@@ -1,0 +1,113 @@
+\documentclass[17pt,notes=hide,amsmath=namelimits,sumlimits,intlimits]{beamer}
+\mode<presentation>
+
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+
+\usetheme{Boadilla}
+\useoutertheme{myinfolines}
+\usecolortheme{rose}
+
+\title[Tuchulcha]{Tuchulcha Project}
+\author[J.M.Gottfried]{Jens-Malte Gottfried}
+\date{19.02.2009}
+\subject{Graphical Charon configuration tool}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{Why do we need this?}
+  \begin{itemize}
+    \item algorithms are configured using plain text parameter files
+    \item these files have to be created by hand
+    \item a graphical tool could speed up and simplify
+	  this configuration process
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Main focuses}
+  \begin{itemize}
+    \item written in C/C++ in order to integrate it
+	  into the Charon project
+    \item platform independent
+    \item easy to learn
+    \item show relevant class documentation
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Features}
+  \begin{itemize}
+    \item look and feel similar to other graphical IDEs
+	  (LabView, QT Designer, ...)
+    \item the graphical flowchart, which is easier to understand
+	  than the plain config file, gives an overview of the data interaction
+    \item documentation is always present on screen to help new users
+    \item dock widgets can be rearranged or hidden to adapt to the user's needs
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Features}
+  \begin{itemize}
+    \item mouse navigation or keyboard shortcuts for advanced users
+    \item the user's attention is focussed on the objects and parameter
+	  configuration and not on syntax details and searching
+	  the needed documentation
+    \item the connectable item filter speeds up finding the needed object
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Features}
+  \begin{itemize}
+    \item multiple configuration can be opened at the same time and be
+	  compared this way
+    \item flowchart images can be saved and used e.g. for presentations
+	  or documentation
+    \item object/class information (so called metadata) are stored in a
+	  separate file
+	\item this way it's possible to configure visualizable
+	  processes in many different projects/applications
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Used software}
+  \begin{itemize}
+    \item CMake build system
+    \item Qt library (GUI, SVG, Webkit)
+    \item Graphviz (flowchart visualization)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Tested build environments}
+  \begin{itemize}
+    \item Linux gcc
+    \item Win32 MinGW
+    \item Visual Studio 2005
+    \item Visual Studio 2008
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Future plans}
+  \begin{itemize}
+    \item possibility to hide or collapse parts of the
+	  flow chart in order to focus on the relevant
+	  parts which your are working on
+    \item automatically metadata generation out of
+	  existing class structures
+    \item interaction with the Argos project to edit
+	  and visualize the processing pipeline
+  \end{itemize}
+\end{frame}
+
+\end{document}

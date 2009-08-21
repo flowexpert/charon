@@ -1,0 +1,11 @@
+thisisalongclassname.inputs	in1;in2;in3
+thisisalongclassname.outputs	out
+thisisalongclassname.parameters
+thisisalongclassname.in1.type	int
+thisisalongclassname.in2.type float
+thisisalongclassname.in3.type string
+thisisalongclassname.out.type	none
+thisisalongclassname.in1.doc	test
+thisisalongclassname.in2.doc	test
+thisisalongclassname.in3.doc	test
+thisisalongclassname.out.doc	test

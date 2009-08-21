@@ -1,0 +1,91 @@
+/**
+\page paramgraph Graph representation in the parameter file
+To represent a node, you need its name and its type.
+So the following example shows a valid parameter file:
+
+<table id="simple" align="center">
+	<caption align="top">minimal graph example</caption>
+	<tr><th>parameter</tr><th>value</th><th>remarks</th></tr>
+	<tr><td>obj1.type</td><td>filereader</td>
+		<td>name: obj1; type: filereader</td></tr>
+</table>
+
+This results in the following graph structure:
+\image html minimal.png "minimal graph example visualization"
+\image latex minimal.png "minimal graph example visualization" width=2.5cm
+
+Example file: \ref minimal.wrp "minimal.wrp"
+
+\section reqired Required parameters
+As shown above, only one parameter per object is strictly required. This is
+the object type which has to be a valid type specified in the used class
+information file (see \ref metadata).
+
+\section slots Slot connections
+If there is more than one object, you can establish connections between them.
+Therefore you have to specify the target slot in the target list of the source
+slot and vice versa. As you can see, the slot connections are realized
+like double linked lists. Empty source/target lists can be omitted.
+
+A simple configuration with two objects is shown in the following table.
+<table id="simple" align="center">
+	<caption align="top">connected graph example</caption>
+	<tr><th>parameter</tr><th>value</th><th>remarks</th></tr>
+	<tr><td>obj1.type</td><td>filereader</td>
+		<td>first object</td></tr>
+	<tr><td>obj2.type</td><td>filewriter</td>
+		<td>second object</td></tr>
+	<tr><td>obj1.data</td><td>obj2.data</td>
+		<td>connection obj1.data->obj2.data</td></tr>
+	<tr><td>obj2.data</td><td>obj1.data</td>
+		<td>connetion obj2.data->obj1.data</td></tr>
+</table>
+
+This results in the graph structure shown in the image below.
+\image html connected.png "connected graph example visualization"
+\image latex connected.png "connected graph example visualization" width=8cm
+
+Example file: \ref connected.wrp "connected.wrp"
+
+\subsection slotlim Limitations
+Output slots can have as many targets as wanted. This can be used to implement
+some kind of <a href="http://en.wikipedia.org/wiki/Observer_pattern">observer
+</a> design pattern.
+
+Input slots can have at maximum one target from which they get their data from.
+This is useful to be able to query data from this slot when needed.
+
+A valid example with multiple connections is shown in the table below.
+<table id="simple" align="center">
+	<caption align="top">multiple connected graph example</caption>
+	<tr><th>parameter</tr><th>value</th><th>remarks</th></tr>
+	<tr><td>fr.type</td><td>filereader</td>
+		<td>data source</td></tr>
+	<tr><td>fw1.type</td><td>filewriter</td>
+		<td>first target</td></tr>
+	<tr><td>fw2.type</td><td>filewriter</td>
+		<td>second target</td></tr>
+	<tr><td>fr.data</td><td>fw1.data;fw2.data</td>
+		<td>multiple targets of output slot</td></tr>
+	<tr><td>fw1.data</td><td>fr.data</td>
+		<td>each input slot has ...</td></tr>
+	<tr><td>fw2.data</td><td>fr.data</td><td>... only one target!</td></tr>
+</table>
+
+\image html multicon.png "multiple connected graph example visualization"
+\image latex multicon.png "multiple connected graph example visualization" width=9cm
+
+Example file: \ref multicon.wrp "multicon.wrp"
+
+\section param Parameters
+Parameters (as shown in the object inspector) can be set or left unset. Unset parameters
+will be shown in gray and default to their value given in the class description.
+
+\image html inspector.png "Object inspector showing set and unset parameters"
+\image latex inspector.png "Object inspector showing set and unset parameters" width=6cm
+
+This is useful not to overload the parameter files and to be able to calculate
+default values (which do not have the same as in the class description)
+for unset parameters "on the fly" during object instatiation.
+
+*/

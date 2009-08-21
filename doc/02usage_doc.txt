@@ -1,0 +1,87 @@
+/**
+\page usage Application usage
+This short usage guide is similar to the documents displayed in the
+help browser. To show the introduction or help documents select
+\c introduction or \c help from the help menu.
+
+\section start Getting started
+To create a new (empty) file, select file->new or type
+CTRL+N.<br>
+To open an existing file, select file->open or type
+CTRL+O.<br>
+
+\subsection editing Editing a Document
+If you have an open document, you can add new items by
+drag&drop (choose one from the selector widget and drag it onto
+the document) or by double-click on the item to add.
+You will be asked for a valid object name.
+If you click at an item in the selector widget,
+the corresponding class documentation will appear in the help browser.
+
+Connections between objects can also be established by
+drag&drop, simply drag the source slot onto the target slot.
+If an input slot is already connected, it will be disconnected
+before establishing the new connection.
+
+Objects can be deleted pressing DEL and renamed using
+F2 or by double-click. In both cases, a dialog will ask for
+your confirmation.
+
+Object parameters can be changed using the objectInspector
+widget. Tooltips show a short documentation for each parameter.
+
+\section widgets Window elements
+Here you find some information about the elements in the application window.
+
+\subsection flowwidget Flowchart window
+On application start, there is no flowchart window avaiable.
+You can open an arbitrary numer of flowchart windows via opening
+existing documents or creating new ones.
+
+The flow window shows the flowchart representation of the object
+structures found in the associated parameterfile document.
+This structure can be edited by drag&drop (see above).
+The parameterfile content can be saved and reloaded. The position
+of the objects is calculated dynamically by Graphviz and cannot be
+changed manually.
+
+\subsection inspector Object inspector
+The object inspector shows parameters for the currently selected
+object (select objects in the flowchart window).
+Unset parameters are shown in gray, their value is the default value
+found in the class description file.
+The parameter values can be changed by pressing F2 or by double-click
+on the value you want to change. Changing an unset value will change
+its status to "set". To reset parameters to their default value, select
+"reset selected parameters" from the edit menu.
+
+To get a short documentation for a parameter, point at it with the
+mouse. A tooltip containing its short description will appear.
+
+\subsection selector Selector widget
+The selector widget provides template instances of all avaiable classes.
+You can instanciate them by double click or by dragging them onto the
+flowchart window. (Double click will add a new instance to the currently
+active flowchart).
+
+You can filter the shown templates by selecting
+"only show connectable items" which hides classes with no slots matching
+to the currently selected flowchart node. Editing the search field
+will show only classes containing the given text in their class name.
+
+The "show all" button resets the search text to an empty text and
+disables the search for connectable slots. All avaiable classes will
+be shown. This can be changed again by modifing the search or connection
+filter.
+
+Clicking on a class in the selector widget will show the corresponding
+class documentation in the help browser.
+
+\subsection helpbrowser Help browser
+The help browser serves to show help documents and class documentation.
+The help browser content can be changed selecting "Help" or
+"Introduction" from the help menu (or the corresponding shortcuts or
+toolbar buttons) or by clicking on a class in the selector widget
+(this only works if there is an opened parameterfile document).
+
+*/

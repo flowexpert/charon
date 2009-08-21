@@ -1,0 +1,9 @@
+<p>
+	This is a small file containing detailed information about the
+	flowestimator class.
+</p>
+<h3>Caption example</h3>
+<p>
+	You have all possiblities, html gives, but remember to omit the
+	html, head and body tags.
+</p>

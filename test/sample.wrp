@@ -1,0 +1,14 @@
+
+fw.type		filewriter
+fw.filename		fw_filename.dat
+
+fs.type		flowestimator
+fs.param1		1
+fs.param2		10.5
+
+rd.type		filereader
+rd.filename		infile.dat
+fw.data		fs.flow
+rd.data		fs.data
+fs.flow		fw.data
+fs.data		rd.data

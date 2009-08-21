@@ -1,0 +1,4 @@
+obj1.type		filereader
+obj2.type		filewriter
+obj1.data		obj2.data
+obj2.data		obj1.data

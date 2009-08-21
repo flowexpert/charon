@@ -1,0 +1,59 @@
+PROJECT(tuchulcha C CXX)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
+
+# use own cmake files
+SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+# finde QT4 with required options
+SET(QT_MIN_VERSION 4.4.0)
+FIND_PACKAGE(Qt4 REQUIRED)
+SET(QT_USE_QTWEBKIT TRUE)
+SET(QT_USE_QTSVG TRUE)
+SET(QT_USE_QTTEST TRUE)
+
+# if changes of bug #0008542 have been incorporated,
+# this is recommended:
+#FIND_PACKAGE(Qt4 4.4.0
+#	COMPONENTS QtCore QtGui QtWebkit QtSVG
+#	REQUIRED
+#)
+
+# set up QT environment
+INCLUDE(${QT_USE_FILE})
+
+FIND_PACKAGE(charon-utils REQUIRED)
+
+IF(WIN32)
+    # Provide option to install/package needed dlls as well
+    OPTION(INSTALL_DLLS "install/package needed (third-party) dlls" ON)
+    INCLUDE(appicon)
+ENDIF(WIN32)
+
+
+IF(MSVC)
+    # visual stiudio is supported since version 2.22
+    FIND_PACKAGE(Graphviz 2.22 REQUIRED)
+ELSE(MSVC)
+    # other builds can use older versions
+    FIND_PACKAGE(Graphviz 2.16 REQUIRED)
+ENDIF(MSVC)
+
+# set up documentation generation
+FIND_PACKAGE(Doxygen)
+INCLUDE(Documentation)
+
+# CPack descriptions for package generation
+INCLUDE(ReleaseSys)
+
+# Test suite
+OPTION(ENABLE_TEST "enabling test suite" ON)
+IF(ENABLE_TEST)
+	ENABLE_TESTING()
+ENDIF(ENABLE_TEST)
+
+# recurse into subdirectories
+ADD_SUBDIRECTORY (src)
+ADD_SUBDIRECTORY (test)
+ADD_SUBDIRECTORY (app)
+
+INCLUDE(InstallDlls)

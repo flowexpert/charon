@@ -1,0 +1,33 @@
+filereader.inputs		
+filereader.parameters		filename
+filereader.filename		sample.cimg
+filereader.filename.type		filename
+filereader.outputs		data
+filereader.data.type		image
+filewriter.inputs		data
+filewriter.data.type		image
+filewriter.parameters		filename
+filewriter.filename		output.cimg
+filewriter.filename.type		filename
+filewriter.outputs		
+flowestimator.inputs		data
+flowestimator.outputs		flow
+flowestimator.data.type		image
+flowestimator.flow.type		image
+flowestimator.parameters		algorithm;param1;param2;param3
+flowestimator.algorithm.type		fsalgos
+flowestimator.param1.type		int
+flowestimator.param2.type		float
+filereader.doc		Filereader instances are able to read image data from some image file.
+filereader.filename.doc		filename to read the data from
+filewriter.doc		Write image date to image files.
+filewriter.filename.doc		filename to write to
+flowestimator.doc		Sample class to estimate local flow in an image.
+flowestimator.algorithm		horn&schunck
+flowestimator.algorithm.doc		select flow estimation algorithm
+flowestimator.param1.doc		sample integer parameter
+flowestimator.param2.doc		sample float parameter
+flowestimator.param3.type		double
+flowestimator.param3.doc		sample double parameter
+filereader.data.doc		read data
+flowestimator.docfile		extras/flowestimator.txt
