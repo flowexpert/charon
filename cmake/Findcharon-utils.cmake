@@ -45,6 +45,16 @@ SET(CHARON_UTILS_IMPORT_FILE
     ${CHARON_UTILS_ROOT_DIR}/include/charon-utils/charon-utils.cmake)
 
 # check if everything went fine
+IF(NOT CHARON_UTILS_ROOT_DIR)
+	MESSAGE(SEND_ERROR
+		"Charon-utils has not been found. "
+		"Please set CHARON_UTILS_ROOT_DIR to the directory, "
+		"where you have installed charon-utils. "
+		"You have to run the install target after build of charon-utils "
+		"or simply use the binary package."
+	)
+ENDIF(NOT CHARON_UTILS_ROOT_DIR)
+
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(charon-utils DEFAULT_MSG
     CHARON_UTILS_IMPORT_FILE
     CHARON_UTILS_ROOT_DIR
