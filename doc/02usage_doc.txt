@@ -1,5 +1,5 @@
 /**
-\page usage Application usage
+\page tuchulcha-usage Application usage
 This short usage guide is similar to the documents displayed in the
 help browser. To show the introduction or help documents select
 \c introduction or \c help from the help menu.

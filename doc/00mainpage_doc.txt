@@ -136,8 +136,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 \image latex lgplv3-147x51.png "LGPL logo" width=4cm
 
 \section infos Further information
-- \subpage build
-- \subpage usage
+- \subpage tuchulcha-build
+- \subpage tuchulcha-usage
 - \subpage paramgraph
 - \subpage metadata
 

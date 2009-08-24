@@ -31,6 +31,21 @@ QT4_AUTOMOC(${PARAMEDIT_SOURCES})
 ADD_EXECUTABLE(paramedit WIN32 ${PARAMEDIT_SOURCES} ${QRC_RES} ${PE_ICO})
 TARGET_LINK_LIBRARIES(paramedit editgraph ${QT_QTMAIN_LIBRARY})
 
+IF(WIN32)
+	# copy needed dll for tests and application run before installing
+	GET_TARGET_PROPERTY(CLOC charon-utils LOCATION)
+	GET_TARGET_PROPERTY(PLOC paramedit LOCATION)
+	GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
+
+	ADD_CUSTOM_COMMAND(TARGET paramedit POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy ${CLOC} ${PLOC_DIR}
+	)
+	INSTALL(FILES ${CLOC}
+		DESTINATION bin
+		COMPONENT dlls
+	)
+ENDIF(WIN32)
+
 # install into bin subdirectory
 INSTALL(
     TARGETS     paramedit paraminspector

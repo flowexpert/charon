@@ -23,6 +23,9 @@ INCLUDE(${QT_USE_FILE})
 
 FIND_PACKAGE(charon-utils REQUIRED)
 
+# executables and dll files are moved to the same directory
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
 IF(WIN32)
     # Provide option to install/package needed dlls as well
     OPTION(INSTALL_DLLS "install/package needed (third-party) dlls" ON)
@@ -55,5 +58,6 @@ ENDIF(ENABLE_TEST)
 ADD_SUBDIRECTORY (src)
 ADD_SUBDIRECTORY (test)
 ADD_SUBDIRECTORY (app)
+ADD_SUBDIRECTORY (bin)
 
 INCLUDE(InstallDlls)
