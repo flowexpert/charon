@@ -41,6 +41,12 @@ ELSE(MSVC)
     FIND_PACKAGE(Graphviz 2.16 REQUIRED)
 ENDIF(MSVC)
 
+IF(UNIX)
+	ADD_DEFINITIONS(-DUNIX)
+ELSE(UNIX)
+	ADD_DEFINITIONS(-DWINDOWS)
+ENDIF(UNIX)
+
 # set up documentation generation
 FIND_PACKAGE(Doxygen)
 INCLUDE(Documentation)
@@ -53,6 +59,13 @@ OPTION(ENABLE_TEST "enabling test suite" ON)
 IF(ENABLE_TEST)
 	ENABLE_TESTING()
 ENDIF(ENABLE_TEST)
+
+# the RPATH to be used when installing
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # recurse into subdirectories
 ADD_SUBDIRECTORY (src)

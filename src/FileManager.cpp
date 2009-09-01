@@ -25,6 +25,9 @@
 #include <cstdlib>
 #include <ctime>
 #include "FileManager.h"
+#include <FileTool.h>
+#include <ParameterFile.h>
+#include <fstream>
 
 FileManager* FileManager::_inst = 0;
 
@@ -85,4 +88,29 @@ QString FileManager::tempFileName() const {
 		filename = QString("paramedit-%1.tmp").arg(rand());
 	} while (path.exists(filename));
 	return path.filePath(filename);
+}
+
+void FileManager::generateMetaData() const {
+	std::string metaPath = std::string(configDir().path().toAscii().data()) + "/metadata";
+	std::string oldPath = FileTool::getCurrentDir();
+	FileTool::changeDir(metaPath);
+	std::vector<std::string> wrp_files = FileTool::getFilesWithSuffix(".wrp");
+	std::ifstream inStream;
+	std::ofstream outStream;
+	const char* fName = classesFile().toAscii().data();
+	outStream.open(fName, std::ios::trunc);
+
+	for(unsigned int i = 0; i < wrp_files.size(); i++) {
+		//&TODO Dateinamen angeben
+		std::string buffer;
+		inStream.open((metaPath + "/" + wrp_files[i]).c_str());
+		while (!inStream.eof()) {
+			std::getline(inStream, buffer);
+			outStream << buffer << std::endl;
+		}
+		outStream << std::endl;
+		inStream.close();
+	}
+	outStream.close();
+	FileTool::changeDir(oldPath);
 }

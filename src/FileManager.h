@@ -46,6 +46,8 @@ public:
     /// get config directory
     QDir configDir() const;
 
+    void generateMetaData() const;
+
 private:
     FileManager();
 

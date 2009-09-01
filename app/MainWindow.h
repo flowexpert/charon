@@ -61,6 +61,9 @@ public slots:
 	
 	/// fit in view
 	void zoomFit();
+
+	///update plugin information
+	void updateMetadata();
 	
 signals:
 	/// inform about changed graph to edit
