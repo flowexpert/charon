@@ -5,9 +5,10 @@ SET(DOC_QUIET FALSE)
 IF (DOXYGEN_FOUND)
     # Possibility to enable/disable documentation creation
     OPTION(ENABLE_DOC "Automatically create documentation" ON)
+	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
     SET(CMAKE_INSTALL_DOC doc
         CACHE PATH "documentation install prefix")
-    MARK_AS_ADVANCED(CMAKE_INSTALL_DOC)
+    MARK_AS_ADVANCED(CMAKE_INSTALL_DOC ENABLE_DOC_VERBOSE)
 
     SET(DOXY_WARN_FORMAT        "$file:$line: $text")
     SET(DOXY_OUTPUT_PATH        ${PROJECT_BINARY_DIR}/doc)
@@ -22,7 +23,11 @@ IF (DOXYGEN_FOUND)
     SET(DOXY_DOC_RECURSIVE      NO)
     SET(DOXY_LATEX_BATCHMODE    YES)
     SET(DOXY_COMPACT_LATEX      YES)
-    SET(DOXY_QUIET              NO)
+    IF(ENABLE_DOC_VERBOSE)
+        SET(DOXY_QUIET          NO)
+    ELSE(ENABLE_DOC_VERBOSE)
+        SET(DOXY_QUIET          YES)
+    ENDIF(ENABLE_DOC_VERBOSE)
         
     # Für die Formeln wird LaTeX benötigt.
     FIND_PACKAGE(LATEX)
