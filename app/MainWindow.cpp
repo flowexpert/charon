@@ -71,8 +71,8 @@ MainWindow::MainWindow(QWidget* myParent) :
 	// select widget
 	QDockWidget* selectWidget = new QDockWidget(tr("Selector"), this);
 	selectWidget->setObjectName("selectwidget");
-	SelectorWidget* selector = new SelectorWidget(selectWidget);
-	selectWidget->setWidget(selector);
+	_selector = new SelectorWidget(selectWidget);
+	selectWidget->setWidget(_selector);
 
 	// object inspector connections
 	connect(inspector, SIGNAL(statusMessage(const QString&, int)),
@@ -84,16 +84,16 @@ MainWindow::MainWindow(QWidget* myParent) :
 
 	// selector widget connections
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
-			selector, SLOT(setModel(ParameterFileModel*)));
+			_selector, SLOT(setModel(ParameterFileModel*)));
 	connect(this, SIGNAL(enableEditors(bool)),
-			selector, SLOT(setEnabled(bool)));
+			_selector, SLOT(setEnabled(bool)));
 
 	// help browser connections
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
 			docGen, SLOT(setModel(ParameterFileModel*)));
-	connect(selector, SIGNAL(showClassDoc(QString)), docGen, SLOT(showClassDoc(
+	connect(_selector, SIGNAL(showClassDoc(QString)), docGen, SLOT(showClassDoc(
 			QString)));
-	connect(selector, SIGNAL(showDocPage(QString)), docGen, SLOT(showDocPage(
+	connect(_selector, SIGNAL(showDocPage(QString)), docGen, SLOT(showDocPage(
 			QString)));
 
 	// add widgets to dock area
@@ -181,7 +181,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 			SLOT(saveFile()), QKeySequence(tr("Ctrl+S")));
 	fileMenu->addAction(QIcon(":/icons/save_as.png"), tr("Save as..."),
 			inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
-	fileMenu->addAction(tr("Update Plugins"),
+	fileMenu->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
 			this, SLOT(updateMetadata()));
 	fileMenu->addAction(QIcon(":/icons/export.png"), tr("Export flowchart"),
 			this, SLOT(saveFlowChart()), QKeySequence(tr("Ctrl+F")));
@@ -355,11 +355,25 @@ void MainWindow::updateMetadata() {
 	ParameterFile pf(std::string(
 			FileManager::instance().configDir().path().toAscii().data())
 			+ "/Paths.config");
-	PluginManager man(pf.get<std::string> ("plugin-path"));
-	man.createMetadata(std::string(
-			FileManager::instance().configDir().path().toAscii().data())
-			+ "/metadata");
+	try{
+		PluginManager man(pf.get<std::string> ("default-plugin-path"));
+		man.createMetadata(std::string(
+				FileManager::instance().configDir().path().toAscii().data())
+				+ "/metadata");
+	} catch (AbstractPluginLoader::PluginException e) {
+		std::cerr << e.what() << std::endl;
+	}
+	try{
+		PluginManager man(pf.get<std::string> ("additional-plugin-path"));
+		man.createMetadata(std::string(
+				FileManager::instance().configDir().path().toAscii().data())
+				+ "/metadata");
+	} catch (AbstractPluginLoader::PluginException e) {
+		std::cerr << e.what() << std::endl;
+	}
 	FileManager::instance().generateMetaData();
 	_centralArea->closeAllSubWindows();
+
+	_selector->update();
 }
 

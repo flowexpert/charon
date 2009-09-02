@@ -25,9 +25,6 @@
 		<file alias="zoomIn.png">../icons/oxygen/viewmag+.png</file>
 		<file alias="zoomOut.png">../icons/oxygen/viewmag-.png</file>
 		<file alias="zoomFit.png">../icons/oxygen/viewmagfit.png</file>
-	</qresource>
-	<qresource prefix="/class">
-		<file alias="sampleclasses.wrp">../test/sampleclasses.wrp</file>
-		<file alias="extras/flowestimator.txt">../test/flowestimator.txt</file>
+		<file alias="refresh.png">../icons/oxygen/view-refresh.png</file>
 	</qresource>
 </RCC>

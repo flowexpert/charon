@@ -31,6 +31,7 @@ class QMdiArea;
 class QMdiSubWindow;
 class FlowWidget;
 class ParameterFileModel;
+class SelectorWidget;
 
 ///	Management of the application's main window.
 class MainWindow : public QMainWindow {
@@ -96,6 +97,8 @@ private:
 	QMdiArea* _centralArea;
 	/// current flow widget
 	FlowWidget* _flow;
+	/// selector widget
+	SelectorWidget * _selector;
 };
 
 #endif /* MAINWINDOW_H_ */

@@ -32,6 +32,7 @@ class ParameterFileModel;
 class GraphModel;
 class GraphBuilder;
 class QUrl;
+class TemplateGraphView;
 
 /// Manage selector of template items for node edition
 class SelectorWidget : public QWidget {
@@ -45,6 +46,9 @@ public:
 
     /// default destructor
     virtual ~SelectorWidget();
+
+    /// loads metadata information and repaints
+    void update();
 
 public slots:
     /// set graph model to edit
@@ -95,6 +99,9 @@ private:
 
     /// this model stores dummy instances of all avaiable classes
     GraphModel* _model;
+
+    /// graph view
+    TemplateGraphView* _view;
 
     /// populate _model with dummy instances
     void _populate();

@@ -24,6 +24,7 @@
 #include <QFile>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include "FileManager.h"
 #include <FileTool.h>
 #include <ParameterFile.h>
@@ -63,17 +64,14 @@ QDir FileManager::configDir() const {
 
 QString FileManager::classesFile() const {
 	QString path = QDir::homePath() + "/.paramedit/classes.wrp";
+	if(!QFile(QDir::homePath() + "/.paramedit/metadata").exists()) {
+		QDir::home().mkpath(".paramedit/metadata");
+	}
 	if(!QFile(path).exists()) {
-		// copy sampleclasses from resource to the path
-		QFile sclasses(":/class/sampleclasses.wrp");
-		sclasses.copy(path);
-		
-		// add sample doc file
-		QFile dummydoc(":/class/extras/flowestimator.txt");
-		if (!configDir().exists("extras"))
-			configDir().mkdir("extras");
-		dummydoc.copy(QDir::homePath()
-			+ "/.paramedit/extras/flowestimator.txt");
+		// write empty classes file
+		std::ofstream newFile(path.toAscii().constData(), std::ios::trunc);
+		newFile << "# empty classes file" << std::endl;
+		newFile.close();
 	}
 
 	// toNativeSeparators here causes the application to crash

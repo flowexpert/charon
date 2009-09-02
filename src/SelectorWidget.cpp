@@ -35,22 +35,27 @@
 SelectorWidget::SelectorWidget(QWidget* myParent, QString classesFile) :
         QWidget(myParent),
         _editmodel(0),
-        _matchingOnly(false) {
-    if (classesFile.isEmpty()) {
-        // meta file manager
-        const FileManager& fileManager = FileManager::instance();
-        classesFile = fileManager.classesFile();
-    }
+        _model(0),
+        _matchingOnly(false){
 
-    // empty GraphModel
-    _model = new GraphModel("", this, classesFile);
-    _model->setUseMetaInfo(false);
+	if (classesFile.isEmpty()) {
+		// meta file manager
+		const FileManager& fileManager = FileManager::instance();
+		classesFile = fileManager.classesFile();
+	}
+
+	// empty GraphModel
+	if(_model) {
+		delete _model;
+	}
+	_model = new GraphModel("", this, classesFile);
+	_model->setUseMetaInfo(false);
 
     // set up GUI
     QGridLayout* gLayout = new QGridLayout(this);
-    TemplateGraphView* view = new TemplateGraphView(0, classesFile);
-    view->setModel(_model);
-    gLayout->addWidget(view, 1, 0, 1, -1);
+    _view = new TemplateGraphView(0, classesFile);
+    _view->setModel(_model);
+    gLayout->addWidget(_view, 1, 0, 1, -1);
 
     QCheckBox* matchingBox = new QCheckBox(
         tr("show only &connectable items"));
@@ -77,11 +82,11 @@ SelectorWidget::SelectorWidget(QWidget* myParent, QString classesFile) :
     gLayout->addWidget(showAll,     0, 4);
 
     // connect signals and slots
-    connect(view, SIGNAL(addNode(QString)),
+    connect(_view, SIGNAL(addNode(QString)),
         this, SLOT(_reqAddNode(QString)));
-    connect(view, SIGNAL(showDocPage(QString)),
+    connect(_view, SIGNAL(showDocPage(QString)),
         this, SIGNAL(showDocPage(QString)));
-    connect(view, SIGNAL(showClassDoc(QString)),
+    connect(_view, SIGNAL(showClassDoc(QString)),
         this, SIGNAL(showClassDoc(QString)));
     connect(matchingBox, SIGNAL(clicked(bool)),
         this, SLOT(_setMatchingOnly(bool)));
@@ -258,4 +263,9 @@ void SelectorWidget::_addShown() {
     if(_model->rowCount() != 1)
         return;
     _reqAddNode(_model->data(_model->index(0, 1)).toString());
+}
+
+void SelectorWidget::update() {
+	_model->loadMetaFile(FileManager::instance().classesFile());
+	_populate();
 }
