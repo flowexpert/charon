@@ -47,14 +47,11 @@ class Gbcce : public Stencil
 			//values
 			std::set<std::string>::iterator uIt;
 			for(uIt=unknowns.begin();uIt!=unknowns.end();uIt++) {
-				this->substencils[*uIt](0,0) = 0;
+				Point4D center(0,0,0,0);
+				substencil entry(1,1,1,1,center)
+				entry.pattern(0,0) = 1;
+				this->substencils[*uIt] = entry;
 			}
-			
-			//setting the center
-			center[0]=0;
-			center[1]=0;
-			center[2]=0;
-			center[3]=0;
 		}
 						
 		void updateStencil(
@@ -69,11 +66,11 @@ class Gbcce : public Stencil
 			motionIn->compute(x, y, z, t, v, term, rhsV);
 			std::map<std::string, T>::iterator termIt;	//term Iterator
 			for(termIt=term.begin();termIt!=term.end();termIt++) {
-				this->substencils[termIt->first](0,0) = termIt->second * lambda;
+				this->substencils[termIt->first].data(0,0) = termIt->second * lambda;
 				this->rhs[termIt->first] = rhsV * termIt->second * lambda;
 			}
 		}
-		
+		/*	Possibly redundant
 		void getStructure() {
 			if (unknowns.empty()) {update();}
 			std::set<std::string>::iterator uIt;	//unknowns iteratort
@@ -81,7 +78,7 @@ class Gbcce : public Stencil
 				this->substencils[*uIt](0,0) = 1;
 			}
 		}
-
+		*/
 		std::set<std::string>& getUnknowns() const {return unknowns;}
 }
 

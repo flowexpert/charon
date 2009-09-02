@@ -20,9 +20,10 @@ class PetscSolver : public Solver
 					for (ssIt = substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
 						ssIt->first->getStructure();
 						int xo=center[0] - ssIt->second->x;
-						int yo=center[1] - ssIt->sedonc->y;
-						int zo=center[2] - ssIt->sedonc->z;
-						int to=center[3] - ssIt->sedonc->t;
+						int yo=center[1] - ssIt->second->y;
+						int zo=center[2] - ssIt->second->z;
+						int to=center[3] - ssIt->second->t;
+						for (int t=0; t< ssIt->first->)
 					}
 				}
 				
