@@ -1,0 +1,49 @@
+# Install script for directory: /home/rsteinbr/workspace/paraObjMotion/src
+
+# Set the install prefix
+IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
+  SET(CMAKE_INSTALL_PREFIX "/export/home/rsteinbr/workspace/install")
+ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
+STRING(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+
+# Set the install configuration name.
+IF(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
+  IF(BUILD_TYPE)
+    STRING(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
+           CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
+  ELSE(BUILD_TYPE)
+    SET(CMAKE_INSTALL_CONFIG_NAME "")
+  ENDIF(BUILD_TYPE)
+  MESSAGE(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
+ENDIF(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
+
+# Set the component getting installed.
+IF(NOT CMAKE_INSTALL_COMPONENT)
+  IF(COMPONENT)
+    MESSAGE(STATUS "Install component: \"${COMPONENT}\"")
+    SET(CMAKE_INSTALL_COMPONENT "${COMPONENT}")
+  ELSE(COMPONENT)
+    SET(CMAKE_INSTALL_COMPONENT)
+  ENDIF(COMPONENT)
+ENDIF(NOT CMAKE_INSTALL_COMPONENT)
+
+# Install shared libraries without execute permission?
+IF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
+  SET(CMAKE_INSTALL_SO_NO_EXE "1")
+ENDIF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
+
+IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(libraries)$")
+  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/export/home/rsteinbr/workspace/paraObjMotion/src/libcharon-motion.a")
+ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(libraries)$")
+
+IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(libraries)$")
+  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/charon-motion" TYPE FILE FILES "/export/home/rsteinbr/workspace/paraObjMotion/src/CMakeFiles/Export/include/charon-motion/charon-motion.cmake")
+  IF("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^()$")
+    FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/charon-motion" TYPE FILE FILES "/export/home/rsteinbr/workspace/paraObjMotion/src/CMakeFiles/Export/include/charon-motion/charon-motion-noconfig.cmake")
+  ENDIF("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^()$")
+ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(libraries)$")
+
+IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(headers)$")
+  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/charon-motion" TYPE DIRECTORY FILES "/home/rsteinbr/workspace/paraObjMotion/src/" FILES_MATCHING REGEX ".(h|hxx)$")
+ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" MATCHES "^(headers)$")
+
