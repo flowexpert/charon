@@ -30,6 +30,9 @@
 #include <ParameterFile.h>
 #include <fstream>
 #include <QFileDialog>
+#include <QMessageBox>
+#include <iostream>
+#include "PluginManager.h"
 
 FileManager* FileManager::_inst = 0;
 
@@ -115,20 +118,57 @@ void FileManager::generateMetaData() const {
 	FileTool::changeDir(oldPath);
 }
 
-bool FileManager::configure(QWidget * parent) const {
-	if (!QFile(QString(QDir::homePath() + "/.paramedit/Paths.config")).exists()) {
+void FileManager::configure(QWidget * parent, bool force) const {
+	if (force
+			|| !QFile(QString(QDir::homePath() + "/.paramedit/Paths.config")).exists()) {
 		QString path = QFileDialog::getExistingDirectory(parent, QString(
 				"Specify your personal plugin path"), QDir::homePath(),
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-		if (!path.size()) {
-			return false;
-		}
-		std::ofstream out;
-		out.open(
-				(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data());
-		out << "additional-plugin-path	" << path.toAscii().data();
-		out << std::endl;
-		out.close();
+
+		QFile pathsConfig("../share/tuchulcha/Paths.config");
+		pathsConfig.copy(QDir::homePath() + "/.paramedit/Paths.config");
+		ParameterFile pf((QDir::homePath() + "/.paramedit/Paths.config").toAscii().data());
+		pf.set<std::string>("additional-plugin-path", path.toAscii().data());
+		pf.save((QDir::homePath() + "/.paramedit/Paths.config").toAscii().data());
 	}
-	return true;
+}
+
+bool FileManager::compileAndLoad(QWidget * parent) const {
+	if (!(ParameterFile(
+			(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data()).get<
+			std::string> ("additional-plugin-path").size())) {
+		QMessageBox msgBox;
+		msgBox.setText("You need a private plugin path.");
+		msgBox.setInformativeText(
+				"Do you want to specify a private plugin path?");
+		msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+		msgBox.setDefaultButton(QMessageBox::No);
+		int ret = msgBox.exec();
+
+		switch (ret) {
+		case QMessageBox::No:
+			return false;
+		case QMessageBox::Yes:
+			configure(parent, true);
+			if (!(ParameterFile(
+					(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data()).get<
+					std::string> ("additional-plugin-path").size())) {
+				return false;
+			}
+			break;
+		}
+	}
+
+	QString fileName = QFileDialog::getOpenFileName(parent, QString(
+			"Select source file"), "/home", QString("Source files (*.cpp)"));
+	if (fileName.size()) {
+		PluginManager
+				man(
+						"../lib/charon-plugins",
+						ParameterFile((QDir::homePath()
+								+ "/.paramedit/Paths.config").toAscii().data()).get<
+								std::string> ("additional-plugin-path"));
+		man.compileAndLoadPlugin(fileName.toAscii().data());
+	}
+	return false;
 }

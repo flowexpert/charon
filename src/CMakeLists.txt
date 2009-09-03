@@ -29,6 +29,18 @@ SET(EDITGRAPH_SOURCES
     TemplateGraphView.cpp
 )
 
+# Configure Paths.config file
+CONFIGURE_FILE(
+	${CMAKE_CURRENT_SOURCE_DIR}/Paths.config.in
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Paths.config
+	@ONLY
+)
+INSTALL(
+    FILES	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Paths.config
+    DESTINATION share/${PROJECT_NAME}
+    COMPONENT   libraries
+)
+
 # =============  generate moc files ====================
 
 # create moc files
@@ -40,7 +52,7 @@ ADD_LIBRARY(editparam ${EDITPARAM_SOURCES})
 ADD_LIBRARY(editgraph ${EDITGRAPH_SOURCES})
 
 # add dependencies
-TARGET_LINK_LIBRARIES(editparam charon-utils ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(editparam charon-plugins charon-utils ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(editgraph editparam ${GRAPHVIZ_LIBRARIES})
 
 # install library to lib directory

@@ -42,10 +42,7 @@
 MainWindow::MainWindow(QWidget* myParent) :
 	QMainWindow(myParent), _flow(0) {
 
-	if(!FileManager::instance().configure()) {
-		std::cerr << "You need a personal plugin path." << std::endl;
-		std::exit(1);
-	}
+	FileManager::instance().configure();
 	FileManager::instance().generateMetaData();
 
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
@@ -188,6 +185,8 @@ MainWindow::MainWindow(QWidget* myParent) :
 			inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
 	fileMenu->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
 			this, SLOT(updateMetadata()));
+	fileMenu->addAction(tr("&Compile and load plug-in"),
+				this, SLOT(compileAndLoad()));
 	fileMenu->addAction(QIcon(":/icons/export.png"), tr("Export flowchart"),
 			this, SLOT(saveFlowChart()), QKeySequence(tr("Ctrl+F")));
 	fileMenu->addAction(QIcon(":/icons/close.png"), tr("&Exit"), this, SLOT(
@@ -369,13 +368,15 @@ void MainWindow::updateMetadata() {
 	} catch (AbstractPluginLoader::PluginException e) {
 		std::cerr << e.what() << std::endl;
 	}
-	try{
-		PluginManager man(pf.get<std::string> ("additional-plugin-path"));
-		man.createMetadata(std::string(
-				FileManager::instance().configDir().path().toAscii().data())
-				+ "/metadata");
-	} catch (AbstractPluginLoader::PluginException e) {
-		std::cerr << e.what() << std::endl;
+	if(pf.get<std::string>("additional-plugin-path") != "") {
+		try{
+			PluginManager man(pf.get<std::string> ("additional-plugin-path"));
+			man.createMetadata(std::string(
+					FileManager::instance().configDir().path().toAscii().data())
+					+ "/metadata");
+		} catch (AbstractPluginLoader::PluginException e) {
+			std::cerr << e.what() << std::endl;
+		}
 	}
 	FileManager::instance().generateMetaData();
 	_centralArea->closeAllSubWindows();
@@ -383,3 +384,6 @@ void MainWindow::updateMetadata() {
 	_selector->update();
 }
 
+void MainWindow::compileAndLoad() {
+	FileManager::instance().compileAndLoad(this);
+}

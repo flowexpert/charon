@@ -63,9 +63,12 @@ public slots:
 	/// fit in view
 	void zoomFit();
 
-	///update plugin information
+	/// update plugin information
 	void updateMetadata();
 	
+	/// compiles and loads a plug-in
+	void compileAndLoad();
+
 signals:
 	/// inform about changed graph to edit
 	/// @param model	new model to edit, 0 if no model exists

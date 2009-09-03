@@ -50,7 +50,9 @@ public:
 
     void generateMetaData() const;
 
-    bool configure(QWidget * = NULL) const;
+    void configure(QWidget * = NULL, bool force = false) const;
+
+    bool compileAndLoad(QWidget * parent) const;
 
 private:
     FileManager();
