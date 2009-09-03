@@ -17,7 +17,7 @@
 template <typename T>
 IncrementorParameter<T>::IncrementorParameter(const std::string& name) :
 	ParameteredObject ("incrementorparameter", name,
-	"class for Incrementor Parameters", t), paramList(this)
+	"class for Incrementor Parameters"), paramList(this)
 {
 	_addOutputSlot( paramList, "paramList", "list of Parameters for Incrementor",
 	               "Incrementor Parameter", "IncrementorParameter");

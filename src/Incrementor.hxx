@@ -13,10 +13,11 @@
 #define INCREMENTOR_HXX_
 
 #include "Incrementor.h"
+#include "ParameteredObject.hxx"
 
 template <typename T>
 Incrementor<T>::Incrementor (const std::string& name) :
-		ParameteredObject("incrementor", name,
+		TemplatedParameteredObject<T>("incrementor", name,
 			" Increments the Parameters, witch are needed to compute changes "
 			"inside the Image ") , paramList(false, true)
 {
