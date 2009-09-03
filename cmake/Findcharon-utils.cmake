@@ -25,8 +25,15 @@ FILE(GLOB CHARON_UTILS_DOCDIRS
     /usr/share/doc/charon-utils-*
 )
 
+FIND_FILE(CHARON_UTILS_TAGFILE
+	NAMES			charon-utils.tag
+    PATHS           ${CHARON_UTILS_ROOT_DIR}/doc
+                    ${CHARON_UTILS_DOCDIRS}
+    PATH_SUFFIXES   html
+	DOC				"doxygen import tag file"
+)
 FIND_PATH(CHARON_UTILS_HTMLDOC_DIR
-    NAMES           charon-utils.tag
+    NAMES           index.html
     PATHS           ${CHARON_UTILS_ROOT_DIR}/doc
                     ${CHARON_UTILS_DOCDIRS}
     PATH_SUFFIXES   html
@@ -36,7 +43,7 @@ FIND_PATH(CHARON_UTILS_HTMLDOC_DIR
 IF(CHARON_UTILS_HTMLDOC_DIR)
     # this can be used to import the charon doxygen documentation
     # this imports the needed tag file and links it to the found htmldoc location
-    SET(CHARON_UTILS_TAG_IMPORT "\"${CHARON_UTILS_HTMLDOC_DIR}/charon-utils.tag=file://${CHARON_UTILS_HTMLDOC_DIR}\"")
+    SET(CHARON_UTILS_TAG_IMPORT "\"${CHARON_UTILS_TAGFILE}=${CHARON_UTILS_HTMLDOC_DIR}\"")
 ENDIF(CHARON_UTILS_HTMLDOC_DIR)
 
 INCLUDE(FindPackageHandleStandardArgs)
@@ -68,6 +75,7 @@ SET(CHARON_UTILS_INCLUDE_DIRS
 
 MARK_AS_ADVANCED(
     CHARON_UTILS_ROOT_DIR
+	CHARON_UTILS_TAGFILE
     CHARON_UTILS_HTMLDOC_DIR
 )
 
