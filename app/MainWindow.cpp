@@ -35,12 +35,17 @@
 #include "FileManager.h"
 #include <ParameterFile.hxx>
 #include <PluginManager.h>
+#include <iostream>
 
 #include "MainWindow.moc"
 
 MainWindow::MainWindow(QWidget* myParent) :
 	QMainWindow(myParent), _flow(0) {
 
+	if(!FileManager::instance().configure()) {
+		std::cerr << "You need a personal plugin path." << std::endl;
+		std::exit(1);
+	}
 	FileManager::instance().generateMetaData();
 
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
@@ -238,6 +243,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 
 	if (!myParent)
 		showMaximized();
+
 }
 
 MainWindow::~MainWindow() {
@@ -356,7 +362,7 @@ void MainWindow::updateMetadata() {
 			FileManager::instance().configDir().path().toAscii().data())
 			+ "/Paths.config");
 	try{
-		PluginManager man(pf.get<std::string> ("default-plugin-path"));
+		PluginManager man("../lib/charon-plugins/Plugins");
 		man.createMetadata(std::string(
 				FileManager::instance().configDir().path().toAscii().data())
 				+ "/metadata");

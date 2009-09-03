@@ -1,26 +1,26 @@
 /*	Copyright (C) 2009 Jens-Malte Gottfried
 
-	This file is part of Tuchulcha.
-    
-    Tuchulcha is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ This file is part of Tuchulcha.
 
-    Tuchulcha is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+ Tuchulcha is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ Tuchulcha is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**	@file	FileManager.cpp
  *	@brief	Implementation of class FileManager.
  *	@date	02.12.2008
  *	@author	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
- 
+
 #include <QFile>
 #include <cstdlib>
 #include <ctime>
@@ -29,17 +29,18 @@
 #include <FileTool.h>
 #include <ParameterFile.h>
 #include <fstream>
+#include <QFileDialog>
 
 FileManager* FileManager::_inst = 0;
 
 FileManager::FileManager() {
-	if(!QDir::home().exists(".paramedit"))
+	if (!QDir::home().exists(".paramedit"))
 		QDir::home().mkdir(".paramedit");
 	Q_ASSERT(configDir().exists());
 }
 
 const FileManager& FileManager::instance() {
-	if(!_inst) {
+	if (!_inst) {
 		_inst = new FileManager();
 
 		// initialize random seed for tempfile name generation
@@ -64,10 +65,10 @@ QDir FileManager::configDir() const {
 
 QString FileManager::classesFile() const {
 	QString path = QDir::homePath() + "/.paramedit/classes.wrp";
-	if(!QFile(QDir::homePath() + "/.paramedit/metadata").exists()) {
+	if (!QFile(QDir::homePath() + "/.paramedit/metadata").exists()) {
 		QDir::home().mkpath(".paramedit/metadata");
 	}
-	if(!QFile(path).exists()) {
+	if (!QFile(path).exists()) {
 		// write empty classes file
 		std::ofstream newFile(path.toAscii().constData(), std::ios::trunc);
 		newFile << "# empty classes file" << std::endl;
@@ -89,7 +90,8 @@ QString FileManager::tempFileName() const {
 }
 
 void FileManager::generateMetaData() const {
-	std::string metaPath = std::string(configDir().path().toAscii().data()) + "/metadata";
+	std::string metaPath = std::string(configDir().path().toAscii().data())
+			+ "/metadata";
 	std::string oldPath = FileTool::getCurrentDir();
 	FileTool::changeDir(metaPath);
 	std::vector<std::string> wrp_files = FileTool::getFilesWithSuffix(".wrp");
@@ -98,7 +100,7 @@ void FileManager::generateMetaData() const {
 	const char* fName = classesFile().toAscii().data();
 	outStream.open(fName, std::ios::trunc);
 
-	for(unsigned int i = 0; i < wrp_files.size(); i++) {
+	for (unsigned int i = 0; i < wrp_files.size(); i++) {
 		//&TODO Dateinamen angeben
 		std::string buffer;
 		inStream.open((metaPath + "/" + wrp_files[i]).c_str());
@@ -111,4 +113,22 @@ void FileManager::generateMetaData() const {
 	}
 	outStream.close();
 	FileTool::changeDir(oldPath);
+}
+
+bool FileManager::configure(QWidget * parent) const {
+	if (!QFile(QString(QDir::homePath() + "/.paramedit/Paths.config")).exists()) {
+		QString path = QFileDialog::getExistingDirectory(parent, QString(
+				"Specify your personal plugin path"), QDir::homePath(),
+				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+		if (!path.size()) {
+			return false;
+		}
+		std::ofstream out;
+		out.open(
+				(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data());
+		out << "additional-plugin-path	" << path.toAscii().data();
+		out << std::endl;
+		out.close();
+	}
+	return true;
 }

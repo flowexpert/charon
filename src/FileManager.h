@@ -26,6 +26,8 @@
 #include <QString>
 #include <QDir>
 
+class QWidget;
+
 /// this class handles creation of a config directory if not avaiable.
 /// If no config directory exists, a new one is created and populated
 /// with a dummy sampleclass file.
@@ -47,6 +49,8 @@ public:
     QDir configDir() const;
 
     void generateMetaData() const;
+
+    bool configure(QWidget * = NULL) const;
 
 private:
     FileManager();
