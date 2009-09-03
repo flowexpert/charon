@@ -19,12 +19,16 @@ class Solver : public ParameteredObject
 		class MetaStencil
 		{
 			private:
-				//vector of pointer to the substencils
-				//where actual the data will be presented
-				///@todo substencils changed to inlcude pair - modify other code to comply
+				/**
+				 * Vector of pointers to the substencils.
+				 * The data for the solver will be pulled from here.
+				*/
 				std::vector< Substencil<T>* > substencils;
 				
-				//The Metastencil
+				/**
+				 * CImg representing the metastencil.
+				 * This is a dummy to pre-allocate memory.
+				 */
 				cimg_library::CImg<T> metastencil;
 				
 				//expansions in all 8 directions
@@ -42,18 +46,20 @@ class Solver : public ParameteredObject
 					//and reposition the center of the meta stencil accordingly
 					std::vector<Stencil<T>*>::iterator sIt;		//stencil iterator
 					for (sIt=stencils.begin() ; sIt != stencils.end() ; sIt++) {
+						std::map<std::string, Substencil<T> >::iterator ssIt;	//Substencil iterator
+						ssIt = sIt->get().find(unknown);
 						//setting work-variable for better reading
-						int centerx = sIt->getCenterX();
-						int centery = sIt->getCenterY();
-						int centerz = sIt->getCenterZ();
-						int centert = sIt->getCenterT();
+						int centerx = ssIt->getCenterX();
+						int centery = ssIt->getCenterY();
+						int centerz = ssIt->getCenterZ();
+						int centert = ssIt->getCenterT();
 						
 						//Measuring the substencil that is currently being added
 						//to the metastencil
-						int width    = sIt->get().find(unknown).pattern.dimx();
-						int height   = sIt->get().find(unknown).pattern.dimy();
-						int depth    = sIt->get().find(unknown).pattern.dimz();
-						int duration = sIt->get().find(unknown).pattern.dimv();
+						int width    = ssIt->pattern.dimx();
+						int height   = ssIt->pattern.dimy();
+						int depth    = ssIt->pattern.dimz();
+						int duration = ssIt->pattern.dimv();
 						//remember the re-declaration of the v-dimension of CImg
 						//to be the time axis? Yeah, right ;-)
 						
@@ -71,27 +77,18 @@ class Solver : public ParameteredObject
 						//the individual expansions can only grow, not shrink
 						//these - admittedly messy - lines just find the maximum
 						//of expansions in all 8 directions
-						//over all added metastencils
-						if (centerx > this->left) {this->left = centerx;}
-						if (width-centerx-1 > this->right) {this->right = width-centerx-1;}
-						if (centery > this->up) {this->up = centery;}
-						if (height-centery-1 > this->down) {this->down = height-centery-1;}
-						if (centerz > this->backward) {this->backward = centerz;}
-						if (depth-centerz-1 > this->forward) {this->forward = depth-centerz-1;}
-						if (centert > this->before) {this->before = centert;}
-						if (duration-centert-1 > this->after) {this->after = duration-centert-1;}
-						
-						//and after having measured the substencil, we finally
-						//add it and its center to the metastencil
-						/*
-						Point4D center(centerx, centery, centerz, centert);
-						std::pair<cimg_library::CImg<T>*,Point4D> entry;
-						entry.first = &(sIt->get().find(unknown).second();
-						entry.second = center;
-						*/
-						
-						
-						substencils.push_back( &(sIt->get().find(unknown)) );
+						//over all added substencils
+						if (centerx            > this->left)     {this->left = centerx;}
+						if (width-centerx-1    > this->right)    {this->right = width-centerx-1;}
+						if (centery            > this->up)       {this->up = centery;}
+						if (height-centery-1   > this->down)     {this->down = height-centery-1;}
+						if (centerz            > this->backward) {this->backward = centerz;}
+						if (depth-centerz-1    > this->forward)  {this->forward = depth-centerz-1;}
+						if (centert            > this->before)   {this->before = centert;}
+						if (duration-centert-1 > this->after)    {this->after = duration-centert-1;}
+												
+						//push_back the address of the just measured substencil
+						this->substencils.push_back( &(*ssIt) );
 					}
 					
 					//expand the metastencil CImg to the appropriate size
@@ -103,11 +100,16 @@ class Solver : public ParameteredObject
 				}
 				
 				//Your implementation of the MetaStencil will need a function
-				//to gather the data from the different Stencils and present
+				//to gather the data from the different substencils and present
 				//it in any way you want it to in order to work with your
 				//solver.
 				//It would be appreciated if you'd name this function 'update'.
-
+				
+				/**
+				 * Expand the given region of interest to include the necessary ghost nodes.
+				 * @param[in] inRoi Region of interest to expand.
+				 * @return Epxanded region of interest.
+				 */
 				Roi<int> expand(const Roi<int>& inRoi) {
 					int t  = -up;
 					int l  = -left;
@@ -123,6 +125,7 @@ class Solver : public ParameteredObject
 				}
 		};
 	public:
+		///Default constructor.
 		Solver(const std::string& classname, const std::string& name = "") : 
 			ParameteredObject(classname,name,"solves the linear system"),
 			stencils(false,true)	//make stencil input slot mandatory and multi

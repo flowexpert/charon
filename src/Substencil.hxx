@@ -38,6 +38,7 @@ class Substencil
 		Point4D center;
 		
 	public:
+		///default constructor
 		Substencil(const unsigned int dimx, const unsigned int dimy,
 		           const unsigned int dimz, const unsigned int dimt,
 		           Point4D center) {
@@ -47,12 +48,14 @@ class Substencil
 			this->center = center;
 		}
 		
+		///copy constructor
 		Substencil(const Substencil &rhs) {
 			this->data = rhs.data;
 			this->pattern = rhs.pattern;
 			this->center = rhs.center;
 		}
 		
+		///assignment operator
 		Substencil& operator= (const Substencil &rhs) {
 			if (&rhs == this) {return *this;}
 			this->data = rhs.data;
@@ -60,6 +63,13 @@ class Substencil
 			this->center = rhs.center;
 			return *this;
 		}
+		
+		int getCenterX() const {return center.x;}
+		int getCenterY() const {return center.y;}
+		int getCenterZ() const {return center.z;}
+		int getCenterT() const {return center.t;}
+		
+		~Substencil();
 }
 
 #endif //_substencil_HXX_
