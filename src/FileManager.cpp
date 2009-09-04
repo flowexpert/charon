@@ -30,7 +30,9 @@
 #include <ParameterFile.h>
 #include <fstream>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QMessageBox>
+#include <QStringList>
 #include <iostream>
 #include "PluginManager.h"
 
@@ -191,6 +193,28 @@ bool FileManager::compileAndLoad(QWidget * parent) const {
 			std::string charon_utils_install = ParameterFile((QDir::homePath()
 					+ "/.paramedit/Paths.config").toAscii().data()).get<
 					std::string> ("charon-utils-install");
+
+			bool ok;
+			QString text = QInputDialog::getText(parent, QString(
+					"Library dependencies"), QString(
+					"Specify referenced Libraries.\n"
+						"Separate multiple libraries with ';'.\n"
+						"Leave empty if no dependencies exist."),
+					QLineEdit::Normal, "", &ok);
+
+			if (!ok) {
+				return false;
+			}
+
+			std::vector<std::string> libsVector;
+
+			QStringList list = text.split(";", QString::SkipEmptyParts);
+
+			for (int i = 0; i < list.size(); i++) {
+				libsVector.push_back(list[i].trimmed().toAscii().data());
+				std::cout << libsVector[i] << std::endl;
+			}
+
 			PluginManager
 					man(
 							charon_utils_install + "/lib/charon-plugins",
@@ -200,8 +224,9 @@ bool FileManager::compileAndLoad(QWidget * parent) const {
 									std::string> ("additional-plugin-path"));
 			std::string oldDir = FileTool::getCurrentDir();
 			FileTool::changeDir(charon_utils_install);
-			man.compileAndLoadPlugin(fileName.toAscii().data(), std::string(
-					configDir().path().toAscii().data()) + "/metadata");
+			man.compileAndLoadPlugin(fileName.toAscii().data(), libsVector,
+					std::string(configDir().path().toAscii().data())
+							+ "/metadata");
 			FileTool::changeDir(oldDir);
 
 			generateMetaData();
