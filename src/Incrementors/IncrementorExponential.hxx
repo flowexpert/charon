@@ -5,7 +5,7 @@
  *      Author: andreas
  */
 /** @file IncrementorExponential.hxx
- * @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
+ *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 24.08.2009
  */
 

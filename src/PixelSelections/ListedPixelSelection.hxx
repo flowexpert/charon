@@ -1,14 +1,19 @@
 /*
- * PixelSelection.hxx
+ * ListedPixelSelection.hxx
  *
  *  Created on: 13.08.2009
  *      Author: andreas
+ */
+/** @file ListedPixelSelection.hxx
+ *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
+ *  @date 13.08.2009
  */
 
 #ifndef _LISTEDPIXELSELECTION_HXX_
 #define _LISTEDPIXELSELECTION_HXX_
 
 #include "ListedPixelSelection.h"
+#include "PixelSelection.hxx"
 
 template<typename T>
 ListedPixelSelection<T>::ListedPixelSelection(const std::string& name) :
@@ -21,7 +26,11 @@ template<typename T>
 void ListedPixelSelection<T>::execute()
 {
 	ParameteredObject::execute();
-	cimg_library::CImg<T> pic = this->image();
+}
+
+template<typename T>
+void ListedPixelSelection<T>::getListOfPixel()
+{
 	forRoiX(*(this->range()),x)
 	{
 		forRoiY(*(this->range()),y)
@@ -36,23 +45,17 @@ void ListedPixelSelection<T>::execute()
 					pixel.z = y;
 					pixel.t = t;
 					///@TODO könnte falsch sein
-					pixel.red = pic.get_crop(pixel.x, pixel.y, pixel.z,
-							pixel.t, 0);
-					pixel.green = pic.get_crop(pixel.x, pixel.y, pixel.z,
-							pixel.t, 1);
-					pixel.blue = pic.get_crop(pixel.x, pixel.y, pixel.z,
-							pixel.t, 2);
-					pixelList.push_back(&pixel);
+					pixel.red = this->image().get_crop(pixel.x, pixel.y,
+							pixel.z, pixel.t, 0);
+					pixel.green = this->image().get_crop(pixel.x, pixel.y,
+							pixel.z, pixel.t, 1);
+					pixel.blue = this->image().get_crop(pixel.x, pixel.y,
+							pixel.z, pixel.t, 2);
+					this->pixelList.push_back(&pixel);
 				}
 			}
 		}
 	}
-}
-
-template<typename T>
-std::vector<Pixel<T>*> ListedPixelSelection<T>::getListOfPixel() const
-{
-	return pixelList;
 }
 ;
 

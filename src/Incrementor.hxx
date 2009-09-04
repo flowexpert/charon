@@ -24,8 +24,8 @@ Incrementor<T>::Incrementor (const std::string& name) :
 	this->_addInputSlot(image, "Image", "Image where to Increment", "CImg");
 	this->_addInputSlot(paramList, "paramList", "list of Parameters for Incrementor",
             "Incrementor Parameter");
-//	_addOutputSlot(newpos, "NextStepPosition",
-//			"Next Position in Image after Incrementation", "nextpos");
+	_addOutputSlot(newpos, "newpos",
+			"Next Position in Image after Incrementation", "Incrementor<T>*");
 }
 
 template <typename T>

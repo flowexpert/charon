@@ -24,6 +24,8 @@ public:
 	/// standard constructor
 	ObjectivFunction (const std::string& name);
 	InputSlot<cimg_library::CImg<T>& > image;
+/// @TODO make 2 pixels as only inputslots first computed Pixel, second Pixel to compare in t+1
+/// @TODO outputslot hemming distance
 	/// compares the changed List of Pixels from the apply function
 	/// (BrightnessModel) with the next picture and try to find the right
 	/// position for every pixel.
