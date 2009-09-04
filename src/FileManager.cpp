@@ -148,7 +148,14 @@ void FileManager::configure(QWidget * parent, bool force) const {
 				"Specify your personal plugin path"), QDir::homePath(),
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
-		QFile pathsConfig("../share/tuchulcha/Paths.config");
+		QFile pathsConfig;
+		if(FileTool::exists("../share/tuchulcha/Paths.config")) {
+			pathsConfig.setFileName("../share/tuchulcha/Paths.config");
+		} else if(FileTool::exists("/usr/local/share/tuchulcha/Paths.config")) {
+			pathsConfig.setFileName("/usr/local/share/tuchulcha/Paths.config");
+		} else if(FileTool::exists("/usr/share/tuchulcha/Paths.config")) {
+			pathsConfig.setFileName("/usr/share/tuchulcha/Paths.config");
+		}
 		pathsConfig.copy(QDir::homePath() + "/.paramedit/Paths.config");
 		ParameterFile
 				pf(
