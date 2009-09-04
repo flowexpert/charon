@@ -32,12 +32,11 @@
 template <class T>
 class Substencil
 {
-	private:
+	public:
 		cimg_library::CImg<T> data;
 		cimg_library::CImg<char> pattern;
 		Point4D center;
 		
-	public:
 		///default constructor
 		Substencil(const unsigned int dimx, const unsigned int dimy,
 		           const unsigned int dimz, const unsigned int dimt,
@@ -63,12 +62,7 @@ class Substencil
 			this->center = rhs.center;
 			return *this;
 		}
-		
-		int getCenterX() const {return center.x;}
-		int getCenterY() const {return center.y;}
-		int getCenterZ() const {return center.z;}
-		int getCenterT() const {return center.t;}
-		
+				
 		~Substencil();
 }
 

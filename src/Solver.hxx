@@ -49,17 +49,17 @@ class Solver : public ParameteredObject
 						std::map<std::string, Substencil<T> >::iterator ssIt;	//Substencil iterator
 						ssIt = sIt->get().find(unknown);
 						//setting work-variable for better reading
-						int centerx = ssIt->getCenterX();
-						int centery = ssIt->getCenterY();
-						int centerz = ssIt->getCenterZ();
-						int centert = ssIt->getCenterT();
+						int centerx = ssIt->second->center.x;
+						int centery = ssIt->second->center.y;
+						int centerz = ssIt->second->center.z;
+						int centert = ssIt->second->center.t;
 						
 						//Measuring the substencil that is currently being added
 						//to the metastencil
-						int width    = ssIt->pattern.dimx();
-						int height   = ssIt->pattern.dimy();
-						int depth    = ssIt->pattern.dimz();
-						int duration = ssIt->pattern.dimv();
+						int width    = ssIt->second->pattern.dimx();
+						int height   = ssIt->second->pattern.dimy();
+						int depth    = ssIt->second->pattern.dimz();
+						int duration = ssIt->second->pattern.dimv();
 						//remember the re-declaration of the v-dimension of CImg
 						//to be the time axis? Yeah, right ;-)
 						
@@ -67,10 +67,10 @@ class Solver : public ParameteredObject
 						//it is important to understand, that the center can
 						//onle "wander" in positive directions - no more fancy
 						//checks and calculations are needed.
-						if (centerx > center.x) {center.x = centerx;}
-						if (centery > center.y) {center.y = centery;}
-						if (centerz > center.z) {center.z = centerz;}
-						if (centert > center.t) {center.t = centert;}
+						if (centerx > this->center.x) {this->center.x = centerx;}
+						if (centery > this->center.y) {this->center.y = centery;}
+						if (centerz > this->center.z) {this->center.z = centerz;}
+						if (centert > this->center.t) {this->center.t = centert;}
 						
 						//setting the expansions
 						//Here's the same principle as with the center:
@@ -141,6 +141,8 @@ class Solver : public ParameteredObject
 		//so all the calculations will take place in this function, thus in
 		//the end, the correct data will be presented in the outputSlot
 		//of the solver
+		
+		virtual ~Solver();
 }
 
 #endif // _SOLVER_HXX_

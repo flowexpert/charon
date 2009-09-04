@@ -16,13 +16,15 @@ class PetscSolver : public Solver
 			public:
 				PetscMetaStencil(const std::string unknown,const std::vector<stencil<T>*>& stencils) :
 				Solver<T>::MetaStencil(unknown,stencils) {
-					std::vector<std::pair<cimg_library::CImg<T>*,Point4D> >::iterator ssIt; //substencil Iterator
+					std::vector< Substencil<T>* >::iterator ssIt; //substencil Iterator
 					for (ssIt = substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
 						ssIt->first->getStructure();
-						int xo=center[0] - ssIt->second->x;
-						int yo=center[1] - ssIt->second->y;
-						int zo=center[2] - ssIt->second->z;
-						int to=center[3] - ssIt->second->t;
+						//Calculating offsets
+						int xo = center.x - ssIt->second->center.x;
+						int yo = center.y - ssIt->second->center.y;
+						int zo = center.z - ssIt->second->center.z;
+						int to = center.t - ssIt->second->center.t;
+						
 						for (int t=0; t< ssIt->first->)
 					}
 				}
@@ -34,8 +36,14 @@ class PetscSolver : public Solver
 				}
 		};
 		
-		//convert from coordinate in the ROI of an unknown to the vector index
-		//of the unknown
+		/**
+		 * Converts a coordinate in an ROI into a relative vector index.
+		 * @param[in] p Point to convert.
+		 * @param[in] dim Dimensions of the ROI that p is in.
+		 * @see getVectorIndex()
+		 * @see getCoordinate()
+		 * @return Relative vector index.
+		 */
 		unsigned int getIndex(const Point4D p, const Point4D dim) const {
 			unsigned int res=0;
 			
@@ -47,8 +55,15 @@ class PetscSolver : public Solver
 			return res;
 		}
 		
-		//convert from the relative vector index (inside an unkown) to the
-		//global vector index
+		/**
+		 * Converts a relative vector index to a global vector index.
+		 * @param[in] i Relative vector index.
+		 * @param[in] unknown The unknown in which the relative vector index is.
+		 * @param[in] unknownSizes Map of ROIs associated to their unknown.
+		 * @see getIndex()
+		 * @see getCoordinate()
+		 * @return Global vector index.
+		 */
 		unsigned int getVectorIndex(const unsigned int i,
 									const std::string& unknown,
 									const std::map<std::string,roi<int> >& unknownSizes) {
@@ -66,26 +81,32 @@ class PetscSolver : public Solver
 		
 		//convert form the global vector index to the coordinate in an ROI of
 		//an unknown
+		/**
+		 * Convert a global vector index to 4-dimensional coordinates and the according unknown.
+		 * @param[in] vi Global vector index.
+		 * @param[in] unknownSizes Map of ROIs associated to their unknown.
+		 * @param[out] unknown Unknown of the ROI in which the point is.
+		 * @param[out] p Coordinates of the point.
+		 */
 		void getCoordinate(	const unsigned int vi,
 							const std::map<std::string, roi<int> >& unknownSizes,
-							std::string& unknown,
-							int& x, int& y, int& z, int& t) {
+							std::string& unknown, Point4D& p) {
 			unsigned int i=vi;
 			std::map<std::string,roi<int> >::iterator usIt=unknownSizes.begin();
 			while (i - (usIt->second().getVolume()) > 0) {
-				i -= usIt->second().getVolume;
+				i -= usIt->second().getVolume();
 				usIt++;
 			}
 			unknown = usIt.first();
 			
-			roi<int> dim = usIt.second();
-			x =  i % (dim.getWidth());
-			i -= x;
-			y =  (i/(dim.getWidth()))%dim.getHeight();
-			i -= (y*dim.getWidth());
-			z =  (i/(dim.getWidth*dim.getHeight()))%dim.getDepth();
-			i -= (z*dim.getWidth()*dim.getHeight());
-			t =  (i/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
+			roi<int>& dim = usIt.second();
+			p.x =  i % (dim.getWidth());
+			i -= p.x;
+			p.y =  (i/(dim.getWidth()))%dim.getHeight();
+			i -= (p.y*dim.getWidth());
+			p.z =  (i/(dim.getWidth*dim.getHeight()))%dim.getDepth();
+			i -= (p.z*dim.getWidth()*dim.getHeight());
+			p.t =  (i/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
 		}
 
 	public:
@@ -96,16 +117,18 @@ class PetscSolver : public Solver
 		
 		void update() {
 			ParameteredObject::update();
-			
-			int nu		//number of unknowns (former: nc)
-			
+						
 			//     =====================
 			//     P R E P A R A T I O N
 			//     =====================
 			
-			//because iterating through stencils is cumbersome, we reorder
-			//the whole structure to iterate through unknowns and get pointer
-			//to the stencils that work with this unknown.
+			//For better acess, the first thing we will do is to reorder the
+			//Substencils. Until now, all the substencils of a method are
+			//grouped together in a Stencil<T> object. What we want to end with
+			//in this preparation phase is a map of metastencils, which group
+			//the substencils by unknown. This is a 2-step process, in the first
+			//step, we go through all stencils and add a pointer to the stencil
+			//into a map, where it is associated with its respective unknown.
 			//
 			//Data structure:
 			//map<string,     vector<stencil*> >
@@ -134,7 +157,10 @@ class PetscSolver : public Solver
 				}
 			}
 			
-			//From this map we can now create the individual MetaStencils
+			//In the second step, we go through the just created map of
+			//substencils and create a PetscMetastencil object for each unknown.
+			//We organize these PetscMetastencils in a map - keyed to their
+			//unknown.
 			std::map<std::string,PetscMetaStencil> MetaStencils;
 			std::map<std::string, std::vector<stencil<T>*> >::iterator ssIt; //substencil Iterator
 			for (ssIt=substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
@@ -200,6 +226,8 @@ class PetscSolver : public Solver
 				
 			}
 		}
+		
+		~PetscSolver();
 }
 
 #endif // _PETSCSOLVER_HXX_

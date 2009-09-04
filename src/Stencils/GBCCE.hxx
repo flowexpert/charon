@@ -80,6 +80,8 @@ class Gbcce : public Stencil
 		}
 		*/
 		std::set<std::string>& getUnknowns() const {return unknowns;}
+		
+		~GBCCE();
 }
 
 #endif //_GBCCE_HXX_

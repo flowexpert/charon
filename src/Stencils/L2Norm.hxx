@@ -156,7 +156,11 @@ class L2Norm : public stencil
 							const unsigned int z=0,
 							const unsigned int t=0,
 							const unsigned int v=0) {
+			//Nothing to do since all the data is static.
 		}
+		
+		~L2Norm();
+		
 }
 
 #endif // _L2NORM_HXX_
