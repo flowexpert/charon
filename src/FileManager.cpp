@@ -92,6 +92,27 @@ QString FileManager::tempFileName() const {
 	return path.filePath(filename);
 }
 
+void FileManager::updatePlugins() const {
+	ParameterFile pf(std::string(
+			FileManager::instance().configDir().path().toAscii().data())
+			+ "/Paths.config");
+
+	std::string charon_utils_install = pf.get<std::string> (
+			"charon-utils-install");
+	std::string additionalPluginPath = pf.get<std::string> (
+			"additional-plugin-path");
+
+	try {
+		PluginManager man(charon_utils_install + "/lib/charon-plugins",
+				additionalPluginPath);
+		man.createMetadata(std::string(
+				FileManager::instance().configDir().path().toAscii().data())
+				+ "/metadata");
+	} catch (AbstractPluginLoader::PluginException e) {
+		std::cerr << e.what() << std::endl;
+	}
+}
+
 void FileManager::generateMetaData() const {
 	std::string metaPath = std::string(configDir().path().toAscii().data())
 			+ "/metadata";
@@ -127,9 +148,12 @@ void FileManager::configure(QWidget * parent, bool force) const {
 
 		QFile pathsConfig("../share/tuchulcha/Paths.config");
 		pathsConfig.copy(QDir::homePath() + "/.paramedit/Paths.config");
-		ParameterFile pf((QDir::homePath() + "/.paramedit/Paths.config").toAscii().data());
-		pf.set<std::string>("additional-plugin-path", path.toAscii().data());
-		pf.save((QDir::homePath() + "/.paramedit/Paths.config").toAscii().data());
+		ParameterFile
+				pf(
+						(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data());
+		pf.set<std::string> ("additional-plugin-path", path.toAscii().data());
+		pf.save(
+				(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data());
 	}
 }
 
@@ -161,14 +185,31 @@ bool FileManager::compileAndLoad(QWidget * parent) const {
 
 	QString fileName = QFileDialog::getOpenFileName(parent, QString(
 			"Select source file"), "/home", QString("Source files (*.cpp)"));
+
 	if (fileName.size()) {
-		PluginManager
-				man(
-						"../lib/charon-plugins",
-						ParameterFile((QDir::homePath()
-								+ "/.paramedit/Paths.config").toAscii().data()).get<
-								std::string> ("additional-plugin-path"));
-		man.compileAndLoadPlugin(fileName.toAscii().data());
+		try {
+			std::string charon_utils_install = ParameterFile((QDir::homePath()
+					+ "/.paramedit/Paths.config").toAscii().data()).get<
+					std::string> ("charon-utils-install");
+			PluginManager
+					man(
+							charon_utils_install + "/lib/charon-plugins",
+							ParameterFile(
+									(QDir::homePath()
+											+ "/.paramedit/Paths.config").toAscii().data()).get<
+									std::string> ("additional-plugin-path"));
+			std::string oldDir = FileTool::getCurrentDir();
+			FileTool::changeDir(charon_utils_install);
+			man.compileAndLoadPlugin(fileName.toAscii().data(), std::string(
+					configDir().path().toAscii().data()) + "/metadata");
+			FileTool::changeDir(oldDir);
+
+			generateMetaData();
+		} catch (AbstractPluginLoader::PluginException e) {
+			std::cerr << e.what() << std::endl;
+		} catch (std::string s) {
+			std::cerr << s << std::endl;
+		}
 	}
 	return false;
 }

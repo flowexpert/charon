@@ -357,27 +357,7 @@ void MainWindow::zoomFit() {
 }
 
 void MainWindow::updateMetadata() {
-	ParameterFile pf(std::string(
-			FileManager::instance().configDir().path().toAscii().data())
-			+ "/Paths.config");
-	try{
-		PluginManager man("../lib/charon-plugins/Plugins");
-		man.createMetadata(std::string(
-				FileManager::instance().configDir().path().toAscii().data())
-				+ "/metadata");
-	} catch (AbstractPluginLoader::PluginException e) {
-		std::cerr << e.what() << std::endl;
-	}
-	if(pf.get<std::string>("additional-plugin-path") != "") {
-		try{
-			PluginManager man(pf.get<std::string> ("additional-plugin-path"));
-			man.createMetadata(std::string(
-					FileManager::instance().configDir().path().toAscii().data())
-					+ "/metadata");
-		} catch (AbstractPluginLoader::PluginException e) {
-			std::cerr << e.what() << std::endl;
-		}
-	}
+	FileManager::instance().updatePlugins();
 	FileManager::instance().generateMetaData();
 	_centralArea->closeAllSubWindows();
 
@@ -386,4 +366,5 @@ void MainWindow::updateMetadata() {
 
 void MainWindow::compileAndLoad() {
 	FileManager::instance().compileAndLoad(this);
+	_selector->update();
 }

@@ -48,6 +48,8 @@ public:
     /// get config directory
     QDir configDir() const;
 
+    void updatePlugins() const;
+
     void generateMetaData() const;
 
     void configure(QWidget * = NULL, bool force = false) const;
