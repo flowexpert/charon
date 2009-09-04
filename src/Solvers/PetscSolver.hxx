@@ -25,7 +25,23 @@ class PetscSolver : public Solver
 						int zo = center.z - ssIt->second->center.z;
 						int to = center.t - ssIt->second->center.t;
 						
-						for (int t=0; t< ssIt->first->)
+						//Iterate through all pixels of the substencil...
+						for (int tc=0 ; tc < ssIt->second->patterm.dimv() ; tc++) {
+							for (int zc=0 ; zc < ssIt->second->pattern.dimz() ; zc++) {
+								for (int yc=0 ; yc < ssIt->second->pattern.dimy() ; yc++) {
+									for (int xc=0 ; xc < ssIt->second->pattern.dimx() ; xc++) {
+										//...and set the pattern into the
+										//metastencil (with offset).
+										if (ssIt->second->pattern(xc,yc,zc,tc)) {
+											///@todo this is supposed to save Point4Ds
+											///@idea use set to prevent duplicate points
+											///@test see if set needs operator== implemented
+											this->metastencil(xc+xo,yc+yo,zc+zo,tc+to) = 1;
+										}
+									}
+								}
+							}
+						}
 					}
 				}
 				
@@ -87,6 +103,8 @@ class PetscSolver : public Solver
 		 * @param[in] unknownSizes Map of ROIs associated to their unknown.
 		 * @param[out] unknown Unknown of the ROI in which the point is.
 		 * @param[out] p Coordinates of the point.
+		 * @see getIndex()
+		 * @see getVectorIndex()
 		 */
 		void getCoordinate(	const unsigned int vi,
 							const std::map<std::string, roi<int> >& unknownSizes,
@@ -118,9 +136,9 @@ class PetscSolver : public Solver
 		void update() {
 			ParameteredObject::update();
 						
-			//     =====================
-			//     P R E P A R A T I O N
-			//     =====================
+			//    *=======================*
+			//    | P R E P A R A T I O N |
+			//    *=======================*
 			
 			//For better acess, the first thing we will do is to reorder the
 			//Substencils. Until now, all the substencils of a method are
@@ -181,9 +199,9 @@ class PetscSolver : public Solver
 			//matrix and thus the size of the whole matrix and the lenght of the
 			//solution vector
 			
-			//     =========
-			//     P E T S C
-			//     =========
+			//     *===========*
+			//     | P E T S C |
+			//     *===========*
 			//PetscInitialize and MPI Initialization are done in the main
 			
 			Vec				x, b;	//x: approx. solution, b: right hand side
