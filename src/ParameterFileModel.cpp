@@ -367,6 +367,7 @@ void ParameterFileModel::save(const QString& fName) {
 		name = fName;
 	if (!name.isEmpty()) {
 		setFileName(name);
+		_refactorTargetPoints();
 		_parameterFile->save(name.toAscii().constData());
 		emit statusMessage(QString("File %1 saved.").arg(name));
 	} else
@@ -537,9 +538,22 @@ std::vector<std::string> ParameterFileModel::_paramFilter(const std::vector<
 	return result;
 }
 
-void ParameterFileModel::executeWorkflow() const {
+void ParameterFileModel::executeWorkflow() {
 	PluginManager man(FileManager::instance().getGlobalPluginPath(),
 			FileManager::instance().getPrivatePluginPath());
+	_refactorTargetPoints();
 	man.loadParameterFile(*_parameterFile);
 	man.executeWorkflow();
+}
+
+void ParameterFileModel::_refactorTargetPoints() {
+	std::vector<std::string> v(_parameterFile->getEveryParameter(
+			"istargetpoint"));
+	std::vector<std::string> targetPoints;
+	for(unsigned int i = 0; i < v.size(); i++) {
+		if(_parameterFile->get<bool>(v[i])) {
+			targetPoints.push_back(v[i].substr(0, v[i].find_first_of('.')));
+		}
+	}
+	_parameterFile->set<std::string>("global.targetpoints", targetPoints);
 }

@@ -147,7 +147,8 @@ public:
     /**
      * Executes the current workflow using the PluginManager class.
      */
-    void executeWorkflow() const;
+    void executeWorkflow();
+
 
 signals:
     /// Property _fileName has changed
@@ -254,6 +255,12 @@ private:
     /// @param list				list to filter
     std::vector<std::string> _paramFilter(const std::vector<std::string>&
         list) const;
+
+    /**
+     * Collects the instances declared as target points and sets the
+     * global.targetpoints parameter.
+     */
+    void _refactorTargetPoints();
 };
 
 #endif /* PARAMETERFILEMODEL_H_ */
