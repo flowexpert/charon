@@ -94,7 +94,7 @@ QString FileManager::tempFileName() const {
 	return path.filePath(filename);
 }
 
-void FileManager::updatePlugins() const {
+void FileManager::loadPluginInformation() const {
 	ParameterFile pf(std::string(
 			FileManager::instance().configDir().path().toAscii().data())
 			+ "/Paths.config");
@@ -115,7 +115,7 @@ void FileManager::updatePlugins() const {
 	}
 }
 
-void FileManager::generateMetaData() const {
+void FileManager::updateMetadata() const {
 	std::string metaPath = std::string(configDir().path().toAscii().data())
 			+ "/metadata";
 	std::string oldPath = FileTool::getCurrentDir();
@@ -142,8 +142,7 @@ void FileManager::generateMetaData() const {
 }
 
 void FileManager::configure(QWidget * parent, bool force) const {
-	if (force
-			|| !QFile(QString(QDir::homePath() + "/.paramedit/Paths.config")).exists()) {
+	if (force || !QFile(QDir::homePath() + "/.paramedit/Paths.config").exists()) {
 		QString path = QFileDialog::getExistingDirectory(parent, QString(
 				"Specify your personal plugin path"), QDir::homePath(),
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
@@ -157,20 +156,15 @@ void FileManager::configure(QWidget * parent, bool force) const {
 			pathsConfig.setFileName("/usr/share/tuchulcha/Paths.config");
 		}
 		pathsConfig.copy(QDir::homePath() + "/.paramedit/Paths.config");
-		ParameterFile
-				pf(
-						(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data());
+		ParameterFile pf(_paramFile());
 		pf.set<std::string> ("additional-plugin-path", path.toAscii().data());
-		pf.save(
-				(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data());
+		pf.save(_paramFile());
 	}
 }
 
 bool FileManager::compileAndLoad(QWidget * parent) const
 		throw (AbstractPluginLoader::PluginException) {
-	if (!(ParameterFile(
-			(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data()).get<
-			std::string> ("additional-plugin-path").size())) {
+	if (!_isPrivatePluginPathSet()) {
 		QMessageBox msgBox;
 		msgBox.setText("You need a private plugin path.");
 		msgBox.setInformativeText(
@@ -184,9 +178,7 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 			return false;
 		case QMessageBox::Yes:
 			configure(parent, true);
-			if (!(ParameterFile(
-					(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data()).get<
-					std::string> ("additional-plugin-path").size())) {
+			if (!_isPrivatePluginPathSet()) {
 				return false;
 			}
 			break;
@@ -198,10 +190,6 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 
 	if (fileName.size()) {
 		try {
-			std::string charon_utils_install = ParameterFile((QDir::homePath()
-					+ "/.paramedit/Paths.config").toAscii().data()).get<
-					std::string> ("charon-utils-install");
-
 			bool ok;
 			QString text = QInputDialog::getText(parent, QString(
 					"Library dependencies"), QString(
@@ -223,21 +211,15 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 				std::cout << libsVector[i] << std::endl;
 			}
 
-			PluginManager
-					man(
-							charon_utils_install + "/lib/charon-plugins",
-							ParameterFile(
-									(QDir::homePath()
-											+ "/.paramedit/Paths.config").toAscii().data()).get<
-									std::string> ("additional-plugin-path"));
+			PluginManager man(getGlobalPluginPath(), getPrivatePluginPath());
 			std::string oldDir = FileTool::getCurrentDir();
-			FileTool::changeDir(charon_utils_install);
+			FileTool::changeDir(_charonUtilsInstall());
 			man.compileAndLoadPlugin(fileName.toAscii().data(), libsVector,
 					std::string(configDir().path().toAscii().data())
 							+ "/metadata");
 			FileTool::changeDir(oldDir);
 
-			generateMetaData();
+			updateMetadata();
 		} catch (AbstractPluginLoader::PluginException e) {
 			throw e;
 		} catch (std::string s) {
@@ -245,4 +227,45 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 		}
 	}
 	return false;
+}
+
+std::string FileManager::_paramFile() const {
+	return (QDir::homePath() + "/.paramedit/Paths.config").toAscii().data();
+}
+
+std::string FileManager::_charonUtilsInstall() const {
+	try {
+		ParameterFile pf(_paramFile());
+		return (pf.get<std::string> ("charon-utils-install"));
+	} catch (...) {
+		return "";
+	}
+}
+
+std::string FileManager::getGlobalPluginPath() const {
+	try {
+		ParameterFile pf(_paramFile());
+		return (pf.get<std::string> ("charon-utils-install")
+				+ "/lib/charon-plugins");
+	} catch (...) {
+		return "";
+	}
+}
+
+std::string FileManager::getPrivatePluginPath() const {
+	try {
+		ParameterFile pf(_paramFile());
+		return (pf.get<std::string> ("additional-plugin-path"));
+	} catch (...) {
+		return "";
+	}
+}
+
+bool FileManager::_isPrivatePluginPathSet() const {
+	try {
+		return ParameterFile(_paramFile()).get<std::string> (
+				"additional-plugin-path").size();
+	} catch (...) {
+		return false;
+	}
 }

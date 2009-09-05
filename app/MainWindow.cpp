@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	QMainWindow(myParent), _flow(0) {
 
 	FileManager::instance().configure();
-	FileManager::instance().generateMetaData();
+	FileManager::instance().updateMetadata();
 
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
@@ -94,8 +94,8 @@ MainWindow::MainWindow(QWidget* myParent) :
 	// help browser connections
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
 			docGen, SLOT(setModel(ParameterFileModel*)));
-	connect(_selector, SIGNAL(showClassDoc(QString)), docGen, SLOT(showClassDoc(
-			QString)));
+	connect(_selector, SIGNAL(showClassDoc(QString)), docGen, SLOT(
+			showClassDoc(QString)));
 	connect(_selector, SIGNAL(showDocPage(QString)), docGen, SLOT(showDocPage(
 			QString)));
 
@@ -186,8 +186,10 @@ MainWindow::MainWindow(QWidget* myParent) :
 			inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
 	fileMenu->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
 			this, SLOT(updateMetadata()));
-	fileMenu->addAction(tr("&Compile and load plug-in"),
-				this, SLOT(compileAndLoad()));
+	fileMenu->addAction(tr("&Compile and load plug-in"), this, SLOT(
+			compileAndLoad()));
+	fileMenu->addAction(tr("Execute &Workflow"), inspector, SLOT(
+			executeWorkflow()));
 	fileMenu->addAction(QIcon(":/icons/export.png"), tr("Export flowchart"),
 			this, SLOT(saveFlowChart()), QKeySequence(tr("Ctrl+F")));
 	fileMenu->addAction(QIcon(":/icons/close.png"), tr("&Exit"), this, SLOT(
@@ -358,8 +360,8 @@ void MainWindow::zoomFit() {
 }
 
 void MainWindow::updateMetadata() {
-	FileManager::instance().updatePlugins();
-	FileManager::instance().generateMetaData();
+	FileManager::instance().loadPluginInformation();
+	FileManager::instance().updateMetadata();
 	_centralArea->closeAllSubWindows();
 
 	_selector->update();
@@ -371,9 +373,9 @@ void MainWindow::compileAndLoad() {
 	} catch (AbstractPluginLoader::PluginException e) {
 		QMessageBox msgBox;
 		msgBox.setText("Error");
-		msgBox.setInformativeText(
-				QString("An error occurred while trying to compile and load a plugin.\n"
-				"Description of the error:\n") + e.what());
+		msgBox.setInformativeText(QString(
+				"An error occurred while trying to compile and load a plugin.\n"
+					"Description of the error:\n") + e.what());
 		msgBox.setStandardButtons(QMessageBox::Ok);
 		msgBox.setDefaultButton(QMessageBox::Ok);
 		msgBox.exec();

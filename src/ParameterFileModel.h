@@ -144,6 +144,11 @@ public:
     /// @return                 empty string if class is unknown
     std::string getClass(std::string objName) const;
 
+    /**
+     * Executes the current workflow using the PluginManager class.
+     */
+    void executeWorkflow() const;
+
 signals:
     /// Property _fileName has changed
     /// @param  fileName        new value

@@ -77,6 +77,9 @@ public slots:
     /// Show SaveAs-Dialog and save File to the selected location.
     virtual void saveFileAs() const;
 
+    /// Executes the current workflow
+    virtual void executeWorkflow() const;
+
     /// Change used model
     /// @param  model   new model to use
     virtual void setModel(ParameterFileModel* model);
