@@ -36,6 +36,7 @@
 #include <ParameterFile.hxx>
 #include <PluginManager.h>
 #include <iostream>
+#include "AbstractPluginLoader.h"
 
 #include "MainWindow.moc"
 
@@ -365,6 +366,18 @@ void MainWindow::updateMetadata() {
 }
 
 void MainWindow::compileAndLoad() {
-	FileManager::instance().compileAndLoad(this);
+	try {
+		FileManager::instance().compileAndLoad(this);
+	} catch (AbstractPluginLoader::PluginException e) {
+		QMessageBox msgBox;
+		msgBox.setText("Error");
+		msgBox.setInformativeText(
+				QString("An error occurred while trying to compile and load a plugin.\n"
+				"Description of the error:\n") + e.what());
+		msgBox.setStandardButtons(QMessageBox::Ok);
+		msgBox.setDefaultButton(QMessageBox::Ok);
+		msgBox.exec();
+		return;
+	}
 	_selector->update();
 }

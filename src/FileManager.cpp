@@ -149,11 +149,11 @@ void FileManager::configure(QWidget * parent, bool force) const {
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 		QFile pathsConfig;
-		if(FileTool::exists("../share/tuchulcha/Paths.config")) {
+		if (FileTool::exists("../share/tuchulcha/Paths.config")) {
 			pathsConfig.setFileName("../share/tuchulcha/Paths.config");
-		} else if(FileTool::exists("/usr/local/share/tuchulcha/Paths.config")) {
+		} else if (FileTool::exists("/usr/local/share/tuchulcha/Paths.config")) {
 			pathsConfig.setFileName("/usr/local/share/tuchulcha/Paths.config");
-		} else if(FileTool::exists("/usr/share/tuchulcha/Paths.config")) {
+		} else if (FileTool::exists("/usr/share/tuchulcha/Paths.config")) {
 			pathsConfig.setFileName("/usr/share/tuchulcha/Paths.config");
 		}
 		pathsConfig.copy(QDir::homePath() + "/.paramedit/Paths.config");
@@ -166,7 +166,8 @@ void FileManager::configure(QWidget * parent, bool force) const {
 	}
 }
 
-bool FileManager::compileAndLoad(QWidget * parent) const {
+bool FileManager::compileAndLoad(QWidget * parent) const
+		throw (AbstractPluginLoader::PluginException) {
 	if (!(ParameterFile(
 			(QDir::homePath() + "/.paramedit/Paths.config").toAscii().data()).get<
 			std::string> ("additional-plugin-path").size())) {
@@ -238,9 +239,9 @@ bool FileManager::compileAndLoad(QWidget * parent) const {
 
 			generateMetaData();
 		} catch (AbstractPluginLoader::PluginException e) {
-			std::cerr << e.what() << std::endl;
+			throw e;
 		} catch (std::string s) {
-			std::cerr << s << std::endl;
+			throw AbstractPluginLoader::PluginException(s);
 		}
 	}
 	return false;

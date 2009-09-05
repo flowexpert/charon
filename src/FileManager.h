@@ -25,6 +25,7 @@
 
 #include <QString>
 #include <QDir>
+#include <AbstractPluginLoader.h>
 
 class QWidget;
 
@@ -54,7 +55,7 @@ public:
 
     void configure(QWidget * = NULL, bool force = false) const;
 
-    bool compileAndLoad(QWidget * parent) const;
+    bool compileAndLoad(QWidget * parent) const throw (AbstractPluginLoader::PluginException);
 
 private:
     FileManager();
