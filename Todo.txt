@@ -1,0 +1,9 @@
+--HIGH PRIORITY
+Windows compatibility
+Mac OS X: Append plugin paths to the DYLD_LIBRARY_PATH environment variable
+
+--MEDIUM PRIORITY
+Delete files in ~/.paramedit/metadata on update
+
+--LOW PRIORITY
+Tuchulcha: compileandload: show console output when error occurres
