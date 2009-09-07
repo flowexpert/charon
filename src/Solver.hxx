@@ -27,9 +27,17 @@ class Solver : public ParameteredObject
 				
 				/**
 				 * CImg representing the metastencil.
-				 * This is a dummy to pre-allocate memory.
+				 * This is a dummy to pre-allocate memory and to store the
+				 * dimensions of the metastencil.
+				 * Later, the data of the substencils will be merged here.
 				 */
-				cimg_library::CImg<T> metastencil;
+				cimg_library::CImg<T> data;
+				
+				/**
+				 * Set of points that belong to this metastencil.
+				 * @remark The size of the metastencil has to be extracted from the pattern.
+				 */
+				std::set<Point4D> pattern;
 				
 				//expansions in all 8 directions
 				int left=0     , right=0;	//x (left is negative, right is positive)
@@ -75,7 +83,7 @@ class Solver : public ParameteredObject
 						//setting the expansions
 						//Here's the same principle as with the center:
 						//the individual expansions can only grow, not shrink
-						//these - admittedly messy - lines just find the maximum
+						//these lines just find the maximum
 						//of expansions in all 8 directions
 						//over all added substencils
 						if (centerx            > this->left)     {this->left = centerx;}
@@ -96,8 +104,10 @@ class Solver : public ParameteredObject
 					int dimy=up+1+down;
 					int dimz=backward+1+forward;
 					int dimt=before+1+after;
-					metastencil.assign(dimx, dimy, dimz, dimt, 0);
+					data.assign(dimx, dimy, dimz, dimt, 0);
 				}
+				
+				///@todo implement copy constructor and assignment operator here
 				
 				//Your implementation of the MetaStencil will need a function
 				//to gather the data from the different substencils and present
@@ -143,6 +153,6 @@ class Solver : public ParameteredObject
 		//of the solver
 		
 		virtual ~Solver();
-}
+};
 
 #endif // _SOLVER_HXX_

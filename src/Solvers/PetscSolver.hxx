@@ -9,21 +9,19 @@ class PetscSolver : public Solver
 {
 	private:
 		class PetscMetaStencil : public Solver<T>::MetaStencil
-		{
-			private:
-				PetscInt* indices;
-			
+		{			
 			public:
 				PetscMetaStencil(const std::string unknown,const std::vector<stencil<T>*>& stencils) :
 				Solver<T>::MetaStencil(unknown,stencils) {
 					std::vector< Substencil<T>* >::iterator ssIt; //substencil Iterator
 					for (ssIt = substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
-						ssIt->first->getStructure();
 						//Calculating offsets
 						int xo = center.x - ssIt->second->center.x;
 						int yo = center.y - ssIt->second->center.y;
 						int zo = center.z - ssIt->second->center.z;
 						int to = center.t - ssIt->second->center.t;
+						//saving the offset as Point4D for later convennience
+						Point4D offset(xo,yo,zo,to);
 						
 						//Iterate through all pixels of the substencil...
 						for (int tc=0 ; tc < ssIt->second->patterm.dimv() ; tc++) {
@@ -33,10 +31,8 @@ class PetscSolver : public Solver
 										//...and set the pattern into the
 										//metastencil (with offset).
 										if (ssIt->second->pattern(xc,yc,zc,tc)) {
-											///@todo this is supposed to save Point4Ds
-											///@idea use set to prevent duplicate points
-											///@test see if set needs operator== implemented
-											this->metastencil(xc+xo,yc+yo,zc+zo,tc+to) = 1;
+											Point4D p(xc,yc,zc,tc);
+											pattern.insert(p+offset);
 										}
 									}
 								}
@@ -45,10 +41,9 @@ class PetscSolver : public Solver
 					}
 				}
 				
-				void update(const unsigned int x,
-							const unsigned int y,
-							const unsigned int z,
-							const unsigned int t) {
+				void update() {
+					//Values from the substencils will be entered into the arrays
+					//for MatSetValues in this function
 				}
 		};
 		
@@ -128,9 +123,13 @@ class PetscSolver : public Solver
 		}
 
 	public:
+		PetscInt		*columns;
+		PetscScalar		*values;
+	
 		PetscSolver(const std::string& name = "") : 
 		Solver("PetscSolver","Solver based on PETSc","solves the linear system with PETSc") {
-			
+			columns=NULL;
+			values=NULL;
 		}
 		
 		void update() {
@@ -168,9 +167,9 @@ class PetscSolver : public Solver
 			std::set<std::string>::iterator uIt;			//unknowns iterator
 			for(sIt=stencils.begin() ; sIt!=stencils.end() ; sIt++) {	//iterate through stencils
 				for(uIt=sIt->getUnknowns().begin();						//iterate through its unknowns
-					uIt!=sIt->getUnknowns().end();
+					uIt!=(*sIt)->getUnknowns().end();
 					uIt++) {
-					substencils[*uIt].push_back( (stencil<T>*)*sIt );		//add entry to the map
+					substencils[*uIt].push_back( (stencil<T>*)**sIt );	//not sure about the 2nd * of sIt
 					//a cast from AbstractSlot<T>* to Stencil<T>*
 				}
 			}
@@ -189,10 +188,15 @@ class PetscSolver : public Solver
 			//now we can determine the size of the expanded ROIs which we will
 			//organize in a map<string, roi<int> > to know how big the individual
 			//vector parts and thus the whole vector and the matrix will be
+			//and we can determine the maximum number of entries for the PetscInt
+			//and PetscScalar arrays, which will be later used to set values in
+			//the matrix
+			int max_ne=0;	//maximum number of entries;
 			std::map<std::string,roi<int> > unknownSizes;
 			std::map<std::string,PetscMetaStencil>::iterator msIt; //PetscMetaStencil iterator
 			for(msIt=MetaStencils.begin() ; msIt != MetaStencils.end() ; msIt++) {
 				unknownSizes[msIt->first()]=msIt->second().expand(this->roi);
+				//determine max_ne here by finding the maximum of the Metastencils pattern.length()
 			}
 			
 			//now we have the individual lenghts of each unknowns block in the
@@ -211,6 +215,7 @@ class PetscSolver : public Solver
 			PetscErrorCode	ierr;	//PETSc Error code for error-traceback
 			PetscInt		n,i,j;	//n: size of matrix, i: column index j: row index
 			PetscInt		Istart, Iend;	//Ownership range
+			///@todo create PetscInt and PetscScalar arrays with new and make sure, that no trash is left over
 			
 			//Calculate the size of the problem (number of rows/columns of
 			//the matrix, number of elements in the vectors).
@@ -245,7 +250,11 @@ class PetscSolver : public Solver
 			}
 		}
 		
-		~PetscSolver();
-}
+		~PetscSolver() {
+			//make sure, PetscInt and PetscScalar get cleared
+			delete[] columns;
+			delete[] values;
+		}
+};
 
 #endif // _PETSCSOLVER_HXX_

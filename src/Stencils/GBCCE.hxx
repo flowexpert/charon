@@ -21,7 +21,6 @@ class Gbcce : public Stencil
 		void update() {
 			ParametedObject::update();
 			unknowns.erase();	//erase the old set of unknowns
-			///@todo make unknowns a private member of brightness and motion models
 			std::set<std::string>& bmUnknowns = brightIn()->getUnknowns();
 			std::set<std::string>& mmUnknonws = motionIn()->getUnknowns();
 			std::set<std::string>::iterator bmIt = bmUnknowns.begin();
@@ -70,18 +69,10 @@ class Gbcce : public Stencil
 				this->rhs[termIt->first] = rhsV * termIt->second * lambda;
 			}
 		}
-		/*	Possibly redundant
-		void getStructure() {
-			if (unknowns.empty()) {update();}
-			std::set<std::string>::iterator uIt;	//unknowns iteratort
-			for(uIt=unknowns.begin() ; uIt!=unknowns.end() ; uIt++) {
-				this->substencils[*uIt](0,0) = 1;
-			}
-		}
-		*/
+
 		std::set<std::string>& getUnknowns() const {return unknowns;}
 		
-		~GBCCE();
-}
+		~GBCCE() {}
+};
 
 #endif //_GBCCE_HXX_

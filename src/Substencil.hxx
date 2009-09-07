@@ -63,7 +63,7 @@ class Substencil
 			return *this;
 		}
 				
-		~Substencil();
-}
+		~Substencil() {}
+};
 
 #endif //_substencil_HXX_

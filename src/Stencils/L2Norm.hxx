@@ -159,8 +159,8 @@ class L2Norm : public stencil
 			//Nothing to do since all the data is static.
 		}
 		
-		~L2Norm();
+		~L2Norm() {}
 		
-}
+};
 
 #endif // _L2NORM_HXX_

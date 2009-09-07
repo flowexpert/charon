@@ -149,6 +149,6 @@ class Stencil : public ParameteredObject
 		 * Default destructor.
 		 */
 		virtual ~Stencil();
-}
+};
 
 #endif //_stencil_HXX_
