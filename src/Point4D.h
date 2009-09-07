@@ -1,3 +1,6 @@
+#ifndef _POINT4D_H_
+#define _POINT4D_H_
+
 class Point4D
 {
 	public:
@@ -7,7 +10,7 @@ class Point4D
 		Point4D(int x, int y, int z, int t) : x(x), y(y), z(z), t(t) {}
 		
 		///copy constructor
-		Point4D(Point4D rhs) {
+		Point4D(const Point4D &rhs) {
 			this->x = rhs.x;
 			this->y = rhs.y;
 			this->z = rhs.z;
@@ -38,10 +41,47 @@ class Point4D
 			return Point4D(*this) += rhs;
 		}
 		
+		///comparison operator
+		bool operator< (const Point4D &rhs) const {
+			if (this->t < rhs.t) {return true;} else if (this->t > rhs.t) {return false;}
+			if (this->z < rhs.z) {return true;} else if (this->z > rhs.z) {return false;}
+			if (this->y < rhs.y) {return true;} else if (this->y > rhs.y) {return false;}
+			if (this->x < rhs.x) {return true;} else if (this->x > rhs.x) {return false;}
+			//if it got this far, either x=y=z=t in which case it has to be
+			//false or something fishy is going on, in which case it should also
+			//be false, so not much of a control here
+			return false;
+		}
+		
+		bool operator> (const Point4D &rhs) const {
+			if (this->t > rhs.t) {return true;} else if (this->t < rhs.t) {return false;}
+			if (this->z > rhs.z) {return true;} else if (this->z < rhs.z) {return false;}
+			if (this->y > rhs.y) {return true;} else if (this->y < rhs.y) {return false;}
+			if (this->x > rhs.x) {return true;} else if (this->x < rhs.x) {return false;}
+			//if it got this far, either x=y=z=t in which case it has to be
+			//false or something fishy is going on, in which case it should also
+			//be false, so not much of a control here
+			return false;
+		}
+		
+		bool operator== (const Point4D &rhs) const {
+			return ((this->x == rhs.x) && (this->y == rhs.y) && (this->z == rhs.z) && (this->t == rhs.t));
+		}
+		
+		bool operator<= (const Point4D &rhs) const {
+			return (*this < rhs || *this == rhs);
+		}
+		
+		bool operator>= (const Point4D &rhs) const {
+			return (*this > rhs || *this == rhs);
+		}
+		
 		unsigned int volume() {
 			unsigned int v = x * y * z * t;
 			return v;
 		}
 		
-		~Point4D();
-}
+		~Point4D() {}
+};
+
+#endif //_POINT4D_H_
