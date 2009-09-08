@@ -29,13 +29,13 @@ public:
 	IncrementorParameter (const std::string& name);
 	OutputSlot<IncrementorParameter<T>* > paramList;
 	/// returns true if inserted name and parameterName are equivalent
-	bool compareNames(const std::string & nameToCompareWith) const;
+	std::string getName() const;
 	/// returns the Parameter min
 	Parameter<T>& getMin ();
 	/// returns the Parameter max
 	Parameter<T>& getMax ();
 	/// returns the Parameter step
-	Parameter<T>& getStepsize();
+	Parameter<T>& getStepSize();
 };
 
 

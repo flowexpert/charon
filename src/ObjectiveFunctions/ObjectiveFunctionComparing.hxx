@@ -1,29 +1,29 @@
 /*
- * ObjectivFunctionComparing.hxx
+ * ObjectiveFunctionComparing.hxx
  *
  *  Created on: 24.08.2009
  *      Author: andreas
  */
-/// @file ObjectivFunctionComparing.hxx
+/// @file ObjectiveFunctionComparing.hxx
 /// @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
 /// @date 24.08.2009
 
-#ifndef OBJECTIVFUNCTIONCOMPARING_HXX_
-#define OBJECTIVFUNCTIONCOMPARING_HXX_
+#ifndef OBJECTIVEFUNKTIONCOMPARING_HXX_
+#define OBJECTIVEFUNKTIONCOMPARING_HXX_
 
-#include "ObjectivFunctionComparing.h"
+#include "ObjectiveFunctionComparing.h"
 
 template<typename T>
-ObjectivFunctionComparing<T>::ObjectivFunctionComparing(const std::string& name) :
-	ObjectivFunction<T>::ObjectivFunction()
+ObjectiveFunctionComparing<T>::ObjectiveFunctionComparing(const std::string& name) :
+	ObjectiveFunction<T>::ObjectiveFunction()
 
 {
 
 }
 
 template<typename T>
-std::vector<T> ObjectivFunctionComparing<T>::execute(
-		const std::vector<Pixel> & pixelList)
+std::vector<T> ObjectiveFunctionComparing<T>::execute(
+		const std::vector<Pixel<T> > & pixelList)
 {
 	for (int i = 0; i <= pixelList.size(); i++)
 	{
@@ -33,4 +33,4 @@ std::vector<T> ObjectivFunctionComparing<T>::execute(
 
 }
 
-#endif /* OBJECTIVFUNCTIONCOMPARING_HXX_ */
+#endif /* OBJECTIVEFUNKTIONCOMPARING_HXX_ */

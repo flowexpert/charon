@@ -1,9 +1,3 @@
-/*
- * ListedPixelSelection.hxx
- *
- *  Created on: 13.08.2009
- *      Author: andreas
- */
 /** @file ListedPixelSelection.hxx
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 13.08.2009
@@ -19,7 +13,7 @@ template<typename T>
 ListedPixelSelection<T>::ListedPixelSelection(const std::string& name) :
 	PixelSelection<T>::PixelSelection(name)
 {
-
+	getListOfPixel();
 }
 
 template<typename T>
@@ -40,17 +34,17 @@ void ListedPixelSelection<T>::getListOfPixel()
 				forRoiT(*(this->range()),t)
 				{
 					Pixel<T> pixel;
-					pixel.x = x;
-					pixel.y = y;
-					pixel.z = y;
-					pixel.t = t;
+					pixel.setX(x);
+					pixel.setY(y);
+					pixel.setZ(z);
+					pixel.setT(t);
 					///@TODO könnte falsch sein
-					pixel.red = this->image().get_crop(pixel.x, pixel.y,
-							pixel.z, pixel.t, 0);
-					pixel.green = this->image().get_crop(pixel.x, pixel.y,
-							pixel.z, pixel.t, 1);
-					pixel.blue = this->image().get_crop(pixel.x, pixel.y,
-							pixel.z, pixel.t, 2);
+					pixel.setRed(this->image().get_crop(pixel.getX(),
+							pixel.getY(), pixel.getZ(), pixel.getT(), 0));
+					pixel.setGreen(this->image().get_crop(pixel.getX(),
+							pixel.getY(), pixel.getZ(), pixel.getT(), 1));
+					pixel.setBlue(this->image().get_crop(pixel.getX(),
+							pixel.getY(), pixel.getZ(), pixel.getT(), 2));
 					this->pixelList.push_back(&pixel);
 				}
 			}

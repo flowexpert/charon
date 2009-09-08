@@ -1,10 +1,5 @@
-/*
- * PixelSelection.h
- *
- *  Created on: 17.08.2009
- *      Author: andreas
- */
-/** @file PixelSelection.h
+/**
+ *  @file PixelSelection.h
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 17.08.2009
  */
@@ -22,15 +17,32 @@
 template<typename T>
 class Pixel
 {
-public:
+protected:
 	///is able to save pixel data
-	float x; ///@param x				x position
-	float y; ///@param y				y position
-	float z; ///@param z				z position
-	float t; ///@param t				Time value
+	T x; ///@param x				x position
+	T y; ///@param y				y position
+	T z; ///@param z				z position
+	T t; ///@param t				Time value
 	T red; ///@param red 			red intensity at x,y,z position
-	T green; ///@param green			green intensity at x,y,z position
+	T green; ///@param green		green intensity at x,y,z position
 	T blue; ///@param blue 			blue intensity at x,y,z position
+
+public:
+	void setX(const T& newX);
+	const T& getX() const;
+	void setY(const T& newY);
+	const T& getY() const;
+	void setZ(const T& newZ);
+	const T& getZ() const;
+	void setT(const T& newT);
+	const T& getT() const;
+	void setRed(const T& newRed);
+	const T& getRed() const;
+	void setBlue(const T& newBlue);
+	const T& getBlue() const;
+	void setGreen(const T& newGreen);
+	const T& getGreen() const;
+
 };
 
 /// Pixel Selection

@@ -15,6 +15,11 @@
 #define BLOCKMATCHINGLIACS_H_
 
 #include "BlockMatching.h"
+#include "PixelSelection.h"
+#include "ListedPixelSelection.h"
+#include "IncrementorCountUp.h"
+#include "ObjectiveFunctionComparing.h"
+
 
 template<typename T>
 class BlockMatchingLIACS: public BlockMatching<T>

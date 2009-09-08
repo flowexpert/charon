@@ -27,16 +27,9 @@ IncrementorParameter<T>::IncrementorParameter(const std::string& name) :
 }
 
 template<typename T>
-bool IncrementorParameter<T>::compareNames(const std::string& nameToCompareWith) const
+std::string IncrementorParameter<T>::getName() const
 {
-	if (this->parameterName == nameToCompareWith)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+		return this->name;
 }
 
 template<typename T>
@@ -52,7 +45,7 @@ Parameter<T>& IncrementorParameter<T>::getMax()
 }
 
 template<typename T>
-Parameter<T>& IncrementorParameter<T>::getStepsize()
+Parameter<T>& IncrementorParameter<T>::getStepSize()
 {
 	return this->step;
 }

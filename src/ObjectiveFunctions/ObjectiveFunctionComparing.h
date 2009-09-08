@@ -1,29 +1,29 @@
 /*
- * ObjectivFunctionComparing.h
+ * ObjectiveFunctionComparing.h
  *
  *  Created on: 24.08.2009
  *      Author: andreas
  */
-/// @file ObjectivFunctionComparing.hxx
+/// @file ObjectiveFunctionComparing.hxx
 /// @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
 /// @date 24.08.2009
 
-#ifndef OBJECTIVFUNCTIONCOMPARING_H_
-#define OBJECTIVFUNCTIONCOMPARING_H_
+#ifndef OBJECTIVEFUNKTIONCOMPARING_H_
+#define OBJECTIVEFUNKTIONCOMPARING_H_
 
-#include "ObjectivFunction.h"
+#include "ObjectiveFunction.h"
 
 template <typename T>
-class ObjectivFunctionComparing : ObjectivFunction<T>
+class ObjectiveFunctionComparing : ObjectiveFunction<T>
 {
 private:
-	std::vector<T> tempFoudPixel
+	std::vector<T> tempFoudPixel;
 
 public:
-	ObjectivFunctionComparing (const std::string& name);
+	ObjectiveFunctionComparing (const std::string& name);
 	InputSlot<cimg_library::CImg<T>& > image;
-	std::vector<T> execute (const std::vector<Pixel> & pixelList);
+	std::vector<T> execute (const std::vector<Pixel<T> > & pixelList);
 
 };
 
-#endif /* OBJECTIVFUNCTIONCOMPARING_H_ */
+#endif /* OBJECTIVEFUNKTIONCOMPARING_H_ */

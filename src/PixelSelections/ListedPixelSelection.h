@@ -1,10 +1,5 @@
-/*
- * ListedPixelSelektion.h
- *
- *  Created on: 13.08.2009
- *      Author: andreas
- */
-/** @file ListedPixelSelection.h
+/**
+ *  @file ListedPixelSelection.h
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 13.08.2009
  */
