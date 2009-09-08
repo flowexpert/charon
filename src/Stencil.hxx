@@ -13,12 +13,12 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file stencil.hxx
+/** @file Stencil.hxx
  *  Implementation of class Stencil.
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *
- *  @date 21.08.2009
+ *  @date 8.09.2009
  */
 
 
