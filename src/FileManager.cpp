@@ -95,9 +95,7 @@ QString FileManager::tempFileName() const {
 }
 
 void FileManager::loadPluginInformation() const {
-	ParameterFile pf(std::string(
-			FileManager::instance().configDir().path().toAscii().data())
-			+ "/Paths.config");
+	ParameterFile pf(_paramFile());
 
 	std::string charon_utils_install = pf.get<std::string> (
 			"charon-utils-install");
@@ -105,19 +103,21 @@ void FileManager::loadPluginInformation() const {
 			"additional-plugin-path");
 
 	try {
-		PluginManager man(charon_utils_install + "/lib/charon-plugins",
+		PluginManager man(charon_utils_install +
+#ifdef UNIX
+				"/lib/charon-plugins",
+#else
+				"/bin",
+#endif
 				additionalPluginPath);
-		man.createMetadata(std::string(
-				FileManager::instance().configDir().path().toAscii().data())
-				+ "/metadata");
+		man.createMetadata(_metaPath());
 	} catch (AbstractPluginLoader::PluginException e) {
 		std::cerr << e.what() << std::endl;
 	}
 }
 
 void FileManager::updateMetadata() const {
-	std::string metaPath = std::string(configDir().path().toAscii().data())
-			+ "/metadata";
+	std::string metaPath = _metaPath();
 	std::string oldPath = FileTool::getCurrentDir();
 	FileTool::changeDir(metaPath);
 	std::vector<std::string> wrp_files = FileTool::getFilesWithSuffix(".wrp");
@@ -148,6 +148,7 @@ void FileManager::configure(QWidget * parent, bool force) const {
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 		QFile pathsConfig;
+#ifdef UNIX
 		if (FileTool::exists("../share/tuchulcha/Paths.config")) {
 			pathsConfig.setFileName("../share/tuchulcha/Paths.config");
 		} else if (FileTool::exists("/usr/local/share/tuchulcha/Paths.config")) {
@@ -155,6 +156,9 @@ void FileManager::configure(QWidget * parent, bool force) const {
 		} else if (FileTool::exists("/usr/share/tuchulcha/Paths.config")) {
 			pathsConfig.setFileName("/usr/share/tuchulcha/Paths.config");
 		}
+#else
+		pathsConfig.setFileName(".\\Paths.config");
+#endif /* UNIX */
 		pathsConfig.copy(QDir::homePath() + "/.paramedit/Paths.config");
 		ParameterFile pf(_paramFile());
 		pf.set<std::string> ("additional-plugin-path", path.toAscii().data());
@@ -215,8 +219,7 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 			std::string oldDir = FileTool::getCurrentDir();
 			FileTool::changeDir(_charonUtilsInstall());
 			man.compileAndLoadPlugin(fileName.toAscii().data(), libsVector,
-					std::string(configDir().path().toAscii().data())
-							+ "/metadata");
+					_metaPath());
 			FileTool::changeDir(oldDir);
 
 			updateMetadata();
@@ -229,8 +232,12 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 	return false;
 }
 
-std::string FileManager::_paramFile() const {
+inline std::string FileManager::_paramFile() const {
 	return (QDir::homePath() + "/.paramedit/Paths.config").toAscii().data();
+}
+
+inline std::string FileManager::_metaPath() const {
+	return (std::string(configDir().path().toAscii().data()) + "/metadata");
 }
 
 std::string FileManager::_charonUtilsInstall() const {

@@ -93,7 +93,13 @@ private:
 	 * Returns the path where the Paths.config file should be
 	 * @return Path to the file Paths.config
 	 */
-	std::string _paramFile() const;
+	inline std::string _paramFile() const;
+
+	/**
+	 * Returns the path to the metadata files.
+	 * @return Path to the metadata files.
+	 */
+	inline std::string _metaPath() const;
 
 	/**
 	 * @return True, if a private plugin path is specified
