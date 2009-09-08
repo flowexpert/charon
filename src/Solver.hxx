@@ -110,60 +110,41 @@ class Solver : public ParameteredObject
 								
 				///copy constructor
 				Metastencil(const Metastencil<T>& rhs) {
-					this->substencils = rhs.getSubstencils();
-					this->data = rhs.getData();
-					this->pattern = rhs.getPattern();
-					
-					unsigned int  l,r,u,d,ba,fo,be,af;
-					getExpansions(l,r,u,d,ba,fo,be,af);
-					this->left = l;
-					this->right = r;
-					this->up = u;
-					this->down = d;
-					this->backward = ba;
-					this->forward = fo;
-					this->before = be;
-					this->after = af;
+					this->substencils = rhs.substencils;
+					this->data        = rhs.data;
+					this->pattern     = rhs.pattern;
+					this->left        = rhs.left;
+					this->right       = rhs.right;
+					this->up          = rhs.up;
+					this->down        = rhs.down;
+					this->backward    = rhs.backward;
+					this->forward     = rhs.forward;
+					this->before      = rhs.before;
+					this->after       = rhs.after;
 				}
 				
 				///assignment operator
 				MetaStencil<T>& operator=(Metastencil<T>& rhs) {
 					if (&rhs == this) {return *this;}
-					this->substencils = rhs.getSubstencils();
-					this->data = rhs.getData();
-					this->pattern = rhs.getPattern();
 					
-					unsigned int  l,r,u,d,ba,fo,be,af;
-					getExpansions(l,r,u,d,ba,fo,be,af);
-					this->left = l;
-					this->right = r;
-					this->up = u;
-					this->down = d;
-					this->backward = ba;
-					this->forward = fo;
-					this->before = be;
-					this->after = af;
+					this->substencils = rhs.substencils;
+					this->data        = rhs.data;
+					this->pattern     = rhs.pattern;
+					this->left        = rhs.left;
+					this->right       = rhs.right;
+					this->up          = rhs.up;
+					this->down        = rhs.down;
+					this->backward    = rhs.backward;
+					this->forward     = rhs.forward;
+					this->before      = rhs.before;
+					this->after       = rhs.after;
 					
 					return *this;
 				}
 				
-				//Getter functions for the copy constructor to work
-				std::vector<Substencil<T>*>& getSubstencils() {return substencils;}
-				cimg_library::CImg<T>& getData() {return data;}
+				//the only necessary getter to determine the maximum number of
+				//entries.
 				std::set<Point4D>& getPattern() {return pattern;}
-				void getExpansions(unsigned int l,  unsigned int r,
-				                   unsigned int u,  unsigned int d,
-				                   unsigned int ba, unsigned int fo,
-				                   unsigned int be, unsigned int af,) {
-					l=this->left;
-					r=this->right;
-					u=this->up;
-					d=this->down;
-					ba=this->backward;
-					fo=this->forward;
-					be=this->before;
-					af=this->after;
-				}
 				
 				//Your implementation of the MetaStencil will need a function
 				//to gather the data from the different substencils and present
@@ -200,7 +181,7 @@ class Solver : public ParameteredObject
 			_addInputSlot(roi,"roi","region of interest to work on","Roi<int>*");
 			_addOutputSlot(out,"out","CImgList containing the solution","CImgList");
 		}
-	
+			
 		virtual void update() =0;
 		//this is the one, only and primary function of the solver
 		//once every object is connected, update() will bi called recursively

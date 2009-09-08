@@ -4,10 +4,15 @@
 #include "solver.hxx"
 #include "petscksp.h"
 
+///@todo incorporate std::runtime_error and #include <stdexept> instead of throw "string"
+
 template <class T>
 class PetscSolver : public Solver
 {
 	private:
+		PetscInt		*columns;
+		PetscScalar		*values;
+		
 		class PetscMetaStencil : public Solver<T>::MetaStencil
 		{			
 			public:
@@ -41,9 +46,12 @@ class PetscSolver : public Solver
 					}
 				}
 				
-				void update() {
-					//Values from the substencils will be entered into the arrays
-					//for MatSetValues in this function
+				/**
+				 * transfer the data from the substencils into columns and values array.
+				 * @param[in] gi global index.
+				 */
+				void update(const unsigned int gi) {
+					
 				}
 		};
 		
@@ -122,10 +130,7 @@ class PetscSolver : public Solver
 			p.t =  (i/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
 		}
 
-	public:
-		PetscInt		*columns;
-		PetscScalar		*values;
-	
+	public:	
 		PetscSolver(const std::string& name = "") : 
 		Solver("PetscSolver","Solver based on PETSc","solves the linear system with PETSc") {
 			columns=NULL;
@@ -205,11 +210,21 @@ class PetscSolver : public Solver
 			
 			//delete both arrays if the already exist.
 			if (columns != NULL) {delete[] columns; columns = NULL;}
-			if (values != NULL) {delete[] values; values = NULL;}
+			if (values  != NULL) {delete[] values;  values  = NULL;}
 			//set the sizes of PetscScalar* values and PetscInt* columns
 			//to the just calculated necessary size.
 			columns = new PetscInt(max_ne);
 			values = new PetscScalar(max_ne);
+			
+			//Calculate the size of the problem (number of rows/columns of
+			//the matrix, number of elements in the vectors).
+			PetscInt n=0;	//Better be safe than sorry
+			std::map<std::string,roi<int> >::iterator usIt;	//unknown sizes iterator
+			//iterate through the unknown Sizes and add their volume up
+			for(usIt=unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
+				n += usIt->getVolume();
+			}
+
 			
 			//now we have the individual lenghts of each unknowns block in the
 			//matrix and thus the size of the whole matrix and the lenght of the
@@ -225,18 +240,10 @@ class PetscSolver : public Solver
 			KSP				ksp;	//KSP context
 			PC				pc;		//PC context
 			PetscErrorCode	ierr;	//PETSc Error code for error-traceback
-			PetscInt		n,i,j;	//n: size of matrix, i: column index j: row index
+			PetscInt		i,j;	//i: column index j: row index
 			PetscInt		Istart, Iend;	//Ownership range
 			///@todo create PetscInt and PetscScalar arrays with new and make sure, that no trash is left over
 			
-			//Calculate the size of the problem (number of rows/columns of
-			//the matrix, number of elements in the vectors).
-			n=0;	//Better be safe than sorry
-			std::map<std::string,roi<int> >::iterator usIt;	//unknown sizes iterator
-			//iterate through the unknown Sizes and add their volume up
-			for(usIt=unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
-				n += usIt->getVolume();
-			}
 			
 			//Create Vector
 			ierr = VecCreate(PETSC_COMM_WORLD,&x);CHKERRQ(ierr);
@@ -256,9 +263,34 @@ class PetscSolver : public Solver
 			
 			ierr = MatGetOwnershipRange(A,&Istart,&Iend);CHKERRQ(ierr);
 			
-			for(i = Istart ; i < Iend ; i++) { //iterate through the owned rows
-				//and set values
+			for(j = Istart ; j < Iend ; j++) { //iterate through the owned rows
+				//Convert the row index into point-coordinates and the unknown
+				//of the block in which the point is.
 				
+				std::string unknown;
+				Point4D p;
+				
+				getCoordinate( (unsigned int)j, unknownSizes, unknown, p);
+				//now p contains the coordinate of the current point and
+				//unknown contains the name of the current unknown.
+				
+				//First, determine whether the point that corresponds to this
+				//row is a ghost node or 'real point'
+				if (this->roi()->isInside(p.x, p.y, p.z, p.t)) { //Real point:
+					//Update all stencils of the unknown to contain current data
+					int nos = (int)substencils[unknown].size();	//number of stencils
+					for (int index = 0 ; index < nos ; index++) {
+						substencils[unknown][index].updateStencil(p.x, p.y, p.z, p.t);
+					}
+					//now call the Metastencil of this unknown to gather all the
+					//data of its substencils (which have just been updated) and
+					//put the values and their indices into the respective arrays
+					//for MatSetValues
+					
+					
+				} else { //Ghost node:
+					
+				}				
 			}
 		}
 		
