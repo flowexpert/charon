@@ -191,13 +191,25 @@ class PetscSolver : public Solver
 			//and we can determine the maximum number of entries for the PetscInt
 			//and PetscScalar arrays, which will be later used to set values in
 			//the matrix
-			int max_ne=0;	//maximum number of entries;
+			unsigned int max_ne=0;	//maximum number of entries;
 			std::map<std::string,roi<int> > unknownSizes;
 			std::map<std::string,PetscMetaStencil>::iterator msIt; //PetscMetaStencil iterator
 			for(msIt=MetaStencils.begin() ; msIt != MetaStencils.end() ; msIt++) {
 				unknownSizes[msIt->first()]=msIt->second().expand(this->roi);
-				//determine max_ne here by finding the maximum of the Metastencils pattern.length()
+				//find the maximum number of entries for the MatSetValues call
+				//so that the size of columns and values is optimal
+				if ( (unsigned int)msIt->getPattern().size() > max_ne) {
+					max_ne = (unsigned int)msIt->getPattern().size();
+				}
 			}
+			
+			//delete both arrays if the already exist.
+			if (columns != NULL) {delete[] columns; columns = NULL;}
+			if (values != NULL) {delete[] values; values = NULL;}
+			//set the sizes of PetscScalar* values and PetscInt* columns
+			//to the just calculated necessary size.
+			columns = new PetscInt(max_ne);
+			values = new PetscScalar(max_ne);
 			
 			//now we have the individual lenghts of each unknowns block in the
 			//matrix and thus the size of the whole matrix and the lenght of the

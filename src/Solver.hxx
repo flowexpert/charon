@@ -39,11 +39,12 @@ class Solver : public ParameteredObject
 				 */
 				std::set<Point4D> pattern;
 				
+				///@todo changed int -> unsigned int - re-check code to avoid hiccups
 				//expansions in all 8 directions
-				int left=0     , right=0;	//x (left is negative, right is positive)
-				int up=0       , down=0;	//y (up is negative, down is positive)
-				int backward=0 , forward=0;	//z (backward is negative, forward is positive)
-				int before=0   , after=0;	//t (before is negative, after is positive)
+				unsigned int left=0     , right=0;	//x (left is negative, right is positive)
+				unsigned int up=0       , down=0;	//y (up is negative, down is positive)
+				unsigned int backward=0 , forward=0;	//z (backward is negative, forward is positive)
+				unsigned int before=0   , after=0;	//t (before is negative, after is positive)
 				
 				Point4D center;				//coordinates of the center of the meta stencil
 			public:
@@ -106,8 +107,63 @@ class Solver : public ParameteredObject
 					int dimt=before+1+after;
 					data.assign(dimx, dimy, dimz, dimt, 0);
 				}
+								
+				///copy constructor
+				Metastencil(const Metastencil<T>& rhs) {
+					this->substencils = rhs.getSubstencils();
+					this->data = rhs.getData();
+					this->pattern = rhs.getPattern();
+					
+					unsigned int  l,r,u,d,ba,fo,be,af;
+					getExpansions(l,r,u,d,ba,fo,be,af);
+					this->left = l;
+					this->right = r;
+					this->up = u;
+					this->down = d;
+					this->backward = ba;
+					this->forward = fo;
+					this->before = be;
+					this->after = af;
+				}
 				
-				///@todo implement copy constructor and assignment operator here
+				///assignment operator
+				MetaStencil<T>& operator=(Metastencil<T>& rhs) {
+					if (&rhs == this) {return *this;}
+					this->substencils = rhs.getSubstencils();
+					this->data = rhs.getData();
+					this->pattern = rhs.getPattern();
+					
+					unsigned int  l,r,u,d,ba,fo,be,af;
+					getExpansions(l,r,u,d,ba,fo,be,af);
+					this->left = l;
+					this->right = r;
+					this->up = u;
+					this->down = d;
+					this->backward = ba;
+					this->forward = fo;
+					this->before = be;
+					this->after = af;
+					
+					return *this;
+				}
+				
+				//Getter functions for the copy constructor to work
+				std::vector<Substencil<T>*>& getSubstencils() {return substencils;}
+				cimg_library::CImg<T>& getData() {return data;}
+				std::set<Point4D>& getPattern() {return pattern;}
+				void getExpansions(unsigned int l,  unsigned int r,
+				                   unsigned int u,  unsigned int d,
+				                   unsigned int ba, unsigned int fo,
+				                   unsigned int be, unsigned int af,) {
+					l=this->left;
+					r=this->right;
+					u=this->up;
+					d=this->down;
+					ba=this->backward;
+					fo=this->forward;
+					be=this->before;
+					af=this->after;
+				}
 				
 				//Your implementation of the MetaStencil will need a function
 				//to gather the data from the different substencils and present
