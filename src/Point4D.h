@@ -15,6 +15,7 @@
 */
 /** @file Point4D.hxx
  *  Implementation of class Point4D.
+ *  This object represents a point in four-dimensional space.
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *

@@ -155,6 +155,317 @@ class PetscSolver : public Solver
 			i -= (p.z*dim.getWidth()*dim.getHeight());
 			p.t =  (i/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
 		}
+		
+		/**
+		 * Find the case for the boundary condition.
+		 * Point4D is slightly abused here to store the caseID.
+		 * @param[in] p Ghost point whose case should be determined.
+		 * @return A Point4D containing the caseID reaching from (0,0,0,0)
+		 *         to (2,2,2,2) where (1,1,1,1) is forbidden because this could
+		 *         not be a ghost point.
+		 */
+		Point4D& findCase(Point4D &p) {
+			Point4D caseID;
+			if (p.x <= roi().left) {caseID.x = 0;}
+			if (p.x > roi().left && p.x < roi().right) {caseID.x = 1;}
+			if (p.x >= roi().right) {caseID.x = 2;}
+			if (p.y <= roi().top) {caseID.y = 0;}
+			if (p.y > roi().top && p.y < roi().bottom) {caseID.y = 1;}
+			if (p.y >= roi().bottom) {caseID.y = 2;}
+			if (p.z <= roi().front) {caseID.z = 0;}
+			if (p.z > roi().front && p.z < roi().back) {caseID.z = 1;}
+			if (p.z >= roi().back) {caseID.z = 2;}
+			if (p.t <= roi().before) {caseID.t = 0;}
+			if (p.t > roi().before && p.t < roi().after) {caseID.t = 1;}
+			if (p.t >= roi().after) {caseID.t = 2;}
+			
+			return caseID;
+		}
+		
+		Point4D& resolveCase(Point4D &caseID) {
+			switch(caseID.t) {
+				case 0:
+					switch(caseID.z) {
+						case 0:
+							switch(caseID.y) {
+								case 0:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 1:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 2:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+							} //end of switch(caseID.y)
+						case 1:
+							switch(caseID.y) {
+								case 0:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 1:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 2:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+							} //end of switch(caseID.y)
+						case 2:
+							switch(caseID.y) {
+								case 0:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 1:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 2:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+							} //end of switch(caseID.y)
+					} //end of switch(caseID.z)
+				case 1:
+					switch(caseID.z) {
+						case 0:
+							switch(caseID.y) {
+								case 0:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 1:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 2:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+							} //end of switch(caseID.y)
+						case 1:
+							switch(caseID.y) {
+								case 0:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 1:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 2:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+							} //end of switch(caseID.y)
+						case 2:
+							switch(caseID.y) {
+								case 0:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 1:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 2:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+							} //end of switch(caseID.y)
+					} //end of switch(caseID.z)
+				case 2:
+					switch(caseID.z) {
+						case 0:
+							switch(caseID.y) {
+								case 0:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 1:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 2:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+							} //end of switch(caseID.y)
+						case 1:
+							switch(caseID.y) {
+								case 0:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 1:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 2:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+							} //end of switch(caseID.y)
+						case 2:
+							switch(caseID.y) {
+								case 0:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 1:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+								case 2:
+									switch(caseID.x) {
+										case 0:
+										
+										case 1:
+										
+										case 2:
+										
+									} //end of switch(caseID.x)
+							} //end of switch(caseID.y)
+					} //end of switch(caseID.z)
+			} //end of switch(caseID.t)
+		} //end of resolveCase
+		
 
 	public:	
 		PetscSolver(const std::string& name = "") : 
@@ -315,7 +626,18 @@ class PetscSolver : public Solver
 					
 					
 				} else { //Ghost node:
-					
+					//The handling of the boundary condition is split into two
+					//steps: Finding out, which case it is and resolving it.
+					//Picture the following
+					Point4D caseID;
+					Point4D associated;
+					unsigned int point;
+					caseID = findCase(p);
+					//'associated' contains the coordinates of the associated pixel
+					//the conversion into the column index has to take place in
+					//this scope.
+					associated = resolveCase(caseID);
+					//MatSetValues
 				}				
 			}
 		}
