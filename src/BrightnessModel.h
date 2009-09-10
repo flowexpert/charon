@@ -90,7 +90,7 @@ public:
 
 	/// returns a Image with the changes it has to do
 	/// Input: a vector of Parameters to compute the modification
-	virtual void apply(const std::vector<std::string> &, cimg_library::CImg<T>& image) =0;
+	virtual void apply(const std::vector<Parameter<T>* > &) =0;
 };
 
 #endif

@@ -47,7 +47,7 @@ void BrightnessModels::Constant<T>::compute(	const int xs, const int ys, const i
 }
 
 void BrightnessModels::Constant<T>::apply
-	(const std::vector<std::string> & modifier, cimg_library::CImg<T>& image)
+	(const std::vector<Parameter<T>* > & modifier)
 {
 	// no brightness change
 }

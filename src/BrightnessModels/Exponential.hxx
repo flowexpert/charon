@@ -92,8 +92,7 @@ void BrightnessModels::Exponential<T>::Functor::get3d
 }
 
 template <class T>
-void BrightnessModels::Exponential<T>::apply(const std::vector<std::string> & modifier,
-           cimg_library::CImg<T>& image)
+void BrightnessModels::Exponential<T>::apply(const std::vector<Parameter<T>* > & modifier)
 {
 
 }

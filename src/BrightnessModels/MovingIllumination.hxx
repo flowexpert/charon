@@ -74,7 +74,7 @@ void BrightnessModels::MovingIllumination<T>::Functor::operator ()(cimg_library:
 }
 
 template <class T>
-void BrightnessModels::MovingIllumination<T>::apply(const std::vector<std::string> & modifier, cimg_library::CImg<T>& image)
+void BrightnessModels::MovingIllumination<T>::apply(const std::vector<Parameter<T>* > & modifier)
 {
 
 }

@@ -87,10 +87,9 @@ void BrightnessModels::Diffusion<T>::setFunctorParams(float d)
 }
 
 template <class T>
-void BrightnessModels::Diffusion<T>::apply(const std::vector<std::string> & modifier,
-                                           cimg_library::CImg<T>& image)
+void BrightnessModels::Diffusion<T>::apply(const std::vector<Parameter<T>* > & modifier)
 {
-    std::string d, x, y, z, t;
+/* std::string d, x, y, z, t;
     x = modifier[0];
     y = modifier[1];
     z = modifier[2];
@@ -108,7 +107,7 @@ void BrightnessModels::Diffusion<T>::apply(const std::vector<std::string> & modi
 //    red 	= D*(((zeichen^2*g)/(zeichen*x^2))+((zeichen^2*g)/(zeichen*y^2))); ///@TODO change to something funktional
 //    green 	= D*(((zeichen^2*g)/(zeichen*x^2))+((zeichen^2*g)/(zeichen*y^2))); ///@TODO change to something funktional
 //    blue	= D*(((zeichen^2*g)/(zeichen*x^2))+((zeichen^2*g)/(zeichen*y^2))); ///@TODO change to something funktional
-
+*/
 }
 
 #endif
