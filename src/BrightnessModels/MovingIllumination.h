@@ -65,7 +65,7 @@ public:
 	///sets the parameters for sequence generation
 	void setFunctorParams(float a1, float a2);
 	//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
-	virtual void apply(const std::vector<Parameter<T>* > & modifier);
+	virtual std::vector<T> apply(const std::vector<Parameter<T>* > & modifier);
 
 };
 

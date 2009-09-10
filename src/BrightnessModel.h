@@ -88,9 +88,12 @@ public:
 	/// by asking the vectors lenght, you get the number of unknowns
 	virtual std::set<std::string>& getUnknowns() =0;
 
-	/// returns a Image with the changes it has to do
-	/// Input: a vector of Parameters to compute the modification
-	virtual void apply(const std::vector<Parameter<T>* > &) =0;
+	/** 
+	 *  returns a Image with the changes it has to do
+	 *  @param modifier vector of Parameters to compute the modification
+	 *  @param[out] vector of pixel properties 
+	 */
+	virtual std::vector<T> apply(const std::vector<Parameter<T>* > & modifier) =0;
 };
 
 #endif

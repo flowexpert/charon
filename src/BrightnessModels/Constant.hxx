@@ -20,6 +20,9 @@
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
 /// @date 27.05.2009
 
+#ifndef _BrightnessModels_Constant_HXX_
+#define _BrightnessModels_Constant_HXX_
+
 #include "Constant.h"
 
 using namespace std;
@@ -46,9 +49,10 @@ void BrightnessModels::Constant<T>::compute(	const int xs, const int ys, const i
 	// no brightness change
 }
 
-void BrightnessModels::Constant<T>::apply
+std::vector<T> BrightnessModels::Constant<T>::apply
 	(const std::vector<Parameter<T>* > & modifier)
 {
 	// no brightness change
 }
 
+#endif

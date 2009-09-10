@@ -20,8 +20,8 @@
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
 /// @date 27.05.2009
 
-#ifndef _BrightnessModels_Constant_h_
-#define _BrightnessModels_Constant_h_
+#ifndef _BrightnessModels_Constant_H_
+#define _BrightnessModels_Constant_H_
 
 #include "../main.h"
 #include "../BrightnessModel.h"
@@ -61,7 +61,7 @@ public:
 	virtual std::set<std::string>& getUnknowns() const;
 	//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
 
-	virtual void apply(const std::vector<Parameter<T>* > & modifier);
+	virtual std::vector<T> apply(const std::vector<Parameter<T>* > & modifier);
 };
 
 }

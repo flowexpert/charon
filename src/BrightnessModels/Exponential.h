@@ -71,7 +71,7 @@ public:
 	void setFunctorParams(float k);
 	//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
 	
-	virtual void apply(const std::vector<Parameter<T>* > & modifier);
+	virtual std::vector<T> apply(const std::vector<Parameter<T>* > & modifier);
 };
 
 }

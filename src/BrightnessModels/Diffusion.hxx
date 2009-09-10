@@ -87,7 +87,7 @@ void BrightnessModels::Diffusion<T>::setFunctorParams(float d)
 }
 
 template <class T>
-void BrightnessModels::Diffusion<T>::apply(const std::vector<Parameter<T>* > & modifier)
+std::vector<T> BrightnessModels::Diffusion<T>::apply(const std::vector<Parameter<T>* > & modifier)
 {
 /* std::string d, x, y, z, t;
     x = modifier[0];

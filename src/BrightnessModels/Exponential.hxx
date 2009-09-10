@@ -20,6 +20,9 @@
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
 /// @date 27.05.2009
 
+#ifndef _BrightnessModels_Exponential_hxx_
+#define _BrightnessModels_Exponential_hxx_
+
 #include "Exponential.h"
 #include <cassert>
 
@@ -92,7 +95,9 @@ void BrightnessModels::Exponential<T>::Functor::get3d
 }
 
 template <class T>
-void BrightnessModels::Exponential<T>::apply(const std::vector<Parameter<T>* > & modifier)
+std::vector<T> BrightnessModels::Exponential<T>::apply(const std::vector<Parameter<T>* > & modifier)
 {
 
 }
+
+#endif

@@ -20,6 +20,9 @@
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
 /// @date 27.05.2009
 
+#ifndef _BRIGHTNESSMODELS_MOVINGILLUMINATION_HXX_
+#define _BRIGHTNESSMODELS_MOVINGILLUMINATION_HXX_
+
 #include "MovingIllumination.h"
 
 using namespace std;
@@ -74,7 +77,9 @@ void BrightnessModels::MovingIllumination<T>::Functor::operator ()(cimg_library:
 }
 
 template <class T>
-void BrightnessModels::MovingIllumination<T>::apply(const std::vector<Parameter<T>* > & modifier)
+std::vector<T> BrightnessModels::MovingIllumination<T>::apply(const std::vector<Parameter<T>* > & modifier)
 {
 
 }
+
+#endif
