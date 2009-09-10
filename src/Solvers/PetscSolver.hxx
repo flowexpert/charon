@@ -32,6 +32,21 @@
 
 ///@todo incorporate std::runtime_error and #include <stdexept> instead of throw "string"
 
+//Forward declarations
+unsigned int pointToRelativeIndex(const Point4D p,
+                                  const roi<int> &dim) const;
+unsigned int relativeIndexToGlobalIndex(const unsigned int i,
+                                        const std::string& unknown,
+                                        const std::map<std::string,roi<int> >& unknownSizes);
+void globalIndexToPoint(const unsigned int vi,
+                        const std::map<std::string, roi<int> >& unknownSizes,
+                        std::string& unknown,
+                        Point4D& p);
+unsigned int pointToGlobalIndex(const Point4D &p,
+                                const std::string unknown,
+                                const std::map<std::string, roi<int> >& unknownSizes);
+
+
 template <class T>
 class PetscSolver : public Solver
 {
@@ -44,26 +59,25 @@ class PetscSolver : public Solver
 			public:
 				PetscMetaStencil(const std::string unknown,const std::vector<stencil<T>*>& stencils) :
 				Solver<T>::MetaStencil(unknown,stencils) {
-					std::vector< Substencil<T>* >::iterator ssIt; //substencil Iterator
-					for (ssIt = substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
+					for (int i = 0 ; i < this->substencils.size() ; i++) {
 						//Calculating offsets
-						int xo = center.x - ssIt->second->center.x;
-						int yo = center.y - ssIt->second->center.y;
-						int zo = center.z - ssIt->second->center.z;
-						int to = center.t - ssIt->second->center.t;
+						int xo = center.x - this->substencils[i]->center.x;
+						int yo = center.y - this->substencils[i]->center.y;
+						int zo = center.z - this->substencils[i]->center.z;
+						int to = center.t - this->substencils[i]->center.t;
 						//saving the offset as Point4D for later convennience
 						Point4D offset(xo,yo,zo,to);
 						
 						//Iterate through all pixels of the substencil...
-						for (int tc=0 ; tc < ssIt->second->patterm.dimv() ; tc++) {
-							for (int zc=0 ; zc < ssIt->second->pattern.dimz() ; zc++) {
-								for (int yc=0 ; yc < ssIt->second->pattern.dimy() ; yc++) {
-									for (int xc=0 ; xc < ssIt->second->pattern.dimx() ; xc++) {
+						for (int tc=0 ; tc < this->substencils[i]->patterm.dimv() ; tc++) {
+							for (int zc=0 ; zc < this->substencils[i]->pattern.dimz() ; zc++) {
+								for (int yc=0 ; yc < this->substencils[i]->pattern.dimy() ; yc++) {
+									for (int xc=0 ; xc < this->substencils[i]->pattern.dimx() ; xc++) {
 										//...and set the pattern into the
-										//metastencil (with offset).
-										if (ssIt->second->pattern(xc,yc,zc,tc)) {
+										//Metastencil (with offset).
+										if (this->substencils[i]->pattern(xc,yc,zc,tc)) {
 											Point4D p(xc,yc,zc,tc);
-											pattern.insert(p+offset);
+											this->pattern.insert(p+offset);
 										}
 									}
 								}
@@ -73,28 +87,71 @@ class PetscSolver : public Solver
 				}
 				
 				/**
-				 * transfer the data from the substencils into columns and values array.
-				 * @param[in] gi global index.
+				 * Write data form substencils into PetscScalar *values and
+				 * their indices into PetscInt *columns.
+				 * @param[in] unknown current unknown.
+				 * @param[in] p current point,
+				 * @param[in] unknownSizes sizes of matrix blocks.
+				 * @param[out] columns Array of column indices for MatSetValues.
+				 * @param[out] values Array of values for MatSteValues.
+				 * @return Number of entries.
 				 */
-				void update(const unsigned int gi) {
-					
+				unsigned int update(const std::string unknown, const Point4D& p,
+				            const std::map<std::string,roi<int> >& unknownSizes,
+				            PetscInt* &columns, PetscScalar* &values) {
+					//first, copy all data from the substencils into
+					//the CImg data object of the MetaStencil
+					for (int i = 0 ; i < this->substencils.size() ; i++) {
+						//Calculating offsets
+						int xo = center.x - this->substencils[i]->center.x;
+						int yo = center.y - this->substencils[i]->center.y;
+						int zo = center.z - this->substencils[i]->center.z;
+						int to = center.t - this->substencils[i]->center.t;
+						//saving the offset as Point4D for later convennience
+						Point4D offset(xo,yo,zo,to);
+						
+						//Iterate through all pixels of the substencil...
+						for (int tc=0 ; tc < this->substencils[i]->data.dimv() ; tc++) {
+							for (int zc=0 ; zc < this->substencils[i]->data.dimz() ; zc++) {
+								for (int yc=0 ; yc < this->substencils[i]->data.dimy() ; yc++) {
+									for (int xc=0 ; xc < this->substencils[i]->data.dimx() ; xc++) {
+										//...and copy them into the
+										//Metastencil (with offset).
+										this->data(xc+xo,yc+yo,zc+zo,tc+to)
+											+=this->substencils[i]->data(xc,yc,zc,tc);
+									}
+								}
+							}
+						}
+					}
+					//now, the data from all the substencils has been merged
+					//into this->data. For all the Point4Ds, which are in
+					//this->pattern, we need to add the index to PetscInt *columns
+					//and its value to PetscScalar *values
+					for(i = 0 ; i < this->pattern.size() ; i++) { //for all Point4Ds in this->pattern
+						columns[i] = pointToGlobalIndex(this->pattern[i]+p,
+						                                unknown,unknownSizes);
+						values[i] = this->data(this->pattern[i].x, this->pattern[i].y,
+						                       this->pattern[i].z, this->pattern[i].t);
+					}
+					return this->pattern.size();
 				}
 		};
 		
 		/**
-		 * Converts a coordinate in an ROI into a relative vector index.
+		 * Converts a coordinate in an ROI into a relative index.
 		 * @param[in] p Point to convert.
 		 * @param[in] dim Dimensions of the ROI that p is in.
 		 * @see getVectorIndex()
 		 * @see getCoordinate()
 		 * @return Relative vector index.
 		 */
-		unsigned int getIndex(const Point4D p, const Point4D dim) const {
+		unsigned int pointToRelativeIndex(const Point4D p, const roi<int> &dim) const {
 			unsigned int res=0;
 			
-			res += p.t * (dim.x * dim.y * dim.z);
-			res += p.z * (dim.x * dim.y);
-			res += p.y * (dim.x);
+			res += p.t * (dim.getWidth() * dim.getHeight() * dim.getDepth());
+			res += p.z * (dim.getWidth() * dim.getHeight());
+			res += p.y * (dim.getWidth());
 			res += p.x;
 			
 			return res;
@@ -109,7 +166,7 @@ class PetscSolver : public Solver
 		 * @see getCoordinate()
 		 * @return Global vector index.
 		 */
-		unsigned int getVectorIndex(const unsigned int i,
+		unsigned int relativeIndexToGlobalIndex(const unsigned int i,
 									const std::string& unknown,
 									const std::map<std::string,roi<int> >& unknownSizes) {
 			unsigned int res=0;
@@ -124,8 +181,6 @@ class PetscSolver : public Solver
 			return res;
 		}
 		
-		//convert form the global vector index to the coordinate in an ROI of
-		//an unknown
 		/**
 		 * Convert a global vector index to 4-dimensional coordinates and the according unknown.
 		 * @param[in] vi Global vector index.
@@ -135,9 +190,9 @@ class PetscSolver : public Solver
 		 * @see getIndex()
 		 * @see getVectorIndex()
 		 */
-		void getCoordinate(	const unsigned int vi,
-							const std::map<std::string, roi<int> >& unknownSizes,
-							std::string& unknown, Point4D& p) {
+		void globalIndexToPoint( const unsigned int vi,
+		                         const std::map<std::string, roi<int> >& unknownSizes,
+		                         std::string& unknown, Point4D& p) {
 			unsigned int i=vi;
 			std::map<std::string,roi<int> >::iterator usIt=unknownSizes.begin();
 			while (i - (usIt->second().getVolume()) > 0) {
@@ -154,17 +209,36 @@ class PetscSolver : public Solver
 			p.z =  (i/(dim.getWidth*dim.getHeight()))%dim.getDepth();
 			i -= (p.z*dim.getWidth()*dim.getHeight());
 			p.t =  (i/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
+			
+			Point4D offset(-dim.left, -dim.top, -dim.front, -dim.back);
+			p -= offset;
 		}
 		
 		/**
-		 * Find the case for the boundary condition.
-		 * Point4D is slightly abused here to store the caseID.
-		 * @param[in] p Ghost point whose case should be determined.
-		 * @return A Point4D containing the caseID reaching from (0,0,0,0)
-		 *         to (2,2,2,2) where (1,1,1,1) is forbidden because this could
-		 *         not be a ghost point.
+		 * Convert coordinates to the global index
+		 * 
+		 * 
+		 * @return global index
 		 */
-		Point4D& findCase(Point4D &p) {
+		unsigned int pointToGlobalIndex(const Point4D &p, const std::string unknown,
+		                                const std::map<std::string, roi<int> >& unknownSizes) {
+			unsigned int result;
+			result = pointToRelativeIndex(p,unknownSizes[unknown]->second());
+			result = relativeIndexToGlobalIndex(result, unknown, unknownSizes);
+			return result;
+		}
+		
+		/**
+		 * Find the closest real pixel to p (which is a ghost pixel).
+		 * @param[in] p Ghost pixel to which the closest real pixel should be found
+		 * @return Point4D object containing the coordinates of the closest
+		 * boundary pixel of the unexpanded ROI
+		 */
+		Point4D& getBoundary(Point4D &p) {
+			//First, identify the case
+			//Point4D caseID does not contain coordinates in this scope.
+			//It contains an identification for the different cases of boundary
+			//conditions for easy and efficient handling.
 			Point4D caseID;
 			if (p.x <= roi().left) {caseID.x = 0;}
 			if (p.x > roi().left && p.x < roi().right) {caseID.x = 1;}
@@ -178,295 +252,37 @@ class PetscSolver : public Solver
 			if (p.t <= roi().before) {caseID.t = 0;}
 			if (p.t > roi().before && p.t < roi().after) {caseID.t = 1;}
 			if (p.t >= roi().after) {caseID.t = 2;}
+						
+			Point4D result;
 			
-			return caseID;
+			//resolve each dimension of the case
+			switch(caseID.x) {
+				case 0: result.x = roi()->left(); break;
+				case 1: result.x = p.x; break;
+				case 2: result.x = roi()->right(); break;
+			}
+			
+			switch(caseID.y) {
+				case 0: result.y = roi()->top(); break;
+				case 1: result.y = p.y; break;
+				case 2: result.y = roi()->bottom(); break;
+			}
+			
+			switch(caseID.z) {
+				case 0: result.z = roi()->front(); break;
+				case 1: result.z = roi() ->p.z; break;
+				case 2: result.z = roi()->back(); break;
+			}
+			
+			switch(caseID.t) {
+				case 0: result.t = roi()->before(); break;
+				case 1: result.t = roi()->p.t; break;
+				case 2: result.t = roi()->after(); break;
+			}
+			
+			return result;
 		}
 		
-		Point4D& resolveCase(Point4D &caseID) {
-			switch(caseID.t) {
-				case 0:
-					switch(caseID.z) {
-						case 0:
-							switch(caseID.y) {
-								case 0:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 1:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 2:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-							} //end of switch(caseID.y)
-						case 1:
-							switch(caseID.y) {
-								case 0:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 1:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 2:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-							} //end of switch(caseID.y)
-						case 2:
-							switch(caseID.y) {
-								case 0:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 1:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 2:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-							} //end of switch(caseID.y)
-					} //end of switch(caseID.z)
-				case 1:
-					switch(caseID.z) {
-						case 0:
-							switch(caseID.y) {
-								case 0:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 1:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 2:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-							} //end of switch(caseID.y)
-						case 1:
-							switch(caseID.y) {
-								case 0:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 1:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 2:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-							} //end of switch(caseID.y)
-						case 2:
-							switch(caseID.y) {
-								case 0:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 1:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 2:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-							} //end of switch(caseID.y)
-					} //end of switch(caseID.z)
-				case 2:
-					switch(caseID.z) {
-						case 0:
-							switch(caseID.y) {
-								case 0:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 1:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 2:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-							} //end of switch(caseID.y)
-						case 1:
-							switch(caseID.y) {
-								case 0:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 1:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 2:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-							} //end of switch(caseID.y)
-						case 2:
-							switch(caseID.y) {
-								case 0:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 1:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-								case 2:
-									switch(caseID.x) {
-										case 0:
-										
-										case 1:
-										
-										case 2:
-										
-									} //end of switch(caseID.x)
-							} //end of switch(caseID.y)
-					} //end of switch(caseID.z)
-			} //end of switch(caseID.t)
-		} //end of resolveCase
-		
-
 	public:	
 		PetscSolver(const std::string& name = "") : 
 		Solver("PetscSolver","Solver based on PETSc","solves the linear system with PETSc") {
@@ -520,11 +336,11 @@ class PetscSolver : public Solver
 			//substencils and create a PetscMetastencil object for each unknown.
 			//We organize these PetscMetastencils in a map - keyed to their
 			//unknown.
-			std::map<std::string,PetscMetaStencil> MetaStencils;
+			std::map<std::string,PetscMetaStencil> metastencils;
 			std::map<std::string, std::vector<stencil<T>*> >::iterator ssIt; //substencil Iterator
 			for (ssIt=substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
 				PetscMetaStencil pms(ssIt->first(),ssIt->second());
-				MetaStencils[ssIt->first()] = pms;
+				metastencils[ssIt->first()] = pms;
 			}
 			
 			//now we can determine the size of the expanded ROIs which we will
@@ -536,7 +352,7 @@ class PetscSolver : public Solver
 			unsigned int max_ne=0;	//maximum number of entries;
 			std::map<std::string,roi<int> > unknownSizes;
 			std::map<std::string,PetscMetaStencil>::iterator msIt; //PetscMetaStencil iterator
-			for(msIt=MetaStencils.begin() ; msIt != MetaStencils.end() ; msIt++) {
+			for(msIt=metastencils.begin() ; msIt != metastencils.end() ; msIt++) {
 				unknownSizes[msIt->first()]=msIt->second().expand(this->roi);
 				//find the maximum number of entries for the MatSetValues call
 				//so that the size of columns and values is optimal
@@ -604,10 +420,10 @@ class PetscSolver : public Solver
 				//Convert the row index into point-coordinates and the unknown
 				//of the block in which the point is.
 				
-				std::string unknown;
-				Point4D p;
+				std::string unknown;	//current unknown
+				Point4D p;	//current point
 				
-				getCoordinate( (unsigned int)j, unknownSizes, unknown, p);
+				globalIndexToPoint( (unsigned int)j, unknownSizes, unknown, p);
 				//now p contains the coordinate of the current point and
 				//unknown contains the name of the current unknown.
 				
@@ -622,22 +438,26 @@ class PetscSolver : public Solver
 					//now call the Metastencil of this unknown to gather all the
 					//data of its substencils (which have just been updated) and
 					//put the values and their indices into the respective arrays
-					//for MatSetValues
+					//for MatSetValues					
+					unsigned int ne; //number of entries
+					ne = metastencils[unknown]->update(unknown,p,unknownSizes,columns,values);
+					
+					ierr = MatSetValues(A,1,&j,ne,columns,values,INSERT_VALUES);CHKERRQ(ierr);
 					
 					
 				} else { //Ghost node:
-					//The handling of the boundary condition is split into two
-					//steps: Finding out, which case it is and resolving it.
-					//Picture the following
-					Point4D caseID;
-					Point4D associated;
-					unsigned int point;
-					caseID = findCase(p);
-					//'associated' contains the coordinates of the associated pixel
-					//the conversion into the column index has to take place in
-					//this scope.
-					associated = resolveCase(caseID);
-					//MatSetValues
+					//To handle Ghost nodes, we have to resolve the boundary
+					//conditions. In this case, the boundary condition is hard
+					//coded and dictates, that all ghost pixels have the same
+					//value as their closest real pixel.
+					//Find the closest boundary pixel
+					Point4D boundary = getBoundary(p);
+					
+					values[0] = 1;
+					values[1] = -1;
+					columns[0] = j;
+					columns[1] = pointToGlobalIndex(boundary, unknown, unknownSizes);
+					ierr = MatSetValues(A,1,&j,2,columns,values,INSERT_VALUES);CHKERRQ(ierr);
 				}				
 			}
 		}

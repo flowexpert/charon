@@ -31,6 +31,14 @@ class Point4D
 		unsigned int x, y, z, t;
 		
 		///default constructor
+		Point4D() {
+			this->x = 0;
+			this->y = 0;
+			this->z = 0;
+			this->t = 0;
+		}		
+		
+		///constructor with coordinates
 		Point4D(int x, int y, int z, int t) : x(x), y(y), z(z), t(t) {}
 		
 		///copy constructor

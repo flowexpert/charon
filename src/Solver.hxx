@@ -131,7 +131,7 @@ class Solver : public ParameteredObject
 					int dimy=up+1+down;
 					int dimz=backward+1+forward;
 					int dimt=before+1+after;
-					data.assign(dimx, dimy, dimz, dimt, 0);
+					data.assign(dimx, dimy, dimz, dimt, 0);	//initializing with 0 is important!
 				}
 								
 				///copy constructor
