@@ -14,12 +14,12 @@ template<typename T>
 Incrementor<T>::Incrementor(const std::string& name) :
 	TemplatedParameteredObject<T> ("incrementor", name,
 			" Increments the Parameters, witch are needed to compute changes "
-				"inside the Image "), paramList(false, true), actualPos(this)
+				"inside the Image "), paramList(false, true), out(this)
 {
 	this->_addInputSlot(image, "Image", "Image where to Increment", "CImg");
 	this->_addInputSlot(paramList, "paramList",
 			"list of Parameters for Incrementor", "Incrementor Parameter");
-	this->_addOutputSlot(actualPos, "actualPos",
+	this->_addOutputSlot(out, "out",
 			"Position in Image after Incrementation", "Incrementor<T>*");
 }
 
@@ -30,7 +30,7 @@ void Incrementor<T>::execute()
 }
 
 template<typename T>
-std::vector<T>& Incrementor<T>::getListOfParams()
+std::vector<Parameter<T>* >& Incrementor<T>::getListOfParams()
 {
 	return this->listOfParams;
 }

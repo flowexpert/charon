@@ -97,7 +97,8 @@ void BrightnessModels::Exponential<T>::Functor::get3d
 template <class T>
 std::vector<T> BrightnessModels::Exponential<T>::apply(const std::vector<Parameter<T>* > & modifier)
 {
-
+	std::vector<T> ret;
+	return ret;
 }
 
 #endif

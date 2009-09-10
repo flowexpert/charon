@@ -52,6 +52,8 @@ void BrightnessModels::Constant<T>::compute(	const int xs, const int ys, const i
 std::vector<T> BrightnessModels::Constant<T>::apply
 	(const std::vector<Parameter<T>* > & modifier)
 {
+	std::vector<T> ret;
+	return ret;
 	// no brightness change
 }
 

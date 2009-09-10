@@ -18,20 +18,20 @@ template<typename T>
 class Incrementor: public TemplatedParameteredObject<T>
 {
 protected:
-	std::vector<T> listOfParams;
+	std::vector<Parameter<T>* > listOfParams;
 public:
 	/// standard constructor
 	Incrementor(const std::string& name);
 	InputSlot<cimg_library::CImg<T>&> image;
 	InputSlot<IncrementorParameter<T>*> paramList;
-	OutputSlot<Incrementor<T>*> actualPos;
+	OutputSlot<Incrementor<T>*> out;
 	void execute();
 	/** computes the next Step
 	 *  the return is 0 if all max not reached and 1 if all max are reached
 	 */
 	virtual bool doStep() =0;
 	///returns a list of the computed Parameters
-	std::vector<T>& getListOfParams();
+	std::vector<Parameter<T>* >& getListOfParams();
 
 };
 

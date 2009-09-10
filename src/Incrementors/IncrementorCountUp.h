@@ -12,9 +12,9 @@ template<typename T>
 class IncrementorCountUp: public Incrementor<T>
 {
 private:
-	typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
-			itParams;
-	typename std::vector<T>::iterator itList;
+	//typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
+	//		itParams;
+	//typename std::vector<Parameter<T> >::iterator itList;
 	unsigned int modifier;
 
 public:
@@ -24,7 +24,7 @@ public:
 	 *  computes the next Step
 	 *  the return is 0 if all max not reached and 1 if all max are reached
 	 */
-	bool doStep();
+	virtual bool doStep();
 
 };
 

@@ -20,132 +20,85 @@ IncrementorCountUp<T>::IncrementorCountUp(const std::string& name) :
 {
 	this->modifier = 0;
 	// sets the iterators to start
-	this->itList = this->listOfParams.begin();
-	this->itParams = this->paramList.begin();
+	//itList = this->listOfParams.begin();
+	//this->itParams = this->paramList.begin();
 
 	// set the params in listOfParams to minimum
 	typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
-			it;
-	typename std::vector<T>::iterator itLi = this->listOfParams.begin();
-	for (it = this->paramList.begin(); it != this->paramList.end(); it++)
+			it = this->paramList.begin();
+	typename std::vector<Parameter<T>*>::iterator itLi =
+			this->listOfParams.begin();
+	unsigned int j = 0;
+	for (; it != this->paramList.end(); it++)
 	{
-		this->listOfParams.insert(itLi, this->paramList()->getMin());
-		itLi++;
+		this->listOfParams.push_back(&(this->paramList[j]->getMin()));
+		j++;
 	}
 }
 
 template<typename T>
 bool IncrementorCountUp<T>::doStep()
 {
-	// compute step
-	if (*itList + this->paramList()->getStepSize()
-			<= this->paramList()->getMax())
+	bool ret = false;
+	//find the return value
+	typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
+			it = this->paramList.begin();
+	unsigned int j = 0;
+	for (; it != this->paramList.end(); it++)
 	{
-		this->listOfParams.insert(itList, *itList
-				+ this->paramList()->getStepSize());
-	}
-	else
-	{
-		this->itList++;
-		this->modifier += 1;
-		for (unsigned int i = 1; i <= modifier; i++)
+		if (*(this->listOfParams[j]) + this->paramList[j]->getStepSize()
+				>= this->paramList[j]->getMax())
 		{
-			this->listOfParams.insert(itList, this->paramList()->getMin());
-			itParams++;
-			if (*itList + this->paramList()->getStepSize()
-					<= this->paramList()->getMax())
-			{
-				this->listOfParams.insert(itList, *itList
-						+ this->paramList()->getStepSize());
-				modifier -= 1;
-			}
-		}
-	}
-	if (modifier == this->listOfParams.size())
-	{
-		if (*itList + this->paramList()->getStepSize()
-				<= this->paramList()->getMax())
-		{
-			return true;
+			ret = true;
 		}
 		else
 		{
-			return false;
+			ret = false;
+			break;
+		}
+		j++;
+	}
+
+	// compute step
+	if (!ret)
+	{
+		typename std::vector<Parameter<T>*>::iterator itLi =
+				this->listOfParams.begin();
+		unsigned int i = 0;
+		for (; itLi != this->listOfParams.end(); itLi++)
+		{
+			if (*(this->listOfParams[i]) + this->paramList[i]->getStepSize()
+					<= this->paramList[i]->getMax())
+			{
+				(*(this->listOfParams[i])) ()
+						+= this->paramList[i]->getStepSize()();
+				break;
+			}
+			else
+			{
+				*(this->listOfParams[i]) = this->paramList[i]->getMin();
+				(*(this->listOfParams[i + 1])) ()
+						+= this->paramList[i + 1]->getStepSize()();
+				typename std::vector<Parameter<T>*>::iterator iterLi = itLi++;
+				unsigned int k = i;
+				for (; iterLi != this->listOfParams.end(); iterLi++)
+				{
+					if (*(this->listOfParams[k]) > this->paramList[k]->getMax())
+					{
+						*(this->listOfParams[k]) = this->paramList[k]->getMin();
+						(*(this->listOfParams[k + 1])) ()
+								+= this->paramList[k + 1]->getStepSize()();
+					}
+					k++;
+				}
+				break;
+			}
+			i++;
 		}
 	}
-	else
-	{
-		return false;
-	}
-	/*
-	 typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
-	 it;
-	 typename std::vector<T>::iterator itLi = this->listOfParams.begin();
-	 /// preinitialization of the return value
-	 std::vector<bool> ret;
-	 for (it = this->paramList.begin(); it != this->paramList.end(); it++)
-	 {
-	 ret.push_back(false);
-	 }
-	 for (it = this->paramList.begin(); it != this->paramList.end(); it++)
-	 {
-	 if (*itLi + this->paramList()->getStepSize()
-	 <= this->paramList()->getMax())
-	 {
-	 ret.push_back(false);
-	 }
-	 else
-	 {
-	 ret.push_back(true);
-	 }
-	 }
-	 typename std::vector<bool>::iterator itRet;
-	 for (itRet = ret.begin(); itRet != ret.end(); itRet++)
-	 {
-	 if (*itRet == false)
-	 {
-	 return false;
-	 }
-	 }
-	 return false;
-	 */
-	/*	/// itterates the parameters with stepsize
-	 for (it = paramList.begin(); it != paramList.end(); it++)
-	 {
 
-	 //list
-	 ///check if x < x-max and y < y-max and z < z-max
-	 if (this->x >= this->paramList()->getMax() || this->y
-	 >= this->paramList()->getMax() || this->z
-	 >= this->paramList()->getMax() || this->t
-	 >= this->paramList()->getMax())
-	 {
-	 ret = true;
-	 }
-	 else
-	 {
-	 return false;
-	 }
-	 }
-	 return ret;
-	 */
+	//return the return vallue
+	return ret;
 }
-
-/*
- template<typename T>
- std::vector<std::string> & IncrementorConstant<T>::getModifier()
- {
- std::stringstream strx;
- std::stringstream stry;
- std::stringstream strz;
- strx << x;
- stry << y;
- strz << z;
- this->modifier.push_back(strx.str());
- this->modifier.push_back(stry.str());
- this->modifier.push_back(strz.str());
- return this->modifier;
- }
- */
 
 #endif /* INCREMENTORCOUNTUP_HXX_ */
