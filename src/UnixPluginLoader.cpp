@@ -1,0 +1,187 @@
+/*  This file is part of Charon.
+
+ Charon is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Charon is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/** @file UnixPluginLoader.cpp
+ *  Implementation of class UnixPluginLoader.
+ *  @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
+ *
+ *  @date 24.08.2009
+ */
+#ifdef UNIX
+#ifdef APPLE
+#define LIBRARY_EXTENSION ".dylib"
+#define DL_COMPILER_FLAG "-dynamiclib"
+#else
+#define LIBRARY_EXTENSION ".so"
+#define DL_COMPILER_FLAG "-shared"
+#endif /*APPLE*/
+
+#include <dlfcn.h>
+#include "UnixPluginLoader.h"
+
+UnixPluginLoader::UnixPluginLoader(const std::string & n) :
+	AbstractPluginLoader(n) {
+	libHandle = NULL;
+
+}
+
+void UnixPluginLoader::load() throw (PluginException) {
+	if (FileTool::exists(pluginPath + "/lib" + pluginName + LIBRARY_EXTENSION)) {
+		libHandle = dlopen((pluginPath + "/lib" + pluginName
+				+ LIBRARY_EXTENSION).c_str(), RTLD_LAZY);
+	} else {
+		libHandle = dlopen((additionalPluginPath + "/lib" + pluginName
+				+ LIBRARY_EXTENSION).c_str(), RTLD_LAZY);
+	}
+
+	if (!libHandle) {
+		if (!FileTool::exists(pluginPath + "/lib" + pluginName
+				+ LIBRARY_EXTENSION) && !FileTool::exists(additionalPluginPath
+				+ "/lib" + pluginName + LIBRARY_EXTENSION)) {
+			throw PluginException("Failed to load the plugin \"" + pluginName
+					+ "\". The file lib" + pluginName + LIBRARY_EXTENSION
+					+ " could not be found. \n Description of the error: \n"
+					+ dlerror(), pluginName, PluginException::FILE_NOT_FOUND);
+		} else {
+			throw PluginException("Failed to load the plugin \"" + pluginName
+					+ "\". Maybe the file is damaged."
+					+ "\n Description of the error: \n" + dlerror(),
+					pluginName, PluginException::FILE_DAMAGED);
+		}
+	}
+
+	create = (ParameteredObject*(*)(const std::string &, template_type)) dlsym(
+			libHandle, "create");
+
+	destroy = (void(*)(ParameteredObject *)) dlsym(libHandle, "destroy");
+
+	if (!create) {
+		dlclose(libHandle);
+		libHandle = NULL;
+		throw PluginException(
+				"Failed to create the function pointer to the Constructor of the plugin \""
+						+ pluginName + "\". Invalid plugin format.",
+				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
+	}
+
+	if (!destroy) {
+		dlclose(libHandle);
+		create = NULL;
+		libHandle = NULL;
+		throw PluginException(
+				"Failed to create the function pointer to the Destructor of the plugin \""
+						+ pluginName + "\". Invalid plugin format.",
+				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
+	}
+}
+
+void UnixPluginLoader::compileAndLoad(const std::string & sourceFile,
+		std::vector<std::string> &references, const std::string & metadataPath)
+		throw (PluginException) {
+
+	//Load paths from the path file
+
+	ParameterFile p;
+	if (FileTool::exists("./share/charon-utils/Paths.config")) {
+		p.load("./share/charon-utils/Paths.config");
+	} else {
+		p.load("Paths.config");
+	}
+	std::string charon_utils = p.get<std::string> ("charon-utils-install");
+	std::string compiler_call = p.get<std::string> ("compiler-call");
+#ifdef APPLE
+	std::vector<std::string> x11_libs_vector = p.getList<std::string>("x11-libs");
+	std::string X11_libs(" ");
+	for (unsigned int i = 0; i < x11_libs_vector.size(); i++) {
+		X11_libs = X11_libs + " " + x11_libs_vector[i];
+	}
+#else
+	std::string X11_libs = "";
+#endif /* APPLE */
+
+	//Preserve the current working directory and changing it to the plugin path
+	std::string oldDir = FileTool::getCurrentDir();
+	FileTool::changeDir(additionalPluginPath);
+
+	//Collect referenced plugins
+	std::string refs = "";
+	for (unsigned int i = 0; i < references.size(); i++) {
+		refs = refs + "-l" + StringTool::toLowerCase(references[i]) + " ";
+	}
+
+	//Compile the plugin
+	std::cout << "Invoking C++ compiler to to compile the plugin \""
+			+ pluginName
+			+ "\" and creating metadata information.\nPlease be patient, this "
+			+ "could take some time." << std::endl;
+
+	std::string sysCall = compiler_call + " -fPIC -I \"" + charon_utils
+			+ "/include/charon-utils\" -L \"" + charon_utils + "/lib\" -L \""
+			+ pluginPath + "\" -L \"" + additionalPluginPath + "\" "
+			+ DL_COMPILER_FLAG + " -lcharon-utils -lpthread " + refs
+			+ " -Wl,-rpath,\"" + pluginPath + "\" -Wl,-rpath,\""
+			+ additionalPluginPath + "\" -o \""
+			+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath)
+			+ "/lib" + pluginName + LIBRARY_EXTENSION + "\" " + sourceFile
+			+ X11_libs;
+#ifndef NDEBUG
+	std::cout << "Compiler call:\n" << sysCall << std::endl;
+#endif
+	if (system(sysCall.c_str())) {
+		throw PluginException("Error in compiling plugin \"" + pluginName
+				+ "\".", pluginName, PluginException::COMPILE_ERROR);
+	}
+	try {
+		load();
+		if (metadataPath.size()) {
+			//create metadata
+			ParameteredObject::setCreateMetadata(true);
+			FileTool::changeDir(metadataPath);
+			destroyInstance(createInstance("temp", 0));
+			ParameteredObject::setCreateMetadata(false);
+		}
+	} catch (PluginException e) {
+		throw e;
+	}
+
+	//Restore the old working directory
+	FileTool::changeDir(oldDir);
+}
+
+void UnixPluginLoader::unload() throw (PluginException) {
+	if (libHandle) {
+		dlclose(libHandle);
+		if (dlerror()) {
+			throw PluginException("Error unloading plugin \"" + pluginName
+					+ "\". Description of the error:\n" + dlerror(),
+					pluginName, PluginException::PLUGIN_NOT_LOADED);
+		}
+		libHandle = NULL;
+		create = NULL;
+		destroy = NULL;
+		std::cout << "Successfully unloaded plugin \"" << pluginName << "\"."
+				<< std::endl;
+	} else {
+		throw PluginException("Plugin \"" + pluginName + "\" is not loaded.",
+				pluginName, PluginException::PLUGIN_NOT_LOADED);
+	}
+}
+
+UnixPluginLoader::~UnixPluginLoader() {
+	if (libHandle) {
+		unload();
+	}
+}
+#endif /*UNIX*/

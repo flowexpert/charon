@@ -1,0 +1,12 @@
+# Install folder of charon-utils
+charon-utils-install	@CMAKE_INSTALL_PREFIX@
+
+# compiler command for plugin generation
+compiler-call		@CMAKE_CXX_COMPILER@ @CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_RELEASE@
+
+# Unix specific folders
+x11-libs			@X11_LIBRARIES@
+
+# Windows specific folders
+sdk-root			@SDK_ROOT@
+vc-root				@VC_ROOT@

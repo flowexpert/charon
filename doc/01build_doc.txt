@@ -1,0 +1,112 @@
+/**
+\page build Project build
+This Project uses the CMake Makefile generator to manage the build process
+for various build tools.
+
+\section config Configure
+To create the build files, run CMake (at least Version 2.6)
+on the project root directory and select the desired Makefile
+generator. More information about this step can be found at the
+<a href="http://www.cmake.org/HTML/Documentation.html">
+CMake Documentation Website</a>.
+
+\subsection in-out-of-source In and out-of-source builds
+You can use in-source or out-of-source-builds. The advantage of in-source-builds
+is that you have all files (sources and binaries) in the same directories, but
+this makes it difficult to keep svn ignore lists etc. up to date.
+Source packages will be messed up too (see below).
+To keep the source directories clean, you can use out-of-source build
+which means that you create a second folder where binaries and tempoary files
+will be stored. It is possible to create multiple build directories
+where you can use different build systems (MinGW/MSVC/...)
+or different compiler settings.
+
+If you use the CMake GUI, you have to specify <b>two</b>
+directories, the source and the build directory. If these are the same, you
+perform a in-source-build, if you select two different directories, the
+source directory will be kept clean.
+
+\subsection environments Testet build environments
+-   Linux gcc >= 4.1
+-   Win32 gcc (mingw >= 4.3)
+-   Win32 Microsoft Visual Studio 2005, 2008
+
+\subsection switches Configuration switches, customizing build
+There are different configuration options that can be en- or disables as needed.
+These switches can be found in the CMake Cache editor (ccmake or cmake-gui).
+They are visible in the <em>simple view</em>.
+-   <b>CMAKE_BUILD_TYPE:</b><br>
+    (only avaiable on some build environments, e.g. gcc)<br>
+    Select build configuration, recommended values: Debug;Release
+-   <b>CMAKE_INSTALL_PREFIX:</b><br>
+    Select directory for installation using the make target "install".
+-   <b>ENABLE_DOC:</b><br>
+    (only avaiable if doxygen et al are installed and found)<br>
+    Enable generation of html api-documentation and offer pdf-doc generation.
+-   <b>WITH_LATEX:</b><br>
+    (only avaiable if LaTeX is installed and found)<br>
+    Enable generation of pdf documentation using \c pdflatex.
+-   <b>ENABLE_TEST:</b><br>
+    Build test suite and enable make target "test".
+-   <b>ENABLE_METADATAGEN:</b><br>
+    Enable generation of a class description file that can be used e.g. in the
+    Tuchulcha project.
+
+\subsection cflags Compiler flags
+When using the <b>GNU gcc compiler</b>, some compiler flags are are very useful
+for debugging. The used flags can be modified in the CMake Cache editor.
+The simplest way is using the CMake GUI. Don't forget to select the
+<em>advanced</em> or <em>grouped view</em> to be able to change the settings
+mentioned below.
+
+The recommended flags for \c CMAKE_CXXFLAGS and \c CMAKE_CFLAGS are:
+-   -W -Wall -Wextra: Activate many compiler warnings
+-   -pipe: try to avoid creation of temporary files (linux)
+
+You can specify a project build type (Debug, Release, ...) using the
+CMake Cache editor.
+
+Recommended settings for <tt>CMAKE_C(XX)FLAGS_DEBUG</tt>:
+-   -g3 -O0: Add debug symbols and deactivate optimization
+
+Recommended settings for <tt>CMAKE_C(XX)FLAGS_RELEASE</tt>:
+-   -O2 -march=\<your_cpu_architecture\> (e.g. -march=core2)
+
+If you are using <b>Visual Studio</b>, you do not need to tweak any of
+these settings.
+
+\section make Build the project
+After this configure step, you can build the project with your selected
+build tool (e.g. by typing \c mingw32-make in the console when using
+"MinGW Makefiles" as Makefile generator).
+The final executable will be avaiable in the \c app
+Directory. Unit tests are avaiable using the command <tt>ctest .</tt>
+
+\section install Installation and distribution
+To install the software, use the install command (the target directory can
+be changed in the CMake Cache editor). More confortable is the usage of
+precompiled packages that can be generated using CPack.
+
+If you want to use the <tt>\<make\> install</tt> command, check the following
+variables in the CMake Cache:
+-   <tt>CMAKE_INSTALL_PREFIX</tt>: this is where the project will be installed
+-   <tt>CMAKE_INSTALL_DOC</tt>: this is where the documentation will be installed
+    (this can be used if you want to install the documentation in a
+    seperate directory)
+    Do <b>not</b> set this to an absolute path or a path outside the build
+    directory (i.e. no path like ../blah) if you want to create packages.
+
+You can use <b>CPack</b> to generate installers and other packages for
+software distribution. For creation of Windows installers you have to
+install the <a href="http://nsis.sourceforge.net/Main_Page">
+Nullsoft Scriptable Install System</a>. CPack can also create RPM and
+DEB packages for linux systems. Zip/TarGZ/Z/... archives containing
+source or binary versions can also be created. You can select the
+package types you want to create in the CMake Cache Editor.
+
+To create the packages, type <tt>\<make\> package</tt> for binary
+packages and <tt>\<make\> package_source</tt> for source packages.
+It is recommended to use out-of-source builds if you want to create
+source packages, otherwise it is possible that some temporary or
+build files are compressed into the archives as well.
+*/

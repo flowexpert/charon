@@ -1,0 +1,90 @@
+/**
+\page usage Using charon-utils
+Charon-utils is a library, so don't look for some kind of main executable.
+You can use charon-utils in your own projects, use the classes and frameworks
+that are offered here. A sample data-processing framework that uses the
+ParameteredObject class can be found in the \c imgmanip directory. The file
+<tt>test/parametertest.cpp</tt> and <tt>test/imgmaniptest.cpp</tt> show how to
+use it.
+
+\section parobj Implementing a parametered Object
+Here, we discuss the content of the source file <tt>paramObjSample.cpp</tt>
+in the examples directory.
+
+\dontinclude paramObjSample.cpp
+\skip #include
+\until {
+Obviously, the new class needs to inherit from ParameteredObject to get all
+the features defined there. 
+
+\until in2
+Here we define the parameters that we want to use to store the
+object properties. These properties can be stored by
+ParameteredObject::saveParameters(), which only saves the parameters and
+ParameteredObject::save() which also stored the slot connections.
+The parameters can be loaded by ParameteredObject::loadParameters(). Like
+ParameteredObject::saveParameters(), this doesn't touch the slots.
+We also define input and output slots that can be used for data exchange between
+objects.
+
+\until };
+In the constructor, we have to call the inherited constructor of
+ParameteredObject. There, we have to specify an unique class name and
+pass the instance name. Then we have to initialize the parameters and
+output slots. Input slot <em>in2</em> is initialized as optional multislot.
+The effects are described below. Within the constructor, we have to add
+all parameters and slots to the corresponding management lists. This is done
+by calls of ParameteredObject::_addInputSlot, ParameteredObject::_addOutputSlot
+and ParameteredObject::_addParameter. This can also be delegated to some
+init() function if there are more than one constructor. The parameter
+initialization can <em>not</em> be delegated! The parameters of the _addXX
+functions are described in the API documentation.
+
+\until };
+The second example class is declared similarly.
+
+\skip main
+\until is now 5
+Object creation and access of the parameters is quite easy. The save/load
+routines handle all registered parameters.
+
+\until and outgen2
+Here you can see how objects can be connected with each other.
+
+\until outgen2->save(testfile);
+The object connections are also saved by the ParameteredObject::save() routine.
+The slot data will <em>not</em> be stored.
+
+\until delete outgen2;
+We do the cleanup and make sure that the destructor automatically disconnects
+existing slot connections.
+
+\until }
+At the end, we save the ParameterFile to the disk.
+
+\section tools  Other tools and frameworks in charon-utils
+The most importent framework in charon-utils is the parametered object
+framework mentioned above. But there are even more nice features.
+These features are easy to understand so the API documentation should be
+sufficient:
+-   namespace ImgTool:<br>
+    image manipulation routines
+-   namespace Convolution:<br>
+    advanced convolution implementations
+-   class FileTool:<br>
+    platform independent file manipulations
+-   class ParameterFile:<br>
+    parameter file handling used by parametered objects etc.
+-   class SplitStream:<br>
+    highly customizable output stream class with possibility to
+    stream into different targets etc.
+-   class StringTool:<br>
+    string manipulations
+-   class TypeDetector:<br>
+    guessing of basic data types
+-   class Pyramid and class Pyramid2DGauss:<br>
+    management of image pyramids
+-   class PdeBoundaryHandler:<br>
+    management of boundary conditions useful when
+    solving differential equations
+ */
