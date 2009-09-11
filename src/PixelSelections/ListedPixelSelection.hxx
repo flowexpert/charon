@@ -1,4 +1,20 @@
-/** @file ListedPixelSelection.hxx
+/*  This file is part of Charon.
+
+ Charon is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Charon is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ *  @file ListedPixelSelection.hxx
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 13.08.2009
  */
@@ -39,12 +55,10 @@ void ListedPixelSelection<T>::getListOfPixel()
 					pixel.setZ(z);
 					pixel.setT(t);
 					///@TODO könnte falsch sein
-					pixel.setRed(this->image().get_crop(pixel.getX(),
-							pixel.getY(), pixel.getZ(), pixel.getT(), 0));
-					pixel.setGreen(this->image().get_crop(pixel.getX(),
-							pixel.getY(), pixel.getZ(), pixel.getT(), 1));
-					pixel.setBlue(this->image().get_crop(pixel.getX(),
-							pixel.getY(), pixel.getZ(), pixel.getT(), 2));
+					for (unsigned int i = 0; i != this->sequence().size; i++)
+					{
+						pixel.pushBackIntensity(this->sequence()(x,y,z,t));
+					}
 					this->pixelList.push_back(&pixel);
 				}
 			}

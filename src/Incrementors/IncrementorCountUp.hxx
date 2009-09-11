@@ -1,3 +1,18 @@
+/*  This file is part of Charon.
+
+ Charon is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Charon is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**
  *  @file IncrementorConstant.hxx
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
@@ -70,14 +85,14 @@ bool IncrementorCountUp<T>::doStep()
 			if (*(this->listOfParams[i]) + this->paramList[i]->getStepSize()
 					<= this->paramList[i]->getMax())
 			{
-				(*(this->listOfParams[i])) ()
+				(*(this->listOfParams[i]))()
 						+= this->paramList[i]->getStepSize()();
 				break;
 			}
 			else
 			{
 				*(this->listOfParams[i]) = this->paramList[i]->getMin();
-				(*(this->listOfParams[i + 1])) ()
+				(*(this->listOfParams[i + 1]))()
 						+= this->paramList[i + 1]->getStepSize()();
 				typename std::vector<Parameter<T>*>::iterator iterLi = itLi++;
 				unsigned int k = i;
@@ -86,8 +101,8 @@ bool IncrementorCountUp<T>::doStep()
 					if (*(this->listOfParams[k]) > this->paramList[k]->getMax())
 					{
 						*(this->listOfParams[k]) = this->paramList[k]->getMin();
-						(*(this->listOfParams[k + 1])) ()
-								+= this->paramList[k + 1]->getStepSize()();
+						(*(this->listOfParams[k + 1]))() += this->paramList[k
+								+ 1]->getStepSize()();
 					}
 					k++;
 				}

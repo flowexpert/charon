@@ -1,3 +1,18 @@
+/*  This file is part of Charon.
+
+ Charon is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Charon is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /// @brief flow estimation by BlockMatching
 /**
  *  BlockMatching by:
@@ -17,6 +32,7 @@
 #include "BlockMatching.h"
 #include "PixelSelection.h"
 #include "ListedPixelSelection.h"
+#include "Incrementor.h"
 #include "IncrementorCountUp.h"
 #include "ObjectiveFunctionComparing.h"
 
@@ -24,11 +40,11 @@
 template<typename T>
 class BlockMatchingLIACS: public BlockMatching<T>
 {
+private:
+	std::vector<Parameter<T>* > paramListForApply;
 public:
 	/// standard constructor
 	BlockMatchingLIACS(const std::string& name);
-	/// standard execute from ParameteredObject
-	void execute();
 	void findFlow();
 
 };

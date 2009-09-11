@@ -1,3 +1,18 @@
+/*  This file is part of Charon.
+
+ Charon is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Charon is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**
  *  @file PixelSelection.hxx
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
@@ -15,9 +30,10 @@ PixelSelection<T>::PixelSelection(const std::string& name) :
 			"save range of interest in a list of pixels")
 {
 	_addInputSlot(range, "range", "Range of Interest", "roi");
-	_addInputSlot(image, "image", "Image to work with", "CImg");
+	_addInputSlot(sequence, "sequence", "Sequence to work with",
+			"cimg_library::CImgList<T>& ");
 	_addOutputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
-			"std::vector<Pixel<T>>*");
+			"std::vector<Pixel<T> > *");
 }
 
 template<typename T>
@@ -69,39 +85,21 @@ const T& Pixel<T>::getT() const
 }
 
 template<typename T>
-void Pixel<T>::setRed(const T& newRed)
+void Pixel<T>::pushBackIntensity(const T& newI)
 {
-	this->red = newRed;
+	this->intensity.push_back(newI);
 }
 
 template<typename T>
-const T& Pixel<T>::getRed() const
+void Pixel<T>::insertIntensity(const int pos, const T& updatedI)
 {
-	return this->red;
+	this->intensity[pos] = updatedI;
 }
 
 template<typename T>
-void Pixel<T>::setBlue(const T& newBlue)
+const std::vector<T>& Pixel<T>::getIntensity() const
 {
-	this->blue = newBlue;
-}
-
-template<typename T>
-const T& Pixel<T>::getBlue() const
-{
-	return this->blue;
-}
-
-template<typename T>
-void Pixel<T>::setGreen(const T& newGreen)
-{
-	this->green = newGreen;
-}
-
-template<typename T>
-const T& Pixel<T>::getGreen() const
-{
-	return this->green;
+	return this->intensity;
 }
 
 #endif

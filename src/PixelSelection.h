@@ -1,3 +1,18 @@
+/*  This file is part of Charon.
+
+ Charon is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Charon is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**
  *  @file PixelSelection.h
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
@@ -19,13 +34,11 @@ class Pixel
 {
 protected:
 	///is able to save pixel data
-	T x; ///@param x				x position
-	T y; ///@param y				y position
-	T z; ///@param z				z position
-	T t; ///@param t				Time value
-	T red; ///@param red 			red intensity at x,y,z position
-	T green; ///@param green		green intensity at x,y,z position
-	T blue; ///@param blue 			blue intensity at x,y,z position
+	T x; ///@param x		x position
+	T y; ///@param y		y position
+	T z; ///@param z		z position
+	T t; ///@param t		Time value
+	std::vector<T> intensity; ///@param intensity 		intensity at x,y,z position
 
 public:
 	void setX(const T& newX);
@@ -36,13 +49,9 @@ public:
 	const T& getZ() const;
 	void setT(const T& newT);
 	const T& getT() const;
-	void setRed(const T& newRed);
-	const T& getRed() const;
-	void setBlue(const T& newBlue);
-	const T& getBlue() const;
-	void setGreen(const T& newGreen);
-	const T& getGreen() const;
-
+	void pushBackIntensity(const T& newI);
+	void insertIntensity(const int pos, const T& updatedI);
+	const std::vector<T>& getIntensity() const;
 };
 
 /// Pixel Selection
@@ -55,7 +64,7 @@ public:
 	/// standard constructor
 	PixelSelection(const std::string& name);
 	InputSlot<Roi<int>*> range;
-	InputSlot<cimg_library::CImg<T>&> image;
+	InputSlot<cimg_library::CImgList<T> &> sequence;
 	OutputSlot<std::vector<Pixel<T> > *> pixelList;
 	/// the execute method starts the execute method form ParameteredObject
 	virtual void execute()=0;

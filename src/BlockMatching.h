@@ -1,10 +1,20 @@
-/*
- * Blockmatching.h
- *
- *  Created on: 12.08.2009
- *      Author: andreas
+/*  This file is part of Charon.
+
+ Charon is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Charon is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** @file Blockmatching.h
+/**
+ *  @file Blockmatching.h
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 12.08.2009
  */
@@ -18,6 +28,9 @@
 #include "Incrementor.h"
 #include "SurfaceAnalysis.h"
 #include "PixelSelection.h"
+#include "BrightnessModel.h"
+#include "MotionModel.h"
+#include "Interpolator.h"
 #include <vector>
 
 template<typename T>
@@ -28,13 +41,13 @@ class BlockMatching: public TemplatedParameteredObject<T>
 public:
 	/// standard constructor
 	BlockMatching(const std::string& name);
-	InputSlot<cimg_library::CImg<T> > sequence;
+	InputSlot<cimg_library::CImgList<T>& > sequence;
 	InputSlot<Roi<int>*> range;
 	InputSlot<std::vector<Pixel<T> >*> pixelList;
-	InputSlot<Incrementor<T> *> newpos;
+	InputSlot<Incrementor<T> *> newParams;
 	InputSlot<std::vector<std::string>*> changes;
 	/// standard execute from Parametered Object
-	virtual void execute() =0;
+	void execute();
 	/// trys to find the flow in the sequence
 	virtual void findFlow() =0;
 
