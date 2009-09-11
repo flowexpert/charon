@@ -39,7 +39,7 @@ class Solver : public ParameteredObject
 	private:
 		InpurSlot< Stencil<T>* > stencils;
 		InputSlot< Roi<int>* > roi;
-		OutputSlot<cimg_library::CImgList<T>& > out;
+		OutputSlot<cimg_library::CImgList<T>& > out; //Pointer? Reference?
 				
 		//meta stencil class to combine multiple substencils by unknown
 		class MetaStencil

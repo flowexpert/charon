@@ -87,7 +87,7 @@ class Stencil : public ParameteredObject
 		 * -   This member must never be erased as long as the stencil exists
 		 * 	   because this would break the pointers of following objects
 		 */
-		std::map<std::string, T>& rhs;
+		std::map<std::string, T> rhs;
 		
 //		/Coordinates of the center.
 //		Point4D center;
@@ -126,6 +126,9 @@ class Stencil : public ParameteredObject
 		 */
 		std::map<std::string, Substencil<T> >& get() const
 			{return substencils;}
+		
+		std::map<std::string, T>& getRhs() const
+			{return rhs;}
 				
 		virtual cimg_library::CImgList<T>& apply(
 			const cimg_library::CImgList<T>& seq,

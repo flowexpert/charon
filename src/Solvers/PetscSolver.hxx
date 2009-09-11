@@ -320,7 +320,7 @@ class PetscSolver : public Solver
 			//necessary stencils by pointers instead of searching through all
 			//stencils to find those that use the unknown in question
 			
-			std::map<std::string, std::vector<stencil<T>*> > substencils;
+			std::map<std::string, std::vector<Stencil<T>*> > substencils;
 			std::set<AbstractSlot<T>*>::const_iterator sIt; //stencil iterator
 			std::set<std::string>::iterator uIt;			//unknowns iterator
 			for(sIt=stencils.begin() ; sIt!=stencils.end() ; sIt++) {	//iterate through stencils
@@ -432,17 +432,24 @@ class PetscSolver : public Solver
 				if (this->roi()->isInside(p.x, p.y, p.z, p.t)) { //Real point:
 					//Update all stencils of the unknown to contain current data
 					int nos = (int)substencils[unknown].size();	//number of stencils
+					PetscScalar rhs;	//right hand side
 					for (int index = 0 ; index < nos ; index++) {
-						substencils[unknown][index].updateStencil(p.x, p.y, p.z, p.t);
+						substencils[unknown][index]->updateStencil(p.x, p.y, p.z, p.t);
+						rhs += (PetscScalar)substencils[unknown][index]->getRhs()[unknown];
 					}
 					//now call the Metastencil of this unknown to gather all the
 					//data of its substencils (which have just been updated) and
 					//put the values and their indices into the respective arrays
 					//for MatSetValues					
 					unsigned int ne; //number of entries
+					//transfer data form the substencils into the arrays and get
+					//the number of entries back
 					ne = metastencils[unknown]->update(unknown,p,unknownSizes,columns,values);
 					
+					//write values into matrix
 					ierr = MatSetValues(A,1,&j,ne,columns,values,INSERT_VALUES);CHKERRQ(ierr);
+					//and right hand side
+					ierr = VecSetValues(b,1,&j,rhs,INSERT_VALUES);CHKERRQ(ierr);
 					
 					
 				} else { //Ghost node:
@@ -460,12 +467,31 @@ class PetscSolver : public Solver
 					ierr = MatSetValues(A,1,&j,2,columns,values,INSERT_VALUES);CHKERRQ(ierr);
 				}				
 			}
+			
+			ierr = MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
+			ierr = MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
+			ierr = VecAssemblyBegin(b);CHKERRQ(ierr);
+			ierr = VecAssemblyEnd(b);CHKERRQ(ierr);
+			
+			ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN);CHKERRQ(ierr);
+			ierr = KSPSolve(ksp,b,x);CHKERRQ(ierr);
+			
+			//write result back
+			
+			
+			//clean up
+			ierr = VecDestroy(x);
+			ierr = VecDestroy(b);
+			ierr = MatDestroy(A);
+			ierr = KSPDestroy(ksp);
+			ierr = PetscFinalize();
 		}
 		
 		~PetscSolver() {
 			//make sure, PetscInt and PetscScalar get cleared
 			delete[] columns;
 			delete[] values;
+			
 		}
 };
 
