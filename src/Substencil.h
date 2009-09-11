@@ -13,11 +13,11 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Substencil.hxx
+/** @file Substencil.h
  *  Implementation of class Subtencil.
  *  This class is used to manage the pattern, the data and the center
  *  of a substencil.
- *  @see Stencil.hxx
+ *  @see Stencil.h
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *
@@ -25,40 +25,32 @@
  */
 
 
-#ifndef _substencil_HXX_
-#define _substencil_HXX_
+#ifndef _SUBSTENCIL_H_
+#define _SUBSTENCIL_H_
 
-#include "Substencil.h"
+#include <CImg.h>
+#include "Point4D.h"
 
-///default constructor
 template <class T>
-Substencil<T>::Substencil(const unsigned int dimx, const unsigned int dimy,
-                          const unsigned int dimz, const unsigned int dimt,
-                          Point4D center) {
-    //extend CImg objects to given size and initialize all values with 0
-	data.assign(dimx, dimy, dimz, dimt, 0);
-	pattern.assign(dimx, dimy, dimz, dimt, 0);
-	this->center = center;
-}
+class Substencil
+{
+	public:
+		cimg_library::CImg<T> data;
+		cimg_library::CImg<char> pattern;
+		Point4D center;
 		
-///copy constructor
-template <class T>
-Substencil<T>::Substencil(const Substencil &rhs) {
-	this->data = rhs.data;
-	this->pattern = rhs.pattern;
-	this->center = rhs.center;
-}
+		///default constructor
+		Substencil(const unsigned int dimx, const unsigned int dimy,
+		           const unsigned int dimz, const unsigned int dimt,
+		           Point4D center);
 		
-///assignment operator
-template <class T>
-Substencil& Substencil<T>::operator= (const Substencil &rhs) {
-	if (&rhs == this) {return *this;}
-	this->data = rhs.data;
-	this->pattern = rhs.pattern;
-	this->center = rhs.center;
-	return *this;
-}
+		///copy constructor
+		Substencil(const Substencil &rhs);
+		
+		///assignment operator
+		Substencil& operator= (const Substencil &rhs);
 				
-Substencil<T>::~Substencil();
+		~Substencil();
+};
 
-#endif //_substencil_HXX_
+#endif //_SUBSTENCIL_H_
