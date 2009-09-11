@@ -41,7 +41,7 @@ int main() {
 	PluginManager man("./Release");
 #endif /* _DEBUG */
 #else
-	PluginManager man("../imgmanip");
+	PluginManager man("../src");
 #endif
 
 	man.loadPlugin("filereader");
