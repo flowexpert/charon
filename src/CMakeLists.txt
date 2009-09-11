@@ -62,3 +62,9 @@ INSTALL(
     COMPONENT   headers
 )
 
+
+INSTALL(
+    EXPORT       ${PROJECT_NAME}
+    DESTINATION  include/${PROJECT_NAME}
+    COMPONENT    libraries
+)
