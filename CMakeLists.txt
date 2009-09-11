@@ -21,6 +21,7 @@ SET(QT_USE_QTTEST TRUE)
 # set up QT environment
 INCLUDE(${QT_USE_FILE})
 
+FIND_PACKAGE(charon-core REQUIRED)
 FIND_PACKAGE(charon-utils REQUIRED)
 
 # executables and dll files are moved to the same directory
