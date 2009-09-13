@@ -1,4 +1,5 @@
 PROJECT(tuchulcha C CXX)
+
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 
 # use own cmake files
@@ -47,6 +48,10 @@ IF(UNIX)
 ELSE(UNIX)
 	ADD_DEFINITIONS(-DWINDOWS)
 ENDIF(UNIX)
+
+IF(APPLE)
+	ADD_DEFINITIONS(-DQ_WS_MAC32)
+ENDIF(APPLE)
 
 # set up documentation generation
 FIND_PACKAGE(Doxygen)

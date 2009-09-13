@@ -50,7 +50,39 @@ ENDIF(WIN32)
 
 # install into bin subdirectory
 INSTALL(
-    TARGETS     paramedit paraminspector
+    TARGETS     paraminspector
     RUNTIME     DESTINATION    bin
     COMPONENT   applications
 )
+
+#Create application package
+IF(APPLE)
+	CONFIGURE_FILE(
+		${CMAKE_CURRENT_SOURCE_DIR}/MacOSInfo.plist.in
+		${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MacOSInfo.plist
+		@ONLY
+	)
+	INSTALL(
+	    FILES       ${PROJECT_SOURCE_DIR}/icons/MacOSIcon.icns
+	    DESTINATION /Applications/Tuchulcha.app/Contents/Resources
+	    COMPONENT   applications
+	)
+	INSTALL(
+	    FILES       ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MacOSInfo.plist
+	    DESTINATION /Applications/Tuchulcha.app/Contents
+	    COMPONENT   applications
+	    RENAME	Info.plist
+	)
+	INSTALL(
+	    TARGETS     paramedit
+	    RUNTIME     DESTINATION    /Applications/Tuchulcha.app/Contents/MacOS
+	    COMPONENT   applications
+	)
+ELSE(APPLE)
+	INSTALL(
+	    TARGETS     paramedit
+	    RUNTIME     DESTINATION    bin
+	    COMPONENT   applications
+	)
+
+ENDIF(APPLE)
