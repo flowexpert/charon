@@ -25,10 +25,11 @@
 #ifndef _POINT4D_H_
 #define _POINT4D_H_
 
+template <class T>
 class Point4D
 {
 	public:
-		unsigned int x, y, z, t;
+		T x, y, z, t;
 		
 		///default constructor
 		Point4D() {
@@ -39,7 +40,7 @@ class Point4D
 		}		
 		
 		///constructor with coordinates
-		Point4D(int x, int y, int z, int t) : x(x), y(y), z(z), t(t) {}
+		Point4D(T x, T y, T z, T t) : x(x), y(y), z(z), t(t) {}
 		
 		///copy constructor
 		Point4D(const Point4D &rhs) {
@@ -108,9 +109,8 @@ class Point4D
 			return (*this > rhs || *this == rhs);
 		}
 		
-		unsigned int volume() {
-			unsigned int v = x * y * z * t;
-			return v;
+		T volume() {
+			return x * y * z * t;
 		}
 		
 		~Point4D() {}
