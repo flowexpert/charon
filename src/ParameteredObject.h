@@ -61,6 +61,9 @@
 typedef unsigned short int template_type;
 
 class PluginManagerInterface;
+template<typename T>
+class TemplatedParameteredObject;
+
 
 /// This is the base class for objects that should be able to save and
 /// reload their settings in/from a ParameterFile.
@@ -78,8 +81,11 @@ class PluginManagerInterface;
 /// -   An object factory can be created using the getInstance() function
 ///     which can even create new objects if a dummy object (named like the
 ///     className itself) exist.
+
 class DLLEX ParameteredObject {
 	friend class PluginManager;
+	template<typename T>
+	friend class TemplatedParameteredObject;
 
 private:
     /// Count number of parametered objects with different class names.

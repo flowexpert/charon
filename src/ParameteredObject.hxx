@@ -52,6 +52,7 @@ TemplatedParameteredObject<T>::TemplatedParameteredObject(
 		const std::string& className, const std::string& name,
 		const std::string& doc) :
 	ParameteredObject(className, name, doc) {
+		_addSomething("parameters", "templatetype", "template type", "string", "double");
 
 }
 
