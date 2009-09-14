@@ -27,6 +27,7 @@
 #include "main.h"
 #include <set>
 #include "BrightnessModels/BrightnessFunctorInterface.h"
+#include "Pixel.h"
 
 /// abstract base class for the different BrightnessModels
 template <class T>
@@ -89,11 +90,14 @@ public:
 	virtual std::set<std::string>& getUnknowns() =0;
 
 	/** 
-	 *  returns a Image with the changes it has to do
+	 *  compute brightness changes 
+	 *  @param inPixel insert pixel for which is the birghtness changes has to 
+	 *  be done
 	 *  @param modifier vector of Parameters to compute the modification
-	 *  @param[out] vector of pixel properties 
+	 *  @param outPixel return value of Pixel type
 	 */
-	virtual std::vector<T> apply(const std::vector<Parameter<T>* > & modifier) =0;
+	virtual void apply(const Pixel<T> & inPixel, 
+	const std::vector<Parameter<T>* > & modifier, Pixel<T> & outPixel) =0;
 };
 
 #endif

@@ -33,9 +33,9 @@ template <typename T>
 BrightnessModels::Diffusion<T>::Diffusion(const string& name) :
 	BrightnessModel<T>("brightnessmodels_diffusion",name)
 {
-	_addInputSlot(dxx, "dxx","2nd derivative in x-direction","CImgList");
-	_addInputSlot(dyy, "dyy","2nd derivative in y-direction","CImgList");
-	_addInputSlot(dzz, "dzz","2nd derivative in z-direction","CImgList");
+	this->_addInputSlot(dxx, "dxx","2nd derivative in x-direction","CImgList");
+	this->_addInputSlot(dyy, "dyy","2nd derivative in y-direction","CImgList");
+	this->_addInputSlot(dzz, "dzz","2nd derivative in z-direction","CImgList");
 	
 	this->brightnessFunctor = &functor;
 	
@@ -87,10 +87,12 @@ void BrightnessModels::Diffusion<T>::setFunctorParams(float d)
 }
 
 template <class T>
-std::vector<T> BrightnessModels::Diffusion<T>::apply(const std::vector<Parameter<T>* > & modifier)
+void BrightnessModels::Diffusion<T>::apply(const Pixel<T> & inPixel, const std::vector<
+		Parameter<T>*> & modifier, Pixel<T> & outPixel)
 {
-	std::vector<T> ret;
-	return ret;
+
+	outPixel = inPixel;
+
 /* std::string d, x, y, z, t;
     x = modifier[0];
     y = modifier[1];

@@ -25,7 +25,7 @@
 
 #include "ObjectiveFunctionComparing.h"
 #include "ObjectiveFunction.hxx"
-#include "ListedPixelSelection.hxx"
+#include "Pixel.hxx"
 
 template<typename T>
 ObjectiveFunctionComparing<T>::ObjectiveFunctionComparing(
@@ -43,18 +43,20 @@ T ObjectiveFunctionComparing<T>::compare(
 {
 	T foundChange = 0;
 	Pixel<T> pixel;
-	std::vector<T> piList;
-	for (unsigned int i = 0; i != pixelList.size(); i++)
+	for (unsigned int i = 0; i != pixelList.size() - 1; i++)
 	{
-		pixel = this->brightnessModel().apply(pixelList[i], params);
-		piList = pixel.getIntensity();
-		for (unsigned int j = 0; j != piList.size(); j++)
+		this->brightnessModel()->apply(pixelList[i], params, pixel);
+		//this->motionModel()->apply(pixel, params, pixel);
+		std::vector<T> piList = pixel.getIntensity(); //pixel intensity list
+		for (unsigned int j = 0; j != piList.size() - 1; j++)
 		{
-			foundChange += this->interpolator()->interpolate(
-					this->sequence[piList[i]], pixel.getX(), pixel.getY(),
+			T predictedIntenity = piList[j];
+			T foundIntensity = this->interpolator()->interpolate(
+					this->sequence()[j], pixel.getX(), pixel.getY(),
 					pixel.getZ(), pixel.getT());
+			foundChange += (predictedIntenity - foundIntensity)
+					* (predictedIntenity - foundIntensity);
 		}
-		pixel = this->motionModel.apply(pixelList[i], params);
 	}
 	return foundChange;
 }

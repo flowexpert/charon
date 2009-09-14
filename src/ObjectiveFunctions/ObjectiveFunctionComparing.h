@@ -24,7 +24,6 @@
 #define OBJECTIVEFUNKTIONCOMPARING_H_
 
 #include "ObjectiveFunction.h"
-#include "ListedPixelSelection.h"
 
 template<typename T>
 class ObjectiveFunctionComparing: ObjectiveFunction<T>

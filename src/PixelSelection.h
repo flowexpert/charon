@@ -25,34 +25,9 @@
 #include "ParameteredObject.hxx"
 #include "Roi.h"
 #include "BlockMatching.h"
+#include "Pixel.h"
 #include "CImg.h"
 #include <vector>
-
-/// Pixel is a data structure to save one pixel in it
-template<typename T>
-class Pixel
-{
-protected:
-	///is able to save pixel data
-	T x; ///@param x		x position
-	T y; ///@param y		y position
-	T z; ///@param z		z position
-	T t; ///@param t		Time value
-	std::vector<T> intensity; ///@param intensity 		intensity at x,y,z position
-
-public:
-	void setX(const T& newX);
-	const T& getX() const;
-	void setY(const T& newY);
-	const T& getY() const;
-	void setZ(const T& newZ);
-	const T& getZ() const;
-	void setT(const T& newT);
-	const T& getT() const;
-	void pushBackIntensity(const T& newI);
-	void insertIntensity(const int pos, const T& updatedI);
-	const std::vector<T>& getIntensity() const;
-};
 
 /// Pixel Selection
 /// This class saves all Pixel we are interested in, in a list of pixel
