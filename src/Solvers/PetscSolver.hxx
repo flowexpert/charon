@@ -425,6 +425,7 @@ void PetscSolver<T>::update() {
 	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN);CHKERRQ(ierr);
 	ierr = KSPSolve(ksp,b,x);CHKERRQ(ierr);
 	
+	//only the #0 Machine is supposed to write results back
 	if (this->isRankZero()) {
 		//Prepare vector and context first
 		Vec				result;	//Vector to store the result in
@@ -441,8 +442,9 @@ void PetscSolver<T>::update() {
 		}
 		//now, lookup contains all unknowns and their index in the CImgList
 		//the indices are easily accessibly with lookup.find(unknown)->second
+		std::map<std::string, unsigned int>::iterator lIt; //Lookup iterator
+		unsigned int globalIndex;	//to store the current global index
 		
-		//write result back
 		//Create local vector to store the result in
 		ierr = VecCreate(PETSC_COMM_WORLD,&result);CHKERRQ(ierr);
 		ierr = VecSetSetSizes(result,n,n);CHKERRQ(ierr); //local vector
@@ -452,12 +454,18 @@ void PetscSolver<T>::update() {
 		ierr = VecScatterEnd();CHKERRQ(ierr);
 		//now 'result' contains - well - the result. The difference is, that x is a
 		//parallel vector (scattered across all machines), but 'result' is a local
-		//vector
+		//vector which exists only in the #0 machine
 		PetscScalar* res;
+		//now make the result-vector available as an array of PetscScalar
 		ierr = VecGetArray(result,res);CHKERRQ(ierr);
 		
-		forRoiXYZT(roi(),x,y,z,t){
-			
+		for(lIt=lookup.begin() ; lIt!=lookup.end();lIt++) { //for all unknowns
+			forRoiXYZT(roi(),x,y,z,t){ //go through the image
+				//get the current global index
+				globalIndex = pointToGlobalIndex(Point4D<unsigned int>(x,y,z,t),lIt->first, unknownSizes);
+				//and write the results into the output slot 'out'
+				out()(lIt->second,x,y,z,t) = res[globalIndex];
+			}
 		}
 		
 		ierr = VecRestoreArray(result,res);CHKERRQ(ierr);
