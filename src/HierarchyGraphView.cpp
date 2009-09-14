@@ -185,8 +185,7 @@ void HierarchyGraphView::_renderGraph(graph_t* graph) {
             // store slot information
             slotRect->setData(1, "input");
             slotRect->setData(2, inputs[i].c_str());
-            slotRect->setData(3, _model->metaInfo()->getType(
-                std::string(cur->name) + "." + inputs[i], className).c_str());
+            slotRect->setData(3, _model->getType(std::string(cur->name) + "." + inputs[i]).c_str());
             rectItemList << slotRect;
         }
 
@@ -197,8 +196,7 @@ void HierarchyGraphView::_renderGraph(graph_t* graph) {
             // store slot information
             slotRect->setData(1, "output");
             slotRect->setData(2, outputs[i].c_str());
-            slotRect->setData(3, _model->metaInfo()->getType(
-                std::string(cur->name) + "." + outputs[i], className).c_str());
+            slotRect->setData(3, _model->getType(std::string(cur->name) + "." + outputs[i]).c_str());
             rectItemList << slotRect;
         }
 

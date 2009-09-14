@@ -59,7 +59,9 @@ public:
     ///                         (use ParameterFileModel::getClass to get this)
     std::vector<std::string> getParameters(const std::string& className) const;
 
-    /// get type of some parameter or slot
+    /// Get type of some parameter or slot.
+    /// Use GraphModel::getType if there are template arguments and you need to
+    /// know the type in the specific instance.
     /// @param parName          name of the parameter
     /// @param className        object class name
     ///                         (use ParameterFileModel::getClass to get this)

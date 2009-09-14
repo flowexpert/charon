@@ -114,9 +114,7 @@ void HierarchyGraphBuilder::updateGraph() {
                 std::string sourceObj = ParameterFile::objName(*source);
                 std::string sourceSlot = ParameterFile::parName(*source);
 
-                std::string sourceClass = _model->getClass(*source);
-                std::string slotType =
-                    _model->metaInfo()->getType(*source, sourceClass);
+                std::string slotType = _model->getType(*source);
 
                 // add edge to graph
                 edge_t* edge = agedge(_graph, nodemap[sourceObj],

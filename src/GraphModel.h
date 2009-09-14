@@ -68,6 +68,11 @@ public:
     /// Get nodes in current graph
     QStringList nodes() const;
 
+    /// Get type of some parameter or slot.
+    /// This also handles presence of some template parameters.
+    /// @param parName          name of the parameter
+    std::string getType(std::string parName) const;
+
 public slots:
     /// @name edit graph
     //  @{

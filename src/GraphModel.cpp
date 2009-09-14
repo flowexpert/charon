@@ -144,10 +144,8 @@ bool GraphModel::connected(const QString& source,
     }
 
     // check slot types
-    std::string inSlotType  =
-        metaInfo()->getType(target.toAscii().constData(), targetClass);
-    std::string outSlotType =
-        metaInfo()->getType(source.toAscii().constData(), sourceClass);
+    std::string inSlotType  = getType(target.toAscii().constData());
+    std::string outSlotType = getType(source.toAscii().constData());
     if (inSlotType != outSlotType)
         throw std::string("Type of \"") + target.toAscii().constData()
             + "\" (" + inSlotType + ") does not match type of \""
@@ -571,4 +569,23 @@ void GraphModel::addNode(const QString& className, bool draw) {
 
     if(draw)
         emit graphChanged();
+}
+
+/// @todo implement me ;-)
+std::string GraphModel::getType(std::string parName) const {
+    std::string res = metaInfo()->getType(parName, getClass(parName));
+    if(StringTool::toLowerCase(res).find("<t>") != std::string::npos) {
+        std::string instanceName = parName.substr(0, parName.find('.'));
+        if(parameterFile().isSet(instanceName + ".templatetype")) {
+            res.replace(StringTool::toLowerCase(res).find("<t>"), 3, "<" + parameterFile().get<std::string>(instanceName + ".templatetype") + ">");
+        } else {
+            try{
+                std::string type = std::string("<") + metaInfo()->getDefault("templatetype", getClass(parName)) + ">";
+                res.replace(StringTool::toLowerCase(res).find("<t>"), 3, type);
+            } catch (...) {
+                qDebug() << "Templated Slot in non-templated Object found.";
+            }
+        }
+    }
+    return res;
 }
