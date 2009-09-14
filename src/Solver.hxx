@@ -129,7 +129,7 @@ MetaStencil<T>& Metastencil<T>::operator=(Metastencil<T>& rhs) {
 //the only necessary getter to determine the maximum number of
 //entries.
 template <class T>
-std::set<Point4D>& Metastencil<T>::getPattern() {return pattern;}
+std::set<Point4D<unsigned int> >& Metastencil<T>::getPattern() {return pattern;}
 
 template <class T>		
 Roi<int> Metastencil<T>::expand(const Roi<int>& inRoi) {
@@ -148,12 +148,12 @@ Roi<int> Metastencil<T>::expand(const Roi<int>& inRoi) {
 
 template <class T>
 Solver<T>::Solver(const std::string& classname, const std::string& name = "") : 
-		ParameteredObject(classname,name,"solves the linear system"),
+		TemplatedParameteredObject<T>(classname,name,"solves the linear system"),
 		stencils(false,true)	//make stencil input slot mandatory and multi
 {
-	_addInputSlot(stencils,"stencil","Multi Input slot for stencils","stencil<T>*");
-	_addInputSlot(roi,"roi","region of interest to work on","Roi<int>*");
-	_addOutputSlot(out,"out","CImgList containing the solution","CImgList");
+	this->_addInputSlot(stencils,"stencil","Multi Input slot for stencils","stencil<T>*");
+	this->_addInputSlot(roi,"roi","region of interest to work on","Roi<int>*");
+	this->_addOutputSlot(out,"out","CImgList containing the solution","CImgList");
 }
 
 template <class T>

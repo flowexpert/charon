@@ -37,12 +37,12 @@ class Substencil
 	public:
 		cimg_library::CImg<T> data;
 		cimg_library::CImg<char> pattern;
-		Point4D center;
+		Point4D<unsigned int> center;
 		
 		///default constructor
 		Substencil(const unsigned int dimx, const unsigned int dimy,
 		           const unsigned int dimz, const unsigned int dimt,
-		           Point4D center);
+		           Point4D<unsigned int> center);
 		
 		///copy constructor
 		Substencil(const Substencil &rhs);

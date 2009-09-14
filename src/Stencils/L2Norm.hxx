@@ -31,10 +31,10 @@
 
 template <class T>
 L2Norm<T>::L2Norm(const std::string& name = "") : 
-Stencil("L2Norm","L2Norm",
-"discretizes partial differential equation terms or defines derivatives filters for images") {
-	_addParameter(unknowns, "unknowns", "List of unknowns");
-	_addParameter(dimensions, "dimensions", "Number of dimensions",2);
+		Stencil<T>("L2Norm","L2Norm",
+		"discretizes partial differential equation terms or defines derivatives filters for images") {
+	this->_addParameter(unknowns, "unknowns", "List of unknowns");
+	this->_addParameter(dimensions, "dimensions", "Number of dimensions",2);
 	if (dimensions > 4) {throw "invalid dimensions";}
 }
 
@@ -61,7 +61,7 @@ void L2Norm<T>::update() {
 			break;
 	}
 	
-	Point4D center;
+	Point4D<unsigned int> center;
 	
 	//filling mask with values and setting the center
 	if (dimensions == 1) {

@@ -27,6 +27,18 @@
 #ifndef _SOLVER_HXX_
 #define _SOLVER_HXX_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef solver_EXPORTS
+///Visual C++ specific code
+#define solver_DECLDIR __declspec(dllexport)
+#else
+#define solver_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define solver_DECLDIR
+#endif
+
 #include <CImg.h>
 #include <petscksp.h>
 #include <ParameteredObject.h>
@@ -34,7 +46,7 @@
 #include "Stencil.h"
 
 template <class T>
-class Solver : public ParameteredObject
+class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 {
 	private:
 		InpurSlot< Stencil<T>* > stencils;
@@ -63,7 +75,7 @@ class Solver : public ParameteredObject
 				 * Set of points that belong to this metastencil.
 				 * @remark The size of the metastencil has to be extracted from the pattern.
 				 */
-				std::set<Point4D> pattern;
+				std::set<Point4D<unsigned int> > pattern;
 				
 				///@todo changed int -> unsigned int - re-check code to avoid hiccups
 				//expansions in all 8 directions
@@ -72,7 +84,7 @@ class Solver : public ParameteredObject
 				unsigned int backward=0 , forward=0;	//z (backward is negative, forward is positive)
 				unsigned int before=0   , after=0;	//t (before is negative, after is positive)
 				
-				Point4D center;				//coordinates of the center of the meta stencil
+				Point4D<unsigned int> center;				//coordinates of the center of the meta stencil
 			public:
 				///default constructor
 				MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils);
@@ -85,7 +97,7 @@ class Solver : public ParameteredObject
 				
 				//the only necessary getter to determine the maximum number of
 				//entries.
-				std::set<Point4D>& getPattern();
+				std::set<Point4D<unsigned int> >& getPattern();
 				
 				//Your implementation of the MetaStencil will need a function
 				//to gather the data from the different substencils and present

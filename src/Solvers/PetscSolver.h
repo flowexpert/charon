@@ -27,14 +27,25 @@
 #ifndef _PETSCSOLVER_H_
 #define _PETSCSOLVER_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef petscsolver_EXPORTS
+///Visual C++ specific code
+#define petscsolver_DECLDIR __declspec(dllexport)
+#else
+#define petscsolver_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define petscsolver_DECLDIR
+#endif
+
 #include "Solver.h"
 #include <petscksp.h>
 
 ///@todo incorporate std::runtime_error and #include <stdexept> instead of throw "string"
 
-
 template <class T>
-class PetscSolver : public Solver
+class petscsolver_DECLDIR PetscSolver : public Solver
 {
 	private:
 		PetscInt		*columns;
@@ -56,7 +67,7 @@ class PetscSolver : public Solver
 				 * @return Number of entries.
 				 */
 				unsigned int update(const std::string unknown,
-				                    const Point4D& p,
+				                    const Point4D<unsigned int>& p,
 				                    const std::map<std::string,roi<int> >& unknownSizes,
 				                    PetscInt* &columns, PetscScalar* &values);
 		};
@@ -69,7 +80,7 @@ class PetscSolver : public Solver
 		 * @see getCoordinate()
 		 * @return Relative vector index.
 		 */
-		unsigned int pointToRelativeIndex(const Point4D p, const roi<int> &dim) const;
+		unsigned int pointToRelativeIndex(const Point4D<unsigned int> p, const roi<int> &dim) const;
 		
 		/**
 		 * Converts a relative vector index to a global vector index.
@@ -95,7 +106,7 @@ class PetscSolver : public Solver
 		 */
 		void globalIndexToPoint(const unsigned int vi,
 		                        const std::map<std::string, roi<int> >& unknownSizes,
-		                        std::string& unknown, Point4D& p);
+		                        std::string& unknown, Point4D<unsigned int>& p);
 		
 		/**
 		 * Convert coordinates to the global index
@@ -104,7 +115,7 @@ class PetscSolver : public Solver
 		 * @param[in] unknownSizes Map of ROIs associated to their unknown
 		 * @return global index
 		 */
-		unsigned int pointToGlobalIndex(const Point4D &p, const std::string unknown,
+		unsigned int pointToGlobalIndex(const Point4D<unsigned int>& p, const std::string unknown,
 		                                const std::map<std::string, roi<int> >& unknownSizes);
 		
 		/**
@@ -113,7 +124,7 @@ class PetscSolver : public Solver
 		 * @return Point4D object containing the coordinates of the closest
 		 * boundary pixel of the unexpanded ROI
 		 */
-		Point4D& getBoundary(Point4D &p);
+		Point4D<unsigned int>& getBoundary(Point4D<unsigned int> &p);
 		
 	public:	
 		PetscSolver(const std::string& name = "");

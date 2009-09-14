@@ -22,19 +22,20 @@
  */
 
 
-#ifndef _stencil_HXX_
-#define _stencil_HXX_
+#ifndef _STENCIL_HXX_
+#define _STENCIL_HXX_
 
 #include "Stencil.h"
+#include "Substencil.hxx"
 #include <ParameteredObject.hxx>
 
 template <class T>
 Stencil<T>::Stencil(const std::string& classname, const std::string& name = "") : 
-				ParameteredObject(classname,name,
+				TemplatedParameteredObject<T>(classname,name,
 				"discretizes partial differential equation terms or defines derivatives filters for images"),
 				out(this) {
-	_addOutputSlot(out,"this","Pointer to itself","Stencil<T>*");
-	_addParameter(lambda,"lambda","weight of the pde term",1);
+	this->_addOutputSlot(out,"this","Pointer to itself","Stencil<T>*");
+	this->_addParameter(lambda,"lambda","weight of the pde term",1);
 }
 
 template <class T> 

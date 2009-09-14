@@ -27,10 +27,22 @@
 #ifndef _GBCCE_H_
 #define _GBCCE_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef gbcce_EXPORTS
+///Visual C++ specific code
+#define gbcce_DECLDIR __declspec(dllexport)
+#else
+#define gbcce_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define gbcce_DECLDIR
+#endif
+
 #include <Stencil.h>
 
 templace <class T>
-class Gbcce : public Stencil
+class gbcce_DECLDIR Gbcce : public Stencil<T>
 {
 	Private:
 		InpurSlot<BrightnessModel*> brightnessIn;

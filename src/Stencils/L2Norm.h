@@ -27,10 +27,22 @@
 #ifndef _L2NORM_H_
 #define _L2NORM_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef l2norm_EXPORTS
+///Visual C++ specific code
+#define l2norm_DECLDIR __declspec(dllexport)
+#else
+#define l2norm_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define l2norm_DECLDIR
+#endif
+
 #include <Stencil.h>
 
 template <class T>
-class L2Norm : public Stencil
+class l2norm_DECLDIR L2Norm : public Stencil<T>
 {
 	private:
 		Parameter<unsigned int> dimensions;

@@ -31,10 +31,10 @@
 
 template <class T>
 Gbcce<T>::Gbcce(const std::string& name = "") : 
-Stencil("GBCCE","General brightness change constraint equation",
-"discretizes partial differential equation terms or defines derivatives filters for images")) {
-	_addInputSlot(brightnessIn,"Brightness Model","Brightness Model","BrightnessModel*");
-	_addInputSlot(motionIn,"Motion Model","Motion Model","MotionModel*");
+		Stencil<T>("GBCCE","General brightness change constraint equation",
+		"discretizes partial differential equation terms or defines derivatives filters for images")) {
+	this->_addInputSlot(brightnessIn,"Brightness Model","Brightness Model","BrightnessModel*");
+	this->_addInputSlot(motionIn,"Motion Model","Motion Model","MotionModel*");
 }
 
 template <class T>
@@ -66,7 +66,7 @@ void Gbcce<T>::update() {
 	//values
 	std::set<std::string>::iterator uIt;
 	for(uIt=unknowns.begin();uIt!=unknowns.end();uIt++) {
-		Point4D center(0,0,0,0);
+		Point4D<unsigned int> center(0,0,0,0);
 		substencil entry(1,1,1,1,center)
 		entry.pattern(0,0) = 1;
 		this->substencils[*uIt] = entry;

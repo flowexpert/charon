@@ -21,13 +21,25 @@
  *  @date 8.09.2009
  */
 
-#ifndef _stencil_H_
-#define _stencil_H_
+#ifndef _STENCIL_H_
+#define _STENCIL_H_
+
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef stencil_EXPORTS
+///Visual C++ specific code
+#define stencil_DECLDIR __declspec(dllexport)
+#else
+#define stencil_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define stencil_DECLDIR
+#endif
 
 #include <CImg.h>
 #include <ParameteredObject.h>
 #include "Point4D.h"
-#include "Substencil.hxx"
+#include "Substencil.h"
 #include <string>
 #include <map>
 #include <set>
@@ -56,12 +68,13 @@ SubStencil:   Mask for one unknown or the general mask if no unknowns are used
 */
 
 /**
- * This is the base class for Stencils. It manages the communication between the
- * solver and the different motion- and brightnesmodels. Or it can present a
- * non-variant stencil to the solver.
+ * This is the base class for Stencils.
+ * It manages the communication between the solver and the different
+ * motion- and brightnesmodels. Or it can present a non-variant stencil
+ * to the solver.
  */
 template <class T>
-class Stencil : public ParameteredObject
+class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 {
 	protected:
 		///Lambda coefficient of the stencil.
@@ -86,15 +99,14 @@ class Stencil : public ParameteredObject
 		 */
 		std::map<std::string, T> rhs;
 		
-//		/Coordinates of the center.
-//		Point4D center;
-		
+		///Output slot containing the this-pointer of the object		
 		OutputSlot<Stencil<T>*> out;
 
+
+	public:
 		///default constructor
 		Stencil(const std::string& classname, const std::string& name = "");
-	
-	public:
+		
 		/**
 		 * Updates the stencil to contain the information to the given coordinate.
 		 * The data will be placed in the member data of the individual substencils.
