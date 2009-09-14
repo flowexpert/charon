@@ -123,7 +123,9 @@ void FileManager::updateMetadata() const {
 	std::vector<std::string> wrp_files = FileTool::getFilesWithSuffix(".wrp");
 	std::ifstream inStream;
 	std::ofstream outStream;
-	const char* fName = classesFile().toAscii().data();
+	QString qFName = classesFile();
+	QByteArray bFName = qFName.toAscii();
+	const char* fName = bFName.constData();
 	outStream.open(fName, std::ios::trunc);
 
 	for (unsigned int i = 0; i < wrp_files.size(); i++) {
