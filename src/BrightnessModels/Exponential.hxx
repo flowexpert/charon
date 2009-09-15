@@ -25,6 +25,7 @@
 
 #include "Exponential.h"
 #include <cassert>
+#include "Pixel.hxx"
 
 using namespace std;
 using namespace cimg_library;

@@ -39,6 +39,8 @@ protected:
 	std::vector<T> intensity; ///@param intensity 		intensity at x,y,z position
 
 public:
+	///standard constructor
+	Pixel();
 	void setX(const T& newX);
 	const T& getX() const;
 	void setY(const T& newY);
@@ -59,7 +61,13 @@ public:
 	 */
 	void insertIntensity(const int pos, const T& newI);
 	const std::vector<T>& getIntensity() const;
-	Pixel<T>& operator= (const Pixel<T>& inPixel);
+	///copy constructor
+	Pixel(const Pixel<T> & rhs);
+	///definition of overloaded operator ==
+	bool operator== (const Pixel<T> &rhs) const;
+	///definition of overloaded operator =
+	Pixel<T>& operator= (const Pixel<T>& rhs);
+
 };
 
 #endif /* PIXEL_H_ */

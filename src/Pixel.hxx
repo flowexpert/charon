@@ -26,6 +26,12 @@
 #include "Pixel.h"
 
 template<typename T>
+Pixel<T>::Pixel()
+{
+
+}
+
+template<typename T>
 void Pixel<T>::setX(const T& newX)
 {
 	this->x = newX;
@@ -92,19 +98,90 @@ const std::vector<T>& Pixel<T>::getIntensity() const
 }
 
 template<typename T>
-Pixel<T>& Pixel<T>::operator=(const Pixel<T>& inPixel)
+Pixel<T>::Pixel(const Pixel<T> & rhs)
 {
-	Pixel<T> tempPixel;
-	tempPixel.setX(inPixel.getX());
-	tempPixel.setY(inPixel.getY());
-	tempPixel.setZ(inPixel.getZ());
-	// set intensity
-	std::vector<T>* tempListOfIntensity = inPixel.getIntensity();
+	this->x(rhs.getX());
+	this->y(rhs.getY());
+	this->z(rhs.getZ());
+	this->t(rhs.getT());
+	std::vector<T>* tempListOfIntensity = rhs.getIntensity();
 	for (unsigned int i = 0; i != tempListOfIntensity.size() - 1; i++)
 	{
-		tempPixel.insertIntensity(i, tempListOfIntensity[i]);
+		this->insertIntensity(i, tempListOfIntensity[i]);
 	}
-	return tempPixel;
+}
+
+template<typename T>
+bool Pixel<T>::operator==(const Pixel<T> &rhs) const
+{
+	bool ret = false;
+	if (this->x == rhs.getX())
+	{
+		if (this->y == rhs.getY())
+		{
+			if (this->z == rhs.getZ())
+			{
+				if (this->t == rhs.getT())
+				{
+
+					if (this->intensity.size() == rhs.intensity.size())
+					{
+						for (unsigned int i = 0; i != this->intensity.size(); i++)
+						{
+							if (this->intensity[i] == rhs->intensity[i])
+							{
+								ret = true;
+							}
+							else
+							{
+								return false;
+							}
+						}
+					}
+					else
+					{
+						return false;
+					}
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+	return ret;
+}
+
+template<typename T>
+Pixel<T>& Pixel<T>::operator=(const Pixel<T>& rhs)
+{
+	if (&rhs == this)
+	{
+		return *this;
+	}
+	this->x = rhs.getX();
+	this->y = rhs.getY();
+	this->z = rhs.getZ();
+	this->t = rhs.getT();
+	std::vector<T>* tempListOfIntensity = rhs.getIntensity();
+	for (unsigned int i = 0; i != tempListOfIntensity.size() - 1; i++)
+	{
+		this->insertIntensity(i, tempListOfIntensity[i]);
+	}
+	return *this;
 }
 
 #endif /* PIXEL_HXX_ */
