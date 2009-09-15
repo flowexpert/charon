@@ -1,58 +1,70 @@
-# here are the include files of the charon-utils project
-#INCLUDE_DIRECTORIES(${CHARON_UTILS_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${CHARON_CORE_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 
-#files for Charon library
-SET(CHARON_FILES
-    Derivatives/bin2.cpp
-    Derivatives/Sobel.cpp
-    DataAssemblers/nrange.cpp
-    MotionModels/LocalPlanarity.cpp
-    Fitters/LeastSquare.cpp
-    MotionModels/LocalAffiness.cpp
-    MotionModels/LocalRotation.cpp
-    MotionModels/LocalStretch.cpp
-    MotionModels/LocalConstant.cpp
-    MotionEstimation.cpp
-    BrightnessModels/Exponential.cpp
-    BrightnessModels/Constant.cpp
-    BrightnessModels/Diffusion.cpp
-    BrightnessModels/MovingIllumination.cpp
-    SequenceGeneration/SequenceGeneration.cpp
-    functions.cpp
-    Generate3d.cpp
-    FlowFunctor.cpp
+ADD_DEFINITIONS(/DHANDLE_DLL)
+
+#Create shared libraries
+ADD_LIBRARY(roi SHARED Roi.cpp)
+ADD_LIBRARY(crop SHARED Crop.cpp)
+TARGET_LINK_LIBRARIES(crop roi)
+ADD_LIBRARY(filereader SHARED FileReader.cpp)
+ADD_LIBRARY(filewriter SHARED FileWriter.cpp)
+ADD_LIBRARY(imagedisplay SHARED ImageDisplay.cpp)
+ADD_LIBRARY(interpolatorcubic SHARED InterpolatorCubic.cpp)
+ADD_LIBRARY(interpolatorlinear SHARED InterpolatorLinear.cpp)
+ADD_LIBRARY(normalize SHARED Normalize.cpp)
+ADD_LIBRARY(threshold SHARED Threshold.cpp)
+
+SET(Plugins
+	roi
+	crop
+	filereader
+	filewriter
+	imagedisplay
+	interpolatorcubic
+	interpolatorlinear
+	normalize
+	threshold
 )
 
-# create libraries
-ADD_LIBRARY(${PROJECT_NAME} STATIC ${CHARON_FILES})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} X11)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} charon-utils)
-
-
+FOREACH(X ${Plugins})
+	TARGET_LINK_LIBRARIES(${X} charon-core)
+	IF(UNIX)
+		TARGET_LINK_LIBRARIES(${X} pthread ${X11_LIBRARIES})
+	ENDIF(UNIX)
+	IF(WIN32)
+		TARGET_LINK_LIBRARIES(${X} gdi32)
+	ENDIF(WIN32)
+ENDFOREACH(X)
 
 # install library
- INSTALL(
-     TARGETS     ${PROJECT_NAME}
-     EXPORT      ${PROJECT_NAME}
-     RUNTIME     DESTINATION bin
-     LIBRARY     DESTINATION lib${LIB_SUFFIX}
-     ARCHIVE     DESTINATION lib${LIB_SUFFIX}
-     COMPONENT   libraries
- )
+SET_TARGET_PROPERTIES(${Plugins}
+	PROPERTIES INSTALL_RPATH
+	${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
+)
+INSTALL(
+    TARGETS      	${Plugins}
+    EXPORT      	${PROJECT_NAME}
+    RUNTIME      	DESTINATION bin
+    LIBRARY      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
+    ARCHIVE      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
+    COMPONENT    	libraries
+)
 
- INSTALL(
-     EXPORT       ${PROJECT_NAME}
-     DESTINATION  include/${PROJECT_NAME}
-     COMPONENT    libraries
- )
- 
 # install header files to include directory
- INSTALL(
-     DIRECTORY   ${CMAKE_CURRENT_SOURCE_DIR}/
-     DESTINATION include/${PROJECT_NAME}
-     COMPONENT   headers
-     FILES_MATCHING REGEX ".(h|hxx)$"
- )
+FILE(GLOB HEADER_FILES
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    *.h *.hxx
+)
+INSTALL(
+    FILES       ${HEADER_FILES}
+    DESTINATION include/${PROJECT_NAME}
+    COMPONENT   headers
+)
 
 
+INSTALL(
+    EXPORT       ${PROJECT_NAME}
+    DESTINATION  include/${PROJECT_NAME}
+    COMPONENT    libraries
+)
