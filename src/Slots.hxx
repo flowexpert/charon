@@ -255,8 +255,8 @@ void AbstractSlot<T>::execute() {
 
 template<typename T>
 inline std::string AbstractSlot<T>::getType() const {
-	unsigned int pos = _type.find("<t>");
-	if (pos != _type.npos) {
+	std::string::size_type pos = _type.find("<t>");
+	if (pos != std::string::npos) {
 		std::string temp(this->_type);
 		temp.replace(pos + 1, 1, getParent().getTemplateType());
 		return temp;
