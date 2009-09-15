@@ -7773,7 +7773,7 @@ namespace cimg_library {
 
       /* The code below was used to close the X11 display when not used anymore,
          unfortunately, since the latest Xorg versions, it randomely hangs, so
-         I prefer to remove it. A fix would be needed anyway.
+         I prefer to remove it. A fix would be needed anyway.*/
 
          if (!cimg::X11attr().nb_wins) {
          // Kill event thread
@@ -7782,12 +7782,12 @@ namespace cimg_library {
          pthread_join(*cimg::X11attr().event_thread,0);
          delete cimg::X11attr().event_thread;
          cimg::X11attr().event_thread = 0;
-         XCloseDisplay(cimg::X11attr().display);
+         //XCloseDisplay(cimg::X11attr().display);
          cimg::X11attr().display = 0;
          delete cimg::X11attr().gc;
          cimg::X11attr().gc = 0;
          } else XUnlockDisplay(cimg::X11attr().display);
-      */
+      
       return *this;
     }
 
