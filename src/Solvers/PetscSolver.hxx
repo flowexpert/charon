@@ -459,6 +459,9 @@ void PetscSolver<T>::update() {
 		//now make the result-vector available as an array of PetscScalar
 		ierr = VecGetArray(result,res);CHKERRQ(ierr);
 		
+		//Due to data locallity, it is performance-wise better to iterate
+		//through the unknowns first and fill the CImgList element by element
+		//instead of pixel by pixel. Same with the solution vector.
 		for(lIt=lookup.begin() ; lIt!=lookup.end();lIt++) { //for all unknowns
 			forRoiXYZT(roi(),x,y,z,t){ //go through the image
 				//get the current global index
