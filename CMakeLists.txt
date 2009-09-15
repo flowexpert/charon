@@ -6,17 +6,17 @@ SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # set up documentation generation
 FIND_PACKAGE(Doxygen)
+FIND_PACKAGE(charon-core REQUIRED)
 INCLUDE(Documentation)
 
 # CPack descriptions for package generation
 INCLUDE(ReleaseSys)
 
-FIND_PACKAGE(charon-core REQUIRED)
-
 # Test suite
 OPTION(ENABLE_TEST "enable test suite" ON)
 IF(ENABLE_TEST)
     ENABLE_TESTING()
+	INCLUDE(CTest)
 ENDIF(ENABLE_TEST)
 
 IF(WIN32)
