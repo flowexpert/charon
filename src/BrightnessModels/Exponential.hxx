@@ -96,8 +96,8 @@ void BrightnessModels::Exponential<T>::Functor::get3d(
 }
 
 template<class T>
-void BrightnessModels::Exponential<T>::apply(const Pixel<T> & inPixel,
-		const std::vector<Parameter<T>*> & modifier, Pixel<T> & outPixel)
+void BrightnessModels::Exponential<T>::apply(const Pixel<T>& inPixel,
+		const std::vector<Parameter<T>*> & modifier, Pixel<T>& outPixel)
 {
 	outPixel = inPixel;
 }

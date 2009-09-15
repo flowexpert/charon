@@ -45,7 +45,7 @@ void Incrementor<T>::execute()
 }
 
 template<typename T>
-std::vector<Parameter<T>* >& Incrementor<T>::getListOfParams()
+std::vector<IncrementorParameter<T>* >& Incrementor<T>::getListOfParams()
 {
 	return this->listOfParams;
 }

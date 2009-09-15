@@ -33,7 +33,7 @@ template<typename T>
 class Incrementor: public TemplatedParameteredObject<T>
 {
 protected:
-	std::vector<Parameter<T>*> listOfParams;
+	std::vector<IncrementorParameter<T>*> listOfParams;
 public:
 	/// standard constructor
 	Incrementor(const std::string& name);
@@ -46,7 +46,7 @@ public:
 	 */
 	virtual bool doStep() =0;
 	///returns a list of the computed Parameters
-	std::vector<Parameter<T>*>& getListOfParams();
+	std::vector<IncrementorParameter<T>*>& getListOfParams();
 
 };
 

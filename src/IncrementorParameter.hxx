@@ -24,22 +24,29 @@
 
 #include "IncrementorParameter.h"
 
-template <typename T>
+template<typename T>
 IncrementorParameter<T>::IncrementorParameter(const std::string& name) :
-	ParameteredObject ("incrementorparameter", name,
-	"class for Incrementor Parameters"), paramList(this)
+	ParameteredObject("incrementorparameter", name,
+			"class for Incrementor Parameters"), paramList(this)
 {
-	_addOutputSlot( paramList, "paramList", "list of Parameters for Incrementor",
-	               "Incrementor Parameter", "IncrementorParameter");
-	_addParameter( min , "min" , "minimum of parameter"           , "T");
-	_addParameter( max , "max" , "maximum of parameter"           , "T");
-	_addParameter( step, "step", "stepsize to increment parameter", "T");
+	_addOutputSlot(paramList, "paramList",
+			"list of Parameters for Incrementor", "Incrementor Parameter",
+			"IncrementorParameter");
+	_addParameter(min, "min", "minimum of parameter", "T");
+	_addParameter(max, "max", "maximum of parameter", "T");
+	_addParameter(step, "step", "stepsize to increment parameter", "T");
+	_addParameter(current, "current", "current incremented Parameter", "T");
 }
 
 template<typename T>
-std::string IncrementorParameter<T>::getName() const
+std::string& IncrementorParameter<T>::getName()
 {
-		return this->name;
+	return this->parameterName;
+}
+template<typename T>
+void IncrementorParameter<T>::setName(std::string& newName)
+{
+	this->parameterName = newName;
 }
 
 template<typename T>
@@ -49,15 +56,45 @@ Parameter<T>& IncrementorParameter<T>::getMin()
 }
 
 template<typename T>
+void IncrementorParameter<T>::setMin(const T newMin)
+{
+	this->min = newMin;
+}
+
+template<typename T>
 Parameter<T>& IncrementorParameter<T>::getMax()
 {
 	return this->max;
 }
 
 template<typename T>
+void IncrementorParameter<T>::setMax(const T newMax)
+{
+	this->max = newMax;
+}
+
+template<typename T>
 Parameter<T>& IncrementorParameter<T>::getStepSize()
 {
 	return this->step;
+}
+
+template<typename T>
+void IncrementorParameter<T>::setStepSize(const T newStep)
+{
+	this->step = newStep;
+}
+
+template<typename T>
+Parameter<T>& IncrementorParameter<T>::getCurrent()
+{
+	return this->current;
+}
+
+template<typename T>
+void IncrementorParameter<T>::setCurrent(const T newCurrent)
+{
+	this->current = newCurrent;
 }
 
 #endif /* INCREMENTORPARAMETER_HXX_ */

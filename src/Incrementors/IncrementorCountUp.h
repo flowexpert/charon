@@ -31,7 +31,7 @@ private:
 	//typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
 	//		itParams;
 	//typename std::vector<Parameter<T> >::iterator itList;
-	unsigned int modifier;
+	//unsigned int modifier;
 
 public:
 	/// standart constructor
