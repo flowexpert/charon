@@ -68,6 +68,7 @@ public:
     /// @param name             Object name
     ImageDisplay(const std::string& name);
 
+	/// \implements ParameteredObject::execute
     virtual void execute();
 };
 

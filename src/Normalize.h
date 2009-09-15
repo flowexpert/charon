@@ -60,6 +60,7 @@ public:
     /// @param name             Object name
     Normalize(const std::string& name);
 
+	/// \implements ParameteredObject::execute
     virtual void execute();
 };
 

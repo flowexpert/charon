@@ -72,7 +72,7 @@ IF (DOXYGEN_FOUND)
     SET(DOXY_DOC_PATHS          "doc src")
     SET(DOXY_GENERATE_HTML      YES)
     SET(DOXY_GENERATE_LATEX     NO )
-    SET(DOXY_TAGFILE_INPUT      "${PROJECT_SOURCE_DIR}/doc/CImg.tag=http://cimg.sourceforge.net/reference")
+    SET(DOXY_TAGFILE_INPUT      "${CHARON_CORE_TAG_IMPORT} ${PROJECT_SOURCE_DIR}/doc/CImg.tag=http://cimg.sourceforge.net/reference")
     SET(DOXY_TAGFILE_OUTPUT     "${PROJECT_BINARY_DIR}/doc/html/${PROJECT_NAME}.tag")
     CONFIGURE_FILE(${DOXY_TEMPLATE} ${DOXY_CONFIG}     @ONLY)
 
