@@ -39,7 +39,7 @@ Stencil<T>::Stencil(const std::string& classname, const std::string& name) :
 }
 
 template <class T> 
-virtual void Stencil<T>::updateStencil(const unsigned int x, const unsigned int y,
+void Stencil<T>::updateStencil(const unsigned int x, const unsigned int y,
                                        const unsigned int z, const unsigned int t,
                                        const unsigned int v) {}
 
@@ -50,13 +50,13 @@ template <class T>
 std::map<std::string, T>& Stencil<T>::getRhs() const {return rhs;}
 
 template <class T>
-virtual cimg_library::CImgList<T>& Stencil<T>::apply(const cimg_library::CImgList<T>& seq,
+cimg_library::CImgList<T>& Stencil<T>::apply(const cimg_library::CImgList<T>& seq,
                                                      const unsigned int frame) const {}
 
 template <class T>
-virtual const std::set<std::string>& Stencil<T>::getUnknowns() const {return unknowns;}
+const std::set<std::string>& Stencil<T>::getUnknowns() const {return unknowns;}
 
 template <class T>
-virtual Stencil<T>::~Stencil() {}
+Stencil<T>::~Stencil() {}
 
 #endif //_stencil_HXX_

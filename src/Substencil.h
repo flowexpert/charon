@@ -39,6 +39,9 @@ class Substencil
 		cimg_library::CImg<char> pattern;
 		Point4D<unsigned int> center;
 		
+		///empty constructor (for use in std::map)
+		Substencil();
+		
 		///default constructor
 		Substencil(const unsigned int dimx, const unsigned int dimy,
 		           const unsigned int dimz, const unsigned int dimt,

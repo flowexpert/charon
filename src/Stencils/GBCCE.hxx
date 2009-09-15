@@ -27,6 +27,7 @@
 #ifndef _GBCCE_HXX_
 #define _GBCCE_HXX_
 
+#include <Stencil.hxx>
 #include "GBCCE.h"
 
 template <class T>

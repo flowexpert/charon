@@ -27,6 +27,7 @@
 #ifndef _L2NORM_HXX_
 #define _L2NORM_HXX_
 
+#include <Stencil.hxx>
 #include "L2Norm.h"
 
 template <class T>

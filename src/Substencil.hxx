@@ -30,6 +30,10 @@
 
 #include "Substencil.h"
 
+template <class T>
+Substencil<T>::Substencil() {}
+
+
 ///default constructor
 template <class T>
 Substencil<T>::Substencil(const unsigned int dimx, const unsigned int dimy,
@@ -43,22 +47,25 @@ Substencil<T>::Substencil(const unsigned int dimx, const unsigned int dimy,
 		
 ///copy constructor
 template <class T>
-Substencil<T>::Substencil(const Substencil &rhs) {
+Substencil<T>::Substencil(const Substencil<T> &rhs) {
+	this->data.assign(rhs.data.dimx(), rhs.data.dimy(), rhs.data.dimz(), rhs.data.dimv() );
 	this->data = rhs.data;
+	this->pattern.assign(rhs.pattern.dimx(), rhs.pattern.dimy(), rhs.pattern.dimz(), rhs.pattern.dimv() );
 	this->pattern = rhs.pattern;
 	this->center = rhs.center;
 }
 		
 ///assignment operator
 template <class T>
-Substencil& Substencil<T>::operator= (const Substencil &rhs) {
+Substencil<T>& Substencil<T>::operator= (const Substencil<T> &rhs) {
 	if (&rhs == this) {return *this;}
 	this->data = rhs.data;
 	this->pattern = rhs.pattern;
 	this->center = rhs.center;
 	return *this;
 }
-				
+
+template <class T>
 Substencil<T>::~Substencil();
 
 #endif //_substencil_HXX_

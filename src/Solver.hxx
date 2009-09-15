@@ -27,6 +27,7 @@
 #ifndef _SOLVER_HXX_
 #define _SOLVER_HXX_
 
+#include <Stencil.hxx>
 #include "Solver.h"
 
 ///default constructor

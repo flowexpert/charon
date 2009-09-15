@@ -58,8 +58,6 @@ class gbcce_DECLDIR Gbcce : public Stencil<T>
 		virtual void updateStencil(const unsigned int x, const unsigned int y,
 		                   const unsigned int z=0, const unsigned int t=0,
 		                   const unsigned int v=0);
-
-		virtual std::set<std::string>& getUnknowns() const;
 		
 		virtual ~Gbcce();
 };
