@@ -1,3 +1,4 @@
+/*
 /*  This file is part of Charon.
 
  Charon is free software: you can redistribute it and/or modify
@@ -14,36 +15,26 @@
  along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  @file SurfaceAnalysis.h
- *  definition of absract class SurfaceAnalysis
+ *  @file SurfaceAnalysisMinChange.h
+ *  definition of SurfaceAnalysisMinChange
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
- *  @date 12.08.2009
+ *  @date 15.09.2009
  */
 
-#ifndef SURFACEANALYSIS_H_
-#define SURFACEANALYSIS_H_
+#ifndef SURFACEANALYSISMINCHANGE_H_
+#define SURFACEANALYSISMINCHANGE_H_
 
-#include "ParameteredObject.h"
-#include "IncrementorParameter.h"
-#include <vector>
+#include "SurfaceAnalysis.h"
 
 template<typename T>
-class SurfaceAnalysis: TemplatedParameteredObject<T>
+class SurfaceAnalysisMinChange : public SurfaceAnalysis <T>
 {
 public:
-	/// standard constructor
-	SurfaceAnalysis(const std::string& name);
-	///standard execute from ParameterdObject
-	void execute();
-	/**
-	 *  find the minimal change in roi
-	 *  @param differences vector of all differences
-	 *  @param parameters all possible parameters
-	 *  @param [out] vector of IncrementorParameter for best fitting Parameters
-	 */
+	SurfaceAnalysisMinChange(const std::string name);
 	virtual std::vector<IncrementorParameter<T>* >
 	& findMinChange(std::vector<T>& differences, std::vector<
-			IncrementorParameter<T>* >& parameters) =0;
+			IncrementorParameter<T>* >& parameters);
+
 };
 
-#endif /* SURFACEANALYSIS_H_ */
+#endif /* SURFACEANALYSISMINCHANGE_H_ */

@@ -14,29 +14,33 @@
  along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  @file SurfaceAnalysis.hxx
- *  implementation of absract class SurfaceAnalysis
+ *  @file SurfaceAnalysisMinChange.hxx
+ *  impelmentation of SurfaceAnalysisMinChange
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
- *  @date 12.08.2009
+ *  @date 15.09.2009
  */
 
-#ifndef _SURFACEANALYSIS_HXX_
-#define _SURFACEANALYSIS_HXX_
+#ifndef SURFACEANALYSISMINCHANGE_HXX_
+#define SURFACEANALYSISMINCHANGE_HXX_
 
-#include "SurfaceAnalysis.h"
+#include "SurfaceAnalysisMinChange.h"
+#include "SurfaceAnalysis.hxx"
 
 template<typename T>
-SurfaceAnalysis<T>::SurfaceAnalysis(const std::string& name) :
-	TemplatedParameteredObject<T> ("SurfaceAnalysis", name,
-			" computes best fitting Parameters, for the flow")
+SurfaceAnalysisMinChange<T>::SurfaceAnalysisMinChange(const std::string name) :
+	SurfaceAnalysis<T>::SurfaceAnalysis(name)
 {
 
 }
 
 template<typename T>
-void SurfaceAnalysis<T>::execute()
+std::vector<IncrementorParameter<T>*> & SurfaceAnalysisMinChange<T>::findMinChange(
+		std::vector<T>& differences,
+		std::vector<IncrementorParameter<T>*>& parameters)
 {
-	ParameteredObject::execute();
+	std::vector<IncrementorParameter<T>*> ret;
+	return ret;
 }
 
-#endif
+#endif /* SURFACEANALYSISMINCHANGE_HXX_ */
+
