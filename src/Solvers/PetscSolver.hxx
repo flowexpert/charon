@@ -219,7 +219,7 @@ Point4D<unsigned int>& PetscSolver<T>::getBoundary(Point4D<unsigned int>& p) {
 }
 
 template <class T>
-PetscSolver<T>::PetscSolver(const std::string& name = "") : 
+PetscSolver<T>::PetscSolver(const std::string& name) : 
 		Solver<T>("PetscSolver","Solver based on PETSc","solves the linear system with PETSc") {
 	this->columns=NULL;
 	this->values=NULL;
@@ -238,8 +238,8 @@ bool PetscSolver<T>::isRankZero() {
 }
 
 template <class T>
-void PetscSolver<T>::update() {
-	ParameteredObject::update();
+void PetscSolver<T>::execute() {
+	ParameteredObject::execute();
 				
 	//    *=======================*
 	//    | P R E P A R A T I O N |
@@ -483,12 +483,11 @@ void PetscSolver<T>::update() {
 	ierr = PetscFinalize();
 }
 		
-		~PetscSolver() {
-			//make sure, PetscInt and PetscScalar get cleared
-			delete[] columns;
-			delete[] values;
-			
-		}
-};
+~PetscSolver() {
+	//make sure, PetscInt and PetscScalar get cleared
+	delete[] columns;
+	delete[] values;
+	
+}
 
 #endif // _PETSCSOLVER_HXX_

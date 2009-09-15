@@ -147,7 +147,7 @@ Roi<int> Metastencil<T>::expand(const Roi<int>& inRoi) {
 }
 
 template <class T>
-Solver<T>::Solver(const std::string& classname, const std::string& name = "") : 
+Solver<T>::Solver(const std::string& classname, const std::string& name) : 
 		TemplatedParameteredObject<T>(classname,name,"solves the linear system"),
 		stencils(false,true)	//make stencil input slot mandatory and multi
 {
@@ -157,7 +157,7 @@ Solver<T>::Solver(const std::string& classname, const std::string& name = "") :
 }
 
 template <class T>
-virtual void Solver<T>::update();
+virtual void Solver<T>::execute();
 
 template <class T>
 virtual Solver<T>::~Solver();

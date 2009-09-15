@@ -30,19 +30,18 @@
 #include "GBCCE.h"
 
 template <class T>
-Gbcce<T>::Gbcce(const std::string& name = "") : 
-		Stencil<T>("GBCCE","General brightness change constraint equation",
-		"discretizes partial differential equation terms or defines derivatives filters for images")) {
+Gbcce<T>::Gbcce(const std::string& name) : 
+		Stencil<T>("GBCCE") {
 	this->_addInputSlot(brightnessIn,"Brightness Model","Brightness Model","BrightnessModel*");
 	this->_addInputSlot(motionIn,"Motion Model","Motion Model","MotionModel*");
 }
 
 template <class T>
-void Gbcce<T>::update() {
-	ParametedObject::update();
-	unknowns.erase();	//erase the old set of unknowns
-	std::set<std::string>& bmUnknowns = brightIn()->getUnknowns();
-	std::set<std::string>& mmUnknonws = motionIn()->getUnknowns();
+void Gbcce<T>::execute() {
+	ParameteredObject::execute();
+	this->unknowns.clear();	//erase the old set of unknowns
+	std::set<std::string> bmUnknowns = this->brightnessIn()->getUnknowns();
+	std::set<std::string> mmUnknowns = this->motionIn()->getUnknowns();
 	std::set<std::string>::iterator bmIt = bmUnknowns.begin();
 	std::set<std::string>::iterator mmIt = mmUnknowns.begin();
 	
@@ -59,15 +58,15 @@ void Gbcce<T>::update() {
 	}
 	//if no collision is detected, merge both input vectors into the
 	//unkowns set which was inherited from the Stencil class
-	unknowns.insert(bmUnknowns.begin(),bmUnknowns.end());
-	unknowns.insert(mmUnknowns.begin(),bmUnknowns.end());
+	this->unknowns.insert(bmUnknowns.begin(),bmUnknowns.end());
+	this->unknowns.insert(mmUnknowns.begin(),bmUnknowns.end());
 	
 	//expanding stencil-map to appropriate size and filling with dummy
 	//values
 	std::set<std::string>::iterator uIt;
-	for(uIt=unknowns.begin();uIt!=unknowns.end();uIt++) {
+	for(uIt=this->unknowns.begin();uIt!=this->unknowns.end();uIt++) {
 		Point4D<unsigned int> center(0,0,0,0);
-		substencil entry(1,1,1,1,center)
+		Substencil<T> entry(1,1,1,1,center);
 		entry.pattern(0,0) = 1;
 		this->substencils[*uIt] = entry;
 	}
@@ -76,22 +75,19 @@ void Gbcce<T>::update() {
 template <class T>						
 void Gbcce<T>::updateStencil(const unsigned int x,const unsigned int y,
                              const unsigned int z,const unsigned int t,
-                             const unsigned int v=0) {
+                             const unsigned int v) {
 	std::map<std::string, T> term;
 	T rhsV=0;
-	brightIn->compute(x, y, z, t, v, term, rhsV);
-	motionIn->compute(x, y, z, t, v, term, rhsV);
-	std::map<std::string, T>::iterator termIt;	//term Iterator
+	this->brightnessIn()->compute(x, y, z, t, v, term, rhsV);
+	this->motionIn()->compute(x, y, z, t, v, term, rhsV);
+	typename std::map<std::string,T>::iterator termIt;	//term Iterator
 	for(termIt=term.begin();termIt!=term.end();termIt++) {
-		this->substencils[termIt->first].data(0,0) = termIt->second * lambda;
-		this->rhs[termIt->first] = rhsV * termIt->second * lambda;
+		this->substencils[termIt->first].data(0,0) = termIt->second * this->lambda();
+		this->rhs[termIt->first] = rhsV * termIt->second * this->lambda();
 	}
 }
 
 template <class T>
-std::set<std::string>& Gbcce<T>::getUnknowns() const {return unknowns;}
-
-template <class T>
-~GBCCE() {}
+Gbcce<T>::~Gbcce() {}
 
 #endif //_GBCCE_HXX_

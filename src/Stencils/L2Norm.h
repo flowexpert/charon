@@ -51,13 +51,13 @@ class l2norm_DECLDIR L2Norm : public Stencil<T>
 	public:
 		L2Norm(const std::string& name = "");
 		
-		void update();
+		virtual void execute();
 		
-		void updateStencil(const unsigned int x, const unsigned int y,
+		virtual void updateStencil(const unsigned int x, const unsigned int y,
 		                   const unsigned int z=0, const unsigned int t=0,
 		                   const unsigned int v=0);
 		
-		~L2Norm();
+		virtual ~L2Norm();
 };
 
 #endif // _L2NORM_H_

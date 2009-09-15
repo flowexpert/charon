@@ -131,7 +131,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver
 		
 		bool isRankZero();
 		
-		void update();
+		void execute();
 				
 		~PetscSolver();
 };

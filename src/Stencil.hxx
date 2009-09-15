@@ -30,7 +30,7 @@
 #include <ParameteredObject.hxx>
 
 template <class T>
-Stencil<T>::Stencil(const std::string& classname, const std::string& name = "") : 
+Stencil<T>::Stencil(const std::string& classname, const std::string& name) : 
 				TemplatedParameteredObject<T>(classname,name,
 				"discretizes partial differential equation terms or defines derivatives filters for images"),
 				out(this) {
@@ -41,7 +41,7 @@ Stencil<T>::Stencil(const std::string& classname, const std::string& name = "") 
 template <class T> 
 virtual void Stencil<T>::updateStencil(const unsigned int x, const unsigned int y,
                                        const unsigned int z, const unsigned int t,
-                                       const unsigned int v=0) {}
+                                       const unsigned int v) {}
 
 template <class T>
 std::map<std::string, Substencil<T> >& Stencil<T>::get() const {return substencils;}

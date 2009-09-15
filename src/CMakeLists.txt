@@ -1,30 +1,18 @@
 INCLUDE_DIRECTORIES(${CHARON_CORE_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${CHARON_UTILS_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 
 ADD_DEFINITIONS(/DHANDLE_DLL)
 
 #Create shared libraries
-ADD_LIBRARY(roi SHARED Roi.cpp)
-ADD_LIBRARY(crop SHARED Crop.cpp)
-TARGET_LINK_LIBRARIES(crop roi)
-ADD_LIBRARY(filereader SHARED FileReader.cpp)
-ADD_LIBRARY(filewriter SHARED FileWriter.cpp)
-ADD_LIBRARY(imagedisplay SHARED ImageDisplay.cpp)
-ADD_LIBRARY(interpolatorcubic SHARED InterpolatorCubic.cpp)
-ADD_LIBRARY(interpolatorlinear SHARED InterpolatorLinear.cpp)
-ADD_LIBRARY(normalize SHARED Normalize.cpp)
-ADD_LIBRARY(threshold SHARED Threshold.cpp)
+ADD_LIBRARY(gbcce SHARED Stencils/GBCCE.cpp)
+ADD_LIBRARY(l2norm SHARED Stencils/L2Norm.cpp)
+# ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
 
 SET(Plugins
-	roi
-	crop
-	filereader
-	filewriter
-	imagedisplay
-	interpolatorcubic
-	interpolatorlinear
-	normalize
-	threshold
+	gbcce
+	l2norm
+#	petscsolver
 )
 
 FOREACH(X ${Plugins})

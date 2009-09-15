@@ -40,26 +40,28 @@
 #endif
 
 #include <Stencil.h>
+#include "BrightnessModel.h"
+#include "MotionModel.h"
 
-templace <class T>
+template <class T>
 class gbcce_DECLDIR Gbcce : public Stencil<T>
 {
-	Private:
-		InpurSlot<BrightnessModel*> brightnessIn;
-		InputSlot<MotionModel*> motionIn;
+	private:
+		InputSlot<BrightnessModel<T>* > brightnessIn;
+		InputSlot<MotionModel<T>* > motionIn;
 
-	Public:
+	public:
 		Gbcce(const std::string& name = "");
 		
-		void update();
+		virtual void execute();
 						
-		void updateStencil(const unsigned int x, const unsigned int y,
+		virtual void updateStencil(const unsigned int x, const unsigned int y,
 		                   const unsigned int z=0, const unsigned int t=0,
 		                   const unsigned int v=0);
 
-		std::set<std::string>& getUnknowns() const;
+		virtual std::set<std::string>& getUnknowns() const;
 		
-		~GBCCE();
+		virtual ~Gbcce();
 };
 
 #endif //_GBCCE_H_

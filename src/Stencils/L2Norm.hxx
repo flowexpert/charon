@@ -30,7 +30,7 @@
 #include "L2Norm.h"
 
 template <class T>
-L2Norm<T>::L2Norm(const std::string& name = "") : 
+L2Norm<T>::L2Norm(const std::string& name) : 
 		Stencil<T>("L2Norm","L2Norm",
 		"discretizes partial differential equation terms or defines derivatives filters for images") {
 	this->_addParameter(unknowns, "unknowns", "List of unknowns");
@@ -39,7 +39,7 @@ L2Norm<T>::L2Norm(const std::string& name = "") :
 }
 
 template <class T>
-void L2Norm<T>::update() {
+void L2Norm<T>::execute() {
 	ParameteredObject::update();
 	//create masks in appropriate dimensions
 	switch (dimensions) {
@@ -174,7 +174,7 @@ void L2Norm<T>::update() {
 template <class T>		
 void L2Norm<T>::updateStencil(const unsigned int x, const unsigned int y,
                               const unsigned int z, const unsigned int t,
-                              const unsigned int v=0) {
+                              const unsigned int v) {
 	//Nothing to do since all the data is static.
 }
 

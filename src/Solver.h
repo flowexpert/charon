@@ -93,11 +93,11 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				Metastencil(const Metastencil<T>& rhs);
 				
 				///assignment operator
-				MetaStencil<T>& operator=(Metastencil<T>& rhs);
+				virtual MetaStencil<T>& operator=(Metastencil<T>& rhs);
 				
 				//the only necessary getter to determine the maximum number of
 				//entries.
-				std::set<Point4D<unsigned int> >& getPattern();
+				virtual std::set<Point4D<unsigned int> >& getPattern();
 				
 				//Your implementation of the MetaStencil will need a function
 				//to gather the data from the different substencils and present
@@ -110,13 +110,13 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				 * @param[in] inRoi Region of interest to expand.
 				 * @return Epxanded region of interest.
 				 */
-				Roi<int> expand(const Roi<int>& inRoi);
+				virtual Roi<int> expand(const Roi<int>& inRoi);
 		};
 	public:
 		///Default constructor.
 		Solver(const std::string& classname, const std::string& name = "");
 			
-		virtual void update() =0;
+		virtual void execute() =0;
 		//this is the one, only and primary function of the solver
 		//once every object is connected, update() will bi called recursively
 		//so all the calculations will take place in this function, thus in
