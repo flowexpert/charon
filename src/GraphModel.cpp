@@ -35,8 +35,7 @@
 #include "GraphModel.moc"
 
 GraphModel::GraphModel(QString fName, QObject* myParent, QString metaFile) :
-        ParameterFileModel(fName, myParent, metaFile),
-        _selected(0) {
+        ParameterFileModel(fName, myParent, metaFile) {
 
     // here we need some metaFile
     if (metaFile.isEmpty())
@@ -48,7 +47,6 @@ GraphModel::~GraphModel() {
 
 void GraphModel::clear(bool draw) {
     setPrefix("", false);
-    _selected = "";
     ParameterFileModel::clear();
     if(draw)
         emit graphChanged();
@@ -77,14 +75,14 @@ bool GraphModel::nodeValid(const QString& name) const {
     }
     catch (std::string msg) {
         if ((msg.find("Class name of") == std::string::npos)
-                || (msg.find("not set!") == std::string::npos))
+            || (msg.find("not set!") == std::string::npos))
             throw msg;
     }
     return false;
 }
 
 bool GraphModel::connected(const QString& source,
-        const QString& target) const {
+                           const QString& target) const {
 
     QStringList sourceSep = source.split(".");
     QStringList targetSep = target.split(".");
@@ -101,46 +99,46 @@ bool GraphModel::connected(const QString& source,
 
     std::string sourceClass = getClass(source.toAscii().constData());
     std::vector<std::string> sourceOutputs =
-        metaInfo()->getOutputs(sourceClass);
+            metaInfo()->getOutputs(sourceClass);
     std::vector<std::string> sourceInputs  =
-        metaInfo()->getInputs(sourceClass);
+            metaInfo()->getInputs(sourceClass);
     std::vector<std::string>::const_iterator outIter;
 
     // source has to be an input/output
     bool sourceIsOutput = true;
 
     outIter = std::find(sourceOutputs.begin(), sourceOutputs.end(),
-        sourceSlot);
+                        sourceSlot);
     if(outIter == sourceOutputs.end())
         sourceIsOutput = false;
 
     if(!sourceIsOutput) {
         outIter = std::find(sourceInputs.begin(), sourceInputs.end(),
-            sourceSlot);
+                            sourceSlot);
         if(outIter == sourceInputs.end())
             throw std::string("source ") + source.toAscii().constData()
-                + " is neither input nor output slot!";
+            + " is neither input nor output slot!";
     }
 
     // check if target is of the corresponding slot type (input <-> output)
     std::string targetClass = getClass(target.toAscii().constData());
     std::vector<std::string> targetOutputs =
-        metaInfo()->getOutputs(targetClass);
+            metaInfo()->getOutputs(targetClass);
     std::vector<std::string> targetInputs  =
-        metaInfo()->getInputs(targetClass);
+            metaInfo()->getInputs(targetClass);
     if (sourceIsOutput) {
         outIter = std::find(targetInputs.begin(), targetInputs.end(),
-            targetSlot);
+                            targetSlot);
         if (outIter == targetInputs.end())
             throw std::string(target.toAscii().constData())
-                + " has to be an input!";
+            + " has to be an input!";
     }
     else {
         outIter = std::find(targetOutputs.begin(), targetOutputs.end(),
-            targetSlot);
+                            targetSlot);
         if (outIter == targetOutputs.end())
             throw std::string(target.toAscii().constData())
-                + " has to be an output!";
+            + " has to be an output!";
     }
 
     // check slot types
@@ -148,9 +146,9 @@ bool GraphModel::connected(const QString& source,
     std::string outSlotType = getType(source.toAscii().constData());
     if (inSlotType != outSlotType)
         throw std::string("Type of \"") + target.toAscii().constData()
-            + "\" (" + inSlotType + ") does not match type of \""
-            + source.toAscii().constData() + "\" ("
-            + outSlotType + ")";
+        + "\" (" + inSlotType + ") does not match type of \""
+                + source.toAscii().constData() + "\" ("
+                + outSlotType + ")";
 
     bool established = true;
 
@@ -159,7 +157,7 @@ bool GraphModel::connected(const QString& source,
         established = false;
     else {
         std::string outList = parameterFile()
-                .get<std::string>(source.toAscii().constData());
+                              .get<std::string>(source.toAscii().constData());
         if(outList.find(target.toAscii().constData()) == std::string::npos)
             established = false;
     }
@@ -168,16 +166,16 @@ bool GraphModel::connected(const QString& source,
     if (!parameterFile().isSet(target.toAscii().constData())) {
         if (established)
             throw std::string("Node ")
-                + source.toAscii().constData() + " missing in List "
-                + target.toAscii().constData() + "!";
+            + source.toAscii().constData() + " missing in List "
+                    + target.toAscii().constData() + "!";
     }
     else {
         std::string inList = parameterFile()
-                .get<std::string>(target.toAscii().constData());
+                             .get<std::string>(target.toAscii().constData());
         if((inList.find(source.toAscii().constData()) == std::string::npos)
-                && established)
+            && established)
             throw std::string("Node ")
-                    + source.toAscii().constData() + " missing in List "
+            + source.toAscii().constData() + " missing in List "
                     + target.toAscii().constData() + "!";
     }
 
@@ -210,7 +208,7 @@ void GraphModel::loadMetaFile(const QString& fName) {
 }
 
 void GraphModel::connectSlot(const QString& source, const QString& target,
-                                                                   bool draw) {
+                             bool draw) {
     // check for valid connection and return, if this connection already
     // exists.
     if (connected(source, target))
@@ -258,7 +256,7 @@ void GraphModel::connectSlot(const QString& source, const QString& target,
                 QString content = data(index(i, 1)).toString();
                 Q_ASSERT(content.indexOf(targetStr.c_str()) < 0);
                 QStringList targetList = content.split(";",
-                    QString::SkipEmptyParts);
+                                                       QString::SkipEmptyParts);
                 // add new target
                 targetList << targetStr.c_str();
                 setData(index(i, 1), targetList.join(";"));
@@ -281,7 +279,7 @@ void GraphModel::connectSlot(const QString& source, const QString& target,
                 QString content = data(index(i, 1)).toString();
                 Q_ASSERT(content.indexOf(sourceStr.c_str()) < 0);
                 QStringList sourceList = content.split(";",
-                    QString::SkipEmptyParts);
+                                                       QString::SkipEmptyParts);
                 // add new target
                 sourceList << sourceStr.c_str();
                 setData(index(i, 1), sourceList.join(";"));
@@ -303,11 +301,11 @@ void GraphModel::connectSlot(const QString& source, const QString& target,
         emit graphChanged();
 
     emit statusMessage(tr("attempt to connect %1 with %2")
-        .arg(source).arg(target));
+                       .arg(source).arg(target));
 }
 
 void GraphModel::disconnectSlot(const QString& source, const QString& target,
-        bool draw) {
+                                bool draw) {
     QStringList sourceSep = source.split(".");
     QStringList targetSep = target.split(".");
     Q_ASSERT(sourceSep.size() == 2);
@@ -348,7 +346,7 @@ void GraphModel::disconnectSlot(const QString& source, const QString& target,
         emit graphChanged();
 
     emit statusMessage(tr("disconnected node %1 from %2")
-        .arg(source).arg(target));
+                       .arg(source).arg(target));
 }
 
 QStringList GraphModel::_connections(QString node) const {
@@ -357,9 +355,9 @@ QStringList GraphModel::_connections(QString node) const {
 
     // collect input & output slots
     std::vector<std::string> inputs  =
-        metaInfo()->getInputs (className);
+            metaInfo()->getInputs (className);
     std::vector<std::string> outputs =
-        metaInfo()->getOutputs(className);
+            metaInfo()->getOutputs(className);
     std::vector<std::string> curSlot;
 
     std::vector<std::string>::const_iterator slot;
@@ -379,9 +377,9 @@ QStringList GraphModel::_connections(QString node) const {
                  || (curSlot.size() <= 1));
         std::vector<std::string>::const_iterator curSlotIter;
         for(curSlotIter = curSlot.begin(); curSlotIter != curSlot.end();
-                curSlotIter++)
+        curSlotIter++)
             result << QString("%1;%2").arg(slot->c_str())
-                .arg(curSlotIter->c_str());
+            .arg(curSlotIter->c_str());
     }
 
     // collect outputs
@@ -390,12 +388,12 @@ QStringList GraphModel::_connections(QString node) const {
         if (!parameterFile().isSet(slotName.toAscii().constData()))
             continue;
         curSlot = parameterFile().getList<std::string>(
-            slotName.toAscii().constData());
+                slotName.toAscii().constData());
         if (curSlot.size() > 0)
             // number of targets of an output slot is unlimited
             for(target = curSlot.begin(); target != curSlot.end(); target++)
                 result << QString("%1;%2").arg(slot->c_str())
-                    .arg(target->c_str());
+                .arg(target->c_str());
     }
 
     return result;
@@ -423,8 +421,8 @@ void GraphModel::renameNode(QString nodename, bool draw) {
     nodename = nodename.split(".")[0];
     bool ok;
     QString newName = QInputDialog::getText(0, tr("rename node"),
-        tr("Enter new name for node \"%1\":").arg(nodename),
-        QLineEdit::Normal, nodename, &ok);
+                                            tr("Enter new name for node \"%1\":").arg(nodename),
+                                            QLineEdit::Normal, nodename, &ok);
     if (ok) {
         // collect connections and disconnect all slots
         QStringList connections = _connections(nodename);
@@ -449,7 +447,7 @@ void GraphModel::renameNode(QString nodename, bool draw) {
             QStringList sep = con->split(";");
             Q_ASSERT(sep.size() == 2);
             connectSlot(QString("%1.%2").arg(newName).arg(sep[0]), sep[1],
-                false);
+                        false);
         }
 
         setPrefix(newName, false);
@@ -458,13 +456,13 @@ void GraphModel::renameNode(QString nodename, bool draw) {
             emit graphChanged();
 
         emit statusMessage(tr("renamed node %1 to %2").arg(nodename)
-            .arg(newName));
+                           .arg(newName));
     }
 }
 
 void GraphModel::deleteNode(const QString& nodename, bool draw) {
     QMessageBox mbox(QMessageBox::Question, tr("confirm delete"),
-            tr("Do you really want to delete node \"%1\"?").arg(nodename));
+                     tr("Do you really want to delete node \"%1\"?").arg(nodename));
     mbox.addButton(QMessageBox::Yes);
     mbox.addButton(QMessageBox::No);
     mbox.setDefaultButton(QMessageBox::No);
@@ -535,40 +533,40 @@ void GraphModel::addNode(const QString& className, bool draw) {
     do {
         bool ok = false;
         newName = QInputDialog::getText(0, tr("add new node"),
-            info + tr("Enter a name for the new node:"),
-            QLineEdit::Normal, tr("newnode"), &ok);
+                                        info + tr("Enter a name for the new node:"),
+                                        QLineEdit::Normal, tr("newnode"), &ok);
         if(!ok)
             return;
         if(nodeValid(newName))
             info = tr("This name is already in use.\n"
-                "Please use another name.\n");
+                      "Please use another name.\n");
         if(newName.contains(QRegExp("[\\s.]")))
             info = tr("Whitespace and dots in names are not allowed.\n"
-                "Please use a valid name.\n");
+                      "Please use a valid name.\n");
     } while (newName.isEmpty()
         || nodeValid(newName)
         || newName.contains(QRegExp("\\s"))
-    );
+        );
 
-    setPrefix("", false);
-    setOnlyParams(false);
+setPrefix("", false);
+setOnlyParams(false);
 
-    std::vector<std::string> inputs =
+std::vector<std::string> inputs =
         metaInfo()->getInputs(className.toAscii().constData());
-    std::vector<std::string> outputs =
+std::vector<std::string> outputs =
         metaInfo()->getOutputs(className.toAscii().constData());
 
-    insertRow(rowCount());
-    setData(index(rowCount()-1, 0), newName + ".type");
-    setData(index(rowCount()-1, 1), className);
-    setPrefix(newName, false);
-    setOnlyParams(true);
+insertRow(rowCount());
+setData(index(rowCount()-1, 0), newName + ".type");
+setData(index(rowCount()-1, 1), className);
+setPrefix(newName, false);
+setOnlyParams(true);
 
-    emit statusMessage(tr("add node %1 of class %2").arg(newName)
-        .arg(className));
+emit statusMessage(tr("add node %1 of class %2").arg(newName)
+                   .arg(className));
 
-    if(draw)
-        emit graphChanged();
+if(draw)
+    emit graphChanged();
 }
 
 /// @todo implement me ;-)
@@ -587,5 +585,38 @@ std::string GraphModel::getType(std::string parName) const {
             }
         }
     }
+    return res;
+}
+
+bool GraphModel::setData(const QModelIndex& ind, const QVariant& value,
+                         int role) {
+    if ((ind.column() == 1) && (data(index(ind.row(), 0)) == "templatetype")) {
+        if ((role != Qt::DisplayRole) && (role != Qt::EditRole))
+            return false;
+
+        if (value == data(ind))
+            return ParameterFileModel::setData(ind, value, role);
+        bool res = ParameterFileModel::setData(ind, value, role);
+
+        QStringList l = _connections(prefix());
+        for (int i = 0; i < l.size(); i++) {
+            QStringList connection = l[i].split(";");
+            std::string slotType = metaInfo()->getType(connection[0].toAscii().constData(),
+                                                       getClass(prefix().toAscii().constData()));
+            if (StringTool::toLowerCase(slotType).find("<t>")) {
+                disconnectSlot(prefix() + "." + connection[0], connection[1], false);
+            }
+        }
+        reDraw();
+        return res;
+    }
+    return ParameterFileModel::setData(ind, value, role);
+}
+
+bool GraphModel::removeRows(int row, int count,
+        const QModelIndex& parentInd) {
+    bool res = ParameterFileModel::removeRows(row, count, parentInd);
+    if(rowCount() > 0 && data(index(row,0)) == "templatetype")
+        reDraw();
     return res;
 }

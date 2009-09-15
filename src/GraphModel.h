@@ -73,6 +73,11 @@ public:
     /// @param parName          name of the parameter
     std::string getType(std::string parName) const;
 
+    virtual bool setData (const QModelIndex& index, const QVariant& value,
+                                                      int role = Qt::EditRole);
+    virtual bool removeRows (int row, int count,
+                                    const QModelIndex& parent = QModelIndex());
+
 public slots:
     /// @name edit graph
     //  @{
@@ -142,9 +147,6 @@ protected:
     /// <tt>\<source-slot\>;\<target-node\>.\<target-slot\></tt>
     /// @param node         nodename to look for connections
     QStringList _connections(QString node) const;
-
-    /// selected node
-    QString _selected;
 
 protected slots:
     /// Load data without showing OpenFile Dialog.
