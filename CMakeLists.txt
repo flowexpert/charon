@@ -67,6 +67,7 @@ INCLUDE(ReleaseSys)
 OPTION(ENABLE_TEST "enabling test suite" ON)
 IF(ENABLE_TEST)
 	ENABLE_TESTING()
+	INCLUDE(CTest)
 ENDIF(ENABLE_TEST)
 
 # the RPATH to be used when installing
