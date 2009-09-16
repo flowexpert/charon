@@ -228,6 +228,14 @@ public:
     virtual void save(ParameterFile& pf) const;
     virtual void load(const ParameterFile& pf);
     virtual std::string getDefaultString();
+
+    /**
+     * Inserts the value of the ParameterList at the end of a stream.
+     *
+     * @see AbstractParameter::intoStream()
+     * @param os Stream ot insert the value in
+     */
+    virtual void intoStream(std::ostream & os) const;
 };
 
 #endif // _Parameter_H

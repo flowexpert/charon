@@ -223,4 +223,11 @@ std::string ParameterList<T>::getDefaultString() {
     return _defaultValue;
 }
 
+template <typename T>
+void ParameterList<T>::intoStream(std::ostream & os) const {
+	for(unsigned int i = 0; i < _value.size(); i++) {
+		os << _value[i] << ",";
+	}
+}
+
 #endif // _Parameter_HXX_
