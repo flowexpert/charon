@@ -154,7 +154,7 @@ void WindowsPluginLoader::compileAndLoad(const std::string & sourceFile, std::ve
 
 	//Load paths from the path file
 	ParameterFile p("Paths.config");
-	std::string charon_utils = p.get<std::string> ("charon-utils-install");
+	std::string charon_core = p.get<std::string> ("charon-core-install");
 	std::string sdk_root = p.get<std::string> ("SDK-root");
 	std::string vc_root = p.get<std::string> ("VC-root");
 	std::string compiler_call = p.get<std::string> ("compiler-call");
@@ -183,14 +183,14 @@ void WindowsPluginLoader::compileAndLoad(const std::string & sourceFile, std::ve
 #ifdef MSVC
 	// syscall for compiling with VisualStudio
 	std::string syscall =	"cl /wd4290 /wd4251 /O2 /Oi /GL /I \""
-							+ charon_utils + "/include/charon-utils\" /I \"" + sdk_root + "\\Include\" /I \"" + vc_root
+							+ charon_core + "/include/charon-core\" /I \"" + sdk_root + "\\Include\" /I \"" + vc_root
 							+ "\\include\" " + "/D \"WIN32\" /D \"NDEBUG\" /D \"_WINDOWS\" "
 							+ "/D \"WINDOWS\" /D \"HANDLE_DLL\" "
 							+ "/D \"" + pluginName + "_EXPORTS\" /D \"MSVC\" /FD "
 							+ "/EHsc /MD /Gy "
 							+ "/W3 /nologo /TP \"" + sourceFile
 							+ "\" /link /LIBPATH:\"" + vc_root + "\\lib\" /LIBPATH:\""
-							+ sdk_root + "\\Lib\" /LIBPATH:\"" + charon_utils
+							+ sdk_root + "\\Lib\" /LIBPATH:\"" + charon_core
 							+ "\\bin\" /LIBPATH:\"" + pluginPath + "\" /OUT:\"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\" + pluginName
 							+ ".dll\" /INCREMENTAL:NO /NOLOGO /DLL /MANIFEST /MANIFESTFILE:\""
 							+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\" + pluginName
@@ -200,19 +200,19 @@ void WindowsPluginLoader::compileAndLoad(const std::string & sourceFile, std::ve
 							+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\" + pluginName + ".lib\" "
 							+ refs + "kernel32.lib user32.lib gdi32.lib winspool.lib "
 							+ "comdlg32.lib advapi32.lib shell32.lib ole32.lib "
-							+ "oleaut32.lib uuid.lib odbc32.lib odbccp32.lib charon-utils.lib "
+							+ "oleaut32.lib uuid.lib odbc32.lib odbccp32.lib charon-core.lib "
 							+ "&& mt /nologo /outputresource:\"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\"
 							+ pluginName + ".dll;#2\" -manifest \"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\"
 							+ pluginName + ".dll.manifest";
 	//}
 #else
 	// syscall for compiling with MinGW
-	std::string syscall =	compiler_call + " -I" + charon_utils + "/src"
-							+ " -I" + charon_utils + "/imgmanip"
-							+ " -L" + charon_utils + "/bin"
+	std::string syscall =	compiler_call + " -I" + charon_core + "/src"
+							+ " -I" + charon_core + "/imgmanip"
+							+ " -L" + charon_core + "/bin"
 							+ " -L" + pluginPath + " -shared"
 							+ " -o " + pluginPath + "/lib" + pluginName + ".dll"
-							+ " -lgdi32 -lcharon-utils -shared " + refs + " "
+							+ " -lgdi32 -lcharon-core -shared " + refs + " "
 							+ sourceFile;
 #endif
 

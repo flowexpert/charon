@@ -121,7 +121,13 @@ private:
     std::map<std::string, Slot*> _outputs;
 
     /// forbid copying
-    ParameteredObject(const ParameteredObject&);
+    /// Implementation needed to compile with Visual C++. Otherwise the following
+    /// error max occur:
+    /// Unresolved extern symbol ""__declspec(dllimport) private: __thiscall 
+    /// ParameteredObject::ParameteredObject(class ParameteredObject const &)" 
+    /// (__imp_??0ParameteredObject@@AAE@ABV0@@Z)"
+    ParameteredObject(const ParameteredObject&){}
+
     /// forbid instantiation without className etc.
     ParameteredObject();
 

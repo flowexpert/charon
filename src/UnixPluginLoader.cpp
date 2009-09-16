@@ -94,12 +94,12 @@ void UnixPluginLoader::compileAndLoad(const std::string & sourceFile,
 	//Load paths from the path file
 
 	ParameterFile p;
-	if (FileTool::exists("./share/charon-utils/Paths.config")) {
-		p.load("./share/charon-utils/Paths.config");
+	if (FileTool::exists("./share/charon-core/Paths.config")) {
+		p.load("./share/charon-core/Paths.config");
 	} else {
 		p.load("Paths.config");
 	}
-	std::string charon_utils = p.get<std::string> ("charon-utils-install");
+	std::string charon_core = p.get<std::string> ("charon-core-install");
 	std::string compiler_call = p.get<std::string> ("compiler-call");
 #ifdef APPLE
 	std::vector<std::string> x11_libs_vector = p.getList<std::string>("x11-libs");
@@ -127,10 +127,10 @@ void UnixPluginLoader::compileAndLoad(const std::string & sourceFile,
 			+ "\" and creating metadata information.\nPlease be patient, this "
 			+ "could take some time." << std::endl;
 
-	std::string sysCall = compiler_call + " -fPIC -I \"" + charon_utils
-			+ "/include/charon-utils\" -L \"" + charon_utils + "/lib\" -L \""
+	std::string sysCall = compiler_call + " -fPIC -I \"" + charon_core
+			+ "/include/charon-core\" -L \"" + charon_core + "/lib\" -L \""
 			+ pluginPath + "\" -L \"" + additionalPluginPath + "\" "
-			+ DL_COMPILER_FLAG + " -lcharon-utils -lpthread " + refs
+			+ DL_COMPILER_FLAG + " -lcharon-core -lpthread " + refs
 			+ " -Wl,-rpath,\"" + pluginPath + "\" -Wl,-rpath,\""
 			+ additionalPluginPath + "\" -o \""
 			+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath)
