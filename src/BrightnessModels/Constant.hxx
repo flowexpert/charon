@@ -50,7 +50,8 @@ void BrightnessModels::Constant<T>::compute(const int xs, const int ys,
 
 template<class T>
 void BrightnessModels::Constant<T>::apply(const Pixel<T> & inPixel,
-		const std::vector<Parameter<T>*> & modifier, Pixel<T> & outPixel)
+		const std::vector<IncrementorParameter<T>*> & modifier,
+		Pixel<T> & outPixel)
 {
 	outPixel = inPixel;
 	// no brightness change

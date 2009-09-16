@@ -88,7 +88,7 @@ void BrightnessModels::Diffusion<T>::setFunctorParams(float d)
 
 template <class T>
 void BrightnessModels::Diffusion<T>::apply(const Pixel<T> & inPixel, const std::vector<
-		Parameter<T>*> & modifier, Pixel<T> & outPixel)
+			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel)
 {
 
 	outPixel = inPixel;

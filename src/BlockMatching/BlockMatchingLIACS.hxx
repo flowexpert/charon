@@ -27,6 +27,7 @@
 #include "ListedPixelSelection.hxx"
 #include "IncrementorCountUp.hxx"
 #include "ObjectiveFunctionComparing.hxx"
+#include "SurfaceAnalysisMinChange.hxx"
 
 template<typename T>
 BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
@@ -36,14 +37,49 @@ BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
 }
 
 template<typename T>
-void BlockMatchingLIACS<T>::findFlow()
+cimg_library::CImgList<T>& BlockMatchingLIACS<T>::findFlow()
 {
 	std::vector<T> pixelProperties;
-//	pixelProperties = this->brightnessModel()->apply(
-//			this->newPos()->getListOfParams());
-	//	pixelProperties = this->motionModel()->apply(this->newPos()->getListOfParams());		///@TODO gibts noch net
-
-
+	std::vector<std::vector<IncrementorParameter<T>*> > allParameters;
+	cimg_forXYZV(this->sequence()[0], x, y, z, t)
+				{
+					for (int i = 0; this->newParams()->doStep(); i++)
+					{
+						allParameters.push_back(
+								this->newParams()->getListOfParams());
+						pixelProperties.push_back(this->changes()->compare(
+								*(this->pixelList()),
+								this->newParams()->getListOfParams()));
+					}
+					std::vector<IncrementorParameter<T>*> tempParams =
+							this->bestParam()->findMinChange(pixelProperties,
+									allParameters);
+					typename std::vector<IncrementorParameter<T>*>::iterator it;
+					T x, y, z, t;
+					unsigned int j;
+					for (it = tempParams.begin(); it != tempParams.end(); it++)
+					{
+						if (tempParams[j]->getName() == "x")
+						{
+							x = tempParams[j]->getCurrent();
+						}
+						if (tempParams[j]->getName() == "y")
+						{
+							y = tempParams[j]->getCurrent();
+						}
+						if (tempParams[j]->getName() == "z")
+						{
+							z = tempParams[j]->getCurrent();
+						}
+						if (tempParams[j]->getName() == "t")
+						{
+							t = tempParams[j]->getCurrent();
+						}
+						j++;
+					}
+					this->surface(x, y, z, t);
+				}
+	return this->surface;
 }
 
 #endif /* BLOCKMATCHINGLIACS_HXX_ */

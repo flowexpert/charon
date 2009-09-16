@@ -45,7 +45,7 @@ private:
 public:
 	/// standard constructor
 	BlockMatchingLIACS(const std::string& name);
-	void findFlow();
+	virtual cimg_library::CImgList<T>& findFlow();
 
 };
 

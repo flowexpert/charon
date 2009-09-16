@@ -1,4 +1,3 @@
-/*
 /*  This file is part of Charon.
 
  Charon is free software: you can redistribute it and/or modify
@@ -27,13 +26,13 @@
 #include "SurfaceAnalysis.h"
 
 template<typename T>
-class SurfaceAnalysisMinChange : public SurfaceAnalysis <T>
+class SurfaceAnalysisMinChange: public SurfaceAnalysis<T>
 {
 public:
 	SurfaceAnalysisMinChange(const std::string name);
-	virtual std::vector<IncrementorParameter<T>* >
-	& findMinChange(std::vector<T>& differences, std::vector<
-			IncrementorParameter<T>* >& parameters);
+	virtual std::vector<IncrementorParameter<T>*> & findMinChange(
+			std::vector<T>& differences, std::vector<std::vector<
+					IncrementorParameter<T>*> >& parameters);
 
 };
 

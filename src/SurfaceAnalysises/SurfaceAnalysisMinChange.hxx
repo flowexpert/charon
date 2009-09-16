@@ -35,11 +35,23 @@ SurfaceAnalysisMinChange<T>::SurfaceAnalysisMinChange(const std::string name) :
 
 template<typename T>
 std::vector<IncrementorParameter<T>*> & SurfaceAnalysisMinChange<T>::findMinChange(
-		std::vector<T>& differences,
-		std::vector<IncrementorParameter<T>*>& parameters)
+		std::vector<T>& differences, std::vector<std::vector<
+				IncrementorParameter<T>*> >& parameters)
 {
-	std::vector<IncrementorParameter<T>*> ret;
-	return ret;
+	//find minimum
+	unsigned int tempMin = 0;
+	for (unsigned int i = 1; i != differences.size() - 1; i++)
+	{
+		if (differences[i] < differences[tempMin] )
+		{
+			tempMin = i;
+		}
+		if ( i == parameters.size())
+		{
+			break;
+		}
+	}
+	return parameters[tempMin];
 }
 
 #endif /* SURFACEANALYSISMINCHANGE_HXX_ */

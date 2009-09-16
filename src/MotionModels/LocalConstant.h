@@ -39,7 +39,7 @@ namespace MotionModels
 * @f]
 */	
 template <class T>
-class LocalConstant : public MotionModel
+class LocalConstant : public MotionModel <T>
 {
 private:
 	//cimg_library::CImg<> dx,dy,dt;

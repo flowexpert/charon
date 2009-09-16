@@ -33,6 +33,7 @@ class SurfaceAnalysis: TemplatedParameteredObject<T>
 public:
 	/// standard constructor
 	SurfaceAnalysis(const std::string& name);
+	OutputSlot<SurfaceAnalysis<T>*> out;
 	///standard execute from ParameterdObject
 	void execute();
 	/**
@@ -41,9 +42,9 @@ public:
 	 *  @param parameters all possible parameters
 	 *  @param [out] vector of IncrementorParameter for best fitting Parameters
 	 */
-	virtual std::vector<IncrementorParameter<T>* >
-	& findMinChange(std::vector<T>& differences, std::vector<
-			IncrementorParameter<T>* >& parameters) =0;
+	virtual std::vector<IncrementorParameter<T>*> & findMinChange(
+			std::vector<T>& differences, std::vector<std::vector<
+					IncrementorParameter<T>*> >& parameters) =0;
 };
 
 #endif /* SURFACEANALYSIS_H_ */

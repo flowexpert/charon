@@ -79,9 +79,8 @@ void BrightnessModels::MovingIllumination<T>::Functor::operator ()(
 }
 
 template<class T>
-void BrightnessModels::MovingIllumination<T>::apply(
-		const Pixel<T> & inPixel, const std::vector<Parameter<T>*> & modifier,
-		Pixel<T> & outPixel)
+void BrightnessModels::MovingIllumination<T>::apply(const Pixel<T> & inPixel, const std::vector<
+		IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel)
 {
 	outPixel = inPixel;
 }

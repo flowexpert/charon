@@ -64,7 +64,7 @@ public:
 	//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
 
 	virtual void apply(const Pixel<T> & inPixel, const std::vector<
-			Parameter<T>*> & modifier, Pixel<T> & outPixel);
+			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel);
 };
 
 }

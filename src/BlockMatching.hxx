@@ -36,9 +36,14 @@ BlockMatching<T>::BlockMatching(const std::string& name) :
 	this->_addInputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
 			"std::vector<Pixel<T>>*");
 	this->_addInputSlot(newParams, "newParams",
-			"Next Parameters after Incrementation", "Incrementor<T> *");
+			"Next Parameters after Incrementation", "Incrementor<T>*");
 	this->_addInputSlot(changes, "changes", "Models to be changed",
-			"std::vector<std::string>*");
+			"ObjectiveFuntction<T>*");
+	this->_addInputSlot(bestParam, "bestParam",
+			"Computes best fitting Parameters, for the flow",
+			"SurfaceAnalysis<T>*");
+	this->_addOutputSlot(out, "out", "Find Flow in Sequence",
+			"BlockMatching<T> *");
 }
 
 template<typename T>

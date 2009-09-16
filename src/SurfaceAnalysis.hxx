@@ -28,9 +28,11 @@
 template<typename T>
 SurfaceAnalysis<T>::SurfaceAnalysis(const std::string& name) :
 	TemplatedParameteredObject<T> ("SurfaceAnalysis", name,
-			" computes best fitting Parameters, for the flow")
+			"Computes best fitting Parameters, for the flow"), out(this)
 {
-
+	this->_addOutputSlot(out, "out",
+			"Computes best fitting Parameters, for the flow",
+			"SurfaceAnalysis<T>*");
 }
 
 template<typename T>

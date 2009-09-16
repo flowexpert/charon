@@ -26,6 +26,7 @@
 #include "Roi.h"
 #include "CImg.h"
 #include "Incrementor.h"
+#include "ObjectiveFunction.h"
 #include "SurfaceAnalysis.h"
 #include "PixelSelection.h"
 #include "BrightnessModel.h"
@@ -37,19 +38,23 @@ template<typename T>
 class BlockMatching: public TemplatedParameteredObject<T>
 
 {
+protected:
+	cimg_library::CImgList<T> surface;
 
 public:
 	/// standard constructor
 	BlockMatching(const std::string& name);
-	InputSlot<cimg_library::CImgList<T>& > sequence;
+	InputSlot<cimg_library::CImgList<T>&> sequence;
 	InputSlot<Roi<int>*> range;
-	InputSlot<std::vector<Pixel<T> >*> pixelList;
+	InputSlot<std::vector<Pixel<T>*>*> pixelList;
 	InputSlot<Incrementor<T> *> newParams;
-	InputSlot<std::vector<std::string>*> changes;
+	InputSlot<ObjectiveFunction<T> *> changes;
+	InputSlot<SurfaceAnalysis<T> *> bestParam;
+	OutputSlot<BlockMatching<T> *> out;
 	/// standard execute from Parametered Object
 	void execute();
 	/// trys to find the flow in the sequence
-	virtual void findFlow() =0;
+	virtual cimg_library::CImgList<T>& findFlow() =0;
 
 };
 
