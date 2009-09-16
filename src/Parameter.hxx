@@ -197,7 +197,9 @@ std::string ParameterList<T>::guessType() const {
 
 template <typename T>
 void ParameterList<T>::save(ParameterFile& pf) const {
-    if (_value == _defaultValue) {
+	std::stringstream stream;
+	this->intoStream(stream);
+    if (stream.str() == _defaultValue) {
         if (pf.isSet(_parent->getName() + "." + _name))
             pf.erase(_parent->getName() + "." + _name);
     }
@@ -209,8 +211,11 @@ template <typename T>
 void ParameterList<T>::load(const ParameterFile& pf) {
     if(pf.isSet(_parent->getName() + "." + _name))
         _value = pf.getList<T>(_parent->getName() + "." + _name);
-    else
-        _value = _defaultValue;
+    else {
+        ParameterFile temp;
+        temp.set("temp", _defaultValue);
+        _value = temp.getList<T>("temp");
+   	}
 }
 
 template <typename T>
@@ -225,8 +230,11 @@ std::string ParameterList<T>::getDefaultString() {
 
 template <typename T>
 void ParameterList<T>::intoStream(std::ostream & os) const {
-	for(unsigned int i = 0; i < _value.size(); i++) {
-		os << _value[i] << ",";
+	if(_value.size()) {
+		for(unsigned int i = 0; i < _value.size()-1; i++) {
+			os << _value[i] << ";";
+		}
+		os << _value[_value.size()-1];
 	}
 }
 
