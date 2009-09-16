@@ -35,7 +35,7 @@ Stencil<T>::Stencil(const std::string& classname, const std::string& name) :
 				"discretizes partial differential equation terms or defines derivatives filters for images"),
 				out(this) {
 	this->_addOutputSlot(out,"this","Pointer to itself","Stencil<T>*");
-	this->_addParameter(lambda,"lambda","weight of the pde term",1);
+	this->_addParameter(lambda,"lambda","weight of the pde term",T(1));
 }
 
 template <class T> 

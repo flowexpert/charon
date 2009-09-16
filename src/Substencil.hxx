@@ -66,6 +66,6 @@ Substencil<T>& Substencil<T>::operator= (const Substencil<T> &rhs) {
 }
 
 template <class T>
-Substencil<T>::~Substencil();
+Substencil<T>::~Substencil() {}
 
 #endif //_substencil_HXX_

@@ -13,6 +13,7 @@ INCLUDE(ReleaseSys)
 
 FIND_PACKAGE(charon-core REQUIRED)
 FIND_PACKAGE(charon-utils REQUIRED)
+FIND_PACKAGE(petsc REQUIRED)
 
 # Test suite
 OPTION(ENABLE_TEST "enable test suite" ON)

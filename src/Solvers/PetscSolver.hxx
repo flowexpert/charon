@@ -124,7 +124,7 @@ unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
 	unsigned int res=0;
 	
 	std::map<std::string,roi<int> >::iterator usIt; //unknown Sizes iterator
-	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.find(unknown) ; usIt++) {
+	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.find(unknown) ; usIt++) {
 		res += usIt->second().getVolume();
 	}
 	

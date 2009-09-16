@@ -1,18 +1,19 @@
 INCLUDE_DIRECTORIES(${CHARON_CORE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CHARON_UTILS_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(${PETSC_INCLUDE_DIRS})
 
 ADD_DEFINITIONS(/DHANDLE_DLL)
 
 #Create shared libraries
 ADD_LIBRARY(gbcce SHARED Stencils/GBCCE.cpp)
 ADD_LIBRARY(l2norm SHARED Stencils/L2Norm.cpp)
-# ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
+ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
 
 SET(Plugins
 	gbcce
 	l2norm
-#	petscsolver
+	petscsolver
 )
 
 FOREACH(X ${Plugins})

@@ -32,33 +32,34 @@
 
 template <class T>
 L2Norm<T>::L2Norm(const std::string& name) : 
-		Stencil<T>("L2Norm","L2Norm",
-		"discretizes partial differential equation terms or defines derivatives filters for images") {
-	this->_addParameter(unknowns, "unknowns", "List of unknowns");
-	this->_addParameter(dimensions, "dimensions", "Number of dimensions",2);
+		Stencil<T>("L2Norm") {
+	this->_addParameter(pUnknowns, "unknowns", "List of unknowns");
+	this->dimensions.setDefault(2);
+	this->_addParameter(dimensions, "dimensions", "Number of dimensions");
 	if (dimensions > 4) {throw "invalid dimensions";}
 }
 
 template <class T>
 void L2Norm<T>::execute() {
-	ParameteredObject::update();
+	ParameteredObject::execute();
 	//create masks in appropriate dimensions
+	typename cimg_library::CImg<T> dataMask(3,1,1,1,0);
+	typename cimg_library::CImg<T> patternMask(3,1,1,1,0);
 	switch (dimensions) {
 		case 1:
-			cimg_library::CImg(3,1,1,1,0)<T> dataMask;
-			cimg_library::CImg(3,1,1,1,0)<T> patternMast;
+			//already has the correct size
 			break;
 		case 2:
-			cimg_library::CImg(3,3,1,1,0)<T> dataMask;
-			cimg_library::Cimg(3,3,1,1,0)<T> patternMask;
+			dataMask.assign(3,3,1,1,0);
+			patternMask.assign(3,3,1,1,0);
 			break;
 		case 3:
-			cimg_library::CImg(3,3,3,1,0)<T> dataMask;
-			cimg_library::CImg(3,3,3,1,0)<T> patternMask;
+			dataMask.assign(3,3,3,1,0);
+			patternMask.assign(3,3,3,1,0);
 			break;
 		case 4:
-			cimg_library::CImg(3,3,3,3,0)<T> dataMask;
-			cimg_library::CImg(3,3,3,3,0)<T> patternMask;
+			dataMask.assign(3,3,3,3,0);
+			patternMask.assign(3,3,3,3,0);
 			break;
 	}
 	
@@ -66,9 +67,9 @@ void L2Norm<T>::execute() {
 	
 	//filling mask with values and setting the center
 	if (dimensions == 1) {
-		dataMask(0) += T(-1 * lambda);
-		dataMask(1) += T( 2 * lambda);
-		dataMask(2) += T(-1 * lambda);
+		dataMask(0) += T(-1 * this->lambda());
+		dataMask(1) += T( 2 * this->lambda());
+		dataMask(2) += T(-1 * this->lambda());
 		
 		patternMask(0) = 1;
 		patternMask(1) = 1;
@@ -79,11 +80,11 @@ void L2Norm<T>::execute() {
 		center.z=0;
 		center.t=0;
 	} else if (dimensions == 2) {
-		dataMask(1,0) += T(-1 * lambda);
-		dataMask(0,1) += T(-1 * lambda);
-		dataMask(1,1) += T( 4 * lambda);
-		dataMask(2,1) += T(-1 * lambda);
-		dataMask(1,2) += T(-1 * lambda);
+		dataMask(1,0) += T(-1 * this->lambda());
+		dataMask(0,1) += T(-1 * this->lambda());
+		dataMask(1,1) += T( 4 * this->lambda());
+		dataMask(2,1) += T(-1 * this->lambda());
+		dataMask(1,2) += T(-1 * this->lambda());
 		
 		patternMask(1,0) = 1;
 		patternMask(0,1) = 1;
@@ -96,13 +97,13 @@ void L2Norm<T>::execute() {
 		center.z=0;
 		center.t=0;
 	} else if (dimensions == 3) {
-		dataMask(1,1,0) += T(-1 * lambda);
-		dataMask(1,0,1) += T(-1 * lambda);
-		dataMask(0,1,1) += T(-1 * lambda);
-		dataMask(1,1,1) += T( 6 * lambda);
-		dataMask(2,1,1) += T(-1 * lambda);
-		dataMask(1,2,1) += T(-1 * lambda);
-		dataMask(1,1,2) += T(-1 * lambda);
+		dataMask(1,1,0) += T(-1 * this->lambda());
+		dataMask(1,0,1) += T(-1 * this->lambda());
+		dataMask(0,1,1) += T(-1 * this->lambda());
+		dataMask(1,1,1) += T( 6 * this->lambda());
+		dataMask(2,1,1) += T(-1 * this->lambda());
+		dataMask(1,2,1) += T(-1 * this->lambda());
+		dataMask(1,1,2) += T(-1 * this->lambda());
 		
 		patternMask(1,1,0) = 1;
 		patternMask(1,0,1) = 1;
@@ -117,15 +118,15 @@ void L2Norm<T>::execute() {
 		center.z=1;
 		center.t=0;
 	} else if (dimensions == 4) {
-		dataMask(1,1,1,0) += T(-1 * lambda);
-		dataMask(1,1,0,1) += T(-1 * lambda);
-		dataMask(1,0,1,1) += T(-1 * lambda);
-		dataMask(0,1,1,1) += T(-1 * lambda);
-		dataMask(1,1,1,1) += T( 8 * lambda);
-		dataMask(2,1,1,1) += T(-1 * lambda);
-		dataMask(1,2,1,1) += T(-1 * lambda);
-		dataMask(1,1,2,1) += T(-1 * lambda);
-		dataMask(1,1,1,2) += T(-1 * lambda);
+		dataMask(1,1,1,0) += T(-1 * this->lambda());
+		dataMask(1,1,0,1) += T(-1 * this->lambda());
+		dataMask(1,0,1,1) += T(-1 * this->lambda());
+		dataMask(0,1,1,1) += T(-1 * this->lambda());
+		dataMask(1,1,1,1) += T( 8 * this->lambda());
+		dataMask(2,1,1,1) += T(-1 * this->lambda());
+		dataMask(1,2,1,1) += T(-1 * this->lambda());
+		dataMask(1,1,2,1) += T(-1 * this->lambda());
+		dataMask(1,1,1,2) += T(-1 * this->lambda());
 		
 		patternMask(1,1,1,0) = 1;
 		patternMask(1,1,0,1) = 1;
@@ -145,30 +146,31 @@ void L2Norm<T>::execute() {
 	//Copy the unknowns form the Parameter list into the set, which was
 	//inherited from the Stencil class
 	std::vector<std::string>::iterator puIt; //parameter list of unknowns iterator
-	for(puIt=pUnknowns.begin() ; puIt!=pUnknowns.end() ; puIt++) {
-		unknowns.insert(*puIt);
+	for(puIt=pUnknowns().begin() ; puIt!=pUnknowns().end() ; puIt++) {
+		this->unknowns.insert(*puIt);
 	}
 	
 	//filling stencil with masks
-	std::set<std::string>::iterator uIt;	//unknowns iterator
-	for(uIt=unknowns().begin() ; uIt!=unknowns().end() ; uIt++) {
+	std::vector<std::string>::iterator uIt;	//unknowns iterator
+	for(uIt=this->pUnknowns().begin() ; uIt!=this->pUnknowns().end() ; uIt++) {
+		Substencil<T>* entry;
 		switch(dimensions) {
 			case 1:
-				substencil entry(3,1,1,1,center);
+				entry = new Substencil<T>(3,1,1,1,center);
 				break;
 			case 2:
-				substencil entry(3,3,1,1,center);
+				entry = new Substencil<T>(3,3,1,1,center);
 				break;
 			case 3:
-				substencil entry(3,3,3,1,center);
+				entry = new Substencil<T>(3,3,3,1,center);
 				break;
 			case 4:
-				substencil entry(3,3,3,3,center);
+				entry = new Substencil<T>(3,3,3,3,center);
 				break;
 		}
-		entry.data = dataMask;
-		entry.pattern = patternMask;
-		substencils[*uIt] = entry;
+		entry->data = dataMask;
+		entry->pattern = patternMask;
+		this->substencils[*uIt] = *entry;
 	}
 }
 
@@ -180,6 +182,6 @@ void L2Norm<T>::updateStencil(const unsigned int x, const unsigned int y,
 }
 
 template <class T>
-L2Norm::~L2Norm() {}
+L2Norm<T>::~L2Norm() {}
 
 #endif // _L2NORM_HXX_
