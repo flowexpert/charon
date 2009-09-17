@@ -32,14 +32,14 @@ FileReader<T>::FileReader(const std::string& name) :
 {
     this->_addParameter (filename, "filename",
         "filename to read image from", "filename");
-    this->_addOutputSlot(image, "image",
-        "image output", "CImg<T>");
+    this->_addOutputSlot(out, "out",
+        "image output", "CImgList<T>");
 }
 
 template <typename T>
 void FileReader<T>::execute() {
 	ParameteredObject::execute();
-    image = cimg_library::CImg<T>::get_load(filename().c_str());
+    out().load(filename().c_str());
 }
 
 #endif /* _FILEREADER_HXX_ */

@@ -20,6 +20,10 @@
  * @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">
  *     Cornelius Ratsch</a>
  * @date 20.08.2009
+ *
+ * \b Changelog:
+ * -	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a> 2009-09-17:\n
+ * 			use CImgList rather than CImg
  */
 
 #ifndef _FILEREADER_H_
@@ -37,8 +41,8 @@
 #define filereader_DECLDIR
 #endif
 
-#include "ParameteredObject.hxx"
-#include "CImg.h"
+#include <charon-core/ParameteredObject.hxx>
+#include <CImg.h>
 
 /// Simple class to read image files.
 /// This class is able to read an image from some image file
@@ -50,7 +54,7 @@ public:
     Parameter<std::string> filename;
 
     /// image data as output slot
-    OutputSlot<cimg_library::CImg<T> > image;
+    OutputSlot<cimg_library::CImgList<T> > out;
 
     /// create a new sample object
     /// @param name             Object name
