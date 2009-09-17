@@ -120,8 +120,11 @@ QString DocGenerator::_docList(const std::vector<std::string>& parList,
 
             // show parameter name and type
             ret += "<td class=\"leftcol\"></td>";
+            QString parType = _model->metaInfo()->
+                getType(*parIter, className).c_str();
+            parType.replace("<", "&lt;").replace(">", "&gt;");
             ret	+= QString("<td class=\"dtype firstrow\">%1</td>")
-                .arg(_model->metaInfo()->getType(*parIter, className).c_str());
+                .arg(parType);
             ret += QString("<td class=\"firstrow\"><span class=\"parname\">"
                 "%1</span></td>\n")
                 .arg(parIter->c_str());
