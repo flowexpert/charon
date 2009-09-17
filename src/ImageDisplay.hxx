@@ -38,7 +38,7 @@ ImageDisplay<T>::ImageDisplay(const std::string& name) :
     this->_addParameter(width,  "width",  "display width (0=auto)", 0u);
     this->_addParameter(height, "height", "display height (0=auto)", 0u);
     this->_addParameter(title,  "title",  "display title");
-    this->_addInputSlot(image,  "image",  "image input", "CImgList<T>");
+    this->_addInputSlot(in,     "in",     "image input", "CImgList<T>");
 }
 
 template <typename T>
@@ -46,16 +46,16 @@ void ImageDisplay<T>::execute() {
     ParameteredObject::execute();
 
     // set desired image size
-    if(frame() >= image().size)
+    if(frame() >= in().size)
         throw std::out_of_range("ImageDisplay: selected frame number is "
                 "larger than number of images");
     if(!width() || !height())
-        _display.assign(image()[frame()].dimx(), image()[frame()].dimy(), title().c_str(), 1);
+        _display.assign(in()[frame()].dimx(), in()[frame()].dimy(), title().c_str(), 1);
     else
         _display.assign(width, height, title().c_str(), 1);
 
     // show image
-    _display << image()[frame()];
+    _display << in()[frame()];
     _display.show();
 
     // and wait, if necessary

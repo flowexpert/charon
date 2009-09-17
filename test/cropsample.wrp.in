@@ -1,4 +1,5 @@
 rd.type            filereader
+rd.out             crop.in
 rd.filename        @PENGUINFILE@
 
 fw.type            filewriter
@@ -11,13 +12,15 @@ roi.top            0
 roi.left           29
 roi.bottom         18
 roi.right          44
+roi.out            crop.roi
 
 crop.type          crop
 crop.roi           roi.out
 crop.in            rd.out
+crop.out           disp.in;fw.in
 
 disp.type          imagedisplay
-disp.in            crop.outimage
+disp.in            crop.out
 disp.wait          1000
 disp.width         200
 disp.height        200

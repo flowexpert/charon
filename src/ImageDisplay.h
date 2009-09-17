@@ -54,10 +54,10 @@ private:
 
 public:
     /// image data as input slot
-    InputSlot<cimg_library::CImgList<T> > image;
+    InputSlot<cimg_library::CImgList<T> > in;
 
-	/// select frame to display
-	Parameter<unsigned int> frame;
+    /// select frame to display
+    Parameter<unsigned int> frame;
     /// Display time (in milliseconds).
     /// Set this to zero to wait for click.
     Parameter<unsigned int> wait;
@@ -74,7 +74,7 @@ public:
     /// @param name             Object name
     ImageDisplay(const std::string& name);
 
-	/// \implements ParameteredObject::execute
+    /// \implements ParameteredObject::execute
     virtual void execute();
 };
 
