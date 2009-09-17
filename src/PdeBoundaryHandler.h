@@ -32,7 +32,7 @@
 #ifndef cimg_strict
     #define cimg_strict
 #endif
-#include "CImg.h"
+#include <CImg.h>
 #include "Roi.h"
 #include <vector>
 

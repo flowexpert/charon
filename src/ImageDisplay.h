@@ -20,6 +20,10 @@
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 11.04.2009
+///
+/// \b Changelog:
+/// -	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a> 2009-09-17:\n
+///			use CImgList rather than CImg
 
 #ifndef _IMAGE_DISPLAY_H_
 #define _IMAGE_DISPLAY_H_
@@ -36,8 +40,8 @@
 #define imagedisplay_DECLDIR
 #endif
 
-#include "ParameteredObject.hxx"
-#include "CImg.h"
+#include <charon-core/ParameteredObject.hxx>
+#include <CImg.h>
 
 /// Simple class to display images.
 /// This class displays the image read from the input slot
@@ -50,8 +54,10 @@ private:
 
 public:
     /// image data as input slot
-    InputSlot<cimg_library::CImg<T> > image;
+    InputSlot<cimg_library::CImgList<T> > image;
 
+	/// select frame to display
+	Parameter<unsigned int> frame;
     /// Display time (in milliseconds).
     /// Set this to zero to wait for click.
     Parameter<unsigned int> wait;

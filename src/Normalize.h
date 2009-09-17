@@ -20,6 +20,10 @@
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 11.04.2009
+///
+/// \b Changelog:
+/// -	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a> 2009-09-17:\n
+///			use CImgList rather than CImg
 
 #ifndef NORMALIZE_H
 #define NORMALIZE_H
@@ -36,8 +40,8 @@
 #define normalize_DECLDIR
 #endif
 
-#include "ParameteredObject.hxx"
-#include "CImg.h"
+#include <charon-core/ParameteredObject.hxx>
+#include <CImg.h>
 
 /// Simple class to normalize images.
 /// This class uses the cimg normalize command to normalize
@@ -47,9 +51,9 @@ class normalize_DECLDIR Normalize : public TemplatedParameteredObject<T>
 {
 public:
     /// image data input slot
-    InputSlot<cimg_library::CImg<T> > inimage;
+    InputSlot<cimg_library::CImgList<T> > in;
     /// image data output slot
-    OutputSlot<cimg_library::CImg<T> > outimage;
+    OutputSlot<cimg_library::CImgList<T> > out;
 
     /// lower bound of normalization
     Parameter<T> lower;
@@ -60,6 +64,7 @@ public:
     /// @param name             Object name
     Normalize(const std::string& name);
 
+	/// apply threshold to all given images
 	/// \implements ParameteredObject::execute
     virtual void execute();
 };

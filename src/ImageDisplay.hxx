@@ -24,22 +24,21 @@
 #ifndef _IMAGEDISPLAY_HXX_
 #define _IMAGEDISPLAY_HXX_
 
+#include <stdexcept>
 #include "ImageDisplay.h"
 
 template <typename T>
 ImageDisplay<T>::ImageDisplay(const std::string& name) :
         TemplatedParameteredObject<T>("imagedisplay", name,
             "read image from image file using cimg"),
-        wait(0),
-        width(0),
-        height(0),
         title("Display")
 {
-    this->_addParameter(wait,   "wait",   "display wait time (in milliseconds)");
-    this->_addParameter(width,  "width",  "display width (0=auto)");
-    this->_addParameter(height, "height", "display height (0=auto)");
+    this->_addParameter(frame,  "frame",  "select frame to display", 0u);
+    this->_addParameter(wait,   "wait",   "display wait time (in milliseconds)", 0u);
+    this->_addParameter(width,  "width",  "display width (0=auto)", 0u);
+    this->_addParameter(height, "height", "display height (0=auto)", 0u);
     this->_addParameter(title,  "title",  "display title");
-    this->_addInputSlot(image,  "image",  "image input", "CImg<T>");
+    this->_addInputSlot(image,  "image",  "image input", "CImgList<T>");
 }
 
 template <typename T>
@@ -47,13 +46,16 @@ void ImageDisplay<T>::execute() {
     ParameteredObject::execute();
 
     // set desired image size
+    if(frame() >= image().size)
+        throw std::out_of_range("ImageDisplay: selected frame number is "
+                "larger than number of images");
     if(!width() || !height())
-        _display.assign(image().dimx(), image().dimy(), title().c_str(), 1);
+        _display.assign(image()[frame()].dimx(), image()[frame()].dimy(), title().c_str(), 1);
     else
         _display.assign(width, height, title().c_str(), 1);
 
     // show image
-    _display << image();
+    _display << image()[frame()];
     _display.show();
 
     // and wait, if necessary

@@ -20,6 +20,10 @@
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 11.04.2009
+///
+/// \b Changelog:
+/// -	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a> 2009-09-17:\n
+///			use CImgList rather than CImg
 
 #ifndef THRESHOLD_H
 #define THRESHOLD_H
@@ -36,22 +40,23 @@
 #define threshold_DECLDIR
 #endif
 
-#include "ParameteredObject.hxx"
-#include "CImg.h"
+#include <charon-core/ParameteredObject.hxx>
+#include <CImg.h>
 
-/// Simple class to threshold images.
+/// simple class to threshold images
+///
 /// This class uses the cimg threshold command to threshold
 /// images at the given value. Soft thresholding and
-/// strict threshold can be enabled. See cimg_library::CImg::threshold()
-/// for more information.
+/// strict threshold can be enabled.
+/// \see cimg_library::CImg::threshold()
 template <typename T>
 class threshold_DECLDIR Threshold : public TemplatedParameteredObject<T>
 {
 public:
     /// image data input slot
-    InputSlot<cimg_library::CImg<T> >  inimage;
+    InputSlot<cimg_library::CImgList<T> >  in;
     /// image data output slot
-    OutputSlot<cimg_library::CImg<T> > outimage;
+    OutputSlot<cimg_library::CImgList<T> > out;
 
     /// Threshold value.
     Parameter<T> value;

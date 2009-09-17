@@ -20,6 +20,10 @@
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 29.07.2009
+///
+/// \b Changelog:
+/// -	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a> 2009-09-17:\n
+///			use CImgList rather than CImg
 
 #ifndef FILEWRITER_H_
 #define FILEWRITER_H_
@@ -36,12 +40,10 @@
 #define filewriter_DECLDIR
 #endif
 
-#include "ParameteredObject.hxx"
-#include "CImg.h"
+#include <charon-core/ParameteredObject.hxx>
+#include <CImg.h>
 
-/**
- * Can write a CImg image to a file.
- */
+/// Can write a CImg image to a file.
 template <typename T>
 class filewriter_DECLDIR FileWriter : public TemplatedParameteredObject<T> {
 public:
@@ -49,7 +51,7 @@ public:
     Parameter<std::string> filename;
 
     /// image data as input slot
-    InputSlot<cimg_library::CImg<T> > image;
+    InputSlot<cimg_library::CImgList<T> > in;
 
     /// create a new sample object
     /// @param name             Object name

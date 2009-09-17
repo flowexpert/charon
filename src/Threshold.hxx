@@ -28,25 +28,24 @@
 
 template <typename T>
 Threshold<T>::Threshold(const std::string& name) :
-        TemplatedParameteredObject<T>("threshold", name,
-            "threshold images using cimg"),
-        soft(false),
-        strict(false)
+    TemplatedParameteredObject<T>("threshold", name,
+        "threshold images using cimg")
 {
-    this->_addParameter (value,      "value",      "Threshold value");
-    this->_addParameter (soft,       "soft",       "Enable soft thresholding");
-    this->_addParameter (strict,     "strict",     "Enable strict thresholding");
-    this->_addInputSlot (inimage,    "inimage",    "image input",  "CImg<T>");
-    this->_addOutputSlot(outimage,   "outimage",   "image output", "CImg<T>");
+    this->_addParameter (value,  "value",  "Threshold value");
+    this->_addParameter (soft,   "soft",   "Enable soft thresholding", false);
+    this->_addParameter (strict, "strict", "Enable strict thresholding", false);
+    this->_addInputSlot (in,     "in",     "image input",  "CImgList<T>");
+    this->_addOutputSlot(out,    "out",    "image output", "CImgList<T>");
 }
-
 
 template <typename T>
 void Threshold<T>::execute()
 {
     ParameteredObject::execute();
 
-    outimage = inimage().get_threshold(value, soft, strict);
+	out = in;
+	cimglist_for(out(), i)
+    	out()[i] = in()[i].get_threshold(value, soft, strict);
 }
 
 #endif /* _THRESHOLD_HXX_ */

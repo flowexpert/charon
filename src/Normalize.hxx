@@ -28,19 +28,21 @@
 
 template<typename T>
 Normalize<T>::Normalize(const std::string& name) :
-	TemplatedParameteredObject<T>("normalize", name, "normalize images using cimg"),
-			lower(0), upper(255) {
-	this->_addParameter(lower, "lower", "lower bound");
-	this->_addParameter(upper, "upper", "upper bound");
-	this->_addInputSlot(inimage, "inimage", "image input", "CImg<T>");
-	this->_addOutputSlot(outimage, "outimage", "image output", "CImg<T>");
+	TemplatedParameteredObject<T>("normalize", name, "normalize images using cimg")
+{
+	this->_addParameter(lower, "lower", "lower bound",  (T) 0);
+	this->_addParameter(upper, "upper", "upper bound",  (T) 255);
+	this->_addInputSlot(in,    "in",    "image input",  "CImgList<T>");
+	this->_addOutputSlot(out,  "out",   "image output", "CImgList<T>");
 }
 
 template<typename T>
 void Normalize<T>::execute() {
 	ParameteredObject::execute();
 
-	outimage = inimage().get_normalize(lower, upper);
+	out = in();
+	cimglist_for(out(), i)
+		out()[i] = in()[i].get_normalize(lower, upper);
 }
 
 #endif /* _NORMALIZE_HXX_ */

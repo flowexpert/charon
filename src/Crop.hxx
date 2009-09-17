@@ -42,9 +42,9 @@ template <typename T>
 Crop<T>::Crop(const std::string& name) :
         TemplatedParameteredObject<T>("crop", name, "crop images")
 {
-    this->_addInputSlot (roi,        "roi",        "region to crop",  "Roi<int>");
-    this->_addInputSlot (inimage,    "inimage",    "image input",     "CImg<T>");
-    this->_addOutputSlot(outimage,   "outimage",   "image output",    "CImg<T>");
+    this->_addInputSlot (roi,   "roi",   "region to crop",  "Roi<int>");
+    this->_addInputSlot (in,    "in",    "image input",     "CImgList<T>");
+    this->_addOutputSlot(out,   "out",   "image output",    "CImgList<T>");
 }
 
 template <typename T>
@@ -58,7 +58,7 @@ void Crop<T>::execute()
     assert(roi()->top   < roi()->bottom);
     assert(roi()->front < roi()->back);
 
-    outimage = inimage().get_crop(roi()->left, roi()->top, roi()->front,
+    out = in().get_crop(0, in().size-1, roi()->left, roi()->top, roi()->front,
         roi()->right-1, roi()->bottom-1, roi()->back-1);
 }
 #endif // _CROP_HXX_

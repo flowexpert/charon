@@ -27,7 +27,7 @@
 #ifndef _Pyramid_H
 #define _Pyramid_H
 
-#include "CImg.h"
+#include <CImg.h>
 #include <vector>
 #include "ParameterFile.h"
 

@@ -20,9 +20,9 @@
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @date 11.04.2009
 
-#include "PluginManager.h"
-#include "ParameteredObject.h"
-#include "FileTool.h"
+#include <charon-core/PluginManager.h>
+#include <charon-core/ParameteredObject.h>
+#include <charon-core/FileTool.h>
 
 #ifndef TESTWRPFILE
 #define TESTWRPFILE "cropsample.wrp"
@@ -31,60 +31,60 @@
 
 
 int main() {
-	// load plugins
+    // load plugins
 
-	try{
+    try{
 #ifdef WINDOWS
 #ifdef _DEBUG
-	PluginManager man("./Debug");
+    PluginManager man("./Debug");
 #else /* _DEBUG */
-	PluginManager man("./Release");
+    PluginManager man("./Release");
 #endif /* _DEBUG */
 #else
-	PluginManager man("../src");
+    PluginManager man("../src");
 #endif
 
-	man.loadPlugin("filereader");
-	man.loadPlugin("imagedisplay");
-	man.loadPlugin("normalize");
-	man.loadPlugin("threshold");
-	man.loadPlugin("crop");
-	man.loadPlugin("roi");
-	man.loadPlugin("interpolatorlinear");
-	man.loadPlugin("interpolatorcubic");
+    man.loadPlugin("filereader");
+    man.loadPlugin("imagedisplay");
+    man.loadPlugin("normalize");
+    man.loadPlugin("threshold");
+    man.loadPlugin("crop");
+    man.loadPlugin("roi");
+    man.loadPlugin("interpolatorlinear");
+    man.loadPlugin("interpolatorcubic");
 
-	// create test instances
-	ParameteredObject*    filereader   = man.createInstance  ("filereader", 0, "filereader");
-	ParameteredObject*    imagedisplay = man.createInstance  ("imagedisplay", 0, "imagedisplay");
-	ParameteredObject*    normalize    = man.createInstance  ("normalize", 0, "normalize");
-	ParameteredObject*    threshold    = man.createInstance  ("threshold", 0, "threshold");
-	ParameteredObject*    roi          = man.createInstance  ("roi", 2, "roi");
-	ParameteredObject*    crop         = man.createInstance  ("crop", 0, "crop");
-	ParameteredObject*    cubic        = man.createInstance  ("interpolatorcubic", 0, "interpolatorcubic");
-	ParameteredObject*    linear       = man.createInstance  ("interpolatorlinear", 0, "interpolatorlinear");
+    // create test instances
+    ParameteredObject* filereader   = man.createInstance  ("filereader", 0, "filereader");
+    ParameteredObject* imagedisplay = man.createInstance  ("imagedisplay", 0, "imagedisplay");
+    ParameteredObject* normalize    = man.createInstance  ("normalize", 0, "normalize");
+    ParameteredObject* threshold    = man.createInstance  ("threshold", 0, "threshold");
+    ParameteredObject* roi          = man.createInstance  ("roi", 2, "roi");
+    ParameteredObject* crop         = man.createInstance  ("crop", 0, "crop");
+    ParameteredObject* cubic        = man.createInstance  ("interpolatorcubic", 0, "interpolatorcubic");
+    ParameteredObject* linear       = man.createInstance  ("interpolatorlinear", 0, "interpolatorlinear");
 
-	// cleanup
-	man.destroyInstance(filereader);
-	man.destroyInstance(imagedisplay);
-	man.destroyInstance(normalize);
-	man.destroyInstance(threshold);
-	man.destroyInstance(roi);
-	man.destroyInstance(crop);
-	man.destroyInstance(cubic);
-	man.destroyInstance(linear);
+    // cleanup
+    man.destroyInstance(filereader);
+    man.destroyInstance(imagedisplay);
+    man.destroyInstance(normalize);
+    man.destroyInstance(threshold);
+    man.destroyInstance(roi);
+    man.destroyInstance(crop);
+    man.destroyInstance(cubic);
+    man.destroyInstance(linear);
 
-	if (FileTool::exists(TESTWRPFILE)) {
-		man.loadParameterFile(TESTWRPFILE);
-		man.executeWorkflow();
-	}
-	else {
-		std::cerr << TESTWRPFILE << " missing" << std::endl;
-		return -1;
-	}
-	} catch (AbstractPluginLoader::PluginException e) {
-		std::cout << e.what() << std::endl;
-		return -1;
-	}
+    if (FileTool::exists(TESTWRPFILE)) {
+        man.loadParameterFile(TESTWRPFILE);
+        man.executeWorkflow();
+    }
+    else {
+        std::cerr << TESTWRPFILE << " missing" << std::endl;
+        return -1;
+    }
+    } catch (AbstractPluginLoader::PluginException e) {
+        std::cout << e.what() << std::endl;
+        return -1;
+    }
 
-	return 0;
+    return 0;
 }

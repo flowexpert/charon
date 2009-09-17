@@ -32,14 +32,14 @@ FileWriter<T>::FileWriter(const std::string& name) :
 			"write image file from image using cimg") {
 	this->_addParameter(filename, "filename", "filename to write image to",
 			"filename");
-	this->_addInputSlot(image, "image", "image input", "CImg<T>");
+	this->_addInputSlot(in, "in", "image input", "CImgList<T>");
 }
 
 template<typename T>
 void FileWriter<T>::execute() {
 	ParameteredObject::execute();
 
-	image().save(filename().c_str());
+	in().save(filename().c_str());
 }
 
 #endif /* _FILEWRITER_HXX_ */
