@@ -61,7 +61,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				 * Vector of pointers to the SubStencils.
 				 * The data for the solver will be pulled from here.
 				*/
-				std::vector< SubStencil<T>* > SubStencils;
+				std::vector< SubStencil<T>* > substencils;
 				
 				/**
 				 * CImg representing the MetaStencil.

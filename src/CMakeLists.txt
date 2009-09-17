@@ -7,7 +7,7 @@ INCLUDE_DIRECTORIES(BEFORE ${PETSC_ROOT_DIR}/include/mpiuni)
 ADD_DEFINITIONS(/DHANDLE_DLL)
 
 #Create shared libraries
-ADD_LIBRARY(gbcce SHARED Stencils/GBCCE.cpp)
+ADD_LIBRARY(gbcce SHARED Stencils/Gbcce.cpp)
 ADD_LIBRARY(l2norm SHARED Stencils/L2Norm.cpp)
 ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
 

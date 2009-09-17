@@ -170,7 +170,7 @@ void L2Norm<T>::execute() {
 		}
 		entry->data = dataMask;
 		entry->pattern = patternMask;
-		this->SubStencils[*uIt] = *entry;
+		this->substencils[*uIt] = *entry;
 	}
 }
 

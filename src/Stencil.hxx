@@ -44,7 +44,7 @@ void Stencil<T>::updateStencil(const unsigned int x, const unsigned int y,
                                        const unsigned int v) {}
 
 template <class T>
-std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {return SubStencils;}
+std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {return substencils;}
 
 template <class T>
 std::map<std::string, T>& Stencil<T>::getRhs() const {return rhs;}

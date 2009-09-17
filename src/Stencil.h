@@ -89,7 +89,7 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 * -   This member must never be erased as long as the stencil exists
 		 * 	   because this would break the pointers of following objects
 		 */
-		std::map<std::string, SubStencil<T> > SubStencils;
+		std::map<std::string, SubStencil<T> > substencils;
 
 		/**
 		 * Map to store and manage all the right hand sides.

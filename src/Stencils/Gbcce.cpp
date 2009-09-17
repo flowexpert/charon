@@ -26,7 +26,7 @@
 
 #define TYPE Gbcce
 
-#include "GBCCE.hxx"
+#include "Gbcce.hxx"
 
 #if defined(MSVC) && defined (gbcce_EXPORTS)
 #define DECLDIR __declspec(dllexport)

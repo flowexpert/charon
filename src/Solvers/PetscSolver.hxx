@@ -34,23 +34,23 @@
 
 PetscMetaStencil<T>::PetscMetaStencil(const std::string unknown,const std::vector<stencil<T>*>& stencils) :
 		Solver<T>::MetaStencil(unknown,stencils) {
-	for (int i = 0 ; i < this->SubStencils.size() ; i++) {
+	for (int i = 0 ; i < this->substencils.size() ; i++) {
 		//Calculating offsets
-		int xo = center.x - this->SubStencils[i]->center.x;
-		int yo = center.y - this->SubStencils[i]->center.y;
-		int zo = center.z - this->SubStencils[i]->center.z;
-		int to = center.t - this->SubStencils[i]->center.t;
+		int xo = center.x - this->substencils[i]->center.x;
+		int yo = center.y - this->substencils[i]->center.y;
+		int zo = center.z - this->substencils[i]->center.z;
+		int to = center.t - this->substencils[i]->center.t;
 		//saving the offset as Point4D for later convennience
 		Point4D<unsigned int> offset(xo,yo,zo,to);
 		
 		//Iterate through all pixels of the SubStencil...
-		for (int tc=0 ; tc < this->SubStencils[i]->patterm.dimv() ; tc++) {
-			for (int zc=0 ; zc < this->SubStencils[i]->pattern.dimz() ; zc++) {
-				for (int yc=0 ; yc < this->SubStencils[i]->pattern.dimy() ; yc++) {
-					for (int xc=0 ; xc < this->SubStencils[i]->pattern.dimx() ; xc++) {
+		for (int tc=0 ; tc < this->substencils[i]->patterm.dimv() ; tc++) {
+			for (int zc=0 ; zc < this->substencils[i]->pattern.dimz() ; zc++) {
+				for (int yc=0 ; yc < this->substencils[i]->pattern.dimy() ; yc++) {
+					for (int xc=0 ; xc < this->substencils[i]->pattern.dimx() ; xc++) {
 						//...and set the pattern into the
 						//MetaStencil (with offset).
-						if (this->SubStencils[i]->pattern(xc,yc,zc,tc)) {
+						if (this->substencils[i]->pattern(xc,yc,zc,tc)) {
 							Point4D<unsigned int> p(xc,yc,zc,tc);
 							this->pattern.insert(p+offset);
 						}
@@ -67,24 +67,24 @@ unsigned int PetscMetaStencil<T>::update(const std::string unknown,
                                          PetscInt* &columns, PetscScalar* &values) {
 	//first, copy all data from the SubStencils into
 	//the CImg data object of the MetaStencil
-	for (int i = 0 ; i < this->SubStencils.size() ; i++) {
+	for (int i = 0 ; i < this->substencils.size() ; i++) {
 		//Calculating offsets
-		int xo = center.x - this->SubStencils[i]->center.x;
-		int yo = center.y - this->SubStencils[i]->center.y;
-		int zo = center.z - this->SubStencils[i]->center.z;
-		int to = center.t - this->SubStencils[i]->center.t;
+		int xo = center.x - this->substencils[i]->center.x;
+		int yo = center.y - this->substencils[i]->center.y;
+		int zo = center.z - this->substencils[i]->center.z;
+		int to = center.t - this->substencils[i]->center.t;
 		//saving the offset as Point4D for later convennience
 		Point4D<unsigned int> offset(xo,yo,zo,to);
 		
 		//Iterate through all pixels of the SubStencil...
-		for (int tc=0 ; tc < this->SubStencils[i]->data.dimv() ; tc++) {
-			for (int zc=0 ; zc < this->SubStencils[i]->data.dimz() ; zc++) {
-				for (int yc=0 ; yc < this->SubStencils[i]->data.dimy() ; yc++) {
-					for (int xc=0 ; xc < this->SubStencils[i]->data.dimx() ; xc++) {
+		for (int tc=0 ; tc < this->substencils[i]->data.dimv() ; tc++) {
+			for (int zc=0 ; zc < this->substencils[i]->data.dimz() ; zc++) {
+				for (int yc=0 ; yc < this->substencils[i]->data.dimy() ; yc++) {
+					for (int xc=0 ; xc < this->substencils[i]->data.dimx() ; xc++) {
 						//...and copy them into the
 						//MetaStencil (with offset).
 						this->data(xc+xo,yc+yo,zc+zo,tc+to)
-							+=this->SubStencils[i]->data(xc,yc,zc,tc);
+							+=this->substencils[i]->data(xc,yc,zc,tc);
 					}
 				}
 			}
@@ -268,14 +268,14 @@ void PetscSolver<T>::execute() {
 	//necessary stencils by pointers instead of searching through all
 	//stencils to find those that use the unknown in question
 	
-	std::map<std::string, std::vector<Stencil<T>*> > SubStencils;
+	std::map<std::string, std::vector<Stencil<T>*> > substencils;
 	std::set<AbstractSlot<T>*>::const_iterator sIt; //stencil iterator
 	std::set<std::string>::iterator uIt;			//unknowns iterator
 	for(sIt=stencils.begin() ; sIt!=stencils.end() ; sIt++) {	//iterate through stencils
 		for(uIt=(*sIt)->getUnknowns().begin();						//iterate through its unknowns
 			uIt!=(*sIt)->getUnknowns().end();
 			uIt++) {
-			SubStencils[*uIt].push_back( (stencil<T>*)**sIt );	//not sure about the 2nd * of sIt
+			substencils[*uIt].push_back( (stencil<T>*)**sIt );	//not sure about the 2nd * of sIt
 			//a cast from AbstractSlot<T>* to Stencil<T>*
 		}
 	}
@@ -286,7 +286,7 @@ void PetscSolver<T>::execute() {
 	//unknown.
 	std::map<std::string,PetscMetaStencil> MetaStencils;
 	std::map<std::string, std::vector<stencil<T>*> >::iterator ssIt; //SubStencil Iterator
-	for (ssIt=SubStencils.begin() ; ssIt != SubStencils.end() ; ssIt++) {
+	for (ssIt=substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
 		PetscMetaStencil pms(ssIt->first,ssIt->second());
 		MetaStencils[ssIt->first] = pms;
 	}
@@ -380,11 +380,11 @@ void PetscSolver<T>::execute() {
 		//row is a ghost node or 'real point'
 		if (this->roi()->isInside(p.x, p.y, p.z, p.t)) { //Real point:
 			//Update all stencils of the unknown to contain current data
-			int nos = (int)SubStencils[unknown].size();	//number of stencils
+			int nos = (int)substencils[unknown].size();	//number of stencils
 			PetscScalar rhs;	//right hand side
 			for (int index = 0 ; index < nos ; index++) {
-				SubStencils[unknown][index]->updateStencil(p.x, p.y, p.z, p.t);
-				rhs += (PetscScalar)SubStencils[unknown][index]->getRhs()[unknown];
+				substencils[unknown][index]->updateStencil(p.x, p.y, p.z, p.t);
+				rhs += (PetscScalar)substencils[unknown][index]->getRhs()[unknown];
 			}
 			//now call the MetaStencil of this unknown to gather all the
 			//data of its SubStencils (which have just been updated) and

@@ -28,7 +28,7 @@
 #define _GBCCE_HXX_
 
 #include <Stencil.hxx>
-#include "GBCCE.h"
+#include "Gbcce.h"
 
 template <class T>
 Gbcce<T>::Gbcce(const std::string& name) : 
@@ -69,7 +69,7 @@ void Gbcce<T>::execute() {
 		Point4D<unsigned int> center(0,0,0,0);
 		SubStencil<T> entry(1,1,1,1,center);
 		entry.pattern(0,0) = 1;
-		this->SubStencils[*uIt] = entry;
+		this->substencils[*uIt] = entry;
 	}
 }
 
@@ -83,7 +83,7 @@ void Gbcce<T>::updateStencil(const unsigned int x,const unsigned int y,
 	this->motionIn()->compute(x, y, z, t, v, term, rhsV);
 	typename std::map<std::string,T>::iterator termIt;	//term Iterator
 	for(termIt=term.begin();termIt!=term.end();termIt++) {
-		this->SubStencils[termIt->first].data(0,0) = termIt->second * this->lambda();
+		this->substencils[termIt->first].data(0,0) = termIt->second * this->lambda();
 		this->rhs[termIt->first] = rhsV * termIt->second * this->lambda();
 	}
 }

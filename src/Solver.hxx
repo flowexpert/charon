@@ -81,7 +81,7 @@ MetaStencil<T>::MetaStencil(const std::string unknown,const std::vector<Stencil<
 		if (duration-centert-1 > this->after)    {this->after = duration-centert-1;}
 								
 		//push_back the address of the just measured SubStencil
-		this->SubStencils.push_back( &(*ssIt) );
+		this->substencils.push_back( &(*ssIt) );
 	}
 	
 	//expand the MetaStencil CImg to the appropriate size
@@ -95,7 +95,7 @@ MetaStencil<T>::MetaStencil(const std::string unknown,const std::vector<Stencil<
 ///copy constructor
 template <class T>
 MetaStencil<T>::MetaStencil(const MetaStencil<T>& rhs) {
-	this->SubStencils = rhs.SubStencils;
+	this->substencils = rhs.substencils;
 	this->data        = rhs.data;
 	this->pattern     = rhs.pattern;
 	this->left        = rhs.left;
@@ -113,7 +113,7 @@ template <class T>
 MetaStencil<T>& MetaStencil<T>::operator=(MetaStencil<T>& rhs) {
 	if (&rhs == this) {return *this;}
 	
-	this->SubStencils = rhs.SubStencils;
+	this->substencils = rhs.substencils;
 	this->data        = rhs.data;
 	this->pattern     = rhs.pattern;
 	this->left        = rhs.left;
