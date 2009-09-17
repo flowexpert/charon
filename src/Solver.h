@@ -48,11 +48,7 @@
 template <class T>
 class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 {
-	private:
-		InputSlot< Stencil<T>* > stencils;
-		InputSlot< Roi<int>* > roi;
-		OutputSlot<cimg_library::CImgList<T>& > out; //Pointer? Reference?
-				
+	protected:
 		//meta stencil class to combine multiple SubStencils by unknown
 		class MetaStencil
 		{
@@ -112,7 +108,12 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				 */
 				virtual Roi<int> expand(const Roi<int>& inRoi);
 		};
+
 	public:
+		InputSlot< Stencil<T>* > stencils;
+		InputSlot< Roi<int>* > roi;
+		OutputSlot<cimg_library::CImgList<T>* > out; //Pointer? Reference?
+
 		///Default constructor.
 		Solver(const std::string& classname, const std::string& name = "");
 			

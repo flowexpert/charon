@@ -46,11 +46,10 @@
 template <class T>
 class gbcce_DECLDIR Gbcce : public Stencil<T>
 {
-	private:
+	public:
 		InputSlot<BrightnessModel<T>* > brightnessIn;
 		InputSlot<MotionModel<T>* > motionIn;
 
-	public:
 		Gbcce(const std::string& name = "");
 		
 		virtual void execute();

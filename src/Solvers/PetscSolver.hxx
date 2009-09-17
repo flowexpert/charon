@@ -222,7 +222,7 @@ Point4D<unsigned int>& PetscSolver<T>::getBoundary(Point4D<unsigned int>& p) {
 
 template <class T>
 PetscSolver<T>::PetscSolver(const std::string& name) : 
-		Solver<T>("PetscSolver","Solver based on PETSc","solves the linear system with PETSc") {
+		Solver<T>("PetscSolver") {
 	this->columns=NULL;
 	this->values=NULL;
 }
@@ -271,13 +271,14 @@ void PetscSolver<T>::execute() {
 	//stencils to find those that use the unknown in question
 	
 	std::map<std::string, std::vector<Stencil<T>*> > substencils;
-	typename std::set<AbstractSlot<T>*>::const_iterator sIt; //stencil iterator
+	typename std::set<AbstractSlot<Stencil<T>* >* >::const_iterator sIt; //stencil iterator
 	std::set<std::string>::iterator uIt;			//unknowns iterator
 	for(sIt=this->stencils.begin() ; sIt!=this->stencils.end() ; sIt++) {	//iterate through stencils
-		for(uIt=(*sIt)->getUnknowns().begin();						//iterate through its unknowns
-			uIt!=(*sIt)->getUnknowns().end();
+	InputSlot<Stencil<T>* >& is = *(InputSlot<Stencil<T>* >*)*sIt;
+		for(uIt=is()->getUnknowns().begin();						//iterate through its unknowns
+			uIt!=is()->getUnknowns().end();
 			uIt++) {
-			substencils[*uIt].push_back( (Stencil<T>*)**sIt );	//not sure about the 2nd * of sIt
+			substencils[*uIt].push_back(is() );	//not sure about the 2nd * of sIt
 			//a cast from AbstractSlot<T>* to Stencil<T>*
 		}
 	}
@@ -289,7 +290,7 @@ void PetscSolver<T>::execute() {
 	std::map<std::string,PetscMetaStencil> MetaStencils;
 	typename std::map<std::string, std::vector<Stencil<T>*> >::iterator ssIt; //SubStencil Iterator
 	for (ssIt=substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
-		PetscMetaStencil pms(ssIt->first,ssIt->second());
+		typename PetscSolver<T>::PetscMetaStencil pms(ssIt->first,ssIt->second);
 		MetaStencils[ssIt->first] = pms;
 	}
 	
@@ -303,7 +304,7 @@ void PetscSolver<T>::execute() {
 	std::map<std::string,Roi<int> > unknownSizes;
 	typename std::map<std::string,PetscMetaStencil>::iterator msIt; //PetscMetaStencil iterator
 	for(msIt=MetaStencils.begin() ; msIt != MetaStencils.end() ; msIt++) {
-		unknownSizes[msIt->first]=msIt->second().expand(this->roi);
+		unknownSizes[msIt->first]=msIt->second.expand(this->roi);
 		//find the maximum number of entries for the MatSetValues call
 		//so that the size of columns and values is optimal
 		if ( (unsigned int)msIt->getPattern().size() > max_ne) {
@@ -461,6 +462,13 @@ void PetscSolver<T>::execute() {
 		//now make the result-vector available as an array of PetscScalar
 		ierr = VecGetArray(result,&res);CHKERRQ(ierr);
 		
+		//epxand the CImgList to the needed size
+		this->out() = new cimg_library::CImgList<T>(lookup.size(),
+		                                            this->roi().getWidth(),
+		                                            this->roi().getHeight(),
+		                                            this->roi().getDepth(),
+		                                            this->roi().getDuration());
+
 		//Due to data locallity, it is performance-wise better to iterate
 		//through the unknowns first and fill the CImgList element by element
 		//instead of pixel by pixel. Same with the solution vector.
@@ -468,11 +476,6 @@ void PetscSolver<T>::execute() {
 			forRoiXYZT(this->roi(),x,y,z,t) { //go through the image
 				//get the current global index
 				globalIndex = pointToGlobalIndex(Point4D<unsigned int>(x,y,z,t),lIt->first, unknownSizes);
-				//epxand the CImgList to the needed size
-				this->out().assign(lookup.size(),this->roi().getWidth(),
-				                                 this->roi().getHeight(),
-				                                 this->roi().getDepth(),
-				                                 this->roi().getDuration());
 				//and write the results into the output slot 'out'
 				this->out()(lIt->second,x,y,z,t) = res[globalIndex];
 			}

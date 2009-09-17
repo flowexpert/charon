@@ -77,9 +77,6 @@ template <class T>
 class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 {
 	protected:
-		///Lambda coefficient of the stencil.
-		Parameter<T> lambda;
-		
 		///Set of the names of unknowns on which this stencil works.
 		std::set<std::string> unknowns;
 		
@@ -98,12 +95,14 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 * 	   because this would break the pointers of following objects
 		 */
 		std::map<std::string, T> rhs;
+
+	public:
+		///Lambda coefficient of the stencil.
+		Parameter<T> lambda;
 		
 		///Output slot containing the this-pointer of the object		
 		OutputSlot<Stencil<T>*> out;
 
-
-	public:
 		///default constructor
 		Stencil(const std::string& classname, const std::string& name = "");
 		

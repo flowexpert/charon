@@ -47,7 +47,7 @@
 template <class T>
 class petscsolver_DECLDIR PetscSolver : public Solver<T>
 {
-	private:
+	protected:
 		PetscInt		*columns;
 		PetscScalar		*values;
 		
