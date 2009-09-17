@@ -32,7 +32,7 @@
 
 ///default constructor
 template <class T>
-MetaStencil<T>::MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils) :
+Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils) :
 		left(0),right(0),up(0),down(0),backward(0),forward(0),before(0),after(0) {
 	//Iterate through the stencils and in each one, find the SubStencils
 	//to the given unknown. Save the maximum of expansion in each dimension
@@ -94,7 +94,7 @@ MetaStencil<T>::MetaStencil(const std::string unknown,const std::vector<Stencil<
 				
 ///copy constructor
 template <class T>
-MetaStencil<T>::MetaStencil(const MetaStencil<T>& rhs) {
+Solver<T>::MetaStencil::MetaStencil(const MetaStencil<T>& rhs) {
 	this->substencils = rhs.substencils;
 	this->data        = rhs.data;
 	this->pattern     = rhs.pattern;
@@ -110,7 +110,7 @@ MetaStencil<T>::MetaStencil(const MetaStencil<T>& rhs) {
 		
 ///assignment operator
 template <class T>
-MetaStencil<T>& MetaStencil<T>::operator=(MetaStencil<T>& rhs) {
+MetaStencil<T>& Solver<T>::MetaStencil::operator=(MetaStencil<T>& rhs) {
 	if (&rhs == this) {return *this;}
 	
 	this->substencils = rhs.substencils;
@@ -131,10 +131,10 @@ MetaStencil<T>& MetaStencil<T>::operator=(MetaStencil<T>& rhs) {
 //the only necessary getter to determine the maximum number of
 //entries.
 template <class T>
-std::set<Point4D<unsigned int> >& MetaStencil<T>::getPattern() {return pattern;}
+std::set<Point4D<unsigned int> >& Solver<T>::MetaStencil::getPattern() {return pattern;}
 
 template <class T>		
-Roi<int> MetaStencil<T>::expand(const Roi<int>& inRoi) {
+Roi<int> Solver<T>::MetaStencil::expand(const Roi<int>& inRoi) {
 	int t  = -up;
 	int l  = -left;
 	int bo = inRoi.getHeight() + down;

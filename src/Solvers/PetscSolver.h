@@ -45,16 +45,16 @@
 ///@todo incorporate std::runtime_error and #include <stdexept> instead of throw "string"
 
 template <class T>
-class petscsolver_DECLDIR PetscSolver : public Solver
+class petscsolver_DECLDIR PetscSolver : public Solver<T>
 {
 	private:
 		PetscInt		*columns;
 		PetscScalar		*values;
 		
 		class PetscMetaStencil : public Solver<T>::MetaStencil
-		{			
+		{
 			public:
-				PetscMetaStencil(const std::string unknown,const std::vector<stencil<T>*>& stencils);
+				PetscMetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils);
 				
 				/**
 				 * Write data form SubStencils into PetscScalar *values and
@@ -68,7 +68,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver
 				 */
 				unsigned int update(const std::string unknown,
 				                    const Point4D<unsigned int>& p,
-				                    const std::map<std::string,roi<int> >& unknownSizes,
+				                    const std::map<std::string,Roi<int> >& unknownSizes,
 				                    PetscInt* &columns, PetscScalar* &values);
 		};
 		
@@ -80,7 +80,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver
 		 * @see getCoordinate()
 		 * @return Relative vector index.
 		 */
-		unsigned int pointToRelativeIndex(const Point4D<unsigned int> p, const roi<int> &dim) const;
+		unsigned int pointToRelativeIndex(const Point4D<unsigned int> p, const Roi<int> &dim) const;
 		
 		/**
 		 * Converts a relative vector index to a global vector index.
@@ -93,7 +93,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver
 		 */
 		unsigned int relativeIndexToGlobalIndex(const unsigned int i,
 		                                        const std::string& unknown,
-		                                        const std::map<std::string,roi<int> >& unknownSizes);
+		                                        const std::map<std::string,Roi<int> >& unknownSizes);
 		
 		/**
 		 * Convert a global vector index to 4-dimensional coordinates and the according unknown.
@@ -105,7 +105,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver
 		 * @see getVectorIndex()
 		 */
 		void globalIndexToPoint(const unsigned int vi,
-		                        const std::map<std::string, roi<int> >& unknownSizes,
+		                        const std::map<std::string, Roi<int> >& unknownSizes,
 		                        std::string& unknown, Point4D<unsigned int>& p);
 		
 		/**
@@ -116,7 +116,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver
 		 * @return global index
 		 */
 		unsigned int pointToGlobalIndex(const Point4D<unsigned int>& p, const std::string unknown,
-		                                const std::map<std::string, roi<int> >& unknownSizes);
+		                                const std::map<std::string, Roi<int> >& unknownSizes);
 		
 		/**
 		 * Find the closest real pixel to p (which is a ghost pixel).

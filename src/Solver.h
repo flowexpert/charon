@@ -93,7 +93,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				MetaStencil(const MetaStencil& rhs);
 				
 				///assignment operator
-				virtual MetaStencil<T>& operator=(MetaStencil<T>& rhs);
+				virtual MetaStencil& operator=(MetaStencil& rhs);
 				
 				//the only necessary getter to determine the maximum number of
 				//entries.
