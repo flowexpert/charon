@@ -23,6 +23,18 @@
 #ifndef _BrightnessModels_Diffusion_h_
 #define _BrightnessModels_Diffusion_h_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef diffusion_EXPORTS
+///Visual C++ specific code
+#define diffusion_DECLDIR __declspec(dllexport)
+#else
+#define diffusion_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define diffusion_DECLDIR
+#endif
+
 #include "../main.h"
 #include "../BrightnessModel.h"
 #include "../functions.h"
@@ -41,7 +53,7 @@ namespace BrightnessModels
  *  where @f$ g\left(\vec x\left( t \right) , t \right) @f$ is the image.
  */
 template<class T>
-class Diffusion: public BrightnessModel<T>
+class diffusion_DECLDIR Diffusion: public BrightnessModel<T>
 {
 private:
 	std::set<std::string> unknowns;

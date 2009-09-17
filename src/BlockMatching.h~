@@ -23,15 +23,15 @@
 #define BLOCKMATCHING_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef blockmatching_EXPORTS
+#ifdef roi_EXPORTS
 ///Visual C++ specific code
-#define blockmatching_DECLDIR __declspec(dllexport)
+#define roi_DECLDIR __declspec(dllexport)
 #else
-#define blockmatching_DECLDIR __declspec(dllimport)
+#define roi_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define blockmatching_DECLDIR
+#define roi_DECLDIR
 #endif
 
 #include <ParameteredObject.hxx>
@@ -47,7 +47,7 @@
 #include <vector>
 
 template<typename T>
-class blockmatching_DECLDIR BlockMatching: public TemplatedParameteredObject<T>
+class BlockMatching: public TemplatedParameteredObject<T>
 
 {
 protected:

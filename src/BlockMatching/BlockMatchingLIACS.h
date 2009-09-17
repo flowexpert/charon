@@ -29,6 +29,18 @@
 #ifndef BLOCKMATCHINGLIACS_H_
 #define BLOCKMATCHINGLIACS_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef blockmatchingliacs_EXPORTS
+///Visual C++ specific code
+#define blockmatchingliacs_DECLDIR __declspec(dllexport)
+#else
+#define blockmatchingliacs_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define blockmatchingliacs_DECLDIR
+#endif
+
 #include "../BlockMatching.h"
 #include "../PixelSelection.h"
 #include <ListedPixelSelection.h>
@@ -39,7 +51,7 @@
 
 
 template<typename T>
-class BlockMatchingLIACS: public BlockMatching<T>
+class blockmatchingliacs_DECLDIR BlockMatchingLIACS: public BlockMatching<T>
 {
 private:
 	std::vector<Parameter<T>* > paramListForApply;

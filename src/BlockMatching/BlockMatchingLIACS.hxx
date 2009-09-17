@@ -37,48 +37,58 @@ BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
 }
 
 template<typename T>
-void /*cimg_library::CImgList<T>&**/ BlockMatchingLIACS<T>::findFlow()
+void /*cimg_library::CImgList<T>&**/BlockMatchingLIACS<T>::findFlow()
 {
-	std::vector<T> pixelProperties;
-	std::vector<std::vector<IncrementorParameter<T>*> > allParameters;
-	cimg_forXYZV(this->sequence()[0], x, y, z, t)
-				{
-					for (int i = 0; this->newParams()->doStep(); i++)
+	if (this->sequence().size)
+	{
+		this->surface.assign(this->sequence()[0].dimv(),
+				this->sequence()[0].dimx(), this->sequence()[0].dimy(),
+				this->sequence()[0].dimz(), 4);
+		std::vector<T> pixelProperties;
+		std::vector<std::vector<IncrementorParameter<T>*> > allParameters;
+		cimg_forXYZV(this->sequence()[0], x, y, z, t)
 					{
-						allParameters.push_back(
-								this->newParams()->getListOfParams());
-						pixelProperties.push_back(this->changes()->compare(
-								*(this->pixelList()),
-								this->newParams()->getListOfParams()));
+						for (int i = 0; this->newParams()->doStep(); i++)
+						{
+							allParameters.push_back(
+									this->newParams()->getListOfParams());
+							pixelProperties.push_back(this->changes()->compare(
+									*(this->pixelList()),
+									this->newParams()->getListOfParams()));
+						}
+						std::vector<IncrementorParameter<T>*> tempParams =
+								this->bestParam()->findMinChange(
+										pixelProperties, allParameters);
+						typename std::vector<IncrementorParameter<T>*>::iterator
+								it;
+						T nextX, nextY, nextZ, nextT;
+						unsigned int j = 0;
+						for (it = tempParams.begin(); it != tempParams.end(); it++)
+						{
+							if (tempParams[j]->getName() == "x")
+							{
+								nextX = tempParams[j]->getCurrent();
+							}
+							if (tempParams[j]->getName() == "y")
+							{
+								nextY = tempParams[j]->getCurrent();
+							}
+							if (tempParams[j]->getName() == "z")
+							{
+								nextZ = tempParams[j]->getCurrent();
+							}
+							if (tempParams[j]->getName() == "t")
+							{
+								nextT = tempParams[j]->getCurrent();
+							}
+							j++;
+						}
+						this->surface(0, x, y, z, t) = nextX;
+						this->surface(1, x, y, z, t) = nextY;
+						this->surface(2, x, y, z, t) = nextZ;
+						this->surface(3, x, y, z, t) = nextT;
 					}
-					std::vector<IncrementorParameter<T>*> tempParams =
-							this->bestParam()->findMinChange(pixelProperties,
-									allParameters);
-					typename std::vector<IncrementorParameter<T>*>::iterator it;
-					T newX, newY, newZ, newT;
-					unsigned int j;
-					for (it = tempParams.begin(); it != tempParams.end(); it++)
-					{
-						if (tempParams[j]->getName() == "x")
-						{
-							newX = tempParams[j]->getCurrent();
-						}
-						if (tempParams[j]->getName() == "y")
-						{
-							newY = tempParams[j]->getCurrent();
-						}
-						if (tempParams[j]->getName() == "z")
-						{
-							newZ = tempParams[j]->getCurrent();
-						}
-						if (tempParams[j]->getName() == "t")
-						{
-							newT = tempParams[j]->getCurrent();
-						}
-						j++;
-					}
-					this->surface[x,y,z,t](newXnewT, newY, newZ, newTt);
-				}
+	}
 	//return this->surface;
 }
 

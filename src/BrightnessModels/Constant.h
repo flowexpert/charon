@@ -23,6 +23,18 @@
 #ifndef _BrightnessModels_Constant_H_
 #define _BrightnessModels_Constant_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef constant_EXPORTS
+///Visual C++ specific code
+#define constant_DECLDIR __declspec(dllexport)
+#else
+#define constant_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define constant_DECLDIR
+#endif
+
 #include "../main.h"
 #include "../BrightnessModel.h"
 #include "BrightnessFunctorInterface.h"
@@ -33,7 +45,7 @@ namespace BrightnessModels
 
 /// a brightness model for no brightness change
 template<class T>
-class Constant: public BrightnessModel<T>
+class constant_DECLDIR Constant: public BrightnessModel<T>
 {
 private:
 	/// the brightness functor for no brightness change

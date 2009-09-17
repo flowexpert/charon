@@ -27,13 +27,13 @@
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef brightnessmodel_EXPORTS
 ///Visual C++ specific code
-#define brightnessmodel_DECLDIR __declspec(dllexport)
+#define roi_DECLDIR __declspec(dllexport)
 #else
-#define brightnessmodel_DECLDIR __declspec(dllimport)
+#define roi_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define brightnessmodel_DECLDIR
+#define roi_DECLDIR
 #endif
 
 #include "main.h"
@@ -44,7 +44,7 @@
 
 /// abstract base class for the different BrightnessModels
 template<class T>
-class brightnessmodel_DECLDIR BrightnessModel: public ParameteredObject
+class BrightnessModel: public ParameteredObject
 {
 protected:
 	//virtual ParameteredObject* _newInstance(const std::string& name) const = 0;

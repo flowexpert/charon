@@ -1,4 +1,4 @@
-/*  Copyright (C) 2009 René Steinbrügge
+/*  Copyright (C) 2009 Jens-Malte Gottfried
 
     This file is part of Charon.
 
@@ -16,77 +16,41 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /// @file LocalStretch.cpp
-/// implements class LocalStretch
-/// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
-/// @date 27.05.2009
+/// This file is needed for the Roi class to work as a plugin.
+/// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
+/// @date 24.08.2009
 
-#include "LocalStretch.h"
+///Class name of the plugin
+#define TYPE LocalStretch
 
-using namespace std;
-using namespace cimg_library;
+#include "LocalStretch.hxx"
 
-using namespace MotionModels;
+#if defined(MSVC) && defined (localstretch_EXPORTS)
+#define DECLDIR __declspec(dllexport)
+#else
+///Not needed with GCC
+#define DECLDIR
+#endif
 
-
-virtual std::set<std::string>& getUnknowns()
-{
-	if (!is3d) {
-		this->unknowns.insert("a1");
-		this->unknowns.insert("a2");
-		this->unknowns.insert("s1");
-		this->unknowns.insert("s2");
-		return this->unknowns;
-	} else {
-		throw "MotionModels::LocalStretch has no 3D implementation yet";
+///Creates an instance of the plugin
+extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
+	switch(t) {
+	case ParameteredObject::TYPE_DOUBLE:
+		return new TYPE<double>(name);
+		break;
+	case ParameteredObject::TYPE_FLOAT:
+		return new TYPE<float>(name);
+		break;
+	case ParameteredObject::TYPE_INT:
+		return new TYPE<int>(name);
+		break;
+	default:
+		return new TYPE<int>(name);
+		break;
 	}
 }
 
-template <class T>
-void LocalStretch::compute(	const int xs, const int ys, const int zs,
-							const int t, const int v,
-							std::map<std::string, T>& map,
-							T& rhs)
-{
-	if (!is3d) //2D
-	{
-//		assert(ret.width == 5);
-//		ret = CImg<>::vector(
-//			dt()(0,xs,ys,t,v),
-//			dx()(0,xs,ys,t,v),
-//			dy()(0,xs,ys,t,v),
-//			(xs-x)*dx()(0,xs,ys,t,v)-(ys-y)*dy()(0,xs,ys,t,v),
-//			(ys-y)*dx()(0,xs,ys,t,v)+(xs-x)*dy()(0,xs,ys,t,v)
-//			).transpose();
-		rhs         += dt()(0,xs,ys,t,v);
-		term["a1"]  += dx()(0,xs,ys,t,v);
-		term["a2"]  += dy()(0,xs,ys,t,v);
-		term["s1"]  += (xs-x)*dx()(0,xs,ys,t,v)-(ys-y)*dy()(0,xs,ys,t,v);
-		term["s2"]  += (ys-y)*dx()(0,xs,ys,t,v)+(xs-x)*dy()(0,xs,ys,t,v);
-	}
-	else	//3D
-		throw "MotionModels::LocalStretch has no 3D implementation yet";
+///Deletes an instance of the plugin
+extern "C" DECLDIR void destroy(ParameteredObject * b) {
+	delete b;
 }
-	
-LocalStretch::LocalStretch(const string& name)
-		: flowfunc() , MotionModel("motionmodels_localstretch",name)
-{
-	_addInputSlot(dx,"dx","derivation in x","CImgList");
-	_addInputSlot(dy,"dy","derivation in y","CImgList");
-	_addInputSlot(dz,"dz","derivation in z","CImgList");
-	_addInputSlot(dt,"dt","derivation in t","CImgList");
-	
-	
-	this->flowFunctor = &flowfunc;
-	this->setFlowFunctorParams(0.5,0.4,0.001,-0.002);
-}
-
-void LocalStretch::setFlowFunctorParams(float a1, float a2, float s1, float s2)
-{
-	flowfunc.setParams(a1,a2,s1,s2,s2,-s1,0.0,0.0);
-}
-void apply(const std::vector<std::string> &, 
-           cimg_library::CImg<T>& image)
-{
-
-}
-

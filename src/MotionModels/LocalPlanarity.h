@@ -23,6 +23,18 @@
 #ifndef _MotionModels_LocalPlanarity_h_
 #define _MotionModels_LocalPlanarity_h_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef localplanarity_EXPORTS
+///Visual C++ specific code
+#define localplanarity_DECLDIR __declspec(dllexport)
+#else
+#define localplanarity_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define localplanarity_DECLDIR
+#endif
+
 #include "../main.h"
 #include "../MotionModel.h"
 #include "../FlowFunctor.h"
@@ -46,7 +58,7 @@ namespace MotionModels
 *  @f]
 */
 template <class T>
-class LocalPlanarity : public MotionModel
+class localplanarity_DECLDIR LocalPlanarity : public MotionModel
 {
 private:
 	FlowFunctor flowfunc;

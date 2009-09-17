@@ -24,6 +24,18 @@
 #ifndef _BRIGHTNESSMODELS_MOVINGILLUMINATION_H_
 #define _BRIGHTNESSMODELS_MOVINGILLUMINATION_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef movingillumination_EXPORTS
+///Visual C++ specific code
+#define movingillumination_DECLDIR __declspec(dllexport)
+#else
+#define movingillumination_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define movingillumination_DECLDIR
+#endif
+
 #include "../main.h"
 #include "../BrightnessModel.h"
 #include "../functions.h"
@@ -35,7 +47,7 @@ namespace BrightnessModels
 /// @brief BrightnessModel for a moving illumination envelope
 /// @details Computes the bcce-term for \f$ a_1 \f$ and \f$ a_2 \f$ as described in paragraph 3.3 of "H. Haussecker, D. Fleet. Computing Optical Flow with Physical Models of Brightness Variation. Proc. IEEE CVPR, Hilton Head, 2000"
 template<class T>
-class MovingIllumination: public BrightnessModel<T>
+class movingillumination_DECLDIR MovingIllumination: public BrightnessModel<T>
 {
 private:
 	std::set<std::string> unknowns;
