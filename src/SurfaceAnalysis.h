@@ -23,7 +23,7 @@
 #ifndef SURFACEANALYSIS_H_
 #define SURFACEANALYSIS_H_
 
-#include "ParameteredObject.h"
+#include <ParameteredObject.h>
 #include "IncrementorParameter.h"
 #include <vector>
 

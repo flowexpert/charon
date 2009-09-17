@@ -23,7 +23,7 @@
 #define INCREMENTOR_HXX_
 
 #include "Incrementor.h"
-#include "ParameteredObject.hxx"
+#include <ParameteredObject.hxx>
 
 template<typename T>
 Incrementor<T>::Incrementor(const std::string& name) :
@@ -45,7 +45,7 @@ void Incrementor<T>::execute()
 }
 
 template<typename T>
-std::vector<IncrementorParameter<T>* >& Incrementor<T>::getListOfParams()
+const std::vector<IncrementorParameter<T>* >& Incrementor<T>::getListOfParams()
 {
 	return this->listOfParams;
 }

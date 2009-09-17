@@ -22,11 +22,10 @@
 #ifndef INCREMENTOR_H_
 #define INCREMENTOR_H_
 
-#include "ParameteredObject.h"
-#include "CImg.h"
-#include "BlockMatching.h"
-#include "ListedPixelSelection.h"
-#include "IncrementorParameter.h"
+#include <ParameteredObject.h>
+#include <CImg.h>
+#include <ListedPixelSelection.h>
+#include <IncrementorParameter.h>
 #include <vector>
 
 template<typename T>
@@ -46,7 +45,7 @@ public:
 	 */
 	virtual bool doStep() =0;
 	///returns a list of the computed Parameters
-	std::vector<IncrementorParameter<T>*>& getListOfParams();
+	const std::vector<IncrementorParameter<T>*>& getListOfParams();
 
 };
 

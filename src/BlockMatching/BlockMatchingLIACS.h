@@ -29,12 +29,13 @@
 #ifndef BLOCKMATCHINGLIACS_H_
 #define BLOCKMATCHINGLIACS_H_
 
-#include "BlockMatching.h"
-#include "PixelSelection.h"
-#include "ListedPixelSelection.h"
-#include "Incrementor.h"
-#include "IncrementorCountUp.h"
-#include "ObjectiveFunctionComparing.h"
+#include "../BlockMatching.h"
+#include "../PixelSelection.h"
+#include <ListedPixelSelection.h>
+#include "../Incrementor.h"
+#include <IncrementorCountUp.h>
+#include "../ObjectiveFunction.h"
+#include <ObjectiveFunctionComparing.h>
 
 
 template<typename T>
@@ -45,7 +46,7 @@ private:
 public:
 	/// standard constructor
 	BlockMatchingLIACS(const std::string& name);
-	virtual cimg_library::CImgList<T>& findFlow();
+	virtual void /*cimg_library::CImgList<T>&*/ findFlow();
 
 };
 

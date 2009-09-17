@@ -92,8 +92,8 @@ public:
 			const float b22, const float b23, const float b31, const float b32,
 			const float b33);
 
-	virtual void apply(const std::vector<std::string> &,
-	 cimg_library::CImg<T>& image);
+	virtual void apply(const Pixel<T> & inPixel, const std::vector<
+			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel);
 };
 }
 

@@ -24,8 +24,8 @@
 #define OBJECTIVEFUNKTIONCOMPARING_HXX_
 
 #include "ObjectiveFunctionComparing.h"
-#include "ObjectiveFunction.hxx"
-#include "Pixel.hxx"
+#include "../ObjectiveFunction.hxx"
+#include "../Pixel.hxx"
 
 template<typename T>
 ObjectiveFunctionComparing<T>::ObjectiveFunctionComparing(
@@ -38,14 +38,14 @@ ObjectiveFunctionComparing<T>::ObjectiveFunctionComparing(
 
 template<typename T>
 T ObjectiveFunctionComparing<T>::compare(
-		const std::vector<Pixel<T> > & pixelList, const std::vector<
-				Parameter<T>*>& params)
+		const std::vector<Pixel<T>*> & pixelList, const std::vector<
+				IncrementorParameter<T>*>& params)
 {
 	T foundChange = 0;
 	Pixel<T> pixel;
 	for (unsigned int i = 0; i != pixelList.size() - 1; i++)
 	{
-		this->brightnessModel()->apply(pixelList[i], params, pixel);
+		this->brightnessModel()->apply(*(pixelList[i]), params, pixel);
 		//this->motionModel()->apply(pixel, params, pixel);
 		std::vector<T> piList = pixel.getIntensity(); //pixel intensity list
 		for (unsigned int j = 0; j != piList.size() - 1; j++)

@@ -23,11 +23,11 @@
 #define BLOCKMATCHINGLIACS_HXX_
 
 #include "BlockMatchingLIACS.h"
-#include "BlockMatching.hxx"
-#include "ListedPixelSelection.hxx"
-#include "IncrementorCountUp.hxx"
-#include "ObjectiveFunctionComparing.hxx"
-#include "SurfaceAnalysisMinChange.hxx"
+#include "../BlockMatching.hxx"
+#include <ListedPixelSelection.hxx>
+#include <IncrementorCountUp.hxx>
+#include <ObjectiveFunctionComparing.hxx>
+#include <SurfaceAnalysisMinChange.hxx>
 
 template<typename T>
 BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
@@ -37,7 +37,7 @@ BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
 }
 
 template<typename T>
-cimg_library::CImgList<T>& BlockMatchingLIACS<T>::findFlow()
+void /*cimg_library::CImgList<T>&**/ BlockMatchingLIACS<T>::findFlow()
 {
 	std::vector<T> pixelProperties;
 	std::vector<std::vector<IncrementorParameter<T>*> > allParameters;
@@ -55,31 +55,31 @@ cimg_library::CImgList<T>& BlockMatchingLIACS<T>::findFlow()
 							this->bestParam()->findMinChange(pixelProperties,
 									allParameters);
 					typename std::vector<IncrementorParameter<T>*>::iterator it;
-					T x, y, z, t;
+					T newX, newY, newZ, newT;
 					unsigned int j;
 					for (it = tempParams.begin(); it != tempParams.end(); it++)
 					{
 						if (tempParams[j]->getName() == "x")
 						{
-							x = tempParams[j]->getCurrent();
+							newX = tempParams[j]->getCurrent();
 						}
 						if (tempParams[j]->getName() == "y")
 						{
-							y = tempParams[j]->getCurrent();
+							newY = tempParams[j]->getCurrent();
 						}
 						if (tempParams[j]->getName() == "z")
 						{
-							z = tempParams[j]->getCurrent();
+							newZ = tempParams[j]->getCurrent();
 						}
 						if (tempParams[j]->getName() == "t")
 						{
-							t = tempParams[j]->getCurrent();
+							newT = tempParams[j]->getCurrent();
 						}
 						j++;
 					}
-					this->surface(x, y, z, t);
+					this->surface[x,y,z,t](newXnewT, newY, newZ, newTt);
 				}
-	return this->surface;
+	//return this->surface;
 }
 
 #endif /* BLOCKMATCHINGLIACS_HXX_ */

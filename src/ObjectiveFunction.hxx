@@ -26,23 +26,21 @@
 
 template<typename T>
 ObjectiveFunction<T>::ObjectiveFunction(const std::string& name) :
-	ParameteredObject("incrementor", name, "Compares the computed pixel"
-		" (Incrementor) with the original image in time+1"), out(this)
+	ParameteredObject("ObjectiveFunction", name,
+			"computes the difference between all way the parameters "
+				"are computed"), out(this)
 {
 	this->_addInputSlot(sequence, "sequence", "Sequence of Images",
 			"cimg_library::CImgList<T>& ");
 	this->_addInputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
 			"std::vector<Pixel<T> > *");
-//	_addInputSlot(pixelToCompare, "pixelToCompare",
-//			"Pixel which we want to find", "Pixel<T>*");
 	this->_addInputSlot(brightnessModel, "brightnessModel",
 			"Pointer to BrightnessModel", "BrightnessModel*");
 	this->_addInputSlot(motionModel, "motionModel", "Poitner to MotionModel",
 			"MotionModel*");
 	this->_addInputSlot(interpolator, "interpolator",
 			"Pointer to Interpolator", "interpolator");
-	this->_addOutputSlot(out, "out", "this OutputSlot",
-			"ObjectiveFunction<T>*");
+	this->_addOutputSlot(out, "out", "this OutputSlot", "ObjectiveFunction<T>*");
 }
 
 template<typename T>

@@ -22,7 +22,10 @@
 #ifndef OBJECTIVEFUNKTION_H_
 #define OBJECTIVEFUNKTION_H_
 
-#include "ParameteredObject.h"
+#include <ParameteredObject.h>
+#include "BrightnessModel.h"
+#include "MotionModel.h"
+#include <Interpolator.h>
 #include "BlockMatching.h"
 #include "PixelSelection.h"
 #include <vector>
@@ -34,9 +37,8 @@ class ObjectiveFunction: ParameteredObject
 public:
 	/// standard constructor
 	ObjectiveFunction(const std::string& name);
-	InputSlot<cimg_library::CImgList<T>& > sequence;
+	InputSlot<cimg_library::CImgList<T>&> sequence;
 	InputSlot<std::vector<Pixel<T> > *> pixelList;
-//	InputSlot<Pixel<T> *> pixelToCompare;
 	InputSlot<BrightnessModel<T>*> brightnessModel;
 	InputSlot<MotionModel<T>*> motionModel;
 	InputSlot<Interpolator<T>*> interpolator;
@@ -52,8 +54,8 @@ public:
 	 *  @param [out] vallue of T which shows the quadratic distance between the
 	 *  range and the computed intensity
 	 */
-	virtual T compare(const std::vector<Pixel<T> > & pixelList,
-			const std::vector<Parameter<T>*>& params) =0;
+	virtual T compare(const std::vector<Pixel<T>* > & pixelList,
+			const std::vector<IncrementorParameter<T>* >& params) =0;
 
 };
 

@@ -133,10 +133,12 @@ void LocalAffiness<T>::setFlowFunctorParams(const float a1, const float a2,
 }
 
 template<class T>
-void LocalAffiness<T>::apply(const std::vector<std::string> &,
-		cimg_library::CImg<T>& image)
+void MotionModels::LocalAffiness<T>::apply(const Pixel<T> & inPixel,
+		const std::vector<IncrementorParameter<T>*> & modifier,
+		Pixel<T> & outPixel)
 {
-
+	outPixel = inPixel;
+	// no moving change
 }
 
 #endif

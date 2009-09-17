@@ -23,7 +23,7 @@
 #ifndef SURFACEANALYSISMINCHANGE_H_
 #define SURFACEANALYSISMINCHANGE_H_
 
-#include "SurfaceAnalysis.h"
+#include "../SurfaceAnalysis.h"
 
 template<typename T>
 class SurfaceAnalysisMinChange: public SurfaceAnalysis<T>

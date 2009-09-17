@@ -52,4 +52,10 @@ void BlockMatching<T>::execute()
 	ParameteredObject::execute();
 }
 
+template<typename T>
+cimg_library::CImgList<T>& BlockMatching<T>::getFlow()
+{
+	return this->surface;
+}
+
 #endif

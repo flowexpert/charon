@@ -22,7 +22,7 @@
 #ifndef INCREMENTORCOUNTUP_H_
 #define INCREMENTORCOUNTUP_H_
 
-#include "Incrementor.h"
+#include "../Incrementor.h"
 
 template<typename T>
 class IncrementorCountUp: public Incrementor<T>

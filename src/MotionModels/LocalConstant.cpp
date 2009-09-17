@@ -124,10 +124,12 @@ void MotionModels::LocalConstant<T>::setFlowFunctorParams(const float a1,
 }
 
 template<class T>
-void MotionModels::LocalConstant<T>::apply(const std::vector<std::string> &,
-		cimg_library::CImg<T>& image)
+void MotionModels::LocalConstant<T>::apply(const Pixel<T> & inPixel,
+		const std::vector<IncrementorParameter<T>*> & modifier,
+		Pixel<T> & outPixel)
 {
-
+	outPixel = inPixel;
+	// no moving change
 }
 
 #endif

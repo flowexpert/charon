@@ -23,7 +23,7 @@
 #ifndef OBJECTIVEFUNKTIONCOMPARING_H_
 #define OBJECTIVEFUNKTIONCOMPARING_H_
 
-#include "ObjectiveFunction.h"
+#include "../ObjectiveFunction.h"
 
 template<typename T>
 class ObjectiveFunctionComparing: ObjectiveFunction<T>
@@ -32,8 +32,8 @@ public:
 	ObjectiveFunctionComparing(const std::string& name);
 	InputSlot<cimg_library::CImg<T>&> image;
 
-	virtual T compare(const std::vector<Pixel<T> > & pixelList,
-			const std::vector<Parameter<T>*>& params);
+	virtual T compare(const std::vector<Pixel<T>*> & pixelList,
+			const std::vector<IncrementorParameter<T>*>& params);
 
 };
 

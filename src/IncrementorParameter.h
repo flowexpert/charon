@@ -21,8 +21,8 @@
 #ifndef INCREMENTORPARAMETER_H_
 #define INCREMENTORPARAMETER_H_
 
-#include "ParameteredObject.h"
-#include "CImg.h"
+#include <ParameteredObject.h>
+#include <CImg.h>
 #include <vector>
 
 template<typename T>

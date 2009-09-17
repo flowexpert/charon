@@ -22,16 +22,16 @@
 #ifndef BLOCKMATCHING_H_
 #define BLOCKMATCHING_H_
 
-#include "ParameteredObject.hxx"
-#include "Roi.h"
-#include "CImg.h"
+#include <ParameteredObject.hxx>
+#include <Roi.h>
+#include <CImg.h>
 #include "Incrementor.h"
 #include "ObjectiveFunction.h"
 #include "SurfaceAnalysis.h"
 #include "PixelSelection.h"
 #include "BrightnessModel.h"
 #include "MotionModel.h"
-#include "Interpolator.h"
+#include <Interpolator.h>
 #include <vector>
 
 template<typename T>
@@ -54,7 +54,8 @@ public:
 	/// standard execute from Parametered Object
 	void execute();
 	/// trys to find the flow in the sequence
-	virtual cimg_library::CImgList<T>& findFlow() =0;
+	virtual void /*cimg_library::CImgList<T>&*/ findFlow() =0;
+	cimg_library::CImgList<T>& getFlow();
 
 };
 

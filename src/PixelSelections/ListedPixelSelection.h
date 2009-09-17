@@ -22,9 +22,10 @@
 #ifndef PIXELSELEKTION_H_
 #define PIXELSELEKTION_H_
 
-#include "Roi.h"
-#include "PixelSelection.hxx"
-#include "CImg.h"
+#include <Roi.h>
+#include "../PixelSelection.h"
+#include "../Pixel.h"
+#include <CImg.h>
 #include <vector>
 
 template<typename T>

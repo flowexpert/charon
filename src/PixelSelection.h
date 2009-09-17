@@ -22,11 +22,11 @@
 #ifndef ABSRACTPIXELSELECTION_H_
 #define ABSRACTPIXELSELECTION_H_
 
-#include "ParameteredObject.hxx"
-#include "Roi.h"
+#include <ParameteredObject.hxx>
+#include <Roi.h>
 #include "BlockMatching.h"
 #include "Pixel.h"
-#include "CImg.h"
+#include <CImg.h>
 #include <vector>
 
 /// Pixel Selection
@@ -40,7 +40,7 @@ public:
 	PixelSelection(const std::string& name);
 	InputSlot<Roi<int>*> range;
 	InputSlot<cimg_library::CImgList<T> &> sequence;
-	OutputSlot<std::vector<Pixel<T> > *> pixelList;
+	OutputSlot<std::vector<Pixel<T>* > *> pixelList;
 	/// the execute method starts the execute method form ParameteredObject
 	virtual void execute()=0;
 	/// creates the List of Pixel
