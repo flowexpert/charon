@@ -13,10 +13,10 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Substencil.hxx
+/** @file SubStencil.hxx
  *  Implementation of class Subtencil.
  *  This class is used to manage the pattern, the data and the center
- *  of a substencil.
+ *  of a SubStencil.
  *  @see Stencil.hxx
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
@@ -25,18 +25,18 @@
  */
 
 
-#ifndef _substencil_HXX_
-#define _substencil_HXX_
+#ifndef _SubStencil_HXX_
+#define _SubStencil_HXX_
 
-#include "Substencil.h"
+#include "SubStencil.h"
 
 template <class T>
-Substencil<T>::Substencil() {}
+SubStencil<T>::SubStencil() {}
 
 
 ///default constructor
 template <class T>
-Substencil<T>::Substencil(const unsigned int dimx, const unsigned int dimy,
+SubStencil<T>::SubStencil(const unsigned int dimx, const unsigned int dimy,
                           const unsigned int dimz, const unsigned int dimt,
                           Point4D<unsigned int> center) {
     //extend CImg objects to given size and initialize all values with 0
@@ -47,7 +47,7 @@ Substencil<T>::Substencil(const unsigned int dimx, const unsigned int dimy,
 		
 ///copy constructor
 template <class T>
-Substencil<T>::Substencil(const Substencil<T> &rhs) {
+SubStencil<T>::SubStencil(const SubStencil<T> &rhs) {
 	this->data.assign(rhs.data.dimx(), rhs.data.dimy(), rhs.data.dimz(), rhs.data.dimv() );
 	this->data = rhs.data;
 	this->pattern.assign(rhs.pattern.dimx(), rhs.pattern.dimy(), rhs.pattern.dimz(), rhs.pattern.dimv() );
@@ -57,7 +57,7 @@ Substencil<T>::Substencil(const Substencil<T> &rhs) {
 		
 ///assignment operator
 template <class T>
-Substencil<T>& Substencil<T>::operator= (const Substencil<T> &rhs) {
+SubStencil<T>& SubStencil<T>::operator= (const SubStencil<T> &rhs) {
 	if (&rhs == this) {return *this;}
 	this->data = rhs.data;
 	this->pattern = rhs.pattern;
@@ -66,6 +66,6 @@ Substencil<T>& Substencil<T>::operator= (const Substencil<T> &rhs) {
 }
 
 template <class T>
-Substencil<T>::~Substencil() {}
+SubStencil<T>::~SubStencil() {}
 
-#endif //_substencil_HXX_
+#endif //_SubStencil_HXX_

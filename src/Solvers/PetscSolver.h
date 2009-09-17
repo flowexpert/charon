@@ -57,7 +57,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver
 				PetscMetaStencil(const std::string unknown,const std::vector<stencil<T>*>& stencils);
 				
 				/**
-				 * Write data form substencils into PetscScalar *values and
+				 * Write data form SubStencils into PetscScalar *values and
 				 * their indices into PetscInt *columns.
 				 * @param[in] unknown current unknown.
 				 * @param[in] p current point,

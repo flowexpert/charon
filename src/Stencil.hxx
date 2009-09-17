@@ -26,7 +26,7 @@
 #define _STENCIL_HXX_
 
 #include "Stencil.h"
-#include "Substencil.hxx"
+#include "SubStencil.hxx"
 #include <ParameteredObject.hxx>
 
 template <class T>
@@ -44,7 +44,7 @@ void Stencil<T>::updateStencil(const unsigned int x, const unsigned int y,
                                        const unsigned int v) {}
 
 template <class T>
-std::map<std::string, Substencil<T> >& Stencil<T>::get() const {return substencils;}
+std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {return SubStencils;}
 
 template <class T>
 std::map<std::string, T>& Stencil<T>::getRhs() const {return rhs;}

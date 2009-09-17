@@ -16,8 +16,8 @@
 /** @file Solver.hxx
  *  Implementation of class Solver.
  *  This is the abstract base class of a solver form which all solver
- *  implementations should be derived. It contains the nested class Metastencil,
- *  which is used to group multiple substencils.
+ *  implementations should be derived. It contains the nested class MetaStencil,
+ *  which is used to group multiple SubStencils.
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *
@@ -32,13 +32,14 @@
 
 ///default constructor
 template <class T>
-MetaStencil<T>::MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils) {
-	//Iterate through the stencils and in each one, find the substencils
+MetaStencil<T>::MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils) :
+		left(0),right(0),up(0),down(0),backward(0),forward(0),before(0),after(0) {
+	//Iterate through the stencils and in each one, find the SubStencils
 	//to the given unknown. Save the maximum of expansion in each dimension
 	//and reposition the center of the meta stencil accordingly
 	std::vector<Stencil<T>*>::iterator sIt;		//stencil iterator
 	for (sIt=stencils.begin() ; sIt != stencils.end() ; sIt++) {
-		std::map<std::string, Substencil<T> >::iterator ssIt;	//Substencil iterator
+		std::map<std::string, SubStencil<T> >::iterator ssIt;	//SubStencil iterator
 		ssIt = sIt->get().find(unknown);
 		//setting work-variable for better reading
 		int centerx = ssIt->second->center.x;
@@ -46,8 +47,8 @@ MetaStencil<T>::MetaStencil(const std::string unknown,const std::vector<Stencil<
 		int centerz = ssIt->second->center.z;
 		int centert = ssIt->second->center.t;
 		
-		//Measuring the substencil that is currently being added
-		//to the metastencil
+		//Measuring the SubStencil that is currently being added
+		//to the MetaStencil
 		int width    = ssIt->second->pattern.dimx();
 		int height   = ssIt->second->pattern.dimy();
 		int depth    = ssIt->second->pattern.dimz();
@@ -69,7 +70,7 @@ MetaStencil<T>::MetaStencil(const std::string unknown,const std::vector<Stencil<
 		//the individual expansions can only grow, not shrink
 		//these lines just find the maximum
 		//of expansions in all 8 directions
-		//over all added substencils
+		//over all added SubStencils
 		if (centerx            > this->left)     {this->left = centerx;}
 		if (width-centerx-1    > this->right)    {this->right = width-centerx-1;}
 		if (centery            > this->up)       {this->up = centery;}
@@ -79,11 +80,11 @@ MetaStencil<T>::MetaStencil(const std::string unknown,const std::vector<Stencil<
 		if (centert            > this->before)   {this->before = centert;}
 		if (duration-centert-1 > this->after)    {this->after = duration-centert-1;}
 								
-		//push_back the address of the just measured substencil
-		this->substencils.push_back( &(*ssIt) );
+		//push_back the address of the just measured SubStencil
+		this->SubStencils.push_back( &(*ssIt) );
 	}
 	
-	//expand the metastencil CImg to the appropriate size
+	//expand the MetaStencil CImg to the appropriate size
 	int dimx=left+1+right;
 	int dimy=up+1+down;
 	int dimz=backward+1+forward;
@@ -93,8 +94,8 @@ MetaStencil<T>::MetaStencil(const std::string unknown,const std::vector<Stencil<
 				
 ///copy constructor
 template <class T>
-Metastencil<T>::Metastencil(const Metastencil<T>& rhs) {
-	this->substencils = rhs.substencils;
+MetaStencil<T>::MetaStencil(const MetaStencil<T>& rhs) {
+	this->SubStencils = rhs.SubStencils;
 	this->data        = rhs.data;
 	this->pattern     = rhs.pattern;
 	this->left        = rhs.left;
@@ -109,10 +110,10 @@ Metastencil<T>::Metastencil(const Metastencil<T>& rhs) {
 		
 ///assignment operator
 template <class T>
-MetaStencil<T>& Metastencil<T>::operator=(Metastencil<T>& rhs) {
+MetaStencil<T>& MetaStencil<T>::operator=(MetaStencil<T>& rhs) {
 	if (&rhs == this) {return *this;}
 	
-	this->substencils = rhs.substencils;
+	this->SubStencils = rhs.SubStencils;
 	this->data        = rhs.data;
 	this->pattern     = rhs.pattern;
 	this->left        = rhs.left;
@@ -130,10 +131,10 @@ MetaStencil<T>& Metastencil<T>::operator=(Metastencil<T>& rhs) {
 //the only necessary getter to determine the maximum number of
 //entries.
 template <class T>
-std::set<Point4D<unsigned int> >& Metastencil<T>::getPattern() {return pattern;}
+std::set<Point4D<unsigned int> >& MetaStencil<T>::getPattern() {return pattern;}
 
 template <class T>		
-Roi<int> Metastencil<T>::expand(const Roi<int>& inRoi) {
+Roi<int> MetaStencil<T>::expand(const Roi<int>& inRoi) {
 	int t  = -up;
 	int l  = -left;
 	int bo = inRoi.getHeight() + down;

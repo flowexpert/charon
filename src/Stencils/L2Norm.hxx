@@ -153,24 +153,24 @@ void L2Norm<T>::execute() {
 	//filling stencil with masks
 	std::vector<std::string>::iterator uIt;	//unknowns iterator
 	for(uIt=this->pUnknowns().begin() ; uIt!=this->pUnknowns().end() ; uIt++) {
-		Substencil<T>* entry;
+		SubStencil<T>* entry;
 		switch(dimensions) {
 			case 1:
-				entry = new Substencil<T>(3,1,1,1,center);
+				entry = new SubStencil<T>(3,1,1,1,center);
 				break;
 			case 2:
-				entry = new Substencil<T>(3,3,1,1,center);
+				entry = new SubStencil<T>(3,3,1,1,center);
 				break;
 			case 3:
-				entry = new Substencil<T>(3,3,3,1,center);
+				entry = new SubStencil<T>(3,3,3,1,center);
 				break;
 			case 4:
-				entry = new Substencil<T>(3,3,3,3,center);
+				entry = new SubStencil<T>(3,3,3,3,center);
 				break;
 		}
 		entry->data = dataMask;
 		entry->pattern = patternMask;
-		this->substencils[*uIt] = *entry;
+		this->SubStencils[*uIt] = *entry;
 	}
 }
 

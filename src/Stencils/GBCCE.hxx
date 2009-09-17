@@ -67,9 +67,9 @@ void Gbcce<T>::execute() {
 	std::set<std::string>::iterator uIt;
 	for(uIt=this->unknowns.begin();uIt!=this->unknowns.end();uIt++) {
 		Point4D<unsigned int> center(0,0,0,0);
-		Substencil<T> entry(1,1,1,1,center);
+		SubStencil<T> entry(1,1,1,1,center);
 		entry.pattern(0,0) = 1;
-		this->substencils[*uIt] = entry;
+		this->SubStencils[*uIt] = entry;
 	}
 }
 
@@ -83,7 +83,7 @@ void Gbcce<T>::updateStencil(const unsigned int x,const unsigned int y,
 	this->motionIn()->compute(x, y, z, t, v, term, rhsV);
 	typename std::map<std::string,T>::iterator termIt;	//term Iterator
 	for(termIt=term.begin();termIt!=term.end();termIt++) {
-		this->substencils[termIt->first].data(0,0) = termIt->second * this->lambda();
+		this->SubStencils[termIt->first].data(0,0) = termIt->second * this->lambda();
 		this->rhs[termIt->first] = rhsV * termIt->second * this->lambda();
 	}
 }

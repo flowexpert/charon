@@ -39,31 +39,31 @@
 #include <CImg.h>
 #include <ParameteredObject.h>
 #include "Point4D.h"
-#include "Substencil.h"
+#include "SubStencil.h"
 #include <string>
 #include <map>
 #include <set>
 
 /*
 ==============================================================
-General nomenclatur for stencils, metastentils and substencils
+General nomenclatur for stencils, metastentils and SubStencils
 ==============================================================
 
 This is the class Stencil, which represents a collection of masks or set of
 weights or pattern for different unknowns - or maybe no unknowns. Each mask is a
-substencil. So there is a substencil for every unknown a stencil knows - or
-just one substencil in general if the stencil has no unknowns.
-In the stencil class, these substencils are grouped by method - so there is one
-set of substencils in the L2Norm stencil and another set of
+SubStencil. So there is a SubStencil for every unknown a stencil knows - or
+just one SubStencil in general if the stencil has no unknowns.
+In the stencil class, these SubStencils are grouped by method - so there is one
+set of SubStencils in the L2Norm stencil and another set of
 masks in the GBCCE Stencil etc.
 In the class Solver, there is a nested class MetaStencil, which regroups the
-substencils of the attached stencils by unknown.
-Substencils are a class of their own that contain their pattern
+SubStencils of the attached stencils by unknown.
+SubStencils are a class of their own that contain their pattern
 (for the solver), the actual data (which is put there by the updateStencil
 method of their stencil) and their center, represented by a Point4D.
 Roundup:
-Stencil:      Set of substencils grouped by method
-MetaStencil:  Set of substencils grouped by unknown
+Stencil:      Set of SubStencils grouped by method
+MetaStencil:  Set of SubStencils grouped by unknown
 SubStencil:   Mask for one unknown or the general mask if no unknowns are used
 */
 
@@ -84,12 +84,12 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		std::set<std::string> unknowns;
 		
 		/**
-		 * Map to store and manage all the substencils.
+		 * Map to store and manage all the SubStencils.
 		 * @remarks
 		 * -   This member must never be erased as long as the stencil exists
 		 * 	   because this would break the pointers of following objects
 		 */
-		std::map<std::string, Substencil<T> > substencils;
+		std::map<std::string, SubStencil<T> > SubStencils;
 
 		/**
 		 * Map to store and manage all the right hand sides.
@@ -109,7 +109,7 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		
 		/**
 		 * Updates the stencil to contain the information to the given coordinate.
-		 * The data will be placed in the member data of the individual substencils.
+		 * The data will be placed in the member data of the individual SubStencils.
 		 * @param[in] x x coordinate.
 		 * @param[in] y y coordinate.
 		 * @param[in] z z coordinate.
@@ -121,10 +121,10 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
                                    const unsigned int v=0);
 		
 		/**
-		 * Getter function for the substencils of the stencil.
-		 * @return reference to the map of substencils.
+		 * Getter function for the SubStencils of the stencil.
+		 * @return reference to the map of SubStencils.
 		 */
-		std::map<std::string, Substencil<T> >& get() const;
+		std::map<std::string, SubStencil<T> >& get() const;
 		
 		std::map<std::string, T>& getRhs() const;
 				

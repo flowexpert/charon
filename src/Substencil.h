@@ -13,10 +13,10 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Substencil.h
+/** @file SubStencil.h
  *  Implementation of class Subtencil.
  *  This class is used to manage the pattern, the data and the center
- *  of a substencil.
+ *  of a SubStencil.
  *  @see Stencil.h
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
@@ -25,14 +25,14 @@
  */
 
 
-#ifndef _SUBSTENCIL_H_
-#define _SUBSTENCIL_H_
+#ifndef _SubStencil_H_
+#define _SubStencil_H_
 
 #include <CImg.h>
 #include "Point4D.h"
 
 template <class T>
-class Substencil
+class SubStencil
 {
 	public:
 		cimg_library::CImg<T> data;
@@ -40,20 +40,20 @@ class Substencil
 		Point4D<unsigned int> center;
 		
 		///empty constructor (for use in std::map)
-		Substencil();
+		SubStencil();
 		
 		///default constructor
-		Substencil(const unsigned int dimx, const unsigned int dimy,
+		SubStencil(const unsigned int dimx, const unsigned int dimy,
 		           const unsigned int dimz, const unsigned int dimt,
 		           Point4D<unsigned int> center);
 		
 		///copy constructor
-		Substencil(const Substencil &rhs);
+		SubStencil(const SubStencil &rhs);
 		
 		///assignment operator
-		Substencil& operator= (const Substencil &rhs);
+		SubStencil& operator= (const SubStencil &rhs);
 				
-		~Substencil();
+		~SubStencil();
 };
 
-#endif //_SUBSTENCIL_H_
+#endif //_SubStencil_H_
