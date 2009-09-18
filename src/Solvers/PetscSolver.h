@@ -78,7 +78,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver<T>
 				                    const std::map<std::string,Roi<int>* >& unknownSizes,
 				                    PetscInt* &columns, PetscScalar* &values);
 		};
-		
+
 		/**
 		 * Converts a coordinate in an ROI into a relative index.
 		 * @param[in] p Point to convert.
@@ -87,7 +87,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver<T>
 		 * @see getCoordinate()
 		 * @return Relative vector index.
 		 */
-		unsigned int pointToRelativeIndex(const Point4D<int> p, const Roi<int> &dim) const;
+		static unsigned int pointToRelativeIndex(const Point4D<int> p, const Roi<int> &dim);
 		
 		/**
 		 * Converts a relative vector index to a global vector index.
@@ -98,7 +98,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver<T>
 		 * @see getCoordinate()
 		 * @return Global vector index.
 		 */
-		unsigned int relativeIndexToGlobalIndex(const unsigned int i,
+		static unsigned int relativeIndexToGlobalIndex(const unsigned int i,
 		                                        const std::string& unknown,
 		                                        const std::map<std::string,Roi<int>* >& unknownSizes);
 		
@@ -111,7 +111,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver<T>
 		 * @see getIndex()
 		 * @see getVectorIndex()
 		 */
-		void globalIndexToPoint(const unsigned int vi,
+		static void globalIndexToPoint(const unsigned int vi,
 		                        const std::map<std::string, Roi<int>* >& unknownSizes,
 		                        std::string& unknown, Point4D<int>& p);
 		
@@ -122,7 +122,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver<T>
 		 * @param[in] unknownSizes Map of ROIs associated to their unknown
 		 * @return global index
 		 */
-		unsigned int pointToGlobalIndex(const Point4D<int>& p, const std::string unknown,
+		static unsigned int pointToGlobalIndex(const Point4D<int>& p, const std::string unknown,
 		                                const std::map<std::string, Roi<int>* >& unknownSizes);
 		
 		/**
@@ -131,7 +131,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver<T>
 		 * @return Point4D object containing the coordinates of the closest
 		 * boundary pixel of the unexpanded ROI
 		 */
-		Point4D<int>& getBoundary(Point4D<int> &p);
+		Point4D<int> getBoundary(Point4D<int> &p);
 		
 	public:
 		///default constructor.

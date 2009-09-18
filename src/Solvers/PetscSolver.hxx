@@ -104,18 +104,18 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(const std::string unknown,
 	//into this->data. For all the Point4Ds, which are in
 	//this->pattern, we need to add the index to PetscInt *columns
 	//and its value to PetscScalar *values
-	for(int i = 0 ; i < this->pattern.size() ; i++) { //for all Point4Ds in this->pattern
-		columns[i] = pointToGlobalIndex(this->pattern[i]+p,
-		                                unknown,unknownSizes);
-		values[i] = this->data(this->pattern[i].x, this->pattern[i].y,
-		                       this->pattern[i].z, this->pattern[i].t);
+	std::set<Point4D<int> >::iterator pIt=this->pattern.begin(); //pattern Iterator
+	//for all Point4Ds in this->pattern
+	for(int i=0 ; i < this->pattern.size() ; i++,pIt++) {
+		columns[i] = PetscSolver<T>::pointToGlobalIndex(*pIt+p,unknown,unknownSizes);
+		values[i] = this->data(pIt->x, pIt->y,pIt->z,pIt->t);
 	}
 	return this->pattern.size();
 }
 		
 template <class T>
 unsigned int PetscSolver<T>::pointToRelativeIndex(const Point4D<int> p,
-                                                  const Roi<int> &dim) const {
+                                                  const Roi<int> &dim) {
 	unsigned int res=0;
 	
 	res += p.t * (dim.getWidth() * dim.getHeight() * dim.getDepth());
@@ -133,7 +133,7 @@ unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
                               const std::map<std::string,Roi<int>* >& unknownSizes) {
 	unsigned int res=0;
 	
-	std::map<std::string,Roi<int>* >::iterator usIt; //unknown Sizes iterator
+	std::map<std::string,Roi<int>* >::const_iterator usIt; //unknown Sizes iterator
 	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.find(unknown) ; usIt++) {
 		res += usIt->second->getVolume();
 	}
@@ -173,56 +173,56 @@ unsigned int PetscSolver<T>::pointToGlobalIndex(const Point4D<int> &p,
                                                 const std::string unknown,
                                                 const std::map<std::string, Roi<int>* >& unknownSizes) {
 	unsigned int result;
-	result = pointToRelativeIndex(p,*(unknownSizes[unknown]));
+	result = pointToRelativeIndex(p,*(unknownSizes.find(unknown)->second));
 	result = relativeIndexToGlobalIndex(result, unknown, unknownSizes);
 	return result;
 }
 
 template <class T>
-Point4D<int>& PetscSolver<T>::getBoundary(Point4D<int>& p) {
+Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) {
 	//First, identify the case
 	//Point4D caseID does not contain coordinates in this scope.
 	//It contains an identification for the different cases of boundary
 	//conditions for easy and efficient handling.
 	Point4D<int> caseID;
-	if (p.x <= this->roi().left) {caseID.x = 0;}
-	if (p.x > this->roi().left && p.x < this->roi().right) {caseID.x = 1;}
-	if (p.x >= this->roi().right) {caseID.x = 2;}
-	if (p.y <= this->roi().top) {caseID.y = 0;}
-	if (p.y > this->roi().top && p.y < this->roi().bottom) {caseID.y = 1;}
-	if (p.y >= this->roi().bottom) {caseID.y = 2;}
-	if (p.z <= this->roi().front) {caseID.z = 0;}
-	if (p.z > this->roi().front && p.z < this->roi().back) {caseID.z = 1;}
-	if (p.z >= this->roi().back) {caseID.z = 2;}
-	if (p.t <= this->roi().before) {caseID.t = 0;}
-	if (p.t > this->roi().before && p.t < this->roi().after) {caseID.t = 1;}
-	if (p.t >= this->roi().after) {caseID.t = 2;}
+	if (p.x <= this->roi()->left) {caseID.x = 0;}
+	if (p.x > this->roi()->left && p.x < this->roi()->right) {caseID.x = 1;}
+	if (p.x >= this->roi()->right) {caseID.x = 2;}
+	if (p.y <= this->roi()->top) {caseID.y = 0;}
+	if (p.y > this->roi()->top && p.y < this->roi()->bottom) {caseID.y = 1;}
+	if (p.y >= this->roi()->bottom) {caseID.y = 2;}
+	if (p.z <= this->roi()->front) {caseID.z = 0;}
+	if (p.z > this->roi()->front && p.z < this->roi()->back) {caseID.z = 1;}
+	if (p.z >= this->roi()->back) {caseID.z = 2;}
+	if (p.t <= this->roi()->before) {caseID.t = 0;}
+	if (p.t > this->roi()->before && p.t < this->roi()->after) {caseID.t = 1;}
+	if (p.t >= this->roi()->after) {caseID.t = 2;}
 				
 	Point4D<int> result;
 	
 	//resolve each dimension of the case
 	switch(caseID.x) {
-		case 0: result.x = this->roi()->left(); break;
+		case 0: result.x = this->roi()->left; break;
 		case 1: result.x = p.x; break;
-		case 2: result.x = this->roi()->right(); break;
+		case 2: result.x = this->roi()->right; break;
 	}
 	
 	switch(caseID.y) {
-		case 0: result.y = this->roi()->top(); break;
+		case 0: result.y = this->roi()->top; break;
 		case 1: result.y = p.y; break;
-		case 2: result.y = this->roi()->bottom(); break;
+		case 2: result.y = this->roi()->bottom; break;
 	}
 	
 	switch(caseID.z) {
-		case 0: result.z = this->roi()->front(); break;
+		case 0: result.z = this->roi()->front; break;
 		case 1: result.z = p.z; break;
-		case 2: result.z = this->roi()->back(); break;
+		case 2: result.z = this->roi()->back; break;
 	}
 	
 	switch(caseID.t) {
-		case 0: result.t = this->roi()->before(); break;
+		case 0: result.t = this->roi()->before; break;
 		case 1: result.t = p.t; break;
-		case 2: result.t = this->roi()->after(); break;
+		case 2: result.t = this->roi()->after; break;
 	}
 	
 	return result;

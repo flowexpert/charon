@@ -79,12 +79,12 @@ class Point4D
 		}
 		
 		///addition operator
-		Point4D& operator+ (const Point4D &rhs) {
+		Point4D& operator+ (const Point4D &rhs) const {
 			return Point4D(*this) += rhs;
 		}
 		
 		///subtraction operator
-		Point4D& operator- (const Point4D &rhs) {
+		Point4D& operator- (const Point4D &rhs) const {
 			return Point4D(*this) -= rhs;
 		}
 		
