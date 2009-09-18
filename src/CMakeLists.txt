@@ -3,8 +3,7 @@ INCLUDE_DIRECTORIES(${CHARON_UTILS_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 
 IF(COMPILE_SOLVERS)
-	INCLUDE_DIRECTORIES(${PETSC_INCLUDE_DIRS})
-	INCLUDE_DIRECTORIES(BEFORE ${PETSC_ROOT_DIR}/include/mpiuni)
+	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
 ENDIF(COMPILE_SOLVERS)
 
 INCLUDE_DIRECTORIES(Incrementors)
@@ -14,7 +13,6 @@ INCLUDE_DIRECTORIES(PixelSelections)
 INCLUDE_DIRECTORIES(SurfaceAnalysis)
 INCLUDE_DIRECTORIES(BrightnessModels)
 INCLUDE_DIRECTORIES(MotionModels)
-
 ADD_DEFINITIONS(/DHANDLE_DLL)
 
 #Create shared libraries
@@ -24,6 +22,15 @@ IF (COMPILE_STENCILS)
 ENDIF (COMPILE_STENCILS)
 IF (COMPILE_SOLVERS)
 	ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
+	TARGET_LINK_LIBRARIES(petscsolver	${PETSC_CONFIG_DIR}/lib/libmpiuni.a
+										${PETSC_CONFIG_DIR}/lib/libpetsc.a
+										${PETSC_CONFIG_DIR}/lib/libpetsccontrib.a
+										${PETSC_CONFIG_DIR}/lib/libpetscdm.a
+										${PETSC_CONFIG_DIR}/lib/libpetscksp.a
+										${PETSC_CONFIG_DIR}/lib/libpetscmat.a
+										${PETSC_CONFIG_DIR}/lib/libpetscsnes.a
+										${PETSC_CONFIG_DIR}/lib/libpetscts.a
+										${PETSC_CONFIG_DIR}/lib/libpetscvec.a)
 ENDIF (COMPILE_SOLVERS)
 IF (COMPILE_BLOCKMATCHING)
 	ADD_LIBRARY(blockmatchingliacs SHARED BlockMatching/BlockMatchingLIACS.cpp)

@@ -27,33 +27,32 @@
 #ifndef _SOLVER_HXX_
 #define _SOLVER_HXX_
 
-#include <Stencil.hxx>
 #include "Solver.h"
+#include <Stencil.hxx>
 
 ///default constructor
 template <class T>
 Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils) :
 		left(0),right(0),up(0),down(0),backward(0),forward(0),before(0),after(0) {
-	out() = &result;
 	//Iterate through the stencils and in each one, find the SubStencils
 	//to the given unknown. Save the maximum of expansion in each dimension
 	//and reposition the center of the meta stencil accordingly
-	std::vector<Stencil<T>*>::iterator sIt;		//stencil iterator
+	typename std::vector<Stencil<T>*>::const_iterator sIt;		//stencil iterator
 	for (sIt=stencils.begin() ; sIt != stencils.end() ; sIt++) {
-		std::map<std::string, SubStencil<T> >::iterator ssIt;	//SubStencil iterator
-		ssIt = sIt->get().find(unknown);
+		typename std::map<std::string, SubStencil<T> >::const_iterator ssIt;	//SubStencil iterator
+		ssIt = (*sIt)->get().find(unknown);
 		//setting work-variable for better reading
-		int centerx = ssIt->second->center.x;
-		int centery = ssIt->second->center.y;
-		int centerz = ssIt->second->center.z;
-		int centert = ssIt->second->center.t;
+		int centerx = ssIt->second.center.x;
+		int centery = ssIt->second.center.y;
+		int centerz = ssIt->second.center.z;
+		int centert = ssIt->second.center.t;
 		
 		//Measuring the SubStencil that is currently being added
 		//to the MetaStencil
-		int width    = ssIt->second->pattern.dimx();
-		int height   = ssIt->second->pattern.dimy();
-		int depth    = ssIt->second->pattern.dimz();
-		int duration = ssIt->second->pattern.dimv();
+		int width    = ssIt->second.pattern.dimx();
+		int height   = ssIt->second.pattern.dimy();
+		int depth    = ssIt->second.pattern.dimz();
+		int duration = ssIt->second.pattern.dimv();
 		//remember the re-declaration of the v-dimension of CImg
 		//to be the time axis? Yeah, right ;-)
 		
@@ -82,7 +81,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<
 		if (duration-centert-1 > this->after)    {this->after = duration-centert-1;}
 								
 		//push_back the address of the just measured SubStencil
-		this->substencils.push_back( &(*ssIt) );
+		this->substencils.push_back( &(ssIt->second) );
 	}
 	
 	//expand the MetaStencil CImg to the appropriate size
@@ -95,7 +94,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<
 				
 ///copy constructor
 template <class T>
-Solver<T>::MetaStencil::MetaStencil(const MetaStencil<T>& rhs) {
+Solver<T>::MetaStencil::MetaStencil(const Solver<T>::MetaStencil& rhs) {
 	this->substencils = rhs.substencils;
 	this->data        = rhs.data;
 	this->pattern     = rhs.pattern;
@@ -114,7 +113,8 @@ Solver<T>::MetaStencil::MetaStencil() {}
 		
 ///assignment operator
 template <class T>
-MetaStencil<T>& Solver<T>::MetaStencil::operator=(MetaStencil<T>& rhs) {
+///@todo why is 'typename' necessary here?
+typename Solver<T>::MetaStencil& Solver<T>::MetaStencil::operator=(Solver<T>::MetaStencil& rhs) {
 	if (&rhs == this) {return *this;}
 	
 	this->substencils = rhs.substencils;
@@ -157,12 +157,10 @@ Solver<T>::Solver(const std::string& classname, const std::string& name) :
 	this->_addInputSlot(stencils,"stencil","Multi Input slot for stencils","stencil<T>*");
 	this->_addInputSlot(roi,"roi","region of interest to work on","Roi<int>*");
 	this->_addOutputSlot(out,"out","CImgList containing the solution","CImgList");
+	out() = &result;
 }
 
 template <class T>
-virtual void Solver<T>::execute();
-
-template <class T>
-virtual Solver<T>::~Solver();
+Solver<T>::~Solver() {}
 
 #endif // _SOLVER_HXX_

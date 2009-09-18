@@ -44,10 +44,10 @@ void Stencil<T>::updateStencil(const unsigned int x, const unsigned int y,
                                        const unsigned int v) {}
 
 template <class T>
-std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {return substencils;}
+const std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {return this->substencils;}
 
 template <class T>
-std::map<std::string, T>& Stencil<T>::getRhs() const {return rhs;}
+const std::map<std::string, T>& Stencil<T>::getRhs() const {return rhs;}
 
 template <class T>
 cimg_library::CImgList<T>& Stencil<T>::apply(const cimg_library::CImgList<T>& seq,

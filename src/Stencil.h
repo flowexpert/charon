@@ -123,9 +123,9 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 * Getter function for the SubStencils of the stencil.
 		 * @return reference to the map of SubStencils.
 		 */
-		std::map<std::string, SubStencil<T> >& get() const;
+		const std::map<std::string, SubStencil<T> >& get() const;
 		
-		std::map<std::string, T>& getRhs() const;
+		const std::map<std::string, T>& getRhs() const;
 				
 		virtual cimg_library::CImgList<T>& apply(const cimg_library::CImgList<T>& seq,
 		                                         const unsigned int frame) const;

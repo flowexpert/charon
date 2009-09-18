@@ -24,8 +24,8 @@
  *  @date 8.09.2009
  */
 
-#ifndef _SOLVER_HXX_
-#define _SOLVER_HXX_
+#ifndef _SOLVER_H_
+#define _SOLVER_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef solver_EXPORTS
@@ -40,7 +40,6 @@
 #endif
 
 #include <CImg.h>
-#include <petscksp.h>
 #include <ParameteredObject.h>
 #include <Roi.h>
 #include "Stencil.h"
@@ -57,7 +56,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				 * Vector of pointers to the SubStencils.
 				 * The data for the solver will be pulled from here.
 				*/
-				std::vector< SubStencil<T>* > substencils;
+				std::vector<const SubStencil<T>* > substencils;
 				
 				/**
 				 * CImg representing the MetaStencil.
@@ -109,7 +108,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				 * @param[in] inRoi Region of interest to expand.
 				 * @return Epxanded region of interest.
 				 */
-				virtual Roi<int>& expand(const Roi<int>& inRoi);
+				virtual void expand(Roi<int>& inRoi);
 		};
 		
 		/**
@@ -125,14 +124,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 		///Default constructor.
 		Solver(const std::string& classname, const std::string& name = "");
 			
-		virtual void execute() =0;
-		//this is the one, only and primary function of the solver
-		//once every object is connected, update() will bi called recursively
-		//so all the calculations will take place in this function, thus in
-		//the end, the correct data will be presented in the outputSlot
-		//of the solver
-		
 		virtual ~Solver();
 };
 
-#endif // _SOLVER_HXX_
+#endif // _SOLVER_H_
