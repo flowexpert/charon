@@ -23,7 +23,7 @@
 #define BLOCKMATCHINGLIACS_HXX_
 
 #include "BlockMatchingLIACS.h"
-#include "../BlockMatching.hxx"
+#include <BlockMatching.hxx>
 #include <ListedPixelSelection.hxx>
 #include <IncrementorCountUp.hxx>
 #include <ObjectiveFunctionComparing.hxx>

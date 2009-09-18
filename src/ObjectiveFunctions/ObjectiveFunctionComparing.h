@@ -35,7 +35,7 @@
 #define objectivefunctioncomparing_DECLDIR
 #endif
 
-#include "../ObjectiveFunction.h"
+#include <ObjectiveFunction.h>
 
 template<typename T>
 class objectivefunctioncomparing_DECLDIR ObjectiveFunctionComparing: ObjectiveFunction<T>

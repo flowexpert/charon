@@ -35,8 +35,8 @@
 #endif
 
 #include <Roi.h>
-#include "../PixelSelection.h"
-#include "../Pixel.h"
+#include <PixelSelection.h>
+#include <Pixel.h>
 #include <CImg.h>
 #include <vector>
 

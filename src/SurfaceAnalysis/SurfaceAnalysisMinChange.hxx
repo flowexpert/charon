@@ -24,7 +24,7 @@
 #define SURFACEANALYSISMINCHANGE_HXX_
 
 #include "SurfaceAnalysisMinChange.h"
-#include "../SurfaceAnalysis.hxx"
+#include <SurfaceAnalysis.hxx>
 
 template<typename T>
 SurfaceAnalysisMinChange<T>::SurfaceAnalysisMinChange(const std::string name) :
@@ -42,11 +42,11 @@ std::vector<IncrementorParameter<T>*> & SurfaceAnalysisMinChange<T>::findMinChan
 	unsigned int tempMin = 0;
 	for (unsigned int i = 1; i != differences.size() - 1; i++)
 	{
-		if (differences[i] < differences[tempMin] )
+		if (differences[i] < differences[tempMin])
 		{
 			tempMin = i;
 		}
-		if ( i == parameters.size())
+		if (i == parameters.size())
 		{
 			break;
 		}

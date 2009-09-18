@@ -36,9 +36,9 @@
 #define motionmodels_localaffiness_DECLDIR
 #endif
 
-#include "../main.h"
-#include "../MotionModel.h"
-#include "../FlowFunctor.h"
+#include <main.h>
+#include <MotionModel.h>
+#include <FlowFunctor.h>
 
 namespace MotionModels
 {

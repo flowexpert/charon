@@ -41,12 +41,12 @@
 #define blockmatchingliacs_DECLDIR
 #endif
 
-#include "../BlockMatching.h"
-#include "../PixelSelection.h"
+#include <BlockMatching.h>
+#include <PixelSelection.h>
 #include <ListedPixelSelection.h>
-#include "../Incrementor.h"
+#include <Incrementor.h>
 #include <IncrementorCountUp.h>
-#include "../ObjectiveFunction.h"
+#include <ObjectiveFunction.h>
 #include <ObjectiveFunctionComparing.h>
 
 

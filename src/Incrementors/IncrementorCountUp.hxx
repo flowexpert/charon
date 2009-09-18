@@ -22,8 +22,8 @@
 #ifndef INCREMENTORCONSTANT_HXX_
 #define INCREMENTORCONSTANT_HXX_
 
-#include "../Incrementor.hxx"
-#include "../IncrementorParameter.hxx"
+#include <Incrementor.hxx>
+#include <IncrementorParameter.hxx>
 #include "IncrementorCountUp.h"
 #include <Parameter.h>
 #include <set>

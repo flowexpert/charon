@@ -36,7 +36,6 @@
 
 #include <ParameteredObject.hxx>
 #include <Roi.h>
-#include "BlockMatching.h"
 #include "Pixel.h"
 #include <CImg.h>
 #include <vector>

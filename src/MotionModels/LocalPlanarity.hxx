@@ -46,7 +46,7 @@ virtual std::set<std::string>& getUnknowns()
 		this->unknowns.insert("b31");
 		this->unknowns.insert("b32");
 		this->unknowns.insert("b33");
-		this->unknowns.insert("c3")
+		this->unknowns.insert("c3");
 	}
 	return this->unknowns;
 }

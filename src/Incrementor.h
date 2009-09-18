@@ -36,7 +36,7 @@
 
 #include <ParameteredObject.h>
 #include <CImg.h>
-#include <ListedPixelSelection.h>
+#include <PixelSelection.h>
 #include <IncrementorParameter.h>
 #include <vector>
 

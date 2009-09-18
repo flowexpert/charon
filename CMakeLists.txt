@@ -22,7 +22,7 @@ OPTION(COMPILE_MOTION "compile motionmodel plugins" on)
 OPTION(COMPILE_BLOCKMATCHING "compile blockmatching plugins" on)
 
 OPTION(COMPILE_STENCILS "compile stencil pugins" on)
-OPTION(COMPILE_SOLVERS "compile solver pugins" on)
+OPTION(COMPILE_SOLVERS "compile solver pugins" off)
 
 IF (COMPILE_SOLVERS)
 FIND_PACKAGE(petsc REQUIRED)

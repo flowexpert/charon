@@ -24,8 +24,8 @@
 #define OBJECTIVEFUNKTIONCOMPARING_HXX_
 
 #include "ObjectiveFunctionComparing.h"
-#include "../ObjectiveFunction.hxx"
-#include "../Pixel.hxx"
+#include <ObjectiveFunction.hxx>
+#include <Pixel.hxx>
 
 template<typename T>
 ObjectiveFunctionComparing<T>::ObjectiveFunctionComparing(
