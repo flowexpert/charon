@@ -38,7 +38,8 @@
 #include <ObjectiveFunction.h>
 
 template<typename T>
-class objectivefunctioncomparing_DECLDIR ObjectiveFunctionComparing: ObjectiveFunction<T>
+class objectivefunctioncomparing_DECLDIR ObjectiveFunctionComparing: public ObjectiveFunction<
+		T>
 {
 public:
 	ObjectiveFunctionComparing(const std::string& name);

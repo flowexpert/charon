@@ -35,9 +35,9 @@
 #define motionmodels_localstretch_DECLDIR
 #endif
 
-#include "../main.h"
-#include "../MotionModel.h"
-#include "../FlowFunctor.h"
+#include <main.h>
+#include <MotionModel.h>
+#include <FlowFunctor.h>
 
 namespace MotionModels
 {
@@ -55,15 +55,11 @@ namespace MotionModels
 *  @f]
 */
 template <class T>
-class motionmodels_localstretch_DECLDIR LocalStretch : public MotionModel
+class motionmodels_localstretch_DECLDIR LocalStretch : public MotionModel <T>
 {
 private:
 	FlowFunctor flowfunc;
 	bool is3d;
-
-protected:
-	virtual ParameteredObject* _newInstance(const std::string& name) const
-	{return new LocalStretch(name);}	
 
 public:
 	/// default constructor
@@ -74,7 +70,7 @@ public:
 	InputSlot<cimg_library::CImgList <T> > dx,dy,dz,dt;
 	//@}
 
-	virtual void update() {is3d = !(dx().is_sameN(1)); _update();}
+	virtual void execute();
 	virtual void compute(	const int xs, const int ys, const int zs,
 							const int t, const int v,
 							std::map<std::string, T>& term,
@@ -96,8 +92,8 @@ public:
 	 */
 	void setFlowFunctorParams(float a1, float a2, float s1, float s2);
 
-	virtual void apply(const std::vector<std::string> &, 
-	                   cimg_library::CImg<T>& image);
+	virtual void apply(const Pixel<T> & inPixel, const std::vector<
+				IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel);
 	
 };
 

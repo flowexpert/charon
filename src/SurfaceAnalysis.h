@@ -40,7 +40,7 @@
 #include <vector>
 
 template<typename T>
-class SurfaceAnalysis: TemplatedParameteredObject<T>
+class SurfaceAnalysis: public TemplatedParameteredObject<T>
 {
 public:
 	/// standard constructor

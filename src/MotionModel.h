@@ -47,16 +47,10 @@ template<class T>
 class MotionModel: public ParameteredObject
 {
 protected:
-	virtual ParameteredObject* _newInstance(const std::string& name) const = 0;
 
 	/*	Berechnet die ben�tigten Ableitungen f�r das gesamte Bild,
 	 so dass diese nicht punktweise berechnet werden m�ssen */
 	//virtual void calculateDerivatives()=0;
-
-	void _update()
-	{
-		std::cout << "momoUpdate" << std::endl; /*_outDataChanged(out);*/
-	}
 
 	std::set<std::string> unknowns;
 
@@ -76,11 +70,6 @@ public:
 		//_addInputSlot(img, "image","Image to work with","image");
 		//_addInputSlot(deriv, "deriv","Derivative-Class","Derivative*");
 		out = this;
-	}
-
-	virtual void update()
-	{
-		_update();
 	}
 
 	//InputSlot<cimg_library::CImg<> > img;

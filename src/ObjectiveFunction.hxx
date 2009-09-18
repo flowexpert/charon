@@ -23,10 +23,12 @@
 #define OBJECTIVEFUNKTION_HXX_
 
 #include "ObjectiveFunction.h"
+#include "ParameteredObject.hxx"
 
 template<typename T>
 ObjectiveFunction<T>::ObjectiveFunction(const std::string& name) :
-	ParameteredObject("ObjectiveFunction", name,
+	TemplatedParameteredObject<T>::TemplatedParameteredObject(
+			"ObjectiveFunction", name,
 			"computes the difference between all way the parameters "
 				"are computed"), out(this)
 {

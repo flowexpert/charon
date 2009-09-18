@@ -38,12 +38,11 @@
 #include "BrightnessModel.h"
 #include "MotionModel.h"
 #include <Interpolator.h>
-#include "BlockMatching.h"
 #include "PixelSelection.h"
 #include <vector>
 
 template<typename T>
-class objectivefunction_DECLDIR ObjectiveFunction: ParameteredObject
+class objectivefunction_DECLDIR ObjectiveFunction: public TemplatedParameteredObject<T>
 {
 
 public:

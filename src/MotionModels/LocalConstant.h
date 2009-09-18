@@ -35,10 +35,10 @@
 #define motionmodels_localconstant_DECLDIR
 #endif
 
-#include "../main.h"
-#include "../MotionModel.h"
-#include "../FlowFunctor.h"
-#include "../IncrementorParameter.h"
+#include <main.h>
+#include <MotionModel.h>
+#include <FlowFunctor.h>
+#include <IncrementorParameter.h>
 
 /// namespace for the different motion models
 namespace MotionModels
