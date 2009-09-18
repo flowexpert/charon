@@ -63,7 +63,7 @@ void L2Norm<T>::execute() {
 			break;
 	}
 	
-	Point4D<unsigned int> center;
+	Point4D<int> center;
 	
 	//filling mask with values and setting the center
 	if (dimensions == 1) {

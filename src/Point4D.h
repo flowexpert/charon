@@ -69,9 +69,23 @@ class Point4D
 			return *this;
 		}
 		
+		///compound subtraction operator
+		Point4D& operator-= (const Point4D &rhs) {
+			this->x -= rhs.x;
+			this->y -= rhs.y;
+			this->z -= rhs.z;
+			this->t -= rhs.t;
+			return *this;
+		}
+		
 		///addition operator
 		Point4D& operator+ (const Point4D &rhs) {
 			return Point4D(*this) += rhs;
+		}
+		
+		///subtraction operator
+		Point4D& operator- (const Point4D &rhs) {
+			return Point4D(*this) -= rhs;
 		}
 		
 		///comparison operator

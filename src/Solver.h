@@ -52,7 +52,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 		//meta stencil class to combine multiple SubStencils by unknown
 		class MetaStencil
 		{
-			private:
+			protected:
 				/**
 				 * Vector of pointers to the SubStencils.
 				 * The data for the solver will be pulled from here.
@@ -71,8 +71,8 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				 * Set of points that belong to this MetaStencil.
 				 * @remark The size of the MetaStencil has to be extracted from the pattern.
 				 */
-				std::set<Point4D<unsigned int> > pattern;
-				
+				std::set<Point4D<int> > pattern;
+								
 				///@todo changed int -> unsigned int - re-check code to avoid hiccups
 				//expansions in all 8 directions
 				unsigned int left       , right;	//x (left is negative, right is positive)
@@ -80,7 +80,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				unsigned int backward   , forward;	//z (backward is negative, forward is positive)
 				unsigned int before     , after;	//t (before is negative, after is positive)
 				
-				Point4D<unsigned int> center;				//coordinates of the center of the meta stencil
+				Point4D<int> center;				//coordinates of the center of the meta stencil
 			public:
 				///default constructor
 				MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils);
@@ -88,12 +88,15 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				///copy constructor
 				MetaStencil(const MetaStencil& rhs);
 				
+				///empty constructor for use in map
+				MetaStencil();
+				
 				///assignment operator
 				virtual MetaStencil& operator=(MetaStencil& rhs);
 				
 				//the only necessary getter to determine the maximum number of
 				//entries.
-				virtual std::set<Point4D<unsigned int> >& getPattern();
+				virtual std::set<Point4D<int> >& getPattern();
 				
 				//Your implementation of the MetaStencil will need a function
 				//to gather the data from the different SubStencils and present
@@ -106,8 +109,13 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				 * @param[in] inRoi Region of interest to expand.
 				 * @return Epxanded region of interest.
 				 */
-				virtual Roi<int> expand(const Roi<int>& inRoi);
+				virtual Roi<int>& expand(const Roi<int>& inRoi);
 		};
+		
+		/**
+		 * CImgList containing the result.
+		 */
+		cimg_library::CImgList<T> result;
 
 	public:
 		InputSlot< Stencil<T>* > stencils;

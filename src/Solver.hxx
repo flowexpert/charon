@@ -34,6 +34,7 @@
 template <class T>
 Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils) :
 		left(0),right(0),up(0),down(0),backward(0),forward(0),before(0),after(0) {
+	out() = &result;
 	//Iterate through the stencils and in each one, find the SubStencils
 	//to the given unknown. Save the maximum of expansion in each dimension
 	//and reposition the center of the meta stencil accordingly
@@ -107,6 +108,9 @@ Solver<T>::MetaStencil::MetaStencil(const MetaStencil<T>& rhs) {
 	this->before      = rhs.before;
 	this->after       = rhs.after;
 }
+
+template <class T>
+Solver<T>::MetaStencil::MetaStencil() {}
 		
 ///assignment operator
 template <class T>
@@ -127,25 +131,22 @@ MetaStencil<T>& Solver<T>::MetaStencil::operator=(MetaStencil<T>& rhs) {
 	
 	return *this;
 }
-		
+
 //the only necessary getter to determine the maximum number of
 //entries.
 template <class T>
-std::set<Point4D<unsigned int> >& Solver<T>::MetaStencil::getPattern() {return pattern;}
+std::set<Point4D<int> >& Solver<T>::MetaStencil::getPattern() {return pattern;}
 
 template <class T>		
-Roi<int> Solver<T>::MetaStencil::expand(const Roi<int>& inRoi) {
-	int t  = -up;
-	int l  = -left;
-	int bo = inRoi.getHeight() + down;
-	int r  = inRoi.getWidth() + right;
-	int f  = -backward;
-	int ba = inRoi.getDepth() + forward;
-	int be = -before;
-	int af = inRoi.getDuration() + after;
-	
-	Roi<int> roi(t, l, bo, r, f, ba, be, af, "");
-	return roi;
+void Solver<T>::MetaStencil::expand(Roi<int>& inRoi) {
+	inRoi.top    = -(this->up);
+	inRoi.left   = -(this->left);
+	inRoi.bottom = inRoi.bottom + this->down;
+	inRoi.right  = inRoi.right + this->right;
+	inRoi.front  = -(this->backward);
+	inRoi.back   = inRoi.back + this->forward;
+	inRoi.before = -(this->before);
+	inRoi.after  = inRoi.after + this->after;
 }
 
 template <class T>

@@ -66,7 +66,7 @@ void Gbcce<T>::execute() {
 	//values
 	std::set<std::string>::iterator uIt;
 	for(uIt=this->unknowns.begin();uIt!=this->unknowns.end();uIt++) {
-		Point4D<unsigned int> center(0,0,0,0);
+		Point4D<int> center(0,0,0,0);
 		SubStencil<T> entry(1,1,1,1,center);
 		entry.pattern(0,0) = 1;
 		this->substencils[*uIt] = entry;
