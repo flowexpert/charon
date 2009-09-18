@@ -135,7 +135,7 @@ public:
 	/// Assign values from another region.
 	/// This does copy the region limits.
 	/// @param rhs          copy source
-	void operator=(const Roi<T>& rhs);
+	Roi<T>& operator=(const Roi<T>& rhs);
 
 	/// Enlarge region so that all elements of this region and
 	/// of the rhs are contained. (The cubic structure is kept, so that

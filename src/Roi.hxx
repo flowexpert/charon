@@ -139,15 +139,16 @@ void Roi<T>::assign(T t, T l, T bo, T r, T f, T ba, T be, T af) {
 }
 
 template <typename T>
-void Roi<T>::operator= (const Roi<T>& rhs) {
-    top    = rhs.top,
-    left   = rhs.left,
-    bottom = rhs.bottom,
-    right  = rhs.right,
-    front  = rhs.front,
-    back   = rhs.back,
-    before = rhs.before,
-    after  = rhs.after;
+Roi<T>& Roi<T>::operator= (const Roi<T>& rhs) {
+    this->top    = rhs.top,
+    this->left   = rhs.left,
+    this->bottom = rhs.bottom,
+    this->right  = rhs.right,
+    this->front  = rhs.front,
+    this->back   = rhs.back,
+    this->before = rhs.before,
+    this->after  = rhs.after;
+    return *this;
 }
 
 template <typename T>
