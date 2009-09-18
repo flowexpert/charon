@@ -121,7 +121,6 @@ void FileManager::updateMetadata() const {
 	std::string oldPath = FileTool::getCurrentDir();
 	FileTool::changeDir(metaPath);
 	std::vector<std::string> wrp_files = FileTool::getFilesWithSuffix(".wrp");
-	std::ifstream inStream;
 	std::ofstream outStream;
 	QString qFName = classesFile();
 	QByteArray bFName = qFName.toAscii();
@@ -130,6 +129,7 @@ void FileManager::updateMetadata() const {
 
 	for (unsigned int i = 0; i < wrp_files.size(); i++) {
 		//&TODO Dateinamen angeben
+		std::ifstream inStream;
 		std::string buffer;
 		inStream.open((metaPath + "/" + wrp_files[i]).c_str());
 		while (!inStream.eof()) {

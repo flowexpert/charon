@@ -66,17 +66,20 @@ IF(APPLE)
 	    FILES       ${PROJECT_SOURCE_DIR}/icons/MacOSIcon.icns
 	    DESTINATION /Applications/Tuchulcha.app/Contents/Resources
 	    COMPONENT   applications
+	    PERMISSIONS WORLD_WRITE
 	)
 	INSTALL(
 	    FILES       ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MacOSInfo.plist
 	    DESTINATION /Applications/Tuchulcha.app/Contents
 	    COMPONENT   applications
 	    RENAME	Info.plist
+	    PERMISSIONS WORLD_WRITE
 	)
 	INSTALL(
 	    TARGETS     paramedit
 	    RUNTIME     DESTINATION    /Applications/Tuchulcha.app/Contents/MacOS
 	    COMPONENT   applications
+	    PERMISSIONS WORLD_WRITE
 	)
 ELSE(APPLE)
 	INSTALL(

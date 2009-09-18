@@ -1,5 +1,4 @@
 --HIGH PRIORITY
-Windows compatibility
 Mac OS X: Append plugin paths to the DYLD_LIBRARY_PATH environment variable
 
 --MEDIUM PRIORITY
