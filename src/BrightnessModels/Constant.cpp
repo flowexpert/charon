@@ -21,11 +21,11 @@
 /// @date 24.08.2009
 
 ///Class name of the plugin
-#define TYPE Constant
+#define TYPE BrightnessModels::Constant
 
 #include "Constant.hxx"
 
-#if defined(MSVC) && defined (constant_EXPORTS)
+#if defined(MSVC) && defined (brightnessmodels_constant_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

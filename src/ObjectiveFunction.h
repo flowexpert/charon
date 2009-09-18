@@ -22,6 +22,18 @@
 #ifndef OBJECTIVEFUNKTION_H_
 #define OBJECTIVEFUNKTION_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef objectivefunction_EXPORTS
+///Visual C++ specific code
+#define objectivefunction_DECLDIR __declspec(dllexport)
+#else
+#define objectivefunction_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define objectivefunction_DECLDIR
+#endif
+
 #include <ParameteredObject.h>
 #include "BrightnessModel.h"
 #include "MotionModel.h"
@@ -31,7 +43,7 @@
 #include <vector>
 
 template<typename T>
-class ObjectiveFunction: ParameteredObject
+class objectivefunction_DECLDIR ObjectiveFunction: ParameteredObject
 {
 
 public:

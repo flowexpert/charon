@@ -21,11 +21,11 @@
 /// @date 24.08.2009
 
 ///Class name of the plugin
-#define TYPE MovingIllumination
+#define TYPE BrightnessModels::MovingIllumination
 
 #include "MovingIllumination.hxx"
 
-#if defined(MSVC) && defined (movingillumination_EXPORTS)
+#if defined(MSVC) && defined (brightnessmodels_movingillumination_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

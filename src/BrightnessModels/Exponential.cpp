@@ -21,11 +21,11 @@
 /// @date 24.08.2009
 
 ///Class name of the plugin
-#define TYPE Exponential
+#define TYPE BrightnessModels::Exponential
 
 #include "Exponential.hxx"
 
-#if defined(MSVC) && defined (exponential_EXPORTS)
+#if defined(MSVC) && defined (brightnessmodels_exponential_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

@@ -22,6 +22,18 @@
 #ifndef INCREMENTOR_H_
 #define INCREMENTOR_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef incrementor_EXPORTS
+///Visual C++ specific code
+#define incrementor_DECLDIR __declspec(dllexport)
+#else
+#define incrementor_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define incrementor_DECLDIR
+#endif
+
 #include <ParameteredObject.h>
 #include <CImg.h>
 #include <ListedPixelSelection.h>
@@ -29,7 +41,7 @@
 #include <vector>
 
 template<typename T>
-class Incrementor: public TemplatedParameteredObject<T>
+class incrementor_DECLDIR Incrementor: public TemplatedParameteredObject<T>
 {
 protected:
 	std::vector<IncrementorParameter<T>*> listOfParams;

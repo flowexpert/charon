@@ -23,10 +23,22 @@
 #ifndef SURFACEANALYSISMINCHANGE_H_
 #define SURFACEANALYSISMINCHANGE_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef surfaceanalysisminchange_EXPORTS
+///Visual C++ specific code
+#define surfaceanalysisminchange_DECLDIR __declspec(dllexport)
+#else
+#define surfaceanalysisminchange_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define surfaceanalysisminchange_DECLDIR
+#endif
+
 #include "../SurfaceAnalysis.h"
 
 template<typename T>
-class SurfaceAnalysisMinChange: public SurfaceAnalysis<T>
+class surfaceanalysisminchange_DECLDIR SurfaceAnalysisMinChange: public SurfaceAnalysis<T>
 {
 public:
 	SurfaceAnalysisMinChange(const std::string name);

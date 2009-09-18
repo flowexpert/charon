@@ -19,8 +19,20 @@
  *  @date 13.08.2009
  */
 
-#ifndef PIXELSELEKTION_H_
-#define PIXELSELEKTION_H_
+#ifndef LISTEDPIXELSELEKTION_H_
+#define LISTEDPIXELSELEKTION_H_
+
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef listedpixelselection_EXPORTS
+///Visual C++ specific code
+#define listedpixelselection_DECLDIR __declspec(dllexport)
+#else
+#define listedpixelselection_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define listedpixelselection_DECLDIR
+#endif
 
 #include <Roi.h>
 #include "../PixelSelection.h"
@@ -42,4 +54,4 @@ private:
 	std::vector<Pixel<T>*> pixelList;
 };
 
-#endif /* PIXELSELEKTION_H_ */
+#endif /* LISTEDPIXELSELEKTION_H_ */

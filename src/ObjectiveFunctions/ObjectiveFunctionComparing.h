@@ -23,10 +23,22 @@
 #ifndef OBJECTIVEFUNKTIONCOMPARING_H_
 #define OBJECTIVEFUNKTIONCOMPARING_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef objectivefunctioncomparing_EXPORTS
+///Visual C++ specific code
+#define objectivefunctioncomparing_DECLDIR __declspec(dllexport)
+#else
+#define objectivefunctioncomparing_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define objectivefunctioncomparing_DECLDIR
+#endif
+
 #include "../ObjectiveFunction.h"
 
 template<typename T>
-class ObjectiveFunctionComparing: ObjectiveFunction<T>
+class objectivefunctioncomparing_DECLDIR ObjectiveFunctionComparing: ObjectiveFunction<T>
 {
 public:
 	ObjectiveFunctionComparing(const std::string& name);

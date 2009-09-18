@@ -18,6 +18,7 @@
 /// @file Constant.hxx
 /// implements class Constant
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
+/// @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
 /// @date 27.05.2009
 
 #ifndef _BrightnessModels_Constant_HXX_
@@ -28,6 +29,7 @@
 using namespace std;
 using namespace cimg_library;
 
+template<class T>
 BrightnessModels::Constant<T>::Constant(const string& name) :
 	BrightnessModel<T> ("brightnessmodels_diffusion", name)
 {
@@ -35,7 +37,7 @@ BrightnessModels::Constant<T>::Constant(const string& name) :
 }
 
 template<class T>
-std::set<std::string>& BrightnessModels::Constant<T>::getUnknowns() const
+std::set<std::string>& BrightnessModels::Constant<T>::getUnknowns()
 {
 	return this->unknowns;
 }

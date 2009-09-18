@@ -21,11 +21,11 @@
 /// @date 24.08.2009
 
 ///Class name of the plugin
-#define TYPE LocalConstant
+#define TYPE MotionModels::LocalConstant
 
 #include "LocalConstant.hxx"
 
-#if defined(MSVC) && defined (localconstant_EXPORTS)
+#if defined(MSVC) && defined (motionmodels_localconstant_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

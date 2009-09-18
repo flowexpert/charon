@@ -22,10 +22,22 @@
 #ifndef INCREMENTORCOUNTUP_H_
 #define INCREMENTORCOUNTUP_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef incrementorcountup_EXPORTS
+///Visual C++ specific code
+#define incrementorcountup_DECLDIR __declspec(dllexport)
+#else
+#define incrementorcountup_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define incrementorcountup_DECLDIR
+#endif
+
 #include "../Incrementor.h"
 
 template<typename T>
-class IncrementorCountUp: public Incrementor<T>
+class incrementorcountup_DECLDIR IncrementorCountUp: public Incrementor<T>
 {
 private:
 	//typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator

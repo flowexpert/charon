@@ -23,6 +23,18 @@
 #ifndef _MotionModel_h_
 #define _MotionModel_h_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef motionmodel_EXPORTS
+///Visual C++ specific code
+#define motionmodel_DECLDIR __declspec(dllexport)
+#else
+#define motionmodel_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define motionmodel_DECLDIR
+#endif
+
 #include "main.h"
 #include "Derivative.h"
 #include "FlowFunctorInterface.h"
@@ -107,7 +119,7 @@ public:
 
 	/// returns a vector of names of unknowns of the model
 	/// by asking the vectors length, you get the number of unknowns
-	virtual std::set<std::string>& getUnknowns();
+	virtual std::set<std::string>& getUnknowns() = 0;
 
 	/// returns a Image with the changes it has to do
 	/// Input: a vector of Parameters to compute the modification

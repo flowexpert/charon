@@ -24,15 +24,15 @@
 #define _BrightnessModels_Exponential_h_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef exponential_EXPORTS
+#ifdef brightnessmodels_exponential_EXPORTS
 ///Visual C++ specific code
-#define exponential_DECLDIR __declspec(dllexport)
+#define brightnessmodels_exponential_DECLDIR __declspec(dllexport)
 #else
-#define exponential_DECLDIR __declspec(dllimport)
+#define brightnessmodels_exponential_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define exponential_DECLDIR
+#define brightnessmodels_exponential_DECLDIR
 #endif
 
 #include "../main.h"
@@ -49,7 +49,7 @@ namespace BrightnessModels
  *  where @f$ g\left(\vec x\left( t \right) , t \right) @f$ is the image and @f$ t_0 @f$ the starting time of the sequence.
  */
 template<class T>
-class diffusion_DECLDIR Exponential: public BrightnessModel<T>
+class brightnessmodels_exponential_DECLDIR Exponential: public BrightnessModel<T>
 {
 private:
 	class Functor: public BrightnessFunctorInterface<T>

@@ -23,6 +23,18 @@
 #ifndef SURFACEANALYSIS_H_
 #define SURFACEANALYSIS_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef surfaceanalysis_EXPORTS
+///Visual C++ specific code
+#define surfaceanalysis_DECLDIR __declspec(dllexport)
+#else
+#define surfaceanalysis_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define surfaceanalysis_DECLDIR
+#endif
+
 #include <ParameteredObject.h>
 #include "IncrementorParameter.h"
 #include <vector>

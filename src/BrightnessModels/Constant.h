@@ -18,21 +18,22 @@
 /// @file Constant.h
 /// defines class BrightnessModels::Constant
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
+/// @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
 /// @date 27.05.2009
 
 #ifndef _BrightnessModels_Constant_H_
 #define _BrightnessModels_Constant_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef constant_EXPORTS
+#ifdef brightnessmodels_constant_EXPORTS
 ///Visual C++ specific code
-#define constant_DECLDIR __declspec(dllexport)
+#define brightnessmodels_constant_DECLDIR __declspec(dllexport)
 #else
-#define constant_DECLDIR __declspec(dllimport)
+#define brightnessmodels_constant_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define constant_DECLDIR
+#define brightnessmodels_constant_DECLDIR
 #endif
 
 #include "../main.h"
@@ -45,7 +46,7 @@ namespace BrightnessModels
 
 /// a brightness model for no brightness change
 template<class T>
-class constant_DECLDIR Constant: public BrightnessModel<T>
+class brightnessmodels_constant_DECLDIR Constant: public BrightnessModel<T>
 {
 private:
 	/// the brightness functor for no brightness change
@@ -72,7 +73,7 @@ public:
 	InputSlot<cimg_library::CImgList<T> > sequence;
 	virtual void compute(const int xs, const int ys, const int zs, const int t,
 			const int v, std::map<std::string, T>& term, T& rhs);
-	virtual std::set<std::string>& getUnknowns() const;
+	virtual std::set<std::string>& getUnknowns();
 	//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
 
 	virtual void apply(const Pixel<T> & inPixel, const std::vector<

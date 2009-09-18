@@ -109,7 +109,7 @@ void LocalAffiness<T>::compute(const int xs, const int ys, const int zs,
 
 template<class T>
 LocalAffiness<T>::LocalAffiness(const string& name) :
-	flowfunc(), MotionModel<T>::MotionModel("motionmodels_localaffiness", name)
+	MotionModel<T>::MotionModel("motionmodels_localaffiness", name), flowfunc()
 {
 	_addInputSlot(dx, "dx", "derivation in x", "CImgList");
 	_addInputSlot(dy, "dy", "derivation in y", "CImgList");

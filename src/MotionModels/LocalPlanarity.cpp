@@ -21,11 +21,11 @@
 /// @date 24.08.2009
 
 ///Class name of the plugin
-#define TYPE LocalPlanarity
+#define TYPE MotionModels::LocalPlanarity
 
 #include "LocalPlanarity.hxx"
 
-#if defined(MSVC) && defined (localplanarity_EXPORTS)
+#if defined(MSVC) && defined (motionmodels_localplanarity_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

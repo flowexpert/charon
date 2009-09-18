@@ -21,11 +21,11 @@
 /// @date 24.08.2009
 
 ///Class name of the plugin
-#define TYPE LocalRotation
+#define TYPE MotionModels::LocalRotation
 
 #include "LocalRotation.hxx"
 
-#if defined(MSVC) && defined (localrotation_EXPORTS)
+#if defined(MSVC) && defined (motionmodels_localrotation_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

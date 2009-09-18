@@ -22,6 +22,18 @@
 #ifndef ABSRACTPIXELSELECTION_H_
 #define ABSRACTPIXELSELECTION_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef pixelselection_EXPORTS
+///Visual C++ specific code
+#define pixelselection_DECLDIR __declspec(dllexport)
+#else
+#define pixelselection_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define pixelselection_DECLDIR
+#endif
+
 #include <ParameteredObject.hxx>
 #include <Roi.h>
 #include "BlockMatching.h"
@@ -32,7 +44,7 @@
 /// Pixel Selection
 /// This class saves all Pixel we are interested in, in a list of pixel
 template<typename T>
-class PixelSelection: public ParameteredObject
+class pixelselection_DECLDIR PixelSelection: public ParameteredObject
 {
 
 public:

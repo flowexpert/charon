@@ -24,15 +24,15 @@
 #define _MotionModels_LocalConstant_h_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef localconstant_EXPORTS
+#ifdef motionmodels_localconstant_EXPORTS
 ///Visual C++ specific code
-#define localconstant_DECLDIR __declspec(dllexport)
+#define motionmodels_localconstant_DECLDIR __declspec(dllexport)
 #else
-#define localconstant_DECLDIR __declspec(dllimport)
+#define motionmodels_localconstant_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define localconstant_DECLDIR
+#define motionmodels_localconstant_DECLDIR
 #endif
 
 #include "../main.h"
@@ -52,7 +52,7 @@ namespace MotionModels
  * @f]
  */
 template<class T>
-class localconstant_DECLDIR LocalConstant: public MotionModel<T>
+class motionmodels_localconstant_DECLDIR LocalConstant: public MotionModel<T>
 {
 private:
 	//cimg_library::CImg<> dx,dy,dt;

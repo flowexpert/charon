@@ -22,7 +22,7 @@
 #ifndef BLOCKMATCHING_H_
 #define BLOCKMATCHING_H_
 
-#if defined(MSVC) && defined(HANDLE_DLL)
+#if  defined(MSVC) && defined(HANDLE_DLL)
 #ifdef blockmatching_EXPORTS
 ///Visual C++ specific code
 #define blockmatching_DECLDIR __declspec(dllexport)

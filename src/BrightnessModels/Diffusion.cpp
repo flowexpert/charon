@@ -21,11 +21,11 @@
 /// @date 24.08.2009
 
 ///Class name of the plugin
-#define TYPE Diffusion
+#define TYPE BrightnessModels::Diffusion
 
 #include "Diffusion.hxx"
 
-#if defined(MSVC) && defined (diffusion_EXPORTS)
+#if defined(MSVC) && defined (brightnessmodels_diffusion_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

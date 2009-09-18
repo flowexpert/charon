@@ -24,15 +24,15 @@
 #define _MotionModels_LocalRotation_h_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef localrotation_EXPORTS
+#ifdef motionmodels_localrotation_EXPORTS
 ///Visual C++ specific code
-#define localrotation_DECLDIR __declspec(dllexport)
+#define motionmodels_localrotation_DECLDIR __declspec(dllexport)
 #else
-#define localrotation_DECLDIR __declspec(dllimport)
+#define motionmodels_localrotation_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define localrotation_DECLDIR
+#define motionmodels_localrotation_DECLDIR
 #endif
 
 #include "../main.h"
@@ -54,7 +54,7 @@ namespace MotionModels
 * @f]
 */
 template <class T>
-class localrotation_DECLDIR LocalRotation : public MotionModel
+class motionmodels_localrotation_DECLDIR LocalRotation : public MotionModel
 {
 private:
 	FlowFunctor flowfunc;

@@ -23,6 +23,18 @@
 #ifndef _flowFunctor_h_
 #define _flowFunctor_h_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef flowfunctor_EXPORTS
+///Visual C++ specific code
+#define flowfunctor_DECLDIR __declspec(dllexport)
+#else
+#define flowfunctor_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define flowfunctor_DECLDIR
+#endif
+
 #include "main.h"
 #include "FlowFunctorInterface.h"
 

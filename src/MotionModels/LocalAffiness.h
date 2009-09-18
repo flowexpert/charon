@@ -25,15 +25,15 @@
 #define _MotionModels_LocalAffiness_h_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef localaffiness_EXPORTS
+#ifdef motionmodels_localaffiness_EXPORTS
 ///Visual C++ specific code
-#define localaffiness_DECLDIR __declspec(dllexport)
+#define motionmodels_localaffiness_DECLDIR __declspec(dllexport)
 #else
-#define localaffiness_DECLDIR __declspec(dllimport)
+#define motionmodels_localaffiness_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define localaffiness_DECLDIR
+#define motionmodels_localaffiness_DECLDIR
 #endif
 
 #include "../main.h"
@@ -56,7 +56,7 @@ namespace MotionModels
  *
  */
 template<class T>
-class localaffiness_DECLDIR LocalAffiness: public MotionModel<T>
+class motionmodels_localaffiness_DECLDIR LocalAffiness: public MotionModel<T>
 {
 private:
 	FlowFunctor flowfunc;

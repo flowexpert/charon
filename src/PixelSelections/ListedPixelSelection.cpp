@@ -15,17 +15,17 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file LocalStretch.cpp
+/// @file ListedPixelSelection.cpp
 /// This file is needed for the Roi class to work as a plugin.
 /// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 24.08.2009
 
 ///Class name of the plugin
-#define TYPE MotionModels::LocalStretch
+#define TYPE ListedPixelSelection
 
-#include "LocalStretch.hxx"
+#include "ListedPixelSelection.hxx"
 
-#if defined(MSVC) && defined (motionmodels_localstretch_EXPORTS)
+#if defined(MSVC) && defined (listedpixelselection_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

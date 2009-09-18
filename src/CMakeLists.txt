@@ -7,17 +7,81 @@ INCLUDE_DIRECTORIES(BEFORE ${PETSC_ROOT_DIR}/include/mpiuni)
 ADD_DEFINITIONS(/DHANDLE_DLL)
 
 #Create shared libraries
-#ADD_LIBRARY(gbcce SHARED Stencils/Gbcce.cpp)
-#ADD_LIBRARY(l2norm SHARED Stencils/L2Norm.cpp)
-#ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
-ADD_LIBRARY(blockmatchingliacs SHARED BlockMatching/BlockMatchingLIACS.cpp)
+IF (COMPILE_STENCILS)
+	ADD_LIBRARY(gbcce SHARED Stencils/Gbcce.cpp)
+	ADD_LIBRARY(l2norm SHARED Stencils/L2Norm.cpp)
+ENDIF (COMPILE_STENCILS)
+IF (COMPILE_SOLVERS)
+	ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
+ENDIF (COMPILE_SOLVERS)
+IF (COMPILE_BLOCKMATCHING)
+	ADD_LIBRARY(blockmatchingliacs SHARED BlockMatching/BlockMatchingLIACS.cpp)
+	ADD_LIBRARY(incrementorcountup SHARED Incrementors/IncrementorCountUp.cpp)
+	ADD_LIBRARY(objectivefunctioncomparing SHARED ObjectiveFunctions/ObjectiveFunctionComparing.cpp)
+	ADD_LIBRARY(listedpixelselection SHARED PixelSelections/ListedPixelSelection.cpp)
+	ADD_LIBRARY(surfaceanalysisminchange SHARED SurfaceAnalysis/SurfaceAnalysisMinChange.cpp)
+ENDIF (COMPILE_BLOCKMATCHING)
+IF (COMPILE_BRIGHTNESS)
+	ADD_LIBRARY(brightnessmodels_constant SHARED BrightnessModels/Constant.cpp)
+	ADD_LIBRARY(brightnessmodels_diffusion SHARED BrightnessModels/Diffusion.cpp)
+	ADD_LIBRARY(brightnessmodels_exponential SHARED BrightnessModels/Exponential.cpp)
+	ADD_LIBRARY(brightnessmodels_movingillumination SHARED BrightnessModels/MovingIllumination.cpp)
+ENDIF (COMPILE_BRIGHTNESS)
+IF (COMPILE_MOTION)
+	ADD_LIBRARY(motionmodels_localaffiness SHARED MotionModels/LocalAffiness.cpp FlowFunctor.cpp)
+	ADD_LIBRARY(motionmodels_localconstant SHARED MotionModels/LocalConstant.cpp FlowFunctor.cpp)
+	ADD_LIBRARY(motionmodels_localplanarity SHARED MotionModels/LocalPlanarity.cpp FlowFunctor.cpp)
+	ADD_LIBRARY(motionmodels_localrotation SHARED MotionModels/LocalRotation.cpp FlowFunctor.cpp)
+	ADD_LIBRARY(motionmodels_localstretch SHARED MotionModels/LocalStretch.cpp FlowFunctor.cpp)
+ENDIF (COMPILE_MOTION)
 
+SET(Plugins)
+IF (COMPILE_STENCILS)
 SET(Plugins
-#	gbcce
-#	l2norm
-#	petscsolver
-	blockmatchingliacs
+	${Plugins}
+	gbcce
+	l2norm
 )
+ENDIF (COMPILE_STENCILS)
+
+IF (COMPILE_SOLVERS)
+SET(Plugins
+	${Plugins}
+	petscsolver
+)
+ENDIF (COMPILE_SOLVERS)
+
+IF (COMPILE_BLOCKMATCHING)
+SET(Plugins
+	${Plugins}
+	blockmatchingliacs
+	incrementorcountup
+	objectivefunctioncomparing
+	listedpixelselection
+	surfaceanalysisminchange
+)
+ENDIF (COMPILE_BLOCKMATCHING)
+
+IF (COMPILE_BRIGHTNESS)
+SET(Plugins
+	${Plugins}
+	brightnessmodels_constant
+	brightnessmodels_diffusion
+	brightnessmodels_exponential
+	brightnessmodels_movingillumination
+)
+ENDIF (COMPILE_BRIGHTNESS)
+
+IF (COMPILE_MOTION)
+SET(Plugins
+	${Plugins}
+	motionmodels_localaffiness
+	motionmodels_localconstant
+	motionmodels_localplanarity 
+	motionmodels_localrotation
+	motionmodels_localstretch
+)
+ENDIF (COMPILE_MOTION)
 
 FOREACH(X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core)

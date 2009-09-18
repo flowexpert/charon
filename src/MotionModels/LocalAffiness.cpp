@@ -21,11 +21,11 @@
 /// @date 24.08.2009
 
 ///Class name of the plugin
-#define TYPE LocalAffiness
+#define TYPE MotionModels::LocalAffiness
 
 #include "LocalAffiness.hxx"
 
-#if defined(MSVC) && defined (localaffiness_EXPORTS)
+#if defined(MSVC) && defined (motionmodels_localaffiness_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

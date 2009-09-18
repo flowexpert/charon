@@ -104,7 +104,7 @@ void MotionModels::LocalConstant<T>::compute(const int xs, const int ys,
 
 template<class T>
 MotionModels::LocalConstant<T>::LocalConstant(const string& name) :
-	flowfunc(), MotionModel<T>::MotionModel("motionmodels_localconstant", name)
+	MotionModel<T>::MotionModel("motionmodels_localconstant", name), flowfunc()
 {
 	_addInputSlot(dx, "dx", "derivation in x", "CImgList");
 	_addInputSlot(dy, "dy", "derivation in y", "CImgList");

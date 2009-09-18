@@ -24,15 +24,15 @@
 #define _MotionModels_LocalStretch_h_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef localstretch_EXPORTS
+#ifdef motionmodels_localstretch_EXPORTS
 ///Visual C++ specific code
-#define localstretch_DECLDIR __declspec(dllexport)
+#define motionmodels_localstretch_DECLDIR __declspec(dllexport)
 #else
-#define localstretch_DECLDIR __declspec(dllimport)
+#define motionmodels_localstretch_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define localstretch_DECLDIR
+#define motionmodels_localstretch_DECLDIR
 #endif
 
 #include "../main.h"
@@ -55,7 +55,7 @@ namespace MotionModels
 *  @f]
 */
 template <class T>
-class localstretch_DECLDIR LocalStretch : public MotionModel
+class motionmodels_localstretch_DECLDIR LocalStretch : public MotionModel
 {
 private:
 	FlowFunctor flowfunc;
