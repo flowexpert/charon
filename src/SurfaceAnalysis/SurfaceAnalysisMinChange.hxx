@@ -15,7 +15,8 @@
  */
 /**
  *  @file SurfaceAnalysisMinChange.hxx
- *  impelmentation of SurfaceAnalysisMinChange
+ *  @brief impelmentation of SurfaceAnalysisMinChange, child class of 
+ *  SurfaceAnalysis
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 15.09.2009
  */

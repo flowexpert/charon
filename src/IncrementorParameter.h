@@ -15,6 +15,7 @@
  */
 /**
  *  @file IncrementorParameter.h
+ *  @brief declaration of class IncrementorParameter
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 31.08.2009
  */
@@ -25,21 +26,24 @@
 #include <CImg.h>
 #include <vector>
 
+/// IncrementorParameter saves one parameter to work in Incrementor or 
+/// Brightnessmodels and MotionModels
 template<typename T>
 class IncrementorParameter: public TemplatedParameteredObject<T>
 {
 private:
-	std::string parameterName;
-	Parameter<T> min;
-	Parameter<T> max;
-	Parameter<T> step;
-	Parameter<T> current;
+	std::string parameterName;/// @param parameterName name of parameter
+	Parameter<T> min;		/// @param min minimum of parameter
+	Parameter<T> max;		/// @param max maximum of parameter
+	Parameter<T> step;		/// @param step stepsize of parameter
+	Parameter<T> current;	/// @param current current pos of parameter
 
 public:
 	/// stadard constructor
 	IncrementorParameter(const std::string& name);
+	/// this outputslot
 	OutputSlot<IncrementorParameter<T>*> paramList;
-	/// returns true if inserted name and parameterName are equivalent
+	/// standard get function for parameter name
 	std::string& getName();
 	/// sets name of InrementorParameter
 	void setName(std::string& newName);

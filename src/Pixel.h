@@ -15,7 +15,7 @@
  */
 /**
  *  @file Pixel.h
- *  defines class Point4D::Pixel
+ *  @brief declaration of class Pixel, child class of Point4D
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 14.09.2009
  */
@@ -26,48 +26,58 @@
 #include <vector>
 #include "Point4D.h"
 
-/// Pixel is a data structure to save one pixel in it
+/// Pixel is a data structure to save one pixel
 template<typename T>
 class Pixel : public Point4D<T>
 {
 protected:
 	///is able to save pixel data
-	T x; ///@param x		x position
-	T y; ///@param y		y position
-	T z; ///@param z		z position
-	T t; ///@param t		Time value
-	std::vector<T> intensity; ///@param intensity 		intensity at x,y,z position
+	T x; ///@param x	x position
+	T y; ///@param y	y position
+	T z; ///@param z	z position
+	T t; ///@param t	Time value
+	std::vector<T> intensity; ///@param intensity 	intensity at x,y,z,t position
 
 public:
-	///standard constructor
+	/// standard constructor
 	Pixel();
+	/// standard set method for parameter x
 	void setX(const T& newX);
+	/// standard get function for parameter x
 	const T& getX() const;
+	/// standard set method for parameter y
 	void setY(const T& newY);
+	/// standard get function for parameter y
 	const T& getY() const;
+	/// standard set method for parameter z
 	void setZ(const T& newZ);
+	/// standard get function for parameter z
 	const T& getZ() const;
+	/// standard set method for parameter t
 	void setT(const T& newT);
+	/// standard get function for parameter t
 	const T& getT() const;
+
 	/**
 	 *  insert a new intensity parameter at the end of the list
 	 *  @param newI new intensity element
 	 */
 	void pushBackIntensity(const T& newI);
+
 	/**
 	 *  insert a new intensity parameter at the inseted Position
 	 *  @param pos position where the new element has to be inserted
 	 *  @param updatedI new intensity element
 	 */
 	void insertIntensity(const int pos, const T& newI);
+	/// standard get function for parameter intensity
 	const std::vector<T>& getIntensity() const;
-	///copy constructor
+	/// copy constructor
 	Pixel(const Pixel<T> & rhs);
-	///definition of overloaded operator ==
+	/// overloaded operator ==
 	bool operator== (const Pixel<T> &rhs) const;
-	///definition of overloaded operator =
+	/// overloaded operator =
 	Pixel<T>& operator= (const Pixel<T>& rhs);
-
 };
 
 #endif /* PIXEL_H_ */

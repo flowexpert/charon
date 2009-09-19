@@ -15,6 +15,7 @@
  */
 /**
  *  @file Incrementor.hxx
+ *  @brief declaration of abstract class Incrementor
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 12.08.2009
  */
@@ -31,7 +32,6 @@ Incrementor<T>::Incrementor(const std::string& name) :
 			" Increments the Parameters, witch are needed to compute changes "
 				"inside the Image "), paramList(false, true), out(this)
 {
-	this->_addInputSlot(image, "Image", "Image where to Increment", "CImg");
 	this->_addInputSlot(paramList, "paramList",
 			"list of Parameters for Incrementor", "Incrementor Parameter");
 	this->_addOutputSlot(out, "out",

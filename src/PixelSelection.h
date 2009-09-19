@@ -15,6 +15,7 @@
  */
 /**
  *  @file PixelSelection.h
+ *  @brief declaration of abstract class PixelSelection
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 17.08.2009
  */
@@ -43,20 +44,26 @@
 /// Pixel Selection
 /// This class saves all Pixel we are interested in, in a list of pixel
 template<typename T>
-class pixelselection_DECLDIR PixelSelection: public ParameteredObject
+class pixelselection_DECLDIR PixelSelection: public TemplatedParameteredObject <T>
 {
+private:
+	std::vector<Pixel<T>*> pixelList;
 
 public:
 	/// standard constructor
 	PixelSelection(const std::string& name);
+	/// inputslot ROI
 	InputSlot<Roi<int>*> range;
+	/// inputslot sequence
 	InputSlot<cimg_library::CImgList<T> &> sequence;
+	/// outputslot list of pixel
 	OutputSlot<std::vector<Pixel<T>* > *> pixelList;
 	/// the execute method starts the execute method form ParameteredObject
-	virtual void execute()=0;
-	/// creates the List of Pixel
-	virtual void getListOfPixel() =0;
-
+	void execute();
+	/// creates the List of Pixel out of the sequence of images and the ROI
+	virtual void createListOfPixel () =0; 
+	/// return the list of Pixel
+	std::vector<Pixel<T>*> & getListOfPixel();
 };
 
 #endif /* ABSRACTPIXELSELECTION_H_ */

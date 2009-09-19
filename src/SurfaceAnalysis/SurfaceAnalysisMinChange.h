@@ -15,7 +15,7 @@
  */
 /**
  *  @file SurfaceAnalysisMinChange.h
- *  definition of SurfaceAnalysisMinChange
+ *  @brief definition of SurfaceAnalysisMinChange, child class of SurfaceAnalysis
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 15.09.2009
  */
@@ -42,7 +42,15 @@ class surfaceanalysisminchange_DECLDIR SurfaceAnalysisMinChange: public SurfaceA
 		T>
 {
 public:
+	///standard constructor
 	SurfaceAnalysisMinChange(const std::string name);
+
+	/**
+	 *  find the minimal change in roi
+	 *  @param differences vector of all differences
+	 *  @param parameters all possible parameters
+	 *  @param [out] vector of IncrementorParameter for best fitting Parameters
+	 */
 	virtual std::vector<IncrementorParameter<T>*> & findMinChange(
 			std::vector<T>& differences, std::vector<std::vector<
 					IncrementorParameter<T>*> >& parameters);

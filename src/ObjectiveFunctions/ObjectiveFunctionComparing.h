@@ -15,7 +15,8 @@
  */
 /**
  *  @file ObjectiveFunctionComparing.hxx
- *  defines the ObjectiveFunctionComparing class
+ *  @brief defines the ObjectiveFunctionComparing class, child class of 
+ *  ObjectiveFunction
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 24.08.2009
  */
@@ -42,12 +43,20 @@ class objectivefunctioncomparing_DECLDIR ObjectiveFunctionComparing: public Obje
 		T>
 {
 public:
+	/// standard constructor
 	ObjectiveFunctionComparing(const std::string& name);
-	InputSlot<cimg_library::CImg<T>&> image;
 
+	/**
+	 *  compares the changed List of Pixels from the apply function
+	 *  (BrightnessModel) with the next picture and try to find the right
+	 *  position for every pixel.
+	 *  @param pixelList list of pixel from PixelSelection
+	 *  @param intensity short vector of computed intensity
+	 *  @param [out] vallue of T which shows the quadratic distance between the
+	 *  range and the computed intensity
+	 */
 	virtual T compare(const std::vector<Pixel<T>*> & pixelList,
 			const std::vector<IncrementorParameter<T>*>& params);
-
 };
 
 #endif /* OBJECTIVEFUNKTIONCOMPARING_H_ */

@@ -15,6 +15,7 @@
  */
 /**
  *  @file ObjectiveFunction.hxx
+ *  @brief implementation of class ObjectiveFunction
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 12.08.2009
  */

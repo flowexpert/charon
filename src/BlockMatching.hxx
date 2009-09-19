@@ -15,6 +15,7 @@
  */
 /**
  *  @file Blockmatching.hxx
+ *  @brief implementation of the abstract base class blockmatching
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 12.08.2009
  */

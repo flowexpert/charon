@@ -15,6 +15,7 @@
  */
 /**
  *  @file IncrementorParameter.hxx
+ *  @brief implementation of class IncrementorParameter
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 31.08.2009
  */

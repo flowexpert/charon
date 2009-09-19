@@ -30,17 +30,11 @@ template<typename T>
 ListedPixelSelection<T>::ListedPixelSelection(const std::string& name) :
 	PixelSelection<T>::PixelSelection(name)
 {
-	getListOfPixel();
+
 }
 
 template<typename T>
-void ListedPixelSelection<T>::execute()
-{
-	ParameteredObject::execute();
-}
-
-template<typename T>
-void ListedPixelSelection<T>::getListOfPixel()
+void ListedPixelSelection<T>::createListOfPixel()
 {
 	forRoiX(*(this->range()),x)
 	{
@@ -55,7 +49,7 @@ void ListedPixelSelection<T>::getListOfPixel()
 					pixel.setY(y);
 					pixel.setZ(z);
 					pixel.setT(t);
-					///@TODO könnte falsch sein
+					//TODO könnte falsch sein
 					for (unsigned int i = 0; i != this->sequence().size; i++)
 					{
 						pixel.pushBackIntensity(this->sequence()(x,y,z,t));
@@ -66,6 +60,5 @@ void ListedPixelSelection<T>::getListOfPixel()
 		}
 	}
 }
-;
 
 #endif

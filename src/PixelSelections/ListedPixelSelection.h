@@ -15,6 +15,8 @@
  */
 /**
  *  @file ListedPixelSelection.h
+ *  @brief declaration of class ListedPixelSelection, child class of 
+ *  PixelSelection
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 13.08.2009
  */
@@ -43,15 +45,11 @@
 template<typename T>
 class ListedPixelSelection: public PixelSelection<T>
 {
-
 public:
-
+	/// standard constructor
 	ListedPixelSelection(const std::string& name);
-	void execute();
-	void getListOfPixel();
-
-private:
-	std::vector<Pixel<T>*> pixelList;
+	/// creates the List of Pixel out of the sequence of images and the ROI
+	void createListOfPixel (); 
 };
 
 #endif /* LISTEDPIXELSELEKTION_H_ */

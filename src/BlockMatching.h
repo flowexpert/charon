@@ -15,6 +15,7 @@
  */
 /**
  *  @file Blockmatching.h
+ *  @brief declaration of abstract base class blockmatching
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 12.08.2009
  */
@@ -46,27 +47,50 @@
 #include <Interpolator.h>
 #include <vector>
 
+/// This is the abstract base class of the declaration and implementation of the 
+/// blockmatching algorithm
+
 template<typename T>
 class blockmatching_DECLDIR BlockMatching: public TemplatedParameteredObject<T>
 
 {
 protected:
+	/// @param surface flow image
 	cimg_library::CImgList<T> surface;
 
 public:
 	/// standard constructor
 	BlockMatching(const std::string& name);
+	
+	/// inputslot for the sequence of images where the flow will be computed
 	InputSlot<cimg_library::CImgList<T>&> sequence;
-	InputSlot<Roi<int>*> range;
+
+	/// inputslot for a list of Pixel out of the ROI to limit the region of 
+	/// computation
 	InputSlot<std::vector<Pixel<T>*>*> pixelList;
+
+	/// inputslot for the Params computed in the Incrementor
 	InputSlot<Incrementor<T> *> newParams;
+
+	/// inputslot to get the changes inside the image in t+1 from the 
+	/// ObjectiveFunction
 	InputSlot<ObjectiveFunction<T> *> changes;
+
+	/// inputslot for the results from the SurfaceAnalysis
 	InputSlot<SurfaceAnalysis<T> *> bestParam;
+
+	/// outputslot to get the results form the flow estimation algorithm 
+	/// BlockMatching
 	OutputSlot<BlockMatching<T> *> out;
+
 	/// standard execute from Parametered Object
 	void execute();
-	/// trys to find the flow in the sequence
-	virtual void /*cimg_library::CImgList<T>&*/findFlow() =0;
+
+	/// Function to calculate the the flow change inside the image in t+1
+	virtual void findFlow() =0;
+
+	/// returns the flow image
+	/// @param [out] flow image
 	cimg_library::CImgList<T>& getFlow();
 
 };

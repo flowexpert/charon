@@ -15,6 +15,7 @@
  */
 /**
  *  @file IncrementorConstant.hxx
+ *  @brief implementation of class IncrementorCountUp, child class of Incrementor
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 24.08.2009
  */
@@ -33,12 +34,6 @@ template<typename T>
 IncrementorCountUp<T>::IncrementorCountUp(const std::string& name) :
 	Incrementor<T>::Incrementor(name)
 {
-	//this->modifier = 0;
-	// sets the iterators to start
-	//itList = this->listOfParams.begin();
-	//this->itParams = this->paramList.begin();
-
-	// set the params in listOfParams to minimum
 	typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
 			it = this->paramList.begin();
 	typename std::vector<IncrementorParameter<T>*>::iterator itLi =
@@ -57,10 +52,10 @@ template<typename T>
 bool IncrementorCountUp<T>::doStep()
 {
 	bool ret = false;
-	//find the return value
 	typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
 			it = this->paramList.begin();
 	unsigned int j = 0;
+	// check for return vallue
 	for (; it != this->paramList.end(); it++)
 	{
 		if (this->listOfParams[j]->getCurrent()
@@ -122,7 +117,7 @@ bool IncrementorCountUp<T>::doStep()
 		}
 	}
 
-	//return the return vallue
+	//return return vallue
 	return ret;
 }
 

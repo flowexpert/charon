@@ -15,7 +15,7 @@
  */
 /**
  *  @file Pixel.hxx
- *  implements class Point4D::Pixel
+ *  @brief implementation of class Pixel
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 14.09.2009
  */

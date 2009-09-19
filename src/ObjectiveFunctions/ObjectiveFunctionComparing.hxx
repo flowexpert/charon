@@ -15,7 +15,8 @@
  */
 /**
  *  @file ObjectiveFunctionComparing.hxx
- *  implements the ObjectiveFunctionComparing class
+ *  @brief implements the ObjectiveFunctionComparing class, child class of
+ *  ObjectiveFunction
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 24.08.2009
  */
@@ -46,7 +47,7 @@ T ObjectiveFunctionComparing<T>::compare(
 	for (unsigned int i = 0; i != pixelList.size() - 1; i++)
 	{
 		this->brightnessModel()->apply(*(pixelList[i]), params, pixel);
-		//this->motionModel()->apply(pixel, params, pixel);
+		this->motionModel()->apply(pixel, params, pixel);
 		std::vector<T> piList = pixel.getIntensity(); //pixel intensity list
 		for (unsigned int j = 0; j != piList.size() - 1; j++)
 		{

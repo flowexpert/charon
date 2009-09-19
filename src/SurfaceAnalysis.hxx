@@ -15,7 +15,7 @@
  */
 /**
  *  @file SurfaceAnalysis.hxx
- *  implementation of absract class SurfaceAnalysis
+ *  @brief implementation of abstract class SurfaceAnalysis
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 12.08.2009
  */

@@ -15,6 +15,7 @@
  */
 /**
  *  @file ObjectiveFunction.h
+ *  @brief declaration of class ObjectiveFunction
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 12.08.2009
  */
@@ -41,6 +42,8 @@
 #include "PixelSelection.h"
 #include <vector>
 
+/// ObjectiveFunction is a class to compute the change between computed pixel 
+/// parameters and real pixel parameters
 template<typename T>
 class objectivefunction_DECLDIR ObjectiveFunction: public TemplatedParameteredObject<T>
 {
@@ -48,14 +51,21 @@ class objectivefunction_DECLDIR ObjectiveFunction: public TemplatedParameteredOb
 public:
 	/// standard constructor
 	ObjectiveFunction(const std::string& name);
+	/// inputslot for image sequence
 	InputSlot<cimg_library::CImgList<T>&> sequence;
+	/// inputslot for the list of pixel from PixelSelection
 	InputSlot<std::vector<Pixel<T> > *> pixelList;
+	/// inputslot from BrightnessModel
 	InputSlot<BrightnessModel<T>*> brightnessModel;
+	/// inputslot from MotionModel
 	InputSlot<MotionModel<T>*> motionModel;
+	/// inputslot from Interpolator
 	InputSlot<Interpolator<T>*> interpolator;
+	/// this outputslot
 	OutputSlot<ObjectiveFunction<T> *> out;
 	///standard execute methode from ParameteredObject
 	void execute();
+
 	/**
 	 *  compares the changed List of Pixels from the apply function
 	 *  (BrightnessModel) with the next picture and try to find the right

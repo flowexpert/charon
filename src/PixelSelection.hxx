@@ -15,6 +15,7 @@
  */
 /**
  *  @file PixelSelection.hxx
+ *  @brief implementation of abstract class PixelSelection
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 17.08.2009
  */
@@ -26,14 +27,27 @@
 
 template<typename T>
 PixelSelection<T>::PixelSelection(const std::string& name) :
-	ParameteredObject("blockmatching", name,
+	TemplatedParameteredObject<T>("blockmatching", name,
 			"save range of interest in a list of pixels")
 {
-	_addInputSlot(range, "range", "Range of Interest", "roi");
-	_addInputSlot(sequence, "sequence", "Sequence to work with",
+	this->_addInputSlot(range, "range", "Range of Interest", "roi");
+	this->_addInputSlot(sequence, "sequence", "Sequence to work with",
 			"cimg_library::CImgList<T>& ");
-	_addOutputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
+	this->_addOutputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
 			"std::vector<Pixel<T> > *");
+}
+
+
+template<typename T>
+void PixelSelection<T>::execute()
+{
+	ParameteredObject::execute();
+}
+
+template<typename T>
+std::vector<Pixel<T>*> & PixelSelection<T>::getListOfPixel()
+{
+	return this->pixelList;
 }
 
 #endif

@@ -15,7 +15,7 @@
  */
 /**
  *  @file SurfaceAnalysis.h
- *  definition of absract class SurfaceAnalysis
+ *  @brief definition of abstract class SurfaceAnalysis
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 12.08.2009
  */
@@ -39,15 +39,19 @@
 #include "IncrementorParameter.h"
 #include <vector>
 
+/// SurfaceAnalysis find the best fitting parameters for the computed pixel and 
+/// the real pixel
 template<typename T>
 class SurfaceAnalysis: public TemplatedParameteredObject<T>
 {
 public:
 	/// standard constructor
 	SurfaceAnalysis(const std::string& name);
+	/// this outputslot
 	OutputSlot<SurfaceAnalysis<T>*> out;
 	///standard execute from ParameterdObject
 	void execute();
+
 	/**
 	 *  find the minimal change in roi
 	 *  @param differences vector of all differences

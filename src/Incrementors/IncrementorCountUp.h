@@ -15,6 +15,7 @@
  */
 /**
  *  @file IncrementorCountUp.h
+ *  @brief declaration of class IncrementorCountUp, child class of Incrementor
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 24.08.2009
  */
@@ -39,21 +40,17 @@
 template<typename T>
 class incrementorcountup_DECLDIR IncrementorCountUp: public Incrementor<T>
 {
-private:
-	//typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
-	//		itParams;
-	//typename std::vector<Parameter<T> >::iterator itList;
-	//unsigned int modifier;
-
 public:
 	/// standart constructor
 	IncrementorCountUp(const std::string& name);
+
 	/**
 	 *  computes the next Step
-	 *  the return is 0 if all max not reached and 1 if all max are reached
+	 *  - compute return vallue true for no doStep possible, false doStep is 
+	 *    possible
+	 *  - compute step for all parameters
 	 */
 	virtual bool doStep();
-
 };
 
 #endif /* INCREMENTORCOUNTUP_H_ */

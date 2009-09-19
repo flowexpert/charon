@@ -15,6 +15,7 @@
  */
 /**
  *  @file Incrementor.h
+ *  @brief declaration of abstract class Incrementor
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 12.08.2009
  */
@@ -40,25 +41,29 @@
 #include <IncrementorParameter.h>
 #include <vector>
 
+/// The incrementor class compute the parameters for the blockmatching algorithm
 template<typename T>
 class incrementor_DECLDIR Incrementor: public TemplatedParameteredObject<T>
 {
 protected:
+	/// @param listOfParams list of computed parameters
 	std::vector<IncrementorParameter<T>*> listOfParams;
+
 public:
 	/// standard constructor
 	Incrementor(const std::string& name);
-	InputSlot<cimg_library::CImg<T>&> image;
+	/// set of inputslots of type IncrementorParameter
 	InputSlot<IncrementorParameter<T>*> paramList;
+	/// this outputslot
 	OutputSlot<Incrementor<T>*> out;
 	void execute();
+
 	/** computes the next Step
 	 *  the return is 0 if all max not reached and 1 if all max are reached
 	 */
 	virtual bool doStep() =0;
 	///returns a list of the computed Parameters
 	const std::vector<IncrementorParameter<T>*>& getListOfParams();
-
 };
 
 #endif /* INCREMENTOR_H_ */
