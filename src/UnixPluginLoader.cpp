@@ -194,7 +194,6 @@ std::string UnixPluginLoader::_pathsConfig() const {
 	} else {
 		return "";
 	}
-	//TODO ifdef
 }
 
 UnixPluginLoader::~UnixPluginLoader() {

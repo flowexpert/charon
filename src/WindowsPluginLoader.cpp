@@ -22,7 +22,7 @@
 #ifdef WINDOWS
 #include <string>
 #include <io.h>
-
+#include <cstdlib>
 #include <windows.h>
 
 #ifdef MSVC
@@ -68,12 +68,15 @@ void WindowsPluginLoader::load() throw (PluginException) {
 			(pluginPath + "\\lib" + pluginName + ".dll").c_str());
 #endif
 	} else {
+		std::string oldDir = FileTool::getCurrentDir();
+		FileTool::changeDir(additionalPluginPath);
 		hInstLibrary = LoadLibrary(
 #ifdef MSVC
 			(additionalPluginPath + "\\" + pluginName + ".dll").c_str());
 #else
 			(additionalPluginPath + "\\lib" + pluginName + ".dll").c_str());
 #endif
+		FileTool::changeDir(oldDir);
 	}
 
 	if (!hInstLibrary) {
@@ -153,7 +156,12 @@ void WindowsPluginLoader::compileAndLoad(const std::string & sourceFile, std::ve
 										 std::string> &references, const std::string & metadataPath) throw (PluginException) {
 
 	//Load paths from the path file
-	ParameterFile p("Paths.config");
+	ParameterFile p;
+	try {
+		p.load(_pathsConfig());
+	} catch (std::string e) {
+		throw PluginException(e);
+	}
 	std::string charon_core = p.get<std::string> ("charon-core-install");
 	std::string sdk_root = p.get<std::string> ("SDK-root");
 	std::string vc_root = p.get<std::string> ("VC-root");
@@ -252,6 +260,17 @@ void WindowsPluginLoader::unload() throw (PluginException) {
 	} else {
 		throw PluginException("Plugin \"" + pluginName + "\" is not loaded.",
 				pluginName, PluginException::PLUGIN_NOT_LOADED);
+	}
+}
+
+std::string WindowsPluginLoader::_pathsConfig() const {
+	std::string programFiles = getenv("ProgramFiles");
+	if (FileTool::exists("./Paths.config")) {
+		return "./Paths.config";
+	} else if (FileTool::exists(programFiles + "\\charon-core\\Paths.config")) {
+		return (programFiles + "\\charon-core\\Paths.config");
+	} else {
+		return "";
 	}
 }
 
