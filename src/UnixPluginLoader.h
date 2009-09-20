@@ -43,6 +43,8 @@ private:
 	 * Points to the loaded library
 	 */
 	void * libHandle;
+
+	virtual std::string _pathsConfig() const;
 public:
 	/**
 	 * Default constructor.

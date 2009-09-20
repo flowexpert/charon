@@ -53,6 +53,13 @@ protected:
 	 */
 	void (*destroy)(ParameteredObject *);
 
+	/**
+	 * Tries to locate the Paths.config file at different locations. Returns
+	 * an empty string if the file could not be found.
+	 * @return Path to the Paths.config file
+	 */
+	virtual std::string _pathsConfig() const = 0;
+
 public:
 	/**
 	 * Path where the plugins are stored

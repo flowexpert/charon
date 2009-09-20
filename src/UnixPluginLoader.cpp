@@ -42,8 +42,11 @@ void UnixPluginLoader::load() throw (PluginException) {
 		libHandle = dlopen((pluginPath + "/lib" + pluginName
 				+ LIBRARY_EXTENSION).c_str(), RTLD_LAZY);
 	} else {
+		std::string oldDir = FileTool::getCurrentDir();
+		FileTool::changeDir(additionalPluginPath);
 		libHandle = dlopen((additionalPluginPath + "/lib" + pluginName
 				+ LIBRARY_EXTENSION).c_str(), RTLD_LAZY);
+		FileTool::changeDir(oldDir);
 	}
 
 	if (!libHandle) {
@@ -94,10 +97,10 @@ void UnixPluginLoader::compileAndLoad(const std::string & sourceFile,
 	//Load paths from the path file
 
 	ParameterFile p;
-	if (FileTool::exists("./share/charon-core/Paths.config")) {
-		p.load("./share/charon-core/Paths.config");
-	} else {
-		p.load("Paths.config");
+	try {
+		p.load(_pathsConfig());
+	} catch (std::string e) {
+		throw PluginException(e);
 	}
 	std::string charon_core = p.get<std::string> ("charon-core-install");
 	std::string compiler_call = p.get<std::string> ("compiler-call");
@@ -177,6 +180,21 @@ void UnixPluginLoader::unload() throw (PluginException) {
 		throw PluginException("Plugin \"" + pluginName + "\" is not loaded.",
 				pluginName, PluginException::PLUGIN_NOT_LOADED);
 	}
+}
+
+std::string UnixPluginLoader::_pathsConfig() const {
+	if (FileTool::exists("./share/charon-utils/Paths.config")) {
+		return "./share/charon-utils/Paths.config";
+	} else if (FileTool::exists("./Paths.config")) {
+		return "./Paths.config";
+	} else if (FileTool::exists("/usr/local/share/charon-utils/Paths.config")) {
+		return "/usr/local/share/charon-utils/Paths.config";
+	} else if (FileTool::exists("/usr/share/charon-utils/Paths.config")) {
+		return "/usr/share/charon-utils/Paths.config";
+	} else {
+		return "";
+	}
+	//TODO ifdef
 }
 
 UnixPluginLoader::~UnixPluginLoader() {

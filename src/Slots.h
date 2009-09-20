@@ -169,7 +169,18 @@ protected:
     /// Pointer to data of connected output slot.
     std::set<AbstractSlot<T>*> _targets;
 
+    /// Add slot target.
+    /// This does not touch the target slot itself.
+    /// @param target       Target slot to add.
+    /// @retval true        Target sucessfully connected.
+    /// @retval false       Target was not connected.
     virtual bool _addTarget(Slot* target);
+
+    /// Remove slot target.
+    /// This does not touch the target slot itself.
+    /// @param target       Target slot to remove.
+    /// @retval true        Target sucessfully disconnected.
+    /// @retval false       Target was not connected.
     virtual bool _removeTarget(Slot* target);
 
 public:
