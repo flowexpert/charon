@@ -39,7 +39,7 @@
 #include <CImg.h>
 #include <ParameteredObject.h>
 #include "Point4D.h"
-#include "SubStencil.h"
+#include "Substencil.h"
 #include <string>
 #include <map>
 #include <set>

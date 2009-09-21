@@ -26,7 +26,7 @@
 #define _STENCIL_HXX_
 
 #include "Stencil.h"
-#include "SubStencil.hxx"
+#include "Substencil.hxx"
 #include <ParameteredObject.hxx>
 
 template <class T>
