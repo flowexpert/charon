@@ -113,7 +113,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(const std::string unknown,
 	}
 	return this->pattern.size();
 }
-		
+
 template <class T>
 unsigned int PetscSolver<T>::pointToRelativeIndex(const Point4D<int> p,
                                                   const Roi<int> &dim) {
@@ -248,6 +248,7 @@ bool PetscSolver<T>::isRankZero() {
 	return !rank;
 }
 
+
 template <class T>
 int PetscSolver<T>::petscExecute() {
 	//    *=======================*
@@ -325,19 +326,6 @@ int PetscSolver<T>::petscExecute() {
 	}
 	//The map containing the unknownSizes is - like all maps - alphanumerically
 	//sorted by key. This will get important with the write-back of the results.
-
-	//create lookup map to convert unknown to index in the CImgList
-	std::map<std::string, unsigned int> lookup;
-	//an Iterator for the unknownSizes already exists in this scope: usIt
-	unsigned int tempIndex=0;
-	std::map<std::string,Roi<int>* >::iterator usIt;	//unknown sizes iterator
-	//unknownSizes is inherently sorted by key in alphanumerical order
-	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
-		lookup[usIt->first]=tempIndex;
-		tempIndex++;
-	}
-	//now, lookup contains all unknowns and their index in the CImgList
-	//the indices are easily accessibly with lookup.find(unknown)->second
 	
 	//delete both arrays if the already exist.
 	if (columns != NULL) {delete[] columns; columns = NULL;}
@@ -350,6 +338,7 @@ int PetscSolver<T>::petscExecute() {
 	//Calculate the size of the problem (number of rows/columns of
 	//the matrix, number of elements in the vectors).
 	PetscInt n=0;	//Better be safe than sorry
+	std::map<std::string,Roi<int>* >::iterator usIt;	//unknown sizes iterator
 	//iterate through the unknown Sizes and add their volume up
 	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
 		n += PetscInt(usIt->second->getVolume());
@@ -456,6 +445,18 @@ int PetscSolver<T>::petscExecute() {
 	
 	//only the #0 Machine is supposed to write results back
 	if (this->isRankZero()) {
+		//create lookup map to convert unknown to index in the CImgList
+		std::map<std::string, unsigned int> lookup;
+		//an Iterator for the unknownSizes already exists in this scope: usIt
+		unsigned int tempIndex=0;
+		//unknownSizes is inherently sorted by key in alphanumerical order
+		for(usIt=unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
+			lookup[usIt->first]=tempIndex;
+			tempIndex++;
+		}
+		//now, lookup contains all unknowns and their index in the CImgList
+		//the indices are easily accessibly with lookup.find(unknown)->second
+
 		//Prepare vector and context first
 		Vec				result;	//Vector to store the result in
 		VecScatter		scatter;//context for scattering the result
@@ -497,7 +498,7 @@ int PetscSolver<T>::petscExecute() {
 		
 		ierr = VecRestoreArray(result,&res);CHKERRQ(ierr);
 	}
-	
+
 	
 	//clean up
 	for(usIt = unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {

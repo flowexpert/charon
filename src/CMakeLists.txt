@@ -22,7 +22,9 @@ IF (COMPILE_STENCILS)
 ENDIF (COMPILE_STENCILS)
 IF (COMPILE_SOLVERS)
 	ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
-	TARGET_LINK_LIBRARIES(petscsolver	${PETSC_CONFIG_DIR}/lib/libmpiuni.a
+	TARGET_LINK_LIBRARIES(petscsolver	roi
+										charon-core
+										${PETSC_CONFIG_DIR}/lib/libmpiuni.a
 										${PETSC_CONFIG_DIR}/lib/libpetsc.a
 										${PETSC_CONFIG_DIR}/lib/libpetsccontrib.a
 										${PETSC_CONFIG_DIR}/lib/libpetscdm.a

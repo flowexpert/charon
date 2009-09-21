@@ -25,8 +25,8 @@
  */
 
 
-#ifndef _SubStencil_HXX_
-#define _SubStencil_HXX_
+#ifndef _SUBSTENCIL_HXX_
+#define _SUBSTENCIL_HXX_
 
 #include "SubStencil.h"
 
@@ -68,4 +68,4 @@ SubStencil<T>& SubStencil<T>::operator= (const SubStencil<T> &rhs) {
 template <class T>
 SubStencil<T>::~SubStencil() {}
 
-#endif //_SubStencil_HXX_
+#endif //_SUBSTENCIL_HXX_

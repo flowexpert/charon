@@ -25,8 +25,8 @@
  */
 
 
-#ifndef _SubStencil_H_
-#define _SubStencil_H_
+#ifndef _SUBSTENCIL_H_
+#define _SUBSTENCIL_H_
 
 #include <CImg.h>
 #include "Point4D.h"
@@ -56,4 +56,4 @@ class SubStencil
 		~SubStencil();
 };
 
-#endif //_SubStencil_H_
+#endif //_SUBSTENCIL_H_
