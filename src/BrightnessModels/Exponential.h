@@ -35,8 +35,8 @@
 #define brightnessmodels_exponential_DECLDIR
 #endif
 
-#include "../main.h"
-#include "../BrightnessModel.h"
+#include <BrightnessModel.h>
+#include <CImg.h>
 
 namespace BrightnessModels
 {

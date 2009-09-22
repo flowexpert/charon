@@ -36,6 +36,7 @@
 #endif
 
 #include <CImg.h>
+#include <Pixel.hxx>
 #include <string>
 #include <MotionModel.h>
 #include <FlowFunctor.h>

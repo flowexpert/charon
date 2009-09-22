@@ -36,7 +36,7 @@
 #define brightnessmodel_DECLDIR
 #endif
 
-#include "main.h"
+#include <ParameteredObject.hxx>
 #include <set>
 #include "BrightnessModels/BrightnessFunctorInterface.h"
 #include "Pixel.h"
@@ -44,12 +44,9 @@
 
 /// abstract base class for the different BrightnessModels
 template<class T>
-class brightnessmodel_DECLDIR BrightnessModel: public ParameteredObject
+class brightnessmodel_DECLDIR BrightnessModel: public TemplatedParameteredObject<T>
 {
 protected:
-	//virtual ParameteredObject* _newInstance(const std::string& name) const = 0;
-
-	/// does initial calculation
 	virtual void initialize()
 	{
 	}
@@ -60,14 +57,14 @@ protected:
 public:
 	/// default constructor
 	BrightnessModel(const std::string& classname, const std::string& name = "") :
-		ParameteredObject(classname, name,
+		TemplatedParameteredObject<T>(classname, name,
 				"computes the vectors for brightness-modeling")
 	{
 		_addOutputSlot(out, "this", "Pointer to itself", "BrightnessModel*");
 		_addOutputSlot(brightnessFunctor, "brightnessfunctor",
 				"Pointer to BrightnessFunctor of the Model",
 				"BrightnessFunctorInterface*");
-		_addInputSlot(img, "image", "Image to work with", "CImgList");
+		_addInputSlot(img, "image", "Image to work with", "CImgList<T>");
 		out = this;
 	}
 
@@ -81,26 +78,29 @@ public:
 	InputSlot<cimg_library::CImgList<T> > img;
 
 	/// updates the motionmodel
-	virtual void update() //FIXME virtual ??
+	virtual void execute() //FIXME virtual ??
 	{
 		initialize();
 		//_outDataChanged(out); // TODO datenpfad
 	}
 
 	/** 
-	 * 	computes the bcce term
+	 * computes the bcce term
 	 * @param xs x coordinate
 	 * @param ys y coordinate
 	 * @param zs z coordinate
 	 * @param t time coordinate
 	 * @param v channel
-	 * @param img image in which bcce term is written
+	 * @param term map to which the result is written
+	 * @param rhs right hand side
 	 */
 	virtual void compute(const int xs, const int ys, const int zs, const int t,
 			const int v, std::map<std::string, T>& term, T& rhs)=0;
-
-	/// returns a vector of names of unknowns of the model
-	/// by asking the vectors lenght, you get the number of unknowns
+	
+	/**
+	 * Get the unknowns of the model.
+	 * @return Set of strings which contains the names of the unknowns
+	 */
 	virtual std::set<std::string>& getUnknowns() =0;
 
 	/** 

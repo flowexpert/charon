@@ -37,10 +37,9 @@
 #endif
 
 #include <CImg.h>
-#include <string>
-#include "functions.h"
 #include <BrightnessModel.h>
-#include "BrightnessFunctorInterface.h"
+#include <string>
+#include <functions.h>
 
 /// namespace including the different brightness models
 namespace BrightnessModels

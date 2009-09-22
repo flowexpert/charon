@@ -35,10 +35,9 @@
 #define brightnessmodels_diffusion_DECLDIR
 #endif
 
-#include "../main.h"
-#include "../BrightnessModel.h"
-#include "../functions.h"
-#include "BrightnessFunctorInterface.h"
+#include <CImg.h>
+#include <BrightnessModel.h>
+#include <functions.h>
 
 namespace BrightnessModels
 {

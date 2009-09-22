@@ -23,7 +23,7 @@
 #ifndef _BrightnessFunctorInterface_h_
 #define _BrightnessFunctorInterface_h_
 
-#include "../main.h"
+#include <CImg.h>
 
 /// Interface class for the functor of brightness change
 template <typename T>

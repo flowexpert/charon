@@ -113,8 +113,8 @@ MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
 }
 
 template <class T>
-void execute() {
-	is3d = !(this->dx().is_sameN(1));
+void MotionModels::LocalConstant<T>::execute() {
+	this->is3d = !(this->dx().is_sameN(1));
 }
 
 template<class T>

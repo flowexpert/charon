@@ -24,11 +24,7 @@
 #define _BrightnessModels_Exponential_hxx_
 
 #include "Exponential.h"
-#include <cassert>
 #include "Pixel.hxx"
-
-using namespace std;
-using namespace cimg_library;
 
 template<class T>
 std::set<std::string>& BrightnessModels::Exponential<T>::getUnknowns()
@@ -42,7 +38,6 @@ void BrightnessModels::Exponential<T>::compute(const int xs, const int ys,
 		const int zs, const int t, const int v, std::map<std::string, T>& term,
 		T& rhs)
 {
-	//assert(term.width == 1);
 	if (sequence().size == 1) // 2D
 		term["k"] += -(sequence()(0, xs, ys, t, v));
 	else

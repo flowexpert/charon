@@ -41,16 +41,16 @@ IF (COMPILE_BLOCKMATCHING)
 ENDIF (COMPILE_BLOCKMATCHING)
 IF (COMPILE_BRIGHTNESS)
 	ADD_LIBRARY(brightnessmodels_constant SHARED BrightnessModels/Constant.cpp)
-	ADD_LIBRARY(brightnessmodels_diffusion SHARED BrightnessModels/Diffusion.cpp)
-	ADD_LIBRARY(brightnessmodels_exponential SHARED BrightnessModels/Exponential.cpp)
-	ADD_LIBRARY(brightnessmodels_movingillumination SHARED BrightnessModels/MovingIllumination.cpp)
+#	ADD_LIBRARY(brightnessmodels_diffusion SHARED BrightnessModels/Diffusion.cpp)
+#	ADD_LIBRARY(brightnessmodels_exponential SHARED BrightnessModels/Exponential.cpp)
+#	ADD_LIBRARY(brightnessmodels_movingillumination SHARED BrightnessModels/MovingIllumination.cpp)
 ENDIF (COMPILE_BRIGHTNESS)
 IF (COMPILE_MOTION)
-	ADD_LIBRARY(motionmodels_localaffiness SHARED MotionModels/LocalAffiness.cpp FlowFunctor.cpp)
+#	ADD_LIBRARY(motionmodels_localaffiness SHARED MotionModels/LocalAffiness.cpp FlowFunctor.cpp)
 	ADD_LIBRARY(motionmodels_localconstant SHARED MotionModels/LocalConstant.cpp FlowFunctor.cpp)
-	ADD_LIBRARY(motionmodels_localplanarity SHARED MotionModels/LocalPlanarity.cpp FlowFunctor.cpp)
-	ADD_LIBRARY(motionmodels_localrotation SHARED MotionModels/LocalRotation.cpp FlowFunctor.cpp)
-	ADD_LIBRARY(motionmodels_localstretch SHARED MotionModels/LocalStretch.cpp FlowFunctor.cpp)
+#	ADD_LIBRARY(motionmodels_localplanarity SHARED MotionModels/LocalPlanarity.cpp FlowFunctor.cpp)
+#	ADD_LIBRARY(motionmodels_localrotation SHARED MotionModels/LocalRotation.cpp FlowFunctor.cpp)
+#	ADD_LIBRARY(motionmodels_localstretch SHARED MotionModels/LocalStretch.cpp FlowFunctor.cpp)
 ENDIF (COMPILE_MOTION)
 
 SET(Plugins)
@@ -92,20 +92,20 @@ IF (COMPILE_BRIGHTNESS)
 SET(Plugins
 	${Plugins}
 	brightnessmodels_constant
-	brightnessmodels_diffusion
-	brightnessmodels_exponential
-	brightnessmodels_movingillumination
+#	brightnessmodels_diffusion
+#	brightnessmodels_exponential
+#	brightnessmodels_movingillumination
 )
 ENDIF (COMPILE_BRIGHTNESS)
 
 IF (COMPILE_MOTION)
 SET(Plugins
 	${Plugins}
-	motionmodels_localaffiness
+#	motionmodels_localaffiness
 	motionmodels_localconstant
-	motionmodels_localplanarity 
-	motionmodels_localrotation
-	motionmodels_localstretch
+#	motionmodels_localplanarity 
+#	motionmodels_localrotation
+#	motionmodels_localstretch
 )
 ENDIF (COMPILE_MOTION)
 

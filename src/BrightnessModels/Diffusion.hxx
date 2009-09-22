@@ -26,11 +26,8 @@
 #include "Diffusion.h"
 #include <vector>
 
-using namespace std;
-using namespace cimg_library;
-
 template<typename T>
-BrightnessModels::Diffusion<T>::Diffusion(const string& name) :
+BrightnessModels::Diffusion<T>::Diffusion(const std::string& name) :
 	BrightnessModel<T> ("brightnessmodels_diffusion", name)
 {
 	this->_addInputSlot(dxx, "dxx", "2nd derivative in x-direction", "CImgList");
@@ -55,18 +52,19 @@ void BrightnessModels::Diffusion<T>::compute(const int xs, const int ys,
 		T& rhs)
 {
 	//assert(term.width == 1);
-	if (dxx().size == 1) // 2D
-		term["d"] += dxx()(0, xs, ys, t, v) + dyy()(0, xs, ys, t, v);
-	else
+	if (this->dxx().size == 1) { // 2D
+		term["d"] += this->dxx()(v, xs, ys, 0, t) +
+		             this->dyy()(v, xs, ys, 0, t);
+	} else {
 		// 3D
-		term["d"] += dxx()(t, xs, ys, zs, v) + dyy()(t, xs, ys, zs, v) + dzz()(
-				t, xs, ys, zs, v);
+		term["d"] += this->dxx()(v, xs, ys, zs, t) +
+		             this->dyy()(v, xs, ys, zs, t) +
+		             this->dzz()(v, xs, ys, zs, t);
+	}
 }
 
 template<class T>
-void BrightnessModels::Diffusion<T>::Functor::operator ()(
-		cimg_library::CImg<T> &sequence) const
-{
+void BrightnessModels::Diffusion<T>::Functor::operator()(cimg_library::CImg<T> &sequence) const {
 	for (unsigned int t = 1; t < sequence.depth; t++)
 		sequence.draw_image(0, 0, t, sequence.get_slice(t).convolve(
 				Functions::gauss_filter(sqrt(2 * (this->d) * t))));
@@ -93,30 +91,8 @@ void BrightnessModels::Diffusion<T>::setFunctorParams(float d)
 template<class T>
 void BrightnessModels::Diffusion<T>::apply(const Pixel<T> & inPixel,
 		const std::vector<IncrementorParameter<T>*> & modifier,
-		Pixel<T> & outPixel)
-{
-
+		Pixel<T> & outPixel) {
 	outPixel = inPixel;
-
-	/* std::string d, x, y, z, t;
-	 x = modifier[0];
-	 y = modifier[1];
-	 z = modifier[2];
-	 d = modifier[3];
-	 T red, green, blue;
-	 ///@TODO könnte falsch sein
-	 red 	= image.get_crop(atoi(x.c_str()), atoi(y.c_str()), atoi(z.c_str()),
-	 atoi(t.c_str()), 0);
-	 green	= image.get_crop(atoi(x.c_str()), atoi(y.c_str()), atoi(z.c_str()),
-	 atoi(t.c_str()), 1);
-	 blue	= image.get_crop(atoi(x.c_str()), atoi(y.c_str()), atoi(z.c_str()),
-	 atoi(t.c_str()), 2);
-	 float D;
-	 D = atof(d.c_str());
-	 //    red 	= D*(((zeichen^2*g)/(zeichen*x^2))+((zeichen^2*g)/(zeichen*y^2))); ///@TODO change to something funktional
-	 //    green 	= D*(((zeichen^2*g)/(zeichen*x^2))+((zeichen^2*g)/(zeichen*y^2))); ///@TODO change to something funktional
-	 //    blue	= D*(((zeichen^2*g)/(zeichen*x^2))+((zeichen^2*g)/(zeichen*y^2))); ///@TODO change to something funktional
-	 */
 }
 
 #endif
