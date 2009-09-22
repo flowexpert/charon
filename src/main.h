@@ -20,6 +20,8 @@
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
 /// @date 27.05.2009
 
+
+///@todo kill this file and fix all other includes that rely on this heap of fail
 #ifndef _main_h_
 #define _main_h_
 

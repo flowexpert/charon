@@ -20,41 +20,28 @@
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
 /// @date 27.05.2009
 
-#ifndef _Derivative_h_
-#define _Derivative_h_
+#ifndef _DERIVATIVE_H_
+#define _DERIVATIVE_H_
 
-#include "main.h"
+#include <CImg.h>
+#include <ParameteredObject.hxx>
 
 /// abstract class for derivatives
-class Derivative  : public ParameteredObject
+template <class T>
+class Derivative  : public TemplatedParameteredObject<T>
 {
-protected:
-	virtual ParameteredObject* _newInstance(const std::string& name) const = 0;
-	
-	/// calculates the derivatives
-	virtual void calculateDerivatives() = 0;
-private:
 public:
 	/// derfault constructor	
 	Derivative(const std::string& classname, const std::string& name = "") : 
-		ParameteredObject(classname,name,"calculates the derivatives")
+		TemplatedParameteredObject<T>(classname,name,"calculates the derivatives")
 	{
-		_addInputSlot(img,"img","image on which derivatives are calculatet","CImgList");
+		_addInputSlot(img,"img","image on which derivatives are calculatet","CImgList<T>");
 		/*_addOutputSlot(out,"this","Pointer to itself","Derivative*");
 		out = this; //*/
 	}
 	
 	/// input slot for the image on which the derivatives are calculated
-	InputSlot<cimg_library::CImgList<> > img;
-	
-	virtual void update() {calculateDerivatives();}
-
-	
-	/*OutputSlot<Derivative*> out;
-	virtual void getX(const cimg_library::CImg<>& img, cimg_library::CImg<>& res)=0;
-	virtual void getY(const cimg_library::CImg<>& img, cimg_library::CImg<>& res)=0;
-	virtual void getZ(const cimg_library::CImg<>& img, cimg_library::CImg<>& res)=0; //*/
+	InputSlot<cimg_library::CImgList<T> > img;
 };
-
 
 #endif

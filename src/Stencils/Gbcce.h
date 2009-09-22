@@ -40,8 +40,8 @@
 #endif
 
 #include <Stencil.h>
-#include "BrightnessModel.h"
-#include "MotionModel.h"
+#include <BrightnessModel.h>
+#include <MotionModel.h>
 
 template <class T>
 class gbcce_DECLDIR Gbcce : public Stencil<T>

@@ -6,34 +6,30 @@ IF(COMPILE_SOLVERS)
 	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
 ENDIF(COMPILE_SOLVERS)
 
-INCLUDE_DIRECTORIES(Incrementors)
-INCLUDE_DIRECTORIES(ObjectiveFunctions)
-INCLUDE_DIRECTORIES(BlockMatching)
-INCLUDE_DIRECTORIES(PixelSelections)
-INCLUDE_DIRECTORIES(SurfaceAnalysis)
-INCLUDE_DIRECTORIES(BrightnessModels)
-INCLUDE_DIRECTORIES(MotionModels)
 ADD_DEFINITIONS(/DHANDLE_DLL)
 
 #Create shared libraries
+IF (COMPILE_DERIVATIVES)
+	ADD_LIBRARY(bin2 SHARED Derivatives/bin2.cpp)
+	ADD_LIBRARY(sobel SHARED Derivatives/Sobel.cpp)
+ENDIF (COMPILE_DERIVATIVES)
 IF (COMPILE_STENCILS)
 	ADD_LIBRARY(gbcce SHARED Stencils/Gbcce.cpp)
 	ADD_LIBRARY(l2norm SHARED Stencils/L2Norm.cpp)
 ENDIF (COMPILE_STENCILS)
 IF (COMPILE_SOLVERS)
 	ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
-	TARGET_LINK_LIBRARIES(petscsolver	roi
-										charon-core
+	TARGET_LINK_LIBRARIES(petscsolver	charon-core
 										${PETSC_CONFIG_DIR}/lib/libf2cblas.a
 										${PETSC_CONFIG_DIR}/lib/libf2clapack.a
 										${PETSC_CONFIG_DIR}/lib/libmpiuni.a
 										${PETSC_CONFIG_DIR}/lib/libpetsc.a
-										${PETSC_CONFIG_DIR}/lib/libpetsccontrib.a
+										# ${PETSC_CONFIG_DIR}/lib/libpetsccontrib.a
 										${PETSC_CONFIG_DIR}/lib/libpetscdm.a
 										${PETSC_CONFIG_DIR}/lib/libpetscksp.a
 										${PETSC_CONFIG_DIR}/lib/libpetscmat.a
-										${PETSC_CONFIG_DIR}/lib/libpetscsnes.a
-										${PETSC_CONFIG_DIR}/lib/libpetscts.a
+										# ${PETSC_CONFIG_DIR}/lib/libpetscsnes.a
+										# ${PETSC_CONFIG_DIR}/lib/libpetscts.a
 										${PETSC_CONFIG_DIR}/lib/libpetscvec.a)
 ENDIF (COMPILE_SOLVERS)
 IF (COMPILE_BLOCKMATCHING)
@@ -58,6 +54,14 @@ IF (COMPILE_MOTION)
 ENDIF (COMPILE_MOTION)
 
 SET(Plugins)
+IF (COMPILE_DERIVATIVES)
+SET(Plugins
+	${Plugins}
+	bin2
+	sobel
+)
+ENDIF (COMPILE_DERIVATIVES)
+
 IF (COMPILE_STENCILS)
 SET(Plugins
 	${Plugins}

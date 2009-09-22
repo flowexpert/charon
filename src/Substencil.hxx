@@ -28,7 +28,7 @@
 #ifndef _SUBSTENCIL_HXX_
 #define _SUBSTENCIL_HXX_
 
-#include "SubStencil.h"
+#include "Substencil.h"
 
 template <class T>
 SubStencil<T>::SubStencil() {}

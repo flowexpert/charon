@@ -28,7 +28,7 @@
 #define _PETSCSOLVER_HXX_
 
 #include <Solver.hxx>
-#include "Petscsolver.h"
+#include "PetscSolver.h"
 
 ///@todo incorporate std::runtime_error and #include <stdexept> instead of throw "string"
 

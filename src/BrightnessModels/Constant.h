@@ -36,8 +36,10 @@
 #define brightnessmodels_constant_DECLDIR
 #endif
 
-#include "../main.h"
-#include "../BrightnessModel.h"
+#include <CImg.h>
+#include <string>
+#include "functions.h"
+#include <BrightnessModel.h>
 #include "BrightnessFunctorInterface.h"
 
 /// namespace including the different brightness models

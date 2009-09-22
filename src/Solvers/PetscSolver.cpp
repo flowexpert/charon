@@ -1,6 +1,4 @@
-/*  Copyright (C) 2009 Jens-Malte Gottfried
-
-    This file is part of Charon.
+/*  This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -15,9 +13,16 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file TemplatedSample.h
-/// @author <a href="mailto:bc002@ix.urz.uni-heidelberg-de">Cornelius Ratsch</a>
-/// Sample templated plugin class
+/** @file PetscSolver.cpp
+ *  Implementation of class PetscSolver.
+ *  This is the PETSc implementation of a solver. It has been designed to run on
+ *  multiple instances simultaneously.
+ *  @see Solver.hxx
+ *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
+ *      Oliver Stengele</a>
+ *
+ *  @date 8.09.2009
+ */
 #define TYPE PetscSolver
 
 #include "PetscSolver.hxx"

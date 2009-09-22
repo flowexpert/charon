@@ -13,7 +13,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Solver.hxx
+/** @file Solver.h
  *  Implementation of class Solver.
  *  This is the abstract base class of a solver form which all solver
  *  implementations should be derived. It contains the nested class MetaStencil,
@@ -41,6 +41,7 @@
 
 #include <CImg.h>
 #include <ParameteredObject.h>
+///@todo this is supposed to work with Roi.h - but it doesn't
 #include <Roi.h>
 #include "Stencil.h"
 
@@ -119,7 +120,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 	public:
 		InputSlot< Stencil<T>* > stencils;
 		InputSlot< Roi<int>* > roi;
-		OutputSlot<cimg_library::CImgList<T>* > out; //Pointer? Reference?
+		OutputSlot<cimg_library::CImgList<T>* > out;
 
 		///Default constructor.
 		Solver(const std::string& classname, const std::string& name = "");

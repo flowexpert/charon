@@ -25,9 +25,6 @@
 
 #include "LocalConstant.h"
 
-using namespace std;
-using namespace cimg_library;
-
 /*
  void MotionModels::LocalConstant::calculateDerivatives()
  {
@@ -70,10 +67,10 @@ void MotionModels::LocalConstant<T>::compute(const int xs, const int ys,
 		//			dy()(t,xs,ys,zs,v),
 		//			dz()(t,xs,ys,zs,v)
 		//			).transpose();
-		rhs += dt()(t, xs, ys, zs, v);
-		term["a1"] += dx()(t, xs, ys, zs, v);
-		term["a2"] += dy()(t, xs, ys, zs, v);
-		term["a3"] += dz()(t, xs, ys, zs, v);
+		rhs += dt()(v, xs, ys, zs, t);
+		term["a1"] += dx()(v, xs, ys, zs, t);
+		term["a2"] += dy()(v, xs, ys, zs, t);
+		term["a3"] += dz()(v, xs, ys, zs, t);
 	}
 	else
 	{
@@ -103,16 +100,21 @@ void MotionModels::LocalConstant<T>::compute(const int xs, const int ys,
 }
 
 template<class T>
-MotionModels::LocalConstant<T>::LocalConstant(const string& name) :
+MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
 	MotionModel<T>::MotionModel("motionmodels_localconstant", name), flowfunc()
 {
-	_addInputSlot(dx, "dx", "derivation in x", "CImgList");
-	_addInputSlot(dy, "dy", "derivation in y", "CImgList");
-	_addInputSlot(dz, "dz", "derivation in z", "CImgList");
-	_addInputSlot(dt, "dt", "derivation in t", "CImgList");
+	_addInputSlot(dx, "dx", "derivation in x", "CImgList<T>");
+	_addInputSlot(dy, "dy", "derivation in y", "CImgList<T>");
+	_addInputSlot(dz, "dz", "derivation in z", "CImgList<T>");
+	_addInputSlot(dt, "dt", "derivation in t", "CImgList<T>");
 
 	this->setFlowFunctorParams(0.5, 0.4, 0.3);
 	this->flowFunctor = &flowfunc;
+}
+
+template <class T>
+void execute() {
+	is3d = !(this->dx().is_sameN(1));
 }
 
 template<class T>
@@ -129,7 +131,7 @@ void MotionModels::LocalConstant<T>::apply(const Pixel<T> & inPixel,
 		Pixel<T> & outPixel)
 {
 	outPixel = inPixel;
-	// no moving change
+	//no change in movement
 }
 
 #endif

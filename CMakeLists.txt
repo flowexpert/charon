@@ -21,6 +21,7 @@ OPTION(COMPILE_MOTION "compile motionmodel plugins" on)
 # if off Blockmatching won't be compiled
 OPTION(COMPILE_BLOCKMATCHING "compile blockmatching plugins" on)
 
+OPTION(COMPILE_DERIVATIVES "compile derivative plugins" on)
 OPTION(COMPILE_STENCILS "compile stencil pugins" on)
 OPTION(COMPILE_SOLVERS "compile solver pugins" off)
 

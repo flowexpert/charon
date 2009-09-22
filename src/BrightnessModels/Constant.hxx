@@ -25,12 +25,10 @@
 #define _BrightnessModels_Constant_HXX_
 
 #include "Constant.h"
-
-using namespace std;
-using namespace cimg_library;
+#include <Pixel.hxx>
 
 template<class T>
-BrightnessModels::Constant<T>::Constant(const string& name) :
+BrightnessModels::Constant<T>::Constant(const std::string& name) :
 	BrightnessModel<T> ("brightnessmodels_diffusion", name)
 {
 	_addInputSlot(sequence, "sequence", "Sequence of Images", "CImgList");

@@ -35,7 +35,8 @@
 #define motionmodels_localconstant_DECLDIR
 #endif
 
-#include <main.h>
+#include <CImg.h>
+#include <string>
 #include <MotionModel.h>
 #include <FlowFunctor.h>
 #include <IncrementorParameter.h>
@@ -52,17 +53,12 @@ namespace MotionModels
  * @f]
  */
 template<class T>
-class motionmodels_localconstant_DECLDIR LocalConstant: public MotionModel<T>
+class motionmodels_localconstant_DECLDIR LocalConstant : public MotionModel<T>
 {
 private:
 	//cimg_library::CImg<> dx,dy,dt;
 	FlowFunctor flowfunc;
 	bool is3d;
-protected:
-	virtual ParameteredObject* _newInstance(const std::string& name) const
-	{
-		return new LocalConstant(name);
-	}
 
 public:
 	/// default constructor
@@ -74,10 +70,8 @@ public:
 	InputSlot<cimg_library::CImgList<T> > dx, dy, dz, dt;
 	//@}
 
-	virtual void update()
-	{
-		is3d = !(dx().is_sameN(1));
-	}
+	virtual void execute();
+	
 	virtual void compute(const int xs, const int ys, const int zs, const int t,
 			const int v, std::map<std::string, T>& term, T& rhs);
 

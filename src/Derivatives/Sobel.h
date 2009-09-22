@@ -20,14 +20,22 @@
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
 /// @date 11.06.2009
 
-#ifndef _Derivatives_Sobel_h_
-#define _Derivatives_Sobel_h_
+#ifndef _DERIVATIVES_SOBEL_H_
+#define _DERIVATIVES_SOBEL_H_
 
-#include "../main.h"
-#include "../Derivative.h"
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef sobel_EXPORTS
+///Visual C++ specific code
+#define sobel_DECLDIR __declspec(dllexport)
+#else
+#define sobel_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define sobel_DECLDIR
+#endif
 
-namespace Derivatives
-{
+#include <Derivative.h>
 
 /// @brief class implementing a sobel filter
 /// @details this class uses a @f$ \frac{1,32} \left[ \begin{array}{ccc} 3 & 0 & -3 \\
@@ -35,29 +43,23 @@ namespace Derivatives
 ///									 3 & 0 & -3
 ///						 \end{array} \right] @f$ filter.
 /// Only implemented for x and y direction
-class Sobel : public Derivative
+template <class T>
+class sobel_DECLDIR Sobel : public Derivative<T>
 {
-protected:
-	virtual ParameteredObject* _newInstance(const std::string& name) const
-		{return new Sobel(name);}
-	virtual void calculateDerivatives();
 private:
 	//cimg_library::CImg<> dx,dy,dz;
-	cimg_library::CImg<> filterx, filtery, filterz;
+	cimg_library::CImg<T> filterx, filtery, filterz;
 public:
 	/// default constructor
 	Sobel(const std::string& name = "");
 	
+	virtual void execute();
+	
 	/// @name output slots
 	/// @brief containing the derivatives in the different directions
 	//@{
-	OutputSlot<cimg_library::CImgList<> > dx,dy;
+	OutputSlot<cimg_library::CImgList<T> > dx,dy;
 	//@}
-
-
 };
-
-}  //end namespace
-
 
 #endif

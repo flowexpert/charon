@@ -29,6 +29,7 @@
 
 #include "Solver.h"
 #include <Stencil.hxx>
+#include <Roi.hxx>
 
 ///default constructor
 template <class T>

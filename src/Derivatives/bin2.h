@@ -20,45 +20,39 @@
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
 /// @date 27.05.2009
 
-#ifndef _Derivatives_bin2_h_
-#define _Derivatives_bin2_h_
+#ifndef _DERIVATIVES_BIN2_H_
+#define _DERIVATIVES_BIN2_H_
 
-#include "../main.h"
-#include "../Derivative.h"
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef bin2_EXPORTS
+///Visual C++ specific code
+#define bin2_DECLDIR __declspec(dllexport)
+#else
+#define bin2_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define bin2_DECLDIR
+#endif
 
-/// namespace for the derivatives
-namespace Derivatives
-{
+#include <Derivative.h>
 
 /// @brief class implementing a simple derivative filter.
 /// @details this class uses a @f$ \left[ \begin{array}{ccc} 1 & 0 & -1 \end{array} \right] @f$ filter
-class bin2 : public Derivative
+template <class T>
+class bin2_DECLDIR bin2 : public Derivative<T>
 {
-protected:
-	virtual ParameteredObject* _newInstance(const std::string& name) const
-		{return new bin2(name);}
-	virtual void calculateDerivatives();
-private:
-	//cimg_library::CImg<> dx,dy,dz;
 public:
 	/// default constructor
 	bin2(const std::string& name = "");
 	
+	virtual void execute();
+
 	/// @name output slots
 	/// @brief containing the derivatives in the different directions
 	//@{
-	OutputSlot<cimg_library::CImgList<> > dx,dy,dz,dt;
+	OutputSlot<cimg_library::CImgList<T> > dx,dy,dz,dt;
 	//@}
-	
-	/*virtual void getX(const cimg_library::CImg<>& img, cimg_library::CImg<>& res);
-	virtual void getY(const cimg_library::CImg<>& img, cimg_library::CImg<>& res);
-	virtual void getZ(const cimg_library::CImg<>& img, cimg_library::CImg<>& res); // */
 };
 
-}  //end namespace
-
-
 #endif
-
-
-
