@@ -99,6 +99,13 @@ public:
 	///	@param newFile	new name
 	///	@return			result of rename
 	static int rename(const std::string& oldFile, const std::string& newFile);
+
+	/**
+	 * Reads a file and writes it into a std::string.
+	 * @param fName File to read
+	 * @return Content of the file
+	 */
+	static std::string readFile(const std::string & fName);
 };
 
 #endif // _FileTool_H_

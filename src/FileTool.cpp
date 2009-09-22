@@ -22,6 +22,7 @@
  */
 
 #include "FileTool.h"
+#include <iostream>
 
 #if defined(sun)         || defined(__sun)       || defined(linux) \
  || defined(__linux)     || defined(__linux__)   || defined(__CYGWIN__) \
@@ -169,3 +170,14 @@ int FileTool::rename(const std::string& oldFile, const std::string& newFile) {
 	return ::rename(oldFile.c_str(), newFile.c_str());
 }
 
+std::string FileTool::readFile(const std::string & fName) {
+	std::ifstream inStream;
+	inStream.open(fName.c_str());
+	std::stringstream str;
+	std::string buffer;
+	while (!inStream.eof()) {
+		std::getline(inStream, buffer);
+		str << buffer << std::endl;
+	}
+	return str.str();
+}

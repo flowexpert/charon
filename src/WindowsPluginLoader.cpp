@@ -199,7 +199,7 @@ void WindowsPluginLoader::compileAndLoad(const std::string & sourceFile, std::ve
 							+ "/W3 /nologo /TP \"" + sourceFile
 							+ "\" /link /LIBPATH:\"" + vc_root + "\\lib\" /LIBPATH:\""
 							+ sdk_root + "\\Lib\" /LIBPATH:\"" + charon_core
-							+ "\\bin\" /LIBPATH:\"" + pluginPath + "\" /OUT:\"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\" + pluginName
+							+ "\\bin\" /LIBPATH:\"" + pluginPath + "\" /LIBPATH:\"" + additionalPluginPath + "\" /OUT:\"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\" + pluginName
 							+ ".dll\" /INCREMENTAL:NO /NOLOGO /DLL /MANIFEST /MANIFESTFILE:\""
 							+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\" + pluginName
 							+ ".dll.manifest\" /MANIFESTUAC:\"level='asInvoker' "
@@ -208,11 +208,10 @@ void WindowsPluginLoader::compileAndLoad(const std::string & sourceFile, std::ve
 							+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\" + pluginName + ".lib\" "
 							+ refs + "kernel32.lib user32.lib gdi32.lib winspool.lib "
 							+ "comdlg32.lib advapi32.lib shell32.lib ole32.lib "
-							+ "oleaut32.lib uuid.lib odbc32.lib odbccp32.lib charon-core.lib "
-							+ "&& mt /nologo /outputresource:\"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\"
+							+ "oleaut32.lib uuid.lib odbc32.lib odbccp32.lib " + charon_core + "\\lib\\charon-core.lib > error.log ";
+	std::string manifestCall = "mt /nologo /outputresource:\"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\"
 							+ pluginName + ".dll;#2\" -manifest \"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\"
-							+ pluginName + ".dll.manifest";
-	//}
+							+ pluginName + ".dll.manifest\" >> error.log";
 #else
 	// syscall for compiling with MinGW
 	std::string syscall =	compiler_call + " -I" + charon_core + "/src"
@@ -226,11 +225,17 @@ void WindowsPluginLoader::compileAndLoad(const std::string & sourceFile, std::ve
 
 #ifndef NDEBUG
 	std::cout << "Compiler call:\n" << syscall << std::endl;
+	std::cout << "Manifest tool call:\n" << manifestCall << std::endl;
 #endif // NDEBUG
 
-	if (system(syscall.c_str()))
+	std::string temp = FileTool::getCurrentDir();
+	if (system(syscall.c_str())) {
 		throw PluginException("Error in compiling plugin \"" + pluginName
-				+ "\".", pluginName, PluginException::COMPILE_ERROR);
+			+ "\". Compiler output:\n" + FileTool::readFile("error.log"), pluginName, PluginException::COMPILE_ERROR);
+	}
+	if (system(manifestCall.c_str()))
+		throw PluginException("Error in invoking the manifest tool for the plugin \"" + pluginName
+		+ "\". Console output:\n" + FileTool::readFile("error.log"), pluginName, PluginException::COMPILE_ERROR);
 	
 	try {
 		load();
@@ -267,8 +272,8 @@ std::string WindowsPluginLoader::_pathsConfig() const {
 	std::string programFiles = getenv("ProgramFiles");
 	if (FileTool::exists("./Paths.config")) {
 		return "./Paths.config";
-	} else if (FileTool::exists(programFiles + "\\charon-core\\Paths.config")) {
-		return (programFiles + "\\charon-core\\Paths.config");
+	} else if (FileTool::exists(programFiles + "\\charon-core\\share\\charon-core\\Paths.config")) {
+		return (programFiles + "\\charon-core\\share\\charon-core\\Paths.config");
 	} else {
 		return "";
 	}
