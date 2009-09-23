@@ -36,6 +36,7 @@ SET(CPACK_SOURCE_IGNORE_FILES
 SET(CPACK_PACKAGE_CONTACT
     "Jens-Malte Gottfried <jmgottfried@web.de>"
 )
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "charon-core (>=0.1.3), libgraphviz-dev (>=2.16), qt4-dev-tools (>=4.4.0)")
 
 # install components
 SET(CPACK_COMPONENTS_ALL applications libraries headers dlls)
