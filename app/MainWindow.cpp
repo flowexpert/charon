@@ -186,9 +186,9 @@ MainWindow::MainWindow(QWidget* myParent) :
 			inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
 	fileMenu->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
 			this, SLOT(updateMetadata()));
-	fileMenu->addAction(tr("&Compile and load plug-in"), this, SLOT(
+	fileMenu->addAction(QIcon(":/icons/runbuild.png"), tr("&Compile and load plug-in"), this, SLOT(
 			compileAndLoad()));
-	fileMenu->addAction(tr("Execute &Workflow"), inspector, SLOT(
+	fileMenu->addAction(QIcon(":/icons/execute.png"), tr("Execute &Workflow"), inspector, SLOT(
 			executeWorkflow()));
 	fileMenu->addAction(QIcon(":/icons/export.png"), tr("Export flowchart"),
 			this, SLOT(saveFlowChart()), QKeySequence(tr("Ctrl+F")));

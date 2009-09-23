@@ -26,5 +26,7 @@
 		<file alias="zoomOut.png">../icons/oxygen/viewmag-.png</file>
 		<file alias="zoomFit.png">../icons/oxygen/viewmagfit.png</file>
 		<file alias="refresh.png">../icons/oxygen/view-refresh.png</file>
+		<file alias="runbuild.png">../icons/oxygen/run-build.png</file>
+		<file alias="execute.png">../icons/oxygen/media-playback-start.png</file>
 	</qresource>
 </RCC>
