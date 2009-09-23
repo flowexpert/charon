@@ -13,20 +13,20 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file PetscSolver.cpp
- *  Implementation of class PetscSolver.
- *  This is the PETSc implementation of a solver. It has been designed to run on
- *  multiple instances simultaneously.
+/** @file ChannelConverter.cpp
+ *  Channel Converter for CImg.
+ *  Converts v dimension to t and vice versa.
+ *  
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *
  *  @date 8.09.2009
  */
-#define TYPE PetscSolver
+#define TYPE ChannelConverter
 
-#include "PetscSolver.hxx"
+#include "ChannelConverter.hxx"
 
-#if defined(MSVC) && defined (petscsolver_EXPORTS)
+#if defined(MSVC) && defined (channelconverter_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

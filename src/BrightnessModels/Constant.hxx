@@ -31,7 +31,12 @@ template<class T>
 BrightnessModels::Constant<T>::Constant(const std::string& name) :
 	BrightnessModel<T> ("brightnessmodels_diffusion", name)
 {
-	_addInputSlot(sequence, "sequence", "Sequence of Images", "CImgList");
+	
+}
+
+template<class T>
+void BrightnessModels::Constant<T>::execute() {
+	ParameteredObject::execute();
 }
 
 template<class T>

@@ -114,6 +114,7 @@ MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
 
 template <class T>
 void MotionModels::LocalConstant<T>::execute() {
+	ParameteredObject::execute();
 	this->is3d = !(this->dx().is_sameN(1));
 }
 

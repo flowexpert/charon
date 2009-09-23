@@ -37,6 +37,7 @@ bin2<T>::bin2(const std::string& name) : Derivative<T>("derivatives_bin2",name)
 template <class T>
 void bin2<T>::execute()
 {
+	ParameteredObject::execute();
 	if (this->dx.connected())
 	{
 		this->dx().assign(this->img().size);

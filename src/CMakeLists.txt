@@ -13,6 +13,8 @@ ENDIF(COMPILE_SOLVERS)
 ADD_DEFINITIONS(/DHANDLE_DLL)
 
 #Create shared libraries
+ADD_LIBRARY(channelconverter SHARED ChannelConverter.cpp)
+
 IF (COMPILE_DERIVATIVES)
 	ADD_LIBRARY(bin2 SHARED Derivatives/bin2.cpp)
 	ADD_LIBRARY(sobel SHARED Derivatives/Sobel.cpp)
@@ -62,6 +64,12 @@ IF (COMPILE_MOTION)
 ENDIF (COMPILE_MOTION)
 
 SET(Plugins)
+
+SET(Plugins
+	${Plugins}
+	channelconverter
+)
+
 IF (COMPILE_DERIVATIVES)
 SET(Plugins
 	${Plugins}

@@ -71,9 +71,12 @@ public:
 	//	Constant(const std::string& name = "") : BrightnessModel("brightnessmodels_constant",name), functor()
 	//		 {brightnessFunctor = &functor;}
 	Constant(const std::string& name = "");
-	InputSlot<cimg_library::CImgList<T> > sequence;
+	
+	virtual void execute();
+		
 	virtual void compute(const int xs, const int ys, const int zs, const int t,
 			const int v, std::map<std::string, T>& term, T& rhs);
+	
 	virtual std::set<std::string>& getUnknowns();
 	//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
 
