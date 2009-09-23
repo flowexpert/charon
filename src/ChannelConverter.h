@@ -47,7 +47,7 @@ class channelconverter_DECLDIR ChannelConverter : public TemplatedParameteredObj
 		InputSlot<cimg_library::CImgList<T> > in;
 		OutputSlot<cimg_library::CImgList<T> > out;
 		
-		ChannelConverter(const std::string& classname, const std::string& name = "");
+		ChannelConverter(const std::string& name = "");
 		
 		virtual void execute();
 		

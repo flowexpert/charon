@@ -29,8 +29,8 @@
 #include <ParameteredObject.hxx>
 
 template <class T>
-ChannelConverter<T>::ChannelConverter(const std::string& classname, const std::string& name) : 
-				TemplatedParameteredObject<T>(classname,name,
+ChannelConverter<T>::ChannelConverter(const std::string& name) : 
+				TemplatedParameteredObject<T>("ChannelConverter",name,
 				"convert dim v <-> dim t") {
 	this->_addInputSlot(in,"input","sequence to convert","CImgList<T>");
 	this->_addOutputSlot(out,"output","converted sequence","CImgList<T>");
