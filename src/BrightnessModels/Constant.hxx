@@ -29,7 +29,7 @@
 
 template<class T>
 BrightnessModels::Constant<T>::Constant(const std::string& name) :
-	BrightnessModel<T> ("brightnessmodels_diffusion", name)
+	BrightnessModel<T> ("brightnessmodels_constant", name)
 {
 	
 }
