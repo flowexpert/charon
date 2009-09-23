@@ -33,8 +33,8 @@
 template <class T>
 Gbcce<T>::Gbcce(const std::string& name) : 
 		Stencil<T>("GBCCE") {
-	this->_addInputSlot(brightnessIn,"Brightness Model","Brightness Model","BrightnessModel*");
-	this->_addInputSlot(motionIn,"Motion Model","Motion Model","MotionModel*");
+	this->_addInputSlot(brightnessIn,"brightnessmodel","Brightness Model","BrightnessModel*");
+	this->_addInputSlot(motionIn,"motionmodel","Motion Model","MotionModel*");
 }
 
 template <class T>

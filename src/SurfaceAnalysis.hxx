@@ -24,6 +24,7 @@
 #define _SURFACEANALYSIS_HXX_
 
 #include "SurfaceAnalysis.h"
+#include <ParameteredObject.hxx>
 
 template<typename T>
 SurfaceAnalysis<T>::SurfaceAnalysis(const std::string& name) :

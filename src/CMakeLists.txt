@@ -24,24 +24,27 @@ ENDIF (COMPILE_STENCILS)
 IF (COMPILE_SOLVERS)
 	ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
 	TARGET_LINK_LIBRARIES(petscsolver	charon-core
-										${PETSC_CONFIG_DIR}/lib/libf2cblas.a
-										${PETSC_CONFIG_DIR}/lib/libf2clapack.a
-										${PETSC_CONFIG_DIR}/lib/libmpiuni.a
-										${PETSC_CONFIG_DIR}/lib/libpetsc.a
-										# ${PETSC_CONFIG_DIR}/lib/libpetsccontrib.a
-										${PETSC_CONFIG_DIR}/lib/libpetscdm.a
-										${PETSC_CONFIG_DIR}/lib/libpetscksp.a
-										${PETSC_CONFIG_DIR}/lib/libpetscmat.a
-										# ${PETSC_CONFIG_DIR}/lib/libpetscsnes.a
-										# ${PETSC_CONFIG_DIR}/lib/libpetscts.a
-										${PETSC_CONFIG_DIR}/lib/libpetscvec.a)
+						${PETSC_CONFIG_DIR}/lib/libf2cblas.a
+						${PETSC_CONFIG_DIR}/lib/libf2clapack.a
+						${PETSC_CONFIG_DIR}/lib/libmpiuni.a
+						${PETSC_CONFIG_DIR}/lib/libpetsc.a
+						# ${PETSC_CONFIG_DIR}/lib/libpetsccontrib.a
+						${PETSC_CONFIG_DIR}/lib/libpetscdm.a
+						${PETSC_CONFIG_DIR}/lib/libpetscksp.a
+						${PETSC_CONFIG_DIR}/lib/libpetscmat.a
+						# ${PETSC_CONFIG_DIR}/lib/libpetscsnes.a
+						# ${PETSC_CONFIG_DIR}/lib/libpetscts.a
+						${PETSC_CONFIG_DIR}/lib/libpetscvec.a)
 ENDIF (COMPILE_SOLVERS)
 IF (COMPILE_BLOCKMATCHING)
 	ADD_LIBRARY(incrementorparameter SHARED IncrementorParameter.cpp)
 	ADD_LIBRARY(incrementorcountup SHARED Incrementors/IncrementorCountUp.cpp)
+	TARGET_LINK_LIBRARIES(incrementorcountup incrementorparameter)
 	ADD_LIBRARY(objectivefunctioncomparing SHARED ObjectiveFunctions/ObjectiveFunctionComparing.cpp)
 	ADD_LIBRARY(listedpixelselection SHARED PixelSelections/ListedPixelSelection.cpp)
+	TARGET_LINK_LIBRARIES(listedpixelselection roi)
 	ADD_LIBRARY(surfaceanalysisminchange SHARED SurfaceAnalysis/SurfaceAnalysisMinChange.cpp)
+	TARGET_LINK_LIBRARIES(surfaceanalysisminchange incrementorparameter)
 	ADD_LIBRARY(blockmatchingliacs SHARED BlockMatching/BlockMatchingLIACS.cpp)
 ENDIF (COMPILE_BLOCKMATCHING)
 IF (COMPILE_BRIGHTNESS)
@@ -128,14 +131,15 @@ ENDFOREACH(X)
 # install library
 SET_TARGET_PROPERTIES(${Plugins}
 	PROPERTIES INSTALL_RPATH
-	${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
+	${CHARON_UTILS_ROOT_DIR}/lib${LIB_SUFFIX}/charon-plugins:${CHARON_CORE_ROOT_DIR}/lib${LIB_SUFFIX}
 )
+
 INSTALL(
     TARGETS      	${Plugins}
     EXPORT      	${PROJECT_NAME}
     RUNTIME      	DESTINATION bin
-    LIBRARY      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
-    ARCHIVE      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
+    LIBRARY      	DESTINATION ${CHARON_UTILS_ROOT_DIR}/lib${LIB_SUFFIX}/charon-plugins
+    ARCHIVE      	DESTINATION ${CHARON_UTILS_ROOT_DIR}/lib${LIB_SUFFIX}/charon-plugins
     COMPONENT    	libraries
 )
 
