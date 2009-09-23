@@ -138,13 +138,13 @@ void UnixPluginLoader::compileAndLoad(const std::string & sourceFile,
 			+ additionalPluginPath + "\" -o \""
 			+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath)
 			+ "/lib" + pluginName + LIBRARY_EXTENSION + "\" " + sourceFile
-			+ X11_libs;
+			+ X11_libs + "> error.log";
 #ifndef NDEBUG
 	std::cout << "Compiler call:\n" << sysCall << std::endl;
 #endif
 	if (system(sysCall.c_str())) {
 		throw PluginException("Error in compiling plugin \"" + pluginName
-				+ "\".", pluginName, PluginException::COMPILE_ERROR);
+				+ "\". Compiler output:\n" + FileTool::readFile("error.log"), pluginName, PluginException::COMPILE_ERROR);
 	}
 	try {
 		load();
@@ -183,14 +183,14 @@ void UnixPluginLoader::unload() throw (PluginException) {
 }
 
 std::string UnixPluginLoader::_pathsConfig() const {
-	if (FileTool::exists("./share/charon-utils/Paths.config")) {
-		return "./share/charon-utils/Paths.config";
+	if (FileTool::exists("./share/charon-core/Paths.config")) {
+		return "./share/charon-core/Paths.config";
 	} else if (FileTool::exists("./Paths.config")) {
 		return "./Paths.config";
-	} else if (FileTool::exists("/usr/local/share/charon-utils/Paths.config")) {
-		return "/usr/local/share/charon-utils/Paths.config";
-	} else if (FileTool::exists("/usr/share/charon-utils/Paths.config")) {
-		return "/usr/share/charon-utils/Paths.config";
+	} else if (FileTool::exists("/usr/local/share/charon-core/Paths.config")) {
+		return "/usr/local/share/charon-core/Paths.config";
+	} else if (FileTool::exists("/usr/share/charon-core/Paths.config")) {
+		return "/usr/share/charon-core/Paths.config";
 	} else {
 		return "";
 	}

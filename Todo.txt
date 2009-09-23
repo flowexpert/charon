@@ -1,9 +1,6 @@
 --HIGH IMPORTANCE
-Fix crash when executing a workflow with an imagedisplay instance as target point
-
 --MEDIUM IMPORTANCE
-Check why imgmanitpest needs a lib file on Windows (unnecessary dll_export commands?)
 Improve error handling when using MinGW (WindowsPluginLoader)
-Is it possible to check template types of slot data? (dynamic_cast is not possible)
+Compile and load routines should be able to build debug versions of the plugins
 
 --LOW IMPORTANCE
