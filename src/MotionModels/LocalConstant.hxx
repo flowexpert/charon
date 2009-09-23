@@ -67,10 +67,10 @@ void MotionModels::LocalConstant<T>::compute(const int xs, const int ys,
 		//			dy()(t,xs,ys,zs,v),
 		//			dz()(t,xs,ys,zs,v)
 		//			).transpose();
-		rhs += dt()(v, xs, ys, zs, t);
-		term["a1"] += dx()(v, xs, ys, zs, t);
-		term["a2"] += dy()(v, xs, ys, zs, t);
-		term["a3"] += dz()(v, xs, ys, zs, t);
+		rhs += (*this->dt())(v, xs, ys, zs, t);
+		term["a1"] += (*this->dx())(v, xs, ys, zs, t);
+		term["a2"] += (*this->dy())(v, xs, ys, zs, t);
+		term["a3"] += (*this->dz())(v, xs, ys, zs, t);
 	}
 	else
 	{
@@ -92,9 +92,9 @@ void MotionModels::LocalConstant<T>::compute(const int xs, const int ys,
 		//			dx()(0,xs,ys,t,v),
 		//			dy()(0,xs,ys,t,v)
 		//			).transpose();
-		rhs += dt()(0, xs, ys, t, v);
-		term["a1"] += dx()(0, xs, ys, t, v);
-		term["a2"] += dy()(0, xs, ys, t, v);
+		rhs += (*this->dt())(0, xs, ys, t, v);
+		term["a1"] += (*this->dx())(0, xs, ys, t, v);
+		term["a2"] += (*this->dy())(0, xs, ys, t, v);
 	}
 	//return r;
 }
@@ -103,10 +103,10 @@ template<class T>
 MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
 	MotionModel<T>::MotionModel("motionmodels_localconstant", name), flowfunc()
 {
-	_addInputSlot(dx, "dx", "derivation in x", "CImgList<T>");
-	_addInputSlot(dy, "dy", "derivation in y", "CImgList<T>");
-	_addInputSlot(dz, "dz", "derivation in z", "CImgList<T>");
-	_addInputSlot(dt, "dt", "derivation in t", "CImgList<T>");
+	_addInputSlot(dx, "dx", "derivation in x", "CImgList<T>*");
+	_addInputSlot(dy, "dy", "derivation in y", "CImgList<T>*");
+	_addInputSlot(dz, "dz", "derivation in z", "CImgList<T>*");
+	_addInputSlot(dt, "dt", "derivation in t", "CImgList<T>*");
 
 	this->setFlowFunctorParams(0.5, 0.4, 0.3);
 	this->flowFunctor = &flowfunc;
@@ -115,7 +115,7 @@ MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
 template <class T>
 void MotionModels::LocalConstant<T>::execute() {
 	ParameteredObject::execute();
-	this->is3d = !(this->dx().is_sameN(1));
+	this->is3d = !(this->dx()->is_sameN(1));
 }
 
 template<class T>

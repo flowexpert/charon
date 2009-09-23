@@ -28,10 +28,10 @@
 template <class T>
 bin2<T>::bin2(const std::string& name) : Derivative<T>("derivatives_bin2",name)
 {
-	this->_addOutputSlot(dx,"dx","derivative in x", "CImgList<T>");
-	this->_addOutputSlot(dy,"dy","derivative in y", "CImgList<T>");
-	this->_addOutputSlot(dz,"dz","derivative in z", "CImgList<T>");
-	this->_addOutputSlot(dt,"dt","derivative in t", "CImgList<T>");
+	this->_addOutputSlot(dx,"dx","derivative in x", "CImgList<T>*");
+	this->_addOutputSlot(dy,"dy","derivative in y", "CImgList<T>*");
+	this->_addOutputSlot(dz,"dz","derivative in z", "CImgList<T>*");
+	this->_addOutputSlot(dt,"dt","derivative in t", "CImgList<T>*");
 }
 
 template <class T>
@@ -40,34 +40,34 @@ void bin2<T>::execute()
 	ParameteredObject::execute();
 	if (this->dx.connected())
 	{
-		this->dx().assign(this->img().size);
+		this->dx()->assign(this->img()->size);
 		cimg_library::CImg<T> f(3,1,1,1,0.5,0.0,-0.5);
-		for (int t=0; t<this->img().size; t++)
-			this->dx()[t]=this->img()[t].get_convolve(f);
+		for (int t=0; t < this->img()->size; t++)
+			(*this->dx())[t]=(*this->img())[t].get_convolve(f);
 		
 	}
 	if (this->dy.connected())
 	{
-		this->dy().assign(this->img().size);
+		this->dy()->assign(this->img()->size);
 		cimg_library::CImg<T> f(1,3,1,1,0.5,0.0,-0.5);
-		for (int t=0; t<this->img().size; t++)
-			this->dy()[t]=this->img()[t].get_convolve(f);
+		for (int t=0; t < this->img()->size; t++)
+			(*this->dy())[t]=(*this->img())[t].get_convolve(f);
 		
 	}
 	if (this->dz.connected())
 	{
-		this->dz().assign(this->img().size);
+		this->dz()->assign(this->img()->size);
 		cimg_library::CImg<T> f(1,1,3,1,0.5,0.0,-0.5);
-		for (int t=0; t<this->img().size; t++)
-			this->dz()[t]=this->img()[t].get_convolve(f);
+		for (int t=0; t < this->img()->size; t++)
+			(*this->dz())[t]=(*this->img())[t].get_convolve(f);
 		
 	}
 	if (this->dt.connected())
 	{
-		this->dt().assign(this->img().size);
+		this->dt()->assign(this->img()->size);
 		cimg_library::CImg<T> f(1,1,1,3,0.5,0.0,-0.5);
-		for (int t=0; t<this->img().size; t++)
-			dt()[t]=this->img()[t].get_convolve(f);
+		for (int t=0; t < this->img()->size; t++)
+			(*this->dt())[t]=(*this->img())[t].get_convolve(f);
 	}
 }
 

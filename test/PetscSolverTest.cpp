@@ -29,8 +29,10 @@
 #include <Constant.hxx>
 #include <LocalConstant.hxx>
 #include <bin2.hxx>
+#include <FileReader.hxx>
 
-int main(int argc, char** argv) {
+int main() {
 	
 	
+	return 0;
 }

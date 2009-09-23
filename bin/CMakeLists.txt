@@ -1,5 +1,7 @@
 IF(ENABLE_TEST)
-
-	ADD_TEST(listedpixelselectiontest listedpixelselectiontest)
-
+	IF(COMPILE_BLOCKMATCHING)
+	
+		ADD_TEST(listedpixelselectiontest listedpixelselectiontest)
+	
+	ENDIF(COMPILE_BLOCKMATCHING)
 ENDIF(ENABLE_TEST)

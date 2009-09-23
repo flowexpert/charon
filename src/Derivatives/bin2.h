@@ -51,7 +51,7 @@ public:
 	/// @name output slots
 	/// @brief containing the derivatives in the different directions
 	//@{
-	OutputSlot<cimg_library::CImgList<T> > dx,dy,dz,dt;
+	OutputSlot<cimg_library::CImgList<T>* > dx,dy,dz,dt;
 	//@}
 };
 

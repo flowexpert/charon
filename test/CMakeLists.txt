@@ -5,13 +5,14 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/PixelSelections)
 
 IF(ENABLE_TEST)
-	# tests for imgmanip classes
-	ADD_DEFINITIONS(-DPENGUINFILE="${CMAKE_CURRENT_SOURCE_DIR}/Penguin.cimg")
-	ADD_DEFINITIONS(-DPENGUINHEADFILE="${CMAKE_CURRENT_SOURCE_DIR}/sequence.cimg")
-	ADD_EXECUTABLE(listedpixelselectiontest listedpixelselectiontest.cpp)
-	TARGET_LINK_LIBRARIES(listedpixelselectiontest charon-core roi filereader)
-	IF(UNIX)
-		TARGET_LINK_LIBRARIES(listedpixelselectiontest pthread ${X11_LIBRARIES})
-	ENDIF(UNIX)
-	
+	IF(COMPILE_BLOCKMATCHING)
+		# tests for imgmanip classes
+		ADD_DEFINITIONS(-DPENGUINFILE="${CMAKE_CURRENT_SOURCE_DIR}/Penguin.cimg")
+		ADD_DEFINITIONS(-DPENGUINHEADFILE="${CMAKE_CURRENT_SOURCE_DIR}/sequence.cimg")
+		ADD_EXECUTABLE(listedpixelselectiontest listedpixelselectiontest.cpp)
+		TARGET_LINK_LIBRARIES(listedpixelselectiontest charon-core roi filereader)
+		IF(UNIX)
+			TARGET_LINK_LIBRARIES(listedpixelselectiontest pthread ${X11_LIBRARIES})
+		ENDIF(UNIX)
+	ENDIF(COMPILE_BLOCKMATCHING)
 ENDIF(ENABLE_TEST)
