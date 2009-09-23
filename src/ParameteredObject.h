@@ -125,7 +125,7 @@ private:
     /// error max occur:
     /// Unresolved extern symbol ""__declspec(dllimport) private: __thiscall 
     /// ParameteredObject::ParameteredObject(class ParameteredObject const &)" 
-    /// (__imp_??0ParameteredObject@@AAE@ABV0@@Z)"
+    /// (__imp_??0ParameteredObject\@\@AAE\@ABV0\@\@Z)"
     ParameteredObject(const ParameteredObject&){}
 
     /// forbid instantiation without className etc.
