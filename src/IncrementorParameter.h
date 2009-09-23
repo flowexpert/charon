@@ -42,7 +42,7 @@ public:
 	/// stadard constructor
 	IncrementorParameter(const std::string& name);
 	/// this outputslot
-	OutputSlot<IncrementorParameter<T>*> paramList;
+	OutputSlot<IncrementorParameter<T>*> out;
 	/// standard get function for parameter name
 	std::string& getName();
 	/// sets name of InrementorParameter

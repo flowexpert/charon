@@ -27,16 +27,16 @@
 
 template<typename T>
 IncrementorParameter<T>::IncrementorParameter(const std::string& name) :
-	ParameteredObject("incrementorparameter", name,
-			"class for Incrementor Parameters"), paramList(this)
+	TemplatedParameteredObject<T> ("incrementorparameter", name,
+			"class for Incrementor Parameters"), out(this)
 {
-	_addOutputSlot(paramList, "paramList",
-			"list of Parameters for Incrementor", "Incrementor Parameter",
-			"IncrementorParameter");
-	_addParameter(min, "min", "minimum of parameter", "T");
-	_addParameter(max, "max", "maximum of parameter", "T");
-	_addParameter(step, "step", "stepsize to increment parameter", "T");
-	_addParameter(current, "current", "current incremented Parameter", "T");
+	this->_addOutputSlot(out, "out", "list of Parameters for Incrementor",
+			"IncrementorParameter<T>*");
+	this->_addParameter(min, "min", "minimum of parameter", "T");
+	this->_addParameter(max, "max", "maximum of parameter", "T");
+	this->_addParameter(step, "step", "stepsize to increment parameter", "T");
+	this->_addParameter(current, "current", "current incremented Parameter",
+			"T");
 }
 
 template<typename T>
