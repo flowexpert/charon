@@ -15,17 +15,17 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file IncrementorCountUp.cpp
-/// This file is needed for the IncrementorCountUp class to work as a plugin.
+/// @file BlockMatchingLIACS.cpp
+/// This file is needed for the IncrementorParameter class to work as a plugin.
 /// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 24.08.2009
 
 ///Class name of the plugin
-#define TYPE IncrementorCountUp
+#define TYPE IncrementorParameter
 
-#include "IncrementorCountUp.hxx"
+#include "IncrementorParameter.hxx"
 
-#if defined(MSVC) && defined (incrementorcountup_EXPORTS)
+#if defined(MSVC) && defined (incrementorparameter_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

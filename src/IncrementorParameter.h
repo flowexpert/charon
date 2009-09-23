@@ -22,12 +22,24 @@
 #ifndef INCREMENTORPARAMETER_H_
 #define INCREMENTORPARAMETER_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef incrementorparameter_EXPORTS
+///Visual C++ specific code
+#define incrementorparameter_DECLDIR __declspec(dllexport)
+#else
+#define incrementorparameter_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define incrementorparameter_DECLDIR
+#endif
+
 #include <ParameteredObject.h>
 
 /// IncrementorParameter saves one parameter to work in Incrementor or 
 /// Brightnessmodels and MotionModels
 template<typename T>
-class IncrementorParameter: public TemplatedParameteredObject<T>
+class incrementorparameter_DECLDIR IncrementorParameter: public TemplatedParameteredObject<T>
 {
 private:
 	std::string parameterName;/// @param parameterName name of parameter

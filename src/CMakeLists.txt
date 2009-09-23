@@ -37,6 +37,7 @@ IF (COMPILE_SOLVERS)
 										${PETSC_CONFIG_DIR}/lib/libpetscvec.a)
 ENDIF (COMPILE_SOLVERS)
 IF (COMPILE_BLOCKMATCHING)
+	ADD_LIBRARY(incrementorparameter SHARED IncrementorParameter.cpp)
 	ADD_LIBRARY(incrementorcountup SHARED Incrementors/IncrementorCountUp.cpp)
 	ADD_LIBRARY(objectivefunctioncomparing SHARED ObjectiveFunctions/ObjectiveFunctionComparing.cpp)
 	ADD_LIBRARY(listedpixelselection SHARED PixelSelections/ListedPixelSelection.cpp)
@@ -84,11 +85,12 @@ ENDIF (COMPILE_SOLVERS)
 IF (COMPILE_BLOCKMATCHING)
 SET(Plugins
 	${Plugins}
-	blockmatchingliacs
+	incrementorparameter	
 	incrementorcountup
 	objectivefunctioncomparing
 	listedpixelselection
 	surfaceanalysisminchange
+	blockmatchingliacs
 )
 ENDIF (COMPILE_BLOCKMATCHING)
 
