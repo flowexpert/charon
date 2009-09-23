@@ -36,10 +36,10 @@
 #define listedpixelselection_DECLDIR
 #endif
 
-#include <Roi.h>
+//#include <Roi.h>
 #include <PixelSelection.h>
-#include <Pixel.h>
-#include <CImg.h>
+//#include <Pixel.h>
+//#include <CImg.h>
 #include <vector>
 
 template<typename T>

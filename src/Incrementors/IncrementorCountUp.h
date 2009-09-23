@@ -44,6 +44,8 @@ public:
 	/// standart constructor
 	IncrementorCountUp(const std::string& name);
 
+	virtual void execute();
+
 	/**
 	 *  computes the next Step
 	 *  - compute return vallue true for no doStep possible, false doStep is 

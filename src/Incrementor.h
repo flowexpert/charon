@@ -56,7 +56,7 @@ public:
 	InputSlot<IncrementorParameter<T>*> paramList;
 	/// this outputslot
 	OutputSlot<Incrementor<T>*> out;
-	void execute();
+	virtual void execute() =0;
 
 	/** computes the next Step
 	 *  the return is 0 if all max not reached and 1 if all max are reached

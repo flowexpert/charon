@@ -39,12 +39,6 @@ Incrementor<T>::Incrementor(const std::string& name) :
 }
 
 template<typename T>
-void Incrementor<T>::execute()
-{
-	ParameteredObject::execute();
-}
-
-template<typename T>
 const std::vector<IncrementorParameter<T>* >& Incrementor<T>::getListOfParams()
 {
 	return this->listOfParams;

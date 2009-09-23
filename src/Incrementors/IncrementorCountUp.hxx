@@ -49,6 +49,12 @@ IncrementorCountUp<T>::IncrementorCountUp(const std::string& name) :
 }
 
 template<typename T>
+void IncrementorCountUp<T>::execute()
+{
+	ParameteredObject::execute();
+}
+
+template<typename T>
 bool IncrementorCountUp<T>::doStep()
 {
 	bool ret = false;
