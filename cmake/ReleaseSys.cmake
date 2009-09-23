@@ -20,6 +20,7 @@ SET(CPACK_RESOURCE_FILE_LICENSE			"${PROJECT_SOURCE_DIR}/COPYING.txt")
 
 SET(CPACK_STRIP_FILES
     ${PROJECT_NAME}
+    charon-plugins
 )
 SET(CPACK_SOURCE_IGNORE_FILES
     .svn
@@ -32,6 +33,7 @@ SET(CPACK_SOURCE_IGNORE_FILES
 SET(CPACK_PACKAGE_CONTACT
     "Jens-Malte Gottfried <jmgottfried@web.de>"
 )
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "g++, xorg-dev")
 
 # install components
 SET(CPACK_COMPONENTS_ALL headers libraries)
