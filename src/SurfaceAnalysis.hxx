@@ -27,8 +27,9 @@
 #include <ParameteredObject.hxx>
 
 template<typename T>
-SurfaceAnalysis<T>::SurfaceAnalysis(const std::string& name) :
-	TemplatedParameteredObject<T> ("SurfaceAnalysis", name,
+SurfaceAnalysis<T>::SurfaceAnalysis(const std::string& name,
+		const std::string& pluginName) :
+	TemplatedParameteredObject<T> (pluginName, name,
 			"Computes best fitting Parameters, for the flow"), out(this)
 {
 	this->_addOutputSlot(out, "out",

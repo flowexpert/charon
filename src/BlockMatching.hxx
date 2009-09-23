@@ -27,8 +27,9 @@
 #include <vector>
 
 template<typename T>
-BlockMatching<T>::BlockMatching(const std::string& name) :
-	TemplatedParameteredObject<T> ("blockmatching", name,
+BlockMatching<T>::BlockMatching(const std::string& name,
+		const std::string& pluginName) :
+	TemplatedParameteredObject<T> (pluginName, name,
 			"BlockMatching try to fing a flow")
 {
 	this->_addInputSlot(sequence, "sequence", "Sequence of Images",

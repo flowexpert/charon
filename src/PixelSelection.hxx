@@ -26,8 +26,9 @@
 #include "PixelSelection.h"
 
 template<typename T>
-PixelSelection<T>::PixelSelection(const std::string& name) :
-	TemplatedParameteredObject<T> ("blockmatching", name,
+PixelSelection<T>::PixelSelection(const std::string& name,
+		const std::string& pluginName) :
+	TemplatedParameteredObject<T> (pluginName, name,
 			"save range of interest in a list of pixels")
 {
 	this->_addInputSlot(range, "range", "Range of Interest", "roi<int>");

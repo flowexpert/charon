@@ -29,7 +29,7 @@
 
 template<typename T>
 SurfaceAnalysisMinChange<T>::SurfaceAnalysisMinChange(const std::string name) :
-	SurfaceAnalysis<T>::SurfaceAnalysis(name)
+	SurfaceAnalysis<T>::SurfaceAnalysis(name, "SurfaceAnalysisMinChange")
 {
 
 }

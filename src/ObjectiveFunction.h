@@ -51,7 +51,7 @@ class objectivefunction_DECLDIR ObjectiveFunction: public TemplatedParameteredOb
 
 public:
 	/// standard constructor
-	ObjectiveFunction(const std::string& name);
+	ObjectiveFunction(const std::string& name, const std::string pluginName);
 	/// inputslot for image sequence
 	InputSlot<cimg_library::CImgList<T>&> sequence;
 	/// inputslot for the list of pixel from PixelSelection

@@ -28,7 +28,7 @@
 
 template<typename T>
 ListedPixelSelection<T>::ListedPixelSelection(const std::string& name) :
-	PixelSelection<T>::PixelSelection(name)
+	PixelSelection<T>::PixelSelection(name, "ListedPixelSelection")
 {
 
 }

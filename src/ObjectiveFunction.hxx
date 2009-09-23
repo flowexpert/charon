@@ -27,9 +27,9 @@
 #include "ParameteredObject.hxx"
 
 template<typename T>
-ObjectiveFunction<T>::ObjectiveFunction(const std::string& name) :
-	TemplatedParameteredObject<T>::TemplatedParameteredObject(
-			"ObjectiveFunction", name,
+ObjectiveFunction<T>::ObjectiveFunction(const std::string& name,
+		const std::string pluginName) :
+	TemplatedParameteredObject<T>::TemplatedParameteredObject(pluginName, name,
 			"computes the difference between all way the parameters "
 				"are computed"), out(this)
 {

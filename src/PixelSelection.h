@@ -52,7 +52,7 @@ protected:
 
 public:
 	/// standard constructor
-	PixelSelection(const std::string& name);
+	PixelSelection(const std::string& name, const std::string& pluginName);
 	/// inputslot ROI
 	InputSlot<Roi<int>*> range;
 	/// inputslot sequence

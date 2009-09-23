@@ -32,7 +32,7 @@
 
 template<typename T>
 BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
-	BlockMatching<T>::BlockMatching(name)
+	BlockMatching<T>::BlockMatching(name, "BlockMatchingLIACS")
 {
 
 }

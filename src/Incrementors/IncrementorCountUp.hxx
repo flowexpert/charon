@@ -29,7 +29,7 @@
 
 template<typename T>
 IncrementorCountUp<T>::IncrementorCountUp(const std::string& name) :
-	Incrementor<T>::Incrementor(name)
+	Incrementor<T>::Incrementor(name, "IncrementorCountUp")
 {
 
 }

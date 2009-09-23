@@ -31,7 +31,7 @@
 template<typename T>
 ObjectiveFunctionComparing<T>::ObjectiveFunctionComparing(
 		const std::string& name) :
-	ObjectiveFunction<T>::ObjectiveFunction(name)
+	ObjectiveFunction<T>::ObjectiveFunction(name, "ObjectiveFunctionComparing")
 
 {
 
@@ -54,7 +54,7 @@ T ObjectiveFunctionComparing<T>::compare(
 			T predictedIntenity = piList[j];
 			T foundIntensity = this->interpolator()->interpolate(
 					this->sequence()[j], pixel.getX(), pixel.getY(),
-					(float)pixel.getZ(), pixel.getT());
+					(float) pixel.getZ(), pixel.getT());
 			foundChange += (predictedIntenity - foundIntensity)
 					* (predictedIntenity - foundIntensity);
 		}

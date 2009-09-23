@@ -46,7 +46,7 @@ class SurfaceAnalysis: public TemplatedParameteredObject<T>
 {
 public:
 	/// standard constructor
-	SurfaceAnalysis(const std::string& name);
+	SurfaceAnalysis(const std::string& name, const std::string& pluginName);
 	/// this outputslot
 	OutputSlot<SurfaceAnalysis<T>*> out;
 	///standard execute from ParameterdObject

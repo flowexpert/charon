@@ -28,8 +28,9 @@
 #include <ParameteredObject.hxx>
 
 template<typename T>
-Incrementor<T>::Incrementor(const std::string& name) :
-	TemplatedParameteredObject<T> ("incrementor", name,
+Incrementor<T>::Incrementor(const std::string& name,
+		const std::string& pluginName) :
+	TemplatedParameteredObject<T> (pluginName, name,
 			" Increments the Parameters, witch are needed to compute changes "
 				"inside the Image "), paramList(false, true), out(this)
 {
