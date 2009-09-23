@@ -33,10 +33,10 @@ class IncrementorParameter: public TemplatedParameteredObject<T>
 {
 private:
 	std::string parameterName;/// @param parameterName name of parameter
-	Parameter<T> min;		/// @param min minimum of parameter
-	Parameter<T> max;		/// @param max maximum of parameter
-	Parameter<T> step;		/// @param step stepsize of parameter
-	Parameter<T> current;	/// @param current current pos of parameter
+	Parameter<T> min; /// @param min minimum of parameter
+	Parameter<T> max; /// @param max maximum of parameter
+	Parameter<T> step; /// @param step stepsize of parameter
+	Parameter<T> current; /// @param current current pos of parameter
 
 public:
 	/// stadard constructor

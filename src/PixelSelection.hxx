@@ -27,21 +27,14 @@
 
 template<typename T>
 PixelSelection<T>::PixelSelection(const std::string& name) :
-	TemplatedParameteredObject<T>("blockmatching", name,
+	TemplatedParameteredObject<T> ("blockmatching", name,
 			"save range of interest in a list of pixels")
 {
-	this->_addInputSlot(range, "range", "Range of Interest", "roi");
+	this->_addInputSlot(range, "range", "Range of Interest", "roi<int>");
 	this->_addInputSlot(sequence, "sequence", "Sequence to work with",
-			"cimg_library::CImgList<T>& ");
-	this->_addOutputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
-			"std::vector<Pixel<T> > *");
-}
-
-
-template<typename T>
-void PixelSelection<T>::execute()
-{
-	ParameteredObject::execute();
+			"CImgList<T>");
+	this->_addOutputSlot(outPixelList, "outPixelList",
+			"List of Pixel out of Roi", "std::vector<Pixel<T> > *");
 }
 
 template<typename T>

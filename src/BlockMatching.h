@@ -61,7 +61,7 @@ protected:
 public:
 	/// standard constructor
 	BlockMatching(const std::string& name);
-	
+
 	/// inputslot for the sequence of images where the flow will be computed
 	InputSlot<cimg_library::CImgList<T>&> sequence;
 

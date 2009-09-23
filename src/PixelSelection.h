@@ -44,9 +44,10 @@
 /// Pixel Selection
 /// This class saves all Pixel we are interested in, in a list of pixel
 template<typename T>
-class pixelselection_DECLDIR PixelSelection: public TemplatedParameteredObject <T>
+class pixelselection_DECLDIR PixelSelection: public TemplatedParameteredObject<
+		T>
 {
-private:
+protected:
 	std::vector<Pixel<T>*> pixelList;
 
 public:
@@ -57,11 +58,7 @@ public:
 	/// inputslot sequence
 	InputSlot<cimg_library::CImgList<T> &> sequence;
 	/// outputslot list of pixel
-	OutputSlot<std::vector<Pixel<T>* > *> pixelList;
-	/// the execute method starts the execute method form ParameteredObject
-	void execute();
-	/// creates the List of Pixel out of the sequence of images and the ROI
-	virtual void createListOfPixel () =0; 
+	OutputSlot<std::vector<Pixel<T>*> *> outPixelList;
 	/// return the list of Pixel
 	std::vector<Pixel<T>*> & getListOfPixel();
 };

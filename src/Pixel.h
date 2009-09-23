@@ -28,7 +28,7 @@
 
 /// Pixel is a data structure to save one pixel
 template<typename T>
-class Pixel : public Point4D<T>
+class Pixel: public Point4D<T>
 {
 protected:
 	///is able to save pixel data
@@ -75,9 +75,9 @@ public:
 	/// copy constructor
 	Pixel(const Pixel<T> & rhs);
 	/// overloaded operator ==
-	bool operator== (const Pixel<T> &rhs) const;
+	bool operator==(const Pixel<T> &rhs) const;
 	/// overloaded operator =
-	Pixel<T>& operator= (const Pixel<T>& rhs);
+	Pixel<T>& operator=(const Pixel<T>& rhs);
 };
 
 #endif /* PIXEL_H_ */

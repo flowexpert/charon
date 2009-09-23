@@ -45,7 +45,8 @@
 /// ObjectiveFunction is a class to compute the change between computed pixel 
 /// parameters and real pixel parameters
 template<typename T>
-class objectivefunction_DECLDIR ObjectiveFunction: public TemplatedParameteredObject<T>
+class objectivefunction_DECLDIR ObjectiveFunction: public TemplatedParameteredObject<
+		T>
 {
 
 public:
@@ -75,8 +76,8 @@ public:
 	 *  @param [out] vallue of T which shows the quadratic distance between the
 	 *  range and the computed intensity
 	 */
-	virtual T compare(const std::vector<Pixel<T>* > & pixelList,
-			const std::vector<IncrementorParameter<T>* >& params) =0;
+	virtual T compare(const std::vector<Pixel<T>*> & pixelList,
+			const std::vector<IncrementorParameter<T>*>& params) =0;
 
 };
 

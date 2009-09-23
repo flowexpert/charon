@@ -33,7 +33,6 @@ BlockMatching<T>::BlockMatching(const std::string& name) :
 {
 	this->_addInputSlot(sequence, "sequence", "Sequence of Images",
 			"cimg_library::CImgList<T>& ");
-	this->_addInputSlot(range, "range", "range of interest", "Roi<int>*");
 	this->_addInputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
 			"std::vector<Pixel<T>>*");
 	this->_addInputSlot(newParams, "newParams",

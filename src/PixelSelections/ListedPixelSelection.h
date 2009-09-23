@@ -49,7 +49,7 @@ public:
 	/// standard constructor
 	ListedPixelSelection(const std::string& name);
 	/// creates the List of Pixel out of the sequence of images and the ROI
-	void createListOfPixel (); 
+	void execute();
 };
 
 #endif /* LISTEDPIXELSELEKTION_H_ */

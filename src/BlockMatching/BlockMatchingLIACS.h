@@ -56,7 +56,7 @@ class blockmatchingliacs_DECLDIR BlockMatchingLIACS: public BlockMatching<T>
 private:
 	/// @param paramListForApply vector of Parameters for the apply function 
 	/// from the BrightnessModels and MotionModels
-	std::vector<Parameter<T>* > paramListForApply;
+	std::vector<Parameter<T>*> paramListForApply;
 
 public:
 	/// standard constructor
