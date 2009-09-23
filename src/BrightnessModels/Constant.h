@@ -54,10 +54,10 @@ private:
 	class Functor: public BrightnessFunctorInterface<T>
 	{
 	public:
-		virtual void operator()(cimg_library::CImg<T>& sequence) const
+		virtual void operator()(cimg_library::CImg<T>&) const
 		{
 		}
-		virtual void get3d(cimg_library::CImgList<T>& sequence) const
+		virtual void get3d(cimg_library::CImgList<T>&) const
 		{
 		}
 	} functor;

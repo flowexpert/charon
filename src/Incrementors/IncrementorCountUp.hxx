@@ -26,14 +26,19 @@
 #include <Incrementor.hxx>
 #include <IncrementorParameter.hxx>
 #include "IncrementorCountUp.h"
-#include <Parameter.h>
 #include <set>
-#include <iostream>
 
 template<typename T>
 IncrementorCountUp<T>::IncrementorCountUp(const std::string& name) :
 	Incrementor<T>::Incrementor(name)
 {
+
+}
+
+template<typename T>
+void IncrementorCountUp<T>::execute()
+{
+	ParameteredObject::execute();
 	typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
 			it = this->paramList.begin();
 	typename std::vector<IncrementorParameter<T>*>::iterator itLi =
@@ -46,12 +51,7 @@ IncrementorCountUp<T>::IncrementorCountUp(const std::string& name) :
 		this->listOfParams[j]->setName(this->paramList[j]->getName());
 		j++;
 	}
-}
 
-template<typename T>
-void IncrementorCountUp<T>::execute()
-{
-	ParameteredObject::execute();
 }
 
 template<typename T>

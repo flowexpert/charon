@@ -41,17 +41,16 @@ std::set<std::string>& BrightnessModels::Constant<T>::getUnknowns()
 }
 
 template<class T>
-void BrightnessModels::Constant<T>::compute(const int xs, const int ys,
-		const int zs, const int t, const int v, std::map<std::string, T>& term,
-		T& rhs)
+void BrightnessModels::Constant<T>::compute(const int , const int ,
+		const int , const int , const int , std::map<std::string, T>& ,
+		T&)
 {
 	// no brightness change
 }
 
 template<class T>
 void BrightnessModels::Constant<T>::apply(const Pixel<T> & inPixel,
-		const std::vector<IncrementorParameter<T>*> & modifier,
-		Pixel<T> & outPixel)
+		const std::vector<IncrementorParameter<T>*> &, Pixel<T> & outPixel)
 {
 	outPixel = inPixel;
 	// no brightness change

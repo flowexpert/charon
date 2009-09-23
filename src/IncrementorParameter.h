@@ -23,8 +23,6 @@
 #define INCREMENTORPARAMETER_H_
 
 #include <ParameteredObject.h>
-#include <CImg.h>
-#include <vector>
 
 /// IncrementorParameter saves one parameter to work in Incrementor or 
 /// Brightnessmodels and MotionModels

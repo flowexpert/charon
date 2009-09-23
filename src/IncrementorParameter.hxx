@@ -24,6 +24,7 @@
 #define INCREMENTORPARAMETER_HXX_
 
 #include "IncrementorParameter.h"
+#include <ParameteredObject.hxx>
 
 template<typename T>
 IncrementorParameter<T>::IncrementorParameter(const std::string& name) :

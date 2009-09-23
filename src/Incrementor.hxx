@@ -33,13 +33,13 @@ Incrementor<T>::Incrementor(const std::string& name) :
 				"inside the Image "), paramList(false, true), out(this)
 {
 	this->_addInputSlot(paramList, "paramList",
-			"list of Parameters for Incrementor", "Incrementor Parameter");
-	this->_addOutputSlot(out, "out",
-			"Position in Image after Incrementation", "Incrementor<T>*");
+			"list of Parameters for Incrementor", "IncrementorParameter<T>*");
+	this->_addOutputSlot(out, "out", "Position in Image after Incrementation",
+			"Incrementor<T>*");
 }
 
 template<typename T>
-const std::vector<IncrementorParameter<T>* >& Incrementor<T>::getListOfParams()
+const std::vector<IncrementorParameter<T>*>& Incrementor<T>::getListOfParams()
 {
 	return this->listOfParams;
 }
