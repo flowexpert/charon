@@ -369,6 +369,7 @@ void MainWindow::updateMetadata() {
 
 void MainWindow::compileAndLoad() {
 	try {
+		_centralArea->closeAllSubWindows();
 		FileManager::instance().compileAndLoad(this);
 	} catch (AbstractPluginLoader::PluginException e) {
 		QMessageBox msgBox;

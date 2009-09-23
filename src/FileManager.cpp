@@ -95,6 +95,15 @@ QString FileManager::tempFileName() const {
 }
 
 void FileManager::loadPluginInformation() const {
+	std::string metaPath = _metaPath();
+	std::string oldPath = FileTool::getCurrentDir();
+	FileTool::changeDir(metaPath);
+	std::vector<std::string> wrp_files = FileTool::getFilesWithSuffix(".wrp");
+	for (unsigned int i = 0; i < wrp_files.size(); i++) {
+		FileTool::remove(wrp_files[i]);
+	}
+	FileTool::changeDir(oldPath);
+
 	ParameterFile pf(_paramFile());
 
 	std::string charon_utils_install = pf.get<std::string> (
@@ -219,7 +228,7 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 
 			PluginManager man(getGlobalPluginPath(), getPrivatePluginPath());
 			std::string oldDir = FileTool::getCurrentDir();
-			FileTool::changeDir(_charonUtilsInstall());
+			FileTool::changeDir(_charonCoreInstall());
 			man.compileAndLoadPlugin(fileName.toAscii().data(), libsVector,
 					_metaPath());
 			FileTool::changeDir(oldDir);
@@ -246,6 +255,15 @@ std::string FileManager::_charonUtilsInstall() const {
 	try {
 		ParameterFile pf(_paramFile());
 		return (pf.get<std::string> ("charon-utils-install"));
+	} catch (...) {
+		return "";
+	}
+}
+
+std::string FileManager::_charonCoreInstall() const {
+	try {
+		ParameterFile pf(_paramFile());
+		return (pf.get<std::string> ("charon-core-install"));
 	} catch (...) {
 		return "";
 	}

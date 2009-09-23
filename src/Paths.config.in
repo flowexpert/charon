@@ -1,1 +1,2 @@
 charon-utils-install	@CHARON_UTILS_ROOT_DIR@
+charon-core-install	@CHARON_CORE_ROOT_DIR@

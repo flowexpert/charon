@@ -111,6 +111,11 @@ private:
 	 */
 	std::string _charonUtilsInstall() const;
 
+	/**
+	 * @return Path to the charon-core install
+	 */
+	std::string _charonCoreInstall() const;
+
 	~FileManager();
 
 	/// pointer to FileManager instance
