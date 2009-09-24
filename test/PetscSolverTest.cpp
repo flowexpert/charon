@@ -35,12 +35,14 @@
 int main() {
 	//create all necessary objects
 	FileReader<float> reader;
+	ChannelConverter<float> converter;
 	bin2<float> derivative;
 	Constant<float> brightnessConst;
 	LocalConstant<float> motionConstant;
 	Gbcce<float> gbcce;
 	L2Norm<float> l2norm;
 	PetscSolver<float> solver;
+	FileWriter<float> writer;
 	
 	return 0;
 }
