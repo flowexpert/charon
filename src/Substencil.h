@@ -37,7 +37,7 @@ class SubStencil
 	public:
 		cimg_library::CImg<T> data;
 		cimg_library::CImg<char> pattern;
-		Point4D<int> center;
+		Point4D<unsigned int> center;
 		
 		///empty constructor (for use in std::map)
 		SubStencil();
@@ -45,7 +45,7 @@ class SubStencil
 		///default constructor
 		SubStencil(const unsigned int dimx, const unsigned int dimy,
 		           const unsigned int dimz, const unsigned int dimt,
-		           Point4D<int> center);
+		           Point4D<unsigned int> center);
 		
 		///copy constructor
 		SubStencil(const SubStencil &rhs);

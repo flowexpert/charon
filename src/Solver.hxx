@@ -43,10 +43,10 @@ Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<
 		typename std::map<std::string, SubStencil<T> >::const_iterator ssIt;	//SubStencil iterator
 		ssIt = (*sIt)->get().find(unknown);
 		//setting work-variable for better reading
-		int centerx = ssIt->second.center.x;
-		int centery = ssIt->second.center.y;
-		int centerz = ssIt->second.center.z;
-		int centert = ssIt->second.center.t;
+		unsigned int centerx = ssIt->second.center.x;
+		unsigned int centery = ssIt->second.center.y;
+		unsigned int centerz = ssIt->second.center.z;
+		unsigned int centert = ssIt->second.center.t;
 		
 		//Measuring the SubStencil that is currently being added
 		//to the MetaStencil
@@ -59,7 +59,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<
 		
 		//positioning of the center of the meta stencil
 		//it is important to understand, that the center can
-		//onle "wander" in positive directions - no more fancy
+		//onle move in positive directions - no more fancy
 		//checks and calculations are needed.
 		if (centerx > this->center.x) {this->center.x = centerx;}
 		if (centery > this->center.y) {this->center.y = centery;}

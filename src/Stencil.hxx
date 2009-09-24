@@ -38,20 +38,12 @@ Stencil<T>::Stencil(const std::string& classname, const std::string& name) :
 	this->_addParameter(lambda,"lambda","weight of the pde term",T(1));
 }
 
-template <class T> 
-void Stencil<T>::updateStencil(const unsigned int x, const unsigned int y,
-                                       const unsigned int z, const unsigned int t,
-                                       const unsigned int v) {}
 
 template <class T>
 const std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {return this->substencils;}
 
 template <class T>
 const std::map<std::string, T>& Stencil<T>::getRhs() const {return rhs;}
-
-template <class T>
-cimg_library::CImgList<T>& Stencil<T>::apply(const cimg_library::CImgList<T>& seq,
-                                                     const unsigned int frame) const {}
 
 template <class T>
 const std::set<std::string>& Stencil<T>::getUnknowns() const {return unknowns;}

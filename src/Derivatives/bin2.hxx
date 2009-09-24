@@ -42,7 +42,7 @@ void bin2<T>::execute()
 	{
 		this->dx()->assign(this->img()->size);
 		cimg_library::CImg<T> f(3,1,1,1,0.5,0.0,-0.5);
-		for (int t=0; t < this->img()->size; t++)
+		for (unsigned int t=0; t < this->img()->size; t++)
 			(*this->dx())[t]=(*this->img())[t].get_convolve(f);
 		
 	}
@@ -50,7 +50,7 @@ void bin2<T>::execute()
 	{
 		this->dy()->assign(this->img()->size);
 		cimg_library::CImg<T> f(1,3,1,1,0.5,0.0,-0.5);
-		for (int t=0; t < this->img()->size; t++)
+		for (unsigned int t=0; t < this->img()->size; t++)
 			(*this->dy())[t]=(*this->img())[t].get_convolve(f);
 		
 	}
@@ -58,7 +58,7 @@ void bin2<T>::execute()
 	{
 		this->dz()->assign(this->img()->size);
 		cimg_library::CImg<T> f(1,1,3,1,0.5,0.0,-0.5);
-		for (int t=0; t < this->img()->size; t++)
+		for (unsigned int t=0; t < this->img()->size; t++)
 			(*this->dz())[t]=(*this->img())[t].get_convolve(f);
 		
 	}
@@ -66,7 +66,7 @@ void bin2<T>::execute()
 	{
 		this->dt()->assign(this->img()->size);
 		cimg_library::CImg<T> f(1,1,1,3,0.5,0.0,-0.5);
-		for (int t=0; t < this->img()->size; t++)
+		for (unsigned int t=0; t < this->img()->size; t++)
 			(*this->dt())[t]=(*this->img())[t].get_convolve(f);
 	}
 }

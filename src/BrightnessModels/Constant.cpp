@@ -26,6 +26,7 @@
 #include "Constant.hxx"
 
 #if defined(MSVC) && defined (brightnessmodels_constant_EXPORTS)
+#define brightnessmodel_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

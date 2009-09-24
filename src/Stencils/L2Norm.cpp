@@ -29,6 +29,7 @@
 #include "L2Norm.hxx"
 
 #if defined(MSVC) && defined (l2norm_EXPORTS)
+#define stencil_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

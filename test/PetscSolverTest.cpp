@@ -29,10 +29,18 @@
 #include <Constant.hxx>
 #include <LocalConstant.hxx>
 #include <bin2.hxx>
+#include <ChannelConverter.hxx>
 #include <FileReader.hxx>
 
 int main() {
-	
+	//create all necessary objects
+	FileReader<float> reader;
+	bin2<float> derivative;
+	Constant<float> brightnessConst;
+	LocalConstant<float> motionConstant;
+	Gbcce<float> gbcce;
+	L2Norm<float> l2norm;
+	PetscSolver<float> solver;
 	
 	return 0;
 }

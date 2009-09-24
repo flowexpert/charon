@@ -32,7 +32,7 @@
 
 template <class T>
 Gbcce<T>::Gbcce(const std::string& name) : 
-		Stencil<T>("GBCCE") {
+		Stencil<T>("GBCCE", name) {
 	this->_addInputSlot(brightnessIn,"brightnessmodel","Brightness Model","BrightnessModel*");
 	this->_addInputSlot(motionIn,"motionmodel","Motion Model","MotionModel*");
 }
@@ -66,7 +66,7 @@ void Gbcce<T>::execute() {
 	//values
 	std::set<std::string>::iterator uIt;
 	for(uIt=this->unknowns.begin();uIt!=this->unknowns.end();uIt++) {
-		Point4D<int> center(0,0,0,0);
+		Point4D<unsigned int> center(0,0,0,0);
 		SubStencil<T> entry(1,1,1,1,center);
 		entry.pattern(0,0) = 1;
 		this->substencils[*uIt] = entry;
@@ -87,6 +87,12 @@ void Gbcce<T>::updateStencil(const unsigned int x,const unsigned int y,
 		this->rhs[termIt->first] = rhsV * termIt->second * this->lambda();
 	}
 }
+
+//not yet implemented
+template <class T>
+cimg_library::CImgList<T>& Gbcce<T>::apply(const cimg_library::CImgList<T>& seq,
+                                           const unsigned int frame) const {}
+
 
 template <class T>
 Gbcce<T>::~Gbcce() {}

@@ -32,7 +32,7 @@
 
 template <class T>
 L2Norm<T>::L2Norm(const std::string& name) : 
-		Stencil<T>("L2Norm") {
+		Stencil<T>("L2Norm", name) {
 	this->_addParameter(pUnknowns, "unknowns", "List of unknowns");
 	this->dimensions.setDefault(2);
 	this->_addParameter(dimensions, "dimensions", "Number of dimensions");
@@ -175,11 +175,15 @@ void L2Norm<T>::execute() {
 }
 
 template <class T>		
-void L2Norm<T>::updateStencil(const unsigned int x, const unsigned int y,
-                              const unsigned int z, const unsigned int t,
-                              const unsigned int v) {
+void L2Norm<T>::updateStencil(const unsigned int, const unsigned int,
+                              const unsigned int, const unsigned int,
+                              const unsigned int) {
 	//Nothing to do since all the data is static.
 }
+
+template <class T>
+cimg_library::CImgList<T>& L2Norm<T>::apply(const cimg_library::CImgList<T>& seq,
+                                            const unsigned int frame) const {}
 
 template <class T>
 L2Norm<T>::~L2Norm() {}

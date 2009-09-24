@@ -23,6 +23,18 @@
 #ifndef _DERIVATIVE_H_
 #define _DERIVATIVE_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef derivative_EXPORTS
+///Visual C++ specific code
+#define derivative_DECLDIR __declspec(dllexport)
+#else
+#define derivative_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define derivative_DECLDIR
+#endif
+
 #include <CImg.h>
 #include <ParameteredObject.hxx>
 

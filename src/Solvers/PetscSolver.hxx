@@ -36,7 +36,7 @@ template <class T>
 PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(const std::string unknown,
                                                    const std::vector<Stencil<T>* >& stencils) :
 		Solver<T>::MetaStencil(unknown,stencils) {
-	for (int i = 0 ; i < this->substencils.size() ; i++) {
+	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
 		//Calculating offsets
 		int xo = this->center.x - this->substencils[i]->center.x;
 		int yo = this->center.y - this->substencils[i]->center.y;
@@ -78,7 +78,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(const std::string unknown,
                                          PetscInt* &columns, PetscScalar* &values) {
 	//first, copy all data from the SubStencils into
 	//the CImg data object of the MetaStencil
-	for (int i = 0 ; i < this->substencils.size() ; i++) {
+	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
 		//Calculating offsets
 		int xo = this->center.x - this->substencils[i]->center.x;
 		int yo = this->center.y - this->substencils[i]->center.y;
@@ -107,7 +107,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(const std::string unknown,
 	//and its value to PetscScalar *values
 	std::set<Point4D<int> >::iterator pIt=this->pattern.begin(); //pattern Iterator
 	//for all Point4Ds in this->pattern
-	for(int i=0 ; i < this->pattern.size() ; i++,pIt++) {
+	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
 		columns[i] = PetscSolver<T>::pointToGlobalIndex(*pIt+p,unknown,unknownSizes);
 		values[i] = this->data(pIt->x, pIt->y,pIt->z,pIt->t);
 	}
@@ -231,7 +231,7 @@ Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) {
 
 template <class T>
 PetscSolver<T>::PetscSolver(const std::string& name) : 
-		Solver<T>("PetscSolver") {
+		Solver<T>("PetscSolver", name) {
 	this->columns=NULL;
 	this->values=NULL;
 }
@@ -243,7 +243,7 @@ bool PetscSolver<T>::isRankZero() {
 	if(!initialized) //just output everything if MPI is not yet initialized
 		return true;
 	
-	PetscMPIInt rank;
+	int rank;
 	MPI_Comm_rank(PETSC_COMM_WORLD,&rank); //WARNING: this line crashes, if petsc was not initialized!
 	return !rank;
 }

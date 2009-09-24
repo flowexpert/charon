@@ -43,7 +43,7 @@ void ChannelConverter<T>::execute() {
 	//what we want is a CImgList that splits the sequence by channel into seperate
 	//CImg objects.
 	out().assign(in()[0].dimv(),in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in().size);
-	for(int t=0; t<in().size; t++) {
+	for(unsigned int t=0; t<in().size; t++) {
 		for(int v=0; v<in()[t].dimv(); v++) {
 			for(int z=0; z<in()[t].dimz(); z++) {
 				for(int y=0; y<in()[t].dimy(); y++) {

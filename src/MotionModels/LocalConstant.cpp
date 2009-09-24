@@ -26,6 +26,7 @@
 #include "LocalConstant.hxx"
 
 #if defined(MSVC) && defined (motionmodels_localconstant_EXPORTS)
+#define motionmodel_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

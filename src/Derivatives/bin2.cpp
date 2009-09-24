@@ -28,6 +28,7 @@
 #include "bin2.hxx"
 
 #if defined(MSVC) && defined (bin2_EXPORTS)
+#define derivative_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

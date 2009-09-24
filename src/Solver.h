@@ -71,7 +71,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				 * Set of points that belong to this MetaStencil.
 				 * @remark The size of the MetaStencil has to be extracted from the pattern.
 				 */
-				std::set<Point4D<int> > pattern;
+				std::set<Point4D<unsigned int> > pattern;
 								
 				///@todo changed int -> unsigned int - re-check code to avoid hiccups
 				//expansions in all 8 directions
@@ -80,7 +80,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				unsigned int backward   , forward;	//z (backward is negative, forward is positive)
 				unsigned int before     , after;	//t (before is negative, after is positive)
 				
-				Point4D<int> center;				//coordinates of the center of the meta stencil
+				Point4D<unsigned int> center;		//coordinates of the center of the meta stencil
 			public:
 				///default constructor
 				MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils);
@@ -96,7 +96,7 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 				
 				//the only necessary getter to determine the maximum number of
 				//entries.
-				virtual std::set<Point4D<int> >& getPattern();
+				virtual std::set<Point4D<unsigned int> >& getPattern();
 				
 				//Your implementation of the MetaStencil will need a function
 				//to gather the data from the different SubStencils and present

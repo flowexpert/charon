@@ -27,6 +27,7 @@
 #include "PetscSolver.hxx"
 
 #if defined(MSVC) && defined (petscsolver_EXPORTS)
+#define solver_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

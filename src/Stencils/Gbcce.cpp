@@ -29,6 +29,7 @@
 #include "Gbcce.hxx"
 
 #if defined(MSVC) && defined (gbcce_EXPORTS)
+#define stencil_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC
