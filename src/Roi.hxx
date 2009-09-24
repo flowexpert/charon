@@ -94,7 +94,7 @@ T Roi<T>::getDepth() const {
 
 template <typename T>
 T Roi<T>::getDuration() const {
-	return before() - after();
+	return after() - before();
 }
 
 template<typename T>
