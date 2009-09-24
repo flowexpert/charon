@@ -20,13 +20,13 @@ IF(ENABLE_TEST)
 		ENDIF(UNIX)
 	ENDIF(COMPILE_BLOCKMATCHING)
 	IF(COMPILE_SOLVER)
-		# tests for imgmanip classes
+		# tests for solver classes
 #		ADD_DEFINITIONS(-DPENGUINFILE="${CMAKE_CURRENT_SOURCE_DIR}/Penguin.cimg")
 #		ADD_DEFINITIONS(-DPENGUINHEADFILE="${CMAKE_CURRENT_SOURCE_DIR}/sequence.cimg")
 		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
 		TARGET_LINK_LIBRARIES(petscsolvertest charon-core roi filereader)
 		IF(UNIX)
-			TARGET_LINK_LIBRARIES(listedpixelselectiontest pthread ${X11_LIBRARIES})
+			TARGET_LINK_LIBRARIES(petscsolvertest pthread ${X11_LIBRARIES})
 		ENDIF(UNIX)
 	ENDIF(COMPILE_SOLVER)
 

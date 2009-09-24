@@ -57,8 +57,8 @@ class l2norm_DECLDIR L2Norm : public Stencil<T>
 		                           const unsigned int, const unsigned int,
 		                           const unsigned int);
 		                   
-		virtual cimg_library::CImgList<T>& apply(const cimg_library::CImgList<T>& seq,
-		                                         const unsigned int frame) const;
+		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
+		                                    const unsigned int frame) const;
 		
 		virtual ~L2Norm();
 };

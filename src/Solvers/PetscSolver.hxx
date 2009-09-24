@@ -35,33 +35,7 @@
 template <class T>
 PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(const std::string unknown,
                                                    const std::vector<Stencil<T>* >& stencils) :
-		Solver<T>::MetaStencil(unknown,stencils) {
-	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
-		//Calculating offsets
-		int xo = this->center.x - this->substencils[i]->center.x;
-		int yo = this->center.y - this->substencils[i]->center.y;
-		int zo = this->center.z - this->substencils[i]->center.z;
-		int to = this->center.t - this->substencils[i]->center.t;
-		//saving the offset as Point4D for later convennience
-		Point4D<int> offset(xo,yo,zo,to);
-		
-		//Iterate through all pixels of the SubStencil...
-		for (int tc=0 ; tc < this->substencils[i]->pattern.dimv() ; tc++) {
-			for (int zc=0 ; zc < this->substencils[i]->pattern.dimz() ; zc++) {
-				for (int yc=0 ; yc < this->substencils[i]->pattern.dimy() ; yc++) {
-					for (int xc=0 ; xc < this->substencils[i]->pattern.dimx() ; xc++) {
-						//...and set the pattern into the
-						//MetaStencil (with offset).
-						if (this->substencils[i]->pattern(xc,yc,zc,tc)) {
-							Point4D<int> p(xc,yc,zc,tc);
-							this->pattern.insert(p+offset);
-						}
-					}
-				}
-			}
-		}
-	}
-}
+		Solver<T>::MetaStencil(unknown,stencils) {}
 
 template <class T>
 PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(const PetscMetaStencil& rhs) :
@@ -73,7 +47,7 @@ PetscSolver<T>::PetscMetaStencil::PetscMetaStencil() :
 
 template <class T>
 unsigned int PetscSolver<T>::PetscMetaStencil::update(const std::string unknown,
-                                         const Point4D<int>& p,
+                                         const Point4D<unsigned int>& p,
                                          const std::map<std::string,Roi<int>* >& unknownSizes,
                                          PetscInt* &columns, PetscScalar* &values) {
 	//first, copy all data from the SubStencils into
@@ -84,8 +58,6 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(const std::string unknown,
 		int yo = this->center.y - this->substencils[i]->center.y;
 		int zo = this->center.z - this->substencils[i]->center.z;
 		int to = this->center.t - this->substencils[i]->center.t;
-		//saving the offset as Point4D for later convennience
-		Point4D<int> offset(xo,yo,zo,to);
 		
 		//Iterate through all pixels of the SubStencil...
 		for (int tc=0 ; tc < this->substencils[i]->data.dimv() ; tc++) {
@@ -105,7 +77,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(const std::string unknown,
 	//into this->data. For all the Point4Ds, which are in
 	//this->pattern, we need to add the index to PetscInt *columns
 	//and its value to PetscScalar *values
-	std::set<Point4D<int> >::iterator pIt=this->pattern.begin(); //pattern Iterator
+	std::set<Point4D<unsigned int> >::iterator pIt = this->pattern.begin(); //pattern Iterator
 	//for all Point4Ds in this->pattern
 	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
 		columns[i] = PetscSolver<T>::pointToGlobalIndex(*pIt+p,unknown,unknownSizes);
@@ -244,7 +216,7 @@ bool PetscSolver<T>::isRankZero() {
 		return true;
 	
 	int rank;
-	MPI_Comm_rank(PETSC_COMM_WORLD,&rank); //WARNING: this line crashes, if petsc was not initialized!
+	MPI_Comm_rank(PETSC_COMM_WORLD, &rank); //WARNING: this line crashes, if petsc was not initialized!
 	return !rank;
 }
 
@@ -357,7 +329,7 @@ int PetscSolver<T>::petscExecute() {
 	Vec				x, b;	//x: approx. solution, b: right hand side
 	Mat				A;		//A: Linear System Matrix
 	KSP				ksp;	//KSP context
-	PC				pc;		//PC context
+//	PC				pc;		//PC context
 	PetscErrorCode	ierr;	//PETSc Error code for error-traceback
 	PetscInt		j;		//j: row index
 	PetscInt		Istart, Iend;	//Ownership range
@@ -394,15 +366,15 @@ int PetscSolver<T>::petscExecute() {
 		//First, determine whether the point that corresponds to this
 		//row is a ghost node or 'real point'
 		if (this->roi()->isInside(p.x, p.y, p.z, p.t)) { //Real point:
+			//if it is a real point, we have positive coordinates and thus can
+			//cast without messing things up.
+			p = Point4D<unsigned int>(p);
 			//Update all stencils of the unknown to contain current data
 			int nos = (int)substencils[unknown].size();	//number of stencils
 			PetscScalar rhs;	//right hand side
 			for (int index = 0 ; index < nos ; index++) {
 				substencils.find(unknown)->second[index]->updateStencil(p.x, p.y, p.z, p.t);
-				rhs += PetscScalar(substencils.find(unknown)->
-				second[index]->
-				getRhs().find(unknown)->
-				second);
+				rhs += PetscScalar(substencils.find(unknown)->second[index]->getRhs().find(unknown)->second);
 			}
 			//now call the MetaStencil of this unknown to gather all the
 			//data of its SubStencils (which have just been updated) and

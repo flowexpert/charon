@@ -58,8 +58,8 @@ class gbcce_DECLDIR Gbcce : public Stencil<T>
 		                   const unsigned int z=0, const unsigned int t=0,
 		                   const unsigned int v=0);
 		                   
-		virtual cimg_library::CImgList<T>& apply(const cimg_library::CImgList<T>& seq,
-		                                         const unsigned int frame) const;
+		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
+		                                    const unsigned int frame) const;
 
 		
 		virtual ~Gbcce();

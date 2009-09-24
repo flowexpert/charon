@@ -74,7 +74,7 @@ class petscsolver_DECLDIR PetscSolver : public Solver<T>
 				 * @return Number of entries.
 				 */
 				unsigned int update(const std::string unknown,
-				                    const Point4D<int>& p,
+				                    const Point4D<unsigned int>& p,
 				                    const std::map<std::string,Roi<int>* >& unknownSizes,
 				                    PetscInt* &columns, PetscScalar* &values);
 		};

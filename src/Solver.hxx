@@ -90,7 +90,29 @@ Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<
 	int dimy=up+1+down;
 	int dimz=backward+1+forward;
 	int dimt=before+1+after;
-	data.assign(dimx, dimy, dimz, dimt, 0);	//initializing with 0 is important!
+	this->data.assign(dimx, dimy, dimz, dimt, 0);	//initializing with 0 is important!
+	
+	//filling the pattern
+	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
+		//saving the offset as Point4D for later convennience
+		Point4D<unsigned int> offset = this->center - this->substencils[i]->center;
+		
+		//Iterate through all pixels of the SubStencil...
+		for (int tc=0 ; tc < this->substencils[i]->pattern.dimv() ; tc++) {
+			for (int zc=0 ; zc < this->substencils[i]->pattern.dimz() ; zc++) {
+				for (int yc=0 ; yc < this->substencils[i]->pattern.dimy() ; yc++) {
+					for (int xc=0 ; xc < this->substencils[i]->pattern.dimx() ; xc++) {
+						//...and set the pattern into the
+						//MetaStencil (with offset).
+						if (this->substencils[i]->pattern(xc,yc,zc,tc)) {
+							Point4D<unsigned int> p(xc,yc,zc,tc);
+							this->pattern.insert(p+offset);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 				
 ///copy constructor

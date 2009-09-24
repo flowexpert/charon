@@ -42,14 +42,14 @@ void Sobel<T>::execute()
 	if (this->dx.connected())
 	{
 		*(this->dx()) = cimg_library::CImgList<T>(this->img()->size);
-		for (int t=0; t<this->img()->size; t++)
+		for (unsigned int t=0; t<this->img()->size; t++)
 			(*this->dx())[t]=(*this->img())[t].get_convolve(this->filterx);		
 	}
 	
 	if (this->dy.connected())
 	{
 		*(this->dy()) = cimg_library::CImgList<T>(this->img()->size);
-		for (int t=0; t<this->img()->size; t++)
+		for (unsigned int t=0; t<this->img()->size; t++)
 			(*this->dy())[t]=(*this->img())[t].get_convolve(this->filtery);
 	}
 }

@@ -92,7 +92,7 @@ public:
 	void setFlowFunctorParams(const float a1, const float a2, const float a3);
 
 	virtual void apply(const Pixel<T> & inPixel, const std::vector<
-			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel);
+			IncrementorParameter<T>*> & /*modifier*/, Pixel<T> & outPixel);
 
 };
 

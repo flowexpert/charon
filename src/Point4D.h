@@ -43,15 +43,31 @@ class Point4D
 		Point4D(T x, T y, T z, T t) : x(x), y(y), z(z), t(t) {}
 		
 		///copy constructor
-		Point4D(const Point4D &rhs) {
+		Point4D(const Point4D<T> &rhs) {
 			this->x = rhs.x;
 			this->y = rhs.y;
 			this->z = rhs.z;
 			this->t = rhs.t;
 		}
 		
+		operator Point4D<int>() {
+			this->x = (int)this->x;
+			this->y = (int)this->y;
+			this->z = (int)this->z;
+			this->t = (int)this->t;
+			return *this;
+		}
+		
+		operator Point4D<unsigned int>() {
+			this->x = (unsigned int)this->x;
+			this->y = (unsigned int)this->y;
+			this->z = (unsigned int)this->z;
+			this->t = (unsigned int)this->t;
+			return *this;
+		}
+				
 		///assignment operator
-		Point4D& operator= (const Point4D &rhs) {
+		Point4D& operator= (const Point4D<T> &rhs) {
 			if(&rhs == this) {return *this;}
 			this->x = rhs.x;
 			this->y = rhs.y;
@@ -61,7 +77,7 @@ class Point4D
 		}
 		
 		///compound addition operator
-		Point4D& operator+= (const Point4D &rhs) {
+		Point4D<T>& operator+= (const Point4D<T> &rhs) {
 			this->x += rhs.x;
 			this->y += rhs.y;
 			this->z += rhs.z;
@@ -70,7 +86,7 @@ class Point4D
 		}
 		
 		///compound subtraction operator
-		Point4D& operator-= (const Point4D &rhs) {
+		Point4D<T>& operator-= (const Point4D<T> &rhs) {
 			this->x -= rhs.x;
 			this->y -= rhs.y;
 			this->z -= rhs.z;
@@ -79,17 +95,17 @@ class Point4D
 		}
 		
 		///addition operator
-		Point4D& operator+ (const Point4D &rhs) const {
+		Point4D<T>& operator+ (const Point4D<T> &rhs) const {
 			return Point4D(*this) += rhs;
 		}
 		
 		///subtraction operator
-		Point4D& operator- (const Point4D &rhs) const {
+		Point4D<T>& operator- (const Point4D<T> &rhs) const {
 			return Point4D(*this) -= rhs;
 		}
 		
 		///comparison operator
-		bool operator< (const Point4D &rhs) const {
+		bool operator< (const Point4D<T> &rhs) const {
 			if (this->t < rhs.t) {return true;} else if (this->t > rhs.t) {return false;}
 			if (this->z < rhs.z) {return true;} else if (this->z > rhs.z) {return false;}
 			if (this->y < rhs.y) {return true;} else if (this->y > rhs.y) {return false;}
@@ -100,7 +116,7 @@ class Point4D
 			return false;
 		}
 		
-		bool operator> (const Point4D &rhs) const {
+		bool operator> (const Point4D<T> &rhs) const {
 			if (this->t > rhs.t) {return true;} else if (this->t < rhs.t) {return false;}
 			if (this->z > rhs.z) {return true;} else if (this->z < rhs.z) {return false;}
 			if (this->y > rhs.y) {return true;} else if (this->y < rhs.y) {return false;}
@@ -111,15 +127,15 @@ class Point4D
 			return false;
 		}
 		
-		bool operator== (const Point4D &rhs) const {
+		bool operator== (const Point4D<T> &rhs) const {
 			return ((this->x == rhs.x) && (this->y == rhs.y) && (this->z == rhs.z) && (this->t == rhs.t));
 		}
 		
-		bool operator<= (const Point4D &rhs) const {
+		bool operator<= (const Point4D<T> &rhs) const {
 			return (*this < rhs || *this == rhs);
 		}
 		
-		bool operator>= (const Point4D &rhs) const {
+		bool operator>= (const Point4D<T> &rhs) const {
 			return (*this > rhs || *this == rhs);
 		}
 		
