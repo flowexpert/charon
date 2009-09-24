@@ -23,8 +23,6 @@
 ///Class name of the plugin
 #define TYPE ObjectiveFunctionComparing
 
-#include "ObjectiveFunctionComparing.hxx"
-
 #if defined(MSVC) && defined (objectivefunctioncomparing_EXPORTS)
 #define objectivefunction_EXPORTS
 #define DECLDIR __declspec(dllexport)
@@ -32,6 +30,8 @@
 ///Not needed with GCC
 #define DECLDIR
 #endif
+
+#include "ObjectiveFunctionComparing.hxx"
 
 ///Creates an instance of the plugin
 extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {

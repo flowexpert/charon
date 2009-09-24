@@ -23,8 +23,6 @@
 ///Class name of the plugin
 #define TYPE ListedPixelSelection
 
-#include "ListedPixelSelection.hxx"
-
 #if defined(MSVC) && defined (listedpixelselection_EXPORTS)
 #define pixelselection_EXPORTS
 #define DECLDIR __declspec(dllexport)
@@ -32,6 +30,8 @@
 ///Not needed with GCC
 #define DECLDIR
 #endif
+
+#include "ListedPixelSelection.hxx"
 
 ///Creates an instance of the plugin
 extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {

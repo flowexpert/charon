@@ -23,8 +23,6 @@
 ///Class name of the plugin
 #define TYPE BlockMatchingLIACS
 
-#include "BlockMatchingLIACS.hxx"
-
 #if defined(MSVC) && defined (blockmatchingliacs_EXPORTS)
 #define blockmatching_EXPORTS
 #define DECLDIR __declspec(dllexport)
@@ -32,6 +30,8 @@
 ///Not needed with GCC
 #define DECLDIR
 #endif
+
+#include "BlockMatchingLIACS.hxx"
 
 ///Creates an instance of the plugin
 extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {

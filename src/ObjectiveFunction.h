@@ -57,14 +57,14 @@ public:
 	/// inputslot for the list of pixel from PixelSelection
 	InputSlot<std::vector<Pixel<T> > *> pixelList;
 	/// inputslot from BrightnessModel
-	InputSlot<BrightnessModel<T>*> brightnessModel;
+	InputSlot<BrightnessModel<T> *> brightnessModel;
 	/// inputslot from MotionModel
-	InputSlot<MotionModel<T>*> motionModel;
+	InputSlot<MotionModel<T> *> motionModel;
 	/// inputslot from Interpolator
-	InputSlot<Interpolator<T>*> interpolator;
+	InputSlot<Interpolator<T> *> interpolator;
 	/// this outputslot
 	OutputSlot<ObjectiveFunction<T> *> out;
-	///standard execute methode from ParameteredObject
+	/// standard execute methode from ParameteredObject
 	void execute();
 
 	/**

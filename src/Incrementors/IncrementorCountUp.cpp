@@ -23,8 +23,6 @@
 ///Class name of the plugin
 #define TYPE IncrementorCountUp
 
-#include "IncrementorCountUp.hxx"
-
 #if defined(MSVC) && defined (incrementorcountup_EXPORTS)
 #define incrementor_EXPORTS
 #define DECLDIR __declspec(dllexport)
@@ -32,6 +30,8 @@
 ///Not needed with GCC
 #define DECLDIR
 #endif
+
+#include "IncrementorCountUp.hxx"
 
 ///Creates an instance of the plugin
 extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
