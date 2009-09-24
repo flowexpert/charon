@@ -24,8 +24,6 @@
  */
 #define TYPE PetscSolver
 
-#include "PetscSolver.hxx"
-
 #if defined(MSVC) && defined (petscsolver_EXPORTS)
 #define solver_EXPORTS
 #define DECLDIR __declspec(dllexport)
@@ -33,6 +31,8 @@
 ///Not needed with GCC
 #define DECLDIR
 #endif
+
+#include "PetscSolver.hxx"
 
 extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {

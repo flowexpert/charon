@@ -16,14 +16,12 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /// @file Constant.cpp
-/// This file is needed for the Constant class to work as a plugin.
+/// This file is needed for the Roi class to work as a plugin.
 /// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 24.08.2009
 
 ///Class name of the plugin
 #define TYPE BrightnessModels::Constant
-
-#include "Constant.hxx"
 
 #if defined(MSVC) && defined (brightnessmodels_constant_EXPORTS)
 #define brightnessmodel_EXPORTS
@@ -32,6 +30,8 @@
 ///Not needed with GCC
 #define DECLDIR
 #endif
+
+#include "Constant.hxx"
 
 ///Creates an instance of the plugin
 extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {

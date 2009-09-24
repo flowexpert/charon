@@ -26,8 +26,6 @@
 
 #define TYPE L2Norm
 
-#include "L2Norm.hxx"
-
 #if defined(MSVC) && defined (l2norm_EXPORTS)
 #define stencil_EXPORTS
 #define DECLDIR __declspec(dllexport)
@@ -35,6 +33,8 @@
 ///Not needed with GCC
 #define DECLDIR
 #endif
+
+#include "L2Norm.hxx"
 
 extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {

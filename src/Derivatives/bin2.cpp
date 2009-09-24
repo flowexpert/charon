@@ -25,8 +25,6 @@
 
 #define TYPE bin2
 
-#include "bin2.hxx"
-
 #if defined(MSVC) && defined (bin2_EXPORTS)
 #define derivative_EXPORTS
 #define DECLDIR __declspec(dllexport)
@@ -34,6 +32,8 @@
 ///Not needed with GCC
 #define DECLDIR
 #endif
+
+#include "bin2.hxx"
 
 extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {

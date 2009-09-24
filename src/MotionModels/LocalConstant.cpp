@@ -16,14 +16,12 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /// @file LocalConstant.cpp
-/// This file is needed for the LocalConstant class to work as a plugin.
+/// This file is needed for the Roi class to work as a plugin.
 /// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 24.08.2009
 
 ///Class name of the plugin
 #define TYPE MotionModels::LocalConstant
-
-#include "LocalConstant.hxx"
 
 #if defined(MSVC) && defined (motionmodels_localconstant_EXPORTS)
 #define motionmodel_EXPORTS
@@ -32,6 +30,8 @@
 ///Not needed with GCC
 #define DECLDIR
 #endif
+
+#include "LocalConstant.hxx"
 
 ///Creates an instance of the plugin
 extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {

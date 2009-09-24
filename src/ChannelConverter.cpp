@@ -24,7 +24,6 @@
  */
 #define TYPE ChannelConverter
 
-#include "ChannelConverter.hxx"
 
 #if defined(MSVC) && defined (channelconverter_EXPORTS)
 #define DECLDIR __declspec(dllexport)
@@ -32,6 +31,8 @@
 ///Not needed with GCC
 #define DECLDIR
 #endif
+
+#include "ChannelConverter.hxx"
 
 extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {

@@ -63,7 +63,7 @@ void L2Norm<T>::execute() {
 			break;
 	}
 	
-	Point4D<int> center;
+	Point4D<unsigned int> center;
 	
 	//filling mask with values and setting the center
 	if (dimensions == 1) {
@@ -75,10 +75,10 @@ void L2Norm<T>::execute() {
 		patternMask(1) = 1;
 		patternMask(2) = 1;
 		
-		center.x=1;
-		center.y=0;
-		center.z=0;
-		center.t=0;
+		center.x=1u;
+		center.y=0u;
+		center.z=0u;
+		center.t=0u;
 	} else if (dimensions == 2) {
 		dataMask(1,0) += T(-1 * this->lambda());
 		dataMask(0,1) += T(-1 * this->lambda());
@@ -92,10 +92,10 @@ void L2Norm<T>::execute() {
 		patternMask(2,1) = 1;
 		patternMask(1,2) = 1;
 		
-		center.x=1;
-		center.y=1;
-		center.z=0;
-		center.t=0;
+		center.x=1u;
+		center.y=1u;
+		center.z=0u;
+		center.t=0u;
 	} else if (dimensions == 3) {
 		dataMask(1,1,0) += T(-1 * this->lambda());
 		dataMask(1,0,1) += T(-1 * this->lambda());
@@ -113,10 +113,10 @@ void L2Norm<T>::execute() {
 		patternMask(1,2,1) = 1;
 		patternMask(1,1,2) = 1;
 		
-		center.x=1;
-		center.y=1;
-		center.z=1;
-		center.t=0;
+		center.x=1u;
+		center.y=1u;
+		center.z=1u;
+		center.t=0u;
 	} else if (dimensions == 4) {
 		dataMask(1,1,1,0) += T(-1 * this->lambda());
 		dataMask(1,1,0,1) += T(-1 * this->lambda());
@@ -138,10 +138,10 @@ void L2Norm<T>::execute() {
 		patternMask(1,1,2,1) = 1;
 		patternMask(1,1,1,2) = 1;
 		
-		center.x=1;
-		center.y=1;
-		center.z=1;
-		center.t=1;
+		center.x=1u;
+		center.y=1u;
+		center.z=1u;
+		center.t=1u;
 	}
 	//Copy the unknowns form the Parameter list into the set, which was
 	//inherited from the Stencil class
@@ -156,16 +156,16 @@ void L2Norm<T>::execute() {
 		SubStencil<T>* entry;
 		switch(dimensions) {
 			case 1:
-				entry = new SubStencil<T>(3,1,1,1,center);
+				entry = new SubStencil<T>(3u,1u,1u,1u,center);
 				break;
 			case 2:
-				entry = new SubStencil<T>(3,3,1,1,center);
+				entry = new SubStencil<T>(3u,3u,1u,1u,center);
 				break;
 			case 3:
-				entry = new SubStencil<T>(3,3,3,1,center);
+				entry = new SubStencil<T>(3u,3u,3u,1u,center);
 				break;
 			case 4:
-				entry = new SubStencil<T>(3,3,3,3,center);
+				entry = new SubStencil<T>(3u,3u,3u,3u,center);
 				break;
 		}
 		entry->data = dataMask;

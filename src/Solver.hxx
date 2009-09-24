@@ -136,7 +136,7 @@ typename Solver<T>::MetaStencil& Solver<T>::MetaStencil::operator=(Solver<T>::Me
 //the only necessary getter to determine the maximum number of
 //entries.
 template <class T>
-std::set<Point4D<int> >& Solver<T>::MetaStencil::getPattern() {return pattern;}
+std::set<Point4D<unsigned int> >& Solver<T>::MetaStencil::getPattern() {return pattern;}
 
 template <class T>		
 void Solver<T>::MetaStencil::expand(Roi<int>& inRoi) {

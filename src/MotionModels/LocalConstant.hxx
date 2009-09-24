@@ -108,7 +108,7 @@ MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
 	_addInputSlot(dz, "dz", "derivation in z", "CImgList<T>*");
 	_addInputSlot(dt, "dt", "derivation in t", "CImgList<T>*");
 
-	this->setFlowFunctorParams(0.5f, 0.4f, 0.3f);
+	this->setFlowFunctorParams(0.5, 0.4, 0.3);
 	this->flowFunctor = &flowfunc;
 }
 
@@ -128,7 +128,7 @@ void MotionModels::LocalConstant<T>::setFlowFunctorParams(const float a1,
 
 template<class T>
 void MotionModels::LocalConstant<T>::apply(const Pixel<T> & inPixel,
-		const std::vector<IncrementorParameter<T>*> & ,
+		const std::vector<IncrementorParameter<T>*> & modifier,
 		Pixel<T> & outPixel)
 {
 	outPixel = inPixel;
