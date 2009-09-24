@@ -52,13 +52,13 @@ protected:
 
 public:
 	/// standard constructor
-	PixelSelection(const std::string& name, const std::string& pluginName);
+	PixelSelection(const std::string& name = "", const std::string& pluginName = "");
 	/// inputslot ROI
 	InputSlot<Roi<int>*> range;
 	/// inputslot sequence
 	InputSlot<cimg_library::CImgList<T> *> sequence;
 	/// outputslot list of pixel
-	OutputSlot<std::vector<Pixel<T>*> *> outPixelList;
+	OutputSlot<PixelSelection<T> *> out;
 	/// return the list of Pixel
 	std::vector<Pixel<T>*> & getListOfPixel();
 };

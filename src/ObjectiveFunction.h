@@ -51,11 +51,11 @@ class objectivefunction_DECLDIR ObjectiveFunction: public TemplatedParameteredOb
 
 public:
 	/// standard constructor
-	ObjectiveFunction(const std::string& name, const std::string pluginName);
+	ObjectiveFunction(const std::string& name = "", const std::string pluginName = "");
 	/// inputslot for image sequence
 	InputSlot<cimg_library::CImgList<T> *> sequence;
 	/// inputslot for the list of pixel from PixelSelection
-	InputSlot<std::vector<Pixel<T> > *> pixelList;
+	InputSlot<std::vector<Pixel<T>*> *> pixelList;
 	/// inputslot from BrightnessModel
 	InputSlot<BrightnessModel<T> *> brightnessModel;
 	/// inputslot from MotionModel
@@ -65,7 +65,7 @@ public:
 	/// this outputslot
 	OutputSlot<ObjectiveFunction<T> *> out;
 	/// standard execute methode from ParameteredObject
-	void execute();
+	virtual void execute() =0;
 
 	/**
 	 *  compares the changed List of Pixels from the apply function

@@ -50,7 +50,7 @@ private:
 
 public:
 	/// stadard constructor
-	IncrementorParameter(const std::string& name);
+	IncrementorParameter(const std::string& name = "");
 	/// this outputslot
 	OutputSlot<IncrementorParameter<T>*> out;
 	/// standard get function for parameter name

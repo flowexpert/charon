@@ -40,14 +40,16 @@ void ListedPixelSelection<T>::execute()
 	forRoiXYZT(*(this->range()), x, y, z, t)
 				{
 					Pixel<T>* pixel = new Pixel<T> ;
-					pixel->setX((T)x);
-					pixel->setY((T)y);
-					pixel->setZ((T)z);
-					pixel->setT((T)t);
+					pixel->setX((T) x);
+					pixel->setY((T) y);
+					pixel->setZ((T) z);
+					pixel->setT((T) t);
+					///@TODO fehler: verursacht im test ein Segfault
+					void*my=this->sequence();
 					for (unsigned int i = 0; i < (*this->sequence()).size; i++)
 					{
-						pixel->pushBackIntensity(
-								(*this->sequence())(i, x, y, z, t));
+						pixel->pushBackIntensity((*this->sequence())(i, x, y,
+								z, t));
 					}
 					this->pixelList.push_back(pixel);
 				}

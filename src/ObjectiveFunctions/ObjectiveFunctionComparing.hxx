@@ -38,6 +38,12 @@ ObjectiveFunctionComparing<T>::ObjectiveFunctionComparing(
 }
 
 template<typename T>
+void ObjectiveFunctionComparing<T>::execute()
+{
+	ParameteredObject::execute();
+}
+
+template<typename T>
 T ObjectiveFunctionComparing<T>::compare(
 		const std::vector<Pixel<T>*> & pixelList, const std::vector<
 				IncrementorParameter<T>*>& params)

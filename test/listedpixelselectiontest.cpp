@@ -37,6 +37,7 @@ int main()
 		Roi<int> roi("roi");
 		ListedPixelSelection<float> lps("lps");
 		std::vector<Pixel<float>*> list;
+
 		roi.left = 29;
 		roi.right = 44;
 		roi.top = 0;
@@ -45,9 +46,12 @@ int main()
 		roi.back = 1;
 		roi.before = 0;
 		roi.after = 1;
+
 		rd.filename = PENGUINFILE;
+
 		lps.range.connect(&roi.out);
 		lps.sequence.connect(&rd.out);
+
 		lps.execute();
 		list = lps.getListOfPixel();
 
@@ -85,6 +89,7 @@ int main()
 		roit.after = 1;
 		lpst.range.connect(&roit.out);
 		lpst.sequence.connect(&rdt.out);
+
 		lpst.execute();
 		std::vector<Pixel<float>*> listt = lpst.getListOfPixel();
 		Pixel<float> pix = *(listt[0]);
@@ -116,9 +121,11 @@ int main()
 								(unsigned int) temp.getT()) << std::endl;
 						std::cout << "saved Pixel: "
 								<< temp.getIntensity()[iter] << std::endl;
-						std::cout << "pixel (" << temp.getX() << ", "
-								<< temp.getY() << ", " << temp.getZ() << ", "
-								<< temp.getT() << ") is wrong. " << std::endl;
+						std::cout << "pixel (" << (unsigned int) temp.getX()
+								<< ", " << (unsigned int) temp.getY() << ", "
+								<< (unsigned int) temp.getZ() << ", "
+								<< (unsigned int) temp.getT() << ") is wrong. "
+								<< std::endl;
 						fehler = true;
 					}
 				}

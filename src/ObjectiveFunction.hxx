@@ -47,10 +47,4 @@ ObjectiveFunction<T>::ObjectiveFunction(const std::string& name,
 	this->_addOutputSlot(out, "out", "this OutputSlot", "ObjectiveFunction<T>*");
 }
 
-template<typename T>
-void ObjectiveFunction<T>::execute()
-{
-	ParameteredObject::execute();
-}
-
 #endif /* OBJECTIVEFUNKTION_HXX_ */

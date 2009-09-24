@@ -31,11 +31,12 @@ PixelSelection<T>::PixelSelection(const std::string& name,
 	TemplatedParameteredObject<T> (pluginName, name,
 			"save range of interest in a list of pixels")
 {
+	out = this;
 	this->_addInputSlot(range, "range", "Range of Interest", "roi<int>");
 	this->_addInputSlot(sequence, "sequence", "Sequence to work with",
 			"CImgList<T>");
-	this->_addOutputSlot(outPixelList, "outPixelList",
-			"List of Pixel out of Roi", "std::vector<Pixel<T> > *");
+	this->_addOutputSlot(out, "out", "List of Pixel out of Roi",
+			"PixelSelection<T> *");
 }
 
 template<typename T>

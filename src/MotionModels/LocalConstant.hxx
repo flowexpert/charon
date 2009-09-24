@@ -112,8 +112,9 @@ MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
 	this->flowFunctor = &flowfunc;
 }
 
-template <class T>
-void MotionModels::LocalConstant<T>::execute() {
+template<class T>
+void MotionModels::LocalConstant<T>::execute()
+{
 	ParameteredObject::execute();
 	this->is3d = !(this->dx()->is_sameN(1));
 }

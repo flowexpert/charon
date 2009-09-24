@@ -46,6 +46,9 @@ public:
 	/// standard constructor
 	ObjectiveFunctionComparing(const std::string& name);
 
+	/// standard execute method
+	virtual void execute();
+
 	/**
 	 *  compares the changed List of Pixels from the apply function
 	 *  (BrightnessModel) with the next picture and try to find the right

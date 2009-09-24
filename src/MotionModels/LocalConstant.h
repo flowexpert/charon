@@ -54,7 +54,7 @@ namespace MotionModels
  * @f]
  */
 template<class T>
-class motionmodels_localconstant_DECLDIR LocalConstant : public MotionModel<T>
+class motionmodels_localconstant_DECLDIR LocalConstant: public MotionModel<T>
 {
 private:
 	//cimg_library::CImg<> dx,dy,dt;
@@ -68,11 +68,11 @@ public:
 
 	/// @name input slots for the derivatives
 	//@{
-	InputSlot<cimg_library::CImgList<T>* > dx, dy, dz, dt;
+	InputSlot<cimg_library::CImgList<T>*> dx, dy, dz, dt;
 	//@}
 
 	virtual void execute();
-	
+
 	virtual void compute(const int xs, const int ys, const int zs, const int t,
 			const int v, std::map<std::string, T>& term, T& rhs);
 

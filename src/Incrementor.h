@@ -49,7 +49,7 @@ protected:
 
 public:
 	/// standard constructor
-	Incrementor(const std::string& name, const std::string& pluginName);
+	Incrementor(const std::string& name = "", const std::string& pluginName = "");
 	/// set of inputslots of type IncrementorParameter
 	InputSlot<IncrementorParameter<T>*> paramList;
 	/// this outputslot
