@@ -132,12 +132,22 @@ MainWindow::MainWindow(QWidget* myParent) :
 
 	action = toolbar->addAction(QIcon(":/icons/save_as.png"), tr(
 			"save\nfile as"), inspector, SLOT(saveFileAs()));
-	action->setToolTip(tr("save current dobument\nto a new location"));
+        action->setToolTip(tr("save current document\nto a new location"));
 
 	action = toolbar->addAction(QIcon(":/icons/export.png"), tr(
 			"export\nflowchart"), this, SLOT(saveFlowChart()));
 	action->setToolTip(tr("export flowchart to an image file"));
 
+        toolbar->addSeparator();
+        action = toolbar->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
+                        this, SLOT(updateMetadata()));
+        action->setToolTip(tr("update classes informations reading all plugins"));
+        action = toolbar->addAction(QIcon(":/icons/runbuild.png"), tr("&Compile and load plug-in"),
+                        this, SLOT(compileAndLoad()));
+        action->setToolTip(tr("compile new plugin from plugin source"));
+        action = toolbar->addAction(QIcon(":/icons/execute.png"), tr("Execute &Workflow"),
+                        inspector, SLOT(executeWorkflow()));
+        action->setToolTip(tr("execute workflow that is described in the current window"));
 	toolbar->addSeparator();
 	toolbar->addModelActions();
 	toolbar->addSeparator();
