@@ -91,7 +91,7 @@ void Gbcce<T>::updateStencil(const unsigned int x,const unsigned int y,
 //not yet implemented
 template <class T>
 cimg_library::CImgList<T>& Gbcce<T>::apply(const cimg_library::CImgList<T>& seq,
-                                           const unsigned int frame) const {}
+                                           const unsigned int frame) const {return seq;}
 
 
 template <class T>
