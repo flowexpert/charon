@@ -57,15 +57,16 @@ template<typename T>
 bool IncrementorCountUp<T>::doStep()
 {
 	bool ret = false;
-	typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
-			it = this->paramList.begin();
-	unsigned int j = 0;
-	// check for return vallue
-	for (; it != this->paramList.end(); it++)
+	//	typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
+	//			it = this->paramList.begin();
+	//	unsigned int j = 0;
+	//	check for return vallue
+	//	for (; it != this->paramList.end(); it++)
+	for (unsigned int j = 0; j != this->listOfParams.size(); j++)
 	{
 		if (this->listOfParams[j]->getCurrent()
 				+ this->paramList[j]->getStepSize()
-				>= this->paramList[j]->getMax())
+				> this->paramList[j]->getMax())
 		{
 			ret = true;
 		}
@@ -74,7 +75,7 @@ bool IncrementorCountUp<T>::doStep()
 			ret = false;
 			break;
 		}
-		j++;
+		//		j++;
 	}
 
 	// compute step

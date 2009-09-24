@@ -16,7 +16,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /// @file BlockMatchingLIACS.cpp
-/// This file is needed for the Roi class to work as a plugin.
+/// This file is needed for the BlockMatchingLIACS class to work as a plugin.
 /// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 24.08.2009
 
@@ -26,6 +26,7 @@
 #include "BlockMatchingLIACS.hxx"
 
 #if defined(MSVC) && defined (blockmatchingliacs_EXPORTS)
+#define blockmatching_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

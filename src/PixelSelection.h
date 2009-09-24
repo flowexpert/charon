@@ -56,7 +56,7 @@ public:
 	/// inputslot ROI
 	InputSlot<Roi<int>*> range;
 	/// inputslot sequence
-	InputSlot<cimg_library::CImgList<T> &> sequence;
+	InputSlot<cimg_library::CImgList<T> *> sequence;
 	/// outputslot list of pixel
 	OutputSlot<std::vector<Pixel<T>*> *> outPixelList;
 	/// return the list of Pixel

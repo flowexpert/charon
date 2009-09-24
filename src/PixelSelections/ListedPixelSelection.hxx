@@ -44,10 +44,10 @@ void ListedPixelSelection<T>::execute()
 					pixel->setY(y);
 					pixel->setZ(z);
 					pixel->setT(t);
-					for (unsigned int i = 0; i < this->sequence().size; i++)
+					for (unsigned int i = 0; i < (*this->sequence()).size; i++)
 					{
 						pixel->pushBackIntensity(
-								this->sequence()(i, x, y, z, t));
+								(*this->sequence())(i, x, y, z, t));
 					}
 					this->pixelList.push_back(pixel);
 				}

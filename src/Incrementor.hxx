@@ -32,8 +32,9 @@ Incrementor<T>::Incrementor(const std::string& name,
 		const std::string& pluginName) :
 	TemplatedParameteredObject<T> (pluginName, name,
 			" Increments the Parameters, witch are needed to compute changes "
-				"inside the Image "), paramList(false, true), out(this)
+				"inside the Image "), paramList(false, true)
 {
+	out = this;
 	this->_addInputSlot(paramList, "paramList",
 			"list of Parameters for Incrementor", "IncrementorParameter<T>*");
 	this->_addOutputSlot(out, "out", "Position in Image after Incrementation",

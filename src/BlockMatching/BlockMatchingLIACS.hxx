@@ -40,16 +40,16 @@ BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
 template<typename T>
 void BlockMatchingLIACS<T>::findFlow()
 {
-	if (this->sequence().size)
+	if ((*this->sequence()).size)
 	{
 		// adjust size of surface
-		this->surface.assign(this->sequence()[0].dimv(),
-				this->sequence()[0].dimx(), this->sequence()[0].dimy(),
-				this->sequence()[0].dimz(), 4);
+		this->surface.assign((*this->sequence())[0].dimv(),
+				(*this->sequence())[0].dimx(), (*this->sequence())[0].dimy(),
+				(*this->sequence())[0].dimz(), 4);
 		std::vector<T> pixelProperties;
 		std::vector<std::vector<IncrementorParameter<T>*> > allParameters;
 		// run over the sequence
-		cimg_forXYZV(this->sequence()[0], x, y, z, t)
+		cimg_forXYZV((*this->sequence())[0], x, y, z, t)
 					{
 						// loop over i until the doStep function from 
 						// Incrementor returns true 

@@ -26,6 +26,7 @@
 #include "IncrementorCountUp.hxx"
 
 #if defined(MSVC) && defined (incrementorcountup_EXPORTS)
+#define incrementor_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

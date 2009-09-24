@@ -16,7 +16,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /// @file LocalRotation.cpp
-/// This file is needed for the Roi class to work as a plugin.
+/// This file is needed for the LocalRotation class to work as a plugin.
 /// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 24.08.2009
 
@@ -26,6 +26,7 @@
 #include "LocalRotation.hxx"
 
 #if defined(MSVC) && defined (motionmodels_localrotation_EXPORTS)
+#define motionmodel_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

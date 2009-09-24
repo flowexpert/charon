@@ -34,7 +34,7 @@ ObjectiveFunction<T>::ObjectiveFunction(const std::string& name,
 				"are computed"), out(this)
 {
 	this->_addInputSlot(sequence, "sequence", "Sequence of Images",
-			"cimg_library::CImgList<T>& ");
+			"cimg_library::CImgList<T> *");
 	this->_addInputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
 			"std::vector<Pixel<T> > *");
 	this->_addInputSlot(brightnessModel, "brightnessModel",
