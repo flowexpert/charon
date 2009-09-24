@@ -40,10 +40,10 @@ void ListedPixelSelection<T>::execute()
 	forRoiXYZT(*(this->range()), x, y, z, t)
 				{
 					Pixel<T>* pixel = new Pixel<T> ;
-					pixel->setX(x);
-					pixel->setY(y);
-					pixel->setZ(z);
-					pixel->setT(t);
+					pixel->setX((T)x);
+					pixel->setY((T)y);
+					pixel->setZ((T)z);
+					pixel->setT((T)t);
 					for (unsigned int i = 0; i < (*this->sequence()).size; i++)
 					{
 						pixel->pushBackIntensity(

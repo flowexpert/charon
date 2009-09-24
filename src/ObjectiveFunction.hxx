@@ -31,8 +31,9 @@ ObjectiveFunction<T>::ObjectiveFunction(const std::string& name,
 		const std::string pluginName) :
 	TemplatedParameteredObject<T>::TemplatedParameteredObject(pluginName, name,
 			"computes the difference between all way the parameters "
-				"are computed"), out(this)
+				"are computed")
 {
+	out = this;
 	this->_addInputSlot(sequence, "sequence", "Sequence of Images",
 			"cimg_library::CImgList<T> *");
 	this->_addInputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
