@@ -182,8 +182,8 @@ void L2Norm<T>::updateStencil(const unsigned int, const unsigned int,
 }
 
 template <class T>
-cimg_library::CImgList<T>& L2Norm<T>::apply(const cimg_library::CImgList<T>& seq,
-                                            const unsigned int frame) const {return seq;}
+cimg_library::CImg<T> L2Norm<T>::apply(const cimg_library::CImgList<T>& seq,
+                                       const unsigned int frame) const {return seq[frame];}
 
 template <class T>
 L2Norm<T>::~L2Norm() {}

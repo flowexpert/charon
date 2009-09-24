@@ -127,8 +127,8 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		
 		const std::map<std::string, T>& getRhs() const;
 				
-		virtual cimg_library::CImgList<T>& apply(const cimg_library::CImgList<T>& seq,
-		                                         const unsigned int frame) const =0;
+		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
+		                                    const unsigned int frame) const =0;
 						
 		/**
 		 * Getter functions for the unknowns of the stencil.
