@@ -118,13 +118,25 @@ class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 		cimg_library::CImgList<T> result;
 
 	public:
+		/**
+		 * Pointers, that the solver will use.
+		 */
 		InputSlot< Stencil<T>* > stencils;
+		
+		/**
+		 * Region of interes for the solver to work on.
+		 */
 		InputSlot< Roi<int>* > roi;
+		
+		/**
+		 * Result.
+		 */
 		OutputSlot<cimg_library::CImgList<T>* > out;
 
 		///Default constructor.
 		Solver(const std::string& classname, const std::string& name = "");
-			
+		
+		///default destructor.
 		virtual ~Solver();
 };
 

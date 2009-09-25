@@ -145,7 +145,8 @@ class petscsolver_DECLDIR PetscSolver : public Solver<T>
 		
 		///main function.
 		void execute();
-				
+		
+		///default destructor.
 		~PetscSolver();
 };
 

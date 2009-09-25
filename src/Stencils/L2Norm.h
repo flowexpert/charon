@@ -45,18 +45,25 @@ template <class T>
 class l2norm_DECLDIR L2Norm : public Stencil<T>
 {
 	private:
+		///Parameter containing the number of dimensions.
 		Parameter<unsigned int> dimensions;
-		ParameterList<std::string> pUnknowns;	//parameter list of unknowns
+		
+		///ParameterList containing all unknowns of the Stencil.
+		ParameterList<std::string> pUnknowns;
 	
 	public:
+		///default constructor.
 		L2Norm(const std::string& name = "");
 		
+		///main function
 		virtual void execute();
 		
+		///update Stencil to contain the data corresponding to the given coordinates
 		virtual void updateStencil(const unsigned int, const unsigned int,
 		                           const unsigned int, const unsigned int,
 		                           const unsigned int);
-		                   
+		
+		///apply the Stencil to a given sequence
 		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
 		                                    const unsigned int frame) const;
 		

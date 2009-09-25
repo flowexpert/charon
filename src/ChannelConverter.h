@@ -44,13 +44,19 @@ template <class T>
 class channelconverter_DECLDIR ChannelConverter : public TemplatedParameteredObject<T>
 {
 	public:
+		///Sequence to be converted.
 		InputSlot<cimg_library::CImgList<T> > in;
+		
+		///Converted sequence.
 		OutputSlot<cimg_library::CImgList<T> > out;
 		
+		///default constructor
 		ChannelConverter(const std::string& name = "");
 		
+		///main function.
 		virtual void execute();
 		
+		///default descructor.
 		virtual ~ChannelConverter();
 };
 

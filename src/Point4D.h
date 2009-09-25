@@ -29,9 +29,12 @@ template <class T>
 class Point4D
 {
 	public:
+		/**
+		 * x, y, z and t coordinates of the Point4D.
+		 */
 		T x, y, z, t;
 		
-		///default constructor
+		///default constructor.
 		Point4D() {
 			this->x = 0;
 			this->y = 0;
@@ -39,10 +42,10 @@ class Point4D
 			this->t = 0;
 		}		
 		
-		///constructor with coordinates
+		///constructor with coordinates.
 		Point4D(T x, T y, T z, T t) : x(x), y(y), z(z), t(t) {}
 		
-		///copy constructor
+		///copy constructor.
 		Point4D(const Point4D<T> &rhs) {
 			this->x = rhs.x;
 			this->y = rhs.y;
@@ -50,6 +53,7 @@ class Point4D
 			this->t = rhs.t;
 		}
 		
+		///cast to Point4D<int>.
 		operator Point4D<int>() {
 			Point4D<int> res;
 			res.x = (int)this->x;
@@ -59,6 +63,7 @@ class Point4D
 			return res;
 		}
 		
+		///cast to Point4D<unsigned int>.
 		operator Point4D<unsigned int>() {
 			Point4D<unsigned int> res;
 			res.x = (unsigned int)abs(this->x);
@@ -118,6 +123,7 @@ class Point4D
 			return false;
 		}
 		
+		///comparison operator
 		bool operator> (const Point4D<T> &rhs) const {
 			if (this->t > rhs.t) {return true;} else if (this->t < rhs.t) {return false;}
 			if (this->z > rhs.z) {return true;} else if (this->z < rhs.z) {return false;}
@@ -129,22 +135,29 @@ class Point4D
 			return false;
 		}
 		
+		///comparison operator
 		bool operator== (const Point4D<T> &rhs) const {
 			return ((this->x == rhs.x) && (this->y == rhs.y) && (this->z == rhs.z) && (this->t == rhs.t));
 		}
 		
+		///comparison operator
 		bool operator<= (const Point4D<T> &rhs) const {
 			return (*this < rhs || *this == rhs);
 		}
 		
+		///comparison operator
 		bool operator>= (const Point4D<T> &rhs) const {
 			return (*this > rhs || *this == rhs);
 		}
 		
+		//*
+		 * Calculate the volume relative to the origin.
+		 */
 		T volume() {
 			return x * y * z * t;
 		}
 		
+		///default destructor.
 		~Point4D() {}
 };
 

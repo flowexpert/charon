@@ -125,8 +125,16 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 */
 		const std::map<std::string, SubStencil<T> >& get() const;
 		
+		/**
+		 * Getter function for the right hand side.
+		 * @return a map containing all right hand sides, associated to unknowns.
+		 */
 		const std::map<std::string, T>& getRhs() const;
-				
+		
+		/**
+		 * Apply the Stencil to a sequence.
+		 * @remark not yet implemented.
+		 */
 		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
 		                                    const unsigned int frame) const =0;
 						

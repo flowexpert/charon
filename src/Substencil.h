@@ -35,24 +35,32 @@ template <class T>
 class SubStencil
 {
 	public:
+		///CImg containing the actual data of the SubStencil.
 		cimg_library::CImg<T> data;
+		
+		/**
+		 * CImg containing the pattern of the SubStencil.
+		 * All positions that could potentially contain data are 1.
+		 * Positions that will never contain data are 0.
+		 */
 		cimg_library::CImg<char> pattern;
 		Point4D<unsigned int> center;
 		
-		///empty constructor (for use in std::map)
+		///default constructor.
 		SubStencil();
 		
-		///default constructor
+		///constructor with dimensions and center.
 		SubStencil(const unsigned int dimx, const unsigned int dimy,
 		           const unsigned int dimz, const unsigned int dimt,
 		           Point4D<unsigned int> center);
 		
-		///copy constructor
+		///copy constructor.
 		SubStencil(const SubStencil &rhs);
 		
-		///assignment operator
+		///assignment operator.
 		SubStencil& operator= (const SubStencil &rhs);
-				
+		
+		///default destructor.
 		~SubStencil();
 };
 
