@@ -63,7 +63,7 @@ public:
 	BlockMatching(const std::string& name = "", const std::string& pluginName = "");
 
 	/// inputslot for the sequence of images where the flow will be computed
-	InputSlot<cimg_library::CImgList<T> &> sequence;
+	InputSlot<cimg_library::CImgList<T> > sequence;
 
 	/// inputslot for a list of Pixel out of the ROI to limit the region of 
 	/// computation
@@ -79,20 +79,9 @@ public:
 	/// inputslot for the results from the SurfaceAnalysis
 	InputSlot<SurfaceAnalysis<T> *> bestParam;
 
-	/// outputslot to get the results form the flow estimation algorithm 
+	/// outputslot to get the results from the flow estimation algorithm 
 	/// BlockMatching
-	OutputSlot<BlockMatching<T> *> out;
-
-	/// standard execute from Parametered Object
-	void execute();
-
-	/// Function to calculate the the flow change inside the image in t+1
-	virtual void findFlow() =0;
-
-	/// returns the flow image
-	/// @param [out] flow image
-	cimg_library::CImgList<T>& getFlow();
-
+	OutputSlot<cimg_library::CImgList<T> > flow;
 };
 
 #endif /* BLOCKMATCHING_H_ */

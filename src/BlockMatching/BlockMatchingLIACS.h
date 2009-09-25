@@ -35,7 +35,7 @@
 #define blockmatchingliacs_DECLDIR
 #endif
 
-#include <BlockMatching.h>
+#include <BlockMatching.hxx>
 #include <PixelSelection.h>
 #include <ListedPixelSelection.h>
 #include <Incrementor.h>
@@ -74,7 +74,7 @@ public:
 	 *    SurfaceAnalysis
 	 *  - Save the best fitting parameters in surface (flow image)
 	 */
-	virtual void findFlow();
+	virtual void execute();
 };
 
 #endif /* BLOCKMATCHINGLIACS_H_ */

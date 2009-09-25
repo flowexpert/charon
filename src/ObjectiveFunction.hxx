@@ -25,7 +25,7 @@
 
 #include "ObjectiveFunction.h"
 #include "ParameteredObject.hxx"
-#include "PixelSelection.hxx"
+#include "PixelSelection.h"
 
 template<typename T>
 ObjectiveFunction<T>::ObjectiveFunction(const std::string& name,
@@ -39,7 +39,7 @@ ObjectiveFunction<T>::ObjectiveFunction(const std::string& name,
 			"cimglist<T>");
 	this->_addInputSlot(brightnessModel, "brightnessModel",
 			"Pointer to BrightnessModel", "BrightnessModel*");
-	this->_addInputSlot(motionModel, "motionModel", "Poitner to MotionModel",
+	this->_addInputSlot(motionModel, "motionModel", "Pointer to MotionModel",
 			"MotionModel*");
 	this->_addInputSlot(interpolator, "interpolator",
 			"Pointer to Interpolator", "interpolator");

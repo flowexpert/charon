@@ -37,27 +37,25 @@
 
 #include <ParameteredObject.hxx>
 #include <Roi.h>
-#include "Pixel.h"
+#include "Pixel.hxx"
 #include <CImg.h>
 #include <vector>
 
 /// Pixel Selection
 /// This class saves all Pixel we are interested in, in a list of pixel
 template<typename T>
-class pixelselection_DECLDIR PixelSelection: public TemplatedParameteredObject<
-		T>
+class pixelselection_DECLDIR PixelSelection: public TemplatedParameteredObject<T>
 {
 protected:
 	std::vector<Pixel<T>*> pixelList;
 
 public:
 	/// standard constructor
-	PixelSelection(const std::string& name = "", const std::string& pluginName =
-			"");
+	PixelSelection(const std::string& name ="", const std::string& pluginName ="");
 	/// inputslot ROI
 	InputSlot<Roi<int> *> range;
 	/// inputslot sequence
-	InputSlot<cimg_library::CImgList<T> &> sequence;
+	InputSlot<cimg_library::CImgList<T> > sequence;
 	/// outputslot list of pixel
 	OutputSlot<PixelSelection<T> *> out;
 

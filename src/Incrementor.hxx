@@ -24,7 +24,6 @@
 #define INCREMENTOR_HXX_
 
 #include "Incrementor.h"
-#include <IncrementorParameter.hxx>
 #include <ParameteredObject.hxx>
 
 template<typename T>

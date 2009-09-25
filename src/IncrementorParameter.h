@@ -42,11 +42,11 @@ template<typename T>
 class incrementorparameter_DECLDIR IncrementorParameter: public TemplatedParameteredObject<
 		T>
 {
-private:
-	std::string parameterName;/// @param parameterName name of parameter
+public: //also public to avoid getters and setters due to template-dll-problem
+	std::string name;/// @param parameterName name of parameter
 	Parameter<T> min; /// @param min minimum of parameter
 	Parameter<T> max; /// @param max maximum of parameter
-	Parameter<T> step; /// @param step stepsize of parameter
+	Parameter<T> stepSize; /// @param step stepsize of parameter
 	Parameter<T> current; /// @param current current pos of parameter
 
 public:
@@ -54,26 +54,6 @@ public:
 	IncrementorParameter(const std::string& name = "");
 	/// this outputslot
 	OutputSlot<IncrementorParameter<T>*> out;
-	/// standard get function for parameter name
-	std::string& getName();
-	/// sets name of InrementorParameter
-	void setName(std::string& newName);
-	/// returns the Parameter min
-	Parameter<T>& getMin();
-	/// sets minimum Parameter
-	void setMin(const T newMin);
-	/// returns the Parameter max
-	Parameter<T>& getMax();
-	/// sets maximum Parameter
-	void setMax(const T newMax);
-	/// returns the Parameter step
-	Parameter<T>& getStepSize();
-	/// sets StepSize Parameter
-	void setStepSize(const T newStep);
-	/// returns the Parameter current
-	Parameter<T>& getCurrent();
-	/// sets current Parameter
-	void setCurrent(const T newCurrent);
 };
 
 #endif /* INCREMENTORPARAMETER_H_ */

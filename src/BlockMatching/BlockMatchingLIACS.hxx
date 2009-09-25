@@ -24,11 +24,6 @@
 #define BLOCKMATCHINGLIACS_HXX_
 
 #include "BlockMatchingLIACS.h"
-#include <BlockMatching.hxx>
-#include <ListedPixelSelection.hxx>
-#include <IncrementorCountUp.hxx>
-#include <ObjectiveFunctionComparing.hxx>
-#include <SurfaceAnalysisMinChange.hxx>
 
 template<typename T>
 BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
@@ -38,8 +33,9 @@ BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
 }
 
 template<typename T>
-void BlockMatchingLIACS<T>::findFlow()
+void BlockMatchingLIACS<T>::execute()
 {
+	/*
 	if (this->sequence().size)
 	{
 		// adjust size of surface
@@ -75,19 +71,19 @@ void BlockMatchingLIACS<T>::findFlow()
 						{
 							if (tempParams[j]->getName() == "x")
 							{
-								nextX = tempParams[j]->getCurrent();
+								nextX = tempParams[j]->current;
 							}
 							if (tempParams[j]->getName() == "y")
 							{
-								nextY = tempParams[j]->getCurrent();
+								nextY = tempParams[j]->current;
 							}
 							if (tempParams[j]->getName() == "z")
 							{
-								nextZ = tempParams[j]->getCurrent();
+								nextZ = tempParams[j]->current;
 							}
 							if (tempParams[j]->getName() == "t")
 							{
-								nextT = tempParams[j]->getCurrent();
+								nextT = tempParams[j]->current;
 							}
 							j++;
 						}
@@ -98,6 +94,7 @@ void BlockMatchingLIACS<T>::findFlow()
 						this->surface(3, x, y, z, t) = nextT;
 					}
 	}
+	*/
 }
 
 #endif /* BLOCKMATCHINGLIACS_HXX_ */

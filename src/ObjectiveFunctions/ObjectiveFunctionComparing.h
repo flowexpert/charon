@@ -39,8 +39,7 @@
 #include <ObjectiveFunction.h>
 
 template<typename T>
-class objectivefunctioncomparing_DECLDIR ObjectiveFunctionComparing: public ObjectiveFunction<
-		T>
+class objectivefunctioncomparing_DECLDIR ObjectiveFunctionComparing: public ObjectiveFunction<T>
 {
 public:
 	/// standard constructor

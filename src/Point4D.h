@@ -150,7 +150,7 @@ class Point4D
 			return (*this > rhs || *this == rhs);
 		}
 		
-		//*
+		/*
 		 * Calculate the volume relative to the origin.
 		 */
 		T volume() {

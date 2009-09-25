@@ -45,15 +45,14 @@
 /// ObjectiveFunction is a class to compute the change between computed pixel 
 /// parameters and real pixel parameters
 template<typename T>
-class objectivefunction_DECLDIR ObjectiveFunction: public TemplatedParameteredObject<
-		T>
+class objectivefunction_DECLDIR ObjectiveFunction: public TemplatedParameteredObject<T>
 {
 
 public:
 	/// standard constructor
 	ObjectiveFunction(const std::string& name = "", const std::string pluginName = "");
 	/// inputslot for image sequence
-	InputSlot<cimg_library::CImgList<T> &> sequence;
+	InputSlot<cimg_library::CImgList<T> > sequence;
 	/// inputslot from BrightnessModel
 	InputSlot<BrightnessModel<T> *> brightnessModel;
 	/// inputslot from MotionModel
@@ -71,7 +70,7 @@ public:
 	 *  position for every pixel.
 	 *  @param pixelList list of pixel from PixelSelection
 	 *  @param intensity short vector of computed intensity
-	 *  @param [out] vallue of T which shows the quadratic distance between the
+	 *  @param [out] value of T which shows the quadratic distance between the
 	 *  range and the computed intensity
 	 */
 	virtual T compare(const std::vector<Pixel<T>*> & pixelList,

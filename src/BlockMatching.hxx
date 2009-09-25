@@ -43,20 +43,8 @@ BlockMatching<T>::BlockMatching(const std::string& name,
 	this->_addInputSlot(bestParam, "bestParam",
 			"Computes best fitting Parameters, for the flow",
 			"SurfaceAnalysis<T>*");
-	this->_addOutputSlot(out, "out", "Find Flow in Sequence",
+	this->_addOutputSlot(flow, "flow", "Resulting motion field",
 			"BlockMatching<T> *");
-}
-
-template<typename T>
-void BlockMatching<T>::execute()
-{
-	ParameteredObject::execute();
-}
-
-template<typename T>
-cimg_library::CImgList<T>& BlockMatching<T>::getFlow()
-{
-	return this->surface;
 }
 
 #endif
