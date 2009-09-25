@@ -47,13 +47,13 @@ public:
 	Derivative(const std::string& classname, const std::string& name = "") : 
 		TemplatedParameteredObject<T>(classname,name,"calculates the derivatives")
 	{
-		_addInputSlot(img,"img","image on which derivatives are calculatet","CImgList<T>*");
+		this->_addInputSlot(img,"img","image on which derivatives are calculatet","CImgList<T>");
 		/*_addOutputSlot(out,"this","Pointer to itself","Derivative*");
 		out = this; //*/
 	}
 	
 	/// input slot for the image on which the derivatives are calculated
-	InputSlot<cimg_library::CImgList<T>* > img;
+	InputSlot<cimg_library::CImgList<T> > img;
 };
 
 #endif

@@ -31,18 +31,19 @@
 #include <bin2.hxx>
 #include <ChannelConverter.hxx>
 #include <FileReader.hxx>
+#include <FlieWriter.hxx>
 
 int main() {
 	//create all necessary objects
-	FileReader<float> reader;
-	ChannelConverter<float> converter;
-	bin2<float> derivative;
-	Constant<float> brightnessConst;
-	LocalConstant<float> motionConstant;
-	Gbcce<float> gbcce;
-	L2Norm<float> l2norm;
-	PetscSolver<float> solver;
-	FileWriter<float> writer;
+	FileReader<float> reader("reader");
+	ChannelConverter<float> converter("converter");
+	bin2<float> derivative("derivative");
+	Constant<float> brightnessConst("brightnessConst");
+	LocalConstant<float> motionConstant("motionConstant");
+	Gbcce<float> gbcce("GBCCE");
+	L2Norm<float> l2norm("L2Norm");
+	PetscSolver<float> solver("Solver");
+	FileWriter<float> writer("writer");
 	
 	return 0;
 }
