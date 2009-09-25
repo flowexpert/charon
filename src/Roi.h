@@ -57,14 +57,14 @@ private:
 	void _init();
 
 public:
-	Parameter<T> top;		///< roi top
-	Parameter<T> left;		///< roi left
-	Parameter<T> bottom;	///< roi bottom
-	Parameter<T> right;		///< roi right
-	Parameter<T> front;		///< roi front
-	Parameter<T> back;		///< roi back
-	Parameter<T> before;	///< roi before
-	Parameter<T> after;		///< roi after
+	Parameter<T> top; ///< roi top
+	Parameter<T> left; ///< roi left
+	Parameter<T> bottom; ///< roi bottom
+	Parameter<T> right; ///< roi right
+	Parameter<T> front; ///< roi front
+	Parameter<T> back; ///< roi back
+	Parameter<T> before; ///< roi before
+	Parameter<T> after; ///< roi after
 
 	OutputSlot<Roi<T>*> out; ///< roi output slot
 
@@ -88,38 +88,65 @@ public:
 	/// @param after		upper value for 4D
 	/// @param name         roi name
 	Roi(const T& top, const T& left, const T& bottom, const T& right,
-		const T& front = 0, const T& back = 1, const T& before=0, const T& after=1,
-		std::string name = "");
+			const T& front = 0, const T& back = 1, const T& before = 0,
+			const T& after = 1, std::string name = "");
 
 	virtual ~Roi();
 
-	T getWidth() const; ///< get region width
-	T getHeight() const; ///< get region height
-	T getDepth() const; ///< get region depth
-    T getDuration() const;	///< get region duration
+	/// get region width
+	inline T getWidth() const {
+		return right() - left();
+	}
+
+	/// get region height
+	inline T getHeight() const {
+		return bottom() - top();
+	}
+
+	/// get region depth
+	inline T getDepth() const {
+		return back() - front();
+	}
+
+	/// get region duration
+	inline T getDuration() const {
+		return after() - before();
+	}
 
 	/// Set region width.
 	/// Modifies right, keeps left.
 	/// @param w            new width
-	void setWidth(T w);
+	inline void setWidth(T w) {
+		right = left() + w;
+	}
 
 	/// Set region height.
 	/// Modifies bottom, keeps top.
 	/// @param h            new height
-	void setHeight(T h);
+	inline void setHeight(T h) {
+		bottom = top() + h;
+	}
 
 	/// Set region depth.
 	/// Modifies back, keeps front.
 	/// @param d            new depth
-	void setDepth(T d);
-	
-    /// Set region length.
-    /// Modifies after, keeps before.
-    /// @param d            new duration
-    void setDuration(T d);
+	inline void setDepth(T d) {
+		back() = front() + d;
+	}
+
+	/// Set region length.
+	/// Modifies after, keeps before.
+	/// @param d            new duration
+	inline void setDuration(T d) {
+		after() = before() + d;
+	}
 
 	/// get region volume
-	T getVolume() const;
+	inline T getVolume() const {
+		return getDuration() ? getWidth() * getHeight() * getDepth()
+				* getDuration() : getDepth() ? getWidth() * getHeight()
+				* getDepth() : getWidth() * getHeight();
+	}
 
 	/// assign region limits
 	/// @param top          top value
@@ -129,8 +156,9 @@ public:
 	/// @param front        front value
 	/// @param back         back value
 	/// @param before       before value
-    /// @param after        after value
-    void assign(T top, T left, T bottom, T right, T front = 0, T back = 1, T before = 0, T after = 1);
+	/// @param after        after value
+	void assign(T top, T left, T bottom, T right, T front = 0, T back = 1,
+			T before = 0, T after = 1);
 
 	/// Assign values from another region.
 	/// This does copy the region limits.
@@ -149,7 +177,11 @@ public:
 	void intersectionWith(const Roi<T>& rhs);
 
 	/// Check if a given point is inside the region.
-	bool isInside(T x, T y, T z = 0, T t = 0) const;
+	inline bool isInside(T x, T y, T z = 0, T t = 0) const {
+		return x >= this->left() && x < this->right() && y >= this->top() && y
+				< this->bottom() && z >= this->front() && z < this->back() && t
+				>= this->before() && t < this->after();
+	}
 
 	/// Load region parameters from the given parameter file.
 	/// @param pf           ParameterFile to load from

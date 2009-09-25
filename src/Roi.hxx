@@ -1,15 +1,15 @@
 /*  This file is part of Charon.
-
+ 
  Charon is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
-
+ 
  Charon is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Lesser General Public License for more details.
-
+ 
  You should have received a copy of the GNU Lesser General Public License
  along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,21 +39,21 @@ void Roi<T>::_init() {
 	this->_addParameter (back,   "back"  , "back bound"  , T(1));
 	this->_addParameter (before, "before", "before bound", T(0));
 	this->_addParameter (after,  "after" , "after bound" , T(1));
-
-
+	
+	
 	_addOutputSlot(out, "out", "pointer to this roi", "Roi<T>");
 	out = this;
 }
 
 template<typename T>
 Roi<T>::Roi(std::string name) :
-	TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
+TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
 	_init();
 }
 
 template<typename T>
 Roi<T>::Roi(const ParameterFile& pf, std::string name) :
-	TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
+TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
 	_init();
 	this->load(pf, name);
 }
@@ -61,7 +61,7 @@ Roi<T>::Roi(const ParameterFile& pf, std::string name) :
 template<typename T>
 Roi<T>::Roi(const T& t, const T& l, const T& bo, const T& r,
             const T& f, const T& ba, const T& be, const T& af, std::string name) :
-	TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
+TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
 	_init();
 	top = t;
 	left = l;
@@ -75,55 +75,6 @@ Roi<T>::Roi(const T& t, const T& l, const T& bo, const T& r,
 
 template<typename T>
 Roi<T>::~Roi(void) {
-}
-
-template<typename T>
-T Roi<T>::getWidth() const {
-	return right() - left();
-}
-
-template<typename T>
-T Roi<T>::getHeight() const {
-	return bottom() - top();
-}
-
-template<typename T>
-T Roi<T>::getDepth() const {
-	return back() - front();
-}
-
-template <typename T>
-T Roi<T>::getDuration() const {
-	return after() - before();
-}
-
-template<typename T>
-void Roi<T>::setWidth(T w) {
-	right = left() + w;
-}
-
-template<typename T>
-void Roi<T>::setHeight(T h) {
-	bottom = top() + h;
-}
-
-template<typename T>
-void Roi<T>::setDepth(T d) {
-	back() = front() + d;
-}
-
-template <typename T>
-void Roi<T>::setDuration(T d) {
-	after() = before() + d;
-}
-
-template <typename T>
-T Roi<T>::getVolume() const {
-    return getDuration() ?
-            getWidth()*getHeight()*getDepth()*getDuration() :
-    	    getDepth() ?
-                getWidth()*getHeight()*getDepth() :
-                getWidth()*getHeight();
 }
 
 template <typename T>
@@ -175,16 +126,10 @@ void Roi<T>::unionWith(const Roi<T>& rhs) {
     after  = rhs.after()  > after()  ? rhs.after()  : after();
 }
 
-template <typename T>
-bool Roi<T>::isInside(T x, T y, T z, T t) const {
-    return x >= left() && x < right() && y >= top() && y < bottom()
-	    && z >= front() && z < back() && t >= before() && t < after();
-}
-
 template<typename T>
 void Roi<T>::loadParameters(const ParameterFile& pf) {
 	ParameteredObject::loadParameters(pf);
-
+	
 	//correct order of parameters
 	if (top() > bottom()) {
 		sout << "Roi '" << ParameteredObject::getName();
@@ -193,7 +138,7 @@ void Roi<T>::loadParameters(const ParameterFile& pf) {
 		bottom = top();
 		top = tmp;
 	}
-
+	
 	if (left() > right()) {
 		sout << "Roi '" << ParameteredObject::getName();
 		sout << "': Switching left and right appropriately." << std::endl;
@@ -201,7 +146,7 @@ void Roi<T>::loadParameters(const ParameterFile& pf) {
 		right = left();
 		left = tmp;
 	}
-
+	
 	if (front() > back()) {
 		sout << "Roi '" << ParameteredObject::getName();
 		sout << "': Switching back and front appropriately." << std::endl;
