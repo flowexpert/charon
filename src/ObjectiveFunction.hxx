@@ -25,6 +25,7 @@
 
 #include "ObjectiveFunction.h"
 #include "ParameteredObject.hxx"
+#include "PixelSelection.hxx"
 
 template<typename T>
 ObjectiveFunction<T>::ObjectiveFunction(const std::string& name,
@@ -35,9 +36,7 @@ ObjectiveFunction<T>::ObjectiveFunction(const std::string& name,
 {
 	out = this;
 	this->_addInputSlot(sequence, "sequence", "Sequence of Images",
-			"cimg_library::CImgList<T> *");
-	this->_addInputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
-			"std::vector<Pixel<T> > *");
+			"cimglist<T>");
 	this->_addInputSlot(brightnessModel, "brightnessModel",
 			"Pointer to BrightnessModel", "BrightnessModel*");
 	this->_addInputSlot(motionModel, "motionModel", "Poitner to MotionModel",

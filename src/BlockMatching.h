@@ -63,11 +63,11 @@ public:
 	BlockMatching(const std::string& name = "", const std::string& pluginName = "");
 
 	/// inputslot for the sequence of images where the flow will be computed
-	InputSlot<cimg_library::CImgList<T> *> sequence;
+	InputSlot<cimg_library::CImgList<T> &> sequence;
 
 	/// inputslot for a list of Pixel out of the ROI to limit the region of 
 	/// computation
-	InputSlot<std::vector<Pixel<T>*>*> pixelList;
+	InputSlot<PixelSelection<T> *> pixelList;
 
 	/// inputslot for the Params computed in the Incrementor
 	InputSlot<Incrementor<T> *> newParams;

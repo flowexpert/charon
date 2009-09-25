@@ -44,12 +44,10 @@ void ListedPixelSelection<T>::execute()
 					pixel->setY((T) y);
 					pixel->setZ((T) z);
 					pixel->setT((T) t);
-					///@TODO fehler: verursacht im test ein Segfault
-					void*my=this->sequence();
-					for (unsigned int i = 0; i < (*this->sequence()).size; i++)
+					for (unsigned int i = 0; i < this->sequence().size; i++)
 					{
-						pixel->pushBackIntensity((*this->sequence())(i, x, y,
-								z, t));
+						pixel->pushBackIntensity(
+								this->sequence()(i, x, y, z, t));
 					}
 					this->pixelList.push_back(pixel);
 				}

@@ -68,7 +68,7 @@ public:
 
 	/// @name input slots for the derivatives
 	//@{
-	InputSlot<cimg_library::CImgList<T>*> dx, dy, dz, dt;
+	InputSlot<cimg_library::CImgList<T> &> dx, dy, dz, dt;
 	//@}
 
 	virtual void execute();

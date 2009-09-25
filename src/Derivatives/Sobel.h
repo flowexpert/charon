@@ -39,7 +39,7 @@
 
 /// @brief class implementing a sobel filter
 /// @details this class uses a @f$ \frac{1,32} \left[ \begin{array}{ccc} 3 & 0 & -3 \\
-///									10 & 0 & -10 \\
+///									10 & 0 & -10 \
 ///									 3 & 0 & -3
 ///						 \end{array} \right] @f$ filter.
 /// Only implemented for x and y direction

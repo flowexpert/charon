@@ -40,33 +40,33 @@ void bin2<T>::execute()
 	ParameteredObject::execute();
 	if (this->dx.connected())
 	{
-		this->dx()->assign(this->img()->size);
+		this->dx().assign(this->img().size);
 		cimg_library::CImg<T> f(3,1,1,1,0.5,0.0,-0.5);
-		for (unsigned int t=0; t < this->img()->size; t++)
+		for (unsigned int t=0; t < this->img().size; t++)
 			this->dx()[t]=this->img()[t].get_convolve(f);
 		
 	}
 	if (this->dy.connected())
 	{
-		this->dy()->assign(this->img()->size);
+		this->dy().assign(this->img().size);
 		cimg_library::CImg<T> f(1,3,1,1,0.5,0.0,-0.5);
-		for (unsigned int t=0; t < this->img()->size; t++)
+		for (unsigned int t=0; t < this->img().size; t++)
 			this->dy()[t]=this->img()[t].get_convolve(f);
 		
 	}
 	if (this->dz.connected())
 	{
-		this->dz()->assign(this->img()->size);
+		this->dz().assign(this->img().size);
 		cimg_library::CImg<T> f(1,1,3,1,0.5,0.0,-0.5);
-		for (unsigned int t=0; t < this->img()->size; t++)
+		for (unsigned int t=0; t < this->img().size; t++)
 			this->dz()[t]=this->img()[t].get_convolve(f);
 		
 	}
 	if (this->dt.connected())
 	{
-		this->dt()->assign(this->img()->size);
+		this->dt().assign(this->img().size);
 		cimg_library::CImg<T> f(1,1,1,3,0.5,0.0,-0.5);
-		for (unsigned int t=0; t < this->img()->size; t++)
+		for (unsigned int t=0; t < this->img().size; t++)
 			this->dt()[t]=this->img()[t].get_convolve(f);
 	}
 }

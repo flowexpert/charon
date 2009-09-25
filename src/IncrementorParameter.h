@@ -39,7 +39,8 @@
 /// IncrementorParameter saves one parameter to work in Incrementor or 
 /// Brightnessmodels and MotionModels
 template<typename T>
-class incrementorparameter_DECLDIR IncrementorParameter: public TemplatedParameteredObject<T>
+class incrementorparameter_DECLDIR IncrementorParameter: public TemplatedParameteredObject<
+		T>
 {
 private:
 	std::string parameterName;/// @param parameterName name of parameter

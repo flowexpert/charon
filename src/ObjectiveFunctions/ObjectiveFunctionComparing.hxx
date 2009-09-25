@@ -59,7 +59,7 @@ T ObjectiveFunctionComparing<T>::compare(
 		{
 			T predictedIntenity = piList[j];
 			T foundIntensity = this->interpolator()->interpolate(
-					(*this->sequence())[j], (float)pixel.getX(), (float)pixel.getY(),
+					this->sequence()[j], (float)pixel.getX(), (float)pixel.getY(),
 					(float) pixel.getZ(), (int)pixel.getT());
 			foundChange += (predictedIntenity - foundIntensity)
 					* (predictedIntenity - foundIntensity);

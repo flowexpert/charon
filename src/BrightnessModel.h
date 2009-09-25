@@ -75,7 +75,7 @@ public:
 	OutputSlot<BrightnessFunctorInterface<T>*> brightnessFunctor;
 
 	/// imagelist to work on
-	InputSlot<cimg_library::CImgList<T> > img;
+	InputSlot<cimg_library::CImgList<T> &> img;
 
 	/// updates the motionmodel
 	virtual void execute() //FIXME virtual ??
