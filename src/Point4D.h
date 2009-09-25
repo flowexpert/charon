@@ -51,19 +51,21 @@ class Point4D
 		}
 		
 		operator Point4D<int>() {
-			this->x = (int)this->x;
-			this->y = (int)this->y;
-			this->z = (int)this->z;
-			this->t = (int)this->t;
-			return *this;
+			Point4D<int> res;
+			res.x = (int)this->x;
+			res.y = (int)this->y;
+			res.z = (int)this->z;
+			res.t = (int)this->t;
+			return res;
 		}
 		
 		operator Point4D<unsigned int>() {
-			this->x = (unsigned int)this->x;
-			this->y = (unsigned int)this->y;
-			this->z = (unsigned int)this->z;
-			this->t = (unsigned int)this->t;
-			return *this;
+			Point4D<unsigned int> res;
+			res.x = (unsigned int)abs(this->x);
+			res.y = (unsigned int)abs(this->y);
+			res.z = (unsigned int)abs(this->z);
+			res.t = (unsigned int)abs(this->t);
+			return res;
 		}
 				
 		///assignment operator
