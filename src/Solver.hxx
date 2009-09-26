@@ -28,8 +28,8 @@
 #define _SOLVER_HXX_
 
 #include "Solver.h"
-#include <Stencil.hxx>
-#include <Roi.hxx>
+#include <Stencil.h>
+#include <Roi.h>
 
 ///default constructor
 template <class T>
@@ -117,7 +117,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<
 				
 ///copy constructor
 template <class T>
-Solver<T>::MetaStencil::MetaStencil(const Solver<T>::MetaStencil& rhs) {
+Solver<T>::MetaStencil::MetaStencil(const typename Solver<T>::MetaStencil& rhs) {
 	this->substencils = rhs.substencils;
 	this->data        = rhs.data;
 	this->pattern     = rhs.pattern;
@@ -137,7 +137,7 @@ Solver<T>::MetaStencil::MetaStencil() {}
 ///assignment operator
 template <class T>
 ///@todo why is 'typename' necessary here?
-typename Solver<T>::MetaStencil& Solver<T>::MetaStencil::operator=(Solver<T>::MetaStencil& rhs) {
+typename Solver<T>::MetaStencil& Solver<T>::MetaStencil::operator=(typename Solver<T>::MetaStencil& rhs) {
 	if (&rhs == this) {return *this;}
 	
 	this->substencils = rhs.substencils;

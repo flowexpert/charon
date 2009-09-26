@@ -18,6 +18,7 @@ FIND_PATH(CHARON_CORE_ROOT_DIR
     PATHS           [HKEY_LOCAL_MACHINE\\SOFTWARE\\Heidelberg\ Collaboratory\ for\ Image\ Processing\\charon-core]
                     /usr
                     /usr/local
+                    C:/charon-suite/charon-core
                     D:/charon-install/core
     DOC             "charon-core root directory"
 )

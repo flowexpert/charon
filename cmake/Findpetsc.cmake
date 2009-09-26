@@ -19,12 +19,10 @@ FIND_PATH(PETSC_ROOT_DIR
     DOC             "petsc root directory"
 )
 
-# this has to be improved to find the configure directory automatically
-FIND_PATH(PETSC_CONFIG_DIR
-	NAMES			include/petscconf.h
-	PATHS			${PETSC_ROOT_DIR}
-	DOC				"petsc configuration directory"
-)
+# as multiple compiled version of petsc with different architectures
+# can reside in the root directory, the architecture has to be specified
+# manually using PETSC_ARCH
+# with both the ROOT_DIR and ARCH every needed path can be generated
 
 INCLUDE(FindPackageHandleStandardArgs)
 
@@ -36,24 +34,23 @@ IF(NOT PETSC_ROOT_DIR)
 		"where you have installed PETSc. "
 	)
 ENDIF(NOT PETSC_ROOT_DIR)
-IF(NOT PETSC_CONFIG_DIR)
-	MESSAGE(SEND_ERROR
-		"PETSc configuration directory has to be specified. "
-		"Please set PETSC_CONFIG_DIR to the correct subpath of your PETSc "
-		"directory (currently set to ${PETSC_ROOT_DIR})"
-	)
-ENDIF(NOT PETSC_CONFIG_DIR)
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(petsc DEFAULT_MSG
     PETSC_ROOT_DIR
-    PETSC_CONFIG_DIR
 )
 
 SET(PETSC_INCLUDE_DIRS
 	${PETSC_ROOT_DIR}/include/
-	${PETSC_ROOT_DIR}/include/mpiuni/
-	${PETSC_CONFIG_DIR}/include/
+	${PETSC_ROOT_DIR}/bmake/${PETSC_ARCH}/
 )
+
+IF (NOT PETSC_USES_MPI)
+	SET(PETSC_INCLUDE_DIRS
+		${PETSC_INCLUDE_DIRS}
+		${PETSC_ROOT_DIR}/include/mpiuni/
+	)
+ENDIF (NOT PETSC_USES_MPI)
+
 
 MARK_AS_ADVANCED(
     PETSC_ROOT_DIR

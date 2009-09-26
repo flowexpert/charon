@@ -6,9 +6,12 @@ INCLUDE_DIRECTORIES(Incrementors)
 INCLUDE_DIRECTORIES(ObjectiveFunctions)
 INCLUDE_DIRECTORIES(SurfaceAnalysis)
 
-IF(COMPILE_SOLVERS)
+IF(COMPILE_SOLVERS AND PETSC_USED)
 	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
-ENDIF(COMPILE_SOLVERS)
+	IF(!PETSC_USES_MPI)
+		INCLUDE_DIRECTORIES(BEFORE ${PETSC_ROOT_DIR}/include/mpiuni/)		
+	ENDIF(!PETSC_USES_MPI)
+ENDIF(COMPILE_SOLVERS AND PETSC_USED)
 
 ADD_DEFINITIONS(/DHANDLE_DLL)
 
@@ -24,19 +27,35 @@ IF (COMPILE_STENCILS)
 	ADD_LIBRARY(l2norm SHARED Stencils/L2Norm.cpp)
 ENDIF (COMPILE_STENCILS)
 IF (COMPILE_SOLVERS)
-	ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
-	TARGET_LINK_LIBRARIES(petscsolver	charon-core
-						${PETSC_CONFIG_DIR}/lib/libf2cblas.a
-						${PETSC_CONFIG_DIR}/lib/libf2clapack.a
-						${PETSC_CONFIG_DIR}/lib/libmpiuni.a
-						${PETSC_CONFIG_DIR}/lib/libpetsc.a
-						# ${PETSC_CONFIG_DIR}/lib/libpetsccontrib.a
-						${PETSC_CONFIG_DIR}/lib/libpetscdm.a
-						${PETSC_CONFIG_DIR}/lib/libpetscksp.a
-						${PETSC_CONFIG_DIR}/lib/libpetscmat.a
-						# ${PETSC_CONFIG_DIR}/lib/libpetscsnes.a
-						# ${PETSC_CONFIG_DIR}/lib/libpetscts.a
-						${PETSC_CONFIG_DIR}/lib/libpetscvec.a)
+	IF (PETSC_USED)
+		ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
+		#add blas/lapack of petsc
+		IF (PETSC_USES_FORTRAN)
+			TARGET_LINK_LIBRARIES(petscsolver	${PETSC_ROOT_DIR}/externalpackages/fblaslapack/${PETSC_ARCH}/libfblas.${LIBFILE_EXT}
+								${PETSC_ROOT_DIR}/externalpackages/fblaslapack/${PETSC_ARCH}/libflapack.${LIBFILE_EXT})
+		ELSE (PETSC_USES_FORTRAN)
+			TARGET_LINK_LIBRARIES(petscsolver	${PETSC_ROOT_DIR}/externalpackages/f2cblaslapack/${PETSC_ARCH}/libf2cblas.${LIBFILE_EXT}
+								${PETSC_ROOT_DIR}/externalpackages/f2cblaslapack/${PETSC_ARCH}/libf2clapack.${LIBFILE_EXT})
+		ENDIF (PETSC_USES_FORTRAN)
+
+		#add MPI support
+		IF (PETSC_USES_MPI)
+			TARGET_LINK_LIBRARIES(petscsolver	${MPI_DIR}/lib/mpi.${LIBFILE_EXT}) #TODO: correct this
+		ELSE (PETSC_USES_MPI)
+			TARGET_LINK_LIBRARIES(petscsolver	${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libmpiuni.${LIBFILE_EXT})
+		ENDIF (PETSC_USES_MPI)
+
+		#add all libraries needed by petsc
+		TARGET_LINK_LIBRARIES(petscsolver	charon-core
+							${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetsc.${LIBFILE_EXT}
+							# ${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetsccontrib.${LIBFILE_EXT}
+							${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscdm.${LIBFILE_EXT}
+							${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscksp.${LIBFILE_EXT}
+							${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscmat.${LIBFILE_EXT}
+							# ${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscsnes.${LIBFILE_EXT}
+							# ${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscts.${LIBFILE_EXT}
+							${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscvec.${LIBFILE_EXT})
+	ENDIF (PETSC_USED)
 ENDIF (COMPILE_SOLVERS)
 IF (COMPILE_BLOCKMATCHING)
 	ADD_LIBRARY(incrementorparameter SHARED IncrementorParameter.cpp)
@@ -86,12 +105,12 @@ SET(Plugins
 )
 ENDIF (COMPILE_STENCILS)
 
-IF (COMPILE_SOLVERS)
+IF (COMPILE_SOLVERS AND PETSC_USED)
 SET(Plugins
 	${Plugins}
 	petscsolver
 )
-ENDIF (COMPILE_SOLVERS)
+ENDIF (COMPILE_SOLVERS AND PETSC_USED)
 
 IF (COMPILE_BLOCKMATCHING)
 SET(Plugins

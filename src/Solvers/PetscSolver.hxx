@@ -252,7 +252,7 @@ int PetscSolver<T>::petscExecute() {
 	
 	std::map<std::string, std::vector<Stencil<T>*> > substencils;
 	typename std::set<AbstractSlot<Stencil<T>* >* >::const_iterator sIt; //stencil iterator
-	std::set<std::string>::iterator uIt;			//unknowns iterator
+	std::set<std::string>::const_iterator uIt;			//unknowns iterator
 	for(sIt=this->stencils.begin() ; sIt!=this->stencils.end() ; sIt++) {	//iterate through stencils
 	InputSlot<Stencil<T>* >& is = *((InputSlot<Stencil<T>* >*)*sIt);
 	//*sIt (dereferencing of sIt) gives us an AbstractSlot<Stencil<T>* >* (a pointer)
