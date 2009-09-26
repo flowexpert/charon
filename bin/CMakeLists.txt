@@ -1,6 +1,9 @@
 IF(ENABLE_TEST)
 	IF(COMPILE_BLOCKMATCHING)
 		ADD_TEST(listedpixelselectiontest listedpixelselectiontest)
+		ADD_TEST(incrementorcountuptest incrementorcountuptest)
+		ADD_TEST(objectivefunctioncomparingtest objectivefunctioncomparingtest)
+		ADD_TEST(surfaceanalysisminchangetest surfaceanalysisminchangetest)
 	ENDIF(COMPILE_BLOCKMATCHING)
 	
 	IF(COMPILE_SOLVERS)

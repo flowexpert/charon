@@ -43,7 +43,7 @@
 
 /// abstract base class for the different motion models
 template<class T>
-class MotionModel: public ParameteredObject
+class MotionModel: public TemplatedParameteredObject<T>
 {
 protected:
 
@@ -56,14 +56,14 @@ protected:
 public:
 	/// default constructor
 	MotionModel(const std::string& classname, const std::string& name = "") :
-		ParameteredObject(classname, name, "computes the vectors")
+		TemplatedParameteredObject<T>(classname, name, "computes the vectors")
 	{
-		_addOutputSlot(out, "this", "Pointer to itself", "MotionModel*");
-		_addOutputSlot(flowFunctor, "flowfunctor",
+		this->_addOutputSlot(out, "this", "Pointer to itself", "MotionModel*");
+		this->_addOutputSlot(flowFunctor, "flowfunctor",
 				"flowFunctor of MotionModel", "FlowFunctorInterface*");
-		_addParameter(x, "x", "x-coordinate of the center of the stencil", 0);
-		_addParameter(y, "y", "y-coordinate of the center of the stencil", 0);
-		_addParameter(z, "z", "z-coordinate of the center of the stencil", 0);
+		this->_addParameter(x, "x", "x-coordinate of the center of the stencil", 0);
+		this->_addParameter(y, "y", "y-coordinate of the center of the stencil", 0);
+		this->_addParameter(z, "z", "z-coordinate of the center of the stencil", 0);
 
 		// Define inputslots in derived class
 		//_addInputSlot(img, "image","Image to work with","image");

@@ -41,7 +41,7 @@ std::vector<IncrementorParameter<T>*> & SurfaceAnalysisMinChange<T>::findMinChan
 {
 	//find minimum
 	unsigned int tempMin = 0;
-	for (unsigned int i = 1; i != differences.size() - 1; i++)
+	for (unsigned int i = 1; i != differences.size(); i++)
 	{
 		if (differences[i] < differences[tempMin])
 		{

@@ -50,17 +50,19 @@ T ObjectiveFunctionComparing<T>::compare(
 {
 	T foundChange = 0;
 	Pixel<T> pixel;
+	Pixel<T> outPixel;
 	for (unsigned int i = 0; i != pixelList.size() - 1; i++)
 	{
 		this->brightnessModel()->apply(*(pixelList[i]), params, pixel);
-		this->motionModel()->apply(pixel, params, pixel);
-		std::vector<T> piList = pixel.getIntensity(); //pixel intensity list
-		for (unsigned int j = 0; j != piList.size() - 1; j++)
+		this->motionModel()->apply(pixel, params, outPixel);
+		std::vector<T> piList = outPixel.getIntensity(); //pixel intensity list
+		for (unsigned int j = 0; j != piList.size(); j++)
 		{
 			T predictedIntenity = piList[j];
 			T foundIntensity = this->interpolator()->interpolate(
-					this->sequence()[j], (float)pixel.getX(), (float)pixel.getY(),
-					(float) pixel.getZ(), (int)pixel.getT());
+					this->sequence()[j], (float) pixel.getX(),
+					(float) pixel.getY(), (float) pixel.getZ(),
+					(int) pixel.getT());
 			foundChange += (predictedIntenity - foundIntensity)
 					* (predictedIntenity - foundIntensity);
 		}

@@ -35,7 +35,6 @@ BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
 template<typename T>
 void BlockMatchingLIACS<T>::execute()
 {
-	/*
 	if (this->sequence().size)
 	{
 		// adjust size of surface
@@ -69,19 +68,19 @@ void BlockMatchingLIACS<T>::execute()
 						unsigned int j = 0;
 						for (it = tempParams.begin(); it != tempParams.end(); it++)
 						{
-							if (tempParams[j]->getName() == "x")
+							if (tempParams[j]->name == "x")
 							{
 								nextX = tempParams[j]->current;
 							}
-							if (tempParams[j]->getName() == "y")
+							if (tempParams[j]->name == "y")
 							{
 								nextY = tempParams[j]->current;
 							}
-							if (tempParams[j]->getName() == "z")
+							if (tempParams[j]->name == "z")
 							{
 								nextZ = tempParams[j]->current;
 							}
-							if (tempParams[j]->getName() == "t")
+							if (tempParams[j]->name == "t")
 							{
 								nextT = tempParams[j]->current;
 							}
@@ -94,7 +93,6 @@ void BlockMatchingLIACS<T>::execute()
 						this->surface(3, x, y, z, t) = nextT;
 					}
 	}
-	*/
 }
 
 #endif /* BLOCKMATCHINGLIACS_HXX_ */

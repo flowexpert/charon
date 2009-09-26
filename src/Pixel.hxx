@@ -188,6 +188,7 @@ Pixel<T>& Pixel<T>::operator=(const Pixel<T>& rhs)
 	this->z = rhs.getZ();
 	this->t = rhs.getT();
 	std::vector<T> tempListOfIntensity = rhs.getIntensity();
+	this->intensity = tempListOfIntensity;
 	/*for (unsigned int i = 0; i != tempListOfIntensity.size() - 1; i++)
 	 {
 	 if (i <= this->intensity.size() - 1)
