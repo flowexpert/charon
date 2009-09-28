@@ -33,11 +33,11 @@
 #include "Slots.hxx"
 
 template<class T>
-void ParameteredObject::_addParameter(Parameter<T>& param,
+inline void ParameteredObject::_addParameter(Parameter<T>& param,
 		const std::string& name, const std::string& doc, const T& defVal,
 		const std::string& type) {
 	param.setDefault(defVal);
-	_addParameter(param, name, doc, type);
+	ParameteredObject::_addParameter(param, name, doc, type.c_str());
 }
 
 template <typename T>
