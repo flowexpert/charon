@@ -90,8 +90,12 @@ void MetaData::_check() {
         // (i.e. "className.parName.type" is set)
         std::vector<std::string>::const_iterator pIter;
         for(pIter = pList.begin(); pIter != pList.end(); pIter++) {
-            if(keys.find(*cIter + "." + *pIter + ".type") == keys.end())
-                throw "parameter " + *pIter
+			std::string test ="incrementorparameter.stepsize.type";
+			std::string p =*pIter;
+			// @TODO: The "parameters" list of a class in a wrp-File should make sure that the (lower)case is consistent!
+			std::transform(p.begin(), p.end(), p.begin(), (int(*)(int)) tolower); //Hack (cf. "todo" above)
+            if(keys.find(*cIter + "." + p + ".type") == keys.end())
+                throw "parameter " + p
                     + " missing in class " + *cIter;
         }
     }
