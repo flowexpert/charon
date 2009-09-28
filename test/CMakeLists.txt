@@ -20,4 +20,16 @@ IF(ENABLE_TEST)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(imgtooltest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
+
+
+	IF(WIN32)
+		# copy needed dll for tests and application run before installing
+		GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
+		GET_TARGET_PROPERTY(PLOC imgmaniptest LOCATION)
+		GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
+
+		ADD_CUSTOM_COMMAND(TARGET imgmaniptest POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy ${CLOC} ${PLOC_DIR}
+		)
+	ENDIF(WIN32)
 ENDIF(ENABLE_TEST)

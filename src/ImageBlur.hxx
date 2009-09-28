@@ -24,18 +24,6 @@
 #ifndef _IMAGEBLUR_HXX_
 #define _IMAGEBLUR_HXX_
 
-#ifdef MSVC
-#ifdef crop_EXPORTS
-///Visual C++ specific code
-#define crop_DECLDIR __declspec(dllexport)
-#else
-#define crop_DECLDIR __declspec(dllimport)
-#endif /*Export or import*/
-#else
-///Not needed with GCC
-#define crop_DECLDIR
-#endif
-
 #include "ImageBlur.h"
 
 template<typename T>

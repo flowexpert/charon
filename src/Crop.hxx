@@ -24,18 +24,6 @@
 #ifndef _CROP_HXX_
 #define _CROP_HXX_
 
-#ifdef MSVC
-#ifdef crop_EXPORTS
-///Visual C++ specific code
-#define crop_DECLDIR __declspec(dllexport)
-#else
-#define crop_DECLDIR __declspec(dllimport)
-#endif /*Export or import*/
-#else
-///Not needed with GCC
-#define crop_DECLDIR
-#endif
-
 #include "Crop.h"
 
 template <typename T>
@@ -57,7 +45,6 @@ void Crop<T>::execute()
     assert(roi()->left  < roi()->right);
     assert(roi()->top   < roi()->bottom);
     assert(roi()->front < roi()->back);
-
     out = in().get_crop(0, in().size-1, roi()->left, roi()->top, roi()->front,
         roi()->right-1, roi()->bottom-1, roi()->back-1);
 }

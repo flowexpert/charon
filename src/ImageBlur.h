@@ -29,15 +29,15 @@
 #define _IMAGEBLUR_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef crop_EXPORTS
+#ifdef imageblur_EXPORTS
 ///Visual C++ specific code
-#define crop_DECLDIR __declspec(dllexport)
+#define imageblur_DECLDIR __declspec(dllexport)
 #else
-#define crop_DECLDIR __declspec(dllimport)
+#define imageblur_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define crop_DECLDIR
+#define imageblur_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
@@ -47,7 +47,7 @@
 /// Simple class to crop images.
 /// This class shrinks the image to given region.
 template <typename T>
-class crop_DECLDIR ImageBlur : public TemplatedParameteredObject<T>
+class imageblur_DECLDIR ImageBlur : public TemplatedParameteredObject<T>
 {
 private:
 	/// Stores the blurred image
