@@ -9,6 +9,8 @@ ADD_LIBRARY(crop SHARED Crop.cpp)
 TARGET_LINK_LIBRARIES(crop roi)
 ADD_LIBRARY(filereader SHARED FileReader.cpp)
 ADD_LIBRARY(filewriter SHARED FileWriter.cpp)
+ADD_LIBRARY(imageblur SHARED ImageBlur.cpp)
+TARGET_LINK_LIBRARIES(imageblur roi)
 ADD_LIBRARY(imagedisplay SHARED ImageDisplay.cpp)
 ADD_LIBRARY(interpolatorcubic SHARED InterpolatorCubic.cpp)
 ADD_LIBRARY(interpolatorlinear SHARED InterpolatorLinear.cpp)
@@ -20,6 +22,7 @@ SET(Plugins
 	crop
 	filereader
 	filewriter
+	imageblur
 	imagedisplay
 	interpolatorcubic
 	interpolatorlinear
