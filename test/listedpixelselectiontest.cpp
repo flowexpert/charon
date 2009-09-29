@@ -51,6 +51,16 @@ int main()
 
 		lps.range.connect(&roi.out);
 		lps.sequence.connect(&rd.out);
+		if (!lps.range.connected(&roi.out))
+		{
+			std::cout << "range is not connected. " << std::endl;
+			return -1;
+		}
+		if (!lps.sequence.connect(&rd.out))
+		{
+			std::cout << "sequence is not connected. " << std::endl;
+			return -1;
+		}
 
 		lps.execute();
 		list = lps.getListOfPixel();
@@ -89,6 +99,16 @@ int main()
 		roit.after = 1;
 		lpst.range.connect(&roit.out);
 		lpst.sequence.connect(&rdt.out);
+		if (!lpst.range.connected(&roit.out))
+		{
+			std::cout << "range is not connected. " << std::endl;
+			return -1;
+		}
+		if (!lpst.sequence.connect(&rdt.out))
+		{
+			std::cout << "sequence is not connected. " << std::endl;
+			return -1;
+		}
 
 		lpst.execute();
 		std::vector<Pixel<float>*> listt = lpst.getListOfPixel();

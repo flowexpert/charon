@@ -65,6 +65,31 @@ int main()
 		inc.paramList.connect(&z.out);
 		inc.paramList.connect(&t.out);
 		inc.paramList.connect(&d.out);
+		if (!inc.paramList.connected(&x.out)) 
+		{
+		std::cout << "parameter x is not connected" << std::endl; 
+		return -1; 
+		}
+		if (!inc.paramList.connected(&y.out)) 
+		{
+		std::cout << "parameter y is not connected" << std::endl; 
+		return -1; 
+		}
+		if (!inc.paramList.connected(&z.out)) 
+		{
+		std::cout << "parameter z is not connected" << std::endl; 
+		return -1; 
+		}
+		if (!inc.paramList.connected(&t.out)) 
+		{
+		std::cout << "parameter t is not connected" << std::endl; 
+		return -1; 
+		}
+		if (!inc.paramList.connected(&d.out)) 
+		{
+		std::cout << "parameter d is not connected" << std::endl; 
+		return -1; 
+		}
 		inc.execute();
 
 		// compute steps

@@ -33,18 +33,18 @@ BlockMatching<T>::BlockMatching(const std::string& name,
 			"BlockMatching try to fing a flow")
 {
 	this->_addInputSlot(sequence, "sequence", "Sequence of Images",
-			"cimg_library::CImgList<T>& ");
+			"CImgList<T>");
 	this->_addInputSlot(pixelList, "pixelList", "List of Pixel out of Roi",
 			"PixelSelection<T> *");
 	this->_addInputSlot(newParams, "newParams",
 			"Next Parameters after Incrementation", "Incrementor<T>*");
 	this->_addInputSlot(changes, "changes", "Models to be changed",
-			"ObjectiveFuntction<T>*");
+			"ObjectiveFunction<T>*");
 	this->_addInputSlot(bestParam, "bestParam",
 			"Computes best fitting Parameters, for the flow",
 			"SurfaceAnalysis<T>*");
 	this->_addOutputSlot(flow, "flow", "Resulting motion field",
-			"BlockMatching<T> *");
+			"cimglist<float>");
 }
 
 #endif

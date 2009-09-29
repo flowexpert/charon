@@ -48,6 +48,7 @@ void BlockMatchingLIACS<T>::execute()
 					{
 						// loop over i until the doStep function from 
 						// Incrementor returns true 
+						///@TODO incrementor returns true in 1st round
 						for (int i = 0; this->newParams()->doStep(); i++)
 						{
 							allParameters.push_back(

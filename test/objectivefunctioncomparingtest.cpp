@@ -68,10 +68,16 @@ int main()
 		lps.range.connect(&roi.out);
 		lps.sequence.connect(&rd.out);
 		lps.execute();
-		std::cout << "lps.sequence: " << lps.sequence.connected(&rd.out)
-				<< std::endl;
-		std::cout << "lps.range: " << lps.range.connected(&roi.out)
-				<< std::endl;
+		if (!lps.sequence.connected(&rd.out))
+		{
+			std::cout << "PixelSelection: sequence is not connected. " << std::endl;
+			return -1; 
+		}
+		if (!lps.range.connected(&roi.out))
+		{
+			std::cout << "PixelSelection: range is not connected. " << std::endl;
+			return -1; 
+		}
 		BrightnessModels::Constant<float> con;
 		MotionModels::LocalConstant<float> locon;
 		InterpolatorLinear<float> ipol("ipol");
@@ -88,15 +94,56 @@ int main()
 		locon.dy.connect(&der.dy);
 		locon.dz.connect(&der.dx);
 		locon.dt.connect(&der.dy);
-
-		std::cout << "ofc.sequence: " << ofc.sequence.connected(&rd.out)
-				<< std::endl;
-		std::cout << "ofc.brightnessModel: " << ofc.brightnessModel.connected(
-				&con.out) << std::endl;
-		std::cout << "ofc.motionModel: " << ofc.motionModel.connected(&locon.out)
-				<< std::endl;
-		std::cout << "ofc.interpolator: " << ofc.interpolator.connected(&ipol.out)
-				<< std::endl;
+		if (!ofc.sequence.connected(&rd.out))
+		{
+			std::cout << "ObjectiveFunction: Sequence is not connected. "<< std::endl;
+			return -1; 
+		}
+		if (!ofc.brightnessModel.connected(&con.out))
+		{
+			std::cout << "ObjectiveFunction: bightnessModel is not connected. "<< std::endl;
+			return -1; 
+		}
+		if (!ofc.motionModel.connected(&locon.out))
+		{
+			std::cout << "ObjectiveFunction: motionModel is not connected. "<< std::endl;
+			return -1; 
+		}
+		if (!ofc.interpolator.connected(&ipol.out))
+		{
+			std::cout << "ObjectiveFunction: interpolator is not connected. "<< std::endl;
+			return -1; 
+		}
+		if (!der.img.connected(&rd.out))
+		{
+			std::cout << "Derivatives: img is not connected. " << std::endl; 
+			return -1; 
+		}
+		if (!con.img.connected(&rd.out))
+		{
+			std::cout << "BrightnessModel::Constant: img is not connected. " << std::endl; 
+			return -1; 
+		}
+		if (!locon.dx.connected(&der.dx))
+		{
+			std::cout << "MotionModel::LocalConstant: dx is not connected. " << std::endl; 
+			return -1;
+		}
+		if (!locon.dy.connected(&der.dy))
+		{
+			std::cout << "MotionModel::LocalConstant: dy is not connected. " << std::endl; 
+			return -1;
+		}
+		if (!locon.dz.connected(&der.dx))
+		{
+			std::cout << "MotionModel::LocalConstant: dz is not connected. " << std::endl; 
+			return -1;
+		}
+		if (!locon.dt.connected(&der.dy))
+		{
+			std::cout << "MotionModel::LocalConstant: dt is not connected. " << std::endl; 
+			return -1;
+		}
 
 		ofc.execute();
 
