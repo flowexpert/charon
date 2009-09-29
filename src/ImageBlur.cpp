@@ -25,7 +25,7 @@
 
 #include "ImageBlur.hxx"
 
-#if defined(MSVC) && defined (crop_EXPORTS)
+#if defined(MSVC) && defined (imageblur_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC

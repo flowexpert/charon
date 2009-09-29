@@ -35,8 +35,7 @@ int main() {
 
 #ifdef WINDOWS
 #ifdef _DEBUG
-    //PluginManager man("./Debug");
-	PluginManager man("C:\\Daten\\Daten\\Arbeit\\charon-suite\\charon-utils\\trunk\\build\\bin\\debug");
+    PluginManager man("./Debug");
 #else /* _DEBUG */
     PluginManager man("./Release");
 #endif /* _DEBUG */
