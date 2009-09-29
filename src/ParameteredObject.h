@@ -392,6 +392,8 @@ public:
 
     virtual const std::string getTemplateType() const;
 
+	virtual void assign(T top, T left, T bottom, T right, T front = 0, T back = 1,
+		T before = 0, T after = 1) { }
 };
 
 #endif // _ParameteredObject_H
