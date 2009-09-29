@@ -77,6 +77,7 @@ template<typename T>
 Roi<T>::~Roi(void) {
 }
 
+#include <iostream>
 template <typename T>
 void Roi<T>::assign(T t, T l, T bo, T r, T f, T ba, T be, T af) {
     top    = t;
@@ -87,6 +88,7 @@ void Roi<T>::assign(T t, T l, T bo, T r, T f, T ba, T be, T af) {
     back   = ba;
     before = be;
     after  = af;
+	std::cout << "Roi assigned!" << std::endl;
 }
 
 template <typename T>

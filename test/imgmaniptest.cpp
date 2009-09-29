@@ -36,7 +36,8 @@ int main() {
     try{
 #ifdef WINDOWS
 #ifdef _DEBUG
-    PluginManager man("./Debug");
+    //PluginManager man("./Debug");
+	PluginManager man("C:\\Daten\\Daten\\Arbeit\\charon-suite\\charon-utils\\trunk\\build\\bin\\debug");
 #else /* _DEBUG */
     PluginManager man("./Release");
 #endif /* _DEBUG */
@@ -52,6 +53,7 @@ int main() {
     man.loadPlugin("roi");
     man.loadPlugin("interpolatorlinear");
     man.loadPlugin("interpolatorcubic");
+    man.loadPlugin("imageblur");
 
     // create test instances
     ParameteredObject* filereader   = man.createInstance  ("filereader", 0, "filereader");
@@ -62,6 +64,7 @@ int main() {
     ParameteredObject* crop         = man.createInstance  ("crop", 0, "crop");
     ParameteredObject* cubic        = man.createInstance  ("interpolatorcubic", 0, "interpolatorcubic");
     ParameteredObject* linear       = man.createInstance  ("interpolatorlinear", 0, "interpolatorlinear");
+	ParameteredObject* blur         = man.createInstance  ("imageblur", 0, "imageblur");
 
     // cleanup
     man.destroyInstance(filereader);
@@ -72,6 +75,7 @@ int main() {
     man.destroyInstance(crop);
     man.destroyInstance(cubic);
     man.destroyInstance(linear);
+    man.destroyInstance(blur);
 
     if (FileTool::exists(TESTWRPFILE)) {
         man.loadParameterFile(TESTWRPFILE);

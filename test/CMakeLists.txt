@@ -7,18 +7,26 @@ IF(ENABLE_TEST)
 	SET(PENGUINFILE "${CMAKE_CURRENT_SOURCE_DIR}/Penguin.pgm")
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/sample.wrp.in ${CMAKE_CURRENT_BINARY_DIR}/sample.wrp @ONLY)
 	ADD_DEFINITIONS(-DTESTWRPFILE="${CMAKE_CURRENT_BINARY_DIR}/sample.wrp")
-	ADD_EXECUTABLE(imgmaniptest imgmaniptest.cpp)
-	TARGET_LINK_LIBRARIES(imgmaniptest charon-plugins)
+	ADD_EXECUTABLE(imgManipTest imgmaniptest.cpp)
+	TARGET_LINK_LIBRARIES(imgManipTest charon-plugins)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(imgmaniptest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
 
 	# tests for ImgTool routines
-	ADD_DEFINITIONS(-DPENGUINFILE="${CMAKE_CURRENT_SOURCE_DIR}/Penguin.pgm")
-	ADD_EXECUTABLE(imgtooltest imgToolTest.cpp)
-	TARGET_LINK_LIBRARIES(imgtooltest charon-core)
+	ADD_DEFINITIONS(-DPENGUINFILE="${PENGUINFILE}")
+	ADD_EXECUTABLE(imgToolTest imgToolTest.cpp)
+	TARGET_LINK_LIBRARIES(imgToolTest charon-core)
 	IF(UNIX)
-		TARGET_LINK_LIBRARIES(imgtooltest pthread ${X11_LIBRARIES})
+		TARGET_LINK_LIBRARIES(imgToolTest pthread ${X11_LIBRARIES})
+	ENDIF(UNIX)
+	
+	#tests for plugin creatin in various ways
+	ADD_DEFINITIONS(-DPENGUINFILE="${PENGUINFILE}")
+	ADD_EXECUTABLE(pluginTest pluginTest.cpp)
+	TARGET_LINK_LIBRARIES(pluginTest charon-core charon-plugins)
+	IF(UNIX)
+		TARGET_LINK_LIBRARIES(pluginTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
 
 
