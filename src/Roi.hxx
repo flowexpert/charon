@@ -31,18 +31,31 @@
 
 template<typename T>
 void Roi<T>::_init() {
+	// register parameters and slots
 	this->_addParameter (top,    "top"   , "upper bound" , T(0));
 	this->_addParameter (left,   "left"  , "left bound"  , T(0));
-	this->_addParameter (bottom, "bottom", "lower bound" , T(0));
-	this->_addParameter (right,  "right" , "right bound" , T(0));
+	this->_addParameter (bottom, "bottom", "lower bound" , T(1));
+	this->_addParameter (right,  "right" , "right bound" , T(1));
 	this->_addParameter (front,  "front" , "front bound" , T(0));
 	this->_addParameter (back,   "back"  , "back bound"  , T(1));
 	this->_addParameter (before, "before", "before bound", T(0));
 	this->_addParameter (after,  "after" , "after bound" , T(1));
-	
-	
-	_addOutputSlot(out, "out", "pointer to this roi", "Roi<T>");
+	this->_addOutputSlot(out, "out", "pointer to this roi", "Roi<T>");
+
 	out = this;
+
+	// add export symbols
+	_addFunction(Roi<T>::getWidth);
+	_addFunction(Roi<T>::getHeight);
+	_addFunction(Roi<T>::getDepth);
+	_addFunction(Roi<T>::getDuration);
+	_addFunction(Roi<T>::setWidth);
+	_addFunction(Roi<T>::setHeight);
+	_addFunction(Roi<T>::setDepth);
+	_addFunction(Roi<T>::setDuration);
+	_addFunction(Roi<T>::getVolume);
+	_addFunction(Roi<T>::isInside);
+	_addFunction(Roi<T>::assign);
 }
 
 template<typename T>
@@ -77,7 +90,6 @@ template<typename T>
 Roi<T>::~Roi(void) {
 }
 
-#include <iostream>
 template <typename T>
 void Roi<T>::assign(T t, T l, T bo, T r, T f, T ba, T be, T af) {
     top    = t;
@@ -88,7 +100,60 @@ void Roi<T>::assign(T t, T l, T bo, T r, T f, T ba, T be, T af) {
     back   = ba;
     before = be;
     after  = af;
-	std::cout << "Roi assigned!" << std::endl;
+}
+
+template <typename T>
+T Roi<T>::getWidth() const {
+	return right() - left();
+}
+
+template <typename T>
+T Roi<T>::getHeight() const {
+	return bottom() - top();
+}
+
+template <typename T>
+T Roi<T>::getDepth() const {
+	return back() - front();
+}
+
+template <typename T>
+T Roi<T>::getDuration() const {
+	return after() - before();
+}
+
+template <typename T>
+void Roi<T>::setWidth(T w) {
+	right = left() + w;
+}
+
+template <typename T>
+void Roi<T>::setHeight(T h) {
+	bottom = top() + h;
+}
+
+template <typename T>
+void Roi<T>::setDepth(T d) {
+	back() = front() + d;
+}
+
+template <typename T>
+void Roi<T>::setDuration(T d) {
+	after() = before() + d;
+}
+
+template <typename T>
+T Roi<T>::getVolume() const {
+	return getDuration() ? getWidth() * getHeight() * getDepth()
+			* getDuration() : getDepth() ? getWidth() * getHeight()
+			* getDepth() : getWidth() * getHeight();
+}
+
+template <typename T>
+bool Roi<T>::isInside(T x, T y, T z, T t) const {
+	return x >= this->left() && x < this->right() && y >= this->top() && y
+			< this->bottom() && z >= this->front() && z < this->back() && t
+			>= this->before() && t < this->after();
 }
 
 template <typename T>

@@ -51,7 +51,7 @@ int main() {
     man.destroyInstance(fileReader);
 	man.destroyInstance(imgDisplay);
 
-    Roi<int>* roi =(Roi<int>*)man.createInstance("roi", 2, "roi");
+    Roi<int>* roi = (Roi<int>*)man.createInstance("roi", 2, "roi");
 	roi->top = 10;
 	roi->assign(10, 10, 20, 20);
 	roi->getWidth();
