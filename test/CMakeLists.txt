@@ -10,7 +10,7 @@ IF(ENABLE_TEST)
 	ADD_EXECUTABLE(imgManipTest imgmaniptest.cpp)
 	TARGET_LINK_LIBRARIES(imgManipTest charon-plugins)
 	IF(UNIX)
-		TARGET_LINK_LIBRARIES(imgmaniptest pthread ${X11_LIBRARIES})
+		TARGET_LINK_LIBRARIES(imgManipTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
 
 	# tests for ImgTool routines
@@ -24,7 +24,7 @@ IF(ENABLE_TEST)
 	#tests for plugin creatin in various ways
 	ADD_DEFINITIONS(-DPENGUINFILE="${PENGUINFILE}")
 	ADD_EXECUTABLE(pluginTest pluginTest.cpp)
-	TARGET_LINK_LIBRARIES(pluginTest charon-core charon-plugins)
+	TARGET_LINK_LIBRARIES(pluginTest charon-core charon-plugins roi filereader)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(pluginTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)

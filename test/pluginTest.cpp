@@ -26,7 +26,6 @@
 
 #include <FileReader.h>
 #include <Roi.h>
-#include <Roi.hxx>
 //#include <ImageBlur.h>
 
 #include <iostream>
@@ -59,6 +58,6 @@ int main() {
 	roi->execute();
     man.destroyInstance(roi);
 
-	std::cin.get();
+	//std::cin.get();
     return 0;
 }
