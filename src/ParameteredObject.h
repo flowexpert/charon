@@ -56,6 +56,8 @@
 #else  // WINDOWS
 #define DLLEX
 #endif // WINDOWS
+/// \def DLLEX
+/// handle dll imports/exports
 
 /// Integer which represents a template type.
 typedef unsigned short int template_type;
@@ -231,6 +233,17 @@ protected:
     /// @param type         Parameter type (string representation)
     void _addOutputSlot(Slot& slot, const std::string& name,
         const std::string& doc, const std::string& type = "");
+
+	/// register member function
+	///
+	/// This hack is useful to get some member functions compiled
+	/// and exported into the dynamic library.
+	/// No code is executed, because this is always not zero, but the
+	/// compiler is forced to compile the given (templated) function
+	/// and export the symbol.
+	/// \param x	function to export
+	#define _addFunction(x) if (!this && &(x)) throw 42;
+
     //  @}
 
     // /// Change/set up instance name.
@@ -247,7 +260,7 @@ protected:
     /// @param doc  Class docstring (for metadata)
     ParameteredObject(const std::string& className,
         const std::string& name = "", const std::string& doc = "");
-
+	
 public:
     /// The template type of the instance is double
     static const template_type TYPE_DOUBLE = 0;
@@ -391,9 +404,6 @@ public:
         const std::string& name = "", const std::string& doc = "");
 
     virtual const std::string getTemplateType() const;
-
-	virtual void assign(T top, T left, T bottom, T right, T front = 0, T back = 1,
-		T before = 0, T after = 1) { }
 };
 
 #endif // _ParameteredObject_H
