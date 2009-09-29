@@ -37,6 +37,7 @@ inline void ParameteredObject::_addParameter(Parameter<T>& param,
 		const std::string& name, const std::string& doc, const T& defVal,
 		const std::string& type) {
 	param.setDefault(defVal);
+	param() = defVal;
 	ParameteredObject::_addParameter(param, name, doc, type.c_str());
 }
 
