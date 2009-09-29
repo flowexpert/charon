@@ -34,7 +34,7 @@ ImageDisplay<T>::ImageDisplay(const std::string& name) :
         title("Display")
 {
     this->_addParameter(frame,  "frame",  "select frame to display", 0u);
-    this->_addParameter(wait,   "wait",   "display wait time (in milliseconds)", 0u);
+    this->_addParameter(wait,   "wait",   "display wait time (in milliseconds)", 500u);
     this->_addParameter(width,  "width",  "display width (0=auto)", 0u);
     this->_addParameter(height, "height", "display height (0=auto)", 0u);
     this->_addParameter(title,  "title",  "display title");

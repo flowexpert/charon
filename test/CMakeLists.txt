@@ -3,10 +3,12 @@ INCLUDE_DIRECTORIES(${CHARON_CORE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 
 IF(ENABLE_TEST)
-	# tests for imgmanip classes
-	SET(PENGUINFILE "${CMAKE_CURRENT_SOURCE_DIR}/Penguin.pgm")
+	# common definitions
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/sample.wrp.in ${CMAKE_CURRENT_BINARY_DIR}/sample.wrp @ONLY)
 	ADD_DEFINITIONS(-DTESTWRPFILE="${CMAKE_CURRENT_BINARY_DIR}/sample.wrp")
+	ADD_DEFINITIONS(-DPENGUINFILE="${CMAKE_CURRENT_SOURCE_DIR}/Penguin.pgm")
+
+	# tests for imgmanip classes
 	ADD_EXECUTABLE(imgManipTest imgmaniptest.cpp)
 	TARGET_LINK_LIBRARIES(imgManipTest charon-plugins)
 	IF(UNIX)
@@ -14,7 +16,6 @@ IF(ENABLE_TEST)
 	ENDIF(UNIX)
 
 	# tests for ImgTool routines
-	ADD_DEFINITIONS(-DPENGUINFILE="${PENGUINFILE}")
 	ADD_EXECUTABLE(imgToolTest imgToolTest.cpp)
 	TARGET_LINK_LIBRARIES(imgToolTest charon-core)
 	IF(UNIX)
@@ -22,7 +23,6 @@ IF(ENABLE_TEST)
 	ENDIF(UNIX)
 	
 	#tests for plugin creatin in various ways
-	ADD_DEFINITIONS(-DPENGUINFILE="${PENGUINFILE}")
 	ADD_EXECUTABLE(pluginTest pluginTest.cpp)
 	TARGET_LINK_LIBRARIES(pluginTest charon-core charon-plugins roi filereader)
 	IF(UNIX)

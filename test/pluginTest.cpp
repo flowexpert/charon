@@ -25,10 +25,8 @@
 #include <charon-core/FileTool.h>
 
 #include <FileReader.h>
+#include <ImageDisplay.h>
 #include <Roi.h>
-//#include <ImageBlur.h>
-
-#include <iostream>
 
 int main() {
     // load plugins
@@ -44,19 +42,21 @@ int main() {
 #endif
 
     // create test instances (automatically loads the plugin)
-    FileReader<double>* fileReader =(FileReader<double>*)man.createInstance("filereader", 0, "filereader");
-	fileReader->filename =PENGUINFILE;
-	fileReader->execute();
-	fileReader->out().display();
+    FileReader<double>* fileReader = (FileReader<double>*)man.createInstance("filereader", 0, "filereader");
+	ImageDisplay<double>* imgDisplay = (ImageDisplay<double>*)man.createInstance("imagedisplay", 0, "imagedisplay");
+	
+	fileReader->filename = PENGUINFILE;
+	fileReader->out.connect(&(imgDisplay->in));
+	imgDisplay->execute();
     man.destroyInstance(fileReader);
+	man.destroyInstance(imgDisplay);
 
     Roi<int>* roi =(Roi<int>*)man.createInstance("roi", 2, "roi");
-	roi->top =10;
+	roi->top = 10;
 	roi->assign(10, 10, 20, 20);
 	roi->getWidth();
 	roi->execute();
     man.destroyInstance(roi);
 
-	//std::cin.get();
     return 0;
 }
