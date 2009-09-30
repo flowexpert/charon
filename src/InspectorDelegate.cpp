@@ -33,6 +33,7 @@
 #include <QFileInfo>
 #include <QFileDialog>
 #include <QToolButton>
+#include <QComboBox>
 #include <QResizeEvent>
 #include <QDebug>
 
@@ -67,8 +68,33 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 					this, SLOT(_setFileDialogFlag(bool)));
 			return editor;
 		}
+		if (param.substr(param.find(".")+1) == "templatetype") {
+			QComboBox* editor = new QComboBox(p);
+			editor->setObjectName("templatetypeBox");
+			editor->addItem("int");
+			editor->addItem("float");
+			editor->addItem("double");
+			QString cur = ind.model()->data(ind, Qt::DisplayRole).toString();
+			if (cur == "int")
+				editor->setCurrentIndex(0);
+			if (cur == "float")
+				editor->setCurrentIndex(1);
+			if (cur == "double")
+				editor->setCurrentIndex(2);
+			return editor;
+		}
 	}
 	return QStyledItemDelegate::createEditor(p,opt,ind);
+}
+
+void InspectorDelegate::setModelData (QWidget* editor,
+		QAbstractItemModel* model, const QModelIndex & index ) const {
+	QComboBox* box = qobject_cast<QComboBox*>(editor);
+	if(editor && (editor->objectName() == "templatetypeBox")) {
+		model->setData(index,box->currentText(),Qt::EditRole);
+		return;
+	}
+	QStyledItemDelegate::setModelData(editor, model, index);
 }
 
 void InspectorDelegate::_setFileDialogFlag(bool f) {
@@ -76,8 +102,7 @@ void InspectorDelegate::_setFileDialogFlag(bool f) {
 }
 
 bool InspectorDelegate::editorEvent(QEvent* e, QAbstractItemModel* model,
-       const QStyleOptionViewItem& option, const QModelIndex& index)
-{
+       const QStyleOptionViewItem& option, const QModelIndex& index) {
 	Qt::ItemFlags flags = model->flags(index);
 	if (!(flags & Qt::ItemIsUserCheckable) || !(option.state & QStyle::State_Enabled)
 			|| !(flags & Qt::ItemIsEnabled))

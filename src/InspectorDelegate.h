@@ -72,6 +72,14 @@ public:
 	/// \param event	event
 	bool eventFilter(QObject* object, QEvent* event);
 
+	/// Sets the data for the item at the given index in the model to the
+	/// contents of the given editor.
+	/// \param editor	editor widget
+	/// \param model	model
+	/// \param index	item index
+	virtual void setModelData (QWidget* editor, QAbstractItemModel* model,
+							   const QModelIndex & index ) const;
+
 protected slots:
 	/// set _fileDialogFlag
 	void _setFileDialogFlag(bool flag);
