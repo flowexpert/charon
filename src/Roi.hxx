@@ -32,14 +32,14 @@
 template<typename T>
 void Roi<T>::_init() {
 	// register parameters and slots
-	this->_addParameter (top,    "top"   , "upper bound" , T(0));
-	this->_addParameter (left,   "left"  , "left bound"  , T(0));
-	this->_addParameter (bottom, "bottom", "lower bound" , T(1));
-	this->_addParameter (right,  "right" , "right bound" , T(1));
-	this->_addParameter (front,  "front" , "front bound" , T(0));
-	this->_addParameter (back,   "back"  , "back bound"  , T(1));
-	this->_addParameter (before, "before", "before bound", T(0));
-	this->_addParameter (after,  "after" , "after bound" , T(1));
+	this->_addParameter (top,    "top"   , "upper bound" , T(0), "T");
+	this->_addParameter (left,   "left"  , "left bound"  , T(0), "T");
+	this->_addParameter (bottom, "bottom", "lower bound" , T(1), "T");
+	this->_addParameter (right,  "right" , "right bound" , T(1), "T");
+	this->_addParameter (front,  "front" , "front bound" , T(0), "T");
+	this->_addParameter (back,   "back"  , "back bound"  , T(1), "T");
+	this->_addParameter (before, "before", "before bound", T(0), "T");
+	this->_addParameter (after,  "after" , "after bound" , T(1), "T");
 	this->_addOutputSlot(out, "out", "pointer to this roi", "Roi<T>");
 
 	out = this;
