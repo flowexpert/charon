@@ -74,7 +74,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 			editor->addItem("int");
 			editor->addItem("float");
 			editor->addItem("double");
-			QString cur = ind.model()->data(ind, Qt::DisplayRole).toString();
+			QString cur = ind.model()->data(ind).toString();
 			if (cur == "int")
 				editor->setCurrentIndex(0);
 			if (cur == "float")
@@ -91,7 +91,7 @@ void InspectorDelegate::setModelData (QWidget* editor,
 		QAbstractItemModel* model, const QModelIndex & index ) const {
 	QComboBox* box = qobject_cast<QComboBox*>(editor);
 	if(editor && (editor->objectName() == "templatetypeBox")) {
-		model->setData(index,box->currentText(),Qt::EditRole);
+		model->setData(index,box->currentText());
 		return;
 	}
 	QStyledItemDelegate::setModelData(editor, model, index);
