@@ -69,61 +69,87 @@ int ParameterFileModel::columnCount(const QModelIndex& /*parent*/) const {
 }
 
 QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
-	// mapper to convert parameter.type into QVariant::Type
-	const VarTypeMap& mapper = VarTypeMap::instance();
+	try {
+		// mapper to convert parameter.type into QVariant::Type
+		const VarTypeMap& mapper = VarTypeMap::instance();
 
-	if ((role == Qt::DisplayRole) || (role == Qt::EditRole)) {
-		int row = ind.row();
+		if ((role == Qt::DisplayRole) || (role == Qt::EditRole)) {
+			int row = ind.row();
 
-		if ((row >= 0) && ((uint) row < _keys.size())) {
-			QString name;
+			if ((row >= 0) && ((uint) row < _keys.size())) {
+				QString name;
 
-			switch (ind.column()) {
-			case 0:
-				// parameter name (without prefix)
-				name = _keys[row].c_str();
-				if (!_prefix.isEmpty())
-					name.remove(0, _prefix.length());
+				switch (ind.column()) {
+				case 0:
+					// parameter name (without prefix)
+					name = _keys[row].c_str();
+					if (!_prefix.isEmpty())
+						name.remove(0, _prefix.length());
 
-				// remove dot after valid prefix
-				if (name[0] == '.')
-					name.remove(0, 1);
-				return name;
+					// remove dot after valid prefix
+					if (name[0] == '.')
+						name.remove(0, 1);
+					return name;
 
-			case 1:
-				QVariant res = "";
-				std::string className = getClass(_keys[row]);
-				if (_parameterFile->isSet(_keys[row]))
-					res = _parameterFile->get<std::string> (_keys[row]).c_str();
-				else if (_onlyParams)
-					res = metaInfo()->getDefault(_keys[row], className).c_str();
+				case 1:
+					QVariant res = "";
+					std::string className = getClass(_keys[row]);
+					if (_parameterFile->isSet(_keys[row]))
+						res = _parameterFile->get<std::string> (_keys[row]).c_str();
+					else if (_onlyParams)
+						res = metaInfo()->getDefault(_keys[row], className).c_str();
 
-				if (_useMetaInfo && metaInfo()->isParameter(_keys[row],
-						className)) {
-					std::string typestring;
-					try {
+					if (_useMetaInfo && metaInfo()->isParameter(_keys[row],
+							className)) {
+						std::string typestring;
 						typestring = metaInfo()->getType(_keys[row], className);
-					} catch (std::string msg) {
-						qDebug() << msg.c_str();
+						QVariant::Type type = mapper[typestring];
+						Q_ASSERT(res.canConvert(type));
+						res.convert(type);
 					}
-					QVariant::Type type = mapper[typestring];
-					Q_ASSERT(res.canConvert(type));
-					res.convert(type);
+					// simply return the string value
+					return res;
 				}
-				// simply return the string value
-				return res;
+			}
+		}
+		if ((role == Qt::ToolTipRole) && _useMetaInfo) {
+			QString ret = metaInfo()->getDocString(_keys[ind.row()], getClass(
+					_keys[ind.row()])).c_str();
+			if (!ret.isEmpty())
+				return ret;
+		}
+		if (role == Qt::ForegroundRole && _onlyParams) {
+			if (!_parameterFile->isSet(_keys[ind.row()]))
+				return Qt::lightGray;
+		}
+		if (ind.column() == 1 && role == Qt::CheckStateRole && _useMetaInfo
+				&& metaInfo()->isParameter(_keys[ind.row()],
+						getClass(_keys[ind.row()]))) {
+			std::string typestring = metaInfo()->getType(_keys[ind.row()],
+				getClass(_keys[ind.row()]));
+			if (typestring == "bool") {
+				if(_parameterFile->isSet(_keys[ind.row()])) {
+					if (_parameterFile->get<bool>(_keys[ind.row()]))
+						return Qt::Checked;
+					else
+						return Qt::Unchecked;
+				}
+				else {
+					std::istringstream tmp(metaInfo()->getDefault(_keys[ind.row()],
+							getClass(_keys[ind.row()])));
+					bool val;
+					tmp >> val;
+					if (val)
+						return Qt::Checked;
+					else
+						return Qt::Unchecked;
+				}
 			}
 		}
 	}
-	if ((role == Qt::ToolTipRole) && _useMetaInfo) {
-		QString ret = metaInfo()->getDocString(_keys[ind.row()], getClass(
-				_keys[ind.row()])).c_str();
-		if (!ret.isEmpty())
-			return ret;
-	}
-	if (role == Qt::ForegroundRole && _onlyParams) {
-		if (!_parameterFile->isSet(_keys[ind.row()]))
-			return Qt::lightGray;
+	catch (std::string msg) {
+		qDebug() << QString("Error in ParameterModel::data()\nMessage: %1")
+					.arg(msg.c_str());
 	}
 	return QVariant();
 }
@@ -185,6 +211,15 @@ bool ParameterFileModel::setData(const QModelIndex& ind, const QVariant& value,
 			std::cerr << "Column: " << ind.column() << std::endl;
 		}
 	}
+	if (ind.column() == 1 && role == Qt::CheckStateRole && _useMetaInfo
+				&& metaInfo()->isParameter(_keys[ind.row()],
+						getClass(_keys[ind.row()]))) {
+		Q_ASSERT(metaInfo()->getType(_keys[ind.row()],
+				getClass(_keys[ind.row()])) == "bool");
+		_parameterFile->set<bool>(_keys[ind.row()],value.toBool());
+		emit(dataChanged(ind,ind));
+		qDebug() << value;
+	}
 	return false;
 }
 
@@ -197,6 +232,12 @@ Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 			if (_onlyParams)
 				return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 		case 1:
+			if(_useMetaInfo && metaInfo()->isParameter(_keys[ind.row()],
+					getClass(_keys[ind.row()]))
+				&& metaInfo()->getType(_keys[ind.row()],
+				getClass(_keys[ind.row()])) == "bool")
+				return Qt::ItemIsSelectable | Qt::ItemIsEnabled
+					| Qt::ItemIsUserCheckable;
 			return Qt::ItemIsSelectable | Qt::ItemIsEnabled
 					| Qt::ItemIsEditable;
 		default:
