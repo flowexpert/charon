@@ -29,6 +29,7 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QDebug>
+#include <QMessageBox>
 #include "PluginManager.h"
 #include "FileManager.h"
 
@@ -579,9 +580,9 @@ std::vector<std::string> ParameterFileModel::_paramFilter(const std::vector<
 }
 
 void ParameterFileModel::executeWorkflow() {
+	PluginManager man(FileManager::instance().getGlobalPluginPath(),
+			FileManager::instance().getPrivatePluginPath());
 	try {
-		PluginManager man(FileManager::instance().getGlobalPluginPath(),
-				FileManager::instance().getPrivatePluginPath());
 		man.loadParameterFile(*_parameterFile);
 		man.executeWorkflow();
 	}
