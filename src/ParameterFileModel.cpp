@@ -579,8 +579,21 @@ std::vector<std::string> ParameterFileModel::_paramFilter(const std::vector<
 }
 
 void ParameterFileModel::executeWorkflow() {
-	PluginManager man(FileManager::instance().getGlobalPluginPath(),
-			FileManager::instance().getPrivatePluginPath());
-	man.loadParameterFile(*_parameterFile);
-	man.executeWorkflow();
+	try {
+		PluginManager man(FileManager::instance().getGlobalPluginPath(),
+				FileManager::instance().getPrivatePluginPath());
+		man.loadParameterFile(*_parameterFile);
+		man.executeWorkflow();
+	}
+	catch (const std::string& msg) {
+		QMessageBox::warning(0, tr("error during execution"),
+			tr("Caught exception of type string.\n\nMessage:\n%1")
+				.arg(msg.c_str()));
+	}
+	catch (const std::exception& excpt) {
+		QMessageBox::warning(0, tr("error during execution"),
+			tr("Caught exception of type %1.\n\nMessage:\n%2")
+				.arg(typeid(excpt).name())
+				.arg(excpt.what()));
+	}
 }
