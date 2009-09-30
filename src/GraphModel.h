@@ -68,11 +68,6 @@ public:
     /// Get nodes in current graph
     QStringList nodes() const;
 
-    /// Get type of some parameter or slot.
-    /// This also handles presence of some template parameters.
-    /// @param parName          name of the parameter
-    std::string getType(std::string parName) const;
-
     virtual bool setData (const QModelIndex& index, const QVariant& value,
                                                       int role = Qt::EditRole);
     virtual bool removeRows (int row, int count,

@@ -569,25 +569,6 @@ if(draw)
     emit graphChanged();
 }
 
-/// @todo implement me ;-)
-std::string GraphModel::getType(std::string parName) const {
-    std::string res = metaInfo()->getType(parName, getClass(parName));
-    if(StringTool::toLowerCase(res).find("<t>") != std::string::npos) {
-        std::string instanceName = parName.substr(0, parName.find('.'));
-        if(parameterFile().isSet(instanceName + ".templatetype")) {
-            res.replace(StringTool::toLowerCase(res).find("<t>"), 3, "<" + parameterFile().get<std::string>(instanceName + ".templatetype") + ">");
-        } else {
-            try{
-                std::string type = std::string("<") + metaInfo()->getDefault("templatetype", getClass(parName)) + ">";
-                res.replace(StringTool::toLowerCase(res).find("<t>"), 3, type);
-            } catch (...) {
-                qDebug() << "Templated Slot in non-templated Object found.";
-            }
-        }
-    }
-    return res;
-}
-
 bool GraphModel::setData(const QModelIndex& ind, const QVariant& value,
                          int role) {
     if ((ind.column() == 1) && (data(index(ind.row(), 0)) == "templatetype")) {

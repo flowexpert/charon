@@ -102,8 +102,7 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 
 					if (_useMetaInfo && metaInfo()->isParameter(_keys[row],
 							className)) {
-						std::string typestring;
-						typestring = metaInfo()->getType(_keys[row], className);
+						std::string typestring = getType(_keys[row]);
 						QVariant::Type type = mapper[typestring];
 						Q_ASSERT(res.canConvert(type));
 						res.convert(type);
@@ -126,8 +125,7 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 		if (ind.column() == 1 && role == Qt::CheckStateRole && _useMetaInfo
 				&& metaInfo()->isParameter(_keys[ind.row()],
 						getClass(_keys[ind.row()]))) {
-			std::string typestring = metaInfo()->getType(_keys[ind.row()],
-				getClass(_keys[ind.row()]));
+			std::string typestring = getType(_keys[ind.row()]);
 			if (typestring == "bool") {
 				if(_parameterFile->isSet(_keys[ind.row()])) {
 					if (_parameterFile->get<bool>(_keys[ind.row()]))
@@ -215,8 +213,7 @@ bool ParameterFileModel::setData(const QModelIndex& ind, const QVariant& value,
 	if (ind.column() == 1 && role == Qt::CheckStateRole && _useMetaInfo
 				&& metaInfo()->isParameter(_keys[ind.row()],
 						getClass(_keys[ind.row()]))) {
-		Q_ASSERT(metaInfo()->getType(_keys[ind.row()],
-				getClass(_keys[ind.row()])) == "bool");
+		Q_ASSERT(getType(_keys[ind.row()]) == "bool");
 		_parameterFile->set<bool>(_keys[ind.row()],value.toBool());
 		emit(dataChanged(ind,ind));
 		qDebug() << value;
@@ -235,8 +232,7 @@ Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 		case 1:
 			if(_useMetaInfo && metaInfo()->isParameter(_keys[ind.row()],
 					getClass(_keys[ind.row()]))
-				&& metaInfo()->getType(_keys[ind.row()],
-				getClass(_keys[ind.row()])) == "bool")
+				&& getType(_keys[ind.row()]) == "bool")
 				return Qt::ItemIsSelectable | Qt::ItemIsEnabled
 					| Qt::ItemIsUserCheckable;
 			return Qt::ItemIsSelectable | Qt::ItemIsEnabled
@@ -597,4 +593,32 @@ void ParameterFileModel::executeWorkflow() {
 				.arg(typeid(excpt).name())
 				.arg(excpt.what()));
 	}
+}
+
+std::string ParameterFileModel::getType(std::string parName) const {
+    if(!_useMetaInfo)
+        return "";
+    std::string res = metaInfo()->getType(parName, getClass(parName));
+    std::string::size_type pos=StringTool::toLowerCase(res).find("<t>");
+    if((pos != std::string::npos) || StringTool::toLowerCase(res)=="t") {
+        std::string instanceName = parName.substr(0, parName.find('.'));
+        if(parameterFile().isSet(instanceName + ".templatetype")) {
+            if(pos != std::string::npos)
+                res.replace(pos, 3, "<" + parameterFile().
+                    get<std::string>(instanceName + ".templatetype") + ">");
+            else if(StringTool::toLowerCase(res) == "t")
+                res = parameterFile().get<std::string>(instanceName + ".templatetype");
+        } else {
+            try{
+                std::string type = metaInfo()->getDefault("templatetype", getClass(parName));
+                if (pos != std::string::npos)
+                    res.replace(pos, 3, std::string("<") + type  + ">");
+                else if(StringTool::toLowerCase(res) == "t")
+                    res = type;
+            } catch (...) {
+                qDebug() << "Templated Slot in non-templated Object found.";
+            }
+        }
+    }
+    return res;
 }

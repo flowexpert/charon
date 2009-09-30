@@ -144,11 +144,13 @@ public:
     /// @return                 empty string if class is unknown
     std::string getClass(std::string objName) const;
 
-    /**
-     * Executes the current workflow using the PluginManager class.
-     */
+    /// Executes the current workflow using the PluginManager class.
     void executeWorkflow();
 
+    /// Get type of some parameter or slot.
+    /// This also handles presence of some template parameters.
+    /// @param parName          name of the parameter
+    std::string getType(std::string parName) const;
 
 signals:
     /// Property _fileName has changed
