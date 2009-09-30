@@ -54,9 +54,9 @@ template<typename T>
 class blockmatching_DECLDIR BlockMatching: public TemplatedParameteredObject<T>
 
 {
-protected:
+/*protected:
 	/// @param surface flow image
-	cimg_library::CImgList<T> surface;
+	cimg_library::CImgList<T> surface;*/
 
 public:
 	/// standard constructor
@@ -82,6 +82,9 @@ public:
 	/// outputslot to get the results from the flow estimation algorithm 
 	/// BlockMatching
 	OutputSlot<cimg_library::CImgList<T> > flow;
+
+	virtual void execute() =0;
+	virtual void findFlow () =0;
 };
 
 #endif /* BLOCKMATCHING_H_ */

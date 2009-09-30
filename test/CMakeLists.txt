@@ -6,6 +6,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/PixelSelections)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/Incrementors)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/ObjectiveFunctions)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/SurfaceAnalysis)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/BlockMatching)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/BrightnessModels)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/MotionModels)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/Derivatives)
@@ -27,6 +28,7 @@ IF(ENABLE_TEST)
 		ADD_EXECUTABLE(incrementorcountuptest incrementorcountuptest.cpp)
 		ADD_EXECUTABLE(objectivefunctioncomparingtest objectivefunctioncomparingtest.cpp)
 		ADD_EXECUTABLE(surfaceanalysisminchangetest surfaceanalysisminchnagetest.cpp)
+		ADD_EXECUTABLE(blockmatchingliacstest blockmatchingliacstest.cpp)
 		TARGET_LINK_LIBRARIES(listedpixelselectiontest charon-core roi filereader)
 		TARGET_LINK_LIBRARIES(incrementorcountuptest 
 		                      charon-core 
@@ -42,11 +44,26 @@ IF(ENABLE_TEST)
 		                      sobel 
 		                      interpolatorlinear)
 		TARGET_LINK_LIBRARIES(surfaceanalysisminchangetest charon-core incrementorparameter)
+		TARGET_LINK_LIBRARIES(blockmatchingliacstest 
+		                      charon-core 
+		                      roi 
+		                      filereader 
+		                      incrementorparameter 
+		                      incrementorcountup
+		                      objectivefunctioncomparing
+		                      surfaceanalysisminchange
+		                      brightnessmodels_constant
+		                      motionmodels_localconstant 
+		                      listedpixelselection 
+		                      sobel 
+		                      interpolatorlinear
+		                      filewriter)
 		IF(UNIX)
 			TARGET_LINK_LIBRARIES(listedpixelselectiontest pthread ${X11_LIBRARIES})
 			TARGET_LINK_LIBRARIES(incrementorcountuptest pthread ${X11_LIBRARIES})
 			TARGET_LINK_LIBRARIES(objectivefunctioncomparingtest pthread ${X11_LIBRARIES})
 			TARGET_LINK_LIBRARIES(surfaceanalysisminchangetest pthread ${X11_LIBRARIES})
+			TARGET_LINK_LIBRARIES(blockmatchingliacstest pthread ${X11_LIBRARIES})
 		ENDIF(UNIX)
 	ENDIF(COMPILE_BLOCKMATCHING)
 	IF(COMPILE_SOLVERS)

@@ -48,7 +48,6 @@ void ListedPixelSelection<T>::execute()
 					{
 						pixel->pushBackIntensity(
 								this->sequence()(i, x, y, z, t));
-						std::cout << "Pixel["<< i <<"]: "<< pixel->getIntensity()[i] << std::endl;
 					}
 					this->pixelList.push_back(pixel);
 				}

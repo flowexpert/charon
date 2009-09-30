@@ -38,10 +38,4 @@ SurfaceAnalysis<T>::SurfaceAnalysis(const std::string& name,
 			"SurfaceAnalysis<T>*");
 }
 
-template<typename T>
-void SurfaceAnalysis<T>::execute()
-{
-	ParameteredObject::execute();
-}
-
 #endif

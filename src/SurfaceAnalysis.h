@@ -50,7 +50,7 @@ public:
 	/// this outputslot
 	OutputSlot<SurfaceAnalysis<T>*> out;
 	///standard execute from ParameterdObject
-	void execute();
+	virtual void execute() =0;
 
 	/**
 	 *  find the minimal change in roi

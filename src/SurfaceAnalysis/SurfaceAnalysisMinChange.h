@@ -45,6 +45,8 @@ public:
 	///standard constructor
 	SurfaceAnalysisMinChange(const std::string name);
 
+	void execute();
+
 	/**
 	 *  find the minimal change in roi
 	 *  @param differences vector of all differences

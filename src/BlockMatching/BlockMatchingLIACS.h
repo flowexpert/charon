@@ -75,6 +75,7 @@ public:
 	 *  - Save the best fitting parameters in surface (flow image)
 	 */
 	virtual void execute();
+	virtual void findFlow();
 };
 
 #endif /* BLOCKMATCHINGLIACS_H_ */

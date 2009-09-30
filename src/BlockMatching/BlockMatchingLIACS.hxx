@@ -35,12 +35,18 @@ BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :
 template<typename T>
 void BlockMatchingLIACS<T>::execute()
 {
+	ParameteredObject::execute();
+}
+
+template<typename T>
+void BlockMatchingLIACS<T>::findFlow()
+{
 	if (this->sequence().size)
 	{
 		// adjust size of surface
-		this->surface.assign(this->sequence()[0].dimv(),
-				this->sequence()[0].dimx(), this->sequence()[0].dimy(),
-				this->sequence()[0].dimz(), 4);
+		this->flow().assign(4, this->sequence()[0].dimx(),
+				this->sequence()[0].dimy(), this->sequence()[0].dimz(),
+				this->sequence()[0].dimv());
 		std::vector<T> pixelProperties;
 		std::vector<std::vector<IncrementorParameter<T>*> > allParameters;
 		// run over the sequence
@@ -49,7 +55,7 @@ void BlockMatchingLIACS<T>::execute()
 						// loop over i until the doStep function from 
 						// Incrementor returns true 
 						///@TODO incrementor returns true in 1st round
-						for (int i = 0; this->newParams()->doStep(); i++)
+						for (int i = 0; !this->newParams()->doStep(); i++)
 						{
 							allParameters.push_back(
 									this->newParams()->getListOfParams());
@@ -66,8 +72,8 @@ void BlockMatchingLIACS<T>::execute()
 						typename std::vector<IncrementorParameter<T>*>::iterator
 								it;
 						T nextX, nextY, nextZ, nextT;
-						unsigned int j = 0;
-						for (it = tempParams.begin(); it != tempParams.end(); it++)
+						//unsigned int j = 0;
+						for (unsigned int j = 0; j != tempParams.size(); j++/*it = tempParams.begin(); it != tempParams.end(); it++*/)
 						{
 							if (tempParams[j]->name == "x")
 							{
@@ -85,13 +91,13 @@ void BlockMatchingLIACS<T>::execute()
 							{
 								nextT = tempParams[j]->current;
 							}
-							j++;
+							//j++;
 						}
-						// insert computed parameters in surface
-						this->surface(0, x, y, z, t) = nextX;
-						this->surface(1, x, y, z, t) = nextY;
-						this->surface(2, x, y, z, t) = nextZ;
-						this->surface(3, x, y, z, t) = nextT;
+						// insert computed parameters in flow
+						this->flow()(0, x, y, z, t) = nextX;
+						this->flow()(1, x, y, z, t) = nextY;
+						this->flow()(2, x, y, z, t) = nextZ;
+						this->flow()(3, x, y, z, t) = nextT;
 					}
 	}
 }

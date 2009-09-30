@@ -45,8 +45,8 @@ void IncrementorCountUp<T>::execute()
 	for (; it != this->paramList.end(); it++)
 	{
 		this->listOfParams.push_back(this->paramList[j]);
-		this->listOfParams[j]->current =this->paramList[j]->min;
-		this->listOfParams[j]->name =this->paramList[j]->name;
+		this->listOfParams[j]->current = this->paramList[j]->min;
+		this->listOfParams[j]->name = this->paramList[j]->name;
 		j++;
 	}
 }
@@ -55,15 +55,10 @@ template<typename T>
 bool IncrementorCountUp<T>::doStep()
 {
 	bool ret = false;
-	//	typename std::set<AbstractSlot<IncrementorParameter<T>*>*>::const_iterator
-	//			it = this->paramList.begin();
-	//	unsigned int j = 0;
 	//	check for return vallue
-	//	for (; it != this->paramList.end(); it++)
 	for (unsigned int j = 0; j != this->listOfParams.size(); j++)
 	{
-		if (this->listOfParams[j]->current
-				+ this->paramList[j]->stepSize
+		if (this->listOfParams[j]->current + this->paramList[j]->stepSize
 				> this->paramList[j]->max)
 		{
 			ret = true;
@@ -73,7 +68,6 @@ bool IncrementorCountUp<T>::doStep()
 			ret = false;
 			break;
 		}
-		//		j++;
 	}
 
 	// compute step
@@ -84,36 +78,34 @@ bool IncrementorCountUp<T>::doStep()
 		unsigned int i = 0;
 		for (; itLi != this->listOfParams.end(); itLi++)
 		{
-			if (this->listOfParams[i]->current
-					+ this->paramList[i]->stepSize
+			if (this->listOfParams[i]->current + this->paramList[i]->stepSize
 					<= this->paramList[i]->max)
 			{
-				this->listOfParams[i]->current =
-						this->listOfParams[i]->current
-								+ this->paramList[i]->stepSize;
+				this->listOfParams[i]->current = this->listOfParams[i]->current
+						+ this->paramList[i]->stepSize;
 				break;
 			}
 			else
 			{
-				this->listOfParams[i]->current =this->paramList[i]->min;
-				this->listOfParams[i + 1]->current =
-						this->listOfParams[i + 1]->current
+				this->listOfParams[i]->current = this->paramList[i]->min;
+				this->listOfParams[i + 1]->current
+						= this->listOfParams[i + 1]->current
 								+ this->paramList[i + 1]->stepSize;
-				typename std::vector<IncrementorParameter<T>*>::iterator
-						iterLi = itLi++;
-				unsigned int k = i;
-				for (; iterLi != this->listOfParams.end(); iterLi++)
+				//typename std::vector<IncrementorParameter<T>*>::iterator
+				//		iterLi = itLi++;
+				//unsigned int k = i;
+				for (unsigned int k = i; k < this->listOfParams.size(); k++/*; iterLi != this->listOfParams.end(); iterLi++*/)
 				{
 					if (this->listOfParams[k]->current
 							> this->paramList[k]->max)
 					{
-						this->listOfParams[k]->current =
-								this->paramList[k]->min;
-						this->listOfParams[k + 1]->current =
-								this->listOfParams[k + 1]->current
+						this->listOfParams[k]->current
+								= this->paramList[k]->min;
+						this->listOfParams[k + 1]->current
+								= this->listOfParams[k + 1]->current
 										+ this->paramList[k + 1]->stepSize;
 					}
-					k++;
+					//k++;
 				}
 				break;
 			}

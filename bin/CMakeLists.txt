@@ -4,6 +4,7 @@ IF(ENABLE_TEST)
 		ADD_TEST(incrementorcountuptest incrementorcountuptest)
 		ADD_TEST(objectivefunctioncomparingtest objectivefunctioncomparingtest)
 		ADD_TEST(surfaceanalysisminchangetest surfaceanalysisminchangetest)
+		ADD_TEST(blockmatchingliacstest blockmatchingliacstest)
 	ENDIF(COMPILE_BLOCKMATCHING)
 	
 	IF(COMPILE_SOLVERS)
