@@ -31,6 +31,7 @@
 #include "SplitStream.h"
 #include "PrefixValidator.h"
 #include "FileManager.h"
+#include "InspectorDelegate.h"
 
 #include "ObjectInspector.moc"
 
@@ -40,6 +41,8 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 	// set up main layout
 	_mainLayout = new QVBoxLayout(this);
 	_view = new QTableView(this);
+	InspectorDelegate* delegate = new InspectorDelegate(this);
+	_view->setItemDelegateForColumn(1, delegate);
 	_prefix = new QLineEdit(this);
 
 	// init model

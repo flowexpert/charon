@@ -8,6 +8,7 @@ SET(EDITPARAM_SOURCES
     ParameterFileModel.cpp
     PrefixValidator.cpp
     ObjectInspector.cpp
+	InspectorDelegate.cpp
     DocGenerator.cpp
     ModelToolBar.cpp
     messageHandler.cpp
