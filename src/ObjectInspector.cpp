@@ -99,8 +99,11 @@ void ObjectInspector::saveFile() const {
 void ObjectInspector::saveFileAs() const {
 	if (!isEnabled())
 		return;
+	QString oldPath = _model->fileName();
+	if (oldPath.isEmpty())
+		oldPath = QDir::currentPath();
 	QString fileName = QFileDialog::getSaveFileName(0, tr("Save File"),
-			QDir::currentPath(), tr("ParameterFile (*.wrp)"));
+			oldPath, tr("ParameterFile (*.wrp)"));
 	if (!fileName.isEmpty())
 		_model->save(fileName);
 }

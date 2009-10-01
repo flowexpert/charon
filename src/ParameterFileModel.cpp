@@ -32,6 +32,7 @@
 #include <QMessageBox>
 #include "PluginManager.h"
 #include "FileManager.h"
+#include <charon-utils/CImg.h>
 
 #include "ParameterFileModel.moc"
 
@@ -592,6 +593,16 @@ void ParameterFileModel::executeWorkflow() {
 			tr("Caught exception of type %1.\n\nMessage:\n%2")
 				.arg(typeid(excpt).name())
 				.arg(excpt.what()));
+	}
+	catch (const cimg_library::CImgException& excpt) {
+		QMessageBox::warning(0, tr("error during execution"),
+			tr("Caught CImg exception of type %1.\n\nMessage:\n%2")
+				.arg(typeid(excpt).name())
+				.arg(excpt.message));
+	}
+	catch (...) {
+		QMessageBox::warning(0, tr("error during execution"),
+			tr("Caught exception of unknown type"));
 	}
 }
 
