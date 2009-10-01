@@ -4,15 +4,15 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
+FIND_PACKAGE(charon-core REQUIRED)
+FIND_PACKAGE(charon-utils REQUIRED)
+
 # set up documentation generation
 FIND_PACKAGE(Doxygen QUIET)
 INCLUDE(Documentation)
 
 # CPack descriptions for package generation
 INCLUDE(ReleaseSys)
-
-FIND_PACKAGE(charon-core REQUIRED)
-FIND_PACKAGE(charon-utils REQUIRED)
 
 # if off BrightnessModels and MotionModels won't be compiled
 OPTION(COMPILE_BRIGHTNESS "compile brightnessmodel plugins" on)

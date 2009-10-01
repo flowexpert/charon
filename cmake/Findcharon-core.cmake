@@ -24,7 +24,7 @@ FIND_PATH(CHARON_CORE_ROOT_DIR
 )
 
 FILE(GLOB CHARON_CORE_DOCDIRS
-    /usr/share/doc/charon-core-*
+    /usr/share/doc/charon-core*
 )
 
 FIND_FILE(CHARON_CORE_TAGFILE

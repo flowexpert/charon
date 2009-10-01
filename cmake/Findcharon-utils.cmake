@@ -23,7 +23,7 @@ FIND_PATH(CHARON_UTILS_ROOT_DIR
 )
 
 FILE(GLOB CHARON_UTILS_DOCDIRS
-    /usr/share/doc/charon-utils-*
+    /usr/share/doc/charon-utils*
 )
 
 FIND_FILE(CHARON_UTILS_TAGFILE
