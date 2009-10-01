@@ -46,9 +46,15 @@ void ImageDisplay<T>::execute() {
     ParameteredObject::execute();
 
     // set desired image size
-    if(frame() >= in().size)
-        throw std::out_of_range("ImageDisplay: selected frame number is "
-                "larger than number of images");
+    if(frame() >= in().size) {
+		std::ostringstream msg;
+		msg	<< __FILE__ << ":" << __LINE__
+			<< "\nImageDisplay: Selected frame number is\n\t"
+        	<< "not less than number of images.\n\t"
+			<< "number of images: " << in().size << "\n\t"
+			<< "selected frame: " << frame();
+        throw std::out_of_range(msg.str().c_str());
+	}
     if(!width() || !height())
         _display.assign(in()[frame()].dimx(), in()[frame()].dimy(), title().c_str(), 1);
     else
