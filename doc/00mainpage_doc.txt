@@ -94,10 +94,9 @@ This is a list of the used libraries and software:
     <a href="http://www.graphviz.org/">graphviz</a> (Version >= 2.22)<br>
     License: <a href="http://www.graphviz.org/License.php">Common Public License</a>
 -   icons from the Oxygen icon set from the
-    <a href="http://websvn.kde.org/trunk/KDE/kdebase/runtime/pics/oxygen/">
+    <a href="http://websvn.kde.org/trunk/kdesupport/oxygen-icons/">
     KDE Project</a><br>
-    License: <a href="http://websvn.kde.org/*checkout*
-    /trunk/KDE/kdebase/runtime/pics/oxygen/COPYING">LGPL</a>
+    License: <a href="http://websvn.kde.org/trunk/kdesupport/oxygen-icons/COPYING?view=markup">LGPL</a>
 -   documentation generated using <a href="http://www.doxygen.org">Doxygen</a> (Version >= 1.5.7)<br>
     License: <a href="http://www.doxygen.org">GPL</a> (this does not affect the documentation output)
 

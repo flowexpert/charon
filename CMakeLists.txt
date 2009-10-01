@@ -22,6 +22,16 @@ SET(QT_USE_QTTEST TRUE)
 # set up QT environment
 INCLUDE(${QT_USE_FILE})
 
+# determine project svn information if possible
+# make sure to switch WITN_SVN off if not building from svn sources
+FIND_PACKAGE(Subversion QUIET)
+IF(Subversion_FOUND)
+	OPTION(WITH_SVN "try to determine svn revision information" ON)
+	IF(WITH_SVN)
+		Subversion_WC_INFO(${PROJECT_SOURCE_DIR} Project)
+	ENDIF(WITH_SVN)
+ENDIF(Subversion_FOUND)
+
 FIND_PACKAGE(charon-core REQUIRED)
 FIND_PACKAGE(charon-utils REQUIRED)
 

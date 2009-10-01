@@ -38,6 +38,10 @@
 #include <iostream>
 #include "AbstractPluginLoader.h"
 
+#ifndef SVNINFO
+#define SVNINFO
+#endif
+
 #include "MainWindow.moc"
 
 MainWindow::MainWindow(QWidget* myParent) :
@@ -283,24 +287,25 @@ void MainWindow::_showAbout() const {
 		"<br /><br />"
 		"Copyright (C) 2009 Heidelberg Collaboratory for Image Processing"
 		"<br /><br />"
-		"Compilation date:\t" __DATE__ "\t" __TIME__
-	"<br /><br />"
-	"This program is part of tuchulcha."
-	"<br /><br />"
-	"tuchulcha is free software; you can redistribute it and/or "
-	"modify it under the terms of the GNU Lesser General Public License as "
-	"published by the Free Software Foundation; either version 3 of "
-	"the License, or (at your option) any later version."
-	"<br /><br />"
-	"This program is distributed in the hope that it will be useful, "
-	"but WITHOUT ANY WARRANTY; without even the implied warranty of "
-	"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the "
-	"GNU Lesser General Public License for more details."
-	"<br /><br />"
-	"A copy of the GNU Lesser General Public License can be found at "
-	"<a href=\"http://www.gnu.org/licenses/\">"
-	"www.gnu.org/licenses/</a>."
-	"<br /><br />"));
+		"Compilation date:\t" __DATE__ "\t" __TIME__"<br />"
+		SVNINFO "<br />"
+		"<br />"
+		"This program is part of tuchulcha."
+		"<br /><br />"
+		"tuchulcha is free software; you can redistribute it and/or "
+		"modify it under the terms of the GNU Lesser General Public License as "
+		"published by the Free Software Foundation; either version 3 of "
+		"the License, or (at your option) any later version."
+		"<br /><br />"
+		"This program is distributed in the hope that it will be useful, "
+		"but WITHOUT ANY WARRANTY; without even the implied warranty of "
+		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the "
+		"GNU Lesser General Public License for more details."
+		"<br /><br />"
+		"A copy of the GNU Lesser General Public License can be found at "
+		"<a href=\"http://www.gnu.org/licenses/\">"
+		"www.gnu.org/licenses/</a>."
+		"<br /><br />"));
 	aboutBox.exec();
 }
 
