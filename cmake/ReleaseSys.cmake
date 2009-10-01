@@ -3,7 +3,7 @@ SET(CPACK_PACKAGE_VENDOR
 	"Heidelberg Collaboratory for Image Processing"
 )
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY
-    "utility package of the charon project"
+    "collection of useful charon plugins for image manipulation"
 )
 
 # package version setup
