@@ -5,7 +5,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # set up documentation generation
-FIND_PACKAGE(Doxygen)
+FIND_PACKAGE(Doxygen QUIET)
 FIND_PACKAGE(charon-core REQUIRED)
 INCLUDE(Documentation)
 
