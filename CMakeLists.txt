@@ -67,7 +67,7 @@ IF(APPLE)
 ENDIF(APPLE)
 
 # set up documentation generation
-FIND_PACKAGE(Doxygen)
+FIND_PACKAGE(Doxygen QUIET)
 INCLUDE(Documentation)
 
 # CPack descriptions for package generation
