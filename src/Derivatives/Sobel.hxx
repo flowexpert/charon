@@ -26,7 +26,7 @@
 #include "Sobel.h"
 
 template <class T>
-Sobel<T>::Sobel(const std::string& name) : Derivative<T>("derivatives_sobel",name), filterx(3,3,1,1,\
+Sobel<T>::Sobel(const std::string& name) : Derivative<T>("sobel",name), filterx(3,3,1,1,\
 						 3.0/32,	0.0,	 -3.0/32, \
 						10.0/32,	0.0,	-10.0/32, \
 						 3.0/32,	0.0,	 -3.0/32)

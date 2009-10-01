@@ -60,6 +60,7 @@ public:
 	/// default constructor
 	Sobel(const std::string& name = "");
 	
+	/// \copydoc ParameteredObject::execute()
 	virtual void execute();
 	
 	/// @name output slots
