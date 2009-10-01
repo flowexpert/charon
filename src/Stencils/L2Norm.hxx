@@ -15,8 +15,6 @@
 */
 /** @file L2Norm.hxx
  *  Implementation of class L2Norm.
- *  This is the L2Norm stencil which is derived from the stencil class.
- *  @see Stencil.hxx
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *
@@ -33,10 +31,11 @@
 template <class T>
 L2Norm<T>::L2Norm(const std::string& name) : 
 		Stencil<T>("L2Norm", name) {
+	this->_addParameter(dimensions, "dimensions", "Number of dimensions", 2u);
 	this->_addParameter(pUnknowns, "unknowns", "List of unknowns");
-	this->dimensions.setDefault(2);
-	this->_addParameter(dimensions, "dimensions", "Number of dimensions");
-	if (dimensions > 4) {throw "invalid dimensions";}
+	if (dimensions > 4) {
+		throw std::out_of_range("invalid dimensions (too large)");
+	}
 }
 
 template <class T>

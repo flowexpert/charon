@@ -40,7 +40,7 @@
 /// @brief class implementing a sobel filter
 /// @details this class uses the following filter mask:
 /** \f[ 
-		\frac{1,32} 
+		\frac{1}{32} 
 		\begin{pmatrix}
 			3 & 0 & -3 \\
 			10 & 0 & -10\\

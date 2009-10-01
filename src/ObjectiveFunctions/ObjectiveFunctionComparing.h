@@ -14,9 +14,8 @@
  along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  @file ObjectiveFunctionComparing.hxx
- *  @brief defines the ObjectiveFunctionComparing class, child class of 
- *  ObjectiveFunction
+ *  @file ObjectiveFunctionComparing.h
+ *  @brief defines class ObjectiveFunctionComparing 
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 24.08.2009
  */
@@ -45,7 +44,7 @@ public:
 	/// standard constructor
 	ObjectiveFunctionComparing(const std::string& name);
 
-	/// standard execute method
+	/// \copydoc ParameteredObject::execute()
 	virtual void execute();
 
 	/**

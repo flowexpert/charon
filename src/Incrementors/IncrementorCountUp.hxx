@@ -14,7 +14,7 @@
  along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  @file IncrementorConstant.hxx
+ *  @file IncrementorCountUp.hxx
  *  @brief implementation of class IncrementorCountUp, child class of Incrementor
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 24.08.2009

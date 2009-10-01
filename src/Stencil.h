@@ -44,35 +44,32 @@
 #include <map>
 #include <set>
 
-/*
-==============================================================
-General nomenclatur for stencils, metastentils and SubStencils
-==============================================================
-
-This is the class Stencil, which represents a collection of masks or set of
-weights or pattern for different unknowns - or maybe no unknowns. Each mask is a
-SubStencil. So there is a SubStencil for every unknown a stencil knows - or
-just one SubStencil in general if the stencil has no unknowns.
-In the stencil class, these SubStencils are grouped by method - so there is one
-set of SubStencils in the L2Norm stencil and another set of
-masks in the GBCCE Stencil etc.
-In the class Solver, there is a nested class MetaStencil, which regroups the
-SubStencils of the attached stencils by unknown.
-SubStencils are a class of their own that contain their pattern
-(for the solver), the actual data (which is put there by the updateStencil
-method of their stencil) and their center, represented by a Point4D.
-Roundup:
-Stencil:      Set of SubStencils grouped by method
-MetaStencil:  Set of SubStencils grouped by unknown
-SubStencil:   Mask for one unknown or the general mask if no unknowns are used
-*/
-
 /**
  * This is the base class for Stencils.
  * It manages the communication between the solver and the different
  * motion- and brightnesmodels. Or it can present a non-variant stencil
  * to the solver.
- */
+ *
+ * <b>General nomenclatur for stencils, metastentils and SubStencils</b>
+ *
+ * This is the class Stencil, which represents a collection of masks or set of
+ * weights or pattern for different unknowns - or maybe no unknowns. Each mask is a
+ * SubStencil. So there is a SubStencil for every unknown a stencil knows - or
+ * just one SubStencil in general if the stencil has no unknowns.
+ * In the stencil class, these SubStencils are grouped by method - so there is one
+ * set of SubStencils in the L2Norm stencil and another set of
+ * masks in the GBCCE Stencil etc.
+ * In the class Solver, there is a nested class MetaStencil, which regroups the
+ * SubStencils of the attached stencils by unknown.
+ * SubStencils are a class of their own that contain their pattern
+ * (for the solver), the actual data (which is put there by the updateStencil
+ * method of their stencil) and their center, represented by a Point4D.
+ * 
+ * Roundup:
+ * - Stencil:      Set of SubStencils grouped by method
+ * - MetaStencil:  Set of SubStencils grouped by unknown
+ * - SubStencil:   Mask for one unknown or the general mask if no unknowns are used
+*/
 template <class T>
 class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 {

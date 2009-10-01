@@ -20,7 +20,7 @@ IF (DOXYGEN_FOUND)
     SET(DOXY_CONFIG             	${PROJECT_BINARY_DIR}/Doxyfile)
     SET(DOXY_CONFIG_PDF         	${PROJECT_BINARY_DIR}/DoxyPdf)
     SET(DOXY_PROJECTNAME        	${PROJECT_NAME})
-    SET(DOXY_DOC_RECURSIVE      	NO)
+    SET(DOXY_DOC_RECURSIVE      	YES)
     SET(DOXY_LATEX_BATCHMODE    	YES)
     SET(DOXY_COMPACT_LATEX      	YES)
 	IF(ENABLE_DOC_VERBOSE)
@@ -59,15 +59,10 @@ IF (DOXYGEN_FOUND)
     FILE(GLOB_RECURSE HTMLDOCS
         ${PROJECT_SOURCE_DIR}/doc/*_doc.txt
         ${PROJECT_SOURCE_DIR}/src/*.h
-        ${PROJECT_SOURCE_DIR}/src/*.hxx
-        ${PROJECT_SOURCE_DIR}/src/*.cpp
-        ${PROJECT_SOURCE_DIR}/test/*.h
-        ${PROJECT_SOURCE_DIR}/test/*.hxx
-        ${PROJECT_SOURCE_DIR}/test/*.cpp
     )
     #MESSAGE(STATUS "Htmldoc deps: ${HTMLDOCS}")
 
-    SET(DOXY_DOC_PATTERN        "*.cpp *.h *.hxx *_doc.txt")
+    SET(DOXY_DOC_PATTERN        "*.h *_doc.txt")
     SET(DOXY_DOC_PATHS          "doc src")
     SET(DOXY_GENERATE_HTML      YES)
     SET(DOXY_GENERATE_LATEX     NO )

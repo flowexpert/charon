@@ -35,20 +35,27 @@ Stencil<T>::Stencil(const std::string& classname, const std::string& name) :
 				"discretizes partial differential equation terms or defines derivatives filters for images"),
 				out(this) {
 	this->_addOutputSlot(out,"this","Pointer to itself","Stencil<T>*");
-	this->_addParameter(lambda,"lambda","weight of the pde term",T(1));
+	this->_addParameter(lambda,"lambda","weight of the pde term",T(1),"T");
 }
 
 
 template <class T>
-const std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {return this->substencils;}
+const std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {
+	return this->substencils;
+}
 
 template <class T>
-const std::map<std::string, T>& Stencil<T>::getRhs() const {return rhs;}
+const std::map<std::string, T>& Stencil<T>::getRhs() const {
+	return rhs;
+}
 
 template <class T>
-const std::set<std::string>& Stencil<T>::getUnknowns() const {return unknowns;}
+const std::set<std::string>& Stencil<T>::getUnknowns() const {
+	return unknowns;
+}
 
 template <class T>
-Stencil<T>::~Stencil() {}
+Stencil<T>::~Stencil() {
+}
 
 #endif //_stencil_HXX_

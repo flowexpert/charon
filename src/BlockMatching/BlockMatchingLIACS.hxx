@@ -14,7 +14,7 @@
  along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  @file BlockmatchingLIACS.hxx
+ *  @file BlockMatchingLIACS.hxx
  *  @brief Implementation of class BlockMatchingLIACS
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 03.09.2009

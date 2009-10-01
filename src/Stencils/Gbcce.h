@@ -13,7 +13,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file GBCCE.h
+/** @file Gbcce.h
  *  Implementation of class Gbcce.
  *  This is the General Brightness Change Constraint Equation stencil which is
  *  derived from the stencil class.

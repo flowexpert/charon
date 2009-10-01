@@ -15,8 +15,6 @@
 */
 /** @file L2Norm.h
  *  Implementation of class L2Norm.
- *  This is the L2Norm stencil which is derived from the stencil class.
- *  @see Stencil.h
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *
@@ -41,29 +39,29 @@
 
 #include <Stencil.h>
 
+/// This is the L2Norm stencil which is derived from class stencil
 template <class T>
 class l2norm_DECLDIR L2Norm : public Stencil<T>
 {
 	private:
-		///Parameter containing the number of dimensions.
+		/// Parameter containing the number of dimensions.
 		Parameter<unsigned int> dimensions;
 		
-		///ParameterList containing all unknowns of the Stencil.
+		/// ParameterList containing all unknowns of the Stencil.
 		ParameterList<std::string> pUnknowns;
 	
 	public:
-		///default constructor.
+		/// default constructor
+		/// \param name instance name
 		L2Norm(const std::string& name = "");
 		
-		///main function
+		/// \copydoc ParameteredObject::execute()
 		virtual void execute();
 		
-		///update Stencil to contain the data corresponding to the given coordinates
 		virtual void updateStencil(const unsigned int, const unsigned int,
 		                           const unsigned int, const unsigned int,
 		                           const unsigned int);
 		
-		///apply the Stencil to a given sequence
 		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
 		                                    const unsigned int frame) const;
 		

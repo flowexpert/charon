@@ -15,12 +15,8 @@
 */
 /** @file Substencil.h
  *  Implementation of class Subtencil.
- *  This class is used to manage the pattern, the data and the center
- *  of a SubStencil.
- *  @see Stencil.h
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
- *
  *  @date 8.09.2009
  */
 
@@ -31,6 +27,11 @@
 #include <CImg.h>
 #include "Point4D.h"
 
+/// Mask for one unknown or the general mask if no unknowns are used
+///
+/// This class is used to manage the pattern, the data and the center
+/// of a SubStencil.
+/// \see class Stencil
 template <class T>
 class SubStencil
 {
@@ -55,10 +56,10 @@ class SubStencil
 		           Point4D<unsigned int> center);
 		
 		///copy constructor.
-		SubStencil(const SubStencil &rhs);
+		SubStencil(const SubStencil& rhs);
 		
 		///assignment operator.
-		SubStencil& operator= (const SubStencil &rhs);
+		SubStencil& operator= (const SubStencil& rhs);
 		
 		///default destructor.
 		~SubStencil();

@@ -15,9 +15,6 @@
 */
 /** @file Substencil.hxx
  *  Implementation of class Substencil.
- *  This class is used to manage the pattern, the data and the center
- *  of a SubStencil.
- *  @see Stencil.hxx
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *
@@ -31,41 +28,41 @@
 #include "Substencil.h"
 
 template <class T>
-SubStencil<T>::SubStencil() {}
+SubStencil<T>::SubStencil() {
+}
 
-
-///default constructor
 template <class T>
 SubStencil<T>::SubStencil(const unsigned int dimx, const unsigned int dimy,
                           const unsigned int dimz, const unsigned int dimt,
-                          Point4D<unsigned int> center) {
+                          Point4D<unsigned int> c) {
     //extend CImg objects to given size and initialize all values with 0
 	data.assign(dimx, dimy, dimz, dimt, 0);
 	pattern.assign(dimx, dimy, dimz, dimt, 0);
-	this->center = center;
+	center = c;
 }
 		
-///copy constructor
 template <class T>
 SubStencil<T>::SubStencil(const SubStencil<T> &rhs) {
-	this->data.assign(rhs.data.dimx(), rhs.data.dimy(), rhs.data.dimz(), rhs.data.dimv() );
-	this->data = rhs.data;
-	this->pattern.assign(rhs.pattern.dimx(), rhs.pattern.dimy(), rhs.pattern.dimz(), rhs.pattern.dimv() );
-	this->pattern = rhs.pattern;
-	this->center = rhs.center;
+	data.assign(rhs.data.dimx(), rhs.data.dimy(), rhs.data.dimz(), rhs.data.dimv() );
+	data = rhs.data;
+	pattern.assign(rhs.pattern.dimx(), rhs.pattern.dimy(), rhs.pattern.dimz(), rhs.pattern.dimv() );
+	pattern = rhs.pattern;
+	center = rhs.center;
 }
 		
-///assignment operator
 template <class T>
 SubStencil<T>& SubStencil<T>::operator= (const SubStencil<T> &rhs) {
-	if (&rhs == this) {return *this;}
-	this->data = rhs.data;
-	this->pattern = rhs.pattern;
-	this->center = rhs.center;
+	if (&rhs == this) {
+		return *this;
+	}
+	data = rhs.data;
+	pattern = rhs.pattern;
+	center = rhs.center;
 	return *this;
 }
 
 template <class T>
-SubStencil<T>::~SubStencil() {}
+SubStencil<T>::~SubStencil() {
+}
 
 #endif //_SUBSTENCIL_HXX_
