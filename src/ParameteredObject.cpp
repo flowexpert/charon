@@ -280,7 +280,18 @@ void ParameteredObject::save(ParameterFile& pf) const {
 void ParameteredObject::loadParameters(const ParameterFile& pf) {
 	// check type
 	assert(pf.isSet(_instanceName + ".type"));
-	assert(pf.get<std::string>(_instanceName + ".type") == _className);
+#ifndef NDEBUG
+	if(StringTool::toLowerCase(pf.get<std::string>(_instanceName + ".type"))
+		!= StringTool::toLowerCase(_className)) {
+		std::ostringstream msg;
+		msg << __FILE__ << ":" << __LINE__;
+		msg << "\n\tclassname and type do not match!";
+		msg << "\n\tclassname: " << _className;
+		msg << "\n\tinstance name: " << _instanceName;
+		msg << "\n\ttype: " << pf.get<std::string>(_instanceName + ".type");
+		throw std::runtime_error(msg.str().c_str());
+	}
+#endif
 
 	// load parameters
 	std::map<std::string, AbstractParameter*>::const_iterator par;
