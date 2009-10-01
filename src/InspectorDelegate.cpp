@@ -142,7 +142,7 @@ bool InspectorDelegate::eventFilter(QObject* object, QEvent* ev)
 InspectorFileEditor::InspectorFileEditor(QWidget* p, const QString& var) :
 		QLineEdit(p), _variable(var) {
 	_toolButton = new QToolButton(this);
-	_toolButton->setText("...");
+	_toolButton->setIcon(QIcon(":/icons/quickopen.png"));
 	_toolButton->setCursor(QCursor(Qt::ArrowCursor));
 	QObject::connect(_toolButton, SIGNAL(clicked(bool)),
 						this, SLOT(chooseFile()));
