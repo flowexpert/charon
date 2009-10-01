@@ -3,7 +3,7 @@ SET(CPACK_PACKAGE_VENDOR
 	"Heidelberg Collaboratory for Image Processing"
 )
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY
-    "utility package of the charon project"
+    "main package of the charon project"
 )
 
 # package version setup
@@ -32,6 +32,8 @@ SET(CPACK_SOURCE_IGNORE_FILES
 SET(CPACK_PACKAGE_CONTACT
     "Jens-Malte Gottfried <jmgottfried@web.de>"
 )
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "charon-utils (>=0.1.3)")
+SET(DEBIAN_PACKAGE_SUGGESTS "tuchulcha (>=0.1.3)")
 
 # install components
 SET(CPACK_COMPONENTS_ALL headers libraries)
