@@ -13,8 +13,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file SubStencil.hxx
- *  Implementation of class Subtencil.
+/** @file Substencil.hxx
+ *  Implementation of class Substencil.
  *  This class is used to manage the pattern, the data and the center
  *  of a SubStencil.
  *  @see Stencil.hxx

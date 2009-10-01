@@ -14,8 +14,8 @@
  along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  @file Blockmatching.h
- *  @brief declaration of abstract base class blockmatching
+ *  @file BlockMatching.h
+ *  @brief declaration of abstract base class BlockMatching
  *  @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
  *  @date 12.08.2009
  */

@@ -13,7 +13,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Point4D.hxx
+/** @file Point4D.h
  *  Implementation of class Point4D.
  *  This object represents a point in four-dimensional space.
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">

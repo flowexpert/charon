@@ -82,67 +82,58 @@ IF (COMPILE_MOTION)
 #	ADD_LIBRARY(motionmodels_localstretch SHARED MotionModels/LocalStretch.cpp FlowFunctor.cpp)
 ENDIF (COMPILE_MOTION)
 
-SET(Plugins)
-
 SET(Plugins
-	${Plugins}
 	channelconverter
 )
 
 IF (COMPILE_DERIVATIVES)
-SET(Plugins
-	${Plugins}
-	bin2
-	sobel
-)
+	LIST(APPEND Plugins
+		bin2
+		sobel
+	)
 ENDIF (COMPILE_DERIVATIVES)
 
 IF (COMPILE_STENCILS)
-SET(Plugins
-	${Plugins}
-	gbcce
-	l2norm
-)
+	LIST(APPEND Plugins
+		gbcce
+		l2norm
+	)
 ENDIF (COMPILE_STENCILS)
 
 IF (COMPILE_SOLVERS AND PETSC_USED)
-SET(Plugins
-	${Plugins}
-	petscsolver
-)
+	LIST(APPEND Plugins
+		petscsolver
+	)
 ENDIF (COMPILE_SOLVERS AND PETSC_USED)
 
 IF (COMPILE_BLOCKMATCHING)
-SET(Plugins
-	${Plugins}
-	incrementorparameter	
-	incrementorcountup
-	objectivefunctioncomparing
-	listedpixelselection
-	surfaceanalysisminchange
-	blockmatchingliacs
-)
+	LIST(APPEND Plugins
+		incrementorparameter	
+		incrementorcountup
+		objectivefunctioncomparing
+		listedpixelselection
+		surfaceanalysisminchange
+		blockmatchingliacs
+	)
 ENDIF (COMPILE_BLOCKMATCHING)
 
 IF (COMPILE_BRIGHTNESS)
-SET(Plugins
-	${Plugins}
-	brightnessmodels_constant
-#	brightnessmodels_diffusion
-#	brightnessmodels_exponential
-#	brightnessmodels_movingillumination
-)
+	LIST(APPEND Plugins
+		brightnessmodels_constant
+#		brightnessmodels_diffusion
+#		brightnessmodels_exponential
+#		brightnessmodels_movingillumination
+	)
 ENDIF (COMPILE_BRIGHTNESS)
 
 IF (COMPILE_MOTION)
-SET(Plugins
-	${Plugins}
-#	motionmodels_localaffiness
-	motionmodels_localconstant
-#	motionmodels_localplanarity 
-#	motionmodels_localrotation
-#	motionmodels_localstretch
-)
+	LIST(APPEND Plugins
+#		motionmodels_localaffiness
+		motionmodels_localconstant
+#		motionmodels_localplanarity 
+#		motionmodels_localrotation
+#		motionmodels_localstretch
+	)
 ENDIF (COMPILE_MOTION)
 
 FOREACH(X ${Plugins})
@@ -155,23 +146,29 @@ FOREACH(X ${Plugins})
 	ENDIF(WIN32)
 ENDFOREACH(X)
 
-# install library
+# install libraries/plugins
+IF(NOT ${CMAKE_INSTALL_PREFIX} STREQUAL ${CHARON_UTILS_ROOT_DIR})
+	MESSAGE(STATUS	"Warning: Plugins will NOT be installed in standart "
+					"plugin directory!")
+	MESSAGE(STATUS	"Set CMAKE_INSTALL_PREFIX to ${CHARON_UTILS_ROOT_DIR} "
+					"to install into global plugin path.")
+ENDIF(NOT ${CMAKE_INSTALL_PREFIX} STREQUAL ${CHARON_UTILS_ROOT_DIR})
 SET_TARGET_PROPERTIES(${Plugins}
 	PROPERTIES INSTALL_RPATH
-	${CHARON_UTILS_ROOT_DIR}/lib${LIB_SUFFIX}/charon-plugins:${CHARON_CORE_ROOT_DIR}/lib${LIB_SUFFIX}
+	${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins:${CHARON_CORE_ROOT_DIR}/lib${LIB_SUFFIX}
 )
 
 INSTALL(
     TARGETS      	${Plugins}
     EXPORT      	${PROJECT_NAME}
     RUNTIME      	DESTINATION bin
-    LIBRARY      	DESTINATION ${CHARON_UTILS_ROOT_DIR}/lib${LIB_SUFFIX}/charon-plugins
-    ARCHIVE      	DESTINATION ${CHARON_UTILS_ROOT_DIR}/lib${LIB_SUFFIX}/charon-plugins
+    LIBRARY      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
+    ARCHIVE      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
     COMPONENT    	libraries
 )
 
 # install header files to include directory
-FILE(GLOB HEADER_FILES
+FILE(GLOB_RECURSE HEADER_FILES
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.h *.hxx
 )
@@ -180,7 +177,6 @@ INSTALL(
     DESTINATION include/${PROJECT_NAME}
     COMPONENT   headers
 )
-
 
 INSTALL(
     EXPORT       ${PROJECT_NAME}

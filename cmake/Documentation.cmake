@@ -56,7 +56,7 @@ IF (DOXYGEN_FOUND)
     # dummy target for documentation creation
 
     # Doxyfile konfigurieren und Make-Target erzeugen
-    FILE(GLOB HTMLDOCS
+    FILE(GLOB_RECURSE HTMLDOCS
         ${PROJECT_SOURCE_DIR}/doc/*_doc.txt
         ${PROJECT_SOURCE_DIR}/src/*.h
         ${PROJECT_SOURCE_DIR}/src/*.hxx
@@ -67,7 +67,7 @@ IF (DOXYGEN_FOUND)
     )
     #MESSAGE(STATUS "Htmldoc deps: ${HTMLDOCS}")
 
-    SET(DOXY_DOC_PATTERN        "*.cpp *.h *.hxx *.hpp *_doc.txt")
+    SET(DOXY_DOC_PATTERN        "*.cpp *.h *.hxx *_doc.txt")
     SET(DOXY_DOC_PATHS          "doc src")
     SET(DOXY_GENERATE_HTML      YES)
     SET(DOXY_GENERATE_LATEX     NO )

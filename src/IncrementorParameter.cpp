@@ -1,4 +1,4 @@
-/*  Copyright (C) 2009 Jens-Malte Gottfried
+/*  Copyright (C) 2009
 
     This file is part of Charon.
 
@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file BlockMatchingLIACS.cpp
+/// @file IncrementorParameter.cpp
 /// This file is needed for the IncrementorParameter class to work as a plugin.
 /// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 24.08.2009

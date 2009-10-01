@@ -63,8 +63,7 @@ int main()
 		roi.before = 0;
 		roi.after = 1;
 		FileReader<float> rd("rd");
-		rd.filename
-				= "/home/andreas/Desktop/charon-suite/charon/trunk/test/test.cimg";
+		rd.filename	= TESTFILE;
 		lps.range.connect(&roi.out);
 		lps.sequence.connect(&rd.out);
 		lps.execute();

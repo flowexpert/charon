@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file sobel.h
+/// @file Sobel.h
 /// defines class Derivatives::Sobel
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
 /// @date 11.06.2009
@@ -38,10 +38,17 @@
 #include <Derivative.h>
 
 /// @brief class implementing a sobel filter
-/// @details this class uses a @f$ \frac{1,32} \left[ \begin{array}{ccc} 3 & 0 & -3 \\
-///									10 & 0 & -10 \
-///									 3 & 0 & -3
-///						 \end{array} \right] @f$ filter.
+/// @details this class uses the following filter mask:
+/** \f[ 
+		\frac{1,32} 
+		\begin{pmatrix}
+			3 & 0 & -3 \\
+			10 & 0 & -10\\
+			3 & 0 & -3			 
+		\end{pmatrix}
+	\f]
+ */
+///
 /// Only implemented for x and y direction
 template <class T>
 class sobel_DECLDIR Sobel : public Derivative<T>
