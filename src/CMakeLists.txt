@@ -19,6 +19,7 @@ ADD_LIBRARY(interpolatorlinear SHARED InterpolatorLinear.cpp)
 ADD_LIBRARY(normalize SHARED Normalize.cpp)
 ADD_LIBRARY(threshold SHARED Threshold.cpp)
 ADD_LIBRARY(linfilter SHARED LinFilter.cpp)
+ADD_LIBRARY(mask1d SHARED Mask1D.cpp)
 
 SET(Plugins
 	roi
@@ -32,6 +33,7 @@ SET(Plugins
 	normalize
 	threshold
 	linfilter
+	mask1d
 )
 
 FOREACH(X ${Plugins})
