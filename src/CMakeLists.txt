@@ -6,57 +6,34 @@ INCLUDE_DIRECTORIES(Incrementors)
 INCLUDE_DIRECTORIES(ObjectiveFunctions)
 INCLUDE_DIRECTORIES(SurfaceAnalysis)
 
-IF(COMPILE_SOLVERS AND PETSC_USED)
-	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
-	IF(!PETSC_USES_MPI)
-		INCLUDE_DIRECTORIES(BEFORE ${PETSC_ROOT_DIR}/include/mpiuni/)		
-	ENDIF(!PETSC_USES_MPI)
-ENDIF(COMPILE_SOLVERS AND PETSC_USED)
+IF(MSVC)
+	ADD_DEFINITIONS(/DHANDLE_DLL)
+ENDIF(MSVC)
 
-ADD_DEFINITIONS(/DHANDLE_DLL)
-
-#Create shared libraries
+# plugins
 ADD_LIBRARY(channelconverter SHARED ChannelConverter.cpp)
+SET(Plugins
+	channelconverter
+)
 
-IF (COMPILE_DERIVATIVES)
-	ADD_LIBRARY(bin2 SHARED Derivatives/bin2.cpp)
-	ADD_LIBRARY(sobel SHARED Derivatives/Sobel.cpp)
-ENDIF (COMPILE_DERIVATIVES)
-IF (COMPILE_STENCILS)
+IF (ENABLE_STENCILS)
 	ADD_LIBRARY(gbcce SHARED Stencils/Gbcce.cpp)
 	ADD_LIBRARY(l2norm SHARED Stencils/L2Norm.cpp)
-ENDIF (COMPILE_STENCILS)
-IF (COMPILE_SOLVERS)
-	IF (PETSC_USED)
-		ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
-		#add blas/lapack of petsc
-		IF (PETSC_USES_FORTRAN)
-			TARGET_LINK_LIBRARIES(petscsolver	${PETSC_ROOT_DIR}/externalpackages/fblaslapack/${PETSC_ARCH}/libfblas.${LIBFILE_EXT}
-								${PETSC_ROOT_DIR}/externalpackages/fblaslapack/${PETSC_ARCH}/libflapack.${LIBFILE_EXT})
-		ELSE (PETSC_USES_FORTRAN)
-			TARGET_LINK_LIBRARIES(petscsolver	${PETSC_ROOT_DIR}/externalpackages/f2cblaslapack/${PETSC_ARCH}/libf2cblas.${LIBFILE_EXT}
-								${PETSC_ROOT_DIR}/externalpackages/f2cblaslapack/${PETSC_ARCH}/libf2clapack.${LIBFILE_EXT})
-		ENDIF (PETSC_USES_FORTRAN)
+	LIST(APPEND Plugins
+		gbcce
+		l2norm
+	)
+ENDIF (ENABLE_STENCILS)
 
-		#add MPI support
-		IF (PETSC_USES_MPI)
-			TARGET_LINK_LIBRARIES(petscsolver	${MPI_DIR}/lib/mpi.${LIBFILE_EXT}) #TODO: correct this
-		ELSE (PETSC_USES_MPI)
-			TARGET_LINK_LIBRARIES(petscsolver	${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libmpiuni.${LIBFILE_EXT})
-		ENDIF (PETSC_USES_MPI)
+IF(ENABLE_SOLVERS AND WITH_PETSC)
+	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
+	ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
+	TARGET_LINK_LIBRARIES(petscsolver ${PETSC_LIBRARIES})
+	LIST(APPEND Plugins
+		petscsolver
+	)
+ENDIF(ENABLE_SOLVERS AND WITH_PETSC)
 
-		#add all libraries needed by petsc
-		TARGET_LINK_LIBRARIES(petscsolver	charon-core
-							${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetsc.${LIBFILE_EXT}
-							# ${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetsccontrib.${LIBFILE_EXT}
-							${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscdm.${LIBFILE_EXT}
-							${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscksp.${LIBFILE_EXT}
-							${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscmat.${LIBFILE_EXT}
-							# ${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscsnes.${LIBFILE_EXT}
-							# ${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscts.${LIBFILE_EXT}
-							${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}/libpetscvec.${LIBFILE_EXT})
-	ENDIF (PETSC_USED)
-ENDIF (COMPILE_SOLVERS)
 IF (COMPILE_BLOCKMATCHING)
 	ADD_LIBRARY(incrementorparameter SHARED IncrementorParameter.cpp)
 	ADD_LIBRARY(incrementorcountup SHARED Incrementors/IncrementorCountUp.cpp)
@@ -68,46 +45,6 @@ IF (COMPILE_BLOCKMATCHING)
 	TARGET_LINK_LIBRARIES(surfaceanalysisminchange incrementorparameter)
 	ADD_LIBRARY(blockmatchingliacs SHARED BlockMatching/BlockMatchingLIACS.cpp)
 	TARGET_LINK_LIBRARIES(blockmatchingliacs incrementorcountup)
-ENDIF (COMPILE_BLOCKMATCHING)
-IF (COMPILE_BRIGHTNESS)
-	ADD_LIBRARY(brightnessmodels_constant SHARED BrightnessModels/Constant.cpp)
-#	ADD_LIBRARY(brightnessmodels_diffusion SHARED BrightnessModels/Diffusion.cpp)
-#	ADD_LIBRARY(brightnessmodels_exponential SHARED BrightnessModels/Exponential.cpp)
-#	ADD_LIBRARY(brightnessmodels_movingillumination SHARED BrightnessModels/MovingIllumination.cpp)
-ENDIF (COMPILE_BRIGHTNESS)
-IF (COMPILE_MOTION)
-#	ADD_LIBRARY(motionmodels_localaffiness SHARED MotionModels/LocalAffiness.cpp FlowFunctor.cpp)
-	ADD_LIBRARY(motionmodels_localconstant SHARED MotionModels/LocalConstant.cpp FlowFunctor.cpp)
-#	ADD_LIBRARY(motionmodels_localplanarity SHARED MotionModels/LocalPlanarity.cpp FlowFunctor.cpp)
-#	ADD_LIBRARY(motionmodels_localrotation SHARED MotionModels/LocalRotation.cpp FlowFunctor.cpp)
-#	ADD_LIBRARY(motionmodels_localstretch SHARED MotionModels/LocalStretch.cpp FlowFunctor.cpp)
-ENDIF (COMPILE_MOTION)
-
-SET(Plugins
-	channelconverter
-)
-
-IF (COMPILE_DERIVATIVES)
-	LIST(APPEND Plugins
-		bin2
-		sobel
-	)
-ENDIF (COMPILE_DERIVATIVES)
-
-IF (COMPILE_STENCILS)
-	LIST(APPEND Plugins
-		gbcce
-		l2norm
-	)
-ENDIF (COMPILE_STENCILS)
-
-IF (COMPILE_SOLVERS AND PETSC_USED)
-	LIST(APPEND Plugins
-		petscsolver
-	)
-ENDIF (COMPILE_SOLVERS AND PETSC_USED)
-
-IF (COMPILE_BLOCKMATCHING)
 	LIST(APPEND Plugins
 		incrementorparameter	
 		incrementorcountup
@@ -117,8 +54,11 @@ IF (COMPILE_BLOCKMATCHING)
 		blockmatchingliacs
 	)
 ENDIF (COMPILE_BLOCKMATCHING)
-
 IF (COMPILE_BRIGHTNESS)
+	ADD_LIBRARY(brightnessmodels_constant SHARED BrightnessModels/Constant.cpp)
+#	ADD_LIBRARY(brightnessmodels_diffusion SHARED BrightnessModels/Diffusion.cpp)
+#	ADD_LIBRARY(brightnessmodels_exponential SHARED BrightnessModels/Exponential.cpp)
+#	ADD_LIBRARY(brightnessmodels_movingillumination SHARED BrightnessModels/MovingIllumination.cpp)
 	LIST(APPEND Plugins
 		brightnessmodels_constant
 #		brightnessmodels_diffusion
@@ -126,8 +66,12 @@ IF (COMPILE_BRIGHTNESS)
 #		brightnessmodels_movingillumination
 	)
 ENDIF (COMPILE_BRIGHTNESS)
-
 IF (COMPILE_MOTION)
+#	ADD_LIBRARY(motionmodels_localaffiness SHARED MotionModels/LocalAffiness.cpp FlowFunctor.cpp)
+	ADD_LIBRARY(motionmodels_localconstant SHARED MotionModels/LocalConstant.cpp FlowFunctor.cpp)
+#	ADD_LIBRARY(motionmodels_localplanarity SHARED MotionModels/LocalPlanarity.cpp FlowFunctor.cpp)
+#	ADD_LIBRARY(motionmodels_localrotation SHARED MotionModels/LocalRotation.cpp FlowFunctor.cpp)
+#	ADD_LIBRARY(motionmodels_localstretch SHARED MotionModels/LocalStretch.cpp FlowFunctor.cpp)
 	LIST(APPEND Plugins
 #		motionmodels_localaffiness
 		motionmodels_localconstant
@@ -136,6 +80,7 @@ IF (COMPILE_MOTION)
 #		motionmodels_localstretch
 	)
 ENDIF (COMPILE_MOTION)
+
 
 FOREACH(X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core)

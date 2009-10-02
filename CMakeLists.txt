@@ -14,25 +14,16 @@ INCLUDE(Documentation)
 # CPack descriptions for package generation
 INCLUDE(ReleaseSys)
 
-# if off BrightnessModels and MotionModels won't be compiled
-OPTION(COMPILE_BRIGHTNESS "compile brightnessmodel plugins" on)
-OPTION(COMPILE_MOTION "compile motionmodel plugins" on)
+# select wich plugins to compile
+OPTION(ENABLE_BRIGHTNESS "compile brightnessmodel plugins" ON)
+OPTION(ENABLE_MOTION "compile motionmodel plugins" ON)
+OPTION(ENABLE_BLOCKMATCHING "compile blockmatching plugins" ON)
+OPTION(ENABLE_STENCILS "compile stencil pugins" ON)
+OPTION(ENABLE_SOLVERS "compile solver pugins" ON)
 
-# if off Blockmatching won't be compiled
-OPTION(COMPILE_BLOCKMATCHING "compile blockmatching plugins" on)
+OPTION(WITH_PETSC "use PETSc library" ON)
 
-OPTION(COMPILE_DERIVATIVES "compile derivative plugins" on)
-OPTION(COMPILE_STENCILS "compile stencil pugins" on)
-OPTION(COMPILE_SOLVERS "compile solver pugins" on)
-
-OPTION(PETSC_USED "use PETSc library" on)
-
-IF (COMPILE_SOLVERS AND PETSC_USED)
-	SET(PETSC_ARCH win_x86_32_mpiuni)
-	OPTION(PETSC_USES_MPI "does PETSc use an external MPI implementation?" off)
-	OPTION(PETSC_USES_FORTRAN "was fortran used for PETSc-compilation?" off)
-	FIND_PACKAGE(petsc REQUIRED)
-ENDIF (COMPILE_SOLVERS AND PETSC_USED)
+FIND_PACKAGE(petsc REQUIRED)
 
 # Test suite
 OPTION(ENABLE_TEST "enable test suite" ON)
