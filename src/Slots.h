@@ -118,10 +118,6 @@ public:
     /// Try to guess slot type.
     virtual std::string guessType() const = 0;
 
-    /// Update children (only valid for output slots)
-    /// @throws std::string Error message on update error.
-    //virtual void updateChildren() const = 0;
-
     /// Get pointers to the connected targets.
     virtual std::set<Slot*> getTargets() const = 0;
 
@@ -221,7 +217,6 @@ public:
     virtual ~InputSlot();
 
     // overload Slot functions
-    //virtual void updateChildren() const;
     virtual operator T() const;
     virtual const T& operator()() const;
     virtual const T& operator[](unsigned int pos) const;
@@ -243,7 +238,6 @@ public:
     virtual ~OutputSlot();
 
     // overload Slot functions
-    //virtual void updateChildren() const;
     virtual operator T() const;
     virtual const T& operator()() const;
     virtual T& operator()();

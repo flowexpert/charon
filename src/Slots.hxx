@@ -288,11 +288,6 @@ template<class T>
 InputSlot<T>::~InputSlot() {
 }
 
-/*template<class T>
- void InputSlot<T>::updateChildren() const {
- throw std::string("input slots do not have children to update");
- }*/
-
 template<class T>
 InputSlot<T>::operator T() const {
 	assert(AbstractSlot<T>::_targets.size());

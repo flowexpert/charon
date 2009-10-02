@@ -34,7 +34,7 @@
 
 // Instantiate static variables.
 std::map<std::string, unsigned int> ParameteredObject::_genericClassNameCount;
-bool ParameteredObject::_createMetadata;
+bool ParameteredObject::_createMetadata = false;
 
 std::string ParameteredObject::_genericName() {
 	ParameteredObject::_genericClassNameCount[_className]++;
@@ -147,10 +147,10 @@ void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 
 	if (_createMetadata) {
 		if (slot.getMulti())
-			_metadata.set<std::string> (_className + "." + _instanceName
+			_metadata.set<std::string> (_className + "." + name
 					+ ".multi", "true");
 		if (slot.getOptional())
-			_metadata.set<std::string> (_className + "." + _instanceName
+			_metadata.set<std::string> (_className + "." + name
 					+ ".optional", "true");
 	}
 }
@@ -178,10 +178,10 @@ void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,
 
 	if (_createMetadata) {
 		if (!slot.getMulti())
-			_metadata.set<std::string> (_className + "." + _instanceName
+			_metadata.set<std::string> (_className + "." + name
 					+ ".multi", "false");
 		if (!slot.getOptional())
-			_metadata.set<std::string> (_className + "." + _instanceName
+			_metadata.set<std::string> (_className + "." + name
 					+ ".optional", "false");
 	}
 }

@@ -19,10 +19,9 @@
 /// Tests for Parameter and ParameteredObject classes.
 
 #include <cstdlib>
-/*#include <iostream>
+#include <iostream>
 
-#include "Parameter.hxx"
-#include "Slots.hxx"
+#include "ParameteredObject.hxx"
 
 // make sure that assert() works (nothing is tested otherwise)
 #undef NDEBUG
@@ -30,11 +29,6 @@
 
 /// sample ParameteredObject class.
 class Sample : public ParameteredObject {
-
-protected:
-    virtual ParameteredObject* _newInstance(const std::string& name) const {
-        return new Sample(name);
-    }
 
 public:
     /// sample integer parameter
@@ -77,11 +71,6 @@ public:
 /// sample ParameteredObject class.
 class Outputgen : public ParameteredObject {
 
-protected:
-    virtual ParameteredObject* _newInstance(const std::string& name) const {
-        return new Outputgen(name);
-    }
-
 public:
    /// sample integer output slot
     OutputSlot<int>    out1;
@@ -101,11 +90,11 @@ public:
         _addOutputSlot(out2, "out2", "float output slot");
     }
 };
-*/
 
 /// Main test application.
 int main() {
-   /* ParameterFile testfile;
+    ParameterFile testfile;
+	ParameteredObject::setCreateMetadata(true);
 
     Sample* sample = new Sample(     "sample");
     assert(sample->par1 == 20);
@@ -125,26 +114,36 @@ int main() {
     assert(sample->par1 == 5);
     assert(sample->par1 != 20);
 
+/*
     // check factory usage
     sample = dynamic_cast<Sample*>(
         ParameteredObject::getInstance("sample", "sample2"));
     assert(sample);
     assert(sample->par1 == 20);
+*/
 
     // check connection settings
     assert(!sample->connected());
     Outputgen* outgen  = new Outputgen("outputgen");
     Outputgen* outgen2 = new Outputgen("outgen2");
-    ParameteredObject::connect("outputgen.out1", "sample2.in1");
+    outgen->out1.connect(&(sample->in1));
     // slot in2 needs not to be connected because it's optional
     assert(sample->connected());
 
     // try to connect multiple sources to in2
     bool res = true;
-    res = res && ParameteredObject::connect("outputgen.out2", "sample2.in2");
-    res = res && ParameteredObject::connect(outgen2->out2, sample->in2);
+    res = res && outgen->out2.connect(&(sample->in2));
+    res = res && outgen2->out2.connect(&(sample->in2));
     assert(res);
 
+    // save object and connections
+    testfile.clear();
+    sample->save(testfile);
+
+    // to view it by hand
+    testfile.save("parametertest2.wrp");
+
+/*
     // outgen and sample should now be in a connected component of 3 objects
     std::set<std::string> nb = outgen->getNeighbours();
     // outgen only has one neighbour, sample2
@@ -158,13 +157,6 @@ int main() {
     assert(nb.find("outputgen") != nb.end());
     assert(nb.find("outgen2") != nb.end());
     assert(sample->getConnected().size() == 3);
-
-    // save object and connections
-    testfile.clear();
-    sample->save(testfile);
-
-    // to view it by hand
-    testfile.save("parametertest2.wrp");
 
     // delete connected object
     // connection should be removed (also from outgen)
@@ -184,7 +176,19 @@ int main() {
     delete ParameteredObject::getInstance("sample"   , "sample" );
     delete ParameteredObject::getInstance("outputgen", "outputgen");
     delete ParameteredObject::getInstance("outputgen", "outgen2");
-    */
+*/
+	delete sample;
+	delete outgen;
+	delete outgen2;
+
+	// check metadata generation
+	assert(FileTool::exists("libsample.wrp"));
+	assert(FileTool::exists("liboutputgen.wrp"));
+
+	// check if input slot flags are correctly written
+	testfile.load("libsample.wrp");
+	assert(testfile.get<bool>("sample.in2.multi"));
+	assert(testfile.get<bool>("sample.in2.optional"));
 
     return EXIT_SUCCESS;
 }
