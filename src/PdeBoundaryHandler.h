@@ -14,7 +14,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file   PdeBoundaryHandler.h
- *  @brief  Declaration of convolution routines.
+ *  @brief  Declaration of class PdeBoundaryHandler.
  *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  *  @date   15.06.2009
  *

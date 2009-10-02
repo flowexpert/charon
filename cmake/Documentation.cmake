@@ -60,15 +60,11 @@ IF (DOXYGEN_FOUND)
     FILE(GLOB HTMLDOCS
         ${PROJECT_SOURCE_DIR}/doc/*_doc.txt
         ${PROJECT_SOURCE_DIR}/src/*.h
-        ${PROJECT_SOURCE_DIR}/src/*.hxx
-        ${PROJECT_SOURCE_DIR}/src/*.cpp
         ${PROJECT_SOURCE_DIR}/test/*.h
-        ${PROJECT_SOURCE_DIR}/test/*.hxx
-        ${PROJECT_SOURCE_DIR}/test/*.cpp
     )
     #MESSAGE(STATUS "Htmldoc deps: ${HTMLDOCS}")
 
-    SET(DOXY_DOC_PATTERN        "*.cpp *.h *.hxx *.hpp *_doc.txt")
+    SET(DOXY_DOC_PATTERN        "*.h *_doc.txt")
     SET(DOXY_DOC_PATHS          "doc src")
     SET(DOXY_GENERATE_HTML      YES)
     SET(DOXY_GENERATE_LATEX     NO )

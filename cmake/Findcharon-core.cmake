@@ -22,7 +22,7 @@ FIND_PATH(CHARON_CORE_ROOT_DIR
 )
 
 FILE(GLOB CHARON_CORE_DOCDIRS
-    /usr/share/doc/charon-core-*
+    /usr/share/doc/charon-core*
 )
 
 FIND_FILE(CHARON_CORE_TAGFILE
@@ -43,7 +43,7 @@ FIND_PATH(CHARON_CORE_HTMLDOC_DIR
 IF(CHARON_CORE_HTMLDOC_DIR)
     # this can be used to import the charon doxygen documentation
     # this imports the needed tag file and links it to the found htmldoc location
-    SET(CHARON_CORE_TAG_IMPORT "${CHARON_CORE_TAGFILE}=${CHARON_CORE_HTMLDOC_DIR}")
+    SET(CHARON_CORE_TAG_IMPORT "\"${CHARON_CORE_TAGFILE}=${CHARON_CORE_HTMLDOC_DIR}\"")
 ENDIF(CHARON_CORE_HTMLDOC_DIR)
 
 INCLUDE(FindPackageHandleStandardArgs)

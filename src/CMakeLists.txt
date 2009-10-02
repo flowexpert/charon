@@ -1,7 +1,9 @@
 INCLUDE_DIRECTORIES(${CHARON_CORE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 
-ADD_DEFINITIONS(/DHANDLE_DLL)
+IF(MSVC)
+	ADD_DEFINITIONS(/DHANDLE_DLL)
+ENDIF(MSVC)
 
 #Create shared libraries
 ADD_LIBRARY(roi SHARED Roi.cpp)
@@ -16,6 +18,7 @@ ADD_LIBRARY(interpolatorcubic SHARED InterpolatorCubic.cpp)
 ADD_LIBRARY(interpolatorlinear SHARED InterpolatorLinear.cpp)
 ADD_LIBRARY(normalize SHARED Normalize.cpp)
 ADD_LIBRARY(threshold SHARED Threshold.cpp)
+ADD_LIBRARY(linfilter SHARED LinFilter.cpp)
 
 SET(Plugins
 	roi
@@ -28,6 +31,7 @@ SET(Plugins
 	interpolatorlinear
 	normalize
 	threshold
+	linfilter
 )
 
 FOREACH(X ${Plugins})

@@ -13,8 +13,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Interpolator.h
- *  Declaration of template class Interpolator and related classes.
+/** @file InterpolatorCubic.h
+ *  Declaration of template class InterpolatorCubic.
  *  @author <a href="mailto:daniel.kondermann@iwr.uni-heidelberg.de">
  *      Daniel Kondermann</a>
  *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
