@@ -54,10 +54,6 @@ template<typename T>
 class blockmatching_DECLDIR BlockMatching: public TemplatedParameteredObject<T>
 
 {
-/*protected:
-	/// @param surface flow image
-	cimg_library::CImgList<T> surface;*/
-
 public:
 	/// standard constructor
 	BlockMatching(const std::string& name = "", const std::string& pluginName = "");
@@ -83,7 +79,10 @@ public:
 	/// BlockMatching
 	OutputSlot<cimg_library::CImgList<T> > flow;
 
+	/// standard execute from ParameteredObject
 	virtual void execute() =0;
+	
+	/// the implentation of the BlockMatching algorithm
 	virtual void findFlow () =0;
 };
 

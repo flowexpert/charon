@@ -43,13 +43,15 @@
 #include <ObjectiveFunction.h>
 #include <ObjectiveFunctionComparing.h>
 
-/// This is the abstract base class of the declaration and implementation of the 
-/// blockmatching algorithm. 
-/// BlockMatching by:
-///     Listed pixel selection and Increment parameters with the Apply function.
-///     Compareing with the objective function to find a flow with the Surface
-///     analysis.
-/// short: LIACS
+/** 
+ *  Abstract base class of the declaration and implementation of the 
+ *  blockmatching algorithm. 
+ *  BlockMatching by:
+ *      Listed pixel selection and Increment parameters with the Apply function.
+ *      Compareing with the objective function to find a flow with the Surface
+ *      analysis.
+ *  short: LIACS
+ */
 template<typename T>
 class blockmatchingliacs_DECLDIR BlockMatchingLIACS: public BlockMatching<T>
 {
@@ -61,6 +63,9 @@ private:
 public:
 	/// standard constructor
 	BlockMatchingLIACS(const std::string& name);
+
+	/// standard execute from ParameteredObject
+	virtual void execute();
 
 	/** 
 	 *  Function to calculate the the flow change inside the image in t+1
@@ -74,7 +79,6 @@ public:
 	 *    SurfaceAnalysis
 	 *  - Save the best fitting parameters in surface (flow image)
 	 */
-	virtual void execute();
 	virtual void findFlow();
 };
 

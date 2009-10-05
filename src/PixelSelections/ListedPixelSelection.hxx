@@ -37,8 +37,10 @@ template<typename T>
 void ListedPixelSelection<T>::execute()
 {
 	ParameteredObject::execute();
+	// run over ROI
 	forRoiXYZT(*(this->range()), x, y, z, t)
 				{
+					// save actual values of Pixel in the Pixel structure
 					Pixel<T>* pixel = new Pixel<T> ;
 					pixel->setX((T) x);
 					pixel->setY((T) y);

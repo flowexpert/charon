@@ -49,6 +49,7 @@ public:
 
 	/**
 	 *  find the minimal change in roi
+	 *  simple implementation of finding minimum in a list of values
 	 *  @param differences vector of all differences
 	 *  @param parameters all possible parameters
 	 *  @param [out] vector of IncrementorParameter for best fitting Parameters

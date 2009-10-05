@@ -80,6 +80,13 @@ public:
 	virtual std::set<std::string>& getUnknowns();
 	//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
 
+	/** 
+	 *  compute brightness changes with the inserted Parameters
+	 *  @param inPixel insert pixel for which is the birghtness changes has to 
+	 *  be done
+	 *  @param modifier vector of Parameters to compute the modification
+	 *  @param outPixel return value of Pixel type
+	 */
 	virtual void apply(const Pixel<T> & inPixel, const std::vector<
 			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel);
 };

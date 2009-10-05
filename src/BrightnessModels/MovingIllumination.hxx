@@ -84,6 +84,7 @@ void BrightnessModels::MovingIllumination<T>::apply(const Pixel<T> & inPixel,
 		Pixel<T> & outPixel)
 {
 	outPixel = inPixel;
+	///@TODO Implement me
 }
 
 #endif

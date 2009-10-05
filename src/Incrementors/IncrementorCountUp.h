@@ -43,7 +43,7 @@ class incrementorcountup_DECLDIR IncrementorCountUp: public Incrementor<T>
 public:
 	/// standart constructor
 	IncrementorCountUp(const std::string& name);
-
+	/// standard execute from ParameteredObject
 	virtual void execute();
 
 	/**
@@ -51,6 +51,8 @@ public:
 	 *  - compute return vallue true for no doStep possible, false doStep is 
 	 *    possible
 	 *  - compute step for all parameters
+	 *    if no step can be done for one Parameter, then set the Parameter to
+	 *    minimum and increment the next one by stepsize
 	 */
 	virtual bool doStep();
 };

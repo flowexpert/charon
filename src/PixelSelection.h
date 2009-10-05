@@ -20,8 +20,8 @@
  *  @date 17.08.2009
  */
 
-#ifndef ABSRACTPIXELSELECTION_H_
-#define ABSRACTPIXELSELECTION_H_
+#ifndef PIXELSELECTION_H_
+#define PIXELSELECTION_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef pixelselection_EXPORTS
@@ -58,10 +58,10 @@ public:
 	InputSlot<cimg_library::CImgList<T> > sequence;
 	/// outputslot list of pixel
 	OutputSlot<PixelSelection<T> *> out;
-
+	/// standard execute from ParameteredObject
 	virtual void execute() =0;
 	/// return the list of Pixel
 	std::vector<Pixel<T>*> & getListOfPixel();
 };
 
-#endif /* ABSRACTPIXELSELECTION_H_ */
+#endif /* PIXELSELECTION_H_ */

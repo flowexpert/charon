@@ -96,6 +96,7 @@ void BrightnessModels::Exponential<T>::apply(const Pixel<T> & inPixel,
 		Pixel<T> & outPixel)
 {
 	outPixel = inPixel;
+	///@TODO implement me
 }
 
 #endif

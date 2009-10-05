@@ -48,7 +48,10 @@ class ListedPixelSelection: public PixelSelection<T>
 public:
 	/// standard constructor
 	ListedPixelSelection(const std::string& name);
-	/// creates the List of Pixel out of the sequence of images and the ROI
+	/**
+	 *  creates the List of Pixel out of the sequence of images and the ROI
+	 *  runs over the ROI and saves all Pixel in a List
+	 */
 	void execute();
 };
 

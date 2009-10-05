@@ -56,11 +56,16 @@ public:
 	OutputSlot<Incrementor<T>*> out;
 	virtual void execute() =0;
 
-	/** computes the next Step
-	 *  the return is 0 if all max not reached and 1 if all max are reached
+	/** 
+	 *  computes the next Step
+	 *  @param [out] is 0 if all max not reached and 1 if all max are reached
 	 */
 	virtual bool doStep() =0;
-	///returns a list of the computed Parameters
+	
+	/**
+	 *  returns a list of the computed Parameters
+	 *  @param [out] list of computed Parameters
+	 */
 	const std::vector<IncrementorParameter<T>*>& getListOfParams();
 };
 

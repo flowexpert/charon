@@ -94,7 +94,7 @@ template<class T>
 void MotionModels::LocalStretch<T>::apply(const Pixel<T> & inPixel, const std::vector<
 			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel)
 {
-
+	///@TODO implement me
 }
 
 template<class T>

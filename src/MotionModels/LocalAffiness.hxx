@@ -138,7 +138,7 @@ void MotionModels::LocalAffiness<T>::apply(const Pixel<T> & inPixel,
 		Pixel<T> & outPixel)
 {
 	outPixel = inPixel;
-	// no moving change
+	///@TODO implement me
 }
 
 #endif

@@ -104,7 +104,7 @@ public:
 	virtual std::set<std::string>& getUnknowns() =0;
 
 	/** 
-	 *  compute brightness changes 
+	 *  compute brightness changes with the inserted Parameters
 	 *  @param inPixel insert pixel for which is the birghtness changes has to 
 	 *  be done
 	 *  @param modifier vector of Parameters to compute the modification

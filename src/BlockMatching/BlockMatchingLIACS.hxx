@@ -54,7 +54,6 @@ void BlockMatchingLIACS<T>::findFlow()
 					{
 						// loop over i until the doStep function from 
 						// Incrementor returns true 
-						///@TODO incrementor returns true in 1st round
 						for (int i = 0; !this->newParams()->doStep(); i++)
 						{
 							allParameters.push_back(
@@ -69,11 +68,10 @@ void BlockMatchingLIACS<T>::findFlow()
 						std::vector<IncrementorParameter<T>*> tempParams =
 								this->bestParam()->findMinChange(
 										pixelProperties, allParameters);
-						typename std::vector<IncrementorParameter<T>*>::iterator
-								it;
+						//typename std::vector<IncrementorParameter<T>*>::iterator
+						//		it;
 						T nextX, nextY, nextZ, nextT;
-						//unsigned int j = 0;
-						for (unsigned int j = 0; j != tempParams.size(); j++/*it = tempParams.begin(); it != tempParams.end(); it++*/)
+						for (unsigned int j = 0; j != tempParams.size(); j++)
 						{
 							if (tempParams[j]->name == "x")
 							{
@@ -91,7 +89,6 @@ void BlockMatchingLIACS<T>::findFlow()
 							{
 								nextT = tempParams[j]->current;
 							}
-							//j++;
 						}
 						// insert computed parameters in flow
 						this->flow()(0, x, y, z, t) = nextX;

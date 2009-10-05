@@ -93,6 +93,7 @@ void BrightnessModels::Diffusion<T>::apply(const Pixel<T> & inPixel,
 		const std::vector<IncrementorParameter<T>*> & modifier,
 		Pixel<T> & outPixel) {
 	outPixel = inPixel;
+	///@TODO implement me
 }
 
 #endif

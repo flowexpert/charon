@@ -109,8 +109,13 @@ public:
 	/// by asking the vectors length, you get the number of unknowns
 	virtual std::set<std::string>& getUnknowns() = 0;
 
-	/// returns a Image with the changes it has to do
-	/// Input: a vector of Parameters to compute the modification
+	/** 
+	 *  compute motion changes with the inserted Parameters
+	 *  @param inPixel insert pixel for which is the birghtness changes has to 
+	 *  be done
+	 *  @param modifier vector of Parameters to compute the modification
+	 *  @param outPixel return value of Pixel type
+	 */
 	virtual void apply(const Pixel<T> & inPixel, const std::vector<
 			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel) =0;
 

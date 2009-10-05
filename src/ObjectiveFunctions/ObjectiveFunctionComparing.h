@@ -49,8 +49,8 @@ public:
 
 	/**
 	 *  compares the changed List of Pixels from the apply function
-	 *  (BrightnessModel) with the next picture and try to find the right
-	 *  position for every pixel.
+	 *  (BrightnessModel and MotionModel) with the next picture and try to find 
+	 *  the right position for every pixel.
 	 *  @param pixelList list of pixel from PixelSelection
 	 *  @param intensity short vector of computed intensity
 	 *  @param [out] vallue of T which shows the quadratic distance between the

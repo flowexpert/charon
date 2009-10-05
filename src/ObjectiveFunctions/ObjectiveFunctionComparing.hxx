@@ -53,9 +53,11 @@ T ObjectiveFunctionComparing<T>::compare(
 	Pixel<T> outPixel;
 	for (unsigned int i = 0; i != pixelList.size() - 1; i++)
 	{
+		// compute possible changes
 		this->brightnessModel()->apply(*(pixelList[i]), params, pixel);
 		this->motionModel()->apply(pixel, params, outPixel);
 		std::vector<T> piList = outPixel.getIntensity(); //pixel intensity list
+		// compare computed pixel with know pixel out
 		for (unsigned int j = 0; j != piList.size(); j++)
 		{
 			T predictedIntenity = piList[j];
@@ -67,6 +69,7 @@ T ObjectiveFunctionComparing<T>::compare(
 					* (predictedIntenity - foundIntensity);
 		}
 	}
+	// return quadratic intensity change between computed and known Pixel
 	return foundChange;
 }
 

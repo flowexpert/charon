@@ -92,6 +92,13 @@ public:
 	 */
 	void setFlowFunctorParams(float a1, float a2, float s1, float s2);
 
+	/** 
+	 *  compute motion changes with the inserted Parameters
+	 *  @param inPixel insert pixel for which is the birghtness changes has to 
+	 *  be done
+	 *  @param modifier vector of Parameters to compute the modification
+	 *  @param outPixel return value of Pixel type
+	 */
 	virtual void apply(const Pixel<T> & inPixel, const std::vector<
 				IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel);
 	

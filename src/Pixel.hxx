@@ -108,18 +108,6 @@ Pixel<T>::Pixel(const Pixel<T>& rhs) :
 	this->t = rhs.getT();
 	std::vector<T> tempListOfIntensity = rhs.getIntensity();
 	this->intensity = tempListOfIntensity;
-	/*std::vector<T> tempListOfIntensity = rhs.getIntensity();
-	 for (unsigned int i = 0; i != tempListOfIntensity.size() - 1; i++)
-	 {
-	 if (i <= this->intensity.size() - 1)
-	 {
-	 this->insertIntensity(i, tempListOfIntensity[i]);
-	 }
-	 else
-	 {
-	 this->pushBackIntensity(tempListOfIntensity[i]);
-	 }
-	 }*/
 }
 
 template<typename T>
@@ -189,17 +177,6 @@ Pixel<T>& Pixel<T>::operator=(const Pixel<T>& rhs)
 	this->t = rhs.getT();
 	std::vector<T> tempListOfIntensity = rhs.getIntensity();
 	this->intensity = tempListOfIntensity;
-	/*for (unsigned int i = 0; i != tempListOfIntensity.size() - 1; i++)
-	 {
-	 if (i <= this->intensity.size() - 1)
-	 {
-	 this->insertIntensity(i, tempListOfIntensity[i]);
-	 }
-	 else
-	 {
-	 this->pushBackIntensity(tempListOfIntensity[i]);
-	 }
-	 }*/
 	return *this;
 }
 
