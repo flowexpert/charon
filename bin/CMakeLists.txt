@@ -2,7 +2,7 @@
 # are located in the ${PROJECT_BINARY_DIR}/bin
 
 IF(ENABLE_TEST)
-	ADD_TEST(ImgManipTest imgmaniptest)
-	ADD_TEST(ImgToolTest imgtooltest)
+	ADD_TEST(ImgManipTest imgManipTest)
+	ADD_TEST(ImgToolTest imgToolTest)
 	ADD_TEST(PluginTest pluginTest)
 ENDIF(ENABLE_TEST)
