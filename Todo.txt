@@ -1,0 +1,6 @@
+--HIGH IMPORTANCE
+--MEDIUM IMPORTANCE
+Implement apply function to Brightnessmodels: Diffusion, Exponential, MovingIllumination
+Implement apply function to MotionModels: LocalAffines, LocalPlanarity, LocalRotation, LocalStretch
+
+--LOW IMPORTANCE
