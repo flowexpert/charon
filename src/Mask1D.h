@@ -24,7 +24,7 @@
 #define MASK1D_H_
 
 #include <charon-core/ParameteredObject.h>
-#include <charon-utils/CImg.h>
+#include "CImg.h"
 
 #ifdef HANDLE_DLL
 #ifdef mask1d_EXPORTS
