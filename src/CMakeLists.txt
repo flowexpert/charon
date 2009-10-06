@@ -11,10 +11,7 @@ IF(MSVC)
 ENDIF(MSVC)
 
 # plugins
-ADD_LIBRARY(channelconverter SHARED ChannelConverter.cpp)
-SET(Plugins
-	channelconverter
-)
+SET(Plugins)
 
 IF (ENABLE_STENCILS)
 	ADD_LIBRARY(gbcce SHARED Stencils/Gbcce.cpp)
