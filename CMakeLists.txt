@@ -12,6 +12,17 @@ INCLUDE(Documentation)
 # CPack descriptions for package generation
 INCLUDE(ReleaseSys)
 
+OPTION(WITH_LAPACK "enable lapack support for CImg" OFF)
+IF(WITH_LAPACK)
+	ENABLE_LANGUAGE(Fortran)
+	FIND_PACKAGE(LAPACK)
+	IF(LAPACK_FOUND)
+		ADD_DEFINITIONS(-Dcimg_use_lapack)
+	ELSE(LAPACK_FOUND)
+		MESSAGE(SEND_ERROR "Lapack cannot be used, please disable WITH_LAPACK")
+	ENDIF(LAPACK_FOUND)
+ENDIF(WITH_LAPACK)
+
 # Test suite
 OPTION(ENABLE_TEST "enable test suite" ON)
 IF(ENABLE_TEST)

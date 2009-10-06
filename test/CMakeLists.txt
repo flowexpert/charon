@@ -30,6 +30,10 @@ IF(ENABLE_TEST)
 		TARGET_LINK_LIBRARIES(pluginTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
 
+	ADD_EXECUTABLE(cImgTest cimgtest.cpp)
+	IF(UNIX)
+		TARGET_LINK_LIBRARIES(cImgTest pthread ${X11_LIBRARIES})
+	ENDIF(UNIX)
 
 	IF(WIN32)
 		# copy needed dll for tests and application run before installing

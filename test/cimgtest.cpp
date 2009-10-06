@@ -15,34 +15,15 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
+/// @file cimgtest.cpp
+/// Some tests for CImg usage.
+/// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+/// @date 06.10.2009
 
-#define TYPE LinearFilter
+#include <CImg.h>
 
-#include "LinearFilter.hxx"
-
-#if defined(HANDLE_DLL) && defined (linearfilter_EXPORTS)
-#define DECLDIR __declspec(dllexport)
-#else
-#define DECLDIR
-#endif
-
-extern "C" DECLDIR ParameteredObject* create(std::string name, template_type t) {
-    switch(t) {
-    case ParameteredObject::TYPE_DOUBLE:
-        return new TYPE<double>(name);
-        break;
-    case ParameteredObject::TYPE_FLOAT:
-        return new TYPE<float>(name);
-        break;
-    case ParameteredObject::TYPE_INT:
-        return new TYPE<int>(name);
-        break;
-    default:
-        return new TYPE<int>(name);
-        break;
-    }
-}
-
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
-    delete b;
+/// main function
+int main() {
+	cimg_library::cimg::info();
+	return 0;
 }

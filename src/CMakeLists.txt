@@ -21,7 +21,10 @@ ADD_LIBRARY(normalize SHARED Normalize.cpp)
 ADD_LIBRARY(threshold SHARED Threshold.cpp)
 ADD_LIBRARY(linearfilter SHARED LinearFilter.cpp)
 ADD_LIBRARY(mask1d SHARED Mask1D.cpp)
-#ADD_LIBRARY(structuretensor SHARED StructureTensor.cpp)
+ADD_LIBRARY(structuretensor SHARED StructureTensor.cpp)
+IF(WITH_LAPACK)
+	TARGET_LINK_LIBRARIES(structuretensor ${LAPACK_LIBRARIES})
+ENDIF(WITH_LAPACK)
 
 SET(Plugins
 	channelconverter
@@ -37,7 +40,7 @@ SET(Plugins
 	threshold
 	linearfilter
 	mask1d
-#	structuretensor
+	structuretensor
 )
 
 FOREACH(X ${Plugins})

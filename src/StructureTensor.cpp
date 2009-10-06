@@ -16,11 +16,11 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define TYPE LinearFilter
+#define TYPE StructureTensor
 
-#include "LinearFilter.hxx"
+#include "StructureTensor.hxx"
 
-#if defined(HANDLE_DLL) && defined (linearfilter_EXPORTS)
+#if defined(HANDLE_DLL) && defined (structuretensor_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 #define DECLDIR
