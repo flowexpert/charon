@@ -15,21 +15,22 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file LinFilter.h
-/// Declaration of the parameter class LinFilter
-/// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
-/// @date 02.10.2009
+/// \file LinearFilter.hxx
+/// Implementation of the parameter class LinFilter
+/// \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+/// \date 02.10.2009
 
-#ifndef LINFILTER_HXX_
-#define LINFILTER_HXX_
+#ifndef LINEAR_FILTER_HXX_
+#define LINEAR_FILTER_HXX_
 
 #include <charon-core/ParameteredObject.hxx>
-#include "LinFilter.h"
+#include "LinearFilter.h"
 #include "Convolution.hxx"
+#include <cassert>
 
 template <typename T>
-LinFilter<T>::LinFilter(const std::string& name) :
-		TemplatedParameteredObject<T>("LinFilter", name, "Linear filtering by convolution"),
+LinearFilter<T>::LinearFilter(const std::string& name) :
+		TemplatedParameteredObject<T>("LinearFilter", name, "Linear filtering by convolution"),
 		masks(false, true)
 {
 	ParameteredObject::_addInputSlot(masks, "masks", "filter mask input", "CImgList<T>");
@@ -38,7 +39,7 @@ LinFilter<T>::LinFilter(const std::string& name) :
 }
 
 template <typename T>
-void LinFilter<T>::execute() {
+void LinearFilter<T>::execute() {
 	ParameteredObject::execute();
 	assert(masks[0].size == 1);
 	out().assign(in().size);
@@ -55,5 +56,5 @@ void LinFilter<T>::execute() {
 	}
 }
 
-#endif // LINFILTER_HXX_
+#endif // LINEAR_FILTER_HXX_
 

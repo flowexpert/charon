@@ -16,9 +16,9 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define TYPE LinFilter
+#define TYPE LinearFilter
 
-#include "LinFilter.hxx"
+#include "LinearFilter.hxx"
 
 #if defined(MSVC) && defined (linfilter_EXPORTS)
 #define DECLDIR __declspec(dllexport)

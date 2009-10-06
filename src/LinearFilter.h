@@ -15,27 +15,27 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file LinFilter.h
-/// Declaration of the parameter class LinFilter
-/// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
-/// @date 02.10.2009
+/// \file LinearFilter.h
+/// Declaration of the parameter class LinearFilter
+/// \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+/// \date 02.10.2009
 
-#ifndef LINFILTER_H_
-#define LINFILTER_H_
+#ifndef LINEAR_FILTER_H_
+#define LINEAR_FILTER_H_
 
 #include <charon-core/ParameteredObject.h>
 #include "CImg.h"
 
 #ifdef HANDLE_DLL
-#ifdef linfilter_EXPORTS
+#ifdef linearfilter_EXPORTS
 /// DLL handling
-#define linfilter_DECLDIR __declspec(dllexport)
+#define linearfilter_DECLDIR __declspec(dllexport)
 #else
-#define linfilter_DECLDIR __declspec(dllimport)
+#define linearfilter_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else
 /// No DLL handling
-#define linfilter_DECLDIR
+#define linearfilter_DECLDIR
 #endif
 
 /**
@@ -47,11 +47,11 @@
  * sequently.
  */
 template <typename T>
-class linfilter_DECLDIR LinFilter : public TemplatedParameteredObject<T> {
+class linearfilter_DECLDIR LinearFilter : public TemplatedParameteredObject<T> {
 public:
 	/// standart constructor
 	/// \param name		instance name
-	LinFilter(const std::string& name = "");
+	LinearFilter(const std::string& name = "");
 
 	/// filter mask input (multislot)
 	InputSlot<cimg_library::CImgList<T> > masks;
@@ -69,5 +69,5 @@ public:
 	virtual void execute();
 };
 
-#endif // LINFILTER_H_
+#endif // LINEAR_FILTER_H_
 

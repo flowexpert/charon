@@ -18,7 +18,7 @@ ADD_LIBRARY(interpolatorcubic SHARED InterpolatorCubic.cpp)
 ADD_LIBRARY(interpolatorlinear SHARED InterpolatorLinear.cpp)
 ADD_LIBRARY(normalize SHARED Normalize.cpp)
 ADD_LIBRARY(threshold SHARED Threshold.cpp)
-ADD_LIBRARY(linfilter SHARED LinFilter.cpp)
+ADD_LIBRARY(linearfilter SHARED LinearFilter.cpp)
 ADD_LIBRARY(mask1d SHARED Mask1D.cpp)
 
 SET(Plugins
@@ -32,7 +32,7 @@ SET(Plugins
 	interpolatorlinear
 	normalize
 	threshold
-	linfilter
+	linearfilter
 	mask1d
 )
 
