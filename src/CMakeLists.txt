@@ -6,6 +6,7 @@ IF(MSVC)
 ENDIF(MSVC)
 
 #Create shared libraries
+ADD_LIBRARY(channelconverter SHARED ChannelConverter.cpp)
 ADD_LIBRARY(roi SHARED Roi.cpp)
 ADD_LIBRARY(crop SHARED Crop.cpp)
 TARGET_LINK_LIBRARIES(crop roi)
@@ -20,8 +21,10 @@ ADD_LIBRARY(normalize SHARED Normalize.cpp)
 ADD_LIBRARY(threshold SHARED Threshold.cpp)
 ADD_LIBRARY(linearfilter SHARED LinearFilter.cpp)
 ADD_LIBRARY(mask1d SHARED Mask1D.cpp)
+#ADD_LIBRARY(structuretensor SHARED StructureTensor.cpp)
 
 SET(Plugins
+	channelconverter
 	roi
 	crop
 	filereader
@@ -34,6 +37,7 @@ SET(Plugins
 	threshold
 	linearfilter
 	mask1d
+#	structuretensor
 )
 
 FOREACH(X ${Plugins})
