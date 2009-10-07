@@ -27174,7 +27174,7 @@ namespace cimg_library {
             for (int k=i; k<dimy(); ++k) scale+= cimg::abs(U(i,k));
             if (scale) {
               for (int k=i; k<dimy(); ++k) { U(i,k)/=scale; s+= U(i,k)*U(i,k); }
-              f = U(i,i); g = (t)((f>=0?-1:1)*cimg_std::sqrt(s)); h=f*g-s; U(i,i) = f-g;
+              f = U(i,i); g = (t)((f>=0?-1:1)*(double)cimg_std::sqrt((double)s)); h=f*g-s; U(i,i) = f-g;
               for (int j=l; j<dimx(); ++j) {
                 s = 0; for (int k=i; k<dimy(); ++k) s+= U(i,k)*U(j,k);
                 f = s/h;
@@ -27190,7 +27190,7 @@ namespace cimg_library {
             for (int k=l; k<dimx(); ++k) scale += cimg::abs(U(k,i));
             if (scale) {
               for (int k=l; k<dimx(); ++k) { U(k,i)/= scale; s+= U(k,i)*U(k,i); }
-              f = U(l,i); g = (t)((f>=0?-1:1)*cimg_std::sqrt(s)); h = f*g-s; U(l,i) = f-g;
+              f = U(l,i); g = (t)((f>=0?-1:1)*(double)cimg_std::sqrt((double)s)); h = f*g-s; U(l,i) = f-g;
               { for (int k=l; k<dimx(); ++k) rv1[k]=U(k,i)/h; }
               for (int j=l; j<dimy(); ++j) {
                 s = 0; for (int k=l; k<dimx(); ++k) s+= U(k,j)*U(k,i);

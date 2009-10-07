@@ -24,7 +24,7 @@
 #define LINEAR_FILTER_H_
 
 #include <charon-core/ParameteredObject.h>
-#include "CImg.h"
+#include <CImg.h>
 
 #ifdef HANDLE_DLL
 #ifdef linearfilter_EXPORTS

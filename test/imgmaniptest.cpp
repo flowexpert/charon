@@ -36,9 +36,9 @@ int main() {
     try{
 #ifdef WINDOWS
 #ifdef _DEBUG
-    PluginManager man("./Debug");
+    PluginManager man("../bin/Debug");
 #else /* _DEBUG */
-    PluginManager man("./Release");
+    PluginManager man("../bin/Release");
 #endif /* _DEBUG */
 #else
     PluginManager man("../src");

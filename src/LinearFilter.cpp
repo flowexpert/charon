@@ -38,7 +38,7 @@ extern "C" DECLDIR ParameteredObject* create(std::string name, template_type t) 
         return new TYPE<int>(name);
         break;
     default:
-        return new TYPE<int>(name);
+        return new TYPE<double>(name);
         break;
     }
 }

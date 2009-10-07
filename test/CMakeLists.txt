@@ -15,8 +15,7 @@ IF(ENABLE_TEST)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(imgManipTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
-	GET_TARGET_PROPERTY(imgManipTest_LOC imgManipTest LOCATION)
-	ADD_TEST(ImgManipTest ${imgManipTest_LOC})
+	ADD_TEST(ImgManipTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imgManipTest)
 
 	# tests for ImgTool routines
 	ADD_EXECUTABLE(imgToolTest imgToolTest.cpp)
@@ -24,32 +23,29 @@ IF(ENABLE_TEST)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(imgToolTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
-	GET_TARGET_PROPERTY(imgToolTest_LOC imgToolTest LOCATION)
-	ADD_TEST(ImgToolTest ${imgToolTest_LOC})
+	ADD_TEST(ImgToolTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imgToolTest)
 	
-	#tests for plugin creatin in various ways
+	#tests for plugin creation in various ways
 	ADD_EXECUTABLE(pluginTest pluginTest.cpp)
 	TARGET_LINK_LIBRARIES(pluginTest charon-core charon-plugins roi filereader)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(pluginTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
-	GET_TARGET_PROPERTY(pluginTest_LOC pluginTest LOCATION)
-	ADD_TEST(PluginTest ${pluginTest_LOC})
+	ADD_TEST(PluginTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/pluginTest)
 
 	ADD_EXECUTABLE(cImgTest cimgtest.cpp)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(cImgTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
-	GET_TARGET_PROPERTY(cImgTest_LOC cImgTest LOCATION)
-	ADD_TEST(CImgTest ${cImgTest_LOC})
+	ADD_TEST(CImgTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cImgTest)
 
 	IF(WIN32)
 		# copy needed dll for tests and application run before installing
 		GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
-		GET_TARGET_PROPERTY(PLOC imgmaniptest LOCATION)
+		GET_TARGET_PROPERTY(PLOC imgManipTest LOCATION)
 		GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
 
-		ADD_CUSTOM_COMMAND(TARGET imgmaniptest POST_BUILD
+		ADD_CUSTOM_COMMAND(TARGET imgManipTest POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy ${CLOC} ${PLOC_DIR}
 		)
 	ENDIF(WIN32)

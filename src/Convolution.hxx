@@ -30,7 +30,7 @@
 
 #include "Convolution.h"
 #include <cassert>
-#include "Interpolator.hxx"
+#include "Interpolator.h"
 #include "PdeBoundaryHandler.hxx"
 
 #ifndef PI

@@ -33,9 +33,9 @@ int main() {
 
 #ifdef WINDOWS
 #ifdef _DEBUG
-    PluginManager man("./Debug");
+    PluginManager man("../bin/debug");
 #else /* _DEBUG */
-    PluginManager man("./Release");
+    PluginManager man("../bin/release");
 #endif /* _DEBUG */
 #else
     PluginManager man("../src");
