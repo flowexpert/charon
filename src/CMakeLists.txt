@@ -31,7 +31,7 @@ IF(ENABLE_SOLVERS AND WITH_PETSC)
 	)
 ENDIF(ENABLE_SOLVERS AND WITH_PETSC)
 
-IF (COMPILE_BLOCKMATCHING)
+IF (ENABLE_BLOCKMATCHING)
 	ADD_LIBRARY(incrementorparameter SHARED IncrementorParameter.cpp)
 	ADD_LIBRARY(incrementorcountup SHARED Incrementors/IncrementorCountUp.cpp)
 	TARGET_LINK_LIBRARIES(incrementorcountup incrementorparameter)
@@ -50,8 +50,8 @@ IF (COMPILE_BLOCKMATCHING)
 		surfaceanalysisminchange
 		blockmatchingliacs
 	)
-ENDIF (COMPILE_BLOCKMATCHING)
-IF (COMPILE_BRIGHTNESS)
+ENDIF (ENABLE_BLOCKMATCHING)
+IF (ENABLE_BRIGHTNESS)
 	ADD_LIBRARY(brightnessmodels_constant SHARED BrightnessModels/Constant.cpp)
 #	ADD_LIBRARY(brightnessmodels_diffusion SHARED BrightnessModels/Diffusion.cpp)
 #	ADD_LIBRARY(brightnessmodels_exponential SHARED BrightnessModels/Exponential.cpp)
@@ -62,8 +62,8 @@ IF (COMPILE_BRIGHTNESS)
 #		brightnessmodels_exponential
 #		brightnessmodels_movingillumination
 	)
-ENDIF (COMPILE_BRIGHTNESS)
-IF (COMPILE_MOTION)
+ENDIF (ENABLE_BRIGHTNESS)
+IF (ENABLE_MOTION)
 #	ADD_LIBRARY(motionmodels_localaffiness SHARED MotionModels/LocalAffiness.cpp FlowFunctor.cpp)
 	ADD_LIBRARY(motionmodels_localconstant SHARED MotionModels/LocalConstant.cpp FlowFunctor.cpp)
 #	ADD_LIBRARY(motionmodels_localplanarity SHARED MotionModels/LocalPlanarity.cpp FlowFunctor.cpp)
@@ -76,7 +76,7 @@ IF (COMPILE_MOTION)
 #		motionmodels_localrotation
 #		motionmodels_localstretch
 	)
-ENDIF (COMPILE_MOTION)
+ENDIF (ENABLE_MOTION)
 
 
 FOREACH(X ${Plugins})
