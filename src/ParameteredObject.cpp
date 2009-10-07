@@ -441,11 +441,3 @@ std::string ParameteredObject::templateTypeToString(template_type t) {
 		return ParameteredObject::TYPE_DOUBLE;
 	}
 }
-
-#ifdef MSVC
-/// dummy function for parameter instantiation
-void __declspec(dllexport) _thisIsAHack() {
-	TemplatedParameteredObject<int> bla("bla", "bla", "bla");
-	bla = bla;
-}
-#endif
