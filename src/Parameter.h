@@ -47,6 +47,16 @@
 #include "AbstractData.hxx"
 #include "ParameterFile.hxx"
 
+#ifdef MSVC
+#ifdef charon_core_EXPORTS
+#define charon_core_DECLDIR __declspec(dllexport)
+#else
+#define charon_core_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+#define charon_core_DECLDIR
+#endif
+
 class ParameteredObject;
 
 /// Parameter object handling.
@@ -123,7 +133,7 @@ public:
 /**
  * Stream output operator
  */
-std::ostream & operator<<(std::ostream & os, const AbstractParameter & param);
+std::ostream charon_core_DECLDIR &operator<<(std::ostream & os, const AbstractParameter & param);
 
 /// Implementation of the AbstractParameter interface for one single
 /// parameter.

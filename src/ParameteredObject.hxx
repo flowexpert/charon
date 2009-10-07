@@ -33,7 +33,7 @@
 #include "Slots.hxx"
 
 template<class T>
-inline void ParameteredObject::_addParameter(Parameter<T>& param,
+void ParameteredObject::_addParameter(Parameter<T>& param,
 		const std::string& name, const std::string& doc, const T& defVal,
 		const std::string& type) {
 	param.setDefault(defVal);

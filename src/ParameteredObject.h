@@ -242,7 +242,7 @@ protected:
 	/// compiler is forced to compile the given (templated) function
 	/// and export the symbol.
 	/// \param x	function to export
-	#define _addFunction(x) if (!this && &(x)) throw 42;
+	#define _addFunction(x) if (!this && &x) throw 42;
 
     //  @}
 
