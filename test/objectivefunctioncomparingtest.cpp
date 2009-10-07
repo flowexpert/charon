@@ -31,7 +31,8 @@
 #include <FlowFunctor.cpp>
 #include <LocalConstant.hxx>
 #include <FileReader.hxx>
-#include <Sobel.hxx>
+#include <LinearFilter.hxx>
+#include <Mask1D.hxx>
 #include <vector>
 
 int main()
@@ -81,18 +82,43 @@ int main()
 		MotionModels::LocalConstant<float> locon;
 		InterpolatorLinear<float> ipol("ipol");
 		ObjectiveFunctionComparing<float> ofc("ofc");
-		Sobel<float> der("der");
-		der.img.connect(&rd.out);
-		der.execute();
+		// replacement for sobel filter
+		LinearFilter<float> derivX("derivX"), derivY("derivY");
+		Mask1D<float> dx("dx"), dy("dy"), sx("sx"), sy("sy");
+		ParameterList<float> dVals("-1;0;1"), sVals("3;10;3");
+		dx.values = dVals;
+		dx.normalize = true;
+		sy.values = sVals;
+		sy.normalize = true;
+		sy.dir = 1;
+		derivX.in.connect(&rd.out);
+		derivX.masks.connect(&dx.out);
+		derivX.masks.connect(&sy.out);
+		assert(derivX.in.connected(&rd.out));
+		assert(derivX.masks.connected(&dx.out));
+		assert(derivX.masks.connected(&sy.out));
+		dy.values = dVals;
+		dy.normalize = true;
+		dy.dir = 1;
+		sx.values = sVals;
+		sx.normalize = true;
+		derivY.in.connect(&rd.out);
+		derivY.masks.connect(&dy.out);
+		derivY.masks.connect(&sx.out);
+		assert(derivY.in.connected(&rd.out));
+		assert(derivY.masks.connected(&dy.out));
+		assert(derivY.masks.connected(&sx.out));
+		derivX.execute();
+		derivY.execute();
 		ofc.sequence.connect(&rd.out);
 		ofc.brightnessModel.connect(&con.out);
 		ofc.motionModel.connect(&locon.out);
 		ofc.interpolator.connect(&ipol.out);
 		con.img.connect(&rd.out);
-		locon.dx.connect(&der.dx);
-		locon.dy.connect(&der.dy);
-		locon.dz.connect(&der.dx);
-		locon.dt.connect(&der.dy);
+		locon.dx.connect(&derivX.out);
+		locon.dy.connect(&derivY.out);
+		locon.dz.connect(&derivX.out);
+		locon.dt.connect(&derivY.out);
 		if (!ofc.sequence.connected(&rd.out))
 		{
 			std::cout << "ObjectiveFunction: Sequence is not connected. "<< std::endl;
@@ -113,32 +139,27 @@ int main()
 			std::cout << "ObjectiveFunction: interpolator is not connected. "<< std::endl;
 			return -1; 
 		}
-		if (!der.img.connected(&rd.out))
-		{
-			std::cout << "Derivatives: img is not connected. " << std::endl; 
-			return -1; 
-		}
 		if (!con.img.connected(&rd.out))
 		{
 			std::cout << "BrightnessModel::Constant: img is not connected. " << std::endl; 
 			return -1; 
 		}
-		if (!locon.dx.connected(&der.dx))
+		if (!locon.dx.connected(&derivX.out))
 		{
 			std::cout << "MotionModel::LocalConstant: dx is not connected. " << std::endl; 
 			return -1;
 		}
-		if (!locon.dy.connected(&der.dy))
+		if (!locon.dy.connected(&derivY.out))
 		{
 			std::cout << "MotionModel::LocalConstant: dy is not connected. " << std::endl; 
 			return -1;
 		}
-		if (!locon.dz.connected(&der.dx))
+		if (!locon.dz.connected(&derivX.out))
 		{
 			std::cout << "MotionModel::LocalConstant: dz is not connected. " << std::endl; 
 			return -1;
 		}
-		if (!locon.dt.connected(&der.dy))
+		if (!locon.dt.connected(&derivY.out))
 		{
 			std::cout << "MotionModel::LocalConstant: dt is not connected. " << std::endl; 
 			return -1;

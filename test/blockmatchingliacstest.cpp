@@ -35,8 +35,15 @@
 #include <LocalConstant.hxx>
 #include <FileReader.hxx>
 #include <FileWriter.hxx>
-#include <Sobel.hxx>
 #include <vector>
+#include <LinearFilter.hxx>
+#include <Mask1D.hxx>
+
+// make sure that assert works
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+#include <cassert>
 
 int main()
 {
@@ -75,14 +82,6 @@ int main()
 		MotionModels::LocalConstant<float> locon;
 		InterpolatorLinear<float> ipol("ipol");
 		ObjectiveFunctionComparing<float> ofc("ofc");
-		Sobel<float> der("der");
-		der.img.connect(&rd.out);
-		if (!der.img.connected(&rd.out))
-		{
-			std::cout << "Derivatives: img is not connected. " << std::endl;
-			return -1;
-		}
-		der.execute();
 		ofc.sequence.connect(&rd.out);
 		if (!ofc.sequence.connected(&rd.out))
 		{
@@ -119,29 +118,57 @@ int main()
 					<< std::endl;
 			return -1;
 		}
-		locon.dx.connect(&der.dx);
-		if (!locon.dx.connected(&der.dx))
+		// replacement for sobel filter
+		LinearFilter<float> derivX("derivX"), derivY("derivY");
+		Mask1D<float> dx("dx"), dy("dy"), sx("sx"), sy("sy");
+		ParameterList<float> dVals("-1;0;1"), sVals("3;10;3");
+		dx.values = dVals;
+		dx.normalize = true;
+		sy.values = sVals;
+		sy.normalize = true;
+		sy.dir = 1;
+		derivX.in.connect(&rd.out);
+		derivX.masks.connect(&dx.out);
+		derivX.masks.connect(&sy.out);
+		assert(derivX.in.connected(&rd.out));
+		assert(derivX.masks.connected(&dx.out));
+		assert(derivX.masks.connected(&sy.out));
+		dy.values = dVals;
+		dy.normalize = true;
+		dy.dir = 1;
+		sx.values = sVals;
+		sx.normalize = true;
+		derivY.in.connect(&rd.out);
+		derivY.masks.connect(&dy.out);
+		derivY.masks.connect(&sx.out);
+		assert(derivY.in.connected(&rd.out));
+		assert(derivY.masks.connected(&dy.out));
+		assert(derivY.masks.connected(&sx.out));
+		derivX.execute();
+		derivY.execute();
+		locon.dx.connect(&derivX.out);
+		if (!locon.dx.connected(&derivX.out))
 		{
 			std::cout << "MotionModel: LocalConstant: dx is not connected. "
 					<< std::endl;
 			return -1;
 		}
-		locon.dy.connect(&der.dy);
-		if (!locon.dy.connected(&der.dy))
+		locon.dy.connect(&derivY.out);
+		if (!locon.dy.connected(&derivY.out))
 		{
 			std::cout << "MotionModel: LocalConstant: dy is not connected. "
 					<< std::endl;
 			return -1;
 		}
-		locon.dz.connect(&der.dx);
-		if (!locon.dz.connected(&der.dx))
+		locon.dz.connect(&derivX.out);
+		if (!locon.dz.connected(&derivX.out))
 		{
 			std::cout << "MotionModel: LocalConstant: dz is not connected. "
 					<< std::endl;
 			return -1;
 		}
-		locon.dt.connect(&der.dy);
-		if (!locon.dt.connected(&der.dy))
+		locon.dt.connect(&derivY.out);
+		if (!locon.dt.connected(&derivY.out))
 		{
 			std::cout << "MotionModel: LocalConstant: dt is not connected. "
 					<< std::endl;
