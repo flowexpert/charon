@@ -6,20 +6,22 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # finde QT4 with required options
-SET(QT_MIN_VERSION 4.4.0)
-FIND_PACKAGE(Qt4 REQUIRED)
-SET(QT_USE_QTWEBKIT TRUE)
-SET(QT_USE_QTSVG TRUE)
-SET(QT_USE_QTTEST TRUE)
+IF(${CMAKE_VERSION} VERSION_LESS 2.8.0)
+	# old interface (for compatibility reasons)
+	SET(QT_MIN_VERSION 4.4.0)
+	FIND_PACKAGE(Qt4 REQUIRED)
+	SET(QT_USE_QTWEBKIT TRUE)
+	SET(QT_USE_QTSVG TRUE)
+	SET(QT_USE_QTTEST TRUE)
+ELSE(${CMAKE_VERSION} VERSION_LESS 2.8.0)
+	# new and intuitive FindQt4 interface
+	FIND_PACKAGE(Qt4 4.4.0
+		COMPONENTS QtCore QtGui QtWebkit QtSVG QtTest
+		REQUIRED
+	)
+ENDIF(${CMAKE_VERSION} VERSION_LESS 2.8.0)
 
-# if changes of bug #0008542 have been incorporated,
-# this is recommended:
-#FIND_PACKAGE(Qt4 4.4.0
-#	COMPONENTS QtCore QtGui QtWebkit QtSVG
-#	REQUIRED
-#)
-
-# set up QT environment
+# set up Qt environment (e.g. set QT_LIBRARIES)
 INCLUDE(${QT_USE_FILE})
 
 # determine project svn information if possible

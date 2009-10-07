@@ -6,21 +6,23 @@ INCLUDE_DIRECTORIES(${GRAPHVIZ_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 IF(ENABLE_TEST)
+	# common definitions
+	ADD_DEFINITIONS(-DDEFAULTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/sampleclasses.wrp")
+	ADD_DEFINITIONS(-DTESTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/testClasses.wrp")
+
+	# test usage of graphviz library
     ADD_EXECUTABLE(graphtest graphtest.cpp)
     TARGET_LINK_LIBRARIES(graphtest ${GRAPHVIZ_LIBRARIES})
-	GET_TARGET_PROPERTY(graphtest_LOC graphtest LOCATION)
-    ADD_TEST(GraphTest ${graphtest_LOC})
+    ADD_TEST(GraphTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/graphtest)
 
-	ADD_DEFINITIONS(-DDEFAULTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/sampleclasses.wrp")
+	# test ParameterFileModel
     ADD_EXECUTABLE(modeltest modeltest.cpp)
     TARGET_LINK_LIBRARIES(modeltest editparam)
-	GET_TARGET_PROPERTY(modeltest_LOC modeltest LOCATION)
-    ADD_TEST(ModelTest ${modeltest_LOC})
+    ADD_TEST(ModelTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/modeltest)
 
-	ADD_DEFINITIONS(-DTESTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/testClasses.wrp")
+	# check for graphviz bug
 	QT4_AUTOMOC(graphTemplateTest.cpp)
 	ADD_EXECUTABLE(graphtemptest graphTemplateTest.cpp)
 	TARGET_LINK_LIBRARIES(graphtemptest editgraph)
-	GET_TARGET_PROPERTY(graphtemptest_LOC graphtemptest LOCATION)
-	ADD_TEST(GraphTempTest ${graphtemptest_LOC})
+	ADD_TEST(GraphTempTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/graphtemptest)
 ENDIF(ENABLE_TEST)
