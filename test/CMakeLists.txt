@@ -15,6 +15,8 @@ IF(ENABLE_TEST)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(imgManipTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
+	GET_TARGET_PROPERTY(imgManipTest_LOC imgManipTest LOCATION)
+	ADD_TEST(ImgManipTest ${imgManipTest_LOC})
 
 	# tests for ImgTool routines
 	ADD_EXECUTABLE(imgToolTest imgToolTest.cpp)
@@ -22,6 +24,8 @@ IF(ENABLE_TEST)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(imgToolTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
+	GET_TARGET_PROPERTY(imgToolTest_LOC imgToolTest LOCATION)
+	ADD_TEST(ImgToolTest ${imgToolTest_LOC})
 	
 	#tests for plugin creatin in various ways
 	ADD_EXECUTABLE(pluginTest pluginTest.cpp)
@@ -29,11 +33,15 @@ IF(ENABLE_TEST)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(pluginTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
+	GET_TARGET_PROPERTY(pluginTest_LOC pluginTest LOCATION)
+	ADD_TEST(PluginTest ${pluginTest_LOC})
 
 	ADD_EXECUTABLE(cImgTest cimgtest.cpp)
 	IF(UNIX)
 		TARGET_LINK_LIBRARIES(cImgTest pthread ${X11_LIBRARIES})
 	ENDIF(UNIX)
+	GET_TARGET_PROPERTY(cImgTest_LOC cImgTest LOCATION)
+	ADD_TEST(CImgTest ${cImgTest_LOC})
 
 	IF(WIN32)
 		# copy needed dll for tests and application run before installing
