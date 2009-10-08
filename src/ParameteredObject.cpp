@@ -192,6 +192,7 @@ void ParameteredObject::execute() {
 			!= _inputs.end(); it++) {
 		it->second->execute();
 	}
+	sout << "Executing " << getClassName() << " \"" << getName() << "\"" << std::endl;
 }
 
 std::set<std::string> ParameteredObject::getNeighbours() const {
