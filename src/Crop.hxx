@@ -55,7 +55,6 @@ void Crop<T>::execute()
 		y1 = roi()->bottom-1,
 		z1 = roi()->back-1,
 		t1 = roi()->after-1;
-	sout << "Executing plugin crop" << std::endl;
 	if(roi()->left == roi()->right) {
 		sout << "\tleaving x dimension uncropped" << std::endl;
 		x0 = 0; x1 = in()[0].dimx()-1;
