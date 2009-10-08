@@ -88,29 +88,23 @@ void ImgTool::histogram(const cimg_library::CImg<T>& img,
                         cimg_library::CImg<T>& hist,
                         int nBins, T minVal, T maxVal,
                         const Roi<int>& roi, bool normalize) {
-    // check preconditions (i.e. if roi values are reasonable etc)
-    assert (roi.top < roi.bottom && roi.left < roi.right);
-    assert (roi.top >= 0 && roi.bottom <= img.dimy());
-    assert (roi.left >= 0 && roi.right <= img.dimx());
+	// check preconditions
     assert (maxVal > minVal);
     assert (nBins > 0);
 
     hist.assign(nBins, 1);
     hist.fill(T(0));
     double factor = 1.f / ((double)maxVal - (double)minVal) * (nBins-1.f);
+	
+	cimg_for_inXYZV(img,roi.left,roi.top,roi.front,roi.before,roi.right-1,roi.bottom-1,roi.back-1,roi.after-1,x,y,z,v)
+	{
+		int bin = (int)floor((img(x,y,z,v) - minVal)*factor);
 
-    for (int y = roi.top; y < roi.bottom; ++y) {
-        const T* pImg = img.ptr(roi.left, y);
-        for (int x = roi.left; x < roi.right; ++x) {
-            int bin = (int)floor((*pImg - minVal)*factor);
-
-            // if max and min are not the actual max and min,
-            // we need to truncate the histogram
-            bin = bin < 0 ? 0 : bin;
-            bin = bin >= nBins ? nBins - 1 : bin;
-            hist(bin)++;
-            ++pImg;
-        }
+        // if max and min are not the actual max and min,
+        // we need to truncate the histogram
+        bin = (bin < 0 ? 0 : bin);
+        bin = (bin >= nBins ? nBins - 1 : bin);
+        hist(bin)++;
     }
     if (normalize)
         // normalize histogram
