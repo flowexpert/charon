@@ -42,10 +42,36 @@ void Crop<T>::execute()
 
     // check roi ranges
     assert(roi());
-    assert(roi()->left  < roi()->right);
-    assert(roi()->top   < roi()->bottom);
-    assert(roi()->front < roi()->back);
-    out = in().get_crop(0, in().size-1, roi()->left, roi()->top, roi()->front,
-        roi()->right-1, roi()->bottom-1, roi()->back-1);
+    assert(roi()->left   <= roi()->right);
+    assert(roi()->top    <= roi()->bottom);
+    assert(roi()->front  <= roi()->back);
+	assert(roi()->before <= roi()->after);
+	unsigned int
+		x0 = roi()->left,
+		y0 = roi()->top,
+		z0 = roi()->front,
+		t0 = roi()->before,
+		x1 = roi()->right-1,
+		y1 = roi()->bottom-1,
+		z1 = roi()->back-1,
+		t1 = roi()->after-1;
+	sout << "Executing plugin crop" << std::endl;
+	if(roi()->left == roi()->right) {
+		sout << "\tleaving x dimension uncropped" << std::endl;
+		x0 = 0; x1 = in()[0].dimx()-1;
+	}
+	if(roi()->top == roi()->bottom) {
+		sout << "\tleaving y dimension uncropped" << std::endl;
+		y0 = 0; y1 = in()[0].dimy()-1;
+	}
+	if(roi()->front == roi()->back) {
+		sout << "\tleaving z dimension uncropped" << std::endl;
+		z0 = 0; z1 = in()[0].dimz()-1;
+	}
+	if(roi()->before == roi()->after) {
+		sout << "\tleaving t dimension uncropped" << std::endl;
+		t0 = 0; t1 = in()[0].dimv()-1;
+	}
+    out = in().get_crop(0, in().size-1, x0, y0, z0, t0, x1, y1, z1, t1);
 }
 #endif // _CROP_HXX_
