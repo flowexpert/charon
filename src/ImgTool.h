@@ -67,23 +67,25 @@ namespace ImgTool {
     void integralImage2D(const cimg_library::CImg<T >& src,
                                cimg_library::CImg<T2>& dst);
 
-    /// Generate histogram.
-    /// Target is the image ist, the histogram has nBins bins in the range
-    /// from min to max. Subregions of the image can be selected using the
-    /// roi. If normalize is true, the resulting histogram is divided by the
-    /// considered region volume.
-    /// @param  img         image input
-    /// @param  hist        histogram output (size: nBins x 1)
-    /// @param  nBins       number of histogram bins
-    /// @param  min         lower pixel value bound
-    ///                     (pixels below min are counted in the min bin)
-    /// @param  max         upper pixel value bound
-    ///                     (pixels above max are counted in the max bin)
-    /// @param  roi         region to consider for histogram generation
-    /// @param  normalize   division by the roi volume to normalize
+    /** Generate histogram.
+     *  Target is the image ist, the histogram has nBins bins in the range
+     *  from min to max. Subregions of the image can be selected using the
+     *  roi. If normalize is true, the resulting histogram is divided by the
+     *  considered region volume.
+     *  @param  img         image input
+     *  @param  hist        histogram output (size: nBins x 1)
+     *  @param  nBins       number of histogram bins
+     *  @param  min         lower pixel value bound
+     *                      (pixels below min are counted in the min bin)
+     *  @param  max         upper pixel value bound
+     *                      (pixels above max are counted in the max bin)
+     *  @param  normalize   division by the roi volume to normalize
+     *  @param  roi         Region to consider for histogram generation.
+	 *						If no roi given, the whole image will be used.
+	 */
     template <typename T>
     void histogram(const cimg_library::CImg<T>& img, cimg_library::CImg<T>& hist,
-                   int nBins, T min, T max, const Roi<int>& roi, bool normalize);
+                   int nBins, T min, T max, bool normalize=false, const Roi<int>* roi=0);
 
     /// Generate 2D histogram from two image sources.
     /// The number of bins is extracted from the hist size

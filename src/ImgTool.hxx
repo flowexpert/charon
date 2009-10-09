@@ -87,7 +87,7 @@ template <typename T>
 void ImgTool::histogram(const cimg_library::CImg<T>& img,
                         cimg_library::CImg<T>& hist,
                         int nBins, T minVal, T maxVal,
-                        const Roi<int>& roi, bool normalize) {
+                        bool normalize, const Roi<int>* roi) {
 	// check preconditions
     assert (maxVal > minVal);
     assert (nBins > 0);
@@ -96,19 +96,35 @@ void ImgTool::histogram(const cimg_library::CImg<T>& img,
     hist.fill(T(0));
     double factor = 1.f / ((double)maxVal - (double)minVal) * (nBins-1.f);
 	
-	cimg_for_inXYZV(img,roi.left,roi.top,roi.front,roi.before,roi.right-1,roi.bottom-1,roi.back-1,roi.after-1,x,y,z,v)
-	{
-		int bin = (int)floor((img(x,y,z,v) - minVal)*factor);
+	if (roi) {
+		cimg_for_inXYZV(img,roi->left,roi->top,roi->front,roi->before,
+			roi->right-1,roi->bottom-1,roi->back-1,roi->after-1,x,y,z,v)
+		{
+			int bin = (int)floor((img(x,y,z,v) - minVal)*factor);
 
-        // if max and min are not the actual max and min,
-        // we need to truncate the histogram
-        bin = (bin < 0 ? 0 : bin);
-        bin = (bin >= nBins ? nBins - 1 : bin);
-        hist(bin)++;
-    }
-    if (normalize)
-        // normalize histogram
-        hist /= roi.getVolume();
+			// if max and min are not the actual max and min,
+			// we need to truncate the histogram
+			bin = (bin < 0 ? 0 : bin);
+			bin = (bin >= nBins ? nBins - 1 : bin);
+			hist(bin)++;
+		}
+		if (normalize)
+			// normalize histogram
+			hist /= roi->getVolume();
+	}
+	else {
+		cimg_for(img,ptr,T) {
+			int bin = (int)floor((*ptr - minVal)*factor);
+
+			// if max and min are not the actual max and min,
+			// we need to truncate the histogram
+			bin = (bin < 0 ? 0 : bin);
+			bin = (bin >= nBins ? nBins - 1 : bin);
+			hist(bin)++;
+		}
+		if (normalize)
+			hist /= (T) img.size();
+	}
 }
 
 template <typename T> T ImgTool::jointHistogram(
