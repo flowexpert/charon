@@ -7,7 +7,7 @@ IF (DOXYGEN_FOUND)
     OPTION(ENABLE_DOC "Automatically create documentation" ON)
     OPTION(WITH_LATEX "activate pdfdoc generation" ON)
 	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
-    SET(CMAKE_INSTALL_DOC doc
+    SET(CMAKE_INSTALL_DOC doc/${PROJECT_NAME}
         CACHE PATH "documentation install prefix")
     MARK_AS_ADVANCED(CMAKE_INSTALL_DOC ENABLE_DOC_VERBOSE)
 
@@ -20,7 +20,7 @@ IF (DOXYGEN_FOUND)
     SET(DOXY_CONFIG             	${PROJECT_BINARY_DIR}/Doxyfile)
     SET(DOXY_CONFIG_PDF         	${PROJECT_BINARY_DIR}/DoxyPdf)
     SET(DOXY_PROJECTNAME        	${PROJECT_NAME})
-    SET(DOXY_DOC_EXCLUDE        	"imgmanip/CImg.h")
+    SET(DOXY_DOC_EXCLUDE        	)
     SET(DOXY_DOC_RECURSIVE      	NO)
     SET(DOXY_LATEX_BATCHMODE    	YES)
     SET(DOXY_COMPACT_LATEX      	YES)
