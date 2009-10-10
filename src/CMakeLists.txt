@@ -1,31 +1,45 @@
 #files for Charon library
 SET(CHARON_FILES
-    SplitStream.cpp
-    StringTool.cpp
-    FileTool.cpp
-    Parameter.cpp
-    ParameterFile.cpp
-    ParameteredObject.cpp
-    TypeDetector.cpp
+	SplitStream
+	StringTool
+	FileTool
+	AbstractData
+	Parameter
+	Slots
+	ParameterFile
+	ParameteredObject
+	TypeDetector
 )
+SET(CHARON_GROUP)
+FOREACH(CURFILE ${CHARON_FILES})
+	FILE(GLOB TEMP
+		RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+		${CURFILE}.cpp ${CURFILE}.h ${CURFILE}.hxx
+	)
+	LIST(APPEND CHARON_GROUP ${TEMP})
+ENDFOREACH(CURFILE ${CHARON_FILES})
 
 SET(PLUGIN_FILES
 	AbstractPluginLoader.cpp
-	PluginManager.cpp
+	AbstractPluginLoader.h
+	PluginManager.h
+	PluginManagerInterface.h
 )
 IF(WIN32)
 	LIST(APPEND PLUGIN_FILES
+		WindowsPluginLoader.h
 		WindowsPluginLoader.cpp
 	)
 ENDIF(WIN32)
 IF(UNIX)
 	LIST(APPEND PLUGIN_FILES
+		UnixPluginLoader.h
 		UnixPluginLoader.cpp
 	)
 ENDIF(UNIX)
 
 # create libraries
-ADD_LIBRARY(${PROJECT_NAME} SHARED ${CHARON_FILES})
+ADD_LIBRARY(${PROJECT_NAME} SHARED ${CHARON_GROUP})
 
 SET_PROPERTY(TARGET ${PROJECT_NAME}
 	PROPERTY COMPILE_DEFINITIONS CREATE_SHARED
