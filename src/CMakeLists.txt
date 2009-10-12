@@ -22,6 +22,7 @@ ENDFOREACH(CURFILE ${CHARON_FILES})
 SET(PLUGIN_FILES
 	AbstractPluginLoader.cpp
 	AbstractPluginLoader.h
+	PluginManager.cpp
 	PluginManager.h
 	PluginManagerInterface.h
 )
@@ -48,9 +49,11 @@ IF(UNIX)
 	TARGET_LINK_LIBRARIES(${PROJECT_NAME} dl)
 ENDIF(UNIX)
 ADD_LIBRARY(charon-plugins STATIC ${PLUGIN_FILES})
-SET_PROPERTY(TARGET charon-plugins
-	PROPERTY COMPILE_DEFINITIONS DLL_EXPORT
-)
+IF(MSVC)
+	SET_PROPERTY(TARGET charon-plugins
+		PROPERTY COMPILE_DEFINITIONS DLL_EXPORT
+	)
+ENDIF(MSVC)
 TARGET_LINK_LIBRARIES(charon-plugins ${PROJECT_NAME})
 
 # Configure Paths.config file
