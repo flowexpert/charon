@@ -4,6 +4,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+INCLUDE(InitFlags)
 
 # finde QT4 with required options
 IF(${CMAKE_VERSION} VERSION_LESS 2.8.0)
