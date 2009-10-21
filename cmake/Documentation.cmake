@@ -33,10 +33,10 @@ IF (DOXYGEN_FOUND)
         SET(DOXY_SKIP_PDFDOC		YES)
     ENDIF(NOT WITH_LATEX)
 
-    # Für die Formeln wird LaTeX benötigt.
+    # LaTeX needed to generate formula
     FIND_PACKAGE(LATEX)
 
-    # Um Graphen zu erstellen wird graphviz benötigt
+    # graphviz needed to generate graphs
     IF(DOXYGEN_DOT_EXECUTABLE)
         SET(DOXY_DOT_ENABLE "YES")
     ELSE(DOXYGEN_DOT_EXECUTABLE)
@@ -56,7 +56,7 @@ IF (DOXYGEN_FOUND)
 
     # dummy target for documentation creation
 
-    # Doxyfile konfigurieren und Make-Target erzeugen
+    # configure doxyfile and generate make targets
     FILE(GLOB HTMLDOCS
         ${PROJECT_SOURCE_DIR}/doc/*_doc.txt
         ${PROJECT_SOURCE_DIR}/src/*.h
@@ -72,7 +72,7 @@ IF (DOXYGEN_FOUND)
     SET(DOXY_DOC_PATHS          "doc src")
     SET(DOXY_GENERATE_HTML      YES)
     SET(DOXY_GENERATE_LATEX     NO )
-    SET(DOXY_TAGFILE_INPUT      "${PROJECT_SOURCE_DIR}/doc/CImg.tag=http://cimg.sourceforge.net/reference")
+    SET(DOXY_TAGFILE_INPUT      )
     SET(DOXY_TAGFILE_OUTPUT     "${PROJECT_BINARY_DIR}/doc/html/${PROJECT_NAME}.tag")
     CONFIGURE_FILE(${DOXY_TEMPLATE} ${DOXY_CONFIG}     @ONLY)
 
