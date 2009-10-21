@@ -111,7 +111,15 @@ void ObjectInspector::saveFileAs() const {
 void ObjectInspector::executeWorkflow() const {
 	if (!isEnabled())
 		return;
+	std::string logFile = FileManager::instance().configDir()
+		.path().toAscii().constData();
+	logFile += "/executeLog.txt";
+	std::ofstream log(logFile.c_str(), std::ios::trunc);
+	Q_ASSERT(log.good());
+	sout.assign(log, std::cout);
 	_model->executeWorkflow();
+	sout.assign();
+	log.close();
 }
 
 void ObjectInspector::setModel(ParameterFileModel* newModel) {

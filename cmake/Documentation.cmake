@@ -6,7 +6,7 @@ IF (DOXYGEN_FOUND)
     # Possibility to enable/disable documentation creation
     OPTION(ENABLE_DOC "Automatically create documentation" ON)
 	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
-    SET(CMAKE_INSTALL_DOC doc
+    SET(CMAKE_INSTALL_DOC doc/${PROJECT_NAME}
         CACHE PATH "documentation install prefix")
     MARK_AS_ADVANCED(CMAKE_INSTALL_DOC ENABLE_DOC_VERBOSE)
 
@@ -29,13 +29,13 @@ IF (DOXYGEN_FOUND)
         SET(DOXY_QUIET          YES)
     ENDIF(ENABLE_DOC_VERBOSE)
         
-    # Für die Formeln wird LaTeX benötigt.
+    # LaTeX needed to create formula
     FIND_PACKAGE(LATEX)
 	IF(LATEX_COMPILER)
 		OPTION(WITH_LATEX "PDF documentation creation" ON)
 	ENDIF(LATEX_COMPILER)
         
-    # Um Graphen zu erstellen wird graphviz benötigt
+    # graphviz needed to generate graphs
     IF(DOXYGEN_DOT_EXECUTABLE)
         SET(DOXY_DOT_ENABLE "YES")
     ELSE(DOXYGEN_DOT_EXECUTABLE)
@@ -53,9 +53,8 @@ IF (DOXYGEN_FOUND)
         ENDIF (NOT DOXYGEN_DOT_EXECUTABLE)
     ENDIF(NOT DOC_QUIET)
 
-    # dummy target for documentation creation
 
-    # Doxyfile konfigurieren und Make-Target erzeugen
+    # set up documentation target
     SET(DOXY_DOC_PATTERN        *.cpp *.h *.hxx *_doc.txt)
     FILE(GLOB HTMLDOCS
         ${PROJECT_SOURCE_DIR}/doc/*_doc.txt
@@ -72,7 +71,7 @@ IF (DOXYGEN_FOUND)
     SET(DOXY_DOC_PATHS          "app src doc")
     SET(DOXY_GENERATE_HTML      YES)
     SET(DOXY_GENERATE_LATEX     NO )
-    SET(DOXY_TAGFILE_INPUT      ${CHARON_UTILS_TAG_IMPORT})
+    SET(DOXY_TAGFILE_INPUT      ${CHARON_UTILS_TAG_IMPORT} "\"${PROJECT_SOURCE_DIR}/doc/CImg.tag=http://cimg.sourceforge.net/reference\"")
     SET(DOXY_TAGFILE_OUTPUT     "${PROJECT_BINARY_DIR}/doc/html/${PROJECT_NAME}.tag")
     CONFIGURE_FILE(${DOXY_TEMPLATE} ${DOXY_CONFIG}     @ONLY)
 

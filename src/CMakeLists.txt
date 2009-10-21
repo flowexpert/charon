@@ -34,13 +34,8 @@ SET(EDITGRAPH_SOURCES
 # Configure Paths.config file
 CONFIGURE_FILE(
 	${CMAKE_CURRENT_SOURCE_DIR}/Paths.config.in
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Paths.config
+	${CMAKE_CURRENT_BINARY_DIR}/Paths.config
 	@ONLY
-)
-INSTALL(
-    FILES	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Paths.config
-    DESTINATION share/${PROJECT_NAME}
-    COMPONENT   libraries
 )
 
 # =============  generate moc files ====================

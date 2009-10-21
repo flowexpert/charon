@@ -111,18 +111,14 @@ void FileManager::loadPluginInformation() const {
 	std::string additionalPluginPath = pf.get<std::string> (
 			"additional-plugin-path");
 
-	try {
-		PluginManager man(charon_utils_install +
+	PluginManager man(charon_utils_install +
 #ifdef UNIX
-				"/lib/charon-plugins",
+		"/lib/charon-plugins",
 #else
-				"/bin",
+		"/bin",
 #endif
-				additionalPluginPath);
-		man.createMetadata(_metaPath());
-	} catch (AbstractPluginLoader::PluginException e) {
-		std::cerr << e.what() << std::endl;
-	}
+		additionalPluginPath);
+	man.createMetadata(_metaPath());
 }
 
 void FileManager::updateMetadata() const {
@@ -159,18 +155,21 @@ void FileManager::configure(QWidget * parent, bool force) const {
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 		QFile pathsConfig;
-#ifdef UNIX
-		if (FileTool::exists("../share/tuchulcha/Paths.config")) {
-			pathsConfig.setFileName("../share/tuchulcha/Paths.config");
-		} else if (FileTool::exists("/usr/local/share/tuchulcha/Paths.config")) {
-			pathsConfig.setFileName("/usr/local/share/tuchulcha/Paths.config");
-		} else if (FileTool::exists("/usr/share/tuchulcha/Paths.config")) {
-			pathsConfig.setFileName("/usr/share/tuchulcha/Paths.config");
-		}
-#else
-		pathsConfig.setFileName(".\\Paths.config");
-#endif /* UNIX */
-		pathsConfig.copy(QDir::homePath() + "/.paramedit/Paths.config");
+		pathsConfig.setFileName(":/share/Paths.config");
+		Q_ASSERT(pathsConfig.exists());
+		bool res;
+		res = pathsConfig.copy(QDir::homePath() + "/.paramedit/Paths.config");
+		Q_ASSERT(res);
+		pathsConfig.setFileName(QDir::homePath() + "/.paramedit/Paths.config");
+		Q_ASSERT(pathsConfig.exists());
+		res = pathsConfig.setPermissions(pathsConfig.permissions()
+			| QFile::ReadOwner | QFile::WriteOwner
+			| QFile::ReadUser | QFile::WriteUser);
+		Q_ASSERT(res);
+#if UNIX
+		Q_ASSERT(pathsConfig.permissions() & QFile::WriteOwner);
+		Q_ASSERT(pathsConfig.permissions() & QFile::ReadOwner);
+#endif
 		ParameterFile pf(_paramFile());
 		pf.set<std::string> ("additional-plugin-path", path.toAscii().data());
 		pf.save(_paramFile());
@@ -223,7 +222,7 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 
 			for (int i = 0; i < list.size(); i++) {
 				libsVector.push_back(list[i].trimmed().toAscii().data());
-				std::cout << libsVector[i] << std::endl;
+				sout << libsVector[i] << std::endl;
 			}
 
 			PluginManager man(getGlobalPluginPath(), getPrivatePluginPath());

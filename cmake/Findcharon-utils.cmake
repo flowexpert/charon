@@ -18,6 +18,7 @@ FIND_PATH(CHARON_UTILS_ROOT_DIR
     PATHS           [HKEY_LOCAL_MACHINE\\SOFTWARE\\Heidelberg\ Collaboratory\ for\ Image\ Processing\\charon-utils]
                     /usr
                     /usr/local
+		    ${CHARON_CORE_ROOT_DIR}
     DOC             "charon-utils root directory"
 )
 

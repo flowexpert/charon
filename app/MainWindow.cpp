@@ -375,11 +375,18 @@ void MainWindow::zoomFit() {
 }
 
 void MainWindow::updateMetadata() {
+	std::string logFile = FileManager::instance().configDir()
+		.path().toAscii().constData();
+	logFile += "/updateLog.txt";
+	std::ofstream log(logFile.c_str(), std::ios::trunc);
+	Q_ASSERT(log.good());
+	sout.assign(log, std::cout);
 	FileManager::instance().loadPluginInformation();
 	FileManager::instance().updateMetadata();
 	_centralArea->closeAllSubWindows();
-
 	_selector->update();
+	sout.assign();
+	log.close();
 }
 
 void MainWindow::compileAndLoad() {
