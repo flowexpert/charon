@@ -52,7 +52,7 @@ int main() {
 	remove(PLUGIN_DIR "/libtestplugin2.wrp");
 	
 #else
-	std::cout << "Compile and load does not with Visual C++ when compiled as Debug." << std::endl;
+	std::cout << "Compile and load does not work with Visual C++ when compiled as Debug." << std::endl;
 #endif /* !defined(_DEBUG) || !defined(MSVC) */
 
 	return 0;

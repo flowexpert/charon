@@ -270,8 +270,8 @@ public:
 	 * @param instanceName Name of the instance
 	 * @return Pointer to a new instance
 	 */
-	ParameteredObject * createInstance(const std::string & pluginName,
-			const template_type t, const std::string & instanceName = "")
+	ParameteredObject* createInstance(std::string pluginName,
+			const template_type t, const std::string& instanceName = "")
 			throw (AbstractPluginLoader::PluginException);
 
 	/**

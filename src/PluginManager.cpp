@@ -105,7 +105,7 @@ void PluginManager::loadPlugin(const std::string & name)
 		}
 
 		loadedPlugins[name] = newPlugin;
-		std::cout << "Plugin \"" << name << "\" loaded successfully."
+		sout << "Plugin \"" << name << "\" loaded successfully."
 				<< std::endl;
 	} else {
 		throw(AbstractPluginLoader::PluginException(
@@ -138,7 +138,7 @@ void PluginManager::compileAndLoadPlugin(const std::string & sourceFile,
 		}
 
 		loadedPlugins[name] = newPlugin;
-		std::cout << "Plugin \"" << name << "\" loaded successfully."
+		sout << "Plugin \"" << name << "\" loaded successfully."
 				<< std::endl;
 	} else {
 		throw(AbstractPluginLoader::PluginException(
@@ -195,9 +195,10 @@ ParameteredObject * PluginManager::getInstance(const std::string & instanceName)
 }
 
 ParameteredObject * PluginManager::createInstance(
-		const std::string & pluginName, const template_type t,
-		const std::string & instanceName)
+		std::string pluginName, const template_type t,
+		const std::string& instanceName)
 		throw (AbstractPluginLoader::PluginException) {
+	pluginName = StringTool::toLowerCase(pluginName);
 	if (instanceName == "" || objects.find(instanceName) == objects.end()) {
 		if (loadedPlugins.find(pluginName) == loadedPlugins.end()) {
 			try {
@@ -292,9 +293,9 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 			}
 		}
 	} catch (AbstractPluginLoader::PluginException e) {
-		std::cout << e.what() << std::endl;
+		sout << e.what() << std::endl;
 	} catch (std::string s) {
-		std::cout << s << std::endl;
+		sout << s << std::endl;
 	} catch (...) {
 		std::cerr << "other" << std::endl;
 	}
@@ -586,23 +587,47 @@ void PluginManager::_createMetadata(const std::string & targetPath) {
 	int start = 0;
 #endif
 
-	for (unsigned int i = 0; i < plugins.size(); ++i) {
+	std::vector<std::string>::const_iterator plugin;
+	for (plugin=plugins.begin(); plugin != plugins.end(); plugin++) {
 		//create metadata information
-		_createMetadataForPlugin(plugins[i].substr(start,
-				plugins[i].find_last_of('.') - start));
+		std::string pluginName = plugin->substr(start,
+			plugin->find_last_of('.') - start);
+		if(pluginName.size())
+			_createMetadataForPlugin(pluginName);
 	}
 }
 
-void PluginManager::_createMetadataForPlugin(const std::string & pluginName) {
-	bool alreadyLoaded = isLoaded(pluginName);
-
-	if (!alreadyLoaded) {
-		loadPlugin(pluginName);
+void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
+	if (!pluginName.size()) {
+		sout << __FILE__ << ":" << __LINE__ << "\t"
+			<< "emtpy pluginName given!" << std::endl;
+		return;
 	}
-	destroyInstance(createInstance(pluginName));
+#ifdef MSVC
+	if (pluginName.find("msvc")!=std::string::npos) {
+		sout << __FILE__ << ":" << __LINE__ << "\t"
+			<< "discarding \"" << pluginName << "\"" << std::endl;
+		return;
+	}
+#endif
+	if (pluginName.find("Qt")!=std::string::npos) {
+		sout << __FILE__ << ":" << __LINE__ << "\t"
+			<< "discarding \"" << pluginName << "\"" << std::endl;
+		return;
+	}
+	try {
+		bool alreadyLoaded = isLoaded(pluginName);
 
-	if (!alreadyLoaded) {
-		unloadPlugin(pluginName);
+		if (!alreadyLoaded) {
+			loadPlugin(pluginName);
+		}
+		destroyInstance(createInstance(pluginName));
+
+		if (!alreadyLoaded) {
+			unloadPlugin(pluginName);
+		}
+	} catch (AbstractPluginLoader::PluginException e) {
+		sout << e.what() << std::endl;
 	}
 }
 
@@ -647,7 +672,7 @@ void PluginManager::_determineTargetPoints() {
 			connected = slotIter->second->connected();
 		}
 		if (!connected) {
-			std::cout << "Found target point \"" << it->second->getName()
+			sout << "Found target point \"" << it->second->getName()
 					<< "\"" << std::endl;
 			targetPoints.push_back(it->second);
 		}

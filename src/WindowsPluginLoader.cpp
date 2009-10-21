@@ -185,7 +185,7 @@ void WindowsPluginLoader::compileAndLoad(const std::string & sourceFile, std::ve
 	 * Now compile and load the final version with optimizing but without the
 	 * CREATE_METADATA-flag
 	 */
-	std::cout << "Invoking C++ compiler to to compile the plugin and creating "
+	sout << "Invoking C++ compiler to to compile the plugin and creating "
 		"metadata information.\nPlease be patient, this could take some "
 		"time." << std::endl;
 #ifdef MSVC
@@ -224,8 +224,8 @@ void WindowsPluginLoader::compileAndLoad(const std::string & sourceFile, std::ve
 #endif
 
 #ifndef NDEBUG
-	std::cout << "Compiler call:\n" << syscall << std::endl;
-	std::cout << "Manifest tool call:\n" << manifestCall << std::endl;
+	sout << "Compiler call:\n" << syscall << std::endl;
+	sout << "Manifest tool call:\n" << manifestCall << std::endl;
 #endif // NDEBUG
 
 	std::string temp = FileTool::getCurrentDir();
@@ -260,7 +260,7 @@ void WindowsPluginLoader::unload() throw (PluginException) {
 		hInstLibrary = NULL;
 		create = NULL;
 		destroy = NULL;
-		std::cout << "Successfully unloaded plugin \"" << pluginName << "\"."
+		sout << "Successfully unloaded plugin \"" << pluginName << "\"."
 				<< std::endl;
 	} else {
 		throw PluginException("Plugin \"" + pluginName + "\" is not loaded.",
@@ -269,7 +269,15 @@ void WindowsPluginLoader::unload() throw (PluginException) {
 }
 
 std::string WindowsPluginLoader::_pathsConfig() const {
+#ifdef MSVC
+	char* buffer;
+	_dupenv_s(&buffer, 0, "ProgramFiles");
+	std::string programFiles = buffer;
+	assert(buffer);
+	free(buffer);
+#else
 	std::string programFiles = getenv("ProgramFiles");
+#endif
 	if (FileTool::exists("./Paths.config")) {
 		return "./Paths.config";
 	} else if (FileTool::exists(programFiles + "\\charon-core\\share\\charon-core\\Paths.config")) {
