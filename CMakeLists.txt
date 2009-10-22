@@ -6,6 +6,7 @@ SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 FIND_PACKAGE(charon-core REQUIRED)
 FIND_PACKAGE(charon-utils REQUIRED)
+INCLUDE(InitFlags)
 
 # set up documentation generation
 FIND_PACKAGE(Doxygen QUIET)
