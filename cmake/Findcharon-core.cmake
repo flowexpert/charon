@@ -26,18 +26,20 @@ FILE(GLOB CHARON_CORE_DOCDIRS
 )
 
 FIND_FILE(CHARON_CORE_TAGFILE
-	NAMES			charon-core.tag
-    PATHS           ${CHARON_CORE_ROOT_DIR}/doc
-                    ${CHARON_CORE_DOCDIRS}
-    PATH_SUFFIXES   html
-	DOC				"doxygen import tag file"
+	NAMES		charon-core.tag
+	PATHS		${CHARON_CORE_ROOT_DIR}/doc
+			${CHARON_CORE_ROOT_DIR}/doc/charon-core
+			${CHARON_CORE_DOCDIRS}
+	PATH_SUFFIXES	html
+	DOC		"doxygen import tag file"
 )
 FIND_PATH(CHARON_CORE_HTMLDOC_DIR
-    NAMES           index.html
-    PATHS           ${CHARON_CORE_ROOT_DIR}/doc
-                    ${CHARON_CORE_DOCDIRS}
-    PATH_SUFFIXES   html
-    DOC             "path to charon-core htmldoc (if exists)"
+	NAMES		index.html
+	PATHS		${CHARON_CORE_ROOT_DIR}/doc
+			${CHARON_CORE_ROOT_DIR}/doc/charon-core
+			${CHARON_CORE_DOCDIRS}
+	PATH_SUFFIXES	html
+	DOC		"path to charon-core htmldoc (if exists)"
 )
 
 IF(CHARON_CORE_HTMLDOC_DIR)

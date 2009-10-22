@@ -34,7 +34,7 @@
 #include <InterpolatorCubic.hxx>
 
 ///Creates an instance of the plugin
-extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
+extern "C" DECLDIR ParameteredObject* create(const std::string& name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);

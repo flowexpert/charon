@@ -21,6 +21,7 @@
 /// @date 16.06.2009
 
 #include "ImgTool.hxx"
+#include "InterpolatorLinear.hxx"
 
 #ifndef PENGUINFILE
 #define PENGUINFILE "Penguin.pgm"
@@ -30,10 +31,43 @@
 const unsigned int wTime = 500;
 
 int main() {
-    cimg_library::CImg<unsigned int> img(PENGUINFILE);
+    cimg_library::CImg<float> img(PENGUINFILE);
     cimg_library::CImgDisplay disp(img, "Original Penguin", 1, false, false);
     disp << img;
     disp.wait(wTime);
+
+	cimg_library::CImg<float> moved = img.get_crop(3,-2,0,0,
+		img.dimx()+2,img.dimy()-3,img.dimz()-1,img.dimv()-1);
+	disp << moved;
+	disp.wait(wTime);
+
+	// test warping
+	cimg_library::CImgList<float> flow(2, img.dimx(), img.dimy(),
+		img.dimz(), img.dimv());
+	flow[0].fill(3.f);
+	flow[1].fill(-2.f);
+	Interpolator<float>* interpolator = new InterpolatorLinear<float>();
+	cimg_library::CImg<float> warped;
+	ImgTool::warp2D(img, flow, warped, interpolator);
+	disp << moved;
+	disp.wait(wTime);
+	disp << warped;
+	disp.wait(wTime);
+	cimg_library::CImg<float>diff =
+		(moved-warped).get_crop(5,5,img.dimx()-6,img.dimy()-6);
+	std::cout << "warping...      " << std::flush;
+	std::cout << "diff.mean() : " << std::abs(diff.mean()) << std::endl;
+	assert(std::abs(diff.mean()) < std::numeric_limits<float>::min());
+
+	// warp back
+	ImgTool::warp2D(warped, -flow, warped, interpolator);
+	delete interpolator;
+	disp << warped;
+	disp.wait(wTime);
+	diff = (warped - img).get_crop(5,5,img.dimx()-6,img.dimy()-6);
+	std::cout << "warping back... " << std::flush;
+	std::cout << "diff.mean() : " << std::abs(diff.mean()) << std::endl;
+	assert(std::abs(diff.mean()) < std::numeric_limits<float>::min());
 
     cimg_library::CImg<float> integral;
     ImgTool::integralImage2D(img, integral);

@@ -97,8 +97,8 @@ void ImgTool::histogram(const cimg_library::CImg<T>& img,
     double factor = 1.f / ((double)maxVal - (double)minVal) * (nBins-1.f);
 	
 	if (roi) {
-		cimg_for_inXYZV(img,roi->left,roi->top,roi->front,roi->before,
-			roi->right-1,roi->bottom-1,roi->back-1,roi->after-1,x,y,z,v)
+		cimg_for_inXYZV(img,roi->xBegin(),roi->yBegin(),roi->zBegin(),roi->tBegin(),
+			roi->xEnd()-1,roi->yEnd()-1,roi->zEnd()-1,roi->tEnd()-1,x,y,z,v)
 		{
 			int bin = (int)floor((img(x,y,z,v) - minVal)*factor);
 
@@ -138,9 +138,9 @@ template <typename T> T ImgTool::jointHistogram(
 
     // preconditions
     assert(min < max);
-    assert(roi.top < roi.bottom && roi.left < roi.right);
-    assert(roi.top >= 0 && roi.bottom <= src1.dimy());
-    assert(roi.left >= 0 && roi.right <= src1.dimx());
+    assert(roi.xBegin() < roi.xEnd() && roi.yBegin() < roi.yEnd());
+    assert(roi.xBegin() >= 0 && roi.xEnd() <= src1.dimx());
+    assert(roi.yBegin() >= 0 && roi.yEnd() <= src1.dimy());
     assert(src2.dimy() == src1.dimy() && src1.dimx() == src2.dimx());
 
     int xBin, yBin, nBins = hist.dimx();
@@ -148,20 +148,19 @@ template <typename T> T ImgTool::jointHistogram(
     hist.fill(0);
     T resmax = 0;
 
-    for(int y = roi.top; y < roi.bottom; ++y)
-        for(int x = roi.left; x < roi.right; ++x) {
-            xBin = (int)floor((src1(x, y) - min)*factor);
-            yBin = (int)floor((src2(x, y) - min)*factor);
-            // if max and min are not the actual max and min,
-            // we need to truncate the histogram
-            xBin = (xBin < 0)      ? 0       : xBin;
-            xBin = (xBin >= nBins) ? nBins-1 : xBin;
-            yBin = (yBin < 0)      ? 0       : yBin;
-            yBin = (yBin >= nBins) ? nBins-1 : yBin;
+	forRoiXY(roi,x,y) {
+       xBin = (int)floor((src1(x, y) - min)*factor);
+       yBin = (int)floor((src2(x, y) - min)*factor);
+       // if max and min are not the actual max and min,
+       // we need to truncate the histogram
+       xBin = (xBin < 0)      ? 0       : xBin;
+       xBin = (xBin >= nBins) ? nBins-1 : xBin;
+       yBin = (yBin < 0)      ? 0       : yBin;
+       yBin = (yBin >= nBins) ? nBins-1 : yBin;
 
-            ++hist(xBin, yBin);
-            resmax = (hist(xBin, yBin) > resmax) ? hist(xBin, yBin) : resmax;
-        }
+       ++hist(xBin, yBin);
+       resmax = (hist(xBin, yBin) > resmax) ? hist(xBin, yBin) : resmax;
+    }
 
     if (normalize) {
         hist   /= roi.getVolume();
@@ -172,48 +171,52 @@ template <typename T> T ImgTool::jointHistogram(
 }
 
 template <typename T>
-void ImgTool::warp2D(cimg_library::CImg<T>& src,
-                     cimg_library::CImg<T>& flow,
+void ImgTool::warp2D(const cimg_library::CImg<T>& src,
+                     const cimg_library::CImgList<T>& flow,
                      cimg_library::CImg<T>& dst,
-                     Interpolator<T>* interpolator) {
+                     const Interpolator<T>* interpolator) {
     // check preconditions
-    assert(flow.is_sameXYZ(src));
-    assert(flow.dimv() >= 2);
+    assert(flow.size >= 2);
+    assert(flow[0].is_sameXYZV(src));
+    assert(flow[1].is_sameXYZV(src));
     if(!dst.is_sameXYZV(src))
         dst.assign(src.dimx(), src.dimy(), src.dimz(), src.dimv());
 
-    cimg_forXYZ(flow,x,y,z) {
-        dst(x, y, z) = interpolator->interpolate(src,
-                     (float)(x+flow(x,y,z,0)), (float)(y+flow(x,y,z,1)), z, 0);
-    }
+	cimg_forXYZV(src,x,y,z,t) {
+		float cx = float(T(x)+flow[0](x,y,z,t));
+		float cy = float(T(y)+flow[1](x,y,z,t));
+		T res = interpolator->interpolate(src, cx, cy, int(z), int(t));
+        dst(x,y,z,t) = res;
+	}
 }
 
 template <typename T>
-void ImgTool::warpToFirstFrame(cimg_library::CImg<T>& src,
-                               cimg_library::CImg<T>& flow,
+void ImgTool::warpToFirstFrame(const cimg_library::CImg<T>& src,
+                               const cimg_library::CImgList<T>& flow,
                                cimg_library::CImg<T>& dst,
-                               Interpolator<T>* interpolator) {
+                               const Interpolator<T>* interpolator) {
     // check preconditions
-    assert(flow.is_sameXY(src));
-    assert(flow.dimz() == src.dimz() - 1);
-    assert(flow.dimv() >= 2);
-    if(!dst.is_sameXYZV(src))
-        dst.assign(src.dimx(), src.dimy(), src.dimz(), src.dimv());
+    assert(flow.size >= 2);
+    assert(flow[0].is_sameXYZ(src));
+    assert(flow[1].is_sameXYZ(src));
+    assert(flow[0].dimv() == flow[1].dimv());
+    if(!(dst.is_sameXYZ(src) || dst.dimv() != flow[0].dimv()+1))
+        dst.assign(src.dimx(), src.dimy(), src.dimz(), flow[0].dimv()+1);
 
     cimg_library::CImg<T> accFlow(2), temp(2);
-    cimg_forXY(dst,x,y) {
+    cimg_forXYZ(dst,x,y,z) {
         //set first image to source image
-        dst(x, y, 0) = src(x, y, 0);
+        dst(x,y,z,0) = src(x,y,z,0);
         //accumulates flow over all images
         accFlow.fill(0);
-        for(int z = 0; z < flow.dimz(); z++) {
+        for(int t = 0; t < flow[0].dimv(); t++) {
             for(int v = 0; v < 2; v++)
-                temp(v) = interpolator->interpolate(flow,
-                           (float)(x+accFlow(0)), (float)(y+accFlow(1)), z, v);
+                temp(v) = interpolator->interpolate(flow[v],
+                    (float)(x+accFlow(0)), (float)(y+accFlow(1)), z, t);
 
             accFlow += temp;
-            dst(x, y, z+1) = interpolator->interpolate(src,
-                         (float)(x+accFlow(0)), (float)(y+accFlow(1)), z+1, 0);
+            dst(x,y,z,t+1) = interpolator->interpolate(src,
+                (float)(x+accFlow(0)), (float)(y+accFlow(1)), z, 0);
         }
     }
 }
@@ -409,37 +412,37 @@ template <typename T>
 void ImgTool::extendRoi2D(const Roi<int>& roi, cimg_library::CImg<T>& img) {
     cimg_forZV(img, z, v) {
         // top
-        T tl = img(roi.left, roi.top, z, v);
-        T tr = img(roi.right-1, roi.top, z, v);
-        for (int y = 0; y < roi.top; ++y) {
-            for (int x = 0; x < roi.left; ++x)
+        T tl = img(roi.xBegin(), roi.yBegin(), z, v);
+        T tr = img(roi.xEnd()-1, roi.yBegin(), z, v);
+        for (int y = 0; y < roi.yBegin(); ++y) {
+            for (int x = 0; x < roi.xBegin(); ++x)
                 img(x, y, z, v) = tl;
-            for (int x = roi.left; x < roi.right; ++x)
-                img(x, y, z, v) = img(x, roi.top, z, v);
-            for (int x = roi.right; x < img.dimx(); ++x)
+            for (int x = roi.xBegin(); x < roi.xEnd(); ++x)
+                img(x, y, z, v) = img(x, roi.yBegin(), z, v);
+            for (int x = roi.xEnd(); x < img.dimx(); ++x)
                 img(x, y, z, v) = tr;
         }
 
         // bottom
-        T bl = img(roi.left, roi.bottom-1);
-        T br = img(roi.right-1, roi.bottom-1);
-        for (int y = roi.bottom; y < img.dimy(); ++y) {
-            for(int x = 0; x < roi.left; ++x)
+        T bl = img(roi.xBegin(), roi.yEnd()-1);
+        T br = img(roi.xEnd()-1, roi.yEnd()-1);
+        for (int y = roi.yEnd(); y < img.dimy(); ++y) {
+            for(int x = 0; x < roi.xBegin(); ++x)
                 img(x, y, z, v) = bl;
-            for(int x = roi.left; x < roi.right; ++x)
-                img(x, y, z, v) = img(x, roi.bottom-1, z, v);
-            for(int x = roi.right; x < img.dimx(); ++x)
+            for(int x = roi.xBegin(); x < roi.xEnd(); ++x)
+                img(x, y, z, v) = img(x, roi.yEnd()-1, z, v);
+            for(int x = roi.xEnd(); x < img.dimx(); ++x)
                 img(x, y, z, v) = br;
         }
 
         // left && right
-        for(int y = roi.top; y < roi.bottom; ++y) {
-            T l = img(roi.left, y, z, v);
-            T r = img(roi.right-1, y, z, v);
-            for(int x = 0; x < roi.left; ++x)
-                img(x, y, z, v) =l;
-            for(int x = roi.right; x < img.dimx(); ++x)
-                img(x, y, z, v) =r;
+        for(int y = roi.yBegin(); y < roi.yEnd(); ++y) {
+            T l = img(roi.xBegin(), y, z, v);
+            T r = img(roi.xEnd()-1, y, z, v);
+            for(int x = 0; x < roi.xBegin(); ++x)
+                img(x, y, z, v) = l;
+            for(int x = roi.xEnd(); x < img.dimx(); ++x)
+                img(x, y, z, v) = r;
         }
     }
 }
@@ -448,31 +451,31 @@ template <typename T>
 void ImgTool::zeroRoi2D(const Roi<int>& roi, cimg_library::CImg<T>& img) {
     cimg_forZV(img, z, v) {
         //top
-        for(int y = 0; y < roi.top; ++y)
+        for(int y = 0; y < roi.yBegin(); ++y)
             for(int x = 0; x < img.dimx(); ++x)
                 img(x, y, z, v) = 0;
 
         //bottom
-        for(int y = roi.bottom; y < img.dimy(); ++y)
+        for(int y = roi.yEnd(); y < img.dimy(); ++y)
             for(int x = 0; x < img.dimx(); ++x)
                 img(x, y, z, v) = 0;
 
         //left && right
-        for(int y =roi.top; y < roi.bottom; ++y) {
-            for(int x =0; x < roi.left; ++x)
-                img(x, y, z, v) =0;
-            for(int x =roi.right; x < img.dimx(); ++x)
-                img(x, y, z, v) =0;
+        for(int y = roi.yBegin(); y < roi.yEnd(); ++y) {
+            for(int x =0; x < roi.xBegin(); ++x)
+                img(x, y, z, v) = 0;
+            for(int x =roi.xEnd(); x < img.dimx(); ++x)
+                img(x, y, z, v) = 0;
         }
     }
 }
 
 template <typename T>
 void ImgTool::mirrorRoi2D(const Roi<int>& roi, cimg_library::CImg<T>& img) {
-    int x      = roi.left;
-    int y      = roi.top;
-    int width  = roi.right - roi.left;
-    int height = roi.bottom - roi.top;
+    int x      = roi.xBegin();
+    int y      = roi.yBegin();
+    int width  = roi.getWidth();
+    int height = roi.getHeight();
 
     // Valid input parameters
     assert(x >= 0 && y >= 0 && width > 0 && height > 0);
@@ -825,7 +828,7 @@ void ImgTool::drawHsvCircle(cimg_library::CImg<T>& rgbImage,
     circle.draw_circle(size/2, size/2, size/2, white);
     box.mul(circle);
     box.HSVtoRGB();
-    rgbImage.draw_image(box, region.left, region.top);
+    rgbImage.draw_image(box, region.xBegin(), region.yBegin());
 }
 
 template <typename T>

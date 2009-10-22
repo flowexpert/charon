@@ -57,14 +57,19 @@ private:
 	void _init();
 
 public:
-	Parameter<T> top;		///< roi top
-	Parameter<T> left;		///< roi left
-	Parameter<T> bottom;	///< roi bottom
-	Parameter<T> right;		///< roi right
-	Parameter<T> front;		///< roi front
-	Parameter<T> back;		///< roi back
-	Parameter<T> before;	///< roi before
-	Parameter<T> after;		///< roi after
+	///\name roi borders, *Begin is included, *End is past the last element
+	//@{
+	Parameter<T> xBegin;
+	Parameter<T> yBegin;
+	Parameter<T> zBegin;
+	Parameter<T> tBegin;
+	Parameter<T> vBegin;
+	Parameter<T> xEnd;
+	Parameter<T> yEnd;
+	Parameter<T> zEnd;	
+	Parameter<T> tEnd;
+	Parameter<T> vEnd;	
+	//@}
 
 	OutputSlot<Roi<T>*> out; ///< roi output slot
 
@@ -78,18 +83,18 @@ public:
 	Roi(const ParameterFile& pf, std::string name = "");
 
 	/// Create Roi with the given limits.
-	/// @param top          top value
-	/// @param left         left value
-	/// @param bottom       bottom value
-	/// @param right        right value
-	/// @param front        front value
-	/// @param back         back value
-	/// @param before		lower value for 4D
-	/// @param after		upper value for 4D
+	/// @param xBegin,xEnd  x limits
+	/// @param yBegin,yEnd  y limits
+	/// @param zBegin,zEnd  z limits
+	/// @param tBegin,tEnd  t limits
+	/// @param vBegin,vEnd	channel limits
 	/// @param name         roi name
-	Roi(const T& top, const T& left, const T& bottom, const T& right,
-			const T& front = 0, const T& back = 1, const T& before = 0,
-			const T& after = 1, std::string name = "");
+	Roi(const T& xBegin, const T& xEnd,
+		const T& yBegin = T(0), const T& yEnd = T(1),
+		const T& zBegin = T(0), const T& zEnd = T(1),
+		const T& tBegin = T(0), const T& tEnd = T(1),
+		const T& vBegin = T(0), const T& vEnd = T(1),
+		std::string name = "");
 
 	virtual ~Roi();
 
@@ -97,41 +102,47 @@ public:
 	T getHeight()   const; ///< get region height
 	T getDepth()    const; ///< get region depth
 	T getDuration() const; ///< get region duration
+	T getChannels()	const; ///< get region channel number
 
 	/// Set region width.
-	/// Modifies right, keeps left.
+	/// Modifies xEnd, keeps xBegin.
 	/// @param w            new width
 	void setWidth(T w);
 
 	/// Set region height.
-	/// Modifies bottom, keeps top.
+	/// Modifies yEnd, keeps yBegin.
 	/// @param h            new height
 	void setHeight(T h);
 
 	/// Set region depth.
-	/// Modifies back, keeps front.
+	/// Modifies zEnd, keeps zBegin.
 	/// @param d            new depth
 	void setDepth(T d);
 
 	/// Set region length.
-	/// Modifies after, keeps before.
+	/// Modifies tEnd, keeps tBegin.
 	/// @param d            new duration
 	void setDuration(T d);
+
+	/// Set channel number.
+	/// Modifies vEnd, keeps vBegin.
+	/// @param v			new channel number
+	void setChannels(T v);
 
 	/// get region volume
 	T getVolume() const;
 
 	/// assign region limits
-	/// @param top          top value
-	/// @param left         left value
-	/// @param bottom       bottom value
-	/// @param right        right value
-	/// @param front        front value
-	/// @param back         back value
-	/// @param before       before value
-	/// @param after        after value
-	void assign(T top, T left, T bottom, T right, T front = 0, T back = 1,
-			T before = 0, T after = 1);
+	/// @param xBegin,xEnd  x limits
+	/// @param yBegin,yEnd  y limits
+	/// @param zBegin,zEnd  z limits
+	/// @param tBegin,tEnd  t limits
+	/// @param vBegin,vEnd	channel limits
+	void assign(const T& xBegin, const T& xEnd,
+		const T& yBegin = T(0), const T& yEnd = T(1),
+		const T& zBegin = T(0), const T& zEnd = T(1),
+		const T& tBegin = T(0), const T& tEnd = T(1),
+		const T& vBegin = T(0), const T& vEnd = T(1));
 
 	/// Assign values from another region.
 	/// This does copy the region limits.
@@ -150,7 +161,8 @@ public:
 	void intersectionWith(const Roi<T>& rhs);
 
 	/// Check if a given point is inside the region.
-	bool isInside(T x, T y, T z = 0, T t = 0) const;
+	/// \param x,y,z,t,v	point coordinates
+	bool isInside(T x, T y = 0, T z = 0, T t = 0, T v = 0) const;
 
 	/// Load region parameters from the given parameter file.
 	/// @param pf           ParameterFile to load from
@@ -164,13 +176,15 @@ template<typename T>
 inline std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi);
 
 /// for loop over the x dimension
-#define forRoiX(roi,x)       for(int x=(int)((roi).left); x<(int)((roi).right); ++x)
+#define forRoiX(roi,x)		for(int x=(int)((roi).xBegin); x<(int)((roi).xEnd); ++x)
 /// for loop over the y dimension
-#define forRoiY(roi,y)       for(int y=(int)((roi).top); y<(int)((roi).bottom); ++y)
+#define forRoiY(roi,y)		for(int y=(int)((roi).yBegin); y<(int)((roi).yEnd); ++y)
 /// for loop over the z dimension
-#define forRoiZ(roi,z)       for(int z=(int)((roi).front); z<(int)((roi).back); ++z)
+#define forRoiZ(roi,z)		for(int z=(int)((roi).zBegin); z<(int)((roi).zEnd); ++z)
 /// for loop over the t dimesnion
-#define forRoiT(roi,t)       for(int t=(int)((roi).before); t<(int)((roi).after); ++t)
+#define forRoiT(roi,t)		for(int t=(int)((roi).tBegin); t<(int)((roi).tEnd); ++t)
+/// for loop over the v dimension
+#define forRoiV(roi,v)		for(int v=(ind)((roi).vBegin); v<(int)((roi).vEnd); ++v)
 /// for loop over the xy plane
 #define forRoiXY(roi,x,y)    forRoiY(roi,y) forRoiX(roi,x)
 /// for loop over the xz plane
@@ -184,8 +198,10 @@ inline std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi);
 /// for loop over the zt plane
 #define forRoiZT(roi,z,t)    forRoiT(roi,t) forRoiZ(roi,z)
 /// for loop over the xyz volume
-#define forRoiXYZ(roi,x,y,z) forRoiZ(roi,z) forRoiY(roi,y) forRoiX(roi,x)
-/// for loop over the entire volume
-#define forRoiXYZT(roi,x,y,z,t) forRoiT(roi,t) forRoiZ(roi,z) forRoiY(roi,y) forRoiX(roi,x)
+#define forRoiXYZ(roi,x,y,z) forRoiZ(roi,z) forRoiXY(roi,x,y)
+/// for loop over the xyzt volume
+#define forRoiXYZT(roi,x,y,z,t) forRoiT(roi,t) forRoiXYZ(roi,x,y,z)
+/// for loop over the xyztv volume
+#define forRoiXYZTV(roi,x,y,z,t,v) forRoiV(roi,v) forRoiXYZT(roi,x,y,z,t)
 
 #endif // _Roi_H_

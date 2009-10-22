@@ -24,7 +24,7 @@
 #define STRUCTURE_TENSOR_H_
 
 #include <charon-core/ParameteredObject.h>
-#include "CImg.h"
+#include <CImg.h>
 
 #ifdef HANDLE_DLL
 #ifdef structuretensor_EXPORTS

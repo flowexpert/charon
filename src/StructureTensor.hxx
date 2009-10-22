@@ -29,14 +29,21 @@
 
 template <typename T>
 StructureTensor<T>::StructureTensor(const std::string& name) :
-		TemplatedParameteredObject<T>("StructureTensor", name, "Structure Tensor and Eigenvector analysis")
+		TemplatedParameteredObject<T>("StructureTensor", name, 
+			"Structure Tensor and Eigenvector analysis")
 {
-	ParameteredObject::_addInputSlot(in, "in", "image input", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(out, "out", "self pointer", "StructureTensor*");
-	ParameteredObject::_addOutputSlot(tensor, "tensor", "structure tensor", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(eigenvalues, "eigenvalues", "eigenvalues", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(eigenvectors, "eigenvectors", "eigenvectors", "CImgList<T>");
-	ParameteredObject::_addParameter(centralScheme, "centralScheme", "scheme for structure tensor calculation", false);
+	ParameteredObject::_addInputSlot(in, "in", 
+		"image input", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(out, "out",
+		"self pointer", "StructureTensor*");
+	ParameteredObject::_addOutputSlot(tensor, "tensor",
+		"structure tensor", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(eigenvalues, "eigenvalues",
+		"eigenvalues", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(eigenvectors, "eigenvectors",
+		"eigenvectors", "CImgList<T>");
+	ParameteredObject::_addParameter(centralScheme, "centralScheme",
+		"scheme for structure tensor calculation", false);
 	out = this;
 }
 
@@ -45,24 +52,31 @@ void StructureTensor<T>::execute() {
 	ParameteredObject::execute();
 	// this can only handle sequences with one channel
 	assert(in().size == 1u);
-	// we have to change the dimensions because CImg stores the tensor elements into
-	// the v-channels.
-	cimg_library::CImgList<T> temp(in()[0].dimv(),in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),1u);
+	// we have to change the dimensions because CImg stores the
+	// tensor elements into the v-channels.
+	cimg_library::CImgList<T> temp(in()[0].dimv(),in()[0].dimx(),
+		in()[0].dimy(),in()[0].dimz(),1u);
 	cimg_library::CImg<T> mat, val, vec;
 	if(in()[0].dimz()==1u) {
 		// 2D
-		tensor().assign(3u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv());
-		eigenvalues().assign(2u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv());
-		eigenvectors().assign(4u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv());
+		tensor().assign(3u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
+			in()[0].dimv());
+		eigenvalues().assign(2u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
+			in()[0].dimv());
+		eigenvectors().assign(4u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
+			in()[0].dimv());
 		mat.assign(2,2);
 		val.assign(1,2);
 		vec.assign(2,2);
 	}
 	else {
 		// 3D
-		tensor().assign(6u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv());
-		eigenvalues().assign(3u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv());
-		eigenvectors().assign(9u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv());
+		tensor().assign(6u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
+			in()[0].dimv());
+		eigenvalues().assign(3u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
+			in()[0].dimv());
+		eigenvectors().assign(9u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
+			in()[0].dimv());
 		mat.assign(3,3);
 		val.assign(1,3);
 		vec.assign(3,3);
@@ -95,8 +109,11 @@ void StructureTensor<T>::execute() {
 			mat.symmetric_eigen(val,vec);
 			// fill into output slots
 			assert(val.dimx()==1);
-			cimg_forY(val,j)
+			cimg_forY(val,j) {
 				eigenvalues()(j,x,y,z,t)=val[j];
+				// check if sorted
+				assert((j==0) || (val[j] <= val[j-1]));
+			}
 			assert(vec.dimx()==vec.dimy());
 			cimg_forXY(vec,i,j)
 				eigenvectors()(i*vec.dimx()+j,x,y,z,t)=vec(i,j);

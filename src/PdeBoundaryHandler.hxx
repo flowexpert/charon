@@ -256,12 +256,12 @@ void PdeBoundaryHandler<T>::init(
 
     if(createIntPointers) {
         // no roi used if own pointers (non-PETSC) are used
-        roi.top     = 0;
-        roi.left    = 0;
-        roi.front   = 0;
-        roi.bottom  = dY;
-        roi.right   = dX;
-        roi.back    = dZ;
+        roi.xBegin = 0;
+        roi.yBegin = 0;
+        roi.zBegin = 0;
+        roi.xEnd = dX;
+        roi.yEnd = dY;
+        roi.zEnd = dZ;
 
         extendedRoi = roi;
     }
@@ -495,18 +495,18 @@ void PdeBoundaryHandler<T>::init(
 template <typename T>
 void PdeBoundaryHandler<T>::updateDelta() {
     if (delta) {
-        if (extendedRoi.top <= 0)
-            extendedRoi.top = 0;
-        if (extendedRoi.bottom >= dimY)
-            extendedRoi.bottom = dimY ? dimY : 1;
-        if (extendedRoi.left <= 0)
-            extendedRoi.left = 0;
-        if (extendedRoi.right >= dimX)
-            extendedRoi.right = dimX;
-        if (extendedRoi.front <= 0)
-            extendedRoi.front = 0;
-        if (extendedRoi.back >= dimZ)
-            extendedRoi.back = dimZ ? dimZ : 1;
+        if (extendedRoi.xBegin <= 0)
+            extendedRoi.xBegin = 0;
+        if (extendedRoi.xEnd >= dimX)
+            extendedRoi.xEnd = dimX;
+        if (extendedRoi.yBegin <= 0)
+            extendedRoi.yBegin = 0;
+        if (extendedRoi.yEnd >= dimY)
+            extendedRoi.yEnd = dimY ? dimY : 1;
+        if (extendedRoi.zBegin <= 0)
+            extendedRoi.zBegin = 0;
+        if (extendedRoi.zEnd >= dimZ)
+            extendedRoi.zEnd = dimZ ? dimZ : 1;
 
         cimglist_for(*delta, d) {
             assert((*delta)[d].dimx() == dimX);
@@ -527,24 +527,23 @@ void PdeBoundaryHandler<T>::updateUnknowns(T*** unknowns,
                                            T*** residuals,
                                            Roi<int>& roi) {
     this->roi =roi;
-    this->extendedRoi = Roi<int>(roi.top-sWidthY,
-                                 roi.left-sWidthX,
-                                 roi.bottom+sWidthY,
-                                 roi.right+sWidthX,
-                                 roi.front-sWidthZ,
-                                 roi.back+sWidthZ);
-    if (extendedRoi.top <= 0)
-        extendedRoi.top = 0;
-    if (extendedRoi.bottom >= dimY)
-        extendedRoi.bottom = dimY ? dimY : 1;
-    if (extendedRoi.left <= 0)
-        extendedRoi.left = 0;
-    if (extendedRoi.right >= dimX)
-        extendedRoi.right = dimX;
-    if (extendedRoi.front <= 0)
-        extendedRoi.front = 0;
-    if (extendedRoi.back >= dimZ)
-        extendedRoi.back = dimZ ? dimZ : 1;
+    this->extendedRoi = Roi<int>(
+		roi.xBegin()-sWidthX, roi.xEnd()+sWidthX,
+		roi.yBegin()-sWidthY, roi.yEnd()+sWidthY,
+		roi.zBegin()-sWidthZ, roi.zEnd()+sWidthZ);
+
+    if (extendedRoi.xBegin() <= 0)
+        extendedRoi.xBegin() = 0;
+    if (extendedRoi.xEnd() >= dimX)
+        extendedRoi.xEnd() = dimX;
+    if (extendedRoi.yBegin() <= 0)
+        extendedRoi.yBegin() = 0;
+    if (extendedRoi.yEnd() >= dimY)
+        extendedRoi.yEnd() = dimY ? dimY : 1;
+    if (extendedRoi.zBegin() <= 0)
+        extendedRoi.zBegin() = 0;
+    if (extendedRoi.zEnd() >= dimZ)
+        extendedRoi.zEnd() = dimZ ? dimZ : 1;
 
     cimg_library::CImg<float> test(boundaryMask.dimx(), boundaryMask.dimy(),
                                    boundaryMask.dimz(), 2, 0);
@@ -683,12 +682,11 @@ void PdeBoundaryHandler<T>::updateBoundaries() {
         // we should ignore these values.
         // Idea: extend current roi by its stencil widths and check whether
         // the boundary point is inside this region
-        Roi<int> extended(roi.top-sWidthY,
-                          roi.left-sWidthX,
-                          roi.bottom+sWidthY,
-                          roi.right+sWidthX,
-                          roi.front-sWidthZ,
-                          roi.back+sWidthZ);
+        Roi<int> extended(
+            roi.xBegin()-sWidthX, roi.xEnd()+sWidthX,
+			roi.yBegin()-sWidthY, roi.yEnd()+sWidthY,
+            roi.zBegin()-sWidthZ, roi.zEnd()+sWidthZ);
+
         if (extended.isInside(tx, ty, tz)) {
             // the source position for von-Neumann boundary conditions is the
             // nearest node inside the domain hence, the source is at the
@@ -699,22 +697,22 @@ void PdeBoundaryHandler<T>::updateBoundaries() {
 
             if (tx < 0)
                 src.x = sWidthX;
-            else if (tx > roi.right -1)
-                src.x = sWidthX+roi.right -1;
+            else if (tx > roi.xEnd() -1)
+                src.x = sWidthX+roi.xEnd() -1;
             else
                 src.x = tx+sWidthX;
 
             if (ty < 0)
                 src.y = sWidthY;
-            else if (dimY && ty > roi.bottom-1)
-                src.y = sWidthY+roi.bottom-1;
+            else if (dimY && ty > roi.yEnd()-1)
+                src.y = sWidthY+roi.yEnd()-1;
             else
                 src.y =ty+sWidthY;
 
             if (tz < 0)
                 src.z = sWidthZ;
-            else if (dimZ && tz > roi.back-1)
-                src.z = sWidthZ+roi.back-1;
+            else if (dimZ && tz > roi.zEnd()-1)
+                src.z = sWidthZ+roi.zEnd()-1;
             else
                 src.z =tz+sWidthZ;
 

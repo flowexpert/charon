@@ -42,20 +42,25 @@ void ImageBlur<T>::execute() {
 
 	// check roi ranges
 	assert(roi());
-	assert(roi()->left < roi()->right);
-	assert(roi()->top < roi()->bottom);
-	assert(roi()->front < roi()->back);
+	assert(roi()->xBegin() < roi()->xEnd());
+	assert(roi()->yBegin() < roi()->yEnd());
+	assert(roi()->zBegin() < roi()->zEnd());
+	assert(roi()->tBegin() < roi()->tEnd());
+	assert(roi()->vBegin() < roi()->vEnd());
 
-	this->outimage = in();
-	for (unsigned int i = 0; i < in().size; i++) {
-		cimg_library::CImg<T> region = in().get_crop(0, in().size - 1, roi()->left,
-				roi()->top, roi()->front, roi()->right - 1, roi()->bottom - 1,
-				roi()->back - 1)[i];
-		region.blur(strength());
-		this->outimage[i].draw_image(roi()->left, roi()->top, roi()->front,
-				roi()->before, region);
+	out() = in();
+	cimg_library::CImgList<T> region = in().get_crop(
+			roi()->vBegin(), roi()->vEnd()-1,
+			roi()->xBegin(), roi()->yBegin(), roi()->zBegin(), roi()->tBegin(),
+			roi()->xEnd()-1, roi()->yEnd()-1, roi()->zEnd()-1, roi()->tEnd()-1);
+	cimglist_for(region, i) {
+		region[i].blur(strength());
+		out()[roi()->vBegin()+i].draw_image(
+				roi()->xBegin(), roi()->yBegin(),
+				roi()->zBegin(),roi()->tBegin(),
+				region[i]
+		);
 	}
-	out = outimage;
 
 }
 #endif // _IMAGEBLUR_HXX_

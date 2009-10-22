@@ -39,7 +39,7 @@ Interpolator<T>::Interpolator(const std::string& className,
                               const std::string& doc) :
         TemplatedParameteredObject<T>(className, name, doc),
         out(0) {
-    _addOutputSlot(out, "out", "interpolator pointer", "interpolator");
+    _addOutputSlot(out, "out", "interpolator pointer", "Interpolator<T>*");
     out = this;
 }
 

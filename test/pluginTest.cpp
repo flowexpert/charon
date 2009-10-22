@@ -27,10 +27,19 @@
 #include <FileReader.h>
 #include <ImageDisplay.h>
 #include <Roi.h>
+#include <list>
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+#include <cassert>
 
 int main() {
-    // load plugins
+	std::ofstream log("pluginTestLog.txt", std::ios::trunc);
+	assert(log.good());
+	sout.assign(std::cout, log);
 
+    // load plugins
 #ifdef WINDOWS
 #ifdef _DEBUG
     PluginManager man("../bin/debug");
@@ -52,11 +61,34 @@ int main() {
 	man.destroyInstance(imgDisplay);
 
     Roi<int>* roi = (Roi<int>*)man.createInstance("roi", 2, "roi");
-	roi->top = 10;
-	roi->assign(10, 10, 20, 20);
-	roi->getWidth();
+	roi->xBegin() = 10;
+	roi->assign(10, 20, 10, 20);
+	assert(roi->getWidth() == 10);
+	assert(roi->getHeight() == 10);
+	assert(roi->getDepth() == 1);
 	roi->execute();
     man.destroyInstance(roi);
+
+	// test creation of some plugins
+	std::list<std::string> plugins;
+	std::list<std::string>::const_iterator plugin;
+	plugins.push_back("InterpolatorLinear");
+	plugins.push_back("InterpolatorCubic");
+	plugins.push_back("LinearFilter");
+	plugins.push_back("Mask1D");
+	plugins.push_back("SteeredDerivative");
+	plugins.push_back("ChannelConverter");
+	plugins.push_back("StructureTensor");
+
+	ParameteredObject* inst = 0;	
+	for(plugin=plugins.begin(); plugin!=plugins.end(); plugin++) {
+		inst = man.createInstance(*plugin);
+		assert(inst);
+		man.destroyInstance(inst);
+	}
+
+	sout.assign();
+	log.close();
 
     return 0;
 }

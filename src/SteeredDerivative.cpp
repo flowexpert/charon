@@ -16,11 +16,11 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define TYPE Mask1D
+#define TYPE SteeredDerivative
 
-#include "Mask1D.hxx"
+#include "SteeredDerivative.hxx"
 
-#if defined(MSVC) && defined (mask1d_EXPORTS)
+#if defined(HANDLE_DLL) && defined (steeredderivative_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else
 #define DECLDIR
@@ -46,3 +46,4 @@ extern "C" DECLDIR ParameteredObject* create(const std::string& name, template_t
 extern "C" DECLDIR void destroy(ParameteredObject * b) {
     delete b;
 }
+

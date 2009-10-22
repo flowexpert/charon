@@ -17,7 +17,6 @@
  *  Declaration of class ChannelConverter.
  *  \author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
- *
  *  \date 8.09.2009
  */
 #ifndef _CHANNELCONVERTER_H_
@@ -36,33 +35,45 @@
 #endif
 
 #include <CImg.h>
-#include <ParameteredObject.h>
+#include <charon-core/ParameteredObject.h>
 
 /**	
  *  Channel Converter for CImg.
- *  Converts v dimension to t and vice versa.
+ *  Permutes image dimensions.
+ *  Per default converts v dimension to t and vice versa.
  */
 template <class T>
 class channelconverter_DECLDIR ChannelConverter : public TemplatedParameteredObject<T>
 {
-	public:
-		/// default constructor
-		ChannelConverter(const std::string& name = "");
-		
-		virtual ~ChannelConverter();
-		
-		/// Sequence to be converted.
-		InputSlot<cimg_library::CImgList<T> > in;
-		
-		/// Converted sequence.
-		OutputSlot<cimg_library::CImgList<T> > out;
-		
-		/**	Perform conversion.
-		 *	The input CImgList has all the frames in different CImg objects in the list
-		 *	what we want is a CImgList that splits the sequence by channel into seperate
-		 *	CImg objects.
-		 */
-		virtual void execute();
+public:
+	/// default constructor
+	ChannelConverter(const std::string& name = "");
+	
+	virtual ~ChannelConverter();
+	
+	/// Sequence to be converted.
+	InputSlot<cimg_library::CImgList<T> > in;
+	
+	/// Converted sequence.
+	OutputSlot<cimg_library::CImgList<T> > out;
+
+	/// Conversion scheme
+	Parameter<std::string> scheme;
+	
+	/**	Perform conversion.
+	 *	The input CImgList has all the frames in different CImg objects in the list
+	 *	what we want is a CImgList that splits the sequence by channel into seperate
+	 *	CImg objects.
+	 */
+	virtual void execute();
+
+private:
+	/// dimension select for permutation
+	/// \param x,y,z,v,t input
+	/// \param sel	select wich variable to return
+	unsigned int _select(
+		unsigned int x, unsigned int y, unsigned int z,
+		unsigned int v, unsigned int t, char sel) const;
 };
 
 #endif

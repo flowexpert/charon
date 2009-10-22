@@ -28,19 +28,34 @@
 #define _Roi_HXX_
 
 #include "Roi.h"
+#include <algorithm>
 
 template<typename T>
 void Roi<T>::_init() {
 	// register parameters and slots
-	this->_addParameter (top,    "top"   , "upper bound" , T(0), "T");
-	this->_addParameter (left,   "left"  , "left bound"  , T(0), "T");
-	this->_addParameter (bottom, "bottom", "lower bound" , T(1), "T");
-	this->_addParameter (right,  "right" , "right bound" , T(1), "T");
-	this->_addParameter (front,  "front" , "front bound" , T(0), "T");
-	this->_addParameter (back,   "back"  , "back bound"  , T(1), "T");
-	this->_addParameter (before, "before", "before bound", T(0), "T");
-	this->_addParameter (after,  "after" , "after bound" , T(1), "T");
-	this->_addOutputSlot(out, "out", "pointer to this roi", "Roi<T>");
+	ParameteredObject::_addParameter<T>(xBegin, "xBegin",
+		"upper bound", T(0), "T");
+	ParameteredObject::_addParameter<T>(xEnd, "xEnd" ,
+		"right bound" , T(1), "T");
+	ParameteredObject::_addParameter<T>(yBegin, "yBegin",
+		"left bound", T(0), "T");
+	ParameteredObject::_addParameter<T>(yEnd, "yEnd",
+		"lower bound" , T(1), "T");
+	ParameteredObject::_addParameter<T>(zBegin, "zBegin",
+		"front bound", T(0), "T");
+	ParameteredObject::_addParameter<T>(zEnd, "zEnd",
+		"back bound"  , T(1), "T");
+	ParameteredObject::_addParameter<T>(tBegin, "tBegin",
+		"lower time bound", T(0), "T");
+	ParameteredObject::_addParameter<T>(tEnd, "tEnd",
+		"upper time bound" , T(1), "T");
+	ParameteredObject::_addParameter<T>(vBegin, "vBegin",
+		"lower channel bound", T(0), "T");
+	ParameteredObject::_addParameter<T>(vEnd, "vEnd",
+		"upper channel bound", T(1), "T");
+
+	ParameteredObject::_addOutputSlot(out, "out",
+		"pointer to this roi", "Roi<T>");
 
 	out = this;
 
@@ -49,10 +64,12 @@ void Roi<T>::_init() {
 	_addFunction(Roi<T>::getHeight);
 	_addFunction(Roi<T>::getDepth);
 	_addFunction(Roi<T>::getDuration);
+	_addFunction(Roi<T>::getChannels);
 	_addFunction(Roi<T>::setWidth);
 	_addFunction(Roi<T>::setHeight);
 	_addFunction(Roi<T>::setDepth);
 	_addFunction(Roi<T>::setDuration);
+	_addFunction(Roi<T>::setChannels);
 	_addFunction(Roi<T>::getVolume);
 	_addFunction(Roi<T>::isInside);
 	_addFunction(Roi<T>::assign);
@@ -72,18 +89,14 @@ TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
 }
 
 template<typename T>
-Roi<T>::Roi(const T& t, const T& l, const T& bo, const T& r,
-            const T& f, const T& ba, const T& be, const T& af, std::string name) :
-TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
+Roi<T>::Roi(
+		const T& xB, const T& xE, const T& yB, const T& yE,
+		const T& zB, const T& zE, const T& tB, const T& tE,
+		const T& vB, const T& vE, std::string name) :
+	TemplatedParameteredObject<T> ("roi", name, "Region of interest")
+{
 	_init();
-	top = t;
-	left = l;
-	bottom = bo;
-	right = r;
-	front = f;
-	back = ba;
-	before = be;
-	after = af;
+	assign(xB,xE,yB,yE,zB,zE,tB,tE,vB,vE);
 }
 
 template<typename T>
@@ -91,153 +104,181 @@ Roi<T>::~Roi(void) {
 }
 
 template <typename T>
-void Roi<T>::assign(T t, T l, T bo, T r, T f, T ba, T be, T af) {
-    top    = t;
-    left   = l;
-    bottom = bo;
-    right  = r;
-    front  = f;
-    back   = ba;
-    before = be;
-    after  = af;
+void Roi<T>::assign(
+		const T& xB, const T& xE, const T& yB, const T& yE,
+		const T& zB, const T& zE, const T& tB, const T& tE,
+		const T& vB, const T& vE)
+{
+	xBegin() = xB;
+	yBegin() = yB;
+	zBegin() = zB;
+	tBegin() = tB;
+	vBegin() = vB;
+	xEnd() = xE;
+	yEnd() = yE;
+	zEnd() = zE;
+	tEnd() = tE;
+	vEnd() = vE;
 }
 
 template <typename T>
 T Roi<T>::getWidth() const {
-	return right() - left();
+	return xEnd() - xBegin();
 }
 
 template <typename T>
 T Roi<T>::getHeight() const {
-	return bottom() - top();
+	return yEnd() - yBegin();
 }
 
 template <typename T>
 T Roi<T>::getDepth() const {
-	return back() - front();
+	return zEnd() - zBegin();
 }
 
 template <typename T>
 T Roi<T>::getDuration() const {
-	return after() - before();
+	return tEnd() - tBegin();
+}
+
+template <typename T>
+T Roi<T>::getChannels() const {
+	return vEnd() - vBegin();
 }
 
 template <typename T>
 void Roi<T>::setWidth(T w) {
-	right = left() + w;
+	xEnd() = xBegin() + w;
 }
 
 template <typename T>
 void Roi<T>::setHeight(T h) {
-	bottom = top() + h;
+	yEnd() = yBegin() + h;
 }
 
 template <typename T>
 void Roi<T>::setDepth(T d) {
-	back() = front() + d;
+	zEnd() = zBegin() + d;
 }
 
 template <typename T>
 void Roi<T>::setDuration(T d) {
-	after() = before() + d;
+	tEnd() = tBegin() + d;
+}
+
+template <typename T>
+void Roi<T>::setChannels(T v) {
+	vEnd() = vBegin() + v;
 }
 
 template <typename T>
 T Roi<T>::getVolume() const {
-	return getDuration() ? getWidth() * getHeight() * getDepth()
-			* getDuration() : getDepth() ? getWidth() * getHeight()
-			* getDepth() : getWidth() * getHeight();
+	T volume = getWidth();
+	if (getHeight())
+		volume *= getHeight();
+	if (getDepth())
+		volume *= getDepth();
+	if (getDuration())
+		volume *= getDuration();
+	if (getChannels())
+		volume *= getChannels();
+	return volume;
 }
 
 template <typename T>
-bool Roi<T>::isInside(T x, T y, T z, T t) const {
-	return x >= this->left() && x < this->right() && y >= this->top() && y
-			< this->bottom() && z >= this->front() && z < this->back() && t
-			>= this->before() && t < this->after();
+bool Roi<T>::isInside(T x, T y, T z, T t, T v) const {
+	bool res = true;
+	res = res && (x >= xBegin() && x < xEnd());
+	res = res && (y >= yBegin() && y < yEnd());
+	res = res && (z >= zBegin() && z < zEnd());
+	res = res && (t >= tBegin() && t < tEnd());
+	res = res && (v >= vBegin() && v < vEnd());
+	return res;
 }
 
 template <typename T>
 Roi<T>& Roi<T>::operator= (const Roi<T>& rhs) {
-    this->top    = rhs.top,
-    this->left   = rhs.left,
-    this->bottom = rhs.bottom,
-    this->right  = rhs.right,
-    this->front  = rhs.front,
-    this->back   = rhs.back,
-    this->before = rhs.before,
-    this->after  = rhs.after;
+	assign(rhs.xBegin(),rhs.xEnd(),
+		rhs.yBegin(), rhs.yEnd(),
+		rhs.zBegin(), rhs.zEnd(),
+		rhs.tBegin(), rhs.tEnd(),
+		rhs.vBegin(), rhs.vEnd());
     return *this;
 }
 
 template <typename T>
 void Roi<T>::intersectionWith(const Roi<T>& rhs) {
-    top    = rhs.top()    > top()    ? rhs.top()    : top();
-    left   = rhs.left()   > left()   ? rhs.left()   : left();
-    bottom = rhs.bottom() < bottom() ? rhs.bottom() : bottom();
-    right  = rhs.right()  < right()  ? rhs.right()  : right();
-    front  = rhs.front()  > front()  ? rhs.front()  : front();
-    back   = rhs.back()   < back()   ? rhs.back()   : back();
-    before = rhs.before() > before() ? rhs.before() : before();
-    after  = rhs.after()  < after()  ? rhs.after()  : after();
+    if(rhs.xBegin() > xBegin()) xBegin() = rhs.xBegin();
+    if(rhs.yBegin() > yBegin()) yBegin() = rhs.yBegin();
+    if(rhs.zBegin() > zBegin()) zBegin() = rhs.zBegin();
+    if(rhs.tBegin() > tBegin()) tBegin() = rhs.tBegin();
+    if(rhs.vBegin() > vBegin()) vBegin() = rhs.vBegin();
+
+	if(rhs.xEnd() < xEnd()) xEnd() = rhs.xEnd();
+	if(rhs.yEnd() < yEnd()) yEnd() = rhs.yEnd();
+	if(rhs.zEnd() < zEnd()) zEnd() = rhs.zEnd();
+	if(rhs.tEnd() < tEnd()) tEnd() = rhs.tEnd();
+	if(rhs.vEnd() < vEnd()) vEnd() = rhs.vEnd();
 }
 
 template <typename T>
 void Roi<T>::unionWith(const Roi<T>& rhs) {
-    top    = rhs.top()    < top()    ? rhs.top()    : top();
-    left   = rhs.left()   < left()   ? rhs.left()   : left();
-    bottom = rhs.bottom() > bottom() ? rhs.bottom() : bottom();
-    right  = rhs.right()  > right()  ? rhs.right()  : right();
-    front  = rhs.front()  < front()  ? rhs.front()  : front();
-    back   = rhs.back()   > back()   ? rhs.back()   : back();
-    before = rhs.before() < before() ? rhs.before() : before();
-    after  = rhs.after()  > after()  ? rhs.after()  : after();
+    if(rhs.xBegin() < xBegin()) xBegin() = rhs.xBegin();
+    if(rhs.yBegin() < yBegin()) yBegin() = rhs.yBegin();
+    if(rhs.zBegin() < zBegin()) zBegin() = rhs.zBegin();
+    if(rhs.tBegin() < tBegin()) tBegin() = rhs.tBegin();
+    if(rhs.vBegin() < vBegin()) vBegin() = rhs.vBegin();
+
+	if(rhs.xEnd() > xEnd()) xEnd() = rhs.xEnd();
+	if(rhs.yEnd() > yEnd()) yEnd() = rhs.yEnd();
+	if(rhs.zEnd() > zEnd()) zEnd() = rhs.zEnd();
+	if(rhs.tEnd() > tEnd()) tEnd() = rhs.tEnd();
+	if(rhs.vEnd() > vEnd()) vEnd() = rhs.vEnd();
 }
 
 template<typename T>
 void Roi<T>::loadParameters(const ParameterFile& pf) {
 	ParameteredObject::loadParameters(pf);
 	
-	//correct order of parameters
-	if (top() > bottom()) {
+	// correct order of parameters
+	if (xBegin() > xEnd()) {
 		sout << "Roi '" << ParameteredObject::getName();
-		sout << "': Switching top and bottom appropriately." << std::endl;
-		T tmp = bottom();
-		bottom = top();
-		top = tmp;
+		sout << "': Switching xBegin and xEnd." << std::endl;
+		std::swap(xBegin(), xEnd());
 	}
 	
-	if (left() > right()) {
+	if (yBegin() > yEnd()) {
 		sout << "Roi '" << ParameteredObject::getName();
-		sout << "': Switching left and right appropriately." << std::endl;
-		T tmp = right();
-		right = left();
-		left = tmp;
+		sout << "': Switching yBegin and yEnd." << std::endl;
+		std::swap(yBegin(), yEnd());
 	}
 	
-	if (front() > back()) {
+	if (zBegin() > zEnd()) {
 		sout << "Roi '" << ParameteredObject::getName();
-		sout << "': Switching back and front appropriately." << std::endl;
-		T tmp = back();
-		back = front();
-		front = tmp;
+		sout << "': Switching zBegin and zEnd." << std::endl;
+		std::swap(zBegin(), zEnd());
+	}
+
+	if (tBegin() > tEnd()) {
+		sout << "Roi '" << ParameteredObject::getName();
+		sout << "': Switching tBegin and tEnd." << std::endl;
+		std::swap(tBegin(), tEnd());
 	}
 	
-    if (before() > after()) {
-        sout << "Roi '" << ParameteredObject::getName();
-        sout << "': Switching before and after appropriately." << std::endl;
-        T tmp = after();
-        after  = before();
-        before = tmp;
-    }
-	
+	if (vBegin() > vEnd()) {
+		sout << "Roi '" << ParameteredObject::getName();
+		sout << "': Switching vBegin and vEnd." << std::endl;
+		std::swap(vBegin(), vEnd());
+	}
 }
 
 template<typename T>
 inline std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi) {
-	strm << "l=x0=" << roi.left() << ",r=x1=" << roi.right();
-	strm << ",t=y0=" << roi.top() << ",b=y1=" << roi.bottom();
-	strm << ",f=z0=" << roi.front() << ",b=z1=" << roi.back();
-    strm << ",b=t0=" << roi.before() << ",a=t1=" << roi.after();
+	strm << "xBegin=" << roi.xBegin() << ",xEnd=" << roi.xEnd() << ",";
+	strm << "yBegin=" << roi.yBegin() << ",yEnd=" << roi.yEnd() << ",";
+	strm << "zBegin=" << roi.zBegin() << ",zEnd=" << roi.zEnd() << ",";
+	strm << "tBegin=" << roi.tBegin() << ",tEnd=" << roi.tEnd() << ",";
+	strm << "vBegin=" << roi.vBegin() << ",vEnd=" << roi.vEnd();
 	return strm;
 }
 

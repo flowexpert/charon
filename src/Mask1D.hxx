@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file Mask1D.xx
+/// @file Mask1D.hxx
 /// Implementation of the parameter class Mask1D
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @date 02.10.2009

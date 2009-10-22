@@ -42,35 +42,43 @@ void Crop<T>::execute()
 
     // check roi ranges
     assert(roi());
-    assert(roi()->left   <= roi()->right);
-    assert(roi()->top    <= roi()->bottom);
-    assert(roi()->front  <= roi()->back);
-	assert(roi()->before <= roi()->after);
+    assert(roi()->xBegin() <= roi()->xEnd());
+    assert(roi()->yBegin() <= roi()->yEnd());
+    assert(roi()->zBegin() <= roi()->zEnd());
+    assert(roi()->tBegin() <= roi()->tEnd());
+    assert(roi()->vBegin() <= roi()->vEnd());
+
 	unsigned int
-		x0 = roi()->left,
-		y0 = roi()->top,
-		z0 = roi()->front,
-		t0 = roi()->before,
-		x1 = roi()->right-1,
-		y1 = roi()->bottom-1,
-		z1 = roi()->back-1,
-		t1 = roi()->after-1;
-	if(roi()->left == roi()->right) {
+		x0 = roi()->xBegin,
+		y0 = roi()->yBegin,
+		z0 = roi()->zBegin,
+		t0 = roi()->tBegin,
+		v0 = roi()->vBegin,
+		x1 = roi()->xEnd-1,
+		y1 = roi()->yEnd-1,
+		z1 = roi()->zEnd-1,
+		t1 = roi()->tEnd-1,
+		v1 = roi()->vEnd-1;
+	if(roi()->xBegin() == roi()->xEnd()) {
 		sout << "\tleaving x dimension uncropped" << std::endl;
 		x0 = 0; x1 = in()[0].dimx()-1;
 	}
-	if(roi()->top == roi()->bottom) {
+	if(roi()->yBegin() == roi()->yEnd()) {
 		sout << "\tleaving y dimension uncropped" << std::endl;
 		y0 = 0; y1 = in()[0].dimy()-1;
 	}
-	if(roi()->front == roi()->back) {
+	if(roi()->zBegin() == roi()->zEnd()) {
 		sout << "\tleaving z dimension uncropped" << std::endl;
 		z0 = 0; z1 = in()[0].dimz()-1;
 	}
-	if(roi()->before == roi()->after) {
+	if(roi()->tBegin() == roi()->tEnd()) {
 		sout << "\tleaving t dimension uncropped" << std::endl;
 		t0 = 0; t1 = in()[0].dimv()-1;
 	}
-    out = in().get_crop(0, in().size-1, x0, y0, z0, t0, x1, y1, z1, t1);
+	if(roi()->vBegin() == roi()->vEnd()) {
+		sout << "\tleaving v dimension uncropped" << std::endl;
+		v0 = 0; v1 = in().size - 1;
+	}
+    out = in().get_crop(v0, v1, x0, y0, z0, t0, x1, y1, z1, t1);
 }
 #endif // _CROP_HXX_

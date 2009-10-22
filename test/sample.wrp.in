@@ -7,13 +7,12 @@ fw.in              blur.out
 
 roi.type           roi
 roi.templatetype   int
-roi.top            0
-roi.left           27
-roi.bottom         18
-roi.right          46
+roi.xBegin         27
+roi.xEnd           46
+roi.yEnd           18
 
 blur.type	imageblur
-blur.strength	2
+blur.strength	1.5
 blur.in		rd.out
 blur.roi	roi.out
 
