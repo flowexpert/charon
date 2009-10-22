@@ -577,8 +577,15 @@ std::vector<std::string> ParameterFileModel::_paramFilter(const std::vector<
 }
 
 void ParameterFileModel::executeWorkflow() {
-	PluginManager man(FileManager::instance().getGlobalPluginPath(),
-			FileManager::instance().getPrivatePluginPath());
+	std::string globalPluginPath = FileManager::instance().getGlobalPluginPath();
+	std::string privatePluginPath = FileManager::instance().getPrivatePluginPath();
+	PluginManager man(globalPluginPath,privatePluginPath);
+	std::string logFile = FileManager::instance().configDir()
+		.path().toAscii().constData();
+	logFile += "/executeLog.txt";
+	std::ofstream log(logFile.c_str(), std::ios::trunc);
+	Q_ASSERT(log.good());
+	sout.assign(log, std::cout);
 	try {
 		man.loadParameterFile(*_parameterFile);
 		man.executeWorkflow();
@@ -604,6 +611,8 @@ void ParameterFileModel::executeWorkflow() {
 		QMessageBox::warning(0, tr("error during execution"),
 			tr("Caught exception of unknown type"));
 	}
+	sout.assign();
+	log.close();
 }
 
 std::string ParameterFileModel::getType(std::string parName) const {

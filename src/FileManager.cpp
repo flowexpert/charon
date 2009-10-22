@@ -104,20 +104,7 @@ void FileManager::loadPluginInformation() const {
 	}
 	FileTool::changeDir(oldPath);
 
-	ParameterFile pf(_paramFile());
-
-	std::string charon_utils_install = pf.get<std::string> (
-			"charon-utils-install");
-	std::string additionalPluginPath = pf.get<std::string> (
-			"additional-plugin-path");
-
-	PluginManager man(charon_utils_install +
-#ifdef UNIX
-		"/lib/charon-plugins",
-#else
-		"/bin",
-#endif
-		additionalPluginPath);
+	PluginManager man(getGlobalPluginPath(), getPrivatePluginPath());
 	man.createMetadata(_metaPath());
 }
 
@@ -271,8 +258,13 @@ std::string FileManager::_charonCoreInstall() const {
 std::string FileManager::getGlobalPluginPath() const {
 	try {
 		ParameterFile pf(_paramFile());
+#ifdef WIN32
+		return (pf.get<std::string> ("charon-utils-install")
+				+ "/bin");
+#else
 		return (pf.get<std::string> ("charon-utils-install")
 				+ "/lib/charon-plugins");
+#endif
 	} catch (...) {
 		return "";
 	}
