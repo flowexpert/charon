@@ -90,12 +90,6 @@ FOREACH(X ${Plugins})
 ENDFOREACH(X)
 
 # install libraries/plugins
-IF(NOT ${CMAKE_INSTALL_PREFIX} STREQUAL ${CHARON_UTILS_ROOT_DIR})
-	MESSAGE(STATUS	"Warning: Plugins will NOT be installed in standart "
-					"plugin directory!")
-	MESSAGE(STATUS	"Set CMAKE_INSTALL_PREFIX to ${CHARON_UTILS_ROOT_DIR} "
-					"to install into global plugin path.")
-ENDIF(NOT ${CMAKE_INSTALL_PREFIX} STREQUAL ${CHARON_UTILS_ROOT_DIR})
 SET_TARGET_PROPERTIES(${Plugins}
 	PROPERTIES INSTALL_RPATH
 	${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins:${CHARON_CORE_ROOT_DIR}/lib${LIB_SUFFIX}
