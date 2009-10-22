@@ -38,14 +38,10 @@ int main()
 		ListedPixelSelection<float> lps("lps");
 		std::vector<Pixel<float>*> list;
 
-		roi.left = 29;
-		roi.right = 44;
-		roi.top = 0;
-		roi.bottom = 18;
-		roi.front = 0;
-		roi.back = 1;
-		roi.before = 0;
-		roi.after = 1;
+		roi.xBegin = 29;
+		roi.xEnd = 44;
+		roi.yBegin = 0;
+		roi.yEnd = 18;
 
 		rd.filename = PENGUINFILE;
 
@@ -89,14 +85,8 @@ int main()
 		rdt.filename = PENGUINHEADFILE;
 		lpst.range.connect(&roit.out);
 		lpst.sequence.connect(&rdt.out);
-		roit.left = 0;
-		roit.right = 60;
-		roit.top = 0;
-		roit.bottom = 60;
-		roit.front = 0;
-		roit.back = 1;
-		roit.before = 0;
-		roit.after = 1;
+		roit.xEnd = 60;
+		roit.yEnd = 60;
 		lpst.range.connect(&roit.out);
 		lpst.sequence.connect(&rdt.out);
 		if (!lpst.range.connected(&roit.out))

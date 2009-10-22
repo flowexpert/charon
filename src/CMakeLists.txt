@@ -7,15 +7,31 @@ INCLUDE_DIRECTORIES(ObjectiveFunctions)
 INCLUDE_DIRECTORIES(SurfaceAnalysis)
 
 IF(MSVC)
-	ADD_DEFINITIONS(/DHANDLE_DLL)
+	ADD_DEFINITIONS(-DHANDLE_DLL)
 ENDIF(MSVC)
 
 # plugins
 SET(Plugins)
 
 IF (ENABLE_STENCILS)
-	ADD_LIBRARY(gbcce SHARED Stencils/Gbcce.cpp)
-	ADD_LIBRARY(l2norm SHARED Stencils/L2Norm.cpp)
+	ADD_LIBRARY(gbcce SHARED
+		Stencils/Gbcce.cpp
+		Stencils/Gbcce.h
+		Stencils/Gbcce.hxx
+		Stencil.h
+		Stencil.hxx
+		Substencil.h
+		Substencil.hxx
+	)
+	ADD_LIBRARY(l2norm SHARED
+		Stencils/L2Norm.cpp
+		Stencils/L2Norm.h
+		Stencils/L2Norm.hxx
+		Stencil.h
+		Stencil.hxx
+		Substencil.h
+		Substencil.hxx
+	)
 	LIST(APPEND Plugins
 		gbcce
 		l2norm
@@ -24,7 +40,13 @@ ENDIF (ENABLE_STENCILS)
 
 IF(ENABLE_SOLVERS AND WITH_PETSC)
 	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
-	ADD_LIBRARY(petscsolver SHARED Solvers/PetscSolver.cpp)
+	ADD_LIBRARY(petscsolver SHARED
+		Solvers/PetscSolver.cpp
+		Solvers/PetscSolver.h
+		Solvers/PetscSolver.hxx
+		Solver.h
+		Solver.hxx
+	)
 	TARGET_LINK_LIBRARIES(petscsolver ${PETSC_LIBRARIES})
 	LIST(APPEND Plugins
 		petscsolver
@@ -32,15 +54,51 @@ IF(ENABLE_SOLVERS AND WITH_PETSC)
 ENDIF(ENABLE_SOLVERS AND WITH_PETSC)
 
 IF (ENABLE_BLOCKMATCHING)
-	ADD_LIBRARY(incrementorparameter SHARED IncrementorParameter.cpp)
-	ADD_LIBRARY(incrementorcountup SHARED Incrementors/IncrementorCountUp.cpp)
+	ADD_LIBRARY(incrementorparameter SHARED
+		IncrementorParameter.cpp
+		IncrementorParameter.h
+		IncrementorParameter.hxx
+	)
+	ADD_LIBRARY(incrementorcountup SHARED
+		Incrementors/IncrementorCountUp.cpp
+		Incrementors/IncrementorCountUp.h
+		Incrementors/IncrementorCountUp.hxx
+		Incrementor.h
+		Incrementor.hxx
+	)
 	TARGET_LINK_LIBRARIES(incrementorcountup incrementorparameter)
-	ADD_LIBRARY(objectivefunctioncomparing SHARED ObjectiveFunctions/ObjectiveFunctionComparing.cpp)
-	ADD_LIBRARY(listedpixelselection SHARED PixelSelections/ListedPixelSelection.cpp)
+	ADD_LIBRARY(objectivefunctioncomparing SHARED
+		ObjectiveFunctions/ObjectiveFunctionComparing.cpp
+		ObjectiveFunctions/ObjectiveFunctionComparing.h
+		ObjectiveFunctions/ObjectiveFunctionComparing.hxx
+		ObjectiveFunction.h
+		ObjectiveFunction.hxx
+	)
+	ADD_LIBRARY(listedpixelselection SHARED
+		PixelSelections/ListedPixelSelection.cpp
+		PixelSelections/ListedPixelSelection.h
+		PixelSelections/ListedPixelSelection.hxx
+		PixelSelection.h
+		PixelSelection.hxx
+		Pixel.h
+		Pixel.hxx
+	)
 	TARGET_LINK_LIBRARIES(listedpixelselection roi)
-	ADD_LIBRARY(surfaceanalysisminchange SHARED SurfaceAnalysis/SurfaceAnalysisMinChange.cpp)
+	ADD_LIBRARY(surfaceanalysisminchange SHARED
+		SurfaceAnalysis/SurfaceAnalysisMinChange.cpp
+		SurfaceAnalysis/SurfaceAnalysisMinChange.h
+		SurfaceAnalysis/SurfaceAnalysisMinChange.hxx
+		SurfaceAnalysis.h
+		SurfaceAnalysis.hxx
+	)
 	TARGET_LINK_LIBRARIES(surfaceanalysisminchange incrementorparameter)
-	ADD_LIBRARY(blockmatchingliacs SHARED BlockMatching/BlockMatchingLIACS.cpp)
+	ADD_LIBRARY(blockmatchingliacs SHARED
+		BlockMatching/BlockMatchingLIACS.cpp
+		BlockMatching/BlockMatchingLIACS.h
+		BlockMatching/BlockMatchingLIACS.hxx
+		BlockMatching.h
+		BlockMatching.hxx
+	)
 	TARGET_LINK_LIBRARIES(blockmatchingliacs incrementorcountup)
 	LIST(APPEND Plugins
 		incrementorparameter	
@@ -52,10 +110,30 @@ IF (ENABLE_BLOCKMATCHING)
 	)
 ENDIF (ENABLE_BLOCKMATCHING)
 IF (ENABLE_BRIGHTNESS)
-	ADD_LIBRARY(brightnessmodels_constant SHARED BrightnessModels/Constant.cpp)
-#	ADD_LIBRARY(brightnessmodels_diffusion SHARED BrightnessModels/Diffusion.cpp)
-#	ADD_LIBRARY(brightnessmodels_exponential SHARED BrightnessModels/Exponential.cpp)
-#	ADD_LIBRARY(brightnessmodels_movingillumination SHARED BrightnessModels/MovingIllumination.cpp)
+	ADD_LIBRARY(brightnessmodels_constant SHARED
+		BrightnessModels/Constant.cpp
+		BrightnessModels/Constant.h
+		BrightnessModels/Constant.hxx
+		BrightnessModel.h
+	)
+#	ADD_LIBRARY(brightnessmodels_diffusion SHARED
+#		BrightnessModels/Diffusion.cpp
+#		BrightnessModels/Diffusion.h
+#		BrightnessModels/Diffusion.hxx
+#		BrightnessModel.h
+#	)
+#	ADD_LIBRARY(brightnessmodels_exponential SHARED
+#		BrightnessModels/Exponential.cpp
+#		BrightnessModels/Exponential.h
+#		BrightnessModels/Exponential.hxx
+#		BrightnessModel.h
+#	)
+#	ADD_LIBRARY(brightnessmodels_movingillumination SHARED
+#		BrightnessModels/MovingIllumination.cpp
+#		BrightnessModels/MovingIllumination.h
+#		BrightnessModels/MovingIllumination.hxx
+#		BrightnessModel.h
+#	)
 	LIST(APPEND Plugins
 		brightnessmodels_constant
 #		brightnessmodels_diffusion
@@ -64,11 +142,51 @@ IF (ENABLE_BRIGHTNESS)
 	)
 ENDIF (ENABLE_BRIGHTNESS)
 IF (ENABLE_MOTION)
-#	ADD_LIBRARY(motionmodels_localaffiness SHARED MotionModels/LocalAffiness.cpp FlowFunctor.cpp)
-	ADD_LIBRARY(motionmodels_localconstant SHARED MotionModels/LocalConstant.cpp FlowFunctor.cpp)
-#	ADD_LIBRARY(motionmodels_localplanarity SHARED MotionModels/LocalPlanarity.cpp FlowFunctor.cpp)
-#	ADD_LIBRARY(motionmodels_localrotation SHARED MotionModels/LocalRotation.cpp FlowFunctor.cpp)
-#	ADD_LIBRARY(motionmodels_localstretch SHARED MotionModels/LocalStretch.cpp FlowFunctor.cpp)
+#	ADD_LIBRARY(motionmodels_localaffiness SHARED
+#		MotionModels/LocalAffiness.cpp
+#		MotionModels/LocalAffiness.h
+#		MotionModels/LocalAffiness.hxx
+#		FlowFunctor.cpp
+#		FlowFunctor.h
+#		FlowFunctorInterface.h
+#		MotionModel.h
+#	)
+	ADD_LIBRARY(motionmodels_localconstant SHARED
+		MotionModels/LocalConstant.cpp
+		MotionModels/LocalConstant.h
+		MotionModels/LocalConstant.hxx
+		FlowFunctor.cpp
+		FlowFunctor.h
+		FlowFunctorInterface.h
+		MotionModel.h
+	)
+#	ADD_LIBRARY(motionmodels_localplanarity SHARED
+#		MotionModels/LocalPlanarity.cpp
+#		MotionModels/LocalPlanarity.h
+#		MotionModels/LocalPlanarity.hxx
+#		FlowFunctor.cpp
+#		FlowFunctor.h
+#		FlowFunctorInterface.h
+#		MotionModel.h
+#	)
+#	ADD_LIBRARY(motionmodels_localrotation SHARED
+#		MotionModels/LocalRotation.cpp
+#		MotionModels/LocalRotation.h
+#		MotionModels/LocalRotation.hxx
+#		FlowFunctor.cpp
+#		FlowFunctor.h
+#		FlowFunctorInterface.h
+#		MotionModel.h
+#	)
+#	ADD_LIBRARY(motionmodels_localstretch SHARED
+#		MotionModels/LocalStretch.cpp
+#		MotionModels/LocalStretch.h
+#		MotionModels/LocalStretch.hxx
+#		FlowFunctor.cpp
+#		FlowFunctor.h
+#		FlowFunctorInterface.h
+#		MotionModel.h
+#	)
 	LIST(APPEND Plugins
 #		motionmodels_localaffiness
 		motionmodels_localconstant

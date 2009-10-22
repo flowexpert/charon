@@ -35,16 +35,16 @@
 #define blockmatching_DECLDIR
 #endif
 
-#include <ParameteredObject.hxx>
-#include <Roi.h>
-#include <CImg.h>
+#include <charon-core/ParameteredObject.hxx>
+#include <charon-utils/Roi.h>
+#include <charon-utils/CImg.h>
+#include <charon-utils/Interpolator.h>
 #include "Incrementor.h"
 #include "ObjectiveFunction.h"
 #include "SurfaceAnalysis.h"
 #include "PixelSelection.h"
 #include "BrightnessModel.h"
 #include "MotionModel.h"
-#include <Interpolator.h>
 #include <vector>
 
 /// This is the abstract base class of the declaration and implementation of the 
@@ -59,7 +59,7 @@ public:
 	BlockMatching(const std::string& name = "", const std::string& pluginName = "");
 
 	/// inputslot for the sequence of images where the flow will be computed
-	InputSlot<cimg_library::CImgList<T> &> sequence;
+	InputSlot<cimg_library::CImgList<T> > sequence;
 
 	/// inputslot for a list of Pixel out of the ROI to limit the region of 
 	/// computation

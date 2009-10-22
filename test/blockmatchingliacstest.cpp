@@ -52,14 +52,8 @@ int main()
 		// initialisation
 		ListedPixelSelection<float> lps("lps");
 		Roi<int> roi("roi");
-		roi.left = 0;
-		roi.right = 15;
-		roi.top = 0;
-		roi.bottom = 18;
-		roi.front = 0;
-		roi.back = 1;
-		roi.before = 0;
-		roi.after = 1;
+		roi.xEnd = 15;
+		roi.yEnd = 18;
 		FileReader<float> rd("rd");
 		rd.filename
 				= TESTFILE;
@@ -288,7 +282,6 @@ int main()
 		wr.filename
 				= "flow.cimg";
 		wr.execute();
-
 	} catch (std::string s)
 	{
 		std::cout << s << std::endl;

@@ -55,14 +55,8 @@ int main()
 		params.push_back(&incpar4);
 		ListedPixelSelection<float> lps("lps");
 		Roi<int> roi("roi");
-		roi.left = 0;
-		roi.right = 2;
-		roi.top = 0;
-		roi.bottom = 2;
-		roi.front = 0;
-		roi.back = 1;
-		roi.before = 0;
-		roi.after = 1;
+		roi.xEnd = 2;
+		roi.yEnd = 2;
 		FileReader<float> rd("rd");
 		rd.filename	= TESTFILE;
 		lps.range.connect(&roi.out);
