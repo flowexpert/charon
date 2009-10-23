@@ -23,19 +23,21 @@ FIND_PATH(CHARON_UTILS_ROOT_DIR
 )
 
 FILE(GLOB CHARON_UTILS_DOCDIRS
-    /usr/share/doc/charon-utils-*
+    /usr/share/doc/charon-utils*
 )
 
 FIND_FILE(CHARON_UTILS_TAGFILE
 	NAMES			charon-utils.tag
-    PATHS           ${CHARON_UTILS_ROOT_DIR}/doc
+    PATHS           ${CHARON_UTILS_ROOT_DIR}/doc/charon-utils
+    	            ${CHARON_UTILS_ROOT_DIR}/doc
                     ${CHARON_UTILS_DOCDIRS}
     PATH_SUFFIXES   html
 	DOC				"doxygen import tag file"
 )
 FIND_PATH(CHARON_UTILS_HTMLDOC_DIR
     NAMES           index.html
-    PATHS           ${CHARON_UTILS_ROOT_DIR}/doc
+    PATHS           ${CHARON_UTILS_ROOT_DIR}/doc/charon-utils
+    	            ${CHARON_UTILS_ROOT_DIR}/doc
                     ${CHARON_UTILS_DOCDIRS}
     PATH_SUFFIXES   html
     DOC             "path to charon-utils htmldoc (if exists)"
