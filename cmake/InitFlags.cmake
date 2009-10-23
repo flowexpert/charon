@@ -35,10 +35,14 @@ IF(NOT CMAKE_FLAGS_INIT)
 		)
 	ENDIF(MSVC)
 	# set install prefix to global install path
-	SET(CMAKE_INSTALL_PREFIX ${CHARON_UTILS_ROOT_DIR}
-		CACHE PATH "Install path prefix, prepended onto install directories."
-		FORCE
-	)
+	IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+		SET(CMAKE_INSTALL_PREFIX ${CHARON_UTILS_ROOT_DIR}
+			CACHE PATH "Install path prefix, prepended onto install directories."
+			FORCE
+		)
+	ELSE(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+		MESSAGE(STATUS "Using user-specified install prefix: ${CMAKE_INSTALL_PREFIX}")
+	ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 	# default to debug builds
 	IF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
 		SET(CMAKE_BUILD_TYPE "Debug"
