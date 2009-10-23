@@ -40,6 +40,7 @@ IF(NOT CMAKE_FLAGS_INIT)
 			CACHE PATH "Install path prefix, prepended onto install directories."
 			FORCE
 		)
+		MESSAGE(STATUS "Using global install prefix: ${CMAKE_INSTALL_PREFIX}")
 	ELSE(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 		MESSAGE(STATUS "Using user-specified install prefix: ${CMAKE_INSTALL_PREFIX}")
 	ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
