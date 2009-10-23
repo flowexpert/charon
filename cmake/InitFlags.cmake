@@ -34,6 +34,15 @@ IF(NOT CMAKE_FLAGS_INIT)
 			FORCE
 		)
 	ENDIF(MSVC)
+	# default to debug builds
+	IF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
+		SET(CMAKE_BUILD_TYPE "Debug"
+			CACHE STRING
+			"Choose the type of build, options are: None(CMAKE_CXX_FLAGS or"
+			"CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel."
+			FORCE
+		)
+	ENDIF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
 ENDIF(NOT CMAKE_FLAGS_INIT)
 
 # set definitions depending on build environment
