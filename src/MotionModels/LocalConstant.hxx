@@ -108,7 +108,7 @@ MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
 	_addInputSlot(dz, "dz", "derivation in z", "CImgList<T>");
 	_addInputSlot(dt, "dt", "derivation in t", "CImgList<T>");
 
-	this->setFlowFunctorParams(0.5, 0.4, 0.3);
+	this->setFlowFunctorParams(.5f, .4f, .3f);
 	this->flowFunctor = &flowfunc;
 }
 

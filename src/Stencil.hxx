@@ -32,10 +32,11 @@
 template <class T>
 Stencil<T>::Stencil(const std::string& classname, const std::string& name) : 
 				TemplatedParameteredObject<T>(classname,name,
-				"discretizes partial differential equation terms or defines derivatives filters for images"),
-				out(this) {
+				"discretizes partial differential equation terms or defines derivatives filters for images")
+{
 	this->_addOutputSlot(out,"this","Pointer to itself","Stencil<T>*");
 	this->_addParameter(lambda,"lambda","weight of the pde term",T(1),"T");
+	out = this;
 }
 
 
