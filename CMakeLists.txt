@@ -4,7 +4,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-INCLUDE(InitFlags)
 
 # CMAKE_VERSION missing in versions <cmake-2.6.3
 IF(NOT CMAKE_VERSION)
@@ -42,6 +41,7 @@ ENDIF(Subversion_FOUND)
 
 FIND_PACKAGE(charon-core REQUIRED)
 FIND_PACKAGE(charon-utils REQUIRED)
+INCLUDE(InitFlags)
 
 # executables and dll files are moved to the same directory
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
