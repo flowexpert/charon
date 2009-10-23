@@ -47,8 +47,7 @@ IF(NOT CMAKE_FLAGS_INIT)
 	IF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
 		SET(CMAKE_BUILD_TYPE "Debug"
 			CACHE STRING
-			"Choose the type of build, options are: None(CMAKE_CXX_FLAGS or"
-			"CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel."
+			"Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
 			FORCE
 		)
 	ENDIF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
