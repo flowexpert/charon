@@ -59,9 +59,9 @@ public:
 	/// outputslot list of pixel
 	OutputSlot<PixelSelection<T> *> out;
 	/// standard execute from ParameteredObject
-	virtual void execute() =0;
+	virtual void execute() = 0;
 	/// return the list of Pixel
-	std::vector<Pixel<T>*> & getListOfPixel();
+	std::vector<Pixel<T>*>& getListOfPixel();
 };
 
 #endif /* PIXELSELECTION_H_ */

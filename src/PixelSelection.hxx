@@ -32,15 +32,16 @@ PixelSelection<T>::PixelSelection(const std::string& name,
 			"save range of interest in a list of pixels")
 {
 	out = this;
-	this->_addInputSlot(range, "range", "Range of Interest", "roi<int>");
-	this->_addInputSlot(sequence, "sequence", "Sequence to work with",
+	ParameteredObject::_addInputSlot(range, "range", "Range of Interest", "roi<int>");
+	ParameteredObject::_addInputSlot(sequence, "sequence", "Sequence to work with",
 			"CImgList<T>");
-	this->_addOutputSlot(out, "out", "List of Pixel out of Roi",
+	ParameteredObject::_addOutputSlot(out, "out", "List of Pixel out of Roi",
 			"PixelSelection<T> *");
+	_addFunction(PixelSelection<T>::getListOfPixel);
 }
 
 template<typename T>
-std::vector<Pixel<T>*> & PixelSelection<T>::getListOfPixel()
+std::vector<Pixel<T>*>& PixelSelection<T>::getListOfPixel()
 {
 	return this->pixelList;
 }

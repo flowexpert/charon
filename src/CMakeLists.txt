@@ -99,7 +99,7 @@ IF (ENABLE_BLOCKMATCHING)
 		BlockMatching.h
 		BlockMatching.hxx
 	)
-	TARGET_LINK_LIBRARIES(blockmatchingliacs incrementorcountup)
+	TARGET_LINK_LIBRARIES(blockmatchingliacs incrementorcountup listedpixelselection)
 	LIST(APPEND Plugins
 		incrementorparameter	
 		incrementorcountup
