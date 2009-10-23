@@ -42,7 +42,7 @@ ObjectiveFunction<T>::ObjectiveFunction(const std::string& name,
 	this->_addInputSlot(motionModel, "motionModel", "Pointer to MotionModel",
 			"MotionModel*");
 	this->_addInputSlot(interpolator, "interpolator",
-			"Pointer to Interpolator", "interpolator");
+			"Pointer to Interpolator", "Interpolator<T>*");
 	this->_addOutputSlot(out, "out", "this OutputSlot", "ObjectiveFunction<T>*");
 }
 

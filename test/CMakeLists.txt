@@ -46,24 +46,48 @@ IF(ENABLE_TEST)
 		ADD_TEST(ObjectiveFunctionComparingTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/objectivefunctioncomparingtest)
 		ADD_TEST(SurfaceAnalysisMinchangeTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/surfaceanalysisminchangetest)
 		ADD_TEST(BlockmatchingLiacstest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/blockmatchingliacstest)
+		
+		IF(WIN32)
+			# copy needed dll for tests and application run before installing
+			GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
+			GET_TARGET_PROPERTY(Roi_LOC roi LOCATION)
+			GET_TARGET_PROPERTY(Filereader_LOC filereader LOCATION)
+			GET_TARGET_PROPERTY(PLOC listedpixelselectiontest LOCATION)
+			GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
+			ADD_CUSTOM_COMMAND(TARGET POST_BUILD listedpixelselectiontest
+				COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${PLOC_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E copy "${Roi_LOC}" "${PLOC_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E copy "${Filereader_LOC}" "${PLOC_DIR}"
+			)
+		ENDIF(WIN32)
 	ENDIF(ENABLE_BLOCKMATCHING)
 	IF(ENABLE_SOLVERS)
 		# tests for solver classes
 		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
 		TARGET_LINK_LIBRARIES(petscsolvertest
-		                      charon-core
-		                      roi
-		                      gbcce l2norm
-		                      brightnessmodels_constant
-		                      motionmodels_localconstant
-		                      bin2
-		                      channelconverter
-		                      filereader
-		                      filewriter)
+			charon-core
+			roi
+			gbcce
+			l2norm
+			brightnessmodels_constant
+			motionmodels_localconstant
+			bin2
+			channelconverter
+			filereader
+			filewriter
+		)
 		IF(UNIX)
 			TARGET_LINK_LIBRARIES(petscsolvertest pthread ${X11_LIBRARIES})
 		ENDIF(UNIX)
-		GET_TARGET_PROPERTY(petscsolvertest_LOC petscsolvertest LOCATION)
 		ADD_TEST(PetscSolverTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscsolvertest)
+		IF(WIN32)
+			# copy needed dll for tests and application run before installing
+			GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
+			GET_TARGET_PROPERTY(PLOC petscsolvertest LOCATION)
+			GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
+			ADD_CUSTOM_COMMAND(TARGET POST_BUILD petscsolvertest
+				COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${PLOC_DIR}"
+			)
+		ENDIF(WIN32)
 	ENDIF(ENABLE_SOLVERS)
 ENDIF(ENABLE_TEST)
