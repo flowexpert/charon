@@ -7,7 +7,7 @@ IF (DOXYGEN_FOUND)
     OPTION(ENABLE_DOC "Automatically create documentation" ON)
     OPTION(WITH_LATEX "activate pdfdoc generation" ON)
 	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
-    SET(CMAKE_INSTALL_DOC doc
+    SET(CMAKE_INSTALL_DOC doc/${PROJECT_NAME}
         CACHE PATH "documentation install prefix")
     MARK_AS_ADVANCED(CMAKE_INSTALL_DOC ENABLE_DOC_VERBOSE)
 
