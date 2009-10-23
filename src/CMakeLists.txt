@@ -6,29 +6,50 @@ INCLUDE_DIRECTORIES(${GRAPHVIZ_INCLUDE_DIRS})
 # source files containing QObject derived classes
 SET(EDITPARAM_SOURCES
     ParameterFileModel.cpp
+    ParameterFileModel.h
     PrefixValidator.cpp
+    PrefixValidator.h
     ObjectInspector.cpp
+    ObjectInspector.h
 	InspectorDelegate.cpp
+	InspectorDelegate.h
     DocGenerator.cpp
+    DocGenerator.h
     ModelToolBar.cpp
+    ModelToolBar.h
     messageHandler.cpp
+    messageHandler.h
     Qtiostream.cpp
+    Qtiostream.h
     imageManip.cpp
+    imageManip.h
     VarTypeMap.cpp
+    VarTypeMap.h
     MetaData.cpp
+    MetaData.h
     FileManager.cpp
+    FileManager.h
 )
 
 SET(EDITGRAPH_SOURCES
     GraphModel.cpp
+    GraphModel.h
     GraphBuilder.cpp
+    GraphBuilder.h
     HierarchyGraphBuilder.cpp
+    HierarchyGraphBuilder.h
     TemplateGraphBuilder.cpp
+    TemplateGraphBuilder.h
     FlowWidget.cpp
+    FlowWidget.h
     SelectorWidget.cpp
+    SelectorWidget.h
     GraphView.cpp
+    GraphView.h
     HierarchyGraphView.cpp
+    HierarchyGraphView.h
     TemplateGraphView.cpp
+    TemplateGraphView.h
 )
 
 # Configure Paths.config file

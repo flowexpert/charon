@@ -20,7 +20,9 @@ ENDIF(WIN32)
 # standalone inspector application
 SET(INSPECTOR_SOURCES
 	AdvancedInspector.cpp
+	AdvancedInspector.h
 	ParamInspectorWindow.cpp
+	ParamInspectorWindow.h
 	paramInspectorApp.cpp
 )
 
@@ -31,6 +33,7 @@ TARGET_LINK_LIBRARIES(paraminspector editparam ${QT_QTMAIN_LIBRARY})
 # main application
 SET(PARAMEDIT_SOURCES
 	MainWindow.cpp
+	MainWindow.h
 	main.cpp
 )
 
