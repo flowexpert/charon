@@ -78,7 +78,7 @@ public:
 	InputSlot<cimg_library::CImgList<T> > img;
 
 	/// updates the motionmodel
-	virtual void execute() //FIXME virtual ??
+	virtual void execute()
 	{
 		initialize();
 		//_outDataChanged(out); // TODO datenpfad
