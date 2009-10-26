@@ -175,7 +175,7 @@ void InspectorFilePathEditor::chooseFile() {
 
 	emit fileDialogExists(true);
 	qDebug() << QString("current path: %1").arg(info.absoluteFilePath());
-	path = QFileDialog::getOpenFileName(this, title, info.absoluteFilePath());
+	path = QFileDialog::getSaveFileName(this, title, info.absoluteFilePath(),QString(),0,QFileDialog::DontConfirmOverwrite);
 	emit fileDialogExists(false);
 
 	if (!path.isEmpty())
