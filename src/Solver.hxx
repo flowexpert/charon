@@ -28,8 +28,8 @@
 #define _SOLVER_HXX_
 
 #include "Solver.h"
-#include <Stencil.h>
-#include <Roi.h>
+#include "Stencil.h"
+#include <charon-utils/Roi.h>
 
 ///default constructor
 template <class T>
@@ -162,14 +162,14 @@ std::set<Point4D<unsigned int> >& Solver<T>::MetaStencil::getPattern() {return p
 
 template <class T>		
 void Solver<T>::MetaStencil::expand(Roi<int>& inRoi) {
-	inRoi.top    = -(this->up);
-	inRoi.left   = -(this->left);
-	inRoi.bottom = inRoi.bottom + this->down;
-	inRoi.right  = inRoi.right + this->right;
-	inRoi.front  = -(this->backward);
-	inRoi.back   = inRoi.back + this->forward;
-	inRoi.before = -(this->before);
-	inRoi.after  = inRoi.after + this->after;
+	inRoi.xBegin = -int(left);
+	inRoi.xEnd   = inRoi.xEnd + right;
+	inRoi.yBegin = -int(up);
+	inRoi.yEnd   = inRoi.yEnd + down;
+	inRoi.zBegin = -int(backward);
+	inRoi.zEnd   = inRoi.zEnd + forward;
+	inRoi.tBegin = -int(before);
+	inRoi.tEnd   = inRoi.tEnd + after;
 }
 
 template <class T>

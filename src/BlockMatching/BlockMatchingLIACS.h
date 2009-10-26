@@ -35,13 +35,13 @@
 #define blockmatchingliacs_DECLDIR
 #endif
 
-#include "BlockMatching.h"
-#include "PixelSelection.h"
-#include "ListedPixelSelection.h"
-#include "Incrementor.h"
-#include "IncrementorCountUp.h"
-#include "ObjectiveFunction.h"
-#include "ObjectiveFunctionComparing.h"
+#include "../BlockMatching.h"
+#include "../PixelSelection.h"
+#include "../PixelSelections/ListedPixelSelection.h"
+#include "../Incrementor.h"
+#include "../Incrementors/IncrementorCountUp.h"
+#include "../ObjectiveFunction.h"
+#include "../ObjectiveFunctions/ObjectiveFunctionComparing.h"
 
 /** 
  *  Abstract base class of the declaration and implementation of the 

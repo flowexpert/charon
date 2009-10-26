@@ -27,7 +27,7 @@
 #ifndef _PETSCSOLVER_HXX_
 #define _PETSCSOLVER_HXX_
 
-#include <Solver.hxx>
+#include "../Solver.hxx"
 #include "PetscSolver.h"
 
 ///@todo incorporate std::runtime_error and #include <stdexept> instead of throw "string"
@@ -137,7 +137,7 @@ void PetscSolver<T>::globalIndexToPoint(const unsigned int vi,
 	i -= (p.z*dim.getWidth()*dim.getHeight());
 	p.t =  (i/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
 	
-	Point4D<int> offset(-dim.left, -dim.top, -dim.front, -dim.back);
+	Point4D<int> offset(-dim.xBegin, -dim.yBegin, -dim.zBegin, -dim.tBegin);
 	p -= offset;
 }
 
@@ -158,44 +158,44 @@ Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) {
 	//It contains an identification for the different cases of boundary
 	//conditions for easy and efficient handling.
 	Point4D<int> caseID;
-	if (p.x <= this->roi()->left) {caseID.x = 0;}
-	if (p.x > this->roi()->left && p.x < this->roi()->right) {caseID.x = 1;}
-	if (p.x >= this->roi()->right) {caseID.x = 2;}
-	if (p.y <= this->roi()->top) {caseID.y = 0;}
-	if (p.y > this->roi()->top && p.y < this->roi()->bottom) {caseID.y = 1;}
-	if (p.y >= this->roi()->bottom) {caseID.y = 2;}
-	if (p.z <= this->roi()->front) {caseID.z = 0;}
-	if (p.z > this->roi()->front && p.z < this->roi()->back) {caseID.z = 1;}
-	if (p.z >= this->roi()->back) {caseID.z = 2;}
-	if (p.t <= this->roi()->before) {caseID.t = 0;}
-	if (p.t > this->roi()->before && p.t < this->roi()->after) {caseID.t = 1;}
-	if (p.t >= this->roi()->after) {caseID.t = 2;}
+	if (p.x <= this->roi()->xBegin) {caseID.x = 0;}
+	if (p.x > this->roi()->xBegin && p.x < this->roi()->xEnd) {caseID.x = 1;}
+	if (p.x >= this->roi()->xEnd) {caseID.x = 2;}
+	if (p.y <= this->roi()->yBegin) {caseID.y = 0;}
+	if (p.y > this->roi()->yBegin && p.y < this->roi()->yEnd) {caseID.y = 1;}
+	if (p.y >= this->roi()->yEnd) {caseID.y = 2;}
+	if (p.z <= this->roi()->zBegin) {caseID.z = 0;}
+	if (p.z > this->roi()->zBegin && p.z < this->roi()->zEnd) {caseID.z = 1;}
+	if (p.z >= this->roi()->zEnd) {caseID.z = 2;}
+	if (p.t <= this->roi()->tBegin) {caseID.t = 0;}
+	if (p.t > this->roi()->tBegin && p.t < this->roi()->tEnd) {caseID.t = 1;}
+	if (p.t >= this->roi()->tEnd) {caseID.t = 2;}
 				
 	Point4D<int> result;
 	
 	//resolve each dimension of the case
 	switch(caseID.x) {
-		case 0: result.x = this->roi()->left; break;
+		case 0: result.x = this->roi()->xBegin; break;
 		case 1: result.x = p.x; break;
-		case 2: result.x = this->roi()->right; break;
+		case 2: result.x = this->roi()->xEnd; break;
 	}
 	
 	switch(caseID.y) {
-		case 0: result.y = this->roi()->top; break;
+		case 0: result.y = this->roi()->yBegin; break;
 		case 1: result.y = p.y; break;
-		case 2: result.y = this->roi()->bottom; break;
+		case 2: result.y = this->roi()->yEnd; break;
 	}
 	
 	switch(caseID.z) {
-		case 0: result.z = this->roi()->front; break;
+		case 0: result.z = this->roi()->zBegin; break;
 		case 1: result.z = p.z; break;
-		case 2: result.z = this->roi()->back; break;
+		case 2: result.z = this->roi()->zEnd; break;
 	}
 	
 	switch(caseID.t) {
-		case 0: result.t = this->roi()->before; break;
+		case 0: result.t = this->roi()->tBegin; break;
 		case 1: result.t = p.t; break;
-		case 2: result.t = this->roi()->after; break;
+		case 2: result.t = this->roi()->tEnd; break;
 	}
 	
 	return result;
@@ -328,7 +328,7 @@ int PetscSolver<T>::petscExecute() {
 	
 	Vec				x, b;	//x: approx. solution, b: right hand side
 	Mat				A;		//A: Linear System Matrix
-	KSP				ksp;	//KSP context
+	KSP				ksp(0);	//KSP context
 //	PC				pc;		//PC context
 	PetscErrorCode	ierr;	//PETSc Error code for error-traceback
 	PetscInt		j;		//j: row index
@@ -464,7 +464,7 @@ int PetscSolver<T>::petscExecute() {
 				//get the current global index
 				globalIndex = pointToGlobalIndex(Point4D<int>(x,y,z,t),lIt->first, unknownSizes);
 				//and write the results into the output slot 'out'
-				(*(this->out()))(lIt->second,x,y,z,t) = res[globalIndex];
+				(*(this->out()))(lIt->second,x,y,z,t) = T(res[globalIndex]);
 			}
 		}
 		

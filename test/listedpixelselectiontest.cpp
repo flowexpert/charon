@@ -20,9 +20,9 @@
  *  @date 21.09.2009
  */
 
-#include <ListedPixelSelection.hxx>
-#include <Roi.h>
-#include <FileReader.h>
+#include <PixelSelections/ListedPixelSelection.hxx>
+#include <charon-utils/Roi.h>
+#include <charon-utils/FileReader.h>
 #include <Pixel.hxx>
 #include <vector>
 #include <stdexcept>

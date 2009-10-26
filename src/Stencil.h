@@ -36,8 +36,8 @@
 #define stencil_DECLDIR
 #endif
 
-#include <CImg.h>
-#include <ParameteredObject.h>
+#include <charon-utils/CImg.h>
+#include <charon-core/ParameteredObject.h>
 #include "Point4D.h"
 #include "Substencil.h"
 #include <string>
@@ -114,7 +114,7 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 */
 		virtual void updateStencil(const unsigned int x, const unsigned int y,
                                    const unsigned int z=0, const unsigned int t=0,
-                                   const unsigned int v=0) =0;
+                                   const unsigned int v=0) = 0;
 		
 		/**
 		 * Getter function for the SubStencils of the stencil.

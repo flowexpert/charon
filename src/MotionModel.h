@@ -35,10 +35,10 @@
 #define motionmodel_DECLDIR
 #endif
 
-#include <Derivative.h>
-#include <FlowFunctorInterface.h>
-#include <IncrementorParameter.h>
-#include <Pixel.h>
+#include "Derivative.h"
+#include "FlowFunctorInterface.h"
+#include "IncrementorParameter.h"
+#include "Pixel.h"
 #include <set>
 
 /// abstract base class for the different motion models

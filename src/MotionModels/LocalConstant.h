@@ -35,12 +35,12 @@
 #define motionmodels_localconstant_DECLDIR
 #endif
 
-#include <CImg.h>
-#include <Pixel.hxx>
+#include <charon-utils/CImg.h>
+#include "../Pixel.hxx"
 #include <string>
-#include <MotionModel.h>
-#include <FlowFunctor.h>
-#include <IncrementorParameter.h>
+#include "../MotionModel.h"
+#include "../FlowFunctor.h"
+#include "../IncrementorParameter.h"
 
 /// namespace for the different motion models
 namespace MotionModels

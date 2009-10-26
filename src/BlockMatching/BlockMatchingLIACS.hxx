@@ -24,7 +24,7 @@
 #define BLOCKMATCHINGLIACS_HXX_
 
 #include "BlockMatchingLIACS.h"
-#include "BlockMatching.hxx"
+#include "../BlockMatching.hxx"
 
 template<typename T>
 BlockMatchingLIACS<T>::BlockMatchingLIACS(const std::string& name) :

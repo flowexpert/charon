@@ -35,7 +35,7 @@
 #define incrementorcountup_DECLDIR
 #endif
 
-#include <Incrementor.h>
+#include "../Incrementor.h"
 
 template<typename T>
 class incrementorcountup_DECLDIR IncrementorCountUp: public Incrementor<T>

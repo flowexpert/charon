@@ -23,8 +23,8 @@
 #define _LISTEDPIXELSELECTION_HXX_
 
 #include "ListedPixelSelection.h"
-#include "PixelSelection.hxx"
-#include "Pixel.hxx"
+#include "../PixelSelection.hxx"
+#include "../Pixel.hxx"
 
 template<typename T>
 ListedPixelSelection<T>::ListedPixelSelection(const std::string& name) :

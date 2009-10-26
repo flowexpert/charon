@@ -22,24 +22,26 @@
  *  @date 8.09.2009
  */
 
-#include <PetscSolver.hxx>
-#include <Roi.hxx>
-#include <Gbcce.hxx>
-#include <L2Norm.hxx>
-#include <Constant.hxx>
-#include <LocalConstant.hxx>
-#include <bin2.hxx>
-#include <ChannelConverter.hxx>
-#include <FileReader.hxx>
-#include <FlieWriter.hxx>
+#include <Solvers/PetscSolver.h>
+#include <charon-utils/Roi.h>
+#include <Stencils/Gbcce.h>
+#include <Stencils/L2Norm.h>
+#include <BrightnessModels/Constant.h>
+#include <MotionModels/LocalConstant.h>
+#include <charon-utils/LinearFilter.h>
+#include <charon-utils/Mask1D.h>
+#include <charon-utils/ChannelConverter.h>
+#include <charon-utils/FileReader.h>
+#include <charon-utils/FileWriter.h>
 
 int main() {
 	//create all necessary objects
 	FileReader<float> reader("reader");
 	ChannelConverter<float> converter("converter");
-	bin2<float> derivative("derivative");
-	Constant<float> brightnessConst("brightnessConst");
-	LocalConstant<float> motionConstant("motionConstant");
+	LinearFilter<float> derivative("derivative");
+	Mask1D<float> diff("diff");
+	BrightnessModels::Constant<float> brightnessConst("brightnessConst");
+	MotionModels::LocalConstant<float> motionConstant("motionConstant");
 	Gbcce<float> gbcce("GBCCE");
 	L2Norm<float> l2norm("L2Norm");
 	PetscSolver<float> solver("Solver");

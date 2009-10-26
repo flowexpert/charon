@@ -25,7 +25,7 @@
 #define SURFACEANALYSISMINCHANGE_HXX_
 
 #include "SurfaceAnalysisMinChange.h"
-#include <SurfaceAnalysis.hxx>
+#include "../SurfaceAnalysis.hxx"
 
 template<typename T>
 SurfaceAnalysisMinChange<T>::SurfaceAnalysisMinChange(const std::string name) :

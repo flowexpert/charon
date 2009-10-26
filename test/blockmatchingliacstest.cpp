@@ -20,24 +20,24 @@
  *  @date 26.09.2009
  */
 
-#include <ObjectiveFunctionComparing.hxx>
-#include <ListedPixelSelection.hxx>
-#include <IncrementorCountUp.hxx>
-#include <SurfaceAnalysisMinChange.hxx>
-#include <IncrementorParameter.hxx>
-#include <BlockMatchingLIACS.hxx>
-#include <CImg.h>
-#include <Roi.h>
-#include <InterpolatorLinear.hxx>
+#include <ObjectiveFunctions/ObjectiveFunctionComparing.h>
+#include <PixelSelections/ListedPixelSelection.h>
+#include <Incrementors/IncrementorCountUp.h>
+#include <SurfaceAnalysis/SurfaceAnalysisMinChange.h>
+#include <IncrementorParameter.h>
+#include <BlockMatching/BlockMatchingLIACS.h>
+#include <charon-utils/CImg.h>
+#include <charon-utils/Roi.h>
+#include <charon-utils/InterpolatorLinear.h>
 #include <Pixel.hxx>
-#include <Constant.hxx>
+#include <BrightnessModels/Constant.h>
 #include <FlowFunctor.cpp>
-#include <LocalConstant.hxx>
-#include <FileReader.hxx>
-#include <FileWriter.hxx>
+#include <MotionModels/LocalConstant.h>
+#include <charon-utils/FileReader.h>
+#include <charon-utils/FileWriter.h>
 #include <vector>
-#include <LinearFilter.hxx>
-#include <Mask1D.hxx>
+#include <charon-utils/LinearFilter.h>
+#include <charon-utils/Mask1D.h>
 
 // make sure that assert works
 #ifdef NDEBUG

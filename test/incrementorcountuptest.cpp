@@ -20,7 +20,7 @@
  *  @date 23.09.2009
  */
 
-#include <IncrementorCountUp.hxx>
+#include <Incrementors/IncrementorCountUp.hxx>
 #include <IncrementorParameter.hxx>
 #include <vector>
 

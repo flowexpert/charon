@@ -25,7 +25,7 @@
 #define _BrightnessModels_Constant_HXX_
 
 #include "Constant.h"
-#include <Pixel.hxx>
+#include "../Pixel.hxx"
 
 template<class T>
 BrightnessModels::Constant<T>::Constant(const std::string& name) :

@@ -39,10 +39,9 @@
 #define solver_DECLDIR
 #endif
 
-#include <CImg.h>
-#include <ParameteredObject.h>
-///@todo this is supposed to work with Roi.h - but it doesn't
-#include <Roi.h>
+#include <charon-utils/CImg.h>
+#include <charon-core/ParameteredObject.h>
+#include <charon-utils/Roi.h>
 #include "Stencil.h"
 
 template <class T>

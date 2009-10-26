@@ -20,7 +20,7 @@
  *  @date 26.09.2009
  */
 
-#include <SurfaceAnalysisMinChange.hxx>
+#include <SurfaceAnalysis/SurfaceAnalysisMinChange.hxx>
 #include <IncrementorParameter.hxx>
 #include <iostream>
 #include <vector>

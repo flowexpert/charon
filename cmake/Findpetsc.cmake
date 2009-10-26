@@ -15,7 +15,7 @@ FIND_PATH(PETSC_ROOT_DIR
     NAMES           include/petscksp.h
     PATHS           /usr
                     /usr/local
-					/opt/petsc
+                    /opt/petsc
                     /opt
     DOC             "petsc root directory"
 )
@@ -177,9 +177,11 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(petsc DEFAULT_MSG
 	${PETSC_LIBVARS}
 )
 
+# determine values of each library variable and add to
+# petsc library list
 FOREACH(LIB ${PETSC_LIBVARS})
 	LIST(APPEND PETSC_LIBRARIES
-		${LIB}
+		${${LIB}}
 	)
 ENDFOREACH(LIB ${PETSC_LIBVARS})
 

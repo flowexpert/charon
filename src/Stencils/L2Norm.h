@@ -37,7 +37,7 @@
 #define l2norm_DECLDIR
 #endif
 
-#include <Stencil.h>
+#include "../Stencil.h"
 
 /// This is the L2Norm stencil which is derived from class stencil
 template <class T>

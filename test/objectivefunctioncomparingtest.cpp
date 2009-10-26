@@ -20,19 +20,19 @@
  *  @date 23.09.2009
  */
 
-#include <ObjectiveFunctionComparing.hxx>
-#include <ListedPixelSelection.hxx>
+#include <ObjectiveFunctions/ObjectiveFunctionComparing.hxx>
+#include <PixelSelections/ListedPixelSelection.hxx>
 #include <IncrementorParameter.hxx>
-#include <CImg.h>
-#include <Roi.h>
-#include <InterpolatorLinear.hxx>
+#include <charon-utils/CImg.h>
+#include <charon-utils/Roi.h>
+#include <charon-utils/InterpolatorLinear.h>
 #include <Pixel.hxx>
-#include <Constant.hxx>
+#include <BrightnessModels/Constant.hxx>
 #include <FlowFunctor.cpp>
-#include <LocalConstant.hxx>
-#include <FileReader.hxx>
-#include <LinearFilter.hxx>
-#include <Mask1D.hxx>
+#include <MotionModels/LocalConstant.hxx>
+#include <charon-utils/FileReader.h>
+#include <charon-utils/LinearFilter.h>
+#include <charon-utils/Mask1D.h>
 #include <vector>
 
 int main()

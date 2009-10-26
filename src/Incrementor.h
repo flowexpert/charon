@@ -35,8 +35,8 @@
 #define incrementor_DECLDIR
 #endif
 
-#include <ParameteredObject.h>
-#include <IncrementorParameter.h>
+#include <charon-core/ParameteredObject.h>
+#include "IncrementorParameter.h"
 #include <vector>
 
 /// The incrementor class compute the parameters for the blockmatching algorithm

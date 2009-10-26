@@ -36,14 +36,14 @@
 #define listedpixelselection_DECLDIR
 #endif
 
-//#include <Roi.h>
-#include <PixelSelection.h>
-//#include <Pixel.h>
-//#include <CImg.h>
+//#include <charon-utils/Roi.h>
+#include "../PixelSelection.h"
+//#include "../Pixel.h"
+//#include <charon-utils/CImg.h>
 #include <vector>
 
 template<typename T>
-class ListedPixelSelection: public PixelSelection<T>
+class listedpixelselection_DECLDIR ListedPixelSelection: public PixelSelection<T>
 {
 public:
 	/// standard constructor

@@ -39,7 +39,7 @@
 #define petscsolver_DECLDIR
 #endif
 
-#include <Solver.h>
+#include "../Solver.h"
 #include <petscksp.h>
 
 ///@todo incorporate std::runtime_error and #include <stdexept> instead of throw "string"
