@@ -15,6 +15,7 @@ IF (ENABLE_STENCILS)
 		Stencils/Gbcce.hxx
 		Stencil.h
 		Stencil.hxx
+		Point4D.h
 		Substencil.h
 		Substencil.hxx
 	)
@@ -24,6 +25,7 @@ IF (ENABLE_STENCILS)
 		Stencils/L2Norm.hxx
 		Stencil.h
 		Stencil.hxx
+		Point4D.h
 		Substencil.h
 		Substencil.hxx
 	)

@@ -15,12 +15,8 @@
 */
 /** @file Solver.h
  *  Implementation of class Solver.
- *  This is the abstract base class of a solver form which all solver
- *  implementations should be derived. It contains the nested class MetaStencil,
- *  which is used to group multiple SubStencils.
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
- *
  *  @date 8.09.2009
  */
 
@@ -29,13 +25,13 @@
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef solver_EXPORTS
-///Visual C++ specific code
+/// Visual C++ specific code
 #define solver_DECLDIR __declspec(dllexport)
 #else
 #define solver_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
-///Not needed with GCC
+/// Not needed with GCC
 #define solver_DECLDIR
 #endif
 
@@ -43,100 +39,111 @@
 #include <charon-core/ParameteredObject.h>
 #include <charon-utils/Roi.h>
 #include "Stencil.h"
-
+/// Abstract base class for solvers.
+/**
+ *  This is the abstract base class of a solver form which all solver
+ *  implementations should be derived. It contains the nested class MetaStencil,
+ *  which is used to group multiple SubStencils.
+ */
 template <class T>
 class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 {
+protected:
+	/// meta stencil class to combine multiple SubStencils by unknown
+	/**
+	 * Your implementation of the MetaStencil will need a function
+	 * to gather the data from the different SubStencils and present
+	 * it in any way you want it to in order to work with your
+	 * solver.
+	 * It would be appreciated if you'd name this function 'update'.
+	 */
+	class MetaStencil
+	{
 	protected:
-		//meta stencil class to combine multiple SubStencils by unknown
-		class MetaStencil
-		{
-			protected:
-				/**
-				 * Vector of pointers to the SubStencils.
-				 * The data for the solver will be pulled from here.
-				*/
-				std::vector<const SubStencil<T>* > substencils;
-				
-				/**
-				 * CImg representing the MetaStencil.
-				 * This is a dummy to pre-allocate memory and to store the
-				 * dimensions of the MetaStencil.
-				 * Later, the data of the SubStencils will be merged here.
-				 */
-				cimg_library::CImg<T> data;
-				
-				/**
-				 * Set of points that belong to this MetaStencil.
-				 * @remark The size of the MetaStencil has to be extracted from the pattern.
-				 */
-				std::set<Point4D<unsigned int> > pattern;
-								
-				///@todo changed int -> unsigned int - re-check code to avoid hiccups
-				//expansions in all 8 directions
-				unsigned int left       , right;	//x (left is negative, right is positive)
-				unsigned int up         , down;		//y (up is negative, down is positive)
-				unsigned int backward   , forward;	//z (backward is negative, forward is positive)
-				unsigned int before     , after;	//t (before is negative, after is positive)
-				
-				Point4D<unsigned int> center;		//coordinates of the center of the meta stencil
-			public:
-				///default constructor
-				MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils);
-								
-				///copy constructor
-				MetaStencil(const MetaStencil& rhs);
-				
-				///empty constructor for use in map
-				MetaStencil();
-				
-				///assignment operator
-				virtual MetaStencil& operator=(MetaStencil& rhs);
-				
-				//the only necessary getter to determine the maximum number of
-				//entries.
-				virtual std::set<Point4D<unsigned int> >& getPattern();
-				
-				//Your implementation of the MetaStencil will need a function
-				//to gather the data from the different SubStencils and present
-				//it in any way you want it to in order to work with your
-				//solver.
-				//It would be appreciated if you'd name this function 'update'.
-				
-				/**
-				 * Expand the given region of interest to include the necessary ghost nodes.
-				 * @param[in] inRoi Region of interest to expand.
-				 * @return Epxanded region of interest.
-				 */
-				virtual void expand(Roi<int>& inRoi);
-		};
+		/**
+		 * Vector of pointers to the SubStencils.
+		 * The data for the solver will be pulled from here.
+		 */
+		std::vector<const SubStencil<T>* > substencils;
 		
 		/**
-		 * CImgList containing the result.
+		 * CImg representing the MetaStencil.
+		 * This is a dummy to pre-allocate memory and to store the
+		 * dimensions of the MetaStencil.
+		 * Later, the data of the SubStencils will be merged here.
 		 */
-		cimg_library::CImgList<T> result;
+		cimg_library::CImg<T> data;
+		
+		/**
+		 * Set of points that belong to this MetaStencil.
+		 * @remark The size of the MetaStencil has to be extracted from the pattern.
+		 */
+		std::set<Point4D<unsigned int> > pattern;
+						
+		/// \todo changed int -> unsigned int - re-check code to avoid hiccups
+		/// \name expansions in all 8 directions
+		//@{
+		unsigned int left       /**< x negative*/, right;	///< x positive
+		unsigned int up         /**< y negative*/, down;	///< y positive
+		unsigned int backward   /**< z negative*/, forward;	///< z positive
+		unsigned int before     /**< t negative*/, after;	///< t positive
+		//@}
+		
+		Point4D<unsigned int> center;		///< coordinates of the center of the meta stencil
 
 	public:
+		/// default constructor
 		/**
-		 * Pointers, that the solver will use.
+		 *	\param[in] unknown		name of the unknown for this stencil group
+		 *	\param[in] stencils		list of stencils to group
 		 */
-		InputSlot< Stencil<T>* > stencils;
+		MetaStencil(const std::string& unknown, const std::vector<Stencil<T>*>& stencils);
+						
+		/// copy constructor
+		MetaStencil(const MetaStencil& rhs /**< [in] copy source*/);
 		
-		/**
-		 * Region of interes for the solver to work on.
-		 */
-		InputSlot< Roi<int>* > roi;
+		/// empty constructor for use in map
+		MetaStencil();
 		
+		/// assignment operator
+		virtual MetaStencil& operator= (MetaStencil& rhs /**< [in] copy source*/);
+		
+		/// getter for MetaStencil::pattern
 		/**
-		 * Result.
+		 *	The only necessary getter to determine the maximum number of
+		 *	entries.
 		 */
-		OutputSlot<cimg_library::CImgList<T>* > out;
+		virtual std::set<Point4D<unsigned int> >& getPattern();
+				
+		/// Expand the given region of interest to include the necessary ghost nodes.
+		/**
+		 * @param[in,out] inRoi		Region of interest to expand.
+		 *							Will be set to the epxanded region of interest.
+		 */
+		virtual void expand(Roi<int>& inRoi);
+	};
+	
+	/// CImgList containing the result.
+	cimg_library::CImgList<T> result;
 
-		///Default constructor.
-		Solver(const std::string& classname, const std::string& name = "");
-		
-		///default destructor.
-		virtual ~Solver();
+public:
+	/// pointers, that the solver will use
+	InputSlot< Stencil<T>* > stencils;
+	
+	/// region of interes for the solver to work on
+	InputSlot< Roi<int>* > roi;
+	
+	/// result
+	OutputSlot<cimg_library::CImgList<T>* > out;
+
+	/// default constructor
+	Solver(
+		const std::string& classname,	///< [in] class name
+		const std::string& name = ""	///< [in] instance name
+	);
+	
+	/// default destructor
+	virtual ~Solver();
 };
 
 #endif // _SOLVER_H_

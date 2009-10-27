@@ -15,12 +15,8 @@
 */
 /** @file Solver.hxx
  *  Implementation of class Solver.
- *  This is the abstract base class of a solver form which all solver
- *  implementations should be derived. It contains the nested class MetaStencil,
- *  which is used to group multiple SubStencils.
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
- *
  *  @date 8.09.2009
  */
 
@@ -31,16 +27,18 @@
 #include "Stencil.h"
 #include <charon-utils/Roi.h>
 
-///default constructor
 template <class T>
 Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils) :
 		left(0),right(0),up(0),down(0),backward(0),forward(0),before(0),after(0) {
-	//Iterate through the stencils and in each one, find the SubStencils
-	//to the given unknown. Save the maximum of expansion in each dimension
-	//and reposition the center of the meta stencil accordingly
-	typename std::vector<Stencil<T>*>::const_iterator sIt;		//stencil iterator
+	// Iterate through the stencils and in each one, find the SubStencils
+	// to the given unknown. Save the maximum of expansion in each dimension
+	// and reposition the center of the meta stencil accordingly
+
+	// stencil iterator
+	typename std::vector<Stencil<T>*>::const_iterator sIt;
 	for (sIt=stencils.begin() ; sIt != stencils.end() ; sIt++) {
-		typename std::map<std::string, SubStencil<T> >::const_iterator ssIt;	//SubStencil iterator
+		// SubStencil iterator
+		typename std::map<std::string, SubStencil<T> >::const_iterator ssIt;
 		ssIt = (*sIt)->get().find(unknown);
 		//setting work-variable for better reading
 		unsigned int centerx = ssIt->second.center.x;
@@ -48,30 +46,32 @@ Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<
 		unsigned int centerz = ssIt->second.center.z;
 		unsigned int centert = ssIt->second.center.t;
 		
-		//Measuring the SubStencil that is currently being added
-		//to the MetaStencil
+		// Measuring the SubStencil that is currently being added
+		// to the MetaStencil
 		int width    = ssIt->second.pattern.dimx();
 		int height   = ssIt->second.pattern.dimy();
 		int depth    = ssIt->second.pattern.dimz();
 		int duration = ssIt->second.pattern.dimv();
-		//remember the re-declaration of the v-dimension of CImg
-		//to be the time axis? Yeah, right ;-)
+		// remember the re-declaration of the v-dimension of CImg
+		// to be the time axis? Yeah, right ;-)
 		
-		//positioning of the center of the meta stencil
-		//it is important to understand, that the center can
-		//onle move in positive directions - no more fancy
-		//checks and calculations are needed.
+		// positioning of the center of the meta stencil
+		//
+		// it is important to understand, that the center can
+		// onle move in positive directions - no more fancy
+		// checks and calculations are needed.
 		if (centerx > this->center.x) {this->center.x = centerx;}
 		if (centery > this->center.y) {this->center.y = centery;}
 		if (centerz > this->center.z) {this->center.z = centerz;}
 		if (centert > this->center.t) {this->center.t = centert;}
 		
-		//setting the expansions
-		//Here's the same principle as with the center:
-		//the individual expansions can only grow, not shrink
-		//these lines just find the maximum
-		//of expansions in all 8 directions
-		//over all added SubStencils
+		// setting the expansions
+		//
+		// Here's the same principle as with the center:
+		// the individual expansions can only grow, not shrink
+		// these lines just find the maximum
+		// of expansions in all 8 directions
+		// over all added SubStencils
 		if (centerx            > this->left)     {this->left = centerx;}
 		if (width-centerx-1    > this->right)    {this->right = width-centerx-1;}
 		if (centery            > this->up)       {this->up = centery;}
@@ -81,35 +81,29 @@ Solver<T>::MetaStencil::MetaStencil(const std::string unknown,const std::vector<
 		if (centert            > this->before)   {this->before = centert;}
 		if (duration-centert-1 > this->after)    {this->after = duration-centert-1;}
 								
-		//push_back the address of the just measured SubStencil
+		// push_back the address of the just measured SubStencil
 		this->substencils.push_back( &(ssIt->second) );
 	}
 	
-	//expand the MetaStencil CImg to the appropriate size
+	// expand the MetaStencil CImg to the appropriate size
 	int dimx=left+1+right;
 	int dimy=up+1+down;
 	int dimz=backward+1+forward;
 	int dimt=before+1+after;
 	this->data.assign(dimx, dimy, dimz, dimt, 0);	//initializing with 0 is important!
 	
-	//filling the pattern
+	// filling the pattern
 	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
 		//saving the offset as Point4D for later convennience
 		Point4D<unsigned int> offset = this->center - this->substencils[i]->center;
 		
 		//Iterate through all pixels of the SubStencil...
-		for (int tc=0 ; tc < this->substencils[i]->pattern.dimv() ; tc++) {
-			for (int zc=0 ; zc < this->substencils[i]->pattern.dimz() ; zc++) {
-				for (int yc=0 ; yc < this->substencils[i]->pattern.dimy() ; yc++) {
-					for (int xc=0 ; xc < this->substencils[i]->pattern.dimx() ; xc++) {
-						//...and set the pattern into the
-						//MetaStencil (with offset).
-						if (this->substencils[i]->pattern(xc,yc,zc,tc)) {
-							Point4D<unsigned int> p(xc,yc,zc,tc);
-							this->pattern.insert(p+offset);
-						}
-					}
-				}
+		cimg_forXYZV(substencils[i]->pattern,xc,yz,zc,tc) {
+			//...and set the pattern into the
+			//MetaStencil (with offset).
+			if (this->substencils[i]->pattern(xc,yc,zc,tc)) {
+				Point4D<unsigned int> p(xc,yc,zc,tc);
+				this->pattern.insert(p+offset);
 			}
 		}
 	}
