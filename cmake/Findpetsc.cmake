@@ -13,6 +13,7 @@
 # search for header files
 FIND_PATH(PETSC_ROOT_DIR
     NAMES           include/petscksp.h
+	HINTS			$ENV{PETSC_DIR}
     PATHS           /usr
                     /usr/local
                     /opt/petsc
@@ -24,12 +25,28 @@ FIND_PATH(PETSC_ROOT_DIR
 # can reside in the root directory, the architecture has to be specified
 # manually using PETSC_ARCH
 # with both the ROOT_DIR and ARCH every needed path can be generated
-SET(PETSC_ARCH win_x86_32_mpiuni CACHE STRING "selecte petsc architecture")
+IF(WIN32)
+	SET(PETSC_ARCH "win_x86_32_mpiuni"
+		CACHE STRING "selecte petsc architecture"
+)
+ELSE(WIN32)
+	SET(PETSC_ARCH "linux-gnu-c++-debug"
+		CACHE STRING "selecte petsc architecture"
+	)
+ENDIF(WIN32)
+# use value of envirionmental variable if set
+IF(NOT "$ENV{PETSC_ARCH}" STREQUAL "")
+	SET(PETSC_ARCH "$ENV{PETSC_ARCH}"
+		CACHE STRING "selecte petsc architecture"
+		FORCE
+	)
+ENDIF(NOT "$ENV{PETSC_ARCH}" STREQUAL "")
 OPTION(WITH_MPI "does PETSc use an external MPI implementation?" OFF)
 OPTION(WITH_FORTRAN "was fortran used for PETSc-compilation?" OFF)
 
 SET(PETSC_LIBRARY_SEARCH_HINT
 	${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}
+	${PETSC_ROOT_DIR}/${PETSC_ARCH}/lib
 )
 
 # cygwin generated msvc libraries are names using the unix
@@ -144,8 +161,9 @@ ELSE (WITH_MPI)
 ENDIF (WITH_MPI)
 
 SET(PETSC_INCLUDE_DIRS
-	${PETSC_ROOT_DIR}/include/
-	${PETSC_ROOT_DIR}/bmake/${PETSC_ARCH}/
+	${PETSC_ROOT_DIR}/include
+	${PETSC_ROOT_DIR}/${PETSC_ARCH}/include
+	${PETSC_ROOT_DIR}/bmake/${PETSC_ARCH}
 )
 IF (WITH_MPI)
 	LIST(APPEND PETSC_INCLUDE_DIRS
