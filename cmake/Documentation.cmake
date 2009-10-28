@@ -32,10 +32,10 @@ IF (DOXYGEN_FOUND)
         SET(DOXY_SKIP_PDFDOC		YES)
     ENDIF(NOT WITH_LATEX)
 
-    # Für die Formeln wird LaTeX benötigt.
+    # LaTeX needed for formula generation 
     FIND_PACKAGE(LATEX)
 
-    # Um Graphen zu erstellen wird graphviz benötigt
+    # graphviz needed to generate graphs
     IF(DOXYGEN_DOT_EXECUTABLE)
         SET(DOXY_DOT_ENABLE "YES")
     ELSE(DOXYGEN_DOT_EXECUTABLE)
@@ -55,7 +55,7 @@ IF (DOXYGEN_FOUND)
 
     # dummy target for documentation creation
 
-    # Doxyfile konfigurieren und Make-Target erzeugen
+    # configure Doxyfile and create make-target
     FILE(GLOB_RECURSE HTMLDOCS
         ${PROJECT_SOURCE_DIR}/doc/*_doc.txt
         ${PROJECT_SOURCE_DIR}/src/*.h

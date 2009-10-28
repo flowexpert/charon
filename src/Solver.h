@@ -106,7 +106,7 @@ protected:
 		MetaStencil();
 		
 		/// assignment operator
-		virtual MetaStencil& operator= (MetaStencil& rhs /**< [in] copy source*/);
+		virtual MetaStencil& operator= (const MetaStencil& rhs /**< [in] copy source*/);
 		
 		/// getter for MetaStencil::pattern
 		/**
@@ -134,7 +134,7 @@ public:
 	InputSlot< Roi<int>* > roi;
 	
 	/// result
-	OutputSlot<cimg_library::CImgList<T>* > out;
+	OutputSlot<cimg_library::CImgList<T> > out;
 
 	/// default constructor
 	Solver(

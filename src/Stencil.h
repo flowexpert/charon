@@ -102,15 +102,12 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 
 		///default constructor
 		Stencil(const std::string& classname, const std::string& name = "");
-		
+
+		/// update stencil
 		/**
-		 * Updates the stencil to contain the information to the given coordinate.
-		 * The data will be placed in the member data of the individual SubStencils.
-		 * @param[in] x x coordinate.
-		 * @param[in] y y coordinate.
-		 * @param[in] z z coordinate.
-		 * @param[in] t t coordinate.
-		 * @param[in] v v coordinate
+		 *	Updates the stencil to contain the information to the given coordinate.
+		 *	The data will be placed in the member data of the individual SubStencils.
+		 *	@param[in] x,y,z,t,v coordinates
 		 */
 		virtual void updateStencil(const unsigned int x, const unsigned int y,
                                    const unsigned int z=0, const unsigned int t=0,
@@ -133,7 +130,7 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 * @remark not yet implemented.
 		 */
 		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
-		                                    const unsigned int frame) const =0;
+		                                    const unsigned int frame) const = 0;
 						
 		/**
 		 * Getter functions for the unknowns of the stencil.

@@ -15,12 +15,8 @@
 */
 /** @file PetscSolver.hxx
  *  Implementation of class PetscSolver.
- *  This is the PETSc implementation of a solver. It has been designed to run on
- *  multiple instances simultaneously.
- *  @see Solver.hxx
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
- *
  *  @date 8.09.2009
  */
 
@@ -29,56 +25,60 @@
 
 #include "../Solver.hxx"
 #include "PetscSolver.h"
-
-///@todo incorporate std::runtime_error and #include <stdexept> instead of throw "string"
-
-template <class T>
-PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(const std::string unknown,
-                                                   const std::vector<Stencil<T>* >& stencils) :
-		Solver<T>::MetaStencil(unknown,stencils) {}
+#include <sstream>
 
 template <class T>
-PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(const PetscMetaStencil& rhs) :
-		Solver<T>::MetaStencil(rhs) {}
+PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(
+	const std::string& unknown,
+	const std::vector<Stencil<T>*>& stencils) :
+		Solver<T>::MetaStencil(unknown,stencils)
+{
+}
+
+template <class T>
+PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(
+	const PetscMetaStencil& rhs) :
+		Solver<T>::MetaStencil(rhs) {
+}
 
 template <class T>
 PetscSolver<T>::PetscMetaStencil::PetscMetaStencil() :
-		Solver<T>::MetaStencil() {}
+		Solver<T>::MetaStencil() {
+}
 
 template <class T>
-unsigned int PetscSolver<T>::PetscMetaStencil::update(const std::string unknown,
-                                         const Point4D<unsigned int>& p,
-                                         const std::map<std::string,Roi<int>* >& unknownSizes,
-                                         PetscInt* &columns, PetscScalar* &values) {
-	//first, copy all data from the SubStencils into
-	//the CImg data object of the MetaStencil
+unsigned int PetscSolver<T>::PetscMetaStencil::update(
+		const std::string unknown,
+		const Point4D<unsigned int>& p,
+		const std::map<std::string,Roi<int>*>& unknownSizes,
+		PetscInt*& columns,
+		PetscScalar*& values)
+{
+	// first, copy all data from the SubStencils into
+	// the CImg data object of the MetaStencil
 	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
-		//Calculating offsets
+		// Calculating offsets
 		int xo = this->center.x - this->substencils[i]->center.x;
 		int yo = this->center.y - this->substencils[i]->center.y;
 		int zo = this->center.z - this->substencils[i]->center.z;
 		int to = this->center.t - this->substencils[i]->center.t;
 		
-		//Iterate through all pixels of the SubStencil...
-		for (int tc=0 ; tc < this->substencils[i]->data.dimv() ; tc++) {
-			for (int zc=0 ; zc < this->substencils[i]->data.dimz() ; zc++) {
-				for (int yc=0 ; yc < this->substencils[i]->data.dimy() ; yc++) {
-					for (int xc=0 ; xc < this->substencils[i]->data.dimx() ; xc++) {
-						//...and copy them into the
-						//MetaStencil (with offset).
-						this->data(xc+xo,yc+yo,zc+zo,tc+to)
-							+=this->substencils[i]->data(xc,yc,zc,tc);
-					}
-				}
-			}
+		// Iterate through all pixels of the SubStencil...
+		cimg_forXYZV(this->substencils[i]->data,xc,yc,zc,tc) {
+			// ...and copy them into the
+			// MetaStencil (with offset).
+			this->data(xc+xo,yc+yo,zc+zo,tc+to)
+				+= this->substencils[i]->data(xc,yc,zc,tc);
 		}
 	}
-	//now, the data from all the SubStencils has been merged
-	//into this->data. For all the Point4Ds, which are in
-	//this->pattern, we need to add the index to PetscInt *columns
-	//and its value to PetscScalar *values
-	std::set<Point4D<unsigned int> >::iterator pIt = this->pattern.begin(); //pattern Iterator
-	//for all Point4Ds in this->pattern
+	// now, the data from all the SubStencils has been merged
+	// into this->data. For all the Point4Ds, which are in
+	// this->pattern, we need to add the index to PetscInt* columns
+	// and its value to PetscScalar* values
+
+	// pattern Iterator
+	std::set<Point4D<unsigned int> >::iterator pIt = this->pattern.begin();
+	// for all Point4Ds in this->pattern
 	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
 		columns[i] = PetscSolver<T>::pointToGlobalIndex(*pIt+p,unknown,unknownSizes);
 		values[i] = this->data(pIt->x, pIt->y,pIt->z,pIt->t);
@@ -87,9 +87,11 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(const std::string unknown,
 }
 
 template <class T>
-unsigned int PetscSolver<T>::pointToRelativeIndex(const Point4D<int> p,
-                                                  const Roi<int> &dim) {
-	unsigned int res=0;
+unsigned int PetscSolver<T>::pointToRelativeIndex(
+		const Point4D<int>& p,
+		const Roi<int>& dim)
+{
+	unsigned int res = 0;
 	
 	res += p.t * (dim.getWidth() * dim.getHeight() * dim.getDepth());
 	res += p.z * (dim.getWidth() * dim.getHeight());
@@ -101,10 +103,11 @@ unsigned int PetscSolver<T>::pointToRelativeIndex(const Point4D<int> p,
 
 template <class T>
 unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
-                              const unsigned int i,
-                              const std::string& unknown,
-                              const std::map<std::string,Roi<int>* >& unknownSizes) {
-	unsigned int res=0;
+		const unsigned int i,
+		const std::string& unknown,
+		const std::map<std::string,Roi<int>*>& unknownSizes)
+{
+	unsigned int res = 0;
 	
 	std::map<std::string,Roi<int>* >::const_iterator usIt; //unknown Sizes iterator
 	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.find(unknown) ; usIt++) {
@@ -117,10 +120,13 @@ unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
 }
 
 template <class T>
-void PetscSolver<T>::globalIndexToPoint(const unsigned int vi,
-                         const std::map<std::string, Roi<int>* >& unknownSizes,
-                         std::string& unknown, Point4D<int>& p) {
-	unsigned int i=vi;
+void PetscSolver<T>::globalIndexToPoint(
+		const unsigned int vi,
+		const std::map<std::string, Roi<int>*>& unknownSizes,
+		std::string& unknown,
+		Point4D<int>& p)
+{
+	unsigned int i = vi;
 	std::map<std::string,Roi<int>* >::const_iterator usIt=unknownSizes.begin();
 	while (i - (usIt->second->getVolume()) > 0) {
 		i -= usIt->second->getVolume();
@@ -142,9 +148,11 @@ void PetscSolver<T>::globalIndexToPoint(const unsigned int vi,
 }
 
 template <class T>
-unsigned int PetscSolver<T>::pointToGlobalIndex(const Point4D<int> &p,
-                                                const std::string unknown,
-                                                const std::map<std::string, Roi<int>* >& unknownSizes) {
+unsigned int PetscSolver<T>::pointToGlobalIndex(
+		const Point4D<int>& p,
+		const std::string& unknown,
+		const std::map<std::string,Roi<int>*>& unknownSizes)
+{
 	unsigned int result;
 	result = pointToRelativeIndex(p,*(unknownSizes.find(unknown)->second));
 	result = relativeIndexToGlobalIndex(result, unknown, unknownSizes);
@@ -153,10 +161,11 @@ unsigned int PetscSolver<T>::pointToGlobalIndex(const Point4D<int> &p,
 
 template <class T>
 Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) {
-	//First, identify the case
-	//Point4D caseID does not contain coordinates in this scope.
-	//It contains an identification for the different cases of boundary
-	//conditions for easy and efficient handling.
+	// First, identify the case
+	//
+	// Point4D caseID does not contain coordinates in this scope.
+	// It contains an identification for the different cases of boundary
+	// conditions for easy and efficient handling.
 	Point4D<int> caseID;
 	if (p.x <= this->roi()->xBegin) {caseID.x = 0;}
 	if (p.x > this->roi()->xBegin && p.x < this->roi()->xEnd) {caseID.x = 1;}
@@ -212,191 +221,243 @@ template <class T>
 bool PetscSolver<T>::isRankZero() {
 	int initialized = 0;
 	MPI_Initialized(&initialized);
-	if(!initialized) //just output everything if MPI is not yet initialized
+	// just output everything if MPI is not yet initialized
+	if(!initialized)
 		return true;
 	
 	int rank;
-	MPI_Comm_rank(PETSC_COMM_WORLD, &rank); //WARNING: this line crashes, if petsc was not initialized!
+	// WARNING: this line crashes, if petsc was not initialized!
+	MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
 	return !rank;
 }
 
 
 template <class T>
 int PetscSolver<T>::petscExecute() {
-	//    *=======================*
-	//    | P R E P A R A T I O N |
-	//    *=======================*
+	/*
+	 *	*=======================*
+	 *	| P R E P A R A T I O N |
+	 *	*=======================*
+	 *
+	 *	For better acess, the first thing we will do is to reorder the
+	 *	SubStencils. Until now, all the SubStencils of a method are
+	 *	grouped together in a Stencil<T> object. What we want to end with
+	 *	in this preparation phase is a map of MetaStencils, which group
+	 *	the SubStencils by unknown. This is a 2-step process, in the first
+	 *	step, we go through all stencils and add a pointer to the stencil
+	 *	into a map, where it is associated with its respective unknown.
+	 *
+	 *	Data structure:
+	 *	map<string,         vector<Stencil*> >
+	 *	    name of         vector of pointers
+	 *	    unknown         that use the unknown
+	 *
+	 *	example:
+	 *	    unknown         Stencil*
+	 *	    a1              &stencil1, &stencil2, &stencil3
+	 *	    b1              &stencil1, &stencil4
+	 *	    c1              &stencil2, &stencil3
+	 *
+	 *	This way, we can iterate through unknowns and access the
+	 *	necessary stencils by pointers instead of searching through all
+	 *	stencils to find those that use the unknown in question
+	 */
 	
-	//For better acess, the first thing we will do is to reorder the
-	//SubStencils. Until now, all the SubStencils of a method are
-	//grouped together in a Stencil<T> object. What we want to end with
-	//in this preparation phase is a map of MetaStencils, which group
-	//the SubStencils by unknown. This is a 2-step process, in the first
-	//step, we go through all stencils and add a pointer to the stencil
-	//into a map, where it is associated with its respective unknown.
-	//
-	//Data structure:
-	//map<string,     vector<stencil*> >
-	//    name of     vector of pointers
-	//    unknown     that use the unknown
-	//
-	//example:
-	//unknown          stencil*
-	//a1               &stencil1, &stencil2, &stencil3
-	//b1               &stencil1, &stencil4
-	//c1               &stencil2, &stencil3
-	//
-	//This way, we can iterate through unknowns and access the
-	//necessary stencils by pointers instead of searching through all
-	//stencils to find those that use the unknown in question
-	
+	// map mentionend above
 	std::map<std::string, std::vector<Stencil<T>*> > substencils;
-	typename std::set<AbstractSlot<Stencil<T>* >* >::const_iterator sIt; //stencil iterator
-	std::set<std::string>::const_iterator uIt;			//unknowns iterator
-	for(sIt=this->stencils.begin() ; sIt!=this->stencils.end() ; sIt++) {	//iterate through stencils
-	InputSlot<Stencil<T>* >& is = *((InputSlot<Stencil<T>* >*)*sIt);
-	//*sIt (dereferencing of sIt) gives us an AbstractSlot<Stencil<T>* >* (a pointer)
-	//Then we cast it to an InputSlot<Stencil<T>* >* (still a pointer)
-	//Then we dereference that and get the InputSlot<Stencil<T>* > (reference, not a pointer)
-	//And we call tht 'is' (short for InputSlot). The operator() returns the Stencil<T>* within
-		for(uIt=is()->getUnknowns().begin();						//iterate through its unknowns
+	// stencil iterator
+	typename std::set<AbstractSlot<Stencil<T>* >* >::const_iterator sIt;
+	// unknowns iterator
+	std::set<std::string>::const_iterator uIt;
+	// iterate through stencils
+	for(sIt=this->stencils.begin() ; sIt!=this->stencils.end() ; sIt++) {
+
+		// *sIt (dereferencing of sIt) gives us an AbstractSlot<Stencil<T>*>*
+		// (a pointer).
+		// Then we cast it to an InputSlot<Stencil<T>*>* (still a pointer)
+		// Then we dereference that and get the InputSlot<Stencil<T>*>
+		// (reference, not a pointer).
+		// And we call that 'is' (short for InputSlot).
+		// The operator() returns the Stencil<T>* within.
+		InputSlot<Stencil<T>*>& is = *((InputSlot<Stencil<T>*>*)*sIt);
+
+		//iterate through its unknowns
+		for(uIt=is()->getUnknowns().begin();
 			uIt!=is()->getUnknowns().end();
 			uIt++) {
-			substencils[*uIt].push_back(is() );
+			substencils[*uIt].push_back(is());
 		}
 	}
-	//In the second step, we go through the just created map of
-	//SubStencils and create a PetscMetaStencil object for each unknown.
-	//We organize these PetscMetaStencils in a map - keyed to their
-	//unknown.
+
+	/*
+	 *	In the second step, we go through the just created map of
+	 *	SubStencils and create a PetscMetaStencil object for each unknown.
+	 *	We organize these PetscMetaStencils in a map - keyed to their
+	 *	unknown.
+	 */
 	std::map<std::string,PetscMetaStencil> MetaStencils;
-	typename std::map<std::string, std::vector<Stencil<T>*> >::iterator ssIt; //SubStencil Iterator
+	// SubStencil Iterator
+	typename std::map<std::string, std::vector<Stencil<T>*> >::iterator ssIt;
 	for (ssIt=substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
 		typename PetscSolver<T>::PetscMetaStencil pms(ssIt->first,ssIt->second);
 		MetaStencils[ssIt->first] = pms;
 	}
 	
-	//now we can determine the size of the expanded ROIs which we will
-	//organize in a map<string, Roi<int> > to know how big the individual
-	//vector parts and thus the whole vector and the matrix will be
-	//and we can determine the maximum number of entries for the PetscInt
-	//and PetscScalar arrays, which will be later used to set values in
-	//the matrix
-	unsigned int max_ne=0;	//maximum number of entries;
+	/*
+	 *	Now we can determine the size of the expanded ROIs which we will
+	 *	organize in a map<string, Roi<int> > to know how big the individual
+	 *	vector parts and thus the whole vector and the matrix will be.
+	 *	Also, we can determine the maximum number of entries for the PetscInt
+	 *	and PetscScalar arrays, which will be later used to set values in
+	 *	the matrix.
+	 */
+
+	// maximum number of entries;
+	unsigned int max_ne = 0;
 	std::map<std::string,Roi<int>* > unknownSizes;
-	typename std::map<std::string,PetscMetaStencil>::iterator msIt; //PetscMetaStencil iterator
+	// PetscMetaStencil iterator
+	typename std::map<std::string,PetscMetaStencil>::iterator msIt;
 	for(msIt=MetaStencils.begin() ; msIt != MetaStencils.end() ; msIt++) {
 		Roi<int>* current = new Roi<int>;
 		*current = *(this->roi());
 		msIt->second.expand(*current);
 		unknownSizes[msIt->first]=current;
-		//find the maximum number of entries for the MatSetValues call
-		//so that the size of columns and values is optimal
+		// find the maximum number of entries for the MatSetValues call
+		// so that the size of columns and values is optimal
 		if ( (unsigned int)msIt->second.getPattern().size() > max_ne) {
 			max_ne = (unsigned int)msIt->second.getPattern().size();
 		}
 	}
-	//The map containing the unknownSizes is - like all maps - alphanumerically
-	//sorted by key. This will get important with the write-back of the results.
+	// The map containing the unknownSizes is - like all maps -
+	// alphanumerically sorted by key. This will get important with the
+	// write-back of the results.
 	
-	//delete both arrays if the already exist.
+	// delete both arrays if the already exist.
 	if (columns != NULL) {delete[] columns; columns = NULL;}
 	if (values  != NULL) {delete[] values;  values  = NULL;}
-	//set the sizes of PetscScalar* values and PetscInt* columns
-	//to the just calculated necessary size.
+	// set the sizes of PetscScalar* values and PetscInt* columns
+	// to the just calculated necessary size.
 	columns = new PetscInt(max_ne);
 	values = new PetscScalar(max_ne);
 	
-	//Calculate the size of the problem (number of rows/columns of
-	//the matrix, number of elements in the vectors).
-	PetscInt n=0;	//Better be safe than sorry
-	std::map<std::string,Roi<int>* >::iterator usIt;	//unknown sizes iterator
-	//iterate through the unknown Sizes and add their volume up
+	// Calculate the size of the problem (number of rows/columns of
+	// the matrix, number of elements in the vectors).
+
+	// Better be safe than sorry
+	PetscInt n=0;
+	// unknown sizes iterator
+	std::map<std::string,Roi<int>* >::iterator usIt;
+	// iterate through the unknown Sizes and add their volume up
 	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
 		n += PetscInt(usIt->second->getVolume());
 	}
 
 	
-	//now we have the individual lenghts of each unknowns block in the
-	//matrix and thus the size of the whole matrix and the lenght of the
-	//solution vector
+	// now we have the individual lenghts of each unknowns block in the
+	// matrix and thus the size of the whole matrix and the lenght of the
+	// solution vector
 	
-	//     *===========*
-	//     | P E T S C |
-	//     *===========*
-	//PetscInitialize and MPI Initialization are done in the main
+	/*
+	 *	*===========*
+	 *	| P E T S C |
+	 *	*===========*
+	 *
+	 *	PetscInitialize and MPI Initialization are done in the main
+	 */
 	
-	Vec				x, b;	//x: approx. solution, b: right hand side
-	Mat				A;		//A: Linear System Matrix
-	KSP				ksp(0);	//KSP context
-//	PC				pc;		//PC context
-	PetscErrorCode	ierr;	//PETSc Error code for error-traceback
-	PetscInt		j;		//j: row index
-	PetscInt		Istart, Iend;	//Ownership range
+	Vec				x,				// approx. solution
+					b;				// right hand side
+	Mat				A;				// Linear System Matrix
+	KSP				ksp(0);			// KSP context
+//	PC				pc;				// PC context
+	PetscErrorCode	ierr;			// PETSc Error code for error-traceback
+	PetscInt		j;				// row index
+	PetscInt		Istart, Iend;	// Ownership range
 	
-	//Create Vector
-	ierr = VecCreate(PETSC_COMM_WORLD,&x);CHKERRQ(ierr);
-	//Set the size of the vector
-	ierr = VecSetSizes(x,PETSC_DECIDE,n);CHKERRQ(ierr);
-	//Set other options from the database
-	ierr = VecSetFromOptions(x);CHKERRQ(ierr);
-	//Duplicate the vector x and save the duplicate in b
-	ierr = VecDuplicate(x,&b);CHKERRQ(ierr);
-	//Create the Matrix A
-	ierr = MatCreate(PETSC_COMM_WORLD,&A);CHKERRQ(ierr);
-	//Set the Size of A to be n*n - let PETSc decide how big the local
-	//chunks should be
-	ierr = MatSetSizes(A,PETSC_DECIDE,PETSC_DECIDE,n,n);CHKERRQ(ierr);
-	//Set other options from the database
-	ierr = MatSetFromOptions(A);CHKERRQ(ierr);
+	// Create Vector
+	ierr = VecCreate(PETSC_COMM_WORLD,&x);
+	CHKERRQ(ierr);
+	// Set the size of the vector
+	ierr = VecSetSizes(x,PETSC_DECIDE,n);
+	CHKERRQ(ierr);
+	// Set other options from the database
+	ierr = VecSetFromOptions(x);
+	CHKERRQ(ierr);
+	// Duplicate the vector x and save the duplicate in b
+	ierr = VecDuplicate(x,&b);
+	CHKERRQ(ierr);
+	// Create the Matrix A
+	ierr = MatCreate(PETSC_COMM_WORLD,&A);
+	CHKERRQ(ierr);
+	// Set the Size of A to be n*n - let PETSc decide how big the local
+	// chunks should be
+	ierr = MatSetSizes(A,PETSC_DECIDE,PETSC_DECIDE,n,n);
+	CHKERRQ(ierr);
+	// Set other options from the database
+	ierr = MatSetFromOptions(A);
+	CHKERRQ(ierr);
 	
-	ierr = MatGetOwnershipRange(A,&Istart,&Iend);CHKERRQ(ierr);
+	ierr = MatGetOwnershipRange(A,&Istart,&Iend);
+	CHKERRQ(ierr);
 	
-	for(j = Istart ; j < Iend ; j++) { //iterate through the owned rows
-		//Convert the row index into point-coordinates and the unknown
-		//of the block in which the point is.
+	// iterate through the owned rows
+	for(j = Istart ; j < Iend ; j++) {
+		// Convert the row index into point-coordinates and the unknown
+		// of the block in which the point is.
 		
-		std::string unknown;	//current unknown
-		Point4D<int> p;	//current point
+		std::string unknown;    //current unknown
+		Point4D<int> p;         //current point
 		
-		globalIndexToPoint( (unsigned int)j, unknownSizes, unknown, p);
-		//now p contains the coordinate of the current point and
-		//unknown contains the name of the current unknown.
+		globalIndexToPoint((unsigned int)j, unknownSizes, unknown, p);
+		// now p contains the coordinate of the current point and
+		// unknown contains the name of the current unknown.
 		
-		//First, determine whether the point that corresponds to this
-		//row is a ghost node or 'real point'
-		if (this->roi()->isInside(p.x, p.y, p.z, p.t)) { //Real point:
-			//if it is a real point, we have positive coordinates and thus can
-			//cast without messing things up.
+		// First, determine whether the point that corresponds to this
+		// row is a ghost node or 'real point'
+		if (this->roi()->isInside(p.x, p.y, p.z, p.t)) {
+			/*
+			 *	Real point:
+			 *		if it is a real point, we have positive coordinates and thus
+			 *		can cast without messing things up.
+			 */
 			p = Point4D<unsigned int>(p);
-			//Update all stencils of the unknown to contain current data
-			int nos = (int)substencils[unknown].size();	//number of stencils
-			PetscScalar rhs;	//right hand side
+			// Update all stencils of the unknown to contain current data
+			int nos = (int)substencils[unknown].size(); // number of stencils
+			PetscScalar rhs;                            // right hand side
 			for (int index = 0 ; index < nos ; index++) {
 				substencils.find(unknown)->second[index]->updateStencil(p.x, p.y, p.z, p.t);
 				rhs += PetscScalar(substencils.find(unknown)->second[index]->getRhs().find(unknown)->second);
 			}
-			//now call the MetaStencil of this unknown to gather all the
-			//data of its SubStencils (which have just been updated) and
-			//put the values and their indices into the respective arrays
-			//for MatSetValues					
+			// now call the MetaStencil of this unknown to gather all the
+			// data of its SubStencils (which have just been updated) and
+			// put the values and their indices into the respective arrays
+			// for MatSetValues
 			unsigned int ne; //number of entries
-			//transfer data form the SubStencils into the arrays and get
-			//the number of entries back
+
+			// transfer data form the SubStencils into the arrays and get
+			// the number of entries back
 			ne = MetaStencils[unknown].update(unknown,p,unknownSizes,columns,values);
 			
-			//write values into matrix
-			ierr = MatSetValues(A,1,&j,ne,columns,values,INSERT_VALUES);CHKERRQ(ierr);
-			//and right hand side
-			ierr = VecSetValues(b,1,&j,&rhs,INSERT_VALUES);CHKERRQ(ierr);
+			// write values into matrix
+			ierr = MatSetValues(A,1,&j,ne,columns,values,INSERT_VALUES);
+			CHKERRQ(ierr);
+
+			// and right hand side
+			ierr = VecSetValues(b,1,&j,&rhs,INSERT_VALUES);
+			CHKERRQ(ierr);
 			
 			
-		} else { //Ghost node:
-			//To handle Ghost nodes, we have to resolve the boundary
-			//conditions. In this case, the boundary condition is hard
-			//coded and dictates, that all ghost pixels have the same
-			//value as their closest real pixel.
-			//Find the closest boundary pixel
+		}
+		else {
+			/*
+			 *	Ghost node:
+			 *		To handle Ghost nodes, we have to resolve the boundary
+			 *		conditions. In this case, the boundary condition is hard
+			 *		coded and dictates, that all ghost pixels have the same
+			 *		value as their closest real pixel.
+			 */
+
+			// Find the closest boundary pixel
 			Point4D<int> boundary = getBoundary(p);
 			
 			values[0] = 1;
@@ -407,64 +468,77 @@ int PetscSolver<T>::petscExecute() {
 		}				
 	}
 	
-	ierr = MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
-	ierr = MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
-	ierr = VecAssemblyBegin(b);CHKERRQ(ierr);
-	ierr = VecAssemblyEnd(b);CHKERRQ(ierr);
+	ierr = MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY);
+	CHKERRQ(ierr);
+	ierr = MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY);
+	CHKERRQ(ierr);
+	ierr = VecAssemblyBegin(b);
+	CHKERRQ(ierr);
+	ierr = VecAssemblyEnd(b);
+	CHKERRQ(ierr);
 	
-	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN);CHKERRQ(ierr);
-	ierr = KSPSolve(ksp,b,x);CHKERRQ(ierr);
+	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN);
+	CHKERRQ(ierr);
+	ierr = KSPSolve(ksp,b,x);
+	CHKERRQ(ierr);
 	
-	//only the #0 Machine is supposed to write results back
+	// only the #0 Machine is supposed to write results back
 	if (this->isRankZero()) {
-		//create lookup map to convert unknown to index in the CImgList
+		// create lookup map to convert unknown to index in the CImgList
 		std::map<std::string, unsigned int> lookup;
-		//an Iterator for the unknownSizes already exists in this scope: usIt
+		// an Iterator for the unknownSizes already exists in this scope: usIt
 		unsigned int tempIndex=0;
-		//unknownSizes is inherently sorted by key in alphanumerical order
+		// unknownSizes is inherently sorted by key in alphanumerical order
 		for(usIt=unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
 			lookup[usIt->first]=tempIndex;
 			tempIndex++;
 		}
-		//now, lookup contains all unknowns and their index in the CImgList
-		//the indices are easily accessibly with lookup.find(unknown)->second
 
-		//Prepare vector and context first
-		Vec				result;	//Vector to store the result in
-		VecScatter		scatter;//context for scattering the result
+		// now, lookup contains all unknowns and their index in the CImgList
+		// the indices are easily accessibly with lookup.find(unknown)->second
+
+		// Prepare vector and context first
+		Vec             result;  // Vector to store the result in
+		VecScatter      scatter; // context for scattering the result
 		
-		std::map<std::string, unsigned int>::iterator lIt; //Lookup iterator
-		unsigned int globalIndex;	//to store the current global index
+		// Lookup iterator
+		std::map<std::string, unsigned int>::iterator lIt;
+		// to store the current global index
+		unsigned int globalIndex;
 		
-		//Create local vector to store the result in
+		// Create local vector to store the result in
 		ierr = VecCreate(PETSC_COMM_WORLD,&result);CHKERRQ(ierr);
 		ierr = VecSetSizes(result,n,n);CHKERRQ(ierr); //local vector
 		ierr = VecSetFromOptions(result);CHKERRQ(ierr);
 		ierr = VecScatterCreate(x,PETSC_NULL,result,PETSC_NULL,&scatter);CHKERRQ(ierr);
 		ierr = VecScatterBegin(scatter,x,result,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
 		ierr = VecScatterEnd(scatter,x,result,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-		//now 'result' contains - well - the result. The difference is, that x is a
-		//parallel vector (scattered across all machines), but 'result' is a local
-		//vector which exists only in the #0 machine
+
+		// now 'result' contains - well - the result. The difference is, that x is a
+		// parallel vector (scattered across all machines), but 'result' is a local
+		// vector which exists only in the #0 machine
 		PetscScalar* res;
-		//now make the result-vector available as an array of PetscScalar
+		// now make the result-vector available as an array of PetscScalar
 		ierr = VecGetArray(result,&res);CHKERRQ(ierr);
 		
-		//epxand the CImgList to the needed size
+		// epxand the CImgList to the needed size
 		this->result.assign(lookup.size(),this->roi()->getWidth(),
 		                                  this->roi()->getHeight(),
 		                                  this->roi()->getDepth(),
 		                                  this->roi()->getDuration());
 
-		//Due to data locallity, it is performance-wise better to iterate
-		//through the unknowns first and fill the CImgList element by element
-		//instead of pixel by pixel. Same with the solution vector.
-		for(lIt=lookup.begin() ; lIt!=lookup.end();lIt++) { //for all unknowns
-			forRoiXYZT(*(this->roi()),x,y,z,t) { //go through the image
-				//get the current global index
+		// Due to data locallity, it is performance-wise better to iterate
+		// through the unknowns first and fill the CImgList element by element
+		// instead of pixel by pixel. Same with the solution vector.
+
+		// for all unknowns
+		for(lIt=lookup.begin() ; lIt!=lookup.end();lIt++) {
+			// go through the image
+			forRoiXYZT(*(this->roi()),x,y,z,t) {
+				// get the current global index
 				globalIndex = pointToGlobalIndex(Point4D<int>(x,y,z,t),lIt->first, unknownSizes);
-				//and write the results into the output slot 'out'
-				(*(this->out()))(lIt->second,x,y,z,t) = T(res[globalIndex]);
+				// and write the results into the output slot 'out'
+				this->out()(lIt->second,x,y,z,t) = T(res[globalIndex]);
 			}
 		}
 		
@@ -472,7 +546,7 @@ int PetscSolver<T>::petscExecute() {
 	}
 
 	
-	//clean up
+	// clean up
 	for(usIt = unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
 		delete usIt->second;
 	}
@@ -491,7 +565,13 @@ void PetscSolver<T>::execute() {
 	ParameteredObject::execute();
 	int errorCode;
 	errorCode = petscExecute();
-	if (errorCode) throw "PETSc error.";
+	if (errorCode) {
+		std::ostringstream msg;
+		msg << __FILE__ << ":" << __LINE__ << std::endl;
+		msg << "\tPETSc error occured" << std::endl;
+		msg << "\tError code:\n\t\t" << errorCode;
+		throw std::runtime_error(msg.str().c_str());
+	}
 }
 
 template <class T>
@@ -499,7 +579,6 @@ PetscSolver<T>::~PetscSolver() {
 	//make sure, PetscInt and PetscScalar get cleared
 	delete[] columns;
 	delete[] values;
-	
 }
 
 #endif // _PETSCSOLVER_HXX_

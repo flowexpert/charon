@@ -15,12 +15,8 @@
 */
 /** @file PetscSolver.h
  *  Implementation of class PetscSolver.
- *  This is the PETSc implementation of a solver. It has been designed to run on
- *  multiple instances simultaneously.
- *  @see Solver.h
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
- *
  *  @date 8.09.2009
  */
 
@@ -42,112 +38,127 @@
 #include "../Solver.h"
 #include <petscksp.h>
 
-///@todo incorporate std::runtime_error and #include <stdexept> instead of throw "string"
-
+/// PETSc implementation of a solver
+/**
+ *	This solver is based on the
+ *	<a href="http://www.mcs.anl.gov/petsc/petsc-as/">PETSc library</a>.
+ *	It has been designed to run on multiple instances (machines, cpus)
+ *	simultaneously.
+ *  \see class Solver
+ */
 template <class T>
 class petscsolver_DECLDIR PetscSolver : public Solver<T>
 {
-	protected:
-		PetscInt		*columns;
-		PetscScalar		*values;
-		
-		class PetscMetaStencil : public Solver<T>::MetaStencil
-		{
-			public:
-				///default constructor.
-				PetscMetaStencil(const std::string unknown,const std::vector<Stencil<T>*>& stencils);
-				
-				///copy constructor.
-				PetscMetaStencil(const PetscMetaStencil& rhs);
-				
-				///empty constructor for use in map.
-				PetscMetaStencil();
-				
-				/**
-				 * Write data form SubStencils into PetscScalar *values and
-				 * their indices into PetscInt *columns.
-				 * @param[in] unknown current unknown.
-				 * @param[in] p current point,
-				 * @param[in] unknownSizes sizes of matrix blocks.
-				 * @param[out] columns Array of column indices for MatSetValues.
-				 * @param[out] values Array of values for MatSteValues.
-				 * @return Number of entries.
-				 */
-				unsigned int update(const std::string unknown,
-				                    const Point4D<unsigned int>& p,
-				                    const std::map<std::string,Roi<int>* >& unknownSizes,
-				                    PetscInt* &columns, PetscScalar* &values);
-		};
-
-		/**
-		 * Converts a coordinate in an ROI into a relative index.
-		 * @param[in] p Point to convert.
-		 * @param[in] dim Dimensions of the ROI that p is in.
-		 * @see getVectorIndex()
-		 * @see getCoordinate()
-		 * @return Relative vector index.
-		 */
-		static unsigned int pointToRelativeIndex(const Point4D<int> p, const Roi<int> &dim);
-		
-		/**
-		 * Converts a relative vector index to a global vector index.
-		 * @param[in] i Relative vector index.
-		 * @param[in] unknown The unknown in which the relative vector index is.
-		 * @param[in] unknownSizes Map of ROIs associated to their unknown.
-		 * @see getIndex()
-		 * @see getCoordinate()
-		 * @return Global vector index.
-		 */
-		static unsigned int relativeIndexToGlobalIndex(const unsigned int i,
-		                                        const std::string& unknown,
-		                                        const std::map<std::string,Roi<int>* >& unknownSizes);
-		
-		/**
-		 * Convert a global vector index to 4-dimensional coordinates and the according unknown.
-		 * @param[in] vi Global vector index.
-		 * @param[in] unknownSizes Map of ROIs associated to their unknown.
-		 * @param[out] unknown Unknown of the ROI in which the point is.
-		 * @param[out] p Coordinates of the point.
-		 * @see getIndex()
-		 * @see getVectorIndex()
-		 */
-		static void globalIndexToPoint(const unsigned int vi,
-		                        const std::map<std::string, Roi<int>* >& unknownSizes,
-		                        std::string& unknown, Point4D<int>& p);
-		
-		/**
-		 * Convert coordinates to the global index
-		 * @param[in] p Current point
-		 * @param[in] unknown Current unknown
-		 * @param[in] unknownSizes Map of ROIs associated to their unknown
-		 * @return global index
-		 */
-		static unsigned int pointToGlobalIndex(const Point4D<int>& p, const std::string unknown,
-		                                const std::map<std::string, Roi<int>* >& unknownSizes);
-		
-		/**
-		 * Find the closest real pixel to p (which is a ghost pixel).
-		 * @param[in] p Ghost pixel to which the closest real pixel should be found
-		 * @return Point4D object containing the coordinates of the closest
-		 * boundary pixel of the unexpanded ROI
-		 */
-		Point4D<int> getBoundary(Point4D<int> &p);
-		
+protected:
+	PetscInt*		columns;
+	PetscScalar*	values;
+	
+	class PetscMetaStencil : public Solver<T>::MetaStencil
+	{
 	public:
-		///default constructor.
-		PetscSolver(const std::string& name = "");
+		/// default constructor
+		PetscMetaStencil(const std::string& unknown  /**[in] unknown name*/,
+			const std::vector<Stencil<T>*>& stencils /**[in] stencils for this unknown*/);
 		
-		///check if process is rank 0.
-		bool isRankZero();
+		/// copy constructor
+		PetscMetaStencil(const PetscMetaStencil& rhs /**[in] copy source*/);
 		
-		///encapsulated execute function for PETSc calls.
-		int petscExecute();
+		/// empty constructor for use in map
+		PetscMetaStencil();
 		
-		///main function.
-		void execute();
-		
-		///default destructor.
-		~PetscSolver();
+		/// update columns and values
+		/**
+		 *	Write data from SubStencils into PetscScalar* values and
+		 *	their indices into PetscInt* columns.
+		 *	@param[in]  unknown			current unknown.
+		 *	@param[in]  p				current point,
+		 *	@param[in]  unknownSizes	sizes of matrix blocks.
+		 *	@param[out] columns			Array of column indices for MatSetValues.
+		 *	@param[out] values			Array of values for MatSteValues.
+		 *	@return						Number of entries.
+		 */
+		unsigned int update(const std::string unknown,
+		                    const Point4D<unsigned int>& p,
+		                    const std::map<std::string,Roi<int>* >& unknownSizes,
+		                    PetscInt*& columns, PetscScalar*& values);
+	};
+
+	/// Convert ROI coordinate to relative index
+	/**
+	 *	@param[in] p					Point to convert.
+	 *	@param[in] dim					Dimensions of the ROI that p is in.
+	 *	@see getVectorIndex()
+	 *	@see getCoordinate()
+	 *	@return							Relative vector index.
+	 */
+	static unsigned int pointToRelativeIndex(const Point4D<int>& p, const Roi<int>& dim);
+	
+	/// Convert a relative vector index to a global vector index.
+	/**
+	 *	@param[in] i					Relative vector index.
+	 *	@param[in] unknown				The unknown in which the relative vector index is.
+	 *	@param[in] unknownSizes			Map of ROIs associated to their unknown.
+	 *	@see getIndex()
+	 *	@see getCoordinate()
+	 *	@return							Global vector index.
+	 */
+	static unsigned int relativeIndexToGlobalIndex(const unsigned int i,
+	                                        const std::string& unknown,
+	                                        const std::map<std::string,Roi<int>* >& unknownSizes);
+	
+	/// Convert a global vector index to 4-dimensional coordinates and the according unknown.
+	/**
+	 *	@param[in]  vi					Global vector index.
+	 *	@param[in]  unknownSizes		Map of ROIs associated to their unknown.
+	 *	@param[out] unknown				Unknown of the ROI in which the point is
+	 *	@param[out] p					Coordinates of the point.
+	 *	@see getIndex()
+	 *	@see getVectorIndex()
+	 */
+	static void globalIndexToPoint(const unsigned int vi,
+	                        const std::map<std::string, Roi<int>* >& unknownSizes,
+	                        std::string& unknown, Point4D<int>& p);
+	
+	/// Convert coordinates to the global index
+	/**
+	 *	@param[in] p					Current point
+	 *	@param[in] unknown				Current unknown
+	 *	@param[in] unknownSizes			Map of ROIs associated to their unknown
+	 *	@return							global index
+	 */
+	static unsigned int pointToGlobalIndex(
+		const Point4D<int>& p,
+		const std::string& unknown,
+		const std::map<std::string,
+		Roi<int>* >& unknownSizes
+	);
+	
+	/// Find the closest real pixel to p (which is a ghost pixel).
+	/**
+	 *	@param[in] p					Ghost pixel to which the closest real
+	 *									pixel should be found
+	 *
+	 *	@return							Point4D object containing the coordinates
+	 *									of the closest boundary pixel of the
+	 *									unexpanded ROI
+	 */
+	Point4D<int> getBoundary(Point4D<int>& p);
+	
+public:
+	/// default constructor
+	PetscSolver(const std::string& name = "" /**[in] instance name*/);
+	
+	/// check if process is rank 0
+	bool isRankZero();
+	
+	/// encapsulated execute function for PETSc calls
+	int petscExecute();
+	
+	/// main function
+	virtual void execute();
+	
+	/// default destructor
+	virtual ~PetscSolver();
 };
 
 #endif // _PETSCSOLVER_H_
