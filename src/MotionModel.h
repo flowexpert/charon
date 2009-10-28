@@ -58,7 +58,7 @@ public:
 	MotionModel(const std::string& classname, const std::string& name = "") :
 		TemplatedParameteredObject<T>(classname, name, "computes the vectors")
 	{
-		this->_addOutputSlot(out, "this", "Pointer to itself", "MotionModel*");
+		this->_addOutputSlot(out, "this", "Pointer to itself", "MotionModel<T>");
 		this->_addOutputSlot(flowFunctor, "flowfunctor",
 				"flowFunctor of MotionModel", "FlowFunctorInterface*");
 		this->_addParameter(x, "x", "x-coordinate of the center of the stencil", 0);
@@ -75,7 +75,7 @@ public:
 	//InputSlot<Derivative*> deriv;
 
 	/// output slot containing pointer to this class
-	OutputSlot<MotionModel*> out;
+	OutputSlot<MotionModel<T>*> out;
 
 	/// output slot containing pointer to the flow functor of the motion model
 	OutputSlot<FlowFunctorInterface*> flowFunctor;
@@ -83,19 +83,13 @@ public:
 	/// coordinates of center of mask
 	Parameter<int> x, y, z;
 
-	// Berechnet Vektor f�r Punkt x,y
+	/// compute the bcce-term of the motion model
 	/**
-	 *        computes the bcce-term of the motion model
-	 * @param xs x-coordinate of the current pixel
-	 * @param ys y-coordinate of the current pixel
-	 
-	 * @param zs z-coordinate of the current pixel
-	 * @param t current time
-	 * @param v channel
-	 * @param x x-coordinate of the center of motion
-	 * @param y y-coordinate of the center of motion
-	 * @param z z-coordinate of the center of motion
-	 * @param[out] res image in which the bcce-term is written
+	 *	@param xs,ys,zs     coordinates of the current pixel
+	 *	@param t            current time
+	 *	@param v            channel
+	 *	@param x,y,z        coordinates of the center of motion
+	 *	@param[out] rhs     image in which the bcce-term is written
 	 */
 	virtual void compute(const int xs, const int ys, const int zs, const int t,
 			const int v, std::map<std::string, T>& term, T& rhs)=0;
@@ -117,7 +111,7 @@ public:
 	 *  @param outPixel return value of Pixel type
 	 */
 	virtual void apply(const Pixel<T> & inPixel, const std::vector<
-			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel) =0;
+			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel) = 0;
 
 };
 

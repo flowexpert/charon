@@ -56,11 +56,13 @@ protected:
 
 public:
 	/// default constructor
-	BrightnessModel(const std::string& classname, const std::string& name = "") :
+	BrightnessModel(
+			const std::string& classname /**[in] class name*/,
+			const std::string& name = "" /**[in] instance name*/) :
 		TemplatedParameteredObject<T>(classname, name,
 				"computes the vectors for brightness-modeling")
 	{
-		_addOutputSlot(out, "this", "Pointer to itself", "BrightnessModel*");
+		_addOutputSlot(out, "this", "Pointer to itself", "BrightnessModel<T>");
 		_addOutputSlot(brightnessFunctor, "brightnessfunctor",
 				"Pointer to BrightnessFunctor of the Model",
 				"BrightnessFunctorInterface*");
@@ -80,22 +82,18 @@ public:
 	/// updates the motionmodel
 	virtual void execute()
 	{
+		ParameteredObject::execute();
 		initialize();
 		//_outDataChanged(out); // TODO datenpfad
 	}
 
-	/** 
-	 * computes the bcce term
-	 * @param xs x coordinate
-	 * @param ys y coordinate
-	 * @param zs z coordinate
-	 * @param t time coordinate
-	 * @param v channel
-	 * @param term map to which the result is written
-	 * @param rhs right hand side
+	///	compute the bcce term
+	/**	@param xs,ys,zs,t,v  coordinates (5D)
+	 *	@param term          map to which the result is written
+	 *	@param rhs           right hand side
 	 */
 	virtual void compute(const int xs, const int ys, const int zs, const int t,
-			const int v, std::map<std::string, T>& term, T& rhs)=0;
+			const int v, std::map<std::string, T>& term, T& rhs) = 0;
 	
 	/**
 	 * Get the unknowns of the model.

@@ -15,12 +15,8 @@
 */
 /** @file Gbcce.hxx
  *  Implementation of class Gbcce.
- *  This is the General Brightness Change Constraint Equation stencil which is
- *  derived from the stencil class.
- *  @see Stencil.hxx
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
- *
  *  @date 8.09.2009
  */
 
@@ -33,37 +29,43 @@
 template <class T>
 Gbcce<T>::Gbcce(const std::string& name) : 
 		Stencil<T>("GBCCE", name) {
-	this->_addInputSlot(brightnessIn,"brightnessmodel","Brightness Model","BrightnessModel*");
-	this->_addInputSlot(motionIn,"motionmodel","Motion Model","MotionModel*");
+	this->_addInputSlot(brightnessIn,"brightnessmodel","Brightness Model","BrightnessModel<T>");
+	this->_addInputSlot(motionIn,"motionmodel","Motion Model","MotionModel<T>");
 }
 
 template <class T>
 void Gbcce<T>::execute() {
 	ParameteredObject::execute();
-	this->unknowns.clear();	//erase the old set of unknowns
+	// erase the old set of unknowns
+	this->unknowns.clear();
 	std::set<std::string> bmUnknowns = this->brightnessIn()->getUnknowns();
 	std::set<std::string> mmUnknowns = this->motionIn()->getUnknowns();
 	std::set<std::string>::iterator bmIt = bmUnknowns.begin();
 	std::set<std::string>::iterator mmIt = mmUnknowns.begin();
 	
-	//Collision detection
-	while (bmIt != bmUnknowns.end()) { //go through the BrightnessModel-Vector of unknowns
-		while (mmIt != mmUnknowns.end()) { //go through the MotionModel-Vector of unknowns
-			if (*bmIt == *mmIt) { //and compare them
+	// Collision detection
+
+	// go through the BrightnessModel-Vector of unknowns
+	while (bmIt != bmUnknowns.end()) {
+		// go through the MotionModel-Vector of unknowns
+		while (mmIt != mmUnknowns.end()) {
+			// and compare them
+			if (*bmIt == *mmIt) {
 				throw "name collision in unknowns";
 			}
 			mmIt++;
 		} 				
-		mmIt = mmUnknowns.begin(); //reset the inner loop iterator
+		// reset the inner loop iterator
+		mmIt = mmUnknowns.begin();
 		bmIt++;
 	}
-	//if no collision is detected, merge both input vectors into the
-	//unkowns set which was inherited from the Stencil class
+	// if no collision is detected, merge both input vectors into the
+	// unkowns set which was inherited from the Stencil class
 	this->unknowns.insert(bmUnknowns.begin(),bmUnknowns.end());
 	this->unknowns.insert(mmUnknowns.begin(),bmUnknowns.end());
 	
-	//expanding stencil-map to appropriate size and filling with dummy
-	//values
+	// expanding stencil-map to appropriate size and filling with dummy
+	// values
 	std::set<std::string>::iterator uIt;
 	for(uIt=this->unknowns.begin();uIt!=this->unknowns.end();uIt++) {
 		Point4D<unsigned int> center(0,0,0,0);
@@ -73,7 +75,7 @@ void Gbcce<T>::execute() {
 	}
 }
 
-template <class T>						
+template <class T>
 void Gbcce<T>::updateStencil(const unsigned int x,const unsigned int y,
                              const unsigned int z,const unsigned int t,
                              const unsigned int v) {
@@ -91,10 +93,13 @@ void Gbcce<T>::updateStencil(const unsigned int x,const unsigned int y,
 //not yet implemented
 template <class T>
 cimg_library::CImg<T> Gbcce<T>::apply(const cimg_library::CImgList<T>& seq,
-                                      const unsigned int frame) const {return seq[frame];}
+                                      const unsigned int frame) const {
+	return seq[frame];
+}
 
 
 template <class T>
-Gbcce<T>::~Gbcce() {}
+Gbcce<T>::~Gbcce() {
+}
 
 #endif //_GBCCE_HXX_

@@ -61,6 +61,7 @@ IF(ENABLE_SOLVERS AND WITH_PETSC)
 		${PETSC_LIBRARIES}
 		roi
 		gbcce
+		charon-plugins
 	)
 	LIST(APPEND Plugins
 		petscsolver

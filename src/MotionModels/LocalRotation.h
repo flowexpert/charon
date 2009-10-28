@@ -75,17 +75,17 @@ public:
 
 	virtual std::set<std::string>& getUnknowns();
 
-	/** @brief set the parameters of the flow functor
-	 *
-	 *  @details flow will be computed:
-	 * @f[
-	 *	\vec f \left( \begin{array}{c} x \\ y \\ z \end{array} \right) =
-	 *		\left( \begin{array}{c} a_1 \\ a_2 \\ a_3 \end{array} \right) +
-	 *		\left( \begin{array}{ccc} s_1 &  s_2 & s_3 \\ 
-	 *				   	 -s_2 &  s_1 & s_4 \\
-	 *					 -s_3 & -s_4 & s_1 \end{array} \right)
-	 *		\left( \begin{array}{c} x-x_c \\ y-y_c \\ z-z_c \end{array} \right)
-	 * @f]
+	/// set the parameters of the flow functor
+	/**
+	 *	flow will be computed:
+	 *	\f[
+	  		\vec f \left( \begin{array}{c} x \\ y \\ z \end{array} \right) =
+	  			\left( \begin{array}{c} a_1 \\ a_2 \\ a_3 \end{array} \right) +
+	  			\left( \begin{array}{ccc} s_1 &  s_2 & s_3 \\ 
+	  				   	 -s_2 &  s_1 & s_4 \\
+	  					 -s_3 & -s_4 & s_1 \end{array} \right)
+	  		\left( \begin{array}{c} x-x_c \\ y-y_c \\ z-z_c \end{array} \right)
+	  	\f]
 	 * 
 	 */
 	void setFlowFunctorParams(const float a1, const float a2, const float a3,

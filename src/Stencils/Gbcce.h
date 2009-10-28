@@ -15,12 +15,8 @@
 */
 /** @file Gbcce.h
  *  Implementation of class Gbcce.
- *  This is the General Brightness Change Constraint Equation stencil which is
- *  derived from the stencil class.
- *  @see Stencil.h
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
- *
  *  @date 8.09.2009
  */
 
@@ -43,23 +39,33 @@
 #include "../BrightnessModel.h"
 #include "../MotionModel.h"
 
+/// General Brightness Change Constraint Equation
+/*
+ *	This is the General Brightness Change Constraint Equation stencil which is
+ *	derived from class Stencil.
+ */
 template <class T>
 class gbcce_DECLDIR Gbcce : public Stencil<T>
 {
 	public:
-		///InputSlot for the brightness model to use.
-		InputSlot<BrightnessModel<T>* > brightnessIn;
+		/// InputSlot for the brightness model to use.
+		InputSlot<BrightnessModel<T>*> brightnessIn;
 		
-		///InputSlot for the motion model to use.
-		InputSlot<MotionModel<T>* > motionIn;
+		/// InputSlot for the motion model to use.
+		InputSlot<MotionModel<T>*> motionIn;
 		
-		///default constructor
-		Gbcce(const std::string& name = "");
+		/// default constructor
+		Gbcce(const std::string& name = "" /**[in] instance name*/);
 		
-		///main function.
+		/// main function
 		virtual void execute();
 		
-		///update the Stencil to contain the data that corresponds to the given coordinates.
+		/// update
+		/**
+		 *	update the Stencil to contain the data that corresponds to the
+		 *	given coordinates.
+		 *	\param[in] x,y,z,t,v	coordinates
+		 */
 		virtual void updateStencil(const unsigned int x, const unsigned int y,
 		                   const unsigned int z=0, const unsigned int t=0,
 		                   const unsigned int v=0);

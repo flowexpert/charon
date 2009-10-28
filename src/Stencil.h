@@ -76,12 +76,12 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 	protected:
 		///Set of the names of unknowns on which this stencil works.
 		std::set<std::string> unknowns;
-		
+
 		/**
 		 * Map to store and manage all the SubStencils.
 		 * @remarks
 		 * -   This member must never be erased as long as the stencil exists
-		 * 	   because this would break the pointers of following objects
+		 *     because this would break the pointers of following objects
 		 */
 		std::map<std::string, SubStencil<T> > substencils;
 
@@ -89,18 +89,18 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 * Map to store and manage all the right hand sides.
 		 * @remarks
 		 * -   This member must never be erased as long as the stencil exists
-		 * 	   because this would break the pointers of following objects
+		 *     because this would break the pointers of following objects
 		 */
 		std::map<std::string, T> rhs;
 
 	public:
-		///Lambda coefficient of the stencil.
+		/// Lambda coefficient of the stencil.
 		Parameter<T> lambda;
 		
-		///Output slot containing the this-pointer of the object		
+		/// Output slot containing the this-pointer of the object		
 		OutputSlot<Stencil<T>*> out;
 
-		///default constructor
+		/// default constructor
 		Stencil(const std::string& classname, const std::string& name = "");
 
 		/// update stencil
@@ -112,32 +112,32 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		virtual void updateStencil(const unsigned int x, const unsigned int y,
                                    const unsigned int z=0, const unsigned int t=0,
                                    const unsigned int v=0) = 0;
-		
+
 		/**
 		 * Getter function for the SubStencils of the stencil.
 		 * @return reference to the map of SubStencils.
 		 */
 		const std::map<std::string, SubStencil<T> >& get() const;
-		
+
 		/**
 		 * Getter function for the right hand side.
 		 * @return a map containing all right hand sides, associated to unknowns.
 		 */
 		const std::map<std::string, T>& getRhs() const;
-		
+
 		/**
 		 * Apply the Stencil to a sequence.
 		 * @remark not yet implemented.
 		 */
 		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
 		                                    const unsigned int frame) const = 0;
-						
+
 		/**
 		 * Getter functions for the unknowns of the stencil.
 		 * @return reference to the set that include the unknowns as strings.
 		 */
 		virtual const std::set<std::string>& getUnknowns() const;
-		
+
 		/**
 		 * Default destructor.
 		 */
