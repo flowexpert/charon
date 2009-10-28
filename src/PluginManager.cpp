@@ -212,7 +212,7 @@ ParameteredObject * PluginManager::createInstance(
 				t);
 		instances[newInstance] = loader;
 		objects[newInstance->getName()] = newInstance;
-		std::cout << "Created Instance \"" << newInstance->getName()
+		sout << "Created Instance \"" << newInstance->getName()
 				<< "\" of the plugin \"" << pluginName << "\", type "
 				<< newInstance->getTemplateType() << std::endl;
 		return newInstance;
