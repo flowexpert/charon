@@ -67,12 +67,12 @@ int main() {
 		man.executeWorkflow();
 	}
 	catch (std::exception e) {
-		sout << "caught exception!" << std::endl;
+		sout << "caught exception of type " << typeid(e).name() << std::endl;
 		sout << "Message:" << std::endl;
 		sout << e.what() << std::endl;
 	}
 	catch (cimg_library::CImgException e) {
-		sout << "caught exception!" << std::endl;
+		sout << "caught exception of type " << typeid(e).name() << std::endl;
 		sout << "Message:" << std::endl;
 		sout << e.message << std::endl;
 	}

@@ -224,7 +224,7 @@ bool PetscSolver<T>::isRankZero() {
 	// just output everything if MPI is not yet initialized
 	if(!initialized)
 		return true;
-	
+
 	int rank;
 	// WARNING: this line crashes, if petsc was not initialized!
 	MPI_Comm_rank(PETSC_COMM_WORLD, &rank);

@@ -116,7 +116,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 }
 				
 template <class T>
-Solver<T>::MetaStencil::MetaStencil(typename const Solver<T>::MetaStencil& rhs) {
+Solver<T>::MetaStencil::MetaStencil(const Solver<T>::MetaStencil& rhs) {
 	this->substencils = rhs.substencils;
 	this->data        = rhs.data;
 	this->pattern     = rhs.pattern;
@@ -136,7 +136,7 @@ Solver<T>::MetaStencil::MetaStencil() {
 		
 template <class T>
 typename Solver<T>::MetaStencil& Solver<T>::MetaStencil::operator = (
-								typename const Solver<T>::MetaStencil& rhs) {
+								const Solver<T>::MetaStencil& rhs) {
 	if (&rhs == this)
 		return *this;
 	
