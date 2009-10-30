@@ -33,6 +33,7 @@
 #include <QtDebug>
 #include <string>
 #include "HierarchyGraphView.h"
+#include "../app/MainWindow.h"
 
 #include "FlowWidget.moc"
 
@@ -45,14 +46,18 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 	setWindowTitle(tr("new file"));
 	connect(_viewer->model(), SIGNAL(fileNameChanged (QString)),
 		this, SLOT(setWindowTitle(QString)));
+	MainWindow* main = qobject_cast<MainWindow*>(parent()->parent());
+	Q_ASSERT(main);
+	connect(_viewer->model(), SIGNAL(fileNameChanged (QString)),
+		main, SLOT(setCurrentFile(QString)));
 }
 
 FlowWidget::~FlowWidget() {
 }
 
-void FlowWidget::load() {
+void FlowWidget::load(const QString& fileName) {
 	try {
-		_viewer->load();
+		_viewer->load(fileName);
 	}
 	catch (std::string msg) {
 		if (msg.find("mpty filename") == std::string::npos)

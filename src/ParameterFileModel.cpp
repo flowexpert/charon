@@ -30,6 +30,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QMessageBox>
+#include <QSettings>
 #include "PluginManager.h"
 #include "FileManager.h"
 #include <charon-utils/CImg.h>
@@ -388,9 +389,19 @@ void ParameterFileModel::_update() {
 void ParameterFileModel::load(const QString& fName) {
 	QString fromDialog = fName;
 
+	QString guess = _fileName;
+	if (guess.isEmpty() || guess == QDir::homePath()) {
+		QSettings settings("Heidelberg Collaboratory for Image Processing",
+			"Tuchulcha");
+		QStringList files = settings.value("recentFileList").toStringList();
+		if (files.size() > 0)
+			guess = files[0];
+		else
+			guess = QDir::homePath();
+	}
 	if (fromDialog.isEmpty())
 		fromDialog = QFileDialog::getOpenFileName(0, tr("Open File"),
-				_fileName, tr("ParameterFile (*.*)"));
+				guess, tr("ParameterFile (*.*)"));
 	setFileName(fromDialog);
 	if (fromDialog.isEmpty())
 		throw std::string("Empty filename");
@@ -400,7 +411,7 @@ void ParameterFileModel::load(const QString& fName) {
 
 void ParameterFileModel::save(const QString& fName) {
 	QString name;
-	if (!_fileName.isEmpty())
+	if ((!_fileName.isEmpty()) && (_fileName != QDir::homePath()))
 		name = _fileName;
 	if (!fName.isEmpty())
 		name = fName;

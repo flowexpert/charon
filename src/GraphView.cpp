@@ -63,8 +63,8 @@ GraphView::~GraphView() {
         delete _model;
 }
 
-void GraphView::load() {
-    _model->load();
+void GraphView::load(const QString& fileName) {
+    _model->load(fileName);
 }
 
 GraphModel* GraphView::model() {

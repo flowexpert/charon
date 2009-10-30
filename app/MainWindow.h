@@ -32,6 +32,7 @@ class QMdiSubWindow;
 class FlowWidget;
 class ParameterFileModel;
 class SelectorWidget;
+class QAction;
 
 ///	Management of the application's main window.
 class MainWindow : public QMainWindow {
@@ -46,34 +47,39 @@ public:
 
 public slots:
 	/// open parameterfile and display flowchart content
-	void open();
+	/// \param fileName File to open.
+	///                 Shows file open dialog if empty.
+	void open(const QString& fileName = "");
 
 	/// create new empty flowchart
 	void openNew();
 
 	/// save current flowchart
 	void saveFlowChart() const;
-	
+
 	/// zoom in
 	void zoomIn();
 
 	/// zoom out
 	void zoomOut();
-	
+
 	/// fit in view
 	void zoomFit();
 
 	/// update plugin information
 	void updateMetadata();
-	
+
 	/// compiles and loads a plug-in
 	void compileAndLoad();
+
+	/// insert file as current file to recent file list
+	void setCurrentFile(const QString& fileName);
 
 signals:
 	/// inform about changed graph to edit
 	/// @param model	new model to edit, 0 if no model exists
 	void activeGraphModelChanged(ParameterFileModel* model);
-	
+
 	/// enable/disable edit widgets
 	/// @param enable	if to enable widgets or not
 	void enableEditors(bool enable);
@@ -91,9 +97,15 @@ private slots:
 	/// show about Qt dialog
 	void _showAboutQt() const;
 
-	///	update windows when new flowchart has been selected
-	///	@param window	activated window
+	/// update windows when new flowchart has been selected
+	/// @param window	activated window
 	void _windowActivated(QMdiSubWindow* window);
+
+	/// open recent file
+	void _openRecentFile();
+
+	/// updated the list of recent files
+	void _updateRecentFileActions();
 
 private:
 	/// Central widget to manage multiple windows
@@ -102,6 +114,17 @@ private:
 	FlowWidget* _flow;
 	/// selector widget
 	SelectorWidget * _selector;
+
+	/// separator above recent files
+	QAction* _separatorAct;
+	/// maximal number of recent files
+	enum { _maxRecentFiles = 5 };
+	/// actions to open recent files
+	QAction* _recentFileActs[_maxRecentFiles];
+
+	/// strip file name
+	/// \param fullFileName    filenane to strip
+	QString _strippedName(const QString& fullFileName) const;
 };
 
 #endif /* MAINWINDOW_H_ */

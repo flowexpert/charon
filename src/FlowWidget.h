@@ -46,25 +46,26 @@ public:
 
 	/// Get used model
 	GraphModel* model();
-	
+
 	/// const version
 	const GraphModel* model() const;
 
 public slots:
-	///	Load ParameterFile and display content.
-	///	The file to load can be specified in an openFile
-	///	dialog.
-	void load();
+	/// Load ParameterFile and display content.
+	/// The file to load can be specified in an openFile
+	/// dialog.
+	/// \param fileName     file to open (file dialog if empty)
+	void load(const QString& fileName = "");
 
 	/// Save flowchart diagram to graphics file.
 	void saveFlowChart() const;
-	
+
 	/// zoom in
 	void zoomIn();
 
 	/// zoom out
 	void zoomOut();
-	
+
 	/// fit in view
 	void zoomFit();
 
@@ -72,7 +73,7 @@ signals:
 	/// Inform about changed model
 	///	@param model	new model
 	void modelChanged(GraphModel* model);
-	
+
 	/// Send status message.
 	/// @param msg			message
 	/// @param timeout		time to show the message

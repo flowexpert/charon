@@ -142,16 +142,16 @@ MainWindow::MainWindow(QWidget* myParent) :
 			"export\nflowchart"), this, SLOT(saveFlowChart()));
 	action->setToolTip(tr("export flowchart to an image file"));
 
-        toolbar->addSeparator();
-        action = toolbar->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
-                        this, SLOT(updateMetadata()));
-        action->setToolTip(tr("update classes informations reading all plugins"));
-        action = toolbar->addAction(QIcon(":/icons/runbuild.png"), tr("&Compile and load plug-in"),
-                        this, SLOT(compileAndLoad()));
-        action->setToolTip(tr("compile new plugin from plugin source"));
-        action = toolbar->addAction(QIcon(":/icons/execute.png"), tr("Execute &Workflow"),
-                        inspector, SLOT(executeWorkflow()));
-        action->setToolTip(tr("execute workflow that is described in the current window"));
+	toolbar->addSeparator();
+	action = toolbar->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
+		this, SLOT(updateMetadata()));
+	action->setToolTip(tr("update classes informations reading all plugins"));
+	action = toolbar->addAction(QIcon(":/icons/runbuild.png"), tr("&Compile and load plug-in"),
+		this, SLOT(compileAndLoad()));
+	action->setToolTip(tr("compile new plugin from plugin source"));
+	action = toolbar->addAction(QIcon(":/icons/execute.png"), tr("Execute &Workflow"),
+		inspector, SLOT(executeWorkflow()));
+	action->setToolTip(tr("execute workflow that is described in the current window"));
 	toolbar->addSeparator();
 	toolbar->addModelActions();
 	toolbar->addSeparator();
@@ -198,6 +198,16 @@ MainWindow::MainWindow(QWidget* myParent) :
 			SLOT(saveFile()), QKeySequence(tr("Ctrl+S")));
 	fileMenu->addAction(QIcon(":/icons/save_as.png"), tr("Save as..."),
 			inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
+	_separatorAct = fileMenu->addSeparator();
+	for (int i = 0; i < _maxRecentFiles; ++i) {
+		_recentFileActs[i] = new QAction(this);
+		_recentFileActs[i]->setVisible(false);
+		connect(_recentFileActs[i], SIGNAL(triggered()),
+			this, SLOT(_openRecentFile()));
+		fileMenu->addAction(_recentFileActs[i]);
+	}
+	_updateRecentFileActions();
+	fileMenu->addSeparator();
 	fileMenu->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
 			this, SLOT(updateMetadata()));
 	fileMenu->addAction(QIcon(":/icons/runbuild.png"), tr("&Compile and load plug-in"), this, SLOT(
@@ -313,13 +323,13 @@ void MainWindow::_showAboutQt() const {
 	QMessageBox::aboutQt(0, tr("About Qt"));
 }
 
-void MainWindow::open() {
+void MainWindow::open(const QString& fileName) {
 	FlowWidget* flowWidget = new FlowWidget(_centralArea);
 	_centralArea->addSubWindow(flowWidget);
 	connect(flowWidget, SIGNAL(statusMessage(const QString&, int)),
 			statusBar(), SLOT(showMessage(const QString&, int)));
 	flowWidget->showMaximized();
-	flowWidget->load();
+	flowWidget->load(fileName);
 }
 
 void MainWindow::openNew() {
@@ -405,4 +415,50 @@ void MainWindow::compileAndLoad() {
 		return;
 	}
 	_selector->update();
+}
+
+void MainWindow::_openRecentFile() {
+QAction *action = qobject_cast<QAction *>(sender());
+	if (action)
+		open(action->data().toString());
+}
+
+void MainWindow::_updateRecentFileActions() {
+	QSettings settings("Heidelberg Collaboratory for Image Processing",
+					   "Tuchulcha");
+	QStringList files = settings.value("recentFileList").toStringList();
+
+	int numRecentFiles = qMin(files.size(), (int)_maxRecentFiles);
+
+	for (int i = 0; i < numRecentFiles; ++i) {
+		QString text = tr("&%1 %2").arg(i + 1).arg(_strippedName(files[i]));
+		_recentFileActs[i]->setText(text);
+		_recentFileActs[i]->setData(files[i]);
+		_recentFileActs[i]->setVisible(true);
+	}
+	for (int j = numRecentFiles; j < _maxRecentFiles; ++j)
+		_recentFileActs[j]->setVisible(false);
+
+	_separatorAct->setVisible(numRecentFiles > 0);
+}
+
+QString MainWindow::_strippedName(const QString& fullFileName) const {
+	return QFileInfo(fullFileName).fileName();
+}
+
+void MainWindow::setCurrentFile(const QString& fileName) {
+	if (fileName.isEmpty())
+		return;
+
+	QSettings settings("Heidelberg Collaboratory for Image Processing",
+					   "Tuchulcha");
+	QStringList files = settings.value("recentFileList").toStringList();
+	files.removeAll(fileName);
+	files.prepend(fileName);
+	while (files.size() > _maxRecentFiles)
+		files.removeLast();
+
+	settings.setValue("recentFileList", files);
+
+	_updateRecentFileActions();
 }

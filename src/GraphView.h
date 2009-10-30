@@ -53,10 +53,11 @@ public:
     const GraphModel* model() const;
 
 public slots:
-    ///	Load ParameterFile and display content.
-    ///	The file to load can be specified in an openFile
-    ///	dialog.
-    void load();
+    /// Load ParameterFile and display content.
+    /// The file to load can be specified in an openFile
+    /// dialog.
+	/// \param fileName    file to open (file dialog if empty)
+    void load(const QString& fileName = "");
 
     /// connect with the given GraphModel
     /// @param model		model to connect with
