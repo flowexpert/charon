@@ -51,8 +51,6 @@ ParameterFileModel::ParameterFileModel(QString fName, QObject* myParent,
 	}
 	if (!_fileName.isEmpty())
 		_load();
-	else
-		_fileName = QDir::homePath();
 }
 
 ParameterFileModel::~ParameterFileModel() {
@@ -390,7 +388,7 @@ void ParameterFileModel::load(const QString& fName) {
 	QString fromDialog = fName;
 
 	QString guess = _fileName;
-	if (guess.isEmpty() || guess == QDir::homePath()) {
+	if (guess.isEmpty()) {
 		QSettings settings("Heidelberg Collaboratory for Image Processing",
 			"Tuchulcha");
 		QStringList files = settings.value("recentFileList").toStringList();
