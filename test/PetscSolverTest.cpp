@@ -34,6 +34,7 @@
 #include <charon-utils/FileReader.h>
 #include <charon-utils/FileWriter.h>
 #include <charon-core/PluginManager.h>
+#include <PetscInit.h>
 
 #ifndef CMAKE_INTDIR
 /// suffix to local plugin dir
@@ -52,10 +53,11 @@ int main() {
 	delete new Mask1D<float>("diff");
 	delete new BrightnessModels::Constant<float>("brightnessConst");
 	delete new MotionModels::LocalConstant<float>("motionConstant");
-	delete new Gbcce<float>("GBCCE");
-	delete new L2Norm<float>("L2Norm");
-	delete new PetscSolver<float>("Solver");
+	delete new Gbcce<float>("bcce");
+	delete new L2Norm<float>("l2Norm");
+	delete new PetscSolver<float>("solver");
 	delete new FileWriter<float>("writer");
+	delete new PetscInit("petscInit");
 
 	std::ofstream log("bcceTestLog.txt", std::ios::trunc);
 	assert(log.good());

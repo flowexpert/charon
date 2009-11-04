@@ -42,7 +42,7 @@ void Gbcce<T>::execute() {
 	std::set<std::string> mmUnknowns = this->motionIn()->getUnknowns();
 	std::set<std::string>::iterator bmIt = bmUnknowns.begin();
 	std::set<std::string>::iterator mmIt = mmUnknowns.begin();
-	
+
 	// Collision detection
 
 	// go through the BrightnessModel-Vector of unknowns
@@ -62,8 +62,8 @@ void Gbcce<T>::execute() {
 	// if no collision is detected, merge both input vectors into the
 	// unkowns set which was inherited from the Stencil class
 	this->unknowns.insert(bmUnknowns.begin(),bmUnknowns.end());
-	this->unknowns.insert(mmUnknowns.begin(),bmUnknowns.end());
-	
+	this->unknowns.insert(mmUnknowns.begin(),mmUnknowns.end());
+
 	// expanding stencil-map to appropriate size and filling with dummy
 	// values
 	std::set<std::string>::iterator uIt;

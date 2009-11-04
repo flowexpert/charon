@@ -106,6 +106,7 @@ IF(ENABLE_TEST)
 		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
 		TARGET_LINK_LIBRARIES(petscsolvertest
 			charon-core
+			charon-plugins
 			roi
 			gbcce
 			l2norm
@@ -117,6 +118,7 @@ IF(ENABLE_TEST)
 			mask1d
 			linearfilter
 			petscsolver
+			petscinit
 		)
 		IF(UNIX)
 			TARGET_LINK_LIBRARIES(petscsolvertest pthread ${X11_LIBRARIES})
