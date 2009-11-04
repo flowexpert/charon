@@ -44,11 +44,16 @@ PetscInit::~PetscInit() {
 		_argc = 0;
 		_argv = 0;
 		// call petsc finish
+		sout << "\tfinalizing Petsc" << std::endl;
 		PetscErrorCode ierr = PetscFinalize();
 		if (ierr) {
 			sout << "Got petsc error code during destructor:\n" 
 				<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ") << std::endl;
 		}
+		int initialized = 0;
+		MPI_Initialized(&initialized);
+		if (initialized)
+			MPI_Finalize();
 	}
 }
 
@@ -79,7 +84,13 @@ void PetscInit::execute() {
 	_initialized = true;
 
 	// call petsc init	
-	PetscInitialize(&_argc, &_argv, PETSC_NULL, PETSC_NULL);
+	sout << "\tinitializing Petsc" << std::endl;
+	PetscErrorCode ierr = MPI_Init(&_argc,&_argv);
+	if (ierr) {
+		sout << "Got petsc error code during initialization:\n" 
+			<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ") << std::endl;
+	}
+	PetscInitialize(&_argc,&_argv,PETSC_NULL,PETSC_NULL);
 }
 
 int PetscInit::argc() const {
