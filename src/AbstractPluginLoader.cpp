@@ -28,7 +28,6 @@ AbstractPluginLoader::AbstractPluginLoader(const std::string & n) :
 }
 
 const std::string& AbstractPluginLoader::getName() const {
-
 	return pluginName;
 }
 
@@ -54,13 +53,11 @@ void AbstractPluginLoader::destroyInstance(ParameteredObject * toDestroy)
 }
 
 AbstractPluginLoader::~AbstractPluginLoader() {
-
 }
 
 AbstractPluginLoader::PluginException::PluginException(const std::string & n,
 		const std::string & pl, error_code e) :
 	runtime_error(n), nameOfPlugin(pl), err(e) {
-
 }
 
 const std::string & AbstractPluginLoader::PluginException::getPluginName() const {
@@ -72,5 +69,4 @@ error_code AbstractPluginLoader::PluginException::getErrorCode() const {
 }
 
 AbstractPluginLoader::PluginException::~PluginException() throw () {
-
 }

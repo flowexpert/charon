@@ -99,7 +99,7 @@ void PluginManager::loadPlugin(const std::string & name)
 
 		try {
 			newPlugin->load();
-		} catch (AbstractPluginLoader::PluginException e) {
+		} catch (const AbstractPluginLoader::PluginException& e) {
 			delete newPlugin;
 			throw e;
 		}
@@ -589,11 +589,12 @@ void PluginManager::_createMetadata(const std::string & targetPath) {
 
 	std::vector<std::string>::const_iterator plugin;
 	for (plugin=plugins.begin(); plugin != plugins.end(); plugin++) {
-		//create metadata information
+		// create metadata information
 		std::string pluginName = plugin->substr(start,
 			plugin->find_last_of('.') - start);
 		if(pluginName.size())
 			_createMetadataForPlugin(pluginName);
+		sout << std::endl;
 	}
 }
 

@@ -38,14 +38,14 @@ UnixPluginLoader::UnixPluginLoader(const std::string & n) :
 }
 
 void UnixPluginLoader::load() throw (PluginException) {
-	if (FileTool::exists(pluginPath + "/lib" + pluginName + LIBRARY_EXTENSION)) {
-		libHandle = dlopen((pluginPath + "/lib" + pluginName
-				+ LIBRARY_EXTENSION).c_str(), RTLD_LAZY);
+	std::string path = pluginPath + "/lib" + pluginName + LIBRARY_EXTENSION;
+	if (FileTool::exists(path)) {
+		libHandle = dlopen(path.c_str(), RTLD_LAZY);
 	} else {
+		path = additionalPluginPath + "/lib" + pluginName + LIBRARY_EXTENSION;
 		std::string oldDir = FileTool::getCurrentDir();
 		FileTool::changeDir(additionalPluginPath);
-		libHandle = dlopen((additionalPluginPath + "/lib" + pluginName
-				+ LIBRARY_EXTENSION).c_str(), RTLD_LAZY);
+		libHandle = dlopen(path.c_str(), RTLD_LAZY);
 		FileTool::changeDir(oldDir);
 	}
 
@@ -64,6 +64,8 @@ void UnixPluginLoader::load() throw (PluginException) {
 					pluginName, PluginException::FILE_DAMAGED);
 		}
 	}
+
+	sout << "Loading " << path << std::endl;
 
 	create = (ParameteredObject*(*)(const std::string &, template_type)) dlsym(
 			libHandle, "create");
@@ -174,7 +176,7 @@ void UnixPluginLoader::unload() throw (PluginException) {
 		libHandle = NULL;
 		create = NULL;
 		destroy = NULL;
-		std::cout << "Successfully unloaded plugin \"" << pluginName << "\"."
+		sout << "Successfully unloaded plugin \"" << pluginName << "\"."
 				<< std::endl;
 	} else {
 		throw PluginException("Plugin \"" + pluginName + "\" is not loaded.",
