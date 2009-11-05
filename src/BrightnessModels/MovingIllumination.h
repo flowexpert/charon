@@ -44,8 +44,11 @@
 namespace BrightnessModels
 {
 
-/// @brief BrightnessModel for a moving illumination envelope
-/// @details Computes the bcce-term for \f$ a_1 \f$ and \f$ a_2 \f$ as described in paragraph 3.3 of "H. Haussecker, D. Fleet. Computing Optical Flow with Physical Models of Brightness Variation. Proc. IEEE CVPR, Hilton Head, 2000"
+/// BrightnessModel for a moving illumination envelope
+/** Computes the bcce-term for \f$ a_1 \f$ and \f$ a_2 \f$ as described in
+ *  paragraph 3.3 of "H. Haussecker, D. Fleet. Computing Optical Flow with
+ *  Physical Models of Brightness Variation. Proc. IEEE CVPR, Hilton Head, 2000"
+ */
 template<class T>
 class brightnessmodels_movingillumination_DECLDIR MovingIllumination: public BrightnessModel<T>
 {

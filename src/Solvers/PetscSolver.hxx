@@ -62,7 +62,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 		int yo = this->center.y - this->substencils[i]->center.y;
 		int zo = this->center.z - this->substencils[i]->center.z;
 		int to = this->center.t - this->substencils[i]->center.t;
-		
+
 		// Iterate through all pixels of the SubStencil...
 		cimg_forXYZV(this->substencils[i]->data,xc,yc,zc,tc) {
 			// ...and copy them into the
@@ -92,12 +92,12 @@ unsigned int PetscSolver<T>::pointToRelativeIndex(
 		const Roi<int>& dim)
 {
 	unsigned int res = 0;
-	
+
 	res += p.t * (dim.getWidth() * dim.getHeight() * dim.getDepth());
 	res += p.z * (dim.getWidth() * dim.getHeight());
 	res += p.y * (dim.getWidth());
 	res += p.x;
-	
+
 	return res;
 }
 
@@ -108,14 +108,14 @@ unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
 		const std::map<std::string,Roi<int>*>& unknownSizes)
 {
 	unsigned int res = 0;
-	
+
 	std::map<std::string,Roi<int>* >::const_iterator usIt; //unknown Sizes iterator
 	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.find(unknown) ; usIt++) {
 		res += usIt->second->getVolume();
 	}
-	
+
 	res += i;
-	
+
 	return res;
 }
 
@@ -126,6 +126,7 @@ void PetscSolver<T>::globalIndexToPoint(
 		std::string& unknown,
 		Point4D<int>& p)
 {
+	/// \todo error occurs here!
 	unsigned int i = vi;
 	std::map<std::string,Roi<int>* >::const_iterator usIt=unknownSizes.begin();
 	while (i - (usIt->second->getVolume()) > 0) {
@@ -133,7 +134,7 @@ void PetscSolver<T>::globalIndexToPoint(
 		usIt++;
 	}
 	unknown = usIt->first;
-	
+
 	Roi<int>& dim = *(usIt->second);
 	p.x =  i % (dim.getWidth());
 	i -= p.x;
@@ -142,7 +143,7 @@ void PetscSolver<T>::globalIndexToPoint(
 	p.z =  (i/(dim.getWidth()*dim.getHeight()))%dim.getDepth();
 	i -= (p.z*dim.getWidth()*dim.getHeight());
 	p.t =  (i/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
-	
+
 	Point4D<int> offset(-dim.xBegin, -dim.yBegin, -dim.zBegin, -dim.tBegin);
 	p -= offset;
 }
@@ -179,40 +180,42 @@ Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) {
 	if (p.t <= this->roi()->tBegin) {caseID.t = 0;}
 	if (p.t > this->roi()->tBegin && p.t < this->roi()->tEnd) {caseID.t = 1;}
 	if (p.t >= this->roi()->tEnd) {caseID.t = 2;}
-				
+
 	Point4D<int> result;
-	
+
 	//resolve each dimension of the case
 	switch(caseID.x) {
 		case 0: result.x = this->roi()->xBegin; break;
 		case 1: result.x = p.x; break;
 		case 2: result.x = this->roi()->xEnd; break;
 	}
-	
+
 	switch(caseID.y) {
 		case 0: result.y = this->roi()->yBegin; break;
 		case 1: result.y = p.y; break;
 		case 2: result.y = this->roi()->yEnd; break;
 	}
-	
+
 	switch(caseID.z) {
 		case 0: result.z = this->roi()->zBegin; break;
 		case 1: result.z = p.z; break;
 		case 2: result.z = this->roi()->zEnd; break;
 	}
-	
+
 	switch(caseID.t) {
 		case 0: result.t = this->roi()->tBegin; break;
 		case 1: result.t = p.t; break;
 		case 2: result.t = this->roi()->tEnd; break;
 	}
-	
+
 	return result;
 }
 
 template <class T>
 PetscSolver<T>::PetscSolver(const std::string& name) : 
 		Solver<T>("PetscSolver", name) {
+	ParameteredObject::_addInputSlot(petsc, "petsc",
+		"petsc initialization", "PetscInit");
 	this->columns=NULL;
 	this->values=NULL;
 }
@@ -262,7 +265,7 @@ int PetscSolver<T>::petscExecute() {
 	 *	necessary stencils by pointers instead of searching through all
 	 *	stencils to find those that use the unknown in question
 	 */
-	
+
 	// map mentionend above
 	std::map<std::string, std::vector<Stencil<T>*> > substencils;
 	// stencil iterator
@@ -302,7 +305,7 @@ int PetscSolver<T>::petscExecute() {
 		typename PetscSolver<T>::PetscMetaStencil pms(ssIt->first,ssIt->second);
 		MetaStencils[ssIt->first] = pms;
 	}
-	
+
 	/*
 	 *	Now we can determine the size of the expanded ROIs which we will
 	 *	organize in a map<string, Roi<int> > to know how big the individual
@@ -331,7 +334,7 @@ int PetscSolver<T>::petscExecute() {
 	// The map containing the unknownSizes is - like all maps -
 	// alphanumerically sorted by key. This will get important with the
 	// write-back of the results.
-	
+
 	// delete both arrays if the already exist.
 	if (columns != NULL) {delete[] columns; columns = NULL;}
 	if (values  != NULL) {delete[] values;  values  = NULL;}
@@ -339,7 +342,7 @@ int PetscSolver<T>::petscExecute() {
 	// to the just calculated necessary size.
 	columns = new PetscInt(max_ne);
 	values = new PetscScalar(max_ne);
-	
+
 	// Calculate the size of the problem (number of rows/columns of
 	// the matrix, number of elements in the vectors).
 
@@ -352,11 +355,11 @@ int PetscSolver<T>::petscExecute() {
 		n += PetscInt(usIt->second->getVolume());
 	}
 
-	
+
 	// now we have the individual lenghts of each unknowns block in the
 	// matrix and thus the size of the whole matrix and the lenght of the
 	// solution vector
-	
+
 	/*
 	 *	*===========*
 	 *	| P E T S C |
@@ -364,7 +367,7 @@ int PetscSolver<T>::petscExecute() {
 	 *
 	 *	PetscInitialize and MPI Initialization are done in the main
 	 */
-	
+
 	Vec				x,				// approx. solution
 					b;				// right hand side
 	Mat				A;				// Linear System Matrix
@@ -373,7 +376,7 @@ int PetscSolver<T>::petscExecute() {
 	PetscErrorCode	ierr;			// PETSc Error code for error-traceback
 	PetscInt		j;				// row index
 	PetscInt		Istart, Iend;	// Ownership range
-	
+
 	// Create Vector
 	ierr = VecCreate(PETSC_COMM_WORLD,&x);
 	CHKERRQ(ierr);
@@ -396,22 +399,22 @@ int PetscSolver<T>::petscExecute() {
 	// Set other options from the database
 	ierr = MatSetFromOptions(A);
 	CHKERRQ(ierr);
-	
+
 	ierr = MatGetOwnershipRange(A,&Istart,&Iend);
 	CHKERRQ(ierr);
-	
+
 	// iterate through the owned rows
 	for(j = Istart ; j < Iend ; j++) {
 		// Convert the row index into point-coordinates and the unknown
 		// of the block in which the point is.
-		
+
 		std::string unknown;    //current unknown
 		Point4D<int> p;         //current point
-		
+
 		globalIndexToPoint((unsigned int)j, unknownSizes, unknown, p);
 		// now p contains the coordinate of the current point and
 		// unknown contains the name of the current unknown.
-		
+
 		// First, determine whether the point that corresponds to this
 		// row is a ghost node or 'real point'
 		if (this->roi()->isInside(p.x, p.y, p.z, p.t)) {
@@ -437,7 +440,7 @@ int PetscSolver<T>::petscExecute() {
 			// transfer data form the SubStencils into the arrays and get
 			// the number of entries back
 			ne = MetaStencils[unknown].update(unknown,p,unknownSizes,columns,values);
-			
+
 			// write values into matrix
 			ierr = MatSetValues(A,1,&j,ne,columns,values,INSERT_VALUES);
 			CHKERRQ(ierr);
@@ -445,8 +448,6 @@ int PetscSolver<T>::petscExecute() {
 			// and right hand side
 			ierr = VecSetValues(b,1,&j,&rhs,INSERT_VALUES);
 			CHKERRQ(ierr);
-			
-			
 		}
 		else {
 			/*
@@ -459,7 +460,7 @@ int PetscSolver<T>::petscExecute() {
 
 			// Find the closest boundary pixel
 			Point4D<int> boundary = getBoundary(p);
-			
+
 			values[0] = 1;
 			values[1] = -1;
 			columns[0] = j;
@@ -467,7 +468,7 @@ int PetscSolver<T>::petscExecute() {
 			ierr = MatSetValues(A,1,&j,2,columns,values,INSERT_VALUES);CHKERRQ(ierr);
 		}				
 	}
-	
+
 	ierr = MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY);
 	CHKERRQ(ierr);
 	ierr = MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY);
@@ -476,12 +477,12 @@ int PetscSolver<T>::petscExecute() {
 	CHKERRQ(ierr);
 	ierr = VecAssemblyEnd(b);
 	CHKERRQ(ierr);
-	
+
 	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN);
 	CHKERRQ(ierr);
 	ierr = KSPSolve(ksp,b,x);
 	CHKERRQ(ierr);
-	
+
 	// only the #0 Machine is supposed to write results back
 	if (this->isRankZero()) {
 		// create lookup map to convert unknown to index in the CImgList
@@ -500,12 +501,12 @@ int PetscSolver<T>::petscExecute() {
 		// Prepare vector and context first
 		Vec             result;  // Vector to store the result in
 		VecScatter      scatter; // context for scattering the result
-		
+
 		// Lookup iterator
 		std::map<std::string, unsigned int>::iterator lIt;
 		// to store the current global index
 		unsigned int globalIndex;
-		
+
 		// Create local vector to store the result in
 		ierr = VecCreate(PETSC_COMM_WORLD,&result);CHKERRQ(ierr);
 		ierr = VecSetSizes(result,n,n);CHKERRQ(ierr); //local vector
@@ -520,7 +521,7 @@ int PetscSolver<T>::petscExecute() {
 		PetscScalar* res;
 		// now make the result-vector available as an array of PetscScalar
 		ierr = VecGetArray(result,&res);CHKERRQ(ierr);
-		
+
 		// epxand the CImgList to the needed size
 		this->result.assign(lookup.size(),this->roi()->getWidth(),
 		                                  this->roi()->getHeight(),
@@ -541,22 +542,21 @@ int PetscSolver<T>::petscExecute() {
 				this->out()(lIt->second,x,y,z,t) = T(res[globalIndex]);
 			}
 		}
-		
+
 		ierr = VecRestoreArray(result,&res);CHKERRQ(ierr);
 	}
 
-	
 	// clean up
 	for(usIt = unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
 		delete usIt->second;
 	}
-	
+
 	ierr = VecDestroy(x);
 	ierr = VecDestroy(b);
 	ierr = MatDestroy(A);
 	ierr = KSPDestroy(ksp);
 	ierr = PetscFinalize();
-	
+
 	return 0;
 }
 

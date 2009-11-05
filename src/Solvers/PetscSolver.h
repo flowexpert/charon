@@ -25,18 +25,20 @@
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef petscsolver_EXPORTS
-///Visual C++ specific code
+/// dll import/export
 #define petscsolver_DECLDIR __declspec(dllexport)
 #else
 #define petscsolver_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
-///Not needed with GCC
+/// no dll handling on gcc
 #define petscsolver_DECLDIR
 #endif
 
 #include "../Solver.h"
 #include <petscksp.h>
+
+class PetscInit;
 
 /// PETSc implementation of a solver
 /**
@@ -52,47 +54,48 @@ class petscsolver_DECLDIR PetscSolver : public Solver<T>
 protected:
 	PetscInt*		columns;
 	PetscScalar*	values;
-	
+
+	/// MetaStencil implementation for usage with PETSc
 	class PetscMetaStencil : public Solver<T>::MetaStencil
 	{
 	public:
 		/// default constructor
 		PetscMetaStencil(const std::string& unknown  /**[in] unknown name*/,
 			const std::vector<Stencil<T>*>& stencils /**[in] stencils for this unknown*/);
-		
+
 		/// copy constructor
 		PetscMetaStencil(const PetscMetaStencil& rhs /**[in] copy source*/);
-		
+
 		/// empty constructor for use in map
 		PetscMetaStencil();
-		
+
 		/// update columns and values
 		/**
 		 *	Write data from SubStencils into PetscScalar* values and
 		 *	their indices into PetscInt* columns.
-		 *	@param[in]  unknown			current unknown.
-		 *	@param[in]  p				current point,
-		 *	@param[in]  unknownSizes	sizes of matrix blocks.
-		 *	@param[out] columns			Array of column indices for MatSetValues.
-		 *	@param[out] values			Array of values for MatSteValues.
-		 *	@return						Number of entries.
+		 *	@param[in]  unknownSizes    sizes of matrix blocks.
+		 *	@param[out] columns         Array of column indices for MatSetValues.
+		 *	@param[out] values          Array of values for MatSteValues.
+		 *	@return                     Number of entries.
 		 */
-		unsigned int update(const std::string unknown,
-		                    const Point4D<unsigned int>& p,
-		                    const std::map<std::string,Roi<int>* >& unknownSizes,
-		                    PetscInt*& columns, PetscScalar*& values);
+		unsigned int update(
+				const std::string unknown /**[in] current unknown*/,
+				const Point4D<unsigned int>& p /**[in] current point*/,
+				const std::map<std::string,Roi<int>* >& unknownSizes,
+				PetscInt*& columns,
+				PetscScalar*& values);
 	};
 
 	/// Convert ROI coordinate to relative index
 	/**
-	 *	@param[in] p					Point to convert.
-	 *	@param[in] dim					Dimensions of the ROI that p is in.
 	 *	@see getVectorIndex()
 	 *	@see getCoordinate()
-	 *	@return							Relative vector index.
+	 *	@return                         Relative vector index.
 	 */
-	static unsigned int pointToRelativeIndex(const Point4D<int>& p, const Roi<int>& dim);
-	
+	static unsigned int pointToRelativeIndex(
+			const Point4D<int>& p /**[in] point to convert*/,
+			const Roi<int>& dim   /**[in] dimensions of the ROI around p*/);
+
 	/// Convert a relative vector index to a global vector index.
 	/**
 	 *	@param[in] i					Relative vector index.
@@ -105,7 +108,7 @@ protected:
 	static unsigned int relativeIndexToGlobalIndex(const unsigned int i,
 	                                        const std::string& unknown,
 	                                        const std::map<std::string,Roi<int>* >& unknownSizes);
-	
+
 	/// Convert a global vector index to 4-dimensional coordinates and the according unknown.
 	/**
 	 *	@param[in]  vi					Global vector index.
@@ -118,7 +121,7 @@ protected:
 	static void globalIndexToPoint(const unsigned int vi,
 	                        const std::map<std::string, Roi<int>* >& unknownSizes,
 	                        std::string& unknown, Point4D<int>& p);
-	
+
 	/// Convert coordinates to the global index
 	/**
 	 *	@param[in] p					Current point
@@ -132,7 +135,7 @@ protected:
 		const std::map<std::string,
 		Roi<int>* >& unknownSizes
 	);
-	
+
 	/// Find the closest real pixel to p (which is a ghost pixel).
 	/**
 	 *	@param[in] p					Ghost pixel to which the closest real
@@ -143,20 +146,23 @@ protected:
 	 *									unexpanded ROI
 	 */
 	Point4D<int> getBoundary(Point4D<int>& p);
-	
+
 public:
 	/// default constructor
 	PetscSolver(const std::string& name = "" /**[in] instance name*/);
-	
+
+	/// petsc initializer input
+	InputSlot<PetscInit*> petsc;
+
 	/// check if process is rank 0
 	bool isRankZero();
-	
+
 	/// encapsulated execute function for PETSc calls
 	int petscExecute();
-	
+
 	/// main function
 	virtual void execute();
-	
+
 	/// default destructor
 	virtual ~PetscSolver();
 };
