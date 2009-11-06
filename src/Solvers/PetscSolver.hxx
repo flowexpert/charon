@@ -80,7 +80,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	std::set<Point4D<unsigned int> >::iterator pIt = this->pattern.begin();
 	// for all Point4Ds in this->pattern
 	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
-		columns[i] = PetscSolver<T>::pointToGlobalIndex(*pIt+p,unknown,unknownSizes);
+		columns[i] = PetscSolver<T>::pointToGlobalIndex((*pIt)+p,unknown,unknownSizes);
 		values[i] = this->data(pIt->x, pIt->y,pIt->z,pIt->t);
 	}
 	return this->pattern.size();
@@ -126,26 +126,36 @@ void PetscSolver<T>::globalIndexToPoint(
 		std::string& unknown,
 		Point4D<int>& p)
 {
-	/// \todo error occurs here!
-	unsigned int i = vi;
-	std::map<std::string,Roi<int>* >::const_iterator usIt=unknownSizes.begin();
-	while (i - (usIt->second->getVolume()) > 0) {
-		i -= usIt->second->getVolume();
-		usIt++;
+	// detect block
+	unsigned int blockBegin = 0;
+	unsigned int blockEnd;
+	std::map<std::string,Roi<int>* >::const_iterator usIt;
+	for(usIt=unknownSizes.begin(); usIt !=unknownSizes.end(); usIt++) {
+		blockEnd = blockBegin + usIt->second->getVolume();
+		if(vi >= blockBegin && vi < blockEnd)
+			break;
+		blockBegin = blockEnd;
 	}
+	assert(usIt != unknownSizes.end());
 	unknown = usIt->first;
 
+	// calculate coordinates relative to block
+	unsigned int diff = vi - blockBegin;
 	Roi<int>& dim = *(usIt->second);
-	p.x =  i % (dim.getWidth());
-	i -= p.x;
-	p.y =  (i/(dim.getWidth()))%dim.getHeight();
-	i -= (p.y*dim.getWidth());
-	p.z =  (i/(dim.getWidth()*dim.getHeight()))%dim.getDepth();
-	i -= (p.z*dim.getWidth()*dim.getHeight());
-	p.t =  (i/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
+	p.x =  diff % (dim.getWidth());
+	assert(diff >= p.x);
+	diff -= p.x;
+	p.y =  (diff/(dim.getWidth()))%dim.getHeight();
+	assert(diff >= p.y*dim.getWidth());
+	diff -= (p.y*dim.getWidth());
+	p.z =  (diff/(dim.getWidth()*dim.getHeight()))%dim.getDepth();
+	assert(diff >= p.z*dim.getWidth()*dim.getHeight());
+	diff -= (p.z*dim.getWidth()*dim.getHeight());
+	p.t =  (diff/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
 
-	Point4D<int> offset(-dim.xBegin, -dim.yBegin, -dim.zBegin, -dim.tBegin);
-	p -= offset;
+	// correct global block coodinates as offset
+	Point4D<int> offset(dim.xBegin, dim.yBegin, dim.zBegin, dim.tBegin);
+	p += offset;
 }
 
 template <class T>
@@ -340,8 +350,8 @@ int PetscSolver<T>::petscExecute() {
 	if (values  != NULL) {delete[] values;  values  = NULL;}
 	// set the sizes of PetscScalar* values and PetscInt* columns
 	// to the just calculated necessary size.
-	columns = new PetscInt(max_ne);
-	values = new PetscScalar(max_ne);
+	columns = new PetscInt[max_ne];
+	values = new PetscScalar[max_ne];
 
 	// Calculate the size of the problem (number of rows/columns of
 	// the matrix, number of elements in the vectors).

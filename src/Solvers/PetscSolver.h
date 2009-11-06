@@ -42,10 +42,10 @@ class PetscInit;
 
 /// PETSc implementation of a solver
 /**
- *	This solver is based on the
- *	<a href="http://www.mcs.anl.gov/petsc/petsc-as/">PETSc library</a>.
- *	It has been designed to run on multiple instances (machines, cpus)
- *	simultaneously.
+ *  This solver is based on the
+ *  <a href="http://www.mcs.anl.gov/petsc/petsc-as/">PETSc library</a>.
+ *  It has been designed to run on multiple instances (machines, cpus)
+ *  simultaneously.
  *  \see class Solver
  */
 template <class T>
@@ -73,10 +73,10 @@ protected:
 		/**
 		 *	Write data from SubStencils into PetscScalar* values and
 		 *	their indices into PetscInt* columns.
-		 *	@param[in]  unknownSizes    sizes of matrix blocks.
-		 *	@param[out] columns         Array of column indices for MatSetValues.
-		 *	@param[out] values          Array of values for MatSteValues.
-		 *	@return                     Number of entries.
+		 *	@param[in]  unknownSizes  sizes of matrix blocks.
+		 *	@param[out] columns       Array of column indices for MatSetValues.
+		 *	@param[out] values        Array of values for MatSteValues.
+		 *	@return                   Number of entries.
 		 */
 		unsigned int update(
 				const std::string unknown /**[in] current unknown*/,
@@ -90,7 +90,7 @@ protected:
 	/**
 	 *	@see getVectorIndex()
 	 *	@see getCoordinate()
-	 *	@return                         Relative vector index.
+	 *	@return                       Relative vector index.
 	 */
 	static unsigned int pointToRelativeIndex(
 			const Point4D<int>& p /**[in] point to convert*/,
@@ -98,52 +98,62 @@ protected:
 
 	/// Convert a relative vector index to a global vector index.
 	/**
-	 *	@param[in] i					Relative vector index.
-	 *	@param[in] unknown				The unknown in which the relative vector index is.
-	 *	@param[in] unknownSizes			Map of ROIs associated to their unknown.
+	 *	@param[in] i                  Relative vector index.
+	 *	@param[in] unknown            The unknown in which the relative
+	 *	                              vector index is.
+	 *	@param[in] unknownSizes       Map of ROIs associated to their unknown.
 	 *	@see getIndex()
 	 *	@see getCoordinate()
-	 *	@return							Global vector index.
+	 *	@return                       Global vector index.
 	 */
-	static unsigned int relativeIndexToGlobalIndex(const unsigned int i,
-	                                        const std::string& unknown,
-	                                        const std::map<std::string,Roi<int>* >& unknownSizes);
+	static unsigned int relativeIndexToGlobalIndex(
+			const unsigned int i,
+			const std::string& unknown,
+			const std::map<std::string,Roi<int>* >& unknownSizes);
 
-	/// Convert a global vector index to 4-dimensional coordinates and the according unknown.
+	/// Convert a global vector index to 4-dimensional coordinates and
+	/// the according unknown.
 	/**
-	 *	@param[in]  vi					Global vector index.
-	 *	@param[in]  unknownSizes		Map of ROIs associated to their unknown.
-	 *	@param[out] unknown				Unknown of the ROI in which the point is
-	 *	@param[out] p					Coordinates of the point.
+	 *	For each unknown, there is a vectorized block containing all values
+	 *	in the corresponding region of interest. To determine the real
+	 *	coordinate of a point given it's vector index in this block, we have
+	 *	to determine the unknown block where vi lies in an then calculate
+	 *	the position inside the roi by back-transformation from the vectorized
+	 *	version (multiple applicaton of modulo). At the end, the global
+	 *	position of the roi is corrected (using x/y/z/t-Begin as offset).
+	 *	@param[in]  vi                Global vector index.
+	 *	@param[in]  unknownSizes      Map of ROIs associated to their unknown.
+	 *	@param[out] unknown           Unknown of the ROI in which the point is
+	 *	@param[out] p                 Coordinates of the point.
 	 *	@see getIndex()
 	 *	@see getVectorIndex()
 	 */
-	static void globalIndexToPoint(const unsigned int vi,
-	                        const std::map<std::string, Roi<int>* >& unknownSizes,
-	                        std::string& unknown, Point4D<int>& p);
+	static void globalIndexToPoint(
+			const unsigned int vi,
+			const std::map<std::string, Roi<int>* >& unknownSizes,
+			std::string& unknown, Point4D<int>& p);
 
 	/// Convert coordinates to the global index
 	/**
-	 *	@param[in] p					Current point
-	 *	@param[in] unknown				Current unknown
-	 *	@param[in] unknownSizes			Map of ROIs associated to their unknown
-	 *	@return							global index
+	 *	@param[in] p                  Current point
+	 *	@param[in] unknown            Current unknown
+	 *	@param[in] unknownSizes       Map of ROIs associated to their unknown
+	 *	@return                       global index
 	 */
 	static unsigned int pointToGlobalIndex(
-		const Point4D<int>& p,
-		const std::string& unknown,
-		const std::map<std::string,
-		Roi<int>* >& unknownSizes
-	);
+			const Point4D<int>& p,
+			const std::string& unknown,
+			const std::map<std::string,
+			Roi<int>* >& unknownSizes);
 
 	/// Find the closest real pixel to p (which is a ghost pixel).
 	/**
-	 *	@param[in] p					Ghost pixel to which the closest real
-	 *									pixel should be found
+	 *	@param[in] p                  Ghost pixel to which the closest real
+	 *	                              pixel should be found
 	 *
-	 *	@return							Point4D object containing the coordinates
-	 *									of the closest boundary pixel of the
-	 *									unexpanded ROI
+	 *	@return                       Point4D object containing the
+	 *	                              coordinates of the closest boundary
+	 *	                              pixel of the unexpanded ROI
 	 */
 	Point4D<int> getBoundary(Point4D<int>& p);
 
