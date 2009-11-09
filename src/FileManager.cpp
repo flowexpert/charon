@@ -54,12 +54,6 @@ const FileManager& FileManager::instance() {
 	return *_inst;
 }
 
-QString FileManager::configFile() const {
-	// toNativeSeparators here causes the application to crash
-	// on std::string destructors (something strange happens here)
-	return configDir().absoluteFilePath("config");
-}
-
 QDir FileManager::configDir() const {
 	QDir ret = QDir::home();
 	bool ok;

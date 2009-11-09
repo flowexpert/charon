@@ -258,14 +258,13 @@ MainWindow::MainWindow(QWidget* myParent) :
 	// nothing loaded yet, so editors have to be disabled
 	emit enableEditors(false);
 
-	// load config file
-	QFile config(FileManager::instance().configFile());
-	if (config.open(QIODevice::ReadOnly)) {
-		QByteArray state = config.readAll();
-		if (state.size() > 1)
-			restoreState(state);
+	// load window state config
+	QSettings settings("Heidelberg Collaboratory for Image Processing",
+	                   "Tuchulcha");
+	if (settings.value("windowState").isValid()) {
+		QByteArray state = settings.value("windowState").toByteArray();
+		restoreState(state);
 	}
-	config.close();
 
 	if (!myParent)
 		showMaximized();
@@ -276,12 +275,10 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *cEvent) {
-	// save config file
-	QFile config(FileManager::instance().configFile());
-	if (config.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-		config.write(saveState());
-	}
-	config.close();
+	// save window state config
+	QSettings settings("Heidelberg Collaboratory for Image Processing",
+					   "Tuchulcha");
+	settings.setValue("windowState", saveState());
 
 	// inherited version
 	QMainWindow::closeEvent(cEvent);

@@ -37,9 +37,6 @@ public:
 	/// get a reference to the file Manager instance
 	static const FileManager& instance();
 
-	/// get the path of the config file
-	QString configFile() const;
-
 	/// get the path of the classes file
 	QString classesFile() const;
 
