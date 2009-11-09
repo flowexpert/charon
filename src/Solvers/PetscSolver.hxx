@@ -143,13 +143,13 @@ void PetscSolver<T>::globalIndexToPoint(
 	unsigned int diff = vi - blockBegin;
 	Roi<int>& dim = *(usIt->second);
 	p.x =  diff % (dim.getWidth());
-	assert(diff >= p.x);
+	assert((int)diff >= p.x);
 	diff -= p.x;
 	p.y =  (diff/(dim.getWidth()))%dim.getHeight();
-	assert(diff >= p.y*dim.getWidth());
+	assert((int)diff >= p.y*dim.getWidth());
 	diff -= (p.y*dim.getWidth());
 	p.z =  (diff/(dim.getWidth()*dim.getHeight()))%dim.getDepth();
-	assert(diff >= p.z*dim.getWidth()*dim.getHeight());
+	assert((int)diff >= p.z*dim.getWidth()*dim.getHeight());
 	diff -= (p.z*dim.getWidth()*dim.getHeight());
 	p.t =  (diff/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
 
@@ -279,7 +279,7 @@ int PetscSolver<T>::petscExecute() {
 	// map mentionend above
 	std::map<std::string, std::vector<Stencil<T>*> > substencils;
 	// stencil iterator
-	typename std::set<AbstractSlot<Stencil<T>* >* >::const_iterator sIt;
+	typename std::set<AbstractSlot<Stencil<T>*>*>::const_iterator sIt;
 	// unknowns iterator
 	std::set<std::string>::const_iterator uIt;
 	// iterate through stencils
@@ -290,15 +290,52 @@ int PetscSolver<T>::petscExecute() {
 		// Then we cast it to an InputSlot<Stencil<T>*>* (still a pointer)
 		// Then we dereference that and get the InputSlot<Stencil<T>*>
 		// (reference, not a pointer).
-		// And we call that 'is' (short for InputSlot).
+		// And we call that 'is' (short for InputStencil).
 		// The operator() returns the Stencil<T>* within.
-		InputSlot<Stencil<T>*>& is = *((InputSlot<Stencil<T>*>*)*sIt);
+		Stencil<T>* is = (*((InputSlot<Stencil<T>*>*)*sIt))();
 
 		//iterate through its unknowns
-		for(uIt=is()->getUnknowns().begin();
-			uIt!=is()->getUnknowns().end();
-			uIt++) {
-			substencils[*uIt].push_back(is());
+		sout << "\tgot Stencil: " << is->getName() << std::endl;
+		if(is->getUnknowns().begin() == is->getUnknowns().end())
+			sout << "\t\twarning: no unknowns found!" << std::endl;
+		for(uIt=is->getUnknowns().begin();
+				uIt!=is->getUnknowns().end();
+					uIt++)
+		{
+			substencils[*uIt].push_back(is);
+#ifndef NDEBUG
+			// print debug information
+			sout << "\t\tfound unknown \"" << *uIt
+				<< "\" with the following pattern:" << std::endl;
+			const cimg_library::CImg<char>& pat =
+				is->get().find(*uIt)->second.pattern;
+			sout << "\t\t\tpattern = " << std::hex << (void*)&pat
+				<< "," << std::endl;
+			sout << "\t\t\tsize    = (" << pat.dimx() << "," << pat.dimy()
+				<< "," << pat.dimz() << "," << pat.dimv() << ") ["
+				<< pat.size()*sizeof(char) << " b]," << std::endl;
+			sout << "\t\t\tdata    = (" << pat.pixel_type() << "*)"
+				<< (void*)pat.data
+				<< " (" << (pat.is_shared ? "shared" : "not shared") << ")"
+				<< std::endl;
+			if (!pat.is_empty()) {
+				sout << "\t\t\tcontent = [ ";
+				const unsigned long width = pat.dimx();
+				const unsigned long siz   = pat.size();
+				const unsigned long siz1  = siz-1;
+				const unsigned int width1 = width-1;
+				cimg_foroff(pat,off) {
+					sout << (unsigned int) pat.data[off];
+					if (off!=siz1) sout << (off%width==width1?" ; ":" ");
+					if (off==7 && siz>16) {
+						off = siz1-8;
+						if (off!=7)
+							sout << "... ";
+					}
+				}
+				sout << " ]" << std::endl;
+			}
+#endif
 		}
 	}
 
