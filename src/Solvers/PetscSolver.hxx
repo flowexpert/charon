@@ -25,6 +25,7 @@
 
 #include "../Solver.hxx"
 #include "PetscSolver.h"
+#include <charon-utils/ImgTool.hxx>
 #include <sstream>
 
 template <class T>
@@ -306,35 +307,14 @@ int PetscSolver<T>::petscExecute() {
 #ifndef NDEBUG
 			// print debug information
 			sout << "\t\tfound unknown \"" << *uIt
-				<< "\" with the following pattern:" << std::endl;
+				<< "\" with the following content:" << std::endl;
+			const cimg_library::CImg<T>& dat =
+				is->get().find(*uIt)->second.data;
+			ImgTool::printInfo(sout, dat, "\t\t\t");
+			sout << "\t\tand the following pattern:" << std::endl;
 			const cimg_library::CImg<char>& pat =
 				is->get().find(*uIt)->second.pattern;
-			sout << "\t\t\tpattern = " << std::hex << (void*)&pat
-				<< "," << std::endl;
-			sout << "\t\t\tsize    = (" << pat.dimx() << "," << pat.dimy()
-				<< "," << pat.dimz() << "," << pat.dimv() << ") ["
-				<< pat.size()*sizeof(char) << " b]," << std::endl;
-			sout << "\t\t\tdata    = (" << pat.pixel_type() << "*)"
-				<< (void*)pat.data
-				<< " (" << (pat.is_shared ? "shared" : "not shared") << ")"
-				<< std::endl;
-			if (!pat.is_empty()) {
-				sout << "\t\t\tcontent = [ ";
-				const unsigned long width = pat.dimx();
-				const unsigned long siz   = pat.size();
-				const unsigned long siz1  = siz-1;
-				const unsigned int width1 = width-1;
-				cimg_foroff(pat,off) {
-					sout << (unsigned int) pat.data[off];
-					if (off!=siz1) sout << (off%width==width1?" ; ":" ");
-					if (off==7 && siz>16) {
-						off = siz1-8;
-						if (off!=7)
-							sout << "... ";
-					}
-				}
-				sout << " ]" << std::endl;
-			}
+			ImgTool::printInfo(sout, pat, "\t\t\t");
 #endif
 		}
 	}
@@ -361,6 +341,10 @@ int PetscSolver<T>::petscExecute() {
 	 *	and PetscScalar arrays, which will be later used to set values in
 	 *	the matrix.
 	 */
+#ifndef NDEBUG
+	sout << "\tcreated " << MetaStencils.size()
+		<< " MetaStencils:" << std::endl;
+#endif
 
 	// maximum number of entries;
 	unsigned int max_ne = 0;
@@ -368,6 +352,9 @@ int PetscSolver<T>::petscExecute() {
 	// PetscMetaStencil iterator
 	typename std::map<std::string,PetscMetaStencil>::iterator msIt;
 	for(msIt=MetaStencils.begin() ; msIt != MetaStencils.end() ; msIt++) {
+#ifndef NDEBUG
+		sout << "\t\t- for unknown " << msIt->first << std::endl;
+#endif
 		Roi<int>* current = new Roi<int>;
 		*current = *(this->roi());
 		msIt->second.expand(*current);
