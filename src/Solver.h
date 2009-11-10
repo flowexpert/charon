@@ -45,7 +45,7 @@
  *  implementations should be derived. It contains the nested class MetaStencil,
  *  which is used to group multiple SubStencils.
  */
-template <class T>
+template <typename T>
 class solver_DECLDIR Solver : public TemplatedParameteredObject<T>
 {
 protected:
@@ -65,7 +65,7 @@ protected:
 		 * The data for the solver will be pulled from here.
 		 */
 		std::vector<const SubStencil<T>* > substencils;
-		
+
 		/**
 		 * CImg representing the MetaStencil.
 		 * This is a dummy to pre-allocate memory and to store the
@@ -73,13 +73,13 @@ protected:
 		 * Later, the data of the SubStencils will be merged here.
 		 */
 		cimg_library::CImg<T> data;
-		
+
 		/**
 		 * Set of points that belong to this MetaStencil.
 		 * @remark The size of the MetaStencil has to be extracted from the pattern.
 		 */
 		std::set<Point4D<unsigned int> > pattern;
-						
+
 		/// \todo changed int -> unsigned int - re-check code to avoid hiccups
 		/// \name expansions in all 8 directions
 		//@{
@@ -88,7 +88,7 @@ protected:
 		unsigned int backward   /**< z negative*/, forward;	///< z positive
 		unsigned int before     /**< t negative*/, after;	///< t positive
 		//@}
-		
+
 		Point4D<unsigned int> center;		///< coordinates of the center of the meta stencil
 
 	public:
@@ -98,23 +98,26 @@ protected:
 		 *	\param[in] stencils		list of stencils to group
 		 */
 		MetaStencil(const std::string& unknown, const std::vector<Stencil<T>*>& stencils);
-						
+
 		/// copy constructor
 		MetaStencil(const MetaStencil& rhs /**< [in] copy source*/);
-		
+
 		/// empty constructor for use in map
 		MetaStencil();
-		
+
 		/// assignment operator
 		virtual MetaStencil& operator= (const MetaStencil& rhs /**< [in] copy source*/);
-		
+
+		/// getter for MetaStencil::center
+		const Point4D<unsigned int>& getCenter() const;
+
 		/// getter for MetaStencil::pattern
 		/**
 		 *	The only necessary getter to determine the maximum number of
 		 *	entries.
 		 */
 		virtual std::set<Point4D<unsigned int> >& getPattern();
-				
+
 		/// Expand the given region of interest to include the necessary ghost nodes.
 		/**
 		 * @param[in,out] inRoi		Region of interest to expand.
@@ -122,17 +125,17 @@ protected:
 		 */
 		virtual void expand(Roi<int>& inRoi);
 	};
-	
+
 	/// CImgList containing the result.
 	cimg_library::CImgList<T> result;
 
 public:
 	/// pointers, that the solver will use
 	InputSlot< Stencil<T>* > stencils;
-	
+
 	/// region of interes for the solver to work on
 	InputSlot< Roi<int>* > roi;
-	
+
 	/// result
 	OutputSlot<cimg_library::CImgList<T> > out;
 
@@ -141,7 +144,7 @@ public:
 		const std::string& classname,	///< [in] class name
 		const std::string& name = ""	///< [in] instance name
 	);
-	
+
 	/// default destructor
 	virtual ~Solver();
 };

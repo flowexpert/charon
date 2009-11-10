@@ -27,7 +27,7 @@
 #include "Stencil.h"
 #include <charon-utils/Roi.h>
 
-template <class T>
+template <typename T>
 Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 									const std::vector<Stencil<T>*>& stencils) :
 		left(0),		right(0),
@@ -50,7 +50,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 		unsigned int centery = ssIt->second.center.y;
 		unsigned int centerz = ssIt->second.center.z;
 		unsigned int centert = ssIt->second.center.t;
-		
+
 		// Measuring the SubStencil that is currently being added
 		// to the MetaStencil
 		int width    = ssIt->second.pattern.dimx();
@@ -59,7 +59,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 		int duration = ssIt->second.pattern.dimv();
 		// remember the re-declaration of the v-dimension of CImg
 		// to be the time axis? Yeah, right ;-)
-		
+
 		// positioning of the center of the meta stencil
 		//
 		// it is important to understand, that the center can
@@ -69,7 +69,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 		if (centery > this->center.y) {this->center.y = centery;}
 		if (centerz > this->center.z) {this->center.z = centerz;}
 		if (centert > this->center.t) {this->center.t = centert;}
-		
+
 		// setting the expansions
 		//
 		// Here's the same principle as with the center:
@@ -85,11 +85,11 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 		if (depth-centerz-1    > this->forward)  {this->forward = depth-centerz-1;}
 		if (centert            > this->before)   {this->before = centert;}
 		if (duration-centert-1 > this->after)    {this->after = duration-centert-1;}
-								
+
 		// push_back the address of the just measured SubStencil
 		this->substencils.push_back( &(ssIt->second) );
 	}
-	
+
 	// expand the MetaStencil CImg to the appropriate size
 	int dimx = left+1+right;
 	int dimy = up+1+down;
@@ -97,12 +97,12 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 	int dimt = before+1+after;
 	// initializing with 0 is important!
 	this->data.assign(dimx, dimy, dimz, dimt, 0);
-	
+
 	// filling the pattern
 	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
 		//saving the offset as Point4D for later convennience
 		Point4D<unsigned int> offset = this->center - this->substencils[i]->center;
-		
+
 		//Iterate through all pixels of the SubStencil...
 		cimg_forXYZV(substencils[i]->pattern,xc,yc,zc,tc) {
 			//...and set the pattern into the
@@ -114,32 +114,28 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 		}
 	}
 }
-				
-template <class T>
-Solver<T>::MetaStencil::MetaStencil(const typename Solver<T>::MetaStencil& rhs) {
-	this->substencils = rhs.substencils;
-	this->data        = rhs.data;
-	this->pattern     = rhs.pattern;
-	this->left        = rhs.left;
-	this->right       = rhs.right;
-	this->up          = rhs.up;
-	this->down        = rhs.down;
-	this->backward    = rhs.backward;
-	this->forward     = rhs.forward;
-	this->before      = rhs.before;
-	this->after       = rhs.after;
+
+template <typename T>
+Solver<T>::MetaStencil::MetaStencil(const typename Solver<T>::MetaStencil& rhs)
+{
+	*this = rhs;
 }
 
-template <class T>
+template <typename T>
 Solver<T>::MetaStencil::MetaStencil() {
 }
-		
-template <class T>
+
+template <typename T>
+const Point4D<unsigned int>& Solver<T>::MetaStencil::getCenter() const {
+	return center;
+}
+
+template <typename T>
 typename Solver<T>::MetaStencil& Solver<T>::MetaStencil::operator = (
 								const typename Solver<T>::MetaStencil& rhs) {
 	if (&rhs == this)
 		return *this;
-	
+
 	this->substencils = rhs.substencils;
 	this->data        = rhs.data;
 	this->pattern     = rhs.pattern;
@@ -151,16 +147,17 @@ typename Solver<T>::MetaStencil& Solver<T>::MetaStencil::operator = (
 	this->forward     = rhs.forward;
 	this->before      = rhs.before;
 	this->after       = rhs.after;
-	
+	this->center      = rhs.center;
+
 	return *this;
 }
 
-template <class T>
+template <typename T>
 std::set<Point4D<unsigned int> >& Solver<T>::MetaStencil::getPattern() {
 	return pattern;
 }
 
-template <class T>		
+template <typename T>
 void Solver<T>::MetaStencil::expand(Roi<int>& inRoi) {
 	inRoi.xBegin = -int(left);
 	inRoi.xEnd   = inRoi.xEnd + right;
@@ -172,8 +169,8 @@ void Solver<T>::MetaStencil::expand(Roi<int>& inRoi) {
 	inRoi.tEnd   = inRoi.tEnd + after;
 }
 
-template <class T>
-Solver<T>::Solver(const std::string& classname, const std::string& name) : 
+template <typename T>
+Solver<T>::Solver(const std::string& classname, const std::string& name) :
 		TemplatedParameteredObject<T>(classname,name,"solves the linear system"),
 		stencils(false,true)	//make stencil input slot mandatory and multi
 {
@@ -183,7 +180,7 @@ Solver<T>::Solver(const std::string& classname, const std::string& name) :
 	out() = result;
 }
 
-template <class T>
+template <typename T>
 Solver<T>::~Solver() {}
 
 #endif // _SOLVER_HXX_

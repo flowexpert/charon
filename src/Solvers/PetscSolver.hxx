@@ -331,6 +331,12 @@ int PetscSolver<T>::petscExecute() {
 	for (ssIt=substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
 		typename PetscSolver<T>::PetscMetaStencil pms(ssIt->first,ssIt->second);
 		MetaStencils[ssIt->first] = pms;
+#ifndef NDEBUG
+		sout << "\t\tcreating MetaStencil for \"" << ssIt->first
+			<< "\"" << std::endl;
+		sout << "\t\t\tcenter: " << MetaStencils[ssIt->first].getCenter()
+			<< std::endl;
+#endif
 	}
 
 	/*
@@ -352,9 +358,6 @@ int PetscSolver<T>::petscExecute() {
 	// PetscMetaStencil iterator
 	typename std::map<std::string,PetscMetaStencil>::iterator msIt;
 	for(msIt=MetaStencils.begin() ; msIt != MetaStencils.end() ; msIt++) {
-#ifndef NDEBUG
-		sout << "\t\t- for unknown " << msIt->first << std::endl;
-#endif
 		Roi<int>* current = new Roi<int>;
 		*current = *(this->roi());
 		msIt->second.expand(*current);

@@ -24,8 +24,10 @@
 #ifndef _POINT4D_H_
 #define _POINT4D_H_
 
+#include <iostream>
+
 /// This class represents a point in four-dimensional space
-template <class T>
+template <typename T>
 class Point4D
 {
 public:
@@ -33,29 +35,29 @@ public:
 	//@{
 	T x, y, z, t;
 	//@}
-	
+
 	/// default constructor
 	Point4D() : x(0), y(0), z(0), t(0) {
-	}		
-	
+	}
+
 	/// constructor with coordinates
 	/** \param[in] x,y,z,t	initial coordinates */
 	Point4D(T x, T y, T z, T t) :
 		x(x), y(y), z(z), t(t)
 	{
 	}
-	
+
 	/// copy constructor
 	Point4D(const Point4D<T>& rhs /**< [in] copy source */) :
 		x(rhs.x), y(rhs.y), z(rhs.z), t(rhs.t)
 	{
 	}
-	
+
 	/// cast to Point4D<int>.
 	operator Point4D<int>() {
 		return Point4D<int>(int(x), int(y), int(z), int(t));
 	}
-	
+
 	/// cast to Point4D<unsigned int>.
 	operator Point4D<unsigned int>() {
 		return Point4D<unsigned int>(
@@ -65,7 +67,7 @@ public:
 			(unsigned int)(std::abs(t))
 		);
 	}
-			
+
 	/// assignment operator
 	Point4D& operator= (const Point4D<T>& rhs /**<[in] copy source*/) {
 		if(&rhs == this)
@@ -76,7 +78,7 @@ public:
 		this->t = rhs.t;
 		return *this;
 	}
-	
+
 	/// compound addition operator
 	Point4D<T>& operator+= (const Point4D<T>& rhs /**<[in] second summand*/) {
 		this->x += rhs.x;
@@ -85,7 +87,7 @@ public:
 		this->t += rhs.t;
 		return *this;
 	}
-	
+
 	///compound subtraction operator
 	Point4D<T>& operator-= (const Point4D<T>&rhs /**<[in] subtrahend*/) {
 		this->x -= rhs.x;
@@ -94,17 +96,17 @@ public:
 		this->t -= rhs.t;
 		return *this;
 	}
-	
+
 	/// addition operator
 	Point4D<T>& operator+ (const Point4D<T> &rhs /**<[in] second summand*/) const {
 		return Point4D(*this) += rhs;
 	}
-	
+
 	/// subtraction operator
 	Point4D<T>& operator- (const Point4D<T> &rhs /**<[in] subtrahend*/) const {
 		return Point4D(*this) -= rhs;
 	}
-	
+
 	/// comparison operator
 	bool operator < (const Point4D<T> &rhs /**<[in] values to compare with*/) const {
 		if (this->t < rhs.t) {return true;} else if (this->t > rhs.t) {return false;}
@@ -116,35 +118,46 @@ public:
 		// be false, so not much of a control here
 		return false;
 	}
-	
+
 	/// comparison operator
 	bool operator > (const Point4D<T>& rhs /**<[in] values to compare with*/) const {
 		return rhs < *this;
 	}
-	
+
 	/// comparison operator
 	bool operator== (const Point4D<T>& rhs /**<[in] values to compare with*/) const {
 		return ((this->x == rhs.x) && (this->y == rhs.y)
 			&& (this->z == rhs.z) && (this->t == rhs.t));
 	}
-	
-	///comparison operator
+
+	/// comparison operator
 	bool operator <= (const Point4D<T>& rhs /**<[in] values to compare with*/) const {
 		return !(*this > rhs);
 	}
-	
-	///comparison operator
+
+	/// comparison operator
 	bool operator >= (const Point4D<T>& rhs /**<[in] values to compare with*/) const {
 		return !(*this < rhs);
 	}
-	
+
 	/// Calculate the volume relative to the origin.
 	T volume() {
 		return x * y * z * t;
 	}
-	
+
 	///default destructor
 	~Point4D() {}
 };
+
+/// print Point4D to stream
+/** \param out      output stream to print to
+ *  \param rhs      point to print
+ *  \return         reference to the used output stream
+ */
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const Point4D<T>& rhs) {
+	out << "(" << rhs.x << "," << rhs.y << "," << rhs.z << "," << rhs.t << ")";
+	return out;
+}
 
 #endif //_POINT4D_H_
