@@ -41,8 +41,12 @@ PetscInit::PetscInit(const std::string& name) :
 PetscInit::~PetscInit() {
 	if(_initialized) {
 		_initialized = false;
+		for (int i=0; i < _argc; i++)
+			delete[] _argv[i];
+		delete[] _argv;
 		_argc = 0;
 		_argv = 0;
+
 		// call petsc finish
 		sout << "\tfinalizing Petsc" << std::endl;
 		PetscErrorCode ierr = PetscFinalize();
@@ -74,9 +78,9 @@ void PetscInit::execute() {
 
 	_argc = args.size();
 	_argv = new char* [_argc];
-	for (std::vector<std::string>::size_type i=0; i < args.size(); i++) {
+	for (int i=0; i < _argc; i++) {
 		const unsigned int s = args[i].length()+1;
-		_argv[i] = new char[s];
+		_argv[i] = new char[s+1];
 		memset(_argv[i], '\0', s);
 		args[i].copy(_argv[i], s);
 	}
@@ -85,12 +89,17 @@ void PetscInit::execute() {
 
 	// call petsc init	
 	sout << "\tinitializing Petsc" << std::endl;
+	sout << "\t\tusing command line \"" << commandLine() << "\"" << std::endl;
 	PetscErrorCode ierr = MPI_Init(&_argc,&_argv);
 	if (ierr) {
-		sout << "Got petsc error code during initialization:\n" 
+		sout << "Got petsc error code during MPI initialization:\n" 
 			<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ") << std::endl;
 	}
-	PetscInitialize(&_argc,&_argv,PETSC_NULL,PETSC_NULL);
+	ierr = PetscInitialize(&_argc,&_argv,PETSC_NULL,PETSC_NULL);
+	if (ierr) {
+		sout << "Got petsc error code during PETSc initialization:\n" 
+			<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ") << std::endl;
+	}
 }
 
 int PetscInit::argc() const {

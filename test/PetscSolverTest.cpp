@@ -63,6 +63,15 @@ int main() {
 	assert(log.good());
 	sout.assign(std::cout, log);
 
+	// testing Petsc Initialization
+	PetscInit* initializer = new PetscInit("bla");
+	initializer->commandLine = "petscsolvertest";
+	initializer->execute();
+	Vec	x;
+	PetscErrorCode ierr = VecCreate(PETSC_COMM_WORLD,&x);
+	CHKERRQ(ierr);
+	delete initializer;
+
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR "/" CMAKE_INTDIR);
 	man.loadParameterFile(BCCE_TESTFILE);
 	try {

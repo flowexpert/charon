@@ -104,6 +104,12 @@ IF(ENABLE_TEST)
 		INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
 		# tests for solver classes
 		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
+		IF(MSVC)
+			SET_TARGET_PROPERTIES(petscsolvertest
+				PROPERTIES LINK_FLAGS
+					/NODEFAULTLIB:"LIBCMT"
+			)
+		ENDIF(MSVC)
 		TARGET_LINK_LIBRARIES(petscsolvertest
 			charon-core
 			charon-plugins
