@@ -35,11 +35,11 @@
 #include <cfloat>
 #include <iomanip>
 #include <climits>
-#include "Roi.hxx"
-#include "InterpolatorLinear.hxx"
+#include "Roi.h"
+#include "Interpolator.h"
 
 // needed by createAllScaleRandomPattern
-#include "Pyramid2DGauss.hxx"
+#include "Pyramid2DGauss.h"
 
 /// circle number \f$\pi\f$
 #define PI 3.14159265358979323846
@@ -1578,4 +1578,49 @@ void ImgTool::crop3d(cimg_library::CImg<T> &src, Roi<T2> roi) {
              roi.bottom-1, roi.back-1);
 }
 
+template <typename T>
+std::string ImgTool::sizeString(const cimg_library::CImg<T>& img) {
+	std::ostringstream res;
+	res << "(" << img.dimx() << "," << img.dimy()
+		<< "," << img.dimz() << "," << img.dimv()
+		<< ") [" << img.size()*sizeof(T) << " b]";
+	return res.str();
+}
+
+template <typename T>
+std::string ImgTool::dataString(const cimg_library::CImg<T>& img) {
+	std::ostringstream res;
+	res << "(" << img.pixel_type() << "*)"
+		<< (void*)img.data
+		<< " (" << (img.is_shared ? "shared" : "not shared") << ")";
+	return res.str();
+}
+
+template <typename T>
+std::string ImgTool::contentString(const cimg_library::CImg<T>& img) {
+	if(img.is_empty())
+		return "[ ]";
+
+	std::ostringstream res;
+	const unsigned long width = img.dimx();
+	const unsigned long siz   = img.size();
+	const unsigned long siz1  = siz-1;
+	const unsigned int width1 = width-1;
+	res << "[ ";
+	cimg_foroff(img,off) {
+		res << cimg_library::cimg::type<T>::format(img.data[off]);
+		if (off!=siz1) res << (off%width==width1?" ; ":" ");
+	}
+	res << " ]";
+	return res.str();
+}
+
+template <typename T>
+void ImgTool::printInfo(std::ostream& os, const cimg_library::CImg<T>& img,
+		const std::string& prefix) {
+	os << prefix << "pointer = " << std::hex << (void*)&img << "," << std::endl;
+	os << prefix << "size    = " << ImgTool::sizeString(img) << "," << std::endl;
+	os << prefix << "data    = " << ImgTool::dataString(img) << std::endl;
+	os << prefix << "content = " << ImgTool::contentString(img) << std::endl;
+}
 #endif // _ImgTool_HXX

@@ -15,7 +15,7 @@ IF(ENABLE_TEST)
 	ADD_TEST(ImgManipTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imgManipTest)
 
 	# tests for ImgTool routines
-	ADD_EXECUTABLE(imgToolTest imgToolTest.cpp)
+	ADD_EXECUTABLE(imgToolTest imgToolTest.cpp ../src/ImgTool.h ../src/ImgTool.hxx)
 	TARGET_LINK_LIBRARIES(imgToolTest charon-core ${CIMG_LINK_LIBRARIES})
 	ADD_TEST(ImgToolTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imgToolTest)
 	

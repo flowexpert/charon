@@ -73,6 +73,7 @@ void Roi<T>::_init() {
 	_addFunction(Roi<T>::getVolume);
 	_addFunction(Roi<T>::isInside);
 	_addFunction(Roi<T>::assign);
+	_addFunction(Roi<T>::operator =);
 }
 
 template<typename T>

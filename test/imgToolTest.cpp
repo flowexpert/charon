@@ -20,6 +20,7 @@
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @date 16.06.2009
 
+#include "Pyramid2DGauss.hxx"
 #include "ImgTool.hxx"
 #include "InterpolatorLinear.hxx"
 

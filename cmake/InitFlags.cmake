@@ -34,6 +34,24 @@ IF(NOT CMAKE_FLAGS_INIT)
 			FORCE
 		)
 	ENDIF(MSVC)
+	# default to debug builds
+	IF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
+		SET(CMAKE_BUILD_TYPE "Debug"
+			CACHE STRING
+			"Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+			FORCE
+		)
+	ENDIF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
+	# set install prefix to global install path
+	IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+		SET(CMAKE_INSTALL_PREFIX ${CHARON_CORE_ROOT_DIR}
+			CACHE PATH "Install path prefix, prepended onto install directories."
+			FORCE
+		)
+		MESSAGE(STATUS "Using global install prefix: ${CMAKE_INSTALL_PREFIX}")
+	ELSE(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+		MESSAGE(STATUS "Using user-specified install prefix: ${CMAKE_INSTALL_PREFIX}")
+	ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 ENDIF(NOT CMAKE_FLAGS_INIT)
 
 # set definitions depending on build environment

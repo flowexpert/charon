@@ -824,6 +824,31 @@ namespace ImgTool {
     /// @param  roi         crop borders
     template <typename T, typename T2>
     void crop3d(cimg_library::CImg<T>& src, Roi<T2> roi);
+
+	/// get string with image size information
+	/// \param  img			image input
+	template <typename T>
+	std::string sizeString(const cimg_library::CImg<T>& img);
+
+	/// get string with image data information
+	/// \param  img			image input
+	template <typename T>
+	std::string dataString(const cimg_library::CImg<T>& img);
+
+	/// get string containing image content
+	/** the image content is printed in a matlab-like
+	 *  matrix representation.
+	 *  \param  img			image input
+	 */
+	template <typename T>
+	std::string contentString(const cimg_library::CImg<T>& img);
+
+	/// print image information
+	template <typename T>
+	void printInfo(
+		std::ostream& os                 /**[in,out] output stream to print to*/,
+		const cimg_library::CImg<T>& img /**[in]     input image*/,
+		const std::string& prefix = ""   /**[in]     prefix to print on new lines first*/);
 }
 
 #endif // _ImgTool_H
