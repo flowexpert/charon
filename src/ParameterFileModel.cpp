@@ -595,6 +595,8 @@ void ParameterFileModel::executeWorkflow() {
 	std::ofstream log(logFile.c_str(), std::ios::trunc);
 	Q_ASSERT(log.good());
 	sout.assign(log, std::cout);
+	QString path = QDir::currentPath();
+	QDir::setCurrent(QFileInfo(_fileName).path());
 	try {
 		man.loadParameterFile(*_parameterFile);
 		man.executeWorkflow();
@@ -622,6 +624,7 @@ void ParameterFileModel::executeWorkflow() {
 	}
 	sout.assign();
 	log.close();
+	QDir::setCurrent(path);
 }
 
 std::string ParameterFileModel::getType(std::string parName) const {
