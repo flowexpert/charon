@@ -82,7 +82,11 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	// for all Point4Ds in this->pattern
 	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
 		columns[i] = PetscSolver<T>::pointToGlobalIndex((*pIt)+p,unknown,unknownSizes);
-		values[i] = this->data(pIt->x, pIt->y,pIt->z,pIt->t);
+		const unsigned int px = pIt->x;
+		const unsigned int py = pIt->y;
+		const unsigned int pz = pIt->z;
+		const unsigned int pt = pIt->t;
+		values[i] = this->data(px, py, pz, pt);
 	}
 	return this->pattern.size();
 }
@@ -349,7 +353,7 @@ int PetscSolver<T>::petscExecute() {
 	 */
 #ifndef NDEBUG
 	sout << "\tcreated " << MetaStencils.size()
-		<< " MetaStencils:" << std::endl;
+		<< " MetaStencils." << std::endl;
 #endif
 
 	// maximum number of entries;

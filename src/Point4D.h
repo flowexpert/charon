@@ -54,12 +54,12 @@ public:
 	}
 
 	/// cast to Point4D<int>.
-	operator Point4D<int>() {
+	operator Point4D<int>() const {
 		return Point4D<int>(int(x), int(y), int(z), int(t));
 	}
 
 	/// cast to Point4D<unsigned int>.
-	operator Point4D<unsigned int>() {
+	operator Point4D<unsigned int>() const {
 		return Point4D<unsigned int>(
 			(unsigned int)(std::abs(x)),
 			(unsigned int)(std::abs(y)),
