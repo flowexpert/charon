@@ -183,9 +183,9 @@ MainWindow::MainWindow(QWidget* myParent) :
 			"clear\nflowchart"), inspector, SLOT(clear()));
 	action->setToolTip(tr("empty flowchart and inspector"));
 
+#ifdef WITH_WEBKIT
 	toolbar->addSeparator();
 
-#ifdef WITH_WEBKIT
 	action = toolbar->addAction(QIcon(":/icons/intro.png"), tr(
 			"introduction\nto paramedit"), docGen, SLOT(showIntro()));
 	action->setToolTip(tr("show introductin page"));
