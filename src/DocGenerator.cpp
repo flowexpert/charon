@@ -23,6 +23,7 @@
  */
 
 #include "DocGenerator.h"
+#ifdef WITH_WEBKIT
 #include <QUrl>
 #include <QDir>
 #include <QFile>
@@ -32,6 +33,8 @@
 #include "ParameterFileModel.h"
 #include "FileManager.h"
 #include "MetaData.h"
+#endif
+
 
 #include "DocGenerator.moc"
 
@@ -39,6 +42,7 @@ DocGenerator::DocGenerator(QWebView* viewer, QObject* myParent) :
         QObject(myParent),
         _viewer(viewer),
         _model(0) {
+#ifdef WITH_WEBKIT
     Q_ASSERT(_viewer);
 
     // load stylesheet
@@ -57,6 +61,7 @@ DocGenerator::DocGenerator(QWebView* viewer, QObject* myParent) :
     else
         qWarning() << "Footer file could not be loaded.";
     footerFile.close();
+#endif
 }
 
 DocGenerator::~DocGenerator() {
@@ -75,6 +80,7 @@ void DocGenerator::showIntro() {
 }
 
 void DocGenerator::showDocPage(const QString& fileName) {
+#ifdef WITH_WEBKIT
     _helpDoc = "";
 
     // to be able to load files from the resource system,
@@ -91,9 +97,11 @@ void DocGenerator::showDocPage(const QString& fileName) {
         qWarning() << tr("DocPage file %1 could not be loaded.")
             .arg(fileName);
     docPage.close();
+#endif
 }
 
 void DocGenerator::showDocString(const QString& doc) {
+#ifdef WITH_WEBKIT
     // check if content update needed
     if (doc == _helpDoc)
         return;
@@ -106,11 +114,13 @@ void DocGenerator::showDocString(const QString& doc) {
 
     // display
     _viewer->setHtml(html);
+#endif
 }
 
 QString DocGenerator::_docList(const std::vector<std::string>& parList,
         const std::string& className, const std::string& slotType) const {
     QString ret;
+#ifdef WITH_WEBKIT
     std::vector<std::string>::const_iterator parIter;
 
     if(parList.size()) {
@@ -173,12 +183,13 @@ QString DocGenerator::_docList(const std::vector<std::string>& parList,
     else
         ret += "<tr><td class=\"leftcol\"></td>"
                "<td colspan=\"3\">" + tr("(none)") + "</td></tr>\n";
-
+#endif
     return ret;
 }
 
 void DocGenerator::showClassDoc(const QString& className) {
     Q_ASSERT(_model);
+#ifdef WITH_WEBKIT
     QString page =
         tr("<h1>ClassDocumentation: %1</h1>\n").arg(className)
         + tr("<h2>Description</h2>\n")
@@ -226,4 +237,5 @@ void DocGenerator::showClassDoc(const QString& className) {
     page += "</table>";
 
     showDocString(page);
+#endif
 }

@@ -23,14 +23,16 @@
  */
 
 #include <QtGui>
+#ifdef WITH_WEBKIT
 #include <QWebView>
+#include "DocGenerator.h"
+#endif WITH_WEBKIT
 
 #include "MainWindow.h"
 #include "ObjectInspector.h"
 #include "FlowWidget.h"
 #include "SelectorWidget.h"
 #include "GraphModel.h"
-#include "DocGenerator.h"
 #include "ModelToolBar.h"
 #include "FileManager.h"
 #include <ParameterFile.hxx>
@@ -67,6 +69,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	ObjectInspector* inspector = new ObjectInspector(inspectorWidget);
 	inspectorWidget->setWidget(inspector);
 
+#ifdef WITH_WEBKIT
 	// help viewer
 	QDockWidget* helpWidget = new QDockWidget(tr("Help Browser"), this);
 	helpWidget->setObjectName("helpwidget");
@@ -74,6 +77,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	helpWidget->setWidget(helpBrowser);
 	DocGenerator* docGen = new DocGenerator(helpBrowser, this);
 	docGen->showIntro();
+#endif
 
 	// select widget
 	QDockWidget* selectWidget = new QDockWidget(tr("Selector"), this);
@@ -95,6 +99,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	connect(this, SIGNAL(enableEditors(bool)),
 			_selector, SLOT(setEnabled(bool)));
 
+#ifdef WITH_WEBKIT
 	// help browser connections
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
 			docGen, SLOT(setModel(ParameterFileModel*)));
@@ -102,12 +107,14 @@ MainWindow::MainWindow(QWidget* myParent) :
 			showClassDoc(QString)));
 	connect(_selector, SIGNAL(showDocPage(QString)), docGen, SLOT(showDocPage(
 			QString)));
+#endif
 
 	// add widgets to dock area
 	addDockWidget(Qt::RightDockWidgetArea, inspectorWidget);
 	addDockWidget(Qt::BottomDockWidgetArea, selectWidget, Qt::Vertical);
+#ifdef WITH_WEBKIT
 	addDockWidget(Qt::BottomDockWidgetArea, helpWidget, Qt::Vertical);
-
+#endif
 	_centralArea = new QMdiArea(this);
 	setCentralWidget(_centralArea);
 
@@ -177,6 +184,8 @@ MainWindow::MainWindow(QWidget* myParent) :
 	action->setToolTip(tr("empty flowchart and inspector"));
 
 	toolbar->addSeparator();
+
+#ifdef WITH_WEBKIT
 	action = toolbar->addAction(QIcon(":/icons/intro.png"), tr(
 			"introduction\nto paramedit"), docGen, SLOT(showIntro()));
 	action->setToolTip(tr("show introductin page"));
@@ -184,6 +193,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	action = toolbar->addAction(QIcon(":/icons/help.png"),
 			tr("paramedit\nhelp"), docGen, SLOT(showHelp()));
 	action->setToolTip(tr("show help page"));
+#endif
 
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
 			toolbar, SLOT(setModel(ParameterFileModel*)));
@@ -239,17 +249,21 @@ MainWindow::MainWindow(QWidget* myParent) :
 	// window menu
 	QMenu* windowMenu = menuBar()->addMenu(tr("&Window"));
 	windowMenu->addAction(inspectorWidget->toggleViewAction());
+#ifdef WITH_WEBKIT
 	windowMenu->addAction(helpWidget->toggleViewAction());
+#endif
 	windowMenu->addAction(selectWidget->toggleViewAction());
 	windowMenu->addSeparator();
 	windowMenu->addAction(toolbar->toggleViewAction());
 
 	// help menu
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
+#ifdef WITH_WEBKIT
 	helpMenu->addAction(QIcon(":/icons/help.png"), tr("&Help"), docGen, SLOT(
 			showHelp()), QKeySequence(tr("F1")));
 	helpMenu->addAction(QIcon(":/icons/intro.png"), tr("&Introduction"),
 			docGen, SLOT(showIntro()), QKeySequence(tr("Shift+F1")));
+#endif
 	helpMenu->addAction(appicon, tr("&About ParamEdit"), this, SLOT(
 			_showAbout()));
 	helpMenu->addAction(QIcon(":/icons/qt.png"), tr("About &Qt"), this, SLOT(
