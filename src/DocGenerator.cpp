@@ -79,8 +79,8 @@ void DocGenerator::showIntro() {
     showDocPage(":/help/start.txt");
 }
 
-void DocGenerator::showDocPage(const QString& fileName) {
 #ifdef WITH_WEBKIT
+void DocGenerator::showDocPage(const QString& fileName) {
     _helpDoc = "";
 
     // to be able to load files from the resource system,
@@ -97,11 +97,13 @@ void DocGenerator::showDocPage(const QString& fileName) {
         qWarning() << tr("DocPage file %1 could not be loaded.")
             .arg(fileName);
     docPage.close();
+#else
+void DocGenerator::showDocPage(const QString&) {
 #endif
 }
 
-void DocGenerator::showDocString(const QString& doc) {
 #ifdef WITH_WEBKIT
+void DocGenerator::showDocString(const QString& doc) {
     // check if content update needed
     if (doc == _helpDoc)
         return;
@@ -114,13 +116,15 @@ void DocGenerator::showDocString(const QString& doc) {
 
     // display
     _viewer->setHtml(html);
+#else
+void DocGenerator::showDocString(const QString&) {
 #endif
 }
 
+#ifdef WITH_WEBKIT
 QString DocGenerator::_docList(const std::vector<std::string>& parList,
         const std::string& className, const std::string& slotType) const {
     QString ret;
-#ifdef WITH_WEBKIT
     std::vector<std::string>::const_iterator parIter;
 
     if(parList.size()) {
@@ -183,13 +187,17 @@ QString DocGenerator::_docList(const std::vector<std::string>& parList,
     else
         ret += "<tr><td class=\"leftcol\"></td>"
                "<td colspan=\"3\">" + tr("(none)") + "</td></tr>\n";
-#endif
     return ret;
+#else
+QString DocGenerator::_docList(const std::vector<std::string>&,
+        const std::string&, const std::string&) const {
+	return QString();
+#endif
 }
 
+#ifdef WITH_WEBKIT
 void DocGenerator::showClassDoc(const QString& className) {
     Q_ASSERT(_model);
-#ifdef WITH_WEBKIT
     QString page =
         tr("<h1>ClassDocumentation: %1</h1>\n").arg(className)
         + tr("<h2>Description</h2>\n")
@@ -237,5 +245,7 @@ void DocGenerator::showClassDoc(const QString& className) {
     page += "</table>";
 
     showDocString(page);
+#else
+void DocGenerator::showClassDoc(const QString&) {
 #endif
 }

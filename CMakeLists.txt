@@ -11,7 +11,8 @@ IF(NOT CMAKE_VERSION)
 ENDIF(NOT CMAKE_VERSION)
 
 # find QT4 with required options
-OPTION(WITH_WEBKIT "use qt webkit" ON)
+OPTION(WITH_WEBKIT "use qt webkit (build help browser)" ON)
+MARK_AS_ADVANCED(WITH_WEBKIT)
 IF(${CMAKE_VERSION} VERSION_LESS 2.8.0)
 	# old interface (for compatibility reasons)
 	SET(QT_MIN_VERSION 4.4.0)
