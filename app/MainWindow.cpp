@@ -26,7 +26,7 @@
 #ifdef WITH_WEBKIT
 #include <QWebView>
 #include "DocGenerator.h"
-#endif WITH_WEBKIT
+#endif
 
 #include "MainWindow.h"
 #include "ObjectInspector.h"
