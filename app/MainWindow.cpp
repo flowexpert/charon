@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	setWindowIcon(appicon);
 
 	// Application Title
-	setWindowTitle("ParamEdit");
+	setWindowTitle("Tuchulcha");
 
 	// object inspector
 	QDockWidget* inspectorWidget = new QDockWidget(tr("ObjectInspector"), this);
@@ -187,11 +187,11 @@ MainWindow::MainWindow(QWidget* myParent) :
 	toolbar->addSeparator();
 
 	action = toolbar->addAction(QIcon(":/icons/intro.png"), tr(
-			"introduction\nto paramedit"), docGen, SLOT(showIntro()));
+			"introduction\nto tuchulcha"), docGen, SLOT(showIntro()));
 	action->setToolTip(tr("show introductin page"));
 
 	action = toolbar->addAction(QIcon(":/icons/help.png"),
-			tr("paramedit\nhelp"), docGen, SLOT(showHelp()));
+			tr("tuchulcha\nhelp"), docGen, SLOT(showHelp()));
 	action->setToolTip(tr("show help page"));
 #endif
 
@@ -264,7 +264,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	helpMenu->addAction(QIcon(":/icons/intro.png"), tr("&Introduction"),
 			docGen, SLOT(showIntro()), QKeySequence(tr("Shift+F1")));
 #endif
-	helpMenu->addAction(appicon, tr("&About ParamEdit"), this, SLOT(
+	helpMenu->addAction(appicon, tr("&About Tuchulcha"), this, SLOT(
 			_showAbout()));
 	helpMenu->addAction(QIcon(":/icons/qt.png"), tr("About &Qt"), this, SLOT(
 			_showAboutQt()));
@@ -300,10 +300,10 @@ void MainWindow::closeEvent(QCloseEvent *cEvent) {
 
 void MainWindow::_showAbout() const {
 	QMessageBox aboutBox;
-	aboutBox.setWindowTitle(tr("About ParamEdit"));
+	aboutBox.setWindowTitle(tr("About Tuchulcha"));
 	aboutBox.setTextFormat(Qt::RichText);
 	aboutBox.setIcon(QMessageBox::Information);
-	aboutBox.setText(tr("This is <b>ParamEdit</b> by Jens-Malte Gottfried "
+	aboutBox.setText(tr("This is <b>Tuchulcha</b> by Jens-Malte Gottfried "
 		"&lt;jmgottfried AT web.de&gt;"
 		"<br /><br />"
 		"Copyright (C) 2009 Heidelberg Collaboratory for Image Processing"

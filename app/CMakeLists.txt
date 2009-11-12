@@ -13,7 +13,7 @@ QT4_ADD_RESOURCES(QRC_RES ${CMAKE_CURRENT_BINARY_DIR}/resources.qrc)
 
 # create icon files (if possible)
 IF(WIN32)
-	EMBED_ICON(PE_ICO ${PROJECT_SOURCE_DIR}/icons/tc.ico paramediticon)
+	EMBED_ICON(TC_ICO ${PROJECT_SOURCE_DIR}/icons/tc.ico tcicon)
 	EMBED_ICON(INSP_ICO ${PROJECT_SOURCE_DIR}/icons/tc2.ico inspicon)
 ENDIF(WIN32)
 
@@ -31,30 +31,30 @@ ADD_EXECUTABLE(paraminspector WIN32 ${INSPECTOR_SOURCES} ${INSP_ICO})
 TARGET_LINK_LIBRARIES(paraminspector editparam ${QT_QTMAIN_LIBRARY})
 
 # main application
-SET(PARAMEDIT_SOURCES
+SET(TUCHULCHA_SOURCES
 	MainWindow.cpp
 	MainWindow.h
 	main.cpp
 )
 
-QT4_AUTOMOC(${PARAMEDIT_SOURCES})
-ADD_EXECUTABLE(paramedit WIN32 ${PARAMEDIT_SOURCES} ${QRC_RES} ${PE_ICO})
+QT4_AUTOMOC(${TUCHULCHA_SOURCES})
+ADD_EXECUTABLE(tuchulcha WIN32 ${TUCHULCHA_SOURCES} ${QRC_RES} ${TC_ICO})
 IF(Subversion_FOUND AND WITH_SVN)
-	SET_TARGET_PROPERTIES(paramedit
+	SET_TARGET_PROPERTIES(tuchulcha
 		PROPERTIES
 			COMPILE_DEFINITIONS SVNINFO="SVN Revision: ${Project_WC_REVISION}"
 	)
 ENDIF(Subversion_FOUND AND WITH_SVN)
 
-TARGET_LINK_LIBRARIES(paramedit editgraph ${QT_QTMAIN_LIBRARY} charon-plugins)
+TARGET_LINK_LIBRARIES(tuchulcha editgraph ${QT_QTMAIN_LIBRARY} charon-plugins)
 
 IF(WIN32)
 	# copy needed dll for tests and application run before installing
 	GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
-	GET_TARGET_PROPERTY(PLOC paramedit LOCATION)
+	GET_TARGET_PROPERTY(PLOC tuchulcha LOCATION)
 	GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
 
-	ADD_CUSTOM_COMMAND(TARGET paramedit POST_BUILD
+	ADD_CUSTOM_COMMAND(TARGET tuchulcha POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy ${CLOC} ${PLOC_DIR}
 	)
 	INSTALL(FILES ${CLOC}
@@ -91,14 +91,14 @@ IF(APPLE)
 	    PERMISSIONS WORLD_WRITE
 	)
 	INSTALL(
-	    TARGETS     paramedit
+	    TARGETS     tuchulcha
 	    RUNTIME     DESTINATION    /Applications/Tuchulcha.app/Contents/MacOS
 	    COMPONENT   applications
 	    PERMISSIONS WORLD_WRITE
 	)
 ELSE(APPLE)
 	INSTALL(
-	    TARGETS     paramedit
+	    TARGETS     tuchulcha
 	    RUNTIME     DESTINATION    bin
 	    COMPONENT   applications
 	)
