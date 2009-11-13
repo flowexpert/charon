@@ -3,8 +3,8 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 
 SET(APP_SRC
 	main.cpp
-	mainwindow.cpp
-	mainwindow.h
+	MainWindow.cpp
+	MainWindow.h
 )
 
 QT4_AUTOMOC(${APP_SRC})
