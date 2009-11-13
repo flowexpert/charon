@@ -271,8 +271,11 @@ void MainWindow::_writeSettings() {
 		"TemplateGenerator");
 
 	settings.beginGroup("MainWindow");
-	settings.setValue("size", size());
-	settings.setValue("pos", pos());
+	settings.setValue("geometry", saveGeometry());
+	if (!isMaximized()) {
+		settings.setValue("size", size());
+		settings.setValue("pos", pos());
+	}
 	settings.endGroup();
 }
 
@@ -281,8 +284,12 @@ void MainWindow::_readSettings() {
 		"TemplateGenerator");
 
 	settings.beginGroup("MainWindow");
-	resize(settings.value("size", QSize(400, 400)).toSize());
-	move(settings.value("pos", QPoint(200, 200)).toPoint());
+	if (settings.contains("geometry"))
+		restoreGeometry(settings.value("geometry").toByteArray());
+	else {
+		resize(settings.value("size", QSize(400, 400)).toSize());
+		move(settings.value("pos", QPoint(200, 200)).toPoint());
+	}
 	settings.endGroup();
 }
 
