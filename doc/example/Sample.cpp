@@ -27,7 +27,7 @@
 #define DECLDIR
 #endif
 
-extern "C" DECLDIR ParameteredObject* create(std::string name, template_type /*t*/) {
+extern "C" DECLDIR ParameteredObject* create(const std::string& name, template_type /*t*/) {
 	return new Sample(name);
 }
 
