@@ -7,9 +7,10 @@ SET(APP_SRC
 	MainWindow.h
 )
 
+QT4_ADD_RESOURCES(QRC_RES resource.qrc)
 QT4_AUTOMOC(${APP_SRC})
 
-ADD_EXECUTABLE(templategenerator ${APP_SRC})
+ADD_EXECUTABLE(templategenerator ${APP_SRC} ${QRC_RES})
 TARGET_LINK_LIBRARIES(templategenerator
 	mylib
 	${QT_LIBRARIES}
