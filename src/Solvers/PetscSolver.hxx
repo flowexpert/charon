@@ -530,7 +530,7 @@ int PetscSolver<T>::petscExecute() {
 			p = Point4D<unsigned int>(p);
 			// Update all stencils of the unknown to contain current data
 			int nos = (int)substencils[unknown].size(); // number of stencils
-			PetscScalar rhs;                            // right hand side
+			PetscScalar rhs = 0;                        // right hand side
 			for (int index = 0 ; index < nos ; index++) {
 				substencils.find(unknown)->second[index]->updateStencil(p.x, p.y, p.z, p.t);
 				rhs += PetscScalar(substencils.find(unknown)->second[index]->getRhs().find(unknown)->second);
