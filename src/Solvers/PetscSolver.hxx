@@ -59,10 +59,10 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	// the CImg data object of the MetaStencil
 	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
 		// Calculating offsets
-		int xo = this->center.x - this->substencils[i]->center.x;
-		int yo = this->center.y - this->substencils[i]->center.y;
-		int zo = this->center.z - this->substencils[i]->center.z;
-		int to = this->center.t - this->substencils[i]->center.t;
+		int xo = int(this->center.x) - int(this->substencils[i]->center.x);
+		int yo = int(this->center.y) - int(this->substencils[i]->center.y);
+		int zo = int(this->center.z) - int(this->substencils[i]->center.z);
+		int to = int(this->center.t) - int(this->substencils[i]->center.t);
 
 		// Iterate through all pixels of the SubStencil...
 		cimg_forXYZV(this->substencils[i]->data,xc,yc,zc,tc) {
@@ -78,15 +78,20 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	// and its value to PetscScalar* values
 
 	// pattern Iterator
-	std::set<Point4D<unsigned int> >::iterator pIt = this->pattern.begin();
+	std::set<Point4D<unsigned int> >::const_iterator pIt = this->pattern.begin();
 	// for all Point4Ds in this->pattern
 	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
-		columns[i] = PetscSolver<T>::pointToGlobalIndex((*pIt)+p,unknown,unknownSizes);
+		const Point4D<unsigned int>& curP = *pIt;
+		Point4D<int> curArg = Point4D<int>(curP)+Point4D<int>(p);
+		PetscInt curCol =
+			PetscSolver<T>::pointToGlobalIndex(curArg,unknown,unknownSizes);
+		columns[i] = curCol;
 		const unsigned int px = pIt->x;
 		const unsigned int py = pIt->y;
 		const unsigned int pz = pIt->z;
 		const unsigned int pt = pIt->t;
-		values[i] = this->data(px, py, pz, pt);
+		PetscScalar curVal = this->data(px, py, pz, pt);
+		values[i] = curVal;
 	}
 	return this->pattern.size();
 }
