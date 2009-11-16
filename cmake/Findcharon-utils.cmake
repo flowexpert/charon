@@ -17,6 +17,7 @@ FIND_PATH(CHARON_UTILS_ROOT_DIR
     NAMES           include/charon-utils/charon-utils.cmake
     HINTS           ${CHARON_CORE_ROOT_DIR}
 	PATHS			[HKEY_LOCAL_MACHINE\\SOFTWARE\\Heidelberg\ Collaboratory\ for\ Image\ Processing\\charon-utils]
+					$ENV{CHARON_DIR}
                     /usr
                     /usr/local
     DOC             "charon-utils root directory"
