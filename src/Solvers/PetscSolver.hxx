@@ -668,8 +668,6 @@ int PetscSolver<T>::petscExecute() {
 	ierr = VecDestroy(b);
 	ierr = MatDestroy(A);
 	ierr = KSPDestroy(ksp);
-	ierr = PetscFinalize();
-
 	return 0;
 }
 
