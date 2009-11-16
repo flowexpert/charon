@@ -104,13 +104,19 @@ IF(ENABLE_TEST)
 		INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
 		# test petsc initialization
 		ADD_EXECUTABLE(petscinittest PetscInitializationTest.cpp)
+		IF(MSVC)
+			SET_TARGET_PROPERTIES(petscinittest
+				PROPERTIES LINK_FLAGS
+					/NODEFAULTLIB:"LIBCMT"
+			)
+		ENDIF(MSVC)
 		TARGET_LINK_LIBRARIES(petscinittest ${PETSC_LIBRARIES})
 		ADD_TEST(PetscInitTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscinittest)
 
 		# checking creation of petsc plugins
 		ADD_EXECUTABLE(petscplugintest PetscPluginTest.cpp)
 		IF(MSVC)
-			SET_TARGET_PROPERTIES(petscsolvertest
+			SET_TARGET_PROPERTIES(petscplugintest
 				PROPERTIES LINK_FLAGS
 					/NODEFAULTLIB:"LIBCMT"
 			)
