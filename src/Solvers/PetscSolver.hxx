@@ -582,6 +582,8 @@ int PetscSolver<T>::petscExecute() {
 	ierr = VecAssemblyEnd(b);
 	CHKERRQ(ierr);
 
+	ierr = KSPCreate(PETSC_COMM_WORLD, &ksp);
+	CHKERRQ(ierr);
 	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN);
 	CHKERRQ(ierr);
 	ierr = KSPSolve(ksp,b,x);
@@ -635,6 +637,13 @@ int PetscSolver<T>::petscExecute() {
 		// Due to data locallity, it is performance-wise better to iterate
 		// through the unknowns first and fill the CImgList element by element
 		// instead of pixel by pixel. Same with the solution vector.
+
+		// preallocate memory for output image
+		this->out().assign(lookup.size(),
+			this->roi()->getWidth(),
+			this->roi()->getHeight(),
+			this->roi()->getDepth(),
+			this->roi()->getDuration());
 
 		// for all unknowns
 		for(lIt=lookup.begin() ; lIt!=lookup.end();lIt++) {
