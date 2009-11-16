@@ -36,7 +36,7 @@
 #include <iomanip>
 #include <climits>
 #include "Roi.h"
-#include "Interpolator.h"
+#include "InterpolatorLinear.h"
 
 // needed by createAllScaleRandomPattern
 #include "Pyramid2DGauss.h"
