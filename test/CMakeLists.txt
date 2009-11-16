@@ -102,15 +102,20 @@ IF(ENABLE_TEST)
 	ENDIF(ENABLE_BLOCKMATCHING)
 	IF(ENABLE_SOLVERS)
 		INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
-		# tests for solver classes
-		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
+		# test petsc initialization
+		ADD_EXECUTABLE(petscinittest PetscInitializationTest.cpp)
+		TARGET_LINK_LIBRARIES(petscinittest ${PETSC_LIBRARIES})
+		ADD_TEST(PetscInitTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscinittest)
+
+		# checking creation of petsc plugins
+		ADD_EXECUTABLE(petscplugintest PetscPluginTest.cpp)
 		IF(MSVC)
 			SET_TARGET_PROPERTIES(petscsolvertest
 				PROPERTIES LINK_FLAGS
 					/NODEFAULTLIB:"LIBCMT"
 			)
 		ENDIF(MSVC)
-		TARGET_LINK_LIBRARIES(petscsolvertest
+		TARGET_LINK_LIBRARIES(petscplugintest
 			charon-core
 			charon-plugins
 			roi
@@ -124,12 +129,11 @@ IF(ENABLE_TEST)
 			mask1d
 			linearfilter
 			petscsolver
-			petscinit
 		)
 		IF(UNIX)
-			TARGET_LINK_LIBRARIES(petscsolvertest pthread ${X11_LIBRARIES})
+			TARGET_LINK_LIBRARIES(petscplugintest pthread ${X11_LIBRARIES})
 		ENDIF(UNIX)
-		ADD_TEST(PetscSolverTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscsolvertest)
+		ADD_TEST(PetscPluginTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscplugintest)
 		IF(WIN32)
 			# copy needed dll for tests and application run before installing
 			GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
@@ -140,7 +144,7 @@ IF(ENABLE_TEST)
 			GET_TARGET_PROPERTY(LinearFilter_LOC linearfilter LOCATION)
 			GET_TARGET_PROPERTY(ChannelConverter_LOC channelconverter LOCATION)
 			GET_TARGET_PROPERTY(InterpolatorLinear_LOC interpolatorlinear LOCATION)
-			GET_TARGET_PROPERTY(PLOC petscsolvertest LOCATION)
+			GET_TARGET_PROPERTY(PLOC petscplugintest LOCATION)
 			GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
 			ADD_CUSTOM_COMMAND(TARGET POST_BUILD petscsolvertest
 				COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${PLOC_DIR}"
@@ -153,5 +157,13 @@ IF(ENABLE_TEST)
 				COMMAND ${CMAKE_COMMAND} -E copy "${InterpolatorLinear_LOC}" "${PLOC_DIR}"
 			)
 		ENDIF(WIN32)
+
+		# executing test workflow
+		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
+		TARGET_LINK_LIBRARIES(petscsolvertest charon-plugins)
+		IF(UNIX)
+			TARGET_LINK_LIBRARIES(petscsolvertest pthread ${X11_LIBRARIES})
+		ENDIF(UNIX)
+		ADD_TEST(PetscSolverTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscsolvertest)
 	ENDIF(ENABLE_SOLVERS)
 ENDIF(ENABLE_TEST)

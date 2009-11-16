@@ -22,8 +22,17 @@
  *  @date 8.09.2009
  */
 
-#include <charon-core/PluginManager.h>
-#include <charon-utils/CImg.h>
+#include <Solvers/PetscSolver.h>
+#include <charon-utils/Roi.h>
+#include <Stencils/Gbcce.h>
+#include <Stencils/L2Norm.h>
+#include <BrightnessModels/Constant.h>
+#include <MotionModels/LocalConstant.h>
+#include <charon-utils/LinearFilter.h>
+#include <charon-utils/Mask1D.h>
+#include <charon-utils/ChannelConverter.h>
+#include <charon-utils/FileReader.h>
+#include <charon-utils/FileWriter.h>
 
 #ifndef CMAKE_INTDIR
 /// suffix to local plugin dir
@@ -35,37 +44,17 @@
 #endif
 
 int main() {
-	std::ofstream log("bcceTestLog.txt", std::ios::trunc);
-	assert(log.good());
-	sout.assign(std::cout, log);
-
-
-	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR "/" CMAKE_INTDIR);
-	man.loadParameterFile(BCCE_TESTFILE);
-	try {
-//		man.executeWorkflow();
-	}
-	catch (const std::exception& e) {
-		sout << "caught exception of type " << typeid(e).name() << std::endl;
-		sout << "Message:" << std::endl;
-		sout << e.what() << std::endl;
-	}
-	catch (const cimg_library::CImgException& e) {
-		sout << "caught exception of type " << typeid(e).name() << std::endl;
-		sout << "Message:" << std::endl;
-		sout << e.message << std::endl;
-	}
-	catch (const std::string& e) {
-		sout << "caught exception!" << std::endl;
-		sout << "Message:" << std::endl;
-		sout << e << std::endl;
-	}
-	catch (...) {
-		sout << "caught unknown exception" << std::endl;
-	}
-
-	sout.assign();
-	log.close();
+	// test creation of all necessary objects
+	delete new FileReader<float>("reader");
+	delete new ChannelConverter<float>("converter");
+	delete new LinearFilter<float>("derivative");
+	delete new Mask1D<float>("diff");
+	delete new BrightnessModels::Constant<float>("brightnessConst");
+	delete new MotionModels::LocalConstant<float>("motionConstant");
+	delete new Gbcce<float>("bcce");
+	delete new L2Norm<float>("l2Norm");
+	delete new PetscSolver<float>("solver");
+	delete new FileWriter<float>("writer");
 
 	return 0;
 }

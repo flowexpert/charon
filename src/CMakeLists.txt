@@ -51,12 +51,8 @@ IF(ENABLE_SOLVERS)
 		Solver.h
 		Solver.hxx
 	)
-	ADD_LIBRARY(petscinit SHARED
-		PetscInit.cpp
-		PetscInit.h
-	)
 	IF(MSVC)
-		SET_TARGET_PROPERTIES(petscsolver petscinit
+		SET_TARGET_PROPERTIES(petscsolver
 			PROPERTIES LINK_FLAGS
 				/NODEFAULTLIB:"LIBCMT"
 		)
@@ -66,14 +62,10 @@ IF(ENABLE_SOLVERS)
 		roi
 		gbcce
 	)
-	TARGET_LINK_LIBRARIES(petscinit
-		${PETSC_LIBRARIES}
-	)
 	LIST(APPEND Plugins
 		petscsolver
-		petscinit
 	)
-	SET_TARGET_PROPERTIES(petscsolver petscinit
+	SET_TARGET_PROPERTIES(petscsolver
 		PROPERTIES INSTALL_RPATH ${PETSC_ROOT_DIR}/${PETSC_ARCH}/lib
 	)
 ENDIF(ENABLE_SOLVERS)

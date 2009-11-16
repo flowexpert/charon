@@ -161,8 +161,8 @@ public:
 	/// default constructor
 	PetscSolver(const std::string& name = "" /**[in] instance name*/);
 
-	/// petsc initializer input
-	InputSlot<PetscInit*> petsc;
+	/// Petsc command line options
+	Parameter<std::string> commandLine;
 
 	/// check if process is rank 0
 	bool isRankZero();
@@ -175,6 +175,12 @@ public:
 
 	/// default destructor
 	virtual ~PetscSolver();
+
+private:
+	/// command line argument counter
+	int _argc;
+	/// command line argument vector
+	char** _argv;
 };
 
 #endif // _PETSCSOLVER_H_

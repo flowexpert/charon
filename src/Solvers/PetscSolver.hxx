@@ -234,10 +234,68 @@ Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) {
 template <class T>
 PetscSolver<T>::PetscSolver(const std::string& name) : 
 		Solver<T>("PetscSolver", name) {
-	ParameteredObject::_addInputSlot(petsc, "petsc",
-		"petsc initialization", "PetscInit");
 	this->columns=NULL;
 	this->values=NULL;
+
+	// convert parameters into argument vector
+	std::vector<std::string> args;
+	StringTool::explode(commandLine(), ' ', args);
+
+	_argc = args.size();
+	_argv = new char* [_argc];
+	for (int i=0; i < _argc; i++) {
+		const unsigned int s = args[i].length()+1;
+		_argv[i] = new char[s+1];
+		memset(_argv[i], '\0', s);
+		args[i].copy(_argv[i], s);
+	}
+
+	// call petsc init
+	sout << "\tinitializing Petsc" << std::endl;
+	sout << "\t\tusing command line \"" << commandLine() << "\"" << std::endl;
+	PetscErrorCode ierr = MPI_Init(&_argc,&_argv);
+	if (ierr) {
+		sout << "Got petsc error code during MPI initialization:\n"
+			<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ")
+			<< std::endl;
+	}
+	ierr = PetscInitialize(&_argc,&_argv,PETSC_NULL,PETSC_NULL);
+	if (ierr) {
+		sout << "Got petsc error code during PETSc initialization:\n"
+			<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ")
+			<< std::endl;
+	}
+}
+
+template <class T>
+PetscSolver<T>::~PetscSolver() {
+	for (int i=0; i < _argc; i++)
+		delete[] _argv[i];
+	delete[] _argv;
+	_argc = 0;
+	_argv = 0;
+
+	// call petsc finish
+	sout << "\tfinalizing Petsc" << std::endl;
+	PetscErrorCode ierr = PetscFinalize();
+	if (ierr)
+		sout << "Got petsc error code during destructor:\n"
+			<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ")
+			<< std::endl;
+
+	int initialized = 0;
+	MPI_Initialized(&initialized);
+	if (initialized) {
+		ierr = MPI_Finalize();
+		if (ierr)
+			sout << "Got petsc error code during destructor:\n"
+				<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ")
+				<< std::endl;
+	}
+
+	//make sure, PetscInt and PetscScalar get cleared
+	delete[] columns;
+	delete[] values;
 }
 
 template <class T>
@@ -618,13 +676,6 @@ void PetscSolver<T>::execute() {
 		msg << "\tError code:\n\t\t" << errorCode;
 		throw std::runtime_error(msg.str().c_str());
 	}
-}
-
-template <class T>
-PetscSolver<T>::~PetscSolver() {
-	//make sure, PetscInt and PetscScalar get cleared
-	delete[] columns;
-	delete[] values;
 }
 
 #endif // _PETSCSOLVER_HXX_
