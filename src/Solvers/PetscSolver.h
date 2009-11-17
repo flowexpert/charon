@@ -48,7 +48,7 @@ class PetscInit;
  *  simultaneously.
  *  \see class Solver
  */
-template <class T>
+template <typename T>
 class petscsolver_DECLDIR PetscSolver : public Solver<T>
 {
 protected:
@@ -181,6 +181,8 @@ private:
 	int _argc;
 	/// command line argument vector
 	char** _argv;
+	/// check if initialization has taken place
+	static bool _initialized;
 };
 
 #endif // _PETSCSOLVER_H_

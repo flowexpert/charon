@@ -28,7 +28,7 @@
 #include <charon-utils/ImgTool.hxx>
 #include <sstream>
 
-template <class T>
+template <typename T>
 PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(
 	const std::string& unknown,
 	const std::vector<Stencil<T>*>& stencils) :
@@ -36,18 +36,18 @@ PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(
 {
 }
 
-template <class T>
+template <typename T>
 PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(
 	const PetscMetaStencil& rhs) :
 		Solver<T>::MetaStencil(rhs) {
 }
 
-template <class T>
+template <typename T>
 PetscSolver<T>::PetscMetaStencil::PetscMetaStencil() :
 		Solver<T>::MetaStencil() {
 }
 
-template <class T>
+template <typename T>
 unsigned int PetscSolver<T>::PetscMetaStencil::update(
 		const std::string unknown,
 		const Point4D<unsigned int>& p,
@@ -96,7 +96,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	return this->pattern.size();
 }
 
-template <class T>
+template <typename T>
 unsigned int PetscSolver<T>::pointToRelativeIndex(
 		const Point4D<int>& p,
 		const Roi<int>& dim)
@@ -111,7 +111,7 @@ unsigned int PetscSolver<T>::pointToRelativeIndex(
 	return res;
 }
 
-template <class T>
+template <typename T>
 unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
 		const unsigned int i,
 		const std::string& unknown,
@@ -129,7 +129,7 @@ unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
 	return res;
 }
 
-template <class T>
+template <typename T>
 void PetscSolver<T>::globalIndexToPoint(
 		const unsigned int vi,
 		const std::map<std::string, Roi<int>*>& unknownSizes,
@@ -168,7 +168,7 @@ void PetscSolver<T>::globalIndexToPoint(
 	p += offset;
 }
 
-template <class T>
+template <typename T>
 unsigned int PetscSolver<T>::pointToGlobalIndex(
 		const Point4D<int>& p,
 		const std::string& unknown,
@@ -180,7 +180,7 @@ unsigned int PetscSolver<T>::pointToGlobalIndex(
 	return result;
 }
 
-template <class T>
+template <typename T>
 Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) {
 	// First, identify the case
 	//
@@ -231,74 +231,56 @@ Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) {
 	return result;
 }
 
-template <class T>
+template <typename T>
+bool PetscSolver<T>::_initialized = false;
+
+template <typename T>
 PetscSolver<T>::PetscSolver(const std::string& name) : 
-		Solver<T>("PetscSolver", name) {
-	this->columns=NULL;
-	this->values=NULL;
-
-	// convert parameters into argument vector
-	std::vector<std::string> args;
-	StringTool::explode(commandLine(), ' ', args);
-
-	_argc = args.size();
-	_argv = new char* [_argc];
-	for (int i=0; i < _argc; i++) {
-		const unsigned int s = args[i].length()+1;
-		_argv[i] = new char[s+1];
-		memset(_argv[i], '\0', s);
-		args[i].copy(_argv[i], s);
-	}
-
-	// call petsc init
-	sout << "\tinitializing Petsc" << std::endl;
-	sout << "\t\tusing command line \"" << commandLine() << "\"" << std::endl;
-	PetscErrorCode ierr = MPI_Init(&_argc,&_argv);
-	if (ierr) {
-		sout << "Got petsc error code during MPI initialization:\n"
-			<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ")
-			<< std::endl;
-	}
-	ierr = PetscInitialize(&_argc,&_argv,PETSC_NULL,PETSC_NULL);
-	if (ierr) {
-		sout << "Got petsc error code during PETSc initialization:\n"
-			<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ")
-			<< std::endl;
-	}
+		Solver<T>("PetscSolver", name),
+		columns(0), values(0)
+{
+	// add petsc command line
+	ParameteredObject::_addParameter(commandLine, "commandLine",
+		"petsc command line");
 }
 
-template <class T>
+template <typename T>
 PetscSolver<T>::~PetscSolver() {
-	for (int i=0; i < _argc; i++)
-		delete[] _argv[i];
-	delete[] _argv;
-	_argc = 0;
-	_argv = 0;
+	if (_initialized) {
+		for (int i=0; i < _argc; i++)
+			delete[] _argv[i];
+		delete[] _argv;
+		_argc = 0;
+		_argv = 0;
 
-	// call petsc finish
-	sout << "\tfinalizing Petsc" << std::endl;
-	PetscErrorCode ierr = PetscFinalize();
-	if (ierr)
-		sout << "Got petsc error code during destructor:\n"
-			<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ")
-			<< std::endl;
-
-	int initialized = 0;
-	MPI_Initialized(&initialized);
-	if (initialized) {
-		ierr = MPI_Finalize();
+		// finalize petsc
+		sout << "\tfinalizing Petsc" << std::endl;
+		PetscErrorCode ierr = PetscFinalize();
 		if (ierr)
 			sout << "Got petsc error code during destructor:\n"
-				<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,0," ")
+				<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,
+					ierr,0," ")
 				<< std::endl;
+
+		int initialized = 0;
+		MPI_Initialized(&initialized);
+		if (initialized) {
+			ierr = MPI_Finalize();
+			if (ierr)
+				sout << "Got petsc error code during destructor:\n"
+					<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,
+						0," ")
+					<< std::endl;
+		}
+		_initialized = false;
 	}
 
-	//make sure, PetscInt and PetscScalar get cleared
+	// make sure, PetscInt and PetscScalar get cleared
 	delete[] columns;
 	delete[] values;
 }
 
-template <class T>
+template <typename T>
 bool PetscSolver<T>::isRankZero() {
 	int initialized = 0;
 	MPI_Initialized(&initialized);
@@ -313,7 +295,7 @@ bool PetscSolver<T>::isRankZero() {
 }
 
 
-template <class T>
+template <typename T>
 int PetscSolver<T>::petscExecute() {
 	/*
 	 *	*=======================*
@@ -472,12 +454,38 @@ int PetscSolver<T>::petscExecute() {
 	 *	PetscInitialize and MPI Initialization are done in the main
 	 */
 
+	// Petsc initialization
+	PetscErrorCode	ierr;			// PETSc Error code for error-traceback
+	if(!_initialized) {
+		// convert parameters into argument vector
+		std::vector<std::string> args;
+		std::string modLine = "petscSolver " + commandLine();
+		StringTool::explode(modLine, ' ', args);
+
+		_argc = args.size();
+		_argv = new char* [_argc];
+		for (int i=0; i < _argc; i++) {
+			const unsigned int s = args[i].length()+1;
+			_argv[i] = new char[s+1];
+			memset(_argv[i], '\0', s);
+			args[i].copy(_argv[i], s);
+		}
+
+		// call petsc init
+		sout << "\tinitializing Petsc" << std::endl;
+		sout << "\t\tusing command line \"" << commandLine() << "\"" << std::endl;
+		ierr = MPI_Init(&_argc,&_argv);
+		CHKERRQ(ierr);
+		ierr = PetscInitialize(&_argc,&_argv,PETSC_NULL,PETSC_NULL);
+		CHKERRQ(ierr);
+		_initialized = true;
+	}
+
 	Vec				x,				// approx. solution
 					b;				// right hand side
 	Mat				A;				// Linear System Matrix
 	KSP				ksp(0);			// KSP context
 //	PC				pc;				// PC context
-	PetscErrorCode	ierr;			// PETSc Error code for error-traceback
 	PetscInt		j;				// row index
 	PetscInt		Istart, Iend;	// Ownership range
 
@@ -671,7 +679,7 @@ int PetscSolver<T>::petscExecute() {
 	return 0;
 }
 
-template <class T>
+template <typename T>
 void PetscSolver<T>::execute() {
 	ParameteredObject::execute();
 	int errorCode;
