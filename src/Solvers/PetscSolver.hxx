@@ -427,7 +427,7 @@ int PetscSolver<T>::petscExecute() {
 		}
 	}
 #ifndef NDEBUG
-	sout << "\tdetermined maximal number of entries: " << std::endl;
+	sout << "\tdetermined maximal number of entries per unknown: " << std::endl;
 	sout << "\t\tmax_ne = " << max_ne << std::endl;
 #endif
 
@@ -455,7 +455,7 @@ int PetscSolver<T>::petscExecute() {
 		n += PetscInt(usIt->second->getVolume());
 	}
 #ifndef NDEBUG
-	sout << "\tcalculated number of entries: " << std::endl;
+	sout << "\tcalculated matrix/vector size: " << std::endl;
 	sout << "\t\tn = " << n << std::endl;
 #endif
 
@@ -608,13 +608,16 @@ int PetscSolver<T>::petscExecute() {
 	ierr = VecAssemblyEnd(b);
 	CHKERRQ(ierr);
 
-	ierr = KSPCreate(PETSC_COMM_WORLD, &ksp);
-	CHKERRQ(ierr);
+	ierr = KSPCreate(PETSC_COMM_WORLD, &ksp); CHKERRQ(ierr);
+	ierr = KSPSetFromOptions(ksp); CHKERRQ(ierr);
 	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN);
+	CHKERRQ(ierr);
+	ierr = KSPMonitorSet(ksp,KSPMonitorDefault,PETSC_NULL,PETSC_NULL);
 	CHKERRQ(ierr);
 	ierr = KSPSolve(ksp,b,x);
 	CHKERRQ(ierr);
-
+	ierr = KSPView(ksp, PETSC_VIEWER_STDOUT_SELF);
+	CHKERRQ(ierr);
 	// only the #0 Machine is supposed to write results back
 	if (this->isRankZero()) {
 		// create lookup map to convert unknown to index in the CImgList
@@ -657,7 +660,8 @@ int PetscSolver<T>::petscExecute() {
 		// epxand the CImgList to the needed size
 		this->out().assign(lookup.size(),
 			globalRoi.getWidth(), globalRoi.getHeight(),
-			globalRoi.getDepth(), globalRoi.getDuration());
+			globalRoi.getDepth(), globalRoi.getDuration(),
+			T(0));
 
 		// Due to data locallity, it is performance-wise better to iterate
 		// through the unknowns first and fill the CImgList element by element
@@ -668,9 +672,14 @@ int PetscSolver<T>::petscExecute() {
 			// go through the image
 			forRoiXYZT(globalRoi,x,y,z,t) {
 				// get the current global index
-				globalIndex = pointToGlobalIndex(Point4D<int>(x,y,z,t),lIt->first, unknownSizes);
+				globalIndex = pointToGlobalIndex(Point4D<int>(x,y,z,t),
+					lIt->first, unknownSizes);
 				// and write the results into the output slot 'out'
-				this->out()(lIt->second,x,y,z,t) = T(res[globalIndex]);
+				this->out()(lIt->second,
+					x-globalRoi.xBegin,
+					y-globalRoi.yBegin,
+					z-globalRoi.zBegin,
+					t-globalRoi.tBegin) = T(res[globalIndex]);
 			}
 		}
 
@@ -682,10 +691,10 @@ int PetscSolver<T>::petscExecute() {
 		delete usIt->second;
 	}
 
-	ierr = VecDestroy(x);
-	ierr = VecDestroy(b);
-	ierr = MatDestroy(A);
-	ierr = KSPDestroy(ksp);
+	ierr = VecDestroy(x);CHKERRQ(ierr);
+	ierr = VecDestroy(b);CHKERRQ(ierr);
+	ierr = MatDestroy(A);CHKERRQ(ierr);
+	ierr = KSPDestroy(ksp);CHKERRQ(ierr);
 	return 0;
 }
 
