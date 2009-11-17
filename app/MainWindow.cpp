@@ -141,24 +141,25 @@ MainWindow::MainWindow(QWidget* myParent) :
 			inspector, SLOT(saveFile()));
 	action->setToolTip(tr("save current document"));
 
-	action = toolbar->addAction(QIcon(":/icons/save_as.png"), tr(
-			"save\nfile as"), inspector, SLOT(saveFileAs()));
-        action->setToolTip(tr("save current document\nto a new location"));
+	action = toolbar->addAction(QIcon(":/icons/save_as.png"),
+		tr("save\nfile as"), inspector, SLOT(saveFileAs()));
+	action->setToolTip(tr("save current document\nto a new location"));
 
-	action = toolbar->addAction(QIcon(":/icons/export.png"), tr(
-			"export\nflowchart"), this, SLOT(saveFlowChart()));
+	action = toolbar->addAction(QIcon(":/icons/export.png"),
+		tr("export\nflowchart"), this, SLOT(saveFlowChart()));
 	action->setToolTip(tr("export flowchart to an image file"));
 
 	toolbar->addSeparator();
-	action = toolbar->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
-		this, SLOT(updateMetadata()));
+	action = toolbar->addAction(QIcon(":/icons/refresh.png"),
+		tr("&Update Plugins"), this, SLOT(updateMetadata()));
 	action->setToolTip(tr("update classes informations reading all plugins"));
-	action = toolbar->addAction(QIcon(":/icons/runbuild.png"), tr("&Compile and load plug-in"),
-		this, SLOT(compileAndLoad()));
+	action = toolbar->addAction(QIcon(":/icons/runbuild.png"),
+		tr("&Compile and load plug-in"), this, SLOT(compileAndLoad()));
 	action->setToolTip(tr("compile new plugin from plugin source"));
-	action = toolbar->addAction(QIcon(":/icons/execute.png"), tr("Execute &Workflow"),
-		inspector, SLOT(executeWorkflow()));
-	action->setToolTip(tr("execute workflow that is described in the current window"));
+	action = toolbar->addAction(QIcon(":/icons/execute.png"),
+		tr("Execute &Workflow"), inspector, SLOT(executeWorkflow()));
+	action->setToolTip(
+		tr("execute workflow that is described in the current window"));
 	toolbar->addSeparator();
 	toolbar->addModelActions();
 	toolbar->addSeparator();
@@ -175,12 +176,12 @@ MainWindow::MainWindow(QWidget* myParent) :
 	action->setToolTip(tr("fit flowchart in view"));
 
 	toolbar->addSeparator();
-	action = toolbar->addAction(QIcon(":/icons/revert.png"), tr(
-			"reset\nselected"), inspector, SLOT(delParam()));
+	action = toolbar->addAction(QIcon(":/icons/revert.png"),
+		tr("reset\nselected"), inspector, SLOT(delParam()));
 	action->setToolTip(tr("reset selected parameter(s)\nto their defaults"));
 
-	action = toolbar->addAction(QIcon(":/icons/revert_all.png"), tr(
-			"clear\nflowchart"), inspector, SLOT(clear()));
+	action = toolbar->addAction(QIcon(":/icons/revert_all.png"),
+		tr("clear\nflowchart"), inspector, SLOT(clear()));
 	action->setToolTip(tr("empty flowchart and inspector"));
 
 #ifdef WITH_WEBKIT
@@ -200,14 +201,14 @@ MainWindow::MainWindow(QWidget* myParent) :
 
 	// file menu
 	QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
-	fileMenu->addAction(QIcon(":/icons/new.png"), tr("&New"), this, SLOT(
-			openNew()), QKeySequence(tr("Ctrl+N")));
-	fileMenu->addAction(QIcon(":/icons/open.png"), tr("&Open"), this, SLOT(
-			open()), QKeySequence(tr("Ctrl+O")));
+	fileMenu->addAction(QIcon(":/icons/new.png"), tr("&New"), this,
+		SLOT(openNew()), QKeySequence(tr("Ctrl+N")));
+	fileMenu->addAction(QIcon(":/icons/open.png"), tr("&Open"), this,
+		SLOT(open()), QKeySequence(tr("Ctrl+O")));
 	fileMenu->addAction(QIcon(":/icons/save.png"), tr("&Save"), inspector,
-			SLOT(saveFile()), QKeySequence(tr("Ctrl+S")));
+		SLOT(saveFile()), QKeySequence(tr("Ctrl+S")));
 	fileMenu->addAction(QIcon(":/icons/save_as.png"), tr("Save as..."),
-			inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
+		inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
 	_separatorAct = fileMenu->addSeparator();
 	for (int i = 0; i < _maxRecentFiles; ++i) {
 		_recentFileActs[i] = new QAction(this);
@@ -220,14 +221,14 @@ MainWindow::MainWindow(QWidget* myParent) :
 	fileMenu->addSeparator();
 	fileMenu->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
 			this, SLOT(updateMetadata()));
-	fileMenu->addAction(QIcon(":/icons/runbuild.png"), tr("&Compile and load plug-in"), this, SLOT(
-			compileAndLoad()));
-	fileMenu->addAction(QIcon(":/icons/execute.png"), tr("Execute &Workflow"), inspector, SLOT(
-			executeWorkflow()));
+	fileMenu->addAction(QIcon(":/icons/runbuild.png"),
+		tr("&Compile and load plug-in"), this, SLOT(compileAndLoad()));
+	fileMenu->addAction(QIcon(":/icons/execute.png"), tr("Execute &Workflow"),
+		inspector, SLOT(executeWorkflow()), QKeySequence(tr("Ctrl+E")));
 	fileMenu->addAction(QIcon(":/icons/export.png"), tr("Export flowchart"),
 			this, SLOT(saveFlowChart()), QKeySequence(tr("Ctrl+F")));
-	fileMenu->addAction(QIcon(":/icons/close.png"), tr("&Exit"), this, SLOT(
-			close()), QKeySequence(tr("Ctrl+Q")));
+	fileMenu->addAction(QIcon(":/icons/close.png"), tr("&Exit"), this,
+		SLOT(close()), QKeySequence(tr("Ctrl+Q")));
 
 	// edit menu
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
@@ -239,12 +240,12 @@ MainWindow::MainWindow(QWidget* myParent) :
 
 	// view menu
 	QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
-	viewMenu->addAction(QIcon(":/icons/zoomIn.png"), tr("zoom in"), this, SLOT(
-			zoomIn()), QKeySequence(tr("Ctrl++")));
+	viewMenu->addAction(QIcon(":/icons/zoomIn.png"), tr("zoom in"), this,
+		SLOT(zoomIn()), QKeySequence(tr("Ctrl++")));
 	viewMenu->addAction(QIcon(":/icons/zoomOut.png"), tr("zoom out"), this,
-			SLOT(zoomOut()), QKeySequence(tr("Ctrl+-")));
+		SLOT(zoomOut()), QKeySequence(tr("Ctrl+-")));
 	viewMenu->addAction(QIcon(":/icons/zoomFit.png"), tr("zoom fit"), this,
-			SLOT(zoomFit()), QKeySequence(tr("Ctrl+HOME")));
+		SLOT(zoomFit()), QKeySequence(tr("Ctrl+HOME")));
 
 	// window menu
 	QMenu* windowMenu = menuBar()->addMenu(tr("&Window"));
