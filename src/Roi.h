@@ -56,8 +56,11 @@ private:
 	/// This assigns the parameters to the parametered object.
 	void _init();
 
+	/// dummy function to get copy constructor compiled into dll
+	Roi<T> createCopy(const Roi<T>& rhs) const;
+
 public:
-	///\name roi borders, *Begin is included, *End is past the last element
+	///\name roi borders, "begin" is included, "end" is past the last element
 	//@{
 	Parameter<T> xBegin;
 	Parameter<T> yBegin;
@@ -95,6 +98,9 @@ public:
 		const T& tBegin = T(0), const T& tEnd = T(1),
 		const T& vBegin = T(0), const T& vEnd = T(1),
 		std::string name = "");
+
+	/// Copy constructor
+	Roi(const Roi<T>& rhs /** [in] copy source */);
 
 	virtual ~Roi();
 
@@ -167,13 +173,16 @@ public:
 	/// Load region parameters from the given parameter file.
 	/// @param pf           ParameterFile to load from
 	virtual void loadParameters(const ParameterFile& pf);
+
+	/// print roi to given stream
+	void print(std::ostream& strm = sout) const;
 };
 
 /// Simplify roi output to some std::ostream.
 /// @param strm             output stream
 /// @param roi              roi instance to print
 template<typename T>
-inline std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi);
+std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi);
 
 /// for loop over the x dimension
 #define forRoiX(roi,x)		for(int x=(int)((roi).xBegin); x<(int)((roi).xEnd); ++x)

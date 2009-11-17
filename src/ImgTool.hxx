@@ -1618,7 +1618,7 @@ std::string ImgTool::contentString(const cimg_library::CImg<T>& img) {
 template <typename T>
 void ImgTool::printInfo(std::ostream& os, const cimg_library::CImg<T>& img,
 		const std::string& prefix) {
-	os << prefix << "pointer = " << std::hex << (void*)&img << "," << std::endl;
+	os << prefix << "pointer = " << (void*)&img << "," << std::endl;
 	os << prefix << "size    = " << ImgTool::sizeString(img) << "," << std::endl;
 	os << prefix << "data    = " << ImgTool::dataString(img) << std::endl;
 	os << prefix << "content = " << ImgTool::contentString(img) << std::endl;

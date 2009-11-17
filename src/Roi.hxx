@@ -1,15 +1,15 @@
 /*  This file is part of Charon.
- 
+
  Charon is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
- 
+
  Charon is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,7 +30,12 @@
 #include "Roi.h"
 #include <algorithm>
 
-template<typename T>
+template <typename T>
+Roi<T> Roi<T>::createCopy(const Roi<T>& rhs) const {
+	return Roi<T>(rhs);
+}
+
+template <typename T>
 void Roi<T>::_init() {
 	// register parameters and slots
 	ParameteredObject::_addParameter<T>(xBegin, "xBegin",
@@ -74,22 +79,24 @@ void Roi<T>::_init() {
 	_addFunction(Roi<T>::isInside);
 	_addFunction(Roi<T>::assign);
 	_addFunction(Roi<T>::operator =);
+	_addFunction(Roi<T>::print);
+	_addFunction(Roi<T>::createCopy);
 }
 
-template<typename T>
+template <typename T>
 Roi<T>::Roi(std::string name) :
 TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
 	_init();
 }
 
-template<typename T>
+template <typename T>
 Roi<T>::Roi(const ParameterFile& pf, std::string name) :
 TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
 	_init();
 	this->load(pf, name);
 }
 
-template<typename T>
+template <typename T>
 Roi<T>::Roi(
 		const T& xB, const T& xE, const T& yB, const T& yE,
 		const T& zB, const T& zE, const T& tB, const T& tE,
@@ -100,7 +107,14 @@ Roi<T>::Roi(
 	assign(xB,xE,yB,yE,zB,zE,tB,tE,vB,vE);
 }
 
-template<typename T>
+template <typename T>
+Roi<T>::Roi(const Roi<T>& rhs) :
+TemplatedParameteredObject<T> ("roi", "", "Region of interest") {
+	_init();
+	*this = rhs;
+}
+
+template <typename T>
 Roi<T>::~Roi(void) {
 }
 
@@ -204,16 +218,16 @@ Roi<T>& Roi<T>::operator= (const Roi<T>& rhs) {
 		rhs.zBegin(), rhs.zEnd(),
 		rhs.tBegin(), rhs.tEnd(),
 		rhs.vBegin(), rhs.vEnd());
-    return *this;
+	return *this;
 }
 
 template <typename T>
 void Roi<T>::intersectionWith(const Roi<T>& rhs) {
-    if(rhs.xBegin() > xBegin()) xBegin() = rhs.xBegin();
-    if(rhs.yBegin() > yBegin()) yBegin() = rhs.yBegin();
-    if(rhs.zBegin() > zBegin()) zBegin() = rhs.zBegin();
-    if(rhs.tBegin() > tBegin()) tBegin() = rhs.tBegin();
-    if(rhs.vBegin() > vBegin()) vBegin() = rhs.vBegin();
+	if(rhs.xBegin() > xBegin()) xBegin() = rhs.xBegin();
+	if(rhs.yBegin() > yBegin()) yBegin() = rhs.yBegin();
+	if(rhs.zBegin() > zBegin()) zBegin() = rhs.zBegin();
+	if(rhs.tBegin() > tBegin()) tBegin() = rhs.tBegin();
+	if(rhs.vBegin() > vBegin()) vBegin() = rhs.vBegin();
 
 	if(rhs.xEnd() < xEnd()) xEnd() = rhs.xEnd();
 	if(rhs.yEnd() < yEnd()) yEnd() = rhs.yEnd();
@@ -224,11 +238,11 @@ void Roi<T>::intersectionWith(const Roi<T>& rhs) {
 
 template <typename T>
 void Roi<T>::unionWith(const Roi<T>& rhs) {
-    if(rhs.xBegin() < xBegin()) xBegin() = rhs.xBegin();
-    if(rhs.yBegin() < yBegin()) yBegin() = rhs.yBegin();
-    if(rhs.zBegin() < zBegin()) zBegin() = rhs.zBegin();
-    if(rhs.tBegin() < tBegin()) tBegin() = rhs.tBegin();
-    if(rhs.vBegin() < vBegin()) vBegin() = rhs.vBegin();
+	if(rhs.xBegin() < xBegin()) xBegin() = rhs.xBegin();
+	if(rhs.yBegin() < yBegin()) yBegin() = rhs.yBegin();
+	if(rhs.zBegin() < zBegin()) zBegin() = rhs.zBegin();
+	if(rhs.tBegin() < tBegin()) tBegin() = rhs.tBegin();
+	if(rhs.vBegin() < vBegin()) vBegin() = rhs.vBegin();
 
 	if(rhs.xEnd() > xEnd()) xEnd() = rhs.xEnd();
 	if(rhs.yEnd() > yEnd()) yEnd() = rhs.yEnd();
@@ -237,23 +251,23 @@ void Roi<T>::unionWith(const Roi<T>& rhs) {
 	if(rhs.vEnd() > vEnd()) vEnd() = rhs.vEnd();
 }
 
-template<typename T>
+template <typename T>
 void Roi<T>::loadParameters(const ParameterFile& pf) {
 	ParameteredObject::loadParameters(pf);
-	
+
 	// correct order of parameters
 	if (xBegin() > xEnd()) {
 		sout << "Roi '" << ParameteredObject::getName();
 		sout << "': Switching xBegin and xEnd." << std::endl;
 		std::swap(xBegin(), xEnd());
 	}
-	
+
 	if (yBegin() > yEnd()) {
 		sout << "Roi '" << ParameteredObject::getName();
 		sout << "': Switching yBegin and yEnd." << std::endl;
 		std::swap(yBegin(), yEnd());
 	}
-	
+
 	if (zBegin() > zEnd()) {
 		sout << "Roi '" << ParameteredObject::getName();
 		sout << "': Switching zBegin and zEnd." << std::endl;
@@ -265,7 +279,7 @@ void Roi<T>::loadParameters(const ParameterFile& pf) {
 		sout << "': Switching tBegin and tEnd." << std::endl;
 		std::swap(tBegin(), tEnd());
 	}
-	
+
 	if (vBegin() > vEnd()) {
 		sout << "Roi '" << ParameteredObject::getName();
 		sout << "': Switching vBegin and vEnd." << std::endl;
@@ -273,13 +287,18 @@ void Roi<T>::loadParameters(const ParameterFile& pf) {
 	}
 }
 
-template<typename T>
-inline std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi) {
-	strm << "xBegin=" << roi.xBegin() << ",xEnd=" << roi.xEnd() << ",";
-	strm << "yBegin=" << roi.yBegin() << ",yEnd=" << roi.yEnd() << ",";
-	strm << "zBegin=" << roi.zBegin() << ",zEnd=" << roi.zEnd() << ",";
-	strm << "tBegin=" << roi.tBegin() << ",tEnd=" << roi.tEnd() << ",";
-	strm << "vBegin=" << roi.vBegin() << ",vEnd=" << roi.vEnd();
+template <typename T>
+void Roi<T>::print(std::ostream& strm) const {
+	strm << *this;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi) {
+	strm << "x:[" << roi.xBegin() << "," << roi.xEnd() << "), ";
+	strm << "y:[" << roi.yBegin() << "," << roi.yEnd() << "), ";
+	strm << "z:[" << roi.zBegin() << "," << roi.zEnd() << "), ";
+	strm << "t:[" << roi.tBegin() << "," << roi.tEnd() << "), ";
+	strm << "v:[" << roi.vBegin() << "," << roi.vEnd() << ")";
 	return strm;
 }
 
