@@ -51,7 +51,7 @@ template <typename T>
 unsigned int PetscSolver<T>::PetscMetaStencil::update(
 		const std::string unknown,
 		const Point4D<unsigned int>& p,
-		const std::map<std::string,Roi<int>*>& unknownSizes,
+		const std::map<std::string,const Roi<int>*>& unknownSizes,
 		PetscInt*& columns,
 		PetscScalar*& values)
 {
@@ -115,11 +115,12 @@ template <typename T>
 unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
 		const unsigned int i,
 		const std::string& unknown,
-		const std::map<std::string,Roi<int>*>& unknownSizes)
+		const std::map<std::string,const Roi<int>*>& unknownSizes)
 {
 	unsigned int res = 0;
 
-	std::map<std::string,Roi<int>* >::const_iterator usIt; //unknown Sizes iterator
+	// unknown Sizes iterator: usIt
+	std::map<std::string,const Roi<int>* >::const_iterator usIt;
 	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.find(unknown) ; usIt++) {
 		res += usIt->second->getVolume();
 	}
@@ -132,14 +133,14 @@ unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
 template <typename T>
 void PetscSolver<T>::globalIndexToPoint(
 		const unsigned int vi,
-		const std::map<std::string, Roi<int>*>& unknownSizes,
+		const std::map<std::string, const Roi<int>*>& unknownSizes,
 		std::string& unknown,
 		Point4D<int>& p)
 {
 	// detect block
 	unsigned int blockBegin = 0;
 	unsigned int blockEnd;
-	std::map<std::string,Roi<int>* >::const_iterator usIt;
+	std::map<std::string, const Roi<int>* >::const_iterator usIt;
 	for(usIt=unknownSizes.begin(); usIt !=unknownSizes.end(); usIt++) {
 		blockEnd = blockBegin + usIt->second->getVolume();
 		if(vi >= blockBegin && vi < blockEnd)
@@ -151,7 +152,7 @@ void PetscSolver<T>::globalIndexToPoint(
 
 	// calculate coordinates relative to block
 	unsigned int diff = vi - blockBegin;
-	Roi<int>& dim = *(usIt->second);
+	const Roi<int>& dim = *(usIt->second);
 	p.x =  diff % (dim.getWidth());
 	assert((int)diff >= p.x);
 	diff -= p.x;
@@ -172,7 +173,7 @@ template <typename T>
 unsigned int PetscSolver<T>::pointToGlobalIndex(
 		const Point4D<int>& p,
 		const std::string& unknown,
-		const std::map<std::string,Roi<int>*>& unknownSizes)
+		const std::map<std::string,const Roi<int>*>& unknownSizes)
 {
 	unsigned int result;
 	result = pointToRelativeIndex(p,*(unknownSizes.find(unknown)->second));
@@ -181,51 +182,53 @@ unsigned int PetscSolver<T>::pointToGlobalIndex(
 }
 
 template <typename T>
-Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) {
+Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) const {
+	// we just need read-only acces to the global roi
+	const Roi<int>& globalRoi = *(this->roi());
 	// First, identify the case
 	//
 	// Point4D caseID does not contain coordinates in this scope.
 	// It contains an identification for the different cases of boundary
 	// conditions for easy and efficient handling.
 	Point4D<int> caseID;
-	if (p.x <= this->roi()->xBegin) {caseID.x = 0;}
-	if (p.x > this->roi()->xBegin && p.x < this->roi()->xEnd) {caseID.x = 1;}
-	if (p.x >= this->roi()->xEnd) {caseID.x = 2;}
-	if (p.y <= this->roi()->yBegin) {caseID.y = 0;}
-	if (p.y > this->roi()->yBegin && p.y < this->roi()->yEnd) {caseID.y = 1;}
-	if (p.y >= this->roi()->yEnd) {caseID.y = 2;}
-	if (p.z <= this->roi()->zBegin) {caseID.z = 0;}
-	if (p.z > this->roi()->zBegin && p.z < this->roi()->zEnd) {caseID.z = 1;}
-	if (p.z >= this->roi()->zEnd) {caseID.z = 2;}
-	if (p.t <= this->roi()->tBegin) {caseID.t = 0;}
-	if (p.t > this->roi()->tBegin && p.t < this->roi()->tEnd) {caseID.t = 1;}
-	if (p.t >= this->roi()->tEnd) {caseID.t = 2;}
+	if (p.x <= globalRoi.xBegin) {caseID.x = 0;}
+	if (p.x > globalRoi.xBegin && p.x < globalRoi.xEnd) {caseID.x = 1;}
+	if (p.x >= globalRoi.xEnd) {caseID.x = 2;}
+	if (p.y <= globalRoi.yBegin) {caseID.y = 0;}
+	if (p.y > globalRoi.yBegin && p.y < globalRoi.yEnd) {caseID.y = 1;}
+	if (p.y >= globalRoi.yEnd) {caseID.y = 2;}
+	if (p.z <= globalRoi.zBegin) {caseID.z = 0;}
+	if (p.z > globalRoi.zBegin && p.z < globalRoi.zEnd) {caseID.z = 1;}
+	if (p.z >= globalRoi.zEnd) {caseID.z = 2;}
+	if (p.t <= globalRoi.tBegin) {caseID.t = 0;}
+	if (p.t > globalRoi.tBegin && p.t < globalRoi.tEnd) {caseID.t = 1;}
+	if (p.t >= globalRoi.tEnd) {caseID.t = 2;}
 
 	Point4D<int> result;
 
 	//resolve each dimension of the case
 	switch(caseID.x) {
-		case 0: result.x = this->roi()->xBegin; break;
+		case 0: result.x = globalRoi.xBegin; break;
 		case 1: result.x = p.x; break;
-		case 2: result.x = this->roi()->xEnd; break;
+		case 2: result.x = globalRoi.xEnd-1; break;
 	}
 
 	switch(caseID.y) {
-		case 0: result.y = this->roi()->yBegin; break;
+		case 0: result.y = globalRoi.yBegin; break;
 		case 1: result.y = p.y; break;
-		case 2: result.y = this->roi()->yEnd; break;
+		case 2: result.y = globalRoi.yEnd-1; break;
 	}
 
 	switch(caseID.z) {
-		case 0: result.z = this->roi()->zBegin; break;
+		case 0: result.z = globalRoi.zBegin; break;
 		case 1: result.z = p.z; break;
-		case 2: result.z = this->roi()->zEnd; break;
+		case 2: result.z = globalRoi.zEnd-1; break;
 	}
 
 	switch(caseID.t) {
-		case 0: result.t = this->roi()->tBegin; break;
+		case 0: result.t = globalRoi.tBegin; break;
 		case 1: result.t = p.t; break;
-		case 2: result.t = this->roi()->tEnd; break;
+		case 2: result.t = globalRoi.tEnd-1; break;
 	}
 
 	return result;
@@ -332,9 +335,12 @@ int PetscSolver<T>::petscExecute() {
 	typename std::set<AbstractSlot<Stencil<T>*>*>::const_iterator sIt;
 	// unknowns iterator
 	std::set<std::string>::const_iterator uIt;
+	// just need read-only access to global roi
+	const Roi<int>& globalRoi = *(this->roi());
+	sout << "\tglobal Roi:\n\t\t" << globalRoi << std::endl;
+
 	// iterate through stencils
 	for(sIt=this->stencils.begin() ; sIt!=this->stencils.end() ; sIt++) {
-
 		// *sIt (dereferencing of sIt) gives us an AbstractSlot<Stencil<T>*>*
 		// (a pointer).
 		// Then we cast it to an InputSlot<Stencil<T>*>* (still a pointer)
@@ -387,36 +393,47 @@ int PetscSolver<T>::petscExecute() {
 			<< std::endl;
 #endif
 	}
+#ifndef NDEBUG
+	sout << "\tcreated " << MetaStencils.size()
+		<< " MetaStencils." << std::endl;
+	sout << "\tExpanding Roi for unknowns" << std::endl;
+	sout << "\t\tglobal value:\n\t\t\t" << globalRoi << std::endl;
+#endif
 
 	/*
 	 *	Now we can determine the size of the expanded ROIs which we will
-	 *	organize in a map<string, Roi<int> > to know how big the individual
-	 *	vector parts and thus the whole vector and the matrix will be.
+	 *	organize in a map<string, const Roi<int>*> to know how big the
+	 *	individual vector parts and thus the whole vector and the matrix
+	 *	will be.
 	 *	Also, we can determine the maximum number of entries for the PetscInt
 	 *	and PetscScalar arrays, which will be later used to set values in
 	 *	the matrix.
 	 */
-#ifndef NDEBUG
-	sout << "\tcreated " << MetaStencils.size()
-		<< " MetaStencils." << std::endl;
-#endif
 
 	// maximum number of entries;
 	unsigned int max_ne = 0;
-	std::map<std::string,Roi<int>* > unknownSizes;
+	std::map<std::string, const Roi<int>* > unknownSizes;
 	// PetscMetaStencil iterator
 	typename std::map<std::string,PetscMetaStencil>::iterator msIt;
 	for(msIt=MetaStencils.begin() ; msIt != MetaStencils.end() ; msIt++) {
-		Roi<int>* current = new Roi<int>;
-		*current = *(this->roi());
+		Roi<int>* current = new Roi<int>(globalRoi);
 		msIt->second.expand(*current);
 		unknownSizes[msIt->first]=current;
+#ifndef NDEBUG
+		sout << "\t\t\"" << msIt->first << "\": " << std::endl;
+		sout << "\t\t\t" << *current << std::endl;
+#endif
 		// find the maximum number of entries for the MatSetValues call
 		// so that the size of columns and values is optimal
 		if ( (unsigned int)msIt->second.getPattern().size() > max_ne) {
 			max_ne = (unsigned int)msIt->second.getPattern().size();
 		}
 	}
+#ifndef NDEBUG
+	sout << "\tdetermined maximal number of entries: " << std::endl;
+	sout << "\t\tmax_ne = " << max_ne << std::endl;
+#endif
+
 	// The map containing the unknownSizes is - like all maps -
 	// alphanumerically sorted by key. This will get important with the
 	// write-back of the results.
@@ -435,7 +452,7 @@ int PetscSolver<T>::petscExecute() {
 	// Better be safe than sorry
 	PetscInt n=0;
 	// unknown sizes iterator
-	std::map<std::string,Roi<int>* >::iterator usIt;
+	std::map<std::string, const Roi<int>* >::iterator usIt;
 	// iterate through the unknown Sizes and add their volume up
 	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
 		n += PetscInt(usIt->second->getVolume());
@@ -529,7 +546,7 @@ int PetscSolver<T>::petscExecute() {
 
 		// First, determine whether the point that corresponds to this
 		// row is a ghost node or 'real point'
-		if (this->roi()->isInside(p.x, p.y, p.z, p.t)) {
+		if (globalRoi.isInside(p.x, p.y, p.z, p.t)) {
 			/*
 			 *	Real point:
 			 *		if it is a real point, we have positive coordinates and thus
@@ -637,26 +654,18 @@ int PetscSolver<T>::petscExecute() {
 		ierr = VecGetArray(result,&res);CHKERRQ(ierr);
 
 		// epxand the CImgList to the needed size
-		this->result.assign(lookup.size(),this->roi()->getWidth(),
-		                                  this->roi()->getHeight(),
-		                                  this->roi()->getDepth(),
-		                                  this->roi()->getDuration());
+		this->out().assign(lookup.size(),
+			globalRoi.getWidth(), globalRoi.getHeight(),
+			globalRoi.getDepth(), globalRoi.getDuration());
 
 		// Due to data locallity, it is performance-wise better to iterate
 		// through the unknowns first and fill the CImgList element by element
 		// instead of pixel by pixel. Same with the solution vector.
 
-		// preallocate memory for output image
-		this->out().assign(lookup.size(),
-			this->roi()->getWidth(),
-			this->roi()->getHeight(),
-			this->roi()->getDepth(),
-			this->roi()->getDuration());
-
 		// for all unknowns
 		for(lIt=lookup.begin() ; lIt!=lookup.end();lIt++) {
 			// go through the image
-			forRoiXYZT(*(this->roi()),x,y,z,t) {
+			forRoiXYZT(globalRoi,x,y,z,t) {
 				// get the current global index
 				globalIndex = pointToGlobalIndex(Point4D<int>(x,y,z,t),lIt->first, unknownSizes);
 				// and write the results into the output slot 'out'

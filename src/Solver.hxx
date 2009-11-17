@@ -25,7 +25,6 @@
 
 #include "Solver.h"
 #include "Stencil.h"
-#include <charon-utils/Roi.h>
 
 template <typename T>
 Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
@@ -169,15 +168,15 @@ std::set<Point4D<unsigned int> >& Solver<T>::MetaStencil::getPattern() {
 }
 
 template <typename T>
-void Solver<T>::MetaStencil::expand(Roi<int>& inRoi) {
-	inRoi.xBegin = -int(left);
-	inRoi.xEnd   = inRoi.xEnd + right;
-	inRoi.yBegin = -int(up);
-	inRoi.yEnd   = inRoi.yEnd + down;
-	inRoi.zBegin = -int(backward);
-	inRoi.zEnd   = inRoi.zEnd + forward;
-	inRoi.tBegin = -int(before);
-	inRoi.tEnd   = inRoi.tEnd + after;
+void Solver<T>::MetaStencil::expand(Roi<int>& inRoi) const {
+	inRoi.xBegin() -= int(left);
+	inRoi.xEnd()   += int(right);
+	inRoi.yBegin() -= int(up);
+	inRoi.yEnd()   += int(down);
+	inRoi.zBegin() -= int(backward);
+	inRoi.zEnd()   += int(forward);
+	inRoi.tBegin() -= int(before);
+	inRoi.tEnd()   += int(after);
 }
 
 template <typename T>
@@ -188,7 +187,6 @@ Solver<T>::Solver(const std::string& classname, const std::string& name) :
 	this->_addInputSlot(stencils,"stencil","Multi Input slot for stencils","Stencil<T>");
 	this->_addInputSlot(roi,"roi","region of interest to work on","Roi<int>");
 	this->_addOutputSlot(out,"out","CImgList containing the solution","CImgList<T>");
-	out() = result;
 }
 
 template <typename T>

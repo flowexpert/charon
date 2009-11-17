@@ -80,13 +80,12 @@ protected:
 		 */
 		std::set<Point4D<unsigned int> > pattern;
 
-		/// \todo changed int -> unsigned int - re-check code to avoid hiccups
 		/// \name expansions in all 8 directions
 		//@{
-		unsigned int left       /**< x negative*/, right;	///< x positive
-		unsigned int up         /**< y negative*/, down;	///< y positive
-		unsigned int backward   /**< z negative*/, forward;	///< z positive
-		unsigned int before     /**< t negative*/, after;	///< t positive
+		unsigned int left       /** x negative*/, right;    ///< x positive
+		unsigned int up         /** y negative*/, down;     ///< y positive
+		unsigned int backward   /** z negative*/, forward;  ///< z positive
+		unsigned int before     /** t negative*/, after;    ///< t positive
 		//@}
 
 		Point4D<unsigned int> center;		///< coordinates of the center of the meta stencil
@@ -123,11 +122,8 @@ protected:
 		 * @param[in,out] inRoi		Region of interest to expand.
 		 *							Will be set to the epxanded region of interest.
 		 */
-		virtual void expand(Roi<int>& inRoi);
+		virtual void expand(Roi<int>& inRoi) const;
 	};
-
-	/// CImgList containing the result.
-	cimg_library::CImgList<T> result;
 
 public:
 	/// pointers, that the solver will use

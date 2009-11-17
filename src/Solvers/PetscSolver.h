@@ -81,7 +81,7 @@ protected:
 		unsigned int update(
 				const std::string unknown /**[in] current unknown*/,
 				const Point4D<unsigned int>& p /**[in] current point*/,
-				const std::map<std::string,Roi<int>* >& unknownSizes,
+				const std::map<std::string,const Roi<int>* >& unknownSizes,
 				PetscInt*& columns,
 				PetscScalar*& values);
 	};
@@ -109,7 +109,7 @@ protected:
 	static unsigned int relativeIndexToGlobalIndex(
 			const unsigned int i,
 			const std::string& unknown,
-			const std::map<std::string,Roi<int>* >& unknownSizes);
+			const std::map<std::string,const Roi<int>* >& unknownSizes);
 
 	/// Convert a global vector index to 4-dimensional coordinates and
 	/// the according unknown.
@@ -130,7 +130,7 @@ protected:
 	 */
 	static void globalIndexToPoint(
 			const unsigned int vi,
-			const std::map<std::string, Roi<int>* >& unknownSizes,
+			const std::map<std::string, const Roi<int>* >& unknownSizes,
 			std::string& unknown, Point4D<int>& p);
 
 	/// Convert coordinates to the global index
@@ -143,8 +143,7 @@ protected:
 	static unsigned int pointToGlobalIndex(
 			const Point4D<int>& p,
 			const std::string& unknown,
-			const std::map<std::string,
-			Roi<int>* >& unknownSizes);
+			const std::map<std::string, const Roi<int>* >& unknownSizes);
 
 	/// Find the closest real pixel to p (which is a ghost pixel).
 	/**
@@ -155,7 +154,7 @@ protected:
 	 *	                              coordinates of the closest boundary
 	 *	                              pixel of the unexpanded ROI
 	 */
-	Point4D<int> getBoundary(Point4D<int>& p);
+	Point4D<int> getBoundary(Point4D<int>& p) const;
 
 public:
 	/// default constructor
