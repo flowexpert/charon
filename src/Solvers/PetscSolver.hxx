@@ -82,16 +82,11 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	// for all Point4Ds in this->pattern
 	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
 		const Point4D<unsigned int>& curP = *pIt;
-		Point4D<int> curArg = Point4D<int>(curP)+Point4D<int>(p);
+		Point4D<int> curArg = Point4D<int>(curP)+Point4D<int>(p)-this->center;
 		PetscInt curCol =
 			PetscSolver<T>::pointToGlobalIndex(curArg,unknown,unknownSizes);
 		columns[i] = curCol;
-		const unsigned int px = pIt->x;
-		const unsigned int py = pIt->y;
-		const unsigned int pz = pIt->z;
-		const unsigned int pt = pIt->t;
-		PetscScalar curVal = this->data(px, py, pz, pt);
-		values[i] = curVal;
+		values[i] = this->data(pIt->x, pIt->y, pIt->z, pIt->t);
 	}
 	return this->pattern.size();
 }
@@ -102,11 +97,13 @@ unsigned int PetscSolver<T>::pointToRelativeIndex(
 		const Roi<int>& dim)
 {
 	unsigned int res = 0;
+	Point4D<int> offset(dim.xBegin,dim.yBegin,dim.zBegin,dim.tBegin);
+	Point4D<int> cur = p - offset;
 
-	res += p.t * (dim.getWidth() * dim.getHeight() * dim.getDepth());
-	res += p.z * (dim.getWidth() * dim.getHeight());
-	res += p.y * (dim.getWidth());
-	res += p.x;
+	res += cur.t * (dim.getWidth() * dim.getHeight() * dim.getDepth());
+	res += cur.z * (dim.getWidth() * dim.getHeight());
+	res += cur.y * (dim.getWidth());
+	res += cur.x;
 
 	return res;
 }
@@ -457,6 +454,10 @@ int PetscSolver<T>::petscExecute() {
 	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
 		n += PetscInt(usIt->second->getVolume());
 	}
+#ifndef NDEBUG
+	sout << "\tcalculated number of entries: " << std::endl;
+	sout << "\t\tn = " << n << std::endl;
+#endif
 
 
 	// now we have the individual lenghts of each unknowns block in the
