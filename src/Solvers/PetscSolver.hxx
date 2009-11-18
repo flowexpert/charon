@@ -65,7 +65,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 		int to = int(this->center.t) - int(this->substencils[i]->center.t);
 
 		// Iterate through all pixels of the SubStencil...
-		cimg_forXYZV(this->substencils[i]->data,xc,yc,zc,tc) {
+		cimg_forXYZC(this->substencils[i]->data,xc,yc,zc,tc) {
 			// ...and copy them into the
 			// MetaStencil (with offset).
 			this->data(xc+xo,yc+yo,zc+zo,tc+to)

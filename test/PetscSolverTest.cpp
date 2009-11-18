@@ -53,7 +53,7 @@ int main() {
 	catch (const cimg_library::CImgException& e) {
 		sout << "caught exception of type " << typeid(e).name() << std::endl;
 		sout << "Message:" << std::endl;
-		sout << e.message << std::endl;
+		sout << e._message << std::endl;
 	}
 	catch (const std::string& e) {
 		sout << "caught exception!" << std::endl;

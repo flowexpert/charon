@@ -52,10 +52,10 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 
 		// Measuring the SubStencil that is currently being added
 		// to the MetaStencil
-		int width    = ssIt->second.pattern.dimx();
-		int height   = ssIt->second.pattern.dimy();
-		int depth    = ssIt->second.pattern.dimz();
-		int duration = ssIt->second.pattern.dimv();
+		int width    = ssIt->second.pattern.width();
+		int height   = ssIt->second.pattern.height();
+		int depth    = ssIt->second.pattern.depth();
+		int duration = ssIt->second.pattern.spectrum();
 		// remember the re-declaration of the v-dimension of CImg
 		// to be the time axis? Yeah, right ;-)
 
@@ -104,7 +104,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 			- Point4D<int>(this->substencils[i]->center);
 
 		//Iterate through all pixels of the SubStencil...
-		cimg_forXYZV(substencils[i]->pattern,xc,yc,zc,tc) {
+		cimg_forXYZC(substencils[i]->pattern,xc,yc,zc,tc) {
 			//...and set the pattern into the
 			//MetaStencil (with offset).
 			if (this->substencils[i]->pattern(xc,yc,zc,tc)) {

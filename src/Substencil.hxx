@@ -43,9 +43,9 @@ SubStencil<T>::SubStencil(const unsigned int dimx, const unsigned int dimy,
 		
 template <class T>
 SubStencil<T>::SubStencil(const SubStencil<T> &rhs) {
-	data.assign(rhs.data.dimx(), rhs.data.dimy(), rhs.data.dimz(), rhs.data.dimv() );
+	data.assign(rhs.data.width(), rhs.data.height(), rhs.data.depth(), rhs.data.spectrum() );
 	data = rhs.data;
-	pattern.assign(rhs.pattern.dimx(), rhs.pattern.dimy(), rhs.pattern.dimz(), rhs.pattern.dimv() );
+	pattern.assign(rhs.pattern.width(), rhs.pattern.height(), rhs.pattern.depth(), rhs.pattern.spectrum() );
 	pattern = rhs.pattern;
 	center = rhs.center;
 }
