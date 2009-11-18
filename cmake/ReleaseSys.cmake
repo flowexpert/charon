@@ -19,12 +19,7 @@ SET(CPACK_PACKAGE_EXECUTABLES
     paramedit "Configuration Graph Editor"
     paraminspector "ParameterFile Editor"
 )
-SET(CPACK_STRIP_FILES
-    paramedit
-    paraminspector
-    editparam
-    editgraph
-)
+SET(CPACK_STRIP_FILES TRUE)
 SET(CPACK_SOURCE_IGNORE_FILES
     .svn
     ./*/.svn
