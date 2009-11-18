@@ -1,19 +1,20 @@
-/*  Copyright (C) 2009 Jens-Malte Gottfried
+/*
+	Copyright (C) 2009 Jens-Malte Gottfried
 
-    This file is part of Charon.
+	This file is part of Charon.
 
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /// @file ImageDisplay.hxx
 /// Implementation of the parameter class ImageDisplay.
@@ -29,47 +30,72 @@
 
 template <typename T>
 ImageDisplay<T>::ImageDisplay(const std::string& name) :
-        TemplatedParameteredObject<T>("imagedisplay", name,
-            "read image from image file using cimg"),
-        title("Display")
+		TemplatedParameteredObject<T>("imagedisplay", name,
+			"read image from image file using cimg"),
+		title("Display")
 {
-    this->_addParameter(frame,  "frame",  "select frame to display", 0u);
-    this->_addParameter(wait,   "wait",   "display wait time (in milliseconds)", 500u);
-    this->_addParameter(width,  "width",  "display width (0=auto)", 0u);
-    this->_addParameter(height, "height", "display height (0=auto)", 0u);
-    this->_addParameter(title,  "title",  "display title");
-    this->_addInputSlot(in,     "in",     "image input", "CImgList<T>");
+	this->_addParameter(slice,   "slice",
+		"select slice (dimz) to display", 0u);
+	this->_addParameter(channel, "channel",
+		"select channel to display (-1=all)", -1);
+	this->_addParameter(frame,   "frame",
+		"select frame to display", 0u);
+	this->_addParameter(wait,    "wait",
+		"display wait time (in milliseconds)", 500u);
+	this->_addParameter(width,   "width",
+		"display width (0=auto)", 0u);
+	this->_addParameter(height,  "height",
+		"display height (0=auto)", 0u);
+	this->_addParameter(title,   "title",
+		"display title");
+	this->_addInputSlot(in,      "in",
+		"image input", "CImgList<T>");
 }
 
 template <typename T>
 void ImageDisplay<T>::execute() {
-    ParameteredObject::execute();
+	ParameteredObject::execute();
 
-    // set desired image size
-    if(frame() >= in().size) {
+	// set desired image size
+	if(frame() >= in().size) {
 		std::ostringstream msg;
 		msg	<< __FILE__ << ":" << __LINE__
 			<< "\nImageDisplay: Selected frame number is\n\t"
-        	<< "not less than number of images.\n\t"
+			<< "not less than number of images.\n\t"
 			<< "number of images: " << in().size << "\n\t"
 			<< "selected frame: " << frame();
-        throw std::out_of_range(msg.str().c_str());
+		throw std::out_of_range(msg.str().c_str());
 	}
-    if(!width() || !height())
-        _display.assign(in()[frame()].dimx(), in()[frame()].dimy(), title().c_str(), 1);
-    else
-        _display.assign(width, height, title().c_str(), 1);
+	if(!width() || !height())
+		_display.assign(
+				in()[frame()].dimx(),
+				in()[frame()].dimy(),
+				title().c_str(), 1);
+	else
+		_display.assign(width, height, title().c_str(), 1);
 
-    // show image
-    _display << in()[frame()];
-    _display.show();
+	// select range to show
+	cimg_library::CImg<T> toShow(in()[frame()]);
+	if (channel() >= 0)
+		toShow.crop(
+				0,0,slice(),channel(),
+				toShow.dimx()-1,toShow.dimy()-1,slice(),channel());
+	else
+		// display all channels (color image)
+		toShow.crop(
+				0,0,slice(),0,
+				toShow.dimx()-1,toShow.dimy()-1,slice(),toShow.dimv()-1);
 
-    // and wait, if necessary
-    if(wait != 0) {
-        _display.wait(wait);
-    }
-    else
-        _display.wait();
+	// show image
+	_display << toShow;
+	_display.show();
+
+	// and wait, if necessary
+	if(wait != 0) {
+		_display.wait(wait);
+	}
+	else
+		_display.wait();
 }
 
 #endif /* _IMAGEDISPLAY_HXX_ */
