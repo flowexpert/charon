@@ -23,6 +23,7 @@
 #include <cassert>
 #include <climits>
 #include <cstdio>
+#include <limits>
 
 SplitStreamBuf::SplitStreamBuf(const std::vector<std::streambuf*>& buffers) {
 	if (buffers.size() < 1)
@@ -45,10 +46,10 @@ int SplitStreamBuf::overflow(int c) {
 	return traits_type::not_eof(c);
 }
 
-int SplitStreamBuf::xsputn(char const* str, int size) {
-	unsigned int min = UINT_MAX;
+std::streamsize SplitStreamBuf::xsputn(char const* str, std::streamsize size) {
+		std::streamsize min = std::numeric_limits<std::streamsize>::max();
 	for(unsigned int i=0; i < buffers_.size(); i++) {
-            std::streamsize temp = buffers_[i]->sputn(str, size);
+		std::streamsize temp = buffers_[i]->sputn(str, size);
 		if (temp < min)
 			min = temp;
 	}
@@ -57,8 +58,10 @@ int SplitStreamBuf::xsputn(char const* str, int size) {
 
 int SplitStreamBuf::sync() {
 	bool fail = false;
-	for (unsigned int i=0; i<buffers_.size(); i++)
-		fail = fail || ( buffers_[i]->pubsync() == -1 );
+	for (unsigned int i=0; i<buffers_.size(); i++) {
+		bool temp = ( buffers_[i]->pubsync() == -1 );
+		fail = fail || temp;
+	}
 
 	if (fail)
 		return -1;

@@ -66,7 +66,7 @@ public:
 	 *	@param size		number of characters
 	 *	@return			number of written characters
 	 */
-	int xsputn(char const * str, int size);
+	std::streamsize xsputn(char const * str, std::streamsize size);
 
 	/**	Sync stream buffers.
 	 *	@return			EOF on failure
