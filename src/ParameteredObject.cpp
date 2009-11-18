@@ -187,12 +187,19 @@ void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,
 }
 
 void ParameteredObject::execute() {
-	assert(connected());
+	if (!connected()) {
+		std::ostringstream msg;
+		msg << __FILE__ << ":" << __LINE__ << "\n\t";
+		msg << "ParameteredObject \"" << getName();
+		msg << "\" not (completely) connected!";
+		throw std::runtime_error(msg.str().c_str());
+	}
 	for (std::map<std::string, Slot *>::iterator it = _inputs.begin(); it
 			!= _inputs.end(); it++) {
 		it->second->execute();
 	}
-	sout << "Executing " << getClassName() << " \"" << getName() << "\"" << std::endl;
+	sout << "Executing " << getClassName() << " \"";
+	sout << getName() << "\"" << std::endl;
 }
 
 std::set<std::string> ParameteredObject::getNeighbours() const {
