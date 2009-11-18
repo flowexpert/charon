@@ -48,7 +48,7 @@ int SplitStreamBuf::overflow(int c) {
 int SplitStreamBuf::xsputn(char const* str, int size) {
 	unsigned int min = UINT_MAX;
 	for(unsigned int i=0; i < buffers_.size(); i++) {
-		unsigned int temp = buffers_[i]->sputn(str, size);
+            std::streamsize temp = buffers_[i]->sputn(str, size);
 		if (temp < min)
 			min = temp;
 	}
