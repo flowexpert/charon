@@ -36,7 +36,7 @@ IF(NOT CMAKE_FLAGS_INIT)
 	ENDIF(MSVC)
 	# set install prefix to global install path
 	IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-		SET(CMAKE_INSTALL_PREFIX ${CHARON_UTILS_ROOT_DIR}
+		SET(CMAKE_INSTALL_PREFIX ${CHARON_CORE_ROOT_DIR}
 			CACHE PATH "Install path prefix, prepended onto install directories."
 			FORCE
 		)

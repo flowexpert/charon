@@ -50,7 +50,6 @@ IF(Subversion_FOUND)
 ENDIF(Subversion_FOUND)
 
 FIND_PACKAGE(charon-core REQUIRED)
-FIND_PACKAGE(charon-utils REQUIRED)
 INCLUDE(InitFlags)
 
 # executables and dll files are moved to the same directory
