@@ -616,7 +616,7 @@ void ParameterFileModel::executeWorkflow() {
 		QMessageBox::warning(0, tr("error during execution"),
 			tr("Caught CImg exception of type %1.\n\nMessage:\n%2")
 				.arg(typeid(excpt).name())
-				.arg(excpt.message));
+				.arg(excpt._message));
 	}
 	catch (...) {
 		QMessageBox::warning(0, tr("error during execution"),
