@@ -109,11 +109,13 @@ void ImageDisplay<T>::execute() {
 
 	// set desired image size
 	cimg_library::CImgDisplay* disp = new cimg_library::CImgDisplay(
-			width(), height(), title().c_str());
+			width()  ? width()  : toShow.width(),
+			height() ? height() : toShow.height(),
+			title().c_str());
 	assert(disp);
 
 	// show image
-	toShow.display(*disp);
+	disp->display(toShow);
 	disp->show();
 
 	// and wait, if necessary
