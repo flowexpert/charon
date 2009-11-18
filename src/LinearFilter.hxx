@@ -41,16 +41,23 @@ LinearFilter<T>::LinearFilter(const std::string& name) :
 template <typename T>
 void LinearFilter<T>::execute() {
 	ParameteredObject::execute();
-	assert(masks[0].size == 1);
-	out().assign(in().size);
-	assert(out().size == in().size);
+	assert(masks[0].size() == 1);
+	assert(in().size() >= 1);
+	out().assign(
+			in().size(),
+			in()[0].width(),
+			in()[0].height(),
+			in()[0].width(),
+			in()[0].spectrum(),
+			T(0));
+	assert(out().size() == in().size());
 	cimglist_for(in(), ii)
 		Convolution::convolve(masks[0][0], in()[ii], out()[ii]);
 
 	// continue convolutions if more than one filter mask given
 	std::set<Slot*>::size_type tsize = masks.getTargets().size();
 	for(unsigned int ii=1; ii < tsize; ii++) {
-		assert(masks[ii].size == 1);
+		assert(masks[ii].size() == 1);
 		cimglist_for(out(), jj)
 			Convolution::convolve(masks[ii][0], out()[jj], out()[jj]);
 	}

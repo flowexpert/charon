@@ -57,10 +57,6 @@
  */
 template <typename T>
 class imagedisplay_DECLDIR ImageDisplay : public TemplatedParameteredObject<T> {
-private:
-	/// Display window
-	cimg_library::CImgDisplay _display;
-
 public:
 	/// image data as input slot
 	InputSlot<cimg_library::CImgList<T> > in;

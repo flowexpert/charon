@@ -51,45 +51,45 @@ template <typename T>
 void StructureTensor<T>::execute() {
 	ParameteredObject::execute();
 	// this can only handle sequences with one channel
-	assert(in().size == 1u);
+	assert(in().size() == 1u);
 	// we have to change the dimensions because CImg stores the
 	// tensor elements into the v-channels.
-	cimg_library::CImgList<T> temp(in()[0].dimv(),in()[0].dimx(),
-		in()[0].dimy(),in()[0].dimz(),1u);
+	cimg_library::CImgList<T> temp(in()[0].spectrum(),in()[0].width(),
+		in()[0].height(),in()[0].depth(),1u);
 	cimg_library::CImg<T> mat, val, vec;
-	if(in()[0].dimz()==1u) {
+	if(in()[0].depth()==1u) {
 		// 2D
-		tensor().assign(3u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
-			in()[0].dimv());
-		eigenvalues().assign(2u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
-			in()[0].dimv());
-		eigenvectors().assign(4u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
-			in()[0].dimv());
+		tensor().assign(3u,in()[0].width(),in()[0].height(),in()[0].depth(),
+			in()[0].spectrum());
+		eigenvalues().assign(2u,in()[0].width(),in()[0].height(),in()[0].depth(),
+			in()[0].spectrum());
+		eigenvectors().assign(4u,in()[0].width(),in()[0].height(),in()[0].depth(),
+			in()[0].spectrum());
 		mat.assign(2,2);
 		val.assign(1,2);
 		vec.assign(2,2);
 	}
 	else {
 		// 3D
-		tensor().assign(6u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
-			in()[0].dimv());
-		eigenvalues().assign(3u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
-			in()[0].dimv());
-		eigenvectors().assign(9u,in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),
-			in()[0].dimv());
+		tensor().assign(6u,in()[0].width(),in()[0].height(),in()[0].depth(),
+			in()[0].spectrum());
+		eigenvalues().assign(3u,in()[0].width(),in()[0].height(),in()[0].depth(),
+			in()[0].spectrum());
+		eigenvectors().assign(9u,in()[0].width(),in()[0].height(),in()[0].depth(),
+			in()[0].spectrum());
 		mat.assign(3,3);
 		val.assign(1,3);
 		vec.assign(3,3);
 	}
-	cimg_forXYZV(in()[0u], x,y,z,t)
+	cimg_forXYZC(in()[0u], x,y,z,t)
 		temp(t,x,y,z,0u) = in()(0u,x,y,z,t);
 	cimglist_for(temp, t) {
-		temp[t].structure_tensor(centralScheme());
+		temp[t].structure_tensors(centralScheme());
 		// change back dimensions
 		cimg_forXYZ(temp[t],x,y,z) {
-			cimg_forV(temp[t],v)
+			cimg_forC(temp[t],v)
 				tensor()(v,x,y,z,t) = temp(t,x,y,z,v);
-			if(temp[t].dimv()==3u) {
+			if(temp[t].spectrum()==3u) {
 				// 2D
 				mat.fill(
 						temp(t,x,y,z,0),temp(t,x,y,z,1),
@@ -98,7 +98,7 @@ void StructureTensor<T>::execute() {
 			}
 			else {
 				// 3D
-				assert(temp[t].dimv()==6u);
+				assert(temp[t].spectrum()==6u);
 				mat.fill(
 						temp(t,x,y,z,0),temp(t,x,y,z,1),temp(t,x,y,z,2),
 						temp(t,x,y,z,1),temp(t,x,y,z,3),temp(t,x,y,z,4),
@@ -108,15 +108,15 @@ void StructureTensor<T>::execute() {
 			// calculate eigenvectors and eigenvalues
 			mat.symmetric_eigen(val,vec);
 			// fill into output slots
-			assert(val.dimx()==1);
+			assert(val.width()==1);
 			cimg_forY(val,j) {
 				eigenvalues()(j,x,y,z,t)=val[j];
 				// check if sorted
 				assert((j==0) || (val[j] <= val[j-1]));
 			}
-			assert(vec.dimx()==vec.dimy());
+			assert(vec.width()==vec.height());
 			cimg_forXY(vec,i,j)
-				eigenvectors()(i*vec.dimx()+j,x,y,z,t)=vec(i,j);
+				eigenvectors()(i*vec.width()+j,x,y,z,t)=vec(i,j);
 		}
 	}
 }

@@ -119,15 +119,20 @@ void ChannelConverter<T>::execute() {
 	}
 
 	out().assign(
-		_select(in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv(),in().size, scheme()[4]),
-		_select(in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv(),in().size, scheme()[0]),
-		_select(in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv(),in().size, scheme()[1]),
-		_select(in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv(),in().size, scheme()[2]),
-		_select(in()[0].dimx(),in()[0].dimy(),in()[0].dimz(),in()[0].dimv(),in().size, scheme()[3])
+		_select(in()[0].width(),in()[0].height(),
+				in()[0].depth(),in()[0].spectrum(),in().size(), scheme()[4]),
+		_select(in()[0].width(),in()[0].height(),
+				in()[0].depth(),in()[0].spectrum(),in().size(), scheme()[0]),
+		_select(in()[0].width(),in()[0].height(),
+				in()[0].depth(),in()[0].spectrum(),in().size(), scheme()[1]),
+		_select(in()[0].width(),in()[0].height(),
+				in()[0].depth(),in()[0].spectrum(),in().size(), scheme()[2]),
+		_select(in()[0].width(),in()[0].height(),
+				in()[0].depth(),in()[0].spectrum(),in().size(), scheme()[3])
 	);
 
 	cimglist_for(in(), t) 
-		cimg_forXYZV(in()[t],x,y,z,v)
+		cimg_forXYZC(in()[t],x,y,z,v)
 			out()(
 				_select(x,y,z,v,t,scheme()[4]),
 				_select(x,y,z,v,t,scheme()[0]),

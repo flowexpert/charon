@@ -48,22 +48,22 @@ SteeredDerivative<T>::SteeredDerivative(const std::string& name) :
 template <typename T>
 void SteeredDerivative<T>::execute() {
 	ParameteredObject::execute();
-	assert(dX().is_sameNXYZV(dY()));
+	assert(dX().is_sameNXYZC(dY()));
 	assert(dX().is_sameXYZ(eigenVectors()));
-	assert(eigenVectors().size >= 2);
-	assert(eigenVectors()[0].dimv() >= dX()[0].dimv());
+	assert(eigenVectors().size() >= 2);
+	assert(eigenVectors()[0].spectrum() >= dX()[0].spectrum());
 
 	cimg_library::CImg<T> eig0 = eigenVectors()[0].get_crop(0,0,0,0,
-		dX()[0].dimx()-1, dX()[0].dimy()-1, dX()[0].dimz()-1, dX()[0].dimv()-1);
+		dX()[0].width()-1, dX()[0].height()-1, dX()[0].depth()-1, dX()[0].spectrum()-1);
 	cimg_library::CImg<T> eig1 = eigenVectors()[1].get_crop(0,0,0,0,
-		dX()[0].dimx()-1, dX()[0].dimy()-1, dX()[0].dimz()-1, dX()[0].dimv()-1);
-	assert(eig0.is_sameXYZV(dX()[0]));
-	assert(eig1.is_sameXYZV(dX()[0]));
+		dX()[0].width()-1, dX()[0].height()-1, dX()[0].depth()-1, dX()[0].spectrum()-1);
+	assert(eig0.is_sameXYZC(dX()[0]));
+	assert(eig1.is_sameXYZC(dX()[0]));
 
-	dA().assign(dX().size, dX()[0].dimx(), dX()[0].dimy(),
-		dX()[0].dimz(), dX()[0].dimv());
-	dO().assign(dX().size, dX()[0].dimx(), dX()[0].dimy(),
-		dX()[0].dimz(), dX()[0].dimv());
+	dA().assign(dX().size(), dX()[0].width(), dX()[0].height(),
+		dX()[0].depth(), dX()[0].spectrum());
+	dO().assign(dX().size(), dX()[0].width(), dX()[0].height(),
+		dX()[0].depth(), dX()[0].spectrum());
 	cimglist_for(dX(), kk) {
 		dO()[kk] = eig0.get_mul(dX()[kk]) + eig1.get_mul(dY()[kk]);
 		dA()[kk] = eig0.get_mul(dY()[kk]) - eig1.get_mul(dX()[kk]);

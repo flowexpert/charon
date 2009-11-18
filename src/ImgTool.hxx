@@ -53,12 +53,12 @@ void ImgTool::normalizeSlices(cimg_library::CImg<T> &img, T minVal, T maxVal) {
         T iMin =  std::numeric_limits<T>::max();
         T iMax = -std::numeric_limits<T>::max();
 
-        cimg_forXYV(img, x, y, v) {
+        cimg_forXYC(img, x, y, v) {
             if (img(x, y, z, v) > iMax) iMax = img(x, y, z, v);
             if (img(x, y, z, v) < iMin) iMin = img(x, y, z, v);
         }
 
-        cimg_forXYV(img, x, y, v)
+        cimg_forXYC(img, x, y, v)
             img(x, y, z, v) = minVal+(img(x, y, z, v)-iMin)/(iMax-iMin)*maxVal;
     }
 }
@@ -66,18 +66,18 @@ void ImgTool::normalizeSlices(cimg_library::CImg<T> &img, T minVal, T maxVal) {
 template <typename T, typename T2>
 void ImgTool::integralImage2D(const cimg_library::CImg<T >& src,
                                     cimg_library::CImg<T2>& dst) {
-    dst.assign(src.dimx(), src.dimy(), src.dimz(), src.dimv());
-    cimg_forZV(src, z, v) {
+    dst.assign(src.width(), src.height(), src.depth(), src.spectrum());
+    cimg_forZC(src, z, v) {
         dst(0, 0, z, v) = src(0, 0, z, v);
 
-        for (int x = 1; x < src.dimx(); ++x)
+        for (int x = 1; x < src.width(); ++x)
             dst(x, 0, z, v) = dst(x-1, 0, z, v) + src(x, 0, z, v);
 
-        for (int y = 1; y < src.dimy(); ++y)
+        for (int y = 1; y < src.height(); ++y)
             dst(0, y, z, v) = dst(0, y-1, z, v) + src(0, y, z, v);
 
-        for (int x = 1; x < src.dimx(); ++x)
-            for (int y = 1; y < src.dimy(); ++y)
+        for (int x = 1; x < src.width(); ++x)
+            for (int y = 1; y < src.height(); ++y)
                 dst(x, y, z, v) =   dst(x-1, y, z, v)   + dst(x, y-1, z, v)
                                   - dst(x-1, y-1, z, v) + src(x, y, z, v);
     }
@@ -97,7 +97,7 @@ void ImgTool::histogram(const cimg_library::CImg<T>& img,
     double factor = 1.f / ((double)maxVal - (double)minVal) * (nBins-1.f);
 	
 	if (roi) {
-		cimg_for_inXYZV(img,roi->xBegin(),roi->yBegin(),roi->zBegin(),roi->tBegin(),
+		cimg_for_inXYZC(img,roi->xBegin(),roi->yBegin(),roi->zBegin(),roi->tBegin(),
 			roi->xEnd()-1,roi->yEnd()-1,roi->zEnd()-1,roi->tEnd()-1,x,y,z,v)
 		{
 			int bin = (int)floor((img(x,y,z,v) - minVal)*factor);
@@ -134,16 +134,16 @@ template <typename T> T ImgTool::jointHistogram(
                 Roi<int> roi,
                 bool normalize) {
     //image should be quaradatic (same resolution for both intensity ranges)
-    assert(hist.dimx() == hist.dimy());
+    assert(hist.width() == hist.height());
 
     // preconditions
     assert(min < max);
     assert(roi.xBegin() < roi.xEnd() && roi.yBegin() < roi.yEnd());
-    assert(roi.xBegin() >= 0 && roi.xEnd() <= src1.dimx());
-    assert(roi.yBegin() >= 0 && roi.yEnd() <= src1.dimy());
-    assert(src2.dimy() == src1.dimy() && src1.dimx() == src2.dimx());
+    assert(roi.xBegin() >= 0 && roi.xEnd() <= src1.width());
+    assert(roi.yBegin() >= 0 && roi.yEnd() <= src1.height());
+    assert(src2.height() == src1.height() && src1.width() == src2.width());
 
-    int xBin, yBin, nBins = hist.dimx();
+    int xBin, yBin, nBins = hist.width();
     T factor = 1.0f / (max - min) * (nBins-1);
     hist.fill(0);
     T resmax = 0;
@@ -176,13 +176,13 @@ void ImgTool::warp2D(const cimg_library::CImg<T>& src,
                      cimg_library::CImg<T>& dst,
                      const Interpolator<T>* interpolator) {
     // check preconditions
-    assert(flow.size >= 2);
-    assert(flow[0].is_sameXYZV(src));
-    assert(flow[1].is_sameXYZV(src));
-    if(!dst.is_sameXYZV(src))
-        dst.assign(src.dimx(), src.dimy(), src.dimz(), src.dimv());
+    assert(flow.size() >= 2);
+    assert(flow[0].is_sameXYZC(src));
+    assert(flow[1].is_sameXYZC(src));
+    if(!dst.is_sameXYZC(src))
+        dst.assign(src.width(), src.height(), src.depth(), src.spectrum());
 
-	cimg_forXYZV(src,x,y,z,t) {
+	cimg_forXYZC(src,x,y,z,t) {
 		float cx = float(T(x)+flow[0](x,y,z,t));
 		float cy = float(T(y)+flow[1](x,y,z,t));
 		T res = interpolator->interpolate(src, cx, cy, int(z), int(t));
@@ -199,9 +199,9 @@ void ImgTool::warpToFirstFrame(const cimg_library::CImg<T>& src,
     assert(flow.size >= 2);
     assert(flow[0].is_sameXYZ(src));
     assert(flow[1].is_sameXYZ(src));
-    assert(flow[0].dimv() == flow[1].dimv());
-    if(!(dst.is_sameXYZ(src) || dst.dimv() != flow[0].dimv()+1))
-        dst.assign(src.dimx(), src.dimy(), src.dimz(), flow[0].dimv()+1);
+    assert(flow[0].spectrum() == flow[1].spectrum());
+    if(!(dst.is_sameXYZ(src) || dst.spectrum() != flow[0].spectrum()+1))
+        dst.assign(src.width(), src.height(), src.depth(), flow[0].spectrum()+1);
 
     cimg_library::CImg<T> accFlow(2), temp(2);
     cimg_forXYZ(dst,x,y,z) {
@@ -209,7 +209,7 @@ void ImgTool::warpToFirstFrame(const cimg_library::CImg<T>& src,
         dst(x,y,z,0) = src(x,y,z,0);
         //accumulates flow over all images
         accFlow.fill(0);
-        for(int t = 0; t < flow[0].dimv(); t++) {
+        for(int t = 0; t < flow[0].spectrum(); t++) {
             for(int v = 0; v < 2; v++)
                 temp(v) = interpolator->interpolate(flow[v],
                     (float)(x+accFlow(0)), (float)(y+accFlow(1)), z, t);
@@ -231,7 +231,7 @@ void ImgTool::meanVarianceFromHistogram(
     mean = 0;
     variance = 0;
     cimg_forX(hist, i) {
-        iVal      = imgMin + (imgMax-imgMin) / hist.dimx() * i;
+        iVal      = imgMin + (imgMax-imgMin) / hist.width() * i;
         mVal      = hist(i) * iVal;
         mean     += mVal;
         variance += mVal * iVal;
@@ -243,17 +243,17 @@ template <typename T>
 T ImgTool::covariance(const cimg_library::CImg<T>& jointHist,
                       T mean1, T mean2, T imgMin, T imgMax) {
     // preconditions
-    assert(jointHist.dimx() == jointHist.dimy());
-    assert(jointHist.dimz() == 1);
+    assert(jointHist.width() == jointHist.height());
+    assert(jointHist.depth() == 1);
 
-    int nBins = jointHist.dimx();
+    int nBins = jointHist.width();
     T v12     = 0;
 
     for(int i = 0; i < nBins; ++i)
         for(int j =0; j < nBins; ++j) {
             // take values as center of bin and assume that hist(0 -> imgMin)
-            T iVal = imgMin + (imgMax-imgMin) / jointHist.dimx() * i;
-            T jVal = imgMin + (imgMax-imgMin) / jointHist.dimy() * j;
+            T iVal = imgMin + (imgMax-imgMin) / jointHist.width() * i;
+            T jVal = imgMin + (imgMax-imgMin) / jointHist.height() * j;
             v12 += iVal * jVal * jointHist(i, j);
         }
 
@@ -264,14 +264,14 @@ T ImgTool::covariance(const cimg_library::CImg<T>& jointHist,
 
 template <typename T>
 void ImgTool::toGray(cimg_library::CImg<T>& img) {
-    if (img.dimv() != 1) {
+    if (img.spectrum() != 1) {
         cimg_forXYZ(img, x, y, z) {
             double tmp = 0;
-            cimg_forV(img, v)
+            cimg_forC(img, v)
                 tmp += (double) img(x, y, z, v);
-            img(x, y, z) = (T) (tmp/img.dimv());
+            img(x, y, z) = (T) (tmp/img.spectrum());
         }
-        img.resize(img.dimx(), img.dimy(), img.dimz(), 1, 0);
+        img.resize(img.width(), img.height(), img.depth(), 1, 0);
     }
 }
 
@@ -294,13 +294,13 @@ void ImgTool::loadSequence(const std::vector<std::string>& files,
         file.load(files[i].c_str());
 
         if (!i)
-            seq.assign(file.dimx(), file.dimy(), files.size(), file.dimv());
+            seq.assign(file.width(), file.height(), files.size(), file.spectrum());
         else
             //assure that all images are same size as first image
             assert(file.is_sameXY(seq) && file.is_sameV(seq));
 
         //copy image into sequence buffer
-        cimg_forXYV(file, x, y, v) {
+        cimg_forXYC(file, x, y, v) {
             seq(x, y, i, v) = file(x, y, 0, v);
         }
     }
@@ -309,9 +309,9 @@ void ImgTool::loadSequence(const std::vector<std::string>& files,
 template <typename T>
 void ImgTool::ZtoV(const cimg_library::CImg<T>& src,
                    cimg_library::CImg<T>& dst) {
-    dst.assign(src.dimx(), src.dimy(), 1, src.dimz());
+    dst.assign(src.width(), src.height(), 1, src.depth());
     cimg_forXY(src, x, y)
-        cimg_forV(dst, v) {
+        cimg_forC(dst, v) {
             dst(x, y, 0, v) = src(x, y, v, 0);
         }
 }
@@ -319,7 +319,7 @@ void ImgTool::ZtoV(const cimg_library::CImg<T>& src,
 template <typename T>
 void ImgTool::VtoZ(const cimg_library::CImg<T>& src,
                    cimg_library::CImg<T>& dst) {
-    dst.assign(src.dimx(), src.dimy(), src.dimv(), 1);
+    dst.assign(src.width(), src.height(), src.spectrum(), 1);
     cimg_forXY(src, x, y)
         cimg_forZ(dst, z) {
             dst(x, y, z, 0) = src(x, y, 0, z);
@@ -329,8 +329,8 @@ void ImgTool::VtoZ(const cimg_library::CImg<T>& src,
 template <typename T>
 void ImgTool::chessBoard2D(int fieldSizeX, int fieldSizeY,
                            cimg_library::CImg<T>& dst) {
-    int nx = dst.dimx() / fieldSizeX + 1;
-    int ny = dst.dimy() / fieldSizeY + 1;
+    int nx = dst.width() / fieldSizeX + 1;
+    int ny = dst.height() / fieldSizeY + 1;
     T white = 1;
     T black = 0;
     T color;
@@ -349,7 +349,7 @@ void ImgTool::chessBoard2D(int fieldSizeX, int fieldSizeY,
 template <typename T>
 void ImgTool::saveSequence(std::string fileName, std::string fileType,
                            const cimg_library::CImg<T>& sequence) {
-    for(int i = 0; i < sequence.dimz(); ++i) {
+    for(int i = 0; i < sequence.depth(); ++i) {
         cimg_library::CImg<T> slice = sequence.get_slice(i);
         std::ostringstream fname;
         fname << fileName;
@@ -374,10 +374,10 @@ void ImgTool::loadSequence(std::string fileName, int startFrame, int endFrame,
         cimg_library::CImg<T> slice;
         slice.load(filename);
         if(i == startFrame)
-            sequence.assign(slice.dimx(), slice.dimy(),
-                            endFrame-startFrame+1, slice.dimv());
+            sequence.assign(slice.width(), slice.height(),
+                            endFrame-startFrame+1, slice.spectrum());
 
-        cimg_forXYV(slice, x, y, v)
+        cimg_forXYC(slice, x, y, v)
             sequence(x, y, i-startFrame, v) =slice(x, y, 0, v);
     }
     delete filename;
@@ -398,10 +398,10 @@ void ImgTool::loadSequenceRaw(std::string fileName,
         cimg_library::CImg<T> slice;
         slice.load_raw(filename, sizeX, sizeY, 1, sizeV);
         if (i == startFrame)
-            sequence.assign(slice.dimx(), slice.dimy(),
-                            endFrame-startFrame+1, slice.dimv());
+            sequence.assign(slice.width(), slice.height(),
+                            endFrame-startFrame+1, slice.spectrum());
 
-        cimg_forXYV(slice, x, y, v)
+        cimg_forXYC(slice, x, y, v)
             sequence(x, y, i-startFrame, v) = slice(x, y, 0, v);
     }
 
@@ -410,7 +410,7 @@ void ImgTool::loadSequenceRaw(std::string fileName,
 
 template <typename T>
 void ImgTool::extendRoi2D(const Roi<int>& roi, cimg_library::CImg<T>& img) {
-    cimg_forZV(img, z, v) {
+    cimg_forZC(img, z, v) {
         // top
         T tl = img(roi.xBegin(), roi.yBegin(), z, v);
         T tr = img(roi.xEnd()-1, roi.yBegin(), z, v);
@@ -419,19 +419,19 @@ void ImgTool::extendRoi2D(const Roi<int>& roi, cimg_library::CImg<T>& img) {
                 img(x, y, z, v) = tl;
             for (int x = roi.xBegin(); x < roi.xEnd(); ++x)
                 img(x, y, z, v) = img(x, roi.yBegin(), z, v);
-            for (int x = roi.xEnd(); x < img.dimx(); ++x)
+            for (int x = roi.xEnd(); x < img.width(); ++x)
                 img(x, y, z, v) = tr;
         }
 
         // bottom
         T bl = img(roi.xBegin(), roi.yEnd()-1);
         T br = img(roi.xEnd()-1, roi.yEnd()-1);
-        for (int y = roi.yEnd(); y < img.dimy(); ++y) {
+        for (int y = roi.yEnd(); y < img.height(); ++y) {
             for(int x = 0; x < roi.xBegin(); ++x)
                 img(x, y, z, v) = bl;
             for(int x = roi.xBegin(); x < roi.xEnd(); ++x)
                 img(x, y, z, v) = img(x, roi.yEnd()-1, z, v);
-            for(int x = roi.xEnd(); x < img.dimx(); ++x)
+            for(int x = roi.xEnd(); x < img.width(); ++x)
                 img(x, y, z, v) = br;
         }
 
@@ -441,7 +441,7 @@ void ImgTool::extendRoi2D(const Roi<int>& roi, cimg_library::CImg<T>& img) {
             T r = img(roi.xEnd()-1, y, z, v);
             for(int x = 0; x < roi.xBegin(); ++x)
                 img(x, y, z, v) = l;
-            for(int x = roi.xEnd(); x < img.dimx(); ++x)
+            for(int x = roi.xEnd(); x < img.width(); ++x)
                 img(x, y, z, v) = r;
         }
     }
@@ -449,22 +449,22 @@ void ImgTool::extendRoi2D(const Roi<int>& roi, cimg_library::CImg<T>& img) {
 
 template <typename T>
 void ImgTool::zeroRoi2D(const Roi<int>& roi, cimg_library::CImg<T>& img) {
-    cimg_forZV(img, z, v) {
+    cimg_forZC(img, z, v) {
         //top
         for(int y = 0; y < roi.yBegin(); ++y)
-            for(int x = 0; x < img.dimx(); ++x)
+            for(int x = 0; x < img.width(); ++x)
                 img(x, y, z, v) = 0;
 
         //bottom
-        for(int y = roi.yEnd(); y < img.dimy(); ++y)
-            for(int x = 0; x < img.dimx(); ++x)
+        for(int y = roi.yEnd(); y < img.height(); ++y)
+            for(int x = 0; x < img.width(); ++x)
                 img(x, y, z, v) = 0;
 
         //left && right
         for(int y = roi.yBegin(); y < roi.yEnd(); ++y) {
             for(int x =0; x < roi.xBegin(); ++x)
                 img(x, y, z, v) = 0;
-            for(int x =roi.xEnd(); x < img.dimx(); ++x)
+            for(int x =roi.xEnd(); x < img.width(); ++x)
                 img(x, y, z, v) = 0;
         }
     }
@@ -481,8 +481,8 @@ void ImgTool::mirrorRoi2D(const Roi<int>& roi, cimg_library::CImg<T>& img) {
     assert(x >= 0 && y >= 0 && width > 0 && height > 0);
 
     // Correct ROI setting
-    assert(img.dimx() >= x + width);
-    assert(img.dimy() >= y + height);   // roi within the image
+    assert(img.width() >= x + width);
+    assert(img.height() >= y + height);   // roi within the image
     assert(x <= width && y <= height);  // enough ROI data for left/top padding
 
     int i,j,k;
@@ -493,26 +493,26 @@ void ImgTool::mirrorRoi2D(const Roi<int>& roi, cimg_library::CImg<T>& img) {
     for(i=offsetY; i < offsetY+height; i++) {
         // left side
         for(j=0, k=2*offsetX-1; j<offsetX; k--, j++)
-            cimg_forZV(img, z, v)
+            cimg_forZC(img, z, v)
                 img(j, i, z, v) = img(k, i, z, v);
 
         // right side
-        for(j=width+offsetX, k=width+offsetX-1; j<img.dimx(); k--, j++)
-            cimg_forZV(img, z, v)
+        for(j=width+offsetX, k=width+offsetX-1; j<img.width(); k--, j++)
+            cimg_forZC(img, z, v)
                 img(j, i, z, v) = img(k, i, z, v);
     }
 
     // Then mirror top/bottom margin (including 4 corners)
     // top side
     for(i=0, k=2*offsetY-1; i<offsetY; k--, i++)
-        cimg_forZV(img, z, v)
-            for(int x = 0; x < img.dimx(); ++x)
+        cimg_forZC(img, z, v)
+            for(int x = 0; x < img.width(); ++x)
                 img(x, i, z, v) = img(x, k, z, v);
 
     // bottom side
-    for(i=height+offsetY, k=height+offsetY-1; i<img.dimy(); k--, i++)
-        cimg_forZV(img, z, v)
-            for(int x =0; x < img.dimx(); ++x)
+    for(i=height+offsetY, k=height+offsetY-1; i<img.height(); k--, i++)
+        cimg_forZC(img, z, v)
+            for(int x =0; x < img.width(); ++x)
                 img(x, i, z, v) =img(x, k, z, v);
 }
 
@@ -531,14 +531,14 @@ cimg_library::CImg<T> ImgTool::sinus2D(T frequencyX, T frequencyY,
 template <typename T>
 void ImgTool::toSequence(const cimg_library::CImgList<T>& list,
                          cimg_library::CImg<T>& dst) {
-    dst.assign(list[0].dimx(), list[0].dimy(), list.size);
+    dst.assign(list[0].width(), list[0].height(), list.size);
     for (unsigned int i = 0; i < list.size; ++i) {
-        assert(list[i].dimx() == dst.dimx());
-        assert(list[i].dimy() == dst.dimy());
-        assert(list[i].dimz() == 1);
-        assert(list[i].dimv() == dst.dimv());
+        assert(list[i].width() == dst.width());
+        assert(list[i].height() == dst.height());
+        assert(list[i].depth() == 1);
+        assert(list[i].spectrum() == dst.spectrum());
 
-        cimg_forXYV(dst, x, y, v)
+        cimg_forXYC(dst, x, y, v)
             dst(x, y, i, v) = list[i](x, y, 0, v);
     }
 }
@@ -547,14 +547,14 @@ template <typename T>
 void ImgTool::toSlice(const cimg_library::CImg<T>& slice,
                       cimg_library::CImg<T>& dst,
                       int sliceIndex) {
-    assert(slice.dimv() == dst.dimv());
-    assert(slice.dimx() == dst.dimx());
-    assert(slice.dimy() == dst.dimy());
-    assert(sliceIndex < dst.dimz());
+    assert(slice.spectrum() == dst.spectrum());
+    assert(slice.width() == dst.width());
+    assert(slice.height() == dst.height());
+    assert(sliceIndex < dst.depth());
     assert(sliceIndex >= 0);
-    assert(slice.dimz() == 1);
+    assert(slice.depth() == 1);
 
-    cimg_forXYV(slice, x, y, v)
+    cimg_forXYC(slice, x, y, v)
         dst(x, y, sliceIndex, v) = slice(x, y, 0, v);
 }
 
@@ -562,12 +562,12 @@ template <typename T>
 void ImgTool::toPlane(const cimg_library::CImg<T>& plane,
                       cimg_library::CImg<T>& dst,
                       int planeIndex) {
-    assert(plane.dimz() == dst.dimz());
-    assert(plane.dimx() == dst.dimx());
-    assert(plane.dimy() == dst.dimy());
-    assert(planeIndex   <  dst.dimv());
+    assert(plane.depth() == dst.depth());
+    assert(plane.width() == dst.width());
+    assert(plane.height() == dst.height());
+    assert(planeIndex   <  dst.spectrum());
     assert(planeIndex   >= 0);
-    assert(plane.dimv() == 1);
+    assert(plane.spectrum() == 1);
 
     cimg_forXYZ(plane, x, y, z)
         dst(x, y, z, planeIndex) = plane(x, y, z, 0);
@@ -577,8 +577,8 @@ template <typename T>
 void ImgTool::localVarianceRoot2D(int maskSize,
                                   const cimg_library::CImg<T>& src,
                                   cimg_library::CImg<T>& dst) {
-    if(dst.dimx() != src.dimx() || dst.dimy() != src.dimy())
-        dst.assign(src.dimx(), src.dimy());
+    if(dst.width() != src.width() || dst.height() != src.height())
+        dst.assign(src.width(), src.height());
 
     if(maskSize % 2 == 0) maskSize++;
     //mask size in one direction (4 -> mask==9)
@@ -602,8 +602,8 @@ void ImgTool::localNormalization2D(int maskSize,
                                    T vMin, T vMax,
                                    const cimg_library::CImg<T>& src,
                                          cimg_library::CImg<T>& dst) {
-    if(dst.dimx() != src.dimx() || dst.dimy() != src.dimy())
-        dst.assign(src.dimx(), src.dimy());
+    if(dst.width() != src.width() || dst.height() != src.height())
+        dst.assign(src.width(), src.height());
 
     if(maskSize % 2 == 0) maskSize++;
 
@@ -635,11 +635,11 @@ template <typename T>
 void ImgTool::sigmoidThreshold(T center, T sharpness,
                                const cimg_library::CImg<T>& src,
                                cimg_library::CImg<T>& dst) {
-    if(dst.dimx() != src.dimx() || dst.dimy() != src.dimy()
-            || dst.dimz() != src.dimz() || dst.dimv() != src.dimv())
-        dst.assign(src.dimx(), src.dimy(), src.dimz(), src.dimv());
+    if(dst.width() != src.width() || dst.height() != src.height()
+            || dst.depth() != src.depth() || dst.spectrum() != src.spectrum())
+        dst.assign(src.width(), src.height(), src.depth(), src.spectrum());
 
-    cimg_forXYZV(src, x, y, z, v)
+    cimg_forXYZC(src, x, y, z, v)
         dst(x, y, z, v)=1/(1+(T)exp(-sharpness*(src(x, y, z, v)-center)));
 }
 
@@ -647,22 +647,22 @@ template <typename T>
 void ImgTool::copy(const cimg_library::CImg<T>& from,
                          cimg_library::CImg<T>& to,
                    int left, int top, int front) {
-    assert(to.dimx() >= from.dimx()+left);
-    assert(to.dimy() >= from.dimy()+top);
-    assert(to.dimz() >= from.dimz()+front);
-    assert(to.dimv() == from.dimv());
+    assert(to.width() >= from.width()+left);
+    assert(to.height() >= from.height()+top);
+    assert(to.depth() >= from.depth()+front);
+    assert(to.spectrum() == from.spectrum());
 
-    cimg_forXYZV(from, x, y, z, v)
+    cimg_forXYZC(from, x, y, z, v)
         to(x+left, y+top, z+front, v) = from(x, y, z, v);
 }
 
 template <typename T>
 void ImgTool::createAllScaleRandomPattern(cimg_library::CImg<T>& dst,
-                                          int dimx, int dimy,
+                                          int width, int height,
                                           float eta, int maxLevels) {
     assert(eta > 0 && eta < 1.0f);
-    int sx = dimx;
-    int sy = dimy;
+    int sx = width;
+    int sy = height;
     dst.assign(sx, sy, 1, 1, 0);
     Pyramid2DGauss<T> p(dst, 5, 1.4f, 2.0f, eta);
 
@@ -781,9 +781,9 @@ template <typename T>
 void ImgTool::grayToHsv(const cimg_library::CImg<T>& gray,
                               cimg_library::CImg<T>& hsv,
                               bool drawColorBar) {
-    assert(gray.dimv() == 1);
+    assert(gray.spectrum() == 1);
     int add = drawColorBar ? 20 : 0;
-    hsv.assign(gray.dimx()+add, gray.dimy(), gray.dimz(), 3, 0);
+    hsv.assign(gray.width()+add, gray.height(), gray.depth(), 3, 0);
     cimg_library::CImg<T> tmp = gray.get_normalize(0.2,1);
 
     cimg_forXYZ(tmp, x, y, z) {
@@ -794,8 +794,8 @@ void ImgTool::grayToHsv(const cimg_library::CImg<T>& gray,
 
     if (drawColorBar) {
         cimg_forYZ(hsv, y, z)
-            for(int x = gray.dimx()+5; x < hsv.dimx(); ++x) {
-                hsv(x, y, z, 0) = (T)(((1.0f-(y/(float)hsv.dimy()))
+            for(int x = gray.width()+5; x < hsv.width(); ++x) {
+                hsv(x, y, z, 0) = (T)(((1.0f-(y/(float)hsv.height()))
                                        * (1 - 0.2) + 0.2) * 355);
                 hsv(x, y, z, 1) = 1;
                 hsv(x, y, z, 2) = 1;
@@ -844,13 +844,13 @@ void ImgTool::drawHsvFrame(cimg_library::CImg<T>& rgbImage, int imPos) {
     else
         s = imPos - w;
 
-    cimg_library::CImg<T> box(rgbImage.dimx(), rgbImage.dimy(), 1, 3, 0);
+    cimg_library::CImg<T> box(rgbImage.width(), rgbImage.height(), 1, 3, 0);
     cimg_forXY(rgbImage, x, y)
-        if (x < s + w || y < s + w || x >= rgbImage.dimx() - s - w
-                || y >= rgbImage.dimy() - s - w) {
+        if (x < s + w || y < s + w || x >= rgbImage.width() - s - w
+                || y >= rgbImage.height() - s - w) {
 
-            float px  = x-rgbImage.dimx()/2.0f;
-            float py  = y-rgbImage.dimy()/2.0f;
+            float px  = x-rgbImage.width()/2.0f;
+            float py  = y-rgbImage.height()/2.0f;
             float len = sqrtf(px*px+py*py);
             box(x, y, 0, 0) = (T)acosf(px/len);
             if(py > 0) box(x, y, 0, 0) = (T)(2*PI - box(x, y, 0, 0));
@@ -862,8 +862,8 @@ void ImgTool::drawHsvFrame(cimg_library::CImg<T>& rgbImage, int imPos) {
     box.HSVtoRGB();
 
     cimg_forXY(rgbImage, x, y)
-        if (x < s + w || y < s + w || x >= rgbImage.dimx() - s - w
-                || y >= rgbImage.dimy() - s - w) {
+        if (x < s + w || y < s + w || x >= rgbImage.width() - s - w
+                || y >= rgbImage.height() - s - w) {
 
             rgbImage(x, y, 0) = box(x, y, 0);
             rgbImage(x, y, 1) = box(x, y, 1);
@@ -876,13 +876,13 @@ void ImgTool::flowToHsv(const cimg_library::CImg<T>& flow,
                               cimg_library::CImg<T>& hsv,
                         bool drawColorBar) {
     // if(!mask.size())
-    //     mask.assign(flow.dimx(), flow.dimy(), flow.dimz(), 1, 1);
+    //     mask.assign(flow.width(), flow.height(), flow.depth(), 1, 1);
 
-    assert(flow.dimv() == 2);
+    assert(flow.spectrum() == 2);
     int add = drawColorBar ? 20 : 0;
-    hsv.assign(flow.dimx()+add, flow.dimy(), flow.dimz(), 3, 0);
+    hsv.assign(flow.width()+add, flow.height(), flow.depth(), 3, 0);
 
-    cimg_library::CImg<T> tmp(flow.dimx(), flow.dimy(), flow.dimz(), 3, 0);
+    cimg_library::CImg<T> tmp(flow.width(), flow.height(), flow.depth(), 3, 0);
     T max = 0;
     cimg_forXYZ(tmp, x, y, z) {
         // get angle between unit x vector (1, 0)
@@ -913,7 +913,7 @@ void ImgTool::flowToHsv(const cimg_library::CImg<T>& flow,
 
     /*
     if(drawColorBar) {
-        Roi<int> region(0, flow.dimx()+1, add, hsv.dimx());
+        Roi<int> region(0, flow.width()+1, add, hsv.width());
         drawHsvCircle(hsv, region);
     }
 
@@ -932,7 +932,7 @@ void ImgTool::drawQuiverThick(      cimg_library::CImg<T >& dst,
                               const int quiver_type,
                               const float opacity) {
     cimg_library::CImg<T> colors(dst);
-    cimg_forXYZV(colors, x, y, z, v)
+    cimg_forXYZC(colors, x, y, z, v)
         colors(x, y, z, v) = color[v];
 
     ImgTool::drawQuiverThick<T>(dst, flow, colors, thickness, sampling,
@@ -948,7 +948,7 @@ void ImgTool::drawQuiverThick(      cimg_library::CImg<T >& dst,
                               const float factor,
                               const int quiver_type,
                               const float opacity) {
-    assert(!dst.is_empty() && flow.dimv() == 2);
+    assert(!dst.is_empty() && flow.spectrum() == 2);
     assert(colors.is_sameXYZ(dst) && sampling > 0);
 
     float vmax, fact;
@@ -970,13 +970,13 @@ void ImgTool::drawQuiverThick(      cimg_library::CImg<T >& dst,
             if (!quiver_type) {
                 const int xx = x+(int)u, yy = y+(int)v;
                 ImgTool::drawArrowThick<T,T2>(dst,x,y,xx,yy,
-                    colors.get_crop(x, y, 0, 0, x, y, 0,colors.dimv()-1).ptr(),
+                    colors.get_crop(x, y, 0, 0, x, y, 0,colors.spectrum()-1).ptr(),
                     thickness,45.0f,thickness+2.0f,~0L,opacity);
             }
             else
                 dst.draw_line((int)(x-0.5*u),(int)(y-0.5*v),
                     (int)(x+0.5*u), (int)(y+0.5*v),
-                    colors.get_crop(x, y, 0, 0,x, y, 0,colors.dimv()-1).ptr(),
+                    colors.get_crop(x, y, 0, 0,x, y, 0,colors.spectrum()-1).ptr(),
                     opacity,~0L);
         }
 }
@@ -1088,10 +1088,10 @@ void ImgTool::drawArrowThick(cimg_library::CImg<T>& dst,
 template <typename T, typename T2>
 void ImgTool::zeroCrossings(const cimg_library::CImg<T >& src,
                                   cimg_library::CImg<T2>& zeroCrossings) {
-    zeroCrossings.assign(src.dimx(), src.dimy(), src.dimz(), src.dimv(), 0);
-    Roi<int> roi(1, 1, src.dimy()-1, src.dimx()-1, 0, src.dimz());
+    zeroCrossings.assign(src.width(), src.height(), src.depth(), src.spectrum(), 0);
+    Roi<int> roi(1, 1, src.height()-1, src.width()-1, 0, src.depth());
 
-    cimg_forV(src, v)
+    cimg_forC(src, v)
         forRoiXYZ(roi, x, y, z)
             if (       (src(x-1, y, z, v) < 0 && src(x, y, z, v) > 0)
                     || (src(x+1, y, z, v) < 0 && src(x, y, z, v) > 0)
@@ -1119,14 +1119,14 @@ void ImgTool::saveCsv(const cimg_library::CImg<T>& src,
                 + "using filename '" + fileName + "'!";
 
     if (header)
-        f   << src.dimx() << colDelimiter
-            << src.dimy() << colDelimiter
-            << src.dimz() << colDelimiter
-            << src.dimv() << rowDelimiter;
+        f   << src.width() << colDelimiter
+            << src.height() << colDelimiter
+            << src.depth() << colDelimiter
+            << src.spectrum() << rowDelimiter;
 
-    cimg_forYZV(src, y, z, v) {
+    cimg_forYZC(src, y, z, v) {
         f   << src(0, y, z, v);
-        for (int x = 1; x < src.dimx(); ++x)
+        for (int x = 1; x < src.width(); ++x)
             f << colDelimiter << src(x, y, z, v);
         f << rowDelimiter;
     }
@@ -1135,7 +1135,7 @@ void ImgTool::saveCsv(const cimg_library::CImg<T>& src,
 template<typename T>
 void ImgTool::loadCsv(cimg_library::CImg<T> &dst,
                       std::string fileName,
-                      int dimX, int dimY, int dimZ, int dimV,
+                      int width, int height, int depth, int spectrum,
                       char rowDelimiter, char colDelimiter,
                       int maxLineLength) {
     std::ifstream f(fileName.c_str());
@@ -1146,9 +1146,9 @@ void ImgTool::loadCsv(cimg_library::CImg<T> &dst,
     //maximum line length is 1024!
     char* line = new char[maxLineLength];
 
-    if(dimX == -1)
+    if(width == -1)
     {
-        //get first line which should contain dimx,dimy,dimz,dimv
+        //get first line which should contain width,height,depth,spectrum
         f.getline(line, maxLineLength, rowDelimiter);
         if(f.fail())
             throw std::string("ImgTool::loadCsv() failed because line length ")
@@ -1169,15 +1169,15 @@ void ImgTool::loadCsv(cimg_library::CImg<T> &dst,
 
         if(dims.size() != 4)
             throw std::string("ImgTool::loadCsv() failed because first line")
-                + "is not 'dimx,dimy,dimz,dimv'!";
+                + "is not 'width,height,depth,spectrum'!";
         dst.assign(dims[0], dims[1], dims[2], dims[3], 0);
     }
     else
-        dst.assign(dimX, dimY, dimZ, dimV, 0);
+        dst.assign(width, height, depth, spectrum, 0);
 
     T value;
-    cimg_forYZV(dst, y, z, v) {
-        for(int x =0; x < dst.dimx()-1; ++x) {
+    cimg_forYZC(dst, y, z, v) {
+        for(int x =0; x < dst.width()-1; ++x) {
             f.getline(line, maxLineLength, colDelimiter);
             if(f.eof())
                 throw std::string("ImgTool::loadCsv() failed because ")
@@ -1200,7 +1200,7 @@ void ImgTool::loadCsv(cimg_library::CImg<T> &dst,
         std::stringstream istrm;
         istrm << line;
         istrm >> value;
-        dst(dst.dimx()-1, y, z, v) =value;
+        dst(dst.width()-1, y, z, v) =value;
     }
 
     delete line;
@@ -1208,15 +1208,15 @@ void ImgTool::loadCsv(cimg_library::CImg<T> &dst,
 
 template<typename T>
 void ImgTool::scatterPlot(const cimg_library::CImg<T>& data,
-                          int dimx, int dimy, char normalizationType,
+                          int width, int height, char normalizationType,
                           cimg_library::CImg<T>& dst,
                           float stdFactor) {
     //assume data has two values per row for x/y-coordinate in plot
-    assert(data.dimx() == 2);
-    assert(data.dimz() == 1);
-    assert(data.dimv() == 1);
-    cimg_library::CImg<T> dx = data.get_crop(0, 0, 0, data.dimy()-1);
-    cimg_library::CImg<T> dy = data.get_crop(1, 0, 1, data.dimy()-1);
+    assert(data.width() == 2);
+    assert(data.depth() == 1);
+    assert(data.spectrum() == 1);
+    cimg_library::CImg<T> dx = data.get_crop(0, 0, 0, data.height()-1);
+    cimg_library::CImg<T> dy = data.get_crop(1, 0, 1, data.height()-1);
 
     if (normalizationType == 1) {
         //normalize to stdFactor*std
@@ -1228,8 +1228,8 @@ void ImgTool::scatterPlot(const cimg_library::CImg<T>& data,
 
     else if(normalizationType == 2) {
         //normalize to quantile range
-        std::vector<T> xvals(dx.dimy());
-        std::vector<T> yvals(dy.dimy());
+        std::vector<T> xvals(dx.height());
+        std::vector<T> yvals(dy.height());
 
         cimg_forY(dx, y) {
             xvals[y] = dx(0, y);
@@ -1240,12 +1240,12 @@ void ImgTool::scatterPlot(const cimg_library::CImg<T>& data,
         sort(yvals.begin(), yvals.end());
 
         //take quantile-range denoted by stdFactor
-        dx.cut((T)(xvals[(int)(stdFactor*dx.dimy())]),
-               (T)(xvals[(int)((1-stdFactor)*dx.dimy()-1)]));
+        dx.cut((T)(xvals[(int)(stdFactor*dx.height())]),
+               (T)(xvals[(int)((1-stdFactor)*dx.height()-1)]));
 
         //take quantile-range denoted by stdFactor
-        dy.cut((T)(yvals[(int)(stdFactor*dy.dimy())]),
-               (T)(yvals[(int)((1-stdFactor)*dy.dimy()-1)]));
+        dy.cut((T)(yvals[(int)(stdFactor*dy.height())]),
+               (T)(yvals[(int)((1-stdFactor)*dy.height()-1)]));
     }
 
     //normalize to min/max
@@ -1254,23 +1254,23 @@ void ImgTool::scatterPlot(const cimg_library::CImg<T>& data,
     dx.normalize(0, 1);
     dy.normalize(0, 1);
 
-    dst.assign(dimx+1, dimy+1, 1, 3, 1);
+    dst.assign(width+1, height+1, 1, 3, 1);
 
     //draw ordered labels
     cimg_forY(data, y)
         if (data(2, y)) {
             //zero-Label
-            dst((int)(dx(0, y)*dimx), (int)(dy(0, y)*dimy), 0) = 0;
-            dst((int)(dx(0, y)*dimx), (int)(dy(0, y)*dimy), 1) = 0;
-            dst((int)(dx(0, y)*dimx), (int)(dy(0, y)*dimy), 2) = 1;
+            dst((int)(dx(0, y)*width), (int)(dy(0, y)*height), 0) = 0;
+            dst((int)(dx(0, y)*width), (int)(dy(0, y)*height), 1) = 0;
+            dst((int)(dx(0, y)*width), (int)(dy(0, y)*height), 2) = 1;
         }
 
     cimg_forY(data, y)
         if (!data(2, y)) {
             //zero-Label
-            dst((int)(dx(0, y)*dimx), (int)(dy(0, y)*dimy), 0) = 1;
-            dst((int)(dx(0, y)*dimx), (int)(dy(0, y)*dimy), 1) = 0;
-            dst((int)(dx(0, y)*dimx), (int)(dy(0, y)*dimy), 2) = 0;
+            dst((int)(dx(0, y)*width), (int)(dy(0, y)*height), 0) = 1;
+            dst((int)(dx(0, y)*width), (int)(dy(0, y)*height), 1) = 0;
+            dst((int)(dx(0, y)*width), (int)(dy(0, y)*height), 2) = 0;
         }
 }
 
@@ -1287,13 +1287,13 @@ void ImgTool::blockVariance2d(const cimg_library::CImg<T>& src,
                               int halfBlockWidth,
                               T outsideValue) {
     Roi<int> roiImg(halfBlockWidth, halfBlockWidth,
-                    src.dimy()-halfBlockWidth, src.dimx()-halfBlockWidth);
+                    src.height()-halfBlockWidth, src.width()-halfBlockWidth);
     Roi<int> roi(-halfBlockWidth, -halfBlockWidth,
                  halfBlockWidth+1, halfBlockWidth+1);
     cimg_library::CImg<T> tmp(2*halfBlockWidth+1, 2*halfBlockWidth+1);
-    dst.assign(src.dimx(), src.dimy(), src.dimz(), src.dimv(), outsideValue);
+    dst.assign(src.width(), src.height(), src.depth(), src.spectrum(), outsideValue);
 
-    cimg_forZV (src, z, v) {
+    cimg_forZC (src, z, v) {
         forRoiXY (roiImg, x, y) {
             forRoiXY (roi, dx, dy)
                 tmp(dx+halfBlockWidth, dy+halfBlockWidth) =
@@ -1308,14 +1308,14 @@ void ImgTool::blockEntropy2d(const cimg_library::CImg<T>& src,
                                    cimg_library::CImg<T>& dst,
                              int halfBlockWidth, T outsideValue) {
     Roi<int> roiImg(halfBlockWidth, halfBlockWidth,
-                    src.dimy()-halfBlockWidth, src.dimx()-halfBlockWidth);
+                    src.height()-halfBlockWidth, src.width()-halfBlockWidth);
     Roi<int> roi(-halfBlockWidth, -halfBlockWidth,
                  halfBlockWidth+1, halfBlockWidth+1);
     cimg_library::CImg<T> tmp(2*halfBlockWidth+1, 2*halfBlockWidth+1);
     cimg_library::CImg<T> hist;
 
-    dst.assign(src.dimx(), src.dimy(), src.dimz(), src.dimv(), outsideValue);
-    cimg_forZV(src, z, v) {
+    dst.assign(src.width(), src.height(), src.depth(), src.spectrum(), outsideValue);
+    cimg_forZC(src, z, v) {
         forRoiXY(roiImg, x, y) {
             forRoiXY(roi, dx, dy)
                 tmp(dx+halfBlockWidth, dy+halfBlockWidth) =
@@ -1336,14 +1336,14 @@ void ImgTool::barronFleetError(const cimg_library::CImg<T>& flow,
                                const cimg_library::CImg<T>& gtFlow,
                                      cimg_library::CImg<T>& result) {
     assert(flow.is_sameXYZ(gtFlow));
-    assert(flow.dimv() == 2);
-    assert(gtFlow.dimv() == 2);
+    assert(flow.spectrum() == 2);
+    assert(gtFlow.spectrum() == 2);
 
     cimg_library::CImg<T> xFlw     = flow.get_channel(0);
     cimg_library::CImg<T> yFlw     = flow.get_channel(1);
     cimg_library::CImg<T> xRealFlw = gtFlow.get_channel(0);
     cimg_library::CImg<T> yRealFlw = gtFlow.get_channel(1);
-    cimg_library::CImg<T> ones(xFlw.dimx(), xFlw.dimy(), 1, 1, 1);
+    cimg_library::CImg<T> ones(xFlw.width(), xFlw.height(), 1, 1, 1);
 
     // barron/fleet angular error
     cimg_library::CImg<T> angAmpFlw =
@@ -1368,8 +1368,8 @@ void ImgTool::amplitudeError(const cimg_library::CImg<T>& flow,
                                    cimg_library::CImg<T>& result,
                                    bool relative) {
     assert(flow.is_sameXYZ(gtFlow));
-    assert(flow.dimv() == 2);
-    assert(gtFlow.dimv() == 2);
+    assert(flow.spectrum() == 2);
+    assert(gtFlow.spectrum() == 2);
 
     cimg_library::CImg<T> xFlw     = flow.get_channel(0);
     cimg_library::CImg<T> yFlw     = flow.get_channel(1);
@@ -1393,8 +1393,8 @@ void ImgTool::angleError(const cimg_library::CImg<T>& flow,
                          const cimg_library::CImg<T>& gtFlow,
                                cimg_library::CImg<T> &result) {
     assert(flow.is_sameXYZ(gtFlow));
-    assert(flow.dimv() == 2);
-    assert(gtFlow.dimv() == 2);
+    assert(flow.spectrum() == 2);
+    assert(gtFlow.spectrum() == 2);
 
     cimg_library::CImg<T> xFlw       = flow.get_channel(0);
     cimg_library::CImg<T> yFlw       = flow.get_channel(1);
@@ -1422,8 +1422,8 @@ void ImgTool::endPointError(const cimg_library::CImg<T>& flow,
                             const cimg_library::CImg<T>& gtFlow,
                                   cimg_library::CImg<T>& result) {
     assert(flow.is_sameXYZ(gtFlow));
-    assert(flow.dimv() == 2);
-    assert(gtFlow.dimv() == 2);
+    assert(flow.spectrum() == 2);
+    assert(gtFlow.spectrum() == 2);
 
     result = flow-gtFlow;
 
@@ -1496,8 +1496,8 @@ void ImgTool::maskedMeanStd(const cimg_library::CImg<T>& src,
     unsigned int count =0;
 
     //same code as in "else" only mask(x, y, z) != mask(x, y, z, v)
-    if (mask.dimv() == 1 && src.dimv() > 1) {
-        cimg_forXYZV(src, x, y, z, v) {
+    if (mask.spectrum() == 1 && src.spectrum() > 1) {
+        cimg_forXYZC(src, x, y, z, v) {
             if(mask(x, y, z)) {
                 mean += src(x, y, z, v);
                 ++count;
@@ -1506,7 +1506,7 @@ void ImgTool::maskedMeanStd(const cimg_library::CImg<T>& src,
         if (count)
             mean /= (T)count;
 
-        cimg_forXYZV(src, x, y, z, v) {
+        cimg_forXYZC(src, x, y, z, v) {
             if (mask(x, y, z))
                 std += (src(x, y, z, v)-mean)*(src(x, y, z, v)-mean);
         }
@@ -1514,8 +1514,8 @@ void ImgTool::maskedMeanStd(const cimg_library::CImg<T>& src,
             std = sqrt(std/(T)count);
     }
     else {
-        assert (mask.dimv() == src.dimv());
-        cimg_forXYZV(src, x, y, z, v) {
+        assert (mask.is_sameC(src));
+        cimg_forXYZC(src, x, y, z, v) {
             if (mask(x, y, z, v)) {
                 mean += src(x, y, z, v);
                 ++count;
@@ -1524,7 +1524,7 @@ void ImgTool::maskedMeanStd(const cimg_library::CImg<T>& src,
         if (count)
             mean /= (T)count;
 
-        cimg_forXYZV(src, x, y, z, v)
+        cimg_forXYZC(src, x, y, z, v)
             if(mask(x, y, z, v))
                 std += (src(x, y, z, v)-mean)*(src(x, y, z, v)-mean);
         if(count)
@@ -1536,19 +1536,19 @@ template<typename T>
 void ImgTool::nThFrame(const cimg_library::CImg<T> &src,
                              cimg_library::CImg<T> &dst,
                              int step, int start) {
-    int dimz = (int)ceil((src.dimz()-start)/(float)step);
-    dst.assign(src.dimx(), src.dimy(), dimz, src.dimv());
+    int depth = (int)ceil((src.depth()-start)/(float)step);
+    dst.assign(src.width(), src.height(), depth, src.spectrum());
 
     int z = start;
-    for(int z = 0; z < dimz; ++z)
-        cimg_forXYV(src, x, y, v)
+    for(int z = 0; z < depth; ++z)
+        cimg_forXYC(src, x, y, v)
         dst(x, y, z, v) = src(x, y, start+z*step, v);
 }
 
 template<typename T>
 void ImgTool::minImageZ(const cimg_library::CImg<T> &src,
                               cimg_library::CImg<T> &dst) {
-    assert(src.dimv() == 1);
+    assert(src.spectrum() == 1);
     dst = src.get_slice(0);
     cimg_forXYZ(src, x, y, z)
         if(dst(x, y) > src(x, y, z))
@@ -1558,7 +1558,7 @@ void ImgTool::minImageZ(const cimg_library::CImg<T> &src,
 template<typename T>
 void ImgTool::maxImageZ(const cimg_library::CImg<T> &src,
                               cimg_library::CImg<T> &dst) {
-    assert(src.dimv() == 1);
+    assert(src.spectrum() == 1);
     dst = src.get_slice(0);
     cimg_forXYZ(src, x, y, z)
         if(dst(x, y) < src(x, y, z))
@@ -1581,37 +1581,54 @@ void ImgTool::crop3d(cimg_library::CImg<T> &src, Roi<T2> roi) {
 template <typename T>
 std::string ImgTool::sizeString(const cimg_library::CImg<T>& img) {
 	std::ostringstream res;
-	res << "(" << img.dimx() << "," << img.dimy()
-		<< "," << img.dimz() << "," << img.dimv()
-		<< ") [" << img.size()*sizeof(T) << " b]";
+	res << "(" << img.width() << "," << img.height()
+		<< "," << img.depth() << "," << img.spectrum()
+		<< ") [";
+	float s = float(img.size()*sizeof(T));
+	if (s < 1024)
+		res << s << " B]";
+	if ((s >= 1024) && ((s /= 1024) < 1024))
+		res << s << " KiB";
+	if ((s >= 1024) && ((s /= 1024) < 1024))
+		res << s << " MiB";
+	if ((s >= 1024) && ((s /= 1024) < 1024))
+		res << s << " GiB";
+	res << "]";
 	return res.str();
 }
 
 template <typename T>
 std::string ImgTool::dataString(const cimg_library::CImg<T>& img) {
 	std::ostringstream res;
-	res << "(" << img.pixel_type() << "*)"
-		<< (void*)img.data
-		<< " (" << (img.is_shared ? "shared" : "not shared") << ")";
+	res << "(" << cimg_library::cimg::type<T>::string() << "*)";
+	res << (void*)img._data;
+	res << " (" << (img._is_shared ? "shared" : "not shared") << ")";
 	return res.str();
 }
 
 template <typename T>
-std::string ImgTool::contentString(const cimg_library::CImg<T>& img) {
+std::string ImgTool::contentString(
+		const cimg_library::CImg<T>& img,
+		unsigned int mE)
+{
 	if(img.is_empty())
 		return "[ ]";
 
 	std::ostringstream res;
-	const unsigned long width = img.dimx();
-	const unsigned long siz   = img.size();
-	const unsigned long siz1  = siz-1;
-	const unsigned int width1 = width-1;
 	res << "[ ";
-	cimg_foroff(img,off) {
-		res << cimg_library::cimg::type<T>::format(img.data[off]);
-		if (off!=siz1) res << (off%width==width1?" ; ":" ");
+	cimg_for_inY(img,0,mE,y) {
+		cimg_for_inX(img,0,mE,x) {
+			res << cimg_library::cimg::type<T>::format(img(x,y,0,0)) << " ";
+		}
+		if (img.width() > int(mE))
+			res << "... ";
+		res << ";\n  ";
 	}
-	res << " ]";
+	if (img.height() > int(mE))
+		res << "... ";
+	res << "]";
+	if ((img.depth() > 1) || (img.depth() > 1))
+		res << "\n ... and more slices ...";
 	return res.str();
 }
 
@@ -1621,6 +1638,12 @@ void ImgTool::printInfo(std::ostream& os, const cimg_library::CImg<T>& img,
 	os << prefix << "pointer = " << (void*)&img << "," << std::endl;
 	os << prefix << "size    = " << ImgTool::sizeString(img) << "," << std::endl;
 	os << prefix << "data    = " << ImgTool::dataString(img) << std::endl;
-	os << prefix << "content = " << ImgTool::contentString(img) << std::endl;
+	std::istringstream cont(ImgTool::contentString(img));
+	std::string cur;
+	std::getline(cont, cur);
+	assert(cont);
+	os << prefix << "content = " << cur << std::endl;
+	while (std::getline(cont, cur))
+		os << prefix << "          " << cur << std::endl;
 }
 #endif // _ImgTool_HXX

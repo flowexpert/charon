@@ -27,6 +27,7 @@
 
 #include <stdexcept>
 #include "ImageDisplay.h"
+#include "ImgTool.hxx"
 
 template <typename T>
 ImageDisplay<T>::ImageDisplay(const std::string& name) :
@@ -56,46 +57,74 @@ template <typename T>
 void ImageDisplay<T>::execute() {
 	ParameteredObject::execute();
 
-	// set desired image size
-	if(frame() >= in().size) {
-		std::ostringstream msg;
-		msg	<< __FILE__ << ":" << __LINE__
-			<< "\nImageDisplay: Selected frame number is\n\t"
-			<< "not less than number of images.\n\t"
-			<< "number of images: " << in().size << "\n\t"
-			<< "selected frame: " << frame();
-		throw std::out_of_range(msg.str().c_str());
+	std::ostringstream msg;
+	msg	<< __FILE__ << ":" << __LINE__;
+	msg << "\nImageDisplay:";
+	bool error = false;
+
+	// check preconditions
+	if(in().size() == 0) {
+		msg << "\n\tImage Sequence is empty!";
+		throw std::runtime_error(msg.str().c_str());
 	}
-	if(!width() || !height())
-		_display.assign(
-				in()[frame()].dimx(),
-				in()[frame()].dimy(),
-				title().c_str(), 1);
-	else
-		_display.assign(width, height, title().c_str(), 1);
+	if(int(slice()) >= in()[0].depth()) {
+		msg << "\n\t"
+			<< "Selected slice is out of range!\n\t"
+			<< "number of slices: " << in()[0].depth() << "\n\t"
+			<< "selected slice: " << slice();
+		error = true;
+	}
+	if(channel() >= in()[0].spectrum()) {
+		msg << "\n\t"
+			<< "Selected channel is out of range!\n\t"
+			<< "number of channels: " << in()[0].spectrum() << "\n\t"
+			<< "selected channel: " << slice();
+		error = true;
+	}
+	if(frame() >= in().size()) {
+		std::ostringstream msg;
+		msg << "\n\t"
+			<< "Selected frame out of range!\n\t"
+			<< "number of images: " << in().size() << "\n\t"
+			<< "selected frame: " << frame();
+		error = true;
+	}
+	if (error)
+		throw std::out_of_range(msg.str().c_str());
+
+	sout << "\tDisplaying image \"" << title() << "\":" << std::endl;
+	ImgTool::printInfo(sout, in()[frame()], "\t\t");
 
 	// select range to show
 	cimg_library::CImg<T> toShow(in()[frame()]);
 	if (channel() >= 0)
 		toShow.crop(
 				0,0,slice(),channel(),
-				toShow.dimx()-1,toShow.dimy()-1,slice(),channel());
+				toShow.width()-1,toShow.height()-1,slice(),channel());
 	else
 		// display all channels (color image)
 		toShow.crop(
 				0,0,slice(),0,
-				toShow.dimx()-1,toShow.dimy()-1,slice(),toShow.dimv()-1);
+				toShow.width()-1,toShow.height()-1,slice(),toShow.spectrum()-1);
+
+	// set desired image size
+	cimg_library::CImgDisplay* disp = new cimg_library::CImgDisplay(
+			width(), height(), title().c_str());
+	assert(disp);
 
 	// show image
-	_display << toShow;
-	_display.show();
+	toShow.display(*disp);
+	disp->show();
 
 	// and wait, if necessary
 	if(wait != 0) {
-		_display.wait(wait);
+		disp->wait(wait);
 	}
 	else
-		_display.wait();
+		while(disp->is_keyESC() || disp->is_keyQ() || disp->is_closed())
+			disp->wait();
+
+	delete disp;
 }
 
 #endif /* _IMAGEDISPLAY_HXX_ */

@@ -96,13 +96,13 @@ void Pyramid2DGauss<T>::load(ParameterFile& pf, std::string name) {
 template <class T>
 void Pyramid2DGauss<T>::assign(const cimg_library::CImg<T>& src) {
     Pyramid<T>::levels.clear();
-    Pyramid<T>::levels << src;
+    Pyramid<T>::levels.push_back(src);
     Pyramid<T>::scaleFactorsX.push_back(1.0f);
     Pyramid<T>::scaleFactorsY.push_back(1.0f);
 
     cimg_library::CImg<T> maskH;
     cimg_library::CImg<T> maskV;
-    cimg_library::CImg<T> tmp(src.dimx(), src.dimy());
+    cimg_library::CImg<T> tmp(src.width(), src.height());
     cimg_library::CImg<T> downsampled;
 
     for (int i = 1; i < Pyramid<T>::nLevels; ++i) {
@@ -120,9 +120,9 @@ void Pyramid2DGauss<T>::assign(const cimg_library::CImg<T>& src) {
         // so that when upsampling results
         // based on a given level, the factor can be used to restore the
         // original proportions of the image
-        int newDimX = (int)ceilf(src.dimx()/factor);
-        int newDimY = (int)ceilf(src.dimy()/factor);
-        downsampled.assign(newDimX, newDimY, src.dimz(), src.dimv(), 0);
+        int newwidth = (int)ceilf(src.width()/factor);
+        int newheight = (int)ceilf(src.height()/factor);
+        downsampled.assign(newwidth, newheight, src.depth(), src.spectrum(), 0);
         //tmp.display();
 
         /*
@@ -134,19 +134,19 @@ void Pyramid2DGauss<T>::assign(const cimg_library::CImg<T>& src) {
             // falls in the original image
             // hence no translation occurs
             downsampled(x, y, z, v) = interpolator.interpolate(tmp,
-                (x-0.5f)*src.dimx()/(float)newDimX,
-                (y-0.5f)*src.dimy()/(float)newDimY, z, v);
+                (x-0.5f)*src.width()/(float)newwidth,
+                (y-0.5f)*src.height()/(float)newheight, z, v);
         }*/
 
-        downsampled = tmp.get_resize(newDimX, newDimY, downsampled.dimz(),
-                                     downsampled.dimv(), 5);
+        downsampled = tmp.get_resize(newwidth, newheight, downsampled.depth(),
+                                     downsampled.spectrum(), 5);
 
         //downsampled.display("downsampled");
         // save result to current pyramid level (level 0 is original)
-        Pyramid<T>::levels << downsampled;
+        Pyramid<T>::levels.push_back(downsampled);
 
-        Pyramid<T>::scaleFactorsX.push_back(src.dimx()/(float)newDimX);
-        Pyramid<T>::scaleFactorsY.push_back(src.dimy()/(float)newDimY);
+        Pyramid<T>::scaleFactorsX.push_back(src.width()/(float)newwidth);
+        Pyramid<T>::scaleFactorsY.push_back(src.height()/(float)newheight);
 
         /*
         this->scaleFactorsX.push_back(factor);
@@ -162,16 +162,16 @@ void Pyramid2DGauss<T>::assign(const cimg_library::CImg<T>& src) {
         // downsample tmp by 2 based on zero(first) level
         float factor =1.0f/(2*sigma);
         // stop building pyramid if images become too small
-        if(src.dimx()*factor < 5 && src.dimy()*factor < 5)
+        if(src.width()*factor < 5 && src.height()*factor < 5)
             break;
-        tmp.resize((int)ceil(src.dimx()*factor), (int)ceil(src.dimy()*factor));
+        tmp.resize((int)ceil(src.width()*factor), (int)ceil(src.height()*factor));
         // save result to current pyramid level (level 0 is original)
         this->levels << tmp;
         scaleFactors.push_back(factor);
         */
     }
 
-    Pyramid<T>::nLevels = Pyramid<T>::levels.size;
+    Pyramid<T>::nLevels = Pyramid<T>::levels.size();
 }
 
 #endif // _Pyramid2DGaussBy2_HXX

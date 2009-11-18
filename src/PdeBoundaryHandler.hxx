@@ -128,13 +128,13 @@ void PdeBoundaryHandler<T>::setCurrentDelta(cimg_library::CImgList<T>* d) {
 
 template <typename T>
 T* PdeBoundaryHandler<T>::at(T*** unknowns, int x) const {
-    assert(!dimY);
+    assert(!height);
     return &((T*)unknowns)[nDof*x];
 }
 
 template <typename T>
 T* PdeBoundaryHandler<T>::at(T*** unknowns, int x, int y) const {
-    assert(!dimZ);
+    assert(!depth);
     return &((T**)unknowns)[y][nDof*x];
 }
 
@@ -221,13 +221,13 @@ void PdeBoundaryHandler<T>::clearUnknowns() {
     }
     else {
         //clear everything because it was created in this class
-        cimg_forXYZV(originalUnknowns, x, y, z, v)
+        cimg_forXYZC(originalUnknowns, x, y, z, v)
             delete originalUnknowns(x, y, z, v);
         originalUnknowns.assign();
     }
 
     //in pyramidUnknowns we need to clear all points
-    cimg_forXYZV(pyramidUnknowns, x, y, z, v)
+    cimg_forXYZC(pyramidUnknowns, x, y, z, v)
         delete pyramidUnknowns(x, y, z, v);
 
     //sout << "Pyramid delete removed!" << std::endl;
@@ -249,9 +249,9 @@ void PdeBoundaryHandler<T>::init(
 
     createInternalPointers = createIntPointers;
     nDof = nDf;
-    dimX = dX;
-    dimY = dY;
-    dimZ = dZ;
+    width = dX;
+    height = dY;
+    depth = dZ;
     dimT = dT;
 
     if(createIntPointers) {
@@ -308,25 +308,25 @@ void PdeBoundaryHandler<T>::init(
     if (is1d) {
         mask.assign(dX+2*sWX, 1, 1, 1, true);
 
-        for (int i=0, j=mask.dimx()-1; i < sWX; ++i, j--)
+        for (int i=0, j=mask.width()-1; i < sWX; ++i, j--)
             mask(i) = mask(j) = false;
 
         stencil.assign(2*sWX+1);
-        stencil(stencil.dimx()/2+1) = false;
+        stencil(stencil.width()/2+1) = false;
 
-        for(int i=0, j=stencil.dimx()-1; i <= sWX; ++i, j--)
+        for(int i=0, j=stencil.width()-1; i <= sWX; ++i, j--)
             stencil(i) = stencil(j) = true;
     }
     else if (is2d) {
         mask.assign(dX+2*sWX, dY+2*sWY, 1, 1, true);
 
         // left and right padding
-        for(int i =0, j =mask.dimx()-1; i < sWX; ++i, j--)
+        for(int i =0, j =mask.width()-1; i < sWX; ++i, j--)
             cimg_forY(mask, y)
                 mask(i, y) = mask(j, y) = false;
 
         //upper and lower padding
-        for(int i =0, j =mask.dimy()-1; i < sWY; ++i, j--)
+        for(int i =0, j =mask.height()-1; i < sWY; ++i, j--)
             cimg_forX(mask, x)
                 mask(x, i) = mask(x, j) = false;
 
@@ -337,17 +337,17 @@ void PdeBoundaryHandler<T>::init(
         mask.assign(dX+2*sWX, dY+2*sWY, dZ+2*sWZ, 1, true);
 
         //left and right padding
-        for(int i =0, j =mask.dimx()-1; i < sWX; ++i, j--)
+        for(int i =0, j =mask.width()-1; i < sWX; ++i, j--)
             cimg_forYZ(mask, y, z)
                 mask(i, y, z) = mask(j, y, z) = false;
 
         //upper and lower padding
-        for(int i =0, j =mask.dimy()-1; i < sWY; ++i, j--)
+        for(int i =0, j =mask.width()-1; i < sWY; ++i, j--)
             cimg_forXZ(mask, x, z)
                 mask(x, i, z) = mask(x, j, z) = false;
 
         //front and back padding
-        for(int i =0, j =mask.dimz()-1; i < sWZ; ++i, j--)
+        for(int i =0, j =mask.depth()-1; i < sWZ; ++i, j--)
             cimg_forXY(mask, x, y)
                 mask(x, y, i) = mask(x, y, j) = false;
 
@@ -358,22 +358,22 @@ void PdeBoundaryHandler<T>::init(
         mask.assign(dX+2*sWX, dY+2*sWY, dZ+2*sWZ, dT+2*sWT, true);
 
         //left and right padding
-        for(int i =0, j =mask.dimx()-1; i < sWX; ++i, j--)
-            cimg_forYZV(mask, y, z, v)
+        for(int i =0, j =mask.width()-1; i < sWX; ++i, j--)
+            cimg_forYZC(mask, y, z, v)
                 mask(i, y, z, v) = mask(j, y, z, v) = false;
 
         //upper and lower padding
-        for(int i =0, j =mask.dimy()-1; i < sWY; ++i, j--)
-            cimg_forXZV(mask, x, z, v)
+        for(int i =0, j =mask.height()-1; i < sWY; ++i, j--)
+            cimg_forXZC(mask, x, z, v)
                 mask(x, i, z, v) = mask(x, j, z, v) = false;
 
         //front and back padding
-        for(int i =0, j =mask.dimz()-1; i < sWZ; ++i, j--)
-            cimg_forXYV(mask, x, y, v)
+        for(int i =0, j =mask.depth()-1; i < sWZ; ++i, j--)
+            cimg_forXYC(mask, x, y, v)
                 mask(x, y, i, v) = mask(x, y, j, v) = false;
 
         //start and end padding
-        for(int i =0, j =mask.dimv()-1; i < sWT; ++i, j--)
+        for(int i =0, j =mask.spectrum()-1; i < sWT; ++i, j--)
             cimg_forXYZ(mask, x, y, z)
                 mask(x, y, z, i) = mask(x, y, z, j) = false;
 
@@ -384,14 +384,14 @@ void PdeBoundaryHandler<T>::init(
     //get the mask containing the boundary points
 
     //init empty boundary image
-    boundaryMask.assign(    mask.dimx(), mask.dimy(),
-                            mask.dimz(), mask.dimv(), false);
-    originalUnknowns.assign(mask.dimx(), mask.dimy(),
-                            mask.dimz(), mask.dimv());
-    pyramidUnknowns.assign( mask.dimx(), mask.dimy(),
-                            mask.dimz(), mask.dimv());
-    residuals.assign(       mask.dimx(), mask.dimy(),
-                            mask.dimz(), mask.dimv());
+    boundaryMask.assign(    mask.width(), mask.height(),
+                            mask.depth(), mask.spectrum(), false);
+    originalUnknowns.assign(mask.width(), mask.height(),
+                            mask.depth(), mask.spectrum());
+    pyramidUnknowns.assign( mask.width(), mask.height(),
+                            mask.depth(), mask.spectrum());
+    residuals.assign(       mask.width(), mask.height(),
+                            mask.depth(), mask.spectrum());
     // init unknowns array with null pointers (if done in constructor,
     // this causes Img-typecasting-compiler-error due to type==pointer!)
     cimg_for(originalUnknowns, ptr, T*)
@@ -405,10 +405,10 @@ void PdeBoundaryHandler<T>::init(
     // default unknowns source is original unknowns
     unknowns = &originalUnknowns;
 
-    cimg_forXYZV(mask, x, y, z, t) {
+    cimg_forXYZC(mask, x, y, z, t) {
         //if inside domain, add boundary to originalUnknowns if neccessary
         if (mask(x, y, z, t))
-            cimg_forXYZV(stencil, sx, sy, sz, st) {
+            cimg_forXYZC(stencil, sx, sy, sz, st) {
                 int ox, oy, oz, ot;
                 if (is1d) {
                     ox = x+sx-sWX;
@@ -446,34 +446,34 @@ void PdeBoundaryHandler<T>::init(
             }
     }
 
-    getValuePositions.assign(4, mask.dimx()+sWX, mask.dimy()+sWY,
-                             mask.dimz()+sWZ, mask.dimv()+sWT, 0);
+    getValuePositions.assign(4, mask.width()+sWX, mask.height()+sWY,
+                             mask.depth()+sWZ, mask.spectrum()+sWT, 0);
 
     // calculate array positions from real unknowns positions
     // stored in x, y, z
     if (is1d)
-        cimg_forXYZV(mask, x, y, z, v) {
+        cimg_forXYZC(mask, x, y, z, v) {
             getValuePositions[0](x, y, z, v) =x;
             getValuePositions[1](x, y, z, v) =0;
             getValuePositions[2](x, y, z, v) =0;
             getValuePositions[3](x, y, z, v) =0;
         }
     else if (is2d)
-        cimg_forXYZV(mask, x, y, z, v) {
+        cimg_forXYZC(mask, x, y, z, v) {
             getValuePositions[0](x, y, z, v) =x;
             getValuePositions[1](x, y, z, v) =y;
             getValuePositions[2](x, y, z, v) =0;
             getValuePositions[3](x, y, z, v) =0;
         }
     else if (is3d)
-        cimg_forXYZV(mask, x, y, z, v) {
+        cimg_forXYZC(mask, x, y, z, v) {
             getValuePositions[0](x, y, z, v) =x;
             getValuePositions[1](x, y, z, v) =y;
             getValuePositions[2](x, y, z, v) =z;
             getValuePositions[3](x, y, z, v) =0;
         }
     else
-        cimg_forXYZV(mask, x, y, z, v) {
+        cimg_forXYZC(mask, x, y, z, v) {
             getValuePositions[0](x, y, z, v) =x;
             getValuePositions[1](x, y, z, v) =y;
             getValuePositions[2](x, y, z, v) =z;
@@ -481,7 +481,7 @@ void PdeBoundaryHandler<T>::init(
         }
 
     if (createIntPointers)
-        cimg_forXYZV(mask, x, y, z, t)
+        cimg_forXYZC(mask, x, y, z, t)
             if(mask(x, y, z, t)) {
                 // if inside domain, add boundary to originalUnknowns
                 // if neccessary
@@ -497,22 +497,22 @@ void PdeBoundaryHandler<T>::updateDelta() {
     if (delta) {
         if (extendedRoi.xBegin <= 0)
             extendedRoi.xBegin = 0;
-        if (extendedRoi.xEnd >= dimX)
-            extendedRoi.xEnd = dimX;
+        if (extendedRoi.xEnd >= width)
+            extendedRoi.xEnd = width;
         if (extendedRoi.yBegin <= 0)
             extendedRoi.yBegin = 0;
-        if (extendedRoi.yEnd >= dimY)
-            extendedRoi.yEnd = dimY ? dimY : 1;
+        if (extendedRoi.yEnd >= height)
+            extendedRoi.yEnd = height ? height : 1;
         if (extendedRoi.zBegin <= 0)
             extendedRoi.zBegin = 0;
-        if (extendedRoi.zEnd >= dimZ)
-            extendedRoi.zEnd = dimZ ? dimZ : 1;
+        if (extendedRoi.zEnd >= depth)
+            extendedRoi.zEnd = depth ? depth : 1;
 
         cimglist_for(*delta, d) {
-            assert((*delta)[d].dimx() == dimX);
-            assert((*delta)[d].dimy() == dimY ? dimY : 1);
-            assert((*delta)[d].dimz() == dimZ ? dimZ : 1);
-            assert((*delta)[d].dimv() == dimT ? dimT : 1);
+            assert((*delta)[d].width() == width);
+            assert((*delta)[d].height() == height ? height : 1);
+            assert((*delta)[d].depth() == depth ? depth : 1);
+            assert((*delta)[d].spectrum() == dimT ? dimT : 1);
             forRoiXYZ(extendedRoi, x, y, z)
                 for(int t =0; t < (dimT?dimT:1); ++t)
                     get(x, y, z, t, &pyramidUnknowns)[d] =
@@ -534,20 +534,20 @@ void PdeBoundaryHandler<T>::updateUnknowns(T*** unknowns,
 
     if (extendedRoi.xBegin() <= 0)
         extendedRoi.xBegin() = 0;
-    if (extendedRoi.xEnd() >= dimX)
-        extendedRoi.xEnd() = dimX;
+    if (extendedRoi.xEnd() >= width)
+        extendedRoi.xEnd() = width;
     if (extendedRoi.yBegin() <= 0)
         extendedRoi.yBegin() = 0;
-    if (extendedRoi.yEnd() >= dimY)
-        extendedRoi.yEnd() = dimY ? dimY : 1;
+    if (extendedRoi.yEnd() >= height)
+        extendedRoi.yEnd() = height ? height : 1;
     if (extendedRoi.zBegin() <= 0)
         extendedRoi.zBegin() = 0;
-    if (extendedRoi.zEnd() >= dimZ)
-        extendedRoi.zEnd() = dimZ ? dimZ : 1;
+    if (extendedRoi.zEnd() >= depth)
+        extendedRoi.zEnd() = depth ? depth : 1;
 
-    cimg_library::CImg<float> test(boundaryMask.dimx(), boundaryMask.dimy(),
-                                   boundaryMask.dimz(), 2, 0);
-    cimg_forXYZV(boundaryMask, x, y, z, t) {
+    cimg_library::CImg<float> test(boundaryMask.width(), boundaryMask.height(),
+                                   boundaryMask.depth(), 2, 0);
+    cimg_forXYZC(boundaryMask, x, y, z, t) {
         // if inside domain, we might need to update the residuals pointers
         if(!boundaryMask(x, y, z, t)) {
             // (iteration over the mask is slow if many processors are used!)
@@ -704,14 +704,14 @@ void PdeBoundaryHandler<T>::updateBoundaries() {
 
             if (ty < 0)
                 src.y = sWidthY;
-            else if (dimY && ty > roi.yEnd()-1)
+            else if (height && ty > roi.yEnd()-1)
                 src.y = sWidthY+roi.yEnd()-1;
             else
                 src.y =ty+sWidthY;
 
             if (tz < 0)
                 src.z = sWidthZ;
-            else if (dimZ && tz > roi.zEnd()-1)
+            else if (depth && tz > roi.zEnd()-1)
                 src.z = sWidthZ+roi.zEnd()-1;
             else
                 src.z =tz+sWidthZ;
@@ -741,14 +741,14 @@ void PdeBoundaryHandler<T>::updateBoundaries() {
 template <typename T>
 void PdeBoundaryHandler<T>::display()
 {
-    cimg_library::CImg<float> dm(unknowns.dimx(), unknowns.dimy(),
-                                 unknowns.dimz(), nDof*(dimT ? dimT : 1), 0);
-    cimg_library::CImg<float> dmask(unknowns.dimx(), unknowns.dimy(),
-                                    unknowns.dimz(), 1);
+    cimg_library::CImg<float> dm(unknowns.width(), unknowns.height(),
+                                 unknowns.depth(), nDof*(dimT ? dimT : 1), 0);
+    cimg_library::CImg<float> dmask(unknowns.width(), unknowns.height(),
+                                    unknowns.depth(), 1);
 
     cimg_forXYZ(unknowns, x, y, z) {
         if(unknowns(x, y, z))
-            for(int k =0; k < dm.dimv(); ++k) {
+            for(int k =0; k < dm.spectrum(); ++k) {
                 if(!finite(unknowns(x, y, z)[k]))
                     dm(x, y, z, k) = 255;
                 else
@@ -769,32 +769,32 @@ void PdeBoundaryHandler<T>::display()
 template <typename T>
 T*** PdeBoundaryHandler<T>::fromCImg(const cimg_library::CImg<T> &src) {
     T*** res = 0;
-    // assert(src.dimx() == dimX && src.dimv() == nDOF);
+    // assert(src.width() == width && src.spectrum() == nDOF);
     if (is1d) {
-        //assert(src.dimy() == 1 && src.dimz() == 1);
-        res = (T***) new T[src.dimx()*src.dimv()];
-        cimg_forXV(src, x, v)
-            ((T*)res)[x*src.dimv()+v] = src(x, 0, 0, v);
+        //assert(src.height() == 1 && src.depth() == 1);
+        res = (T***) new T[src.width()*src.spectrum()];
+        cimg_forXC(src, x, v)
+            ((T*)res)[x*src.spectrum()+v] = src(x, 0, 0, v);
     }
     else if(is2d) {
-        //assert(src.dimy() == dimY && src.dimz() == 1);
-        res = (T***) new T*[src.dimy()];
+        //assert(src.height() == height && src.depth() == 1);
+        res = (T***) new T*[src.height()];
         cimg_forY(src, y)
-            res[y] = (T**) new T[src.dimx()*src.dimv()];
-        cimg_forXYV(src, x, y, v)
-            ((T**)res)[y][x*src.dimv()+v] = src(x, y, 0, v);
+            res[y] = (T**) new T[src.width()*src.spectrum()];
+        cimg_forXYC(src, x, y, v)
+            ((T**)res)[y][x*src.spectrum()+v] = src(x, y, 0, v);
     }
     // 4d and 3d are handled alike.
     else {
-        // assert(src.dimy() == dimY && src.dimz() == dimZ);
-        res = new T**[src.dimz()];
+        // assert(src.height() == height && src.depth() == depth);
+        res = new T**[src.depth()];
         cimg_forZ(src, z) {
-            res[z] = (T**) new T*[src.dimy()];
+            res[z] = (T**) new T*[src.height()];
             cimg_forY(src, y)
-                res[z][y] = (T*) new T[src.dimx()*src.dimv()];
+                res[z][y] = (T*) new T[src.width()*src.spectrum()];
         }
-        cimg_forXYZV(src, x, y, z, v)
-            res[z][y][x*src.dimv()+v] = src(x, y, z, v);
+        cimg_forXYZC(src, x, y, z, v)
+            res[z][y][x*src.spectrum()+v] = src(x, y, z, v);
     }
 
     return res;
@@ -802,23 +802,23 @@ T*** PdeBoundaryHandler<T>::fromCImg(const cimg_library::CImg<T> &src) {
 
 template <typename T>
 void PdeBoundaryHandler<T>::toCimg(T*** src, cimg_library::CImg<T>& dst) {
-    dst.assign(dimX,
-               dimY ? dimY : 1,
-               dimZ ? dimZ : 1,
+    dst.assign(width,
+               height ? height : 1,
+               depth ? depth : 1,
                dimT ? nDof*dimT : nDof,
                0);
 
     if(is1d)
-        cimg_forXV(dst, x, v)
+        cimg_forXC(dst, x, v)
             dst(x, 0, 0, v) = at(src, x)[v];       // ((T*)src)[x*nDOF+v];
     else if(is2d) {
-        cimg_forXYV(dst, x, y, v)
+        cimg_forXYC(dst, x, y, v)
             dst(x, y, 0, v) = at(src, x, y)[v];    // ((T**)src)[y][x*nDOF+v];
         cimg_forY(dst, y)
             delete src[y];
     }
     else {
-        cimg_forXYZV(dst, x, y, z, v)
+        cimg_forXYZC(dst, x, y, z, v)
             dst(x, y, z, v) = at(src, x, y, z)[v]; // src[z][y][x*nDOF+v];
         cimg_forZ(dst, z) {
             cimg_forY(dst, y)

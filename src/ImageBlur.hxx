@@ -49,11 +49,12 @@ void ImageBlur<T>::execute() {
 	assert(roi()->vBegin() < roi()->vEnd());
 
 	out() = in();
-	cimg_library::CImgList<T> region = in().get_crop(
-			roi()->vBegin(), roi()->vEnd()-1,
+	cimg_library::CImgList<T> region = in().get_images(
+			roi()->vBegin(), roi()->vEnd()-1);
+	cimglist_for(region, i) {
+		region[i].crop(
 			roi()->xBegin(), roi()->yBegin(), roi()->zBegin(), roi()->tBegin(),
 			roi()->xEnd()-1, roi()->yEnd()-1, roi()->zEnd()-1, roi()->tEnd()-1);
-	cimglist_for(region, i) {
 		region[i].blur(strength());
 		out()[roi()->vBegin()+i].draw_image(
 				roi()->xBegin(), roi()->yBegin(),

@@ -838,10 +838,13 @@ namespace ImgTool {
 	/// get string containing image content
 	/** the image content is printed in a matlab-like
 	 *  matrix representation.
-	 *  \param  img			image input
+	 *  \param  img         image input
+	 *  \param  maxEntries  maximal number of matrix rows/cols to print
 	 */
 	template <typename T>
-	std::string contentString(const cimg_library::CImg<T>& img);
+	std::string contentString(
+			const cimg_library::CImg<T>& img,
+			unsigned int maxEntries = 5u);
 
 	/// print image information
 	template <typename T>

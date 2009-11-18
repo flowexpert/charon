@@ -61,24 +61,26 @@ void Crop<T>::execute()
 		v1 = roi()->vEnd-1;
 	if(roi()->xBegin() == roi()->xEnd()) {
 		sout << "\tleaving x dimension uncropped" << std::endl;
-		x0 = 0; x1 = in()[0].dimx()-1;
+		x0 = 0; x1 = in()[0].width()-1;
 	}
 	if(roi()->yBegin() == roi()->yEnd()) {
 		sout << "\tleaving y dimension uncropped" << std::endl;
-		y0 = 0; y1 = in()[0].dimy()-1;
+		y0 = 0; y1 = in()[0].height()-1;
 	}
 	if(roi()->zBegin() == roi()->zEnd()) {
 		sout << "\tleaving z dimension uncropped" << std::endl;
-		z0 = 0; z1 = in()[0].dimz()-1;
+		z0 = 0; z1 = in()[0].depth()-1;
 	}
 	if(roi()->tBegin() == roi()->tEnd()) {
 		sout << "\tleaving t dimension uncropped" << std::endl;
-		t0 = 0; t1 = in()[0].dimv()-1;
+		t0 = 0; t1 = in()[0].spectrum()-1;
 	}
 	if(roi()->vBegin() == roi()->vEnd()) {
 		sout << "\tleaving v dimension uncropped" << std::endl;
-		v0 = 0; v1 = in().size - 1;
+		v0 = 0; v1 = in().size() - 1;
 	}
-    out = in().get_crop(v0, v1, x0, y0, z0, t0, x1, y1, z1, t1);
+    out() = in().get_images(v0, v1);
+	cimglist_for(out(),k)
+		out()[k].crop(x0, y0, z0, t0, x1, y1, z1, t1);
 }
 #endif // _CROP_HXX_

@@ -89,7 +89,7 @@ private:
     //  @{
     int sWidthX, sWidthY, sWidthZ, sWidthT;
     bool is1d, is2d, is3d;
-    int dimX, dimY, dimZ, dimT, nDof;
+    int width, height, depth, dimT, nDof;
     //  @}
 
     /// If false, pointers have to be supplied by some other object,
@@ -180,13 +180,13 @@ public:
     /// T arrays for the boundary values.
     /// Initializes all masks and arrays need to handle a problem
     /// of given dimensions.
-    /// @param  dimX,dimY,dimZ,dimT,nDof
+    /// @param  width,height,depth,dimT,nDof
     ///                         problem dimensions
     /// @param  sWidthX,sWidthY,sWidthZ,sWidthT
     ///                         stencil widhts
     /// @param  createInternalPointers
     ///                         internal pointer switch
-    void init(int dimX, int dimY, int dimZ, int dimT, int nDof,
+    void init(int width, int height, int depth, int dimT, int nDof,
               int sWidthX, int sWidthY, int sWidthZ, int sWidthT,
               bool createInternalPointers);
 
