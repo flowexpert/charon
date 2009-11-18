@@ -119,11 +119,12 @@ void ImageDisplay<T>::execute() {
 	disp->show();
 
 	// and wait, if necessary
-	if(wait != 0) {
+	disp->flush();
+	if (wait())
 		disp->wait(wait);
-	}
 	else
-		while(disp->is_keyESC() || disp->is_keyQ() || disp->is_closed())
+		while (!(disp->is_keyESC() || disp->is_keyQ() ||
+				disp->is_closed() || disp->button()))
 			disp->wait();
 
 	delete disp;
