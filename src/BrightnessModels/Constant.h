@@ -17,7 +17,8 @@
  */
 /// @file Constant.h
 /// defines class BrightnessModels::Constant
-/// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
+/// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">
+/// René Steinbrügge</a>
 /// @author <a href="mailto:Andreas.Runk@gmx.de">Andreas Runk</a>
 /// @date 27.05.2009
 
@@ -45,51 +46,49 @@
 namespace BrightnessModels
 {
 
-/// a brightness model for no brightness change
-template<class T>
-class brightnessmodels_constant_DECLDIR Constant: public BrightnessModel<T>
-{
-private:
-	/// the brightness functor for no brightness change
-	class Functor: public BrightnessFunctorInterface<T>
+	/// a brightness model for no brightness change
+	template<class T>
+	class brightnessmodels_constant_DECLDIR Constant: public BrightnessModel<T>
 	{
+	private:
+		/// the brightness functor for no brightness change
+		class Functor: public BrightnessFunctorInterface<T>
+		{
+		public:
+			virtual void operator()(cimg_library::CImg<T>&) const
+			{
+			}
+			virtual void get3d(cimg_library::CImgList<T>&) const
+			{
+			}
+		} functor;
+
 	public:
-		virtual void operator()(cimg_library::CImg<T>&) const
-		{
-		}
-		virtual void get3d(cimg_library::CImgList<T>&) const
-		{
-		}
-	} functor;
+		/// default constructor
+		Constant(const std::string& name = "");
 
-protected:
-	//	virtual ParameteredObject* _newInstance(const std::string& name) const
-	//		{return new Constant(name);}
+		virtual void execute();
 
-public:
-	/// default constructor
-	//	Constant(const std::string& name = "") : BrightnessModel("brightnessmodels_constant",name), functor()
-	//		 {brightnessFunctor = &functor;}
-	Constant(const std::string& name = "");
-	
-	virtual void execute();
-		
-	virtual void compute(const int xs, const int ys, const int zs, const int t,
-			const int v, std::map<std::string, T>& term, T& rhs);
-	
-	virtual std::set<std::string>& getUnknowns();
-	//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
+		virtual void compute(
+				const int xs, const int ys, const int zs, const int t,
+				const int v, std::map<std::string, T>& term, T& rhs,
+				const std::string& unknown = "");
 
-	/** 
-	 *  compute brightness changes with the inserted Parameters
-	 *  @param inPixel insert pixel for which is the birghtness changes has to 
-	 *  be done
-	 *  @param modifier vector of Parameters to compute the modification
-	 *  @param outPixel return value of Pixel type
-	 */
-	virtual void apply(const Pixel<T> & inPixel, const std::vector<
-			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel);
-};
+		virtual std::set<std::string>& getUnknowns();
+		//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
+
+		/**
+		 *  compute brightness changes with the inserted Parameters
+		 *  @param inPixel   insert pixel for which is the birghtness changes
+		 *                   has to be done
+		 *  @param modifier  vector of Parameters to compute the modification
+		 *  @param outPixel  return value of Pixel type
+		 */
+		virtual void apply(
+				const Pixel<T>& inPixel,
+				const std::vector<IncrementorParameter<T>*>& modifier,
+				Pixel<T>& outPixel);
+	};
 
 }
 

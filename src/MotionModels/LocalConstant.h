@@ -59,7 +59,6 @@ class motionmodels_localconstant_DECLDIR LocalConstant: public MotionModel<T>
 private:
 	//cimg_library::CImg<> dx,dy,dt;
 	FlowFunctor flowfunc;
-	bool is3d;
 
 public:
 	/// default constructor
@@ -71,22 +70,22 @@ public:
 	InputSlot<cimg_library::CImgList<T> > dx, dy, dz, dt;
 	//@}
 
-	virtual void execute();
-
-	virtual void compute(const int xs, const int ys, const int zs, const int t,
-			const int v, std::map<std::string, T>& term, T& rhs);
+	virtual void compute(
+			const int xs, const int ys, const int zs, const int t,
+			const int v, std::map<std::string, T>& term, T& rhs,
+			const std::string& unknown = "");
 
 	virtual std::set<std::string>& getUnknowns();
 	//	virtual FlowFunctorInterface& getFlowFunctor() {return flowfunc;};
 
 
-	/** @brief set the parameters of the flow functor
-	 *
-	 *  @details flow will be computed:
+	/// set the parameters of the flow functor
+	/**
+	 * flow will be computed:
 	 * @f[
-	 *	\vec f \left( \begin{array}{c} x \\ y \\ z \end{array} \right) =
-	 *		\left( \begin{array}{c} a_1 \\ a_2 \\ a_3 \end{array} \right)
-	 * @f]
+	      \vec f \left( \begin{array}{c} x \\ y \\ z \end{array} \right) =
+	          \left( \begin{array}{c} a_1 \\ a_2 \\ a_3 \end{array} \right)
+	   @f]
 	 * 
 	 */
 	void setFlowFunctorParams(const float a1, const float a2, const float a3);

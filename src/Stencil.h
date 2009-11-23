@@ -68,8 +68,9 @@
  * Roundup:
  * - Stencil:      Set of SubStencils grouped by method
  * - MetaStencil:  Set of SubStencils grouped by unknown
- * - SubStencil:   Mask for one unknown or the general mask if no unknowns are used
-*/
+ * - SubStencil:   Mask for one unknown or the general mask
+ *                 if no unknowns are used
+ */
 template <class T>
 class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 {
@@ -105,13 +106,28 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 
 		/// update stencil
 		/**
-		 *	Updates the stencil to contain the information to the given coordinate.
-		 *	The data will be placed in the member data of the individual SubStencils.
-		 *	@param[in] x,y,z,t,v coordinates
+		 *  Updates the stencil to contain the information to the given
+		 *  coordinate. The data will be placed in the member data of the
+		 *  individual SubStencils. Usually, there are as many equations
+		 *  per unknown in the linear equation system as there are pixels
+		 *  in the considered roi. To be able to get all these equations,
+		 *  you have to provide the current unknown and the position in
+		 *  the roi. If there is only one equation or you are implementing
+		 *  a static stencil, discard the unneeded coordinates and set the
+		 *  substencils for all unknowns that differ from the given one to
+		 *  zero.
+		 *  \param[in] unknown    query substencils for this unknown,
+		 *                        e.g. the Euler-Lagrange equation after
+		 *                        deriving wrt the given unknown.
+		 *  @param[in] x,y,z,t,v  coordinates
 		 */
-		virtual void updateStencil(const unsigned int x, const unsigned int y,
-                                   const unsigned int z=0, const unsigned int t=0,
-                                   const unsigned int v=0) = 0;
+		virtual void updateStencil(
+				const std::string& unknown,
+				const unsigned int x=0,
+				const unsigned int y=0,
+				const unsigned int z=0,
+				const unsigned int t=0,
+				const unsigned int v=0) = 0;
 
 		/**
 		 * Getter function for the SubStencils of the stencil.
@@ -125,12 +141,14 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 */
 		const std::map<std::string, T>& getRhs() const;
 
-		/**
-		 * Apply the Stencil to a sequence.
-		 * @remark not yet implemented.
+		/// apply stencil to a sequence
+		/** \param seq           sequence to apply stencil on
+		 *  \param frame         frame to apply stencil on
+		 *  \return              processed version of the input sequence
 		 */
-		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
-		                                    const unsigned int frame) const = 0;
+		virtual cimg_library::CImg<T> apply(
+				const cimg_library::CImgList<T>& seq,
+				const unsigned int frame) const = 0;
 
 		/**
 		 * Getter functions for the unknowns of the stencil.

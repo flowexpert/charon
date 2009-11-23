@@ -55,7 +55,10 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 		PetscInt*& columns,
 		PetscScalar*& values)
 {
-	// first, copy all data from the SubStencils into
+	// first, initialize content to zero
+	this->data.fill(T(0));
+
+	// copy all data from the SubStencils into
 	// the CImg data object of the MetaStencil
 	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
 		// Calculating offsets
@@ -84,7 +87,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 		const Point4D<unsigned int>& curP = *pIt;
 		Point4D<int> curArg = Point4D<int>(curP)+Point4D<int>(p)-this->center;
 		PetscInt curCol =
-			PetscSolver<T>::pointToGlobalIndex(curArg,unknown,unknownSizes);
+			PetscSolver<T>::_pointToGlobalIndex(curArg,unknown,unknownSizes);
 		columns[i] = curCol;
 		values[i] = this->data(pIt->x, pIt->y, pIt->z, pIt->t);
 	}
@@ -92,7 +95,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 }
 
 template <typename T>
-unsigned int PetscSolver<T>::pointToRelativeIndex(
+unsigned int PetscSolver<T>::_pointToRelativeIndex(
 		const Point4D<int>& p,
 		const Roi<int>& dim)
 {
@@ -109,7 +112,7 @@ unsigned int PetscSolver<T>::pointToRelativeIndex(
 }
 
 template <typename T>
-unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
+unsigned int PetscSolver<T>::_relativeIndexToGlobalIndex(
 		const unsigned int i,
 		const std::string& unknown,
 		const std::map<std::string,const Roi<int>*>& unknownSizes)
@@ -128,7 +131,7 @@ unsigned int PetscSolver<T>::relativeIndexToGlobalIndex(
 }
 
 template <typename T>
-void PetscSolver<T>::globalIndexToPoint(
+void PetscSolver<T>::_globalIndexToPoint(
 		const unsigned int vi,
 		const std::map<std::string, const Roi<int>*>& unknownSizes,
 		std::string& unknown,
@@ -167,19 +170,19 @@ void PetscSolver<T>::globalIndexToPoint(
 }
 
 template <typename T>
-unsigned int PetscSolver<T>::pointToGlobalIndex(
+unsigned int PetscSolver<T>::_pointToGlobalIndex(
 		const Point4D<int>& p,
 		const std::string& unknown,
 		const std::map<std::string,const Roi<int>*>& unknownSizes)
 {
 	unsigned int result;
-	result = pointToRelativeIndex(p,*(unknownSizes.find(unknown)->second));
-	result = relativeIndexToGlobalIndex(result, unknown, unknownSizes);
+	result = _pointToRelativeIndex(p,*(unknownSizes.find(unknown)->second));
+	result = _relativeIndexToGlobalIndex(result, unknown, unknownSizes);
 	return result;
 }
 
 template <typename T>
-Point4D<int> PetscSolver<T>::getBoundary(Point4D<int>& p) const {
+Point4D<int> PetscSolver<T>::_getBoundary(Point4D<int>& p) const {
 	// we just need read-only acces to the global roi
 	const Roi<int>& globalRoi = *(this->roi());
 	// First, identify the case
@@ -236,8 +239,7 @@ bool PetscSolver<T>::_initialized = false;
 
 template <typename T>
 PetscSolver<T>::PetscSolver(const std::string& name) : 
-		Solver<T>("PetscSolver", name),
-		columns(0), values(0)
+		Solver<T>("PetscSolver", name)
 {
 	// add petsc command line
 	ParameteredObject::_addParameter(commandLine, "commandLine",
@@ -274,10 +276,6 @@ PetscSolver<T>::~PetscSolver() {
 		}
 		_initialized = false;
 	}
-
-	// make sure, PetscInt and PetscScalar get cleared
-	delete[] columns;
-	delete[] values;
 }
 
 template <typename T>
@@ -289,7 +287,6 @@ bool PetscSolver<T>::isRankZero() {
 		return true;
 
 	int rank;
-	// WARNING: this line crashes, if petsc was not initialized!
 	MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
 	return !rank;
 }
@@ -435,13 +432,11 @@ int PetscSolver<T>::petscExecute() {
 	// alphanumerically sorted by key. This will get important with the
 	// write-back of the results.
 
-	// delete both arrays if the already exist.
-	if (columns != NULL) {delete[] columns; columns = NULL;}
-	if (values  != NULL) {delete[] values;  values  = NULL;}
 	// set the sizes of PetscScalar* values and PetscInt* columns
 	// to the just calculated necessary size.
-	columns = new PetscInt[max_ne];
-	values = new PetscScalar[max_ne];
+	// petsc values for columns and values
+	PetscInt*       columns = new PetscInt[max_ne];   assert(columns);
+	PetscScalar*    values = new PetscScalar[max_ne]; assert(values);
 
 	// Calculate the size of the problem (number of rows/columns of
 	// the matrix, number of elements in the vectors).
@@ -468,8 +463,6 @@ int PetscSolver<T>::petscExecute() {
 	 *	*===========*
 	 *	| P E T S C |
 	 *	*===========*
-	 *
-	 *	PetscInitialize and MPI Initialization are done in the main
 	 */
 
 	// Petsc initialization
@@ -499,39 +492,30 @@ int PetscSolver<T>::petscExecute() {
 		_initialized = true;
 	}
 
-	Vec				x,				// approx. solution
-					b;				// right hand side
-	Mat				A;				// Linear System Matrix
-	KSP				ksp(0);			// KSP context
-//	PC				pc;				// PC context
-	PetscInt		j;				// row index
-	PetscInt		Istart, Iend;	// Ownership range
+	Vec             x,              // approx. solution
+	                b;              // right hand side
+	Mat             A;              // Linear System Matrix
+	KSP             ksp(0);         // KSP context
+	PetscInt        j;              // row index
+	PetscInt        Istart, Iend;   // Ownership range
 
 	// Create Vector
-	ierr = VecCreate(PETSC_COMM_WORLD,&x);
-	CHKERRQ(ierr);
+	ierr = VecCreate(PETSC_COMM_WORLD,&x); CHKERRQ(ierr);
 	// Set the size of the vector
-	ierr = VecSetSizes(x,PETSC_DECIDE,n);
-	CHKERRQ(ierr);
+	ierr = VecSetSizes(x,PETSC_DECIDE,n); CHKERRQ(ierr);
 	// Set other options from the database
-	ierr = VecSetFromOptions(x);
-	CHKERRQ(ierr);
+	ierr = VecSetFromOptions(x); CHKERRQ(ierr);
 	// Duplicate the vector x and save the duplicate in b
-	ierr = VecDuplicate(x,&b);
-	CHKERRQ(ierr);
+	ierr = VecDuplicate(x,&b); CHKERRQ(ierr);
 	// Create the Matrix A
-	ierr = MatCreate(PETSC_COMM_WORLD,&A);
-	CHKERRQ(ierr);
+	ierr = MatCreate(PETSC_COMM_WORLD,&A); CHKERRQ(ierr);
 	// Set the Size of A to be n*n - let PETSc decide how big the local
 	// chunks should be
-	ierr = MatSetSizes(A,PETSC_DECIDE,PETSC_DECIDE,n,n);
-	CHKERRQ(ierr);
+	ierr = MatSetSizes(A,PETSC_DECIDE,PETSC_DECIDE,n,n); CHKERRQ(ierr);
 	// Set other options from the database
-	ierr = MatSetFromOptions(A);
-	CHKERRQ(ierr);
+	ierr = MatSetFromOptions(A); CHKERRQ(ierr);
 
-	ierr = MatGetOwnershipRange(A,&Istart,&Iend);
-	CHKERRQ(ierr);
+	ierr = MatGetOwnershipRange(A,&Istart,&Iend); CHKERRQ(ierr);
 
 	// iterate through the owned rows
 	for(j = Istart ; j < Iend ; j++) {
@@ -541,7 +525,7 @@ int PetscSolver<T>::petscExecute() {
 		std::string unknown;    //current unknown
 		Point4D<int> p;         //current point
 
-		globalIndexToPoint((unsigned int)j, unknownSizes, unknown, p);
+		_globalIndexToPoint((unsigned int)j, unknownSizes, unknown, p);
 		// now p contains the coordinate of the current point and
 		// unknown contains the name of the current unknown.
 
@@ -558,8 +542,10 @@ int PetscSolver<T>::petscExecute() {
 			int nos = (int)substencils[unknown].size(); // number of stencils
 			PetscScalar rhs = 0;                        // right hand side
 			for (int index = 0 ; index < nos ; index++) {
-				substencils.find(unknown)->second[index]->updateStencil(p.x, p.y, p.z, p.t);
-				rhs += PetscScalar(substencils.find(unknown)->second[index]->getRhs().find(unknown)->second);
+				substencils.find(unknown)->second[index]->
+					updateStencil(unknown, p.x, p.y, p.z, p.t);
+				rhs += PetscScalar(substencils.find(unknown)->second[index]->
+					getRhs().find(unknown)->second);
 			}
 			// now call the MetaStencil of this unknown to gather all the
 			// data of its SubStencils (which have just been updated) and
@@ -569,15 +555,22 @@ int PetscSolver<T>::petscExecute() {
 
 			// transfer data form the SubStencils into the arrays and get
 			// the number of entries back
-			ne = MetaStencils[unknown].update(unknown,p,unknownSizes,columns,values);
+			ne = MetaStencils[unknown].update(
+				unknown,p,unknownSizes,columns,values);
 
 			// write values into matrix
 			ierr = MatSetValues(A,1,&j,ne,columns,values,INSERT_VALUES);
-			CHKERRQ(ierr);
+				CHKERRQ(ierr);
+
+			// add missing entries (cross terms)
+			ne = _addCrossTerms(
+					MetaStencils, unknownSizes, unknown,
+					p, columns, values);
+			ierr = MatSetValues(A,1,&j,ne,columns,values,INSERT_VALUES);
+				CHKERRQ(ierr);
 
 			// and right hand side
-			ierr = VecSetValues(b,1,&j,&rhs,INSERT_VALUES);
-			CHKERRQ(ierr);
+			ierr = VecSetValues(b,1,&j,&rhs,INSERT_VALUES); CHKERRQ(ierr);
 		}
 		else {
 			/*
@@ -589,35 +582,29 @@ int PetscSolver<T>::petscExecute() {
 			 */
 
 			// Find the closest boundary pixel
-			Point4D<int> boundary = getBoundary(p);
+			Point4D<int> boundary = _getBoundary(p);
 
 			values[0] = 1;
 			values[1] = -1;
 			columns[0] = j;
-			columns[1] = pointToGlobalIndex(boundary, unknown, unknownSizes);
-			ierr = MatSetValues(A,1,&j,2,columns,values,INSERT_VALUES);CHKERRQ(ierr);
+			columns[1] = _pointToGlobalIndex(boundary, unknown, unknownSizes);
+			ierr = MatSetValues(A,1,&j,2,columns,values,INSERT_VALUES);
+				CHKERRQ(ierr);
 		}				
 	}
 
-	ierr = MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY);
-	CHKERRQ(ierr);
-	ierr = MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY);
-	CHKERRQ(ierr);
-	ierr = VecAssemblyBegin(b);
-	CHKERRQ(ierr);
-	ierr = VecAssemblyEnd(b);
-	CHKERRQ(ierr);
+	ierr = MatAssemblyBegin(A,MAT_FINAL_ASSEMBLY); CHKERRQ(ierr);
+	ierr = MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY); CHKERRQ(ierr);
+	ierr = VecAssemblyBegin(b); CHKERRQ(ierr);
+	ierr = VecAssemblyEnd(b); CHKERRQ(ierr);
 
 	ierr = KSPCreate(PETSC_COMM_WORLD, &ksp); CHKERRQ(ierr);
 	ierr = KSPSetFromOptions(ksp); CHKERRQ(ierr);
-	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN);
-	CHKERRQ(ierr);
+	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN); CHKERRQ(ierr);
 	ierr = KSPMonitorSet(ksp,KSPMonitorDefault,PETSC_NULL,PETSC_NULL);
-	CHKERRQ(ierr);
-	ierr = KSPSolve(ksp,b,x);
-	CHKERRQ(ierr);
-	ierr = KSPView(ksp, PETSC_VIEWER_STDOUT_SELF);
-	CHKERRQ(ierr);
+		CHKERRQ(ierr);
+	ierr = KSPSolve(ksp,b,x); CHKERRQ(ierr);
+	ierr = KSPView(ksp, PETSC_VIEWER_STDOUT_SELF); CHKERRQ(ierr);
 	// only the #0 Machine is supposed to write results back
 	if (this->isRankZero()) {
 		// create lookup map to convert unknown to index in the CImgList
@@ -646,16 +633,19 @@ int PetscSolver<T>::petscExecute() {
 		ierr = VecCreate(PETSC_COMM_WORLD,&result);CHKERRQ(ierr);
 		ierr = VecSetSizes(result,n,n);CHKERRQ(ierr); //local vector
 		ierr = VecSetFromOptions(result);CHKERRQ(ierr);
-		ierr = VecScatterCreate(x,PETSC_NULL,result,PETSC_NULL,&scatter);CHKERRQ(ierr);
-		ierr = VecScatterBegin(scatter,x,result,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-		ierr = VecScatterEnd(scatter,x,result,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+		ierr = VecScatterCreate(x,PETSC_NULL,result,PETSC_NULL,&scatter);
+			CHKERRQ(ierr);
+		ierr = VecScatterBegin(scatter,x,result,INSERT_VALUES,SCATTER_FORWARD);
+			CHKERRQ(ierr);
+		ierr = VecScatterEnd(scatter,x,result,INSERT_VALUES,SCATTER_FORWARD);
+			CHKERRQ(ierr);
 
-		// now 'result' contains - well - the result. The difference is, that x is a
-		// parallel vector (scattered across all machines), but 'result' is a local
-		// vector which exists only in the #0 machine
+		// now 'result' contains - well - the result. The difference is,
+		// that x is a parallel vector (scattered across all machines), but
+		// 'result' is a local vector which exists only in the #0 machine
 		PetscScalar* res;
 		// now make the result-vector available as an array of PetscScalar
-		ierr = VecGetArray(result,&res);CHKERRQ(ierr);
+		ierr = VecGetArray(result,&res); CHKERRQ(ierr);
 
 		// epxand the CImgList to the needed size
 		this->out().assign(lookup.size(),
@@ -672,7 +662,7 @@ int PetscSolver<T>::petscExecute() {
 			// go through the image
 			forRoiXYZT(globalRoi,x,y,z,t) {
 				// get the current global index
-				globalIndex = pointToGlobalIndex(Point4D<int>(x,y,z,t),
+				globalIndex = _pointToGlobalIndex(Point4D<int>(x,y,z,t),
 					lIt->first, unknownSizes);
 				// and write the results into the output slot 'out'
 				this->out()(lIt->second,
@@ -683,7 +673,7 @@ int PetscSolver<T>::petscExecute() {
 			}
 		}
 
-		ierr = VecRestoreArray(result,&res);CHKERRQ(ierr);
+		ierr = VecRestoreArray(result,&res); CHKERRQ(ierr);
 	}
 
 	// clean up
@@ -691,11 +681,77 @@ int PetscSolver<T>::petscExecute() {
 		delete usIt->second;
 	}
 
-	ierr = VecDestroy(x);CHKERRQ(ierr);
-	ierr = VecDestroy(b);CHKERRQ(ierr);
-	ierr = MatDestroy(A);CHKERRQ(ierr);
-	ierr = KSPDestroy(ksp);CHKERRQ(ierr);
+	ierr = VecDestroy(x); CHKERRQ(ierr);
+	ierr = VecDestroy(b); CHKERRQ(ierr);
+	ierr = MatDestroy(A); CHKERRQ(ierr);
+	ierr = KSPDestroy(ksp); CHKERRQ(ierr);
+
+	if (columns)
+		delete[] columns;
+	if (values)
+		delete[] values;
+
 	return 0;
+}
+
+template <typename T>
+unsigned int PetscSolver<T>::_addCrossTerms(
+		const std::map<std::string,PetscMetaStencil>& MetaStencils,
+		const std::map<std::string, const Roi<int>*>& unknownSizes,
+		const std::string& unknown,
+		const Point4D<int>& p,
+		PetscInt*& columns,
+		PetscScalar*& values) const
+{
+	unsigned int ne=0;
+	typename std::set<AbstractSlot<Stencil<T>*>*>::const_iterator sIt;
+
+	for(sIt=this->stencils.begin();sIt!=this->stencils.end();sIt++) {
+		Stencil<T>* s = (*((InputSlot<Stencil<T>*>*)*sIt))();
+		s->updateStencil(unknown,p.x,p.y,p.z,p.t);
+		const std::set<std::string>& allUnk = s->getUnknowns();
+		typename std::set<std::string>::const_iterator unk;
+		for(unk = allUnk.begin(); unk != allUnk.end(); unk++) {
+			// current unknown already handled by MetaStencil
+			if (*unk == unknown)
+				continue;
+			// skip emtpy substencils
+			const SubStencil<T>& entry = s->get().find(*unk)->second;
+			if (entry.pattern.is_empty())
+				continue;
+			assert (entry.pattern.is_sameXYZC(entry.data));
+
+			// Calculating offset
+			int xo = int(MetaStencils.find(*unk)->second.getCenter().x)
+					- int(entry.center.x);
+			int yo = int(MetaStencils.find(*unk)->second.getCenter().y)
+					- int(entry.center.y);
+			int zo = int(MetaStencils.find(*unk)->second.getCenter().z)
+					- int(entry.center.z);
+			int to = int(MetaStencils.find(*unk)->second.getCenter().t)
+					- int(entry.center.t);
+
+			// test
+			xo = yo = zo = to = 0;
+
+			cimg_forXYZC(entry.pattern,cx,cy,cz,ct) {
+				if (entry.pattern(cx,cy,cz,ct)) {
+					Point4D<int> curP(cx+xo,cy+yo,cz+zo,ct+to);
+					Point4D<int> curArg =
+							curP+Point4D<int>(p)-entry.center;
+					PetscInt curCol =
+							PetscSolver<T>::_pointToGlobalIndex(
+									curArg,
+									*unk,
+									unknownSizes);
+					columns[ne] = curCol;
+					values[ne] = entry.data(cx,cy,cz,ct);
+					ne++;
+				}
+			}
+		}
+	}
+	return ne;
 }
 
 template <typename T>

@@ -44,27 +44,36 @@ template <class T>
 class l2norm_DECLDIR L2Norm : public Stencil<T>
 {
 	private:
+		cimg_library::CImg<T> _dataMask;
+		cimg_library::CImg<T> _patternMask;
+		Point4D<unsigned int> _center;
+
+	public:
 		/// Parameter containing the number of dimensions.
 		Parameter<unsigned int> dimensions;
-		
+
 		/// ParameterList containing all unknowns of the Stencil.
 		ParameterList<std::string> pUnknowns;
-	
-	public:
+
 		/// default constructor
 		/// \param name instance name
 		L2Norm(const std::string& name = "");
-		
+
 		/// \copydoc ParameteredObject::execute()
 		virtual void execute();
-		
-		virtual void updateStencil(const unsigned int, const unsigned int,
-		                           const unsigned int, const unsigned int,
-		                           const unsigned int);
-		
-		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
-		                                    const unsigned int frame) const;
-		
+
+		virtual void updateStencil(
+				const std::string& unknown,
+				const unsigned int x=0,
+				const unsigned int y=0,
+				const unsigned int z=0,
+				const unsigned int t=0,
+				const unsigned int v=0);
+
+		virtual cimg_library::CImg<T> apply(
+				const cimg_library::CImgList<T>& seq,
+				const unsigned int frame) const;
+
 		virtual ~L2Norm();
 };
 

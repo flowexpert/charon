@@ -76,18 +76,40 @@ void Gbcce<T>::execute() {
 }
 
 template <class T>
-void Gbcce<T>::updateStencil(const unsigned int x,const unsigned int y,
-                             const unsigned int z,const unsigned int t,
-                             const unsigned int v) {
+void Gbcce<T>::updateStencil(
+		const std::string& unknown,
+		const unsigned int x,
+		const unsigned int y,
+		const unsigned int z,
+		const unsigned int t,
+		const unsigned int v) {
 	std::map<std::string, T> term;
-	T rhsV=0;
-	this->brightnessIn()->compute(x, y, z, t, v, term, rhsV);
-	this->motionIn()->compute(x, y, z, t, v, term, rhsV);
-	typename std::map<std::string,T>::iterator termIt;	//term Iterator
+	T rhsTemp = 0;
+
+	// collect unknowns
+	const std::set<std::string>& mUnknowns = motionIn()->getUnknowns();
+	const std::set<std::string>& bUnknowns = brightnessIn()->getUnknowns();
+	std::set<std::string> allUnknowns;
+	allUnknowns.insert(bUnknowns.begin(), bUnknowns.end());
+	allUnknowns.insert(mUnknowns.begin(), mUnknowns.end());
+
+	// initialize term for all unknowns
+	std::set<std::string>::const_iterator unkIt;
+	for (unkIt = allUnknowns.begin(); unkIt != allUnknowns.end(); unkIt++)
+		term[*unkIt] = T(0);
+
+	// compute term
+	this->brightnessIn()->compute(x, y, z, t, v, term, rhsTemp, unknown);
+	this->motionIn()->compute(x, y, z, t, v, term, rhsTemp, unknown);
+
+	// and fill into substencils
+	typename std::map<std::string,T>::iterator termIt;
 	for(termIt=term.begin();termIt!=term.end();termIt++) {
-		this->substencils[termIt->first].data(0,0) = termIt->second * this->lambda();
-		this->rhs[termIt->first] = rhsV * termIt->second * this->lambda();
+		const T val = termIt->second * this->lambda();
+		this->substencils[termIt->first].data(0,0) = val;
 	}
+	rhsTemp *= this->lambda();
+	this->rhs[unknown] = rhsTemp;
 }
 
 //not yet implemented

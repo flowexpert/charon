@@ -50,34 +50,29 @@ class gbcce_DECLDIR Gbcce : public Stencil<T>
 	public:
 		/// InputSlot for the brightness model to use.
 		InputSlot<BrightnessModel<T>*> brightnessIn;
-		
+
 		/// InputSlot for the motion model to use.
 		InputSlot<MotionModel<T>*> motionIn;
-		
+
 		/// default constructor
 		Gbcce(const std::string& name = "" /**[in] instance name*/);
-		
+
 		/// main function
 		virtual void execute();
-		
-		/// update
-		/**
-		 *	update the Stencil to contain the data that corresponds to the
-		 *	given coordinates.
-		 *	\param[in] x,y,z,t,v	coordinates
-		 */
-		virtual void updateStencil(const unsigned int x, const unsigned int y,
-		                   const unsigned int z=0, const unsigned int t=0,
-		                   const unsigned int v=0);
-		
-		/**
-		 * apply the stencil to a sequence.
-		 * @remark not yet implemented.
-		 */
-		virtual cimg_library::CImg<T> apply(const cimg_library::CImgList<T>& seq,
-		                                    const unsigned int frame) const;
 
-		
+		virtual void updateStencil(
+				const std::string& unknown,
+				const unsigned int x=0,
+				const unsigned int y=0,
+				const unsigned int z=0,
+				const unsigned int t=0,
+				const unsigned int v=0);
+
+		virtual cimg_library::CImg<T> apply(
+				const cimg_library::CImgList<T>& seq,
+				const unsigned int frame) const;
+
+
 		virtual ~Gbcce();
 };
 

@@ -41,21 +41,29 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 	// stencil iterator
 	typename std::vector<Stencil<T>*>::const_iterator sIt;
 	for (sIt=stencils.begin() ; sIt != stencils.end() ; sIt++) {
-		// SubStencil iterator
-		typename std::map<std::string, SubStencil<T> >::const_iterator ssIt;
-		ssIt = (*sIt)->get().find(unknown);
-		//setting work-variable for better reading
-		unsigned int centerx = ssIt->second.center.x;
-		unsigned int centery = ssIt->second.center.y;
-		unsigned int centerz = ssIt->second.center.z;
-		unsigned int centert = ssIt->second.center.t;
+		// update stencil for given unknown (pattern/center may depend)
+		(*sIt)->updateStencil(unknown);
+
+		// find substencil for current unknown and skip emtpy ones
+		const std::map<std::string, SubStencil<T> >& curSub = (*sIt)->get();
+		typename std::map<std::string, SubStencil<T> >::const_iterator found;
+		found = curSub.find(unknown);
+		assert(found != curSub.end());
+		if (found->second.pattern.is_empty())
+			continue;
+
+		// setting work-variable for better reading
+		unsigned int centerx = found->second.center.x;
+		unsigned int centery = found->second.center.y;
+		unsigned int centerz = found->second.center.z;
+		unsigned int centert = found->second.center.t;
 
 		// Measuring the SubStencil that is currently being added
 		// to the MetaStencil
-		int width    = ssIt->second.pattern.width();
-		int height   = ssIt->second.pattern.height();
-		int depth    = ssIt->second.pattern.depth();
-		int duration = ssIt->second.pattern.spectrum();
+		int width    = found->second.pattern.width();
+		int height   = found->second.pattern.height();
+		int depth    = found->second.pattern.depth();
+		int duration = found->second.pattern.spectrum();
 		// remember the re-declaration of the v-dimension of CImg
 		// to be the time axis? Yeah, right ;-)
 
@@ -86,7 +94,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 		if (duration-centert-1 > this->after)    {this->after = duration-centert-1;}
 
 		// push_back the address of the just measured SubStencil
-		this->substencils.push_back( &(ssIt->second) );
+		this->substencils.push_back( &(found->second) );
 	}
 
 	// expand the MetaStencil CImg to the appropriate size

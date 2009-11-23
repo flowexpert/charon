@@ -35,22 +35,21 @@
 #define motionmodel_DECLDIR
 #endif
 
-#include "Derivative.h"
+//#include "Derivative.h"
 #include "FlowFunctorInterface.h"
 #include "IncrementorParameter.h"
 #include "Pixel.h"
 #include <set>
 
 /// abstract base class for the different motion models
+/** If you need some input slots implementing your own MotionModel,
+ *  you have to add them in your derived classs.
+ */
 template<class T>
 class MotionModel: public TemplatedParameteredObject<T>
 {
 protected:
-
-	/*	Berechnet die ben�tigten Ableitungen f�r das gesamte Bild,
-	 so dass diese nicht punktweise berechnet werden m�ssen */
-	//virtual void calculateDerivatives()=0;
-
+	/// unknowns handled by this motion model
 	std::set<std::string> unknowns;
 
 public:
@@ -58,16 +57,16 @@ public:
 	MotionModel(const std::string& classname, const std::string& name = "") :
 		TemplatedParameteredObject<T>(classname, name, "computes the vectors")
 	{
-		this->_addOutputSlot(out, "this", "Pointer to itself", "MotionModel<T>");
+		this->_addOutputSlot(out, "this",
+				"Pointer to itself", "MotionModel<T>");
 		this->_addOutputSlot(flowFunctor, "flowfunctor",
 				"flowFunctor of MotionModel", "FlowFunctorInterface*");
-		this->_addParameter(x, "x", "x-coordinate of the center of the stencil", 0);
-		this->_addParameter(y, "y", "y-coordinate of the center of the stencil", 0);
-		this->_addParameter(z, "z", "z-coordinate of the center of the stencil", 0);
-
-		// Define inputslots in derived class
-		//_addInputSlot(img, "image","Image to work with","image");
-		//_addInputSlot(deriv, "deriv","Derivative-Class","Derivative*");
+		this->_addParameter(x, "x",
+				"x-coordinate of the center of the stencil", 0);
+		this->_addParameter(y, "y",
+				"y-coordinate of the center of the stencil", 0);
+		this->_addParameter(z, "z",
+				"z-coordinate of the center of the stencil", 0);
 		out = this;
 	}
 
@@ -80,19 +79,25 @@ public:
 	/// output slot containing pointer to the flow functor of the motion model
 	OutputSlot<FlowFunctorInterface*> flowFunctor;
 
-	/// coordinates of center of mask
+	/// \name coordinates of center of mask
+	//\{
 	Parameter<int> x, y, z;
+	//\}
 
 	/// compute the bcce-term of the motion model
 	/**
-	 *	@param xs,ys,zs     coordinates of the current pixel
-	 *	@param t            current time
-	 *	@param v            channel
-	 *	@param x,y,z        coordinates of the center of motion
-	 *	@param[out] rhs     image in which the bcce-term is written
+	 *  \param[in]  xs,ys,zs  coordinates of the current pixel
+	 *  \param[in]  t         current time
+	 *  \param[in]  v         channel
+	 *  \param[out] term      pre factor for each unknown
+	 *  \param[out] rhs       T in which the bcce-term is written
+	 *  \param[in]  unknown   name of the unknown to compute the term for
+	 *                        (this is used for global methods)
 	 */
-	virtual void compute(const int xs, const int ys, const int zs, const int t,
-			const int v, std::map<std::string, T>& term, T& rhs)=0;
+	virtual void compute(
+			const int xs, const int ys, const int zs, const int t,
+			const int v, std::map<std::string, T>& term, T& rhs,
+			const std::string& unknown = "") = 0;
 
 	// returns the width of the bcce-terms
 	// @details = number of parameters of the model + 1

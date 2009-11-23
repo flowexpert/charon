@@ -52,9 +52,6 @@ template <typename T>
 class petscsolver_DECLDIR PetscSolver : public Solver<T>
 {
 protected:
-	PetscInt*		columns;
-	PetscScalar*	values;
-
 	/// MetaStencil implementation for usage with PETSc
 	class PetscMetaStencil : public Solver<T>::MetaStencil
 	{
@@ -71,17 +68,19 @@ protected:
 
 		/// update columns and values
 		/**
-		 *	Write data from SubStencils into PetscScalar* values and
-		 *	their indices into PetscInt* columns.
-		 *	@param[in]  unknownSizes  sizes of matrix blocks.
-		 *	@param[out] columns       Array of column indices for MatSetValues.
-		 *	@param[out] values        Array of values for MatSteValues.
-		 *	@return                   Number of entries.
+		 *  Write data from SubStencils into PetscScalar* values and
+		 *  their indices into PetscInt* columns.
+		 *  \param[in]  unknown       current unknown
+		 *  \param[in]  p             current point
+		 *  @param[in]  unknownSizes  sizes of matrix blocks.
+		 *  @param[out] columns       Array of column indices for MatSetValues.
+		 *  @param[out] values        Array of values for MatSteValues.
+		 *  @return                   Number of entries.
 		 */
 		unsigned int update(
-				const std::string unknown /**[in] current unknown*/,
-				const Point4D<unsigned int>& p /**[in] current point*/,
-				const std::map<std::string,const Roi<int>* >& unknownSizes,
+				const std::string unknown,
+				const Point4D<unsigned int>& p,
+				const std::map<std::string,const Roi<int>*>& unknownSizes,
 				PetscInt*& columns,
 				PetscScalar*& values);
 	};
@@ -92,7 +91,7 @@ protected:
 	 *	@see getCoordinate()
 	 *	@return                       Relative vector index.
 	 */
-	static unsigned int pointToRelativeIndex(
+	static unsigned int _pointToRelativeIndex(
 			const Point4D<int>& p /**[in] point to convert*/,
 			const Roi<int>& dim   /**[in] dimensions of the ROI around p*/);
 
@@ -106,7 +105,7 @@ protected:
 	 *	@see getCoordinate()
 	 *	@return                       Global vector index.
 	 */
-	static unsigned int relativeIndexToGlobalIndex(
+	static unsigned int _relativeIndexToGlobalIndex(
 			const unsigned int i,
 			const std::string& unknown,
 			const std::map<std::string,const Roi<int>* >& unknownSizes);
@@ -128,7 +127,7 @@ protected:
 	 *	@see getIndex()
 	 *	@see getVectorIndex()
 	 */
-	static void globalIndexToPoint(
+	static void _globalIndexToPoint(
 			const unsigned int vi,
 			const std::map<std::string, const Roi<int>* >& unknownSizes,
 			std::string& unknown, Point4D<int>& p);
@@ -140,7 +139,7 @@ protected:
 	 *	@param[in] unknownSizes       Map of ROIs associated to their unknown
 	 *	@return                       global index
 	 */
-	static unsigned int pointToGlobalIndex(
+	static unsigned int _pointToGlobalIndex(
 			const Point4D<int>& p,
 			const std::string& unknown,
 			const std::map<std::string, const Roi<int>* >& unknownSizes);
@@ -154,7 +153,26 @@ protected:
 	 *	                              coordinates of the closest boundary
 	 *	                              pixel of the unexpanded ROI
 	 */
-	Point4D<int> getBoundary(Point4D<int>& p) const;
+	Point4D<int> _getBoundary(Point4D<int>& p) const;
+
+	/// Add cross terms which are not handled by MetaStencil
+	/**
+	 *  \param[in] MetaStencils       Meta Stencil list
+	 *  \param[in] unknownSizes       Map of ROIs associated to their unknown
+	 *  \param[in] unknown            currently handled unknown
+	 *  \param[in] p                  currently handled point
+	 *                                (has to be a real point)
+	 *  @param[out] columns           Array of column indices for MatSetValues.
+	 *  @param[out] values            Array of values for MatSteValues.
+	 *  @return                       Number of entries.
+	 */
+	unsigned int _addCrossTerms(
+			const std::map<std::string,PetscMetaStencil>& MetaStencils,
+			const std::map<std::string, const Roi<int>*>& unknownSizes,
+			const std::string& unknown,
+			const Point4D<int>& p,
+			PetscInt*& columns,
+			PetscScalar*& values) const;
 
 public:
 	/// default constructor

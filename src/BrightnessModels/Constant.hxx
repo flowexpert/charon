@@ -45,9 +45,10 @@ std::set<std::string>& BrightnessModels::Constant<T>::getUnknowns()
 }
 
 template<class T>
-void BrightnessModels::Constant<T>::compute(const int , const int ,
-		const int , const int , const int , std::map<std::string, T>& ,
-		T&)
+void BrightnessModels::Constant<T>::compute(
+		const int , const int , const int , const int , const int ,
+		std::map<std::string, T>& , T&,
+		const std::string&)
 {
 	// no brightness change
 }

@@ -38,85 +38,64 @@ std::set<std::string>& MotionModels::LocalConstant<T>::getUnknowns()
 {
 	this->unknowns.insert("a1");
 	this->unknowns.insert("a2");
-	if (is3d)
+	if (dz.connected())
 		this->unknowns.insert("a3");
 	return this->unknowns;
 }
 
 template<class T>
-void MotionModels::LocalConstant<T>::compute(const int xs, const int ys,
-		const int zs, const int t, const int v, std::map<std::string, T>& term,
-		T& rhs)
+void MotionModels::LocalConstant<T>::compute(
+		const int xs, const int ys, const int zs, const int t, const int v,
+		std::map<std::string, T>& term, T& rhs,
+		const std::string& unknown)
 {
-	// 	cout << " HOP" << endl;
-	// 	cout << (is3d? "ja" : "ne");
-	// 	cout << ",xs " << xs;
-	// 	cout << ",ys " << ys;
-	// 	cout << ",zs " << zs;
-	// 	cout << ",t " << t;
-	// 	cout << ",v " << v;
-	// 	cout << "HIP" << endl;
-	if (is3d)
-	{
-		//cout  << "3d" << endl;
-		//cout << "ret.width: " << ret.width << endl;
-		//		assert(ret.width == 4);
-		//		ret = CImg<>::vector(
-		//			dt()(t,xs,ys,zs,v),
-		//			dx()(t,xs,ys,zs,v),
-		//			dy()(t,xs,ys,zs,v),
-		//			dz()(t,xs,ys,zs,v)
-		//			).transpose();
-		rhs += this->dt()(v, xs, ys, zs, t);
-		term["a1"] += this->dx()(v, xs, ys, zs, t);
-		term["a2"] += this->dy()(v, xs, ys, zs, t);
-		term["a3"] += this->dz()(v, xs, ys, zs, t);
-	}
-	else
-	{
-		// 		cout  << "2d" << endl;
-		//
-		// 		/*dt()[0].print("dt");
-		// 		dx()[0].print("dx");
-		// 		dy()[0].print("dy");
-		// 		*/
-		// 		dt().print("dt");
-		// 		dx().print("dx");
-		// 		dy().print("dy");
-		//
-		// 		cout << "HEP" <<endl;
+	if(!dz.connected())
+		assert(zs == 0u); // 2D only
 
-		//		assert(ret.width == 3);
-		//		ret = CImg<>::vector(
-		//			dt()(0,xs,ys,t,v),
-		//			dx()(0,xs,ys,t,v),
-		//			dy()(0,xs,ys,t,v)
-		//			).transpose();
-		rhs += this->dt()(0, xs, ys, t, v);
-		term["a1"] += this->dx()(0, xs, ys, t, v);
-		term["a2"] += this->dy()(0, xs, ys, t, v);
+	T values[4u] = {
+		this->dx()(v, xs, ys, zs, t),
+		this->dy()(v, xs, ys, zs, t),
+		dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0),
+		this->dt()(v, xs, ys, zs, t)
+	};
+	if (unknown.length()) {
+		T factor = 1.;
+		if (unknown == "a1")
+			factor = values[0];
+		else if (unknown == "a2")
+			factor = values[1];
+		else if (dz.connected() && unknown == "a3")
+			factor = values[2];
+		else {
+			std::ostringstream msg;
+			msg << __FILE__ << ":" << __LINE__ << std::endl;
+			msg << "\tInvalid Unknown given!" << std::endl;
+			msg << "\tGiven unknown: \"" << unknown << "\"";
+			throw std::out_of_range(msg.str().c_str());
+		}
+		for(unsigned int i=0; i<4u; i++)
+			values[i] *= factor;
 	}
-	//return r;
+	term["a1"] += values[0];
+	term["a2"] += values[1];
+	if (dz.connected())
+		term["a3"] += values[2];
+	rhs += values[3];
 }
 
 template<class T>
 MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
-	MotionModel<T>::MotionModel("motionmodels_localconstant", name), flowfunc()
+		MotionModel<T>::MotionModel("motionmodels_localconstant", name),
+		flowfunc(),
+		dz(true, false)  // dz is optional, for handling 3D flows
 {
 	_addInputSlot(dx, "dx", "derivation in x", "CImgList<T>");
 	_addInputSlot(dy, "dy", "derivation in y", "CImgList<T>");
-	_addInputSlot(dz, "dz", "derivation in z", "CImgList<T>");
+	_addInputSlot(dz, "dz", "derivation in z (for 3D mode)", "CImgList<T>");
 	_addInputSlot(dt, "dt", "derivation in t", "CImgList<T>");
 
 	this->setFlowFunctorParams(.5f, .4f, .3f);
 	this->flowFunctor = &flowfunc;
-}
-
-template<class T>
-void MotionModels::LocalConstant<T>::execute()
-{
-	ParameteredObject::execute();
-	this->is3d = !(this->dx().is_sameN(1));
 }
 
 template<class T>

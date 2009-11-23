@@ -47,10 +47,6 @@ template<class T>
 class brightnessmodel_DECLDIR BrightnessModel: public TemplatedParameteredObject<T>
 {
 protected:
-	virtual void initialize()
-	{
-	}
-
 	/// Set of unknowns
 	std::set<std::string> unknowns;
 
@@ -79,27 +75,23 @@ public:
 	/// imagelist to work on
 	InputSlot<cimg_library::CImgList<T> > img;
 
-	/// updates the motionmodel
-	virtual void execute()
-	{
-		ParameteredObject::execute();
-		initialize();
-		//_outDataChanged(out); // TODO datenpfad
-	}
-
-	///	compute the bcce term
-	/**	@param xs,ys,zs,t,v  coordinates (5D)
-	 *	@param term          map to which the result is written
-	 *	@param rhs           right hand side
+	/// compute the bcce term
+	/** @param xs,ys,zs,t,v  coordinates (5D)
+	 *  @param term          map to which the result is written
+	 *  @param rhs           right hand side
+	 *  \param unknown       name of the unknown to compute the term for
+	 *                       (this is used for global methods)
 	 */
-	virtual void compute(const int xs, const int ys, const int zs, const int t,
-			const int v, std::map<std::string, T>& term, T& rhs) = 0;
-	
+	virtual void compute(
+			const int xs, const int ys, const int zs,
+			const int t, const int v,
+			std::map<std::string, T>& term, T& rhs,
+			const std::string& unknown = "") = 0;
 	/**
 	 * Get the unknowns of the model.
 	 * @return Set of strings which contains the names of the unknowns
 	 */
-	virtual std::set<std::string>& getUnknowns() =0;
+	virtual std::set<std::string>& getUnknowns() = 0;
 
 	/** 
 	 *  compute brightness changes with the inserted Parameters

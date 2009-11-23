@@ -26,15 +26,15 @@
 #include <CImg.h>
 
 /// Interface class for the functor of brightness change
+/// \todo convert to 3D handling and CImgList
 template <typename T>
 class BrightnessFunctorInterface
 {
 public:
-	/**
-	 *        applies a change of brightness to the sequence
-	 * @param sequence sequence to work on
+	/** applies a change of brightness to the sequence
+	 *  @param sequence sequence to work on
 	 */
-	virtual void operator() (cimg_library::CImg<T>& sequence) const = 0;  //TODO auf 3D und CImgList umstellen
+	virtual void operator() (cimg_library::CImg<T>& sequence) const = 0;
 	virtual void get3d(cimg_library::CImgList<T>& sequence) const = 0;
 };
 
