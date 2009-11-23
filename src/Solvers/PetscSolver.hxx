@@ -721,24 +721,10 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 				continue;
 			assert (entry.pattern.is_sameXYZC(entry.data));
 
-			// Calculating offset
-			int xo = int(MetaStencils.find(*unk)->second.getCenter().x)
-					- int(entry.center.x);
-			int yo = int(MetaStencils.find(*unk)->second.getCenter().y)
-					- int(entry.center.y);
-			int zo = int(MetaStencils.find(*unk)->second.getCenter().z)
-					- int(entry.center.z);
-			int to = int(MetaStencils.find(*unk)->second.getCenter().t)
-					- int(entry.center.t);
-
-			// test
-			xo = yo = zo = to = 0;
-
 			cimg_forXYZC(entry.pattern,cx,cy,cz,ct) {
 				if (entry.pattern(cx,cy,cz,ct)) {
-					Point4D<int> curP(cx+xo,cy+yo,cz+zo,ct+to);
-					Point4D<int> curArg =
-							curP+Point4D<int>(p)-entry.center;
+					Point4D<int> curArg(cx,cy,cz,ct);
+					curArg += Point4D<int>(p) - entry.center;
 					PetscInt curCol =
 							PetscSolver<T>::_pointToGlobalIndex(
 									curArg,

@@ -162,9 +162,10 @@ protected:
 	 *  \param[in] unknown            currently handled unknown
 	 *  \param[in] p                  currently handled point
 	 *                                (has to be a real point)
-	 *  @param[out] columns           Array of column indices for MatSetValues.
-	 *  @param[out] values            Array of values for MatSteValues.
-	 *  @return                       Number of entries.
+	 *  \param[out] columns           Array of column indices for MatSetValues.
+	 *  \param[out] values            Array of values for MatSteValues.
+	 *  \return                       Number of entries.
+	 *  \todo    check for duplicate entries still missing
 	 */
 	unsigned int _addCrossTerms(
 			const std::map<std::string,PetscMetaStencil>& MetaStencils,
