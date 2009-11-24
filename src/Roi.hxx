@@ -293,7 +293,7 @@ void Roi<T>::print(std::ostream& strm) const {
 }
 
 template <typename T>
-std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi) {
+roi_DECLDIR std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi) {
 	strm << "x:[" << roi.xBegin() << "," << roi.xEnd() << "), ";
 	strm << "y:[" << roi.yBegin() << "," << roi.yEnd() << "), ";
 	strm << "z:[" << roi.zBegin() << "," << roi.zEnd() << "), ";

@@ -182,7 +182,7 @@ public:
 /// @param strm             output stream
 /// @param roi              roi instance to print
 template<typename T>
-std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi);
+roi_DECLDIR std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi);
 
 /// for loop over the x dimension
 #define forRoiX(roi,x)		for(int x=(int)((roi).xBegin); x<(int)((roi).xEnd); ++x)
