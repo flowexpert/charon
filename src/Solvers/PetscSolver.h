@@ -157,21 +157,19 @@ protected:
 
 	/// Add cross terms which are not handled by MetaStencil
 	/**
-	 *  \param[in] MetaStencils       Meta Stencil list
-	 *  \param[in] unknownSizes       Map of ROIs associated to their unknown
 	 *  \param[in] unknown            currently handled unknown
 	 *  \param[in] p                  currently handled point
 	 *                                (has to be a real point)
+	 *  \param[in] unknownSizes       Map of ROIs associated to their unknown
 	 *  \param[out] columns           Array of column indices for MatSetValues.
 	 *  \param[out] values            Array of values for MatSteValues.
 	 *  \return                       Number of entries.
 	 *  \todo    check for duplicate entries still missing
 	 */
 	unsigned int _addCrossTerms(
-			const std::map<std::string,PetscMetaStencil>& MetaStencils,
-			const std::map<std::string, const Roi<int>*>& unknownSizes,
 			const std::string& unknown,
 			const Point4D<int>& p,
+			const std::map<std::string, const Roi<int>*>& unknownSizes,
 			PetscInt*& columns,
 			PetscScalar*& values) const;
 

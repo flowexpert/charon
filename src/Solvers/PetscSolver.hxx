@@ -563,9 +563,7 @@ int PetscSolver<T>::petscExecute() {
 				CHKERRQ(ierr);
 
 			// add missing entries (cross terms)
-			ne = _addCrossTerms(
-					MetaStencils, unknownSizes, unknown,
-					p, columns, values);
+			ne = _addCrossTerms(unknown, p, unknownSizes, columns, values);
 			ierr = MatSetValues(A,1,&j,ne,columns,values,INSERT_VALUES);
 				CHKERRQ(ierr);
 
@@ -696,15 +694,14 @@ int PetscSolver<T>::petscExecute() {
 
 template <typename T>
 unsigned int PetscSolver<T>::_addCrossTerms(
-		const std::map<std::string,PetscMetaStencil>& MetaStencils,
-		const std::map<std::string, const Roi<int>*>& unknownSizes,
 		const std::string& unknown,
 		const Point4D<int>& p,
+		const std::map<std::string, const Roi<int>*>& unknownSizes,
 		PetscInt*& columns,
 		PetscScalar*& values) const
 {
-	unsigned int ne=0;
 	typename std::set<AbstractSlot<Stencil<T>*>*>::const_iterator sIt;
+	std::map<PetscInt, PetscScalar> matrixEntries;
 
 	for(sIt=this->stencils.begin();sIt!=this->stencils.end();sIt++) {
 		Stencil<T>* s = (*((InputSlot<Stencil<T>*>*)*sIt))();
@@ -730,14 +727,21 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 									curArg,
 									*unk,
 									unknownSizes);
-					columns[ne] = curCol;
-					values[ne] = entry.data(cx,cy,cz,ct);
-					ne++;
+					// int() should initialize to zero in std::map,
+					// if errors occur here, add further checks
+					matrixEntries[curCol] += entry.data(cx,cy,cz,ct);
 				}
 			}
 		}
 	}
-	return ne;
+	unsigned int cur=0;
+	typename std::map<PetscInt, PetscScalar>::const_iterator entIt;
+	for (entIt = matrixEntries.begin(); entIt != matrixEntries.end(); entIt++) {
+		columns[cur] = entIt->first;
+		values[cur] = entIt->second;
+		cur++;
+	}
+	return matrixEntries.size();
 }
 
 template <typename T>

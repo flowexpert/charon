@@ -53,10 +53,10 @@ void MotionModels::LocalConstant<T>::compute(
 		assert(zs == 0u); // 2D only
 
 	T values[4u] = {
-		this->dx()(v, xs, ys, zs, t),
-		this->dy()(v, xs, ys, zs, t),
-		dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0),
-		this->dt()(v, xs, ys, zs, t)
+		this->dx()(v, xs, ys, zs, t),                          // I_x
+		this->dy()(v, xs, ys, zs, t),                          // I_y
+		dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0),  // I_z
+		this->dt()(v, xs, ys, zs, t)                           // I_t
 	};
 	if (unknown.length()) {
 		T factor = 1.;
@@ -75,12 +75,12 @@ void MotionModels::LocalConstant<T>::compute(
 		}
 		for(unsigned int i=0; i<4u; i++)
 			values[i] *= factor;
-	}
-	term["a1"] += values[0];
-	term["a2"] += values[1];
+	}                            //    (optional - if unknown set)
+	term["a1"] += values[0];     // +I_x (I_u)
+	term["a2"] += values[1];     // +I_y (I_u)
 	if (dz.connected())
-		term["a3"] += values[2];
-	rhs += values[3];
+		term["a3"] += values[2]; // +I_z (I_u)
+	rhs -= values[3];            // -I_t (I_u)
 }
 
 template<class T>
