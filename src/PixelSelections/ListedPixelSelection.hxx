@@ -46,7 +46,7 @@ void ListedPixelSelection<T>::execute()
 					pixel->setY((T) y);
 					pixel->setZ((T) z);
 					pixel->setT((T) t);
-					for (unsigned int i = 0; i < this->sequence().size; i++)
+					for (unsigned int i = 0; i < this->sequence().size(); i++)
 					{
 						pixel->pushBackIntensity(
 								this->sequence()(i, x, y, z, t));
