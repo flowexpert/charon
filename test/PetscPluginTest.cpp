@@ -34,15 +34,6 @@
 #include <charon-utils/FileReader.h>
 #include <charon-utils/FileWriter.h>
 
-#ifndef CMAKE_INTDIR
-/// suffix to local plugin dir
-/**	in MSVC this is set to "Debug"
- *	on debug builds and to "Release"
- *	on release builds.
- */
-#define CMAKE_INTDIR
-#endif
-
 int main() {
 	// test creation of all necessary objects
 	delete new FileReader<float>("reader");

@@ -59,7 +59,7 @@ void MotionModels::LocalConstant<T>::compute(
 		this->dt()(v, xs, ys, zs, t)                           // I_t
 	};
 	if (unknown.length()) {
-		T factor = 1.;
+		T factor = T(1);
 		if (unknown == "a1")
 			factor = values[0];
 		else if (unknown == "a2")
