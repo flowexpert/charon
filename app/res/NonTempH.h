@@ -72,8 +72,8 @@ public:
     {
         // parameters
         @addParameter@
-        _addParameter (par1, "par1", "sample integer parameter");
-        _addParameter (par2, "par2", "sample float parameter");
+        _addParameter(par1, "par1", "sample integer parameter","defVal");
+        _addParameter(par2, "par2", "sample float parameter");
 
         // slots
         @addSlot@

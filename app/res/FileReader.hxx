@@ -30,7 +30,7 @@ FileReader<T>::FileReader(const std::string& name) :
         TemplatedParameteredObject<T>("filereader", name,
             "read image from image file using cimg")
 {
-    this->_addParameter (filename, "filename",
+    ParameteredObject::_addParameter (filename, "filename",
         "filename to read image from", "filename");
     this->_addOutputSlot(out, "out",
         "image output", "CImgList<T>");

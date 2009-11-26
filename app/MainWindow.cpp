@@ -107,15 +107,18 @@ MainWindow::MainWindow(QWidget *parent)
 	QPushButton* nextButton2 = new QPushButton (tr("&Weiter"));
 	QTableWidget* table2 = new QTableWidget(5, 4, page2);
 	_check1 = new QCheckBox(tr("templated Plugin"));
-	QSpacerItem* spacertable1 = new QSpacerItem(20,20, QSizePolicy::Minimum, QSizePolicy::Minimum);
 	QStringList longerList = (QStringList() << "Name" << "Input/Output" << "Documentation" << "Typ");
 	table2->setHorizontalHeaderLabels(longerList);
+	table2->verticalHeader()->hide();
+	table2->horizontalHeader()->setStretchLastSection(true);
 	_inputIOName1 = new QLineEdit(page2);
 	_inputIOName2 = new QLineEdit(page2);
 	_inputIOName3 = new QLineEdit(page2);
 	_inputIOName4 = new QLineEdit(page2);
 	_inputIOName5 = new QLineEdit(page2);
 	_inputIODocumentation = new QTextEdit(page2);
+	// do not accept TAB as input
+	_inputIODocumentation->setTabChangesFocus(true);
 	_inputIOTyp = new QLineEdit(page2);
 	/*_check2 = new QCheckBox(page2);
 	_check3 = new QCheckBox(tr("Parameter2"));
@@ -146,12 +149,16 @@ MainWindow::MainWindow(QWidget *parent)
 	table2->setCellWidget(0,2,_inputIODocumentation);
 	table2->setCellWidget(0,1,_combo1);
 	table2->setCellWidget(1,1,combo2);
+	table2->resizeColumnsToContents();
 	layout2->addWidget(_check1,1,1);
 	layout2->addWidget(table2,3,1);
-	layout2->addItem(spacertable1,3,2);
 	//layout2->setColumnStretch(4,1);
 	buttonlayout2->addItem(spacer2);
 	buttonlayout2->addWidget(nextButton2);
+
+	// get line edit back from table ;-)
+	QLineEdit* bla = qobject_cast<QLineEdit*>(table2->cellWidget(0,0));
+
 
 
 	connect(nextButton2,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
@@ -278,7 +285,7 @@ void MainWindow::_save() {
 			newTempHeader.replace("@In/Out@","");
 
 		if(!QString(_inputParaName->text()).isEmpty()){
-			newTempHeader.replace("@Parameter@",QString("@Documentation@ \n Parameter<@Typ@> @ParameterName@;"));
+			newTempHeader.replace("@Parameter@",QString("@Documentation@ \n Parameter<@Typ@> @ParameterName@;\n@Parameter@"));
 			newTempHeader.replace("@ParameterName@",_inputParaName->text());
 			newTempHeader.replace("@Typ@",_inputParaTyp->text());
 			newTempHeader.replace("@Documentation@",_inputParaDocumentation->toPlainText());
@@ -355,7 +362,9 @@ void MainWindow::_save() {
 
 		if(!QString(_inputParaName->text()).isEmpty()){
 
-		newTempHxx.replace("@Parameter@",QString("this->_addParameter (@ParaName@, \"@ParaName@\", \"@Documentation@\", \"@Default@\");"));
+		newTempHxx.replace("@Parameter@",QString("this->_addParameter "
+			"(@ParaName@, \"@ParaName@\", \"@Documentation@\", "
+			"\"@Default@\");"));
 		newTempHxx.replace("@ParaName@",_inputParaName->text());
 		newTempHxx.replace("@Documentation@",_inputParaDocumentation->toPlainText());
 		newTempHxx.replace("@Default@",_inputParaDefault->text());
@@ -365,8 +374,12 @@ void MainWindow::_save() {
 
 		if(!QString(_inputIOName1->text()).isEmpty()){
 
-		if(_combo1->currentIndex() == 1){
-		newTempHxx.replace("@In/Out@",QString("this->_addOutputSlot(@IOName@, \"@IOName@\", \"@Documentation@\", \"CImgList<@Typ@>\");"));}
+		if (_combo1->currentIndex() == 1) {
+			newTempHxx.replace(
+					"@In/Out@",
+					QString("this->_addOutputSlot(@IOName@, \"@IOName@\", "
+							"\"@Documentation@\", \"CImgList<@Typ@>\");"));
+		}
 		else
 		newTempHxx.replace("@In/Out@",QString("this->_addInputSlot(@IOName@, \"@IOName@\", \"@Documentation@\", \"CImgList<@Typ@>\");"));
 

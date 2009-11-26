@@ -72,7 +72,10 @@ private:
 
 private slots:
 	void _showHello();
-	void _save();			///< constructs new files an writes chosen parameters/slots
+	/// constructs new files an writes chosen parameters/slots
+	/** This replaces @...@ by ...
+	 */
+	void _save();
 	void _selectOutputDir();	///< browse to output directory
 	/// restore window geometry
 	void _readSettings();

@@ -20,15 +20,16 @@
 /// @author @Author@
 /// @date 20.08.2009
 
-#ifndef _@pluginName@_HXX_
-#define _@pluginName@_HXX_
+#ifndef _@pluginNameUpper@_HXX_
+#define _@pluginNameUpper@_HXX_
 
 #include "@pluginName@.h"
 
+/// @PluginDoc@
 template <typename T>
 @pluginName@<T>::@pluginName@(const std::string& name) :
         TemplatedParameteredObject<T>("@pluginName@", name,
-            "read image from image file using cimg")
+            "@PluginDoc@")
 {
 
     @Parameter@
@@ -41,7 +42,8 @@ template <typename T>
 template <typename T>
 void @pluginName@<T>::execute() {
 	ParameteredObject::execute();
-    out().load(filename().c_str());
+
+	// your code goes here :-)
 }
 
-#endif /* _FILEREADER_HXX_ */
+#endif /* _@pluginNameUpper@_HXX_ */

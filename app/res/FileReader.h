@@ -51,10 +51,10 @@ template <typename T>
 class filereader_DECLDIR FileReader : public TemplatedParameteredObject<T> {
 public:
     /// filename to read image from
-    Parameter<std::string> filename;
+    Parameter< std::string > filename;
 
     /// image data as output slot
-    OutputSlot<cimg_library::CImgList<T> > out;
+    OutputSlot< cimg_library::CImgList<T> > out;
 
     /// create a new sample object
     /// @param name             Object name
