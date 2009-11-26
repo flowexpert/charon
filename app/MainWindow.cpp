@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <MyLabel.h>
 #include <MyTabWidget.h>
+#include <QComboBox>
 
 MainWindow::MainWindow(QWidget *parent)
 		: QMainWindow(parent)
@@ -19,11 +20,11 @@ MainWindow::MainWindow(QWidget *parent)
 	layoutmain->addWidget(tabWidget,1,1);
 
 	QWidget* page1 = new QWidget;
-	tabWidget->addTab(page1, tr("tab1"));
+	tabWidget->addTab(page1, tr("Directory"));
 	QWidget* page2 = new QWidget;
-	tabWidget->addTab(page2, tr("tab2"));
+	tabWidget->addTab(page2, tr("Slots"));
 	QWidget* page3 = new QWidget;
-	tabWidget->addTab(page3, tr("tab3"));
+	tabWidget->addTab(page3, tr("Parameters"));
 	QWidget* page4 = new QWidget;
 	tabWidget->addTab(page4, tr("tab4"));
 	QWidget* page5 = new QWidget;
@@ -42,8 +43,8 @@ MainWindow::MainWindow(QWidget *parent)
 	QHBoxLayout* buttonlayout1 = new QHBoxLayout(page1lo);
 	page1lo->setLayout(buttonlayout1);
 	QPushButton* helloButton = new QPushButton(tr("hello world"));
-	QPushButton* createButton = new QPushButton(tr("&Create"));
-	QPushButton* exitButton = new QPushButton(tr("&Exit"));
+
+
 	MyLabel* label = new MyLabel;
 	QSpacerItem* spacer1 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QPushButton* nextButton1 = new QPushButton (tr("&Weiter"));
@@ -51,7 +52,10 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(browse, SIGNAL(clicked()), this, SLOT(_selectOutputDir()));
 	QLabel* name = new QLabel (tr("Name of plug in:"));
 	QLabel* save = new QLabel (tr("saved in:"));
+	QLabel* author = new QLabel (tr("Author:"));
 
+
+	_inputAuthorName = new QLineEdit(page1);
 	_inputDir = new QLineEdit(page1);
 	_inputName = new QLineEdit (page1);
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
@@ -59,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent)
 	_inputDir -> setText(settings.value("recentOutputDir", QDir::homePath())
 		.toString());
 	_inputName -> setText(tr("plugin1"));
+	_inputAuthorName -> setText (tr("Unknown"));
 	// add directory completer for output directory
 	QCompleter* completer = new QCompleter(this);
 	completer->setModel(new QDirModel(QStringList(), QDir::AllDirs,
@@ -67,20 +72,20 @@ MainWindow::MainWindow(QWidget *parent)
 
 	label->setText(tr("Please choose a name and a directory to save"));
 	layout->addWidget(label,1,1,1,3,Qt::AlignCenter);
-	layout->addWidget(name,3,1,1,2);
-	layout->addWidget(save,4,1,1,2);
-	layout->addWidget(_inputName,3,3);
-	layout->addWidget(_inputDir,4,3);
-	layout->addWidget(browse,4,4);
+	layout->addWidget(author,3,1,1,2);
+	layout->addWidget(_inputAuthorName,3,3);
+	layout->addWidget(name,4,1,1,2);
+	layout->addWidget(save,5,1,1,2);
+	layout->addWidget(_inputName,4,3);
+	layout->addWidget(_inputDir,5,3);
+	layout->addWidget(browse,5,4);
 	buttonlayout1->addItem(spacer1);
 	buttonlayout1->addWidget(nextButton1);
 	layout->setColumnStretch(1,1);
 	layout->setColumnStretch(6,1);
 	layout->setRowStretch(2,1);
-	layout->setRowStretch(5,1);
+	layout->setRowStretch(6,1);
 
-	double a;
-	a = (_inputName-> text()).toDouble();
 
 
 	connect(helloButton, SIGNAL(clicked()), this, SLOT(_showHello()));
@@ -100,15 +105,24 @@ MainWindow::MainWindow(QWidget *parent)
 	page2lo->setLayout(buttonlayout2);
 	QSpacerItem* spacer2 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QPushButton* nextButton2 = new QPushButton (tr("&Weiter"));
+	QTableWidget* table2 = new QTableWidget(5, 4, page2);
 	_check1 = new QCheckBox(tr("templated Plugin"));
-	_check2 = new QCheckBox(tr("Parameter1"));
+	QSpacerItem* spacertable1 = new QSpacerItem(20,20, QSizePolicy::Minimum, QSizePolicy::Minimum);
+	QStringList longerList = (QStringList() << "Name" << "Input/Output" << "Documentation" << "Typ");
+	table2->setHorizontalHeaderLabels(longerList);
+	_inputIOName1 = new QLineEdit(page2);
+	_inputIOName2 = new QLineEdit(page2);
+	_inputIOName3 = new QLineEdit(page2);
+	_inputIOName4 = new QLineEdit(page2);
+	_inputIOName5 = new QLineEdit(page2);
+	_inputIODocumentation = new QTextEdit(page2);
+	_inputIOTyp = new QLineEdit(page2);
+	/*_check2 = new QCheckBox(page2);
 	_check3 = new QCheckBox(tr("Parameter2"));
 	_check4 = new QCheckBox(tr("Parameter3"));
 	_check5 = new QCheckBox(tr("Input1"));
 	_check6 = new QCheckBox(tr("Input2"));
 	_check7 = new QCheckBox(tr("Output"));
-	layout2->addWidget(_check1,2,1);
-	layout2->setRowStretch(10,2);
 	layout2->addWidget(_check3,5,1);
 	layout2->setRowStretch(1,1);
 	layout2->setRowStretch(3,1);
@@ -116,9 +130,27 @@ MainWindow::MainWindow(QWidget *parent)
 	layout2->addWidget(_check4,6,1);
 	layout2->addWidget(_check5,7,1);
 	layout2->addWidget(_check6,8,1);
-	layout2->addWidget(_check7,9,1);
+	layout2->addWidget(_check7,9,1); */
+	_combo1 = new QComboBox(page3);
+	_combo1 ->addItem(tr("Input"));
+	_combo1 ->addItem(tr("Output"));
+	QComboBox* combo2 = new QComboBox(page3);
+	combo2 ->addItem(tr("Input"));
+	combo2 ->addItem(tr("Output"));
+	table2->setCellWidget(0,0,_inputIOName1);
+	table2->setCellWidget(1,0,_inputIOName2);
+	table2->setCellWidget(2,0,_inputIOName3);
+	table2->setCellWidget(3,0,_inputIOName4);
+	table2->setCellWidget(4,0,_inputIOName5);
+	table2->setCellWidget(0,3,_inputIOTyp);
+	table2->setCellWidget(0,2,_inputIODocumentation);
+	table2->setCellWidget(0,1,_combo1);
+	table2->setCellWidget(1,1,combo2);
+	layout2->addWidget(_check1,1,1);
+	layout2->addWidget(table2,3,1);
+	layout2->addItem(spacertable1,3,2);
+	//layout2->setColumnStretch(4,1);
 	buttonlayout2->addItem(spacer2);
-	buttonlayout2->addWidget(createButton);
 	buttonlayout2->addWidget(nextButton2);
 
 
@@ -137,13 +169,27 @@ MainWindow::MainWindow(QWidget *parent)
 	page3lo->setLayout(buttonlayout3);
 	QSpacerItem* spacer3 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QPushButton* nextButton3 = new QPushButton (tr("&Weiter"));
+	QPushButton* createButton = new QPushButton(tr("&Create"));
+	table1 = new QTableWidget(12, 4, page3);
+	QStringList paramlist = (QStringList() << "Name" << "Documentation" << "Typ" << "Default" );
+	table1->setHorizontalHeaderLabels(paramlist);
+	layout3 -> addWidget(table1,1,1);
 	buttonlayout3->addItem(spacer3);
-	buttonlayout3->addWidget(exitButton);
+	buttonlayout3->addWidget(createButton);
 	buttonlayout3->addWidget(nextButton3);
-	layout3->setColumnStretch(5,1);
+	_inputParaName = new QLineEdit(page3);
+	_inputParaTyp = new QLineEdit(page3);
+	_inputParaDocumentation = new QTextEdit(page3);
+	_inputParaDefault = new QLineEdit(page3);
+	table1->setCellWidget(0,0,_inputParaName);
+	table1->setCellWidget(0,1,_inputParaDocumentation);
+	table1->setCellWidget(0,2,_inputParaTyp);
+	table1->setCellWidget(0,3,_inputParaDefault);
+
+
+	//layout3->setColumnStretch(5,1);
 
 	connect(nextButton3,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
-	connect(exitButton, SIGNAL(clicked()), this, SLOT(close()));
 
 	// page 4
 	QVBoxLayout* background4 = new QVBoxLayout(page4);
@@ -158,10 +204,13 @@ MainWindow::MainWindow(QWidget *parent)
 	page4lo->setLayout(buttonlayout4);
 	QSpacerItem* spacer4 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QPushButton* nextButton4 = new QPushButton (tr("&Weiter"));
+	QPushButton* exitButton = new QPushButton(tr("&Exit"));
 	buttonlayout4->addItem(spacer4);
+	buttonlayout4->addWidget(exitButton);
 	buttonlayout4->addWidget(nextButton4);
-	layout4->setColumnStretch(5,1);
 
+
+	connect(exitButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect(nextButton4,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
 
 
@@ -198,63 +247,240 @@ void MainWindow::_save() {
 		"TemplateGenerator");
 	settings.setValue("recentOutputDir", outDir.absolutePath());
 
-	QFile file1(outDir.absoluteFilePath(QString("%1.h")
-			.arg(_inputName->text())));
-	if (!file1.open(QIODevice::WriteOnly | QIODevice::Text))
-		return;
-
-	QTextStream out(&file1);
-	out << "The magic number is: " << 66 << "\n\n\n";
-	if (_check1->isChecked())
-		out << "This is a templated plugin! \n\n\n\n\n";
-	if (_check2->isChecked())
-		out << "Parameter1 \n";
-	if (_check3->isChecked())
-		out << "Parameter2 \n";
-	if (_check4->isChecked())
-		out << "Parameter3 \n";
-	if (_check5->isChecked())
-		out << "Input1 \n";
-	if (_check6->isChecked())
-		out << "Input2 \n";
-	if (_check6->isChecked())
-		out << "Output \n";
-
-
 	if (_check1->isChecked()) {
-		QFile file2(outDir.absoluteFilePath(QString("%1.hxx")
-			.arg(_inputName->text())));
 
-		if (!file2.open(QIODevice::WriteOnly | QIODevice::Text))
+
+		QFile templatedPrototypHeaderFile(":/templates/res/TempH.h");
+		if (!templatedPrototypHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
 			return;
 
-		QTextStream out2(&file2);
-		out2 << "The magic number is: " << 66 << "\n\n\n";
-	}
+		QTextStream TempHText(&templatedPrototypHeaderFile);
 
-	QFile file3(outDir.absoluteFilePath(QString("%1.cpp")
+		QString newTempHeader;
+
+		newTempHeader = TempHText.readAll();
+		newTempHeader.replace(QString("@Author@"),_inputAuthorName->text());
+		newTempHeader.replace(QString("@pluginName@"),_inputName->text());
+
+		if(!QString(_inputIOName1->text()).isEmpty()){
+
+		if(_combo1->currentIndex() == 1){
+		newTempHeader.replace("@In/Out@",QString("@Documentation@ \n OutputSlot<cimg_library::CImgList<@Typ@> > ").append(QString("%1;")
+			.arg(_inputIOName1->text())));}
+		else
+		newTempHeader.replace("@In/Out@",QString("@Documentation@ \n InputSlot<cimg_library::CImgList<@Typ@> > ").append(QString("%1;")
+			.arg(_inputIOName1->text())));
+
+		newTempHeader.replace(QString("@Documentation@"),_inputIODocumentation->toPlainText());
+		newTempHeader.replace(QString("@Typ@"),_inputIOTyp->text());
+		}
+		else
+			newTempHeader.replace("@In/Out@","");
+
+		if(!QString(_inputParaName->text()).isEmpty()){
+			newTempHeader.replace("@Parameter@",QString("@Documentation@ \n Parameter<@Typ@> @ParameterName@;"));
+			newTempHeader.replace("@ParameterName@",_inputParaName->text());
+			newTempHeader.replace("@Typ@",_inputParaTyp->text());
+			newTempHeader.replace("@Documentation@",_inputParaDocumentation->toPlainText());
+			}
+		else
+			newTempHeader.replace("@Parameter@","");
+
+
+		QFile templatedHeaderFile(outDir.absoluteFilePath(QString("%1.h")
+				.arg(_inputName->text())));
+		if (!templatedHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+
+
+
+		QTextStream out(&templatedHeaderFile);
+		out  << newTempHeader << "\n\n\n" ;
+
+		/*if (_check1->isChecked())
+			out << "This is a templated plugin! \n\n\n\n\n";
+		if (_check2->isChecked())
+			out << "Parameter1 \n";
+		if (_check3->isChecked())
+			out << "Parameter2 \n";
+		if (_check4->isChecked())
+			out << "Parameter3 \n";
+		if (_check5->isChecked())
+			out << "Input1 \n";
+		if (_check6->isChecked())
+			out << "Input2 \n";
+		if (_check6->isChecked())
+			out << "Output \n";*/
+
+
+
+
+
+		QFile templatedPrototypCppFile(":/templates/res/TempCpp.cpp");
+		if (!templatedPrototypCppFile.open(QIODevice::ReadOnly | QIODevice::Text))
+			return;
+
+		QTextStream TempCppText(&templatedPrototypCppFile);
+
+		QString newTempCpp;
+
+		newTempCpp = TempCppText.readAll();
+		newTempCpp.replace(QString("@Author@"),_inputAuthorName->text());
+		newTempCpp.replace(QString("@pluginName@"),_inputName->text());
+
+
+
+		QFile templatedCppFile(outDir.absoluteFilePath(QString("%1.cpp")
 			.arg(_inputName->text())));
-	if (!file3.open(QIODevice::WriteOnly | QIODevice::Text))
-		return;
+
+		if (!templatedCppFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
 
 
-	QTextStream out3(&file3);
-	out3 << "The magic number is: " << 66 << "\n\n\n";
+		QTextStream out2(&templatedCppFile);
+		out2 << newTempCpp << "\n\n\n";
 
-	if (_check1->isChecked())
-		out3 << "This is a templated plugin! \n\n\n\n\n";
-	if (_check2->isChecked())
-		out3 << "addParameter Parameter1 \n";
-	if (_check3->isChecked())
-		out3 << "addParameter Parameter2 \n";
-	if (_check4->isChecked())
-		out3 << "addParameter Parameter3 \n";
-	if (_check5->isChecked())
-		out3 << "addInputSlot Input1 \n";
-	if (_check6->isChecked())
-		out3 << "addInputSlot Input2 \n";
-	if (_check6->isChecked())
-		out3 << "addOutputSlot Output \n";
+
+		QFile templatedPrototypHxxFile(":/templates/res/TempHxx.hxx");
+		if (!templatedPrototypHxxFile.open(QIODevice::ReadOnly | QIODevice::Text))
+			return;
+
+		QTextStream TempHxxText(&templatedPrototypHxxFile);
+
+		QString newTempHxx;
+
+		newTempHxx = TempHxxText.readAll();
+		newTempHxx.replace(QString("@Author@"),_inputAuthorName->text());
+		newTempHxx.replace(QString("@pluginName@"),_inputName->text());
+
+		if(!QString(_inputParaName->text()).isEmpty()){
+
+		newTempHxx.replace("@Parameter@",QString("this->_addParameter (@ParaName@, \"@ParaName@\", \"@Documentation@\", \"@Default@\");"));
+		newTempHxx.replace("@ParaName@",_inputParaName->text());
+		newTempHxx.replace("@Documentation@",_inputParaDocumentation->toPlainText());
+		newTempHxx.replace("@Default@",_inputParaDefault->text());
+		}
+		else
+			newTempHxx.replace("@Parameter@","");
+
+		if(!QString(_inputIOName1->text()).isEmpty()){
+
+		if(_combo1->currentIndex() == 1){
+		newTempHxx.replace("@In/Out@",QString("this->_addOutputSlot(@IOName@, \"@IOName@\", \"@Documentation@\", \"CImgList<@Typ@>\");"));}
+		else
+		newTempHxx.replace("@In/Out@",QString("this->_addInputSlot(@IOName@, \"@IOName@\", \"@Documentation@\", \"CImgList<@Typ@>\");"));
+
+		newTempHxx.replace(QString("@Documentation@"),_inputIODocumentation->toPlainText());
+		newTempHxx.replace(QString("@Typ@"),_inputIOTyp->text());
+		newTempHxx.replace(QString("@IOName@"),_inputIOName1->text());
+		}
+		else
+			newTempHxx.replace("@In/Out@","");
+
+
+		QFile templatedHxxFile(outDir.absoluteFilePath(QString("%1.hxx")
+				.arg(_inputName->text())));
+		if (!templatedHxxFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+
+
+		QTextStream out3(&templatedHxxFile);
+		out3  << newTempHxx << "\n\n\n";
+
+		/*if (_check1->isChecked())
+			out3 << "This is a templated plugin! \n\n\n\n\n";
+		if (_check2->isChecked())
+			out3 << "addParameter Parameter1 \n";
+		if (_check3->isChecked())
+			out3 << "addParameter Parameter2 \n";
+		if (_check4->isChecked())
+			out3 << "addParameter Parameter3 \n";
+		if (_check5->isChecked())
+			out3 << "addInputSlot Input1 \n";
+		if (_check6->isChecked())
+			out3 << "addInputSlot Input2 \n";
+		if (_check6->isChecked())
+		out3 << "addOutputSlot Output \n";*/
+	}
+	else{
+		QFile nonTemplatedPrototypHeaderFile(":/templates/res/NonTempH.h");
+		if (!nonTemplatedPrototypHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
+			return;
+
+		QTextStream nonTempHText(&nonTemplatedPrototypHeaderFile);
+
+		QString newNonTempHeader;
+
+		newNonTempHeader = nonTempHText.readAll();
+		newNonTempHeader.replace(QString("@Author@"),_inputAuthorName->text());
+		newNonTempHeader.replace(QString("@pluginName@"),_inputName->text());
+
+		if(!QString(_inputParaName->text()).isEmpty()){
+
+		newNonTempHeader.replace("@Parameter@",QString("Parameter<@Typ@>   @ParaName@"));
+		newNonTempHeader.replace("@addParameter@",QString("_addParameter (@ParaName@, \"@ParaName@\", \"@Documentation@\", \"@Default@\");"));
+		newNonTempHeader.replace("@ParaName@",_inputParaName->text());
+		newNonTempHeader.replace("@Documentation@",_inputParaDocumentation->toPlainText());
+		newNonTempHeader.replace("@Default@",_inputParaDefault->text());
+		newNonTempHeader.replace("@Typ@",_inputParaTyp->text());
+		}
+		else{
+			newNonTempHeader.replace("@Parameter@","");
+			newNonTempHeader.replace("@addParameter@","");
+			}
+
+		if(!QString(_inputIOName1->text()).isEmpty()){
+
+		if(_combo1->currentIndex() == 1){
+		newNonTempHeader.replace("@In/Out@",QString("OutputSlot<@Typ@>   @IOName@;"));
+		newNonTempHeader.replace("@addSlot@","_addOutputSlot (@IOName@,  \"@IOName@\",  \"@Documentation@\"");
+		}
+		else{
+		newNonTempHeader.replace("@In/Out@",QString("InputSlot<@Typ@>   @IOName@;"));
+		newNonTempHeader.replace("@addSlot@","_addInputSlot (@IOName@,  \"@IOName@\",  \"@Documentation@\"");
+		}
+		newNonTempHeader.replace(QString("@Documentation@"),_inputIODocumentation->toPlainText());
+		newNonTempHeader.replace(QString("@Typ@"),_inputIOTyp->text());
+		newNonTempHeader.replace(QString("@IOName@"),_inputIOName1->text());
+		}
+		else{
+			newNonTempHeader.replace("@In/Out@","");
+			newNonTempHeader.replace("@addSlot@","");
+			}
+
+
+		QFile nontemplatedHeaderFile(outDir.absoluteFilePath(QString("%1.h")
+			.arg(_inputName->text())));
+
+		if (!nontemplatedHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+
+		QTextStream out4(&nontemplatedHeaderFile);
+		out4 << newNonTempHeader << "\n\n\n";
+
+
+		QFile nonTemplatedPrototypCppFile(":/templates/res/NonTempCpp.cpp");
+		if (!nonTemplatedPrototypCppFile.open(QIODevice::ReadOnly | QIODevice::Text))
+			return;
+
+		QTextStream nonTempCppText(&nonTemplatedPrototypCppFile);
+
+		QString newNonTempCpp;
+
+		newNonTempCpp = nonTempCppText.readAll();
+		newNonTempCpp.replace(QString("@Author@"),_inputAuthorName->text());
+		newNonTempCpp.replace(QString("@pluginName@"),_inputName->text());
+
+
+		QFile nontemplatedCppFile(outDir.absoluteFilePath(QString("%1.cpp")
+				.arg(_inputName->text())));
+		if (!nontemplatedCppFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+
+
+		QTextStream out5(&nontemplatedCppFile);
+		out5 << newNonTempCpp << "\n\n\n";
+	}
 }
 
 void MainWindow::_selectOutputDir() {

@@ -1,9 +1,9 @@
 <RCC>
-    <qresource prefix="/templates">
-		<file>res/FileReader.cpp</file>
-		<file>res/FileReader.hxx</file>
-		<file>res/FileReader.h</file>
-		<file>res/Sample.h</file>
-		<file>res/Sample.cpp</file>
-	</qresource>
+    <qresource prefix="/templates" >
+        <file>res/NonTempCpp.cpp</file>
+        <file>res/NonTempH.h</file>
+        <file>res/TempCpp.cpp</file>
+        <file>res/TempH.h</file>
+        <file>res/TempHxx.hxx</file>
+    </qresource>
 </RCC>
