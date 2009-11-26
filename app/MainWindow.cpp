@@ -158,6 +158,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	// get line edit back from table ;-)
 	QLineEdit* bla = qobject_cast<QLineEdit*>(table2->cellWidget(0,0));
+	Q_ASSERT(bla);
 
 
 
