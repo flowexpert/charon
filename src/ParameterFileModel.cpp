@@ -35,6 +35,10 @@
 #include "FileManager.h"
 #include <charon-utils/CImg.h>
 
+#ifdef __GNUG__
+#include <cxxabi.h>
+#endif // __GNUG__
+
 #include "ParameterFileModel.moc"
 
 ParameterFileModel::ParameterFileModel(QString fName, QObject* myParent,
@@ -603,20 +607,31 @@ void ParameterFileModel::executeWorkflow() {
 	}
 	catch (const std::string& msg) {
 		QMessageBox::warning(0, tr("error during execution"),
-			tr("Caught exception of type string.\n\nMessage:\n%1")
-				.arg(msg.c_str()));
+			tr("Caught exception of type <b>std::string</b>."
+				"<br><br>Message:<br>%1")
+				.arg(msg.c_str()).replace("\n", "<br>"));
 	}
 	catch (const std::exception& excpt) {
+		const char* name = typeid(excpt).name();
+#ifdef __GNUG__
+		const char* demangled = abi::__cxa_demangle(name, 0, 0, 0);
+		name = demangled;
+#endif // __GNUG__
 		QMessageBox::warning(0, tr("error during execution"),
-			tr("Caught exception of type %1.\n\nMessage:\n%2")
-				.arg(typeid(excpt).name())
-				.arg(excpt.what()));
+			tr("Caught exception of type <b>%1</b><br><br>Message:<br>%2")
+				.arg(name)
+				.arg(excpt.what()).replace("\n", "<br>"));
 	}
 	catch (const cimg_library::CImgException& excpt) {
+		const char* name = typeid(excpt).name();
+#ifdef __GNUG__
+		const char* demangled = abi::__cxa_demangle(name, 0, 0, 0);
+		name = demangled;
+#endif // __GNUG__
 		QMessageBox::warning(0, tr("error during execution"),
-			tr("Caught CImg exception of type %1.\n\nMessage:\n%2")
-				.arg(typeid(excpt).name())
-				.arg(excpt._message));
+			tr("Caught CImg exception of type <b>%1</b><br><br>Message:<br>%2")
+				.arg(name)
+				.arg(excpt._message).replace("\n", "<br>"));
 	}
 	catch (...) {
 		QMessageBox::warning(0, tr("error during execution"),
