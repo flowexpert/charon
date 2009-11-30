@@ -100,9 +100,11 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 					QVariant res = "";
 					std::string className = getClass(_keys[row]);
 					if (_parameterFile->isSet(_keys[row]))
-						res = _parameterFile->get<std::string> (_keys[row]).c_str();
+						res = _parameterFile->get<std::string> (
+								_keys[row]).c_str();
 					else if (_onlyParams)
-						res = metaInfo()->getDefault(_keys[row], className).c_str();
+						res = metaInfo()->getDefault(
+								_keys[row], className).c_str();
 
 					if (_useMetaInfo && metaInfo()->isParameter(_keys[row],
 							className)) {
@@ -138,7 +140,8 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 						return Qt::Unchecked;
 				}
 				else {
-					std::istringstream tmp(metaInfo()->getDefault(_keys[ind.row()],
+					std::istringstream tmp(metaInfo()->getDefault(
+							_keys[ind.row()],
 							getClass(_keys[ind.row()])));
 					bool val;
 					tmp >> val;
@@ -528,8 +531,8 @@ std::string ParameterFileModel::getClass(std::string name) const {
 	return className;
 }
 
-std::vector<std::string> ParameterFileModel::_prefixFilter(const std::vector<
-		std::string>& list) const {
+std::vector<std::string> ParameterFileModel::_prefixFilter(
+		const std::vector<std::string>& list) const {
 	std::string pref = _prefix.toAscii().constData();
 	std::string::size_type length = pref.length();
 	Q_ASSERT(length > 0);
@@ -545,8 +548,8 @@ std::vector<std::string> ParameterFileModel::_prefixFilter(const std::vector<
 	return result;
 }
 
-std::set<std::string> ParameterFileModel::_collectObjects(const std::vector<
-		std::string>& list) const {
+std::set<std::string> ParameterFileModel::_collectObjects(
+		const std::vector<std::string>& list) const {
 	std::set<std::string> result;
 	std::string::size_type pos;
 	std::string object;
@@ -568,8 +571,8 @@ std::set<std::string> ParameterFileModel::_collectObjects(const std::vector<
 	return result;
 }
 
-std::vector<std::string> ParameterFileModel::_paramFilter(const std::vector<
-		std::string>& list) const {
+std::vector<std::string> ParameterFileModel::_paramFilter(
+		const std::vector<std::string>& list) const {
 	Q_ASSERT(_onlyParams);
 	std::list<std::string> temp;
 	const std::set<std::string>& objects = _collectObjects(list);
@@ -590,8 +593,10 @@ std::vector<std::string> ParameterFileModel::_paramFilter(const std::vector<
 }
 
 void ParameterFileModel::executeWorkflow() {
-	std::string globalPluginPath = FileManager::instance().getGlobalPluginPath();
-	std::string privatePluginPath = FileManager::instance().getPrivatePluginPath();
+	std::string globalPluginPath =
+			FileManager::instance().getGlobalPluginPath();
+	std::string privatePluginPath =
+			FileManager::instance().getPrivatePluginPath();
 	PluginManager man(globalPluginPath,privatePluginPath);
 	std::string logFile = FileManager::instance().configDir()
 		.path().toAscii().constData();
@@ -614,8 +619,7 @@ void ParameterFileModel::executeWorkflow() {
 	catch (const std::exception& excpt) {
 		const char* name = typeid(excpt).name();
 #ifdef __GNUG__
-		const char* demangled = abi::__cxa_demangle(name, 0, 0, 0);
-		name = demangled;
+		name = abi::__cxa_demangle(name, 0, 0, 0);
 #endif // __GNUG__
 		QMessageBox::warning(0, tr("error during execution"),
 			tr("Caught exception of type <b>%1</b><br><br>Message:<br>%2")
@@ -625,8 +629,7 @@ void ParameterFileModel::executeWorkflow() {
 	catch (const cimg_library::CImgException& excpt) {
 		const char* name = typeid(excpt).name();
 #ifdef __GNUG__
-		const char* demangled = abi::__cxa_demangle(name, 0, 0, 0);
-		name = demangled;
+		name = abi::__cxa_demangle(name, 0, 0, 0);
 #endif // __GNUG__
 		QMessageBox::warning(0, tr("error during execution"),
 			tr("Caught CImg exception of type <b>%1</b><br><br>Message:<br>%2")
@@ -643,29 +646,31 @@ void ParameterFileModel::executeWorkflow() {
 }
 
 std::string ParameterFileModel::getType(std::string parName) const {
-    if(!_useMetaInfo)
-        return "";
-    std::string res = metaInfo()->getType(parName, getClass(parName));
-    std::string::size_type pos=StringTool::toLowerCase(res).find("<t>");
-    if((pos != std::string::npos) || StringTool::toLowerCase(res)=="t") {
-        std::string instanceName = parName.substr(0, parName.find('.'));
-        if(parameterFile().isSet(instanceName + ".templatetype")) {
-            if(pos != std::string::npos)
-                res.replace(pos, 3, "<" + parameterFile().
-                    get<std::string>(instanceName + ".templatetype") + ">");
-            else if(StringTool::toLowerCase(res) == "t")
-                res = parameterFile().get<std::string>(instanceName + ".templatetype");
-        } else {
-            try{
-                std::string type = metaInfo()->getDefault("templatetype", getClass(parName));
-                if (pos != std::string::npos)
-                    res.replace(pos, 3, std::string("<") + type  + ">");
-                else if(StringTool::toLowerCase(res) == "t")
-                    res = type;
-            } catch (...) {
-                qDebug() << "Templated Slot in non-templated Object found.";
-            }
-        }
-    }
-    return res;
+	if(!_useMetaInfo)
+		return "";
+	std::string res = metaInfo()->getType(parName, getClass(parName));
+	std::string::size_type pos=StringTool::toLowerCase(res).find("<t>");
+	if((pos != std::string::npos) || StringTool::toLowerCase(res)=="t") {
+		std::string instanceName = parName.substr(0, parName.find('.'));
+		if(parameterFile().isSet(instanceName + ".templatetype")) {
+			if(pos != std::string::npos)
+				res.replace(pos, 3, "<" + parameterFile().
+					get<std::string>(instanceName + ".templatetype") + ">");
+			else if(StringTool::toLowerCase(res) == "t")
+				res = parameterFile().get<std::string>(
+						instanceName + ".templatetype");
+		} else {
+			try{
+				std::string type = metaInfo()->getDefault(
+						"templatetype", getClass(parName));
+				if (pos != std::string::npos)
+					res.replace(pos, 3, std::string("<") + type  + ">");
+				else if(StringTool::toLowerCase(res) == "t")
+					res = type;
+			} catch (...) {
+				qDebug() << "Templated Slot in non-templated Object found.";
+			}
+		}
+	}
+	return res;
 }
