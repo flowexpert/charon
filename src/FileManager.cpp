@@ -36,12 +36,38 @@
 #include <iostream>
 #include "PluginManager.h"
 
+#ifndef TUCHULCHA_DIR
+/// Tuchulcha config path
+/** Name of the directory where tuchulcha stores configuration
+ *  its config files in (besides stuff managed by QSettings),
+ *  e.g. metadata etc.
+ */
+#define TUCHULCHA_DIR ".tuchulcha"
+#endif
+
 FileManager* FileManager::_inst = 0;
 
 FileManager::FileManager() {
-	if (!QDir::home().exists(".paramedit"))
-		QDir::home().mkdir(".paramedit");
-	Q_ASSERT(configDir().exists());
+	if (!QDir::home().exists(TUCHULCHA_DIR))
+		QDir::home().mkdir(TUCHULCHA_DIR);
+	QString configPath = QDir::homePath() + "/" + TUCHULCHA_DIR;
+	QFileInfo configPathInfo(configPath);
+	if (!configPathInfo.exists())
+		qFatal("%s",
+				(tr("Tuchulcha configuration directory \"%1\" "
+					"could not be created. Are permissions set correctly?")
+				.arg(configPath))
+				.toAscii().constData());
+	if (!configPathInfo.isDir())
+		qFatal("%s",
+				(tr("Tuchulcha configuration directory \"%1\" "
+					"exists, but is not a directory. Please delete "
+					"\"%1\"")
+				.arg(configPath))
+				.toAscii().constData());
+}
+
+FileManager::~FileManager() {
 }
 
 const FileManager& FileManager::instance() {
@@ -56,16 +82,18 @@ const FileManager& FileManager::instance() {
 
 QDir FileManager::configDir() const {
 	QDir ret = QDir::home();
-	bool ok;
-	ok = ret.cd(".paramedit");
-	Q_ASSERT(ok);
+	bool ok = ret.cd(TUCHULCHA_DIR);
+	if (!ok)
+		qFatal("%s", (tr("failed to change to directory \"%1\"")
+				.arg(QDir::homePath() + "/" + TUCHULCHA_DIR))
+			   .toAscii().constData());
 	return ret;
 }
 
 QString FileManager::classesFile() const {
-	QString path = QDir::homePath() + "/.paramedit/classes.wrp";
-	if (!QFile(QDir::homePath() + "/.paramedit/metadata").exists()) {
-		QDir::home().mkpath(".paramedit/metadata");
+	QString path = QDir::homePath() + "/" + TUCHULCHA_DIR + "/classes.wrp";
+	if (!QFile(QDir::homePath() + "/" + TUCHULCHA_DIR + "/metadata").exists()) {
+		QDir::home().mkpath(TUCHULCHA_DIR "/metadata");
 	}
 	if (!QFile(path).exists()) {
 		// write empty classes file
@@ -130,7 +158,8 @@ void FileManager::updateMetadata() const {
 }
 
 void FileManager::configure(QWidget * parent, bool force) const {
-	if (force || !QFile(QDir::homePath() + "/.paramedit/Paths.config").exists()) {
+	if (force || !QFile(QDir::homePath() + "/"
+			+ TUCHULCHA_DIR +  "/Paths.config").exists()) {
 		QString path = QFileDialog::getExistingDirectory(parent, QString(
 				"Specify your personal plugin path"), QDir::homePath(),
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
@@ -139,17 +168,27 @@ void FileManager::configure(QWidget * parent, bool force) const {
 		pathsConfig.setFileName(":/share/Paths.config");
 		Q_ASSERT(pathsConfig.exists());
 		bool res;
-		res = pathsConfig.copy(QDir::homePath() + "/.paramedit/Paths.config");
-		Q_ASSERT(res);
-		pathsConfig.setFileName(QDir::homePath() + "/.paramedit/Paths.config");
+		QString targetPath = QDir::homePath() + "/" + TUCHULCHA_DIR
+				+"/Paths.config";
+		res = pathsConfig.copy(targetPath);
+		if (!res)
+			qFatal("%s",
+					(tr("failed to copy config file \"%1\" "
+						" to \"%2\". Perhaps missing permissions?")
+					.arg(pathsConfig.fileName())
+					.arg(targetPath)).toAscii().constData());
+
+		pathsConfig.setFileName(QDir::homePath() + "/" +
+				TUCHULCHA_DIR + "/Paths.config");
 		Q_ASSERT(pathsConfig.exists());
 		res = pathsConfig.setPermissions(pathsConfig.permissions()
 			| QFile::ReadOwner | QFile::WriteOwner
 			| QFile::ReadUser | QFile::WriteUser);
 		Q_ASSERT(res);
 #if UNIX
-		Q_ASSERT(pathsConfig.permissions() & QFile::WriteOwner);
-		Q_ASSERT(pathsConfig.permissions() & QFile::ReadOwner);
+		QFileInfo configFileInfo(pathsConfig.fileName());
+		Q_ASSERT(configFileInfo.permission(QFile::WriteOwner));
+		Q_ASSERT(configFileInfo.permission(QFile::ReadOwner));
 #endif
 		ParameterFile pf(_paramFile());
 		pf.set<std::string> ("additional-plugin-path", path.toAscii().data());
@@ -224,7 +263,8 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 }
 
 inline std::string FileManager::_paramFile() const {
-	return (QDir::homePath() + "/.paramedit/Paths.config").toAscii().data();
+	return (QDir::homePath() + "/"
+			+ TUCHULCHA_DIR + "/Paths.config").toAscii().data();
 }
 
 inline std::string FileManager::_metaPath() const {
@@ -281,3 +321,5 @@ bool FileManager::_isPrivatePluginPathSet() const {
 		return false;
 	}
 }
+
+#include "FileManager.moc"

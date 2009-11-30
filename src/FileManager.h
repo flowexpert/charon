@@ -26,13 +26,16 @@
 #include <QString>
 #include <QDir>
 #include <AbstractPluginLoader.h>
+#include <QObject>
 
 class QWidget;
 
 /// this class handles creation of a config directory if not avaiable.
 /// If no config directory exists, a new one is created and populated
 /// with a dummy sampleclass file.
-class FileManager {
+class FileManager : public QObject {
+	Q_OBJECT
+
 public:
 	/// get a reference to the file Manager instance
 	static const FileManager& instance();
@@ -80,6 +83,8 @@ public:
 private:
 	FileManager();
 
+	virtual ~FileManager();
+
 	/// @name forbid copying
 	//	@{
 	FileManager(const FileManager&);
@@ -112,8 +117,6 @@ private:
 	 * @return Path to the charon-core install
 	 */
 	std::string _charonCoreInstall() const;
-
-	~FileManager();
 
 	/// pointer to FileManager instance
 	static FileManager* _inst;
