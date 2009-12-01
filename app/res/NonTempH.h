@@ -17,9 +17,10 @@
 */
 /// @file @pluginName@.h
 /// @author @Author@
+/// @date @date@
 /// Sample plugin class
-#ifndef @pluginName@_H_
-#define @pluginName@_H_
+#ifndef @pluginNameUpper@_H_
+#define @pluginNameUpper@_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef @pluginName@_EXPORTS
@@ -43,45 +44,30 @@ class sample_DECLDIR Sample : public ParameteredObject {
 public:
 
     @Parameter@
-    /// sample integer parameter
-    Parameter<int>   par1;
-    /// sample float parameter
-    Parameter<float> par2;
+    
 
 
     @In/Out@
-    /// sample integer output slot
-    OutputSlot<int>   out1;
-    /// sample float output slot
-    OutputSlot<float> out2;
-
-    /// sample integer input slot
-    InputSlot<int>   in1;
-    /// sample float input slot
-    InputSlot<float> in2;
+    
 
     /// create a new sample object
     /// @param name             Object name
     Sample(const std::string& name = "") :
-            ParameteredObject("sample", name, "some sample class"),
+            ParameteredObject("sample", name, "@PluginDocu@"),
             par1(20),          // initial values ...
             par2(1.5),         // ... for parameters ...
             out1(8),           // ... and for output ...
             out2(7.3f),        // ... slots
             in2(true, true)    // make in2 optional and multislot
     {
-        // parameters
-        @addParameter@
-        _addParameter(par1, "par1", "sample integer parameter","defVal");
-        _addParameter(par2, "par2", "sample float parameter");
+	// parameters
+	@addParameter@
+        
 
-        // slots
-        @addSlot@
-        _addInputSlot (in1,  "in1",  "sample integer input slot");
-        _addInputSlot (in2,  "in2",  "sample float input slot");
-        _addOutputSlot(out1, "out1", "sample integer output slot");
-        _addOutputSlot(out2, "out2", "sample float output slot");
+	// slots
+	@add-In/Out@
+        
     }
 };
 
-#endif /* SAMPLE_H_ */
+#endif /* @pluginNameUpper@_H_ */

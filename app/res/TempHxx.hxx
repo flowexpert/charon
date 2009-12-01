@@ -18,7 +18,7 @@
 /// @file @pluginName@.hxx
 /// Implementation of the parameter class FileReader.
 /// @author @Author@
-/// @date 20.08.2009
+/// @date @date@
 
 #ifndef _@pluginNameUpper@_HXX_
 #define _@pluginNameUpper@_HXX_
@@ -29,13 +29,13 @@
 template <typename T>
 @pluginName@<T>::@pluginName@(const std::string& name) :
         TemplatedParameteredObject<T>("@pluginName@", name,
-            "@PluginDoc@")
+            "@PluginDocu@")
 {
 
-    @Parameter@
+    @addParameter@
 
 
-    @In/Out@
+    @add-In/Out@
 
 }
 

@@ -18,7 +18,7 @@
 /**	@file MainWindow.h
  *	@brief Declaration of class MainWindow
  *
- *	@date	13.11.2009
+ *	@date	01.12.2009
  *	@author Robert Weidel
  */
 #ifndef MAINWINDOW_H
@@ -49,26 +49,11 @@ private:
 	QLineEdit* _inputName;		///< plugin name
 	QLineEdit* _inputDir;		///< file output directory
 	QLineEdit* _inputAuthorName;	///< author's name
-	QLineEdit* _inputIOName1;	///< input/output name
-	QLineEdit* _inputIOName2;	///< input/output name 2
-	QLineEdit* _inputIOName3;	///< input/output name 3
-	QLineEdit* _inputIOName4;	///< input/output name 4
-	QLineEdit* _inputIOName5;	///< input/output name 5
-	QTextEdit* _inputIODocumentation; ///< documentation for I/O-slot 1
-	QLineEdit* _inputIOTyp;		///< typ of I/O-slot 1
-	QLineEdit* _inputParaName;	///< name of first parameter
-	QTextEdit* _inputParaDocumentation; ///< documentation of first parameter
-	QLineEdit* _inputParaTyp;	///< parameter typ
-	QLineEdit* _inputParaDefault;	    ///< default value of first parameter
-	QTableWidget* table1;		///< table layout for I/O/parameter definition
+	QTextEdit* _pluginDoc;		///< documentation of the generated plugin
+	QTableWidget* _table1;		///< table layout for Input/Output definition
+	QTableWidget* _table2;		///< table layout for parameter definition
 	QCheckBox* _check1;		///< check if it's an templated plugin
-	QCheckBox* _check2;		///< not used
-	QCheckBox* _check3;
-	QCheckBox* _check4;
-	QCheckBox* _check5;
-	QCheckBox* _check6;
-	QCheckBox* _check7;
-	QComboBox* _combo1;		///< choose between Input/Output
+
 
 private slots:
 	void _showHello();
@@ -81,6 +66,14 @@ private slots:
 	void _readSettings();
 	/// save window geometry
 	void _writeSettings();
+	/// adds a row with specific cell elements to table1
+	void _addslot();
+	/// removes last row from table1
+	void _removeslot();
+	/// adds a row with specific cell elements to table2
+	void _addparameter();
+	/// removes last row from table2
+	void _removeparameter();
 };
 
 #endif // MAINWINDOW_H

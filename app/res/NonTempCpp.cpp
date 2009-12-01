@@ -17,6 +17,7 @@
 */
 /// @file @pluginName@.cpp
 /// @author @Author@
+/// @date @date@
 /// Needed for this class to work as plugin.
 #include "@pluginName@.h"
 

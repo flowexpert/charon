@@ -18,13 +18,13 @@
 /** @file @pluginName@.h
  * Declaration of the parameter class @pluginName@.
  * @author @Author@
- * @date 20.08.2009
+ * @date @date@
  *
 
  */
 
-#ifndef _@pluginName@_H_
-#define _@pluginName@_H_
+#ifndef _@pluginNameUpper@_H_
+#define _@pluginNameUpper@_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef @pluginName@_EXPORTS
@@ -46,10 +46,10 @@ template <typename T>
 class @pluginName@_DECLDIR @pluginName@ : public TemplatedParameteredObject<T> {
 public:
 
-@Parameter@
+	@Parameter@
 
 
-@In/Out@
+	@In/Out@
 
 
     /// create a new sample object

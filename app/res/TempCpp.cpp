@@ -18,7 +18,7 @@
 /// @file @pluginName@.cpp
 /// This file is needed for the FileReader class to work as a plugin.
 /// @author @Author@
-/// @date 24.08.2009
+/// @date @date@
 
 ///Class name of the plugin
 #define TYPE @pluginName@
