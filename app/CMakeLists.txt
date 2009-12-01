@@ -15,3 +15,5 @@ TARGET_LINK_LIBRARIES(templategenerator
 	mylib
 	${QT_LIBRARIES}
 )
+
+

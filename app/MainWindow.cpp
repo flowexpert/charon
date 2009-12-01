@@ -74,6 +74,22 @@ MainWindow::MainWindow(QWidget *parent)
 			QDir::Name, completer));
 	_inputDir->setCompleter(completer);
 
+/*
+	QGroupBox *groupBox = new QGroupBox(page1);
+
+
+	QGridLayout *vbox = new QGridLayout;
+	vbox->addWidget(author,3,1,1,2);
+	vbox->addWidget(_inputAuthorName,3,3);
+	vbox->addWidget(name,4,1,1,2);
+	vbox->addWidget(save,5,1,1,2);
+	vbox->addWidget(_inputName,4,3);
+	vbox->addWidget(_inputDir,5,3);
+	vbox->addWidget(browse,5,4);
+	groupBox->setLayout(vbox);
+*/
+
+
 	label->setText(tr("Please choose a name and directory to save"));
 	layout->addWidget(label,1,1,1,3,Qt::AlignCenter);
 	layout->addWidget(_check1,10,3);
@@ -85,6 +101,8 @@ MainWindow::MainWindow(QWidget *parent)
 	layout->addWidget(_inputName,4,3);
 	layout->addWidget(_inputDir,5,3);
 	layout->addWidget(browse,5,4);
+
+	//layout->addWidget(groupBox,3,1,3,3);
 	buttonlayout1->addItem(spacer1);
 	buttonlayout1->addWidget(exitButton);
 	buttonlayout1->addWidget(nextButton1);
@@ -356,11 +374,11 @@ void MainWindow::_save() {
 	QDate* date = new QDate();
 
 
-	str.replace(QString("@Author@"),_inputAuthorName->text());
-	str.replace(QString("@pluginName@"),_inputName->text());
-	str.replace(QString("@pluginNameUpper@"),_inputName->text().toUpper());
-	str.replace("@PluginDoc@", _pluginDoc->toPlainText().replace("\n","\n/// "));
-	str.replace("@PluginDocu@", _pluginDoc->toPlainText().replace("\n"," <br> "));
+	str.replace(QString("@Author@"),_inputAuthorName->text().trimmed());
+	str.replace(QString("@pluginName@"),_inputName->text().trimmed());
+	str.replace(QString("@pluginNameUpper@"),_inputName->text().toUpper().trimmed());
+	str.replace("@PluginDoc@", _pluginDoc->toPlainText().replace("\n","\n/// ").trimmed());
+	str.replace("@PluginDocu@", _pluginDoc->toPlainText().replace("\n"," <br> ").trimmed());
 	str.replace("@date@",date->currentDate().toString("dd.MM.yyyy"));
 
 
@@ -382,9 +400,9 @@ void MainWindow::_save() {
 			"\n\t@In/Out@"));
 
 
-		str.replace(QString("@Documentation@"),IODoc->toPlainText().replace("\n","\n\t/// "));
-		str.replace(QString("@Typ@"),IOTyp->text());
-		str.replace("@I/O-Name@",IOName->text());
+		str.replace(QString("@Documentation@"),IODoc->toPlainText().replace("\n","\n\t/// ").trimmed());
+		str.replace(QString("@Typ@"),IOTyp->text().trimmed());
+		str.replace("@I/O-Name@",IOName->text().trimmed());
 		}
 
 		if(!QString(IOName->text()).isEmpty()){
@@ -397,9 +415,9 @@ void MainWindow::_save() {
 			str.replace("@add-In/Out@",QString("ParameteredObject::_addInputSlot(@IOName@,"
 				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
 
-		str.replace(QString("@Documentation@"),IODoc->toPlainText().replace("\n"," <br> "));
-		str.replace(QString("@Typ@"),IOTyp->text());
-		str.replace(QString("@IOName@"),IOName->text());
+		str.replace(QString("@Documentation@"),IODoc->toPlainText().replace("\n"," <br> ").trimmed());
+		str.replace(QString("@Typ@"),IOTyp->text().trimmed());
+		str.replace(QString("@IOName@"),IOName->text().trimmed());
 		}
 
 	}
@@ -419,9 +437,9 @@ void MainWindow::_save() {
 		if(!QString(paraName->text()).isEmpty()){
 			str.replace("@Parameter@",QString("/// @Documentation@ \n\tParameter < @Typ@ >"
 				" @ParameterName@;\n\t@Parameter@"));
-			str.replace("@ParameterName@",paraName->text());
-			str.replace("@Typ@",paraTyp->text());
-			str.replace("@Documentation@",paraDoc->toPlainText().replace("\n","\n\t/// "));
+			str.replace("@ParameterName@",paraName->text().trimmed());
+			str.replace("@Typ@",paraTyp->text().trimmed());
+			str.replace("@Documentation@",paraDoc->toPlainText().replace("\n","\n\t/// ").trimmed());
 			}
 
 
@@ -432,9 +450,9 @@ void MainWindow::_save() {
 		str.replace("@addParameter@",QString("ParameteredObject::_addParameter "
 			"(@ParaName@, \"@ParaName@\", \"@Documentation@\", "
 			"\"@Default@\");"));
-		str.replace("@ParaName@",paraName->text());
-		str.replace("@Documentation@",paraDoc->toPlainText().replace("\n"," <br> "));
-		str.replace("@Default@",paraDefault->text());
+		str.replace("@ParaName@",paraName->text().trimmed());
+		str.replace("@Documentation@",paraDoc->toPlainText().replace("\n"," <br> ").trimmed());
+		str.replace("@Default@",paraDefault->text().trimmed());
 		}
 
 	}
