@@ -39,7 +39,7 @@
 #include "ParameteredObject.hxx"
 
 /// sample ParameteredObject class.
-class sample_DECLDIR Sample : public ParameteredObject {
+class @pluginName@_DECLDIR @pluginName@ : public ParameteredObject {
 
 public:
 
@@ -52,8 +52,8 @@ public:
 
     /// create a new sample object
     /// @param name             Object name
-    Sample(const std::string& name = "") :
-            ParameteredObject("sample", name, "@PluginDocu@"),
+    @pluginName@(const std::string& name = "") :
+            ParameteredObject("@pluginName@", name, "@PluginDocu@"),
             par1(20),          // initial values ...
             par2(1.5),         // ... for parameters ...
             out1(8),           // ... and for output ...
