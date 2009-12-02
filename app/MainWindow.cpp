@@ -612,7 +612,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	msgBox2.exec();
 
 	if (msgBox2.clickedButton() == cancelButton2) {
-	return;
+	event->ignore();;
 	} else if (msgBox2.clickedButton() == acceptButton2) {
 	_writeSettings();
 	QMainWindow::closeEvent(event);
