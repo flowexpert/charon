@@ -21,6 +21,20 @@
 /// Needed for this class to work as plugin.
 #include "@pluginName@.h"
 
+@pluginName@(const std::string& name = "") :
+            ParameteredObject("@pluginName@", name, "@PluginDocu@"),
+
+    {
+	// parameters
+	@addParameter@
+        
+
+	// slots
+	@add-In/Out@
+        
+    }
+
+
 #if defined(MSVC) && defined (@pluginName@_EXPORTS)
 #define DECLDIR __declspec(dllexport)
 #else

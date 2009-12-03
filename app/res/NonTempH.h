@@ -52,22 +52,7 @@ public:
 
     /// create a new sample object
     /// @param name             Object name
-    @pluginName@(const std::string& name = "") :
-            ParameteredObject("@pluginName@", name, "@PluginDocu@"),
-            par1(20),          // initial values ...
-            par2(1.5),         // ... for parameters ...
-            out1(8),           // ... and for output ...
-            out2(7.3f),        // ... slots
-            in2(true, true)    // make in2 optional and multislot
-    {
-	// parameters
-	@addParameter@
-        
-
-	// slots
-	@add-In/Out@
-        
-    }
+    @pluginName@(const std::string& name = "");
 };
 
 #endif /* @pluginNameUpper@_H_ */
