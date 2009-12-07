@@ -74,6 +74,8 @@ private slots:
 	void _addparameter();
 	/// removes last row from table2
 	void _removeparameter();
+	/// loads an existing plugin
+	void _load();
 };
 
 #endif // MAINWINDOW_H
