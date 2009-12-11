@@ -1586,7 +1586,7 @@ std::string ImgTool::sizeString(const cimg_library::CImg<T>& img) {
 		<< ") [";
 	float s = float(img.size()*sizeof(T));
 	if (s < 1024)
-		res << s << " B]";
+		res << s << " B";
 	if ((s >= 1024) && ((s /= 1024) < 1024))
 		res << s << " KiB";
 	if ((s >= 1024) && ((s /= 1024) < 1024))
