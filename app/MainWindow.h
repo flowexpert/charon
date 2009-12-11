@@ -27,6 +27,8 @@
 #include <QtGui/QMainWindow>
 #include <QtGui>
 
+class QTableWidgetItem;
+
 /// template generator main window
 class MainWindow : public QMainWindow
 {
@@ -76,6 +78,7 @@ private slots:
 	void _removeparameter();
 	/// loads an existing plugin
 	void _load();
+	void _itemChanged(QTableWidgetItem* item);
 };
 
 #endif // MAINWINDOW_H

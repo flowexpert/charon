@@ -141,36 +141,17 @@ MainWindow::MainWindow(QWidget *parent)
 	QPushButton* add = new QPushButton (tr("&Add"));
 	QPushButton* remove = new QPushButton (tr("&Remove"));
 	QPushButton* exitButton2 = new QPushButton(tr("&Exit"));
-	_table1 = new QTableWidget(2, 4, page2);
+	_table1 = new QTableWidget(0, 4, page2);
 	QStringList longerList = (QStringList() << "Name" << "Input/Output" << "Documentation" << "Typ");
 	_table1->setHorizontalHeaderLabels(longerList);
 	_table1->verticalHeader()->hide();
 	_table1->horizontalHeader()->setStretchLastSection(true);
-
-	_table1->setCellWidget(0,2,new QTextEdit(page2));
-	QTextEdit* documentation1 = qobject_cast<QTextEdit*>(_table1->cellWidget(0,2));
-	Q_ASSERT(documentation1);
-	documentation1->setTabChangesFocus(true);
-	_table1->setCellWidget(0,0,new QLineEdit(page2));
-	_table1->setCellWidget(0,1,new QComboBox(page2));
-	QComboBox* combobox1 = qobject_cast<QComboBox*>(_table1->cellWidget(0,1));
-	Q_ASSERT(combobox1);
-	combobox1 ->addItem(tr("Input"));
-	combobox1 ->addItem(tr("Output"));
-	_table1->setCellWidget(0,3,new QLineEdit(page2));
-	_table1->setCellWidget(1,2,new QTextEdit(page2));
-	QTextEdit* documentation2 = qobject_cast<QTextEdit*>(_table1->cellWidget(1,2));
-	Q_ASSERT(documentation2);
-	documentation2->setTabChangesFocus(true);
-	_table1->setCellWidget(1,0,new QLineEdit(page2));
-	_table1->setCellWidget(1,1,new QComboBox(page2));
-	QComboBox* combobox2 = qobject_cast<QComboBox*>(_table1->cellWidget(1,1));
-	Q_ASSERT(combobox2);
-	combobox2 ->addItem(tr("Input"));
-	combobox2 ->addItem(tr("Output"));
-	_table1->setCellWidget(1,3,new QLineEdit(page2));
-
 	_table1->resizeColumnsToContents();
+	_table1->setColumnWidth(0, 200);
+	_table1->setColumnWidth(2, 300);
+
+	_addslot();
+	_addslot();
 
 	layout2->addWidget(_table1,3,1);
 	buttonlayout2->addWidget(add);
@@ -186,6 +167,8 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(nextButton2,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
 	connect(add,SIGNAL(clicked()), this, SLOT(_addslot()));
 	connect(remove,SIGNAL(clicked()), this, SLOT(_removeslot()));
+	connect(_table1, SIGNAL(itemChanged(QTableWidgetItem*)),
+		this, SLOT(_itemChanged(QTableWidgetItem*)));
 
 
 	// page 3
@@ -278,6 +261,11 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(createButton, SIGNAL(clicked()), this, SLOT(_save()));
 }
 
+void MainWindow::_itemChanged(QTableWidgetItem* item) {
+	qDebug() << "changed row=" << item->row()
+			<< "; changed column=" << item->column();
+}
+
 MainWindow::~MainWindow() {
 }
 
@@ -304,11 +292,14 @@ void MainWindow::_save() {
 
 
 
-	QMessageBox msgBox;
-	QPushButton *overwriteButton = msgBox.addButton(tr("Overwrite"), QMessageBox::AcceptRole);
-	QPushButton *changeButton = msgBox.addButton(tr("Change"), QMessageBox::AcceptRole);
-	QPushButton *acceptButton = msgBox.addButton(tr("Create"), QMessageBox::AcceptRole);
-	QPushButton *cancelButton = msgBox.addButton(tr("Cancel"), QMessageBox::RejectRole);
+	QMessageBox msgBox(
+			QMessageBox::Question,
+			tr("How to create the plugin?"),
+			tr("Do you really want to create the plugin?"));
+	QPushButton *overwriteButton = msgBox.addButton(tr("&Overwrite"), QMessageBox::AcceptRole);
+	QPushButton *changeButton = msgBox.addButton(tr("Chan&ge"), QMessageBox::AcceptRole);
+	QPushButton *acceptButton = msgBox.addButton(tr("Crea&te"), QMessageBox::AcceptRole);
+	QPushButton *cancelButton = msgBox.addButton(QMessageBox::Cancel);
 	if (outFile.exists()){
 		msgBox.setText("The output file you choose does already exist!\n"
 			       "Please select one of the following options.\n\n"
@@ -319,7 +310,6 @@ void MainWindow::_save() {
 		msgBox.removeButton(acceptButton);
 		}
 	else{
-		msgBox.setText("Do you really want to create the plugin?");
 		msgBox.removeButton(overwriteButton);
 		msgBox.removeButton(changeButton);
 		}
@@ -558,9 +548,12 @@ void MainWindow::_save() {
 }
 
 void MainWindow::_selectOutputDir() {
+	QString path = _inputDir->text();
+	if (path.isEmpty() || !QFileInfo(path).isDir())
+		path = QDir::homePath();
 	QString dir = QFileDialog::getExistingDirectory(
 			this, tr("Select output directory"),
-			QDir::homePath(),
+			path,
 			QFileDialog::ShowDirsOnly);
 	if(!dir.isEmpty())
 		_inputDir->setText(dir);
@@ -601,13 +594,14 @@ void MainWindow::_addslot() {
 	QTextEdit* documentationx = qobject_cast<QTextEdit*>(_table1->cellWidget(row,2));
 	Q_ASSERT(documentationx);
 	documentationx->setTabChangesFocus(true);
-	_table1->setCellWidget(row,0,new QLineEdit());
+	documentationx->setFrameShape(QFrame::NoFrame);
+	documentationx->setFrameShadow(QFrame::Plain);
+	//_table1->setCellWidget(row,0,new QLineEdit());
 	_table1->setCellWidget(row,1,new QComboBox());
 	QComboBox* comboboxx = qobject_cast<QComboBox*>(_table1->cellWidget(row,1));
 	Q_ASSERT(comboboxx);
 	comboboxx ->addItem(tr("Input"));
 	comboboxx ->addItem(tr("Output"));
-	_table1->setCellWidget(row,3,new QLineEdit());
 	}
 
 void MainWindow::_removeslot() {
@@ -680,9 +674,9 @@ void MainWindow::_load() {
 
 	QFile loadHxxFile(outDir.absoluteFilePath(QString("%1.hxx")
 			.arg(_inputName->text())));
-	if (!loadHxxFile.open(QIODevice::ReadOnly | QIODevice::Text))
+	if (!loadHxxFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		//return;
-		;
+	}
 
 	QTextStream loadCodeHxx(&loadHxxFile);
 
@@ -705,7 +699,7 @@ void MainWindow::_load() {
 
 	int slotcount = 0;
 	int paracount = 0;
-	for(;!loadH.atEnd();){
+	while(!loadH.atEnd()){
 		QString tempString;
 		if(!loadCodeHxx.atEnd())
 			tempString = loadCodeHxx.readLine();
@@ -743,21 +737,21 @@ void MainWindow::_load() {
 
 		if(tempString2.contains("_addParameter(")){
 			_addparameter();
-			tempString.remove(tempString.lastIndexOf(")"), 1);
+			tempString.remove(QRegExp("\\)\\s*$"));
 			tempString.remove("\"");
-			tempString.remove(0,tempString.indexOf("(") + 1);
+			tempString.remove(QRegExp("^.*\\("));
 			QString paraNamex = tempString.section(",",0,0);
 			QString paraDocux = tempString.section(",",2,2);
 			QString paraDefaultx = tempString.section(",",3,3);
 
 			QTextEdit* editParaDocu = qobject_cast<QTextEdit*>
-						(_table2->cellWidget(paracount,1));
+				(_table2->cellWidget(paracount,1));
 			Q_ASSERT(editParaDocu);
 			QLineEdit* tableParaName = qobject_cast<QLineEdit*>
-						   (_table2->cellWidget(paracount,0));
+				(_table2->cellWidget(paracount,0));
 			Q_ASSERT(tableParaName);
 			QLineEdit* tableParaDefault = qobject_cast<QLineEdit*>
-						      (_table2->cellWidget(paracount,3));
+				(_table2->cellWidget(paracount,3));
 			Q_ASSERT(tableParaDefault);
 
 			tableParaDefault->setText(paraDefaultx.trimmed());
@@ -788,19 +782,15 @@ void MainWindow::_load() {
 			QString slotDocux = tempString.section(",",2,2);
 
 
-			QLineEdit* editSlotTyp = qobject_cast<QLineEdit*>
-					(_table1->cellWidget(slotcount,3));
-			Q_ASSERT(editSlotTyp);
-			QLineEdit* editSlotName = qobject_cast<QLineEdit*>
-					(_table1->cellWidget(slotcount,0));
-			Q_ASSERT(editSlotName);
 			QTextEdit* editSlotDocu = qobject_cast<QTextEdit*>
 					(_table1->cellWidget(slotcount,2));
 			Q_ASSERT(editSlotDocu);
 
 			editSlotDocu->setText(slotDocux.trimmed());
-			editSlotTyp->setText(slotTypx.trimmed());
-			editSlotName->setText(slotNamex.trimmed());
+			_table1->setItem(slotcount,3,
+					new QTableWidgetItem(slotTypx.trimmed()));
+			_table1->setItem(slotcount,0,
+					new QTableWidgetItem(slotNamex.trimmed()));
 
 			slotcount++;
 		}
@@ -812,19 +802,15 @@ void MainWindow::_load() {
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-
-	QMessageBox msgBox2;
-	msgBox2.setText("Do you really want to quit?");
-	QPushButton *acceptButton2 = msgBox2.addButton(tr("Exit"), QMessageBox::AcceptRole);
-	QPushButton *cancelButton2 = msgBox2.addButton(tr("Cancel"), QMessageBox::RejectRole);
-	msgBox2.setDefaultButton(acceptButton2);
-	msgBox2.exec();
-
-	if (msgBox2.clickedButton() == cancelButton2) {
-	event->ignore();
-	} else if (msgBox2.clickedButton() == acceptButton2) {
-	_writeSettings();
-	QMainWindow::closeEvent(event);
+	if (QMessageBox::question(
+			0, tr("confirm close"),
+			tr("Do you really want to quit?"),
+			QMessageBox::Yes | QMessageBox::No,
+			QMessageBox::No) == QMessageBox::No) {
+		event->ignore();
+	} else {
+		_writeSettings();
+		QMainWindow::closeEvent(event);
 	}
 }
 

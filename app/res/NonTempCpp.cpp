@@ -18,34 +18,33 @@
 /// @file @pluginName@.cpp
 /// @author @Author@
 /// @date @date@
-/// Needed for this class to work as plugin.
+/// Needed for class @pluginName@ to work as plugin.
 #include "@pluginName@.h"
 
 @pluginName@(const std::string& name = "") :
             ParameteredObject("@pluginName@", name, "@PluginDocu@"),
 
-    {
+{
 	// parameters
 	@addParameter@
-        
+
 
 	// slots
 	@add-In/Out@
-        
-    }
 
+}
 
-#if defined(MSVC) && defined (@pluginName@_EXPORTS)
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define DECLDIR
-#endif
+void @pluginName@::execute() {
+	ParameteredObject::execute();
 
-extern "C" DECLDIR ParameteredObject* create(const std::string& name, template_type /*t*/) {
+	// your code goes here :-)
+}
+
+extern "C" @pluginNameLower@_DECLDIR ParameteredObject*
+		create(const std::string& name, template_type /*t*/) {
 	return new @pluginName@(name);
 }
 
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
+extern "C" @pluginNameLower@_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }

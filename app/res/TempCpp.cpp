@@ -16,7 +16,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /// @file @pluginName@.cpp
-/// This file is needed for the FileReader class to work as a plugin.
+/// This file is needed for class @pluginName@ to work as a plugin.
 /// @author @Author@
 /// @date @date@
 
@@ -25,15 +25,9 @@
 
 #include "@pluginName@.hxx"
 
-#if defined(MSVC) && defined (@pluginName@_EXPORTS)
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define DECLDIR
-#endif
-
 ///Creates an instance of the plugin
-extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
+extern "C" @pluginNameLower@_DECLDIR ParameteredObject*
+		create(const std::string & name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -51,6 +45,6 @@ extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_
 }
 
 ///Deletes an instance of the plugin
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
+extern "C" @pluginNameLower@_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }

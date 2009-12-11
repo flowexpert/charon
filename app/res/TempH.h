@@ -27,15 +27,15 @@
 #define _@pluginNameUpper@_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef @pluginName@_EXPORTS
+#ifdef @pluginNameLower@_EXPORTS
 ///Visual C++ specific code
-#define @pluginName@_DECLDIR __declspec(dllexport)
+#define @pluginNameLower@_DECLDIR __declspec(dllexport)
 #else
-#define @pluginName@_DECLDIR __declspec(dllimport)
+#define @pluginNameLower@_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define @pluginName@_DECLDIR
+#define @pluginNameLower@_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
@@ -43,7 +43,7 @@
 
 
 template <typename T>
-class @pluginName@_DECLDIR @pluginName@ : public TemplatedParameteredObject<T> {
+class @pluginNameLower@_DECLDIR @pluginName@ : public TemplatedParameteredObject<T> {
 public:
 
 	@Parameter@
@@ -52,12 +52,11 @@ public:
 	@In/Out@
 
 
-    /// create a new sample object
+    /// create a new @pluginName@ object
     /// @param name             Object name
     @pluginName@(const std::string& name);
 
     /// Update object.
-    /// Reload image and put new data into the output slot.
     virtual void execute();
 };
 
