@@ -288,26 +288,55 @@ void MainWindow::_showHello() {
 
 void MainWindow::_save() {
 
-	///message box zu verify if the button was clicked by purpose
-
-	QMessageBox msgBox;
-	msgBox.setText("Do you really want to create the plugin?");
-	QPushButton *acceptButton = msgBox.addButton(tr("Create"), QMessageBox::AcceptRole);
-	QPushButton *cancelButton = msgBox.addButton(tr("Cancel"), QMessageBox::RejectRole);
-	msgBox.setDefaultButton(acceptButton);
-	msgBox.exec();
-
-	if (msgBox.clickedButton() == cancelButton) {
-	return;
-	} else if (msgBox.clickedButton() == acceptButton) {
-
-	///saving settings and creating the plugin
-
 	QDir outDir(_inputDir->text());
 	if (!outDir.exists()) {
 		qWarning("Output directory does not exist!");
 		return;
 	}
+
+	///message box zu verify if the button was clicked by purpose
+
+
+	QFile outFile(outDir.absoluteFilePath(QString("%1.h")
+				.arg(_inputName->text())));
+
+
+
+
+
+	QMessageBox msgBox;
+	QPushButton *overwriteButton = msgBox.addButton(tr("Overwrite"), QMessageBox::AcceptRole);
+	QPushButton *changeButton = msgBox.addButton(tr("Change"), QMessageBox::AcceptRole);
+	QPushButton *acceptButton = msgBox.addButton(tr("Create"), QMessageBox::AcceptRole);
+	QPushButton *cancelButton = msgBox.addButton(tr("Cancel"), QMessageBox::RejectRole);
+	if (outFile.exists()){
+		msgBox.setText("The output file you choose does already exist!\n"
+			       "Please select one of the following options.\n\n"
+			       "Overwrite: Overwrites the existing plugin, losing the previous data.\n"
+			       "Change: Changes only the slots and parameters. \n"
+			       "Cancel: Cancels the plugin creation, leaving the files unchanged.");
+
+		msgBox.removeButton(acceptButton);
+		}
+	else{
+		msgBox.setText("Do you really want to create the plugin?");
+		msgBox.removeButton(overwriteButton);
+		msgBox.removeButton(changeButton);
+		}
+
+	msgBox.setDefaultButton(cancelButton);
+	msgBox.exec();
+
+	if (msgBox.clickedButton() == cancelButton) {
+	// cancels plugin generation
+		return;
+	} else if (msgBox.clickedButton() == acceptButton || overwriteButton)
+
+
+	{
+	///saving settings and creating the plugin
+
+
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");
 	settings.setValue("recentOutputDir", outDir.absolutePath());
