@@ -19,8 +19,6 @@ FIND_PATH(CHARON_CORE_ROOT_DIR
 					$ENV{CHARON_DIR}
                     /usr
                     /usr/local
-                    C:/charon-suite/charon-core
-                    D:/charon-install/core
     DOC             "charon-core root directory"
 )
 
