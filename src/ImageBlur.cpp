@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file Crop.cpp
+/// @file ImageBlur.cpp
 /// This file is needed for the Crop class to work as a plugin.
 /// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 24.08.2009
