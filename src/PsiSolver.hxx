@@ -13,28 +13,40 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Solver.hxx
- *  Implementation of class Solver.
+/** @file PsiSolver.hxx
+ *  Implementation of class PsiSolver.
  *  @author <a href="mailto:techfreaq@web.de">
  *      Nina Hernitschek</a>
  *  @date 23.11.2009
  */
-//
-//#ifndef _PSISOLVER_HXX_
-//#define _PSISOLVER_HXX_
-//
-//#include "PsiSolver.h"
-//
-//template <typename T>
-//Solver<T>::Solver(const std::string& classname, const std::string& name) :
-//		TemplatedParameteredObject<T>(classname,name,"solves the linear system")
-//{
-//	this->_addInputSlot(imgin,"imgin","CImgList","CImgList<T>");
-//	this->_addOutputSlot(imgout,"imgout","CImgList containing the solution","CImgList<T>");
-//	out() = result;
-//}
-//
-//template <typename T>
-//Solver<T>::~Solver() {}
-//
-//#endif // _PSISOLVER_HXX_
+
+#ifndef _PSISOLVER_HXX_
+#define _PSISOLVER_HXX_
+
+#include "PsiSolver.h"
+
+template <typename T>
+Solver<T>::Solver(const std::string& classname, const std::string& name) :
+		TemplatedParameteredObject<T>(classname,name,"solves the linear system")
+{
+	this->_addInputSlot(imgin,"imgin","CImgList","CImgList<T>");
+	this->_addOutputSlot(imgout,"imgout","CImgList containing the solution","CImgList<T>");
+	out() = result;
+}
+
+
+
+// CImgList<T> &is = imgin();
+// cout << is[0](5, 5, 5, 1);
+
+
+
+
+
+
+
+
+template <typename T>
+Solver<T>::~Solver() {}
+
+#endif // _PSISOLVER_HXX_

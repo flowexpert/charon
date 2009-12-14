@@ -19,64 +19,90 @@
  *      Nina Hernitschek</a>
  *  @date 23.11.2009
  */
-//
-//#ifndef _SAMPLEPSISOLVER_HXX_
-//#define _SAMPLEPSIVER_HXX_
-//
-//#include "../PsiSolver.hxx"
-//#include "SamplePsiPSolver.h"
-//#include <charon-utils/ImgTool.hxx>
-//#include <sstream>
-//
-//
-//template <typename T>
-//
-//template <typename T>
-//int SamplePsiSolver<T>::samplePsiSolverExecute() {
-//	
-//
-//	// just need read-only access to Image
-//	const Img<int>& globalImg = *(this->imgin());
-//
-//
-//	sout << "\tglobal Roi:\n\t\t" << globalImg << std::endl;
-//
-//
-//
-//	/* 
-//		does something...
-//
-//		write in imgout
-//	
-//	*/
-//
-//
-//	// clean up
-//	for(usIt = unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
-//		delete usIt->second;
-//	}
-//
-//	/*ierr = VecDestroy(x);CHKERRQ(ierr);
-//	ierr = VecDestroy(b);CHKERRQ(ierr);
-//	ierr = MatDestroy(A);CHKERRQ(ierr);
-//	ierr = KSPDestroy(ksp);CHKERRQ(ierr);*/
-//
-//
-//	return 0;
-//}
-//
-//template <typename T>
-//void SamplePsiSolver<T>::execute() {
-//	ParameteredObject::execute();
-//	int errorCode;
-//	errorCode = samplePsiSolverExecute();
-//	if (errorCode) {
-//		std::ostringstream msg;
-//		msg << __FILE__ << ":" << __LINE__ << std::endl;
-//		msg << "\tSamplePsiSolver error occured" << std::endl;
-//		msg << "\tError code:\n\t\t" << errorCode;
-//		throw std::runtime_error(msg.str().c_str());
-//	}
-//}
-//
-//#endif // _PETSCSOLVER_HXX_
+
+#ifndef _SAMPLEPSISOLVER_HXX_
+#define _SAMPLEPSIVER_HXX_
+
+#include "../PsiSolver.hxx"
+#include "SamplePsiPSolver.h"
+#include <charon-utils/ImgTool.hxx>
+#include <sstream>
+
+template <typename T>
+
+template <typename T>
+int PsiSolver<T>::psiSolverExecute() {
+
+return 0;
+}
+
+
+
+
+
+
+template <typename T>
+void PsiSolver<T>::execute() {
+    ParameteredObject::execute();
+    int errorCode;
+    errorCode = psiSolverExecute();
+    if (errorCode) {
+        std::ostringstream msg;
+        msg << __FILE__ << ":" << __LINE__ << std::endl;
+        msg << "\tpsiSolver error occured" << std::endl;
+        msg << "\tError code:\n\t\t" << errorCode;
+        throw std::runtime_error(msg.str().c_str());
+    }
+}
+
+
+
+template <typename T>
+int SamplePsiSolver<T>::samplePsiSolverExecute() {
+	
+
+	// just need read-only access to Image
+	const Img<int>& globalImg = *(this->imgin());
+
+
+	sout << "\tglobal Roi:\n\t\t" << globalImg << std::endl;
+
+
+
+	/* 
+		does something...
+
+		write in imgout
+	
+	*/
+
+
+	// clean up
+	for(usIt = unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
+		delete usIt->second;
+	}
+
+	/*ierr = VecDestroy(x);CHKERRQ(ierr);
+	ierr = VecDestroy(b);CHKERRQ(ierr);
+	ierr = MatDestroy(A);CHKERRQ(ierr);
+	ierr = KSPDestroy(ksp);CHKERRQ(ierr);*/
+
+
+	return 0;
+}
+
+template <typename T>
+void SamplePsiSolver<T>::execute() {
+	ParameteredObject::execute();
+	int errorCode;
+	errorCode = samplePsiSolverExecute();
+	if (errorCode) {
+		std::ostringstream msg;
+		msg << __FILE__ << ":" << __LINE__ << std::endl;
+		msg << "\tSamplePsiSolver error occured" << std::endl;
+		msg << "\tError code:\n\t\t" << errorCode;
+		throw std::runtime_error(msg.str().c_str());
+	}
+}
+
+#endif // _PETSCSOLVER_HXX_

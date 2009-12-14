@@ -21,41 +21,41 @@
  *
  *  @date 23.11.2009
  */
-//#define TYPE PsiSolver
-//
-//#if defined(MSVC) && defined (psisolver_EXPORTS)
-//#define psisolver_EXPORTS
-//#define DECLDIR __declspec(dllexport)
-//#else
-/////Not needed with GCC
-//#define DECLDIR
-//#endif
-//
-//#include "PsiSolver.h"
-//
-//extern "C" DECLDIR ParameteredObject* create(const std::string& name, template_type /*t*/) {
-//    return new PsiSolver(name);
-//}
-//
-//
-//extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
-//	switch(t) {
-//	case ParameteredObject::TYPE_DOUBLE:
-//		return new TYPE<double>(name);
-//		break;
-//	case ParameteredObject::TYPE_FLOAT:
-//		return new TYPE<float>(name);
-//		break;
-//	case ParameteredObject::TYPE_INT:
-//		return new TYPE<int>(name);
-//		break;
-//	default:
-//		return new TYPE<int>(name);
-//		break;
-//	}
-//}
-//
-//
-//extern "C" DECLDIR void destroy(ParameteredObject * b) {
-//	delete b;
-//}
+#define TYPE PsiSolver
+
+#if defined(MSVC) && defined (psisolver_EXPORTS)
+#define psisolver_EXPORTS
+#define DECLDIR __declspec(dllexport)
+#else
+///Not needed with GCC
+#define DECLDIR
+#endif
+
+#include "PsiSolver.h"
+
+extern "C" DECLDIR ParameteredObject* create(const std::string& name, template_type /*t*/) {
+    return new PsiSolver(name);
+}
+
+
+extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
+	switch(t) {
+	case ParameteredObject::TYPE_DOUBLE:
+		return new TYPE<double>(name);
+		break;
+	case ParameteredObject::TYPE_FLOAT:
+		return new TYPE<float>(name);
+		break;
+	case ParameteredObject::TYPE_INT:
+		return new TYPE<int>(name);
+		break;
+	default:
+		return new TYPE<int>(name);
+		break;
+	}
+}
+
+
+extern "C" DECLDIR void destroy(ParameteredObject * b) {
+	delete b;
+}

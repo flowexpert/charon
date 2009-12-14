@@ -19,55 +19,55 @@
  *      Nina Hernitschek</a>
  *  @date 23.11.2009
  */
-//
-//#ifndef _SAMPLEPSISOLVER_H_
-//#define _SAMPLEPSISOLVER_H_
-//
-//#if defined(MSVC) && defined(HANDLE_DLL)
-//#ifdef samplepsicsolver_EXPORTS
-///// dll import/export
-//#define samplepsicsolver_DECLDIR __declspec(dllexport)
-//#else
-//#define samplepsisolver_DECLDIR __declspec(dllimport)
-//#endif /*Export or import*/
-//#else /* No DLL handling or GCC */
-///// no dll handling on gcc
-//#define samplepsisolver_DECLDIR
-//#endif
-//
-//#include "../PsiSolver.h"
-//
-//
-//template <typename T>
-//class samplepsisolver_DECLDIR SamplePsiSolver : public PsiSolver<T>
-//{
-//
-//	static void CalcPsi();
-//	static void CalcDPsi();
-//
-//public:
-//	/// default constructor
-//	SamplePsiSolver(const std::string& name = "" /**[in] instance name*/);
-//
-//	/// Petsc command line options
-//	Parameter<std::string> commandLine;
-//
-//	/// encapsulated execute function 
-//	int samplePsiSolverExecute();
-//
-//	/// main function
-//	virtual void execute();
-//
-//	/// default destructor
-//	virtual ~SamplePsiSolver();
-//
-//private:
-//	/// command line argument counter
-//	int _argc;
-//	/// command line argument vector
-//	char** _argv;
-//	/// check if initialization has taken place
-//	static bool _initialized;
-//};
-//
-//#endif // _SAMPLEPSISOLVER_H_
+
+#ifndef _SAMPLEPSISOLVER_H_
+#define _SAMPLEPSISOLVER_H_
+
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef samplepsicsolver_EXPORTS
+/// dll import/export
+#define samplepsicsolver_DECLDIR __declspec(dllexport)
+#else
+#define samplepsisolver_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+/// no dll handling on gcc
+#define samplepsisolver_DECLDIR
+#endif
+
+#include "../PsiSolver.h"
+
+
+template <typename T>
+class samplepsisolver_DECLDIR SamplePsiSolver : public PsiSolver<T>
+{
+
+	static CImgList CalcPsi();
+	static CImgList CalcDPsi();
+
+public:
+	/// default constructor
+	SamplePsiSolver(const std::string& name = "" /**[in] instance name*/);
+
+	/// Petsc command line options
+	Parameter<std::string> commandLine;
+
+	/// encapsulated execute function 
+	int samplePsiSolverExecute();
+
+	/// main function
+	virtual void execute();
+
+	/// default destructor
+	virtual ~SamplePsiSolver();
+
+private:
+	/// command line argument counter
+	int _argc;
+	/// command line argument vector
+	char** _argv;
+	/// check if initialization has taken place
+	static bool _initialized;
+};
+
+#endif // _SAMPLEPSISOLVER_H_

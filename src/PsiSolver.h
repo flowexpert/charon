@@ -20,67 +20,67 @@
  *  @date 23.11.2009
  */
 
-//
-//
-//#ifndef _PSISOLVER_H_
-//#define _PSISOLVER_H_
-//
-//#if defined(MSVC) && defined(HANDLE_DLL)
-//#ifdef psisolver_EXPORTS
-///// Visual C++ specific code
-//#define psisolver_DECLDIR __declspec(dllexport)
-//#else
-//#define psisolver_DECLDIR __declspec(dllimport)
-//#endif /*Export or import*/
-//
-//
-//#else /* No DLL handling or GCC */
-///// Not needed with GCC
-//#define psisolver_DECLDIR
-//#endif
-//
-//#include <iostream>
-//#include <cstdlib>
-//#include "ParameteredObject.hxx"
-//
-//class sample_DECLDIR Sample : public ParameteredObject {
-//
-//	/// CImgList containing the result.
-//	cimg_library::CImgList<T> result;
-//
-//	public:
-//	/*/// pointers, that the solver will use
-//	InputSlot< Stencil<T>* > stencils;
-//
-//	/// region of interes for the solver to work on
-//	InputSlot< Roi<int>* > roi;*/
-//
-//	InputSlot<cimg_library::CImgList<T> > imgin;
-//
-//	/// result
-//	OutputSlot<cimg_library::CImgList<T> > imgout;
-//
-//	/// default constructor
-//	PsiSolver(
-//		const std::string& classname,	///< [in] class name
-//		const std::string& name = ""	///< [in] instance name
-//	);
-//
-//	
-//	/// encapsulated execute function 
-//	int PsiSolverExecute();
-//
-//	/// main function
-//	virtual void execute();
-//
-//	//returns Psi
-//	void CalcPsi();
-//	//returns derivative of Psi
-//	void CalcDPsi();
-//	/// default destructor
-//	virtual ~PsiSolver();
-//
-//};
-//
-//
-//#endif // _PSISOLVER_H_
+
+
+#ifndef _PSISOLVER_H_
+#define _PSISOLVER_H_
+
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef psisolver_EXPORTS
+/// Visual C++ specific code
+#define psisolver_DECLDIR __declspec(dllexport)
+#else
+#define psisolver_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+
+
+#else /* No DLL handling or GCC */
+/// Not needed with GCC
+#define psisolver_DECLDIR
+#endif
+
+#include <iostream>
+#include <cstdlib>
+#include "ParameteredObject.hxx"
+
+class sample_DECLDIR Sample : public ParameteredObject {
+
+	/// CImgList containing the result.
+	cimg_library::CImgList<T> result;
+
+	public:
+	/*/// pointers, that the solver will use
+	InputSlot< Stencil<T>* > stencils;
+
+	/// region of interes for the solver to work on
+	InputSlot< Roi<int>* > roi;*/
+
+	InputSlot<cimg_library::CImgList<T> > imgin;
+
+	/// result
+	OutputSlot<cimg_library::CImgList<T> > imgout;
+
+	/// default constructor
+	PsiSolver(
+		const std::string& classname,	///< [in] class name
+		const std::string& name = ""	///< [in] instance name
+	);
+
+	
+	/// encapsulated execute function 
+	int PsiSolverExecute();
+
+	/// main function
+	virtual void execute();
+
+	//returns Psi
+	CImgList<double> CalcPsi();
+	//returns derivative of Psi
+	CImgList<double> CalcDPsi();
+	/// default destructor
+	virtual ~PsiSolver();
+
+};
+
+
+#endif // _PSISOLVER_H_
