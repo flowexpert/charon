@@ -34,7 +34,7 @@
 #include "PluginManager.h"
 #include "FileManager.h"
 #include "ui_LogDialog.h"
-#include <charon-utils/CImg.h>
+#include "CImg.h"
 
 #ifdef __GNUG__
 #include <cxxabi.h>
