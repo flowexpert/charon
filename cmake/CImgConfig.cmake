@@ -68,4 +68,4 @@ IF(JPEG_FOUND)
 ENDIF(JPEG_FOUND)
 
 # don't let exception windows pop up 
-ADD_DEFINITIONS(-Dcimg_debug=1)
+ADD_DEFINITIONS(-Dcimg_debug=0)
