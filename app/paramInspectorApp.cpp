@@ -22,7 +22,7 @@
  */
 
 #include <QApplication>
-#include "messageHandler.h"
+#include <QErrorMessage>
 
 #include "ParamInspectorWindow.h"
 
@@ -32,10 +32,10 @@
  * @return		0 in case of sucessful execution.
  */
 int main(int argc, char *argv[]) {
-	qInstallMsgHandler(messageHandler);
 	QApplication app(argc, argv);
 	ParamInspectorWindow window;
 	window.resize(320, 480);
 	window.show();
+	QErrorMessage::qtHandler();
 	return app.exec();
 }

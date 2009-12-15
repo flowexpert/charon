@@ -23,7 +23,7 @@
  */
 
 #include "DocGenerator.h"
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 #include <QUrl>
 #include <QDir>
 #include <QFile>
@@ -42,7 +42,7 @@ DocGenerator::DocGenerator(QWebView* viewer, QObject* myParent) :
         QObject(myParent),
         _viewer(viewer),
         _model(0) {
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
     Q_ASSERT(_viewer);
 
     // load stylesheet
@@ -79,7 +79,7 @@ void DocGenerator::showIntro() {
     showDocPage(":/help/start.txt");
 }
 
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 void DocGenerator::showDocPage(const QString& fileName) {
     _helpDoc = "";
 
@@ -102,7 +102,7 @@ void DocGenerator::showDocPage(const QString&) {
 #endif
 }
 
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 void DocGenerator::showDocString(const QString& doc) {
     // check if content update needed
     if (doc == _helpDoc)
@@ -121,7 +121,7 @@ void DocGenerator::showDocString(const QString&) {
 #endif
 }
 
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 QString DocGenerator::_docList(const std::vector<std::string>& parList,
         const std::string& className, const std::string& slotType) const {
     QString ret;
@@ -195,7 +195,7 @@ QString DocGenerator::_docList(const std::vector<std::string>&,
 #endif
 }
 
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 void DocGenerator::showClassDoc(const QString& className) {
     Q_ASSERT(_model);
     QString page =

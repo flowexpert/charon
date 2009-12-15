@@ -4,7 +4,9 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 INCLUDE_DIRECTORIES(${GRAPHVIZ_INCLUDE_DIRS})
 
 # source files containing QObject derived classes
+QT4_WRAP_UI(UI_SRC LogDialog.ui)
 SET(EDITPARAM_SOURCES
+	${UI_SRC}
     ParameterFileModel.cpp
     ParameterFileModel.h
     PrefixValidator.cpp
@@ -17,8 +19,6 @@ SET(EDITPARAM_SOURCES
     DocGenerator.h
     ModelToolBar.cpp
     ModelToolBar.h
-    messageHandler.cpp
-    messageHandler.h
     Qtiostream.cpp
     Qtiostream.h
     imageManip.cpp

@@ -33,6 +33,7 @@
 #include <QSettings>
 #include "PluginManager.h"
 #include "FileManager.h"
+#include "ui_LogDialog.h"
 #include <charon-utils/CImg.h>
 
 #ifdef __GNUG__
@@ -598,12 +599,16 @@ void ParameterFileModel::executeWorkflow() {
 	std::string privatePluginPath =
 			FileManager::instance().getPrivatePluginPath();
 	PluginManager man(globalPluginPath,privatePluginPath);
-	std::string logFile = FileManager::instance().configDir()
+	std::string logFileName = FileManager::instance().configDir()
 		.path().toAscii().constData();
-	logFile += "/executeLog.txt";
-	std::ofstream log(logFile.c_str(), std::ios::trunc);
+	logFileName += "/executeLog.txt";
+	std::ofstream log(logFileName.c_str(), std::ios::trunc);
 	Q_ASSERT(log.good());
+#ifdef WIN32
+	sout.assign(log);
+#else
 	sout.assign(log, std::cout);
+#endif
 	QString path = QDir::currentPath();
 	QDir::setCurrent(QFileInfo(_fileName).path());
 	try {
@@ -621,28 +626,38 @@ void ParameterFileModel::executeWorkflow() {
 #ifdef __GNUG__
 		name = abi::__cxa_demangle(name, 0, 0, 0);
 #endif // __GNUG__
-		QMessageBox::warning(0, tr("error during execution"),
-			tr("Caught exception of type <b>%1</b><br><br>Message:<br>%2")
-				.arg(name)
-				.arg(excpt.what()).replace("\n", "<br>"));
+		qWarning("%s",
+				 tr("Caught exception of type \"%1\"\n\nMessage:\n%2")
+				.arg(name).arg(excpt.what()).toAscii().constData());
 	}
 	catch (const cimg_library::CImgException& excpt) {
 		const char* name = typeid(excpt).name();
 #ifdef __GNUG__
 		name = abi::__cxa_demangle(name, 0, 0, 0);
 #endif // __GNUG__
-		QMessageBox::warning(0, tr("error during execution"),
-			tr("Caught CImg exception of type <b>%1</b><br><br>Message:<br>%2")
-				.arg(name)
-				.arg(excpt._message).replace("\n", "<br>"));
+		qWarning("%s",
+			tr("Caught CImg exception of type \"%1\"\n\nMessage:\n%2")
+				.arg(name).arg(excpt._message).toAscii().constData());
 	}
 	catch (...) {
-		QMessageBox::warning(0, tr("error during execution"),
-			tr("Caught exception of unknown type"));
+		qWarning("%s", tr("Caught exception of unknown type")
+				.toAscii().constData());
 	}
 	sout.assign();
 	log.close();
 	QDir::setCurrent(path);
+
+	Ui::LogDialog logDialog;
+	QDialog* dialog = new QDialog(0);
+	logDialog.setupUi(dialog);
+	logDialog.infoLabel->setText(tr("Workflow execution finished."));
+	logDialog.logLabel->setText(
+			tr("Content of logfile <tt>%1</tt>:").arg(logFileName.c_str()));
+	QFile logFile(logFileName.c_str());
+	logFile.open(QIODevice::ReadOnly | QIODevice::Text);
+	logDialog.logText->insertPlainText(logFile.readAll());
+	logFile.close();
+	dialog->exec();
 }
 
 std::string ParameterFileModel::getType(std::string parName) const {

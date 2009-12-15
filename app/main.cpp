@@ -24,7 +24,7 @@
 
 #include <cstdlib>
 #include <QApplication>
-#include "messageHandler.h"
+#include <QErrorMessage>
 
 #include "MainWindow.h"
 
@@ -34,9 +34,9 @@
  * @return		0 in case of sucessful execution.
  */
 int main(int argc, char *argv[]) {
-	qInstallMsgHandler(messageHandler);
 	QApplication app(argc, argv);
 	Q_INIT_RESOURCE(resources);
 	MainWindow window;
+	QErrorMessage::qtHandler();
 	return app.exec();
 }

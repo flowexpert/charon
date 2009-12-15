@@ -23,7 +23,7 @@
  */
 
 #include <QtGui>
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 #include <QWebView>
 #include "DocGenerator.h"
 #endif
@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	ObjectInspector* inspector = new ObjectInspector(inspectorWidget);
 	inspectorWidget->setWidget(inspector);
 
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 	// help viewer
 	QDockWidget* helpWidget = new QDockWidget(tr("Help Browser"), this);
 	helpWidget->setObjectName("helpwidget");
@@ -99,7 +99,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	connect(this, SIGNAL(enableEditors(bool)),
 			_selector, SLOT(setEnabled(bool)));
 
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 	// help browser connections
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
 			docGen, SLOT(setModel(ParameterFileModel*)));
@@ -112,7 +112,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	// add widgets to dock area
 	addDockWidget(Qt::RightDockWidgetArea, inspectorWidget);
 	addDockWidget(Qt::BottomDockWidgetArea, selectWidget, Qt::Vertical);
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 	addDockWidget(Qt::BottomDockWidgetArea, helpWidget, Qt::Vertical);
 #endif
 	_centralArea = new QMdiArea(this);
@@ -184,7 +184,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 		tr("clear\nflowchart"), inspector, SLOT(clear()));
 	action->setToolTip(tr("empty flowchart and inspector"));
 
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 	toolbar->addSeparator();
 
 	action = toolbar->addAction(QIcon(":/icons/intro.png"), tr(
@@ -250,7 +250,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	// window menu
 	QMenu* windowMenu = menuBar()->addMenu(tr("&Window"));
 	windowMenu->addAction(inspectorWidget->toggleViewAction());
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 	windowMenu->addAction(helpWidget->toggleViewAction());
 #endif
 	windowMenu->addAction(selectWidget->toggleViewAction());
@@ -259,7 +259,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 
 	// help menu
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
-#ifdef WITH_WEBKIT
+#ifdef QT_WEBKIT_LIB
 	helpMenu->addAction(QIcon(":/icons/help.png"), tr("&Help"), docGen, SLOT(
 			showHelp()), QKeySequence(tr("F1")));
 	helpMenu->addAction(QIcon(":/icons/intro.png"), tr("&Introduction"),
@@ -397,18 +397,10 @@ void MainWindow::zoomFit() {
 }
 
 void MainWindow::updateMetadata() {
-	std::string logFile = FileManager::instance().configDir()
-		.path().toAscii().constData();
-	logFile += "/updateLog.txt";
-	std::ofstream log(logFile.c_str(), std::ios::trunc);
-	Q_ASSERT(log.good());
-	sout.assign(log, std::cout);
 	FileManager::instance().loadPluginInformation();
 	FileManager::instance().updateMetadata();
 	_centralArea->closeAllSubWindows();
 	_selector->update();
-	sout.assign();
-	log.close();
 }
 
 void MainWindow::compileAndLoad() {

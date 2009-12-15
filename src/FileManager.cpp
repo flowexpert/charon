@@ -35,6 +35,7 @@
 #include <QStringList>
 #include <iostream>
 #include "PluginManager.h"
+#include "ui_LogDialog.h"
 
 #ifndef TUCHULCHA_DIR
 /// Tuchulcha config path
@@ -117,6 +118,17 @@ QString FileManager::tempFileName() const {
 }
 
 void FileManager::loadPluginInformation() const {
+	std::string logFileName = FileManager::instance().configDir()
+		.path().toAscii().constData();
+	logFileName += "/updateLog.txt";
+	std::ofstream log(logFileName.c_str(), std::ios::trunc);
+	Q_ASSERT(log.good());
+#ifdef WIN32
+	sout.assign(log);
+#else
+	sout.assign(log, std::cout);
+#endif
+
 	std::string metaPath = _metaPath();
 	std::string oldPath = FileTool::getCurrentDir();
 	FileTool::changeDir(metaPath);
@@ -128,6 +140,21 @@ void FileManager::loadPluginInformation() const {
 
 	PluginManager man(getGlobalPluginPath(), getPrivatePluginPath());
 	man.createMetadata(_metaPath());
+
+	sout.assign();
+	log.close();
+
+	Ui::LogDialog logDialog;
+	QDialog* dialog = new QDialog(0);
+	logDialog.setupUi(dialog);
+	logDialog.infoLabel->setText(tr("Plugin information updated."));
+	logDialog.logLabel->setText(
+			tr("Content of logfile <tt>%1</tt>:").arg(logFileName.c_str()));
+	QFile logFile(logFileName.c_str());
+	logFile.open(QIODevice::ReadOnly | QIODevice::Text);
+	logDialog.logText->insertPlainText(logFile.readAll());
+	logFile.close();
+	dialog->exec();
 }
 
 void FileManager::updateMetadata() const {
