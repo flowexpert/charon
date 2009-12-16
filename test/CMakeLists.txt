@@ -21,6 +21,7 @@ IF(ENABLE_TEST)
 		ADD_EXECUTABLE(listedpixelselectiontest listedpixelselectiontest.cpp)
 		TARGET_LINK_LIBRARIES(listedpixelselectiontest
 			charon-core
+			${CIMG_LIBRARIES}
 			roi
 			filereader
 		)
@@ -28,11 +29,13 @@ IF(ENABLE_TEST)
 		ADD_EXECUTABLE(incrementorcountuptest incrementorcountuptest.cpp)
 		TARGET_LINK_LIBRARIES(incrementorcountuptest
 			charon-core
+			${CIMG_LIBRARIES}
 		)
 
 		ADD_EXECUTABLE(objectivefunctioncomparingtest objectivefunctioncomparingtest.cpp)
 		TARGET_LINK_LIBRARIES(objectivefunctioncomparingtest
 			charon-core
+			${CIMG_LIBRARIES}
 			roi
 			interpolatorlinear
 			filereader
@@ -43,12 +46,14 @@ IF(ENABLE_TEST)
 		ADD_EXECUTABLE(surfaceanalysisminchangetest surfaceanalysisminchnagetest.cpp)
 		TARGET_LINK_LIBRARIES(surfaceanalysisminchangetest
 			charon-core
+			${CIMG_LIBRARIES}
 			incrementorparameter
 		)
 
 		ADD_EXECUTABLE(blockmatchingliacstest blockmatchingliacstest.cpp)
 		TARGET_LINK_LIBRARIES(blockmatchingliacstest
 			charon-core
+			${CIMG_LIBRARIES}
 			roi
 			filereader
 			filewriter
@@ -63,13 +68,6 @@ IF(ENABLE_TEST)
 			brightnessmodels_constant
 		)
 
-		IF(UNIX)
-			TARGET_LINK_LIBRARIES(listedpixelselectiontest pthread ${X11_LIBRARIES})
-			TARGET_LINK_LIBRARIES(incrementorcountuptest pthread ${X11_LIBRARIES})
-			TARGET_LINK_LIBRARIES(objectivefunctioncomparingtest pthread ${X11_LIBRARIES})
-			TARGET_LINK_LIBRARIES(surfaceanalysisminchangetest pthread ${X11_LIBRARIES})
-			TARGET_LINK_LIBRARIES(blockmatchingliacstest pthread ${X11_LIBRARIES})
-		ENDIF(UNIX)
 		ADD_TEST(ListedPixelSelectionTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/listedpixelselectiontest)
 		ADD_TEST(IncrementorCountupTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/incrementorcountuptest)
 		ADD_TEST(ObjectiveFunctionComparingTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/objectivefunctioncomparingtest)
@@ -124,6 +122,7 @@ IF(ENABLE_TEST)
 		TARGET_LINK_LIBRARIES(petscplugintest
 			charon-core
 			charon-plugins
+			${CIMG_LIBRARIES}
 			roi
 			gbcce
 			l2norm
@@ -136,9 +135,6 @@ IF(ENABLE_TEST)
 			linearfilter
 			petscsolver
 		)
-		IF(UNIX)
-			TARGET_LINK_LIBRARIES(petscplugintest pthread ${X11_LIBRARIES})
-		ENDIF(UNIX)
 		ADD_TEST(PetscPluginTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscplugintest)
 		IF(WIN32)
 			# copy needed dll for tests and application run before installing
@@ -152,7 +148,7 @@ IF(ENABLE_TEST)
 			GET_TARGET_PROPERTY(InterpolatorLinear_LOC interpolatorlinear LOCATION)
 			GET_TARGET_PROPERTY(PLOC petscplugintest LOCATION)
 			GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
-			ADD_CUSTOM_COMMAND(TARGET POST_BUILD petscsolvertest
+			ADD_CUSTOM_COMMAND(TARGET POST_BUILD petscplugintest
 				COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${PLOC_DIR}"
 				COMMAND ${CMAKE_COMMAND} -E copy "${Roi_LOC}" "${PLOC_DIR}"
 				COMMAND ${CMAKE_COMMAND} -E copy "${Filereader_LOC}" "${PLOC_DIR}"
@@ -166,10 +162,7 @@ IF(ENABLE_TEST)
 
 		# executing test workflow
 		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
-		TARGET_LINK_LIBRARIES(petscsolvertest charon-plugins)
-		IF(UNIX)
-			TARGET_LINK_LIBRARIES(petscsolvertest pthread ${X11_LIBRARIES})
-		ENDIF(UNIX)
+		TARGET_LINK_LIBRARIES(petscsolvertest charon-core charon-plugins ${CIMG_LIBRARIES})
 		ADD_TEST(PetscSolverTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscsolvertest)
 	ENDIF(ENABLE_SOLVERS)
 ENDIF(ENABLE_TEST)

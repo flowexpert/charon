@@ -5,7 +5,7 @@ IF(NOT CMAKE_FLAGS_INIT)
 	IF(CMAKE_COMPILER_IS_GNUCXX)
 		IF(NOT CMAKE_C_FLAGS)
 		SET(CMAKE_C_FLAGS
-			"-W -Wall -Wextra -Wshadow -pedantic"
+			"-W -Wall -Wextra -pedantic"
 			CACHE STRING
 			"Flags used by the compiler during all build types."
 			FORCE
@@ -13,7 +13,7 @@ IF(NOT CMAKE_FLAGS_INIT)
 		ENDIF(NOT CMAKE_C_FLAGS)
 		IF(NOT CMAKE_CXX_FLAGS)
 		SET(CMAKE_CXX_FLAGS
-			"-W -Wall -Wextra -Wshadow -pedantic"
+			"-W -Wall -Wextra -pedantic"
 			CACHE STRING
 			"Flags used by the compiler during all build types."
 			FORCE
