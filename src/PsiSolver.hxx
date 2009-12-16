@@ -35,17 +35,6 @@ Solver<T>::Solver(const std::string& classname, const std::string& name) :
 }
 
 
-
-// CImgList<T> &is = imgin();
-// cout << is[0](5, 5, 5, 1);
-
-
-
-
-
-
-
-
 template <typename T>
 Solver<T>::~Solver() {}
 

@@ -12,7 +12,7 @@
 
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
-*/
+
 /** @file SamplePsiSolver.cpp
  *  Implementation of class SamplePsiSolver.
  *  This is the PETSc implementation of a solver. It has been designed to run on
@@ -21,7 +21,7 @@
  *      Nina Hernitschek</a>
  *
  *  @date 23.11.2009
- *//*
+ */
 #define TYPE SamplePsiSolver
 
 #if defined(MSVC) && defined (samplepsisolver_EXPORTS)
@@ -53,4 +53,4 @@ extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_
 
 extern "C" DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
-}*/
+}

@@ -49,12 +49,9 @@ class sample_DECLDIR Sample : public ParameteredObject {
 	cimg_library::CImgList<T> result;
 
 	public:
-	/*/// pointers, that the solver will use
-	InputSlot< Stencil<T>* > stencils;
-
-	/// region of interes for the solver to work on
-	InputSlot< Roi<int>* > roi;*/
-
+	/*// pointers, that the solver will use
+	InputSlot< CImgList<T>* > imgin;
+	*/
 	InputSlot<cimg_library::CImgList<T> > imgin;
 
 	/// result
@@ -73,11 +70,7 @@ class sample_DECLDIR Sample : public ParameteredObject {
 	/// main function
 	virtual void execute();
 
-	//returns Psi
-	CImgList<double> CalcPsi();
-	//returns derivative of Psi
-	CImgList<double> CalcDPsi();
-	/// default destructor
+	
 	virtual ~PsiSolver();
 
 };

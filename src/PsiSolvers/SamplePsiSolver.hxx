@@ -28,18 +28,6 @@
 #include <charon-utils/ImgTool.hxx>
 #include <sstream>
 
-template <typename T>
-
-template <typename T>
-int PsiSolver<T>::psiSolverExecute() {
-
-return 0;
-}
-
-
-
-
-
 
 template <typename T>
 void PsiSolver<T>::execute() {
@@ -60,14 +48,10 @@ void PsiSolver<T>::execute() {
 template <typename T>
 int SamplePsiSolver<T>::samplePsiSolverExecute() {
 	
-
 	// just need read-only access to Image
 	const Img<int>& globalImg = *(this->imgin());
 
-
 	sout << "\tglobal Roi:\n\t\t" << globalImg << std::endl;
-
-
 
 	/* 
 		does something...
@@ -105,4 +89,4 @@ void SamplePsiSolver<T>::execute() {
 	}
 }
 
-#endif // _PETSCSOLVER_HXX_
+#endif // _SAMPLEPSISOLVER_HXX_

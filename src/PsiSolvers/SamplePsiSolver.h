@@ -36,7 +36,7 @@
 #endif
 
 #include "../PsiSolver.h"
-
+#include "../RobustnessTerm.h"
 
 template <typename T>
 class samplepsisolver_DECLDIR SamplePsiSolver : public PsiSolver<T>
@@ -62,6 +62,10 @@ public:
 	virtual ~SamplePsiSolver();
 
 private:
+	/// robustness term
+
+	RobustnessTerm* psi;
+
 	/// command line argument counter
 	int _argc;
 	/// command line argument vector
