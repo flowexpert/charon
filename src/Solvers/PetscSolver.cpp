@@ -24,17 +24,10 @@
  */
 #define TYPE PetscSolver
 
-#if defined(MSVC) && defined (petscsolver_EXPORTS)
-#define solver_EXPORTS
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define DECLDIR
-#endif
-
 #include "PetscSolver.hxx"
 
-extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
+extern "C" petscsolver_DECLDIR ParameteredObject * create(
+		const std::string &name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -51,6 +44,6 @@ extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_
 	}
 }
 
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
+extern "C" petscsolver_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }

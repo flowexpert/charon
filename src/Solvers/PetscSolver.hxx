@@ -357,6 +357,7 @@ int PetscSolver<T>::petscExecute() {
 			// print debug information
 			sout << "\t\tfound unknown \"" << *uIt
 				<< "\" with the following content:" << std::endl;
+			is->updateStencil(*uIt);
 			const cimg_library::CImg<T>& dat =
 				is->get().find(*uIt)->second.data;
 			ImgTool::printInfo(sout, dat, "\t\t\t");
