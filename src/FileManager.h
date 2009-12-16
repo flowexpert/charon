@@ -40,6 +40,10 @@ public:
 	/// get a reference to the file Manager instance
 	static const FileManager& instance();
 
+	/// parent widget for operation result dialogs
+	/** (e.g. when upating plugins etc.) */
+	static QWidget* dialogParent;
+
 	/// get the path of the classes file
 	QString classesFile() const;
 

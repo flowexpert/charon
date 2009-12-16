@@ -25,6 +25,7 @@
 #include <QErrorMessage>
 
 #include "ParamInspectorWindow.h"
+#include "FileManager.h"
 
 /**	Start of test application.
  * @param argc	Counter of command line arguments.
@@ -34,8 +35,11 @@
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
 	ParamInspectorWindow window;
+	FileManager::dialogParent = &window;
 	window.resize(320, 480);
 	window.show();
-	QErrorMessage::qtHandler();
+	QErrorMessage* handler = QErrorMessage::qtHandler();
+	//handler->setParent(FileManager::dialogParent);
+	handler->setModal(true);
 	return app.exec();
 }

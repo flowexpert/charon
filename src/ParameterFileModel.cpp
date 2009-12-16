@@ -648,7 +648,7 @@ void ParameterFileModel::executeWorkflow() {
 	QDir::setCurrent(path);
 
 	Ui::LogDialog logDialog;
-	QDialog* dialog = new QDialog(0);
+	QDialog* dialog = new QDialog(FileManager::dialogParent);
 	logDialog.setupUi(dialog);
 	logDialog.infoLabel->setText(tr("Workflow execution finished."));
 	logDialog.logLabel->setText(

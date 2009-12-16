@@ -48,6 +48,8 @@
 
 FileManager* FileManager::_inst = 0;
 
+QWidget* FileManager::dialogParent = 0;
+
 FileManager::FileManager() {
 	if (!QDir::home().exists(TUCHULCHA_DIR))
 		QDir::home().mkdir(TUCHULCHA_DIR);
@@ -145,7 +147,7 @@ void FileManager::loadPluginInformation() const {
 	log.close();
 
 	Ui::LogDialog logDialog;
-	QDialog* dialog = new QDialog(0);
+	QDialog* dialog = new QDialog(dialogParent);
 	logDialog.setupUi(dialog);
 	logDialog.infoLabel->setText(tr("Plugin information updated."));
 	logDialog.logLabel->setText(

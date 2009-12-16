@@ -27,6 +27,7 @@
 #include <QErrorMessage>
 
 #include "MainWindow.h"
+#include "FileManager.h"
 
 /**	Start of main application.
  * @param argc	Counter of command line arguments.
@@ -37,6 +38,9 @@ int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
 	Q_INIT_RESOURCE(resources);
 	MainWindow window;
-	QErrorMessage::qtHandler();
+	FileManager::dialogParent = &window;
+	QErrorMessage* handler = QErrorMessage::qtHandler();
+	//handler->setParent(FileManager::dialogParent);
+	handler->setModal(true);
 	return app.exec();
 }
