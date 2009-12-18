@@ -52,9 +52,17 @@ private:
 	QLineEdit* _inputDir;		///< file output directory
 	QLineEdit* _inputAuthorName;	///< author's name
 	QTextEdit* _pluginDoc;		///< documentation of the generated plugin
-	QTableWidget* _table1;		///< table layout for Input/Output definition
-	QTableWidget* _table2;		///< table layout for parameter definition
-	QCheckBox* _check1;		///< check if it's an templated plugin
+	QTableWidget* _table1;		///< table layout for Input definition
+	QTableWidget* _table2;		///< table layout for Output definition
+	QTableWidget* _table3;		///< table layout for parameter definition
+	//QCheckBox* _check1;		///< check if it's an templated plugin
+	QComboBox* _templated;		///< choose if templated or nontemplated plugin
+	QSignalMapper *signalMapper;	///< handling clicked SIGNALs
+	QLineEdit* _inputFile;		///< existing plugin to load
+
+
+signals:
+	void clicked(int table);
 
 
 private slots:
@@ -69,13 +77,9 @@ private slots:
 	/// save window geometry
 	void _writeSettings();
 	/// adds a row with specific cell elements to table1
-	void _addslot();
-	/// removes last row from table1
-	void _removeslot();
-	/// adds a row with specific cell elements to table2
-	void _addparameter();
-	/// removes last row from table2
-	void _removeparameter();
+	void _editRowCount(int table);
+	/// browse to inputFile
+	void _selectInputFile();
 	/// loads an existing plugin
 	void _load();
 	void _itemChanged(QTableWidgetItem* item);

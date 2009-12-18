@@ -19,16 +19,63 @@ MainWindow::MainWindow(QWidget *parent)
 	MyTabWidget *tabWidget = new MyTabWidget(centralWidget);
 	layoutmain->addWidget(tabWidget,1,1);
 
+	QWidget* page0 = new QWidget;
+	tabWidget->addTab(page0, tr("Load"));
 	QWidget* page1 = new QWidget;
 	tabWidget->addTab(page1, tr("Directory"));
 	QWidget* page2 = new QWidget;
 	tabWidget->addTab(page2, tr("Slots"));
 	QWidget* page3 = new QWidget;
 	tabWidget->addTab(page3, tr("Parameters"));
-	QWidget* page4 = new QWidget;
-	tabWidget->addTab(page4, tr("tab4"));
 	QWidget* page5 = new QWidget;
 	tabWidget->addTab(page5, tr("tab5"));
+
+
+	// page 0
+	QVBoxLayout* background0 = new QVBoxLayout(page0);
+	QWidget* page0hi = new QWidget(page0);
+	QWidget* page0lo = new QWidget(page0);
+	background0->addWidget(page0hi,6);
+	background0->addWidget(page0lo,1);
+	QGridLayout* layout0 = new QGridLayout(page0hi);
+	page0->setLayout(background0);
+	page0hi->setLayout(layout0);
+	QHBoxLayout* buttonlayout0 = new QHBoxLayout(page0lo);
+	page0lo->setLayout(buttonlayout0);
+	QSpacerItem* spacer4 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+	QPushButton* nextButton4 = new QPushButton (tr("&Weiter"));
+	QLabel* welcome = new QLabel(tr("Welcome to the template generator plugin.\n\n\n"
+					"If you want to load an already existing plugin"
+					" use the browse button to find the header file.\n"
+					"Otherwise continue without loading."));
+	QPushButton* load = new QPushButton(tr("Load"));
+	QPushButton* browse2 = new QPushButton(tr("Browse"));
+	_inputFile = new QLineEdit();
+
+	QSettings settings("Heidelberg Collaboratory for Image Processing",
+		"TemplateGenerator");
+	_inputFile -> setText(settings.value("recentOutputDir", QDir::homePath())
+		.toString());
+
+	layout0->addWidget(welcome,2,1,1,3);
+	layout0->addWidget(_inputFile,4,1);
+	layout0->addWidget(browse2,4,2);
+	layout0->setColumnStretch(3,1);
+	layout0->setRowStretch(3,2);
+	layout0->setRowStretch(5,2);
+	layout0->setRowStretch(1,1);
+	buttonlayout0->addItem(spacer4);
+	buttonlayout0->addWidget (load);
+	buttonlayout0->addWidget(nextButton4);
+
+
+
+	connect(nextButton4,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
+	connect(load,SIGNAL(clicked()),this, SLOT(_load()));
+	connect(browse2,SIGNAL(clicked()),this,SLOT(_selectInputFile()));
+
+
+
 
 
 	// page 1
@@ -50,7 +97,6 @@ MainWindow::MainWindow(QWidget *parent)
 	QPushButton* nextButton1 = new QPushButton (tr("&Weiter"));
 	QPushButton* browse = new QPushButton (tr("Browse"));
 	QPushButton* exitButton = new QPushButton(tr("&Exit"));
-	QPushButton* load = new QPushButton(tr("Load"));
 	QLabel* name = new QLabel (tr("Name of plug in:"));
 	QLabel* save = new QLabel (tr("saved in:"));
 	QLabel* author = new QLabel (tr("Author:"));
@@ -58,13 +104,15 @@ MainWindow::MainWindow(QWidget *parent)
 	QLabel* pluginDocLabel = new QLabel(tr("plugin description:"));
 
 
-	_check1 = new QCheckBox(tr(""));
-	QLabel* checktemplated = new QLabel(tr("templated Plugin"));
+	//_check1 = new QCheckBox(tr(""));
+	_templated = new QComboBox();
+	_templated->addItem(tr("Templated"));
+	_templated->addItem(tr("Non-Templated"));
+
+	//QLabel* checktemplated = new QLabel(tr("templated Plugin"));
 	_inputAuthorName = new QLineEdit(page1);
 	_inputDir = new QLineEdit(page1);
 	_inputName = new QLineEdit (page1);
-	QSettings settings("Heidelberg Collaboratory for Image Processing",
-		"TemplateGenerator");
 	_inputDir -> setText(settings.value("recentOutputDir", QDir::homePath())
 		.toString());
 	_inputName -> setText(tr("plugin1"));
@@ -93,8 +141,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 	label->setText(tr("Please choose a name and directory to save"));
 	layout->addWidget(label,1,1,1,3,Qt::AlignCenter);
-	layout->addWidget(_check1,10,3);
-	layout->addWidget(checktemplated,10,1,1,2);
+	layout->addWidget(_templated,10,3);
+	//layout->addWidget(checktemplated,10,1,1,2);
 	layout->addWidget(author,3,1,1,2);
 	layout->addWidget(_inputAuthorName,3,3);
 	layout->addWidget(name,4,1,1,2);
@@ -104,7 +152,6 @@ MainWindow::MainWindow(QWidget *parent)
 	layout->addWidget(browse,5,4);
 
 	//layout->addWidget(groupBox,3,1,3,3);
-	buttonlayout1->addWidget (load);
 	buttonlayout1->addItem(spacer1);
 	buttonlayout1->addWidget(exitButton);
 	buttonlayout1->addWidget(nextButton1);
@@ -122,7 +169,6 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(helloButton, SIGNAL(clicked()), this, SLOT(_showHello()));
 	connect(nextButton1, SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
 	connect(browse, SIGNAL(clicked()), this, SLOT(_selectOutputDir()));
-	connect(load,SIGNAL(clicked()),this, SLOT(_load()));
 
 
 	// page 2
@@ -137,12 +183,19 @@ MainWindow::MainWindow(QWidget *parent)
 	QHBoxLayout* buttonlayout2 = new QHBoxLayout(page2lo);
 	page2lo->setLayout(buttonlayout2);
 	QSpacerItem* spacer2 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+	QSpacerItem* spacerMid = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QPushButton* nextButton2 = new QPushButton (tr("&Weiter"));
 	QPushButton* add = new QPushButton (tr("&Add"));
 	QPushButton* remove = new QPushButton (tr("&Remove"));
+	QPushButton* add2 = new QPushButton (tr("&Add"));
+	QPushButton* remove2 = new QPushButton (tr("&Remove"));
 	QPushButton* exitButton2 = new QPushButton(tr("&Exit"));
-	_table1 = new QTableWidget(0, 4, page2);
-	QStringList longerList = (QStringList() << "Name" << "Input/Output" << "Documentation" << "Typ");
+	QLabel* inputLabel = new QLabel (tr("Input Slots"));
+	QLabel* outputLabel = new QLabel (tr("Output Slots"));
+	QWidget* page2mid = new QWidget(page2);
+	QHBoxLayout* buttonMidLayout = new QHBoxLayout();
+	_table1 = new QTableWidget(0, 3, page2);
+	QStringList longerList = (QStringList() << "Name"  << "Documentation" << "Typ");
 	_table1->setHorizontalHeaderLabels(longerList);
 	_table1->verticalHeader()->hide();
 	_table1->horizontalHeader()->setStretchLastSection(true);
@@ -150,23 +203,57 @@ MainWindow::MainWindow(QWidget *parent)
 	_table1->setColumnWidth(0, 200);
 	_table1->setColumnWidth(2, 300);
 
-	_addslot();
-	_addslot();
+	_editRowCount(0);
+	_editRowCount(0);
 
-	layout2->addWidget(_table1,3,1);
-	buttonlayout2->addWidget(add);
-	buttonlayout2->addWidget(remove);
+	_table2 = new QTableWidget(0, 3, page2);
+	_table2->setHorizontalHeaderLabels(longerList);
+	_table2->verticalHeader()->hide();
+	_table2->horizontalHeader()->setStretchLastSection(true);
+	_table2->resizeColumnsToContents();
+	_table2->setColumnWidth(0, 200);
+	_table2->setColumnWidth(2, 300);
+
+	_editRowCount(1);
+	_editRowCount(1);
+
+	layout2->addWidget(inputLabel,1,1);
+	layout2->addWidget(outputLabel,4,1);
+	layout2->addWidget(_table1,2,1);
+	layout2->addWidget(_table2,5,1);
+	layout2->addWidget(page2mid,3,1);
+	page2mid->setLayout(buttonMidLayout);
+	buttonMidLayout->addWidget(add);
+	buttonMidLayout->addWidget(remove);
+	buttonMidLayout->addItem(spacerMid);
+	buttonlayout2->addWidget(add2);
+	buttonlayout2->addWidget(remove2);
 	buttonlayout2->addItem(spacer2);
 	buttonlayout2->addWidget(exitButton2);
 	buttonlayout2->addWidget(nextButton2);
+
+	signalMapper = new QSignalMapper(this);
+	connect(add, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(add, 0);
+	connect(signalMapper, SIGNAL(mapped(int)),
+		this, SIGNAL(clicked(int)));
+	connect(add2, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(add2, 1);
+	connect(remove, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(remove, 3);
+	connect(remove2, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(remove2, 4);
+
+
+
+
 
 
 
 
 	connect(exitButton2, SIGNAL(clicked()), this, SLOT(close()));
 	connect(nextButton2,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
-	connect(add,SIGNAL(clicked()), this, SLOT(_addslot()));
-	connect(remove,SIGNAL(clicked()), this, SLOT(_removeslot()));
+	connect(this,SIGNAL(clicked(int)), this, SLOT(_editRowCount(int)));
 	connect(_table1, SIGNAL(itemChanged(QTableWidgetItem*)),
 		this, SLOT(_itemChanged(QTableWidgetItem*)));
 
@@ -184,24 +271,35 @@ MainWindow::MainWindow(QWidget *parent)
 	page3lo->setLayout(buttonlayout3);
 	QSpacerItem* spacer3 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QPushButton* createButton = new QPushButton(tr("&Create"));
-	QPushButton* add2 = new QPushButton (tr("&Add"));
-	QPushButton* remove2 = new QPushButton (tr("&Remove"));
+	QPushButton* add3 = new QPushButton (tr("&Add"));
+	QPushButton* remove3 = new QPushButton (tr("&Remove"));
 	QPushButton* exitButton3 = new QPushButton(tr("&Exit"));
-	_table2 = new QTableWidget(2, 4, page3);
+	QLabel* parameterLabel = new QLabel (tr("Input Slots"));
+	_table3 = new QTableWidget(0, 4, page3);
 	QStringList paramlist = (QStringList() << "Name" << "Documentation" << "Typ" << "Default" );
-	_table2->setHorizontalHeaderLabels(paramlist);
-	layout3 -> addWidget(_table2,1,1);
-	buttonlayout3->addWidget(add2);
-	buttonlayout3->addWidget(remove2);
+	_table3->setHorizontalHeaderLabels(paramlist);
+	layout3->addWidget(parameterLabel,1,1);
+	layout3 -> addWidget(_table3,2,1);
+	buttonlayout3->addWidget(add3);
+	buttonlayout3->addWidget(remove3);
 	buttonlayout3->addItem(spacer3);
 	buttonlayout3->addWidget(exitButton3);
 	buttonlayout3->addWidget(createButton);
 
+	_editRowCount(2);
+	_editRowCount(2);
 
-	_table2->horizontalHeader()->setStretchLastSection(true);
-	_table2->verticalHeader()->hide();
+	connect(add3, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(add3, 2);
+	connect(remove3, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(remove3, 5);
 
 
+
+	_table3->horizontalHeader()->setStretchLastSection(true);
+	_table3->verticalHeader()->hide();
+
+/*
 	_table2->setCellWidget(0,1,new QTextEdit(page3));
 	QTextEdit* documentation3 = qobject_cast<QTextEdit*>(_table2->cellWidget(0,1));
 	Q_ASSERT(documentation3);
@@ -216,35 +314,14 @@ MainWindow::MainWindow(QWidget *parent)
 	_table2->setCellWidget(1,0,new QLineEdit(page3));
 	_table2->setCellWidget(1,2,new QLineEdit(page3));
 	_table2->setCellWidget(1,3,new QLineEdit(page3));
-
+*/
 	_table2->resizeColumnsToContents();
 
 
 
 	connect(exitButton3, SIGNAL(clicked()), this, SLOT(close()));
-	connect(add2,SIGNAL(clicked()), this, SLOT(_addparameter()));
-	connect(remove2,SIGNAL(clicked()), this, SLOT(_removeparameter()));
-
-	// page 4
-	QVBoxLayout* background4 = new QVBoxLayout(page4);
-	QWidget* page4hi = new QWidget(page4);
-	QWidget* page4lo = new QWidget(page4);
-	background4->addWidget(page4hi,6);
-	background4->addWidget(page4lo,1);
-	QGridLayout* layout4 = new QGridLayout(page4hi);
-	page4->setLayout(background4);
-	page4hi->setLayout(layout4);
-	QHBoxLayout* buttonlayout4 = new QHBoxLayout(page4lo);
-	page4lo->setLayout(buttonlayout4);
-	QSpacerItem* spacer4 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-	QPushButton* nextButton4 = new QPushButton (tr("&Weiter"));
-
-	buttonlayout4->addItem(spacer4);
-	buttonlayout4->addWidget(nextButton4);
 
 
-
-	connect(nextButton4,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
 
 
 	// page 5
@@ -334,7 +411,7 @@ void MainWindow::_save() {
 
 	QStringList newFiles;
 
-	if (_check1->isChecked()) {
+	if (_templated->currentIndex() == 0) {
 
 
 		QFile templatedPrototypHeaderFile(":/templates/res/TempH.h");
@@ -399,6 +476,7 @@ void MainWindow::_save() {
 	str.replace(QString("@Author@"),_inputAuthorName->text().trimmed());
 	str.replace(QString("@pluginName@"),_inputName->text().trimmed());
 	str.replace(QString("@pluginNameUpper@"),_inputName->text().toUpper().trimmed());
+	str.replace(QString("@pluginNameLower@"),_inputName->text().toLower().trimmed());
 	str.replace("@PluginDoc@", _pluginDoc->toPlainText().replace("\n","\n/// ").trimmed());
 	str.replace("@PluginDocu@", _pluginDoc->toPlainText().replace("\n"," <br> ").trimmed());
 	str.replace("@date@",date->currentDate().toString("dd.MM.yyyy"));
@@ -406,40 +484,69 @@ void MainWindow::_save() {
 
 	for(int i = 0; i < _table1->rowCount(); i++) {
 
-		QLineEdit* IOName = qobject_cast<QLineEdit*>(_table1->cellWidget(i,0));
-		QComboBox* IOChoose = qobject_cast<QComboBox*>(_table1->cellWidget(i,1));
-		QTextEdit* IODoc = qobject_cast<QTextEdit*>(_table1->cellWidget(i,2));
-		QLineEdit* IOTyp = qobject_cast<QLineEdit*>(_table1->cellWidget(i,3));
+		QTableWidgetItem* IName = _table1->item(i,0);
+		QTableWidgetItem* IDoc = _table1->item(i,1);
+		QTableWidgetItem* ITyp = _table1->item(i,2);
 
-		if(!QString(IOName->text()).isEmpty()){
+		IName->text();
 
-		if(IOChoose->currentIndex() == 1)
-		str.replace("@In/Out@",QString("/// @Documentation@ \n\tOutputSlot < @Typ@ > @I/O-Name@;"
-			"\n\t@In/Out@"));
+		if(!QString(IName->text()).isEmpty()){
 
-		else
-		str.replace("@In/Out@",QString("/// @Documentation@ \n\tInputSlot < @Typ@ > @I/O-Name@;"
-			"\n\t@In/Out@"));
+		//if(IOChoose->currentIndex() == 1)
+		//str.replace("@In/Out@",QString("/// @Documentation@ \n\tOutputSlot < @Typ@ > @I/O-Name@;"
+		//	"\n\t@In/Out@"));
+
+		//else
+			str.replace("@In/Out@",QString("/// @Documentation@ \n\tInputSlot < @Typ@ > @I/O-Name@;"
+				"\n\t@In/Out@"));
 
 
-		str.replace(QString("@Documentation@"),IODoc->toPlainText().replace("\n","\n\t/// ").trimmed());
-		str.replace(QString("@Typ@"),IOTyp->text().trimmed());
-		str.replace("@I/O-Name@",IOName->text().trimmed());
-		}
+			str.replace(QString("@Documentation@"),IDoc->text().replace("\n","\n\t/// ").trimmed());
+			str.replace(QString("@Typ@"),ITyp->text().trimmed());
+			str.replace("@I/O-Name@",IName->text().trimmed());
+		//}
 
-		if(!QString(IOName->text()).isEmpty()){
+		//
 
-		if (IOChoose->currentIndex() == 1)
-			str.replace("@add-In/Out@",QString("ParameteredObject::_addOutputSlot(@IOName@,"
-				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
+//		if (IOChoose->currentIndex() == 1)
+//			str.replace("@add-In/Out@",QString("ParameteredObject::_addOutputSlot(@IOName@,"
+//				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
 
-		else
+//		else
+
 			str.replace("@add-In/Out@",QString("ParameteredObject::_addInputSlot(@IOName@,"
 				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
 
-		str.replace(QString("@Documentation@"),IODoc->toPlainText().replace("\n"," <br> ").trimmed());
-		str.replace(QString("@Typ@"),IOTyp->text().trimmed());
-		str.replace(QString("@IOName@"),IOName->text().trimmed());
+			str.replace(QString("@Documentation@"),IDoc->text().replace("\n"," <br> ").trimmed());
+			str.replace(QString("@Typ@"),ITyp->text().trimmed());
+			str.replace(QString("@IOName@"),IName->text().trimmed());
+		}
+
+	}
+	for(int k = 0; k < _table2->rowCount(); k++) {
+
+
+
+		QTableWidgetItem* OName = _table2->item(k,0);
+		QTableWidgetItem* ODoc = _table2->item(k,1);
+		QTableWidgetItem* OTyp = _table2->item(k,2);
+
+		if(!QString(OName->text()).isEmpty()){
+
+			str.replace("@In/Out@",QString("/// @Documentation@ \n\tOutputSlot < @Typ@ > @I/O-Name@;"
+			"\n\t@In/Out@"));
+
+
+			str.replace(QString("@Documentation@"),ODoc->text().replace("\n","\n\t/// ").trimmed());
+			str.replace(QString("@Typ@"),OTyp->text().trimmed());
+			str.replace("@I/O-Name@",OName->text().trimmed());
+
+			str.replace("@add-In/Out@",QString("ParameteredObject::_addOutputSlot(@IOName@,"
+				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
+
+			str.replace(QString("@Documentation@"),ODoc->text().replace("\n"," <br> ").trimmed());
+			str.replace(QString("@Typ@"),OTyp->text().trimmed());
+			str.replace(QString("@IOName@"),OName->text().trimmed());
 		}
 
 	}
@@ -449,32 +556,34 @@ void MainWindow::_save() {
 
 
 
-	for (int j = 0; j < _table2->rowCount(); j++ ) {
+	for (int j = 0; j < _table3->rowCount(); j++ ) {
 
-		QLineEdit* paraName = qobject_cast<QLineEdit*>(_table2->cellWidget(j,0));
-		QTextEdit* paraDoc = qobject_cast<QTextEdit*>(_table2->cellWidget(j,1));
-		QLineEdit* paraTyp = qobject_cast<QLineEdit*>(_table2->cellWidget(j,2));
-		QLineEdit* paraDefault = qobject_cast<QLineEdit*>(_table2->cellWidget(j,3));
+		QTableWidgetItem* paraName = _table3->item(j,0);
+		QTableWidgetItem* paraDoc = _table3->item(j,1);
+		QTableWidgetItem* paraTyp = _table3->item(j,2);
+		QTableWidgetItem* paraDefault = _table3->item(j,3);
 
 		if(!QString(paraName->text()).isEmpty()){
 			str.replace("@Parameter@",QString("/// @Documentation@ \n\tParameter < @Typ@ >"
 				" @ParameterName@;\n\t@Parameter@"));
 			str.replace("@ParameterName@",paraName->text().trimmed());
 			str.replace("@Typ@",paraTyp->text().trimmed());
-			str.replace("@Documentation@",paraDoc->toPlainText().replace("\n","\n\t/// ").trimmed());
+			str.replace("@Documentation@",paraDoc->text()
+					.replace("\n","\n\t/// ").trimmed());
 			}
 
 
 
 
-	if(!QString(paraName->text()).isEmpty()){
+		if(!QString(paraName->text()).isEmpty()){
 
-		str.replace("@addParameter@",QString("ParameteredObject::_addParameter "
-			"(@ParaName@, \"@ParaName@\", \"@Documentation@\", "
-			"\"@Default@\");\n\t@addParameter@"));
-		str.replace("@ParaName@",paraName->text().trimmed());
-		str.replace("@Documentation@",paraDoc->toPlainText().replace("\n"," <br> ").trimmed());
-		str.replace("@Default@",paraDefault->text().trimmed());
+			str.replace("@addParameter@",QString("ParameteredObject::_addParameter "
+				"(@ParaName@, \"@ParaName@\", \"@Documentation@\", "
+				"\"@Default@\");\n\t@addParameter@"));
+			str.replace("@ParaName@",paraName->text().trimmed());
+			str.replace("@Documentation@",paraDoc->text()
+					.replace("\n"," <br> ").trimmed());
+			str.replace("@Default@",paraDefault->text().trimmed());
 		}
 
 	}
@@ -487,7 +596,7 @@ void MainWindow::_save() {
 	editedNewFiles = str.split("@@@@@@@@@@@");
 
 
-	if (_check1->isChecked()) {
+	if (_templated->currentIndex() == 0) {
 		QFile templatedHeaderFile(outDir.absoluteFilePath(QString("%1.h")
 				.arg(_inputName->text())));
 		if (!templatedHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -559,6 +668,21 @@ void MainWindow::_selectOutputDir() {
 		_inputDir->setText(dir);
 }
 
+
+void MainWindow::_selectInputFile() {
+	QString path = _inputFile->text();
+	if (path.isEmpty() || !QFileInfo(path).isFile() && !QFileInfo(path).isDir()){
+		path = QDir::homePath();
+	}
+	QString dir = QFileDialog::getOpenFileName(
+			this, tr("Select output directory"),
+			path);
+	if(!dir.isEmpty())
+		_inputFile->setText(dir);
+}
+
+
+
 void MainWindow::_writeSettings() {
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");
@@ -586,59 +710,76 @@ void MainWindow::_readSettings() {
 	settings.endGroup();
 }
 
-void MainWindow::_addslot() {
-	int row = _table1->rowCount();
-	_table1->insertRow(row);
+void MainWindow::_editRowCount(int table) {
+	if(table == 0){
+		int row = _table1->rowCount();
+		_table1->insertRow(row);
+		_table1->setItem(row, 0, new QTableWidgetItem());
+		_table1->setItem(row, 1, new QTableWidgetItem());
+		_table1->setItem(row, 2, new QTableWidgetItem());
+	}
+	if(table == 1){
+		int row = _table2->rowCount();
+		_table2->insertRow(row);
+		_table2->setItem(row, 0, new QTableWidgetItem());
+		_table2->setItem(row, 1, new QTableWidgetItem());
+		_table2->setItem(row, 2, new QTableWidgetItem());
+	}
+	if(table == 2){
+		int row = _table3->rowCount();
+		_table3->insertRow(row);
+		_table3->setItem(row, 0, new QTableWidgetItem());
+		_table3->setItem(row, 1, new QTableWidgetItem());
+		_table3->setItem(row, 2, new QTableWidgetItem());
+		_table3->setItem(row, 3, new QTableWidgetItem());
+	}
+	if(table == 3){
+		if(_table1->currentRow()!= -1)
+			_table1->removeRow(_table1->currentRow());
+		else
+			_table1->removeRow(_table1->rowCount() -1);
+	}
+	if(table == 4){
+		if(_table2->currentRow()!= -1)
+			_table2->removeRow(_table2->currentRow());
+		else
+			_table2->removeRow(_table2->rowCount() -1);
+	}
+	if(table == 5){
+		if(_table3->currentRow()!= -1)
+			_table3->removeRow(_table3->currentRow());
+		else
+			_table3->removeRow(_table3->rowCount() -1);
+	}
 
-	_table1->setCellWidget(row,2,new QTextEdit());
+
+	/*_table1->setCellWidget(row,2,new QTextEdit());
 	QTextEdit* documentationx = qobject_cast<QTextEdit*>(_table1->cellWidget(row,2));
 	Q_ASSERT(documentationx);
 	documentationx->setTabChangesFocus(true);
 	documentationx->setFrameShape(QFrame::NoFrame);
 	documentationx->setFrameShadow(QFrame::Plain);
-	//_table1->setCellWidget(row,0,new QLineEdit());
-	_table1->setCellWidget(row,1,new QComboBox());
-	QComboBox* comboboxx = qobject_cast<QComboBox*>(_table1->cellWidget(row,1));
-	Q_ASSERT(comboboxx);
-	comboboxx ->addItem(tr("Input"));
-	comboboxx ->addItem(tr("Output"));
-	}
 
-void MainWindow::_removeslot() {
-	_table1->removeRow(_table1->rowCount() -1);
-	}
-
-
-void MainWindow::_addparameter() {
-	int row = _table2->rowCount();
-	_table2->insertRow(row);
-
-	_table2->setCellWidget(row,1,new QTextEdit());
-	QTextEdit* documentationx = qobject_cast<QTextEdit*>(_table2->cellWidget(row,1));
-	Q_ASSERT(documentationx);
-	documentationx->setTabChangesFocus(true);
-	_table2->setCellWidget(row,0,new QLineEdit());
-	_table2->setCellWidget(row,2,new QLineEdit());
-	_table2->setCellWidget(row,3,new QLineEdit());
-	}
-
-void MainWindow::_removeparameter() {
-	_table2->removeRow(_table2->rowCount() -1);
+	_table1->setCellWidget(row,0,new QLineEdit());
+*/
 }
 
 void MainWindow::_load() {
-	/*
-	QFile outFile(_inputDir->text());
+
+	QFile outFile(_inputFile->text());
 	if (!outFile.exists()) {
 		qWarning("Input file does not exist!");
 		return;
 	}
-	*/
+
+	for(; 0 < _table3->rowCount();) {
+	_editRowCount(5);
+	}
 	for(; 0 < _table2->rowCount();) {
-	_removeparameter();
+	_editRowCount(4);
 	}
 	for(; 0 < _table1->rowCount();) {
-	_removeslot();
+	_editRowCount(3);
 	}
 
 	QDir outDir(_inputDir->text());
@@ -652,15 +793,14 @@ void MainWindow::_load() {
 	settings.setValue("recentOutputDir", outDir.absolutePath());
 
 
-	QFile loadHeaderFile(outDir.absoluteFilePath(QString("%1.h")
-				.arg(_inputName->text())));
+
+	QFile loadHeaderFile(_inputFile->text());
 		if (!loadHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
 			return;
 
 	QTextStream loadH(&loadHeaderFile);
 
-	QFile loadCppFile(outDir.absoluteFilePath(QString("%1.cpp")
-					.arg(_inputName->text())));
+	QFile loadCppFile(_inputFile->text().remove(".h").append(".cpp"));
 	if (!loadCppFile.open(QIODevice::ReadOnly | QIODevice::Text))
 		return;
 
@@ -672,8 +812,7 @@ void MainWindow::_load() {
 
 
 
-	QFile loadHxxFile(outDir.absoluteFilePath(QString("%1.hxx")
-			.arg(_inputName->text())));
+	QFile loadHxxFile(_inputFile->text().append("xx"));
 	if (!loadHxxFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		//return;
 	}
@@ -681,99 +820,94 @@ void MainWindow::_load() {
 	QTextStream loadCodeHxx(&loadHxxFile);
 
 
+	QString codeFiles;
+	codeFiles.append(loadH.readAll());
+	codeFiles.append(loadCodeCpp.readAll());
+	codeFiles.append(loadCodeHxx.readAll());
 
-	/*
+
+	QTextStream Code(&codeFiles);
 
 
-	if(_check1->isChecked()){
 
-
-		QFile loadHxxFile(outDir.absoluteFilePath(QString("%1.hxx")
-			.arg(_inputName->text())));
-		if (!loadHxxFile.open(QIODevice::ReadOnly | QIODevice::Text))
-			return;
-
-		QTextStream loadCode(&loadHxxFile);
-	}
-*/
-
-	int slotcount = 0;
+	int incount = 0;
+	int outcount = 0;
 	int paracount = 0;
-	while(!loadH.atEnd()){
+	while(!Code.atEnd()){
 		QString tempString;
-		if(!loadCodeHxx.atEnd())
-			tempString = loadCodeHxx.readLine();
-		else if (!loadCodeCpp.atEnd())
-			tempString = loadCodeCpp.readLine();
-		else
-			tempString = loadH.readLine();
+		tempString = Code.readLine();
 
-		tempString.replace(";","");
+
 		QString tempString2 = tempString;
 		tempString2.replace(" ","");
 
 		if(tempString2.contains("Parameter<")){
 
+			for(int count = 0; !tempString.contains(";") && count < 5; count++){
+
+				tempString.append(Code.readLine());
+			}
+
+			tempString.replace(";","");
+			_editRowCount(2);
+
 			tempString.remove(0,tempString.indexOf("<") + 1);
 			QString paraTypx = tempString.section(">",0,-2);
 			QString paraNamex = tempString.section(">",-1,-1);
-			for(int table = 0; table < _table2->rowCount(); table++){
-				QLineEdit* editParaName = qobject_cast<QLineEdit*>
-					(_table2->cellWidget(table,0));
-				Q_ASSERT(editParaName);
+			_table3->item(paracount,0)->setText(paraNamex.trimmed());
+			_table3->item(paracount,2)->setText(paraTypx.trimmed());
 
-				if(editParaName->text() == paraNamex.trimmed()){
-					QLineEdit* editParaTyp = qobject_cast<QLineEdit*>
-						(_table2->cellWidget(table,2));
-					Q_ASSERT(editParaTyp);
-					editParaTyp->setText(paraTypx);
 
-				}
-			}
+
+			paracount++;
 
 		}
 
 
-
 		if(tempString2.contains("_addParameter(")){
-			_addparameter();
+
+			for(int count = 0; !tempString.contains(";") && count < 5; count++){
+
+				tempString.append(Code.readLine());
+				tempString.remove("\t");
+				qWarning() << tempString;
+			}
+
+			tempString.replace(";","");
 			tempString.remove(QRegExp("\\)\\s*$"));
 			tempString.remove("\"");
-			tempString.remove(QRegExp("^.*\\("));
+			//tempString.remove(QRegExp("^.*\\("));
+			tempString.remove(0,tempString.indexOf("(") + 1);
+			qWarning() << tempString;
 			QString paraNamex = tempString.section(",",0,0);
 			QString paraDocux = tempString.section(",",2,2);
 			QString paraDefaultx = tempString.section(",",3,3);
 
-			QTextEdit* editParaDocu = qobject_cast<QTextEdit*>
-				(_table2->cellWidget(paracount,1));
-			Q_ASSERT(editParaDocu);
-			QLineEdit* tableParaName = qobject_cast<QLineEdit*>
-				(_table2->cellWidget(paracount,0));
-			Q_ASSERT(tableParaName);
-			QLineEdit* tableParaDefault = qobject_cast<QLineEdit*>
-				(_table2->cellWidget(paracount,3));
-			Q_ASSERT(tableParaDefault);
 
-			tableParaDefault->setText(paraDefaultx.trimmed());
-			tableParaName->setText(paraNamex.trimmed());
-			editParaDocu->setText(paraDocux.trimmed());
 
-			paracount++;
-		}
-		if(tempString2.contains("OutputSlot(", Qt::CaseInsensitive)
-			||tempString2.contains("InputSlot(", Qt::CaseInsensitive)){
+			for(int table = 0; table < _table3->rowCount(); table++){
+				QTableWidgetItem* editParaName = _table3->item(table,0);
 
-			_addslot();
-			QComboBox* editCombo = qobject_cast<QComboBox*>
-				(_table1->cellWidget(slotcount,1));
-			Q_ASSERT(editCombo);
-			if(tempString.contains("OutputSlot(", Qt::CaseInsensitive)){
-				editCombo->setCurrentIndex(1);
-				tempString.remove(0,tempString.indexOf("(") + 1);
+				if(editParaName->text() == paraNamex.trimmed()){
+					_table3->item(table,1)->setText(paraDocux);
+					_table3->item(table,3)->setText(paraDefaultx);
+
+				}
 			}
-			else
-				tempString.remove(0,tempString.indexOf("(") + 1);
+		}
 
+
+		if(tempString2.contains("InputSlot(", Qt::CaseInsensitive)){
+
+			for(int count = 0; !tempString.contains(";") && count < 5; count++){
+
+				tempString.append(Code.readLine());
+			}
+
+			tempString.replace(";","");
+
+			_editRowCount(0);
+			tempString.remove(0,tempString.indexOf("(") + 1);
 			tempString.remove("\"");
 			tempString.remove(tempString.lastIndexOf(")"), 1);
 
@@ -782,17 +916,37 @@ void MainWindow::_load() {
 			QString slotDocux = tempString.section(",",2,2);
 
 
-			QTextEdit* editSlotDocu = qobject_cast<QTextEdit*>
-					(_table1->cellWidget(slotcount,2));
-			Q_ASSERT(editSlotDocu);
+			_table1->item(incount,1)->setText(slotDocux.trimmed());
+			_table1->item(incount,2)->setText(slotTypx.trimmed());
+			_table1->item(incount,0)->setText(slotNamex.trimmed());
 
-			editSlotDocu->setText(slotDocux.trimmed());
-			_table1->setItem(slotcount,3,
-					new QTableWidgetItem(slotTypx.trimmed()));
-			_table1->setItem(slotcount,0,
-					new QTableWidgetItem(slotNamex.trimmed()));
+			incount++;
+		}
+		if(tempString2.contains("OutputSlot(", Qt::CaseInsensitive)){
 
-			slotcount++;
+			for(int count = 0; !tempString.contains(";") && count < 5; count++){
+
+				tempString.append(Code.readLine());
+			}
+
+			tempString.replace(";","");
+
+			_editRowCount(1);
+			tempString.remove(0,tempString.indexOf("(") + 1);
+			tempString.remove("\"");
+			tempString.remove(tempString.lastIndexOf(")"), 1);
+
+			QString slotNamex = tempString.section(",",0,0);
+			QString slotTypx = tempString.section(",",3,3);
+			QString slotDocux = tempString.section(",",2,2);
+
+
+			_table2->item(outcount,1)->setText(slotDocux.trimmed());
+			_table2->item(outcount,2)->setText(slotTypx.trimmed());
+			_table2->item(outcount,0)->setText(slotNamex.trimmed());
+
+
+			outcount++;
 		}
 	}
 
