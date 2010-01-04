@@ -82,7 +82,8 @@ private slots:
 	void _selectInputFile();
 	/// loads an existing plugin
 	void _load();
-	void _itemChanged(QTableWidgetItem* item);
+//	void _itemChanged(QTableWidgetItem* item);
+	void _changeExisting();
 };
 
 #endif // MAINWINDOW_H

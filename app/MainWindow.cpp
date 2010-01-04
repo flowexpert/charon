@@ -27,8 +27,8 @@ MainWindow::MainWindow(QWidget *parent)
 	tabWidget->addTab(page2, tr("Slots"));
 	QWidget* page3 = new QWidget;
 	tabWidget->addTab(page3, tr("Parameters"));
-	QWidget* page5 = new QWidget;
-	tabWidget->addTab(page5, tr("tab5"));
+	//QWidget* page5 = new QWidget;
+	//tabWidget->addTab(page5, tr("tab5"));
 
 
 	// page 0
@@ -42,10 +42,10 @@ MainWindow::MainWindow(QWidget *parent)
 	page0hi->setLayout(layout0);
 	QHBoxLayout* buttonlayout0 = new QHBoxLayout(page0lo);
 	page0lo->setLayout(buttonlayout0);
-	QSpacerItem* spacer4 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-	QPushButton* nextButton4 = new QPushButton (tr("&Weiter"));
+	QSpacerItem* spacer0 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+	QPushButton* nextButton0 = new QPushButton (tr("&Continue >"));
 	QLabel* welcome = new QLabel(tr("Welcome to the template generator plugin.\n\n\n"
-					"If you want to load an already existing plugin"
+					"If you want to load an existing plugin"
 					" use the browse button to find the header file.\n"
 					"Otherwise continue without loading."));
 	QPushButton* load = new QPushButton(tr("Load"));
@@ -64,13 +64,14 @@ MainWindow::MainWindow(QWidget *parent)
 	layout0->setRowStretch(3,2);
 	layout0->setRowStretch(5,2);
 	layout0->setRowStretch(1,1);
-	buttonlayout0->addItem(spacer4);
+	buttonlayout0->addItem(spacer0);
 	buttonlayout0->addWidget (load);
-	buttonlayout0->addWidget(nextButton4);
+	buttonlayout0->addWidget(nextButton0);
 
 
 
-	connect(nextButton4,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
+	connect(nextButton0,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
+	connect(load,SIGNAL(clicked()),tabWidget, SLOT(nextPage()));
 	connect(load,SIGNAL(clicked()),this, SLOT(_load()));
 	connect(browse2,SIGNAL(clicked()),this,SLOT(_selectInputFile()));
 
@@ -94,22 +95,21 @@ MainWindow::MainWindow(QWidget *parent)
 
 	MyLabel* label = new MyLabel;
 	QSpacerItem* spacer1 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-	QPushButton* nextButton1 = new QPushButton (tr("&Weiter"));
+	QPushButton* nextButton1 = new QPushButton (tr("&Continue >"));
 	QPushButton* browse = new QPushButton (tr("Browse"));
-	QPushButton* exitButton = new QPushButton(tr("&Exit"));
-	QLabel* name = new QLabel (tr("Name of plug in:"));
-	QLabel* save = new QLabel (tr("saved in:"));
+	QPushButton* previousButton = new QPushButton(tr("< &Back"));
+	QLabel* name = new QLabel (tr("Name of Plugin:"));
+	QLabel* save = new QLabel (tr("Saved in:"));
 	QLabel* author = new QLabel (tr("Author:"));
 	_pluginDoc = new QTextEdit(page1);
-	QLabel* pluginDocLabel = new QLabel(tr("plugin description:"));
+	QLabel* pluginDocLabel = new QLabel(tr("Plugin Description:"));
 
 
-	//_check1 = new QCheckBox(tr(""));
 	_templated = new QComboBox();
 	_templated->addItem(tr("Templated"));
 	_templated->addItem(tr("Non-Templated"));
 
-	//QLabel* checktemplated = new QLabel(tr("templated Plugin"));
+
 	_inputAuthorName = new QLineEdit(page1);
 	_inputDir = new QLineEdit(page1);
 	_inputName = new QLineEdit (page1);
@@ -123,26 +123,11 @@ MainWindow::MainWindow(QWidget *parent)
 			QDir::Name, completer));
 	_inputDir->setCompleter(completer);
 
-/*
-	QGroupBox *groupBox = new QGroupBox(page1);
 
 
-	QGridLayout *vbox = new QGridLayout;
-	vbox->addWidget(author,3,1,1,2);
-	vbox->addWidget(_inputAuthorName,3,3);
-	vbox->addWidget(name,4,1,1,2);
-	vbox->addWidget(save,5,1,1,2);
-	vbox->addWidget(_inputName,4,3);
-	vbox->addWidget(_inputDir,5,3);
-	vbox->addWidget(browse,5,4);
-	groupBox->setLayout(vbox);
-*/
-
-
-	label->setText(tr("Please choose a name and directory to save"));
+	label->setText(tr("Please choose a name and directory to save."));
 	layout->addWidget(label,1,1,1,3,Qt::AlignCenter);
 	layout->addWidget(_templated,10,3);
-	//layout->addWidget(checktemplated,10,1,1,2);
 	layout->addWidget(author,3,1,1,2);
 	layout->addWidget(_inputAuthorName,3,3);
 	layout->addWidget(name,4,1,1,2);
@@ -151,9 +136,8 @@ MainWindow::MainWindow(QWidget *parent)
 	layout->addWidget(_inputDir,5,3);
 	layout->addWidget(browse,5,4);
 
-	//layout->addWidget(groupBox,3,1,3,3);
 	buttonlayout1->addItem(spacer1);
-	buttonlayout1->addWidget(exitButton);
+	buttonlayout1->addWidget(previousButton);
 	buttonlayout1->addWidget(nextButton1);
 	layout->setColumnStretch(1,1);
 	layout->setColumnStretch(6,1);
@@ -165,7 +149,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-	connect(exitButton, SIGNAL(clicked()), this, SLOT(close()));
+	connect(previousButton, SIGNAL(clicked()), tabWidget, SLOT(previousPage()));
 	connect(helloButton, SIGNAL(clicked()), this, SLOT(_showHello()));
 	connect(nextButton1, SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
 	connect(browse, SIGNAL(clicked()), this, SLOT(_selectOutputDir()));
@@ -184,12 +168,12 @@ MainWindow::MainWindow(QWidget *parent)
 	page2lo->setLayout(buttonlayout2);
 	QSpacerItem* spacer2 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QSpacerItem* spacerMid = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-	QPushButton* nextButton2 = new QPushButton (tr("&Weiter"));
+	QPushButton* nextButton2 = new QPushButton (tr("&Continue >"));
 	QPushButton* add = new QPushButton (tr("&Add"));
 	QPushButton* remove = new QPushButton (tr("&Remove"));
 	QPushButton* add2 = new QPushButton (tr("&Add"));
 	QPushButton* remove2 = new QPushButton (tr("&Remove"));
-	QPushButton* exitButton2 = new QPushButton(tr("&Exit"));
+	QPushButton* previousButton2 = new QPushButton(tr("< &Back"));
 	QLabel* inputLabel = new QLabel (tr("Input Slots"));
 	QLabel* outputLabel = new QLabel (tr("Output Slots"));
 	QWidget* page2mid = new QWidget(page2);
@@ -229,7 +213,7 @@ MainWindow::MainWindow(QWidget *parent)
 	buttonlayout2->addWidget(add2);
 	buttonlayout2->addWidget(remove2);
 	buttonlayout2->addItem(spacer2);
-	buttonlayout2->addWidget(exitButton2);
+	buttonlayout2->addWidget(previousButton2);
 	buttonlayout2->addWidget(nextButton2);
 
 	signalMapper = new QSignalMapper(this);
@@ -251,11 +235,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-	connect(exitButton2, SIGNAL(clicked()), this, SLOT(close()));
+	connect(previousButton2, SIGNAL(clicked()), tabWidget, SLOT(previousPage()));
 	connect(nextButton2,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
 	connect(this,SIGNAL(clicked(int)), this, SLOT(_editRowCount(int)));
-	connect(_table1, SIGNAL(itemChanged(QTableWidgetItem*)),
-		this, SLOT(_itemChanged(QTableWidgetItem*)));
 
 
 	// page 3
@@ -273,8 +255,8 @@ MainWindow::MainWindow(QWidget *parent)
 	QPushButton* createButton = new QPushButton(tr("&Create"));
 	QPushButton* add3 = new QPushButton (tr("&Add"));
 	QPushButton* remove3 = new QPushButton (tr("&Remove"));
-	QPushButton* exitButton3 = new QPushButton(tr("&Exit"));
-	QLabel* parameterLabel = new QLabel (tr("Input Slots"));
+	QPushButton* previousButton3 = new QPushButton(tr("< &Back"));
+	QLabel* parameterLabel = new QLabel (tr("Parameter"));
 	_table3 = new QTableWidget(0, 4, page3);
 	QStringList paramlist = (QStringList() << "Name" << "Documentation" << "Typ" << "Default" );
 	_table3->setHorizontalHeaderLabels(paramlist);
@@ -283,7 +265,7 @@ MainWindow::MainWindow(QWidget *parent)
 	buttonlayout3->addWidget(add3);
 	buttonlayout3->addWidget(remove3);
 	buttonlayout3->addItem(spacer3);
-	buttonlayout3->addWidget(exitButton3);
+	buttonlayout3->addWidget(previousButton3);
 	buttonlayout3->addWidget(createButton);
 
 	_editRowCount(2);
@@ -299,30 +281,15 @@ MainWindow::MainWindow(QWidget *parent)
 	_table3->horizontalHeader()->setStretchLastSection(true);
 	_table3->verticalHeader()->hide();
 
+
+
+
+
+	connect(previousButton3, SIGNAL(clicked()), tabWidget, SLOT(previousPage()));
+	connect(createButton, SIGNAL(clicked()), this, SLOT(_save()));
+
+
 /*
-	_table2->setCellWidget(0,1,new QTextEdit(page3));
-	QTextEdit* documentation3 = qobject_cast<QTextEdit*>(_table2->cellWidget(0,1));
-	Q_ASSERT(documentation3);
-	documentation3->setTabChangesFocus(true);
-	_table2->setCellWidget(0,0,new QLineEdit(page3));
-	_table2->setCellWidget(0,2,new QLineEdit(page3));
-	_table2->setCellWidget(0,3,new QLineEdit(page3));
-	_table2->setCellWidget(1,1,new QTextEdit(page3));
-	QTextEdit* documentation4 = qobject_cast<QTextEdit*>(_table2->cellWidget(1,1));
-	Q_ASSERT(documentation4);
-	documentation4->setTabChangesFocus(true);
-	_table2->setCellWidget(1,0,new QLineEdit(page3));
-	_table2->setCellWidget(1,2,new QLineEdit(page3));
-	_table2->setCellWidget(1,3,new QLineEdit(page3));
-*/
-	_table2->resizeColumnsToContents();
-
-
-
-	connect(exitButton3, SIGNAL(clicked()), this, SLOT(close()));
-
-
-
 
 	// page 5
 	QGridLayout* layout5 = new QGridLayout(page5);
@@ -334,17 +301,272 @@ MainWindow::MainWindow(QWidget *parent)
 	helloButton->setSizePolicy(policy);
 
 
+*/
 
-	connect(createButton, SIGNAL(clicked()), this, SLOT(_save()));
 }
 
-void MainWindow::_itemChanged(QTableWidgetItem* item) {
-	qDebug() << "changed row=" << item->row()
-			<< "; changed column=" << item->column();
-}
+
 
 MainWindow::~MainWindow() {
 }
+
+void MainWindow::_changeExisting() {
+
+	///saving settings and changing the plugin
+
+
+	QDir outDir(_inputDir->text());
+	if (!outDir.exists()) {
+		qWarning("Output directory does not exist!");
+		return;
+	}
+
+
+	QSettings settings("Heidelberg Collaboratory for Image Processing",
+		"TemplateGenerator");
+	settings.setValue("recentOutputDir", outDir.absolutePath());
+
+
+	QFile loadHeaderFile(_inputFile->text());
+		if (!loadHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
+			return;
+
+	QTextStream loadH(&loadHeaderFile);
+
+	QFile loadCppFile(_inputFile->text().remove(".h").append(".cpp"));
+	if (!loadCppFile.open(QIODevice::ReadOnly | QIODevice::Text))
+		return;
+
+	QTextStream loadCodeCpp(&loadCppFile);
+
+
+
+
+
+
+
+	QFile loadHxxFile(_inputFile->text().append("xx"));
+	if (!loadHxxFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		//return;
+	}
+
+	QTextStream loadCodeHxx(&loadHxxFile);
+
+
+	QStringList filesToChange;
+	filesToChange.append(loadH.readAll());
+	filesToChange.append(loadCodeCpp.readAll());
+	filesToChange.append(loadCodeHxx.readAll());
+
+
+	QString codeString = filesToChange.join("@@@@@@@@@@@");
+
+
+	codeString.replace("public:","public: \n\n\t@In/Out@");
+	codeString.replace("public:","public: \n\n\t@Parameter@");
+
+	// Zeilenweises Einlesen des Plugins um die alten Parameter und Slots zu entfernen
+	// und den richtigen Ort zum Einfügen im .hxx File zu finden
+
+	QTextStream Code(&codeString);
+	QString changedCode;
+
+	while(!Code.atEnd()){
+
+		QString tempString;
+		tempString = Code.readLine();
+		QString tempString2 = tempString;
+		tempString2.replace(" ","");
+
+		QString nameOfPlugin = _inputFile->text().section("/",-1,-1).section(".",0,-2);
+		QString constructor = nameOfPlugin.prepend("::");
+		tempString.append("\n");
+
+
+		if(tempString2.contains(constructor)){
+
+			for(int count = 0; !tempString.contains("{") && count < 7; count++){
+
+				tempString.append("\n");
+				tempString.append(Code.readLine());
+			}
+
+			tempString.replace("{","{\n\n\t@addParameter@\n\n\t@add-In/Out@");
+		}
+
+		if(tempString2.contains("Parameter<") || tempString2.contains("_addParameter(") ||
+		   tempString2.contains("InputSlot<") || tempString2.contains("OutputSlot<") ||
+		tempString2.contains("_addInputSlot") || tempString2.contains("_addOutputSlot")){
+
+			for(int count = 0; !tempString.contains(";") && count < 5; count++){
+
+				tempString.append(Code.readLine());
+			}
+
+			tempString.clear();
+		}
+		changedCode.append(tempString);
+	}
+
+
+	for(int i = 0; i < _table1->rowCount(); i++) {
+
+		QTableWidgetItem* IName = _table1->item(i,0);
+		QTableWidgetItem* IDoc = _table1->item(i,1);
+		QTableWidgetItem* ITyp = _table1->item(i,2);
+
+		IName->text();
+
+		if(!QString(IName->text()).isEmpty()){
+
+
+			changedCode.replace("@In/Out@",QString("/// @Documentation@ \n\tInputSlot < @Typ@ > @I/O-Name@;"
+				"\n\t@In/Out@"));
+
+
+			changedCode.replace(QString("@Documentation@"),IDoc->text().replace("\n","\n\t/// ").trimmed());
+			changedCode.replace(QString("@Typ@"),ITyp->text().trimmed());
+			changedCode.replace("@I/O-Name@",IName->text().trimmed());
+
+
+			changedCode.replace("@add-In/Out@",QString("ParameteredObject::_addInputSlot(@IOName@,"
+				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
+
+			changedCode.replace(QString("@Documentation@"),IDoc->text().replace("\n"," <br> ").trimmed());
+			changedCode.replace(QString("@Typ@"),ITyp->text().trimmed());
+			changedCode.replace(QString("@IOName@"),IName->text().trimmed());
+		}
+
+	}
+	for(int k = 0; k < _table2->rowCount(); k++) {
+
+
+
+		QTableWidgetItem* OName = _table2->item(k,0);
+		QTableWidgetItem* ODoc = _table2->item(k,1);
+		QTableWidgetItem* OTyp = _table2->item(k,2);
+
+		if(!QString(OName->text()).isEmpty()){
+
+			changedCode.replace("@In/Out@",
+						QString("/// @Documentation@ \n\tOutputSlot < @Typ@ > @I/O-Name@;"
+						"\n\t@In/Out@"));
+
+			changedCode.replace(QString("@Documentation@"),ODoc->text().replace("\n","\n\t/// ").trimmed());
+			changedCode.replace(QString("@Typ@"),OTyp->text().trimmed());
+			changedCode.replace("@I/O-Name@",OName->text().trimmed());
+
+			changedCode.replace("@add-In/Out@",QString("ParameteredObject::_addOutputSlot(@IOName@,"
+				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
+
+			changedCode.replace(QString("@Documentation@"),ODoc->text().replace("\n"," <br> ").trimmed());
+			changedCode.replace(QString("@Typ@"),OTyp->text().trimmed());
+			changedCode.replace(QString("@IOName@"),OName->text().trimmed());
+		}
+
+	}
+	changedCode.replace("@In/Out@","");
+	changedCode.replace("@add-In/Out@","");
+
+
+
+
+	for (int j = 0; j < _table3->rowCount(); j++ ) {
+
+		QTableWidgetItem* paraName = _table3->item(j,0);
+		QTableWidgetItem* paraDoc = _table3->item(j,1);
+		QTableWidgetItem* paraTyp = _table3->item(j,2);
+		QTableWidgetItem* paraDefault = _table3->item(j,3);
+
+		if(!QString(paraName->text()).isEmpty()){
+			changedCode.replace("@Parameter@",QString("/// @Documentation@ \n\tParameter < @Typ@ >"
+				" @ParameterName@;\n\t@Parameter@"));
+			changedCode.replace("@ParameterName@",paraName->text().trimmed());
+			changedCode.replace("@Typ@",paraTyp->text().trimmed());
+			changedCode.replace("@Documentation@",paraDoc->text()
+					.replace("\n","\n\t/// ").trimmed());
+			}
+
+
+
+
+		if(!QString(paraName->text()).isEmpty()){
+
+			changedCode.replace("@addParameter@",QString("ParameteredObject::_addParameter "
+				"(@ParaName@, \"@ParaName@\", \"@Documentation@\", "
+				"\"@Default@\");\n\t@addParameter@"));
+			changedCode.replace("@ParaName@",paraName->text().trimmed());
+			changedCode.replace("@Documentation@",paraDoc->text()
+					.replace("\n"," <br> ").trimmed());
+			changedCode.replace("@Default@",paraDefault->text().trimmed());
+		}
+
+	}
+	changedCode.replace("@Parameter@","");
+	changedCode.replace("@addParameter@","");
+
+
+
+	QStringList editedNewFiles;
+	editedNewFiles = changedCode.split("@@@@@@@@@@@");
+
+
+	if (loadHxxFile.exists()) {
+		QFile templatedHeaderFile(_inputFile->text());
+		if (!templatedHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+
+
+
+		QTextStream out(&templatedHeaderFile);
+		out  << editedNewFiles.at(0) << "\n\n\n" ;
+
+
+		QFile templatedCppFile(_inputFile->text().remove(".h").append(".cpp"));
+
+		if (!templatedCppFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+
+
+		QTextStream out2(&templatedCppFile);
+		out2 << editedNewFiles.at(1) << "\n\n\n";
+
+
+		QFile templatedHxxFile(_inputFile->text().remove(".h").append(".hxx"));
+		if (!templatedHxxFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+
+
+		QTextStream out3(&templatedHxxFile);
+		out3  << editedNewFiles.at(2) << "\n\n\n";
+
+		}
+
+	else {
+		QFile nontemplatedHeaderFile(_inputFile->text());
+
+		if (!nontemplatedHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+
+		QTextStream out4(&nontemplatedHeaderFile);
+		out4 << editedNewFiles.at(0) << "\n\n\n";
+
+
+		QFile nontemplatedCppFile(_inputFile->text().remove(".h").append(".cpp"));
+		if (!nontemplatedCppFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+
+
+		QTextStream out5(&nontemplatedCppFile);
+		out5 << editedNewFiles.at(1) << "\n\n\n";
+
+		}
+
+	QMessageBox::information(this, tr("Changed"),
+				 tr("Your plugin has been changed."));
+}
+
+
 
 void MainWindow::_showHello() {
 	QMessageBox::information(this, tr("hello world box"),
@@ -397,7 +619,13 @@ void MainWindow::_save() {
 	if (msgBox.clickedButton() == cancelButton) {
 	// cancels plugin generation
 		return;
-	} else if (msgBox.clickedButton() == acceptButton || overwriteButton)
+		} else if (msgBox.clickedButton() == changeButton){
+		_changeExisting();
+
+	}
+
+
+	else if (msgBox.clickedButton() == acceptButton || overwriteButton)
 
 
 	{
@@ -492,11 +720,7 @@ void MainWindow::_save() {
 
 		if(!QString(IName->text()).isEmpty()){
 
-		//if(IOChoose->currentIndex() == 1)
-		//str.replace("@In/Out@",QString("/// @Documentation@ \n\tOutputSlot < @Typ@ > @I/O-Name@;"
-		//	"\n\t@In/Out@"));
 
-		//else
 			str.replace("@In/Out@",QString("/// @Documentation@ \n\tInputSlot < @Typ@ > @I/O-Name@;"
 				"\n\t@In/Out@"));
 
@@ -504,15 +728,8 @@ void MainWindow::_save() {
 			str.replace(QString("@Documentation@"),IDoc->text().replace("\n","\n\t/// ").trimmed());
 			str.replace(QString("@Typ@"),ITyp->text().trimmed());
 			str.replace("@I/O-Name@",IName->text().trimmed());
-		//}
 
-		//
 
-//		if (IOChoose->currentIndex() == 1)
-//			str.replace("@add-In/Out@",QString("ParameteredObject::_addOutputSlot(@IOName@,"
-//				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
-
-//		else
 
 			str.replace("@add-In/Out@",QString("ParameteredObject::_addInputSlot(@IOName@,"
 				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
@@ -651,7 +868,11 @@ void MainWindow::_save() {
 		out5 << editedNewFiles.at(1) << "\n\n\n";
 
 		}
+	QMessageBox::information(this, tr("Completed"),
+				 tr("Your plugin has been generated."));
 	}
+
+
 
 
 }
@@ -753,15 +974,6 @@ void MainWindow::_editRowCount(int table) {
 	}
 
 
-	/*_table1->setCellWidget(row,2,new QTextEdit());
-	QTextEdit* documentationx = qobject_cast<QTextEdit*>(_table1->cellWidget(row,2));
-	Q_ASSERT(documentationx);
-	documentationx->setTabChangesFocus(true);
-	documentationx->setFrameShape(QFrame::NoFrame);
-	documentationx->setFrameShadow(QFrame::Plain);
-
-	_table1->setCellWidget(row,0,new QLineEdit());
-*/
 }
 
 void MainWindow::_load() {
@@ -870,7 +1082,6 @@ void MainWindow::_load() {
 
 				tempString.append(Code.readLine());
 				tempString.remove("\t");
-				qWarning() << tempString;
 			}
 
 			tempString.replace(";","");
@@ -878,7 +1089,6 @@ void MainWindow::_load() {
 			tempString.remove("\"");
 			//tempString.remove(QRegExp("^.*\\("));
 			tempString.remove(0,tempString.indexOf("(") + 1);
-			qWarning() << tempString;
 			QString paraNamex = tempString.section(",",0,0);
 			QString paraDocux = tempString.section(",",2,2);
 			QString paraDefaultx = tempString.section(",",3,3);
@@ -897,7 +1107,7 @@ void MainWindow::_load() {
 		}
 
 
-		if(tempString2.contains("InputSlot(", Qt::CaseInsensitive)){
+		if(tempString2.contains("InputSlot(")){
 
 			for(int count = 0; !tempString.contains(";") && count < 5; count++){
 
@@ -922,7 +1132,7 @@ void MainWindow::_load() {
 
 			incount++;
 		}
-		if(tempString2.contains("OutputSlot(", Qt::CaseInsensitive)){
+		if(tempString2.contains("OutputSlot(")){
 
 			for(int count = 0; !tempString.contains(";") && count < 5; count++){
 
@@ -950,7 +1160,8 @@ void MainWindow::_load() {
 		}
 	}
 
-
+	QMessageBox::information(this, tr("Load"),
+				 tr("Your plugin has been loaded."));
 }
 
 

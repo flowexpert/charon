@@ -8,13 +8,14 @@
 class MyTabWidget : public QTabWidget
 
 {
-        Q_OBJECT
+	Q_OBJECT
 
 public:
-    MyTabWidget(QWidget* parent = 0);
+	MyTabWidget(QWidget* parent = 0);
 
 public slots:
-    void nextPage();
+	void nextPage();
+	void previousPage();
 
 
 };

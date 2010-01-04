@@ -4,16 +4,26 @@
 
 
 MyTabWidget::MyTabWidget(QWidget* p) :
-                QTabWidget(p)
+		QTabWidget(p)
 {
 }
 
 void MyTabWidget::nextPage()
 {
 
-    int temp = currentIndex();
-    temp++;
-    setCurrentIndex(temp);
+	int temp = currentIndex();
+	temp++;
+	setCurrentIndex(temp);
+
+
+}
+
+void MyTabWidget::previousPage()
+{
+
+	int temp = currentIndex();
+	temp--;
+	setCurrentIndex(temp);
 
 
 }
