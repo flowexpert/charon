@@ -24,6 +24,9 @@
  */
 #define TYPE PetscSolver
 
+#if defined(MSVC) && defined (petscsolver_EXPORTS) 
+#define solver_EXPORTS
+#endif
 #include "PetscSolver.hxx"
 
 extern "C" petscsolver_DECLDIR ParameteredObject * create(
