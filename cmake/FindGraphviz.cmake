@@ -11,10 +11,7 @@
 #  GRAPHVIZ_INCLUDE_DIRS			graphviz include directory
 #  GRAPHVIZ_LIBRARY_DIRS			graphviz library directory
 #  GRAPHVIZ_DOT_EXECUTABLE			graphviz dot executable
-#  GRAPHVIZ_VERSION_STRING			dot version string (major.minor.patch.tweak)
-#  GRAPHVIZ_VERSION_MAJOR			parts of the version string
-#  GRAPHVIZ_VERSION_MINOR			- " -
-#  GRAPHVIZ_VERSION_PATCH			- " -
+#  GRAPHVIZ_VERSION_STRING			dot version string (major.minor.patch)
 #
 # For usage with Visual Studio you need 
 # at least version graphviz-2.22.x.msi
@@ -48,6 +45,14 @@ FIND_LIBRARY(GRAPHVIZ_CDT_LIBRARY
 	NAMES			cdt
 	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
 	DOC				"graphviz container types"
+    PATH_SUFFIXES   release
+	NO_DEFAULT_PATH
+)
+FIND_LIBRARY(GRAPHVIZ_CDT_LIBRARY_DEBUG
+	NAMES			cdt
+	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
+	DOC				"graphviz container types"
+    PATH_SUFFIXES   debug
 	NO_DEFAULT_PATH
 )
 
@@ -55,6 +60,14 @@ FIND_LIBRARY(GRAPHVIZ_GRAPH_LIBRARY
 	NAMES			graph
 	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
 	DOC				"graphviz container types"
+    PATH_SUFFIXES   release
+	NO_DEFAULT_PATH
+)
+FIND_LIBRARY(GRAPHVIZ_GRAPH_LIBRARY_DEBUG
+	NAMES			graph
+	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
+	DOC				"graphviz container types"
+    PATH_SUFFIXES   debug
 	NO_DEFAULT_PATH
 )
 
@@ -62,6 +75,14 @@ FIND_LIBRARY(GRAPHVIZ_GVC_LIBRARY
 	NAMES			gvc
 	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
 	DOC				"graphviz container types"
+    PATH_SUFFIXES   release
+	NO_DEFAULT_PATH
+)
+FIND_LIBRARY(GRAPHVIZ_GVC_LIBRARY_DEBUG
+	NAMES			gvc
+	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
+	DOC				"graphviz container types"
+    PATH_SUFFIXES   debug
 	NO_DEFAULT_PATH
 )
 
@@ -78,6 +99,9 @@ MARK_AS_ADVANCED(
 	GRAPHVIZ_CDT_LIBRARY
 	GRAPHVIZ_GRAPH_LIBRARY
 	GRAPHVIZ_GVC_LIBRARY
+	GRAPHVIZ_CDT_LIBRARY_DEBUG
+	GRAPHVIZ_GRAPH_LIBRARY_DEBUG
+	GRAPHVIZ_GVC_LIBRARY_DEBUG
 	GRAPHVIZ_DOT_EXECUTABLE
 )
 
@@ -109,7 +133,6 @@ IF(NOT GRAPHVIZ_VERSION_STRING)
 ENDIF(NOT GRAPHVIZ_VERSION_STRING)
 
 # check if version matches
-#TODO: change to IF(... VERSION_LESS ...) syntax
 SET(GRAPHVIZ_VERSION_FINE TRUE)
 IF(Graphviz_FIND_VERSION)
 	IF(NOT GRAPHVIZ_VERSION_STRING)
@@ -123,6 +146,7 @@ IF(Graphviz_FIND_VERSION)
 	)
 	IF (${GRAPHVIZ_VERSION_STRING} VERSION_LESS ${GRAPHVIZ_VERSION_EXPECTED})
 	  MESSAGE(SEND_ERROR
+	      "Found Graphviz version is not high eanough!"
 		  "Version string  : ${GRAPHVIZ_VERSION_STRING}"
 		  "Version expected: ${GRAPHVIZ_VERSION_EXPECTED}"
       )
@@ -160,10 +184,14 @@ ELSE(APPLE)
 ENDIF(APPLE)
 
 SET(GRAPHVIZ_LIBRARIES
-	${GRAPHVIZ_GRAPH_LIBRARY};
-	${GRAPHVIZ_CDT_LIBRARY};
-	${GRAPHVIZ_GVC_LIBRARY};
+	optimized;${GRAPHVIZ_GRAPH_LIBRARY};
+	debug;${GRAPHVIZ_GRAPH_LIBRARY_DEBUG};
+	optimized;${GRAPHVIZ_CDT_LIBRARY};
+	debug;${GRAPHVIZ_GRAPH_LIBRARY_DEBUG};
+	optimized;${GRAPHVIZ_GVC_LIBRARY};
+	debug;${GRAPHVIZ_GRAPH_LIBRARY_DEBUG};
 )
+#MESSAGE("Graphviz libraries: ${GRAPHVIZ_LIBRARIES}")
 
 # cleanup
 IF(COMMAND unset)
@@ -172,18 +200,3 @@ IF(COMMAND unset)
     UNSET(GRAPHVIZ_DOT_RUN_ERROR)
     UNSET(GRAPHVIZ_FOUND_MESSAGE)
 ENDIF(COMMAND unset)
-
-#IF(WIN32 AND INSTALL_DLLS)
-#	# install dlls
-#	INSTALL(FILES
-#		${GRAPHVIZ_ROOT_DIR}/bin/cdt.dll
-#		${GRAPHVIZ_ROOT_DIR}/bin/graph.dll
-#		${GRAPHVIZ_ROOT_DIR}/bin/gvc.dll
-#		${GRAPHVIZ_ROOT_DIR}/bin/libexpat.dll
-#		${GRAPHVIZ_ROOT_DIR}/bin/ltdl.dll
-#		${GRAPHVIZ_ROOT_DIR}/bin/Pathplan.dll
-#		${GRAPHVIZ_ROOT_DIR}/bin/zlib1.dll
-#		DESTINATION		bin
-#		COMPONENT		dlls
-#	)
-#ENDIF(WIN32 AND INSTALL_DLLS)
