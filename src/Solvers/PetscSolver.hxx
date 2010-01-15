@@ -545,8 +545,9 @@ int PetscSolver<T>::petscExecute() {
 			for (int index = 0 ; index < nos ; index++) {
 				substencils.find(unknown)->second[index]->
 					updateStencil(unknown, p.x, p.y, p.z, p.t);
-				rhs += PetscScalar(substencils.find(unknown)->second[index]->
-					getRhs().find(unknown)->second);
+				Stencil<T>* mystencil = reinterpret_cast<Stencil<T>*>(substencils.find(unknown)->second[index]);
+				std::map<std::string, T>& myrhs = *(const_cast<std::map<std::string, T>*>(&(mystencil->getRhs())));
+				rhs += PetscScalar(myrhs[unknown]);
 			}
 			// now call the MetaStencil of this unknown to gather all the
 			// data of its SubStencils (which have just been updated) and
