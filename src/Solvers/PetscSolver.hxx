@@ -85,7 +85,8 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	// for all Point4Ds in this->pattern
 	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
 		const Point4D<unsigned int>& curP = *pIt;
-		Point4D<int> curArg = Point4D<int>(curP)+Point4D<int>(p)-this->center;
+		Point4D<int> curArg = curP + p;
+		curArg -= Point4D<int>(this->center);
 		PetscInt curCol =
 			PetscSolver<T>::_pointToGlobalIndex(curArg,unknown,unknownSizes);
 		columns[i] = curCol;
