@@ -88,6 +88,13 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 
 		/**
 		 * Map to store and manage all the right hand sides.
+		 * \todo
+		 *     This is a map to store the rhs for each unknown.
+		 *     Is this really needed, because Stencil::updateStencil is now
+		 *     called given the unknown and is able to set the
+		 *     rhs <em>for the given unknown</em>.<br>
+		 *     Changing this to a simple \c T could make writing a stencil much
+		 *     easier.
 		 * @remarks
 		 * -   This member must never be erased as long as the stencil exists
 		 *     because this would break the pointers of following objects
@@ -97,7 +104,7 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 	public:
 		/// Lambda coefficient of the stencil.
 		Parameter<T> lambda;
-		
+
 		/// Output slot containing the this-pointer of the object		
 		OutputSlot<Stencil<T>*> out;
 
@@ -137,7 +144,11 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 
 		/**
 		 * Getter function for the right hand side.
-		 * @return a map containing all right hand sides, associated to unknowns.
+		 * \todo
+		 *     change to const <code>T& getRhs(std::string unknown)</code>
+		 *     or even omit the unknown, see Stencil::rhs.
+		 * @return a map containing all right hand sides,
+		 *         associated to unknowns.
 		 */
 		const std::map<std::string, T>& getRhs() const;
 

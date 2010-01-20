@@ -164,7 +164,6 @@ protected:
 	 *  \param[out] columns           Array of column indices for MatSetValues.
 	 *  \param[out] values            Array of values for MatSteValues.
 	 *  \return                       Number of entries.
-	 *  \todo    check for duplicate entries still missing
 	 */
 	unsigned int _addCrossTerms(
 			const std::string& unknown,
