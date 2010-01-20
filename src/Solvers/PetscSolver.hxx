@@ -85,7 +85,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	// for all Point4Ds in this->pattern
 	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
 		const Point4D<unsigned int>& curP = *pIt;
-		Point4D<int> curArg = curP + p;
+		Point4D<int> curArg = Point4D<int>(curP) + Point4D<int>(p);
 		curArg -= Point4D<int>(this->center);
 		PetscInt curCol =
 			PetscSolver<T>::_pointToGlobalIndex(curArg,unknown,unknownSizes);
@@ -546,9 +546,8 @@ int PetscSolver<T>::petscExecute() {
 			for (int index = 0 ; index < nos ; index++) {
 				substencils.find(unknown)->second[index]->
 					updateStencil(unknown, p.x, p.y, p.z, p.t);
-				std::map<std::string, T>& myrhs = *(const_cast<std::map<std::string, T>*>
-					(&(substencils.find(unknown)->second[index]->getRhs())));
-				rhs += PetscScalar(myrhs[unknown]);
+				rhs += PetscScalar(
+						substencils.find(unknown)->second[index]->getRhs());
 			}
 			// now call the MetaStencil of this unknown to gather all the
 			// data of its SubStencils (which have just been updated) and

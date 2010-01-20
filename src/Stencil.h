@@ -76,7 +76,7 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 {
 	protected:
 		///Set of the names of unknowns on which this stencil works.
-		std::set<std::string> unknowns;
+		std::set<std::string> _unknowns;
 
 		/**
 		 * Map to store and manage all the SubStencils.
@@ -84,22 +84,14 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 * -   This member must never be erased as long as the stencil exists
 		 *     because this would break the pointers of following objects
 		 */
-		std::map<std::string, SubStencil<T> > substencils;
+		std::map<std::string, SubStencil<T> > _subStencils;
 
 		/**
-		 * Map to store and manage all the right hand sides.
-		 * \todo
-		 *     This is a map to store the rhs for each unknown.
-		 *     Is this really needed, because Stencil::updateStencil is now
-		 *     called given the unknown and is able to set the
-		 *     rhs <em>for the given unknown</em>.<br>
-		 *     Changing this to a simple \c T could make writing a stencil much
-		 *     easier.
-		 * @remarks
-		 * -   This member must never be erased as long as the stencil exists
-		 *     because this would break the pointers of following objects
+		 * Map to store and manage all the right hand side.
+		 * This has to be updated to represent the correct unknown
+		 * during Stencil::updateStencil.
 		 */
-		std::map<std::string, T> rhs;
+		T _rhs;
 
 	public:
 		/// Lambda coefficient of the stencil.
@@ -144,13 +136,8 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 
 		/**
 		 * Getter function for the right hand side.
-		 * \todo
-		 *     change to const <code>T& getRhs(std::string unknown)</code>
-		 *     or even omit the unknown, see Stencil::rhs.
-		 * @return a map containing all right hand sides,
-		 *         associated to unknowns.
 		 */
-		const std::map<std::string, T>& getRhs() const;
+		const T& getRhs() const;
 
 		/// apply stencil to a sequence
 		/** \param seq           sequence to apply stencil on
@@ -165,7 +152,7 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 * Getter functions for the unknowns of the stencil.
 		 * @return reference to the set that include the unknowns as strings.
 		 */
-		virtual const std::set<std::string>& getUnknowns() const;
+		const std::set<std::string>& getUnknowns() const;
 
 		/**
 		 * Default destructor.

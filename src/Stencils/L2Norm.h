@@ -39,42 +39,45 @@
 
 #include "../Stencil.h"
 
-/// This is the L2Norm stencil which is derived from class stencil
+/// Laplacian stencil used for regularization in global methods.
 template <class T>
 class l2norm_DECLDIR L2Norm : public Stencil<T>
 {
-	private:
-		cimg_library::CImg<T> _dataMask;
-		cimg_library::CImg<T> _patternMask;
-		Point4D<unsigned int> _center;
+private:
+	/// \name precalculate substencil data
+	//  \{
+	cimg_library::CImg<T> _dataMask;    ///< common data
+	cimg_library::CImg<T> _patternMask; ///< common pattern
+	Point4D<unsigned int> _center;      ///< common center
+	//  \}
 
-	public:
-		/// Parameter containing the number of dimensions.
-		Parameter<unsigned int> dimensions;
+public:
+	/// Parameter containing the number of dimensions.
+	Parameter<unsigned int> dimensions;
 
-		/// ParameterList containing all unknowns of the Stencil.
-		ParameterList<std::string> pUnknowns;
+	/// ParameterList containing all unknowns of the Stencil.
+	ParameterList<std::string> pUnknowns;
 
-		/// default constructor
-		/// \param name instance name
-		L2Norm(const std::string& name = "");
+	/// default constructor
+	/// \param name instance name
+	L2Norm(const std::string& name = "");
 
-		/// \copydoc ParameteredObject::execute()
-		virtual void execute();
+	/// \copydoc ParameteredObject::execute()
+	virtual void execute();
 
-		virtual void updateStencil(
-				const std::string& unknown,
-				const unsigned int x=0,
-				const unsigned int y=0,
-				const unsigned int z=0,
-				const unsigned int t=0,
-				const unsigned int v=0);
+	virtual void updateStencil(
+			const std::string& unknown,
+			const unsigned int x=0,
+			const unsigned int y=0,
+			const unsigned int z=0,
+			const unsigned int t=0,
+			const unsigned int v=0);
 
-		virtual cimg_library::CImg<T> apply(
-				const cimg_library::CImgList<T>& seq,
-				const unsigned int frame) const;
+	virtual cimg_library::CImg<T> apply(
+			const cimg_library::CImgList<T>& seq,
+			const unsigned int frame) const;
 
-		virtual ~L2Norm();
+	virtual ~L2Norm();
 };
 
 #endif // _L2NORM_H_

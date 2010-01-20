@@ -46,7 +46,7 @@ void L2Norm<T>::execute() {
 	// inherited from the Stencil class
 	std::vector<std::string>::iterator puIt;
 	for(puIt=pUnknowns().begin() ; puIt!=pUnknowns().end() ; puIt++) {
-		this->unknowns.insert(*puIt);
+		this->_unknowns.insert(*puIt);
 	}
 
 	//create masks in appropriate dimensions
@@ -173,7 +173,7 @@ void L2Norm<T>::updateStencil(
 			entry.data.clear();
 			entry.pattern.clear();
 		}
-		this->substencils[*uIt] = entry;
+		this->_subStencils[*uIt] = entry;
 	}
 }
 

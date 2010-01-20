@@ -31,30 +31,33 @@
 
 template <class T>
 Stencil<T>::Stencil(const std::string& classname, const std::string& name) : 
-				TemplatedParameteredObject<T>(classname,name,
-				"discretizes partial differential equation terms or defines derivatives filters for images")
+		TemplatedParameteredObject<T>(classname,name,
+				"discretizes partial differential equation terms or defines "
+				"derivatives filters for images"),
+		_rhs(0)
 {
 	this->_addOutputSlot(out,"this","Pointer to itself","Stencil<T>");
 	this->_addParameter(lambda,"lambda","weight of the pde term",T(1),"T");
 	_addFunction(Stencil<T>::get);
 	_addFunction(Stencil<T>::getRhs);
+	_addFunction(Stencil<T>::getUnknowns);
 	out = this;
 }
 
 
 template <class T>
 const std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {
-	return this->substencils;
+	return _subStencils;
 }
 
 template <class T>
-const std::map<std::string, T>& Stencil<T>::getRhs() const {
-	return rhs;
+const T& Stencil<T>::getRhs() const {
+	return _rhs;
 }
 
 template <class T>
 const std::set<std::string>& Stencil<T>::getUnknowns() const {
-	return unknowns;
+	return _unknowns;
 }
 
 template <class T>

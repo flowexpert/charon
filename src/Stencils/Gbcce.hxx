@@ -37,7 +37,7 @@ template <class T>
 void Gbcce<T>::execute() {
 	ParameteredObject::execute();
 	// erase the old set of unknowns
-	this->unknowns.clear();
+	this->_unknowns.clear();
 	std::set<std::string> bmUnknowns = this->brightnessIn()->getUnknowns();
 	std::set<std::string> mmUnknowns = this->motionIn()->getUnknowns();
 	std::set<std::string>::iterator bmIt = bmUnknowns.begin();
@@ -61,17 +61,17 @@ void Gbcce<T>::execute() {
 	}
 	// if no collision is detected, merge both input vectors into the
 	// unkowns set which was inherited from the Stencil class
-	this->unknowns.insert(bmUnknowns.begin(),bmUnknowns.end());
-	this->unknowns.insert(mmUnknowns.begin(),mmUnknowns.end());
+	this->_unknowns.insert(bmUnknowns.begin(),bmUnknowns.end());
+	this->_unknowns.insert(mmUnknowns.begin(),mmUnknowns.end());
 
 	// expanding stencil-map to appropriate size and filling with dummy
 	// values
 	std::set<std::string>::iterator uIt;
-	for(uIt=this->unknowns.begin();uIt!=this->unknowns.end();uIt++) {
+	for(uIt=this->_unknowns.begin();uIt!=this->_unknowns.end();uIt++) {
 		Point4D<unsigned int> center(0,0,0,0);
 		SubStencil<T> entry(1,1,1,1,center);
 		entry.pattern(0,0) = 1;
-		this->substencils[*uIt] = entry;
+		this->_subStencils[*uIt] = entry;
 	}
 }
 
@@ -84,7 +84,7 @@ void Gbcce<T>::updateStencil(
 		const unsigned int t,
 		const unsigned int v) {
 	std::map<std::string, T> term;
-	T rhsTemp = 0;
+	this->_rhs = 0;
 
 	// collect unknowns
 	const std::set<std::string>& mUnknowns = motionIn()->getUnknowns();
@@ -99,17 +99,16 @@ void Gbcce<T>::updateStencil(
 		term[*unkIt] = T(0);
 
 	// compute term
-	this->brightnessIn()->compute(x, y, z, t, v, term, rhsTemp, unknown);
-	this->motionIn()->compute(x, y, z, t, v, term, rhsTemp, unknown);
+	this->brightnessIn()->compute(x, y, z, t, v, term, this->_rhs, unknown);
+	this->motionIn()->compute(x, y, z, t, v, term, this->_rhs, unknown);
 
 	// and fill into substencils
 	typename std::map<std::string,T>::iterator termIt;
 	for(termIt=term.begin();termIt!=term.end();termIt++) {
 		const T val = termIt->second * this->lambda();
-		this->substencils[termIt->first].data(0,0) = val;
+		this->_subStencils[termIt->first].data(0,0) = val;
 	}
-	rhsTemp *= this->lambda();
-	this->rhs[unknown] = rhsTemp;
+	this->_rhs *= this->lambda();
 }
 
 //not yet implemented

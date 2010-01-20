@@ -27,42 +27,44 @@
 #include <CImg.h>
 #include "Point4D.h"
 
-/// Mask for one unknown or the general mask if no unknowns are used
-///
-/// This class is used to manage the pattern, the data and the center
-/// of a SubStencil.
-/// \see class Stencil
+/// Mask for one unknown or general mask if no unknowns are used
+/** This class is used to manage the pattern, the data and the center
+ *  of a SubStencil.
+ *  \see class Stencil
+ */
 template <class T>
 class SubStencil
 {
-	public:
-		///CImg containing the actual data of the SubStencil.
-		cimg_library::CImg<T> data;
-		
-		/**
-		 * CImg containing the pattern of the SubStencil.
-		 * All positions that could potentially contain data are 1.
-		 * Positions that will never contain data are 0.
-		 */
-		cimg_library::CImg<char> pattern;
-		Point4D<unsigned int> center;
-		
-		///default constructor.
-		SubStencil();
-		
-		///constructor with dimensions and center.
-		SubStencil(const unsigned int dimx, const unsigned int dimy,
-		           const unsigned int dimz, const unsigned int dimt,
-		           Point4D<unsigned int> center);
-		
-		///copy constructor.
-		SubStencil(const SubStencil& rhs);
-		
-		///assignment operator.
-		SubStencil& operator= (const SubStencil& rhs);
-		
-		///default destructor.
-		~SubStencil();
+public:
+	///CImg containing the actual data of the SubStencil.
+	cimg_library::CImg<T> data;
+
+	/**
+	 * CImg containing the pattern of the SubStencil.
+	 * All positions that could potentially contain data are 1.
+	 * Positions that will never contain data are 0.
+	 */
+	cimg_library::CImg<char> pattern;
+
+	/// center of the substencil pattern
+	Point4D<unsigned int> center;
+
+	///default constructor.
+	SubStencil();
+
+	///constructor with dimensions and center.
+	SubStencil(const unsigned int dimx, const unsigned int dimy,
+			const unsigned int dimz, const unsigned int dimt,
+			Point4D<unsigned int> center);
+
+	///copy constructor.
+	SubStencil(const SubStencil& rhs);
+
+	///assignment operator.
+	SubStencil& operator= (const SubStencil& rhs);
+
+	///default destructor.
+	~SubStencil();
 };
 
 #endif //_SUBSTENCIL_H_
