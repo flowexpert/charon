@@ -111,24 +111,33 @@ namespace ImgTool {
                      T min, T max, cimg_library::CImg<T>& hist, Roi<int> roi,
                      bool normalize);
 
-    /** Create warped image from src and flow.
-     *  Warped over the first two dimensions.
-     *  Output is dst. The sizes (xyz) of src and flow have to be the same,
-     *  flow is a vector-field (flow.dimv() >= 2).
-        \f[
-            \text{dst}(x,y,z,t) = \text{src}(x+\text{flow}_1(x,y,z),
-                y+\text{flow}_2(x,y,z),z,t)
-        \f]
-     *  The image coordinates of src are interpolated with the given
-     *  interpolator.
-     *  @param[in]   src          image input (size: x,y,z,t)
-     *  @param[in]   flow         flow field input (size: x,y,z,t,v>=2)
-     *  @param[out]  dst          output image (will be set to size x,y,z,t)
-     *  @param[in]   interpolator Interpolator to use if non-integer values occur.
+	/** Create warped image from src and flow.
+	 *  Warped over the first two dimensions.
+	 *  Output is dst. The sizes (xyz) of src and flow have to be the same,
+	 *  flow is a vector-field (flow.dimv() >= 2).
+	 *  The additional parameter weight can be used to invert the flow (set
+	 *  to -1) or for warping half in both directions.
+		\f[
+			\text{dst}(x,y,z,t) = \text{src}(
+				x+\text{weight}\cdot\text{flow}_1(x,y,z,t),
+				y+\text{weight}\cdot\text{flow}_2(x,y,z,t),z,t)
+		\f]
+	 *  The image coordinates of src are interpolated with the given
+	 *  interpolator.
+	 *  @param[in]   src          image input (size: x,y,z,t)
+	 *  @param[in]   flow         flow field input (size: x,y,z,t,v>=2)
+	 *  @param[out]  dst          output image (will be set to size x,y,z,t)
+	 *  @param[in]   interpolator Interpolator to use if non-integer values
+	 *                            occur.
+	 *  \param[in]   weight       multiply flow with this factor before warping
 	 */
     template <typename T>
-    void warp2D(const cimg_library::CImg<T>& src, const cimg_library::CImgList<T>& flow,
-                cimg_library::CImg<T>& dst, const Interpolator<T>* interpolator);
+    void warp2D(
+			const cimg_library::CImg<T>& src,
+			const cimg_library::CImgList<T>& flow,
+			cimg_library::CImg<T>& dst,
+			const Interpolator<T>* interpolator,
+			float weight=1.f);
 
     /** Create warped image from src and flow.
      *  Warped over the first two dimensions and accumulate flow over
