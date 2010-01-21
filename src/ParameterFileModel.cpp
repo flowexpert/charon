@@ -603,12 +603,13 @@ void ParameterFileModel::executeWorkflow() {
 		.path().toAscii().constData();
 	logFileName += "/executeLog.txt";
 	std::ofstream log(logFileName.c_str(), std::ios::trunc);
-	Q_ASSERT(log.good());
+	Q_ASSERT(!log.fail() && log.good());
 #ifdef WIN32
 	sout.assign(log);
 #else
 	sout.assign(log, std::cout);
 #endif
+	sout << "Opened execution logfile." << std::endl;
 	QString path = QDir::currentPath();
 	QDir::setCurrent(QFileInfo(_fileName).path());
 	try {
@@ -638,6 +639,12 @@ void ParameterFileModel::executeWorkflow() {
 		qWarning("%s",
 			tr("Caught CImg exception of type \"%1\"\n\nMessage:\n%2")
 				.arg(name).arg(excpt._message).toAscii().constData());
+	}
+	catch (const char* &msg) {
+		QMessageBox::warning(0, tr("error during execution"),
+			tr("Caught exception of type <b>char*</b>."
+				"<br><br>Message:<br>%1")
+				.arg(msg).replace("\n", "<br>"));
 	}
 	catch (...) {
 		qWarning("%s", tr("Caught exception of unknown type")
