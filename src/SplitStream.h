@@ -81,10 +81,14 @@ public:
 class DLLEX SplitStream : public std::ostream {
 public:
 	/**	Default constructor.
-	 *	Use std::cout as default output stream.
+	 *	Use no output stream.
+	 */
+	SplitStream();
+
+	/**	Assign one stream to output list.
 	 *	@param stream		stream to pipe output to
 	 */
-	SplitStream(std::ostream& stream = std::cout);
+	SplitStream(std::ostream& stream);
 
 	/**	Assign two streams to output list.
 	 *	@param stream1		fist output stream to assign

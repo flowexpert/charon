@@ -68,6 +68,11 @@ int SplitStreamBuf::sync() {
 	return 0;
 }
 
+SplitStream::SplitStream() :
+		std::ostream(std::_Uninitialized())
+{
+}
+
 SplitStream::SplitStream(std::ostream& stream) :
 		std::ostream(std::cout.rdbuf()) {
 	buffers_.push_back(stream.rdbuf());
@@ -111,12 +116,14 @@ void SplitStream::updateBuf(std::vector<std::streambuf*> buffers){
 
 void SplitStream::assign(std::ostream& stream){
 	buffers_.clear();
+	this->init(stream.rdbuf());
 	buffers_.push_back(stream.rdbuf());
 	assert(buffers_.size() == 1);
 }
 
 void SplitStream::assign(std::ostream& stream1, std::ostream &stream2){
 	buffers_.clear();
+	this->init(stream1.rdbuf());
 	buffers_.push_back(stream1.rdbuf());
 	buffers_.push_back(stream2.rdbuf());
 	assert(buffers_.size() == 2);
@@ -125,6 +132,7 @@ void SplitStream::assign(std::ostream& stream1, std::ostream &stream2){
 
 void SplitStream::assign(std::vector<std::ostream*>& streamList){
 	buffers_.clear();
+	this->init(streamList[0]->rdbuf());
 	for(unsigned int i=0; i<streamList.size();i++)
 		buffers_.push_back(streamList[i]->rdbuf());
 	assert(buffers_.size() == streamList.size());
