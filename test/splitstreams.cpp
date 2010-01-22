@@ -1,33 +1,35 @@
 /*	Copyright (C) 2009 Jens-Malte Gottfried
 
 	This file is part of Charon.
-    
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/**	@file splitstreams.cpp
- *	Unit tests for class SplitStream.
- *	@author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
- *	@date 11.08.2008
+/** @file splitstreams.cpp
+ *  Unit tests for class SplitStream.
+ *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+ *  @date 11.08.2008
  */
 
 #include "SplitStream.h"
 #include <cassert>
 #include <sstream>
 #include <fstream>
+#include <iomanip>
 #include <cstdlib>
+#include <stdexcept>
 
-///	Main application.
+/// Main application.
 int main() {
 	// start of the tests
 	bool fail = false;
@@ -38,22 +40,18 @@ int main() {
 	std::streambuf* buf = new SplitStreamBuf(buffers);
 
 	std::ostream tout(buf);
-	tout << "Output to std::ostream(buf)";
-	tout << "Output using numbers:" << (int) 4 << "\n" << std::endl;
+	tout << "Output to std::ostream(buf);";
+	tout << " using numbers: " << (int) 4 << std::endl;
 
-	sout << "Output to SplitStream sout" << std::endl;
-	sout << "Adress of sout (using manipulators): " << std::hex;
-	sout << (long int) &sout << std::endl;
-
-	sout << "test multiple output (line should appear twice):" << std::endl;
-	sout << "blalkdasjflsajdfljkdf" << std::endl;
-	sout << "blalkdasjflsajdfljkdf" << std::endl; 
+	sout.assign(std::cout);
+	sout << "Output to SplitStream sout\n";
+	sout << "Adress of sout (using manipulators): " << std::setw(20);
+	sout << (void*) &sout << std::endl;
 
 	std::ostringstream os;
 	sout.assign(std::cout, os);
-	std::string teststring = "Testing output to StringStream";
+	std::string teststring = "Testing output to StringStream\n";
 	sout << teststring;
-	std::cout << std::endl;
 	if(os.str() != teststring){
 		std::cout << "String content des not match!" << std::endl;
 		return EXIT_FAILURE;
@@ -62,16 +60,17 @@ int main() {
 	// creating empy ostream* vector
 	std::vector<std::ostream*> streamvec;
 	fail = true;
-	std::cout << "Testing expecting exception..." << std::endl;
+	std::cout << "Testing expected exception..." << std::endl;
 	try {
 		// assigning emtpy vector has to rise exception
 		sout.assign(streamvec);
 	}
-	catch(const char* msg) {
-		std::cout << "Got exception message: " << msg << std::endl;
+	catch(const std::invalid_argument& err) {
+		std::cout << "Caught invalid_argument exception.\n";
+		std::cout << "Exception message:\n" << err.what() << std::endl;
 		fail = false;
 	}
-	if(fail){
+	if (fail) {
 		std::cout << "No exception got!" << std::endl;
 		return EXIT_FAILURE;
 	}
