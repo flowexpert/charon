@@ -24,10 +24,16 @@
 #include <climits>
 #include <cstdio>
 #include <limits>
+#include <stdexcept>
+#include <sstream>
 
 SplitStreamBuf::SplitStreamBuf(const std::vector<std::streambuf*>& buffers) {
-	if (buffers.size() < 1)
-		throw "Buffer must be initialized with at least one streambuf!";
+	if (buffers.size() < 1) {
+		std::ostringstream msg;
+		msg << __FILE__ << ":" << __LINE__ << "\n\t";
+		msg << "Buffer must be initialized with at least one streambuf!";
+		throw std::invalid_argument(msg.str().c_str());
+	}
 	buffers_ = buffers;
 }
 
@@ -136,6 +142,12 @@ void SplitStream::assign(std::ostream& stream1, std::ostream &stream2){
 
 void SplitStream::assign(std::vector<std::ostream*>& streamList){
 	buffers_.clear();
+	if (streamList.size() < 1) {
+		std::ostringstream msg;
+		msg << __FILE__ << ":" << __LINE__ << "\n\t";
+		msg << "You have to assign at least one output stream!";
+		throw std::invalid_argument(msg.str().c_str());
+	}
 	this->init(streamList[0]->rdbuf());
 	for(unsigned int i=0; i<streamList.size();i++)
 		buffers_.push_back(streamList[i]->rdbuf());
