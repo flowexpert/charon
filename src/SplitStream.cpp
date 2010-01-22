@@ -69,12 +69,16 @@ int SplitStreamBuf::sync() {
 }
 
 SplitStream::SplitStream() :
+#ifdef UNIX
+		std::ostream(std::cout.rdbuf())
+#else
 		std::ostream(std::_Uninitialized())
+#endif
 {
 }
 
 SplitStream::SplitStream(std::ostream& stream) :
-		std::ostream(std::cout.rdbuf()) {
+		std::ostream(stream.rdbuf()) {
 	buffers_.push_back(stream.rdbuf());
 	assert(buffers_.size() == 1);
 	buffer_ = new SplitStreamBuf(buffers_);
