@@ -65,6 +65,8 @@ void TemplateGraphView::_renderGraph(graph_t* graph) {
 
     QStringList tempnames;
 
+    // avoid usage of decimal-"," in svg files
+    char* localeBak = setlocale(LC_NUMERIC, "C");
     // render graph and save it to some temporary files
     gvLayout(_gvc, graph, const_cast<char*> ("dot"));
 
@@ -88,7 +90,10 @@ void TemplateGraphView::_renderGraph(graph_t* graph) {
 
     gvFreeLayout(_gvc, graph);
 
-    // display graph
+    // resore pevious locale
+    setlocale(LC_NUMERIC, localeBak);
+
+	// display graph
     QGraphicsSvgItem* svgImage = new QGraphicsSvgItem(svgfile);
     scene()->addItem(svgImage);
     QRectF imBB = svgImage->boundingRect();

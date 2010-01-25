@@ -89,7 +89,12 @@ protected:
     virtual void mousePressEvent(QMouseEvent* event);
 
     /// Render graph and update display
-    ///	@param graph	Graph to render
+	/** \todo The derived functions in class HierarchyGraphView
+	 *        and TemplateGraphView do nearly the same, this could
+	 *        be changed to use the template method design pattern.
+	 *        There is actually <em>much</em> code duplication.
+     *  \param graph	Graph to render
+	 */
     virtual void _renderGraph(graph_t* graph) = 0;
 
     /// graphviz context (for graph rendering)

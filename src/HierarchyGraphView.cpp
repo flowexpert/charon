@@ -94,11 +94,8 @@ void HierarchyGraphView::_renderGraph(graph_t* graph) {
     scene()->addItem(svgImage);
     QRectF imBB = svgImage->boundingRect();
 
-    // find bounding rects of the nodes
-    char* ret = 0;
-
     // get graph bounding box
-    ret = agget(graph, const_cast<char*>("bb"));
+    char* ret = agget(graph, const_cast<char*>("bb"));
     std::istringstream bbStrm(ret);
     QRectF bb;
     bbStrm >> bb;
