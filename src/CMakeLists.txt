@@ -24,6 +24,9 @@ TARGET_LINK_LIBRARIES(linearfilter interpolatorlinear)
 ADD_LIBRARY(mask1d SHARED Mask1D.cpp Mask1D.h Mask1D.hxx)
 ADD_LIBRARY(structuretensor SHARED StructureTensor.cpp StructureTensor.h StructureTensor.hxx)
 ADD_LIBRARY(steeredderivative SHARED SteeredDerivative.cpp SteeredDerivative.h SteeredDerivative.hxx)
+ADD_LIBRARY(cimg2vigramultiarray SHARED CImg2VigraMultiArray.cpp CImg2VigraMultiArray.h CImg2VigraMultiArray.hxx)
+ADD_LIBRARY(vigramultiarray2cimg SHARED VigraMultiArray2CImg.cpp VigraMultiArray2CImg.h VigraMultiArray2CImg.hxx)
+ADD_LIBRARY(splineresize SHARED SplineResize.cpp SplineResize.h SplineResize.hxx)
 
 SET(Plugins
 	channelconverter
@@ -41,6 +44,9 @@ SET(Plugins
 	mask1d
 	structuretensor
 	steeredderivative
+	cimg2vigramultiarray
+	vigramultiarray2cimg
+	splineresize
 )
 
 FOREACH(X ${Plugins})
