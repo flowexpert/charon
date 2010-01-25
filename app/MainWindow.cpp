@@ -42,11 +42,10 @@ MainWindow::MainWindow(QWidget *parent)
 	page0hi->setLayout(layout0);
 	QHBoxLayout* buttonlayout0 = new QHBoxLayout(page0lo);
 	page0lo->setLayout(buttonlayout0);
-	QSpacerItem* spacer0 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QPushButton* nextButton0 = new QPushButton (tr("&Continue >"));
-	QLabel* welcome = new QLabel(tr("Welcome to the template generator plugin.\n\n\n"
+	QLabel* welcome = new QLabel(tr("<b>Welcome to the template generator plugin.</b><br><br><br>"
 					"If you want to load an existing plugin"
-					" use the browse button to find the header file.\n"
+					" use the browse button to find the header file.<br>"
 					"Otherwise continue without loading."));
 	QPushButton* load = new QPushButton(tr("Load"));
 	QPushButton* browse2 = new QPushButton(tr("Browse"));
@@ -64,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent)
 	layout0->setRowStretch(3,2);
 	layout0->setRowStretch(5,2);
 	layout0->setRowStretch(1,1);
-	buttonlayout0->addItem(spacer0);
+	buttonlayout0->addStretch();
 	buttonlayout0->addWidget (load);
 	buttonlayout0->addWidget(nextButton0);
 
@@ -90,11 +89,8 @@ MainWindow::MainWindow(QWidget *parent)
 	page1hi->setLayout(layout);
 	QHBoxLayout* buttonlayout1 = new QHBoxLayout(page1lo);
 	page1lo->setLayout(buttonlayout1);
-	QPushButton* helloButton = new QPushButton(tr("hello world"));
-
 
 	MyLabel* label = new MyLabel;
-	QSpacerItem* spacer1 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QPushButton* nextButton1 = new QPushButton (tr("&Continue >"));
 	QPushButton* browse = new QPushButton (tr("Browse"));
 	QPushButton* previousButton = new QPushButton(tr("< &Back"));
@@ -136,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent)
 	layout->addWidget(_inputDir,5,3);
 	layout->addWidget(browse,5,4);
 
-	buttonlayout1->addItem(spacer1);
+	buttonlayout1->addStretch();
 	buttonlayout1->addWidget(previousButton);
 	buttonlayout1->addWidget(nextButton1);
 	layout->setColumnStretch(1,1);
@@ -150,7 +146,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 	connect(previousButton, SIGNAL(clicked()), tabWidget, SLOT(previousPage()));
-	connect(helloButton, SIGNAL(clicked()), this, SLOT(_showHello()));
 	connect(nextButton1, SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
 	connect(browse, SIGNAL(clicked()), this, SLOT(_selectOutputDir()));
 
@@ -166,8 +161,6 @@ MainWindow::MainWindow(QWidget *parent)
 	page2hi->setLayout(layout2);
 	QHBoxLayout* buttonlayout2 = new QHBoxLayout(page2lo);
 	page2lo->setLayout(buttonlayout2);
-	QSpacerItem* spacer2 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-	QSpacerItem* spacerMid = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QPushButton* nextButton2 = new QPushButton (tr("&Continue >"));
 	QPushButton* add = new QPushButton (tr("&Add"));
 	QPushButton* remove = new QPushButton (tr("&Remove"));
@@ -176,8 +169,6 @@ MainWindow::MainWindow(QWidget *parent)
 	QPushButton* previousButton2 = new QPushButton(tr("< &Back"));
 	QLabel* inputLabel = new QLabel (tr("Input Slots"));
 	QLabel* outputLabel = new QLabel (tr("Output Slots"));
-	QWidget* page2mid = new QWidget(page2);
-	QHBoxLayout* buttonMidLayout = new QHBoxLayout();
 	_table1 = new QTableWidget(0, 3, page2);
 	QStringList longerList = (QStringList() << "Name"  << "Documentation" << "Typ");
 	_table1->setHorizontalHeaderLabels(longerList);
@@ -201,18 +192,19 @@ MainWindow::MainWindow(QWidget *parent)
 	_editRowCount(1);
 	_editRowCount(1);
 
-	layout2->addWidget(inputLabel,1,1);
-	layout2->addWidget(outputLabel,4,1);
-	layout2->addWidget(_table1,2,1);
-	layout2->addWidget(_table2,5,1);
-	layout2->addWidget(page2mid,3,1);
-	page2mid->setLayout(buttonMidLayout);
-	buttonMidLayout->addWidget(add);
-	buttonMidLayout->addWidget(remove);
-	buttonMidLayout->addItem(spacerMid);
-	buttonlayout2->addWidget(add2);
-	buttonlayout2->addWidget(remove2);
-	buttonlayout2->addItem(spacer2);
+	layout2->addWidget(inputLabel,1,1,1,3);
+	layout2->addWidget(_table1,2,1,1,3);
+	layout2->addWidget(add,3,1);
+	layout2->addWidget(remove,3,2);
+	layout2->setColumnStretch(3,1);
+
+	layout2->addWidget(outputLabel,5,1,1,3);
+	layout2->addWidget(_table2,6,1,1,3);
+	layout2->addWidget(add2,7,1);
+	layout2->addWidget(remove2,7,2);
+	layout2->setRowMinimumHeight(4,10);
+
+	buttonlayout2->addStretch();
 	buttonlayout2->addWidget(previousButton2);
 	buttonlayout2->addWidget(nextButton2);
 
@@ -251,7 +243,6 @@ MainWindow::MainWindow(QWidget *parent)
 	page3hi->setLayout(layout3);
 	QHBoxLayout* buttonlayout3 = new QHBoxLayout(page3lo);
 	page3lo->setLayout(buttonlayout3);
-	QSpacerItem* spacer3 = new QSpacerItem(40,20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 	QPushButton* createButton = new QPushButton(tr("&Create"));
 	QPushButton* add3 = new QPushButton (tr("&Add"));
 	QPushButton* remove3 = new QPushButton (tr("&Remove"));
@@ -260,11 +251,13 @@ MainWindow::MainWindow(QWidget *parent)
 	_table3 = new QTableWidget(0, 4, page3);
 	QStringList paramlist = (QStringList() << "Name" << "Documentation" << "Typ" << "Default" );
 	_table3->setHorizontalHeaderLabels(paramlist);
-	layout3->addWidget(parameterLabel,1,1);
-	layout3 -> addWidget(_table3,2,1);
-	buttonlayout3->addWidget(add3);
-	buttonlayout3->addWidget(remove3);
-	buttonlayout3->addItem(spacer3);
+	layout3->addWidget(parameterLabel,1,1,1,3);
+	layout3 -> addWidget(_table3,2,1,1,3);
+	layout3->addWidget(add3,3,1);
+	layout3->addWidget(remove3,3,2);
+	layout3->setColumnStretch(3,1);
+
+	buttonlayout3->addStretch();
 	buttonlayout3->addWidget(previousButton3);
 	buttonlayout3->addWidget(createButton);
 
@@ -564,13 +557,6 @@ void MainWindow::_changeExisting() {
 
 	QMessageBox::information(this, tr("Changed"),
 				 tr("Your plugin has been changed."));
-}
-
-
-
-void MainWindow::_showHello() {
-	QMessageBox::information(this, tr("hello world box"),
-				 tr("Welcome to this hello world application!"));
 }
 
 void MainWindow::_save() {
@@ -892,7 +878,7 @@ void MainWindow::_selectOutputDir() {
 
 void MainWindow::_selectInputFile() {
 	QString path = _inputFile->text();
-	if (path.isEmpty() || !QFileInfo(path).isFile() && !QFileInfo(path).isDir()){
+	if (path.isEmpty() || (!QFileInfo(path).isFile() && !QFileInfo(path).isDir())){
 		path = QDir::homePath();
 	}
 	QString dir = QFileDialog::getOpenFileName(

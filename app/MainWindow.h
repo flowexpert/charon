@@ -66,7 +66,6 @@ signals:
 
 
 private slots:
-	void _showHello();
 	/// constructs new files an writes chosen parameters/slots
 	/** This replaces @...@ by ...
 	 */
