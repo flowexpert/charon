@@ -15,12 +15,10 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file @pluginName@.h
- * Declaration of the parameter class @pluginName@.
- * @author @Author@
- * @date @date@
- *
-
+/** \file @pluginName@.h
+ *  Declaration of the parameter class @pluginName@.
+ *  \author @Author@
+ *  \date @date@
  */
 
 #ifndef _@pluginNameUpper@_H_
@@ -28,20 +26,20 @@
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef @pluginNameLower@_EXPORTS
-///Visual C++ specific code
+/// Visual C++ specific code
 #define @pluginNameLower@_DECLDIR __declspec(dllexport)
 #else
 #define @pluginNameLower@_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
-///Not needed with GCC
+/// Not needed with GCC
 #define @pluginNameLower@_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
 #include <CImg.h>
 
-
+/// @PluginDoc@
 template <typename T>
 class @pluginNameLower@_DECLDIR @pluginName@ : public TemplatedParameteredObject<T> {
 public:
@@ -52,12 +50,12 @@ public:
 	@In/Out@
 
 
-    /// create a new @pluginName@ object
-    /// @param name             Object name
-    @pluginName@(const std::string& name);
+	/// create a new @pluginName@ object
+	/// \param name          Instance name
+	@pluginName@(const std::string& name);
 
-    /// Update object.
-    virtual void execute();
+	/// Update object.
+	virtual void execute();
 };
 
 #endif // _@pluginName@_H_

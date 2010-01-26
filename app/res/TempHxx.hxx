@@ -15,27 +15,27 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file @pluginName@.hxx
-/// Implementation of the parameter class @pluginName@.
-/// @author @Author@
-/// @date @date@
+/** \file @pluginName@.hxx
+ *  Implementation of the parameter class @pluginName@.
+ *  \author @Author@
+ *  \date @date@
+ */
 
 #ifndef _@pluginNameUpper@_HXX_
 #define _@pluginNameUpper@_HXX_
 
 #include "@pluginName@.h"
 
-/// @PluginDoc@
 template <typename T>
 @pluginName@<T>::@pluginName@(const std::string& name) :
-        TemplatedParameteredObject<T>("@pluginName@", name,
-            "@PluginDocu@")
+		TemplatedParameteredObject<T>("@pluginName@", name,
+			"@PluginDocu@")
 {
 
-    @addParameter@
+	@addParameter@
 
 
-    @add-In/Out@
+	@add-In/Out@
 
 }
 

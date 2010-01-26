@@ -15,10 +15,11 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file @pluginName@.cpp
-/// This file is needed for class @pluginName@ to work as a plugin.
-/// @author @Author@
-/// @date @date@
+/** \file @pluginName@.cpp
+ *  This file is needed for class @pluginName@ to work as a plugin.
+ *  \author @Author@
+ *  \date @date@
+ */
 
 ///Class name of the plugin
 #define TYPE @pluginName@
