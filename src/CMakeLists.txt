@@ -24,9 +24,6 @@ TARGET_LINK_LIBRARIES(linearfilter interpolatorlinear)
 ADD_LIBRARY(mask1d SHARED Mask1D.cpp Mask1D.h Mask1D.hxx)
 ADD_LIBRARY(structuretensor SHARED StructureTensor.cpp StructureTensor.h StructureTensor.hxx)
 ADD_LIBRARY(steeredderivative SHARED SteeredDerivative.cpp SteeredDerivative.h SteeredDerivative.hxx)
-ADD_LIBRARY(cimg2vigramultiarray SHARED CImg2VigraMultiArray.cpp CImg2VigraMultiArray.h CImg2VigraMultiArray.hxx)
-ADD_LIBRARY(vigramultiarray2cimg SHARED VigraMultiArray2CImg.cpp VigraMultiArray2CImg.h VigraMultiArray2CImg.hxx)
-ADD_LIBRARY(splineresize SHARED SplineResize.cpp SplineResize.h SplineResize.hxx)
 
 SET(Plugins
 	channelconverter
@@ -44,13 +41,38 @@ SET(Plugins
 	mask1d
 	structuretensor
 	steeredderivative
-	cimg2vigramultiarray
-	vigramultiarray2cimg
-	splineresize
+)
+SET(Plugins_CImg
+	${Plugins}
 )
 
+IF(WITH_VIGRA)
+	# additional vigra modules
+	ADD_LIBRARY(cimg2vigramultiarray SHARED CImg2VigraMultiArray.cpp CImg2VigraMultiArray.h CImg2VigraMultiArray.hxx)
+	ADD_LIBRARY(vigramultiarray2cimg SHARED VigraMultiArray2CImg.cpp VigraMultiArray2CImg.h VigraMultiArray2CImg.hxx)
+	ADD_LIBRARY(splineresize SHARED SplineResize.cpp SplineResize.h SplineResize.hxx)
+	SET(Plugins_Vigra
+		cimg2vigramultiarray
+		vigramultiarray2cimg
+		splineresize
+	)
+	LIST(APPEND Plugins_CImg
+		cimg2vigramultiarray
+		vigramultiarray2cimg
+	)
+	LIST(APPEND Plugins
+		${Plugins_Vigra}
+	)
+	FOREACH(X ${Plugins_Vigra})
+		TARGET_LINK_LIBRARIES(${X} ${VIGRA_LIBRARIES})
+	ENDFOREACH(X)
+ENDIF(WITH_VIGRA)
+
 FOREACH(X ${Plugins})
-	TARGET_LINK_LIBRARIES(${X} charon-core ${CIMG_LINK_LIBRARIES})
+	TARGET_LINK_LIBRARIES(${X} charon-core)
+ENDFOREACH(X)
+FOREACH(X ${Plugins_CImg})
+	TARGET_LINK_LIBRARIES(${X} ${CIMG_LINK_LIBRARIES})
 ENDFOREACH(X)
 
 # install library
