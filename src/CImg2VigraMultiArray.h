@@ -19,8 +19,6 @@
  * Declaration of the parameter class CImg2VigraMultiArray.
  * @author Daniel Kondermann
  * @date 19.01.2010
- *
-
  */
 
 #ifndef _CIMG2VIGRAMULTIARRAY_H_
@@ -39,18 +37,22 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include "C:\Daten\Daten\Arbeit\cpp\vigra-hg\install\include\vigra\multi_array.hxx"
-#include "C:\Daten\Daten\Arbeit\cpp\vigra-hg\install\include\vigra\windows.h"
+#include <vigra/multi_array.hxx>
+#include <vigra/windows.h>
 #include <CImg.h>
 using namespace cimg_library;
 
+/// Convert a CImgList-Object to a vigra::MultiArray<5, T>
+/** The data copied. As the MultiArray may not have images of varying size,
+ *  the maximum image size of the CImgList is applied to all images.
+ *  Missing values are filled according to the missingValue parameter.
+ */
 template <typename T>
-class cimg2vigramultiarray_DECLDIR CImg2VigraMultiArray : public TemplatedParameteredObject<T> {
+class cimg2vigramultiarray_DECLDIR CImg2VigraMultiArray :
+	public TemplatedParameteredObject<T> {
 private:
-	vigra::MultiArray<5, T> result;
+	vigra::MultiArray<5, T> result; ///< temporary result storage
 public:
-
-	
 
 	/// Value for locations missing in the CImgList due to smaller image sizes.
 	Parameter < double > missingValue;
@@ -59,15 +61,13 @@ public:
 	InputSlot < CImgList<T> > in;
 	/// A copy of the image stored as vigra::MultiArray<5, T>
 	OutputSlot < vigra::MultiArrayView<5, T> > out;
-	
 
+	/// create a new CImg2VigraMultiArray object
+	/// @param name             Object name
+	CImg2VigraMultiArray(const std::string& name);
 
-    /// create a new CImg2VigraMultiArray object
-    /// @param name             Object name
-    CImg2VigraMultiArray(const std::string& name);
-
-    /// Update object.
-    virtual void execute();
+	/// Update object.
+	virtual void execute();
 };
 
 #endif // _CImg2VigraMultiArray_H_

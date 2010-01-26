@@ -39,17 +39,27 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include "C:\Daten\Daten\Arbeit\cpp\vigra-hg\install\include\vigra\multi_array.hxx"
-#include "C:\Daten\Daten\Arbeit\cpp\vigra-hg\install\include\vigra\multi_resize.hxx"
-#include "C:\Daten\Daten\Arbeit\cpp\vigra-hg\install\include\vigra\windows.h"
-#include <CImg.h>
-using namespace cimg_library;
+#include <vigra/multi_array.hxx>
+#include <vigra/multi_resize.hxx>
+#include <vigra/windows.h>
 
-
+/// Resize image using B-spline interpolation
+/** The function implements separable spline interpolation algorithm described
+ *  in M. Unser, A. Aldroubi, M. Eden, "B-Spline Signal Processing"
+ *  IEEE Transactions on Signal Processing, vol. 41, no. 2, pp. 821-833
+ *  (part I), pp. 834-848 (part II), 1993. to obtain optimal interpolation
+ *  quality and speed. The implementation ensures that image values are
+ *  interpolated rather than smoothed by first calling a recursive (sharpening)
+ *  prefilter as described in the above paper.
+ *  The input image must have a size of at least 4x4, the destination of at
+ *  least 2x2. The scaling factors are then calculated accordingly.
+ *  If the source image is larger than the destination, it is smoothed
+ *  (band limited) using a recursive exponential filter.
+ */
 template <typename T>
 class splineresize_DECLDIR SplineResize : public TemplatedParameteredObject<T> {
 private:
-	vigra::MultiArray<5, T> result;
+	vigra::MultiArray<5, T> result; ///< temporary result storage
 public:
 
 	/// Factor for resizing. If zero, the parameters newDim* are used. 
@@ -74,21 +84,19 @@ public:
 	Parameter < unsigned int > newDimV;
 	/// The order of the spline. Minimum is 3, maximum is 10.
 	Parameter < unsigned int > splineOrder;
-	
+
 
 	/// The source image. 
 	InputSlot < vigra::MultiArrayView<5, T> > in;
 	/// The resized image. 
 	OutputSlot < vigra::MultiArrayView<5, T> > out;
-	
 
+	/// create a new SplineResize object
+	/// @param name             Object name
+	SplineResize(const std::string& name);
 
-    /// create a new SplineResize object
-    /// @param name             Object name
-    SplineResize(const std::string& name);
-
-    /// Update object.
-    virtual void execute();
+	/// Update object.
+	virtual void execute();
 };
 
 #endif // _SplineResize_H_

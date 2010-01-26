@@ -25,20 +25,17 @@
 
 #include "VigraMultiArray2CImg.h"
 
-/// Converts a vigra::MultiArrayView<5, T> to a CImgList-Object. The data is copied for compatibility reasons. Please note that this conversion is not always possible if the MultiArray is strided or has too many dimensions! Dimensions are mapped the following way: 0->X, 1->Y, 2->Z, 3->V, 4->ListIndex.
 template <typename T>
 VigraMultiArray2CImg<T>::VigraMultiArray2CImg(const std::string& name) :
         TemplatedParameteredObject<T>("VigraMultiArray2CImg", name,
-            "Converts a vigra::MultiArrayView<5, T> to a CImgList-Object. The data is copied for compatibility reasons. Please note that this conversion is not always possible if the MultiArray is strided or has too many dimensions! Dimensions are mapped the following way: 0->X, 1->Y, 2->Z, 3->V, 4->ListIndex.")
+            "Converts a vigra::MultiArrayView<5, T> to a CImgList-Object. "
+			"The data is copied for compatibility reasons. Please note that "
+			"this conversion is not always possible if the MultiArray is "
+			"strided or has too many dimensions! Dimensions are mapped the "
+			"following way: 0->X, 1->Y, 2->Z, 3->V, 4->ListIndex.")
 {
-
-    
-
-
     ParameteredObject::_addInputSlot(in, "in", "The vigra::MultiArray<5, T> object to be converted.", "vigra::MultiArrayView<5, T>"); 
 	ParameteredObject::_addOutputSlot(out, "out", "A copy of the same image in CImgList<T> data format.", "CImgList<T>"); 
-	
-
 }
 
 template <typename T>

@@ -25,20 +25,19 @@
 
 #include "CImg2VigraMultiArray.h"
 
-/// Converts a CImgList-Object to a vigra::MultiArray<5, T>. The data copied. As the MultiArray may not have images of varying size, the maximum image size of the CImgList is applied to all images. Missing values are filled according to the missingValue parameter.
 template <typename T>
 CImg2VigraMultiArray<T>::CImg2VigraMultiArray(const std::string& name) :
-        TemplatedParameteredObject<T>("CImg2VigraMultiArray", name,
-            "Converts a CImgList-Object to a vigra::MultiArray<5, T>. The data copied. As the MultiArray may not have images of varying size, the maximum image size of the CImgList is applied to all images. Missing values are filled according to the missingValue parameter.")
+		TemplatedParameteredObject<T>("CImg2VigraMultiArray", name,
+			"Converts a CImgList-Object to a vigra::MultiArray<5, T>. "
+			"The data copied. As the MultiArray may not have images of "
+			"varying size, the maximum image size of the CImgList is applied "
+			"to all images. Missing values are filled according to the "
+			"missingValue parameter.")
 {
+	ParameteredObject::_addParameter (missingValue, "missingValue", "Value for locations missing in the CImgList due to smaller image sizes.");
 
-    
-    ParameteredObject::_addParameter (missingValue, "missingValue", "Value for locations missing in the CImgList due to smaller image sizes.");
-
-    ParameteredObject::_addInputSlot(in, "in", "The CImg object to be converted", "CImgList<T>"); 
-	ParameteredObject::_addOutputSlot(out, "out", "A copy of the image stored as vigra::MultiArray<5, T>", "vigra::MultiArrayView<5, T>"); 
-	
-
+	ParameteredObject::_addInputSlot(in, "in", "The CImg object to be converted", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(out, "out", "A copy of the image stored as vigra::MultiArray<5, T>", "vigra::MultiArrayView<5, T>");
 }
 
 template <typename T>
@@ -49,7 +48,8 @@ void CImg2VigraMultiArray<T>::execute() {
 	if(!in().size())
 		throw "CImg2VigraMultiArray: Specified in-image list is empty!";
 
-	unsigned int dimx =0, dimy =0, dimz =0, dimv =0, dimt =0;
+	int dimx =0, dimy =0, dimz =0, dimv =0;
+	unsigned int dimt =0;
 	for(unsigned int i =0; i < in().size(); ++i)
 	{
 		if(in()[i].width() > dimx)
@@ -60,8 +60,10 @@ void CImg2VigraMultiArray<T>::execute() {
 			dimz =in()[i].depth();
 		if(in()[i].spectrum() > dimv)
 			dimv =in()[i].spectrum();
+		if(in().size() > dimt)
+			dimt =in().size();
 	}
-	result.reshape(vigra::MultiArray<5, T>::difference_type(dimx, dimy, dimz, dimv, in().size()));
+	result.reshape(typename vigra::MultiArray<5, T>::difference_type(dimx, dimy, dimz, dimv, dimt));
 	result.init((T)missingValue);
 	sout << "inited" << std::endl;
 	for(unsigned int t =0; t < in().size(); ++t)

@@ -39,29 +39,34 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include "C:\Daten\Daten\Arbeit\cpp\vigra-hg\install\include\vigra\multi_array.hxx"
-//#include "C:\Daten\Daten\Arbeit\cpp\vigra-hg\install\include\vigra\multi_iterator.hxx"
-#include "C:\Daten\Daten\Arbeit\cpp\vigra-hg\install\include\vigra\windows.h"
+#include <vigra/multi_array.hxx>
+//#include <vigra/multi_iterator.hxx>
+#include <vigra/windows.h>
 #include <CImg.h>
 using namespace cimg_library;
 
+/// Convert a vigra::MultiArrayView<5, T> to a CImgList-Object
+/** The data is copied for compatibility reasons. Please note that this
+ *  conversion is not always possible if the MultiArray is strided or has too
+ *  many dimensions! Dimensions are mapped the following way:
+ * 0->X, 1->Y, 2->Z, 3->V, 4->ListIndex.
+ */
 template <typename T>
-class vigramultiarray2cimg_DECLDIR VigraMultiArray2CImg : public TemplatedParameteredObject<T> {
+class vigramultiarray2cimg_DECLDIR VigraMultiArray2CImg :
+		public TemplatedParameteredObject<T> {
 public:
 
 	/// The vigra::MultiArray object to be converted. 
 	InputSlot < vigra::MultiArrayView<5, T> > in;
 	/// The same image but with a CImgList<T> data structure around it. 
 	OutputSlot < CImgList<T> > out;
-	
 
+	/// create a new VigraMultiArray2CImg object
+	/// @param name             Object name
+	VigraMultiArray2CImg(const std::string& name);
 
-    /// create a new VigraMultiArray2CImg object
-    /// @param name             Object name
-    VigraMultiArray2CImg(const std::string& name);
-
-    /// Update object.
-    virtual void execute();
+	/// Update object.
+	virtual void execute();
 };
 
 #endif // _VigraMultiArray2CImg_H_
