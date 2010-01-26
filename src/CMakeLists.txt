@@ -48,6 +48,7 @@ SET(Plugins_CImg
 
 IF(WITH_VIGRA)
 	# additional vigra modules
+	INCLUDE_DIRECTORIES(${VIGRA_INCLUDE_DIRS})
 	ADD_LIBRARY(cimg2vigramultiarray SHARED CImg2VigraMultiArray.cpp CImg2VigraMultiArray.h CImg2VigraMultiArray.hxx)
 	ADD_LIBRARY(vigramultiarray2cimg SHARED VigraMultiArray2CImg.cpp VigraMultiArray2CImg.h VigraMultiArray2CImg.hxx)
 	ADD_LIBRARY(splineresize SHARED SplineResize.cpp SplineResize.h SplineResize.hxx)
