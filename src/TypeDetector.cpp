@@ -55,3 +55,10 @@ std::string TypeDetector::type(const std::string& info) const {
         return entry->second;
 }
 
+void TypeDetector::destroy() {
+	if (_instance) {
+		delete _instance;
+		_instance = 0;
+	}
+}
+

@@ -39,9 +39,14 @@ int main() {
 	buffers.push_back(std::cout.rdbuf());
 	std::streambuf* buf = new SplitStreamBuf(buffers);
 
-	std::ostream tout(buf);
-	tout << "Output to std::ostream(buf);";
-	tout << " using numbers: " << (int) 4 << std::endl;
+	std::ostream* tout = new std::ostream(buf);
+	*tout << "Output to std::ostream(buf);";
+	*tout << " using numbers: " << (int) 4 << std::endl;
+
+	delete tout;
+	delete buf;
+	tout = 0;
+	buf = 0;
 
 	sout.assign(std::cout);
 	sout << "Output to SplitStream sout\n";

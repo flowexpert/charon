@@ -47,10 +47,10 @@ class DLLEX TypeDetector
 private:
 	/// Map that stores the type dictionary.
 	std::map<std::string, std::string> _typemap;
-	
+
 	/// Forbid instanciation.
 	TypeDetector();
-	
+
 	/// Instance pointer.
 	static TypeDetector* _instance;
 
@@ -58,7 +58,10 @@ public:
 	/// Get a TypeDetector instance.
 	/// If no instance exists, this creates one.
 	static const TypeDetector& instance();
-	
+
+	/// Cleanup, free memory
+	static void destroy();
+
 	/// Get type representation.
 	/// Known types will result the proper representation,
 	/// unknown types will cause the original string to be returned.

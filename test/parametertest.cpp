@@ -180,6 +180,7 @@ int main() {
 	delete sample;
 	delete outgen;
 	delete outgen2;
+	TypeDetector::destroy();
 
 	// check metadata generation
 #ifdef MSVC

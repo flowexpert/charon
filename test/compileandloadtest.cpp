@@ -12,29 +12,38 @@
 #endif
 
 int main() {
-//Compile and load fails if compiled as debug with Visual Studio. Plug-ins are always compiled as
-//Release and a Debug compiled main application cannot load Release compiled Plug-ins.
+// Compile and load fails if compiled as debug with Visual Studio.
+// Plug-ins are always compiled as Release and a Debug compiled main
+// application cannot load Release compiled Plug-ins.
 #if !defined(_DEBUG) || !defined(MSVC)
 #ifdef MSVC
-	std::cout << "Copying " << (FileTool::getCurrentDir() +	"\\..\\src\\Release\\charon-core.lib").c_str() 
-		<< " to " << (FileTool::getCurrentDir() + "\\charon-core.lib").c_str() << std::endl;
+	std::cout << "Copying " << (FileTool::getCurrentDir()
+			+ "\\..\\src\\Release\\charon-core.lib").c_str()
+			<< " to " << (FileTool::getCurrentDir() + "\\charon-core.lib")
+			.c_str() << std::endl;
 
-	if(!CopyFile((FileTool::getCurrentDir() + 	"\\..\\src\\Release\\charon-core.lib").c_str(),
-		(FileTool::getCurrentDir() + "\\charon-core.lib").c_str(), false)) {
-		std::cout << "Error on copying library file, error #" << GetLastError() << std::endl;
+	if(!CopyFile((FileTool::getCurrentDir() +
+			"\\..\\src\\Release\\charon-core.lib").c_str(),
+			(FileTool::getCurrentDir()+"\\charon-core.lib").c_str(), false)) {
+		std::cout << "Error on copying library file, error #"
+				<< GetLastError() << std::endl;
 		return -1;
 	}
 #endif /* MSVC */
 	try{
-	PluginManager man(PLUGIN_DIR);
+		PluginManager man(PLUGIN_DIR);
 
-	man.compileAndLoadPlugin(TESTPLUGIN_SOURCE_DIR "/testplugin1.cpp");
+		man.compileAndLoadPlugin(TESTPLUGIN_SOURCE_DIR "/testplugin1.cpp");
 
-	std::vector<std::string> v;
-	v.push_back("testplugin1");
-	man.compileAndLoadPlugin(TESTPLUGIN_SOURCE_DIR "/testplugin2.cpp", v);
-
-	man.createInstance("testplugin2")->execute();
+		std::vector<std::string> v;
+		v.push_back("testplugin1");
+		man.compileAndLoadPlugin(TESTPLUGIN_SOURCE_DIR "/testplugin2.cpp", v);
+		ParameteredObject* instance = man.createInstance("testplugin2");
+		instance->execute();
+		man.destroyInstance(instance);
+		std::cout << "Living instances: "
+				<< man.getInstancesCount() << std::endl;
+		assert(man.getInstancesCount() == 0);
 	} catch (AbstractPluginLoader::PluginException e) {
 		std::cout << e.what() << std::endl;
 		return -1;
@@ -50,9 +59,11 @@ int main() {
 	remove(PLUGIN_DIR "/libtestplugin1.wrp");
 	remove(PLUGIN_DIR "/libtestplugin2.dylib");
 	remove(PLUGIN_DIR "/libtestplugin2.wrp");
-	
+	TypeDetector::destroy();
+
 #else
-	std::cout << "Compile and load does not work with Visual C++ when compiled as Debug." << std::endl;
+	std::cout << "Compile and load does not work with Visual C++ when "
+			<< "compiled as Debug." << std::endl;
 #endif /* !defined(_DEBUG) || !defined(MSVC) */
 
 	return 0;
