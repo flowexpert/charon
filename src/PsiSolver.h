@@ -52,10 +52,18 @@ class sample_DECLDIR Sample : public ParameteredObject {
 	/*// pointers, that the solver will use
 	InputSlot< CImgList<T>* > imgin;
 	*/
-	InputSlot<cimg_library::CImgList<T> > imgin;
+	InputSlot<cimg_library::CImgList<T> > imgListIn;
+	InputSlot<cimg_library::CImgList<T> > fluxListIn;
 
 	/// result
-	OutputSlot<cimg_library::CImgList<T> > imgout;
+	OutputSlot<cimg_library::CImgList<T> > imgListOut;
+
+	// result for writing in file
+	OutputSlot<cimg_library::CImgList<T> > imgListResult;
+
+	/// inputslot from Interpolator
+	InputSlot<Interpolator<T> *> interpolator;
+
 
 	/// default constructor
 	PsiSolver(

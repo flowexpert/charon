@@ -29,8 +29,11 @@ template <typename T>
 Solver<T>::Solver(const std::string& classname, const std::string& name) :
 		TemplatedParameteredObject<T>(classname,name,"solves the linear system")
 {
-	this->_addInputSlot(imgin,"imgin","CImgList","CImgList<T>");
-	this->_addOutputSlot(imgout,"imgout","CImgList containing the solution","CImgList<T>");
+	this->_addInputSlot(imgin,"imgListIn","CImgList","CImgList<T>");
+	this->_addInputSlot(imgin,"imgFluxIn","CImgList","CImgList<T>");
+	this->_addOutputSlot(imgout,"imgListOut","CImgList containing the solution","CImgList<T>");
+	this->_addInputSlot(interpolator, "interpolator", "Pointer to Interpolator", "Interpolator<T>*");
+
 	out() = result;
 }
 
