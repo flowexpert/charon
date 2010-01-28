@@ -58,9 +58,9 @@ IF(Vigra_FIND_VERSION)
 		SET(VIGRA_VERSION_FINE FALSE)
 		IF(NOT Vigra_FIND_QUIETLY)
 			MESSAGE(WARNING
-				"Vigra version does not match requirements.\n"
-				"Expected at least ${Vigra_FIND_VERSION} "
-				"but found ${VIGRA_VERSION}.\n")
+				"    Vigra version does not match requirements.\n"
+				"    Expected at least ${Vigra_FIND_VERSION}\n"
+				"    but found         ${VIGRA_VERSION}.\n")
 		ENDIF(NOT Vigra_FIND_QUIETLY)
 	ENDIF()
 	IF(Vigra_FIND_VERSION_EXACT AND
@@ -68,9 +68,9 @@ IF(Vigra_FIND_VERSION)
 		SET(VIGRA_VERSION_FINE FALSE)
 		IF(NOT Vigra_FIND_QUIETLY)
 			MESSAGE(WARNING
-				"Vigra version does not match requirements.\n"
-				"Expected exactly ${Vigra_FIND_VERSION} "
-				"but found ${VIGRA_VERSION}.\n")
+				"    Vigra version does not match requirements.\n"
+				"    Expected exactly ${Vigra_FIND_VERSION}\n"
+				"    but found        ${VIGRA_VERSION}.\n")
 		ENDIF(NOT Vigra_FIND_QUIETLY)
 	ENDIF()
 ENDIF(Vigra_FIND_VERSION)
