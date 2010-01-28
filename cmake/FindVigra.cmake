@@ -10,6 +10,7 @@
 #  VIGRA_ROOT_DIR            vigra installation directory
 #  VIGRA_INCLUDE_DIRS        vigra include directories
 #  VIGRA_LIBRARIES           vigra libraries
+#  VIGRA_VERSION             vigra version string (e.g. "1.7.0")
 
 # search for header files
 FIND_PATH(VIGRA_ROOT_DIR
@@ -33,6 +34,10 @@ ENDIF(NOT VIGRA_ROOT_DIR)
 
 SET(VIGRA_INCLUDE_DIRS ${VIGRA_ROOT_DIR}/include)
 
+# Try to compile and run a simple test file to detect
+# the vigra version. This works with vigra version
+# b62549894487 and above. In the current official
+# repo, the Version sting is not defined.
 TRY_RUN(
 	VIGRA_CHECK_RUN_RESULT
 	VIGRA_CHECK_COMPILE_RESULT
@@ -84,6 +89,15 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(Vigra DEFAULT_MSG
 	VIGRA_CHECK_RUN_SUCCESS
 	VIGRA_VERSION_FINE
 )
+
+IF(COMMAND UNSET)
+	UNSET(VIGRA_FIND_MESSAGE)
+	UNSET(VIGRA_CHECK_COMPILE_RESULT)
+	UNSET(VIGRA_CHECK_COMPILE)
+	UNSET(VIGRA_CHECK_RUN_RESULT)
+	UNSET(VIGRA_CHECK_RUN_SUCCESS)
+	UNSET(VIGRA_VERSION_FINE)
+ENDIF(COMMAND UNSET)
 
 MARK_AS_ADVANCED(
     VIGRA_ROOT_DIR
