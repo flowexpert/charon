@@ -41,14 +41,12 @@
 
 /// @PluginDoc@
 template <typename T>
-class @pluginNameLower@_DECLDIR @pluginName@ : public TemplatedParameteredObject<T> {
+class @pluginNameLower@_DECLDIR @pluginName@ :
+		public TemplatedParameteredObject<T> {
 public:
-
 	@Parameter@
 
-
 	@In/Out@
-
 
 	/// create a new @pluginName@ object
 	/// \param name          Instance name
@@ -58,4 +56,4 @@ public:
 	virtual void execute();
 };
 
-#endif // _@pluginName@_H_
+#endif // _@pluginNameUpper@_H_

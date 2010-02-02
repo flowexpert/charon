@@ -31,12 +31,9 @@ template <typename T>
 		TemplatedParameteredObject<T>("@pluginName@", name,
 			"@PluginDocu@")
 {
-
 	@addParameter@
 
-
 	@add-In/Out@
-
 }
 
 template <typename T>
