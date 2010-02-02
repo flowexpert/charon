@@ -75,14 +75,14 @@ void SequenceGenerator<T>::execute() {
 	double u  = velocities()[0];
 	double v  = velocities()[1];
 	double w  = 0.;
-	bool is3D = false;
+
+	// handle 3D test sequences
 	if(size()[2] > 1u) {
 		assert(velocities().size() == 3u);
 		assert(wavelength().size() == 3u);
-		flow().assign(3u,size()[0],size()[1],size()[2],size()[3]-1);
 		wz = 2*M_PI/wavelength()[2];
 		w  = velocities()[2];
-		is3D = true;
+		flow().assign(3u,size()[0],size()[1],size()[2],size()[3]-1);
 	}
 	else {
 		assert(velocities().size() == 2u);
@@ -96,8 +96,8 @@ void SequenceGenerator<T>::execute() {
 	cimg_forXYZC(sequence()[0],x,y,z,t)
 			sequence()[0](x,y,z,t) = isAdd ?
 				(sin(wx*(x-u*t)) + sin(wy*(y-v*t)) + sin(wz*(z-w*t))) :
-				(is3D ? (sin(wx*(x-u*t)) * sin(wy*(y-v*t)) * sin(wz*(z-w*t))) :
-					(sin(wx*(x-u*t)) * sin(wy*(y-v*t))));
+				// using cos for z-component to avoid zero flow in 2D case
+				(sin(wx*(x-u*t)) * sin(wy*(y-v*t)) * cos(wz*(z-w*t))) ;
 }
 
 #endif /* _SEQUENCEGENERATOR_HXX_ */
