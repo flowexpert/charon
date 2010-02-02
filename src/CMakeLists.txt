@@ -213,6 +213,11 @@ IF (ENABLE_MOTION)
 	)
 ENDIF (ENABLE_MOTION)
 
+ADD_LIBRARY(sequencegenerator SHARED
+	SequenceGenerator.h
+	SequenceGenerator.hxx
+	SequenceGenerator.cpp)
+LIST(APPEND Plugins sequencegenerator)
 
 FOREACH(X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core ${CIMG_LIBRARIES})
