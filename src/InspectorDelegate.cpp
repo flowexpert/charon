@@ -35,7 +35,6 @@
 #include <QToolButton>
 #include <QComboBox>
 #include <QResizeEvent>
-#include <QDebug>
 
 InspectorDelegate::InspectorDelegate(QObject* p) :
 		QStyledItemDelegate(p) {
@@ -174,7 +173,6 @@ void InspectorFilePathEditor::chooseFile() {
 		title = tr("Select File for %1").arg(_variable);
 
 	emit fileDialogExists(true);
-	qDebug() << QString("current path: %1").arg(info.absoluteFilePath());
 	path = QFileDialog::getSaveFileName(this, title, info.absoluteFilePath(),QString(),0,QFileDialog::DontConfirmOverwrite);
 	emit fileDialogExists(false);
 

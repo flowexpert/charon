@@ -223,8 +223,7 @@ bool ParameterFileModel::setData(const QModelIndex& ind, const QVariant& value,
 						getClass(_keys[ind.row()]))) {
 		Q_ASSERT(getType(_keys[ind.row()]) == "bool");
 		_parameterFile->set<bool>(_keys[ind.row()],value.toBool());
-		emit(dataChanged(ind,ind));
-		qDebug() << value;
+		emit dataChanged(createIndex(ind.row(),0),ind);
 	}
 	return false;
 }
