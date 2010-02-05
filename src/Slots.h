@@ -44,117 +44,117 @@ class PluginManagerInterface;
 /// Commom properties of slot objects.
 class Slot {
 private:
-    /// forbid copying
-    Slot(const Slot&);
+	/// forbid copying
+	Slot(const Slot&);
 
 protected:
-    /// Add slot target.
-    /// This does not touch the target slot itself.
-    /// @param target       Target slot to add.
-    /// @retval true        Target sucessfully connected.
-    /// @retval false       Target was not connected.
-    virtual bool _addTarget(Slot* target) = 0;
+	/// Add slot target.
+	/// This does not touch the target slot itself.
+	/// @param target       Target slot to add.
+	/// @retval true        Target sucessfully connected.
+	/// @retval false       Target was not connected.
+	virtual bool _addTarget(Slot* target) = 0;
 
-    /// Remove slot target.
-    /// This does not touch the target slot itself.
-    /// @param target       Target slot to remove.
-    /// @retval true        Target sucessfully disconnected.
-    /// @retval false       Target was not connected.
-    virtual bool _removeTarget(Slot* target) = 0;
+	/// Remove slot target.
+	/// This does not touch the target slot itself.
+	/// @param target       Target slot to remove.
+	/// @retval true        Target sucessfully disconnected.
+	/// @retval false       Target was not connected.
+	virtual bool _removeTarget(Slot* target) = 0;
 
-    /// Pointer to parent object
-    ParameteredObject* _parent;
+	/// Pointer to parent object
+	ParameteredObject* _parent;
 
-    /// Slot name.
-    std::string _name;
+	/// Slot name.
+	std::string _name;
 
-    /// Slot type
-    std::string _type;
+	/// Slot type
+	std::string _type;
 
-    /// flag to mark this slot as optional
-    bool _optional;
+	/// flag to mark this slot as optional
+	bool _optional;
 
-    /// flag to mark this slot as a multislot,
-    /// that can have multiple sources/targets.
-    bool _multiSlot;
+	/// flag to mark this slot as a multislot,
+	/// that can have multiple sources/targets.
+	bool _multiSlot;
 
 public:
-    /// default constructor
-    Slot();
+	/// default constructor
+	Slot();
 
-    /// initialize parent and name
-    /// @param parent           parent object
-    /// @param name             slot name
-    /// @param type				slot type
-    /// @throws std::string     Error message if invalid parent set.
-    void init(ParameteredObject* parent, std::string name, std::string type);
+	/// initialize parent and name
+	/// @param parent           parent object
+	/// @param name             slot name
+	/// @param type				slot type
+	/// @throws std::string     Error message if invalid parent set.
+	void init(ParameteredObject* parent, std::string name, std::string type);
 
-    virtual ~Slot();
+	virtual ~Slot();
 
-    /// get parent object
-    ParameteredObject& getParent();
+	/// get parent object
+	ParameteredObject& getParent();
 
-    /// get parent object (const version)
-    const ParameteredObject& getParent() const;
+	/// get parent object (const version)
+	const ParameteredObject& getParent() const;
 
-    /// Get slot name.
-    std::string getName() const;
+	/// Get slot name.
+	std::string getName() const;
 
-    /**
-     * Get slot type.
-     * If "<T>" is found inside the type string, this will be replaced through
-     * the template type of the parent ParameteredObject.
-     *
-     * @return std::string representation of the slot type
-     */
-    virtual std::string getType() const = 0;
+	/**
+	 * Get slot type.
+	 * If "<T>" is found inside the type string, this will be replaced through
+	 * the template type of the parent ParameteredObject.
+	 *
+	 * @return std::string representation of the slot type
+	 */
+	virtual std::string getType() const = 0;
 
-    /// return value of _multiSlot;
-    bool getMulti() const;
+	/// return value of _multiSlot;
+	bool getMulti() const;
 
-    /// return value of _optional;
-    bool getOptional() const;
+	/// return value of _optional;
+	bool getOptional() const;
 
-    /// Try to guess slot type.
-    virtual std::string guessType() const = 0;
+	/// Try to guess slot type.
+	virtual std::string guessType() const = 0;
 
-    /// Get pointers to the connected targets.
-    virtual std::set<Slot*> getTargets() const = 0;
+	/// Get pointers to the connected targets.
+	virtual std::set<Slot*> getTargets() const = 0;
 
-    /// Check if slot is connected.
-    bool connected();
+	/// Check if slot is connected.
+	bool connected();
 
-    /// Check if slot is connected to given slot.
-    /// @param target           Target slot to check.
-    bool connected(Slot* target);
+	/// Check if slot is connected to given slot.
+	/// @param target           Target slot to check.
+	bool connected(Slot* target);
 
-    /// Connect with given slot.
-    /// @param target           Target slot to connect to.
-    bool connect(Slot* target);
+	/// Connect with given slot.
+	/// @param target           Target slot to connect to.
+	bool connect(Slot* target);
 
-    /// Remove all slot targets.
-    bool disconnect();
+	/// Remove all slot targets.
+	bool disconnect();
 
-    /// Remove all slot targets.
-    bool disconnect(Slot* target);
+	/// Remove all slot targets.
+	bool disconnect(Slot* target);
 
-    /// Save slot connections
-    /// This function disconnects already established connections in the
-    /// parameterFile and stores the current one.
-    /// @warning            You have to make sure, that this function
-    ///                     is only called once in each save run,
-    ///                     otherwise the connections will be erased
-    ///                     from the target slot.
-    /// @param pf           ParameterFile to save to
-    virtual void save(ParameterFile& pf) const;
+	/// Save slot connections
+	/// This function disconnects already established connections in the
+	/// parameterFile and stores the current one.
+	/// @warning            You have to make sure, that this function
+	///                     is only called once in each save run,
+	///                     otherwise the connections will be erased
+	///                     from the target slot.
+	/// @param pf           ParameterFile to save to
+	virtual void save(ParameterFile& pf) const;
 
-    /// Load slot connections
-    /// @param pf           ParameterFile to load from
-    /// @param man          PluginManager to get the instances from
-    virtual void load(const ParameterFile& pf, const PluginManagerInterface * man) = 0;
+	/// Load slot connections
+	/// @param pf           ParameterFile to load from
+	/// @param man          PluginManager to get the instances from
+	virtual void load(const ParameterFile& pf, const PluginManagerInterface * man) = 0;
 
-    /// Calls execute() on all targets.
-    virtual void execute() = 0;
+	/// Calls execute() on all targets.
+	virtual void execute() = 0;
 };
 
 /// Encapsulation of slot connection handling (type specific)
@@ -162,43 +162,43 @@ public:
 template <typename T>
 class AbstractSlot : public Slot {
 protected:
-    /// Pointer to data of connected output slot.
-    std::set<AbstractSlot<T>*> _targets;
+	/// Pointer to data of connected output slot.
+	std::set<AbstractSlot<T>*> _targets;
 
-    /// Add slot target.
-    /// This does not touch the target slot itself.
-    /// @param target       Target slot to add.
-    /// @retval true        Target sucessfully connected.
-    /// @retval false       Target was not connected.
-    virtual bool _addTarget(Slot* target);
+	/// Add slot target.
+	/// This does not touch the target slot itself.
+	/// @param target       Target slot to add.
+	/// @retval true        Target sucessfully connected.
+	/// @retval false       Target was not connected.
+	virtual bool _addTarget(Slot* target);
 
-    /// Remove slot target.
-    /// This does not touch the target slot itself.
-    /// @param target       Target slot to remove.
-    /// @retval true        Target sucessfully disconnected.
-    /// @retval false       Target was not connected.
-    virtual bool _removeTarget(Slot* target);
+	/// Remove slot target.
+	/// This does not touch the target slot itself.
+	/// @param target       Target slot to remove.
+	/// @retval true        Target sucessfully disconnected.
+	/// @retval false       Target was not connected.
+	virtual bool _removeTarget(Slot* target);
 
 public:
-    AbstractSlot();
-    virtual ~AbstractSlot();
+	AbstractSlot();
+	virtual ~AbstractSlot();
 
-    // overload Slot functions
-    virtual std::string guessType() const;
-    virtual std::set<Slot*> getTargets() const;
-    virtual void save(ParameterFile& pf) const;
-    virtual void load(const ParameterFile& pf, const PluginManagerInterface * man);
-    virtual void execute();
+	// overload Slot functions
+	virtual std::string guessType() const;
+	virtual std::set<Slot*> getTargets() const;
+	virtual void save(ParameterFile& pf) const;
+	virtual void load(const ParameterFile& pf, const PluginManagerInterface * man);
+	virtual void execute();
 
-    virtual std::string getType() const;
+	virtual std::string getType() const;
 
-    /// @name Iterators for stl-like usage
-    //  @{
-    /// iterator to the beginning of the source list
-    typename std::set<AbstractSlot<T>*>::const_iterator begin() const;
-    /// iterator to the end of the source list
-    typename std::set<AbstractSlot<T>*>::const_iterator end() const;
-    //  @}
+	/// @name Iterators for stl-like usage
+	//  @{
+	/// iterator to the beginning of the source list
+	typename std::set<AbstractSlot<T>*>::const_iterator begin() const;
+	/// iterator to the end of the source list
+	typename std::set<AbstractSlot<T>*>::const_iterator end() const;
+	//  @}
 };
 
 /// Input slot.
@@ -206,42 +206,43 @@ public:
 /// to the connected output slot. Data are read from this source, if needed.
 template <typename T>
 class InputSlot : public AbstractSlot<T>,
-                  public AbstractROData<T>,
-                  public AbstractMultiROData<T> {
+				  public AbstractROData<T>,
+				  public AbstractMultiROData<T> {
 public:
-    /// Create new input slot.
-    /// @param optional     make this slot optional
-    /// @param multi        make this slot connectable to multiple slots
-    InputSlot(bool optional=false, bool multi=false);
+	/// Create new input slot.
+	/// @param optional     make this slot optional
+	/// @param multi        make this slot connectable to multiple slots
+	InputSlot(bool optional=false, bool multi=false);
 
-    virtual ~InputSlot();
+	virtual ~InputSlot();
 
-    // overload Slot functions
-    virtual operator T() const;
-    virtual const T& operator()() const;
-    virtual const T& operator[](unsigned int pos) const;
+	// overload Slot functions
+	virtual operator T() const;
+	virtual const T& operator()() const;
+	virtual const T& operator[](unsigned int pos) const;
+	virtual unsigned int size() const;
 };
 
 /// Output slot.
 /// This slot stores the output data and a list of connected slots.
 template <typename T>
 class OutputSlot : public AbstractSlot<T>,
-                   public AbstractData<T> {
+				   public AbstractData<T> {
 private:
-    T data; ///< Slot data.
+	T data; ///< Slot data.
 
 public:
-    /// Create new output slot.
-    /// @param initval      initialize data with this value
-    OutputSlot(const T& initval = T());
+	/// Create new output slot.
+	/// @param initval      initialize data with this value
+	OutputSlot(const T& initval = T());
 
-    virtual ~OutputSlot();
+	virtual ~OutputSlot();
 
-    // overload Slot functions
-    virtual operator T() const;
-    virtual const T& operator()() const;
-    virtual T& operator()();
-    virtual T& operator= (const T& B);
+	// overload Slot functions
+	virtual operator T() const;
+	virtual const T& operator()() const;
+	virtual T& operator()();
+	virtual T& operator= (const T& B);
 };
 
 #endif /* _SLOTS_H */

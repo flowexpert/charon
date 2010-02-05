@@ -31,14 +31,14 @@
 template<typename T>
 class AbstractROData {
 public:
-    virtual ~AbstractROData() {};
+	virtual ~AbstractROData() {};
 
-    /// Cast operator to get data (get copy)
-    virtual operator T() const = 0;
+	/// Cast operator to get data (get copy)
+	virtual operator T() const = 0;
 
-    /// Call operator.
-    /// Also returns internal data (const reference)
-    virtual const T& operator()() const = 0;
+	/// Call operator.
+	/// Also returns internal data (const reference)
+	virtual const T& operator()() const = 0;
 };
 
 /// Interface for data assignment and readout.
@@ -47,15 +47,15 @@ public:
 template<typename T>
 class AbstractData : public AbstractROData<T> {
 public:
-    virtual ~AbstractData() {};
+	virtual ~AbstractData() {};
 
-    /// data assignment operator
-    /// @param B         data to assign
-    virtual T& operator=(const T& B) = 0;
+	/// data assignment operator
+	/// @param B         data to assign
+	virtual T& operator=(const T& B) = 0;
 
-    /// Call operator.
-    /// Non const version.
-    virtual T& operator()() = 0;
+	/// Call operator.
+	/// Non const version.
+	virtual T& operator()() = 0;
 };
 
 /// Common interface for read-only access to multiple data members
@@ -63,12 +63,16 @@ public:
 template<typename T>
 class AbstractMultiROData {
 public:
-    virtual ~AbstractMultiROData() {};
+	virtual ~AbstractMultiROData() {};
 
-    /// Access to specific member (read-only).
-    /// @param pos              data position
-    /// @throws std::string     error message if pos out of range
-    virtual const T& operator[](unsigned int pos) const = 0;
+	/// Access to specific member (read-only).
+	/// @param pos              data position
+	/// @throws std::string     error message if pos out of range
+	virtual const T& operator[](unsigned int pos) const = 0;
+
+	/// Access to number of members
+	/// (for iterations using operator[])
+	virtual unsigned int size() const = 0;
 };
 
 /// Common interface for read-write access to multiple data members
@@ -76,12 +80,12 @@ public:
 template<typename T>
 class AbstractMultiData : public AbstractMultiROData<T> {
 public:
-    virtual ~AbstractMultiData() {};
+	virtual ~AbstractMultiData() {};
 
-    /// Access to specific member (read-write).
-    /// @param pos              data position
-    /// @throws std::string     error message if pos out of range
-    virtual T& operator[](unsigned int pos) = 0;
+	/// Access to specific member (read-write).
+	/// @param pos              data position
+	/// @throws std::string     error message if pos out of range
+	virtual T& operator[](unsigned int pos) = 0;
 };
 
 #endif // _ABSTRACT_DATA_HXX_

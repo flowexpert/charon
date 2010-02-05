@@ -325,6 +325,11 @@ const T& InputSlot<T>::operator[](unsigned int pos) const {
 	return source->operator()();
 }
 
+template<typename T>
+unsigned int InputSlot<T>::size() const {
+	return AbstractSlot<T>::_targets.size();
+}
+
 // ============================   class OutputSlot   ========================
 
 template<class T>
