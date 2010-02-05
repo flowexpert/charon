@@ -237,13 +237,20 @@ protected:
 	/// register member function
 	///
 	/// This hack is useful to get some member functions compiled
-	/// and exported into the dynamic library.
+	/// (and exported into) the (dynamic) library.
 	/// No code is executed, because this is always not zero, but the
 	/// compiler is forced to compile the given (templated) function
 	/// and export the symbol.
 	/// \param x	function to export
 	#define _addFunction(x) if (!this && &x) throw 42;
 
+	/// register some constructor
+	///
+	/// use this hack, if you have multiple templated constructors and want
+	/// them to be compiled (and exported) into the (dynamic) library.
+	///
+	/// Example: <code>_addConstructor(myObject(par1,par2,par3));</code>
+	#define _addConstructor(x) if (!this && new x) throw 42;
     //  @}
 
     // /// Change/set up instance name.
