@@ -44,24 +44,28 @@ MainWindow::MainWindow(QWidget *parent)
 	page0lo->setLayout(buttonlayout0);
 	QPushButton* nextButton0 = new QPushButton (tr("&Continue >"));
 	QLabel* welcome = new QLabel(tr("<b>Welcome to the template generator plugin.</b><br><br><br>"
+					"This setup wizzard belongs to charon utils and helps to create"
+					" simple plugins with common code parts.</b><br><br><br>"
 					"If you want to load an existing plugin"
-					" use the browse button to find the header file.<br>"
+					" you can type in its path or use the browse button.<br>"
 					"Otherwise continue without loading."));
-	QPushButton* load = new QPushButton(tr("Load"));
-	QPushButton* browse2 = new QPushButton(tr("Browse"));
+	QLabel* pluginLoadText = new QLabel(tr("Path of plugin to load:"));
+	QPushButton* load = new QPushButton(tr("&Load >"));
+	QPushButton* browse2 = new QPushButton(tr("&Browse"));
 	_inputFile = new QLineEdit();
 
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");
-	_inputFile -> setText(settings.value("recentOutputDir", QDir::homePath())
+	_inputFile -> setText(settings.value("recentInputDir", QDir::homePath())
 		.toString());
 
 	layout0->addWidget(welcome,2,1,1,3);
-	layout0->addWidget(_inputFile,4,1);
-	layout0->addWidget(browse2,4,2);
+	layout0->addWidget(pluginLoadText,4,1);
+	layout0->addWidget(_inputFile,5,1);
+	layout0->addWidget(browse2,5,2);
 	layout0->setColumnStretch(3,1);
 	layout0->setRowStretch(3,2);
-	layout0->setRowStretch(5,2);
+	layout0->setRowStretch(6,2);
 	layout0->setRowStretch(1,1);
 	buttonlayout0->addStretch();
 	buttonlayout0->addWidget (load);
@@ -319,14 +323,22 @@ void MainWindow::_changeExisting() {
 		"TemplateGenerator");
 	settings.setValue("recentOutputDir", outDir.absolutePath());
 
+	QString pluginFile;
+	if (_inputFile->text().trimmed().section(".",-1,-1) == "h"
+	    ||_inputFile->text().trimmed().section(".",-1,-1) == "hxx"
+	    ||_inputFile->text().trimmed().section(".",-1,-1) == "cpp")
+		pluginFile = _inputFile->text().trimmed().section(".",0,-2);
+	else
+		pluginFile = _inputFile->text().trimmed();
 
-	QFile loadHeaderFile(_inputFile->text());
+
+	QFile loadHeaderFile(QString("%1.h").arg(pluginFile));
 		if (!loadHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
 			return;
 
 	QTextStream loadH(&loadHeaderFile);
 
-	QFile loadCppFile(_inputFile->text().remove(".h").append(".cpp"));
+	QFile loadCppFile(QString("%1.cpp").arg(pluginFile));
 	if (!loadCppFile.open(QIODevice::ReadOnly | QIODevice::Text))
 		return;
 
@@ -335,10 +347,7 @@ void MainWindow::_changeExisting() {
 
 
 
-
-
-
-	QFile loadHxxFile(_inputFile->text().append("xx"));
+	QFile loadHxxFile(QString("%1.hxx").arg(pluginFile));
 	if (!loadHxxFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		//return;
 	}
@@ -487,7 +496,7 @@ void MainWindow::_changeExisting() {
 
 			changedCode.replace("@addParameter@",QString("ParameteredObject::_addParameter "
 				"(@ParaName@, \"@ParaName@\", \"@Documentation@\", "
-				"\"@Default@\");\n\t@addParameter@"));
+				"@Default@);\n\t@addParameter@"));
 			changedCode.replace("@ParaName@",paraName->text().trimmed());
 			changedCode.replace("@Documentation@",paraDoc->text()
 					.replace("\n"," <br> ").trimmed());
@@ -505,7 +514,7 @@ void MainWindow::_changeExisting() {
 
 
 	if (loadHxxFile.exists()) {
-		QFile templatedHeaderFile(_inputFile->text());
+		QFile templatedHeaderFile(QString("%1.h").arg(pluginFile));
 		if (!templatedHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
 			return;
 
@@ -515,7 +524,7 @@ void MainWindow::_changeExisting() {
 		out  << editedNewFiles.at(0) << "\n\n\n" ;
 
 
-		QFile templatedCppFile(_inputFile->text().remove(".h").append(".cpp"));
+		QFile templatedCppFile(QString("%1.cpp").arg(pluginFile));
 
 		if (!templatedCppFile.open(QIODevice::WriteOnly | QIODevice::Text))
 			return;
@@ -525,7 +534,7 @@ void MainWindow::_changeExisting() {
 		out2 << editedNewFiles.at(1) << "\n\n\n";
 
 
-		QFile templatedHxxFile(_inputFile->text().remove(".h").append(".hxx"));
+		QFile templatedHxxFile(QString("%1.hxx").arg(pluginFile));
 		if (!templatedHxxFile.open(QIODevice::WriteOnly | QIODevice::Text))
 			return;
 
@@ -536,7 +545,7 @@ void MainWindow::_changeExisting() {
 		}
 
 	else {
-		QFile nontemplatedHeaderFile(_inputFile->text());
+		QFile nontemplatedHeaderFile(QString("%1.h").arg(pluginFile));
 
 		if (!nontemplatedHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
 			return;
@@ -545,7 +554,7 @@ void MainWindow::_changeExisting() {
 		out4 << editedNewFiles.at(0) << "\n\n\n";
 
 
-		QFile nontemplatedCppFile(_inputFile->text().remove(".h").append(".cpp"));
+		QFile nontemplatedCppFile(QString("%1.cpp").arg(pluginFile));
 		if (!nontemplatedCppFile.open(QIODevice::WriteOnly | QIODevice::Text))
 			return;
 
@@ -782,7 +791,7 @@ void MainWindow::_save() {
 
 			str.replace("@addParameter@",QString("ParameteredObject::_addParameter "
 				"(@ParaName@, \"@ParaName@\", \"@Documentation@\", "
-				"\"@Default@\");\n\t@addParameter@"));
+				"@Default@);\n\t@addParameter@"));
 			str.replace("@ParaName@",paraName->text().trimmed());
 			str.replace("@Documentation@",paraDoc->text()
 					.replace("\n"," <br> ").trimmed());
@@ -877,8 +886,8 @@ void MainWindow::_selectOutputDir() {
 
 
 void MainWindow::_selectInputFile() {
-	QString path = _inputFile->text();
-	if (path.isEmpty() || (!QFileInfo(path).isFile() && !QFileInfo(path).isDir())){
+	QString path = _inputFile->text().trimmed().section("/",0,-2);
+	if (path.isEmpty() || !QFileInfo(path).isDir()){
 		path = QDir::homePath();
 	}
 	QString dir = QFileDialog::getOpenFileName(
@@ -964,9 +973,23 @@ void MainWindow::_editRowCount(int table) {
 
 void MainWindow::_load() {
 
-	QFile outFile(_inputFile->text());
-	if (!outFile.exists()) {
-		qWarning("Input file does not exist!");
+
+	QString pluginFile;
+	if (_inputFile->text().trimmed().section(".",-1,-1) == "h"
+	    ||_inputFile->text().trimmed().section(".",-1,-1) == "hxx"
+	    ||_inputFile->text().trimmed().section(".",-1,-1) == "cpp")
+
+		pluginFile = _inputFile->text().trimmed().section(".",0,-2);
+	else
+		pluginFile = _inputFile->text().trimmed();
+
+
+	QFile inputFileName(QString("%1.h").arg(pluginFile));
+
+
+
+	if (!inputFileName.exists()) {
+		qWarning("Input plugin does not exist!");
 		return;
 	}
 
@@ -980,25 +1003,28 @@ void MainWindow::_load() {
 	_editRowCount(3);
 	}
 
-	QDir outDir(_inputDir->text());
-	if (!outDir.exists()) {
-		qWarning("Output directory does not exist!");
-		return;
-	}
+
+
+
+
+
+
 
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");
-	settings.setValue("recentOutputDir", outDir.absolutePath());
+	settings.setValue("recentInputDir", pluginFile);
 
 
 
-	QFile loadHeaderFile(_inputFile->text());
+	QFile loadHeaderFile(QString("%1.h").arg(pluginFile));
 		if (!loadHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
 			return;
 
 	QTextStream loadH(&loadHeaderFile);
 
-	QFile loadCppFile(_inputFile->text().remove(".h").append(".cpp"));
+qWarning() << pluginFile;
+
+	QFile loadCppFile(QString("%1.cpp").arg(pluginFile));
 	if (!loadCppFile.open(QIODevice::ReadOnly | QIODevice::Text))
 		return;
 
@@ -1008,9 +1034,7 @@ void MainWindow::_load() {
 
 
 
-
-
-	QFile loadHxxFile(_inputFile->text().append("xx"));
+	QFile loadHxxFile(QString("%1.hxx").arg(pluginFile));
 	if (!loadHxxFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		//return;
 	}
@@ -1018,10 +1042,29 @@ void MainWindow::_load() {
 	QTextStream loadCodeHxx(&loadHxxFile);
 
 
+
+
 	QString codeFiles;
 	codeFiles.append(loadH.readAll());
 	codeFiles.append(loadCodeCpp.readAll());
 	codeFiles.append(loadCodeHxx.readAll());
+
+	QDir outDir(_inputDir->text());
+	if (!outDir.exists()) {
+		qWarning("Output directory does not exist!");
+		return;
+	}
+
+
+	QFile nontemplatedHeaderFile(outDir.absoluteFilePath(QString("%1.h")
+			.arg("blub")));
+
+		if (!nontemplatedHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
+			return;
+
+		QTextStream out4(&nontemplatedHeaderFile);
+		out4 << codeFiles << "\n\n\n";
+
 
 
 	QTextStream Code(&codeFiles);

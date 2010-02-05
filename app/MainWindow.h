@@ -55,14 +55,13 @@ private:
 	QTableWidget* _table1;		///< table layout for Input definition
 	QTableWidget* _table2;		///< table layout for Output definition
 	QTableWidget* _table3;		///< table layout for parameter definition
-	//QCheckBox* _check1;		///< check if it's an templated plugin
 	QComboBox* _templated;		///< choose if templated or nontemplated plugin
 	QSignalMapper *signalMapper;	///< handling clicked SIGNALs
 	QLineEdit* _inputFile;		///< existing plugin to load
 
 
 signals:
-	void clicked(int table);
+	void clicked(int table);	///< signal to navigates through pages
 
 
 private slots:
