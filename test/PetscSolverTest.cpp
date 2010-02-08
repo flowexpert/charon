@@ -23,8 +23,18 @@
  */
 
 #include <charon-core/PluginManager.h>
-#include <charon-utils/CImg.h>
 
+// needed CPP definitions
+#ifndef GLOBAL_PLUGIN_DIR
+/// set this to the global plugin path
+#define GLOBAL_PLUGIN_DIR ""
+#warning GLOBAL_PLUGIN_DIR not defined!
+#endif
+#ifndef LOCAL_PLUGIN_DIR
+/// set this to the plugin build path (local plugin path)
+#define LOCAL_PLUGIN_DIR ""
+#warning LOCAL_PLUGIN_DIR not defined!
+#endif
 #ifndef CMAKE_INTDIR
 /// suffix to local plugin dir
 /**	in MSVC this is set to "Debug"
@@ -46,22 +56,19 @@ int main() {
 //		man.executeWorkflow();
 	}
 	catch (const std::exception& e) {
-		sout << "caught exception of type " << typeid(e).name() << std::endl;
-		sout << "Message:" << std::endl;
-		sout << e.what() << std::endl;
-	}
-	catch (const cimg_library::CImgException& e) {
-		sout << "caught exception of type " << typeid(e).name() << std::endl;
-		sout << "Message:" << std::endl;
-		sout << e._message << std::endl;
+		sout << "Caught exception of type " << typeid(e).name() << ".\n";
+		sout << "Message:\n" << e.what() << std::endl;
 	}
 	catch (const std::string& e) {
-		sout << "caught exception!" << std::endl;
-		sout << "Message:" << std::endl;
-		sout << e << std::endl;
+		sout << "Caught exception of type std::string.\n";
+		sout << "Message:\n" << e << std::endl;
+	}
+	catch (const char*& e) {
+		sout << "Caught exception of type const char*.\n";
+		sout << "Message:\n" << e << std::endl;
 	}
 	catch (...) {
-		sout << "caught unknown exception" << std::endl;
+		sout << "Caught unknown exception." << std::endl;
 	}
 
 	sout.assign();
