@@ -34,7 +34,6 @@
 #include "PluginManager.h"
 #include "FileManager.h"
 #include "ui_LogDialog.h"
-#include "CImg.h"
 
 #ifdef __GNUG__
 #include <cxxabi.h>
@@ -629,15 +628,6 @@ void ParameterFileModel::executeWorkflow() {
 		qWarning("%s",
 				 tr("Caught exception of type \"%1\"\n\nMessage:\n%2")
 				.arg(name).arg(excpt.what()).toAscii().constData());
-	}
-	catch (const cimg_library::CImgException& excpt) {
-		const char* name = typeid(excpt).name();
-#ifdef __GNUG__
-		name = abi::__cxa_demangle(name, 0, 0, 0);
-#endif // __GNUG__
-		qWarning("%s",
-			tr("Caught CImg exception of type \"%1\"\n\nMessage:\n%2")
-				.arg(name).arg(excpt._message).toAscii().constData());
 	}
 	catch (const char* &msg) {
 		QMessageBox::warning(0, tr("error during execution"),
