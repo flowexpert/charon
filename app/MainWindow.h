@@ -80,7 +80,7 @@ private slots:
 	void _selectInputFile();
 	/// loads an existing plugin
 	void _load();
-//	void _itemChanged(QTableWidgetItem* item);
+	/// save settings and change the plugin
 	void _changeExisting();
 };
 

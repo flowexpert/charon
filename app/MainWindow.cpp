@@ -2,7 +2,6 @@
 
 #include <QFile>
 #include <QtGui>
-#include <MyLabel.h>
 #include <MyTabWidget.h>
 #include <QComboBox>
 
@@ -22,14 +21,11 @@ MainWindow::MainWindow(QWidget *parent)
 	QWidget* page0 = new QWidget;
 	tabWidget->addTab(page0, tr("Load"));
 	QWidget* page1 = new QWidget;
-	tabWidget->addTab(page1, tr("Directory"));
+	tabWidget->addTab(page1, tr("General"));
 	QWidget* page2 = new QWidget;
 	tabWidget->addTab(page2, tr("Slots"));
 	QWidget* page3 = new QWidget;
 	tabWidget->addTab(page3, tr("Parameters"));
-	//QWidget* page5 = new QWidget;
-	//tabWidget->addTab(page5, tr("tab5"));
-
 
 	// page 0
 	QVBoxLayout* background0 = new QVBoxLayout(page0);
@@ -43,12 +39,13 @@ MainWindow::MainWindow(QWidget *parent)
 	QHBoxLayout* buttonlayout0 = new QHBoxLayout(page0lo);
 	page0lo->setLayout(buttonlayout0);
 	QPushButton* nextButton0 = new QPushButton (tr("&Continue >"));
-	QLabel* welcome = new QLabel(tr("<b>Welcome to the template generator plugin.</b><br><br><br>"
-					"This setup wizzard belongs to charon utils and helps to create"
-					" simple plugins with common code parts.</b><br><br><br>"
-					"If you want to load an existing plugin"
-					" you can type in its path or use the browse button.<br>"
-					"Otherwise continue without loading."));
+	QLabel* welcome = new QLabel(
+			tr("<b>Welcome to the template generator plugin.</b><br><br><br>"
+				"This setup wizzard belongs to charon and helps to create "
+				"simple plugins with common code parts.</b><br><br><br>"
+				"If you want to load an existing plugin "
+				"you can type in its path or use the browse button.<br>"
+				"Otherwise continue without loading."));
 	QLabel* pluginLoadText = new QLabel(tr("Path of plugin to load:"));
 	QPushButton* load = new QPushButton(tr("&Load >"));
 	QPushButton* browse2 = new QPushButton(tr("&Browse"));
@@ -71,16 +68,10 @@ MainWindow::MainWindow(QWidget *parent)
 	buttonlayout0->addWidget (load);
 	buttonlayout0->addWidget(nextButton0);
 
-
-
 	connect(nextButton0,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
 	connect(load,SIGNAL(clicked()),tabWidget, SLOT(nextPage()));
 	connect(load,SIGNAL(clicked()),this, SLOT(_load()));
 	connect(browse2,SIGNAL(clicked()),this,SLOT(_selectInputFile()));
-
-
-
-
 
 	// page 1
 	QVBoxLayout* background1 = new QVBoxLayout(page1);
@@ -94,65 +85,58 @@ MainWindow::MainWindow(QWidget *parent)
 	QHBoxLayout* buttonlayout1 = new QHBoxLayout(page1lo);
 	page1lo->setLayout(buttonlayout1);
 
-	MyLabel* label = new MyLabel;
-	QPushButton* nextButton1 = new QPushButton (tr("&Continue >"));
-	QPushButton* browse = new QPushButton (tr("Browse"));
-	QPushButton* previousButton = new QPushButton(tr("< &Back"));
-	QLabel* name = new QLabel (tr("Name of Plugin:"));
-	QLabel* save = new QLabel (tr("Saved in:"));
+	QLabel* label = new QLabel;
+
 	QLabel* author = new QLabel (tr("Author:"));
-	_pluginDoc = new QTextEdit(page1);
-	QLabel* pluginDocLabel = new QLabel(tr("Plugin Description:"));
+	_inputAuthorName = new QLineEdit(
+			settings.value("recentAuthor", tr("Unknown")).toString());
 
+	QLabel* name = new QLabel (tr("Name of Plugin:"));
+	_inputName = new QLineEdit(tr("plugin1"));
 
-	_templated = new QComboBox();
-	_templated->addItem(tr("Templated"));
-	_templated->addItem(tr("Non-Templated"));
-
-
-	_inputAuthorName = new QLineEdit(page1);
-	_inputDir = new QLineEdit(page1);
-	_inputName = new QLineEdit (page1);
-	_inputDir -> setText(settings.value("recentOutputDir", QDir::homePath())
-		.toString());
-	_inputName -> setText(tr("plugin1"));
-	_inputAuthorName -> setText (tr("Unknown"));
+	QLabel* save = new QLabel (tr("Saved in:"));
+	_inputDir = new QLineEdit(
+			settings.value("recentOutputDir", QDir::homePath()).toString());
 	// add directory completer for output directory
 	QCompleter* completer = new QCompleter(this);
 	completer->setModel(new QDirModel(QStringList(), QDir::AllDirs,
 			QDir::Name, completer));
 	_inputDir->setCompleter(completer);
+	QPushButton* browse = new QPushButton (tr("Browse"));
 
+	_templated = new QComboBox();
+	_templated->addItem(tr("Templated"));
+	_templated->addItem(tr("Non-Templated"));
 
+	QLabel* pluginDocLabel = new QLabel(tr("Plugin Description:"));
+	_pluginDoc = new QTextEdit();
 
 	label->setText(tr("Please choose a name and directory to save."));
 	layout->addWidget(label,1,1,1,3,Qt::AlignCenter);
-	layout->addWidget(_templated,10,3);
-	layout->addWidget(author,3,1,1,2);
-	layout->addWidget(_inputAuthorName,3,3);
-	layout->addWidget(name,4,1,1,2);
-	layout->addWidget(save,5,1,1,2);
-	layout->addWidget(_inputName,4,3);
-	layout->addWidget(_inputDir,5,3);
-	layout->addWidget(browse,5,4);
+	layout->setRowStretch(2,1);
+	layout->addWidget(author,3,1);
+	layout->addWidget(_inputAuthorName,3,2);
+	layout->addWidget(name,4,1);
+	layout->addWidget(_inputName,4,2);
+	layout->addWidget(save,5,1);
+	layout->addWidget(_inputDir,5,2);
+	layout->addWidget(browse,5,3);
+	layout->setRowStretch(6,1);
+	layout->addWidget(_templated,7,2);
+	layout->addWidget(pluginDocLabel,8,1);
+	layout->addWidget(_pluginDoc,8,2);
+	layout->setRowStretch(9,1);
+	layout->setColumnStretch(2,1);
 
+	QPushButton* previousButton = new QPushButton(tr("< &Back"));
+	QPushButton* nextButton1 = new QPushButton (tr("&Continue >"));
 	buttonlayout1->addStretch();
 	buttonlayout1->addWidget(previousButton);
 	buttonlayout1->addWidget(nextButton1);
-	layout->setColumnStretch(1,1);
-	layout->setColumnStretch(6,1);
-	layout->setRowStretch(2,1);
-	layout->setRowStretch(6,1);
-	layout->addWidget(pluginDocLabel,11,1,1,2);
-	layout->addWidget(_pluginDoc,11,3);
-	layout->setRowStretch(15,1);
-
-
 
 	connect(previousButton, SIGNAL(clicked()), tabWidget, SLOT(previousPage()));
 	connect(nextButton1, SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
 	connect(browse, SIGNAL(clicked()), this, SLOT(_selectOutputDir()));
-
 
 	// page 2
 	QVBoxLayout* background2 = new QVBoxLayout(page2);
@@ -224,17 +208,9 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(remove2, SIGNAL(clicked()), signalMapper, SLOT(map()));
 	signalMapper->setMapping(remove2, 4);
 
-
-
-
-
-
-
-
 	connect(previousButton2, SIGNAL(clicked()), tabWidget, SLOT(previousPage()));
 	connect(nextButton2,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
 	connect(this,SIGNAL(clicked(int)), this, SLOT(_editRowCount(int)));
-
 
 	// page 3
 	QVBoxLayout* background3 = new QVBoxLayout(page3);
@@ -253,7 +229,9 @@ MainWindow::MainWindow(QWidget *parent)
 	QPushButton* previousButton3 = new QPushButton(tr("< &Back"));
 	QLabel* parameterLabel = new QLabel (tr("Parameter"));
 	_table3 = new QTableWidget(0, 4, page3);
-	QStringList paramlist = (QStringList() << "Name" << "Documentation" << "Typ" << "Default" );
+	QStringList paramlist = (
+			QStringList() << "Name" << "Documentation"
+			<< "Typ" << "Default" );
 	_table3->setHorizontalHeaderLabels(paramlist);
 	layout3->addWidget(parameterLabel,1,1,1,3);
 	layout3 -> addWidget(_table3,2,1,1,3);
@@ -273,51 +251,22 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(remove3, SIGNAL(clicked()), signalMapper, SLOT(map()));
 	signalMapper->setMapping(remove3, 5);
 
-
-
 	_table3->horizontalHeader()->setStretchLastSection(true);
 	_table3->verticalHeader()->hide();
 
-
-
-
-
 	connect(previousButton3, SIGNAL(clicked()), tabWidget, SLOT(previousPage()));
 	connect(createButton, SIGNAL(clicked()), this, SLOT(_save()));
-
-
-/*
-
-	// page 5
-	QGridLayout* layout5 = new QGridLayout(page5);
-	page5->setLayout(layout5);
-	layout5->setColumnStretch(5,1);
-	layout5->addWidget(helloButton,2,2);
-	QSizePolicy policy(helloButton->sizePolicy());
-	policy.setVerticalPolicy(QSizePolicy::Expanding);
-	helloButton->setSizePolicy(policy);
-
-
-*/
-
 }
-
-
 
 MainWindow::~MainWindow() {
 }
 
 void MainWindow::_changeExisting() {
-
-	///saving settings and changing the plugin
-
-
 	QDir outDir(_inputDir->text());
 	if (!outDir.exists()) {
 		qWarning("Output directory does not exist!");
 		return;
 	}
-
 
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");
@@ -325,12 +274,11 @@ void MainWindow::_changeExisting() {
 
 	QString pluginFile;
 	if (_inputFile->text().trimmed().section(".",-1,-1) == "h"
-	    ||_inputFile->text().trimmed().section(".",-1,-1) == "hxx"
-	    ||_inputFile->text().trimmed().section(".",-1,-1) == "cpp")
+		||_inputFile->text().trimmed().section(".",-1,-1) == "hxx"
+		||_inputFile->text().trimmed().section(".",-1,-1) == "cpp")
 		pluginFile = _inputFile->text().trimmed().section(".",0,-2);
 	else
 		pluginFile = _inputFile->text().trimmed();
-
 
 	QFile loadHeaderFile(QString("%1.h").arg(pluginFile));
 		if (!loadHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -344,9 +292,6 @@ void MainWindow::_changeExisting() {
 
 	QTextStream loadCodeCpp(&loadCppFile);
 
-
-
-
 	QFile loadHxxFile(QString("%1.hxx").arg(pluginFile));
 	if (!loadHxxFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		//return;
@@ -354,21 +299,18 @@ void MainWindow::_changeExisting() {
 
 	QTextStream loadCodeHxx(&loadHxxFile);
 
-
 	QStringList filesToChange;
 	filesToChange.append(loadH.readAll());
 	filesToChange.append(loadCodeCpp.readAll());
 	filesToChange.append(loadCodeHxx.readAll());
 
-
 	QString codeString = filesToChange.join("@@@@@@@@@@@");
-
 
 	codeString.replace("public:","public: \n\n\t@In/Out@");
 	codeString.replace("public:","public: \n\n\t@Parameter@");
 
 	// Zeilenweises Einlesen des Plugins um die alten Parameter und Slots zu entfernen
-	// und den richtigen Ort zum Einfügen im .hxx File zu finden
+	// und den richtigen Ort zum Einfuegen im .hxx File zu finden
 
 	QTextStream Code(&codeString);
 	QString changedCode;
@@ -630,7 +572,7 @@ void MainWindow::_save() {
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");
 	settings.setValue("recentOutputDir", outDir.absolutePath());
-
+	settings.setValue("recentAuthor", _inputAuthorName->text());
 
 	QStringList newFiles;
 
@@ -1003,18 +945,9 @@ void MainWindow::_load() {
 	_editRowCount(3);
 	}
 
-
-
-
-
-
-
-
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");
 	settings.setValue("recentInputDir", pluginFile);
-
-
 
 	QFile loadHeaderFile(QString("%1.h").arg(pluginFile));
 		if (!loadHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -1022,7 +955,7 @@ void MainWindow::_load() {
 
 	QTextStream loadH(&loadHeaderFile);
 
-qWarning() << pluginFile;
+	qWarning() << pluginFile;
 
 	QFile loadCppFile(QString("%1.cpp").arg(pluginFile));
 	if (!loadCppFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -1031,18 +964,12 @@ qWarning() << pluginFile;
 	QTextStream loadCodeCpp(&loadCppFile);
 
 
-
-
-
 	QFile loadHxxFile(QString("%1.hxx").arg(pluginFile));
 	if (!loadHxxFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		//return;
 	}
 
 	QTextStream loadCodeHxx(&loadHxxFile);
-
-
-
 
 	QString codeFiles;
 	codeFiles.append(loadH.readAll());
@@ -1055,21 +982,16 @@ qWarning() << pluginFile;
 		return;
 	}
 
-
 	QFile nontemplatedHeaderFile(outDir.absoluteFilePath(QString("%1.h")
 			.arg("blub")));
 
-		if (!nontemplatedHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
-			return;
+	if (!nontemplatedHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
+		return;
 
-		QTextStream out4(&nontemplatedHeaderFile);
-		out4 << codeFiles << "\n\n\n";
-
-
+	QTextStream out4(&nontemplatedHeaderFile);
+	out4 << codeFiles << "\n\n\n";
 
 	QTextStream Code(&codeFiles);
-
-
 
 	int incount = 0;
 	int outcount = 0;
@@ -1189,8 +1111,8 @@ qWarning() << pluginFile;
 		}
 	}
 
-	QMessageBox::information(this, tr("Load"),
-				 tr("Your plugin has been loaded."));
+	QMessageBox::information(
+			this, tr("Load"), tr("Your plugin has been loaded."));
 }
 
 

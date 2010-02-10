@@ -2,32 +2,22 @@
 #include <QFile>
 #include <QtGui>
 
-
 MyTabWidget::MyTabWidget(QWidget* p) :
-		QTabWidget(p)
-{
+		QTabWidget(p) {
 }
 
-void MyTabWidget::nextPage()
-{
-
+void MyTabWidget::nextPage() {
 	int temp = currentIndex();
 	temp++;
-	setCurrentIndex(temp);
-
-
+	if (temp < this->count())
+		setCurrentIndex(temp);
 }
 
-void MyTabWidget::previousPage()
-{
-
+void MyTabWidget::previousPage() {
 	int temp = currentIndex();
 	temp--;
-	setCurrentIndex(temp);
-
-
+	if (temp >= 0)
+		setCurrentIndex(temp);
 }
-
-
 
 #include "MyTabWidget.moc"

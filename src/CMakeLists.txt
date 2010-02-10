@@ -1,16 +1,11 @@
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
-
 SET(MYLIB_SRC
-	MyLabel.cpp
-        MyLabel.h
-        MyTabWidget.cpp
-        MyTabWidget.h)
-
+	MyTabWidget.cpp
+	MyTabWidget.h
+)
 
 QT4_AUTOMOC(${MYLIB_SRC})
 
-
 ADD_LIBRARY(mylib ${MYLIB_SRC})
-
 TARGET_LINK_LIBRARIES(mylib ${QT_LIBRARIES})
