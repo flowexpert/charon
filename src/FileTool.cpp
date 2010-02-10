@@ -13,12 +13,12 @@
  You should have received a copy of the GNU Lesser General Public License
  along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**	@file	FileTool.cpp
- *	@brief	Implementation of class FileTool.
- *	@author	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+/** @file   FileTool.cpp
+ *  @brief  Implementation of FileTool methods.
+ *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  *  @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
- *	@date	11.08.2008
- *	@remark	Based on FileTool.hxx by Daniel Kondermann.
+ *  @date   11.08.2008
+ *  @remark Based on FileTool.hxx by Daniel Kondermann.
  */
 
 #include "FileTool.h"
@@ -66,12 +66,6 @@ const char FileTool::slash = '/';
 #else
 const char FileTool::slash = '\\';
 #endif
-
-FileTool::FileTool() {
-}
-
-FileTool::~FileTool() {
-}
 
 int FileTool::makePath(std::string& path) {
 	slashConvert(path);
@@ -170,14 +164,14 @@ int FileTool::rename(const std::string& oldFile, const std::string& newFile) {
 	return ::rename(oldFile.c_str(), newFile.c_str());
 }
 
-std::string FileTool::readFile(const std::string & fName) {
+std::string FileTool::readFile(const std::string& fName) {
 	std::ifstream inStream;
 	inStream.open(fName.c_str());
 	std::stringstream str;
 	std::string buffer;
 	while (!inStream.eof()) {
 		std::getline(inStream, buffer);
-		str << buffer << std::endl;
+		str << buffer << "\n";
 	}
 	return str.str();
 }

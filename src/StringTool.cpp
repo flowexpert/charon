@@ -13,11 +13,11 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/**	@file	StringTool.cpp
- *	@brief	Implementation of class StringTool.
- *	@date	11.08.2008
- *	@author	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
- *	@remark	Based on StringTool.hxx by Daniel Kondermann
+/** @file   StringTool.cpp
+ *  @brief  Implementation of StringTool methods.
+ *  @date   11.08.2008
+ *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+ *  @remark Based on StringTool.hxx by Daniel Kondermann
  */
 
 #include "StringTool.h"
