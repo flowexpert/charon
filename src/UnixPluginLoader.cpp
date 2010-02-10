@@ -96,8 +96,6 @@ void UnixPluginLoader::compileAndLoad(const std::string & sourceFile,
 		std::vector<std::string> &references, const std::string & metadataPath)
 		throw (PluginException) {
 
-	//Load paths from the path file
-
 	ParameterFile p;
 	try {
 		p.load(_pathsConfig());
@@ -185,17 +183,21 @@ void UnixPluginLoader::unload() throw (PluginException) {
 }
 
 std::string UnixPluginLoader::_pathsConfig() const {
-	if (FileTool::exists("./share/charon-core/Paths.config")) {
-		return "./share/charon-core/Paths.config";
-	} else if (FileTool::exists("./Paths.config")) {
-		return "./Paths.config";
-	} else if (FileTool::exists("/usr/local/share/charon-core/Paths.config")) {
+	if (FileTool::exists("Paths.config"))
+		return "Paths.config";
+	else if (FileTool::exists("share/charon-core/Paths.config"))
+		return "share/charon-core/Paths.config";
+	else if (FileTool::exists("/usr/local/share/charon-core/Paths.config"))
 		return "/usr/local/share/charon-core/Paths.config";
-	} else if (FileTool::exists("/usr/share/charon-core/Paths.config")) {
+	else if (FileTool::exists("/usr/share/charon-core/Paths.config"))
 		return "/usr/share/charon-core/Paths.config";
-	} else {
-		return "";
-	}
+	else
+		throw std::runtime_error(
+				"Could not find file Paths.config.\n"
+				"Tried directories:\n\t./\n\t./share/charon-core/\n\t"
+				"/usr/local/share/charon-core/\n\t"
+				"/usr/share/charon-core/\n"
+				"Working dir:\n\t" + FileTool::getCurrentDir());
 }
 
 UnixPluginLoader::~UnixPluginLoader() {

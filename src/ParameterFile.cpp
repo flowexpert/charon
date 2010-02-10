@@ -27,6 +27,14 @@
 
 #include "ParameterFile.hxx"
 
+ParameterFile::IoError::IoError(const std::string& msg) :
+		std::runtime_error(msg.c_str()) {
+}
+
+ParameterFile::Unset::Unset(const std::string& msg) :
+		std::invalid_argument(msg) {
+}
+
 ParameterFile::ParameterFile() :
 	_noFoundWarnings(false), _convertSlashes(true), _delimiter(';') {
 }
@@ -75,8 +83,9 @@ void ParameterFile::setNotFoundWarningsOn(bool noFoundWarnings) {
 bool ParameterFile::save(std::string fileName) const {
 	std::ofstream file(fileName.c_str(), std::ios::trunc);
 	if (file.bad()) {
-		throw "ERROR: Parameter file '" + fileName
-				+ "' could not be saved. IO error.";
+		throw ParameterFile::IoError(
+				"Parameter file \"" + fileName + "\" could not be saved. "
+				"(file.bad())");
 	} else {
 		toStream(file);
 		file.close();
@@ -86,12 +95,15 @@ bool ParameterFile::save(std::string fileName) const {
 
 bool ParameterFile::load(std::string fileName) {
 	if (!FileTool::exists(fileName))
-		throw "File " + fileName + " does not exist.";
+		throw ParameterFile::IoError(
+				"Parameter file \"" + fileName + "\": "
+				"does not exist.");
 	std::ifstream file;
 	file.open(fileName.c_str());
 	if (file.bad()) {
-		throw "Parameter file '" + fileName
-				+ "' could not be opened. IO error. (file.bad())";
+		throw ParameterFile::IoError(
+				"Parameter file \"" + fileName + "\" could not be opened. "
+				"(file.bad())");
 	} else {
 		clear();
 		fromStream(file);
@@ -228,9 +240,8 @@ void ParameterFile::fromStream(std::istream& strm) {
 
 void ParameterFile::erase(std::string parameter) {
 	_toLower(parameter);
-	if (!isSet(parameter)) {
-		throw "In erase(" + parameter + "): Parameter not set!";
-	}
+	if (!isSet(parameter))
+		throw ParameterFile::Unset("Parameter " + parameter + " not set");
 
 	// Add delete information into log list
 	_setParams["[del] " + parameter] = get<std::string> (parameter, "");

@@ -35,6 +35,7 @@
  *  -   Removed setting of default values on get-functions
  *  -   added const version of get-functions
  *  -   throwing exceptions when erase called with an unset parameter name
+ *  -   these exceptions are derived from std::exception
  *  -   added parName and objName to get parts of parameter descriptors
  */
 #ifndef _ParameterFile_H
@@ -56,6 +57,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <stdexcept>
 
 /** This class serves to store parameters used within the Charon Project.
  *  Parameters of different types can be stored and loaded from a plain text
@@ -78,191 +80,207 @@
 class DLLEX ParameterFile
 {
 private:
-    /** Store a string value to the parameter list.
-     *  @param  parameter   Name of the parameter to store
-     *  @param  value       String representation of the value.
-     *  @throw  std::string error-string when called with empty parameter name
-     *  @remark             Modified parameter (when overwriting an existing
-     *                      value) is marked as modified. */
-    void _set(std::string parameter, std::string value);
+	/** Store a string value to the parameter list.
+	 *  @param  parameter   Name of the parameter to store
+	 *  @param  value       String representation of the value.
+	 *  @remark             Modified parameter (when overwriting an existing
+	 *                      value) is marked as modified. */
+	void _set(std::string parameter, std::string value);
 
-    /** Get the lowercase version of a string.
-     * @param  input        Input string
-     * @return              string transformed to lowercase */
-    inline void _toLower(std::string& input) const;
+	/** Get the lowercase version of a string.
+	 * @param  input        Input string
+	 * @return              string transformed to lowercase */
+	inline void _toLower(std::string& input) const;
 
-    /// @name Parameter store
-    //  @{
+	/// @name Parameter store
+	//  @{
 
-    /// this vector keeps a copy of all parameters in order to preserve their
-    /// ordering in the actual file	it is used for saving the file in the same
-    /// order and appending new parameters at the end of the file
-    std::vector<std::string> _parameterLines;
+	/// this vector keeps a copy of all parameters in order to preserve their
+	/// ordering in the actual file	it is used for saving the file in the same
+	/// order and appending new parameters at the end of the file
+	std::vector<std::string> _parameterLines;
 
-    /// maps parameters to their respective values
-    std::map<std::string, std::string> _params;
+	/// maps parameters to their respective values
+	std::map<std::string, std::string> _params;
 
-    /// stores modified and new parameters in a seperate map
-    /// (see showSetParams())
-    std::map<std::string, std::string> _setParams;
+	/// stores modified and new parameters in a seperate map
+	/// (see showSetParams())
+	std::map<std::string, std::string> _setParams;
 
-    //  @}
+	//  @}
 
-    /// @name Properties to change behaviour
-    //  @{
+	/// @name Properties to change behaviour
+	//  @{
 
-    /// warn if parameter was not found
-    bool _noFoundWarnings;
+	/// warn if parameter was not found
+	bool _noFoundWarnings;
 
-    /// convert linux to windows slashes and vice versa
-    /// (depends on define CHARON_LINUX/CHARON_WINDOWS in StringTool)
-    bool _convertSlashes;
+	/// convert linux to windows slashes and vice versa
+	/// (depends on define CHARON_LINUX/CHARON_WINDOWS in StringTool)
+	bool _convertSlashes;
 
-    /// delimiter for lists of values (default is ';')
-    char _delimiter;
+	/// delimiter for lists of values (default is ';')
+	char _delimiter;
 
-    //  @}
+	//  @}
 
 public:
-    /// Default constructor
-    ParameterFile();
+	/// I/O error exception thrown by ParameterFile instances.
+	class DLLEX IoError : public std::runtime_error {
+	public:
+		/// constuctor using given error message
+		/// \param msg  error description
+		explicit IoError(const std::string& msg);
+	};
 
-    /// Initialize Parameterfile reading content of an existing file.
-    /// @param  fileName    Name of the plaintext-file to read.
-    ParameterFile(std::string fileName);
+	/// Exception thrown when trying to access unset parameters.
+	class DLLEX Unset : public std::invalid_argument {
+	public:
+		/// constuctor using given error message
+		/// \param msg  error description
+		explicit Unset(const std::string& msg);
+	};
 
-    /// Default destructor
-    ~ParameterFile();
+	/// Default constructor
+	ParameterFile();
 
-    /// get parameter component of a full name
-    /// @param  fullName    full name descriptor (e.g. "obj1.par1")
-    /// @return             parameter name part  (e.g. "par1")
-    static std::string parName(std::string fullName);
+	/// Initialize Parameterfile reading content of an existing file.
+	/// @param  fileName    Name of the plaintext-file to read.
+	ParameterFile(std::string fileName);
 
-    /// get object name component of a full name
-    /// @param  fullName    full name descriptor (e.g. "obj1.par1")
-    /// @return             object name part     (e.g. "obj1")
-    static std::string objName(std::string fullName);
+	/// Default destructor
+	~ParameterFile();
 
-    /// Change property delimiter
-    /// @param  delimiter       New value
-    void setDelimiter(char delimiter);
+	/// get parameter component of a full name
+	/// @param  fullName    full name descriptor (e.g. "obj1.par1")
+	/// @return             parameter name part  (e.g. "par1")
+	static std::string parName(std::string fullName);
 
-    /// Change property convertSlashes
-    /// @param convertSlashes	New value
-    void setConvertSlashes(bool convertSlashes);
+	/// get object name component of a full name
+	/// @param  fullName    full name descriptor (e.g. "obj1.par1")
+	/// @return             object name part     (e.g. "obj1")
+	static std::string objName(std::string fullName);
 
-    /// Check if a givem parameter has already been set.
-    /// @param  parameter       Name of the parameter to check
-    /// @return                 True if value already present
-    /// @throws std::string     error-string when called with empty
-    ///                         parameter name
-    bool isSet(std::string parameter) const;
+	/// Change property delimiter
+	/// @param  delimiter       New value
+	void setDelimiter(char delimiter);
 
-    /// Set a parameter to the given single value.
-    /// @param  parameter   Name of the parameter to set
-    /// @param  value       Value to set
-    template<class T>
-    void set(std::string parameter, const T& value = T());
+	/// Change property convertSlashes
+	/// @param convertSlashes	New value
+	void setConvertSlashes(bool convertSlashes);
 
-    /// Set a parameter to multiple values.
-    /// Use getList to restore this list of values.
-    /// @param  parameter   Name of the parameter to set
-    /// @param  value       List containing the values to set
-    template<class T>
-    void set(std::string parameter, const std::vector<T>& value);
+	/// Check if a givem parameter has already been set.
+	/// @param  parameter       Name of the parameter to check
+	/// @return                 True if value already present
+	bool isSet(std::string parameter) const;
 
-    /// Get the value of a specified parameter.
-    /// @param parameter    Name of parameter to get
-    /// @return             Found value
-    /// @throws std::string error message in case of unset parameter
-    template<class T>
-    T get(std::string parameter) const;
+	/// Set a parameter to the given single value.
+	/// @param  parameter   Name of the parameter to set
+	/// @param  value       Value to set
+	template<class T>
+	void set(std::string parameter, const T& value = T());
 
-    /// Get the value of a specified parameter.
-    /// @param  parameter       Name of the parameter to get
-    /// @param  defaultValue    value to set if parameter unset
-    /// @return                 Found value
-    template<class T>
-    T get(std::string parameter, T defaultValue);
+	/// Set a parameter to multiple values.
+	/// Use getList to restore this list of values.
+	/// @param  parameter   Name of the parameter to set
+	/// @param  value       List containing the values to set
+	template<class T>
+	void set(std::string parameter, const std::vector<T>& value);
 
-    /// If multiple values are set, return a list containing these values.
-    /// The values are sored separated by the delimiter stored in
-    /// thec orresponding property.
-    /// @param parameter        Name of the parameter to look for
-    /// @return                 List containing the found values
-    /// @throws std::string     Error message when parameter not set
-    template<class T>
-    std::vector<T> getList(std::string parameter) const;
+	/// Get the value of a specified parameter.
+	/// @param parameter        Name of parameter to get
+	/// @return                 Found value
+	/// @throws invalid_argument
+	///                         error message in case of unset parameter
+	template<class T>
+	T get(std::string parameter) const;
 
-    /// If multiple values are set, return a list containing these values.
-    /// The values are sored separated by the delimiter stored in
-    /// thec orresponding property.
-    /// @param parameter        Name of the parameter to look for
-    /// @param defaultValue     Value to set in case of unset parameter
-    /// @return                 List containing the found values
-    template<class T>
-    inline std::vector<T> getList(std::string parameter,
-            std::string defaultValue);
+	/// Get the value of a specified parameter.
+	/// @param  parameter       Name of the parameter to get
+	/// @param  defaultValue    value to set if parameter unset
+	/// @return                 Found value
+	template<class T>
+	T get(std::string parameter, T defaultValue);
 
-    /// Look for parameters beginning with a given string.
-    /// @param  beginsWith  Beginning of parameter name
-    /// @return             List containing the found parameters.
-    ///                     This vector has the same sorting
-    ///                     as the lines in the textfile.
-    std::vector<std::string> getKeyList(std::string beginsWith = "") const;
+	/// If multiple values are set, return a list containing these values.
+	/// The values are sored separated by the delimiter stored in
+	/// thec orresponding property.
+	/// @param parameter        Name of the parameter to look for
+	/// @return                 List containing the found values
+	/// @throws std::invalid_argument
+	///                         Error message when parameter not set
+	template<class T>
+	std::vector<T> getList(std::string parameter) const;
 
-    /**
-     * Look for parameters ignoring the instance name.
-     * For example, getEveryParameter("type") will return a vector every "type"
-     * parameter in this ParameterFile.
-     * @param param Parameter name to look for
-     * @return             List containing the found parameters.
-     *                     This vector has the same sorting
-     *                     as the lines in the textfile.
-     */
-    std::vector<std::string> getEveryParameter(const std::string & param) const;
+	/// If multiple values are set, return a list containing these values.
+	/// The values are sored separated by the delimiter stored in
+	/// thec orresponding property.
+	/// @param parameter        Name of the parameter to look for
+	/// @param defaultValue     Value to set in case of unset parameter
+	/// @return                 List containing the found values
+	template<class T>
+	inline std::vector<T> getList(
+			std::string parameter, std::string defaultValue);
 
-    /// Print a list of all set parameters to sout.
-    void showSetParams() const;
+	/// Look for parameters beginning with a given string.
+	/// @param  beginsWith  Beginning of parameter name
+	/// @return             List containing the found parameters.
+	///                     This vector has the same sorting
+	///                     as the lines in the textfile.
+	std::vector<std::string> getKeyList(std::string beginsWith = "") const;
 
-    /// Clear parameter list.
-    void clear();
+	/**
+	 * Look for parameters ignoring the instance name.
+	 * For example, getEveryParameter("type") will return a vector every "type"
+	 * parameter in this ParameterFile.
+	 * @param param Parameter name to look for
+	 * @return             List containing the found parameters.
+	 *                     This vector has the same sorting
+	 *                     as the lines in the textfile.
+	 */
+	std::vector<std::string> getEveryParameter(const std::string& param) const;
 
-    /// Delete a parameter from the parameter list.
-    /// @param  parameter   Name of the parameter to remove
-    /// @throws std::string error-string describing the failure if parameter
-    ///                     is not set
-    void erase(std::string parameter);
+	/// Print a list of all set parameters to sout.
+	void showSetParams() const;
 
-    /// Clear list of modifications.
-    /// This does not change the stored parameters.
-    void resetSetParams();
+	/// Clear parameter list.
+	void clear();
 
-    /// Set property noFoundWarnings.
-    /// @param  noFoundWarnings New value
-    void setNotFoundWarningsOn(bool noFoundWarnings);
+	/// Delete a parameter from the parameter list.
+	/// @param  parameter   Name of the parameter to remove
+	/// @throws std::invalid_argument
+	///                     failure description if parameter
+	///                     is not set
+	void erase(std::string parameter);
 
-    /// Save parameters and values to a plain text file.
-    /// @param  fileName    Name of the file to write to.
-    ///                     The file will be overwritten.
-    /// @return             True on a successful write
-    /// @throws std::string error string on file write-error
-    bool save(std::string fileName) const;
+	/// Clear list of modifications.
+	/// This does not change the stored parameters.
+	void resetSetParams();
 
-    /// Load parameters from the given file.
-    /// @param  fileName    Name of the file to read from
-    /// @return             True on successful read
-    /// @throws std::string error string on read errors
-    bool load(std::string fileName);
+	/// Set property noFoundWarnings.
+	/// @param  noFoundWarnings New value
+	void setNotFoundWarningsOn(bool noFoundWarnings);
 
-    /// Save parameters in the same order as they where inserted.
-    /// @param  strm        Stream to write to
-    void toStream(std::ostream &strm) const;
+	/// Save parameters and values to a plain text file.
+	/// @param  fileName    Name of the file to write to.
+	///                     The file will be overwritten.
+	/// @return             True on a successful write
+	/// @throws IoError     error string on file write-error
+	bool save(std::string fileName) const;
 
-    /// Restore parameters reading from the given stream.
-    /// @param strm        Input stream to read from
-    void fromStream(std::istream& strm);
+	/// Load parameters from the given file.
+	/// @param  fileName    Name of the file to read from
+	/// @return             True on successful read
+	/// @throws IoError     error description on read errors
+	bool load(std::string fileName);
+
+	/// Save parameters in the same order as they where inserted.
+	/// @param  strm        Stream to write to
+	void toStream(std::ostream &strm) const;
+
+	/// Restore parameters reading from the given stream.
+	/// @param strm        Input stream to read from
+	void fromStream(std::istream& strm);
 };
 
 #endif // _ParameterFile_H

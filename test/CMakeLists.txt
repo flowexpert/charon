@@ -25,6 +25,10 @@ IF(ENABLE_TEST)
 	ENDIF(WIN32)
 	ADD_DEFINITIONS(-DTESTPLUGIN_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 	ADD_EXECUTABLE(compileandloadtest compileandloadtest.cpp)
+	ADD_CUSTOM_COMMAND(TARGET compileandloadtest POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Paths.config
+			${CMAKE_CURRENT_BINARY_DIR}/Paths.config)
 	TARGET_LINK_LIBRARIES(compileandloadtest charon-plugins)
 	ADD_TEST(CompileAndLoadTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/compileandloadtest)
 ENDIF(ENABLE_TEST)

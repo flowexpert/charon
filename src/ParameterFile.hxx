@@ -68,11 +68,9 @@ inline T ParameterFile::get(std::string parameter) const {
 	_toLower(parameter);
 	std::map<std::string, std::string>::const_iterator found;
 	found = _params.find(parameter);
-	if (found == _params.end()) {
-		std::ostringstream msg;
-		msg << "Parameter " << parameter << " not set!";
-		throw msg.str();
-	}
+	if (found == _params.end())
+		throw ParameterFile::Unset("Parameter " + parameter + " not set");
+
 	std::istringstream strm(found->second);
 	T ret;
 	strm >> ret;
@@ -98,11 +96,9 @@ inline std::vector<T> ParameterFile::getList(std::string parameter) const {
 	std::vector<T> result;
 	std::map<std::string, std::string>::const_iterator found;
 	found = _params.find(parameter);
-	if (found == _params.end()) {
-		std::ostringstream msg;
-		msg << "Parameter " << parameter << " not set!";
-		throw msg.str();
-	}
+	if (found == _params.end())
+		throw ParameterFile::Unset("Parameter " + parameter + " not set");
+
 	std::string value = found->second;
 	if (value != "" && value != "none") {
 		std::vector<std::string> tmp;
@@ -148,8 +144,9 @@ inline std::string ParameterFile::objName(std::string name) {
 }
 
 inline void ParameterFile::_toLower(std::string& input) const {
-	std::transform(input.begin(), input.end(), input.begin(),
-			(int(*)(int)) tolower);
+	std::transform(
+		input.begin(), input.end(), input.begin(),
+		(int(*)(int)) tolower);
 }
 
 // specialized versions
@@ -159,11 +156,9 @@ inline std::string ParameterFile::get(std::string parameter) const {
 	_toLower(parameter);
 	std::map<std::string, std::string>::const_iterator found;
 	found = _params.find(parameter);
-	if (found == _params.end()) {
-		std::ostringstream msg;
-		msg << "Parameter " << parameter << " not set!";
-		throw msg.str();
-	}
+	if (found == _params.end())
+		throw ParameterFile::Unset("Parameter " + parameter + " not set");
+
 	// ensure that full string is returned
 	return found->second;
 }
@@ -173,11 +168,9 @@ inline bool ParameterFile::get(std::string parameter) const {
 	_toLower(parameter);
 	std::map<std::string, std::string>::const_iterator found;
 	found = _params.find(parameter);
-	if (found == _params.end()) {
-		std::ostringstream msg;
-		msg << "Parameter " << parameter << " not set!";
-		throw msg.str();
-	}
+	if (found == _params.end())
+		throw ParameterFile::Unset("Parameter " + parameter + " not set");
+
 	std::string val = found->second;
 	_toLower(val);
 	if (val == "true")
@@ -193,16 +186,14 @@ inline bool ParameterFile::get(std::string parameter) const {
 }
 
 template<>
-inline std::vector<std::string> ParameterFile::getList(std::string parameter) const {
+inline std::vector<std::string> ParameterFile::getList(
+		std::string parameter) const {
 	_toLower(parameter);
 	std::vector<std::string> result;
 	std::map<std::string, std::string>::const_iterator found;
 	found = _params.find(parameter);
-	if (found == _params.end()) {
-		std::ostringstream msg;
-		msg << "Parameter " << parameter << " not set!";
-		throw msg.str();
-	}
+	if (found == _params.end())
+		throw ParameterFile::Unset("Parameter " + parameter + " not set");
 	std::string value = found->second;
 	if (value != "" && value != "none") {
 		StringTool::explode(value, _delimiter, result);

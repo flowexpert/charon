@@ -91,9 +91,8 @@ int main(){
         try {
             val1 = paramtest->get<std::string>("param1");
         }
-        catch(std::string reason) {
-            if (reason.find("not set") != std::string::npos)
-                fail = false;
+		catch(const ParameterFile::Unset&) {
+			fail = false;
         }
         if (fail)
             throw std::string("no exception from get caught!");
@@ -102,9 +101,8 @@ int main(){
         try {
             paramtest->erase("param2");
         }
-        catch(std::string reason) {
-            if (reason.find("not set") != std::string::npos)
-                fail = false;
+		catch(const ParameterFile::Unset&) {
+			fail = false;
         }
         if (fail)
             throw std::string("no exception from erase caught!");
@@ -113,9 +111,8 @@ int main(){
         try {
             paramtest->getList<float>("bla");
         }
-        catch(std::string reason) {
-            if (reason.find("not set") != std::string::npos)
-                fail = false;
+		catch(const ParameterFile::Unset&) {
+			fail = false;
         }
         if (fail)
             throw std::string("no exception from getList caught!");
