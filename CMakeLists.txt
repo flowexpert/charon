@@ -1,4 +1,5 @@
 PROJECT(templategenerator)
+SET(templategenerator_VERSION 0.1.3)
 	
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 
@@ -32,3 +33,5 @@ INCLUDE(${QT_USE_FILE})
 # recurse into subdirectories
 ADD_SUBDIRECTORY (src)
 ADD_SUBDIRECTORY (app)
+
+INCLUDE(CPackConfig)

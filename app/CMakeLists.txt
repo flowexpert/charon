@@ -15,5 +15,5 @@ TARGET_LINK_LIBRARIES(templategenerator
 	mylib
 	${QT_LIBRARIES}
 )
-
-
+INSTALL(TARGETS templategenerator
+	DESTINATION bin)
