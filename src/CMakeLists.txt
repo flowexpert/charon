@@ -218,6 +218,11 @@ ADD_LIBRARY(sequencegenerator SHARED
 	SequenceGenerator.hxx
 	SequenceGenerator.cpp)
 LIST(APPEND Plugins sequencegenerator)
+ADD_LIBRARY(diff2d SHARED
+	Diff2D.h
+	Diff2D.hxx
+	Diff2D.cpp)
+LIST(APPEND Plugins diff2d)
 
 FOREACH(X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core ${CIMG_LIBRARIES})
