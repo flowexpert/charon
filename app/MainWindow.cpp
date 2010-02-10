@@ -5,7 +5,7 @@
 #include <MyTabWidget.h>
 #include <QComboBox>
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
 		: QMainWindow(parent)
 {
 	QWidget* centralWidget = new QWidget;
@@ -38,16 +38,19 @@ MainWindow::MainWindow(QWidget *parent)
 	page0hi->setLayout(layout0);
 	QHBoxLayout* buttonlayout0 = new QHBoxLayout(page0lo);
 	page0lo->setLayout(buttonlayout0);
-	QPushButton* nextButton0 = new QPushButton (tr("&Continue >"));
+	QPushButton* nextButton0 = new QPushButton (
+			tr("&Create new plugin from scratch >"));
 	QLabel* welcome = new QLabel(
-			tr("<b>Welcome to the template generator plugin.</b><br><br><br>"
+			tr(
+				"<h2 align=center>Welcome to the plugin template generator."
+				"</h2><br><br><br>"
 				"This setup wizzard belongs to charon and helps to create "
-				"simple plugins with common code parts.</b><br><br><br>"
+				"simple plugins with common code parts.<br><br><br>"
 				"If you want to load an existing plugin "
 				"you can type in its path or use the browse button.<br>"
 				"Otherwise continue without loading."));
 	QLabel* pluginLoadText = new QLabel(tr("Path of plugin to load:"));
-	QPushButton* load = new QPushButton(tr("&Load >"));
+	QPushButton* load = new QPushButton(tr("&Load existing plugin >"));
 	QPushButton* browse2 = new QPushButton(tr("&Browse"));
 	_inputFile = new QLineEdit();
 
@@ -56,16 +59,16 @@ MainWindow::MainWindow(QWidget *parent)
 	_inputFile -> setText(settings.value("recentInputDir", QDir::homePath())
 		.toString());
 
-	layout0->addWidget(welcome,2,1,1,3);
+	layout0->setRowStretch(1,1);
+	layout0->addWidget(welcome,2,1,1,2);
+	layout0->setRowStretch(3,2);
 	layout0->addWidget(pluginLoadText,4,1);
 	layout0->addWidget(_inputFile,5,1);
 	layout0->addWidget(browse2,5,2);
-	layout0->setColumnStretch(3,1);
-	layout0->setRowStretch(3,2);
+	layout0->addWidget(load,5,3);
 	layout0->setRowStretch(6,2);
-	layout0->setRowStretch(1,1);
+	layout0->setColumnStretch(1,1);
 	buttonlayout0->addStretch();
-	buttonlayout0->addWidget (load);
 	buttonlayout0->addWidget(nextButton0);
 
 	connect(nextButton0,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
