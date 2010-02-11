@@ -185,8 +185,8 @@ void ImgTool::warp2D(
 		dst.assign(src.width(), src.height(), src.depth(), src.spectrum());
 
 	cimg_forXYZC(src,x,y,z,t) {
-		float cx = weight * float(T(x)+flow[0](x,y,z,t));
-		float cy = weight * float(T(y)+flow[1](x,y,z,t));
+		float cx = float(T(x) + weight*flow[0](x,y,z,t));
+		float cy = float(T(y) + weight*flow[1](x,y,z,t));
 		T res = interpolator->interpolate(src, cx, cy, int(z), int(t));
 		dst(x,y,z,t) = res;
 	}
