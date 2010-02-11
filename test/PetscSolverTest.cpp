@@ -44,6 +44,10 @@
  */
 #define CMAKE_INTDIR
 #endif
+// make assert work for testing
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 
 int main() {
 	std::ofstream log("bcceTestLog.txt", std::ios::trunc);
