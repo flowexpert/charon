@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget* parent)
 			tr("&Create new plugin from scratch >"));
 	QLabel* welcome = new QLabel(
 			tr(
-				"<h2 align=center>Welcome to the plugin template generator."
+				"<h2 align=center>Welcome to the plugin template generator!"
 				"</h2><br><br><br>"
 				"This setup wizzard belongs to charon and helps to create "
 				"simple plugins with common code parts.<br><br><br>"
@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget* parent)
 		.toString());
 
 	layout0->setRowStretch(1,1);
-	layout0->addWidget(welcome,2,1,1,2);
+	layout0->addWidget(welcome,2,1,1,3);
 	layout0->setRowStretch(3,2);
 	layout0->addWidget(pluginLoadText,4,1);
 	layout0->addWidget(_inputFile,5,1);
