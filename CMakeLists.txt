@@ -31,7 +31,7 @@ ENDIF(WITH_PETSC)
 # Test suite
 OPTION(ENABLE_TEST "enable test suite" ON)
 IF(ENABLE_TEST)
-    ENABLE_TESTING()
+	ENABLE_TESTING()
 ENDIF(ENABLE_TEST)
 
 # executables and dll files are moved to the same directory

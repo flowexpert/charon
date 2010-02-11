@@ -17,7 +17,7 @@
 */
 /** \file Diff2D.h
  *  Declaration of the parameter class Diff2D.
- *  \author Jens-Malte Gottfried
+ *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  *  \date 10.02.2010
  */
 
@@ -37,43 +37,41 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
 /// Calculate 2D derivatives.
-/// 
-/// This plugin serves to simplify calculations of 2D derivations.
-/// Although derivatives may be calculated using class LinearFilter, this plugin
-/// makes derivative calculations more compact.
-/// Only the derivatives of connected output slots are calculated.
+/** This plugin serves to simplify calculations of 2D derivations.
+ *  Although derivatives may be calculated using class LinearFilter,
+ *  this plugin makes derivative calculations more compact.
+ *  Only the derivatives of connected output slots are calculated.
+ */
 template <typename T>
 class diff2d_DECLDIR Diff2D :
 		public TemplatedParameteredObject<T> {
 public:
 	/// linear 1D filter mask used for derivation wrt x,y 
-	Parameter < T > diffMaskXY;
+	ParameterList < T > diffMaskXY;
 	/// linear 1D filter mask applied orthogonal of derivation (wrt x,y) 
-	Parameter < T > smoothMaskXY;
+	ParameterList < T > smoothMaskXY;
 	/// linear 1D filter mask used for derivation wrt t 
-	Parameter < T > diffMaskT;
-	
+	ParameterList < T > diffMaskT;
 
 	/// image input 
-	InputSlot < CImgList<T> > img;
+	InputSlot < cimg_library::CImgList<T> > img;
 	/// if connected, calculations are performed on count change only 
 	InputSlot < unsigned int > count;
 	/// derivative wrt x 
-	OutputSlot < CImgList<T> > dx;
+	OutputSlot < cimg_library::CImgList<T> > dx;
 	/// derivative wrt y 
-	OutputSlot < CImgList<T> > dy;
+	OutputSlot < cimg_library::CImgList<T> > dy;
 	/// derivative wrt t 
-	OutputSlot < CImgList<T> > dt;
+	OutputSlot < cimg_library::CImgList<T> > dt;
 	/// second derivative wrt x 
-	OutputSlot < CImgList<T> > dxx;
+	OutputSlot < cimg_library::CImgList<T> > dxx;
 	/// second derivative wrt x,y 
-	OutputSlot < CImgList<T> > dxy;
+	OutputSlot < cimg_library::CImgList<T> > dxy;
 	/// second derivative wrt y 
-	OutputSlot < CImgList<T> > dyy;
-	
+	OutputSlot < cimg_library::CImgList<T> > dyy;
 
 	/// create a new Diff2D object
 	/// \param name          Instance name
@@ -81,6 +79,10 @@ public:
 
 	/// Update object.
 	virtual void execute();
+
+private:
+	/// remember last value of count() to check if recalculation needed
+	int _count;
 };
 
 #endif // _DIFF2D_H_

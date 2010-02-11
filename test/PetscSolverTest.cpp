@@ -23,6 +23,7 @@
  */
 
 #include <charon-core/PluginManager.h>
+#include <charon-utils/CImg.h>
 
 // needed CPP definitions
 #ifndef GLOBAL_PLUGIN_DIR
@@ -47,31 +48,48 @@
 int main() {
 	std::ofstream log("bcceTestLog.txt", std::ios::trunc);
 	assert(log.good());
-	sout.assign(std::cout, log);
+	sout.assign(log);
 
 
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR "/" CMAKE_INTDIR);
 	man.loadParameterFile(BCCE_TESTFILE);
 	try {
-//		man.executeWorkflow();
+		man.executeWorkflow();
+		assert(FileTool::exists("bcceTest_flow.cimg"));
+		assert(FileTool::exists("bcceTest_flow_calc.cimg"));
+
+		// load original and calculated flow
+		cimg_library::CImgList<double> flowOrig("bcceTest_flow.cimg");
+		cimg_library::CImgList<double> flowCalc("bcceTest_flow_calc.cimg");
+
+		assert(flowOrig.size() == 2);
+		assert(flowOrig.is_sameNXYZC(flowCalc));
+
+		// check results
+		double meanError = sqrt(((flowOrig[0]-flowCalc[0]).sqr()
+			+(flowOrig[1]-flowCalc[1]).sqr()).mean());
+		std::cout << "mean of difference norm: " << meanError << std::endl;
+		assert(meanError < 0.1);
+
+		man.reset();
 	}
 	catch (const std::exception& e) {
-		sout << "Caught exception of type " << typeid(e).name() << ".\n";
-		sout << "Message:\n" << e.what() << std::endl;
+		std::cerr << "Caught exception of type " << typeid(e).name() << ".\n";
+		std::cerr << "Message:\n" << e.what() << std::endl;
 	}
 	catch (const std::string& e) {
-		sout << "Caught exception of type std::string.\n";
-		sout << "Message:\n" << e << std::endl;
+		std::cerr << "Caught exception of type std::string.\n";
+		std::cerr << "Message:\n" << e << std::endl;
 	}
 	catch (const char*& e) {
-		sout << "Caught exception of type const char*.\n";
-		sout << "Message:\n" << e << std::endl;
+		std::cerr << "Caught exception of type const char*.\n";
+		std::cerr << "Message:\n" << e << std::endl;
 	}
 	catch (...) {
-		sout << "Caught unknown exception." << std::endl;
+		std::cerr << "Caught unknown exception." << std::endl;
 	}
 
-	sout.assign();
+	sout.assign(std::cout);
 	log.close();
 
 	return 0;

@@ -21,7 +21,7 @@ IF(ENABLE_TEST)
 		ADD_EXECUTABLE(listedpixelselectiontest listedpixelselectiontest.cpp)
 		TARGET_LINK_LIBRARIES(listedpixelselectiontest
 			charon-core
-			${CIMG_LIBRARIES}
+			${CIMG_LINK_LIBRARIES}
 			roi
 			filereader
 		)
@@ -29,13 +29,13 @@ IF(ENABLE_TEST)
 		ADD_EXECUTABLE(incrementorcountuptest incrementorcountuptest.cpp)
 		TARGET_LINK_LIBRARIES(incrementorcountuptest
 			charon-core
-			${CIMG_LIBRARIES}
+			${CIMG_LINK_LIBRARIES}
 		)
 
 		ADD_EXECUTABLE(objectivefunctioncomparingtest objectivefunctioncomparingtest.cpp)
 		TARGET_LINK_LIBRARIES(objectivefunctioncomparingtest
 			charon-core
-			${CIMG_LIBRARIES}
+			${CIMG_LINK_LIBRARIES}
 			roi
 			interpolatorlinear
 			filereader
@@ -46,14 +46,14 @@ IF(ENABLE_TEST)
 		ADD_EXECUTABLE(surfaceanalysisminchangetest surfaceanalysisminchnagetest.cpp)
 		TARGET_LINK_LIBRARIES(surfaceanalysisminchangetest
 			charon-core
-			${CIMG_LIBRARIES}
+			${CIMG_LINK_LIBRARIES}
 			incrementorparameter
 		)
 
 		ADD_EXECUTABLE(blockmatchingliacstest blockmatchingliacstest.cpp)
 		TARGET_LINK_LIBRARIES(blockmatchingliacstest
 			charon-core
-			${CIMG_LIBRARIES}
+			${CIMG_LINK_LIBRARIES}
 			roi
 			filereader
 			filewriter
@@ -122,7 +122,7 @@ IF(ENABLE_TEST)
 		TARGET_LINK_LIBRARIES(petscplugintest
 			charon-core
 			charon-plugins
-			${CIMG_LIBRARIES}
+			${CIMG_LINK_LIBRARIES}
 			roi
 			gbcce
 			l2norm
@@ -162,7 +162,7 @@ IF(ENABLE_TEST)
 
 		# executing test workflow
 		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
-		TARGET_LINK_LIBRARIES(petscsolvertest charon-core charon-plugins ${CIMG_LIBRARIES})
+		TARGET_LINK_LIBRARIES(petscsolvertest charon-core charon-plugins ${CIMG_LINK_LIBRARIES})
 		ADD_TEST(PetscSolverTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscsolvertest)
 	ENDIF(ENABLE_SOLVERS)
 ENDIF(ENABLE_TEST)

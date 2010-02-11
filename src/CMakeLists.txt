@@ -1,9 +1,9 @@
 INCLUDE_DIRECTORIES(${CHARON_CORE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CHARON_UTILS_INCLUDE_DIRS})
 
-IF(MSVC)
+IF (MSVC)
 	ADD_DEFINITIONS(-DHANDLE_DLL)
-ENDIF(MSVC)
+ENDIF()
 
 # plugins
 SET(Plugins)
@@ -35,14 +35,15 @@ IF (ENABLE_STENCILS)
 	)
 ENDIF (ENABLE_STENCILS)
 
-IF(ENABLE_SOLVERS AND NOT WITH_PETSC)
+IF (ENABLE_SOLVERS AND NOT WITH_PETSC)
 	MESSAGE(SEND_ERROR
 		"Trying to compile solvers without petsc "
 		"is currently not supported. "
 		"Please activate WITH_PETSC. "
 	)
-ENDIF(ENABLE_SOLVERS AND NOT WITH_PETSC)
-IF(ENABLE_SOLVERS)
+ENDIF()
+
+IF (ENABLE_SOLVERS)
 	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
 	ADD_LIBRARY(petscsolver SHARED
 		Solvers/PetscSolver.cpp
@@ -51,12 +52,12 @@ IF(ENABLE_SOLVERS)
 		Solver.h
 		Solver.hxx
 	)
-	IF(MSVC)
+	IF (MSVC)
 		SET_TARGET_PROPERTIES(petscsolver
 			PROPERTIES LINK_FLAGS
 				/NODEFAULTLIB:"LIBCMT"
 		)
-	ENDIF(MSVC)
+	ENDIF()
 	TARGET_LINK_LIBRARIES(petscsolver
 		${PETSC_LIBRARIES}
 		roi
@@ -68,7 +69,7 @@ IF(ENABLE_SOLVERS)
 	SET_TARGET_PROPERTIES(petscsolver
 		PROPERTIES INSTALL_RPATH ${PETSC_ROOT_DIR}/${PETSC_ARCH}/lib
 	)
-ENDIF(ENABLE_SOLVERS)
+ENDIF (ENABLE_SOLVERS)
 
 IF (ENABLE_BLOCKMATCHING)
 	ADD_LIBRARY(incrementorparameter SHARED
@@ -126,6 +127,7 @@ IF (ENABLE_BLOCKMATCHING)
 		blockmatchingliacs
 	)
 ENDIF (ENABLE_BLOCKMATCHING)
+
 IF (ENABLE_BRIGHTNESS)
 	ADD_LIBRARY(brightnessmodels_constant SHARED
 		BrightnessModels/Constant.cpp
@@ -158,6 +160,7 @@ IF (ENABLE_BRIGHTNESS)
 #		brightnessmodels_movingillumination
 	)
 ENDIF (ENABLE_BRIGHTNESS)
+
 IF (ENABLE_MOTION)
 #	ADD_LIBRARY(motionmodels_localaffiness SHARED
 #		MotionModels/LocalAffiness.cpp
@@ -224,9 +227,9 @@ ADD_LIBRARY(diff2d SHARED
 	Diff2D.cpp)
 LIST(APPEND Plugins diff2d)
 
-FOREACH(X ${Plugins})
+FOREACH (X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core ${CIMG_LIBRARIES})
-	IF(UNIX)
+	IF (UNIX)
 		GET_TARGET_PROPERTY(PLUGIN_RPATH ${X} INSTALL_RPATH)
 		IF(PLUGIN_RPATH)
 			SET(PLUGIN_RPATH "${PLUGIN_RPATH}:${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins:${CHARON_CORE_ROOT_DIR}/lib${LIB_SUFFIX}")
@@ -240,33 +243,33 @@ FOREACH(X ${Plugins})
 		IF(COMMAND UNSET)
 			UNSET(PLUGIN_RPATH)
 		ENDIF(COMMAND UNSET)
-	ENDIF(UNIX)
-ENDFOREACH(X)
+	ENDIF (UNIX)
+ENDFOREACH (X)
 
 # install libraries/plugins
 
 INSTALL(
-    TARGETS      	${Plugins}
-    EXPORT      	${PROJECT_NAME}
-    RUNTIME      	DESTINATION bin
-    LIBRARY      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
-    ARCHIVE      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
-    COMPONENT    	libraries
+	TARGETS         ${Plugins}
+	EXPORT          ${PROJECT_NAME}
+	RUNTIME         DESTINATION bin
+	LIBRARY         DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	ARCHIVE         DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	COMPONENT       libraries
 )
 
 # install header files to include directory
 FILE(GLOB_RECURSE HEADER_FILES
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    *.h *.hxx
+	RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+	*.h *.hxx
 )
 INSTALL(
-    FILES       ${HEADER_FILES}
-    DESTINATION include/${PROJECT_NAME}
-    COMPONENT   headers
+	FILES           ${HEADER_FILES}
+	DESTINATION     include/${PROJECT_NAME}
+	COMPONENT       headers
 )
 
 INSTALL(
-    EXPORT       ${PROJECT_NAME}
-    DESTINATION  include/${PROJECT_NAME}
-    COMPONENT    libraries
+	EXPORT          ${PROJECT_NAME}
+	DESTINATION     include/${PROJECT_NAME}
+	COMPONENT       libraries
 )
