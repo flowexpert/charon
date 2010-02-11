@@ -34,7 +34,13 @@ Diff2D<T>::Diff2D(const std::string& name) :
 			"This plugin serves to simplify calculations of 2D derivations. "
 			"Although derivatives may be calculated using class LinearFilter, "
 			"this plugin makes derivative calculations more compact.<br>"
-			"Only the derivatives of connected output slots are calculated."),
+			"Only the derivatives of connected output slots are calculated."
+			"<br><br>If you perform some kind of iterations, it is essential "
+			"to connect the count input slot, because recalculation takes "
+			"place on count changes only. "
+			"If count is not connected, only one calculation is performed "
+			"and reused later."
+			),
 		diffMaskXY("0.5;0;-0.5"),
 		smoothMaskXY("0.1875;0.625;0.1875"),
 		diffMaskT("1;-1"),
@@ -56,8 +62,8 @@ Diff2D<T>::Diff2D(const std::string& name) :
 			"image input", "CImgList<T>");
 	ParameteredObject::_addInputSlot(
 			count, "count",
-			"if connected, calculations are performed on count change only",
-			"unsigned int");
+			"if connected, calculations are performed on count change only, "
+			"if unconnected, calculations are performed exactly once");
 	ParameteredObject::_addOutputSlot(
 			dx, "dx", "derivative wrt x", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
