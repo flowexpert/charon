@@ -25,6 +25,8 @@ SET(PLUGIN_FILES
 	PluginManager.cpp
 	PluginManager.h
 	PluginManagerInterface.h
+	ExceptionHandler.cpp
+	ExceptionHandler.h
 )
 IF(WIN32)
 	LIST(APPEND PLUGIN_FILES
