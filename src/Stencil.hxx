@@ -36,7 +36,7 @@ Stencil<T>::Stencil(const std::string& classname, const std::string& name) :
 				"derivatives filters for images"),
 		_rhs(0)
 {
-	this->_addOutputSlot(out,"this","Pointer to itself","Stencil<T>");
+	this->_addOutputSlot(out,"this","Pointer to itself","Stencil<T>*");
 	this->_addParameter(lambda,"lambda","weight of the pde term",T(1),"T");
 	_addFunction(Stencil<T>::get);
 	_addFunction(Stencil<T>::getRhs);
