@@ -27,6 +27,12 @@
 #include <vector>
 #include <stdexcept>
 
+#ifndef TESTDIR
+/// global testing directory
+#define TESTDIR ""
+#error TESTDIR not defined!
+#endif
+
 int main()
 {
 	bool test1 = false, test2 = false;
@@ -43,7 +49,7 @@ int main()
 		roi.yBegin = 0;
 		roi.yEnd = 18;
 
-		rd.filename = PENGUINFILE;
+		rd.filename = TESTDIR "/Penguin.cimg";
 
 		lps.range.connect(&roi.out);
 		lps.sequence.connect(&rd.out);
@@ -82,7 +88,7 @@ int main()
 		FileReader<float> rdt("rdt");
 		Roi<int> roit("roit");
 		ListedPixelSelection<float> lpst("lpst");
-		rdt.filename = PENGUINHEADFILE;
+		rdt.filename = TESTDIR "sequence.cimg";
 		lpst.range.connect(&roit.out);
 		lpst.sequence.connect(&rdt.out);
 		roit.xEnd = 60;

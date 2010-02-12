@@ -35,6 +35,12 @@
 #include <charon-utils/Mask1D.h>
 #include <vector>
 
+#ifndef TESTDIR
+/// global testing directory
+#define TESTDIR ""
+#error TESTDIR not defined!
+#endif
+
 int main()
 {
 	try
@@ -58,7 +64,7 @@ int main()
 		roi.xEnd = 2;
 		roi.yEnd = 2;
 		FileReader<float> rd("rd");
-		rd.filename	= TESTFILE;
+		rd.filename	= TESTDIR "/test.cimg";
 		lps.range.connect(&roi.out);
 		lps.sequence.connect(&rd.out);
 		lps.execute();

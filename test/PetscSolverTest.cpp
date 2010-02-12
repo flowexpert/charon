@@ -29,12 +29,17 @@
 #ifndef GLOBAL_PLUGIN_DIR
 /// set this to the global plugin path
 #define GLOBAL_PLUGIN_DIR ""
-#warning GLOBAL_PLUGIN_DIR not defined!
+#error GLOBAL_PLUGIN_DIR not defined!
 #endif
 #ifndef LOCAL_PLUGIN_DIR
 /// set this to the plugin build path (local plugin path)
 #define LOCAL_PLUGIN_DIR ""
-#warning LOCAL_PLUGIN_DIR not defined!
+#error LOCAL_PLUGIN_DIR not defined!
+#endif
+#ifndef TESTDIR
+/// global testing directory
+#define TESTDIR ""
+#error TESTDIR not defined!
 #endif
 #ifndef CMAKE_INTDIR
 /// suffix to local plugin dir
@@ -56,7 +61,7 @@ int main() {
 
 
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR "/" CMAKE_INTDIR);
-	man.loadParameterFile(BCCE_TESTFILE);
+	man.loadParameterFile(TESTDIR "/bccetest.wrp");
 	try {
 		man.executeWorkflow();
 		assert(FileTool::exists("bcceTest_flow.cimg"));

@@ -39,6 +39,11 @@
 #include <charon-utils/LinearFilter.h>
 #include <charon-utils/Mask1D.h>
 
+#ifndef TESTDIR
+/// global testing directory
+#define TESTDIR ""
+#error TESTDIR not defined!
+#endif
 // make sure that assert works
 #ifdef NDEBUG
 #undef NDEBUG
@@ -55,8 +60,7 @@ int main()
 		roi.xEnd = 15;
 		roi.yEnd = 18;
 		FileReader<float> rd("rd");
-		rd.filename
-				= TESTFILE;
+		rd.filename = TESTDIR "/test.cimg";
 		lps.range.connect(&roi.out);
 		if (!lps.range.connected(&roi.out))
 		{
