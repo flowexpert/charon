@@ -230,7 +230,7 @@ ADD_LIBRARY(flowcomparator SHARED
 	FlowComparator.h
 	FlowComparator.hxx
 	FlowComparator.cpp)
-LIST(APPEND PLUGINS flowcomparator)
+LIST(APPEND Plugins flowcomparator)
 
 FOREACH (X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core ${CIMG_LIBRARIES})
