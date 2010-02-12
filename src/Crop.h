@@ -54,20 +54,25 @@ template <typename T>
 class crop_DECLDIR Crop : public TemplatedParameteredObject<T>
 {
 public:
-    /// image data input slot
-    InputSlot<cimg_library::CImgList<T> >  in;
-    /// image data output slot
-    OutputSlot<cimg_library::CImgList<T> > out;
+	/// image data input slot
+	InputSlot<cimg_library::CImgList<T> >  in;
+	/// image data output slot
+	OutputSlot<cimg_library::CImgList<T> > out;
 
-    /// image region of interest
-    InputSlot<Roi<int>*> roi;
+	/// image region of interest
+	InputSlot<Roi<int>*> roi;
 
-    /// create a new Threshold object
-    /// @param name             Object name
-    Crop(const std::string& name);
+	/// \name select dimensions to crop
+	//  \{
+	Parameter<bool> x,y,z,t,v;
+	//  \}
+
+	/// create a new Threshold object
+	/// @param name             Object name
+	Crop(const std::string& name);
 
 	/// \implements ParameteredObject::execute
-    virtual void execute();
+	virtual void execute();
 };
 
 #endif // _CROP_H_

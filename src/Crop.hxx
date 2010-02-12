@@ -28,58 +28,65 @@
 
 template <typename T>
 Crop<T>::Crop(const std::string& name) :
-        TemplatedParameteredObject<T>("crop", name, "crop images")
+		TemplatedParameteredObject<T>("crop", name, "crop images")
 {
-    this->_addInputSlot (roi,   "roi",   "region to crop",  "Roi<int>");
-    this->_addInputSlot (in,    "in",    "image input",     "CImgList<T>");
-    this->_addOutputSlot(out,   "out",   "image output",    "CImgList<T>");
+	this->_addInputSlot (roi,   "roi",   "region to crop",  "Roi<int>");
+	this->_addInputSlot (in,    "in",    "image input",     "CImgList<T>");
+	this->_addOutputSlot(out,   "out",   "image output",    "CImgList<T>");
+
+	this->_addParameter(x, "x", "crop in x direction", true);
+	this->_addParameter(y, "y", "crop in y direction", true);
+	this->_addParameter(z, "z", "crop in z direction", true);
+	this->_addParameter(t, "t", "crop in t direction", true);
+	this->_addParameter(v, "v", "crop in v direction", true);
 }
 
 template <typename T>
 void Crop<T>::execute()
 {
-    ParameteredObject::execute();
+	ParameteredObject::execute();
 
-    // check roi ranges
-    assert(roi());
-    assert(roi()->xBegin() <= roi()->xEnd());
-    assert(roi()->yBegin() <= roi()->yEnd());
-    assert(roi()->zBegin() <= roi()->zEnd());
-    assert(roi()->tBegin() <= roi()->tEnd());
-    assert(roi()->vBegin() <= roi()->vEnd());
+	// check roi ranges
+	assert(roi());
+	assert(roi()->xBegin() <= roi()->xEnd());
+	assert(roi()->yBegin() <= roi()->yEnd());
+	assert(roi()->zBegin() <= roi()->zEnd());
+	assert(roi()->tBegin() <= roi()->tEnd());
+	assert(roi()->vBegin() <= roi()->vEnd());
 
 	unsigned int
-		x0 = roi()->xBegin,
-		y0 = roi()->yBegin,
-		z0 = roi()->zBegin,
-		t0 = roi()->tBegin,
-		v0 = roi()->vBegin,
-		x1 = roi()->xEnd-1,
-		y1 = roi()->yEnd-1,
-		z1 = roi()->zEnd-1,
-		t1 = roi()->tEnd-1,
-		v1 = roi()->vEnd-1;
-	if(roi()->xBegin() == roi()->xEnd()) {
+		x0 = x() ? roi()->xBegin() : 0u,
+		y0 = y() ? roi()->yBegin() : 0u,
+		z0 = z() ? roi()->zBegin() : 0u,
+		t0 = t() ? roi()->tBegin() : 0u,
+		v0 = v() ? roi()->vBegin() : 0u,
+		x1 = x() ? roi()->xEnd()-1 : in()[0].width()-1u,
+		y1 = y() ? roi()->yEnd()-1 : in()[0].height()-1u,
+		z1 = z() ? roi()->zEnd()-1 : in()[0].depth()-1u,
+		t1 = t() ? roi()->tEnd()-1 : in()[0].spectrum()-1u,
+		v1 = v() ? roi()->vEnd()-1 : in().size()-1u;
+
+	if(x() && roi()->xBegin() == roi()->xEnd()) {
 		sout << "\tleaving x dimension uncropped" << std::endl;
-		x0 = 0; x1 = in()[0].width()-1;
+		x0 = 0u; x1 = in()[0].width()-1u;
 	}
-	if(roi()->yBegin() == roi()->yEnd()) {
+	if(y() && roi()->yBegin() == roi()->yEnd()) {
 		sout << "\tleaving y dimension uncropped" << std::endl;
-		y0 = 0; y1 = in()[0].height()-1;
+		y0 = 0u; y1 = in()[0].height()-1u;
 	}
-	if(roi()->zBegin() == roi()->zEnd()) {
+	if(z() && roi()->zBegin() == roi()->zEnd()) {
 		sout << "\tleaving z dimension uncropped" << std::endl;
-		z0 = 0; z1 = in()[0].depth()-1;
+		z0 = 0u; z1 = in()[0].depth()-1u;
 	}
-	if(roi()->tBegin() == roi()->tEnd()) {
+	if(t() && roi()->tBegin() == roi()->tEnd()) {
 		sout << "\tleaving t dimension uncropped" << std::endl;
-		t0 = 0; t1 = in()[0].spectrum()-1;
+		t0 = 0u; t1 = in()[0].spectrum()-1u;
 	}
-	if(roi()->vBegin() == roi()->vEnd()) {
+	if(v() && roi()->vBegin() == roi()->vEnd()) {
 		sout << "\tleaving v dimension uncropped" << std::endl;
-		v0 = 0; v1 = in().size() - 1;
+		v0 = 0u; v1 = in().size() - 1u;
 	}
-    out() = in().get_images(v0, v1);
+	out() = in().get_images(v0, v1);
 	cimglist_for(out(),k)
 		out()[k].crop(x0, y0, z0, t0, x1, y1, z1, t1);
 }
