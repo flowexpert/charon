@@ -31,6 +31,9 @@ template<class T>
 BrightnessModels::Constant<T>::Constant(const std::string& name) :
 	BrightnessModel<T> ("brightnessmodels_constant", name)
 {
+	_addFunction(BrightnessModels::Constant<T>::getUnknowns);
+	_addFunction(BrightnessModels::Constant<T>::compute);
+	_addFunction(BrightnessModels::Constant<T>::apply);
 }
 
 template<class T>
