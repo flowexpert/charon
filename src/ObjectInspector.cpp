@@ -41,8 +41,6 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 	// set up main layout
 	_mainLayout = new QVBoxLayout(this);
 	_view = new QTableView(this);
-	InspectorDelegate* delegate = new InspectorDelegate(this);
-	_view->setItemDelegateForColumn(1, delegate);
 	_prefix = new QLineEdit(this);
 
 	// init model
@@ -69,12 +67,15 @@ void ObjectInspector::init() {
 
 	// init view widget
 	_view->setAlternatingRowColors(true);
+	_view->setEditTriggers(QAbstractItemView::AllEditTriggers);
 	_view->verticalHeader()->hide();
 	_view->setCornerButtonEnabled(false);
 	_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	_view->setColumnWidth(0, 120);
 	_view->setColumnWidth(1, 120);
 	_view->horizontalHeader()->setStretchLastSection(true);
+	InspectorDelegate* delegate = new InspectorDelegate(this);
+	_view->setItemDelegateForColumn(1, delegate);
 	_mainLayout->addWidget(_view);
 }
 
