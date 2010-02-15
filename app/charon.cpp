@@ -42,7 +42,7 @@ namespace Config {
 	std::string workingDir;
 }
 
-/// print usage infor to stdout
+/// print usage info to stdout
 void printInfo() {
 	std::cout << "\n === charon workflow executor ===\n\n"
 		<< "Usage: " << Config::appName << " [options] parameterFile\n\n"
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 		{"workingdir", required_argument, NULL, 'w'},
 		{NULL,         no_argument,       NULL,  0}
 	};
-	const char* getoptShortOptions = "o:l:g:vw:h?";
+	const char* getoptShortOptions = "vo:hg:l:w:?";
 
 	while (true) {
 		int optionIndex = 0;
