@@ -31,16 +31,24 @@
 #include <SplitStream.h>
 #include <ExceptionHandler.h>
 #include <PluginManager.h>
+#include <TypeDetector.h>
 
 namespace Config {
-	bool verbose = false;
-	std::string logfile;
-	std::string paramFile;
-	std::string globalPath;
-	std::string localPath;
-	std::string appName;
-	std::string workingDir;
+	bool           verbose     = false;
+	std::string    logfile;
+	std::string    paramFile;
+	std::string    globalPath;
+	std::string    localPath;
+	std::string    appName;
+	std::string    workingDir;
+	std::string    oldDir;
+	std::ofstream  log;
+	PluginManager* man;
 }
+
+void printInfo();
+int run();
+void cleanup();
 
 /// print usage info to stdout
 void printInfo() {
@@ -60,8 +68,6 @@ void printInfo() {
 		<< "This may be set up e.g. by Tuchulcha.\n\t"
 		<< std::endl;
 }
-
-int run();
 
 /// main routine
 int main(int argc, char* argv[]) {
@@ -157,7 +163,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	// start application with given configuration using exception handler
-	return ExceptionHandler::run(run);
+	int ret = ExceptionHandler::run(run);
+	cleanup();
+	return ret;
 }
 
 /// main routine with exception handling
@@ -172,27 +180,49 @@ int run() {
 	if (Config::verbose)
 		std::cout << "\nInitializing plugin manager." << std::endl;
 
-	PluginManager man(Config::globalPath, Config::localPath);
+	Config::man = 0;
+	Config::man = new PluginManager(Config::globalPath, Config::localPath);
 
 	if (Config::verbose)
 		std::cout << "Loading workflow from \"" << Config::paramFile
 				<< "\"." << std::endl;
-	man.loadParameterFile(Config::paramFile);
+	Config::man->loadParameterFile(Config::paramFile);
+
+	Config::oldDir = FileTool::getCurrentDir();
+	if(!Config::workingDir.empty()) {
+		if (Config::verbose)
+			std::cout << "Entering directory " << Config::workingDir
+					<< std::endl;
+		FileTool::changeDir(Config::workingDir);
+	}
 
 	if (Config::verbose)
 		std::cout << "Starting workflow execution." << std::endl;
-	man.executeWorkflow();
+	Config::man->executeWorkflow();
 
 	if (Config::verbose)
 		std::cout << "Finished workflow execution." << std::endl;
 
-	man.reset();
+	return EXIT_SUCCESS;
+}
+
+void cleanup() {
+	if(!Config::workingDir.empty()) {
+		if (Config::verbose)
+			std::cout << "Leaving directory " << Config::workingDir
+					<< std::endl;
+		FileTool::changeDir(Config::oldDir);
+	}
+	if (Config::man) {
+		Config::man->reset();
+		delete Config::man;
+		Config::man = 0;
+	}
+	if(Config::log.is_open()) {
+		sout.assign(std::cout);
+		Config::log.close();
+	}
+	TypeDetector::destroy();
 	if (Config::verbose)
 		std::cout << "Cleanup finished. Bye" << std::endl;
-
-	if(log.is_open()) {
-		sout.assign(std::cout);
-		log.close();
-	}
-	return EXIT_SUCCESS;
 }
