@@ -357,10 +357,12 @@ void PluginManager::executeWorkflow() {
 			targetPoints[i]->execute();
 		}
 	} else {
-		throw AbstractPluginLoader::PluginException("Could not execute "
-			"workflow: The target point is invalid or not set. Please "
-			"check the global.targetpoint parameter of the parameter file.",
-				"unknown", AbstractPluginLoader::PluginException::OTHER);
+		throw AbstractPluginLoader::PluginException(
+			"Could not execute workflow:\n\t"
+			"No valid target point found.\n\tPlease check if "
+			"all required plugins could be loaded,\n\tthen check if this is "
+			"a valid parameter file.", "unknown",
+			AbstractPluginLoader::PluginException::OTHER);
 	}
 }
 
