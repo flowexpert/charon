@@ -80,6 +80,7 @@ int main(int argc, char* argv[]) {
 		{NULL,         no_argument,       NULL,  0}
 	};
 	const char* getoptShortOptions = "vo:hg:l:w:?";
+	assert(no_argument == 0);
 
 	while (true) {
 		int optionIndex = 0;
