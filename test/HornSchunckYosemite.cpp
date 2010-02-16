@@ -55,7 +55,7 @@
 #include <charon-core/ParameteredObject.h>
 #include <charon-core/FileTool.h>
 #include <charon-core/ExceptionHandler.h>
-#include <charon/FlowComparator.h>
+#include "FlowComparator.h"
 
 int test() {
 	std::ofstream log("TestHornSchunckYosemite.log", std::ios::trunc);
