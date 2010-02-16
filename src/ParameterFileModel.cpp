@@ -31,6 +31,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QSettings>
+#include <QDateTime>
 #include "PluginManager.h"
 #include "FileManager.h"
 #include "ui_LogDialog.h"
@@ -608,10 +609,15 @@ void ParameterFileModel::executeWorkflow() {
 	sout.assign(log, std::cout);
 #endif
 	sout << "Opened execution logfile." << std::endl;
+	const QDateTime& startTime = QDateTime::currentDateTime();
+	sout << "Time: " << startTime.toString(Qt::ISODate).toAscii().constData();
+	sout << std::endl;
 	QString path = QDir::currentPath();
 	QDir::setCurrent(QFileInfo(_fileName).path());
 	try {
+		sout << "loading Parameter file" << std::endl;
 		man.loadParameterFile(*_parameterFile);
+		sout << "starting execution" << std::endl;
 		man.executeWorkflow();
 	}
 	catch (const std::string& msg) {
@@ -639,6 +645,13 @@ void ParameterFileModel::executeWorkflow() {
 		qWarning("%s", tr("Caught exception of unknown type")
 				.toAscii().constData());
 	}
+	sout << "Execution finished.\n";
+	const QDateTime& endTime = QDateTime::currentDateTime();
+	sout << "Time   : " << endTime.toString(Qt::ISODate).toAscii().constData();
+	sout << "\n";
+	QTime runTime = QTime().addSecs(startTime.secsTo(endTime));
+	sout << "Runtime: " << runTime.toString("hh:mm:ss.zzz")
+			.toAscii().constData() << std::endl;
 	sout.assign();
 	log.close();
 	QDir::setCurrent(path);
