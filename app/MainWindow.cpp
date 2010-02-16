@@ -52,18 +52,32 @@ MainWindow::MainWindow(QWidget* parent)
 	QLabel* pluginLoadText = new QLabel(tr("Path of plugin to load:"));
 	QPushButton* load = new QPushButton(tr("&Load existing plugin >"));
 	QPushButton* browse2 = new QPushButton(tr("&Browse"));
-	_inputFile = new QLineEdit();
+	//_inputFile = new QLineEdit();
+
+	_inputFile1 = new QComboBox();
+	_inputFile1->setEditable(true);
+	_inputFile1->setInsertPolicy(QComboBox::NoInsert);
+
 
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");
-	_inputFile -> setText(settings.value("recentInputDir", QDir::homePath())
+	_inputFile1 -> addItem(settings.value("recentInputDir1", QDir::homePath())
+		.toString());
+	_inputFile1 -> addItem(settings.value("recentInputDir2")
+		.toString());
+	_inputFile1 -> addItem(settings.value("recentInputDir3")
+		.toString());
+	_inputFile1 -> addItem(settings.value("recentInputDir4")
+		.toString());
+	_inputFile1 -> addItem(settings.value("recentInputDir5")
 		.toString());
 
 	layout0->setRowStretch(1,1);
 	layout0->addWidget(welcome,2,1,1,3);
 	layout0->setRowStretch(3,2);
 	layout0->addWidget(pluginLoadText,4,1);
-	layout0->addWidget(_inputFile,5,1);
+	//layout0->addWidget(_inputFile,5,1);
+	layout0->addWidget(_inputFile1,5,1);
 	layout0->addWidget(browse2,5,2);
 	layout0->addWidget(load,5,3);
 	layout0->setRowStretch(6,2);
@@ -230,7 +244,8 @@ MainWindow::MainWindow(QWidget* parent)
 	QPushButton* add3 = new QPushButton (tr("&Add"));
 	QPushButton* remove3 = new QPushButton (tr("&Remove"));
 	QPushButton* previousButton3 = new QPushButton(tr("< &Back"));
-	QLabel* parameterLabel = new QLabel (tr("Parameter"));
+	QLabel* parameterLabel = new QLabel (tr("In this table you can define parameter. \n\n"
+						"Warning: String values have to be encapsulated into \"\"\n"));
 	_table3 = new QTableWidget(0, 4, page3);
 	QStringList paramlist = (
 			QStringList() << "Name" << "Documentation"
@@ -831,15 +846,17 @@ void MainWindow::_selectOutputDir() {
 
 
 void MainWindow::_selectInputFile() {
-	QString path = _inputFile->text().trimmed().section("/",0,-2);
+	QString path = _inputFile1->itemText(_inputFile1->currentIndex()).trimmed().section("/",0,-2);
 	if (path.isEmpty() || !QFileInfo(path).isDir()){
 		path = QDir::homePath();
 	}
 	QString dir = QFileDialog::getOpenFileName(
 			this, tr("Select output directory"),
 			path);
-	if(!dir.isEmpty())
-		_inputFile->setText(dir);
+	if(!dir.isEmpty()){
+		_inputFile1->insertItem(0,dir);
+		_inputFile1->setCurrentIndex(0);
+	}
 }
 
 
@@ -920,13 +937,13 @@ void MainWindow::_load() {
 
 
 	QString pluginFile;
-	if (_inputFile->text().trimmed().section(".",-1,-1) == "h"
-	    ||_inputFile->text().trimmed().section(".",-1,-1) == "hxx"
-	    ||_inputFile->text().trimmed().section(".",-1,-1) == "cpp")
+	if (_inputFile1->itemText(_inputFile1->currentIndex()).trimmed().section(".",-1,-1) == "h"
+	    ||_inputFile1->itemText(_inputFile1->currentIndex()).trimmed().section(".",-1,-1) == "hxx"
+	    ||_inputFile1->itemText(_inputFile1->currentIndex()).trimmed().section(".",-1,-1) == "cpp")
 
-		pluginFile = _inputFile->text().trimmed().section(".",0,-2);
+		pluginFile = _inputFile1->itemText(_inputFile1->currentIndex()).trimmed().section(".",0,-2);
 	else
-		pluginFile = _inputFile->text().trimmed();
+		pluginFile = _inputFile1->itemText(_inputFile1->currentIndex()).trimmed();
 
 
 	QFile inputFileName(QString("%1.h").arg(pluginFile));
@@ -948,9 +965,20 @@ void MainWindow::_load() {
 	_editRowCount(3);
 	}
 
+
+
+
+
+
+
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");
-	settings.setValue("recentInputDir", pluginFile);
+	settings.setValue("recentInputDir5", settings.value("recentInputDir4").toString());
+	settings.setValue("recentInputDir4", settings.value("recentInputDir3").toString());
+	settings.setValue("recentInputDir3", settings.value("recentInputDir2").toString());
+	settings.setValue("recentInputDir2", settings.value("recentInputDir1").toString());
+	settings.setValue("recentInputDir1", pluginFile);
+
 
 	QFile loadHeaderFile(QString("%1.h").arg(pluginFile));
 		if (!loadHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))

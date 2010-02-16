@@ -58,6 +58,7 @@ private:
 	QComboBox* _templated;		///< choose if templated or nontemplated plugin
 	QSignalMapper *signalMapper;	///< handling clicked SIGNALs
 	QLineEdit* _inputFile;		///< existing plugin to load
+	QComboBox* _inputFile1;		///< existing plugin to load
 
 
 signals:
