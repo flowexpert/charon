@@ -348,7 +348,8 @@ int PetscSolver<T>::petscExecute() {
 		Stencil<T>* is = (*((InputSlot<Stencil<T>*>*)*sIt))();
 
 		//iterate through its unknowns
-		sout << "\tgot Stencil: " << is->getName() << std::endl;
+		sout << "\tgot Stencil: " << is->getName() << " (lambda=";
+		sout << is->lambda() << ")" << std::endl;
 		if(is->getUnknowns().begin() == is->getUnknowns().end())
 			sout << "\t\twarning: no unknowns found!" << std::endl;
 		for(uIt=is->getUnknowns().begin();
