@@ -4440,7 +4440,7 @@ namespace cimg_library {
        \note This function is defined since it is not provided by all compilers
        (not an ANSI function).
     **/
-    inline int strncasecmp(const char *const s1, const char *const s2, const int l) {
+    inline int strncasecmp(const char *const s1, const char *const s2, const size_t l) {
       if (!l) return 0;
       if (!s1) return s2?-1:0;
       const char *ns1 = s1, *ns2 = s2;
@@ -4455,7 +4455,7 @@ namespace cimg_library {
     **/
     inline int strcasecmp(const char *const s1, const char *const s2) {
       if (!s1) return s2?-1:0;
-      const unsigned int l1 = std::strlen(s1), l2 = std::strlen(s2);
+      const size_t l1 = std::strlen(s1), l2 = std::strlen(s2);
       return cimg::strncasecmp(s1,s2,1+(l1<l2?l1:l2));
     }
 
@@ -4988,7 +4988,7 @@ namespace cimg_library {
         if (body) std::strcpy(body,filename);
         return filename + std::strlen(filename);
       }
-      const unsigned int l = p - filename - 1;
+      const size_t l = p - filename - 1;
       if (body) { std::memcpy(body,filename,l); body[l] = 0; }
       return p;
     }
@@ -12201,7 +12201,7 @@ namespace cimg_library {
           if (*expr._data) {
             char *d = expr._data;
             for (const char *s = expr._data; *s || (bool)(*d=0); ++s) if (*s!=' ') *(d++) = *s;
-            l = d - expr._data;
+            l = (unsigned int)(d - expr._data);
           }
         }
         if (!l) throw CImgArgumentException("[_cimg_math_parser] "
@@ -12328,7 +12328,7 @@ namespace cimg_library {
         for (char *s = se2; s>ss; --s) if (*s==';' && level[s-expr._data]==clevel) { compile(ss,s); _cimg_mp_return(compile(s+1,se)); }
         for (char *s = ss1, *ps = ss, *ns = ss2; s<se1; ++s, ++ps, ++ns)
            if (*s=='=' && *ns!='=' && *ps!='=' && *ps!='>' && *ps!='<' && *ps!='!' && level[s-expr._data]==clevel) {
-             CImg<charT> variable_name(ss,s-ss+1); variable_name.back() = 0;
+             CImg<charT> variable_name(ss,(unsigned int)(s-ss+1)); variable_name.back() = 0;
              bool is_valid_name = true;
              if ((*ss>='0' && *ss<='9') ||
                  (s==ss+1 && (*ss=='x' || *ss=='y' || *ss=='z' || *ss=='c' ||
@@ -12525,7 +12525,7 @@ namespace cimg_library {
         }
 
         // No known item found, assuming this is an already initialize variable.
-        CImg<charT> variable_name(ss,se-ss+1); variable_name.back() = 0;
+        CImg<charT> variable_name(ss,(unsigned int)(se-ss+1)); variable_name.back() = 0;
         for (unsigned int i = 0; i<mempos; ++i) if (label[i]._data && !std::strcmp(variable_name,label[i])) _cimg_mp_return(i);
         *se = saved_char;
         throw CImgArgumentException("[_cimg_math_parser] "
@@ -27898,14 +27898,16 @@ namespace cimg_library {
         for (unsigned int x = sampling/2; x<_width; x+=sampling) {
           const unsigned int X = x*flow._width/_width, Y = y*flow._height/_height;
           float u = (float)flow(X,Y,0,0)*fact/vmax, v = (float)flow(X,Y,0,1)*fact/vmax;
-          if (arrows) {
-            const int xx = x+(int)u, yy = y+(int)v;
-            if (colorfield) draw_arrow(x,y,xx,yy,color.get_vector_at(X,Y)._data,opacity,45,sampling/5.0f,pattern);
-            else draw_arrow(x,y,xx,yy,color._data,opacity,45,sampling/5.0f,pattern);
-          } else {
-            if (colorfield) draw_line((int)(x-0.5*u),(int)(y-0.5*v),(int)(x+0.5*u),(int)(y+0.5*v),color.get_vector_at(X,Y)._data,opacity,pattern);
-            else draw_line((int)(x-0.5*u),(int)(y-0.5*v),(int)(x+0.5*u),(int)(y+0.5*v),color._data,opacity,pattern);
-          }
+          if(u * v != 0.0) {
+			  if (arrows) {
+				const int xx = x+(int)u, yy = y+(int)v;
+				if (colorfield) draw_arrow(x,y,xx,yy,color.get_vector_at(X,Y)._data,opacity,45,sampling/5.0f,pattern);
+				else draw_arrow(x,y,xx,yy,color._data,opacity,45,sampling/5.0f,pattern);
+			  } else {
+				if (colorfield) draw_line((int)(x-0.5*u),(int)(y-0.5*v),(int)(x+0.5*u),(int)(y+0.5*v),color.get_vector_at(X,Y)._data,opacity,pattern);
+				else draw_line((int)(x-0.5*u),(int)(y-0.5*v),(int)(x+0.5*u),(int)(y+0.5*v),color._data,opacity,pattern);
+			  }
+		  }
         }
 
       return *this;
