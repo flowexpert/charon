@@ -85,7 +85,8 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	// for all Point4Ds in this->pattern
 	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
 		const Point4D<unsigned int>& curP = *pIt;
-		Point4D<int> curArg = Point4D<int>(curP) + Point4D<int>(p);
+		Point4D<int> curArg = Point4D<int>(curP);
+		curArg += Point4D<int>(p);
 		curArg -= Point4D<int>(this->center);
 		PetscInt curCol =
 			PetscSolver<T>::_pointToGlobalIndex(curArg,unknown,unknownSizes);
@@ -102,7 +103,8 @@ unsigned int PetscSolver<T>::_pointToRelativeIndex(
 {
 	unsigned int res = 0;
 	Point4D<int> offset(dim.xBegin,dim.yBegin,dim.zBegin,dim.tBegin);
-	Point4D<int> cur = p - offset;
+	Point4D<int> cur = p;
+	cur -= offset;
 
 	res += cur.t * (dim.getWidth() * dim.getHeight() * dim.getDepth());
 	res += cur.z * (dim.getWidth() * dim.getHeight());
@@ -723,7 +725,8 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 			cimg_forXYZC(entry.pattern,cx,cy,cz,ct) {
 				if (entry.pattern(cx,cy,cz,ct)) {
 					Point4D<int> curArg(cx,cy,cz,ct);
-					curArg += Point4D<int>(p) - entry.center;
+					curArg += Point4D<int>(p);
+					curArg -= entry.center;
 					PetscInt curCol =
 							PetscSolver<T>::_pointToGlobalIndex(
 									curArg,

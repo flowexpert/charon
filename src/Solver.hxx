@@ -108,8 +108,9 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 	// filling the pattern
 	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
 		//saving the offset as Point4D for later convennience
-		Point4D<int> offset = Point4D<int>(this->center)
-			- Point4D<int>(this->substencils[i]->center);
+		Point4D<int> curCenter = Point4D<int>(this->substencils[i]->center);
+		Point4D<int> offset    = Point4D<int>(this->center);
+		offset -= curCenter;
 
 		//Iterate through all pixels of the SubStencil...
 		cimg_forXYZC(substencils[i]->pattern,xc,yc,zc,tc) {
@@ -117,7 +118,8 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 			//MetaStencil (with offset).
 			if (this->substencils[i]->pattern(xc,yc,zc,tc)) {
 				Point4D<int> p(xc,yc,zc,tc);
-				Point4D<int> sum = p+offset;
+				Point4D<int> sum = p;
+				sum += offset;
 				assert(sum.x >= 0);
 				assert(sum.x < dimx);
 				assert(sum.y >= 0);
