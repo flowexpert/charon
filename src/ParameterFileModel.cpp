@@ -619,6 +619,7 @@ void ParameterFileModel::executeWorkflow() {
 		man.loadParameterFile(*_parameterFile);
 		sout << "starting execution" << std::endl;
 		man.executeWorkflow();
+		man.reset();
 	}
 	catch (const std::string& msg) {
 		QMessageBox::warning(0, tr("error during execution"),
