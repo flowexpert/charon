@@ -13,8 +13,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Solver.h
- *  Implementation of class PsiSolver.
+/** @file IterativeSolver.h
+ *  Implementation of class IterativeSolver.
  *  @author <a href="mailto:techfreaq@web.de">
  *      Nina Hernitschek</a>
  *  @date 23.11.2009
@@ -22,26 +22,27 @@
 
 
 
-#ifndef _PSISOLVER_H_
-#define _PSISOLVER_H_
+#ifndef _ITERATIVESOLVER_H_
+#define _ITERATIVESOLVER_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef psisolver_EXPORTS
+#ifdef iterativesolver_EXPORTS
 /// Visual C++ specific code
-#define psisolver_DECLDIR __declspec(dllexport)
+#define iterativesolver_DECLDIR __declspec(dllexport)
 #else
-#define psisolver_DECLDIR __declspec(dllimport)
+#define iterativesolver_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 
 
 #else /* No DLL handling or GCC */
 /// Not needed with GCC
-#define psisolver_DECLDIR
+#define iterativesolver_DECLDIR
 #endif
 
 #include <iostream>
 #include <cstdlib>
 #include "ParameteredObject.hxx"
+#include "RobustnessTerm.h"
 
 class sample_DECLDIR Sample : public ParameteredObject {
 
@@ -49,39 +50,36 @@ class sample_DECLDIR Sample : public ParameteredObject {
 	cimg_library::CImgList<T> result;
 
 	public:
-	/*// pointers, that the solver will use
-	InputSlot< CImgList<T>* > imgin;
-	*/
+	// pointers used by the solver
+
 	InputSlot<cimg_library::CImgList<T> > imgListIn;
-	InputSlot<cimg_library::CImgList<T> > fluxListIn;
+	InputSlot<cimg_library::CImgList<T> > flowListIn;
+	InputSlot<Interpolator<T> *> interpolator;
+	InputSlot<RobustnessTerm<T> *> robustnessTerm;
 
 	/// result
-	OutputSlot<cimg_library::CImgList<T> > imgListOut;
+	OutputSlot<cimg_library::CImgList<T> > flowListOut;
 
 	// result for writing in file
 	OutputSlot<cimg_library::CImgList<T> > imgListResult;
 
-	/// inputslot from Interpolator
-	InputSlot<Interpolator<T> *> interpolator;
-
+	
 
 	/// default constructor
-	PsiSolver(
+	IterativeSolver(
 		const std::string& classname,	///< [in] class name
 		const std::string& name = ""	///< [in] instance name
 	);
 
-	
 	/// encapsulated execute function 
-	int PsiSolverExecute();
+	int IterativeSolverExecute();
 
 	/// main function
 	virtual void execute();
 
-	
-	virtual ~PsiSolver();
+	virtual ~IterativeSolver();
 
 };
 
 
-#endif // _PSISOLVER_H_
+#endif // _ITERATIVESOLVER_H_

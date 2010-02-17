@@ -12,27 +12,31 @@
 
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
-
-/** @file SamplePsiSolver.cpp
- *  Implementation of class SamplePsiSolver.
- *  This is the PETSc implementation of a solver. It has been designed to run on
- *  multiple instances simultaneously.
+*/
+/** @file IterativeSolver.cpp
+ *  Implementation of class IterativeSolver.
+ *  This is the implementation of an iterative solver using a Psi.
  *  @author <a href="mailto:techfreaq@web.de">
  *      Nina Hernitschek</a>
  *
  *  @date 23.11.2009
  */
-#define TYPE SamplePsiSolver
+#define TYPE IterativeSolver
 
-#if defined(MSVC) && defined (samplepsisolver_EXPORTS)
-#define psisolver_EXPORTS
+#if defined(MSVC) && defined (iterativesolver_EXPORTS)
+#define iterativesolver_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC
 #define DECLDIR
 #endif
 
-#include "SamplePsiSolver.hxx"
+#include "IterativeSolver.h"
+
+extern "C" DECLDIR ParameteredObject* create(const std::string& name, template_type /*t*/) {
+    return new PsiSolver(name);
+}
+
 
 extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {
@@ -50,6 +54,7 @@ extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_
 		break;
 	}
 }
+
 
 extern "C" DECLDIR void destroy(ParameteredObject * b) {
 	delete b;

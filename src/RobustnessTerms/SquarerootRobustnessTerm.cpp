@@ -13,31 +13,25 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file PsiSolver.cpp
- *  Implementation of class PsiSolver.
- *  This is the implementation of a solver using a Psi.
- *  @author <a href="mailto:techfreaq@web.de">
- *      Nina Hernitschek</a>
+/** @file SquarerootRobustnessTerm.cpp
+ *  @see RobustnessTerm.cpp
+ *  @author <a href="mailto:techfreaq@web.de">Nina Hernitschek</a>
  *
- *  @date 23.11.2009
+ *  @date 14.12.2009
  */
-#define TYPE PsiSolver
 
-#if defined(MSVC) && defined (psisolver_EXPORTS)
-#define psisolver_EXPORTS
+#define TYPE SquarerootRobustnessTerm
+
+#if defined(MSVC) && defined (SquarerootRobustnessTerm_EXPORTS)
+#define RobustnessTerm_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC
 #define DECLDIR
 #endif
 
-#include "PsiSolver.h"
-
-extern "C" DECLDIR ParameteredObject* create(const std::string& name, template_type /*t*/) {
-    return new PsiSolver(name);
-}
-
-
+#include "SquarerootRobustnessTerm.hxx"
+/*
 extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
@@ -55,7 +49,6 @@ extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_
 	}
 }
 
-
 extern "C" DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
-}
+}*/
