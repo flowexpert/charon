@@ -15,11 +15,11 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
 */
-/**	@file FlowWidget.cpp
- *	@brief Implementation of class FlowWidget
+/** @file FlowWidget.cpp
+ *  @brief Implementation of class FlowWidget
  *
- *	@date	28.08.2008
- *	@author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+ *  @date	28.08.2008
+ *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
 #include "FlowWidget.h"
@@ -59,9 +59,16 @@ void FlowWidget::load(const QString& fileName) {
 	try {
 		_viewer->load(fileName);
 	}
-	catch (std::string msg) {
-		if (msg.find("mpty filename") == std::string::npos)
-			qWarning() << msg.c_str();
+	catch (const std::string& msg) {
+		qWarning("%s", msg.c_str());
+		close();
+	}
+	catch (const std::exception& err) {
+		qWarning("%s", err.what());
+		close();
+	}
+	catch (...) {
+		qWarning("Got exception during load!");
 		close();
 	}
 }

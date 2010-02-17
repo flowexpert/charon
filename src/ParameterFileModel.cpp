@@ -392,25 +392,40 @@ void ParameterFileModel::_update() {
 }
 
 void ParameterFileModel::load(const QString& fName) {
+	// determine which file to load
+	// (file dialog if fName is empty)
 	QString fromDialog = fName;
-
-	QString guess = _fileName;
-	if (guess.isEmpty()) {
-		QSettings settings("Heidelberg Collaboratory for Image Processing",
-			"Tuchulcha");
-		QStringList files = settings.value("recentFileList").toStringList();
-		if (files.size() > 0)
-			guess = files[0];
-		else
-			guess = QDir::homePath();
-	}
-	if (fromDialog.isEmpty())
+	if (fromDialog.isEmpty()) {
+		QString guess = _fileName;
+		if (guess.isEmpty()) {
+			QSettings settings(
+					"Heidelberg Collaboratory for Image Processing",
+					"Tuchulcha");
+			QStringList files =
+					settings.value("recentFileList").toStringList();
+			if (files.size() > 0)
+				guess = files[0];
+			else
+				guess = QDir::homePath();
+		}
 		fromDialog = QFileDialog::getOpenFileName(0, tr("Open File"),
 				guess, tr("ParameterFile (*.*)"));
-	setFileName(fromDialog);
+	}
 	if (fromDialog.isEmpty())
-		throw std::string("Empty filename");
+		throw std::invalid_argument("Empty filename");
+	if (!QFileInfo(fromDialog).isFile())
+		throw std::invalid_argument(
+				std::string("File \"")
+				+ fromDialog.toAscii().constData()
+				+ "\" does not exist!");
+	if (!QFileInfo(fromDialog).isReadable())
+		throw std::invalid_argument(
+				std::string("File \"")
+				+ fromDialog.toAscii().constData()
+				+ "\" is not readable!");
 
+	// fromDialog is a readable file now
+	setFileName(fromDialog);
 	_load();
 }
 
@@ -524,10 +539,14 @@ std::string ParameterFileModel::getClass(std::string name) const {
 	if (pos != std::string::npos)
 		name = name.substr(0, pos);
 	std::string className;
-	if (_parameterFile->isSet(name + ".type"))
+	try {
 		className = _parameterFile->get<std::string> (name + ".type");
-	else
-		throw "Class name of " + name + " not set!";
+	}
+	catch (const ParameterFile::Unset& err) {
+		throw ParameterFile::Unset(
+				"Class name of " + name + " not set:\n"
+				+ err.what());
+	}
 	return className;
 }
 
@@ -558,7 +577,9 @@ std::set<std::string> ParameterFileModel::_collectObjects(
 	for (listIter = list.begin(); listIter != list.end(); listIter++) {
 		pos = listIter->find(".");
 		if ((pos == 0) || (pos == std::string::npos))
-			throw "invalid file format! Line \"" + *listIter + "\" invalid.";
+			throw std::runtime_error(
+					"invalid file format! Line \""
+					+ *listIter + "\" invalid.");
 		result.insert(listIter->substr(0, pos));
 	}
 

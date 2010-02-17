@@ -68,17 +68,8 @@ void GraphModel::_load() {
 }
 
 bool GraphModel::nodeValid(const QString& name) const {
-    std::string nameStr = name.toAscii().constData();
-    try {
-        if (getClass(nameStr).size() > 0)
-            return true;
-    }
-    catch (std::string msg) {
-        if ((msg.find("Class name of") == std::string::npos)
-            || (msg.find("not set!") == std::string::npos))
-            throw msg;
-    }
-    return false;
+	std::string nameStr = name.toAscii().constData();
+	return !getClass(nameStr).empty();
 }
 
 bool GraphModel::connected(const QString& source,
@@ -116,8 +107,9 @@ bool GraphModel::connected(const QString& source,
         outIter = std::find(sourceInputs.begin(), sourceInputs.end(),
                             sourceSlot);
         if(outIter == sourceInputs.end())
-            throw std::string("source ") + source.toAscii().constData()
-            + " is neither input nor output slot!";
+			throw std::runtime_error(
+					std::string("source ") + source.toAscii().constData()
+					+ " is neither input nor output slot!");
     }
 
     // check if target is of the corresponding slot type (input <-> output)
@@ -130,25 +122,28 @@ bool GraphModel::connected(const QString& source,
         outIter = std::find(targetInputs.begin(), targetInputs.end(),
                             targetSlot);
         if (outIter == targetInputs.end())
-            throw std::string(target.toAscii().constData())
-            + " has to be an input!";
+			throw std::runtime_error(
+					std::string(target.toAscii().constData())
+					+ " has to be an input!");
     }
     else {
         outIter = std::find(targetOutputs.begin(), targetOutputs.end(),
                             targetSlot);
         if (outIter == targetOutputs.end())
-            throw std::string(target.toAscii().constData())
-            + " has to be an output!";
+			throw std::runtime_error(
+					std::string(target.toAscii().constData())
+					+ " has to be an output!");
     }
 
     // check slot types
     std::string inSlotType  = getType(target.toAscii().constData());
     std::string outSlotType = getType(source.toAscii().constData());
     if (inSlotType != outSlotType)
-        throw std::string("Type of \"") + target.toAscii().constData()
-        + "\" (" + inSlotType + ") does not match type of \""
+		throw std::runtime_error(
+				std::string("Type of \"") + target.toAscii().constData()
+				+ "\" (" + inSlotType + ") does not match type of \""
                 + source.toAscii().constData() + "\" ("
-                + outSlotType + ")";
+				+ outSlotType + ")");
 
     bool established = true;
 
@@ -165,18 +160,18 @@ bool GraphModel::connected(const QString& source,
     // check if target node is in input/ouput list of source
     if (!parameterFile().isSet(target.toAscii().constData())) {
         if (established)
-            throw std::string("Node ")
+			throw std::runtime_error(std::string("Node ")
             + source.toAscii().constData() + " missing in List "
-                    + target.toAscii().constData() + "!";
+					+ target.toAscii().constData() + "!");
     }
     else {
         std::string inList = parameterFile()
                              .get<std::string>(target.toAscii().constData());
         if((inList.find(source.toAscii().constData()) == std::string::npos)
             && established)
-            throw std::string("Node ")
+			throw std::runtime_error(std::string("Node ")
             + source.toAscii().constData() + " missing in List "
-                    + target.toAscii().constData() + "!";
+					+ target.toAscii().constData() + "!");
     }
 
     return established;
