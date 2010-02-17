@@ -1,7 +1,7 @@
 <div>
-	<h1>Welcome to ParamEdit</h1>
+	<h1>Welcome to Tuchulcha</h1>
 	<p>
-		You can always open this document selecting "Introduction" from
+		You can always open this document selecting "Introduction" in
 		the Help menu.
 	</p>
 
@@ -14,7 +14,7 @@
 	</p>
 	<h2>Editing a Document</h2>
 	<p>
-		When you have an open document, you can add new items by
+		If you have an open document, you can add new items by
 		drag&drop (choose one from the selector widget and drag it onto
 		the document) or by double click on the item to add.
 		You will be asked for a valid object name.
