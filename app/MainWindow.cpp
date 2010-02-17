@@ -438,6 +438,8 @@ void MainWindow::_updateRecentFileActions() {
 		QString text = tr("&%1 %2").arg(i + 1).arg(_strippedName(files[i]));
 		_recentFileActs[i]->setText(text);
 		_recentFileActs[i]->setData(files[i]);
+		_recentFileActs[i]->setStatusTip(
+				tr("Open recent file \"%1\"").arg(files[i]));
 		_recentFileActs[i]->setVisible(true);
 	}
 	for (int j = numRecentFiles; j < _maxRecentFiles; ++j)
@@ -457,8 +459,9 @@ void MainWindow::setCurrentFile(const QString& fileName) {
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 					   "Tuchulcha");
 	QStringList files = settings.value("recentFileList").toStringList();
-	files.removeAll(fileName);
-	files.prepend(fileName);
+	QString fname = QFileInfo(fileName).absoluteFilePath();
+	files.removeAll(fname);
+	files.prepend(fname);
 	while (files.size() > _maxRecentFiles)
 		files.removeLast();
 
