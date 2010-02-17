@@ -5,17 +5,17 @@
 #include <MyTabWidget.h>
 #include <QComboBox>
 
-MainWindow::MainWindow(QWidget* parent)
-		: QMainWindow(parent)
+MainWindow::MainWindow(QWidget* p)
+		: QMainWindow(p)
 {
-	QWidget* centralWidget = new QWidget;
-	setCentralWidget(centralWidget);
+	QWidget* myCentralWidget = new QWidget;
+	setCentralWidget(myCentralWidget);
 	// restore window geometry
 	_readSettings();
 
-	QGridLayout* layoutmain = new QGridLayout(centralWidget);
-	centralWidget-> setLayout(layoutmain);
-	MyTabWidget *tabWidget = new MyTabWidget(centralWidget);
+	QGridLayout* layoutmain = new QGridLayout;
+	myCentralWidget->setLayout(layoutmain);
+	MyTabWidget *tabWidget = new MyTabWidget;
 	layoutmain->addWidget(tabWidget,1,1);
 
 	QWidget* page0 = new QWidget;
@@ -28,15 +28,15 @@ MainWindow::MainWindow(QWidget* parent)
 	tabWidget->addTab(page3, tr("Parameters"));
 
 	// page 0
-	QVBoxLayout* background0 = new QVBoxLayout(page0);
-	QWidget* page0hi = new QWidget(page0);
-	QWidget* page0lo = new QWidget(page0);
+	QVBoxLayout* background0 = new QVBoxLayout;
+	QWidget* page0hi = new QWidget;
+	QWidget* page0lo = new QWidget;
 	background0->addWidget(page0hi,6);
 	background0->addWidget(page0lo,1);
-	QGridLayout* layout0 = new QGridLayout(page0hi);
+	QGridLayout* layout0 = new QGridLayout;
 	page0->setLayout(background0);
 	page0hi->setLayout(layout0);
-	QHBoxLayout* buttonlayout0 = new QHBoxLayout(page0lo);
+	QHBoxLayout* buttonlayout0 = new QHBoxLayout;
 	page0lo->setLayout(buttonlayout0);
 	QPushButton* nextButton0 = new QPushButton (
 			tr("&Create new plugin from scratch >"));
@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget* parent)
 	QPushButton* browse2 = new QPushButton(tr("&Browse"));
 	//_inputFile = new QLineEdit();
 
-	_inputFile1 = new QComboBox();
+	_inputFile1 = new QComboBox;
 	_inputFile1->setEditable(true);
 	_inputFile1->setInsertPolicy(QComboBox::NoInsert);
 
@@ -91,15 +91,15 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(browse2,SIGNAL(clicked()),this,SLOT(_selectInputFile()));
 
 	// page 1
-	QVBoxLayout* background1 = new QVBoxLayout(page1);
-	QWidget* page1hi = new QWidget(page1);
-	QWidget* page1lo = new QWidget(page1);
+	QVBoxLayout* background1 = new QVBoxLayout;
+	QWidget* page1hi = new QWidget;
+	QWidget* page1lo = new QWidget;
 	background1->addWidget(page1hi,6);
 	background1->addWidget(page1lo,1);
-	QGridLayout* layout = new QGridLayout(page1hi);
+	QGridLayout* layout1 = new QGridLayout;
 	page1->setLayout(background1);
-	page1hi->setLayout(layout);
-	QHBoxLayout* buttonlayout1 = new QHBoxLayout(page1lo);
+	page1hi->setLayout(layout1);
+	QHBoxLayout* buttonlayout1 = new QHBoxLayout;
 	page1lo->setLayout(buttonlayout1);
 
 	QLabel* label = new QLabel;
@@ -121,29 +121,29 @@ MainWindow::MainWindow(QWidget* parent)
 	_inputDir->setCompleter(completer);
 	QPushButton* browse = new QPushButton (tr("Browse"));
 
-	_templated = new QComboBox();
+	_templated = new QComboBox;
 	_templated->addItem(tr("Templated"));
 	_templated->addItem(tr("Non-Templated"));
 
 	QLabel* pluginDocLabel = new QLabel(tr("Plugin Description:"));
-	_pluginDoc = new QTextEdit();
+	_pluginDoc = new QTextEdit;
 
 	label->setText(tr("Please choose a name and directory to save."));
-	layout->addWidget(label,1,1,1,3,Qt::AlignCenter);
-	layout->setRowStretch(2,1);
-	layout->addWidget(author,3,1);
-	layout->addWidget(_inputAuthorName,3,2);
-	layout->addWidget(name,4,1);
-	layout->addWidget(_inputName,4,2);
-	layout->addWidget(save,5,1);
-	layout->addWidget(_inputDir,5,2);
-	layout->addWidget(browse,5,3);
-	layout->setRowStretch(6,1);
-	layout->addWidget(_templated,7,2);
-	layout->addWidget(pluginDocLabel,8,1);
-	layout->addWidget(_pluginDoc,8,2);
-	layout->setRowStretch(9,1);
-	layout->setColumnStretch(2,1);
+	layout1->addWidget(label,1,1,1,3,Qt::AlignCenter);
+	layout1->setRowStretch(2,1);
+	layout1->addWidget(author,3,1);
+	layout1->addWidget(_inputAuthorName,3,2);
+	layout1->addWidget(name,4,1);
+	layout1->addWidget(_inputName,4,2);
+	layout1->addWidget(save,5,1);
+	layout1->addWidget(_inputDir,5,2);
+	layout1->addWidget(browse,5,3);
+	layout1->setRowStretch(6,1);
+	layout1->addWidget(_templated,7,2);
+	layout1->addWidget(pluginDocLabel,8,1);
+	layout1->addWidget(_pluginDoc,8,2);
+	layout1->setRowStretch(9,1);
+	layout1->setColumnStretch(2,1);
 
 	QPushButton* previousButton = new QPushButton(tr("< &Back"));
 	QPushButton* nextButton1 = new QPushButton (tr("&Continue >"));
@@ -156,15 +156,15 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(browse, SIGNAL(clicked()), this, SLOT(_selectOutputDir()));
 
 	// page 2
-	QVBoxLayout* background2 = new QVBoxLayout(page2);
-	QWidget* page2hi = new QWidget(page2);
-	QWidget* page2lo = new QWidget(page2);
+	QVBoxLayout* background2 = new QVBoxLayout;
+	QWidget* page2hi = new QWidget;
+	QWidget* page2lo = new QWidget;
 	background2->addWidget(page2hi,6);
 	background2->addWidget(page2lo,1);
-	QGridLayout* layout2 = new QGridLayout(page2hi);
+	QGridLayout* layout2 = new QGridLayout;
 	page2->setLayout(background2);
 	page2hi->setLayout(layout2);
-	QHBoxLayout* buttonlayout2 = new QHBoxLayout(page2lo);
+	QHBoxLayout* buttonlayout2 = new QHBoxLayout;
 	page2lo->setLayout(buttonlayout2);
 	QPushButton* nextButton2 = new QPushButton (tr("&Continue >"));
 	QPushButton* add = new QPushButton (tr("&Add"));
@@ -174,7 +174,7 @@ MainWindow::MainWindow(QWidget* parent)
 	QPushButton* previousButton2 = new QPushButton(tr("< &Back"));
 	QLabel* inputLabel = new QLabel (tr("Input Slots"));
 	QLabel* outputLabel = new QLabel (tr("Output Slots"));
-	_table1 = new QTableWidget(0, 3, page2);
+	_table1 = new QTableWidget(0, 3);
 	QStringList longerList = (QStringList() << "Name"  << "Documentation" << "Typ");
 	_table1->setHorizontalHeaderLabels(longerList);
 	_table1->verticalHeader()->hide();
@@ -186,7 +186,7 @@ MainWindow::MainWindow(QWidget* parent)
 	_editRowCount(0);
 	_editRowCount(0);
 
-	_table2 = new QTableWidget(0, 3, page2);
+	_table2 = new QTableWidget(0, 3);
 	_table2->setHorizontalHeaderLabels(longerList);
 	_table2->verticalHeader()->hide();
 	_table2->horizontalHeader()->setStretchLastSection(true);
@@ -230,15 +230,15 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(this,SIGNAL(clicked(int)), this, SLOT(_editRowCount(int)));
 
 	// page 3
-	QVBoxLayout* background3 = new QVBoxLayout(page3);
-	QWidget* page3hi = new QWidget(page3);
-	QWidget* page3lo = new QWidget(page3);
+	QVBoxLayout* background3 = new QVBoxLayout;
+	QWidget* page3hi = new QWidget;
+	QWidget* page3lo = new QWidget;
 	background3->addWidget(page3hi,6);
 	background3->addWidget(page3lo,1);
-	QGridLayout* layout3 = new QGridLayout(page3hi);
+	QGridLayout* layout3 = new QGridLayout;
 	page3->setLayout(background3);
 	page3hi->setLayout(layout3);
-	QHBoxLayout* buttonlayout3 = new QHBoxLayout(page3lo);
+	QHBoxLayout* buttonlayout3 = new QHBoxLayout;
 	page3lo->setLayout(buttonlayout3);
 	QPushButton* createButton = new QPushButton(tr("&Create"));
 	QPushButton* add3 = new QPushButton (tr("&Add"));
@@ -1147,17 +1147,17 @@ void MainWindow::_load() {
 }
 
 
-void MainWindow::closeEvent(QCloseEvent* event)
+void MainWindow::closeEvent(QCloseEvent* cEvent)
 {
 	if (QMessageBox::question(
 			0, tr("confirm close"),
 			tr("Do you really want to quit?"),
 			QMessageBox::Yes | QMessageBox::No,
 			QMessageBox::No) == QMessageBox::No) {
-		event->ignore();
+		cEvent->ignore();
 	} else {
 		_writeSettings();
-		QMainWindow::closeEvent(event);
+		QMainWindow::closeEvent(cEvent);
 	}
 }
 
