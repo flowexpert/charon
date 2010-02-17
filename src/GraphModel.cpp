@@ -68,8 +68,12 @@ void GraphModel::_load() {
 }
 
 bool GraphModel::nodeValid(const QString& name) const {
-	std::string nameStr = name.toAscii().constData();
-	return !getClass(nameStr).empty();
+	try {
+		return !getClass(name.toAscii().constData()).empty();
+	}
+	catch (const ParameterFile::Unset&) {
+		return false;
+	}
 }
 
 bool GraphModel::connected(const QString& source,
@@ -415,36 +419,51 @@ void GraphModel::disconnectAllSlots(QString node, bool draw) {
 void GraphModel::renameNode(QString nodename, bool draw) {
     nodename = nodename.split(".")[0];
     bool ok;
-    QString newName = QInputDialog::getText(0, tr("rename node"),
-                                            tr("Enter new name for node \"%1\":").arg(nodename),
-                                            QLineEdit::Normal, nodename, &ok);
+	QString newName = QInputDialog::getText(
+			0, tr("rename node"),
+			tr("Enter new name for node \"%1\":").arg(nodename),
+			QLineEdit::Normal, nodename, &ok);
     if (ok) {
-        // collect connections and disconnect all slots
-        QStringList connections = _connections(nodename);
-        disconnectAllSlots(nodename, false);
-
-        // rename node
+		if(this->nodeValid(newName)) {
+			QMessageBox::warning(
+					0, tr("node exists"),
+					tr("A node named <i>%1</i> does already exist.<br/>"
+					   "Please choose another name.").arg(newName));
+			return;
+		}
         setPrefix("", false);
         setOnlyParams(false);
+		// sweep through all parameters
         for(int i = 0; i < rowCount(); i++) {
-            QStringList parName = data(createIndex(i, 0)).toString().split(".");
-            Q_ASSERT(parName.size() > 0);
+			// rename node
+			QStringList parName = data(createIndex(i,0)).toString().split(".");
+			const std::string parName0 = parName[0].toAscii().constData();
+			const std::string parName1 = parName[1].toAscii().constData();
+			Q_ASSERT(parName.size() > 0);
             if (parName[0] == nodename) {
                 parName[0] = newName;
                 setData(createIndex(i, 0), parName.join("."));
             }
+			// rename target slots of other nodes
+			else if (metaInfo()->isInputSlot(parName1, getClass(parName0))
+				|| metaInfo()->isOutputSlot(parName1,getClass(parName0))) {
+				QStringList parVals =
+						data(createIndex(i,1)).toString().split(";");
+				for (int j=0; j<parVals.size(); j++) {
+					QStringList target = parVals[j].split(".");
+					Q_ASSERT(target.size() > 0);
+					if (target[0].isEmpty())
+						continue;
+					Q_ASSERT(target.size() == 2);
+					if (target[0] == nodename) {
+						target[0] = newName;
+						parVals[j] = target.join(".");
+					}
+				}
+				setData(createIndex(i,1), parVals.join(";"));
+			}
         }
         setOnlyParams(true);
-
-        // reestablish connections
-        QStringList::const_iterator con;
-        for(con = connections.begin(); con != connections.end(); con++){
-            QStringList sep = con->split(";");
-            Q_ASSERT(sep.size() == 2);
-            connectSlot(QString("%1.%2").arg(newName).arg(sep[0]), sep[1],
-                        false);
-        }
-
         setPrefix(newName, false);
 
         if(draw)
