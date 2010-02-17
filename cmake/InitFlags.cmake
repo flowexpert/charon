@@ -1,13 +1,14 @@
 IF(NOT CMAKE_FLAGS_INIT)
-	SET(CMAKE_FLAGS_INIT TRUE CACHE INTERNAL "initial flags set")
 	# initial compiler flags can be set here, this is only
 	# executed once in the first configure run.
+	SET(CMAKE_FLAGS_INIT TRUE CACHE INTERNAL "initial flags set")
+
 	IF(CMAKE_COMPILER_IS_GNUCXX)
 		IF(NOT CMAKE_C_FLAGS)
-			SET(CMAKE_C_FLAGS   "-W -Wall -Wextra")
+			SET(CMAKE_C_FLAGS   "-W -Wall -Wextra -Wshadow")
 		ENDIF()
 		IF(NOT CMAKE_CXX_FLAGS)
-			SET(CMAKE_CXX_FLAGS "-W -Wall -Wextra")
+			SET(CMAKE_CXX_FLAGS "-W -Wall -Wextra -Wshadow")
 		ENDIF()
 	ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 	IF(MSVC)
