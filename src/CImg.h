@@ -4444,7 +4444,7 @@ namespace cimg_library {
       if (!l) return 0;
       if (!s1) return s2?-1:0;
       const char *ns1 = s1, *ns2 = s2;
-      int k, diff = 0; for (k = 0; k<l && !(diff = uncase(*ns1)-uncase(*ns2)); ++k) { ++ns1; ++ns2; }
+      size_t k, diff = 0; for (k = 0; k<l && !(diff = uncase(*ns1)-uncase(*ns2)); ++k) { ++ns1; ++ns2; }
       return k!=l?diff:0;
     }
 
