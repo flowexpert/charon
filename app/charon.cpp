@@ -33,24 +33,42 @@
 #include <PluginManager.h>
 #include <TypeDetector.h>
 
+/// global configuration options
 namespace Config {
-	bool           verbose     = false;
-	std::string    logfile;
-	std::string    paramFile;
-	std::string    globalPath;
-	std::string    localPath;
-	std::string    appName;
-	std::string    workingDir;
-	std::string    oldDir;
-	std::ofstream  log;
-	PluginManager* man;
+	bool           verbose = false;     ///< more verbose output
+	std::string    logfile;             ///< sout logfile
+	std::string    paramFile;           ///< workflow parameter file
+	std::string    globalPath;          ///< global plugin path
+	std::string    localPath;           ///< local plugin path
+	std::string    appName;             ///< application name
+	std::string    workingDir;          ///< working directory
+	std::string    oldDir;              ///< cwd at app start
+	std::ofstream  log;                 ///< logging file stream
+	PluginManager* man = 0;             ///< plugin manager
 }
 
+/// print usage info to stdout
 void printInfo();
+/// parse command line and set up configuration
+/// \param argc,argv     command line options
+int init(int& argc, char**& argv);
+/// execute workflow with given configuration using exception handler
 int run();
+/// close logfiles, reset plugin manager etc.
 void cleanup();
 
-/// print usage info to stdout
+/// main routine
+/// \param argc,argv     command line options
+int main(int argc, char* argv[]) {
+	int ret;
+	ret = init(argc, argv);
+	if (ret != EXIT_SUCCESS)
+		return ret;
+	ret = ExceptionHandler::run(run);
+	cleanup();
+	return ret;
+}
+
 void printInfo() {
 	std::cout << "\n === charon workflow executor ===\n\n"
 		<< "Usage: " << Config::appName << " [options] parameterFile\n\n"
@@ -69,8 +87,7 @@ void printInfo() {
 		<< std::endl;
 }
 
-/// main routine
-int main(int argc, char* argv[]) {
+int init(int& argc, char**& argv) {
 	// Parse command line options using GNU getopt.
 	// See http://www.gnu.org/software/libc/manual/html_node/Getopt.html
 	// for more information.
@@ -118,7 +135,7 @@ int main(int argc, char* argv[]) {
 		printInfo();
 		std::cerr << "ERROR: "
 				<< "Too many additional arguments specified!\n";
-		abort();
+		return EXIT_FAILURE;
 	}
 
 	// check for parameter file
@@ -126,14 +143,14 @@ int main(int argc, char* argv[]) {
 		printInfo();
 		std::cerr << "ERROR: "
 				<< "You have to specify some parameter file to execute!\n";
-		abort();
+		return EXIT_FAILURE;
 	}
 	if (!FileTool::exists(Config::paramFile)){
 		printInfo();
 		std::cerr << "ERROR: "
 				<< "Given parameter file (\"" << Config::paramFile
 				<< "\") does not exist!\n";
-		abort();
+		return EXIT_FAILURE;
 	}
 
 	// check for global plugin directory
@@ -141,7 +158,7 @@ int main(int argc, char* argv[]) {
 		printInfo();
 		std::cerr << "ERROR: "
 				<< "You have to specify a valid global plugin directory!\n";
-		abort();
+		return EXIT_FAILURE;
 	}
 
 	// print configuration
@@ -161,14 +178,9 @@ int main(int argc, char* argv[]) {
 				<< (!Config::workingDir.empty() ? Config::workingDir :
 					FileTool::getCurrentDir()) << "\n\t";
 	}
-
-	// start application with given configuration using exception handler
-	int ret = ExceptionHandler::run(run);
-	cleanup();
-	return ret;
+	return EXIT_SUCCESS;
 }
 
-/// main routine with exception handling
 int run() {
 	std::ofstream log;
 	if (!Config::logfile.empty()) {
