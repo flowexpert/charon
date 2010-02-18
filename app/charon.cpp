@@ -19,14 +19,14 @@
  *  @date 2010-02-15
  */
 
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
 #ifdef STANDALONE_GETOPT
 #include "getopt_standalone.h"
 #else
 #include <getopt.h>
 #endif
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
 #include <FileTool.h>
 #include <SplitStream.h>
 #include <ExceptionHandler.h>
