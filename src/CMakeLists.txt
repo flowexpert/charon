@@ -216,6 +216,10 @@ IF (ENABLE_MOTION)
 	)
 ENDIF (ENABLE_MOTION)
 
+IF(ENABLE_ROBUSTNESS)
+	# Nina's plugins go here
+ENDIF(ENABLE_ROBUSTNESS)
+
 ADD_LIBRARY(sequencegenerator SHARED
 	SequenceGenerator.h
 	SequenceGenerator.hxx

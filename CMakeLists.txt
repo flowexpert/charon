@@ -22,6 +22,7 @@ OPTION(ENABLE_MOTION "compile motionmodel plugins" ON)
 OPTION(ENABLE_BLOCKMATCHING "compile blockmatching plugins" ON)
 OPTION(ENABLE_STENCILS "compile stencil pugins" ON)
 OPTION(ENABLE_SOLVERS "compile solver pugins" ON)
+OPTION(ENABLE_ROBUSTNESS "compile solver pugins" ON)
 
 OPTION(WITH_PETSC "use PETSc library" ON)
 IF(WITH_PETSC)
