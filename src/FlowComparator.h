@@ -47,7 +47,7 @@ class flowcomparator_DECLDIR FlowComparator :
 		public TemplatedParameteredObject<T> {
 private:
 	/// mean of endpoint error
-	T _meanEndpointError;
+	double _meanEndpointError;
 
 public:
 	/// flow result from some flow estimation 
@@ -66,7 +66,7 @@ public:
 
 	/// \name getters of calculated information
 	//  \{
-	T getMeanEndpointError() const;
+	double getMeanEndpointError() const;
 	//  \}
 };
 

@@ -37,7 +37,7 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
 /// Generate simple test sequences with ground truth
 ///

@@ -25,7 +25,7 @@
 #define _DIFF2D_HXX_
 
 #include "Diff2D.h"
-#include <charon-utils/Convolution.hxx>
+#include <charon-utils/Convolution.h>
 
 template <typename T>
 Diff2D<T>::Diff2D(const std::string& name) :

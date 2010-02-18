@@ -82,7 +82,7 @@ void FlowComparator<T>::execute() {
 }
 
 template <typename T>
-T FlowComparator<T>::getMeanEndpointError() const {
+double FlowComparator<T>::getMeanEndpointError() const {
 	return _meanEndpointError;
 }
 

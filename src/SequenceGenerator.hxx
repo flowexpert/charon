@@ -24,6 +24,7 @@
 #ifndef _SEQUENCEGENERATOR_HXX_
 #define _SEQUENCEGENERATOR_HXX_
 
+#define _USE_MATH_DEFINES
 #include "SequenceGenerator.h"
 #include <cmath>
 
@@ -95,9 +96,9 @@ void SequenceGenerator<T>::execute() {
 		flow()[kk].fill(velocities()[kk]);
 	cimg_forXYZC(sequence()[0],x,y,z,t)
 			sequence()[0](x,y,z,t) = isAdd ?
-				(sin(wx*(x-u*t)) + sin(wy*(y-v*t)) + sin(wz*(z-w*t))) :
+				T(sin(wx*(x-u*t)) + sin(wy*(y-v*t)) + sin(wz*(z-w*t))) :
 				// using cos for z-component to avoid zero flow in 2D case
-				(sin(wx*(x-u*t)) * sin(wy*(y-v*t)) * cos(wz*(z-w*t))) ;
+				T(sin(wx*(x-u*t)) * sin(wy*(y-v*t)) * cos(wz*(z-w*t))) ;
 }
 
 #endif /* _SEQUENCEGENERATOR_HXX_ */
