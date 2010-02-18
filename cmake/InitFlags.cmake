@@ -22,13 +22,13 @@ IF(NOT CMAKE_FLAGS_INIT)
 	ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 	IF(MSVC)
 		SET(CMAKE_C_FLAGS
-			"${CMAKE_C_FLAGS} /wd4251 /wd4290"
+			"${CMAKE_C_FLAGS} /wd4251 /wd4275 /wd4290"
 			CACHE STRING
 			"Flags used by the compiler during all build types."
 			FORCE
 		)
 		SET(CMAKE_CXX_FLAGS
-			"${CMAKE_CXX_FLAGS} /wd4251 /wd4290"
+			"${CMAKE_CXX_FLAGS} /wd4251 /wd4275 /wd4290"
 			CACHE STRING
 			"Flags used by the compiler during all build types."
 			FORCE

@@ -32,6 +32,7 @@
 
 int main() {
     // load plugins
+	sout.assign(std::cout);
 
     try{
 #ifdef WINDOWS
