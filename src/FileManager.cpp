@@ -186,10 +186,10 @@ void FileManager::updateMetadata() const {
 	FileTool::changeDir(oldPath);
 }
 
-void FileManager::configure(QWidget * parent, bool force) const {
+void FileManager::configure(QWidget* parentWidget, bool force) const {
 	if (force || !QFile(QDir::homePath() + "/"
 			+ TUCHULCHA_DIR +  "/Paths.config").exists()) {
-		QString path = QFileDialog::getExistingDirectory(parent, QString(
+		QString path = QFileDialog::getExistingDirectory(parentWidget, QString(
 				"Specify your personal plugin path"), QDir::homePath(),
 				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
@@ -225,7 +225,7 @@ void FileManager::configure(QWidget * parent, bool force) const {
 	}
 }
 
-bool FileManager::compileAndLoad(QWidget * parent) const
+bool FileManager::compileAndLoad(QWidget* parentWidget) const
 		throw (AbstractPluginLoader::PluginException) {
 	if (!_isPrivatePluginPathSet()) {
 		QMessageBox msgBox;
@@ -240,7 +240,7 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 		case QMessageBox::No:
 			return false;
 		case QMessageBox::Yes:
-			configure(parent, true);
+			configure(parentWidget, true);
 			if (!_isPrivatePluginPathSet()) {
 				return false;
 			}
@@ -248,13 +248,13 @@ bool FileManager::compileAndLoad(QWidget * parent) const
 		}
 	}
 
-	QString fileName = QFileDialog::getOpenFileName(parent, QString(
+	QString fileName = QFileDialog::getOpenFileName(parentWidget, QString(
 			"Select source file"), "/home", QString("Source files (*.cpp)"));
 
 	if (fileName.size()) {
 		try {
 			bool ok;
-			QString text = QInputDialog::getText(parent, QString(
+			QString text = QInputDialog::getText(parentWidget, QString(
 					"Library dependencies"), QString(
 					"Specify referenced Libraries.\n"
 						"Separate multiple libraries with ';'.\n"
