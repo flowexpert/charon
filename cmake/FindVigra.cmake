@@ -12,6 +12,10 @@
 #  VIGRA_LIBRARIES           vigra libraries
 #  VIGRA_VERSION             vigra version string (e.g. "1.7.0")
 
+IF(DEFINED WITH_VIGRA AND NOT WITH_VIGRA)
+	RETURN()
+ENDIF()
+
 # search for header files
 FIND_PATH(VIGRA_ROOT_DIR
     NAMES           include/vigra/multi_array.hxx
@@ -23,7 +27,7 @@ FIND_PATH(VIGRA_ROOT_DIR
 
 # check if everything went fine
 IF(NOT VIGRA_ROOT_DIR)
-	MESSAGE(SEND_ERROR
+	MESSAGE(WARNING
 		"Vigra has not been found. "
 		"Please set VIGRA_ROOT_DIR to the directory, "
 		"where you have installed Vigra. "
