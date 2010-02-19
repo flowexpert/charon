@@ -34,7 +34,7 @@ ELSE(${CMAKE_VERSION} VERSION_LESS 2.8.0)
 		REQUIRED
 	)
 ENDIF(${CMAKE_VERSION} VERSION_LESS 2.8.0)
-OPTION(WITH_WEBKIT "use qt webkit (build help browser)" ${QT_QTWEBKIT_LIBRARY})
+OPTION(WITH_WEBKIT "use qt webkit (build help browser)" ${QT_QTWEBKIT_FOUND})
 MARK_AS_ADVANCED(WITH_WEBKIT)
 
 # set up Qt environment (e.g. set QT_LIBRARIES)
