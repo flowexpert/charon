@@ -1,6 +1,7 @@
 # Test suite of application
 INCLUDE_DIRECTORIES(${CHARON_CORE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
 
 IF(ENABLE_TEST)
 	# common definitions and test file configuration
