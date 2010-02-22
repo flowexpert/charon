@@ -26,28 +26,31 @@
 
 #include "../RobustnessTerm.hxx"
 #include "SquarerootRobustnessTerm.h"
+#include <math.h>
 
+//namespace RobustnessTerms
+//{
 
 //calculates robustness term, Psi
-	double Psi(double s) {
+double Psi(double s) {
 		
-		double psi = sqrt(pow(s, 2) + pow(e, 2));
+		double psi = sqrt(pow(s, 2) + pow(epsilon, 2));
 		
 		return psi;
-	};
+};
 
 //calculates derivative of robustness term, DPsi
 	
-	double DPsi(double s, double ds) {
+double DPsi(double s, double ds) {
 	
-		double dpsi = s*ds/(sqrt(pow(s, 2) + pow(e, 2));
+		double dpsi = s*ds/(sqrt(pow(s, 2) + pow(epsilon, 2)));
 
 		return dpsi;
-	};
+};
 
 
 
-
+//}
 
 
 

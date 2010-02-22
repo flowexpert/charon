@@ -36,12 +36,21 @@
 #define squarerootrobustnessterm_DECLDIR
 #endif
 
+#include <CImg.h>
 #include "../RobustnessTerm.h"
 
-/// This is the SquareRootRobustnessTerm which is derived from class RobustnessTerm
-
-class squarerootrobustnessterm_DECLDIR SquareRootRobustnessTerm : public RobustnessTerm<T>
+namespace RobustnessTerms
 {
+
+template<class T>
+class squarerootrobustnessterm_DECLDIR SquareRootRobustnessTerm: public RobustnessTerm<T>
+{
+	protected:
+		virtual ParameteredObject* _newInstance ( const std::string& name ) const
+		{return new SquareRootRobustnessTerm ( name );}
+
+		double epsilon;
+
 	public:
 
 		///calculates robustness term, Psi
@@ -49,8 +58,8 @@ class squarerootrobustnessterm_DECLDIR SquareRootRobustnessTerm : public Robustn
 
 		//calculates derivative of robustness term, DPsi
 		double DPsi(double s);
-
-
 };
+}
 
-#endif // _SQUAREROOTROBUSTNESSTERM_H_
+#endif
+// _SQUAREROOTROBUSTNESSTERM_H_
