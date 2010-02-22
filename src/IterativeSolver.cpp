@@ -34,7 +34,7 @@
 #include "IterativeSolver.h"
 
 extern "C" DECLDIR ParameteredObject* create(const std::string& name, template_type /*t*/) {
-    return new PsiSolver(name);
+    return new IterativeSolver(name);
 }
 
 
