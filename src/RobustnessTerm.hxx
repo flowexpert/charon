@@ -24,28 +24,21 @@
 #define ROBUSTNESSTERM_HXX_
 
 #include "RobustnessTerm.h"
+#include "Solver.h"
 
 
-RobustnessTerm()
-{
 
-};
-
-~RobustnessTerm()
-{
-
-};
 
 
 // standard set method for parameter e
-void setE (double e)
+void RobustnessTerm::setE (double e)
 {
 	this->e = e;
 };
 
 // standard get function for parameter e
 
-double getE()
+double RobustnessTerm::getE()
 {
 	return this->e;
 }
