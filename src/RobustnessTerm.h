@@ -24,29 +24,33 @@
 #define ROBUSTNESSTERM_H_
 
 #include <math.h>
+#include "ParameteredObject.h"
+/// class which compute the bcce-terms
 
-template<typename T>
-class RobustnessTerm
+
+class RobustnessTerm : public ParameteredObject
 {
-protected:
-	double e;
 
-public:
-	/// standard constructor and destructor
-	RobustnessTerm();
-	~RobustnessTerm();
 
-	/// standard set method for parameter e
-	void setE(double e);
+	protected:
+		double e;
 
-	/// standard get function for parameter e
-	double getE();
-	
-	///calculates robustness term, Psi
-	virtual double Psi(double s)=0;
+	public:
+		/// standard constructor and destructor
+		RobustnessTerm();
+		~RobustnessTerm();
 
-	//calculates derivative of robustness term, DPsi
-	virtual double DPsi(double s)=0;
+		/// standard set method for parameter e
+		void setE(double e);
+
+		/// standard get function for parameter e
+		double getE();
+		
+		///calculates robustness term, Psi
+		virtual double Psi(double s)=0;
+
+		//calculates derivative of robustness term, DPsi
+		virtual double DPsi(double s)=0;
 
 };
 
