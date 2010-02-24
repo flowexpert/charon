@@ -26,8 +26,8 @@
 #include "IterativeSolver.h"
 
 template <typename T>
-Solver<T>::Solver(const std::string& classname, const std::string& name) :
-		TemplatedParameteredObject<T>(classname,name,"solves the linear system")
+IterativeSolver<T>::IterativeSolver(const std::string& classname, const std::string& name, const std::string& doc) :
+		TemplatedParameteredObject<T>(classname,name,doc)
 {
 	this->_addInputSlot(imgListIn,"imgListIn","CImgList","CImgList<T>");
 	this->_addInputSlot(flowListIn,"flowListIn","CImgList","CImgList<T>");
@@ -37,10 +37,6 @@ Solver<T>::Solver(const std::string& classname, const std::string& name) :
 	
 	out() = result;
 }
-
-
-template <typename T>
-Solver<T>::~Solver() {}
 
 #endif // _ITERATIVESOLVER_HXX_
 

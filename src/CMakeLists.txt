@@ -229,7 +229,6 @@ IF(ENABLE_ROBUSTNESS)
 		IterativeSolvers/SampleIterativeSolver.cpp
 		IterativeSolvers/SampleIterativeSolver.h
 		IterativeSolvers/SampleIterativeSolver.hxx
-		IterativeSolver.cpp
 		IterativeSolver.h
 		IterativeSolver.hxx
 		Solver.h

@@ -22,19 +22,12 @@
  */
 #define TYPE SampleIterativeSolver
 
-#if defined(MSVC) && defined (sampleiterativesolver_EXPORTS)
 #define solver_EXPORTS
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define iterativesolver_DECLDIR
-#endif
+#define iterativesolver_EXPORTS
 
 #include "SampleIterativeSolver.hxx"
 
-using namespace std;
-
-extern "C" iterativesolver_DECLDIR ParameteredObject* create(
+extern "C" sampleiterativesolver_DECLDIR ParameteredObject* create(
 		const std::string &name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
@@ -53,6 +46,6 @@ extern "C" iterativesolver_DECLDIR ParameteredObject* create(
 }
 
 ///Deletes an instance of the plugin
-extern "C" iterativesolver_DECLDIR void destroy(ParameteredObject * b) {
+extern "C" sampleiterativesolver_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }

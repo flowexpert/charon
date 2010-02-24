@@ -33,32 +33,9 @@ using namespace std;
 //class iterativeSolverException   {   }; 
 
 template <typename T>
-void IterativeSolver<T>::execute() {
-    ParameteredObject::execute();
-   
-	/*
-	try  {
-       IterativeSolverExecute();
-	}    catch(const iterativeSolverException &Exception) {
-		//std::ostringstream msg;
-         msg << "\titerativeSolver error occured" << std::endl;
-		 throw std::runtime_error(msg.str().c_str());*/
+void SampleIterativeSolver<T>::execute() {
+	ParameteredObject::execute();
 
-		errorCode = IterativeSolverExecute();
-		if (errorCode) {
-		std::ostringstream msg;
-		msg << __FILE__ << ":" << __LINE__ << std::endl;
-		msg << "\tPETSc error occured" << std::endl;
-		msg << "\tError code:\n\t\t" << errorCode;
-		throw std::runtime_error(msg.str().c_str());
-	}
-   } 
-}
-
-
-template <typename T>
-int SampleIterativeSolver<T>::sampleIterativeSolverExecute() {
-	
 	/*
 		imgListIn is the CImgList from file or from last iteration
 		flowListIn is the CImgList (the flow) gained from the solver, e.g. from PetscSolver
@@ -66,8 +43,8 @@ int SampleIterativeSolver<T>::sampleIterativeSolverExecute() {
 	*/
 
 	// just need read-only access to ImageList
-	const Img<t>& globalImg = *(this->imgListIn());
-	const Img<t>& globalFlow = *(this->flowListIn());
+	const cimg_library::CImgList<T>& globalImg = this->imgListIn();
+	const cimg_library::CImgList<T>& globalFlow = this->flowListIn();
 
 	/* 	
 		is warping image 2 with the flow gained from the solver to image 1
@@ -78,7 +55,7 @@ int SampleIterativeSolver<T>::sampleIterativeSolverExecute() {
 	int x,y,z;
 
 	//throw exception if there are more or less than 2 images in the list
-	if (this.imgListIn.size()!=2)
+	if (this->imgListIn().size()!=2)
 	{
 		throw iterativeSolverException();
 	}
@@ -120,13 +97,6 @@ CImg<unsigned char> img(256,256,1,3);       // Define a 256x256 color image
 		am ende der schleife, wenn von petscsolver berechnete fluss gleich 0:
 		zähle flüsse zusammen, um gesamtfluss zu erhalten
 	*/
-
-	// clean up
-	for(usIt = unknownSizes.begin() ; usIt != unknownSizes.end() ; usIt++) {
-		delete usIt->second;
-	}
-
-	return 0;
 }
 
 #endif // _SAMPLEITERATIVESOLVER_HXX_

@@ -20,8 +20,6 @@
  *  @date 23.11.2009
  */
 
-
-
 #ifndef _ITERATIVESOLVER_H_
 #define _ITERATIVESOLVER_H_
 
@@ -37,16 +35,14 @@
 #define iterativesolver_DECLDIR
 #endif
 
-#include <iostream>
-#include <cstdlib>
-//#include "ParameteredObject.hxx"
-//#include "ParameteredObject.h"
+#include <charon-core/ParameteredObject.hxx>
+#include <charon-utils/CImg.h>
 #include "RobustnessTerm.h"
-#include "Solver.h"
 #include "Interpolator.h"
 
 template <typename T>
-class iterativesolver_DECLDIR IterativeSolver : public Solver<T> {
+class iterativesolver_DECLDIR IterativeSolver :
+		public TemplatedParameteredObject<T> {
 
 	/// CImgList containing the result.
 	cimg_library::CImgList<T> result;
@@ -69,18 +65,10 @@ class iterativesolver_DECLDIR IterativeSolver : public Solver<T> {
 
 	/// default constructor
 	IterativeSolver(
-		const std::string& classname,	///< [in] class name
-		const std::string& name = ""	///< [in] instance name
+		const std::string& classname,   ///< [in] class name
+		const std::string& name,        ///< [in] instance name
+		const std::string& doc          ///< [in] class doc
 	);
-
-	/// encapsulated execute function 
-	int IterativeSolverExecute();
-
-	/// main function
-	virtual void execute();
-
-	virtual ~IterativeSolver();
-
 };
 
 

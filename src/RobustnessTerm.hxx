@@ -23,7 +23,7 @@
 #ifndef ROBUSTNESSTERM_HXX_
 #define ROBUSTNESSTERM_HXX_
 
-#include "Solver.hxx"
+#include "Solver.h"
 #include "RobustnessTerm.h"
 
 

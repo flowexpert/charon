@@ -26,7 +26,7 @@
 
 #include "../RobustnessTerm.hxx"
 #include "SquarerootRobustnessTerm.h"
-#include <math.h>
+#include <cmath>
 
 //namespace RobustnessTerms
 //{
@@ -34,7 +34,7 @@
 //constructor
 template <typename T>
 SquarerootRobustnessTerm<T>::SquarerootRobustnessTerm(const std::string& name) : 
-		Solver<T>("SquarerootRobustnessTerm", name)
+		RobustnessTerm<T>("SquarerootRobustnessTerm", name)
 {
 	// add own command line
 	ParameteredObject::_addParameter(commandLine, "commandLine",

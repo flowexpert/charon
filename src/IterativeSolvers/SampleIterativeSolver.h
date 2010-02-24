@@ -36,7 +36,6 @@
 #endif
 
 #include "../IterativeSolver.h"
-#include "../RobustnessTerm.h"
 
 template <typename T>
 class sampleiterativesolver_DECLDIR SampleIterativeSolver : public IterativeSolver<T>
@@ -45,26 +44,13 @@ public:
 	/// default constructor
 	SampleIterativeSolver(const std::string& name = "" /**[in] instance name*/);
 
-	/// encapsulated execute function 
-	int sampleIterativeSolverExecute();
-
 	/// main function
 	virtual void execute();
-
-	/// default destructor
-	virtual ~SampleIterativeSolver();
 
 private:
 
 	/// robustness term
 	RobustnessTerm<T>* psi;
-
-	/// command line argument counter
-	int _argc;
-	/// command line argument vector
-	char** _argv;
-	/// check if initialization has taken place
-	static bool _initialized;
 };
 
 #endif // _SAMPLEITERATIVESOLVER_H_
