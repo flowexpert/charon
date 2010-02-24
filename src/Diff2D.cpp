@@ -27,7 +27,7 @@
 #include "Diff2D.hxx"
 #include <charon-utils/Convolution.hxx>
 
-///Creates an instance of the plugin
+/// Creates an instance of the plugin
 extern "C" diff2d_DECLDIR ParameteredObject*
 		create(const std::string & name, template_type t) {
 	switch(t) {
@@ -46,10 +46,8 @@ extern "C" diff2d_DECLDIR ParameteredObject*
 	}
 }
 
-///Deletes an instance of the plugin
+/// Deletes an instance of the plugin
 extern "C" diff2d_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
-
-
 

@@ -173,8 +173,5 @@ void Diff2D<T>::execute() {
 		}
 	}
 }
-
 #endif /* _DIFF2D_HXX_ */
-
-
 

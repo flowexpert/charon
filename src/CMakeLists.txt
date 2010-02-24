@@ -246,11 +246,12 @@ ADD_LIBRARY(sequencegenerator SHARED
 	SequenceGenerator.hxx
 	SequenceGenerator.cpp)
 LIST(APPEND Plugins sequencegenerator)
-# ADD_LIBRARY(diff2d SHARED
-#	Diff2D.h
-#	Diff2D.hxx
-#	Diff2D.cpp)
-#LIST(APPEND Plugins diff2d)
+ADD_LIBRARY(diff2d SHARED
+	Diff2D.h
+	Diff2D.hxx
+	Diff2D.cpp)
+TARGET_LINK_LIBRARIES(diff2d interpolatorlinear)
+LIST(APPEND Plugins diff2d)
 ADD_LIBRARY(flowcomparator SHARED
 	FlowComparator.h
 	FlowComparator.hxx

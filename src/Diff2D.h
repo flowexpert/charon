@@ -81,7 +81,7 @@ public:
 
 	/// create a new Diff2D object
 	/// \param name          Instance name
-	Diff2D(const std::string& name);
+	Diff2D(const std::string& name = "");
 
 	/// Update object.
 	virtual void execute();
@@ -92,6 +92,4 @@ private:
 };
 
 #endif // _DIFF2D_H_
-
-
 
