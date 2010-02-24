@@ -39,27 +39,31 @@
 #include <CImg.h>
 #include "../RobustnessTerm.h"
 
-namespace RobustnessTerms
-{
+//namespace RobustnessTerms {
 
-template<class T>
-class squarerootrobustnessterm_DECLDIR SquareRootRobustnessTerm: public RobustnessTerm<T>
+template<typename T>
+class squarerootrobustnessterm_DECLDIR SquarerootRobustnessTerm: public RobustnessTerm<T>
 {
 	protected:
-		virtual ParameteredObject* _newInstance ( const std::string& name ) const
-		{return new SquareRootRobustnessTerm ( name );}
+		//virtual ParameteredObject* _newInstance ( const std::string& name ) const
+		//{return new SquareRootRobustnessTerm ( name );}
 
 		double epsilon;
 
 	public:
+		/// default constructor
+		SquarerootRobustnessTerm(const std::string& name = "" /**[in] instance name*/);
 
 		///calculates robustness term, Psi
-		double Psi(double s);
+		double Psi(const double s);
 
 		//calculates derivative of robustness term, DPsi
-		double DPsi(double s);
+		double DPsi(const double s, const double ds);
+		
+		// default dtor
+		virtual ~SquarerootRobustnessTerm();
 };
-}
+//}
 
 #endif
 // _SQUAREROOTROBUSTNESSTERM_H_

@@ -216,20 +216,42 @@ IF (ENABLE_MOTION)
 	)
 ENDIF (ENABLE_MOTION)
 
+
 IF(ENABLE_ROBUSTNESS)
-	# Nina's plugins go here
+	ADD_LIBRARY(squarerootrobustnessterm SHARED
+		RobustnessTerm.h
+		RobustnessTerm.hxx
+		RobustnessTerms/SquarerootRobustnessTerm.cpp
+		RobustnessTerms/SquarerootRobustnessTerm.h
+		RobustnessTerms/SquarerootRobustnessTerm.hxx
+	)
+	ADD_LIBRARY(sampleiterativesolver SHARED
+		IterativeSolvers/SampleIterativeSolver.cpp
+		IterativeSolvers/SampleIterativeSolver.h
+		IterativeSolvers/SampleIterativeSolver.hxx
+		IterativeSolver.cpp
+		IterativeSolver.h
+		IterativeSolver.hxx
+		Solver.h
+		Solver.hxx
+	)
+LIST(APPEND Plugins
+		squarerootrobustnessterm
+		sampleiterativesolver
+	)	
 ENDIF(ENABLE_ROBUSTNESS)
+
 
 ADD_LIBRARY(sequencegenerator SHARED
 	SequenceGenerator.h
 	SequenceGenerator.hxx
 	SequenceGenerator.cpp)
 LIST(APPEND Plugins sequencegenerator)
-ADD_LIBRARY(diff2d SHARED
-	Diff2D.h
-	Diff2D.hxx
-	Diff2D.cpp)
-LIST(APPEND Plugins diff2d)
+# ADD_LIBRARY(diff2d SHARED
+#	Diff2D.h
+#	Diff2D.hxx
+#	Diff2D.cpp)
+#LIST(APPEND Plugins diff2d)
 ADD_LIBRARY(flowcomparator SHARED
 	FlowComparator.h
 	FlowComparator.hxx

@@ -24,23 +24,36 @@
 #define _SAMPLEITERATIVEVER_HXX_
 
 #include "../IterativeSolver.hxx"
-#include "SampleIterativePSolver.h"
+#include "SampleIterativeSolver.h"
 #include <charon-utils/ImgTool.hxx>
 #include <sstream>
-class iterativeSolverException   {   }; 
+
+using namespace std;
+
+//class iterativeSolverException   {   }; 
 
 template <typename T>
 void IterativeSolver<T>::execute() {
     ParameteredObject::execute();
    
+	/*
 	try  {
-       iterativeSolverExecute();
+       IterativeSolverExecute();
 	}    catch(const iterativeSolverException &Exception) {
+		//std::ostringstream msg;
          msg << "\titerativeSolver error occured" << std::endl;
-		 throw std::runtime_error(msg.str().c_str());
+		 throw std::runtime_error(msg.str().c_str());*/
+
+		errorCode = IterativeSolverExecute();
+		if (errorCode) {
+		std::ostringstream msg;
+		msg << __FILE__ << ":" << __LINE__ << std::endl;
+		msg << "\tPETSc error occured" << std::endl;
+		msg << "\tError code:\n\t\t" << errorCode;
+		throw std::runtime_error(msg.str().c_str());
+	}
    } 
 }
-
 
 
 template <typename T>
@@ -91,7 +104,7 @@ int SampleIterativeSolver<T>::sampleIterativeSolverExecute() {
 				}
 
 		}
-}
+//}
 /*
 cimg_forX(img,x) : equivalent to : for (int x = 0; x<img.width(); x++).
 cimg_forY(img,y) : equivalent to : for (int y = 0; y<img.height(); y++).

@@ -15,7 +15,7 @@
  */
 /**
  *  @file RobustnessTerm.h
- *  @brief declaration of class RobustnessTerm used by the PsiSolver
+ *  @brief declaration of class RobustnessTerm used by the IterativeSolver
  *  @author <a href="mailto:techfreaq@web.de">Nina Hernitschek</a>
  *  @date 14.12.2009
  */
@@ -23,22 +23,34 @@
 #ifndef ROBUSTNESSTERM_H_
 #define ROBUSTNESSTERM_H_
 
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef robustnessterm_EXPORTS
+/// Visual C++ specific code
+#define robustnessterm_DECLDIR __declspec(dllexport)
+#else
+#define robustnessterm_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+/// Not needed with GCC
+#define robustnessterm_DECLDIR
+#endif
+
 #include <math.h>
 #include "ParameteredObject.h"
 /// class which compute the bcce-terms
 
 
-class RobustnessTerm : public ParameteredObject
+template <typename T>
+class robustnessterm_DECLDIR RobustnessTerm : public TemplatedParameteredObject<T>
 {
-
-
 	protected:
 		double e;
 
 	public:
-		/// standard constructor and destructor
+		/// standard constructor 
 		RobustnessTerm();
-		~RobustnessTerm();
+		// default destructor
+		virtual ~RobustnessTerm();
 
 		/// standard set method for parameter e
 		void setE(double e);
@@ -47,11 +59,10 @@ class RobustnessTerm : public ParameteredObject
 		double getE();
 		
 		///calculates robustness term, Psi
-		virtual double Psi(double s)=0;
+		virtual double Psi(const double s); //=0;
 
 		//calculates derivative of robustness term, DPsi
-		virtual double DPsi(double s)=0;
-
+		virtual double DPsi(const double s /*, double ds*/); //=0;
 };
 
 #endif /* ROBUSTNESSTERM_H_ */

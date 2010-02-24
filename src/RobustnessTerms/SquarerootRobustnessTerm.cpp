@@ -22,8 +22,8 @@
 
 #define TYPE SquarerootRobustnessTerm
 
-#if defined(MSVC) && defined (SquarerootRobustnessTerm_EXPORTS)
-#define RobustnessTerm_EXPORTS
+#if defined(MSVC) && defined (squarerootrobustnessterm_EXPORTS)
+#define robustnessterm_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC
@@ -32,17 +32,15 @@
 
 #include "SquarerootRobustnessTerm.hxx"
 
-
-RobustnessTerm::RobustnessTerm(const std::string& name ) :
-		ParameteredObject("robustnessterm", name ,"RobustnessTerm")
+/*
+SquarerootRobustnessTerm(const std::string& name ) :
+		ParameteredObject("squarerootrobustnessterm", name ,"Computes SquarerootRobustnessTerm")
 {
 	//_addOutputSlot(result,"result","computed result","Solver");
 	epsilon=0;
-}
+}*/
 
-
-
-extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
+extern "C" squarerootrobustnessterm_DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -59,6 +57,6 @@ extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_
 	}
 }
 
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
+extern "C" squarerootrobustnessterm_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }

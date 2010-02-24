@@ -32,8 +32,6 @@
 #else
 #define iterativesolver_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
-
-
 #else /* No DLL handling or GCC */
 /// Not needed with GCC
 #define iterativesolver_DECLDIR
@@ -41,10 +39,14 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "ParameteredObject.hxx"
+//#include "ParameteredObject.hxx"
+//#include "ParameteredObject.h"
 #include "RobustnessTerm.h"
+#include "Solver.h"
+#include "Interpolator.h"
 
-class sample_DECLDIR Sample : public ParameteredObject {
+template <typename T>
+class iterativesolver_DECLDIR IterativeSolver : public Solver<T> {
 
 	/// CImgList containing the result.
 	cimg_library::CImgList<T> result;

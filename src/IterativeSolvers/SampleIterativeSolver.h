@@ -24,9 +24,9 @@
 #define _SAMPLEITERATIVESOLVER_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef sampleiterativecsolver_EXPORTS
+#ifdef sampleiterativesolver_EXPORTS
 /// dll import/export
-#define sampleiterativecsolver_DECLDIR __declspec(dllexport)
+#define sampleiterativesolver_DECLDIR __declspec(dllexport)
 #else
 #define sampleiterativesolver_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
@@ -57,7 +57,7 @@ public:
 private:
 
 	/// robustness term
-	RobustnessTerm* psi;
+	RobustnessTerm<T>* psi;
 
 	/// command line argument counter
 	int _argc;

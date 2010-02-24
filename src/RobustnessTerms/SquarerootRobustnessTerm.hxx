@@ -31,8 +31,26 @@
 //namespace RobustnessTerms
 //{
 
+//constructor
+template <typename T>
+SquarerootRobustnessTerm<T>::SquarerootRobustnessTerm(const std::string& name) : 
+		Solver<T>("SquarerootRobustnessTerm", name)
+{
+	// add own command line
+	ParameteredObject::_addParameter(commandLine, "commandLine",
+		"SquarerootRobustnessTerm command line");
+	epsilon=0;
+}
+
+template <typename T>
+SquarerootRobustnessTerm<T>::~SquarerootRobustnessTerm() {
+	//clean up..
+}
+
 //calculates robustness term, Psi
-double Psi(double s) {
+template <typename T>
+double SquarerootRobustnessTerm<T>::Psi(const double s) {
+//double Psi(double s) {
 		
 		double psi = sqrt(pow(s, 2) + pow(epsilon, 2));
 		
@@ -40,8 +58,9 @@ double Psi(double s) {
 };
 
 //calculates derivative of robustness term, DPsi
-	
-double DPsi(double s, double ds) {
+template <typename T>
+double SquarerootRobustnessTerm<T>::DPsi(const double s, const double ds) {
+//double DPsi(double s, double ds) {
 	
 		double dpsi = s*ds/(sqrt(pow(s, 2) + pow(epsilon, 2)));
 

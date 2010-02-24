@@ -23,22 +23,22 @@
 #ifndef ROBUSTNESSTERM_HXX_
 #define ROBUSTNESSTERM_HXX_
 
+#include "Solver.hxx"
 #include "RobustnessTerm.h"
-#include "Solver.h"
-
-
-
 
 
 // standard set method for parameter e
-void RobustnessTerm::setE (double e)
+template <typename T>
+void RobustnessTerm<T>::setE(double e) 
+//void RobustnessTerm::setE (double e)
 {
 	this->e = e;
-};
+}
 
 // standard get function for parameter e
-
-double RobustnessTerm::getE()
+template <typename T>
+double RobustnessTerm<T>::getE() 
+//double RobustnessTerm::getE()
 {
 	return this->e;
 }
