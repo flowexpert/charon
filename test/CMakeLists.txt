@@ -133,29 +133,6 @@ IF(ENABLE_TEST)
 			petscsolver
 		)
 		ADD_TEST(PetscPluginTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscplugintest)
-		IF(WIN32)
-			# copy needed dll for tests and application run before installing
-			GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
-			GET_TARGET_PROPERTY(Roi_LOC roi LOCATION)
-			GET_TARGET_PROPERTY(Filereader_LOC filereader LOCATION)
-			GET_TARGET_PROPERTY(Filewriter_LOC filewriter LOCATION)
-			GET_TARGET_PROPERTY(Mask1d_LOC mask1d LOCATION)
-			GET_TARGET_PROPERTY(LinearFilter_LOC linearfilter LOCATION)
-			GET_TARGET_PROPERTY(ChannelConverter_LOC channelconverter LOCATION)
-			GET_TARGET_PROPERTY(InterpolatorLinear_LOC interpolatorlinear LOCATION)
-			GET_TARGET_PROPERTY(PLOC petscplugintest LOCATION)
-			GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
-			ADD_CUSTOM_COMMAND(TARGET POST_BUILD petscplugintest
-				COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${PLOC_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${Roi_LOC}" "${PLOC_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${Filereader_LOC}" "${PLOC_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${Filewriter_LOC}" "${PLOC_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${LinearFilter_LOC}" "${PLOC_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${ChannelConverter_LOC}" "${PLOC_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${Mask1d_LOC}" "${PLOC_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${InterpolatorLinear_LOC}" "${PLOC_DIR}"
-			)
-		ENDIF(WIN32)
 
 		# executing test workflow
 		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
@@ -166,5 +143,31 @@ IF(ENABLE_TEST)
 		ADD_EXECUTABLE(hornschunckyosemite HornSchunckYosemite.cpp)
 		TARGET_LINK_LIBRARIES(hornschunckyosemite flowcomparator charon-plugins ${CIMG_LINK_LIBRARIES})
 		ADD_TEST(HornSchunckYosemite ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hornschunckyosemite)
+
+		IF(WIN32)
+			# copy needed dll for tests and application run before installing
+			GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
+			GET_TARGET_PROPERTY(Roi_LOC roi LOCATION)
+			GET_TARGET_PROPERTY(Filereader_LOC filereader LOCATION)
+			GET_TARGET_PROPERTY(Filewriter_LOC filewriter LOCATION)
+			GET_TARGET_PROPERTY(Mask1d_LOC mask1d LOCATION)
+			GET_TARGET_PROPERTY(LinearFilter_LOC linearfilter LOCATION)
+			GET_TARGET_PROPERTY(ChannelConverter_LOC channelconverter LOCATION)
+			GET_TARGET_PROPERTY(InterpolatorLinear_LOC interpolatorlinear LOCATION)
+			GET_TARGET_PROPERTY(Crop_LOC crop LOCATION)
+			GET_TARGET_PROPERTY(PLOC petscplugintest LOCATION)
+			GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
+			ADD_CUSTOM_COMMAND(TARGET POST_BUILD hornschunckyosemite
+				COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${PLOC_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E copy "${Roi_LOC}" "${PLOC_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E copy "${Filereader_LOC}" "${PLOC_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E copy "${Filewriter_LOC}" "${PLOC_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E copy "${LinearFilter_LOC}" "${PLOC_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E copy "${ChannelConverter_LOC}" "${PLOC_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E copy "${Mask1d_LOC}" "${PLOC_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E copy "${Crop_LOC}" "${PLOC_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E copy "${InterpolatorLinear_LOC}" "${PLOC_DIR}"
+			)
+		ENDIF(WIN32)
 	ENDIF(ENABLE_SOLVERS)
 ENDIF(ENABLE_TEST)
