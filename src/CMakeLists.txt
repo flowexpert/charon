@@ -234,9 +234,15 @@ IF(ENABLE_ROBUSTNESS)
 		Solver.h
 		Solver.hxx
 	)
+	ADD_LIBRARY(iteratorhelper SHARED
+		IteratorHelper.h
+		IteratorHelper.hxx
+		IteratorHelper.cpp
+	)
 LIST(APPEND Plugins
 		squarerootrobustnessterm
 		sampleiterativesolver
+		iteratorhelper
 	)	
 ENDIF(ENABLE_ROBUSTNESS)
 

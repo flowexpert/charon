@@ -29,8 +29,16 @@
 #include <sstream>
 
 using namespace std;
+using namespace cimg_library;
 
 //class iterativeSolverException   {   }; 
+
+template <typename T>
+SampleIterativeSolver<T>::SampleIterativeSolver(const std::string& name) : 
+		IterativeSolver<T>("SampleIterativeSolver", name)
+{
+	
+}
 
 template <typename T>
 void SampleIterativeSolver<T>::execute() {
@@ -42,61 +50,68 @@ void SampleIterativeSolver<T>::execute() {
 	
 	*/
 
+	float flowx, flowy;
 	// just need read-only access to ImageList
-	const cimg_library::CImgList<T>& globalImg = this->imgListIn();
-	const cimg_library::CImgList<T>& globalFlow = this->flowListIn();
+	const cimg_library::CImgList<T>& globalImgListIn = this->imgListIn();
+	const cimg_library::CImgList<T>& globalFlowListIn = this->flowListIn();
+
+	cimg_library::CImgList<T>& globalImgListOut = this->imgListOut();
+	cimg_library::CImg<T>& globalFlowOut = this->flowOut();
 
 	/* 	
 		is warping image 2 with the flow gained from the solver to image 1
 		and puts the result into imgout
 	*/
 
-
-	int x,y,z;
-
 	//throw exception if there are more or less than 2 images in the list
-	if (this->imgListIn().size()!=2)
+	if (globalImgListIn.size()!=2)
 	{
-		throw iterativeSolverException();
+		//welche art von Fehlerbehandlung erwünscht?
+		//throw iterativeSolverException();
 	}
+
+
+	/*
+	// check preconditions
+	assert(globalImgListIn().size() >= 2);
+	assert(globalImgListIn[0].is_sameXYZC(globalImgListIn[1]));
+	
+	*/
 
 	else
 	{
-		while (imgListIn[1]!=imgListIn[2]) 
-		{
-
+		if(!globalImgListIn[0].is_sameXYZC(globalImgListIn[1]))
 				// 1. create new image 2' which contains the interpolated values
 				// 2. read flow F at position X 
 				// 3. read intensity from position X+F in picture 2
 				// 4. write the intensity at position x in picture 2'
-
-				cimg_forXYZ(imgListOut[1], x,y,z) //equivalent to : for (int x = 0; x<img.width(); x++), for (int y = 0; y<img.height(); y++), for (int z = 0; z<img.depth(); z++)
+				// 5. image 1' is the same as image 1
+				cimg_forXYZC(globalImgListOut[1], x,y,z,t) 
 				{
-					imgListOut[1].img(x,y,z) = this->interpolator().interpolate(
-													imgListIn[2], 
-													(float) x+flowListIn[1].img(x,y,z,0),
-													(float) y+flowListIn[1].img(x,y,z,1),
-													(float) z)}
+					flowx=float (T(x)+globalFlowListIn[0](x,y,z,0));
+					flowy=float (T(y)+globalFlowListIn[0](x,y,z,1));
+					globalImgListOut[1](x,y,z,t) = this->interpolator()->interpolate(
+													globalImgListIn[1], 
+													flowx,
+													flowy,
+													int(z), int(t));
 
+					globalImgListOut[0](x,y,z,t)=globalImgListIn[0](x,y,z,t);
+
+					this->imgListOut() = globalImgListOut;
+
+					//add to global flow
+					globalFlowOut(x,y,z,0)+=flowx;
+					globalFlowOut(x,y,z,0)+=flowy;
 				}
+		else
+			{
+				this->flowOut() = globalFlowOut;
+			}
+	}
 
-		}
-//}
-/*
-cimg_forX(img,x) : equivalent to : for (int x = 0; x<img.width(); x++).
-cimg_forY(img,y) : equivalent to : for (int y = 0; y<img.height(); y++).
-cimg_forZ(img,z) : equivalent to : for (int z = 0; z<img.depth(); z++).
 
-cimg_forXYZ(img,x,y,z) : equivalent to : cimg_forZ(img,z) cimg_forXY(img,x,y).
-CImg<unsigned char> img(256,256,1,3);       // Define a 256x256 color image
-  cimg_forXYC(img,x,y,v) { img(x,y,v) = (x+y)*(v+1)/6; }
-  img.display("Color gradient");
-*/
 
-	/*
-		am ende der schleife, wenn von petscsolver berechnete fluss gleich 0:
-		zähle flüsse zusammen, um gesamtfluss zu erhalten
-	*/
 }
 
 #endif // _SAMPLEITERATIVESOLVER_HXX_

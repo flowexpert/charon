@@ -13,56 +13,58 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file IterativeSolver.h
- *  Implementation of class IterativeSolver.
+/** @file IteratorHelper.h
+ *  Implementation of class IteratorHelper.
  *  @author <a href="mailto:techfreaq@web.de">
  *      Nina Hernitschek</a>
- *  @date 23.11.2009
+ *  @date 26.02.2010
  */
 
-#ifndef _ITERATIVESOLVER_H_
-#define _ITERATIVESOLVER_H_
+#ifndef _ITERATORHELPER_H_
+#define _ITERATORHELPER_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef iterativesolver_EXPORTS
+#ifdef iteratorhelper_EXPORTS
 /// Visual C++ specific code
-#define iterativesolver_DECLDIR __declspec(dllexport)
+#define iteratorhelper_DECLDIR __declspec(dllexport)
 #else
-#define iterativesolver_DECLDIR __declspec(dllimport)
+#define iteratorhelpeer_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 /// Not needed with GCC
-#define iterativesolver_DECLDIR
+#define iteratorhelpeer_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
-#include "RobustnessTerm.h"
-#include "Interpolator.h"
-
 
 template <typename T>
-class iterativesolver_DECLDIR IterativeSolver :
+class iteratorhelper_DECLDIR IteratorHelper :
 		public TemplatedParameteredObject<T> {
 
 	public:
-	// pointers used by the solver
+	// pointers used by the IteratorHelper
+	InputSlot<cimg_library::CImgList<T> > imgListFileIn; //CImgList from file
+	InputSlot<cimg_library::CImgList<T> > imgListIn;	//CImgList from IterativeSolver
+	OutputSlot<cimg_library::CImgList<T> > imgListOut;	
 
-	InputSlot<cimg_library::CImgList<T> > imgListIn;
-	InputSlot<cimg_library::CImgList<T> > flowListIn;
-	InputSlot<Interpolator<T> *> interpolator;
-	InputSlot<RobustnessTerm<T> *> robustnessTerm;
-
-	/// result
-	OutputSlot<cimg_library::CImg<T> > flowOut;
-	OutputSlot<cimg_library::CImgList<T> > imgListOut;
-
-	/// default constructor
-	IterativeSolver(
+	// default constructor
+	IteratorHelper(
 		const std::string& classname,	///< [in] class name
 		const std::string& name = ""	///< [in] instance name
 	);
+
+
+	// main function
+	virtual void execute();
+
+
+
+
+	private:
+		bool flag;	//1: read from file, use imgListFile In
+					//0: read from IterativeSolver, use imgListIn
 };
 
 
-#endif // _ITERATIVESOLVER_H_
+#endif // _ITERATORHELPER_H_

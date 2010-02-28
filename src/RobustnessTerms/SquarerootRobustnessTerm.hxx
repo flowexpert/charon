@@ -24,7 +24,8 @@
 #ifndef _SQUAREROOTROBUSTNESSTERM_HXX_
 #define _SQUAREROOTROBUSTNESSTERM_HXX_
 
-#include "../RobustnessTerm.hxx"
+//#include "../RobustnessTerm.h"
+#include "ParameteredObject.hxx"
 #include "SquarerootRobustnessTerm.h"
 #include <cmath>
 
@@ -32,47 +33,41 @@
 //{
 
 //constructor
+/*
 template <typename T>
 SquarerootRobustnessTerm<T>::SquarerootRobustnessTerm(const std::string& name) : 
-		RobustnessTerm<T>("SquarerootRobustnessTerm", name)
+		RobustnessTerm<T>("SquarerootRobustnessTerm", name, "class for Squareroot Robustness Terms")
 {
-	// add own command line
-	ParameteredObject::_addParameter(commandLine, "commandLine",
-		"SquarerootRobustnessTerm command line");
-	epsilon=0;
-}
+	e=0;
+}*/
 
-template <typename T>
-SquarerootRobustnessTerm<T>::~SquarerootRobustnessTerm() {
-	//clean up..
+template<typename T>
+SquarerootRobustnessTerm<T>::SquarerootRobustnessTerm(const std::string& name) :
+	RobustnessTerm<T> ("squarerootrobustnessterm", name)//, functor()
+{
+	e=0;
+	//	brightnessFunctor = &functor;
+	//_addInputSlot(sequence, "sequence", "Sequence of Images", "CImgList");
+	//this->setFunctorParams(0.02);
 }
 
 //calculates robustness term, Psi
 template <typename T>
 double SquarerootRobustnessTerm<T>::Psi(const double s) {
-//double Psi(double s) {
-		
-		double psi = sqrt(pow(s, 2) + pow(epsilon, 2));
-		
+
+		double psi = sqrt(pow(s, 2) + pow(e, 2));
+
 		return psi;
 };
 
 //calculates derivative of robustness term, DPsi
 template <typename T>
 double SquarerootRobustnessTerm<T>::DPsi(const double s, const double ds) {
-//double DPsi(double s, double ds) {
 	
-		double dpsi = s*ds/(sqrt(pow(s, 2) + pow(epsilon, 2)));
+		double dpsi = s*ds/(sqrt(pow(s, 2) + pow(e, 2)));
 
 		return dpsi;
 };
-
-
-
-//}
-
-
-
 
 
 #endif // _SQUAREROOTROBUSTNESSTERM_HXX_

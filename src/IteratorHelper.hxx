@@ -1,0 +1,63 @@
+/*  This file is part of Charon.
+
+    Charon is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Charon is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/** @file IterativeSolver.hxx
+ *  Implementation of class IteratorHelper.
+ *  @author <a href="mailto:techfreaq@web.de">
+ *      Nina Hernitschek</a>
+ *  @date 26.02.2010
+ */
+
+#ifndef _ITERATORHELPER_HXX_
+#define _ITERATORHELPER_HXX_
+
+#include "IteratorHelper.h"
+
+template <typename T>
+IteratorHelper<T>::IteratorHelper(const std::string& classname, const std::string& name) :
+		TemplatedParameteredObject<T>(classname,name,"helper for iterativeSolver")
+{
+
+	InputSlot<cimg_library::CImgList<T> > imgListFileIn; //CImgList from file
+	InputSlot<cimg_library::CImgList<T> > imgListIn;	//CImgList from IterativeSolver
+	OutputSlot<cimg_library::CImgList<T> > imgListOut;	
+
+	this->_addInputSlot(imgListIn,"imgListIn","CImgList from file","CImgList<T>");
+	this->_addInputSlot(imgListFileIn,"imgListFileIn","CImgList from IterativeSolver","CImgList<T>");
+	this->_addOutputSlot(imgListOut,"imgListOut","CImgList containing the CImgList used in iteration","CImgList<T>");
+	
+	flag = 1; //read from file
+}
+
+	
+template <typename T>
+void IteratorHelper<T>::execute() {
+	ParameteredObject::execute();
+
+	if(flag==1)
+	{
+		imgListOut=imgListFileIn;
+		flag=0;
+	}
+	else
+	{
+		imgListOut=imgListIn;
+	}
+
+
+
+}
+
+#endif // _ITERATORHELPER_HXX_

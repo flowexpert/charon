@@ -23,9 +23,13 @@
 #ifndef ROBUSTNESSTERM_HXX_
 #define ROBUSTNESSTERM_HXX_
 
-#include "Solver.h"
 #include "RobustnessTerm.h"
 
+/*
+template <class T>
+RobustnessTerm<T>::RobustnessTerm(const std::string& classname, const std::string& name, const std::string& doc) : 
+		TemplatedParameteredObject<T>(classname,name,doc)
+{}*/
 
 // standard set method for parameter e
 template <typename T>

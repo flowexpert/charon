@@ -47,22 +47,26 @@ class robustnessterm_DECLDIR RobustnessTerm : public TemplatedParameteredObject<
 		double e;
 
 	public:
-		/// standard constructor 
-		RobustnessTerm();
-		// default destructor
-		virtual ~RobustnessTerm();
+		/// default constructor
+		RobustnessTerm(
+			const std::string& classname /**[in] class name*/,
+			const std::string& name = "" /**[in] instance name*/) :
+		TemplatedParameteredObject<T>(classname, name,
+				"computes the robustness term") {}
 
 		/// standard set method for parameter e
-		void setE(double e);
+		void setE(double e)
+		{this->e = e;}
 
 		/// standard get function for parameter e
-		double getE();
+		double getE()
+		{return this->e;}
 		
 		///calculates robustness term, Psi
-		virtual double Psi(const double s); //=0;
+		virtual double Psi(const double s)=0;
 
 		//calculates derivative of robustness term, DPsi
-		virtual double DPsi(const double s /*, double ds*/); //=0;
+		virtual double DPsi(const double s, double ds)=0;
 };
 
 #endif /* ROBUSTNESSTERM_H_ */
