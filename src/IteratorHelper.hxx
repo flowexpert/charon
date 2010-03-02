@@ -26,22 +26,37 @@
 #include "IteratorHelper.h"
 
 template <typename T>
-IteratorHelper<T>::IteratorHelper(const std::string& classname, const std::string& name) :
-		TemplatedParameteredObject<T>(classname,name,"helper for iterativeSolver")
-{
+void IteratorHelper<T>::_init() {
+	this->_addInputSlot(imgListIn,"imgListIn",
+		"CImgList from file","CImgList<T>");
+	this->_addInputSlot(imgListFileIn,"imgListFileIn",
+		"CImgList from IterativeSolver","CImgList<T>");
+	this->_addOutputSlot(imgListOut,"imgListOut",
+		"CImgList containing the CImgList used in iteration","CImgList<T>");
 
-	InputSlot<cimg_library::CImgList<T> > imgListFileIn; //CImgList from file
-	InputSlot<cimg_library::CImgList<T> > imgListIn;	//CImgList from IterativeSolver
-	OutputSlot<cimg_library::CImgList<T> > imgListOut;	
-
-	this->_addInputSlot(imgListIn,"imgListIn","CImgList from file","CImgList<T>");
-	this->_addInputSlot(imgListFileIn,"imgListFileIn","CImgList from IterativeSolver","CImgList<T>");
-	this->_addOutputSlot(imgListOut,"imgListOut","CImgList containing the CImgList used in iteration","CImgList<T>");
-	
-	flag = 1; //read from file
+	flag = 1;
 }
 
-	
+template <typename T>
+IteratorHelper<T>::IteratorHelper(
+		const std::string& classname,
+		const std::string& name,
+		const std::string& doc) :
+		TemplatedParameteredObject<T>(classname,name,
+			doc + "<br><br>derived by class IteratorHelper")
+{
+	_init();
+}
+
+template <typename T>
+IteratorHelper<T>::IteratorHelper(
+		const std::string& name) :
+		TemplatedParameteredObject<T>("IteratorHelper",name,
+			"Helper for iterative solvers")
+{
+	_init();
+}
+
 template <typename T>
 void IteratorHelper<T>::execute() {
 	ParameteredObject::execute();

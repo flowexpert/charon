@@ -26,16 +26,25 @@
 #include "IterativeSolver.h"
 
 template <typename T>
-IterativeSolver<T>::IterativeSolver(const std::string& classname, const std::string& name) :
-		TemplatedParameteredObject<T>(classname,name,"solves iterativly")
+IterativeSolver<T>::IterativeSolver(
+		const std::string& classname,
+		const std::string& name,
+		const std::string& doc) :
+		TemplatedParameteredObject<T>(classname,name,
+				doc + "<br><br>This class inherits IterativeSolver.")
 {
-	this->_addInputSlot(imgListIn,"imgListIn","CImgList","CImgList<T>");
-	this->_addInputSlot(flowListIn,"flowListIn","CImgList","CImgList<T>");
-	this->_addInputSlot(interpolator, "interpolator", "Pointer to Interpolator", "Interpolator<T>*");
-	this->_addInputSlot(robustnessTerm, "robustnessTerm", "Robustness Term", "RobustnessTerm<I>*");
-	this->_addOutputSlot(flowOut,"flowOut","CImg containing the solution","CImg<T>");
-	this->_addOutputSlot(imgListOut,"imgListOut","CImgList containing the warped images","CImgList<T>");
-
+	this->_addInputSlot(imgListIn,"imgListIn",
+		"CImgList","CImgList<T>");
+	this->_addInputSlot(flowListIn,"flowListIn",
+		"CImgList","CImgList<T>");
+	this->_addInputSlot(interpolator, "interpolator",
+		"Pointer to Interpolator", "Interpolator<T>*");
+	this->_addInputSlot(robustnessTerm, "robustnessTerm",
+		"Robustness Term", "RobustnessTerm<I>*");
+	this->_addOutputSlot(flowOut,"flowOut",
+		"CImg containing the solution","CImg<T>");
+	this->_addOutputSlot(imgListOut,"imgListOut",
+		"CImgList containing the warped images","CImgList<T>");
 }
 
 #endif // _ITERATIVESOLVER_HXX_

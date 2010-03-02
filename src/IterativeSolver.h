@@ -45,23 +45,32 @@ template <typename T>
 class iterativesolver_DECLDIR IterativeSolver :
 		public TemplatedParameteredObject<T> {
 
-	public:
-	// pointers used by the solver
+private:
+	/// forbid instantiation
+	IterativeSolver();
 
+protected:
+	/// constructor for derived classes
+	IterativeSolver(
+		const std::string& classname,  ///< [in] class name
+		const std::string& name,       ///< [in] instance name
+		const std::string& doc         ///  [in] class docstring
+	);
+
+public:
+	/// \name pointers used by the solver
+	//  \{
 	InputSlot<cimg_library::CImgList<T> > imgListIn;
 	InputSlot<cimg_library::CImgList<T> > flowListIn;
-	InputSlot<Interpolator<T> *> interpolator;
-	InputSlot<RobustnessTerm<T> *> robustnessTerm;
+	InputSlot<Interpolator<T>*> interpolator;
+	InputSlot<RobustnessTerm<T>*> robustnessTerm;
+	//  \}
 
-	/// result
+	/// \name result
+	//  \{
 	OutputSlot<cimg_library::CImg<T> > flowOut;
 	OutputSlot<cimg_library::CImgList<T> > imgListOut;
-
-	/// default constructor
-	IterativeSolver(
-		const std::string& classname,	///< [in] class name
-		const std::string& name = ""	///< [in] instance name
-	);
+	//  \}
 };
 
 

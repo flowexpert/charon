@@ -35,7 +35,7 @@ using namespace cimg_library;
 
 template <typename T>
 SampleIterativeSolver<T>::SampleIterativeSolver(const std::string& name) : 
-		IterativeSolver<T>("SampleIterativeSolver", name)
+		IterativeSolver<T>("SampleIterativeSolver", name, "solves iteratively")
 {
 	
 }
@@ -66,7 +66,7 @@ void SampleIterativeSolver<T>::execute() {
 	//throw exception if there are more or less than 2 images in the list
 	if (globalImgListIn.size()!=2)
 	{
-		//welche art von Fehlerbehandlung erwünscht?
+		//welche art von Fehlerbehandlung erwuenscht?
 		//throw iterativeSolverException();
 	}
 

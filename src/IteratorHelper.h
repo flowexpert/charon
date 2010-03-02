@@ -42,28 +42,39 @@ template <typename T>
 class iteratorhelper_DECLDIR IteratorHelper :
 		public TemplatedParameteredObject<T> {
 
-	public:
-	// pointers used by the IteratorHelper
-	InputSlot<cimg_library::CImgList<T> > imgListFileIn; //CImgList from file
-	InputSlot<cimg_library::CImgList<T> > imgListIn;	//CImgList from IterativeSolver
-	OutputSlot<cimg_library::CImgList<T> > imgListOut;	
-
-	// default constructor
+protected:
+	/// constructor for derived classes
 	IteratorHelper(
-		const std::string& classname,	///< [in] class name
-		const std::string& name = ""	///< [in] instance name
+		const std::string& classname  /** [in] class name          */,
+		const std::string& name       /** [in] instance name       */,
+		const std::string& doc        /** [in] class documentation */
 	);
 
+public:
+	/// \name pointers used by the IteratorHelper
+	//  \{
+	/// CImgList from file
+	InputSlot<cimg_library::CImgList<T> > imgListFileIn;
+	/// CImgList from IterativeSolver
+	InputSlot<cimg_library::CImgList<T> > imgListIn;
+	OutputSlot<cimg_library::CImgList<T> > imgListOut;
+	//  \}
 
-	// main function
+	/// default constructor
+	IteratorHelper(const std::string& name = "" /**[in] instance name*/);
+
+	/// main function
 	virtual void execute();
 
+private:
+	/// common initialization code
+	void _init();
 
-
-
-	private:
-		bool flag;	//1: read from file, use imgListFile In
-					//0: read from IterativeSolver, use imgListIn
+	/// working mode flag
+	/** 1: read from file, use imgListFile In
+	 *  0: read from IterativeSolver, use imgListIn
+	 */
+	bool flag;
 };
 
 

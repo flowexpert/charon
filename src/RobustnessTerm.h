@@ -55,17 +55,19 @@ class robustnessterm_DECLDIR RobustnessTerm : public TemplatedParameteredObject<
 				"computes the robustness term") {}
 
 		/// standard set method for parameter e
-		void setE(double e)
-		{this->e = e;}
+		void setE(double e) {
+			this->e = e;
+		}
 
 		/// standard get function for parameter e
-		double getE()
-		{return this->e;}
+		double getE() const {
+			return this->e;
+		}
 		
-		///calculates robustness term, Psi
+		/// calculates robustness term, Psi
 		virtual double Psi(const double s)=0;
 
-		//calculates derivative of robustness term, DPsi
+		/// calculates derivative of robustness term, DPsi
 		virtual double DPsi(const double s, double ds)=0;
 };
 
