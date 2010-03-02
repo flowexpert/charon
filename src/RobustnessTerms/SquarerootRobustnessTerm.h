@@ -43,15 +43,17 @@ template<typename T>
 class squarerootrobustnessterm_DECLDIR SquarerootRobustnessTerm:
 		public RobustnessTerm<T>
 {
-	public:
-		/// default constructor
-		SquarerootRobustnessTerm(const std::string& name = "" /**[in] instance name*/);
+public:
+	/// default constructor
+	/** \param[in] name     instance name
+	 */
+	SquarerootRobustnessTerm(const std::string& name = "");
 
-		/// calculates robustness term, Psi
-		double Psi(const double s);
+	/// calculates robustness term, Psi
+	virtual double Psi(double s) const;
 
-		/// calculates derivative of robustness term, DPsi
-		double DPsi(const double s, const double ds);
+	/// calculates derivative of robustness term, DPsi
+	virtual double DPsi(double s, double ds) const;
 };
 
 #endif

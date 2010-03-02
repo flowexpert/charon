@@ -28,44 +28,24 @@
 #include "SquarerootRobustnessTerm.h"
 #include <cmath>
 
-//namespace RobustnessTerms
-//{
-
-//constructor
-/*
-template <typename T>
-SquarerootRobustnessTerm<T>::SquarerootRobustnessTerm(const std::string& name) : 
-		RobustnessTerm<T>("SquarerootRobustnessTerm", name, "class for Squareroot Robustness Terms")
-{
-	e=0;
-}*/
-
 template<typename T>
 SquarerootRobustnessTerm<T>::SquarerootRobustnessTerm(const std::string& name) :
-	RobustnessTerm<T> ("squarerootrobustnessterm", name)//, functor()
+	RobustnessTerm<T> ("squarerootrobustnessterm", name,
+		"please add robustness term class documentation")
 {
-	this->e=0;
-	//	brightnessFunctor = &functor;
-	//_addInputSlot(sequence, "sequence", "Sequence of Images", "CImgList");
-	//this->setFunctorParams(0.02);
+	this->setE(0);
 }
 
-//calculates robustness term, Psi
 template <typename T>
-double SquarerootRobustnessTerm<T>::Psi(const double s) {
-
-		double psi = sqrt(pow(s, 2) + pow(this->e, 2));
-
-		return psi;
+double SquarerootRobustnessTerm<T>::Psi(double s) const {
+	double psi = sqrt(pow(s, 2) + pow(this->e, 2));
+	return psi;
 }
 
-//calculates derivative of robustness term, DPsi
 template <typename T>
-double SquarerootRobustnessTerm<T>::DPsi(const double s, const double ds) {
-	
-		double dpsi = s*ds/(sqrt(pow(s, 2) + pow(this->e, 2)));
-
-		return dpsi;
+double SquarerootRobustnessTerm<T>::DPsi(double s, double ds) const {
+	double dpsi = s*ds/(sqrt(pow(s, 2) + pow(this->e, 2)));
+	return dpsi;
 }
 
 

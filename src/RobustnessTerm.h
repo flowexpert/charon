@@ -41,34 +41,30 @@
 
 
 template <typename T>
-class robustnessterm_DECLDIR RobustnessTerm : public TemplatedParameteredObject<T>
+class robustnessterm_DECLDIR RobustnessTerm :
+		public TemplatedParameteredObject<T>
 {
-	protected:
-		double e;
+protected:
+	double e;
 
-	public:
-		/// default constructor
-		RobustnessTerm(
-			const std::string& classname /**[in] class name*/,
-			const std::string& name = "" /**[in] instance name*/) :
-		TemplatedParameteredObject<T>(classname, name,
-				"computes the robustness term") {}
+	/// constructor for derived classes
+	RobustnessTerm(
+		const std::string& classname /**[in] class name*/,
+		const std::string& name      /**[in] instance name*/,
+		const std::string& doc       /**[in] docstring*/);
 
-		/// standard set method for parameter e
-		void setE(double e) {
-			this->e = e;
-		}
+public:
+	/// standard set method for parameter e
+	void setE(double e);
 
-		/// standard get function for parameter e
-		double getE() const {
-			return this->e;
-		}
-		
-		/// calculates robustness term, Psi
-		virtual double Psi(const double s)=0;
+	/// standard get function for parameter e
+	double getE() const;
 
-		/// calculates derivative of robustness term, DPsi
-		virtual double DPsi(const double s, double ds)=0;
+	/// calculates robustness term, Psi
+	virtual double Psi(double s) const = 0;
+
+	/// calculates derivative of robustness term, DPsi
+	virtual double DPsi(double s, double ds) const = 0;
 };
 
 #endif /* ROBUSTNESSTERM_H_ */

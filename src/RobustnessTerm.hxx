@@ -25,25 +25,22 @@
 
 #include "RobustnessTerm.h"
 
-/*
-template <class T>
-RobustnessTerm<T>::RobustnessTerm(const std::string& classname, const std::string& name, const std::string& doc) : 
-		TemplatedParameteredObject<T>(classname,name,doc)
-{}*/
-
-// standard set method for parameter e
 template <typename T>
-void RobustnessTerm<T>::setE(double e) 
-//void RobustnessTerm::setE (double e)
-{
+RobustnessTerm<T>::RobustnessTerm(
+	const std::string& classname,
+	const std::string& name,
+	const std::string& doc) :
+		TemplatedParameteredObject<T>(classname, name,
+			doc + "<br><br>This class inherits class RobustnessTerm<T>.") {
+}
+
+template <typename T>
+void RobustnessTerm<T>::setE(double e) {
 	this->e = e;
 }
 
-// standard get function for parameter e
 template <typename T>
-double RobustnessTerm<T>::getE() 
-//double RobustnessTerm::getE()
-{
+double RobustnessTerm<T>::getE() const {
 	return this->e;
 }
 
