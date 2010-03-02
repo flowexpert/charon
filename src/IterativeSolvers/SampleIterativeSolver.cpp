@@ -12,7 +12,7 @@
 
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
-
+*/
 /** @file SampleIterativeSolver.cpp
  *  Implementation of class SampleIterativeSolver.
  *  @author <a href="mailto:techfreaq@web.de">

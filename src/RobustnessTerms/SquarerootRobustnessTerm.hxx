@@ -24,7 +24,6 @@
 #ifndef _SQUAREROOTROBUSTNESSTERM_HXX_
 #define _SQUAREROOTROBUSTNESSTERM_HXX_
 
-//#include "../RobustnessTerm.h"
 #include "ParameteredObject.hxx"
 #include "SquarerootRobustnessTerm.h"
 #include <cmath>
@@ -45,7 +44,7 @@ template<typename T>
 SquarerootRobustnessTerm<T>::SquarerootRobustnessTerm(const std::string& name) :
 	RobustnessTerm<T> ("squarerootrobustnessterm", name)//, functor()
 {
-	e=0;
+	this->e=0;
 	//	brightnessFunctor = &functor;
 	//_addInputSlot(sequence, "sequence", "Sequence of Images", "CImgList");
 	//this->setFunctorParams(0.02);
@@ -55,19 +54,19 @@ SquarerootRobustnessTerm<T>::SquarerootRobustnessTerm(const std::string& name) :
 template <typename T>
 double SquarerootRobustnessTerm<T>::Psi(const double s) {
 
-		double psi = sqrt(pow(s, 2) + pow(e, 2));
+		double psi = sqrt(pow(s, 2) + pow(this->e, 2));
 
 		return psi;
-};
+}
 
 //calculates derivative of robustness term, DPsi
 template <typename T>
 double SquarerootRobustnessTerm<T>::DPsi(const double s, const double ds) {
 	
-		double dpsi = s*ds/(sqrt(pow(s, 2) + pow(e, 2)));
+		double dpsi = s*ds/(sqrt(pow(s, 2) + pow(this->e, 2)));
 
 		return dpsi;
-};
+}
 
 
 #endif // _SQUAREROOTROBUSTNESSTERM_HXX_

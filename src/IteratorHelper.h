@@ -28,11 +28,11 @@
 /// Visual C++ specific code
 #define iteratorhelper_DECLDIR __declspec(dllexport)
 #else
-#define iteratorhelpeer_DECLDIR __declspec(dllimport)
+#define iteratorhelper_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 /// Not needed with GCC
-#define iteratorhelpeer_DECLDIR
+#define iteratorhelper_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
