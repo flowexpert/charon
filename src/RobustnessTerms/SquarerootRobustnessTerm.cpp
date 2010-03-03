@@ -31,16 +31,10 @@
 #endif
 
 #include "SquarerootRobustnessTerm.hxx"
+#include "../RobustnessTerm.hxx"
 
-/*
-SquarerootRobustnessTerm(const std::string& name ) :
-		ParameteredObject("squarerootrobustnessterm", name ,"Computes SquarerootRobustnessTerm")
-{
-	//_addOutputSlot(result,"result","computed result","Solver");
-	epsilon=0;
-}*/
-
-extern "C" squarerootrobustnessterm_DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
+extern "C" squarerootrobustnessterm_DECLDIR ParameteredObject* create(
+		const std::string &name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -57,6 +51,7 @@ extern "C" squarerootrobustnessterm_DECLDIR ParameteredObject * create(const std
 	}
 }
 
-extern "C" squarerootrobustnessterm_DECLDIR void destroy(ParameteredObject * b) {
+extern "C" squarerootrobustnessterm_DECLDIR void destroy(
+		ParameteredObject * b) {
 	delete b;
 }
