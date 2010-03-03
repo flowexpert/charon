@@ -37,6 +37,7 @@
 
 #include "../IterativeSolver.h"
 
+/// implementation of an iterative solver
 template <typename T>
 class sampleiterativesolver_DECLDIR SampleIterativeSolver : public IterativeSolver<T>
 {
@@ -44,7 +45,7 @@ public:
 	/// default constructor
 	SampleIterativeSolver(const std::string& name = "" /**[in] instance name*/);
 
-	/// main function
+	/// execute function, warps images and returns result
 	virtual void execute();
 
 private:

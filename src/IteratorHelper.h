@@ -38,6 +38,7 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
 
+/// helper class used for iterative solving
 template <typename T>
 class iteratorhelper_DECLDIR IteratorHelper :
 		public TemplatedParameteredObject<T> {
