@@ -7232,16 +7232,16 @@ namespace cimg_library {
       XUnlockDisplay(cimg::X11_attr().display);
       if (!cimg::X11_attr().nb_wins) {
         // Kill event thread
-        //pthread_cancel(*cimg::X11_attr().event_thread);
-        //XUnlockDisplay(cimg::X11_attr().display);
-        //pthread_join(*cimg::X11_attr().event_thread,0);
-        //delete cimg::X11_attr().event_thread;
-        //cimg::X11_attr().event_thread = 0;
+        pthread_cancel(*cimg::X11_attr().event_thread);
+        XUnlockDisplay(cimg::X11_attr().display);
+        pthread_join(*cimg::X11_attr().event_thread,0);
+        delete cimg::X11_attr().event_thread;
+        cimg::X11_attr().event_thread = 0;
         // XUnlockDisplay(cimg::X11_attr().display); // <- This call make the library hang sometimes (fix required).
         // XCloseDisplay(cimg::X11_attr().display); // <- This call make the library hang sometimes (fix required).
-        //cimg::X11_attr().display = 0;
-        //delete cimg::X11_attr().gc;
-        //cimg::X11_attr().gc = 0;
+        cimg::X11_attr().display = 0;
+        delete cimg::X11_attr().gc;
+        cimg::X11_attr().gc = 0;
       }
       return *this;
     }
