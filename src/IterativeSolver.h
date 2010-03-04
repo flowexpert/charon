@@ -48,6 +48,8 @@ class iterativesolver_DECLDIR IterativeSolver :
 private:
 	/// forbid instantiation
 	IterativeSolver();
+	/// forbid copying
+	IterativeSolver(const IterativeSolver&);
 
 protected:
 	/// constructor for derived classes
