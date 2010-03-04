@@ -137,8 +137,8 @@ void UnixPluginLoader::compileAndLoad(const std::string & sourceFile,
 			+ " -Wl,-rpath,\"" + pluginPath + "\" -Wl,-rpath,\""
 			+ additionalPluginPath + "\" -o \""
 			+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath)
-			+ "/lib" + pluginName + LIBRARY_EXTENSION + "\" " + sourceFile
-			+ X11_libs + "> error.log";
+			+ "/lib" + pluginName + LIBRARY_EXTENSION + "\" \"" + sourceFile
+			+ "\" " + X11_libs + " > error.log";
 #ifndef NDEBUG
 	std::cout << "Compiler call:\n" << sysCall << std::endl;
 #endif
