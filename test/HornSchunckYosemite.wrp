@@ -16,8 +16,8 @@ solverroi.out		solver.roi
 flowreader.type		filereader
 flowreader.out		flowcrop.in
 flowreader.filename		yosemiteFlow.cimg
-solverroi.xend		100
-solverroi.yend		100
+solverroi.xend		32
+solverroi.yend		32
 seqreader.type		filereader
 seqreader.out		seqcrop.in
 seqreader.filename		yosemiteNoClouds.cimg
@@ -42,10 +42,10 @@ bm.image		seqcrop.out
 roi.type		roi
 roi.templatetype		int
 roi.out		seqcrop.roi;flowcrop.roi
-roi.xbegin		100
-roi.xend		200
-roi.ybegin		100
-roi.yend		200
+roi.xbegin		190
+roi.xend		222
+roi.ybegin		120
+roi.yend		152
 seqcrop.type		crop
 seqcrop.in		seqreader.out
 seqcrop.out		diff.img;bm.image
