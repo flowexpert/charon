@@ -45,8 +45,6 @@ template <typename T>
 class warp_DECLDIR Warp :
 		public TemplatedParameteredObject<T> {
 public:
-	
-
 	/// Image sequence 
 	InputSlot < cimg_library::CImgList<T> > image_sequence;
 	/// Image flow 
@@ -55,7 +53,8 @@ public:
 	InputSlot < Interpolator<T> * > interpolator;
 	/// Warped Image 
 	OutputSlot < cimg_library::CImgList<T> > warped_image;
-	
+	/// Flow weight
+	Parameter<double> weight;
 
 	/// create a new Warp object
 	/// \param name          Instance name

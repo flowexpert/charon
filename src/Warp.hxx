@@ -37,6 +37,8 @@ Warp<T>::Warp(const std::string& name) :
 			"Interpolator", "Interpolator<T>*");
 	ParameteredObject::_addOutputSlot(warped_image, "warped_image",
 			"Warped Image", "CImgList<T>");
+
+	ParameteredObject::_addParameter(weight, "weight", "Flow weight", 1.);
 }
 
 template<typename T>
@@ -50,27 +52,32 @@ void Warp<T>::execute() {
 	int height = this->image_sequence()[0].height();
 	int depth = this->image_sequence()[0].depth();
 	int spectrum = this->image_sequence()[0].spectrum();
-	this->warped_image().assign(size, width, height, depth, spectrum);
 
-	for (int i = 0; i < size; ++i) {
-		for (int x = 0; x < width; ++x) {
-			for (int y = 0; y < height; ++y) {
-				for (int z = 0; z < depth; ++z) {
-					for (int t = 0; t < spectrum; ++t) {
-						T x_new = x + this->flow_sequence[0](x, y, z, t);
-						T y_new = y + this->flow_sequence[1](x, y, z, t);
-						T z_new = z + this->flow_sequence[2](x, y, z, t);
-
-						T res = this->interpolator()->interpolate(
-								this->image_sequence()[i], (float) x_new,
-								(float) y_new, (float) z_new, t);
-
-						this->warped_image()[i](x, y, z, t) = res;
-					}
-				}
-			}
-		}
+	int spectrum_increment = 0;
+	if (spectrum == this->flow_sequence()[0].spectrum() + 1) {
+		sout << "Ignoring first image in sequence." << std::endl;
+		spectrum_increment = 1;
 	}
+	this->warped_image().assign(size, width, height, depth, spectrum
+			- spectrum_increment);
+
+	const bool is3D = (this->flow_sequence().size() == 3);
+cimglist_for(this->warped_image(), i) {
+	cimg_forXYZC(this->warped_image()[i],x,y,z, t) {
+		T x_new = x + this->weight() * this->flow_sequence()[0](x, y, z, t);
+		T y_new = y + this->weight() * this->flow_sequence()[1](x, y, z, t);
+		T z_new = z;
+		if(is3D) {
+			z_new += this->weight() * this->flow_sequence()[2](x, y, z, t);
+		}
+
+		T res = this->interpolator()->interpolate(
+				this->image_sequence()[i], (float) x_new,
+				(float) y_new, (float) z_new, t + spectrum_increment);
+
+		this->warped_image()[i](x, y, z, t) = res;
+	}
+}
 
 }
 
