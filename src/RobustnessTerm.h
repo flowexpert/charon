@@ -39,21 +39,16 @@
 #include "ParameteredObject.h"
 /// class which compute the bcce-terms
 
-
-template <typename T>
-class robustnessterm_DECLDIR RobustnessTerm :
-		public TemplatedParameteredObject<T>
+class robustnessterm_DECLDIR RobustnessTerm
 {
 protected:
 	double e;
 
 	/// constructor for derived classes
-	RobustnessTerm(
-		const std::string& classname /**[in] class name*/,
-		const std::string& name      /**[in] instance name*/,
-		const std::string& doc       /**[in] docstring*/);
+	RobustnessTerm();
 
 public:
+
 	/// standard set method for parameter e
 	void setE(double e);
 
@@ -61,10 +56,12 @@ public:
 	double getE() const;
 
 	/// calculates robustness term, Psi
-	virtual double Psi(double s) const = 0;
+	virtual const double Psi(double s) const;
 
 	/// calculates derivative of robustness term, DPsi
-	virtual double DPsi(double s, double ds) const = 0;
+	virtual const double DPsi(double s, double ds) const;
 };
 
 #endif /* ROBUSTNESSTERM_H_ */
+
+

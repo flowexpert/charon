@@ -29,9 +29,22 @@ IF (ENABLE_STENCILS)
 		Substencil.h
 		Substencil.hxx
 	)
+
+	ADD_LIBRARY(psistencil SHARED
+		Stencils/PsiStencil.cpp
+		Stencils/PsiStencil.h
+		Stencils/PsiStencil.hxx
+		Stencil.h
+		Stencil.hxx
+		Point4D.h
+		Substencil.h
+		Substencil.hxx
+	)
+
 	LIST(APPEND Plugins
 		gbcce
 		l2norm
+		psistencil
 	)
 ENDIF (ENABLE_STENCILS)
 

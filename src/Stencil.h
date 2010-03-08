@@ -92,6 +92,9 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 		 * during Stencil::updateStencil.
 		 */
 		T _rhs;
+		T _rhsD;
+		std::map<std::string, T> term;
+		std::map<std::string, T> termD;
 
 	public:
 		/// Lambda coefficient of the stencil.
@@ -128,17 +131,36 @@ class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T>
 				const unsigned int t=0,
 				const unsigned int v=0) = 0;
 
+
 		/**
 		 * Getter function for the SubStencils of the stencil.
 		 * @return reference to the map of SubStencils.
 		 */
-		const std::map<std::string, SubStencil<T> >& get() const;
+		const std::map<std::string, SubStencil<T> >& get();
 
 		/**
 		 * Getter function for the right hand side.
 		 */
 		const T& getRhs() const;
 
+
+
+		/**
+		 * Getter function for the right hand side of D.
+		 */
+		const T& getRhsD()const {return rhsD};
+
+		/**
+		 * Getter function for the term of D'.
+		 */
+		const std::map<std::string, T>& getTerm()const {return term};
+
+		/**
+		 * Getter function for the term of D.
+		 */
+		const std::map<std::string, T>& getTermD()const {return termD};
+
+	
 		/// apply stencil to a sequence
 		/** \param seq           sequence to apply stencil on
 		 *  \param frame         frame to apply stencil on

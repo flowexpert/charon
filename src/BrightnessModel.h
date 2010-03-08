@@ -87,6 +87,13 @@ public:
 			const int t, const int v,
 			std::map<std::string, T>& term, T& rhs,
 			const std::string& unknown = "") = 0;
+
+	virtual void computeD(
+			const int xs, const int ys, const int zs,
+			const int t, const int v,
+			std::map<std::string, T>& term, T& rhs,
+			const std::string& unknown = "") = 0;
+
 	/**
 	 * Get the unknowns of the model.
 	 * @return Set of strings which contains the names of the unknowns

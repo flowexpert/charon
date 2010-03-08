@@ -57,6 +57,16 @@ void BrightnessModels::Constant<T>::compute(
 }
 
 template<class T>
+void BrightnessModels::Constant<T>::computeD(
+		const int , const int , const int , const int , const int ,
+		std::map<std::string, T>& , T&,
+		const std::string&)
+{
+	// no brightness change
+}
+
+
+template<class T>
 void BrightnessModels::Constant<T>::apply(const Pixel<T> & inPixel,
 		const std::vector<IncrementorParameter<T>*> &, Pixel<T> & outPixel)
 {

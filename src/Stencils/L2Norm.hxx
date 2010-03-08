@@ -177,6 +177,7 @@ void L2Norm<T>::updateStencil(
 	}
 }
 
+
 template <class T>
 cimg_library::CImg<T> L2Norm<T>::apply(
 		const cimg_library::CImgList<T>& seq,

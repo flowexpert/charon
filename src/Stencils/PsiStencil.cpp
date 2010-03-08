@@ -13,28 +13,31 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file SquarerootRobustnessTerm.cpp
- *  @see RobustnessTerm.cpp
- *  @author <a href="mailto:techfreaq@web.de">Nina Hernitschek</a>
+/** @file PsiStencil.cpp
+ *  Implementation of class PsiStencil.
+ *  This is the PsiStencil which is
+ *	derived from class Stencil.
+ *  It is used to apply a robustness term on a stencil
+ *  @see Stencil.cpp
+ *  @author <a href="mailto:techfreaq@web.de">
+ *      Nina Hernitschek</a>
  *
- *  @date 14.12.2009
+ *  @date 03.03.2010
  */
-/*
-#define TYPE SquarerootRobustnessTerm
 
-#if defined(MSVC) && defined (squarerootrobustnessterm_EXPORTS)
-#define robustnessterm_EXPORTS
+#define TYPE PsiStencil
+
+#if defined(MSVC) && defined (psistencil_EXPORTS)
+#define stencil_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
 ///Not needed with GCC
 #define DECLDIR
 #endif
 
-#include "SquarerootRobustnessTerm.hxx"
-#include "../RobustnessTerm.hxx"
+#include "PsiStencil.hxx"
 
-extern "C" squarerootrobustnessterm_DECLDIR ParameteredObject* create(
-		const std::string &name, template_type t) {
+extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -51,7 +54,6 @@ extern "C" squarerootrobustnessterm_DECLDIR ParameteredObject* create(
 	}
 }
 
-extern "C" squarerootrobustnessterm_DECLDIR void destroy(
-		ParameteredObject * b) {
+extern "C" DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
-}*/
+}

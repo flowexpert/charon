@@ -81,6 +81,11 @@ public:
 	///sets the parameters for sequence generation
 	void setFunctorParams(float a1, float a2);
 	//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
+	virtual void computeD(
+			const int xs, const int ys, const int zs,
+			const int t, const int v,
+			std::map<std::string, T>& term, T& rhs,
+			const std::string& unknown = "") = 0;
 	
 	/** 
 	 *  compute brightness changes with the inserted Parameters

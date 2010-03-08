@@ -51,7 +51,7 @@ public:
 private:
 
 	/// robustness term
-	RobustnessTerm<T>* psi;
+	RobustnessTerm psi;
 };
 
 #endif // _SAMPLEITERATIVESOLVER_H_

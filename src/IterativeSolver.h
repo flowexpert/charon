@@ -69,7 +69,7 @@ public:
 	/// interpolator used for warping
 	InputSlot<Interpolator<T>*> interpolator;
 	/// robustness term
-	InputSlot<RobustnessTerm<T>*> robustnessTerm;
+	InputSlot<RobustnessTerm> robustnessTerm;
 	//  \}
 
 	/// \name result

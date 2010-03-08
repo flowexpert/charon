@@ -41,21 +41,21 @@
 
 /// class which uses the function \f$\Psi(s^2)=\sqrt{s^2+e^2}\f$ with
 /// parameter compute the bcce-terms
-template<typename T>
+
+
 class squarerootrobustnessterm_DECLDIR SquarerootRobustnessTerm:
-		public RobustnessTerm<T>
+		public RobustnessTerm
 {
 public:
 	/// default constructor
-	/** \param[in] name     instance name
-	 */
-	SquarerootRobustnessTerm(const std::string& name = "");
+	SquarerootRobustnessTerm();
 
 	/// calculates robustness term, Psi
-	virtual double Psi(double s) const;
+	const double Psi(double s) const;
 
 	/// calculates derivative of robustness term, DPsi
-	virtual double DPsi(double s, double ds) const;
+	const double DPsi(double s, double ds) const;
+	
 };
 
 #endif

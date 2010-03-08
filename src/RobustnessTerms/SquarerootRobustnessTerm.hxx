@@ -24,29 +24,26 @@
 #ifndef _SQUAREROOTROBUSTNESSTERM_HXX_
 #define _SQUAREROOTROBUSTNESSTERM_HXX_
 
-#include "ParameteredObject.hxx"
+//#include "ParameteredObject.hxx"
 #include "SquarerootRobustnessTerm.h"
 #include <cmath>
 
-template<typename T>
-SquarerootRobustnessTerm<T>::SquarerootRobustnessTerm(const std::string& name) :
-	RobustnessTerm<T> ("squarerootrobustnessterm", name,
-		"please add robustness term class documentation")
+
+SquarerootRobustnessTerm::SquarerootRobustnessTerm()
 {
 	this->setE(0);
 }
 
-template <typename T>
-double SquarerootRobustnessTerm<T>::Psi(double s) const {
+
+const double SquarerootRobustnessTerm::Psi(double s) const {
 	double psi = sqrt(pow(s, 2) + pow(this->e, 2));
 	return psi;
 }
 
-template <typename T>
-double SquarerootRobustnessTerm<T>::DPsi(double s, double ds) const {
+
+const double SquarerootRobustnessTerm::DPsi(double s, double ds) const {
 	double dpsi = s*ds/(sqrt(pow(s, 2) + pow(this->e, 2)));
 	return dpsi;
 }
-
 
 #endif // _SQUAREROOTROBUSTNESSTERM_HXX_

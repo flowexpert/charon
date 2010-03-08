@@ -25,22 +25,15 @@
 
 #include "RobustnessTerm.h"
 
-template <typename T>
-RobustnessTerm<T>::RobustnessTerm(
-	const std::string& classname,
-	const std::string& name,
-	const std::string& doc) :
-		TemplatedParameteredObject<T>(classname, name,
-			doc + "<br><br>This class inherits class RobustnessTerm<T>.") {
+RobustnessTerm::RobustnessTerm(){
 }
 
-template <typename T>
-void RobustnessTerm<T>::setE(double e) {
+
+void RobustnessTerm::setE(double e) {
 	this->e = e;
 }
 
-template <typename T>
-double RobustnessTerm<T>::getE() const {
+double RobustnessTerm::getE() const {
 	return this->e;
 }
 

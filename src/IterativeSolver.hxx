@@ -40,7 +40,7 @@ IterativeSolver<T>::IterativeSolver(
 	this->_addInputSlot(interpolator, "interpolator",
 		"Pointer to Interpolator", "Interpolator<T>*");
 	this->_addInputSlot(robustnessTerm, "robustnessTerm",
-		"Robustness Term", "RobustnessTerm<I>*");
+		"Robustness Term", "RobustnessTerm*");
 	this->_addOutputSlot(flowOut,"flowOut",
 		"CImg containing the solution","CImg<T>");
 	this->_addOutputSlot(imgListOut,"imgListOut",

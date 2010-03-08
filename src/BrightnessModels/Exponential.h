@@ -73,6 +73,12 @@ public:
 	virtual void compute(const int xs, const int ys, const int zs, const int t,
 			const int v, std::map<std::string, T>& term, T& rhs);
 
+	virtual void computeD(
+			const int xs, const int ys, const int zs,
+			const int t, const int v,
+			std::map<std::string, T>& term, T& rhs,
+			const std::string& unknown = "") = 0;
+
 	virtual std::set<std::string>& getUnknowns(); // names of unknowns
 	/**
 	 *        set parameter for sequence generation

@@ -83,8 +83,10 @@ void Gbcce<T>::updateStencil(
 		const unsigned int z,
 		const unsigned int t,
 		const unsigned int v) {
-	std::map<std::string, T> term;
+	//std::map<std::string, T> term;
+	//std::map<std::string, T> termD;
 	this->_rhs = 0;
+	this->_rhsD = 0;
 
 	// collect unknowns
 	const std::set<std::string>& mUnknowns = motionIn()->getUnknowns();
@@ -98,9 +100,13 @@ void Gbcce<T>::updateStencil(
 	for (unkIt = allUnknowns.begin(); unkIt != allUnknowns.end(); unkIt++)
 		term[*unkIt] = T(0);
 
-	// compute term
+	// compute term for D'
 	this->brightnessIn()->compute(x, y, z, t, v, term, this->_rhs, unknown);
 	this->motionIn()->compute(x, y, z, t, v, term, this->_rhs, unknown);
+
+	// compute term for D
+	this->brightnessIn()->computeD(x, y, z, t, v, termD, this->_rhsD, unknown);
+	this->motionIn()->computeD(x, y, z, t, v, termD, this->_rhsD, unknown);
 
 	// and fill into substencils
 	typename std::map<std::string,T>::iterator termIt;
@@ -110,6 +116,8 @@ void Gbcce<T>::updateStencil(
 	}
 	this->_rhs *= this->lambda();
 }
+
+
 
 //not yet implemented
 template <class T>

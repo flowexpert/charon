@@ -75,6 +75,12 @@ public:
 
 	virtual std::set<std::string>& getUnknowns();
 
+
+	virtual void computeD(
+			const int xs, const int ys, const int zs, const int t,
+			const int v, std::map<std::string, T>& term, T& rhs,
+			const std::string& unknown = "") = 0;
+
 	/// set the parameters of the flow functor
 	/**
 	 *	flow will be computed:

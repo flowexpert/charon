@@ -99,6 +99,11 @@ public:
 			const int v, std::map<std::string, T>& term, T& rhs,
 			const std::string& unknown = "") = 0;
 
+	virtual void computeD(
+			const int xs, const int ys, const int zs, const int t,
+			const int v, std::map<std::string, T>& term, T& rhs,
+			const std::string& unknown = "") = 0;
+
 	// returns the width of the bcce-terms
 	// @details = number of parameters of the model + 1
 	//virtual int count()=0; // Anzahl der Parameter + 1
