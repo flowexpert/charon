@@ -25,6 +25,8 @@ TARGET_LINK_LIBRARIES(linearfilter interpolatorlinear)
 ADD_LIBRARY(mask1d SHARED Mask1D.cpp Mask1D.h Mask1D.hxx)
 ADD_LIBRARY(structuretensor SHARED StructureTensor.cpp StructureTensor.h StructureTensor.hxx)
 ADD_LIBRARY(steeredderivative SHARED SteeredDerivative.cpp SteeredDerivative.h SteeredDerivative.hxx)
+ADD_LIBRARY(sequencegenerator SHARED SequenceGenerator.cpp SequenceGenerator.h SequenceGenerator.hxx)
+ADD_LIBRARY(warp SHARED Warp.cpp Warp.h Warp.hxx)
 
 SET(Plugins
 	channelconverter
@@ -42,6 +44,8 @@ SET(Plugins
 	mask1d
 	structuretensor
 	steeredderivative
+	sequencegenerator
+	warp
 )
 SET(Plugins_CImg
 	${Plugins}
