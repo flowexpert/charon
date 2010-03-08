@@ -45,10 +45,6 @@
 template <typename T>
 class flowcomparator_DECLDIR FlowComparator :
 		public TemplatedParameteredObject<T> {
-private:
-	/// mean of endpoint error
-	double _meanEndpointError;
-
 public:
 	/// flow result from some flow estimation 
 	InputSlot < cimg_library::CImgList<T> > result;

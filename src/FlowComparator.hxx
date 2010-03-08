@@ -38,8 +38,6 @@ FlowComparator<T>::FlowComparator(const std::string& name) :
 		"underlaying ground truth", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(passthrough, "passthrough",
 		"result passthrough", "CImgList<T>");
-
-	_addFunction(FlowComparator<T>::getMeanEndpointError);
 }
 
 template <typename T>
@@ -49,6 +47,11 @@ void FlowComparator<T>::execute() {
 	// shared assignment, no copying
 	passthrough().assign(result(), true);
 
+	sout << "\tmean endpoint error: " << getMeanEndpointError() << std::endl;
+}
+
+template <typename T>
+double FlowComparator<T>::getMeanEndpointError() const {
 	if (!result().is_sameNXYZC(groundtruth())) {
 		std::ostringstream msg;
 		msg << __FILE__ << ":" << __LINE__ << "\n\t";
@@ -69,21 +72,13 @@ void FlowComparator<T>::execute() {
 	}
 
 	// perform calculations
-	_meanEndpointError = 0;
 	cimg_library::CImg<T> endpointError(result()[0]);
 	endpointError.fill(T(0));
 	cimglist_for(result(), kk) {
 		endpointError += (result()[kk]-groundtruth()[kk]).sqr();
 	}
 	endpointError.sqrt();
-	_meanEndpointError = endpointError.mean();
-
-	sout << "\tmean endpoint error: " << _meanEndpointError << std::endl;
-}
-
-template <typename T>
-double FlowComparator<T>::getMeanEndpointError() const {
-	return _meanEndpointError;
+	return endpointError.mean();;
 }
 
 #endif /* _FLOWCOMPARATOR_HXX_ */
