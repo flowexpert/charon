@@ -61,9 +61,7 @@ int main() {
 	assert(std::abs(diff.mean()) < std::numeric_limits<float>::min());
 
 	// warp back
-	cimglist_for(flow,k)
-		flow[k] = -flow[k];
-	ImgTool::warp2D(warped, flow, warped, interpolator);
+	ImgTool::warp2D(warped, flow, warped, interpolator, -1.0);
 	delete interpolator;
 	disp.display(warped);
 	disp.wait(wTime);
