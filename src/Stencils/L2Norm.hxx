@@ -178,6 +178,16 @@ void L2Norm<T>::updateStencil(
 	}
 }
 
+template <class T>
+void L2Norm<T>::updateEnergy(
+		const unsigned int x,
+		const unsigned int y,
+		const unsigned int z,
+		const unsigned int t,
+		const unsigned int v,
+		const cimg_library::CImgList<T> flowList){
+
+};
 
 template <class T>
 cimg_library::CImg<T> L2Norm<T>::apply(

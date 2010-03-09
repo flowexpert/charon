@@ -59,6 +59,11 @@ const T& Stencil<T>::getRhs() const {
 }
 
 template <class T>
+const double Stencil<T>::getEnergy() const {
+	return _energy;
+}
+
+template <class T>
 const std::set<std::string>& Stencil<T>::getUnknowns() const {
 	return _unknowns;
 }

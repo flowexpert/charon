@@ -83,14 +83,25 @@ void MotionModels::LocalConstant<T>::compute(
 	rhs -= values[3];            // -I_t (I_u)
 }
 
+
 template<class T>
-void MotionModels::LocalConstant<T>::computeD(
+void MotionModels::LocalConstant<T>::computeEnergy(
 		const int xs, const int ys, const int zs, const int t, const int v,
-		std::map<std::string, T>& termD, T& rhsD,
-		const std::string& /*unknown*/)
+		const cimg_library::CImgList<T> flowList, double& energy)
 {
-	compute(xs, ys, zs, t, v, termD, rhsD, "");
+	if(!dz.connected())
+		assert(zs == 0u); // 2D only
+
+	T values[4u] = {
+		this->dx()(v, xs, ys, zs, t),                          // I_x
+		this->dy()(v, xs, ys, zs, t),                          // I_y
+		dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0),  // I_z
+		this->dt()(v, xs, ys, zs, t)                           // I_t
+	};
+
+	energy += pow( double(values[0]*flowList[0](x,y,z,t) + values[1]*flowList[1](x,y,z,t)+values[2]*flowList[1](x,y,z,t)+values[3]) ,2);
 }
+
 
 template<class T>
 MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :

@@ -91,8 +91,7 @@ void Gbcce<T>::updateStencil(
 	//std::map<std::string, T> term;
 	//std::map<std::string, T> termD;
 	this->_rhs = 0;
-	this->_rhsD = 0;
-
+	
 	// collect unknowns
 	const std::set<std::string>& mUnknowns = motionIn()->getUnknowns();
 	const std::set<std::string>& bUnknowns = brightnessIn()->getUnknowns();
@@ -105,13 +104,9 @@ void Gbcce<T>::updateStencil(
 	for (unkIt = allUnknowns.begin(); unkIt != allUnknowns.end(); unkIt++)
 		this->_term[*unkIt] = T(0);
 
-	// compute term for D'
+	// compute term 
 	this->brightnessIn()->compute(x,y,z,t,v,this->_term,this->_rhs,unknown);
 	this->motionIn()->compute(x,y,z,t,v,this->_term,this->_rhs,unknown);
-
-	// compute term for D
-	this->brightnessIn()->computeD(x,y,z,t,v,this->_termD,this->_rhsD,unknown);
-	this->motionIn()->computeD(x,y,z,t,v,this->_termD,this->_rhsD,unknown);
 
 	// and fill into substencils
 	typename std::map<std::string,T>::iterator termIt;
@@ -122,6 +117,39 @@ void Gbcce<T>::updateStencil(
 	this->_rhs *= this->lambda();
 }
 
+
+
+
+template <class T>
+void Gbcce<T>::updateEnergy(
+		const unsigned int x,
+		const unsigned int y,
+		const unsigned int z,
+		const unsigned int t,
+		const unsigned int v,
+		const cimg_library::CImgList<T> flowList
+		) {
+	//std::map<std::string, T> term;
+	//std::map<std::string, T> termD;
+	this->_rhs = 0;
+	
+	// collect unknowns
+	const std::set<std::string>& mUnknowns = motionIn()->getUnknowns();
+	const std::set<std::string>& bUnknowns = brightnessIn()->getUnknowns();
+	std::set<std::string> allUnknowns;
+	allUnknowns.insert(bUnknowns.begin(), bUnknowns.end());
+	allUnknowns.insert(mUnknowns.begin(), mUnknowns.end());
+
+	// initialize term for all unknowns
+	std::set<std::string>::const_iterator unkIt;
+	for (unkIt = allUnknowns.begin(); unkIt != allUnknowns.end(); unkIt++)
+		this->_term[*unkIt] = T(0);
+
+	// compute energy 
+	this->brightnessIn()->computeEnergy(x,y,z,t,v,flowList, this->_energy);
+	this->motionIn()->computeEnergy(x,y,z,t,v,flowList, this->_energy);
+
+}
 
 
 //not yet implemented

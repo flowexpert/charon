@@ -95,6 +95,9 @@ protected:
 	std::map<std::string, T> _term;
 	std::map<std::string, T> _termD;
 
+	/// calculated energy of the stencil
+	double _energy;
+
 public:
 	/// Lambda coefficient of the stencil.
 	Parameter<T> lambda;
@@ -132,6 +135,15 @@ public:
 			const unsigned int t=0,
 			const unsigned int v=0) = 0;
 
+	//updates the energy
+		virtual void updateEnergy(
+		const unsigned int x,
+		const unsigned int y,
+		const unsigned int z,
+		const unsigned int t,
+		const unsigned int v,
+		const cimg_library::CImgList<T> flowList)=0;
+
 
 	/// Getter function for the SubStencils of the stencil.
 	/** @return reference to the map of SubStencils.
@@ -144,8 +156,8 @@ public:
 	/// Getter function for the right hand side of D.
 	const T& getRhsD() const;
 
-	/// Getter function for the term of D'.
-	const std::map<std::string, T>& getTerm() const;
+	/// Getter function for the energy.
+	const double getEnergy() const;
 
 	/// Getter function for the term of D.
 	const std::map<std::string, T>& getTermD() const;

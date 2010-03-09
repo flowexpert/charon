@@ -49,10 +49,14 @@ public:
 	RobustnessTerm();
 
 	/// standard set method for parameter e
-	void setE(double e);
+	void setE(double e)
+	{this->e = e;};
 
 	/// standard get function for parameter e
-	double getE() const;
+	double getE() const
+		{
+	return this->e;
+		};
 
 	/// calculates robustness term, Psi
 	virtual double Psi(double s) const;

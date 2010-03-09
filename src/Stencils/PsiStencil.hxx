@@ -29,6 +29,8 @@
 
 #include "../Stencil.hxx"
 #include "PsiStencil.h"
+#include "../RobustnessTerm.h"
+//#include "../RobustnessTerm.hxx"
 
 template <class T>
 PsiStencil<T>::PsiStencil(const std::string& name) :
@@ -57,43 +59,34 @@ void PsiStencil<T>::updateStencil(
 		const unsigned int z,
 		const unsigned int t,
 		const unsigned int v) {
-	std::map<std::string, T> newTerm;
 	
-	this->_rhs = 0;
-	T _rhsD = 0;
-	T _newRhs = 0;
-
-	//update stencilIn
-	stencilIn()->updateStencil(unknown, x, y, z, t, v);
-
-	// get term and rhs for D'
-	const std::map<std::string, T>& term = stencilIn()->getTerm();
-	this->_rhs = stencilIn()->getRhs();
-	// get term and rhs for D
-	const std::map<std::string, T>& termD = stencilIn()->getTermD();
-	_rhsD = stencilIn()->getRhsD();
 
 	// get values of unknowns u,v,w
 	const cimg_library::CImgList<T>& flowList = this->flowListIn();
-	
-	// calculate D
-	// TODO: handle 2D case (no "a3" present!)
-	T _D = pow((termD.find("a1")->second * flowList[0](x,y,z,t) +
-				termD.find("a2")->second * flowList[1](x,y,z,t) +
-				termD.find("a3")->second * flowList[2](x,y,z,t) +
-				this->_rhsD), 2 );
-	T _dD = term.find("a1")->second * flowList[0](x,y,z,t) +
-			term.find("a2")->second * flowList[1](x,y,z,t) +
-			term.find("a3")->second * flowList[2](x,y,z,t) +
-			this->_rhs;
-	
 
+	// update stencil of stencilIn
+	stencilIn()->updateStencil(unknown, x, y, z, t, v);
+	// update energy of stencilIn
+	stencilIn()->updateEnergy(x, y, z, t, v, flowList);
+
+
+	this->_rhs = stencilIn()->getRhs();
+	this->_unknowns = stencilIn()->getUnknowns();
+	this->lambda = stencilIn()->lambda;
+
+	// get subStencils
+	_subStencils = stencilIn()->get();
+	
 	// set parameter for robustness term
 	robustnessTermIn()->setE(0.001);
-	// calculate Psi'(D)*D' and return as stencilOut
-	// ATTENTION: out() is a pointer to the stencil. This should always
-	// be equal to "this". Never assign anything else to this->out()!
-	// this->out() = DPsi(_D,0.002)*_dD;
+
+	double factor = robustnessTermIn()->DPsi(stencilIn()->getEnergy(),0.002);
+
+	_rhs*=factor;
+	
+	// calculate Psi'(D)*D' 
+	this->_subStencils[unknown].data = _subStencils[unknown].data * factor;
+
 }
 
 

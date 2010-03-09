@@ -57,14 +57,12 @@ void BrightnessModels::Constant<T>::compute(
 }
 
 template<class T>
-void BrightnessModels::Constant<T>::computeD(
-		const int , const int , const int , const int , const int ,
-		std::map<std::string, T>& , T&,
-		const std::string&)
+void BrightnessModels::Constant<T>::computeEnergy(
+		const int xs, const int ys, const int zs, const int t, const int v,
+		const cimg_library::CImgList<T> flowList, double& energy)
 {
 	// no brightness change
 }
-
 
 template<class T>
 void BrightnessModels::Constant<T>::apply(const Pixel<T> & inPixel,

@@ -25,8 +25,7 @@
 
 #include "RobustnessTerm.h"
 
-RobustnessTerm::RobustnessTerm(){
-}
+//RobustnessTerm::RobustnessTerm(){}
 
 
 void RobustnessTerm::setE(double e) {

@@ -50,8 +50,7 @@ public:
 
 private:
 
-	/// robustness term
-	RobustnessTerm psi;
+
 };
 
 #endif // _SAMPLEITERATIVESOLVER_H_

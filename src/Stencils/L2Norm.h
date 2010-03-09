@@ -73,6 +73,15 @@ public:
 			const unsigned int t=0,
 			const unsigned int v=0);
 
+	//updates the energy
+		virtual void updateEnergy(
+		const unsigned int x,
+		const unsigned int y,
+		const unsigned int z,
+		const unsigned int t,
+		const unsigned int v,
+		const cimg_library::CImgList<T> flowList);
+
 	virtual cimg_library::CImg<T> apply(
 			const cimg_library::CImgList<T>& seq,
 			const unsigned int frame) const;
