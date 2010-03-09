@@ -87,26 +87,10 @@ template<class T>
 void MotionModels::LocalConstant<T>::computeD(
 		const int xs, const int ys, const int zs, const int t, const int v,
 		std::map<std::string, T>& termD, T& rhsD,
-		const std::string& unknown)
+		const std::string& /*unknown*/)
 {
-	if(!dz.connected())
-		assert(zs == 0u); // 2D only
-
-	T values[4u] = {
-		this->dx()(v, xs, ys, zs, t),                          // I_x
-		this->dy()(v, xs, ys, zs, t),                          // I_y
-		dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0),  // I_z
-		this->dt()(v, xs, ys, zs, t)                           // I_t
-	};
-	                             //    (optional - if unknown set)
-	termD["a1"] += values[0];     // +I_x (I_u)
-	termD["a2"] += values[1];     // +I_y (I_u)
-	if (dz.connected())
-		termD["a3"] += values[2]; // +I_z (I_u)
-	rhsD -= values[3];            // -I_t (I_u)
+	compute(xs, ys, zs, t, v, termD, rhsD, "");
 }
-
-
 
 template<class T>
 MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
