@@ -36,7 +36,7 @@
 #endif
 
 #include <math.h>
-#include "ParameteredObject.h"
+
 /// class which compute the bcce-terms
 
 class robustnessterm_DECLDIR RobustnessTerm
