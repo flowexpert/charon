@@ -44,10 +44,9 @@ class robustnessterm_DECLDIR RobustnessTerm
 protected:
 	double e;
 
+public:
 	/// constructor for derived classes
 	RobustnessTerm();
-
-public:
 
 	/// standard set method for parameter e
 	void setE(double e);
@@ -56,10 +55,10 @@ public:
 	double getE() const;
 
 	/// calculates robustness term, Psi
-	virtual const double Psi(double s) const;
+	virtual double Psi(double s) const;
 
 	/// calculates derivative of robustness term, DPsi
-	virtual const double DPsi(double s, double ds) const;
+	virtual double DPsi(double s, double ds) const;
 };
 
 #endif /* ROBUSTNESSTERM_H_ */

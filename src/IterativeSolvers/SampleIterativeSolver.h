@@ -39,8 +39,8 @@
 
 /// implementation of an iterative solver
 template <typename T>
-class sampleiterativesolver_DECLDIR SampleIterativeSolver : public IterativeSolver<T>
-{
+class sampleiterativesolver_DECLDIR SampleIterativeSolver :
+	public IterativeSolver<T> {
 public:
 	/// default constructor
 	SampleIterativeSolver(const std::string& name = "" /**[in] instance name*/);

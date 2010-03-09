@@ -27,10 +27,15 @@
 #include "Gbcce.h"
 
 template <class T>
-Gbcce<T>::Gbcce(const std::string& name) : 
-		Stencil<T>("GBCCE", name) {
-	this->_addInputSlot(brightnessIn,"brightnessmodel","Brightness Model","BrightnessModel<T>");
-	this->_addInputSlot(motionIn,"motionmodel","Motion Model","MotionModel<T>");
+Gbcce<T>::Gbcce(const std::string& name) :  Stencil<T>("GBCCE", name,
+			"Stencil modeling general brightness change constraint.<br>"
+			"General means that it can be customized using different "
+			"brightness and motion models.")
+{
+	this->_addInputSlot(brightnessIn, "brightnessmodel",
+		"Brightness Model","BrightnessModel<T>");
+	this->_addInputSlot(motionIn, "motionmodel",
+		"Motion Model", "MotionModel<T>");
 }
 
 template <class T>
@@ -98,19 +103,19 @@ void Gbcce<T>::updateStencil(
 	// initialize term for all unknowns
 	std::set<std::string>::const_iterator unkIt;
 	for (unkIt = allUnknowns.begin(); unkIt != allUnknowns.end(); unkIt++)
-		term[*unkIt] = T(0);
+		this->_term[*unkIt] = T(0);
 
 	// compute term for D'
-	this->brightnessIn()->compute(x, y, z, t, v, term, this->_rhs, unknown);
-	this->motionIn()->compute(x, y, z, t, v, term, this->_rhs, unknown);
+	this->brightnessIn()->compute(x,y,z,t,v,this->_term,this->_rhs,unknown);
+	this->motionIn()->compute(x,y,z,t,v,this->_term,this->_rhs,unknown);
 
 	// compute term for D
-	this->brightnessIn()->computeD(x, y, z, t, v, termD, this->_rhsD, unknown);
-	this->motionIn()->computeD(x, y, z, t, v, termD, this->_rhsD, unknown);
+	this->brightnessIn()->computeD(x,y,z,t,v,this->_termD,this->_rhsD,unknown);
+	this->motionIn()->computeD(x,y,z,t,v,this->_termD,this->_rhsD,unknown);
 
 	// and fill into substencils
 	typename std::map<std::string,T>::iterator termIt;
-	for(termIt=term.begin();termIt!=term.end();termIt++) {
+	for(termIt=this->_term.begin();termIt!=this->_term.end();termIt++) {
 		const T val = termIt->second * this->lambda();
 		this->_subStencils[termIt->first].data(0,0) = val;
 	}

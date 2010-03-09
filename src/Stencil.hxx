@@ -30,10 +30,13 @@
 #include <ParameteredObject.hxx>
 
 template <class T>
-Stencil<T>::Stencil(const std::string& classname, const std::string& name) : 
-		TemplatedParameteredObject<T>(classname,name,
-				"discretizes partial differential equation terms or defines "
-				"derivatives filters for images"),
+Stencil<T>::Stencil(
+		const std::string& classname, const std::string& name,
+		const std::string& doc) :
+		TemplatedParameteredObject<T>(classname,name,doc +
+				"<br><br>This class is derived from class Stencil.<br>"
+				"A stencil discretizes partial differential equation terms "
+				"or defines derivatives filters for images"),
 		_rhs(0)
 {
 	this->_addOutputSlot(out,"this","Pointer to itself","Stencil<T>*");

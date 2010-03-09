@@ -31,13 +31,16 @@
 #include "PsiStencil.h"
 
 template <class T>
-PsiStencil<T>::PsiStencil(const std::string& name) : 
-		Stencil<T>("PSISTENCIL", name) {
-	
-	this->_addInputSlot(stencilIn,"stencilIn","Input slot for stencil","Stencil<T>"); 
-	this->_addOutputSlot(flowListIn,"flowListIn","CImgList containing the flow","CImgList<T>");
-	this->_addInputSlot(robustnessTermIn,"robustnessTerm","Input slot for the Robustness Term","RobustnessTerm"); 
-	//	output slot is derived from stencil:	this->_addOutputSlot(out,"this","Pointer to itself","Stencil<T>*");
+PsiStencil<T>::PsiStencil(const std::string& name) :
+		Stencil<T>("PsiStencil", name,
+			"Wrapper stencil applying robustness terms")
+{
+	this->_addInputSlot(stencilIn, "stencilIn",
+			"Input slot for stencil","Stencil<T>*");
+	this->_addOutputSlot(flowListIn, "flowListIn",
+			"CImgList containing the flow","CImgList<T>");
+	this->_addInputSlot(robustnessTermIn, "robustnessTerm",
+			"Input slot for the Robustness Term", "RobustnessTerm*");
 }
 
 template <class T>
@@ -54,8 +57,6 @@ void PsiStencil<T>::updateStencil(
 		const unsigned int z,
 		const unsigned int t,
 		const unsigned int v) {
-	std::map<std::string, T> term;
-	std::map<std::string, T> termD;
 	std::map<std::string, T> newTerm;
 	
 	this->_rhs = 0;
@@ -66,33 +67,41 @@ void PsiStencil<T>::updateStencil(
 	stencilIn()->updateStencil(unknown, x, y, z, t, v);
 
 	// get term and rhs for D'
-	const std::set<std::string, T>& term = stencilIn()->getTerm();
-	_rhs = stencilIn()->getRhs();
+	const std::map<std::string, T>& term = stencilIn()->getTerm();
+	this->_rhs = stencilIn()->getRhs();
 	// get term and rhs for D
-	const std::set<std::string, T>& termD = stencilIn()->getTermD();
+	const std::map<std::string, T>& termD = stencilIn()->getTermD();
 	_rhsD = stencilIn()->getRhsD();
 
 	// get values of unknowns u,v,w
-	cimg_library::CImgList<T>& flowList = this->flowListIn();
+	const cimg_library::CImgList<T>& flowList = this->flowListIn();
 	
-	//calculate D
-	T _D = pow( (termD["a1"]* flowList[0](x,y,z,t)+ termD["a2"]* flowList[1](x,y,z,t)+ termD["a3"]* flowList[2](x,y,z,t)+rhsD), 2 );
-	T _dD = term["a1"]* flowList[0](x,y,z,t)+ term["a2"]* flowList[1](x,y,z,t)+ term["a3"]* flowList[2](x,y,z,t)+rhs;
+	// calculate D
+	// TODO: handle 2D case (no "a3" present!)
+	T _D = pow((termD.find("a1")->second * flowList[0](x,y,z,t) +
+				termD.find("a2")->second * flowList[1](x,y,z,t) +
+				termD.find("a3")->second * flowList[2](x,y,z,t) +
+				this->_rhsD), 2 );
+	T _dD = term.find("a1")->second * flowList[0](x,y,z,t) +
+			term.find("a2")->second * flowList[1](x,y,z,t) +
+			term.find("a3")->second * flowList[2](x,y,z,t) +
+			this->_rhs;
 	
 
 	// set parameter for robustness term
-
-	robustnessTerm()->setE(0.001);
+	robustnessTermIn()->setE(0.001);
 	// calculate Psi'(D)*D' and return as stencilOut
-	out() -> DPsisi(_D,0.002)*_dD;
-
+	// ATTENTION: out() is a pointer to the stencil. This should always
+	// be equal to "this". Never assign anything else to this->out()!
+	// this->out() = DPsi(_D,0.002)*_dD;
 }
 
 
 //not yet implemented
 template <class T>
-cimg_library::CImg<T> PsiStencil<T>::apply(const cimg_library::CImgList<T>& seq,
-                                      const unsigned int frame) const {
+cimg_library::CImg<T> PsiStencil<T>::apply(
+		const cimg_library::CImgList<T>& seq,
+		const unsigned int frame) const {
 	return seq[frame];
 }
 
