@@ -15,25 +15,25 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file SequenceGenerator.h
- *  Declaration of the parameter class SequenceGenerator.
+/** \file Images2Sequence.h
+ *  Declaration of the parameter class Images2Sequence.
  *  \author Cornelius Ratsch
  *  \date 04.03.2010
  */
 
-#ifndef _SEQUENCEGENERATOR_H_
-#define _SEQUENCEGENERATOR_H_
+#ifndef _IMAGES2SEQUENCE_H_
+#define _IMAGES2SEQUENCE_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef sequencegenerator_EXPORTS
+#ifdef images2sequence_EXPORTS
 /// Visual C++ specific code
-#define sequencegenerator_DECLDIR __declspec(dllexport)
+#define images2sequence_DECLDIR __declspec(dllexport)
 #else
-#define sequencegenerator_DECLDIR __declspec(dllimport)
+#define images2sequence_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 /// Not needed with GCC
-#define sequencegenerator_DECLDIR
+#define images2sequence_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
@@ -41,26 +41,24 @@
 
 /// Generates an image sequence out of multiple images
 template <typename T>
-class sequencegenerator_DECLDIR SequenceGenerator :
+class images2sequence_DECLDIR Images2Sequence :
 		public TemplatedParameteredObject<T> {
 public:
-	
-
 	/// One or more images 
 	InputSlot < cimg_library::CImgList<T> > images;
 	/// image sequence containing every input image 
 	OutputSlot < cimg_library::CImgList<T> > image_sequence;
 	
 
-	/// create a new SequenceGenerator object
+	/// create a new Images2Sequence object
 	/// \param name          Instance name
-	SequenceGenerator(const std::string& name);
+	Images2Sequence(const std::string& name = "");
 
 	/// Update object.
 	virtual void execute();
 };
 
-#endif // _SEQUENCEGENERATOR_H_
+#endif // _IMAGES2SEQUENCE_H_
 
 
 

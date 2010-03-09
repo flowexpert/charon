@@ -15,19 +15,19 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file SequenceGenerator.cpp
- *  This file is needed for class SequenceGenerator to work as a plugin.
+/** \file Images2Sequence.cpp
+ *  This file is needed for class Images2Sequence to work as a plugin.
  *  \author Cornelius Ratsch
  *  \date 04.03.2010
  */
 
 ///Class name of the plugin
-#define TYPE SequenceGenerator
+#define TYPE Images2Sequence
 
-#include "SequenceGenerator.hxx"
+#include "Images2Sequence.hxx"
 
 ///Creates an instance of the plugin
-extern "C" sequencegenerator_DECLDIR ParameteredObject*
+extern "C" images2sequence_DECLDIR ParameteredObject*
 		create(const std::string & name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
@@ -46,7 +46,7 @@ extern "C" sequencegenerator_DECLDIR ParameteredObject*
 }
 
 ///Deletes an instance of the plugin
-extern "C" sequencegenerator_DECLDIR void destroy(ParameteredObject * b) {
+extern "C" images2sequence_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
 
