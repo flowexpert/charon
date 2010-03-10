@@ -78,24 +78,24 @@ void MotionModels::LocalConstant<T>::compute(
 
 template<class T>
 void MotionModels::LocalConstant<T>::computeEnergy(
-		const int xs, const int ys, const int zs, const int t, const int v,
+		const int xs, const int ys, const int zs, const int ts, const int vs,
 		const cimg_library::CImgList<T> flowList, double& energy)
 {
 	if(!dz.connected())
 		assert(zs == 0u); // 2D only
 
 	// derivatives
-	const T& iX = this->dx()(v, xs, ys, zs, t);
-	const T& iY = this->dy()(v, xs, ys, zs, t);
-	const T& iZ = dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0);
-	const T& iT = this->dt()(v, xs, ys, zs, t);
+	const T& iX = this->dx()(vs, xs, ys, zs, ts);
+	const T& iY = this->dy()(vs, xs, ys, zs, ts);
+	const T& iZ = dz.connected() ? this->dz()(vs, xs, ys, zs, ts) : T(0);
+	const T& iT = this->dt()(vs, xs, ys, zs, ts);
 
 	// flow components
-	const T& u = flowList[0](xs,ys,zs,t);
-	const T& v = flowList[1](xs,ys,zs,t);
-	const T& w = dz.connected() ? flowlist[2](xs,ys,zs,t) : T(0);
+	const T& u = flowList[0](xs,ys,zs,ts);
+	const T& v = flowList[1](xs,ys,zs,ts);
+	const T& w = dz.connected() ? flowList[2](xs,ys,zs,ts) : T(0);
 
-	energy += pow(double(iX*u+iY*v+iZ+w-iT,2));
+	energy += pow(double(iX*u+iY*v+iZ+w-iT),2.);
 }
 
 
