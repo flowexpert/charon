@@ -44,20 +44,20 @@ void MotionModels::LocalConstant<T>::compute(
 	if(!dz.connected())
 		assert(zs == 0u); // 2D only
 
-	T values[4u] = {
-		this->dx()(v, xs, ys, zs, t),                          // I_x
-		this->dy()(v, xs, ys, zs, t),                          // I_y
-		dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0),  // I_z
-		this->dt()(v, xs, ys, zs, t)                           // I_t
-	};
+	const T& iX = this->dx()(v, xs, ys, zs, t);
+	const T& iY = this->dy()(v, xs, ys, zs, t);
+	const T& iZ = dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0);
+	const T& iT = this->dt()(v, xs, ys, zs, t);
+	T factor = T(1);
+
+	// multiply with derivative wrt unkown, if any unknown is given
 	if (unknown.length()) {
-		T factor = T(1);
 		if (unknown == "a1")
-			factor = values[0];
+			factor = iX;
 		else if (unknown == "a2")
-			factor = values[1];
+			factor = iY;
 		else if (dz.connected() && unknown == "a3")
-			factor = values[2];
+			factor = iZ;
 		else {
 			std::ostringstream msg;
 			msg << __FILE__ << ":" << __LINE__ << std::endl;
@@ -65,14 +65,14 @@ void MotionModels::LocalConstant<T>::compute(
 			msg << "\tGiven unknown: \"" << unknown << "\"";
 			throw std::out_of_range(msg.str().c_str());
 		}
-		for(unsigned int i=0; i<4u; i++)
-			values[i] *= factor;
-	}                            //    (optional - if unknown set)
-	term["a1"] += values[0];     // +I_x (I_u)
-	term["a2"] += values[1];     // +I_y (I_u)
+	}
+
+	// calculate values to return
+	term["a1"] += factor * iX;
+	term["a2"] += factor * iY;
 	if (dz.connected())
-		term["a3"] += values[2]; // +I_z (I_u)
-	rhs -= values[3];            // -I_t (I_u)
+		term["a3"] += factor * iZ;
+	rhs -= factor * iT;
 }
 
 
