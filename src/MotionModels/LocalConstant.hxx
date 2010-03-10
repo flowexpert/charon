@@ -25,14 +25,6 @@
 
 #include "LocalConstant.h"
 
-/*
- void MotionModels::LocalConstant::calculateDerivatives()
- {
- this->deriv()->getX((this->img),dx);
- this->deriv()->getY((this->img),dy);
- this->deriv()->getZ((this->img),dt);
- } //*/
-
 template<class T>
 std::set<std::string>& MotionModels::LocalConstant<T>::getUnknowns()
 {
@@ -92,14 +84,18 @@ void MotionModels::LocalConstant<T>::computeEnergy(
 	if(!dz.connected())
 		assert(zs == 0u); // 2D only
 
-	T values[4u] = {
-		this->dx()(v, xs, ys, zs, t),                          // I_x
-		this->dy()(v, xs, ys, zs, t),                          // I_y
-		dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0),  // I_z
-		this->dt()(v, xs, ys, zs, t)                           // I_t
-	};
+	// derivatives
+	const T& iX = this->dx()(v, xs, ys, zs, t);
+	const T& iY = this->dy()(v, xs, ys, zs, t);
+	const T& iZ = dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0);
+	const T& iT = this->dt()(v, xs, ys, zs, t);
 
-	energy += pow( double(values[0]*flowList[0](xs,ys,zs,t) + values[1]*flowList[1](xs,ys,zs,t)+values[2]*flowList[1](xs,ys,zs,t)+values[3]) ,2);
+	// flow components
+	const T& u = flowList[0](xs,ys,zs,t);
+	const T& v = flowList[1](xs,ys,zs,t);
+	const T& w = dz.connected() ? flowlist[2](xs,ys,zs,t) : T(0);
+
+	energy += pow(double(iX*u+iY*v+iZ+w-iT,2));
 }
 
 
