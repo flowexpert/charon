@@ -31,6 +31,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QGraphicsItem>
+#include <QMessageBox>
 
 #include <graphviz/gvc.h>
 
@@ -128,7 +129,7 @@ void GraphView::mousePressEvent(QMouseEvent* mouseEvent) {
 
 void GraphView::save() const {
     QString fileName = QFileDialog::getSaveFileName(0, tr("Save flowchart"),
-            QDir::currentPath(), tr("graphic files (*.png *.svg)"));
+            QDir::currentPath(), tr("graphic files (*.png *.svg *.pdf)"));
 
     if(fileName.isEmpty())
         return;
@@ -139,12 +140,26 @@ void GraphView::save() const {
 
     // render graph and save it to the selected file
     gvLayout(_gvc, _builder->graph(), const_cast<char*> ("dot"));
-    if (fileName.indexOf("png") > 0)
+	QStringList fileNameSplit = fileName.split(".");
+	QString extension = fileNameSplit.last();
+	extension.toLower();
+	bool ok = true;
+    if (extension == "png")
         gvRenderFilename(_gvc, _builder->graph(), const_cast<char*>("png"),
                 const_cast<char*> (fileName.toAscii().constData()));
-    else
+    else if (extension == "svg")
         gvRenderFilename(_gvc, _builder->graph(), const_cast<char*>("svg"),
                 const_cast<char*> (fileName.toAscii().constData()));
+	else if (extension == "pdf")
+        gvRenderFilename(_gvc, _builder->graph(), const_cast<char*>("pdf"),
+                const_cast<char*> (fileName.toAscii().constData()));
+	else {
+		ok = false;
+		QMessageBox::warning(
+				0, tr("Error generating graphics file"),
+				tr("Unknown file extension: %1<br>"
+					"Supported: svg, png, pdf").arg(extension));
+	}
 
     gvFreeLayout(_gvc, _builder->graph());
 
@@ -152,5 +167,6 @@ void GraphView::save() const {
     _model->setPrefix(prefOld);
 
     // status message
-    emit statusMessage(tr("Saved graphic to file %1").arg(fileName), 5000);
+	emit statusMessage(ok ? tr("Saved graphic to file %1").arg(fileName) :
+		tr("Error generating file %1").arg(fileName), 5000);
 }
