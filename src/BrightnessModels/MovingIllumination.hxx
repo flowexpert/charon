@@ -78,6 +78,16 @@ void BrightnessModels::MovingIllumination<T>::Functor::operator ()(
 	}
 }
 
+
+
+template<class T>
+void BrightnessModels::MovingIllumination<T>::computeEnergy(
+		const int xs, const int ys, const int zs, const int t, const int v,
+		const cimg_library::CImgList<T>& parameterList, double& energy)
+{
+
+}
+
 template<class T>
 void BrightnessModels::MovingIllumination<T>::apply(const Pixel<T> & inPixel,
 		const std::vector<IncrementorParameter<T>*> & modifier,

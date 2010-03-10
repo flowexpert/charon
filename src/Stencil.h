@@ -142,7 +142,7 @@ public:
 		const unsigned int z,
 		const unsigned int t,
 		const unsigned int v,
-		const cimg_library::CImgList<T> flowList)=0;
+		const cimg_library::CImgList<T>& flowList)=0;
 
 
 	/// Getter function for the SubStencils of the stencil.

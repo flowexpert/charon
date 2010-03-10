@@ -37,7 +37,6 @@
 
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
-#include "RobustnessTerm.h"
 #include "Interpolator.h"
 
 /// class used for iterative solving
@@ -68,8 +67,6 @@ public:
 	InputSlot<cimg_library::CImgList<T> > flowListIn;
 	/// interpolator used for warping
 	InputSlot<Interpolator<T>*> interpolator;
-	/// robustness term
-	InputSlot<RobustnessTerm> robustnessTerm;
 	//  \}
 
 	/// \name result

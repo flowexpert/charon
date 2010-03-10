@@ -126,6 +126,18 @@ void MotionModels::LocalPlanarity<T>::compute(const int xs, const int ys,
 	}
 }
 
+
+
+
+template<class T>
+void MotionModels::LocalPlanarity<T>::computeEnergy(
+				const int xs, const int ys, const int zs, const int t, const int v,
+				const cimg_library::CImgList<T>& parameterList, double& energy)
+ {
+ }
+
+
+
 template<class T>
 MotionModels::LocalPlanarity<T>::LocalPlanarity(const std::string& name) :
 	MotionModel<T>::MotionModel("motionmodels_localplanarity", name), flowfunc()

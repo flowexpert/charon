@@ -59,7 +59,7 @@ void BrightnessModels::Constant<T>::compute(
 template<class T>
 void BrightnessModels::Constant<T>::computeEnergy(
 		const int xs, const int ys, const int zs, const int t, const int v,
-		const cimg_library::CImgList<T> flowList, double& energy)
+		const cimg_library::CImgList<T>& parameterList, double& energy)
 {
 	// no brightness change
 }

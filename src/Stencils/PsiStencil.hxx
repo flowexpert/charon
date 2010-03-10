@@ -29,8 +29,8 @@
 
 #include "../Stencil.hxx"
 #include "PsiStencil.h"
-#include "../RobustnessTerm.h"
-//#include "../RobustnessTerm.hxx"
+#include <ParameteredObject.hxx>
+
 
 template <class T>
 PsiStencil<T>::PsiStencil(const std::string& name) :
@@ -39,10 +39,9 @@ PsiStencil<T>::PsiStencil(const std::string& name) :
 {
 	this->_addInputSlot(stencilIn, "stencilIn",
 			"Input slot for stencil","Stencil<T>*");
-	this->_addOutputSlot(flowListIn, "flowListIn",
-			"CImgList containing the flow","CImgList<T>");
-	this->_addInputSlot(robustnessTermIn, "robustnessTerm",
-			"Input slot for the Robustness Term", "RobustnessTerm*");
+	this->_addParameter(epsilon,"epsilon","parameter of the Robustness Term",0.001,"double");
+	this->_addOutputSlot(parameterListIn, "parameterListIn",
+			"CImgList containing the parameters","CImgList<T>");
 }
 
 template <class T>
@@ -60,15 +59,14 @@ void PsiStencil<T>::updateStencil(
 		const unsigned int t,
 		const unsigned int v) {
 	
-
-	// get values of unknowns u,v,w
-	const cimg_library::CImgList<T>& flowList = this->flowListIn();
+	// get values of unknowns 
+	const cimg_library::CImgList<T>& parameterList = this->parameterListIn();
 
 	// update stencil of stencilIn
 	stencilIn()->updateStencil(unknown, x, y, z, t, v);
-	// update energy of stencilIn
-	stencilIn()->updateEnergy(x, y, z, t, v, flowList);
 
+	// update energy of stencilIn
+	stencilIn()->updateEnergy(x, y, z, t, v, parameterList);
 
 	this->_rhs = stencilIn()->getRhs();
 	this->_unknowns = stencilIn()->getUnknowns();
@@ -77,10 +75,7 @@ void PsiStencil<T>::updateStencil(
 	// get subStencils
 	this->_subStencils = stencilIn()->get();
 	
-	// set parameter for robustness term
-	robustnessTermIn()->setE(0.001);
-
-	double factor = robustnessTermIn()->DPsi(stencilIn()->getEnergy(),0.002);
+	double factor = DPsi(stencilIn()->getEnergy(),epsilon());
 
 	this->_rhs*=factor;
 	
@@ -88,6 +83,15 @@ void PsiStencil<T>::updateStencil(
 	this->_subStencils[unknown].data = this->_subStencils[unknown].data * factor;
 
 }
+
+// robustness term
+
+template <class T>
+double PsiStencil<T>::DPsi(double s, double e) const {
+	double dpsi = s/(sqrt(pow(s, 2) + pow(e, 2)));
+	return dpsi;
+}
+
 
 
 //not yet implemented

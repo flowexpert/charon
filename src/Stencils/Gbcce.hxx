@@ -118,8 +118,6 @@ void Gbcce<T>::updateStencil(
 }
 
 
-
-
 template <class T>
 void Gbcce<T>::updateEnergy(
 		const unsigned int x,
@@ -127,7 +125,7 @@ void Gbcce<T>::updateEnergy(
 		const unsigned int z,
 		const unsigned int t,
 		const unsigned int v,
-		const cimg_library::CImgList<T> flowList
+		const cimg_library::CImgList<T>& parameterList
 		) {
 	//std::map<std::string, T> term;
 	//std::map<std::string, T> termD;
@@ -146,8 +144,8 @@ void Gbcce<T>::updateEnergy(
 		this->_term[*unkIt] = T(0);
 
 	// compute energy 
-	this->brightnessIn()->computeEnergy(x,y,z,t,v,flowList, this->_energy);
-	this->motionIn()->computeEnergy(x,y,z,t,v,flowList, this->_energy);
+	this->brightnessIn()->computeEnergy(x,y,z,t,v,parameterList, this->_energy);
+	this->motionIn()->computeEnergy(x,y,z,t,v,parameterList, this->_energy);
 
 }
 

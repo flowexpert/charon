@@ -45,6 +45,15 @@ void BrightnessModels::Exponential<T>::compute(const int xs, const int ys,
 		term["k"] += -(sequence()(t, xs, ys, zs, v));
 }
 
+
+
+template<class T>
+void BrightnessModels::Exponential<T>::computeEnergy(
+				const int xs, const int ys, const int zs, const int t, const int v,
+				const cimg_library::CImgList<T>& parameterList, double& energy)
+ {
+ }
+
 template<class T>
 BrightnessModels::Exponential<T>::Exponential(const string& name) :
 	BrightnessModel<T> ("brightnessmodels_exponential", name), functor()

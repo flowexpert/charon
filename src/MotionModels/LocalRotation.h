@@ -76,8 +76,8 @@ public:
 	virtual std::set<std::string>& getUnknowns();
 
 	virtual void computeEnergy(
-		const int xs, const int ys, const int zs, const int t, const int v,
-		const cimg_library::CImgList<T> flowList, double& energy) = 0;
+				const int xs, const int ys, const int zs, const int t, const int v,
+				const cimg_library::CImgList<T>& parameterList, double& energy);
 
 	/// set the parameters of the flow functor
 	/**

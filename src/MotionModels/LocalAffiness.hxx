@@ -107,6 +107,17 @@ void LocalAffiness<T>::compute(const int xs, const int ys, const int zs,
 	}
 }
 
+
+
+
+template<class T>
+void MotionModels::LocalAffiness<T>::computeEnergy(
+				const int xs, const int ys, const int zs, const int t, const int v,
+				const cimg_library::CImgList<T>& flowList, double& energy)
+ {
+ }
+
+
 template<class T>
 LocalAffiness<T>::LocalAffiness(const string& name) :
 	MotionModel<T>::MotionModel("motionmodels_localaffiness", name), flowfunc()

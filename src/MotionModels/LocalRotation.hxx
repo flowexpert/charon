@@ -94,6 +94,15 @@ void MotionModels::LocalRotation<T>::compute(const int xs, const int ys,
 	}
 }
 
+
+template<class T>
+void MotionModels::LocalRotation<T>::computeEnergy(
+				const int xs, const int ys, const int zs, const int t, const int v,
+				const cimg_library::CImgList<T>& parameterList, double& energy)
+ {
+ }
+
+
 template<class T>
 MotionModels::LocalRotation<T>::LocalRotation(const std::string& name) :
 	MotionModel<T>::MotionModel("motionmodels_localrotation", name), flowfunc()

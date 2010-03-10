@@ -79,7 +79,7 @@ void MotionModels::LocalConstant<T>::compute(
 template<class T>
 void MotionModels::LocalConstant<T>::computeEnergy(
 		const int xs, const int ys, const int zs, const int ts, const int vs,
-		const cimg_library::CImgList<T> flowList, double& energy)
+		const cimg_library::CImgList<T>& parameterList, double &energy)
 {
 	if(!dz.connected())
 		assert(zs == 0u); // 2D only
@@ -91,9 +91,9 @@ void MotionModels::LocalConstant<T>::computeEnergy(
 	const T& iT = this->dt()(vs, xs, ys, zs, ts);
 
 	// flow components
-	const T& u = flowList[0](xs,ys,zs,ts);
-	const T& v = flowList[1](xs,ys,zs,ts);
-	const T& w = dz.connected() ? flowList[2](xs,ys,zs,ts) : T(0);
+	const T& u = parameterList[0](xs,ys,zs,ts);
+	const T& v = parameterList[1](xs,ys,zs,ts);
+	const T& w = dz.connected() ? parameterList[2](xs,ys,zs,ts) : T(0);
 
 	energy += pow(double(iX*u+iY*v+iZ+w-iT),2.);
 }

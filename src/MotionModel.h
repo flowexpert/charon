@@ -100,8 +100,8 @@ public:
 			const std::string& unknown = "") = 0;
 
 	virtual void computeEnergy(
-		const int xs, const int ys, const int zs, const int t, const int v,
-		const cimg_library::CImgList<T> flowList, double& energy) = 0;
+				const int xs, const int ys, const int zs, const int t, const int v,
+				const cimg_library::CImgList<T>& parameterList, double& energy)=0;
 
 	// returns the width of the bcce-terms
 	// @details = number of parameters of the model + 1

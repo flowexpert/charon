@@ -185,7 +185,7 @@ void L2Norm<T>::updateEnergy(
 		const unsigned int z,
 		const unsigned int t,
 		const unsigned int v,
-		const cimg_library::CImgList<T> flowList){
+		const cimg_library::CImgList<T>& flowList){
 
 };
 

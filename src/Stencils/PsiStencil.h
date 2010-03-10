@@ -38,10 +38,6 @@
 #include "../Stencil.h"
 #include "../BrightnessModel.h"
 #include "../MotionModel.h"
-#include "../RobustnessTerm.h"
-//#include "../RobustnessTerm.hxx"
-
-//class RobustnessTerm;
 
 /// PsiStencil
 /*
@@ -58,19 +54,20 @@ class psistencil_DECLDIR PsiStencil : public Stencil<T>
 		//  \{
 		/// InputSlot for the stencil.
 		InputSlot<Stencil<T>*> stencilIn;
-		/// CImgList for flow
-		InputSlot<cimg_library::CImgList<T> > flowListIn;
-		/// InputSlot for the RobustnessTerm.
-		InputSlot<RobustnessTerm*> robustnessTermIn;
+		/// Input slot for CImgList containing the parameters
+		InputSlot<cimg_library::CImgList<T> > parameterListIn;
+
+		/// parameter epsilon for robustness term
+		Parameter<double> epsilon;
 		//  \}
 
-	
 		/// default constructor
 		PsiStencil(const std::string& name = "" /**[in] instance name*/);
 
 		/// main function
 		virtual void execute();
 
+		/// updates stencil
 		virtual void updateStencil(
 				const std::string& unknown,
 				const unsigned int x=0,
@@ -79,14 +76,20 @@ class psistencil_DECLDIR PsiStencil : public Stencil<T>
 				const unsigned int t=0,
 				const unsigned int v=0);
 
-
+		/// updates energy
 		virtual void updateEnergy(
 			const unsigned int x,
 			const unsigned int y,
 			const unsigned int z,
 			const unsigned int t,
 			const unsigned int v,
-			const cimg_library::CImgList<T> flowList){};
+			const cimg_library::CImgList<T>& flowList){};
+
+
+
+		/// calculates derivative of robustness term, DPsi
+		virtual double DPsi(double s, double e) const;
+
 
 		virtual cimg_library::CImg<T> apply(
 				const cimg_library::CImgList<T>& seq,
