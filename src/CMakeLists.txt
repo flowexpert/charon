@@ -29,22 +29,9 @@ IF (ENABLE_STENCILS)
 		Substencil.h
 		Substencil.hxx
 	)
-
-	ADD_LIBRARY(psistencil SHARED
-		Stencils/PsiStencil.cpp
-		Stencils/PsiStencil.h
-		Stencils/PsiStencil.hxx
-		Stencil.h
-		Stencil.hxx
-		Point4D.h
-		Substencil.h
-		Substencil.hxx
-	)
-
 	LIST(APPEND Plugins
 		gbcce
 		l2norm
-		psistencil
 	)
 ENDIF (ENABLE_STENCILS)
 
@@ -233,10 +220,9 @@ ENDIF (ENABLE_MOTION)
 IF(ENABLE_ROBUSTNESS)
 	ADD_LIBRARY(squarerootrobustnessterm SHARED
 		RobustnessTerm.h
-		RobustnessTerm.hxx
+		RobustnessTerm.cpp
 		RobustnessTerms/SquarerootRobustnessTerm.cpp
 		RobustnessTerms/SquarerootRobustnessTerm.h
-		RobustnessTerms/SquarerootRobustnessTerm.hxx
 	)
 	ADD_LIBRARY(sampleiterativesolver SHARED
 		IterativeSolvers/SampleIterativeSolver.cpp
@@ -247,15 +233,28 @@ IF(ENABLE_ROBUSTNESS)
 		Solver.h
 		Solver.hxx
 	)
+	TARGET_LINK_LIBRARIES(sampleiterativesolver squarerootrobustnessterm)
 	ADD_LIBRARY(iteratorhelper SHARED
 		IteratorHelper.h
 		IteratorHelper.hxx
 		IteratorHelper.cpp
 	)
+	ADD_LIBRARY(psistencil SHARED
+		Stencils/PsiStencil.cpp
+		Stencils/PsiStencil.h
+		Stencils/PsiStencil.hxx
+		Stencil.h
+		Stencil.hxx
+		Point4D.h
+		Substencil.h
+		Substencil.hxx
+	)
+	TARGET_LINK_LIBRARIES(psistencil squarerootrobustnessterm)
 LIST(APPEND Plugins
 		squarerootrobustnessterm
 		sampleiterativesolver
 		iteratorhelper
+		psistencil
 	)	
 ENDIF(ENABLE_ROBUSTNESS)
 

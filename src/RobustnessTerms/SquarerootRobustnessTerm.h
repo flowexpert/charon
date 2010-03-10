@@ -51,10 +51,10 @@ public:
 	SquarerootRobustnessTerm();
 
 	/// calculates robustness term, Psi
-	const double Psi(double s) const;
+	virtual double Psi(double s) const;
 
 	/// calculates derivative of robustness term, DPsi
-	const double DPsi(double s, double ds) const;
+	virtual double DPsi(double s, double ds) const;
 	
 };
 

@@ -13,45 +13,29 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file SquarerootRobustnessTerm.cpp
- *  @see RobustnessTerm.cpp
+/** @file SquarerootRobustnessTerm.hxx
+ *  Implementation of class SquarerootRobustnessTerm.
  *  @author <a href="mailto:techfreaq@web.de">Nina Hernitschek</a>
  *
  *  @date 14.12.2009
  */
-/*
-#define TYPE SquarerootRobustnessTerm
 
-#if defined(MSVC) && defined (squarerootrobustnessterm_EXPORTS)
-#define robustnessterm_EXPORTS
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define DECLDIR
-#endif
+#include "SquarerootRobustnessTerm.h"
+#include <cmath>
 
-#include "SquarerootRobustnessTerm.hxx"
-#include "../RobustnessTerm.hxx"
-
-extern "C" squarerootrobustnessterm_DECLDIR ParameteredObject* create(
-		const std::string &name, template_type t) {
-	switch(t) {
-	case ParameteredObject::TYPE_DOUBLE:
-		return new TYPE<double>(name);
-		break;
-	case ParameteredObject::TYPE_FLOAT:
-		return new TYPE<float>(name);
-		break;
-	case ParameteredObject::TYPE_INT:
-		return new TYPE<int>(name);
-		break;
-	default:
-		return new TYPE<int>(name);
-		break;
-	}
+SquarerootRobustnessTerm::SquarerootRobustnessTerm()
+{
+	this->setE(0);
 }
 
-extern "C" squarerootrobustnessterm_DECLDIR void destroy(
-		ParameteredObject * b) {
-	delete b;
-}*/
+
+double SquarerootRobustnessTerm::Psi(double s) const {
+	double psi = sqrt(pow(s, 2) + pow(this->e, 2));
+	return psi;
+}
+
+
+double SquarerootRobustnessTerm::DPsi(double s, double ds) const {
+	double dpsi = s*ds/(sqrt(pow(s, 2) + pow(this->e, 2)));
+	return dpsi;
+}

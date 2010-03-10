@@ -20,9 +20,7 @@
  *  @date 14.12.2009
  */
 
-#ifndef ROBUSTNESSTERM_HXX_
-#define ROBUSTNESSTERM_HXX_
-
+#define robustnessterm_EXPORTS
 #include "RobustnessTerm.h"
 
 //RobustnessTerm::RobustnessTerm(){}
@@ -35,5 +33,3 @@ void RobustnessTerm::setE(double e) {
 double RobustnessTerm::getE() const {
 	return this->e;
 }
-
-#endif /* ROBUSTNESSTERM_HXX_ */
