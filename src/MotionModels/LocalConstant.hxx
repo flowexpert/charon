@@ -99,7 +99,7 @@ void MotionModels::LocalConstant<T>::computeEnergy(
 		this->dt()(v, xs, ys, zs, t)                           // I_t
 	};
 
-	energy += pow( double(values[0]*flowList[0](x,y,z,t) + values[1]*flowList[1](x,y,z,t)+values[2]*flowList[1](x,y,z,t)+values[3]) ,2);
+	energy += pow( double(values[0]*flowList[0](xs,ys,zs,t) + values[1]*flowList[1](xs,ys,zs,t)+values[2]*flowList[1](xs,ys,zs,t)+values[3]) ,2);
 }
 
 

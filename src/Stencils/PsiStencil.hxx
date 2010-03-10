@@ -75,17 +75,17 @@ void PsiStencil<T>::updateStencil(
 	this->lambda = stencilIn()->lambda;
 
 	// get subStencils
-	_subStencils = stencilIn()->get();
+	this->_subStencils = stencilIn()->get();
 	
 	// set parameter for robustness term
 	robustnessTermIn()->setE(0.001);
 
 	double factor = robustnessTermIn()->DPsi(stencilIn()->getEnergy(),0.002);
 
-	_rhs*=factor;
+	this->_rhs*=factor;
 	
 	// calculate Psi'(D)*D' 
-	this->_subStencils[unknown].data = _subStencils[unknown].data * factor;
+	this->_subStencils[unknown].data = this->_subStencils[unknown].data * factor;
 
 }
 
