@@ -57,7 +57,7 @@ void SampleIterativeSolver<T>::execute() {
 	const cimg_library::CImgList<T>& globalFlowListIn = this->flowListIn();
 
 	cimg_library::CImgList<T>& globalImgListOut = this->imgListOut();
-	cimg_library::CImg<T>& globalFlowOut = this->flowOut();
+	cimg_library::CImgList<T>& globalFlowOut = this->flowListOut();
 
 	/* 	
 		is warping image 2 with the flow gained from the solver to image 1
@@ -102,12 +102,12 @@ void SampleIterativeSolver<T>::execute() {
 					this->imgListOut() = globalImgListOut;
 
 					//add to global flow
-					globalFlowOut(x,y,z,0)+=flowx;
-					globalFlowOut(x,y,z,0)+=flowy;
+					globalFlowOut[0](x,y,z,0)+=flowx;
+					globalFlowOut[0](x,y,z,0)+=flowy;
 				}
 		else
 			{
-				this->flowOut() = globalFlowOut;
+				this->flowListOut() = globalFlowOut;
 			}
 	}
 
