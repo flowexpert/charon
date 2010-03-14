@@ -59,6 +59,8 @@ public:
 	/// CImgList from IterativeSolver
 	InputSlot<cimg_library::CImgList<T> > imgListIn;
 	OutputSlot<cimg_library::CImgList<T> > imgListOut;
+	/// number of iterations
+	Parameter<int> iterations;
 	//  \}
 
 	/// default constructor
@@ -76,6 +78,9 @@ private:
 	 *  0: read from IterativeSolver, use imgListIn
 	 */
 	bool flag;
+
+	/// current iteration
+	int i;
 };
 
 

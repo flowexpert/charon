@@ -31,9 +31,11 @@ void IteratorHelper<T>::_init() {
 		"CImgList from file","CImgList<T>");
 	this->_addInputSlot(imgListFileIn,"imgListFileIn",
 		"CImgList from IterativeSolver","CImgList<T>");
+	this->_addParameter(iterations,"iterations","number of iterations",5,"int");
 	this->_addOutputSlot(imgListOut,"imgListOut",
 		"CImgList containing the CImgList used in iteration","CImgList<T>");
 
+	i = 0;
 	flag = 1;
 }
 
@@ -61,16 +63,19 @@ template <typename T>
 void IteratorHelper<T>::execute() {
 	ParameteredObject::execute();
 
-	if(flag==1)
+	if (i<=iterations)
 	{
-		imgListOut=imgListFileIn;
-		flag=0;
+		if(flag==1)
+		{
+			imgListOut=imgListFileIn;
+			flag=0;
+		}
+		else
+		{
+			imgListOut=imgListIn;
+		}
+	i++;
 	}
-	else
-	{
-		imgListOut=imgListIn;
-	}
-
 
 
 }
