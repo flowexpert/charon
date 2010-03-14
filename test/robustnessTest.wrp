@@ -33,7 +33,7 @@ diff2d.dt		motionmodels_localconstant.dt
 brightnessmodels_constant.image		iteratorhelper.imgListOut
 iterativesolver.flowlistin		petscsolver.out
 petscsolver.out		iterativesolver.flowListIn
-iteratorhelper.imglistfilein		
+iteratorhelper.imglistfilein		seqcrop.out
 iteratorhelper.imglistin		iterativesolver.imgListOut
 roi.templatetype		int
 petscsolver.roi		roi.out
@@ -55,3 +55,28 @@ croproi.out		flowcrop.roi;seqcrop.roi
 seqcrop.roi		croproi.out
 seqcrop.in		seqreader.out
 seqreader.out		seqcrop.in
+flowreader.filename		yosemiteFlow.cimg
+flowcrop.z		0
+flowcrop.t		0
+flowcrop.v		0
+croproi.xbegin		190
+croproi.xend		222
+croproi.ybegin		120
+croproi.yend		152
+croproi.zend		0
+croproi.tend		0
+croproi.vend		0
+seqreader.filename		yosemiteNoClouds.cimg
+seqcrop.z		0
+seqcrop.t		0
+seqcrop.v		0
+petscsolver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ks
+l2norm.lambda		2000
+l2norm.unknowns		a1;a2
+roi.xend		32
+roi.yend		32
+roi.zend		0
+roi.tend		0
+roi.vend		0
+iterativesolver.imglistin		iteratorhelper.imgListOut
+psistencil.epsilon		0.01
