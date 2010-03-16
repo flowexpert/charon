@@ -20,7 +20,7 @@
  *  @remark Based on StringTool.hxx by Daniel Kondermann
  */
 
-#include "StringTool.h"
+#include <charon-core/StringTool.h>
 #include <sstream>
 #include <algorithm>
 

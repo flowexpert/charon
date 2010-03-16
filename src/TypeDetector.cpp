@@ -19,7 +19,7 @@
  *  @date   17.12.2008
  *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
-#include "TypeDetector.h"
+#include <charon-core/TypeDetector.h>
 
 // init static pointer
 TypeDetector* TypeDetector::_instance = 0;

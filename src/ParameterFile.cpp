@@ -25,7 +25,7 @@
  *	@date 25.09.2008
  */
 
-#include "ParameterFile.hxx"
+#include <charon-core/ParameterFile.hxx>
 
 ParameterFile::IoError::IoError(const std::string& msg) :
 		std::runtime_error(msg.c_str()) {

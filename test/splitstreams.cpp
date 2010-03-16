@@ -21,13 +21,13 @@
  *  @date 11.08.2008
  */
 
-#include "SplitStream.h"
 #include <cassert>
 #include <sstream>
 #include <fstream>
 #include <iomanip>
 #include <cstdlib>
 #include <stdexcept>
+#include <charon-core/SplitStream.h>
 
 /// Main application.
 int main() {

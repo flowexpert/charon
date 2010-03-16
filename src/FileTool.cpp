@@ -21,7 +21,7 @@
  *  @remark Based on FileTool.hxx by Daniel Kondermann.
  */
 
-#include "FileTool.h"
+#include <charon-core/FileTool.h>
 #include <iostream>
 
 #if defined(sun)         || defined(__sun)       || defined(linux) \
@@ -53,7 +53,7 @@
 #error "Operating system not recognized!"
 #endif
 
-#include "StringTool.h"
+#include <charon-core/StringTool.h>
 #include <algorithm>
 #include <sstream>
 #include <fstream>

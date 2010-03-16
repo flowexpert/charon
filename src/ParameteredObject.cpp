@@ -27,10 +27,10 @@
  *  @date 11.12.2008
  */
 
-#include "ParameteredObject.hxx"
 #include <algorithm>
 #include <cassert>
-#include "PluginManagerInterface.h"
+#include <charon-core/ParameteredObject.hxx>
+#include <charon-core/PluginManagerInterface.h>
 
 // Instantiate static variables.
 std::map<std::string, unsigned int> ParameteredObject::_genericClassNameCount;

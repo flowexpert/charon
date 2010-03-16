@@ -19,7 +19,7 @@
  *
  *  @date 24.08.2009
  */
-#include "AbstractPluginLoader.h"
+#include <charon-core/AbstractPluginLoader.h>
 
 AbstractPluginLoader::AbstractPluginLoader(const std::string & n) :
 	pluginName(StringTool::toLowerCase(n)) {

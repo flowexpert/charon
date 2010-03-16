@@ -21,7 +21,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "ParameteredObject.hxx"
+#include <charon-core/ParameteredObject.hxx>
 
 // make sure that assert() works (nothing is tested otherwise)
 #undef NDEBUG

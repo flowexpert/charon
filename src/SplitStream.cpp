@@ -19,7 +19,7 @@
  *	@author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
-#include "SplitStream.h"
+#include <charon-core/SplitStream.h>
 #include <cassert>
 #include <climits>
 #include <cstdio>

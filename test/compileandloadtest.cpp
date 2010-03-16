@@ -1,8 +1,8 @@
-#include "PluginManager.h"
 #include <stdexcept>
 #ifdef MSVC
 #include <windows.h>
 #endif
+#include <charon-core/PluginManager.h>
 
 #ifndef   PLUGIN_DIR
 /// charon-utils plugin path (in bild directory)

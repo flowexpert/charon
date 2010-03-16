@@ -1,4 +1,6 @@
 #files for Charon library
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
+SET(CHARON_CORE_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-core)
 SET(CHARON_FILES
 	SplitStream
 	StringTool
@@ -13,30 +15,31 @@ SET(CHARON_FILES
 SET(CHARON_GROUP)
 FOREACH(CURFILE ${CHARON_FILES})
 	FILE(GLOB TEMP
-		RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-		${CURFILE}.cpp ${CURFILE}.h ${CURFILE}.hxx
+		${CMAKE_CURRENT_SOURCE_DIR}/${CURFILE}.cpp
+		${CHARON_CORE_INCLUDE_DIR}/${CURFILE}.h
+		${CHARON_CORE_INCLUDE_DIR}/${CURFILE}.hxx
 	)
 	LIST(APPEND CHARON_GROUP ${TEMP})
 ENDFOREACH(CURFILE ${CHARON_FILES})
 
 SET(PLUGIN_FILES
 	AbstractPluginLoader.cpp
-	AbstractPluginLoader.h
+	${CHARON_CORE_INCLUDE_DIR}/AbstractPluginLoader.h
 	PluginManager.cpp
-	PluginManager.h
-	PluginManagerInterface.h
+	${CHARON_CORE_INCLUDE_DIR}/PluginManager.h
+	${CHARON_CORE_INCLUDE_DIR}/PluginManagerInterface.h
 	ExceptionHandler.cpp
-	ExceptionHandler.h
+	${CHARON_CORE_INCLUDE_DIR}/ExceptionHandler.h
 )
 IF(WIN32)
 	LIST(APPEND PLUGIN_FILES
-		WindowsPluginLoader.h
+		${CHARON_CORE_INCLUDE_DIR}/WindowsPluginLoader.h
 		WindowsPluginLoader.cpp
 	)
 ENDIF(WIN32)
 IF(UNIX)
 	LIST(APPEND PLUGIN_FILES
-		UnixPluginLoader.h
+		${CHARON_CORE_INCLUDE_DIR}/UnixPluginLoader.h
 		UnixPluginLoader.cpp
 	)
 ENDIF(UNIX)
@@ -87,12 +90,9 @@ INSTALL(
 )
 
 # install header files to include directory
-FILE(GLOB HEADER_FILES
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    *.h *.hxx
-)
 INSTALL(
-    FILES       ${HEADER_FILES}
-    DESTINATION include/${PROJECT_NAME}
+    DIRECTORY   ${CHARON_CORE_INCLUDE_DIR}
+    DESTINATION include
     COMPONENT   headers
+	PATTERN ".svn" EXCLUDE
 )

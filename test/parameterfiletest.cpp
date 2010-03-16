@@ -22,7 +22,7 @@
  */
 
 #include <cstdlib>
-#include "ParameterFile.hxx"
+#include <charon-core/ParameterFile.hxx>
 
 /// Test application for class ParameterFile.
 int main(){

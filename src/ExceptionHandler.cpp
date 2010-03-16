@@ -19,14 +19,14 @@
  *  @date 2010-02-11
  */
 
-#include "ExceptionHandler.h"
-#include "TypeDetector.h"
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
 #ifdef __GNUG__
 #include <cxxabi.h>
 #endif // __GNUG__
+#include <charon-core/ExceptionHandler.h>
+#include <charon-core/TypeDetector.h>
 
 int ExceptionHandler::run(int (&method)()) {
 	int ret = EXIT_FAILURE;

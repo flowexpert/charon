@@ -29,8 +29,8 @@
 #include <strsafe.h>
 #endif
 
-#include "WindowsPluginLoader.h"
-#include "ParameterFile.h"
+#include <charon-core/WindowsPluginLoader.h>
+#include <charon-core/ParameterFile.h>
 
 WindowsPluginLoader::WindowsPluginLoader(const std::string & n) :
 	AbstractPluginLoader(n) {

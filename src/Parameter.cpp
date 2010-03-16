@@ -19,7 +19,7 @@
  *
  *  @date 24.08.2009
  */
-#include "Parameter.h"
+#include <charon-core/Parameter.h>
 
 /**
  * Lets you insert the value of a Parameter into a stream.

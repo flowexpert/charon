@@ -29,7 +29,7 @@
 #endif /*APPLE*/
 
 #include <dlfcn.h>
-#include "UnixPluginLoader.h"
+#include <charon-core/UnixPluginLoader.h>
 
 UnixPluginLoader::UnixPluginLoader(const std::string & n) :
 	AbstractPluginLoader(n) {

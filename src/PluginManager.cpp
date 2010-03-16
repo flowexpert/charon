@@ -25,10 +25,10 @@
 #define PLUGIN_LOADER WindowsPluginLoader
 #endif
 
-#include "PluginManager.h"
-#include "ParameteredObject.hxx"
 #include <cassert>
 #include <cstdlib>
+#include <charon-core/PluginManager.h>
+#include <charon-core/ParameteredObject.hxx>
 
 std::string AbstractPluginLoader::pluginPath;
 std::string AbstractPluginLoader::additionalPluginPath;

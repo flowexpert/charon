@@ -27,11 +27,11 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <FileTool.h>
-#include <SplitStream.h>
-#include <ExceptionHandler.h>
-#include <PluginManager.h>
-#include <TypeDetector.h>
+#include <charon-core/FileTool.h>
+#include <charon-core/SplitStream.h>
+#include <charon-core/ExceptionHandler.h>
+#include <charon-core/PluginManager.h>
+#include <charon-core/TypeDetector.h>
 
 /// global configuration options
 namespace Config {
