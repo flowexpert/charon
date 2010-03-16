@@ -4,20 +4,10 @@ IF(NOT CMAKE_FLAGS_INIT)
 	# executed once in the first configure run.
 	IF(CMAKE_COMPILER_IS_GNUCXX)
 		IF(NOT CMAKE_C_FLAGS)
-		SET(CMAKE_C_FLAGS
-			"-W -Wall -Wextra -Wshadow -pedantic"
-			CACHE STRING
-			"Flags used by the compiler during all build types."
-			FORCE
-		)
+			SET(CMAKE_C_FLAGS "-W -Wall -Wextra")
 		ENDIF(NOT CMAKE_C_FLAGS)
 		IF(NOT CMAKE_CXX_FLAGS)
-		SET(CMAKE_CXX_FLAGS
-			"-W -Wall -Wextra -Wshadow -pedantic"
-			CACHE STRING
-			"Flags used by the compiler during all build types."
-			FORCE
-		)
+			SET(CMAKE_CXX_FLAGS	"-W -Wall -Wextra")
 		ENDIF(NOT CMAKE_CXX_FLAGS)
 	ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 	IF(MSVC)
@@ -35,6 +25,16 @@ IF(NOT CMAKE_FLAGS_INIT)
 		)
 	ENDIF(MSVC)
 
+	# commit changed flags
+	SET(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} CACHE STRING
+		"Flags used by the compiler during all build types."
+		FORCE
+	)
+	SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} CACHE STRING
+		"Flags used by the compiler during all build types."
+		FORCE
+	)
+
 	# default to debug builds
 	IF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
 		SET(CMAKE_BUILD_TYPE "Debug"
@@ -44,7 +44,7 @@ IF(NOT CMAKE_FLAGS_INIT)
 		)
 	ENDIF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
 
-	# use PETSC_DIR as installation prefix, if this environment variable is set
+	# use CHARON_DIR as installation prefix, if this environment variable is set
 	SET(CHARON_DIR_SET $ENV{CHARON_DIR})
 	IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND CHARON_DIR_SET)
 		SET(CMAKE_INSTALL_PREFIX "$ENV{CHARON_DIR}"
@@ -63,7 +63,7 @@ IF(WIN32)
 	ADD_DEFINITIONS(-DWINDOWS)
 	IF(MSVC)
 		ADD_DEFINITIONS(-DMSVC)
-		#Tell MSVC not to use the unholy min and max macros
+		# Tell MSVC not to use the unholy min and max macros
 		ADD_DEFINITIONS(-DNOMINMAX)
 	ENDIF(MSVC)
 	IF(MINGW)
