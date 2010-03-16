@@ -73,9 +73,12 @@ TARGET_LINK_LIBRARIES(editparam charon-plugins charon-core ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(editgraph editparam ${GRAPHVIZ_LIBRARIES})
 
 # install library to lib directory
+IF(NOT EXPORT_NAME)
+	SET(EXPORT_NAME ${PROJECT_NAME})
+ENDIF()
 INSTALL(
     TARGETS      editparam
-    EXPORT       ${PROJECT_NAME}
+    EXPORT       ${EXPORT_NAME}
     RUNTIME      DESTINATION bin
     LIBRARY      DESTINATION lib${LIB_SUFFIX}
     ARCHIVE      DESTINATION lib${LIB_SUFFIX}
@@ -83,17 +86,19 @@ INSTALL(
 )
 INSTALL(
     TARGETS      editgraph
-    EXPORT       ${PROJECT_NAME}
+    EXPORT       ${EXPORT_NAME}
     RUNTIME      DESTINATION bin
     LIBRARY      DESTINATION lib${LIB_SUFFIX}
     ARCHIVE      DESTINATION lib${LIB_SUFFIX}
     COMPONENT    libraries
 )
-INSTALL(
-    EXPORT       ${PROJECT_NAME}
-    DESTINATION  include/${PROJECT_NAME}
-    COMPONENT    libraries
-)
+IF(NOT SKIP_EXPORT_INSTALL)
+	INSTALL(
+    	EXPORT       ${PROJECT_NAME}
+    	DESTINATION  include/${PROJECT_NAME}
+    	COMPONENT    libraries
+	)
+ENDIF()
 
 # install header files to include directory
 FILE(GLOB HEADER_FILES

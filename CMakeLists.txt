@@ -6,6 +6,11 @@ SET(tuchulcha_VERSION 0.1.3)
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
+# executables and dll files are moved to the same directory
+IF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+ENDIF()
+
 # CMAKE_VERSION missing in versions <cmake-2.6.3
 IF(NOT CMAKE_VERSION)
 	SET(CMAKE_VERSION "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
@@ -53,9 +58,6 @@ ENDIF(Subversion_FOUND)
 FIND_PACKAGE(charon-core REQUIRED)
 INCLUDE(InitFlags)
 
-# executables and dll files are moved to the same directory
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-
 IF(WIN32)
     # Provide option to install/package needed dlls as well
     OPTION(INSTALL_DLLS "install/package needed (third-party) dlls" ON)
@@ -69,15 +71,6 @@ IF(MSVC)
 ELSE(MSVC)
     # other builds can use older versions
     FIND_PACKAGE(Graphviz 2.16 REQUIRED)
-ENDIF(MSVC)
-
-IF(UNIX)
-	ADD_DEFINITIONS(-DUNIX)
-ELSE(UNIX)
-	ADD_DEFINITIONS(-DWINDOWS)
-ENDIF(UNIX)
-IF(MSVC)
-	ADD_DEFINITIONS(/wd4290)
 ENDIF(MSVC)
 
 IF(APPLE)
