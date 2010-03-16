@@ -11,18 +11,8 @@ IF(NOT CMAKE_FLAGS_INIT)
 		ENDIF(NOT CMAKE_CXX_FLAGS)
 	ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 	IF(MSVC)
-		SET(CMAKE_C_FLAGS
-			"${CMAKE_C_FLAGS} /wd4251 /wd4275 /wd4290"
-			CACHE STRING
-			"Flags used by the compiler during all build types."
-			FORCE
-		)
-		SET(CMAKE_CXX_FLAGS
-			"${CMAKE_CXX_FLAGS} /wd4251 /wd4275 /wd4290"
-			CACHE STRING
-			"Flags used by the compiler during all build types."
-			FORCE
-		)
+		SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4251 /wd4275 /wd4290")
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251 /wd4275 /wd4290")
 	ENDIF(MSVC)
 
 	# commit changed flags
@@ -76,4 +66,3 @@ IF(UNIX)
 		ADD_DEFINITIONS(-DAPPLE)
 	ENDIF(APPLE)
 ENDIF(UNIX)
-

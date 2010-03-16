@@ -3,6 +3,12 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+# executables and dll files are moved to the same directory
+IF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+ENDIF()
+
 INCLUDE(InitFlags)
 
 # set up documentation generation
@@ -18,9 +24,6 @@ IF(ENABLE_TEST)
     ENABLE_TESTING()
 	INCLUDE(CTest)
 ENDIF(ENABLE_TEST)
-
-# executables and dll files are moved to the same directory
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(app)

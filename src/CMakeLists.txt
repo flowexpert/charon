@@ -74,20 +74,25 @@ INSTALL(
 )
 
 # install library
+IF(NOT EXPORT_NAME)
+	SET(EXPORT_NAME ${PROJECT_NAME})
+ENDIF()
 INSTALL(
     TARGETS      ${PROJECT_NAME} charon-plugins
-    EXPORT       ${PROJECT_NAME}
+    EXPORT       ${EXPORT_NAME}
     RUNTIME      DESTINATION bin
     LIBRARY      DESTINATION lib${LIB_SUFFIX}
     ARCHIVE      DESTINATION lib${LIB_SUFFIX}
     COMPONENT    libraries
 )
 
-INSTALL(
-    EXPORT       ${PROJECT_NAME}
-    DESTINATION  include/${PROJECT_NAME}
-    COMPONENT    libraries
-)
+IF(NOT SKIP_EXPORT_INSTALL)
+	INSTALL(
+		EXPORT       ${EXPORT_NAME}
+		DESTINATION  include/${PROJECT_NAME}
+		COMPONENT    libraries
+	)
+ENDIF()
 
 # install header files to include directory
 INSTALL(
