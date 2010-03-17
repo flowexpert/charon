@@ -20,13 +20,12 @@
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @date 16.06.2009
 
-#include "Pyramid2DGauss.hxx"
-#include "ImgTool.hxx"
-#include "InterpolatorLinear.hxx"
+#include <charon-utils/Pyramid2DGauss.hxx>
+#include <charon-utils/ImgTool.hxx>
+#include <charon-utils/InterpolatorLinear.hxx>
 
 #ifndef PENGUINFILE
-#define PENGUINFILE "Penguin.pgm"
-#warning using "Penguin.pgm"
+#error PENGUINFILE not defined!
 #endif
 
 const unsigned int wTime = 500;

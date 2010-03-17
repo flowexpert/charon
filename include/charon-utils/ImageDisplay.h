@@ -42,7 +42,7 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
 /// Simple class to display images.
 /** This class displays the image read from the input slot

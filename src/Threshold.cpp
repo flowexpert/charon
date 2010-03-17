@@ -23,7 +23,7 @@
 ///Class name of the plugin
 #define TYPE Threshold
 
-#include "Threshold.hxx"
+#include <charon-utils/Threshold.hxx>
 
 #if defined(MSVC) && defined (threshold_EXPORTS)
 #define DECLDIR __declspec(dllexport)

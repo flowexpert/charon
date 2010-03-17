@@ -32,7 +32,7 @@
 #define DECLDIR
 #endif
 
-#include "ChannelConverter.hxx"
+#include <charon-utils/ChannelConverter.hxx>
 
 extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {

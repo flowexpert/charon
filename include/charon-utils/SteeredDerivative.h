@@ -24,7 +24,7 @@
 #define STEERED_DERIVATIVE_H_
 
 #include <charon-core/ParameteredObject.h>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
 #ifdef HANDLE_DLL
 #ifdef steeredderivative_EXPORTS

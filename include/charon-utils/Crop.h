@@ -15,8 +15,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file ImageBlur.h
-/// Declaration of the parameter class ImageBlur.
+/// @file Crop.h
+/// Declaration of the parameter class Crop.
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 11.04.2009
@@ -25,51 +25,54 @@
 /// -	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a> 2009-09-17:\n
 ///			use CImgList rather than CImg
 
-#ifndef _IMAGEBLUR_H_
-#define _IMAGEBLUR_H_
+#ifndef _CROP_H_
+#define _CROP_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef imageblur_EXPORTS
+#ifdef crop_EXPORTS
 ///Visual C++ specific code
-#define imageblur_DECLDIR __declspec(dllexport)
+#define crop_DECLDIR __declspec(dllexport)
 #else
-#define imageblur_DECLDIR __declspec(dllimport)
+#define crop_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define imageblur_DECLDIR
+#define crop_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 #include "Roi.h"
 
-/// Simple class to crop images.
-/// This class shrinks the image to given region.
+/** Simple class to crop images.
+ *
+ *  This class shrinks the image to given region.
+ *  If you want to crop only in certain dimensions, leave
+ *  the values of the unneeded ranges at [0:0].
+ */
 template <typename T>
-class imageblur_DECLDIR ImageBlur : public TemplatedParameteredObject<T>
+class crop_DECLDIR Crop : public TemplatedParameteredObject<T>
 {
-private:
-	/// Stores the blurred image
-	cimg_library::CImgList<T> outimage;
 public:
-    /// image data input slot
-    InputSlot<cimg_library::CImgList<T> >  in;
-    /// image data output slot
-    OutputSlot<cimg_library::CImgList<T> > out;
+	/// image data input slot
+	InputSlot<cimg_library::CImgList<T> >  in;
+	/// image data output slot
+	OutputSlot<cimg_library::CImgList<T> > out;
 
-    /// blur strength
-    Parameter<float> strength;
+	/// image region of interest
+	InputSlot<Roi<int>*> roi;
 
-    /// image region of interest
-    InputSlot<Roi<int>*> roi;
+	/// \name select dimensions to crop
+	//  \{
+	Parameter<bool> x,y,z,t,v;
+	//  \}
 
-    /// create a new Threshold object
-    /// @param name             Object name
-    ImageBlur(const std::string& name);
+	/// create a new Threshold object
+	/// @param name             Object name
+	Crop(const std::string& name);
 
 	/// \implements ParameteredObject::execute
-    virtual void execute();
+	virtual void execute();
 };
 
-#endif // _IMAGEBLUR_H_
+#endif // _CROP_H_

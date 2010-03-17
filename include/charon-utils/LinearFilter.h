@@ -15,27 +15,27 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// \file StructureTensor.h
-/// Declaration of the parameter class StructureTensor
+/// \file LinearFilter.h
+/// Declaration of the parameter class LinearFilter
 /// \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
-/// \date 06.10.2009
+/// \date 02.10.2009
 
-#ifndef STRUCTURE_TENSOR_H_
-#define STRUCTURE_TENSOR_H_
+#ifndef LINEAR_FILTER_H_
+#define LINEAR_FILTER_H_
 
 #include <charon-core/ParameteredObject.h>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
 #ifdef HANDLE_DLL
-#ifdef structuretensor_EXPORTS
+#ifdef linearfilter_EXPORTS
 /// DLL handling
-#define structuretensor_DECLDIR __declspec(dllexport)
+#define linearfilter_DECLDIR __declspec(dllexport)
 #else
-#define structuretensor_DECLDIR __declspec(dllimport)
+#define linearfilter_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else
 /// No DLL handling
-#define structuretensor_DECLDIR
+#define linearfilter_DECLDIR
 #endif
 
 /**
@@ -47,37 +47,27 @@
  * sequently.
  */
 template <typename T>
-class structuretensor_DECLDIR StructureTensor : public TemplatedParameteredObject<T> {
+class linearfilter_DECLDIR LinearFilter : public TemplatedParameteredObject<T> {
 public:
 	/// standart constructor
 	/// \param name		instance name
-	StructureTensor(const std::string& name = "");
+	LinearFilter(const std::string& name = "");
 
+	/// filter mask input (multislot)
+	InputSlot<cimg_library::CImgList<T> > masks;
 	/// image input
 	InputSlot<cimg_library::CImgList<T> > in;
-	/// self pointer
-	OutputSlot<StructureTensor*> out;
 	/// result output
-	OutputSlot<cimg_library::CImgList<T> > tensor;
-	/// eigenvalues output
-	OutputSlot<cimg_library::CImgList<T> > eigenvalues;
-	/// eigenvectors output
-	OutputSlot<cimg_library::CImgList<T> > eigenvectors;
+	OutputSlot<cimg_library::CImgList<T> > out;
 
-	/// central scheme
-	Parameter<bool> centralScheme;
-
-	/**	Calculate structure tensor and perform eigenvector analysis.
-	 *
-	 *	The structure tensor is calculated in the xyz dimensions.
-	 *	The results are stored in the output List items, make sure that the
-	 *	input list contains only one item.
-	 *	This uses the built-in CImg routines.
-	 *
+	/** Convolve with given filter masks.
 	 *  \copydetails ParameteredObject::execute()
+	 *
+	 * The filter masks are convolved with each element in the CImgList.
+	 * Make sure, that the mask-"lists" contain exactly one element.
 	 */
 	virtual void execute();
 };
 
-#endif // STRUCTURE_TENSOR_H_
+#endif // LINEAR_FILTER_H_
 

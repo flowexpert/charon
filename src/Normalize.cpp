@@ -23,7 +23,7 @@
 ///Class name of the plugin
 #define TYPE Normalize
 
-#include "Normalize.hxx"
+#include <charon-utils/Normalize.hxx>
 
 #if defined(MSVC) && defined (normalize_EXPORTS)
 #define DECLDIR __declspec(dllexport)

@@ -27,9 +27,9 @@
 #ifndef _Pyramid_H
 #define _Pyramid_H
 
-#include <CImg.h>
 #include <vector>
-#include "ParameterFile.h"
+#include <charon-core/ParameterFile.h>
+#include <charon-utils/CImg.h>
 
 /// Abstract base class for pyramid creation.
 /// Whenever a pyramid is needed, an instance

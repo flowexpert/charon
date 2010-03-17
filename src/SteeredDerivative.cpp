@@ -18,7 +18,7 @@
 
 #define TYPE SteeredDerivative
 
-#include "SteeredDerivative.hxx"
+#include <charon-utils/SteeredDerivative.hxx>
 
 #if defined(HANDLE_DLL) && defined (steeredderivative_EXPORTS)
 #define DECLDIR __declspec(dllexport)

@@ -42,7 +42,7 @@
 #include <vigra/multi_array.hxx>
 //#include <vigra/multi_iterator.hxx>
 #include <vigra/windows.h>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 using namespace cimg_library;
 
 /// Convert a vigra::MultiArrayView<5, T> to a CImgList-Object

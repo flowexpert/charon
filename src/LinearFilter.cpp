@@ -18,7 +18,7 @@
 
 #define TYPE LinearFilter
 
-#include "LinearFilter.hxx"
+#include <charon-utils/LinearFilter.hxx>
 
 #if defined(HANDLE_DLL) && defined (linearfilter_EXPORTS)
 #define DECLDIR __declspec(dllexport)

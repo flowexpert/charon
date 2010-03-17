@@ -31,7 +31,7 @@
 #ifndef cimg_strict
     #define cimg_strict
 #endif
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
     #define finite _finite
     #define CHARON_GDI

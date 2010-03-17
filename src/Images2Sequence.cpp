@@ -24,7 +24,7 @@
 ///Class name of the plugin
 #define TYPE Images2Sequence
 
-#include "Images2Sequence.hxx"
+#include <charon-utils/Images2Sequence.hxx>
 
 ///Creates an instance of the plugin
 extern "C" images2sequence_DECLDIR ParameteredObject*

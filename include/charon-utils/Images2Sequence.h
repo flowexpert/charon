@@ -15,56 +15,50 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file Warp.h
- *  Declaration of the parameter class Warp.
+/** \file Images2Sequence.h
+ *  Declaration of the parameter class Images2Sequence.
  *  \author Cornelius Ratsch
- *  \date 08.03.2010
+ *  \date 04.03.2010
  */
 
-#ifndef _WARP_H_
-#define _WARP_H_
+#ifndef _IMAGES2SEQUENCE_H_
+#define _IMAGES2SEQUENCE_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef warp_EXPORTS
+#ifdef images2sequence_EXPORTS
 /// Visual C++ specific code
-#define warp_DECLDIR __declspec(dllexport)
+#define images2sequence_DECLDIR __declspec(dllexport)
 #else
-#define warp_DECLDIR __declspec(dllimport)
+#define images2sequence_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 /// Not needed with GCC
-#define warp_DECLDIR
+#define images2sequence_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
-#include <Interpolator.h>
+#include <charon-utils/CImg.h>
 
-/// Warps an image
+/// Generates an image sequence out of multiple images
 template <typename T>
-class warp_DECLDIR Warp :
+class images2sequence_DECLDIR Images2Sequence :
 		public TemplatedParameteredObject<T> {
 public:
-	/// Image sequence 
-	InputSlot < cimg_library::CImgList<T> > image_sequence;
-	/// Image flow 
-	InputSlot < cimg_library::CImgList<T> > flow_sequence;
-	/// Interpolator 
-	InputSlot < Interpolator<T> * > interpolator;
-	/// Warped Image 
-	OutputSlot < cimg_library::CImgList<T> > warped_image;
-	/// Flow weight
-	Parameter<double> weight;
+	/// One or more images 
+	InputSlot < cimg_library::CImgList<T> > images;
+	/// image sequence containing every input image 
+	OutputSlot < cimg_library::CImgList<T> > image_sequence;
+	
 
-	/// create a new Warp object
+	/// create a new Images2Sequence object
 	/// \param name          Instance name
-	Warp(const std::string& name);
+	Images2Sequence(const std::string& name = "");
 
 	/// Update object.
 	virtual void execute();
 };
 
-#endif // _WARP_H_
+#endif // _IMAGES2SEQUENCE_H_
 
 
 

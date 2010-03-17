@@ -34,8 +34,8 @@
 #define channelconverter_DECLDIR
 #endif
 
-#include <CImg.h>
 #include <charon-core/ParameteredObject.h>
+#include <charon-utils/CImg.h>
 
 /**	
  *  Channel Converter for CImg.

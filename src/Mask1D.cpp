@@ -18,7 +18,7 @@
 
 #define TYPE Mask1D
 
-#include "Mask1D.hxx"
+#include <charon-utils/Mask1D.hxx>
 
 #if defined(MSVC) && defined (mask1d_EXPORTS)
 #define DECLDIR __declspec(dllexport)

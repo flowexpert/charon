@@ -18,7 +18,7 @@
 
 #define TYPE StructureTensor
 
-#include "StructureTensor.hxx"
+#include <charon-utils/StructureTensor.hxx>
 
 #if defined(HANDLE_DLL) && defined (structuretensor_EXPORTS)
 #define DECLDIR __declspec(dllexport)

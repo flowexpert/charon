@@ -23,7 +23,7 @@
 ///Class name of the plugin
 #define TYPE FileWriter
 
-#include "FileWriter.hxx"
+#include <charon-utils/FileWriter.hxx>
 
 #if defined(MSVC) && defined (filewriter_EXPORTS)
 #define DECLDIR __declspec(dllexport)

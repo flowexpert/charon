@@ -23,7 +23,7 @@
 ///Class name of the plugin
 #define TYPE ImageDisplay
 
-#include "ImageDisplay.hxx"
+#include <charon-utils/ImageDisplay.hxx>
 
 #if defined(MSVC) && defined (imagedisplay_EXPORTS)
 #define DECLDIR __declspec(dllexport)

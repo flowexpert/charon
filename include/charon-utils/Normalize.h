@@ -15,50 +15,58 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file FileWriter.h
-/// Declaration of the parameter class FileWriter.
+/// @file Normalize.h
+/// Declaration of the parameter class Normalize.
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
-/// @date 29.07.2009
+/// @date 11.04.2009
 ///
 /// \b Changelog:
 /// -	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a> 2009-09-17:\n
 ///			use CImgList rather than CImg
 
-#ifndef FILEWRITER_H_
-#define FILEWRITER_H_
+#ifndef NORMALIZE_H
+#define NORMALIZE_H
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef filewriter_EXPORTS
+#ifdef normalize_EXPORTS
 ///Visual C++ specific code
-#define filewriter_DECLDIR __declspec(dllexport)
+#define normalize_DECLDIR __declspec(dllexport)
 #else
-#define filewriter_DECLDIR __declspec(dllimport)
+#define normalize_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define filewriter_DECLDIR
+#define normalize_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
-/// Can write a CImg image to a file.
+/// Simple class to normalize images.
+/// This class uses the cimg normalize command to normalize
+/// images linearly between two given values.
 template <typename T>
-class filewriter_DECLDIR FileWriter : public TemplatedParameteredObject<T> {
+class normalize_DECLDIR Normalize : public TemplatedParameteredObject<T>
+{
 public:
-    /// filename to write image to
-    Parameter<std::string> filename;
-
-    /// image data as input slot
+    /// image data input slot
     InputSlot<cimg_library::CImgList<T> > in;
+    /// image data output slot
+    OutputSlot<cimg_library::CImgList<T> > out;
 
-    /// create a new sample object
+    /// lower bound of normalization
+    Parameter<T> lower;
+    /// upper bound of normalization
+    Parameter<T> upper;
+
+    /// create a new Normalize object
     /// @param name             Object name
-    FileWriter(const std::string& name);
+    Normalize(const std::string& name);
 
-    /// Update object.
+	/// apply threshold to all given images
+	/// \implements ParameteredObject::execute
     virtual void execute();
 };
 
-#endif /* FILEWRITER_H_ */
+#endif // NORMALIZE_H

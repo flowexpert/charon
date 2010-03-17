@@ -24,9 +24,9 @@
 #include <charon-core/ParameteredObject.h>
 #include <charon-core/FileTool.h>
 
-#include <FileReader.h>
-#include <ImageDisplay.h>
-#include <Roi.h>
+#include <charon-utils/FileReader.h>
+#include <charon-utils/ImageDisplay.h>
+#include <charon-utils/Roi.h>
 #include <list>
 
 #ifdef NDEBUG

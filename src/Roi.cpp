@@ -23,7 +23,7 @@
 ///Class name of the plugin
 #define TYPE Roi
 
-#include "Roi.hxx"
+#include <charon-utils/Roi.hxx>
 
 #if defined(MSVC) && defined (roi_EXPORTS)
 #define DECLDIR __declspec(dllexport)

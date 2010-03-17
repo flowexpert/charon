@@ -23,7 +23,7 @@
 ///Class name of the plugin
 #define TYPE Crop
 
-#include "Crop.hxx"
+#include <charon-utils/Crop.hxx>
 
 #if defined(MSVC) && defined (crop_EXPORTS)
 #define DECLDIR __declspec(dllexport)

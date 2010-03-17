@@ -29,7 +29,7 @@
 #ifndef _Convolution_H
 #define _Convolution_H
 
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 #include "Interpolator.h"
 #include "PdeBoundaryHandler.h"
 

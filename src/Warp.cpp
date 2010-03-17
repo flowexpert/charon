@@ -24,7 +24,7 @@
 ///Class name of the plugin
 #define TYPE Warp
 
-#include "Warp.hxx"
+#include <charon-utils/Warp.hxx>
 
 ///Creates an instance of the plugin
 extern "C" warp_DECLDIR ParameteredObject*

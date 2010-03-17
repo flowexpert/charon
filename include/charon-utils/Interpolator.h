@@ -44,8 +44,8 @@
 #define interpolator_DECLDIR
 #endif
 
-#include <CImg.h>
 #include <charon-core/ParameteredObject.h>
+#include <charon-utils/CImg.h>
 
 /// Abstract interpolation scheme.
 /// This class is used to choose an interpolation

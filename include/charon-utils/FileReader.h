@@ -42,7 +42,7 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
 /// Simple class to read image files.
 /// This class is able to read an image from some image file

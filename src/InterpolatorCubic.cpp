@@ -31,7 +31,7 @@
 #define DECLDIR
 #endif
 
-#include <InterpolatorCubic.hxx>
+#include <charon-utils/InterpolatorCubic.hxx>
 
 ///Creates an instance of the plugin
 extern "C" DECLDIR ParameteredObject* create(const std::string& name, template_type t) {

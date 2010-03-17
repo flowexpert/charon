@@ -23,7 +23,7 @@
 ///Class name of the plugin
 #define TYPE FileReader
 
-#include "FileReader.hxx"
+#include <charon-utils/FileReader.hxx>
 
 #if defined(MSVC) && defined (filereader_EXPORTS)
 #define DECLDIR __declspec(dllexport)

@@ -15,8 +15,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file Threshold.h
-/// Declaration of the parameter class Threshold.
+/// @file ImageBlur.h
+/// Declaration of the parameter class ImageBlur.
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 11.04.2009
@@ -25,52 +25,51 @@
 /// -	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a> 2009-09-17:\n
 ///			use CImgList rather than CImg
 
-#ifndef THRESHOLD_H
-#define THRESHOLD_H
+#ifndef _IMAGEBLUR_H_
+#define _IMAGEBLUR_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef threshold_EXPORTS
+#ifdef imageblur_EXPORTS
 ///Visual C++ specific code
-#define threshold_DECLDIR __declspec(dllexport)
+#define imageblur_DECLDIR __declspec(dllexport)
 #else
-#define threshold_DECLDIR __declspec(dllimport)
+#define imageblur_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define threshold_DECLDIR
+#define imageblur_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
+#include "Roi.h"
 
-/// simple class to threshold images
-///
-/// This class uses the cimg threshold command to threshold
-/// images at the given value. Soft thresholding and
-/// strict threshold can be enabled.
-/// \see cimg_library::CImg::threshold()
+/// Simple class to crop images.
+/// This class shrinks the image to given region.
 template <typename T>
-class threshold_DECLDIR Threshold : public TemplatedParameteredObject<T>
+class imageblur_DECLDIR ImageBlur : public TemplatedParameteredObject<T>
 {
+private:
+	/// Stores the blurred image
+	cimg_library::CImgList<T> outimage;
 public:
     /// image data input slot
     InputSlot<cimg_library::CImgList<T> >  in;
     /// image data output slot
     OutputSlot<cimg_library::CImgList<T> > out;
 
-    /// Threshold value.
-    Parameter<T> value;
-    /// Enable soft thresholding.
-    Parameter<bool> soft;
-    /// Tells if the threshold is strict.
-    Parameter<bool> strict;
+    /// blur strength
+    Parameter<float> strength;
+
+    /// image region of interest
+    InputSlot<Roi<int>*> roi;
 
     /// create a new Threshold object
     /// @param name             Object name
-    Threshold(const std::string& name);
+    ImageBlur(const std::string& name);
 
 	/// \implements ParameteredObject::execute
-    virtual void execute ();
+    virtual void execute();
 };
 
-#endif // THRESHOLD_H
+#endif // _IMAGEBLUR_H_

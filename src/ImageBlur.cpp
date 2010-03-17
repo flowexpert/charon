@@ -23,7 +23,7 @@
 ///Class name of the plugin
 #define TYPE ImageBlur
 
-#include "ImageBlur.hxx"
+#include <charon-utils/ImageBlur.hxx>
 
 #if defined(MSVC) && defined (imageblur_EXPORTS)
 #define DECLDIR __declspec(dllexport)

@@ -39,8 +39,7 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <vigra/multi_array.hxx>
 #include <vigra/windows.h>
-#include <CImg.h>
-using namespace cimg_library;
+#include <charon-utils/CImg.h>
 
 /// Convert a CImgList-Object to a vigra::MultiArray<5, T>
 /** The data copied. As the MultiArray may not have images of varying size,
@@ -58,7 +57,7 @@ public:
 	Parameter < double > missingValue;
 
 	/// The CImgList object to be converted 
-	InputSlot < CImgList<T> > in;
+    InputSlot < cimg_library::CImgList<T> > in;
 	/// A copy of the image stored as vigra::MultiArray<5, T>
 	OutputSlot < vigra::MultiArrayView<5, T> > out;
 

@@ -23,7 +23,7 @@
 ///Class name of the plugin
 #define TYPE SplineResize
 
-#include "SplineResize.hxx"
+#include <charon-utils/SplineResize.hxx>
 
 ///Creates an instance of the plugin
 extern "C" splineresize_DECLDIR ParameteredObject*

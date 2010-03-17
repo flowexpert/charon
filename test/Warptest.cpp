@@ -54,8 +54,8 @@
 #include <charon-core/PluginManager.h>
 #include <charon-core/ParameteredObject.h>
 #include <charon-core/FileTool.h>
-#include <Crop.h>
 #include <charon-core/ExceptionHandler.h>
+#include <charon-utils/Crop.h>
 #include<limits>
 
 int test() {

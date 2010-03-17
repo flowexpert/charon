@@ -20,7 +20,7 @@
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @date 06.10.2009
 
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
 /// main function
 int main() {

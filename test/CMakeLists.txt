@@ -1,7 +1,8 @@
 # Test suite of application
 INCLUDE_DIRECTORIES(${CHARON_CORE_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
+SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 
 IF(ENABLE_TEST)
 	# common definitions and test file configuration
@@ -24,17 +25,30 @@ IF(ENABLE_TEST)
 
 	# tests for imgmanip classes
 	ADD_EXECUTABLE(imgManipTest imgmaniptest.cpp)
-	TARGET_LINK_LIBRARIES(imgManipTest charon-plugins ${CIMG_LINK_LIBRARIES})
+	TARGET_LINK_LIBRARIES(imgManipTest
+		charon-plugins
+		${CIMG_LINK_LIBRARIES}
+	)
 	ADD_TEST(ImgManipTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imgManipTest)
 
 	# tests for ImgTool routines
-	ADD_EXECUTABLE(imgToolTest imgToolTest.cpp ../src/ImgTool.h ../src/ImgTool.hxx)
+	ADD_EXECUTABLE(imgToolTest
+		imgToolTest.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/ImgTool.h
+		${CHARON_UTILS_INCLUDE_DIR}/ImgTool.hxx
+	)
 	TARGET_LINK_LIBRARIES(imgToolTest charon-core ${CIMG_LINK_LIBRARIES})
 	ADD_TEST(ImgToolTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imgToolTest)
 	
 	#tests for plugin creation in various ways
 	ADD_EXECUTABLE(pluginTest pluginTest.cpp)
-	TARGET_LINK_LIBRARIES(pluginTest charon-core charon-plugins roi filereader ${CIMG_LINK_LIBRARIES})
+	TARGET_LINK_LIBRARIES(pluginTest
+		charon-core
+		charon-plugins
+		roi
+		filereader
+		${CIMG_LINK_LIBRARIES}
+	)
 	ADD_TEST(PluginTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/pluginTest)
 
 	ADD_EXECUTABLE(cImgTest cimgtest.cpp)
