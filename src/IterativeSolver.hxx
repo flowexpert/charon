@@ -39,10 +39,12 @@ IterativeSolver<T>::IterativeSolver(
 		"CImgList","CImgList<T>");
 	this->_addInputSlot(interpolator, "interpolator",
 		"Pointer to Interpolator", "Interpolator<T>*");
+	this->_addInputSlot(iteratorHelper, "iteratorHelper",
+		"Pointer to iteratorHelper", "IteratorHelper<T>*");
 	this->_addOutputSlot(flowListOut,"flowListOut",
 		"CImg containing the solution","CImgList<T>");
-	this->_addOutputSlot(imgListOut,"imgListOut",
-		"CImgList containing the warped images","CImgList<T>");
+	//this->_addOutputSlot(imgListOut,"imgListOut",
+	//	"CImgList containing the warped images","CImgList<T>");
 }
 
 #endif // _ITERATIVESOLVER_HXX_

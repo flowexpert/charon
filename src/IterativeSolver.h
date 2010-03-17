@@ -38,6 +38,7 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
 #include "Interpolator.h"
+#include "IteratorHelper.h"
 
 /// class used for iterative solving
 template <typename T>
@@ -50,6 +51,7 @@ private:
 	/// forbid copying
 	IterativeSolver(const IterativeSolver&);
 
+
 protected:
 	/// constructor for derived classes
 	IterativeSolver(
@@ -57,6 +59,8 @@ protected:
 		const std::string& name,       ///< [in] instance name
 		const std::string& doc         ///  [in] class docstring
 	);
+
+	cimg_library::CImgList<T> imgListOut;
 
 public:
 	/// \name pointers used by the solver
@@ -67,6 +71,8 @@ public:
 	InputSlot<cimg_library::CImgList<T> > flowListIn;
 	/// interpolator used for warping
 	InputSlot<Interpolator<T>*> interpolator;
+	/// iteratorHelper
+	InputSlot<IteratorHelper<T>*> iteratorHelper;
 	//  \}
 
 	/// \name result
@@ -74,7 +80,7 @@ public:
 	/// flow result to write in file
 	OutputSlot<cimg_library::CImgList<T> > flowListOut;
 	/// warped image returned to solver
-	OutputSlot<cimg_library::CImgList<T> > imgListOut;
+	//OutputSlot<cimg_library::CImgList<T> > imgListOut;
 	//  \}
 };
 

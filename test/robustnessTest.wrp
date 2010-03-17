@@ -80,3 +80,6 @@ roi.tend		0
 roi.vend		0
 iterativesolver.imglistin		iteratorhelper.imgListOut
 psistencil.epsilon		0.01
+iterativesolver.iteratorhelper		iteratorhelper.this
+iteratorhelper.this		iterativesolver.iteratorHelper
+psistencil.parameterlistin		iteratorhelper.imgListOut

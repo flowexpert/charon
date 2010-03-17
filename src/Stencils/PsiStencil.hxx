@@ -40,7 +40,7 @@ PsiStencil<T>::PsiStencil(const std::string& name) :
 	this->_addInputSlot(stencilIn, "stencilIn",
 			"Input slot for stencil","Stencil<T>*");
 	this->_addParameter(epsilon,"epsilon","parameter of the Robustness Term",0.001,"double");
-	this->_addOutputSlot(parameterListIn, "parameterListIn",
+	this->_addInputSlot(parameterListIn, "parameterListIn",
 			"CImgList containing the parameters","CImgList<T>");
 }
 

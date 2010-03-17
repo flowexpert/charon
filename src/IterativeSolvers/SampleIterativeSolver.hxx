@@ -56,7 +56,7 @@ void SampleIterativeSolver<T>::execute() {
 	const cimg_library::CImgList<T>& globalImgListIn = this->imgListIn();
 	const cimg_library::CImgList<T>& globalFlowListIn = this->flowListIn();
 
-	cimg_library::CImgList<T>& globalImgListOut = this->imgListOut();
+	//cimg_library::CImgList<T>& globalImgListOut = this->imgListOut();
 	cimg_library::CImgList<T>& globalFlowOut = this->flowListOut();
 
 	/* 	
@@ -87,19 +87,20 @@ void SampleIterativeSolver<T>::execute() {
 				// 3. read intensity from position X+F in picture 2
 				// 4. write the intensity at position x in picture 2'
 				// 5. image 1' is the same as image 1
-				cimg_forXYZC(globalImgListOut[1], x,y,z,t) 
+				cimg_forXYZC(imgListOut[1], x,y,z,t) 
 				{
 					flowx=float (T(x)+globalFlowListIn[0](x,y,z,0));
 					flowy=float (T(y)+globalFlowListIn[0](x,y,z,1));
-					globalImgListOut[1](x,y,z,t) = this->interpolator()->interpolate(
+					imgListOut[1](x,y,z,t) = this->interpolator()->interpolate(
 													globalImgListIn[1], 
 													flowx,
 													flowy,
 													int(z), int(t));
 
-					globalImgListOut[0](x,y,z,t)=globalImgListIn[0](x,y,z,t);
+					imgListOut[0](x,y,z,t)=globalImgListIn[0](x,y,z,t);
 
-					this->imgListOut() = globalImgListOut;
+					//updates the iteratorHelper
+					this->iteratorHelper()->update(imgListOut);
 
 					//add to global flow
 					globalFlowOut[0](x,y,z,0)+=flowx;

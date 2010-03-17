@@ -57,8 +57,11 @@ public:
 	/// CImgList from file
 	InputSlot<cimg_library::CImgList<T> > imgListFileIn;
 	/// CImgList from IterativeSolver
-	InputSlot<cimg_library::CImgList<T> > imgListIn;
+	//InputSlot<cimg_library::CImgList<T> > imgListIn;
+	/// output imgList
 	OutputSlot<cimg_library::CImgList<T> > imgListOut;
+	/// Output slot containing the this-pointer of the object
+	OutputSlot<IteratorHelper<T>*> out;
 	/// number of iterations
 	Parameter<int> iterations;
 	//  \}
@@ -69,9 +72,15 @@ public:
 	/// main function
 	virtual void execute();
 
+	/// update image
+	virtual void update(cimg_library::CImgList<T> imgList);
+
 private:
 	/// common initialization code
 	void _init();
+
+	/// imageList
+	cimg_library::CImgList<T> imgListIn;
 
 	/// working mode flag
 	/** 1: read from file, use imgListFile In

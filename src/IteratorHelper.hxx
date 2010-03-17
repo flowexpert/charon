@@ -27,13 +27,16 @@
 
 template <typename T>
 void IteratorHelper<T>::_init() {
-	this->_addInputSlot(imgListIn,"imgListIn",
-		"CImgList from file","CImgList<T>");
+	//this->_addInputSlot(imgListIn,"imgListIn",
+	//	"CImgList from file","CImgList<T>");
 	this->_addInputSlot(imgListFileIn,"imgListFileIn",
 		"CImgList from IterativeSolver","CImgList<T>");
 	this->_addParameter(iterations,"iterations","number of iterations",5,"int");
 	this->_addOutputSlot(imgListOut,"imgListOut",
 		"CImgList containing the CImgList used in iteration","CImgList<T>");
+	this->_addOutputSlot(out,"this","Pointer to itself","IteratorHelper<T>*");
+
+	out = this;
 
 	i = 0;
 	flag = 1;
@@ -57,6 +60,12 @@ IteratorHelper<T>::IteratorHelper(
 			"Helper for iterative solvers")
 {
 	_init();
+}
+
+template <typename T>
+void IteratorHelper<T>::update(cimg_library::CImgList<T> imgList)
+{
+	imgListIn = imgList;
 }
 
 template <typename T>
