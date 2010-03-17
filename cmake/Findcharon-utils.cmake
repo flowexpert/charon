@@ -12,6 +12,25 @@
 #  CHARON_UTILS_HTMLDOC_DIR         path to charon-utils htmldoc (optional)
 #  CHARON_UTILS_TAG_IMPORT          doxygen tag import command (if possible)
 
+# look for include charon-utils project
+IF(charon-utils_SOURCE_DIR)
+	SET(CHARON_UTILS_ROOT_DIR ${charon-utils_SOURCE_DIR})
+	SET(CHARON_UTILS_INCLUDE_DIRS
+		${charon-utils_SOURCE_DIR}/include
+		${charon-utils_SOURCE_DIR}/include/charon-utils
+	)
+	SET(CHARON_UTILS_HTMLDOC_DIR
+		${CMAKE_INSTALL_PREFIX}/${charon-utils_INSTALL_DOC}/html
+	)
+	SET(CHARON_UTILS_TAGFILE
+		${charon-utils_BINARY_DIR}/doc/html/charon-utils.tag
+	)
+    SET(CHARON_UTILS_TAG_IMPORT
+		"\"${CHARON_UTILS_TAGFILE}=${CHARON_UTILS_HTMLDOC_DIR}\""
+	)
+	RETURN()
+ENDIF(charon-utils_SOURCE_DIR)
+
 # search for header files
 FIND_PATH(CHARON_UTILS_ROOT_DIR
     NAMES           include/charon-utils/charon-utils.cmake

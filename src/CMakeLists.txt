@@ -287,10 +287,12 @@ FOREACH (X ${Plugins})
 ENDFOREACH (X)
 
 # install libraries/plugins
-
+IF(NOT EXPORT_NAME)
+	SET(EXPORT_NAME ${PROJECT_NAME})
+ENDIF()
 INSTALL(
 	TARGETS         ${Plugins}
-	EXPORT          ${PROJECT_NAME}
+	EXPORT          ${EXPORT_NAME}
 	RUNTIME         DESTINATION bin
 	LIBRARY         DESTINATION lib${LIB_SUFFIX}/charon-plugins
 	ARCHIVE         DESTINATION lib${LIB_SUFFIX}/charon-plugins
@@ -308,8 +310,10 @@ INSTALL(
 	COMPONENT       headers
 )
 
-INSTALL(
-	EXPORT          ${PROJECT_NAME}
-	DESTINATION     include/${PROJECT_NAME}
-	COMPONENT       libraries
-)
+IF(NOT SKIP_EXPORT_INSTALL)
+	INSTALL(
+		EXPORT          ${EXPORT_NAME}
+		DESTINATION     include/${PROJECT_NAME}
+		COMPONENT       libraries
+	)
+ENDIF()

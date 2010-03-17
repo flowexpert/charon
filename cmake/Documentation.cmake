@@ -4,12 +4,11 @@ SET(DOC_QUIET FALSE)
 
 IF (DOXYGEN_FOUND)
     # Possibility to enable/disable documentation creation
-    OPTION(ENABLE_DOC "Automatically create documentation" ON)
     OPTION(WITH_LATEX "activate pdfdoc generation" ON)
 	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
-    SET(CMAKE_INSTALL_DOC doc/${PROJECT_NAME}
-        CACHE PATH "documentation install prefix")
-    MARK_AS_ADVANCED(CMAKE_INSTALL_DOC ENABLE_DOC_VERBOSE)
+    SET(${PROJECT_NAME}_INSTALL_DOC doc/${PROJECT_NAME}
+        CACHE PATH "${PROJECT_NAME} documentation install prefix")
+    MARK_AS_ADVANCED(${PROJECT_NAME}_INSTALL_DOC ENABLE_DOC_VERBOSE)
 
 	IF(MSVC)
 	    SET(DOXY_WARN_FORMAT        	"$file($line) : $text")
@@ -36,7 +35,7 @@ IF (DOXYGEN_FOUND)
         SET(DOXY_SKIP_PDFDOC		YES)
     ENDIF(NOT WITH_LATEX)
 
-    # LaTeX needed for formula generation 
+    # LaTeX needed to generate formula
     FIND_PACKAGE(LATEX)
 
     # graphviz needed to generate graphs
@@ -58,13 +57,9 @@ IF (DOXYGEN_FOUND)
     ENDIF(NOT DOC_QUIET)
 
     # dummy target for documentation creation
-
-    # configure Doxyfile and create make-target
-    FILE(GLOB_RECURSE HTMLDOCS
-        ${PROJECT_SOURCE_DIR}/doc/*_doc.txt
-        ${PROJECT_SOURCE_DIR}/src/*.h
-    )
-    #MESSAGE(STATUS "Htmldoc deps: ${HTMLDOCS}")
+	IF(NOT TARGET doc)
+	    ADD_CUSTOM_TARGET(doc)
+	ENDIF()
 
     SET(DOXY_DOC_PATTERN        "*.h *_doc.txt")
     SET(DOXY_DOC_PATHS          "doc src")
@@ -74,29 +69,20 @@ IF (DOXYGEN_FOUND)
     SET(DOXY_TAGFILE_OUTPUT     "${PROJECT_BINARY_DIR}/doc/html/${PROJECT_NAME}.tag")
     CONFIGURE_FILE(${DOXY_TEMPLATE} ${DOXY_CONFIG}     @ONLY)
 
-    ADD_CUSTOM_TARGET(htmldoc
-        DEPENDS ${PROJECT_BINARY_DIR}/doc/html/index.html
-        COMMENT "Generating html documentation"
-    )
-
-    ADD_CUSTOM_COMMAND(
-        OUTPUT  ${PROJECT_BINARY_DIR}/doc/html/index.html
-        DEPENDS ${HTMLDOCS}
+    ADD_CUSTOM_TARGET(${PROJECT_NAME}_doc_html
         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXY_CONFIG}
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMENT "Generating ${PROJECT_NAME} html documentation"
     )
+    ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_html)
 
-    IF(ENABLE_DOC)
-        ADD_CUSTOM_TARGET(doc ALL)
-        ADD_DEPENDENCIES(doc htmldoc)
-
-        # install html documentation
-        INSTALL(
-            DIRECTORY       ${PROJECT_BINARY_DIR}/doc/html
-            DESTINATION     ${CMAKE_INSTALL_DOC}
-            COMPONENT       htmldoc
-        )
-    ENDIF(ENABLE_DOC)
+    # install html documentation
+    INSTALL(
+        DIRECTORY       ${PROJECT_BINARY_DIR}/doc/html
+        DESTINATION     ${${PROJECT_NAME}_INSTALL_DOC}
+		OPTIONAL
+        COMPONENT       htmldoc
+    )
 
     IF(LATEX_COMPILER AND NOT DOXY_SKIP_PDFDOC)
         SET(DOXY_DOC_RECURSIVE      NO)
@@ -108,13 +94,8 @@ IF (DOXYGEN_FOUND)
         SET(DOXY_TAGFILE_OUTPUT)
         CONFIGURE_FILE(${DOXY_TEMPLATE} ${DOXY_CONFIG_PDF} @ONLY)
 
-        FILE(GLOB TEXDOCS
-            ${PROJECT_SOURCE_DIR}/doc/*_doc.txt
-        )
-        #MESSAGE(STATUS "PDFdoc deps: ${TEXDOCS}")
         ADD_CUSTOM_COMMAND(
             OUTPUT  ${PROJECT_BINARY_DIR}/doc/latex/refman.tex
-            DEPENDS ${TEXDOCS}
             COMMAND ${DOXYGEN_EXECUTABLE} "${DOXY_CONFIG_PDF}"
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         )
@@ -131,21 +112,20 @@ IF (DOXYGEN_FOUND)
             COMMAND ${PDFLATEX_COMPILER}  refman.tex
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/doc/latex
         )
-        ADD_CUSTOM_TARGET(pdfgen
+        ADD_CUSTOM_TARGET(${PROJECT_NAME}_doc_pdf
             DEPENDS ${PROJECT_BINARY_DIR}/doc/latex/refman.pdf
+	        COMMENT "Generating ${PROJECT_NAME} html documentation"
         )
 
-        IF(ENABLE_DOC)
-            ADD_DEPENDENCIES(doc pdfgen)
+        ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_pdf)
 
-            # install pdf documentation
-            INSTALL(
-                FILES           ${PROJECT_BINARY_DIR}/doc/latex/refman.pdf
-                RENAME          ${PROJECT_NAME}-manual.pdf
-                DESTINATION     ${CMAKE_INSTALL_DOC}
-                COMPONENT       pdfdoc
-            )
-        ENDIF(ENABLE_DOC)
+        # install pdf documentation
+        INSTALL(
+            FILES           ${PROJECT_BINARY_DIR}/doc/latex/refman.pdf
+            RENAME          ${PROJECT_NAME}-manual.pdf
+            DESTINATION     ${${PROJECT_NAME}_INSTALL_DOC}
+			OPTIONAL
+            COMPONENT       pdfdoc
+        )
     ENDIF(LATEX_COMPILER AND NOT DOXY_SKIP_PDFDOC)
-
 ENDIF (DOXYGEN_FOUND)

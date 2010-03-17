@@ -12,6 +12,26 @@
 #  CHARON_CORE_HTMLDOC_DIR         path to charon-core htmldoc (optional)
 #  CHARON_CORE_TAG_IMPORT          doxygen tag import command (if possible)
 
+# if charon-core is already included (e.g. in charon-meta),
+# we can use the libraries and variables directly.
+IF(DEFINED charon-core_SOURCE_DIR)
+	SET(CHARON_CORE_ROOT_DIR ${charon-core_SOURCE_DIR})
+	SET(CHARON_CORE_INCLUDE_DIRS
+		${charon-core_SOURCE_DIR}/include
+		${charon-core_SOURCE_DIR}/include/charon-core
+	)
+	SET(CHARON_CORE_HTMLDOC_DIR
+		${CMAKE_INSTALL_PREFIX}/${charon-core_INSTALL_DOC}/html
+	)
+	SET(CHARON_CORE_TAGFILE
+		${charon-core_BINARY_DIR}/doc/html/charon-core.tag
+	)
+    SET(CHARON_CORE_TAG_IMPORT
+		"\"${CHARON_CORE_TAGFILE}=${CHARON_CORE_HTMLDOC_DIR}\""
+	)
+	RETURN()
+ENDIF(DEFINED charon-core_SOURCE_DIR)
+
 # search for header files
 FIND_PATH(CHARON_CORE_ROOT_DIR
     NAMES           include/charon-core/charon-core.cmake
@@ -33,6 +53,7 @@ FIND_FILE(CHARON_CORE_TAGFILE
                     ${CHARON_CORE_DOCDIRS}
     PATH_SUFFIXES   html
 	DOC				"doxygen import tag file"
+	NO_DEFAULT_PATH
 )
 FIND_PATH(CHARON_CORE_HTMLDOC_DIR
     NAMES           index.html
@@ -41,6 +62,7 @@ FIND_PATH(CHARON_CORE_HTMLDOC_DIR
                     ${CHARON_CORE_DOCDIRS}
     PATH_SUFFIXES   html
     DOC             "path to charon-core htmldoc (if exists)"
+	NO_DEFAULT_PATH
 )
 
 IF(CHARON_CORE_HTMLDOC_DIR)
