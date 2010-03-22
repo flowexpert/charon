@@ -79,37 +79,35 @@ void SampleIterativeSolver<T>::execute() {
 	
 	*/
 
-	else
-	{
-		if(!globalImgListIn[0].is_sameXYZC(globalImgListIn[1]))
-				// 1. create new image 2' which contains the interpolated values
-				// 2. read flow F at position X 
-				// 3. read intensity from position X+F in picture 2
-				// 4. write the intensity at position x in picture 2'
-				// 5. image 1' is the same as image 1
-				cimg_forXYZC(this->imgListOut[1], x,y,z,t)
-				{
-					flowx=float (T(x)+globalFlowListIn[0](x,y,z,0));
-					flowy=float (T(y)+globalFlowListIn[0](x,y,z,1));
-					this->imgListOut[1](x,y,z,t) =
-							this->interpolator()->interpolate(
-									globalImgListIn[1],
-									flowx, flowy,
-									int(z), int(t));
+	else {
+		if(!globalImgListIn[0].is_sameXYZC(globalImgListIn[1])) {
+			// 1. create new image 2' which contains the interpolated values
+			// 2. read flow F at position X
+			// 3. read intensity from position X+F in picture 2
+			// 4. write the intensity at position x in picture 2'
+			// 5. image 1' is the same as image 1
+			cimg_forXYZC(this->imgListOut[1], x,y,z,t) {
+				flowx=float (T(x)+globalFlowListIn[0](x,y,z,0));
+				flowy=float (T(y)+globalFlowListIn[0](x,y,z,1));
+				this->imgListOut[1](x,y,z,t) =
+						this->interpolator()->interpolate(
+								globalImgListIn[1],
+								flowx, flowy,
+								int(z), int(t));
 
-					this->imgListOut[0](x,y,z,t)=globalImgListIn[0](x,y,z,t);
+				this->imgListOut[0](x,y,z,t)=globalImgListIn[0](x,y,z,t);
 
-					//updates the iteratorHelper
-					this->iteratorHelper()->update(this->imgListOut);
+				//updates the iteratorHelper
+				this->iteratorHelper()->update(this->imgListOut);
 
-					//add to global flow
-					globalFlowOut[0](x,y,z,0)+=flowx;
-					globalFlowOut[0](x,y,z,0)+=flowy;
-				}
-		else
-			{
-				this->flowListOut() = globalFlowOut;
+				//add to global flow
+				globalFlowOut[0](x,y,z,0)+=flowx;
+				globalFlowOut[0](x,y,z,0)+=flowy;
 			}
+		}
+		else {
+			this->flowListOut() = globalFlowOut;
+		}
 	}
 
 
