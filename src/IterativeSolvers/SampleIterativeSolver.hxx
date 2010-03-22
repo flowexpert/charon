@@ -87,20 +87,20 @@ void SampleIterativeSolver<T>::execute() {
 				// 3. read intensity from position X+F in picture 2
 				// 4. write the intensity at position x in picture 2'
 				// 5. image 1' is the same as image 1
-				cimg_forXYZC(imgListOut[1], x,y,z,t) 
+				cimg_forXYZC(this->imgListOut[1], x,y,z,t)
 				{
 					flowx=float (T(x)+globalFlowListIn[0](x,y,z,0));
 					flowy=float (T(y)+globalFlowListIn[0](x,y,z,1));
-					imgListOut[1](x,y,z,t) = this->interpolator()->interpolate(
-													globalImgListIn[1], 
-													flowx,
-													flowy,
-													int(z), int(t));
+					this->imgListOut[1](x,y,z,t) =
+							this->interpolator()->interpolate(
+									globalImgListIn[1],
+									flowx, flowy,
+									int(z), int(t));
 
-					imgListOut[0](x,y,z,t)=globalImgListIn[0](x,y,z,t);
+					this->imgListOut[0](x,y,z,t)=globalImgListIn[0](x,y,z,t);
 
 					//updates the iteratorHelper
-					this->iteratorHelper()->update(imgListOut);
+					this->iteratorHelper()->update(this->imgListOut);
 
 					//add to global flow
 					globalFlowOut[0](x,y,z,0)+=flowx;
