@@ -53,11 +53,11 @@ void PsiStencil<T>::execute() {
 template <class T>
 void PsiStencil<T>::updateStencil(
 		const std::string& unknown,
-		const unsigned int x,
-		const unsigned int y,
-		const unsigned int z,
-		const unsigned int t,
-		const unsigned int v) {
+		const unsigned int& x,
+		const unsigned int& y,
+		const unsigned int& z,
+		const unsigned int& t,
+		const unsigned int& v) {
 	
 	// get values of unknowns 
 	const cimg_library::CImgList<T>& parameterList = this->parameterListIn();
@@ -66,7 +66,7 @@ void PsiStencil<T>::updateStencil(
 	stencilIn()->updateStencil(unknown, x, y, z, t, v);
 
 	// update energy of stencilIn
-	stencilIn()->updateEnergy(x, y, z, t, v, parameterList);
+	stencilIn()->updateEnergy(parameterList, x, y, z, t, v);
 
 	this->_rhs = stencilIn()->getRhs();
 	this->_unknowns = stencilIn()->getUnknowns();
@@ -84,6 +84,14 @@ void PsiStencil<T>::updateStencil(
 
 }
 
+template <class T>
+void PsiStencil<T>::updateEnergy(
+		const cimg_library::CImgList<T>&,
+		const unsigned int&, const unsigned int&,
+		const unsigned int&, const unsigned int&,
+		const unsigned int&) {
+}
+
 // robustness term
 
 template <class T>
@@ -91,8 +99,6 @@ double PsiStencil<T>::DPsi(double s, double e) const {
 	double dpsi = s/(sqrt(pow(s, 2) + pow(e, 2)));
 	return dpsi;
 }
-
-
 
 //not yet implemented
 template <class T>

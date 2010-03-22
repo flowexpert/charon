@@ -83,11 +83,11 @@ void Gbcce<T>::execute() {
 template <class T>
 void Gbcce<T>::updateStencil(
 		const std::string& unknown,
-		const unsigned int x,
-		const unsigned int y,
-		const unsigned int z,
-		const unsigned int t,
-		const unsigned int v) {
+		const unsigned int& x,
+		const unsigned int& y,
+		const unsigned int& z,
+		const unsigned int& t,
+		const unsigned int& v) {
 	//std::map<std::string, T> term;
 	//std::map<std::string, T> termD;
 	this->_rhs = 0;
@@ -120,12 +120,12 @@ void Gbcce<T>::updateStencil(
 
 template <class T>
 void Gbcce<T>::updateEnergy(
-		const unsigned int x,
-		const unsigned int y,
-		const unsigned int z,
-		const unsigned int t,
-		const unsigned int v,
-		const cimg_library::CImgList<T>& parameterList
+		const cimg_library::CImgList<T>& parameterList,
+		const unsigned int& x,
+		const unsigned int& y,
+		const unsigned int& z,
+		const unsigned int& t,
+		const unsigned int& v
 		) {
 	//std::map<std::string, T> term;
 	//std::map<std::string, T> termD;

@@ -47,48 +47,40 @@
 template <class T>
 class gbcce_DECLDIR Gbcce : public Stencil<T>
 {
-	public:
-		/// InputSlot for the brightness model to use.
-		InputSlot<BrightnessModel<T>*> brightnessIn;
+public:
+	/// InputSlot for the brightness model to use.
+	InputSlot<BrightnessModel<T>*> brightnessIn;
 
-		/// InputSlot for the motion model to use.
-		InputSlot<MotionModel<T>*> motionIn;
+	/// InputSlot for the motion model to use.
+	InputSlot<MotionModel<T>*> motionIn;
 
-		/// default constructor
-		Gbcce(const std::string& name = "" /**[in] instance name*/);
+	/// default constructor
+	Gbcce(const std::string& name = "" /**[in] instance name*/);
 
-		/// main function
-		virtual void execute();
+	/// main function
+	virtual void execute();
 
-		/// updates the stencil
-		virtual void updateStencil(
-				const std::string& unknown,
-				const unsigned int x=0,
-				const unsigned int y=0,
-				const unsigned int z=0,
-				const unsigned int t=0,
-				const unsigned int v=0);
+	virtual void updateStencil(
+		const std::string& unknown,
+		const unsigned int& x=0,
+		const unsigned int& y=0,
+		const unsigned int& z=0,
+		const unsigned int& t=0,
+		const unsigned int& v=0);
 
-		//updates the energy
-		virtual void updateEnergy(
-		const unsigned int x,
-		const unsigned int y,
-		const unsigned int z,
-		const unsigned int t,
-		const unsigned int v,
-		const cimg_library::CImgList<T>& flowList);
+	virtual void updateEnergy(
+		const cimg_library::CImgList<T>& flowList,
+		const unsigned int& x,
+		const unsigned int& y,
+		const unsigned int& z,
+		const unsigned int& t,
+		const unsigned int& v);
 
+	virtual cimg_library::CImg<T> apply(
+			const cimg_library::CImgList<T>& seq,
+			const unsigned int frame) const;
 
-		virtual cimg_library::CImg<T> apply(
-				const cimg_library::CImgList<T>& seq,
-				const unsigned int frame) const;
-
-		virtual ~Gbcce();
-
-
-protected:
-
-
+	virtual ~Gbcce();
 };
 
 #endif //_GBCCE_H_

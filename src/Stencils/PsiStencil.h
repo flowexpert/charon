@@ -48,56 +48,53 @@
 template <class T>
 class psistencil_DECLDIR PsiStencil : public Stencil<T>
 {
-	public:
-		
-		/// \name pointers used by the IteratorHelper
-		//  \{
-		/// InputSlot for the stencil.
-		InputSlot<Stencil<T>*> stencilIn;
-		/// Input slot for CImgList containing the parameters
-		InputSlot<cimg_library::CImgList<T> > parameterListIn;
+public:
 
-		/// parameter epsilon for robustness term
-		Parameter<double> epsilon;
-		//  \}
+	/// \name pointers used by the IteratorHelper
+	//  \{
+	/// InputSlot for the stencil.
+	InputSlot<Stencil<T>*> stencilIn;
+	/// Input slot for CImgList containing the parameters
+	InputSlot<cimg_library::CImgList<T> > parameterListIn;
 
-		/// default constructor
-		PsiStencil(const std::string& name = "" /**[in] instance name*/);
+	/// parameter epsilon for robustness term
+	Parameter<double> epsilon;
+	//  \}
 
-		/// main function
-		virtual void execute();
+	/// default constructor
+	PsiStencil(const std::string& name = "" /**[in] instance name*/);
 
-		/// updates stencil
-		virtual void updateStencil(
-				const std::string& unknown,
-				const unsigned int x=0,
-				const unsigned int y=0,
-				const unsigned int z=0,
-				const unsigned int t=0,
-				const unsigned int v=0);
+	/// main function
+	virtual void execute();
 
-		/// updates energy
-		virtual void updateEnergy(
-			const unsigned int x,
-			const unsigned int y,
-			const unsigned int z,
-			const unsigned int t,
-			const unsigned int v,
-			const cimg_library::CImgList<T>& flowList){};
+	/// updates stencil
+	virtual void updateStencil(
+			const std::string& unknown,
+			const unsigned int& x=0,
+			const unsigned int& y=0,
+			const unsigned int& z=0,
+			const unsigned int& t=0,
+			const unsigned int& v=0);
 
+	/// updates energy
+	virtual void updateEnergy(
+		const cimg_library::CImgList<T>& flowList,
+		const unsigned int& x,
+		const unsigned int& y,
+		const unsigned int& z,
+		const unsigned int& t,
+		const unsigned int& v);
 
-
-		/// calculates derivative of robustness term, DPsi
-		virtual double DPsi(double s, double e) const;
+	/// calculates derivative of robustness term, DPsi
+	virtual double DPsi(double s, double e) const;
 
 
-		virtual cimg_library::CImg<T> apply(
-				const cimg_library::CImgList<T>& seq,
-				const unsigned int frame) const;
+	virtual cimg_library::CImg<T> apply(
+			const cimg_library::CImgList<T>& seq,
+			const unsigned int frame) const;
 
 
-		virtual ~PsiStencil();
-
+	virtual ~PsiStencil();
 };
 
 #endif //_PSISTENCIL_H_

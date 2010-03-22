@@ -154,11 +154,9 @@ void L2Norm<T>::execute() {
 template <class T>
 void L2Norm<T>::updateStencil(
 		const std::string& unknown,
-		const unsigned int,
-		const unsigned int,
-		const unsigned int,
-		const unsigned int,
-		const unsigned int) {
+		const unsigned int&, const unsigned int&,
+		const unsigned int&, const unsigned int&,
+		const unsigned int&) {
 	// fill stencil with masks
 	std::vector<std::string>::iterator uIt;
 	for(uIt=this->pUnknowns().begin() ; uIt!=this->pUnknowns().end() ; uIt++) {
@@ -180,14 +178,11 @@ void L2Norm<T>::updateStencil(
 
 template <class T>
 void L2Norm<T>::updateEnergy(
-		const unsigned int x,
-		const unsigned int y,
-		const unsigned int z,
-		const unsigned int t,
-		const unsigned int v,
-		const cimg_library::CImgList<T>& flowList){
-
-};
+		const cimg_library::CImgList<T>&,
+		const unsigned int&, const unsigned int&,
+		const unsigned int&, const unsigned int&,
+		const unsigned int&) {
+}
 
 template <class T>
 cimg_library::CImg<T> L2Norm<T>::apply(

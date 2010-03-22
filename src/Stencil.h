@@ -52,14 +52,16 @@
  *  <b>General nomenclatur for stencils, metastentils and SubStencils</b>
  *
  *  This is the class Stencil, which represents a collection of masks or set of
- *  weights or pattern for different unknowns - or maybe no unknowns. Each mask is a
- *  SubStencil. So there is a SubStencil for every unknown a stencil knows - or
- *  just one SubStencil in general if the stencil has no unknowns.
- *  In the stencil class, these SubStencils are grouped by method - so there is one
- *  set of SubStencils in the L2Norm stencil and another set of
+ *  weights or pattern for different unknowns - or maybe no unknowns.
+ *  Each mask is a SubStencil. So there is a SubStencil for every unknown a
+ *  stencil knows - or just one SubStencil in general if the stencil has no
+ *  unknowns.
+ *
+ *  In the stencil class, these SubStencils are grouped by method -
+ *  so there is one set of SubStencils in the L2Norm stencil and another set of
  *  masks in the GBCCE Stencil etc.
- *  In the class Solver, there is a nested class MetaStencil, which regroups the
- *  SubStencils of the attached stencils by unknown.
+ *  In the class Solver, there is a nested class MetaStencil,
+ *  which regroups the SubStencils of the attached stencils by unknown.
  *  SubStencils are a class of their own that contain their pattern
  *  (for the solver), the actual data (which is put there by the updateStencil
  *  method of their stencil) and their center, represented by a Point4D.
@@ -87,10 +89,12 @@ protected:
 	/// Map to store and manage all the right hand side.
 	/** This has to be updated to represent the correct unknown
 	 *  during Stencil::updateStencil.
+	 * \todo add documentation here for the following three members:
+	 *        - _rhsD
+	 *        - _term
+	 *        - _termD
 	 */
 	T _rhs;
-
-	// TODO: add documentation here for all three members!
 	T _rhsD;
 	std::map<std::string, T> _term;
 	std::map<std::string, T> _termD;
@@ -128,21 +132,27 @@ public:
 	 *  @param[in] x,y,z,t,v  coordinates
 	 */
 	virtual void updateStencil(
-			const std::string& unknown,
-			const unsigned int x=0,
-			const unsigned int y=0,
-			const unsigned int z=0,
-			const unsigned int t=0,
-			const unsigned int v=0) = 0;
+		const std::string& unknown,
+		const unsigned int& x=0,
+		const unsigned int& y=0,
+		const unsigned int& z=0,
+		const unsigned int& t=0,
+		const unsigned int& v=0) = 0;
 
-	//updates the energy
-		virtual void updateEnergy(
-		const unsigned int x,
-		const unsigned int y,
-		const unsigned int z,
-		const unsigned int t,
-		const unsigned int v,
-		const cimg_library::CImgList<T>& flowList)=0;
+	/// updates the energy
+	/** This function is inteded to be pure virtual, is yet only for
+     *  interface purposes. Making it pure virtual will break current
+     *  code that does not implement this interface yet.
+	 *  \todo add more documentation here, what this function is good
+     *        for and how to implement it in derived stencils.
+	 */
+	virtual void updateEnergy(
+		const cimg_library::CImgList<T>& flowList,
+		const unsigned int& x=0,
+		const unsigned int& y=0,
+		const unsigned int& z=0,
+		const unsigned int& t=0,
+		const unsigned int& v=0);
 
 
 	/// Getter function for the SubStencils of the stencil.
@@ -157,7 +167,7 @@ public:
 	const T& getRhsD() const;
 
 	/// Getter function for the energy.
-	const double getEnergy() const;
+	double getEnergy() const;
 
 	/// Getter function for the term of D.
 	const std::map<std::string, T>& getTermD() const;

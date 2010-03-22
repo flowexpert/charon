@@ -334,7 +334,17 @@ int PetscSolver<T>::petscExecute() {
 	std::set<std::string>::const_iterator uIt;
 	// just need read-only access to global roi
 	const Roi<int>& globalRoi = *(this->roi());
+#ifndef NDEBUG
 	sout << "\tglobal Roi:\n\t\t" << globalRoi << std::endl;
+	const int cx = (globalRoi.xEnd() - globalRoi.xBegin())/2;
+	const int cy = (globalRoi.yEnd() - globalRoi.yBegin())/2;
+	const int cz = (globalRoi.zEnd() - globalRoi.zBegin())/2;
+	const int ct = (globalRoi.tEnd() - globalRoi.tBegin())/2;
+	sout << "\tcenter: " << cx << ", " << cy << ", "
+		<< cz << ", " << ct << "\n";
+	sout << "\tStencil content is evaluated at this center position."
+		<< std::endl;
+#endif
 
 	// iterate through stencils
 	for(sIt=this->stencils.begin() ; sIt!=this->stencils.end() ; sIt++) {
@@ -361,7 +371,7 @@ int PetscSolver<T>::petscExecute() {
 			// print debug information
 			sout << "\t\tfound unknown \"" << *uIt
 				<< "\" with the following content:" << std::endl;
-			is->updateStencil(*uIt);
+			is->updateStencil(*uIt,cx,cy,cz,ct);
 			const cimg_library::CImg<T>& dat =
 				is->get().find(*uIt)->second.data;
 			ImgTool::printInfo(sout, dat, "\t\t\t");

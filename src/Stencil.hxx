@@ -29,7 +29,7 @@
 #include "Substencil.hxx"
 #include <ParameteredObject.hxx>
 
-template <class T>
+template <typename T>
 Stencil<T>::Stencil(
 		const std::string& classname, const std::string& name,
 		const std::string& doc) :
@@ -48,28 +48,36 @@ Stencil<T>::Stencil(
 }
 
 
-template <class T>
+template <typename T>
 const std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {
 	return _subStencils;
 }
 
-template <class T>
+template <typename T>
 const T& Stencil<T>::getRhs() const {
 	return _rhs;
 }
 
-template <class T>
-const double Stencil<T>::getEnergy() const {
+template <typename T>
+double Stencil<T>::getEnergy() const {
 	return _energy;
 }
 
-template <class T>
+template <typename T>
 const std::set<std::string>& Stencil<T>::getUnknowns() const {
 	return _unknowns;
 }
 
-template <class T>
+template <typename T>
 Stencil<T>::~Stencil() {
+}
+
+template <typename T>
+void Stencil<T>::updateEnergy(
+	const cimg_library::CImgList<T>&,
+	const unsigned int&, const unsigned int&,
+	const unsigned int&, const unsigned int&,
+	const unsigned int&) {
 }
 
 #endif //_stencil_HXX_
