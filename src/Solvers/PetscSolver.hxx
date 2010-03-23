@@ -294,6 +294,11 @@ bool PetscSolver<T>::isRankZero() {
 	return !rank;
 }
 
+PetscErrorCode _myMonitor(KSP,PetscInt it,PetscReal rnorm,void*) {
+	sout << "KSP Iteration" << std::setw(5) << it << " : Residual norm ";
+	sout << std::scientific << std::setprecision(12) << rnorm << std::endl;
+	return 0;
+}
 
 template <typename T>
 int PetscSolver<T>::petscExecute() {
@@ -614,10 +619,33 @@ int PetscSolver<T>::petscExecute() {
 	ierr = KSPCreate(PETSC_COMM_WORLD, &ksp); CHKERRQ(ierr);
 	ierr = KSPSetFromOptions(ksp); CHKERRQ(ierr);
 	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN); CHKERRQ(ierr);
-	ierr = KSPMonitorSet(ksp,KSPMonitorDefault,PETSC_NULL,PETSC_NULL);
-		CHKERRQ(ierr);
+	ierr = KSPMonitorSet(ksp,_myMonitor,PETSC_NULL,PETSC_NULL); CHKERRQ(ierr);
 	ierr = KSPSolve(ksp,b,x); CHKERRQ(ierr);
+
+	// temporary file for view info output
+	const char* viewFileName;
+	do {
+		srand(time(0));
+		const int randNum = rand();
+		std::ostringstream viewFileNameGen;
+		viewFileNameGen << "file" << randNum << ".tmp";
+		viewFileName = viewFileNameGen.str().c_str();
+	} while(FileTool::exists(viewFileName));
+
+	//PetscViewer viewer;
+//	ierr = PetscViewerASCIIOpen(
+//			PETSC_COMM_SELF, viewFileName,&viewer); CHKERRQ(ierr);
 	ierr = KSPView(ksp, PETSC_VIEWER_STDOUT_SELF); CHKERRQ(ierr);
+//	ierr = PetscViewerDestroy(viewer); CHKERRQ(ierr);
+//	{
+//		std::ifstream viewreader(viewFileName);
+//		std::string viewline;
+//		assert(viewreader.good());
+//		while(std::getline(viewreader, viewline))
+//			sout << viewline << "\n";
+//		viewreader.close();
+//	}
+//	FileTool::remove(viewFileName);
 	// only the #0 Machine is supposed to write results back
 	if (this->isRankZero()) {
 		// create lookup map to convert unknown to index in the CImgList
