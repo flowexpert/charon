@@ -102,5 +102,25 @@ ELSE(APPLE)
 	    RUNTIME     DESTINATION    bin
 	    COMPONENT   applications
 	)
-
+	IF(UNIX)
+		# application icons
+		INSTALL(FILES
+			${PROJECT_SOURCE_DIR}/icons/tc.png
+			DESTINATION share/icons/hicolor/48x48/apps
+			RENAME tuchulcha.png
+		)
+		INSTALL(FILES
+			tuchulcha.desktop
+			DESTINATION share/applications
+		)
+		INSTALL(FILES
+			${PROJECT_SOURCE_DIR}/icons/tc2.png
+			DESTINATION share/icons/hicolor/48x48/apps
+			RENAME paraminspector.png
+		)
+		INSTALL(FILES
+			paraminspector.desktop
+			DESTINATION share/applications
+		)
+	ENDIF()
 ENDIF(APPLE)

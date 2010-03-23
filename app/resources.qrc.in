@@ -10,7 +10,7 @@
 		<file alias="Paths.config">@PROJECT_BINARY_DIR@/src/Paths.config</file>
 	</qresource>
 	<qresource prefix="/icons">
-		<file alias="appicon.png">@PROJECT_SOURCE_DIR@/icons/appicon.png</file>
+		<file alias="appicon.png">@PROJECT_SOURCE_DIR@/icons/tc.png</file>
 		<file alias="new.png">@PROJECT_SOURCE_DIR@/icons/oxygen/document_new.png</file>
 		<file alias="open.png">@PROJECT_SOURCE_DIR@/icons/oxygen/document_open.png</file>
 		<file alias="quickopen.png">@PROJECT_SOURCE_DIR@/icons/oxygen/quickopen-file.png</file>

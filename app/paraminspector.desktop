@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Paraminspector
+GenericName=parameter file editor
+Comment=Helper to edit charon parameter files
+TryExec=paraminspector
+Exec=paraminspector %U
+StartupNotify=true
+Terminal=false
+Type=Application
+Icon=paraminspector
+NoDisplay=false
+Categories=Qt;Development;TextEditor
+MimeType=text/plain
