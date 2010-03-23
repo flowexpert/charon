@@ -305,8 +305,8 @@ void GraphModel::connectSlot(const QString& source, const QString& target,
 
 void GraphModel::disconnectSlot(const QString& source, const QString& target,
                                 bool draw) {
-    QStringList sourceSep = source.split(".");
-    QStringList targetSep = target.split(".");
+	QStringList sourceSep = source.toLower().split(".");
+	QStringList targetSep = target.toLower().split(".");
     Q_ASSERT(sourceSep.size() == 2);
     Q_ASSERT(targetSep.size() == 2);
     QString prefixSave = setPrefix(sourceSep[0], false);
@@ -315,10 +315,10 @@ void GraphModel::disconnectSlot(const QString& source, const QString& target,
     for(int i=0; i<rowCount(); i++) {
         if (data(createIndex(i, 0)) == sourceSep[1]) {
             // check target is in list
-            QString content = data(createIndex(i, 1)).toString();
-            Q_ASSERT(content.indexOf(target) >= 0);
+			QString content = data(createIndex(i, 1)).toString().toLower();
+			Q_ASSERT(content.indexOf(target.toLower()) >= 0);
             QStringList targets = content.split(";", QString::SkipEmptyParts);
-            int pos = targets.indexOf(target);
+			int pos = targets.indexOf(target.toLower());
             Q_ASSERT(pos >= 0);
             targets.removeAt(pos);
             setData(createIndex(i, 1), targets.join(";"));
@@ -328,10 +328,10 @@ void GraphModel::disconnectSlot(const QString& source, const QString& target,
     for(int i=0; i<rowCount(); i++) {
         if (data(createIndex(i, 0)) == targetSep[1]) {
             // check target is in list
-            QString content = data(createIndex(i, 1)).toString();
-            Q_ASSERT(content.indexOf(source) >= 0);
+			QString content = data(createIndex(i, 1)).toString().toLower();
+			Q_ASSERT(content.indexOf(source.toLower()) >= 0);
             QStringList targets = content.split(";", QString::SkipEmptyParts);
-            int pos = targets.indexOf(source);
+			int pos = targets.indexOf(source.toLower());
             Q_ASSERT(pos >= 0);
             targets.removeAt(pos);
             setData(createIndex(i, 1), targets.join(";"));
