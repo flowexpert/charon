@@ -56,18 +56,35 @@ double FlowComparator<T>::getMeanEndpointError() const {
 		std::ostringstream msg;
 		msg << __FILE__ << ":" << __LINE__ << "\n\t";
 		msg << "Dimensions of result and groundtruth do not match.";
-		msg << "\n\t\tResult     : "
-				<< result()[0].width() << "; "
-				<< result()[0].height() << "; "
-				<< result()[0].depth() << "; "
-				<< result()[0].spectrum() << "; "
-				<< result().size();
-		msg << "\n\t\tGroundTruth: "
-				<< groundtruth()[0].width() << "; "
-				<< groundtruth()[0].height() << "; "
-				<< groundtruth()[0].depth() << "; "
-				<< groundtruth()[0].spectrum() << "; "
-				<< groundtruth().size();
+		msg << "\n\t\tResult     : ";
+		const cimg_library::CImgList<T>& res = result();
+		assert(&res);
+		const unsigned int& is = res.size();
+		msg << is << "; ";
+		if (is) {
+			const unsigned int& iw = res[0].width();
+			const unsigned int& ih = res[0].height();
+			const unsigned int& id = res[0].depth();
+			const unsigned int& it = res[0].spectrum();
+			msg << iw << "; " << ih << "; " << id << "; " << it;
+		}
+		else
+			msg << " (no content)";
+
+		msg << "\n\t\tGroundTruth: ";
+		const cimg_library::CImgList<T>& truth = groundtruth();
+		assert(&truth);
+		const unsigned int& gs = truth.size();
+		msg << gs << "; ";
+		if (gs) {
+			const unsigned int& gw = truth[0].width();
+			const unsigned int& gh = truth[0].height();
+			const unsigned int& gd = truth[0].depth();
+			const unsigned int& gt = truth[0].spectrum();
+			msg << gw << "; " << gh << "; " << gd << "; " << gt;
+		}
+		else
+			msg << " (no content)";
 		throw std::invalid_argument(msg.str());
 	}
 
