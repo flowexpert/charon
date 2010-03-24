@@ -36,6 +36,7 @@
 
 #include "TypeDetector.h"
 #include "AbstractData.hxx"
+#include "ParameterFile.h"
 #include <set>
 
 class ParameteredObject;
@@ -126,17 +127,17 @@ public:
 
 	/// Check if slot is connected to given slot.
 	/// @param target           Target slot to check.
-	bool connected(Slot* target);
+	bool connected(Slot& target);
 
 	/// Connect with given slot.
 	/// @param target           Target slot to connect to.
-	bool connect(Slot* target);
+	bool connect(Slot& target);
 
 	/// Remove all slot targets.
 	bool disconnect();
 
 	/// Remove all slot targets.
-	bool disconnect(Slot* target);
+	bool disconnect(Slot& target);
 
 	/// Save slot connections
 	/// This function disconnects already established connections in the
@@ -151,7 +152,9 @@ public:
 	/// Load slot connections
 	/// @param pf           ParameterFile to load from
 	/// @param man          PluginManager to get the instances from
-	virtual void load(const ParameterFile& pf, const PluginManagerInterface * man) = 0;
+	virtual void load(
+			const ParameterFile& pf,
+			const PluginManagerInterface* man) = 0;
 
 	/// Calls execute() on all targets.
 	virtual void execute() = 0;

@@ -126,14 +126,14 @@ int main() {
     assert(!sample->connected());
     Outputgen* outgen  = new Outputgen("outputgen");
     Outputgen* outgen2 = new Outputgen("outgen2");
-    outgen->out1.connect(&(sample->in1));
+	outgen->out1.connect(sample->in1);
     // slot in2 needs not to be connected because it's optional
     assert(sample->connected());
 
     // try to connect multiple sources to in2
     bool res = true;
-    res = res && outgen->out2.connect(&(sample->in2));
-    res = res && outgen2->out2.connect(&(sample->in2));
+	res = res && outgen->out2.connect(sample->in2);
+	res = res && outgen2->out2.connect(sample->in2);
     assert(res);
 
     // save object and connections

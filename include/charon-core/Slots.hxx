@@ -78,16 +78,16 @@ inline bool Slot::connected() {
 	return (getTargets().size() > 0);
 }
 
-inline bool Slot::connected(Slot* target) {
+inline bool Slot::connected(Slot& target) {
 	std::set<Slot *> targets = getTargets();
-	return (targets.find(target) != targets.end());
+	return (targets.find(&target) != targets.end());
 }
 
-inline bool Slot::connect(Slot* target) {
-	assert(target);
+inline bool Slot::connect(Slot& target) {
+	assert(&target);
 	bool ret = true;
-	ret &= _addTarget(target);
-	ret &= target->_addTarget(this);
+	ret &= _addTarget(&target);
+	ret &= target._addTarget(this);
 	return ret;
 }
 
@@ -102,13 +102,13 @@ inline bool Slot::disconnect() {
 	return res;
 }
 
-inline bool Slot::disconnect(Slot* target) {
+inline bool Slot::disconnect(Slot& target) {
 	std::set<Slot*> targets = getTargets();
-	if (targets.find(target) == targets.end())
+	if (targets.find(&target) == targets.end())
 		return false;
 	bool res = true;
-	res &= target->_removeTarget(this);
-	res &= _removeTarget(target);
+	res &= target._removeTarget(this);
+	res &= _removeTarget(&target);
 	return res;
 }
 
@@ -241,7 +241,7 @@ void AbstractSlot<T>::load(const ParameterFile& pf,
 							+ targetSlot->getType() + ")."));
 		}
 		AbstractSlot<T>* tmp = (AbstractSlot<T>*) (targetSlot);
-		connect(tmp);
+		connect(*tmp);
 	}
 }
 

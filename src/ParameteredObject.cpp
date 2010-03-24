@@ -358,7 +358,7 @@ bool ParameteredObject::_connect(ParameteredObject* target,
 	Slot* targetSlot = slotIter->second;
 
 	// add target slot to target ist of own slot
-	return ownSlot->connect(targetSlot);
+	return ownSlot->connect(*targetSlot);
 }
 
 bool ParameteredObject::_disconnect(ParameteredObject* target,
@@ -383,7 +383,7 @@ bool ParameteredObject::_disconnect(ParameteredObject* target,
 	Slot* targetSlot = slotIter->second;
 
 	// remove target slot from target list of own slot
-	return ownSlot->disconnect(targetSlot);
+	return ownSlot->disconnect(*targetSlot);
 }
 
 Slot* ParameteredObject::getSlot(const std::string& slotName) {
