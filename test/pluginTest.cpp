@@ -55,7 +55,7 @@ int main() {
 	ImageDisplay<double>* imgDisplay = (ImageDisplay<double>*)man.createInstance("imagedisplay", 0, "imagedisplay");
 	
 	fileReader->filename = PENGUINFILE;
-	fileReader->out.connect(&(imgDisplay->in));
+	fileReader->out.connect(imgDisplay->in);
 	imgDisplay->execute();
     man.destroyInstance(fileReader);
 	man.destroyInstance(imgDisplay);
