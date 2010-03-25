@@ -86,8 +86,7 @@ public:
 
 	/// compute the bcce-term of the motion model
 	/**
-	 *  \param[in]  xs,ys,zs  coordinates of the current pixel
-	 *  \param[in]  t         current time
+	 *  \param[in]  p         coordinates of the current pixel (including time)
 	 *  \param[in]  v         channel
 	 *  \param[out] term      pre factor for each unknown
 	 *  \param[out] rhs       T in which the bcce-term is written
@@ -95,13 +94,14 @@ public:
 	 *                        (this is used for global methods)
 	 */
 	virtual void compute(
-			const int xs, const int ys, const int zs, const int t,
-			const int v, std::map<std::string, T>& term, T& rhs,
+			const Point4D<int>& p, const int& v,
+			std::map<std::string, T>& term, T& rhs,
 			const std::string& unknown = "") = 0;
 
 	virtual void computeEnergy(
-				const int xs, const int ys, const int zs, const int t, const int v,
-				const cimg_library::CImgList<T>& parameterList, double& energy)=0;
+			const Point4D<int>& p, const int& v,
+			const cimg_library::CImgList<T>& parameterList,
+			double& energy) = 0;
 
 	// returns the width of the bcce-terms
 	// @details = number of parameters of the model + 1

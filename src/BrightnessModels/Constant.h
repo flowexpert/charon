@@ -70,13 +70,14 @@ namespace BrightnessModels
 		virtual void execute();
 
 		virtual void compute(
-				const int xs, const int ys, const int zs, const int t,
-				const int v, std::map<std::string, T>& term, T& rhs,
+				const Point4D<int>& p, const int& v,
+				std::map<std::string, T>& term, T& rhs,
 				const std::string& unknown = "");
 
 		virtual void computeEnergy(
-				const int xs, const int ys, const int zs, const int t, const int v,
-				const cimg_library::CImgList<T>& parameterList, double& energy);
+				const Point4D<int>& p, const int& v,
+				const cimg_library::CImgList<T>& parameterList,
+				double& energy);
 
 		virtual std::set<std::string>& getUnknowns();
 		//virtual BrightnessFunctorInterface& getFunctor() {return functor;}

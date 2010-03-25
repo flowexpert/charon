@@ -78,17 +78,18 @@ protected:
 		 * Set of points that belong to this MetaStencil.
 		 * @remark The size of the MetaStencil has to be extracted from the pattern.
 		 */
-		std::set<Point4D<unsigned int> > pattern;
+		std::set<Point4D<int> > pattern;
 
 		/// \name expansions in all 8 directions
 		//@{
-		unsigned int left       /** x negative*/, right;    ///< x positive
-		unsigned int up         /** y negative*/, down;     ///< y positive
-		unsigned int backward   /** z negative*/, forward;  ///< z positive
-		unsigned int before     /** t negative*/, after;    ///< t positive
+		int left       /** x negative*/, right;    ///< x positive
+		int up         /** y negative*/, down;     ///< y positive
+		int backward   /** z negative*/, forward;  ///< z positive
+		int before     /** t negative*/, after;    ///< t positive
 		//@}
 
-		Point4D<unsigned int> center;		///< coordinates of the center of the meta stencil
+		/// coordinates of the center of the meta stencil
+		Point4D<int> center;
 
 	public:
 		/// default constructor
@@ -108,14 +109,14 @@ protected:
 		virtual MetaStencil& operator= (const MetaStencil& rhs /**< [in] copy source*/);
 
 		/// getter for MetaStencil::center
-		const Point4D<unsigned int>& getCenter() const;
+		const Point4D<int>& getCenter() const;
 
 		/// getter for MetaStencil::pattern
 		/**
 		 *	The only necessary getter to determine the maximum number of
 		 *	entries.
 		 */
-		virtual std::set<Point4D<unsigned int> >& getPattern();
+		virtual std::set<Point4D<int> >& getPattern();
 
 		/// Expand the given region of interest to include the necessary ghost nodes.
 		/**

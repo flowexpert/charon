@@ -53,10 +53,10 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 			continue;
 
 		// setting work-variable for better reading
-		unsigned int centerx = found->second.center.x;
-		unsigned int centery = found->second.center.y;
-		unsigned int centerz = found->second.center.z;
-		unsigned int centert = found->second.center.t;
+		int centerx = found->second.center.x;
+		int centery = found->second.center.y;
+		int centerz = found->second.center.z;
+		int centert = found->second.center.t;
 
 		// Measuring the SubStencil that is currently being added
 		// to the MetaStencil
@@ -128,8 +128,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 				assert(sum.z < dimz);
 				assert(sum.t >= 0);
 				assert(sum.t < dimt);
-				Point4D<unsigned int> usum(sum);
-				this->pattern.insert(usum);
+				this->pattern.insert(sum);
 			}
 		}
 	}
@@ -146,7 +145,7 @@ Solver<T>::MetaStencil::MetaStencil() {
 }
 
 template <typename T>
-const Point4D<unsigned int>& Solver<T>::MetaStencil::getCenter() const {
+const Point4D<int>& Solver<T>::MetaStencil::getCenter() const {
 	return center;
 }
 
@@ -173,7 +172,7 @@ typename Solver<T>::MetaStencil& Solver<T>::MetaStencil::operator = (
 }
 
 template <typename T>
-std::set<Point4D<unsigned int> >& Solver<T>::MetaStencil::getPattern() {
+std::set<Point4D<int> >& Solver<T>::MetaStencil::getPattern() {
 	return pattern;
 }
 

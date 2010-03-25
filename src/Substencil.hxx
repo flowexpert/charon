@@ -34,7 +34,7 @@ SubStencil<T>::SubStencil() {
 template <class T>
 SubStencil<T>::SubStencil(const unsigned int dimx, const unsigned int dimy,
                           const unsigned int dimz, const unsigned int dimt,
-                          Point4D<unsigned int> c) {
+						  Point4D<int> c) {
     //extend CImg objects to given size and initialize all values with 0
 	data.assign(dimx, dimy, dimz, dimt, 0);
 	pattern.assign(dimx, dimy, dimz, dimt, 0);

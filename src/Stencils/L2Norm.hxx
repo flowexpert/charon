@@ -154,9 +154,7 @@ void L2Norm<T>::execute() {
 template <class T>
 void L2Norm<T>::updateStencil(
 		const std::string& unknown,
-		const unsigned int&, const unsigned int&,
-		const unsigned int&, const unsigned int&,
-		const unsigned int&) {
+		const Point4D<int>&, const int&) {
 	// fill stencil with masks
 	std::vector<std::string>::iterator uIt;
 	for(uIt=this->pUnknowns().begin() ; uIt!=this->pUnknowns().end() ; uIt++) {
@@ -168,20 +166,12 @@ void L2Norm<T>::updateStencil(
 		}
 		else {
 			// empty substencil for other unknowns
-			entry.center = Point4D<unsigned int>();
+			entry.center = Point4D<int>();
 			entry.data.clear();
 			entry.pattern.clear();
 		}
 		this->_subStencils[*uIt] = entry;
 	}
-}
-
-template <class T>
-void L2Norm<T>::updateEnergy(
-		const cimg_library::CImgList<T>&,
-		const unsigned int&, const unsigned int&,
-		const unsigned int&, const unsigned int&,
-		const unsigned int&) {
 }
 
 template <class T>

@@ -49,7 +49,7 @@ std::set<std::string>& BrightnessModels::Constant<T>::getUnknowns()
 
 template<class T>
 void BrightnessModels::Constant<T>::compute(
-		const int , const int , const int , const int , const int ,
+		const Point4D<int>&, const int&,
 		std::map<std::string, T>& , T&,
 		const std::string&)
 {
@@ -58,8 +58,8 @@ void BrightnessModels::Constant<T>::compute(
 
 template<class T>
 void BrightnessModels::Constant<T>::computeEnergy(
-		const int xs, const int ys, const int zs, const int t, const int v,
-		const cimg_library::CImgList<T>& parameterList, double& energy)
+		const Point4D<int>&, const int&,
+		const cimg_library::CImgList<T>&, double&)
 {
 	// no brightness change
 }

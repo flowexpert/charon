@@ -47,7 +47,7 @@ public:
 	cimg_library::CImg<char> pattern;
 
 	/// center of the substencil pattern
-	Point4D<unsigned int> center;
+	Point4D<int> center;
 
 	///default constructor.
 	SubStencil();
@@ -55,7 +55,7 @@ public:
 	///constructor with dimensions and center.
 	SubStencil(const unsigned int dimx, const unsigned int dimy,
 			const unsigned int dimz, const unsigned int dimt,
-			Point4D<unsigned int> center);
+			Point4D<int> center);
 
 	///copy constructor.
 	SubStencil(const SubStencil& rhs);

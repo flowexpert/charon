@@ -53,20 +53,16 @@ void PsiStencil<T>::execute() {
 template <class T>
 void PsiStencil<T>::updateStencil(
 		const std::string& unknown,
-		const unsigned int& x,
-		const unsigned int& y,
-		const unsigned int& z,
-		const unsigned int& t,
-		const unsigned int& v) {
+		const Point4D<int>& p, const int& v) {
 	
 	// get values of unknowns 
 	const cimg_library::CImgList<T>& parameterList = this->parameterListIn();
 
 	// update stencil of stencilIn
-	stencilIn()->updateStencil(unknown, x, y, z, t, v);
+	stencilIn()->updateStencil(unknown,p,v);
 
 	// update energy of stencilIn
-	stencilIn()->updateEnergy(parameterList, x, y, z, t, v);
+	stencilIn()->updateEnergy(parameterList,p,v);
 
 	this->_rhs = stencilIn()->getRhs();
 	this->_unknowns = stencilIn()->getUnknowns();
@@ -87,9 +83,7 @@ void PsiStencil<T>::updateStencil(
 template <class T>
 void PsiStencil<T>::updateEnergy(
 		const cimg_library::CImgList<T>&,
-		const unsigned int&, const unsigned int&,
-		const unsigned int&, const unsigned int&,
-		const unsigned int&) {
+		const Point4D<int>&, const int&) {
 }
 
 // robustness term

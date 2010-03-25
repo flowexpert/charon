@@ -133,11 +133,7 @@ public:
 	 */
 	virtual void updateStencil(
 		const std::string& unknown,
-		const unsigned int& x=0,
-		const unsigned int& y=0,
-		const unsigned int& z=0,
-		const unsigned int& t=0,
-		const unsigned int& v=0) = 0;
+		const Point4D<int>& p=Point4D<int>(), const int& v=0) = 0;
 
 	/// updates the energy
 	/** This function is inteded to be pure virtual, is yet only for
@@ -148,11 +144,7 @@ public:
 	 */
 	virtual void updateEnergy(
 		const cimg_library::CImgList<T>& flowList,
-		const unsigned int& x=0,
-		const unsigned int& y=0,
-		const unsigned int& z=0,
-		const unsigned int& t=0,
-		const unsigned int& v=0);
+		const Point4D<int>& p=Point4D<int>(), const int& v=0);
 
 
 	/// Getter function for the SubStencils of the stencil.

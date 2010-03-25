@@ -75,9 +75,7 @@ Stencil<T>::~Stencil() {
 template <typename T>
 void Stencil<T>::updateEnergy(
 	const cimg_library::CImgList<T>&,
-	const unsigned int&, const unsigned int&,
-	const unsigned int&, const unsigned int&,
-	const unsigned int&) {
+	const Point4D<int>&, const int&) {
 }
 
 #endif //_stencil_HXX_

@@ -30,75 +30,63 @@
 template <typename T>
 class Point4D
 {
+private:
+	/// coordinates of the Point4D.
+	T _c[4];
+
 public:
-	/// \name coordinates of the Point4D.
-	//@{
-	T x, y, z, t;
-	//@}
+	T& x; ///< x coordinate (horizontal)
+	T& y; ///< y coordinate (vertical)
+	T& z; ///< z coordinate (3rd D)
+	T& t; ///< t coordinate (time)
 
 	/// default constructor
-	Point4D() : x(0), y(0), z(0), t(0) {
+	Point4D() : x(_c[0]),y(_c[1]),z(_c[2]),t(_c[3]) {
+		for (unsigned int i=0; i<4u; i++)
+			_c[i] = T(0);
 	}
 
 	/// constructor with coordinates
-	/** \param[in] x,y,z,t	initial coordinates */
-	Point4D(T x, T y, T z, T t) :
-		x(x), y(y), z(z), t(t)
-	{
+	/** \param[in] rx,ry,rz,rt	initial coordinates */
+	Point4D(T rx, T ry, T rz, T rt) : x(_c[0]),y(_c[1]),z(_c[2]),t(_c[3]) {
+		_c[0] = rx;
+		_c[1] = ry;
+		_c[2] = rz;
+		_c[3] = rt;
 	}
 
 	/// copy constructor
-	Point4D(const Point4D<T>& rhs /**< [in] copy source */) :
-		x(rhs.x), y(rhs.y), z(rhs.z), t(rhs.t)
-	{
-	}
-
-	/// cast to Point4D<int>.
-	operator Point4D<int>() const {
-		return Point4D<int>(int(x), int(y), int(z), int(t));
-	}
-
-	/// cast to Point4D<unsigned int>.
-	operator Point4D<unsigned int>() const {
-		return Point4D<unsigned int>(
-			(unsigned int)(std::abs(x)),
-			(unsigned int)(std::abs(y)),
-			(unsigned int)(std::abs(z)),
-			(unsigned int)(std::abs(t))
-		);
+	Point4D(const Point4D<T>& rhs /**< [in] copy source */)
+			: x(_c[0]),y(_c[1]),z(_c[2]),t(_c[3]) {
+		*this = rhs;
 	}
 
 	/// assignment operator
 	Point4D& operator= (const Point4D<T>& rhs /**<[in] copy source*/) {
 		if(&rhs == this)
 			return *this;
-		this->x = rhs.x;
-		this->y = rhs.y;
-		this->z = rhs.z;
-		this->t = rhs.t;
+		for (unsigned int i=0; i<4u; i++)
+			_c[i] = rhs._c[i];
 		return *this;
 	}
 
 	/// compound addition operator
 	Point4D<T>& operator+= (const Point4D<T>& rhs /**<[in] second summand*/) {
-		this->x += rhs.x;
-		this->y += rhs.y;
-		this->z += rhs.z;
-		this->t += rhs.t;
+		for (unsigned int i=0; i<4u; i++)
+			_c[i] += rhs._c[i];
 		return *this;
 	}
 
 	///compound subtraction operator
 	Point4D<T>& operator-= (const Point4D<T>&rhs /**<[in] subtrahend*/) {
-		this->x -= rhs.x;
-		this->y -= rhs.y;
-		this->z -= rhs.z;
-		this->t -= rhs.t;
+		for (unsigned int i=0; i<4u; i++)
+			_c[i] -= rhs._c[i];
 		return *this;
 	}
 
 	/// addition operator
-	Point4D<T>& operator+ (const Point4D<T> &rhs /**<[in] second summand*/) const {
+	/** \param[in] rhs second summand */
+	Point4D<T>& operator+ (const Point4D<T> &rhs) const {
 		return Point4D(*this) += rhs;
 	}
 
@@ -108,11 +96,14 @@ public:
 	}
 
 	/// comparison operator
-	bool operator < (const Point4D<T> &rhs /**<[in] values to compare with*/) const {
-		if (this->t < rhs.t) {return true;} else if (this->t > rhs.t) {return false;}
-		if (this->z < rhs.z) {return true;} else if (this->z > rhs.z) {return false;}
-		if (this->y < rhs.y) {return true;} else if (this->y > rhs.y) {return false;}
-		if (this->x < rhs.x) {return true;} else if (this->x > rhs.x) {return false;}
+	/** \param[in] rhs values to compare with */
+	bool operator < (const Point4D<T> &rhs) const {
+		for (int i=3u; i>=0; i--) {
+			if (_c[i] < rhs._c[i])
+				return true;
+			if (_c[i] > rhs._c[i])
+				return false;
+		}
 		// if it got this far, either x=y=z=t in which case it has to be
 		// false or something fishy is going on, in which case it should also
 		// be false, so not much of a control here
@@ -120,29 +111,46 @@ public:
 	}
 
 	/// comparison operator
-	bool operator > (const Point4D<T>& rhs /**<[in] values to compare with*/) const {
+	/** \param[in] rhs values to compare with */
+	bool operator > (const Point4D<T>& rhs) const {
 		return rhs < *this;
 	}
 
 	/// comparison operator
-	bool operator== (const Point4D<T>& rhs /**<[in] values to compare with*/) const {
-		return ((this->x == rhs.x) && (this->y == rhs.y)
-			&& (this->z == rhs.z) && (this->t == rhs.t));
+	/** \param[in] rhs values to compare with */
+	bool operator== (const Point4D<T>& rhs) const {
+		bool ret = true;
+		for (unsigned int i=0; i<4u; i++)
+			ret = ret && (_c[i]==rhs._c[i]);
+		return ret;
 	}
 
 	/// comparison operator
-	bool operator <= (const Point4D<T>& rhs /**<[in] values to compare with*/) const {
+	/** \param[in] rhs values to compare with */
+	bool operator <= (const Point4D<T>& rhs) const {
 		return !(*this > rhs);
 	}
 
 	/// comparison operator
-	bool operator >= (const Point4D<T>& rhs /**<[in] values to compare with*/) const {
+	/** \param[in] rhs values to compare with */
+	bool operator >= (const Point4D<T>& rhs) const {
 		return !(*this < rhs);
 	}
 
 	/// Calculate the volume relative to the origin.
 	T volume() {
-		return x * y * z * t;
+		T vol = 1;
+		for (unsigned int i=0; i<4u; i++)
+			vol *= _c[i];
+		return vol;
+	}
+
+	/// Check if all coordinates are positive
+	bool isPositive() const {
+		bool ret = true;
+		for (unsigned int i=0; i<4u; i++)
+			ret = ret && (_c[i] >= T(0));
+		return ret;
 	}
 
 	///default destructor
@@ -156,7 +164,8 @@ public:
  */
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const Point4D<T>& rhs) {
-	out << "(" << rhs.x << "," << rhs.y << "," << rhs.z << "," << rhs.t << ")";
+	out << "(" << rhs.x << "," << rhs.y << ","
+			<< rhs.z << "," << rhs.t << ")";
 	return out;
 }
 

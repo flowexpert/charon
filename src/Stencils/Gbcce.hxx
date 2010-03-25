@@ -73,7 +73,7 @@ void Gbcce<T>::execute() {
 	// values
 	std::set<std::string>::iterator uIt;
 	for(uIt=this->_unknowns.begin();uIt!=this->_unknowns.end();uIt++) {
-		Point4D<unsigned int> center(0,0,0,0);
+		Point4D<int> center;
 		SubStencil<T> entry(1,1,1,1,center);
 		entry.pattern(0,0) = 1;
 		this->_subStencils[*uIt] = entry;
@@ -83,11 +83,8 @@ void Gbcce<T>::execute() {
 template <class T>
 void Gbcce<T>::updateStencil(
 		const std::string& unknown,
-		const unsigned int& x,
-		const unsigned int& y,
-		const unsigned int& z,
-		const unsigned int& t,
-		const unsigned int& v) {
+		const Point4D<int>& p,
+		const int& v) {
 	//std::map<std::string, T> term;
 	//std::map<std::string, T> termD;
 	this->_rhs = 0;
@@ -105,8 +102,8 @@ void Gbcce<T>::updateStencil(
 		this->_term[*unkIt] = T(0);
 
 	// compute term 
-	this->brightnessIn()->compute(x,y,z,t,v,this->_term,this->_rhs,unknown);
-	this->motionIn()->compute(x,y,z,t,v,this->_term,this->_rhs,unknown);
+	this->brightnessIn()->compute(p,v,this->_term,this->_rhs,unknown);
+	this->motionIn()->compute(p,v,this->_term,this->_rhs,unknown);
 
 	// and fill into substencils
 	typename std::map<std::string,T>::iterator termIt;
@@ -121,12 +118,7 @@ void Gbcce<T>::updateStencil(
 template <class T>
 void Gbcce<T>::updateEnergy(
 		const cimg_library::CImgList<T>& parameterList,
-		const unsigned int& x,
-		const unsigned int& y,
-		const unsigned int& z,
-		const unsigned int& t,
-		const unsigned int& v
-		) {
+		const Point4D<int>& p, const int& v) {
 	//std::map<std::string, T> term;
 	//std::map<std::string, T> termD;
 	this->_rhs = 0;
@@ -144,9 +136,8 @@ void Gbcce<T>::updateEnergy(
 		this->_term[*unkIt] = T(0);
 
 	// compute energy 
-	this->brightnessIn()->computeEnergy(x,y,z,t,v,parameterList, this->_energy);
-	this->motionIn()->computeEnergy(x,y,z,t,v,parameterList, this->_energy);
-
+	this->brightnessIn()->computeEnergy(p,v,parameterList, this->_energy);
+	this->motionIn()->computeEnergy(p,v,parameterList, this->_energy);
 }
 
 

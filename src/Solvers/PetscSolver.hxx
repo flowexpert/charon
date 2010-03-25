@@ -50,7 +50,7 @@ PetscSolver<T>::PetscMetaStencil::PetscMetaStencil() :
 template <typename T>
 unsigned int PetscSolver<T>::PetscMetaStencil::update(
 		const std::string unknown,
-		const Point4D<unsigned int>& p,
+		const Point4D<int>& p,
 		const std::map<std::string,const Roi<int>*>& unknownSizes,
 		PetscInt*& columns,
 		PetscScalar*& values)
@@ -62,10 +62,10 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	// the CImg data object of the MetaStencil
 	for (unsigned int i = 0 ; i < this->substencils.size() ; i++) {
 		// Calculating offsets
-		int xo = int(this->center.x) - int(this->substencils[i]->center.x);
-		int yo = int(this->center.y) - int(this->substencils[i]->center.y);
-		int zo = int(this->center.z) - int(this->substencils[i]->center.z);
-		int to = int(this->center.t) - int(this->substencils[i]->center.t);
+		int xo = this->center.x - this->substencils[i]->center.x;
+		int yo = this->center.y - this->substencils[i]->center.y;
+		int zo = this->center.z - this->substencils[i]->center.z;
+		int to = this->center.t - this->substencils[i]->center.t;
 
 		// Iterate through all pixels of the SubStencil...
 		cimg_forXYZC(this->substencils[i]->data,xc,yc,zc,tc) {
@@ -81,13 +81,12 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 	// and its value to PetscScalar* values
 
 	// pattern Iterator
-	std::set<Point4D<unsigned int> >::const_iterator pIt = this->pattern.begin();
+	std::set<Point4D<int> >::const_iterator pIt = this->pattern.begin();
 	// for all Point4Ds in this->pattern
 	for(unsigned int i=0 ; i < this->pattern.size() ; i++,pIt++) {
-		const Point4D<unsigned int>& curP = *pIt;
-		Point4D<int> curArg = Point4D<int>(curP);
-		curArg += Point4D<int>(p);
-		curArg -= Point4D<int>(this->center);
+		Point4D<int> curArg = *pIt;
+		curArg += p;
+		curArg -= this->center;
 		PetscInt curCol =
 			PetscSolver<T>::_pointToGlobalIndex(curArg,unknown,unknownSizes);
 		columns[i] = curCol;
@@ -124,12 +123,10 @@ unsigned int PetscSolver<T>::_relativeIndexToGlobalIndex(
 
 	// unknown Sizes iterator: usIt
 	std::map<std::string,const Roi<int>* >::const_iterator usIt;
-	for(usIt=unknownSizes.begin() ; usIt != unknownSizes.find(unknown) ; usIt++) {
+	for(usIt=unknownSizes.begin(); usIt != unknownSizes.find(unknown); usIt++)
 		res += usIt->second->getVolume();
-	}
 
 	res += i;
-
 	return res;
 }
 
@@ -376,7 +373,7 @@ int PetscSolver<T>::petscExecute() {
 			// print debug information
 			sout << "\t\tfound unknown \"" << *uIt
 				<< "\" with the following content:" << std::endl;
-			is->updateStencil(*uIt,cx,cy,cz,ct);
+			is->updateStencil(*uIt,Point4D<int>(cx,cy,cz,ct));
 			const cimg_library::CImg<T>& dat =
 				is->get().find(*uIt)->second.data;
 			ImgTool::printInfo(sout, dat, "\t\t\t");
@@ -553,17 +550,18 @@ int PetscSolver<T>::petscExecute() {
 		// row is a ghost node or 'real point'
 		if (globalRoi.isInside(p.x, p.y, p.z, p.t)) {
 			/*
-			 *	Real point:
-			 *		if it is a real point, we have positive coordinates and thus
-			 *		can cast without messing things up.
+			 * Real point:
+			 *     if it is a real point, we should now have
+			 *     positive coordinates.
 			 */
-			p = Point4D<unsigned int>(p);
+			assert(p.isPositive());
+
 			// Update all stencils of the unknown to contain current data
 			int nos = (int)substencils[unknown].size(); // number of stencils
 			PetscScalar rhs = 0;                        // right hand side
 			for (int index = 0 ; index < nos ; index++) {
 				substencils.find(unknown)->second[index]->
-					updateStencil(unknown, p.x, p.y, p.z, p.t);
+					updateStencil(unknown, p);
 				rhs += PetscScalar(
 						substencils.find(unknown)->second[index]->getRhs());
 			}
@@ -748,7 +746,7 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 
 	for(sIt=this->stencils.begin();sIt!=this->stencils.end();sIt++) {
 		Stencil<T>* s = (*((InputSlot<Stencil<T>*>*)*sIt))();
-		s->updateStencil(unknown,p.x,p.y,p.z,p.t);
+		s->updateStencil(unknown,p);
 		const std::set<std::string>& allUnk = s->getUnknowns();
 		typename std::set<std::string>::const_iterator unk;
 		for(unk = allUnk.begin(); unk != allUnk.end(); unk++) {

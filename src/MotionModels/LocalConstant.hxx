@@ -37,17 +37,17 @@ std::set<std::string>& MotionModels::LocalConstant<T>::getUnknowns()
 
 template<class T>
 void MotionModels::LocalConstant<T>::compute(
-		const int xs, const int ys, const int zs, const int t, const int v,
+		const Point4D<int>& p, const int& v,
 		std::map<std::string, T>& term, T& rhs,
 		const std::string& unknown)
 {
 	if(!dz.connected())
-		assert(zs == 0u); // 2D only
+		assert(p.z == 0u); // 2D only
 
-	const T& iX = this->dx()(v, xs, ys, zs, t);
-	const T& iY = this->dy()(v, xs, ys, zs, t);
-	const T& iZ = dz.connected() ? this->dz()(v, xs, ys, zs, t) : T(0);
-	const T& iT = this->dt()(v, xs, ys, zs, t);
+	const T& iX = this->dx()(v, p.x, p.y, p.z, p.t);
+	const T& iY = this->dy()(v, p.x, p.y, p.z, p.t);
+	const T& iZ = dz.connected() ? this->dz()(v, p.x, p.y, p.z, p.t) : T(0);
+	const T& iT = this->dt()(v, p.x, p.y, p.z, p.t);
 	T factor = T(1);
 
 	// multiply with derivative wrt unkown, if any unknown is given
@@ -78,22 +78,22 @@ void MotionModels::LocalConstant<T>::compute(
 
 template<class T>
 void MotionModels::LocalConstant<T>::computeEnergy(
-		const int xs, const int ys, const int zs, const int ts, const int vs,
+		const Point4D<int>& p, const int& vs,
 		const cimg_library::CImgList<T>& parameterList, double &energy)
 {
 	if(!dz.connected())
-		assert(zs == 0u); // 2D only
+		assert(p.z == 0u); // 2D only
 
 	// derivatives
-	const T& iX = this->dx()(vs, xs, ys, zs, ts);
-	const T& iY = this->dy()(vs, xs, ys, zs, ts);
-	const T& iZ = dz.connected() ? this->dz()(vs, xs, ys, zs, ts) : T(0);
-	const T& iT = this->dt()(vs, xs, ys, zs, ts);
+	const T& iX = this->dx()(vs, p.x, p.y, p.z, p.t);
+	const T& iY = this->dy()(vs, p.x, p.y, p.z, p.t);
+	const T& iZ = dz.connected() ? this->dz()(vs, p.x, p.y, p.z, p.t) : T(0);
+	const T& iT = this->dt()(vs, p.x, p.y, p.z, p.t);
 
 	// flow components
-	const T& u = parameterList[0](xs,ys,zs,ts);
-	const T& v = parameterList[1](xs,ys,zs,ts);
-	const T& w = dz.connected() ? parameterList[2](xs,ys,zs,ts) : T(0);
+	const T& u = parameterList[0](p.x,p.y,p.z,p.t);
+	const T& v = parameterList[1](p.x,p.y,p.z,p.t);
+	const T& w = dz.connected() ? parameterList[2](p.x,p.y,p.z,p.t) : T(0);
 
 	energy += pow(double(iX*u+iY*v+iZ+w-iT),2.);
 }

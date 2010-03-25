@@ -62,19 +62,11 @@ public:
 
 	virtual void updateStencil(
 		const std::string& unknown,
-		const unsigned int& x=0,
-		const unsigned int& y=0,
-		const unsigned int& z=0,
-		const unsigned int& t=0,
-		const unsigned int& v=0);
+		const Point4D<int>& p=Point4D<int>(), const int& v=0);
 
 	virtual void updateEnergy(
 		const cimg_library::CImgList<T>& flowList,
-		const unsigned int& x,
-		const unsigned int& y,
-		const unsigned int& z,
-		const unsigned int& t,
-		const unsigned int& v);
+		const Point4D<int>& p=Point4D<int>(), const int& v=0);
 
 	virtual cimg_library::CImg<T> apply(
 			const cimg_library::CImgList<T>& seq,

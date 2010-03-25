@@ -83,14 +83,15 @@ public:
 	 *                       (this is used for global methods)
 	 */
 	virtual void compute(
-			const int xs, const int ys, const int zs,
-			const int t, const int v,
+			const Point4D<int>& p, const int& v,
 			std::map<std::string, T>& term, T& rhs,
 			const std::string& unknown = "") = 0;
 
 	virtual void computeEnergy(
-				const int xs, const int ys, const int zs, const int t, const int v,
-				const cimg_library::CImgList<T>& parameterList, double& energy)=0;
+				const Point4D<int>& p, const int& v,
+				const cimg_library::CImgList<T>& parameterList,
+				double& energy) = 0;
+
 	/**
 	 * Get the unknowns of the model.
 	 * @return Set of strings which contains the names of the unknowns
