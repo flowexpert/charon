@@ -222,8 +222,8 @@ public:
 	// overload Slot functions
 	virtual operator T() const;
 	virtual const T& operator()() const;
-	virtual const T& operator[](unsigned int pos) const;
-	virtual unsigned int size() const;
+	virtual const T& operator[](std::size_t pos) const;
+	virtual std::size_t size() const;
 };
 
 /// Output slot.

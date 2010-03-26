@@ -21,6 +21,8 @@
  *  @date 10.04.2009
  */
 
+#include <vector>
+
 #ifndef _ABSTRACT_DATA_HXX_
 #define _ABSTRACT_DATA_HXX_
 
@@ -68,11 +70,11 @@ public:
 	/// Access to specific member (read-only).
 	/// @param pos              data position
 	/// @throws std::string     error message if pos out of range
-	virtual const T& operator[](unsigned int pos) const = 0;
+	virtual const T& operator[](std::size_t pos) const = 0;
 
 	/// Access to number of members
 	/// (for iterations using operator[])
-	virtual unsigned int size() const = 0;
+	virtual std::size_t size() const = 0;
 };
 
 /// Common interface for read-write access to multiple data members
@@ -85,7 +87,7 @@ public:
 	/// Access to specific member (read-write).
 	/// @param pos              data position
 	/// @throws std::string     error message if pos out of range
-	virtual T& operator[](unsigned int pos) = 0;
+	virtual T& operator[](std::size_t pos) = 0;
 };
 
 #endif // _ABSTRACT_DATA_HXX_

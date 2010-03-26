@@ -307,7 +307,7 @@ const T& InputSlot<T>::operator()() const {
 }
 
 template<class T>
-const T& InputSlot<T>::operator[](unsigned int pos) const {
+const T& InputSlot<T>::operator[](std::size_t pos) const {
 	if (pos >= AbstractSlot<T>::_targets.size()) {
 		std::ostringstream err;
 		err << "pos out of range: pos = " << pos;
@@ -326,7 +326,7 @@ const T& InputSlot<T>::operator[](unsigned int pos) const {
 }
 
 template<typename T>
-unsigned int InputSlot<T>::size() const {
+std::size_t InputSlot<T>::size() const {
 	return AbstractSlot<T>::_targets.size();
 }
 
