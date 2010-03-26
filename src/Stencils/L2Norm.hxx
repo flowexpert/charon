@@ -129,6 +129,7 @@ void L2Norm<T>::execute() {
 
 	_dataMask *= this->lambda();
 
+	// precalculate rhs values for whole image
 	if (flowGuess.connected()) {
 		assert(flowGuess().size() == dimensions());
 		const cimg_library::CImgList<T>& flow = flowGuess();
@@ -143,16 +144,19 @@ void L2Norm<T>::execute() {
 template <class T>
 void L2Norm<T>::updateStencil(
 		const std::string& unknown,
-		const Point4D<int>&, const int&) {
+		const Point4D<int>& p, const int&) {
 	// fill stencil with masks
-	std::vector<std::string>::iterator uIt;
-	for(uIt=this->pUnknowns().begin() ; uIt!=this->pUnknowns().end() ; uIt++) {
+	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
 		SubStencil<T> entry;
-		if(*uIt == unknown) {
+		if(pUnknowns[i] == unknown) {
 			entry.center  = _center;
 			// shared assignment (no copying of values)
 			entry.data.assign(_dataMask,true);
 			entry.pattern.assign(_patternMask,true);
+			if(flowGuess.connected())
+				this->_rhs = _rhsVals[i](p.x,p.y,p.z,p.t);
+			else
+				this->_rhs = T(0);
 		}
 		else {
 			// empty substencil for other unknowns
@@ -160,7 +164,7 @@ void L2Norm<T>::updateStencil(
 			entry.data.clear();
 			entry.pattern.clear();
 		}
-		this->_subStencils[*uIt] = entry;
+		this->_subStencils[pUnknowns[i]] = entry;
 	}
 }
 
@@ -168,7 +172,7 @@ template <class T>
 cimg_library::CImg<T> L2Norm<T>::apply(
 		const cimg_library::CImgList<T>& seq,
 		const unsigned int frame) const {
-	if(dimensions() > 2 || dimensions() < 1)
+	if(dimensions() > 3 || dimensions() < 2)
 		throw std::out_of_range(
 				"invalid dimensions (apply works for 2D, 3D)");
 	return seq[frame].get_convolve(_dataMask);
