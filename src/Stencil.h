@@ -89,7 +89,7 @@ protected:
 	/// Map to store and manage all the right hand side.
 	/** This has to be updated to represent the correct unknown
 	 *  during Stencil::updateStencil.
-	 * \todo add documentation here for the following three members:
+	 * \todo (Nina) add documentation here for the following three members:
 	 *        - _rhsD
 	 *        - _term
 	 *        - _termD

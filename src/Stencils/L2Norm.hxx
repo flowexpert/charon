@@ -30,13 +30,16 @@
 
 template <class T>
 L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
-			"Stencil modeling spatial smoothness using laplacian operator.")
+			"Stencil modeling spatial smoothness using laplacian operator."),
+		flowGuess(true, false) // optional
 {
 	this->_addParameter(dimensions, "dimensions", "Number of dimensions", 2u);
 	this->_addParameter(pUnknowns, "unknowns", "List of unknowns");
-	if (dimensions > 4) {
-		throw std::out_of_range("invalid dimensions (too large)");
-	}
+	this->_addParameter(rhsWeight, "rhsWeight",
+			"Weight of the calculated RHS (only if initial guess is given)",
+			1.);
+	this->_addInputSlot(flowGuess, "flowGuess",
+			"Initial flow guess for rhs calculation", "CImgList<T>");
 }
 
 template <class T>
@@ -50,67 +53,41 @@ void L2Norm<T>::execute() {
 		this->_unknowns.insert(*puIt);
 	}
 
-	//create masks in appropriate dimensions
+	// create masks in appropriate dimensions,
+	// then fill mask with values and set the center
 	switch (dimensions) {
-		case 1:
-			//already has the correct size
-			_dataMask.assign(3,1,1,1,0);
-			_patternMask.assign(3,1,1,1,0);
-			break;
-		case 2:
-			_dataMask.assign(3,3,1,1,0);
-			_patternMask.assign(3,3,1,1,0);
-			break;
-		case 3:
-			_dataMask.assign(3,3,3,1,0);
-			_patternMask.assign(3,3,3,1,0);
-			break;
-		case 4:
-			_dataMask.assign(3,3,3,3,0);
-			_patternMask.assign(3,3,3,3,0);
-			break;
-	}
+	case 1:
+		//already has the correct size
+		_dataMask.assign(3,1,1,1);
+		_dataMask.fill(T(-1), T(2), T(-1));
+		_patternMask.assign(3,1,1,1);
+		_patternMask.fill(1);
+		_center = Point4D<int>(1,0,0,0);
+		break;
+	case 2:
+		_dataMask.assign(3,3,1,1);
+		_dataMask.fill(
+				T( 0), T(-1), T( 0),
+				T(-1), T( 4), T(-1),
+				T( 0), T(-1), T( 0));
+		_patternMask.assign(3,3,1,1);
+		_patternMask.fill(
+				0, 1, 0,
+				1, 1, 1,
+				0, 1, 0);
+		_center = Point4D<int>(1,1,0,0);
+		break;
+	case 3:
+		_dataMask.assign(3,3,3,1,0);
+		_dataMask(1,1,0) = T(-1);
+		_dataMask(1,0,1) = T(-1);
+		_dataMask(0,1,1) = T(-1);
+		_dataMask(1,1,1) = T( 6);
+		_dataMask(2,1,1) = T(-1);
+		_dataMask(1,2,1) = T(-1);
+		_dataMask(1,1,2) = T(-1);
 
-	//filling mask with values and setting the center
-	if (dimensions == 1) {
-		_dataMask(0) += T(-1 * this->lambda());
-		_dataMask(1) += T( 2 * this->lambda());
-		_dataMask(2) += T(-1 * this->lambda());
-
-		_patternMask(0) = 1;
-		_patternMask(1) = 1;
-		_patternMask(2) = 1;
-
-		_center.x=1u;
-		_center.y=0u;
-		_center.z=0u;
-		_center.t=0u;
-	} else if (dimensions == 2) {
-		_dataMask(1,0) += T(-1 * this->lambda());
-		_dataMask(0,1) += T(-1 * this->lambda());
-		_dataMask(1,1) += T( 4 * this->lambda());
-		_dataMask(2,1) += T(-1 * this->lambda());
-		_dataMask(1,2) += T(-1 * this->lambda());
-
-		_patternMask(1,0) = 1;
-		_patternMask(0,1) = 1;
-		_patternMask(1,1) = 1;
-		_patternMask(2,1) = 1;
-		_patternMask(1,2) = 1;
-
-		_center.x=1u;
-		_center.y=1u;
-		_center.z=0u;
-		_center.t=0u;
-	} else if (dimensions == 3) {
-		_dataMask(1,1,0) += T(-1 * this->lambda());
-		_dataMask(1,0,1) += T(-1 * this->lambda());
-		_dataMask(0,1,1) += T(-1 * this->lambda());
-		_dataMask(1,1,1) += T( 6 * this->lambda());
-		_dataMask(2,1,1) += T(-1 * this->lambda());
-		_dataMask(1,2,1) += T(-1 * this->lambda());
-		_dataMask(1,1,2) += T(-1 * this->lambda());
-
+		_patternMask.assign(3,3,3,1,0);
 		_patternMask(1,1,0) = 1;
 		_patternMask(1,0,1) = 1;
 		_patternMask(0,1,1) = 1;
@@ -119,21 +96,21 @@ void L2Norm<T>::execute() {
 		_patternMask(1,2,1) = 1;
 		_patternMask(1,1,2) = 1;
 
-		_center.x=1u;
-		_center.y=1u;
-		_center.z=1u;
-		_center.t=0u;
-	} else if (dimensions == 4) {
-		_dataMask(1,1,1,0) += T(-1 * this->lambda());
-		_dataMask(1,1,0,1) += T(-1 * this->lambda());
-		_dataMask(1,0,1,1) += T(-1 * this->lambda());
-		_dataMask(0,1,1,1) += T(-1 * this->lambda());
-		_dataMask(1,1,1,1) += T( 8 * this->lambda());
-		_dataMask(2,1,1,1) += T(-1 * this->lambda());
-		_dataMask(1,2,1,1) += T(-1 * this->lambda());
-		_dataMask(1,1,2,1) += T(-1 * this->lambda());
-		_dataMask(1,1,1,2) += T(-1 * this->lambda());
+		_center = Point4D<int>(1,1,1,0);
+		break;
+	case 4:
+		_dataMask.assign(3,3,3,3,0);
+		_dataMask(1,1,1,0) = T(-1);
+		_dataMask(1,1,0,1) = T(-1);
+		_dataMask(1,0,1,1) = T(-1);
+		_dataMask(0,1,1,1) = T(-1);
+		_dataMask(1,1,1,1) = T( 8);
+		_dataMask(2,1,1,1) = T(-1);
+		_dataMask(1,2,1,1) = T(-1);
+		_dataMask(1,1,2,1) = T(-1);
+		_dataMask(1,1,1,2) = T(-1);
 
+		_patternMask.assign(3,3,3,3,0);
 		_patternMask(1,1,1,0) = 1;
 		_patternMask(1,1,0,1) = 1;
 		_patternMask(1,0,1,1) = 1;
@@ -144,10 +121,22 @@ void L2Norm<T>::execute() {
 		_patternMask(1,1,2,1) = 1;
 		_patternMask(1,1,1,2) = 1;
 
-		_center.x=1u;
-		_center.y=1u;
-		_center.z=1u;
-		_center.t=1u;
+		_center = Point4D<int>(1,1,1,1);
+		break;
+	default:
+		throw std::out_of_range("invalid dimensions (too large)");
+	}
+
+	_dataMask *= this->lambda();
+
+	if (flowGuess.connected()) {
+		assert(flowGuess().size() == dimensions());
+		const cimg_library::CImgList<T>& flow = flowGuess();
+		_rhsVals.assign(flow);
+		cimglist_for(flow, kk) {
+			_rhsVals[kk] = this->apply(flow, kk);
+			_rhsVals[kk] *= -rhsWeight();
+		}
 	}
 }
 
@@ -161,8 +150,9 @@ void L2Norm<T>::updateStencil(
 		SubStencil<T> entry;
 		if(*uIt == unknown) {
 			entry.center  = _center;
-			entry.data    = _dataMask;
-			entry.pattern = _patternMask;
+			// shared assignment (no copying of values)
+			entry.data.assign(_dataMask,true);
+			entry.pattern.assign(_patternMask,true);
 		}
 		else {
 			// empty substencil for other unknowns
@@ -178,7 +168,10 @@ template <class T>
 cimg_library::CImg<T> L2Norm<T>::apply(
 		const cimg_library::CImgList<T>& seq,
 		const unsigned int frame) const {
-	return seq[frame];
+	if(dimensions() > 2 || dimensions() < 1)
+		throw std::out_of_range(
+				"invalid dimensions (apply works for 2D, 3D)");
+	return seq[frame].get_convolve(_dataMask);
 }
 
 template <class T>

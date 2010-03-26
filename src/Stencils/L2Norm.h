@@ -46,17 +46,22 @@ class l2norm_DECLDIR L2Norm : public Stencil<T>
 private:
 	/// \name precalculate substencil data
 	//  \{
-	cimg_library::CImg<T> _dataMask;    ///< common data
-	cimg_library::CImg<T> _patternMask; ///< common pattern
-	Point4D<int> _center;      ///< common center
+	cimg_library::CImg<T>     _dataMask;    ///< common data
+	cimg_library::CImg<char>  _patternMask; ///< common pattern
+	Point4D<int>              _center;      ///< common center
+	cimg_library::CImgList<T> _rhsVals;     ///< values for rhs (optional)
 	//  \}
 
 public:
-	/// Parameter containing the number of dimensions.
+	/// Number of dimensions (1D, 2D, 3D, 4D).
 	Parameter<unsigned int> dimensions;
-
 	/// ParameterList containing all unknowns of the Stencil.
 	ParameterList<std::string> pUnknowns;
+
+	/// Weight of the calculated RHS (only if initial guess is given)
+	Parameter<double> rhsWeight;
+	/// Initial flow guess for rhs calculation
+	InputSlot<cimg_library::CImgList<T> > flowGuess;
 
 	/// default constructor
 	/// \param name instance name
