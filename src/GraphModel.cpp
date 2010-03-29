@@ -329,12 +329,12 @@ void GraphModel::disconnectSlot(const QString& source, const QString& target,
         if (data(createIndex(i, 0)) == targetSep[1]) {
             // check target is in list
 			QString content = data(createIndex(i, 1)).toString().toLower();
-			Q_ASSERT(content.indexOf(source.toLower()) >= 0);
-            QStringList targets = content.split(";", QString::SkipEmptyParts);
+			QStringList targets = content.split(";", QString::SkipEmptyParts);
 			int pos = targets.indexOf(source.toLower());
-            Q_ASSERT(pos >= 0);
-            targets.removeAt(pos);
-            setData(createIndex(i, 1), targets.join(";"));
+			if (pos >= 0) {
+				targets.removeAt(pos);
+				setData(createIndex(i, 1), targets.join(";"));
+			}
         }
     }
 
