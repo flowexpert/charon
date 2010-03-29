@@ -1,21 +1,11 @@
-flowreader.type		filereader
 seqreader.type		filereader
-flowcrop.type		crop
 seqcrop.type		crop
 croproi.type		roi
-flowcrop.out		
-flowcrop.in		flowreader.out
-flowreader.out		flowcrop.in
 croproi.templatetype		int
-flowcrop.roi		croproi.out
-croproi.out		flowcrop.roi;seqcrop.roi
+croproi.out		seqcrop.roi
 seqcrop.roi		croproi.out
 seqcrop.in		seqreader.out
 seqreader.out		seqcrop.in
-flowreader.filename		yosemiteFlow.cimg
-flowcrop.z		0
-flowcrop.t		0
-flowcrop.v		0
 croproi.xbegin		190
 croproi.xend		222
 croproi.ybegin		120
@@ -31,7 +21,9 @@ seqcrop.out		iteratorhelper.imglistfilein
 iteratorhelper.type		iteratorhelper
 iteratorhelper.imglistfilein		seqcrop.out
 iteratorhelper.imglistout		diff2d.img
-bmconst.type		brightnessmodels_constant
-bmconst.image		iteratorhelper.imgListOut
-d2d.type		diff2d
-d2d.img		iteratorhelper.imgListOut
+disp1.type		imagedisplay
+disp2.type		imagedisplay
+disp1.in		iteratorhelper.imgListOut
+disp2.in		iteratorhelper.imgListOut
+disp1.channel		0
+disp2.channel		0
