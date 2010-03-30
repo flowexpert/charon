@@ -620,21 +620,22 @@ int PetscSolver<T>::petscExecute() {
 	ierr = KSPMonitorSet(ksp,_myMonitor,PETSC_NULL,PETSC_NULL); CHKERRQ(ierr);
 	ierr = KSPSolve(ksp,b,x); CHKERRQ(ierr);
 
-	// temporary file for view info output
-	const char* viewFileName;
-	do {
-		srand(time(0));
-		const int randNum = rand();
-		std::ostringstream viewFileNameGen;
-		viewFileNameGen << "file" << randNum << ".tmp";
-		viewFileName = viewFileNameGen.str().c_str();
-	} while(FileTool::exists(viewFileName));
-
-	//PetscViewer viewer;
+//	// temporary file for view info output
+//	const char* viewFileName;
+//	do {
+//		srand(time(0));
+//		const int randNum = rand();
+//		std::ostringstream viewFileNameGen;
+//		viewFileNameGen << "file" << randNum << ".tmp";
+//		viewFileName = viewFileNameGen.str().c_str();
+//	} while(FileTool::exists(viewFileName));
+//
+	PetscViewer viewer;
 //	ierr = PetscViewerASCIIOpen(
-//			PETSC_COMM_SELF, viewFileName,&viewer); CHKERRQ(ierr);
-	ierr = KSPView(ksp, PETSC_VIEWER_STDOUT_SELF); CHKERRQ(ierr);
-//	ierr = PetscViewerDestroy(viewer); CHKERRQ(ierr);
+//			PETSC_COMM_SELF, viewFileName, &viewer); CHKERRQ(ierr);
+	PetscViewerASCIIGetStdout(PETSC_COMM_SELF, &viewer);
+	ierr = KSPView(ksp, viewer); CHKERRQ(ierr);
+	ierr = PetscViewerDestroy(viewer); CHKERRQ(ierr);
 //	{
 //		std::ifstream viewreader(viewFileName);
 //		std::string viewline;
@@ -644,6 +645,8 @@ int PetscSolver<T>::petscExecute() {
 //		viewreader.close();
 //	}
 //	FileTool::remove(viewFileName);
+//	assert(!FileTool::exists(viewFileName));
+
 	// only the #0 Machine is supposed to write results back
 	if (this->isRankZero()) {
 		// create lookup map to convert unknown to index in the CImgList
