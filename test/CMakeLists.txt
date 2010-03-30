@@ -66,11 +66,11 @@ IF(ENABLE_TEST)
 			brightnessmodels_constant
 		)
 
-		ADD_TEST(ListedPixelSelectionTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/listedpixelselectiontest)
-		ADD_TEST(IncrementorCountupTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/incrementorcountuptest)
-		ADD_TEST(ObjectiveFunctionComparingTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/objectivefunctioncomparingtest)
-		ADD_TEST(SurfaceAnalysisMinchangeTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/surfaceanalysisminchangetest)
-		ADD_TEST(BlockmatchingLiacstest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/blockmatchingliacstest)
+		ADD_TEST(ListedPixelSelection ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/listedpixelselectiontest)
+		ADD_TEST(IncrementorCountup ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/incrementorcountuptest)
+		ADD_TEST(ObjectiveFunctionComparing ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/objectivefunctioncomparingtest)
+		ADD_TEST(SurfaceAnalysisMinchange ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/surfaceanalysisminchangetest)
+		ADD_TEST(BlockmatchingLiacs ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/blockmatchingliacstest)
 		
 		IF(WIN32)
 			# copy needed dll for tests and application run before installing
@@ -104,7 +104,7 @@ IF(ENABLE_TEST)
 			)
 		ENDIF(MSVC)
 		TARGET_LINK_LIBRARIES(petscinittest ${PETSC_LIBRARIES})
-		ADD_TEST(PetscInitTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscinittest)
+		ADD_TEST(PetscInitialization ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscinittest)
 
 		# checking creation of petsc plugins
 		ADD_EXECUTABLE(petscplugintest PetscPluginTest.cpp)
@@ -130,17 +130,17 @@ IF(ENABLE_TEST)
 			linearfilter
 			petscsolver
 		)
-		ADD_TEST(PetscPluginTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscplugintest)
+		ADD_TEST(PetscPlugin ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscplugintest)
 
 		# executing test workflow
 		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
 		TARGET_LINK_LIBRARIES(petscsolvertest charon-core charon-plugins ${CIMG_LINK_LIBRARIES})
-		ADD_TEST(PetscSolverTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscsolvertest)
+		ADD_TEST(Petsc_HornSchunck_Sinus ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscsolvertest)
 
 		# testing Horn&Schunck Method on Yosemite Sequence
 		ADD_EXECUTABLE(hornschunckyosemite HornSchunckYosemite.cpp)
 		TARGET_LINK_LIBRARIES(hornschunckyosemite flowcomparator charon-plugins ${CIMG_LINK_LIBRARIES})
-		ADD_TEST(HornSchunckYosemite ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hornschunckyosemite)
+		ADD_TEST(Petsc_HornSchunck_Yosemite ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hornschunckyosemite)
 
 		IF(WIN32)
 			# copy needed dll for tests and application run before installing
