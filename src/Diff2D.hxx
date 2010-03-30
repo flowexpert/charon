@@ -62,8 +62,8 @@ Diff2D<T>::Diff2D(const std::string& name) :
 			"image input", "CImgList<T>");
 	ParameteredObject::_addInputSlot(
 			count, "count",
-			"if connected, calculations are performed on count change only, "
-			"if unconnected, calculations are performed exactly once");
+			"if connected, calculations are performed on count change only, if unconnected, calculations are performed exactly once", 
+			"unsigned int");
 	ParameteredObject::_addOutputSlot(
 			dx, "dx", "derivative wrt x", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(

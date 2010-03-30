@@ -27,19 +27,19 @@
 
 template <typename T>
 void IteratorHelper<T>::_init() {
-	//this->_addInputSlot(imgListIn,"imgListIn",
-	//	"CImgList from file","CImgList<T>");
+
 	this->_addInputSlot(imgListFileIn,"imgListFileIn",
 		"CImgList from IterativeSolver","CImgList<T>");
 	this->_addParameter(iterations,"iterations","number of iterations",5,"int");
 	this->_addOutputSlot(imgListOut,"imgListOut",
 		"CImgList containing the CImgList used in iteration","CImgList<T>");
+	this->_addOutputSlot(iterationStepOut,"iterationStepOut",
+		"current iteration step","unsigned int");
 	this->_addOutputSlot(out,"this","Pointer to itself","IteratorHelper<T>*");
 
 	out = this;
 
-	i = 0;
-	flag = 1;
+	iterationStep = 1;
 }
 
 template <typename T>
@@ -72,21 +72,26 @@ template <typename T>
 void IteratorHelper<T>::execute() {
 	ParameteredObject::execute();
 
-	if (i<=iterations)
+	if (iterationStep<=iterations)
 	{
-		if(flag==1)
+		if(iterationStep==1) // first iteration step
 		{
-			imgListOut=imgListFileIn;
-			flag=0;
+			// read from file, use imgListFile In
+			imgListOut=imgListFileIn;	
 		}
 		else
 		{
+			// read from IterativeSolver, use imgListIn
 			imgListOut=imgListIn;
 		}
-	i++;
 	}
+}
 
 
+template <typename T>
+void IteratorHelper<T>::nextStep() {
+	iterationStep++;
+	iterationStepOut = iterationStep;
 }
 
 #endif // _ITERATORHELPER_HXX_

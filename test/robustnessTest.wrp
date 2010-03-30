@@ -75,11 +75,14 @@ l2norm.lambda		2000
 l2norm.unknowns		a1;a2
 roi.xend		32
 roi.yend		32
-roi.zend		0
-roi.tend		0
-roi.vend		0
+roi.zend		1
+roi.tend		1
+roi.vend		1
 iterativesolver.imglistin		iteratorhelper.imgListOut
 psistencil.epsilon		0.01
 iterativesolver.iteratorhelper		iteratorhelper.this
 iteratorhelper.this		iterativesolver.iteratorHelper
 psistencil.parameterlistin		iteratorhelper.imgListOut
+diff2d.count		iteratorhelper.iterationStepOut
+iteratorhelper.iterationstepout		diff2d.count
+iteratorhelper.iterations		2

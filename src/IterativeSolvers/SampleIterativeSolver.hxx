@@ -97,13 +97,15 @@ void SampleIterativeSolver<T>::execute() {
 
 				this->imgListOut[0](x,y,z,t)=globalImgListIn[0](x,y,z,t);
 
-				//updates the iteratorHelper
-				this->iteratorHelper()->update(this->imgListOut);
-
 				//add to global flow
 				globalFlowOut[0](x,y,z,0)+=flowx;
 				globalFlowOut[0](x,y,z,0)+=flowy;
 			}
+			//updates the iteratorHelper
+			this->iteratorHelper()->update(this->imgListOut);
+			//next iteration step
+			this->iteratorHelper()->nextStep();
+
 		}
 		else {
 			this->flowListOut() = globalFlowOut;
