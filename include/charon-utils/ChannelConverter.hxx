@@ -30,14 +30,28 @@
 template <class T>
 ChannelConverter<T>::ChannelConverter(const std::string& name) : 
 	TemplatedParameteredObject<T>("ChannelConverter",name,
-		"convert dim v <-> dim t")
+		"Channel Converter for CImgLists<br><br>"
+		"Permutes image dimensions.<br>"
+		"Select permutation using the parameter <i>scheme</i>.<br>"
+		"Per default converts v dimension to t and vice versa.")
 {
 	ParameteredObject::_addInputSlot(in,"input",
 		"sequence to convert","CImgList<T>");
 	ParameteredObject::_addOutputSlot(out,"output",
 		"converted sequence","CImgList<T>");
 	ParameteredObject::_addParameter<std::string>(scheme, "scheme",
-		"dimension permutation", "xyztv", "string");
+		"Conversion scheme.<br>"
+		"<i>xyzvt</i> or <i>01234</i> leaves dimensions unpermuted.<br>"
+		"Exchange dimensions as needed, e.g. the default <i>xyztv</i> "
+		"will permute the 4th CImg dimension (v) and the list element "
+		"dimension (t).<br>"
+		"Having a flow field with time in the z-dimension and flow "
+		"components in the v-dimension, you have to select <i>xytzv</i> "
+		"or <i>01423</i>.<br>"
+		"This does also work to convert 2D image sequences having their "
+		"time axis in the z-dimension "
+		"(monochrome or color channels in v-dim).",
+		"xyztv", "string");
 }
 
 template <class T>

@@ -37,13 +37,15 @@
 #include <charon-core/ParameteredObject.h>
 #include <charon-utils/CImg.h>
 
-/**	
- *  Channel Converter for CImg.
- *  Permutes image dimensions.
+
+/// Channel Converter for CImgLists
+/** Permutes image dimensions.
+ *  Select permutation using the parameter <i>scheme</i>
  *  Per default converts v dimension to t and vice versa.
  */
 template <class T>
-class channelconverter_DECLDIR ChannelConverter : public TemplatedParameteredObject<T>
+class channelconverter_DECLDIR ChannelConverter :
+		public TemplatedParameteredObject<T>
 {
 public:
 	/// default constructor
@@ -58,12 +60,22 @@ public:
 	OutputSlot<cimg_library::CImgList<T> > out;
 
 	/// Conversion scheme
+	/** <i>xyzvt</i> or <i>01234</i> leaves dimensions unpermuted.
+	 *  Exchange dimensions as needed, e.g. the default <i>xyztv</i> will
+	 *  permute the 4th CImg dimension (v) and the list element dimension (t).
+	 *
+	 *  Having a flow field with time in the z-dimension and flow
+	 *  components in the v-dimension, you have to select <i>xytzv</i>
+	 *  or <i>01423</i>.
+	 *  This does also work to convert 2D image sequences having their
+	 *  time axis in the z-dimension (monochrome or color channels in v-dim).
+	 */
 	Parameter<std::string> scheme;
 	
-	/**	Perform conversion.
-	 *	The input CImgList has all the frames in different CImg objects in the list
-	 *	what we want is a CImgList that splits the sequence by channel into seperate
-	 *	CImg objects.
+	/// Perform conversion.
+	/** The input CImgList has all the frames in different CImg objects in
+	 *  the list what we want is a CImgList that splits the sequence by
+	 *  channel into seperate CImg objects.
 	 */
 	virtual void execute();
 
