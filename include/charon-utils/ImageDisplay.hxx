@@ -94,6 +94,8 @@ void ImageDisplay<T>::execute() {
 
 	sout << "\tDisplaying image \"" << title() << "\":" << std::endl;
 	ImgTool::printInfo(sout, in()[frame()], "\t\t");
+	sout << "\t\tCImgList contains " << in().size() << " frame(s)."
+			<< std::endl;
 
 	// select range to show
 	cimg_library::CImg<T> toShow(in()[frame()]);
