@@ -45,14 +45,14 @@ FIND_LIBRARY(GRAPHVIZ_CDT_LIBRARY
 	NAMES			cdt
 	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
 	DOC				"graphviz container types"
-    PATH_SUFFIXES   release
+    PATH_SUFFIXES   release release/lib
 	NO_DEFAULT_PATH
 )
 FIND_LIBRARY(GRAPHVIZ_CDT_LIBRARY_DEBUG
 	NAMES			cdt
 	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
 	DOC				"graphviz container types"
-    PATH_SUFFIXES   debug
+    PATH_SUFFIXES   debug debug/lib
 	NO_DEFAULT_PATH
 )
 
@@ -60,14 +60,14 @@ FIND_LIBRARY(GRAPHVIZ_GRAPH_LIBRARY
 	NAMES			graph
 	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
 	DOC				"graphviz container types"
-    PATH_SUFFIXES   release
+    PATH_SUFFIXES   release release/lib
 	NO_DEFAULT_PATH
 )
 FIND_LIBRARY(GRAPHVIZ_GRAPH_LIBRARY_DEBUG
 	NAMES			graph
 	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
 	DOC				"graphviz container types"
-    PATH_SUFFIXES   debug
+    PATH_SUFFIXES   debug debug/lib
 	NO_DEFAULT_PATH
 )
 
@@ -75,14 +75,14 @@ FIND_LIBRARY(GRAPHVIZ_GVC_LIBRARY
 	NAMES			gvc
 	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
 	DOC				"graphviz container types"
-    PATH_SUFFIXES   release
+    PATH_SUFFIXES   release release/lib
 	NO_DEFAULT_PATH
 )
 FIND_LIBRARY(GRAPHVIZ_GVC_LIBRARY_DEBUG
 	NAMES			gvc
 	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
 	DOC				"graphviz container types"
-    PATH_SUFFIXES   debug
+    PATH_SUFFIXES   debug debug/lib
 	NO_DEFAULT_PATH
 )
 
