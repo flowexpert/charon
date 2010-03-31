@@ -30,12 +30,14 @@ void IteratorHelper<T>::_init() {
 
 	this->_addInputSlot(imgListFileIn,"imgListFileIn",
 		"CImgList from IterativeSolver","CImgList<T>");
-	this->_addParameter(iterations,"iterations","number of iterations",5,"int");
+	this->_addParameter(iterations,"iterations",
+		"number of iterations",5);
 	this->_addOutputSlot(imgListOut,"imgListOut",
 		"CImgList containing the CImgList used in iteration","CImgList<T>");
 	this->_addOutputSlot(iterationStepOut,"iterationStepOut",
-		"current iteration step","unsigned int");
-	this->_addOutputSlot(out,"this","Pointer to itself","IteratorHelper<T>*");
+		"current iteration step");
+	this->_addOutputSlot(out,"this",
+		"Pointer to itself", "IteratorHelper<T>*");
 
 	out = this;
 
