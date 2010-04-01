@@ -13,7 +13,7 @@ croproi.yend		152
 croproi.zend		0
 croproi.tend		0
 croproi.vend		0
-seqreader.filename		yosemiteNoClouds.cimg
+seqreader.filename		C:/charon/charon/test/yosemiteFlow.cimg
 seqcrop.z		0
 seqcrop.t		0
 seqcrop.v		0
@@ -22,8 +22,8 @@ iteratorhelper.type		iteratorhelper
 iteratorhelper.imglistfilein		seqcrop.out
 iteratorhelper.imglistout		diff2d.img
 disp1.type		imagedisplay
-disp2.type		imagedisplay
 disp1.in		iteratorhelper.imgListOut
-disp2.in		iteratorhelper.imgListOut
+diff2d.type		diff2d
+diff2d.img		iteratorhelper.imgListOut
 disp1.channel		0
-disp2.channel		0
+

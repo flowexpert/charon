@@ -30,10 +30,12 @@ void IteratorHelper<T>::_init() {
 
 	this->_addInputSlot(imgListFileIn,"imgListFileIn",
 		"CImgList from IterativeSolver","CImgList<T>");
-	this->_addParameter(iterations,"iterations",
-		"number of iterations",5);
+	this->_addParameter(maxIterations,"maxIterations",
+		"maximum number of iteration steps",5);
 	this->_addOutputSlot(imgListOut,"imgListOut",
 		"CImgList containing the CImgList used in iteration","CImgList<T>");
+	this->_addOutputSlot(flowListOut,"flowListOut",
+		"CImgList containing the flow from iterativeSolver","CImgList<T>");
 	this->_addOutputSlot(iterationStepOut,"iterationStepOut",
 		"current iteration step");
 	this->_addOutputSlot(out,"this",
@@ -65,26 +67,41 @@ IteratorHelper<T>::IteratorHelper(
 }
 
 template <typename T>
-void IteratorHelper<T>::update(cimg_library::CImgList<T> imgList)
+void IteratorHelper<T>::update(cimg_library::CImgList<T> imgList, cimg_library::CImgList<T> flowList)
 {
 	imgListIn = imgList;
+	flowListIn = flowList;
 }
 
 template <typename T>
 void IteratorHelper<T>::execute() {
 	ParameteredObject::execute();
 
-	if (iterationStep<=iterations)
+	sout << "IteratorHelper, iteration " << iterationStep << std::endl;
+
+	if (iterationStep<=maxIterations)
 	{
 		if(iterationStep==1) // first iteration step
 		{
 			// read from file, use imgListFile In
+
 			imgListOut=imgListFileIn;	
+
+			// initial guess: flow is 0
+
+		/*	unsigned int width = imgListFileIn()[0].width();
+			unsigned int height = imgListFileIn()[0].height();
+			unsigned int depth = imgListFileIn()[0].depth();
+		*/
+			flowListOut().assign(3,imgListFileIn()[0].width(),imgListFileIn()[0].height(),imgListFileIn()[0].depth(), 1, 0);
 		}
 		else
 		{
 			// read from IterativeSolver, use imgListIn
 			imgListOut=imgListIn;
+			
+			// use calculated flow
+			flowListOut=flowListIn;
 		}
 	}
 }
@@ -94,6 +111,20 @@ template <typename T>
 void IteratorHelper<T>::nextStep() {
 	iterationStep++;
 	iterationStepOut = iterationStep;
+
+	execute();
+}
+
+template <typename T>
+int IteratorHelper<T>::getCurrentStep() {
+	return iterationStep;
+}
+
+template <typename T>
+int IteratorHelper<T>::getMaxIterations() {
+	return maxIterations;
 }
 
 #endif // _ITERATORHELPER_HXX_
+
+

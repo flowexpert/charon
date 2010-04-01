@@ -49,6 +49,7 @@ public:
 	virtual void execute();
 
 private:
+	cimg_library::CImgList<T> globalFlowOut;
 
 
 };

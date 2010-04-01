@@ -1,3 +1,5 @@
+
+
 /*  This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
@@ -60,6 +62,8 @@ public:
 	//InputSlot<cimg_library::CImgList<T> > imgListIn;
 	/// output imgList
 	OutputSlot<cimg_library::CImgList<T> > imgListOut;
+	/// output imgList for flow from iterativeSolver
+	OutputSlot<cimg_library::CImgList<T> > flowListOut;
 	/// Output slot containing current iteration step
 	OutputSlot < unsigned int > iterationStepOut;
 	/// Output slot containing the this-pointer of the object
@@ -67,7 +71,8 @@ public:
 
 
 	/// number of iterations
-	Parameter<int> iterations;
+	Parameter<int> maxIterations;
+
 	//  \}
 
 	/// default constructor
@@ -81,18 +86,29 @@ public:
 	virtual void nextStep();
 
 	/// update image
-	virtual void update(cimg_library::CImgList<T> imgList);
+	virtual void update(cimg_library::CImgList<T> imgList, cimg_library::CImgList<T> flowList);
+
+	/// get current iteration step
+	virtual int getCurrentStep();
+
+	/// get maximum number of iteration steps
+	virtual int getMaxIterations();
+
 
 private:
 	/// common initialization code
 	void _init();
 
-	/// imageList
+	/// image list
 	cimg_library::CImgList<T> imgListIn;
 
+	/// flow list
+	cimg_library::CImgList<T> flowListIn;
+
 	/// current iteration
-	unsigned int iterationStep;
+	int iterationStep;
 };
 
 
 #endif // _ITERATORHELPER_H_
+

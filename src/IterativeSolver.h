@@ -79,8 +79,6 @@ public:
 	//  \{
 	/// flow result to write in file
 	OutputSlot<cimg_library::CImgList<T> > flowListOut;
-	/// warped image returned to solver
-	//OutputSlot<cimg_library::CImgList<T> > imgListOut;
 	//  \}
 };
 

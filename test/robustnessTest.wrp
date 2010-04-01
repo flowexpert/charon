@@ -82,7 +82,7 @@ iterativesolver.imglistin		iteratorhelper.imgListOut
 psistencil.epsilon		0.01
 iterativesolver.iteratorhelper		iteratorhelper.this
 iteratorhelper.this		iterativesolver.iteratorHelper
-psistencil.parameterlistin		iteratorhelper.imgListOut
+psistencil.parameterlistin		iteratorhelper.flowListOut
 diff2d.count		iteratorhelper.iterationStepOut
 iteratorhelper.iterationstepout		diff2d.count
 iteratorhelper.iterations		2

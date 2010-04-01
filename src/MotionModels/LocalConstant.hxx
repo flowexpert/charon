@@ -96,6 +96,7 @@ void MotionModels::LocalConstant<T>::computeEnergy(
 	const T& w = dz.connected() ? parameterList[2](p.x,p.y,p.z,p.t) : T(0);
 
 	energy += pow(double(iX*u+iY*v+iZ+w-iT),2);
+
 }
 
 
