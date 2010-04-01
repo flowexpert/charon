@@ -114,7 +114,7 @@ IF (DOXYGEN_FOUND)
         )
         ADD_CUSTOM_TARGET(${PROJECT_NAME}_doc_pdf
             DEPENDS ${PROJECT_BINARY_DIR}/doc/latex/refman.pdf
-	        COMMENT "Generating ${PROJECT_NAME} html documentation"
+	        COMMENT "Generating ${PROJECT_NAME} pdf manual"
         )
 
         ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_pdf)
