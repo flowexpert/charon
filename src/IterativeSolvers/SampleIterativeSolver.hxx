@@ -38,10 +38,17 @@ template <typename T>
 SampleIterativeSolver<T>::SampleIterativeSolver(const std::string& name) : 
 		IterativeSolver<T>("SampleIterativeSolver", name, "solves iteratively")
 {
+
 }
 
 template <typename T>
 void SampleIterativeSolver<T>::execute() {
+
+//        debuggen!!!
+
+
+do{
+
 	ParameteredObject::execute();
 
 	int step = this->iteratorHelper()->getCurrentStep();
@@ -147,6 +154,9 @@ void SampleIterativeSolver<T>::execute() {
 
 		}
 	}
+
+
+}while(this->iteratorHelper()->getCurrentStep()<=this->iteratorHelper()->getMaxIterations());
 
 }
 

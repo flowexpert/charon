@@ -79,8 +79,6 @@ void IteratorHelper<T>::execute() {
 
 	sout << "IteratorHelper, iteration " << iterationStep << std::endl;
 
-	if (iterationStep<=maxIterations)
-	{
 		if(iterationStep==1) // first iteration step
 		{
 			// read from file, use imgListFile In
@@ -103,7 +101,7 @@ void IteratorHelper<T>::execute() {
 			// use calculated flow
 			flowListOut=flowListIn;
 		}
-	}
+
 }
 
 
@@ -111,8 +109,6 @@ template <typename T>
 void IteratorHelper<T>::nextStep() {
 	iterationStep++;
 	iterationStepOut = iterationStep;
-
-	execute();
 }
 
 template <typename T>
