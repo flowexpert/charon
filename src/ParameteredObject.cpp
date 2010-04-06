@@ -208,7 +208,10 @@ void ParameteredObject::resetExecuted(bool propagate) {
 	if (propagate) {
 		for (std::map<std::string, Slot*>::iterator it = _outputs.begin();
 				it != _outputs.end(); it++) {
-			it->second->getParent().resetExecuted(propagate);
+			std::set<Slot*> targets = it->second->getTargets();
+			std::set<Slot*>::iterator tIt;
+			for(tIt = targets.begin(); tIt != targets.end(); tIt ++)
+				(*tIt)->getParent().resetExecuted(propagate);
 		}
 	}
 }
