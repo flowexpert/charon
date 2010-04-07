@@ -750,7 +750,8 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 
 	for(sIt=this->stencils.begin();sIt!=this->stencils.end();sIt++) {
 		Stencil<T>* s = (*((InputSlot<Stencil<T>*>*)*sIt))();
-		s->updateStencil(unknown,p);
+		// stencil has already been updated ealier (avoid duplicate call)
+		//s->updateStencil(unknown,p);
 		const std::set<std::string>& allUnk = s->getUnknowns();
 		typename std::set<std::string>::const_iterator unk;
 		for(unk = allUnk.begin(); unk != allUnk.end(); unk++) {

@@ -156,7 +156,8 @@ protected:
 	Point4D<int> _getBoundary(Point4D<int>& p) const;
 
 	/// Add cross terms which are not handled by MetaStencil
-	/**
+	/** \remarks   Make sure that update() has been called to the stencils
+	 *             with the same unknown given to this stencil
 	 *  \param[in] unknown            currently handled unknown
 	 *  \param[in] p                  currently handled point
 	 *                                (has to be a real point)
