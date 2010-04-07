@@ -60,7 +60,7 @@ do{
 	{
 		globalFlowOut.assign(this->flowListIn().size(),this->flowListIn()[0].width(),
 			this->flowListIn()[0].height(),this->flowListIn()[0].depth(), this->flowListIn()[0].spectrum(), 0);
-		imgListOut.assign(this->imgListIn().size(),this->imgListIn()[0].width(),
+		this->imgListOut.assign(this->imgListIn().size(),this->imgListIn()[0].width(),
 			this->imgListIn()[0].height(),this->imgListIn()[0].depth(), this->imgListIn()[0].spectrum(), 0);
 	}
 

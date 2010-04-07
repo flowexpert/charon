@@ -46,23 +46,19 @@ PsiStencil<T>::PsiStencil(const std::string& name) :
 
 template <class T>
 void PsiStencil<T>::execute() {
-	
 	ParameteredObject::execute();
+
 	// erase the old set of unknowns
 	this->_unknowns.clear();
 	std::set<std::string> myUnknowns = this->stencilIn()->getUnknowns();
-	std::set<std::string>::iterator myIt = myUnknowns.begin();
-
 	this->_unknowns.insert(myUnknowns.begin(),myUnknowns.end());
 	
-	// expanding stencil-map to appropriate size and filling with dummy
-	// values
+	// expanding stencil-map to appropriate size and filling with
+	// values from imported substencil
 	std::set<std::string>::iterator uIt;
 	for(uIt=this->_unknowns.begin();uIt!=this->_unknowns.end();uIt++) {
-		Point4D<int> center;/////////////
-		SubStencil<T> entry(1,1,1,1,center);
-		entry.pattern(0,0) = 1;
-		this->_subStencils[*uIt] = entry;
+		stencilIn()->updateStencil(*uIt);
+		this->_subStencils[*uIt] = stencilIn()->get().find(*uIt)->second;
 	}
 }
 
@@ -70,47 +66,30 @@ template <class T>
 void PsiStencil<T>::updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p, const int& v) {
-	
 
-	//const	 std::string unkn = unknown;
 
 	// get values of unknowns 
 	const cimg_library::CImgList<T>& parameterList = this->parameterListIn();
 
 	// update stencil of stencilIn
 	stencilIn()->updateStencil(unknown,p,v);
-
-	// update energy of stencilIn
 	stencilIn()->updateEnergy(parameterList,p,v);
-	
-	this->_rhs = stencilIn()->getRhs();
 
+	this->_rhs = stencilIn()->getRhs();
 	this->lambda = stencilIn()->lambda;
 
+	// update rhs
+	const double factor = DPsi(stencilIn()->getEnergy(),epsilon());
+	this->_rhs *= factor;
 
-	// get subStencils
-	this->_subStencils = stencilIn()->get();
-
-	double factor = DPsi(stencilIn()->getEnergy(),epsilon());
-
-	this->_rhs*=factor;
-
-	// collect unknowns
-	const std::set<std::string>& mUnknowns = stencilIn()->getUnknowns();
-	std::set<std::string> allUnknowns;
-	allUnknowns.insert(mUnknowns.begin(), mUnknowns.end());
-	
 	// initialize term for all unknowns
-	std::set<std::string>::const_iterator unkIt;
-	for (unkIt = allUnknowns.begin(); unkIt != allUnknowns.end(); unkIt++){
-
-
-			if (*unkIt == unknown) {
-				// calculate Psi'(D)*D' 
-				this->_subStencils.find(*unkIt)->second.data *=factor;
-			}
-		}
-
+	std::set<std::string>::const_iterator uIt;
+	for (uIt = this->_unknowns.begin(); uIt != this->_unknowns.end(); uIt++){
+		// transfer substencil data
+		const SubStencil<T>& inSubStencil=stencilIn()->get().find(*uIt)->second;
+		this->_subStencils[*uIt] = inSubStencil;
+		this->_subStencils[*uIt].data *= factor;
+	}
 }
 
 template <class T>
