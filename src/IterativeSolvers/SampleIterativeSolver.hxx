@@ -44,14 +44,12 @@ SampleIterativeSolver<T>::SampleIterativeSolver(const std::string& name) :
 template <typename T>
 void SampleIterativeSolver<T>::execute() {
 
-	//        debuggen!!!
-
-
 	do {
 
 		ParameteredObject::execute();
 
 		int step = this->iteratorHelper()->getCurrentStep();
+		int max = this->iteratorHelper()->getMaxIterations();
 
 		sout << "Iterative Solver, iteration " << step << std::endl;;
 
@@ -77,11 +75,13 @@ void SampleIterativeSolver<T>::execute() {
 		///	and puts the result into imgout
 
 		/*
-		 Zugriff auf ersten Zeitschritt: imgList[0](x,y,z,0)
-		 Zugriff auf zweiten Zeitschritt: imgList[0](x,y,z,1)
-		 Zugriff auf erste Flusskomponente: flowList[0](x,y,z,t)
-		 Zugriff auf zweite Flusskomponente: flowList[1](x,y,z,t)
+		 access to first time step: imgList[0](x,y,z,0)
+		 access to second time step: imgList[0](x,y,z,1)
+		 access to first flow component: flowList[0](x,y,z,t)
+		 access to second flow component: flowList[1](x,y,z,t)
 		*/
+
+		// check preconditions:
 
 		//throw exception if there are more or less than 2 images in the list
 		if (globalImgListIn[0].spectrum()!=2)
@@ -90,30 +90,23 @@ void SampleIterativeSolver<T>::execute() {
 			//throw iterativeSolverException();
 		}
 
-		// check preconditions
-		//assert(globalImgListIn().size() >= 2);
-		//assert(globalImgListIn[0].is_sameXYZC(globalImgListIn[1]));
-
+		//check if both images are not the same
 		else {
 
 			bool isSame=1;
-	/*
-				cimg_forXYZ(globalImgListIn[0], x,y,z) {
+					cimg_forXYZ(globalImgListIn[0], x,y,z) {
 					if (globalImgListIn[0](x,y,z,0)!=globalImgListIn[0](x,y,z,1))
 					{
 						isSame=0;
+						break;
 					}
 				}
 
-		*/
-
-			isSame=0;
-
-			if(isSame==0)  { //wenn 	imgList[0](x,y,z,0) !=imgList[0](x,y,z,1)
-				// 1. create new image 2' which contains the interpolated values
+			if(isSame==0)  { 
+				// 1. create new image I' which contains the interpolated values
 				// 2. read flow F at position X
-				// 3. read intensity from position X+F in picture 2
-				// 4. write the intensity at position x in picture 2'
+				// 3. read intensity from position X+F in picture I
+				// 4. write the intensity at position x in picture I'
 
 				cimg_forXYZC(this->imgListOut[0], x,y,z,t) {
 					flowx=float (T(x)+globalFlowListIn[0](x,y,z,0));
@@ -140,13 +133,7 @@ void SampleIterativeSolver<T>::execute() {
 				{
 					//updates the iteratorHelper with imgListOut and globalFlowOut
 					this->iteratorHelper()->update(this->imgListOut, globalFlowOut);
-					//next iteration step
-					this->iteratorHelper()->nextStep();
 				}
-
-				// just for testing!!!
-				//this->flowListOut() = globalFlowOut;
-
 			}
 			else // flow hasn't changed
 			{
@@ -154,7 +141,8 @@ void SampleIterativeSolver<T>::execute() {
 
 			}
 		}
-
+		//next iteration step
+		this->iteratorHelper()->nextStep();
 
 	}while(this->iteratorHelper()->getCurrentStep()<=this->iteratorHelper()->getMaxIterations());
 
