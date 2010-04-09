@@ -14,7 +14,7 @@
 #endif
 
 #include <iostream>
-#include "ParameteredObject.hxx"
+#include <charon-core/ParameteredObject.hxx>
 
 class testplugin1_DECLDIR TestPlugin1: public ParameteredObject {
 public:

@@ -131,7 +131,7 @@ void UnixPluginLoader::compileAndLoad(const std::string & sourceFile,
 			+ "could take some time." << std::endl;
 
 	std::string sysCall = compiler_call + " -fPIC -I \"" + charon_core
-			+ "/include/charon-core\" -L \"" + charon_core + "/lib\" -L \""
+			+ "/include\" -L \"" + charon_core + "/lib\" -L \""
 			+ pluginPath + "\" -L \"" + additionalPluginPath + "\" "
 			+ DL_COMPILER_FLAG + " -lcharon-core -lpthread " + refs
 			+ " -Wl,-rpath,\"" + pluginPath + "\" -Wl,-rpath,\""

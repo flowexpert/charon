@@ -1,5 +1,5 @@
-# Install folder of charon-utils
-charon-core-install	@CMAKE_INSTALL_PREFIX@
+# Install folder of charon-core (or source directory)
+charon-core-install	@CHARON_CORE_ROOT_DIR@
 
 # compiler command for plugin generation
 compiler-call		@CMAKE_CXX_COMPILER@ @CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_RELEASE@

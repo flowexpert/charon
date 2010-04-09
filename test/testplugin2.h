@@ -14,7 +14,7 @@
 #endif
 
 #include <iostream>
-#include "ParameteredObject.hxx"
+#include <charon-core/ParameteredObject.hxx>
 #include "testplugin1.h"
 
 template<typename T>
