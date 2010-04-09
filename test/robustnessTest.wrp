@@ -60,9 +60,9 @@ flowcrop.z		0
 flowcrop.t		0
 flowcrop.v		0
 croproi.xbegin		190
-croproi.xend		193
+croproi.xend		199
 croproi.ybegin		120
-croproi.yend		123
+croproi.yend		129
 croproi.zend		0
 croproi.tend		0
 croproi.vend		0
@@ -73,8 +73,8 @@ seqcrop.v		0
 petscsolver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ks
 l2norm.lambda		2000
 l2norm.unknowns		a1;a2
-roi.xend		3
-roi.yend		3
+roi.xend		9
+roi.yend		9
 roi.zend		1
 roi.tend		1
 roi.vend		1
@@ -86,3 +86,6 @@ psistencil.parameterlistin		iteratorhelper.flowListOut
 diff2d.count		iteratorhelper.iterationStepOut
 iteratorhelper.iterationstepout		diff2d.count
 iteratorhelper.iterations		2
+iteratorhelper.maxiterations		5
+l2norm.flowguess		iteratorhelper.flowListOut
+iteratorhelper.flowlistout		l2norm.flowGuess
