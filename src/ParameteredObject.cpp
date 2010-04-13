@@ -216,6 +216,29 @@ void ParameteredObject::resetExecuted(bool propagate) {
 	}
 }
 
+std::set<ParameteredObject*> ParameteredObject::_getTargetNodes() {
+	std::set<ParameteredObject*> res;
+	std::set<ParameteredObject*> children;
+	std::map<std::string, Slot*>::const_iterator outIter;
+	std::set<Slot*>::const_iterator tIter;
+	for (outIter = _outputs.begin(); outIter != _outputs.end(); outIter++) {
+		const std::set<Slot*>& targets = outIter->second->getTargets();
+		for(tIter = targets.begin(); tIter != targets.end(); tIter++)
+			children.insert(&((*tIter)->getParent()));
+	}
+	if(children.size() > 0) {
+		std::set<ParameteredObject*>::const_iterator cIter;
+		for (cIter = children.begin(); cIter != children.end(); cIter++) {
+			const std::set<ParameteredObject*>& targets =
+					(*cIter)->_getTargetNodes();
+			res.insert(targets.begin(), targets.end());
+		}
+	}
+	else
+		res.insert(this);
+	return res;
+}
+
 std::set<std::string> ParameteredObject::getNeighbours() const {
 	std::set<std::string> res;
 	std::map<std::string, Slot*>::const_iterator slotIter;

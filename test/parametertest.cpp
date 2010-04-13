@@ -72,7 +72,7 @@ public:
 class Outputgen : public ParameteredObject {
 
 public:
-   /// sample integer output slot
+	/// sample integer output slot
 	OutputSlot<int>    out1;
 	/// sample float output slot
 	OutputSlot<float>  out2;
@@ -88,6 +88,11 @@ public:
 		// slots
 		_addOutputSlot(out1, "out1", "integer output slot");
 		_addOutputSlot(out2, "out2", "float output slot");
+	}
+
+	/// get target nodes
+	std::set<ParameteredObject*> getTargets() {
+		return _getTargetNodes();
 	}
 };
 
@@ -150,11 +155,37 @@ int main() {
 	assert(outgen2->executed());
 	assert(sample->executed());
 
+	// check usage of getTargets
+	{
+		const std::set<ParameteredObject*>& targets = outgen->getTargets();
+		assert(targets.size() == 1);
+		assert((*targets.begin()) == sample);
+	}
+	Sample* sample2 = new Sample("sample2");
+	outgen->out1.connect(sample2->in1);
+	{
+		const std::set<ParameteredObject*>& targets = outgen->getTargets();
+		assert(targets.size() == 2);
+		std::set<ParameteredObject*> reference;
+		reference.insert(sample);
+		reference.insert(sample2);
+		assert(std::equal(targets.begin(), targets.end(), reference.begin()));
+	}
+	outgen->out1.disconnect(sample2->in1);
+	sample->out1.connect(sample2->in1);
+	{
+		const std::set<ParameteredObject*>& targets = outgen->getTargets();
+		assert(targets.size() == 1);
+		assert(outgen->out1.connected(sample->in1));
+		assert(sample->out1.connect(sample2->in1));
+		assert((*targets.begin()) == sample2);
+	}
+	sample->out1.disconnect(sample2->in1);
+	delete sample2;
+
 	// save object and connections
 	testfile.clear();
 	sample->save(testfile);
-
-	// to view it by hand
 	testfile.save("parametertest2.wrp");
 
 	delete sample;

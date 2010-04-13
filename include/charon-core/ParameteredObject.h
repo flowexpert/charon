@@ -293,9 +293,15 @@ protected:
 	/// set property _executed
 	/** \param value        New value of _executed
 	 */
-	void setExecuted(bool value) {
+	void _setExecuted(bool value) {
 		_executed = value;
 	}
+
+	/// get target nodes
+	/** Determine target leaves of the execution workflow (i.e. Parametered
+	 *  Objects with no targets connected to output slots).
+	 */
+	std::set<ParameteredObject*> _getTargetNodes();
 
 public:
 	/// The template type of the instance is double
