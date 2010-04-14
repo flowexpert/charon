@@ -29,7 +29,6 @@ SquarerootRobustnessTerm::SquarerootRobustnessTerm(const std::string& name) :
 		RobustnessTerm("SquarerootRobustnessTerm", name, 
 			"This class is used for calculationg Robustness Term using the function \f$\Psi(s^2)=\sqrt{s^2+e^2}\f$")
 {
-
 }
 
 // calculates derivative of robustness term
