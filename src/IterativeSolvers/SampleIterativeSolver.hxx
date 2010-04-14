@@ -63,7 +63,6 @@ void SampleIterativeSolver<T>::execute() {
 		}
 
 
-		///	imgListIn is the CImgList from file or from last iteration
 		///	flowListIn is the CImgList (the flow) gained from the solver, e.g. from PetscSolver
 
 		float flowx, flowy;
@@ -83,6 +82,7 @@ void SampleIterativeSolver<T>::execute() {
 
 		// check preconditions:
 
+		int spec = globalImgListIn[0].spectrum();
 		//throw exception if there are more or less than 2 images in the list
 		if (globalImgListIn[0].spectrum()!=2)
 		{
@@ -94,40 +94,35 @@ void SampleIterativeSolver<T>::execute() {
 		else {
 
 			bool isSame=1;
-					cimg_forXYZ(globalImgListIn[0], x,y,z) {
-					if (globalImgListIn[0](x,y,z,0)!=globalImgListIn[0](x,y,z,1))
-					{
-						isSame=0;
-						break;
-					}
+			//	if (imgListOut[0].channel(0)!=imgListOut[0].channel(1) )
+				{	
+					isSame=0;
 				}
 
 			if(isSame==0)  { 
-				// 1. create new image I' which contains the interpolated values
-				// 2. read flow F at position X
-				// 3. read intensity from position X+F in picture I
-				// 4. write the intensity at position x in picture I'
+			
+				cimg_library::CImg<T> img1;
+				img1.assign(globalImgListIn[0].get_channel(1));
 
-				cimg_forXYZC(this->imgListOut[0], x,y,z,t) {
-					flowx=float (T(x)+globalFlowListIn[0](x,y,z,0));
-					flowy=float (T(y)+globalFlowListIn[1](x,y,z,0));
-					this->imgListOut[0](x,y,z,t) =
-							this->interpolator()->interpolate(
-									globalImgListIn[0],
-									flowx, flowy,
-									int(z), int(t));
+				//	ImgTool::warp2D(imgListOut[0].get_channel(1), globalFlowListIn, imgListOut[0].channel(1), this->interpolator());
+				ImgTool::warp2D(img1, globalFlowListIn, img1, this->interpolator());
 
-					//add to global flow
-					globalFlowOut[0](x,y,z,0)+=flowx;
-					globalFlowOut[1](x,y,z,0)+=flowy;
-				}
+				imgListOut = globalImgListIn;
+				imgListOut[0].channel(0); // jetzt ist gerade nur noch das erste Bild da
+				imgListOut[0].append(img1,'c'); // hier wir das zweite Bild hinzugefügt
+				
+				int spectrum = imgListOut[0].spectrum();
 
+				//sum calculated flows
+				globalFlowOut[0]+=globalFlowListIn[0];
+				globalFlowOut[1]+=globalFlowListIn[1];
 
 				// if maximum iteration step reached, output flow
 
-				if(step == this->iteratorHelper()->getMaxIterations())
+				if(step == max)
 				{
 					this->flowListOut() = globalFlowOut;
+
 				}
 				else //prepare next iteration step
 				{
