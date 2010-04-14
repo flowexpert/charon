@@ -121,8 +121,9 @@ void Gbcce<T>::updateEnergy(
 		const Point4D<int>& p, const int& v) {
 	//std::map<std::string, T> term;
 	//std::map<std::string, T> termD;
-	this->_rhs = 0;
 	
+	this->_energy = 0;
+
 	// collect unknowns
 	const std::set<std::string>& mUnknowns = motionIn()->getUnknowns();
 	const std::set<std::string>& bUnknowns = brightnessIn()->getUnknowns();
