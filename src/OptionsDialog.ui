@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Jens-Malte Gottfried</author>
+ <class>OptionsDialog</class>
+ <widget class="QDialog" name="OptionsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>585</width>
+    <height>255</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Options</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="pathBox">
+     <property name="title">
+      <string>Path settings</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelCore">
+        <property name="text">
+         <string>charon-core install</string>
+        </property>
+        <property name="buddy">
+         <cstring>editCore</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDirEdit" name="editCore"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelUtils">
+        <property name="text">
+         <string>charon-utils install</string>
+        </property>
+        <property name="buddy">
+         <cstring>editUtils</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDirEdit" name="editUtils"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="labelAdd">
+        <property name="text">
+         <string>additional plugins</string>
+        </property>
+        <property name="buddy">
+         <cstring>editAdd</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QDirEdit" name="editAdd"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="browseCore">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="browseUtils">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QPushButton" name="browseAdd">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="otherBox">
+     <property name="title">
+      <string>Further settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QCheckBox" name="checkWait">
+        <property name="text">
+         <string>wait after workflow execution</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QDirEdit</class>
+   <extends>QLineEdit</extends>
+   <header>QDirEdit.h</header>
+   <slots>
+    <slot>fileDialog()</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>editCore</tabstop>
+  <tabstop>browseCore</tabstop>
+  <tabstop>editUtils</tabstop>
+  <tabstop>browseUtils</tabstop>
+  <tabstop>editAdd</tabstop>
+  <tabstop>browseAdd</tabstop>
+  <tabstop>checkWait</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>OptionsDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>227</x>
+     <y>233</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>OptionsDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>295</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browseCore</sender>
+   <signal>clicked()</signal>
+   <receiver>editCore</receiver>
+   <slot>fileDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>482</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>357</x>
+     <y>47</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browseUtils</sender>
+   <signal>clicked()</signal>
+   <receiver>editUtils</receiver>
+   <slot>fileDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>482</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>363</x>
+     <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browseAdd</sender>
+   <signal>clicked()</signal>
+   <receiver>editAdd</receiver>
+   <slot>fileDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>482</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>332</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -109,12 +109,6 @@ void ObjectInspector::saveFileAs() const {
 		_model->save(fileName);
 }
 
-void ObjectInspector::executeWorkflow() const {
-	if (!isEnabled())
-		return;
-	_model->executeWorkflow();
-}
-
 void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	if (newModel == _model)
 		return;

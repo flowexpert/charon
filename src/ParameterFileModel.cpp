@@ -29,16 +29,7 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QDebug>
-#include <QMessageBox>
 #include <QSettings>
-#include <QDateTime>
-#include "PluginManager.h"
-#include "FileManager.h"
-#include "ui_LogDialog.h"
-
-#ifdef __GNUG__
-#include <cxxabi.h>
-#endif // __GNUG__
 
 #include "ParameterFileModel.moc"
 
@@ -611,84 +602,6 @@ std::vector<std::string> ParameterFileModel::_paramFilter(
 	result.resize(temp.size());
 	result.assign(temp.begin(), temp.end());
 	return result;
-}
-
-void ParameterFileModel::executeWorkflow() {
-	std::string globalPluginPath =
-			FileManager::instance().getGlobalPluginPath();
-	std::string privatePluginPath =
-			FileManager::instance().getPrivatePluginPath();
-	PluginManager man(globalPluginPath,privatePluginPath);
-	std::string logFileName = FileManager::instance().configDir()
-		.path().toAscii().constData();
-	logFileName += "/executeLog.txt";
-	std::ofstream log(logFileName.c_str(), std::ios::trunc);
-	Q_ASSERT(!log.fail() && log.good());
-#ifdef WIN32
-	sout.assign(log);
-#else
-	sout.assign(log, std::cout);
-#endif
-	sout << "Opened execution logfile." << std::endl;
-	const QDateTime& startTime = QDateTime::currentDateTime();
-	sout << "Time: " << startTime.toString(Qt::ISODate).toAscii().constData();
-	sout << std::endl;
-	QString path = QDir::currentPath();
-	QDir::setCurrent(QFileInfo(_fileName).path());
-	try {
-		sout << "loading Parameter file" << std::endl;
-		man.loadParameterFile(*_parameterFile);
-		sout << "starting execution" << std::endl;
-		man.executeWorkflow();
-		man.reset();
-	}
-	catch (const std::string& msg) {
-		QMessageBox::warning(0, tr("error during execution"),
-			tr("Caught exception of type <b>std::string</b>."
-				"<br><br>Message:<br>%1")
-				.arg(msg.c_str()).replace("\n", "<br>"));
-	}
-	catch (const std::exception& excpt) {
-		const char* name = typeid(excpt).name();
-#ifdef __GNUG__
-		name = abi::__cxa_demangle(name, 0, 0, 0);
-#endif // __GNUG__
-		qWarning("%s",
-				 tr("Caught exception of type \"%1\"\n\nMessage:\n%2")
-				.arg(name).arg(excpt.what()).toAscii().constData());
-	}
-	catch (const char* &msg) {
-		QMessageBox::warning(0, tr("error during execution"),
-			tr("Caught exception of type <b>char*</b>."
-				"<br><br>Message:<br>%1")
-				.arg(msg).replace("\n", "<br>"));
-	}
-	catch (...) {
-		qWarning("%s", tr("Caught exception of unknown type")
-				.toAscii().constData());
-	}
-	sout << "Execution finished.\n";
-	const QDateTime& endTime = QDateTime::currentDateTime();
-	sout << "Time   : " << endTime.toString(Qt::ISODate).toAscii().constData();
-	sout << "\n";
-	QTime runTime = QTime().addSecs(startTime.secsTo(endTime));
-	sout << "Runtime: " << runTime.toString("hh:mm:ss.zzz")
-			.toAscii().constData() << std::endl;
-	sout.assign();
-	log.close();
-	QDir::setCurrent(path);
-
-	Ui::LogDialog logDialog;
-	QDialog* dialog = new QDialog(FileManager::dialogParent);
-	logDialog.setupUi(dialog);
-	logDialog.infoLabel->setText(tr("Workflow execution finished."));
-	logDialog.logLabel->setText(
-			tr("Content of logfile <tt>%1</tt>:").arg(logFileName.c_str()));
-	QFile logFile(logFileName.c_str());
-	logFile.open(QIODevice::ReadOnly | QIODevice::Text);
-	logDialog.logText->insertPlainText(logFile.readAll());
-	logFile.close();
-	dialog->exec();
 }
 
 std::string ParameterFileModel::getType(std::string parName) const {
