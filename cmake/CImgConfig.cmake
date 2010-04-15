@@ -42,7 +42,12 @@ ENDIF(UNIX)
 # OpenMP support
 FIND_PACKAGE(OpenMP QUIET)
 IF(OPENMP_FOUND)
-	OPTION(WITH_OPENMP "use OpenMP" ON)
+	#deactivate openmp in windows by default as it is not supported in Visual Studio Express and will drop you into dll hell
+	IF(MSVC)
+		OPTION(WITH_OPENMP "use OpenMP" OFF)
+	ELSE(MSVC)
+		OPTION(WITH_OPENMP "use OpenMP" ON)
+	ENDIF(MSVC)
 ENDIF(OPENMP_FOUND)
 IF(WITH_OPENMP)
 	ADD_DEFINITIONS(-Dcimg_use_openmp ${OpenMP_CXX_FLAGS})
