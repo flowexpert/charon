@@ -58,7 +58,7 @@ public:
 signals:
 	/// emit status of file dialog
 	/** i.e. true, if dialog is open and false otherwise */
-	void dialogOpen(bool status);
+	void dialogOpen(bool status /** true if dialog opens, false if closed */);
 
 public slots:
 	/// show open dialog and use the selected directory as entry

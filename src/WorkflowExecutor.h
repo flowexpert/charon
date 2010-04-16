@@ -73,14 +73,14 @@ public slots:
 	 *  widget and is determined using the object inspector.
 	 *
 	 *  The behaviour of the workflow execution is influenced by the
-	 *  QSettings property <it>waitAfterExecute<it>.
+	 *  QSettings property <i>waitAfterExecute</i>.
 	 *
 	 *  If this property is set to <tt>true</tt>, a message box shows up after
 	 *  execution termination, all plugins stay loaded.
 	 *  This is e.g. useful for interactive workflows.
 	 *  Plugin cleanup is performed on the next call to this function.
 	 *
-	 *  If <it>waitAfterExecute<it> is set to false, a plugin cleanup is
+	 *  If <i>waitAfterExecute</i> is set to false, a plugin cleanup is
 	 *  performed on execution termination which unloads all plugins.
 	 */
 	void run();
