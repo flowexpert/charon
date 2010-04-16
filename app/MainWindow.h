@@ -97,6 +97,9 @@ private slots:
 	/// show about Qt dialog
 	void _showAboutQt() const;
 
+	/// edit options
+	void _options();
+
 	/// update windows when new flowchart has been selected
 	/// @param window	activated window
 	void _windowActivated(QMdiSubWindow* window);

@@ -39,6 +39,9 @@
 #include <PluginManager.h>
 #include <iostream>
 #include "AbstractPluginLoader.h"
+#include "WorkflowExecutor.h"
+
+#include "ui_OptionsDialog.h"
 
 #ifndef SVNINFO
 #define SVNINFO
@@ -121,6 +124,8 @@ MainWindow::MainWindow(QWidget* myParent) :
 	connect(_centralArea, SIGNAL(subWindowActivated (QMdiSubWindow*)),
 			this, SLOT(_windowActivated(QMdiSubWindow*)));
 
+	WorkflowExecutor* executor = new WorkflowExecutor(inspector, this);
+
 	// toolbar
 	ModelToolBar* toolbar = new ModelToolBar(tr("toolbar"));
 	toolbar->setObjectName("toolbar");
@@ -156,10 +161,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	action = toolbar->addAction(QIcon(":/icons/runbuild.png"),
 		tr("&Compile and load plug-in"), this, SLOT(compileAndLoad()));
 	action->setToolTip(tr("compile new plugin from plugin source"));
-	action = toolbar->addAction(QIcon(":/icons/execute.png"),
-		tr("Execute &Workflow"), inspector, SLOT(executeWorkflow()));
-	action->setToolTip(
-		tr("execute workflow that is described in the current window"));
+	toolbar->addAction(executor->runAction());
 	toolbar->addSeparator();
 	toolbar->addModelActions();
 	toolbar->addSeparator();
@@ -223,8 +225,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 			this, SLOT(updateMetadata()));
 	fileMenu->addAction(QIcon(":/icons/runbuild.png"),
 		tr("&Compile and load plug-in"), this, SLOT(compileAndLoad()));
-	fileMenu->addAction(QIcon(":/icons/execute.png"), tr("Execute &Workflow"),
-		inspector, SLOT(executeWorkflow()), QKeySequence(tr("Ctrl+E")));
+	fileMenu->addAction(executor->runAction());
 	fileMenu->addAction(QIcon(":/icons/export.png"), tr("Export flowchart"),
 			this, SLOT(saveFlowChart()), QKeySequence(tr("Ctrl+F")));
 	fileMenu->addAction(QIcon(":/icons/close.png"), tr("&Exit"), this,
@@ -237,6 +238,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 			QKeySequence(tr("Ctrl+R")));
 	editMenu->addAction(QIcon(":/icons/revert_all.png"), tr("clear flowchart"),
 			inspector, SLOT(clear()), QKeySequence(tr("Ctrl+Shift+R")));
+	editMenu->addAction(tr("Options"), this, SLOT(_options()));
 
 	// view menu
 	QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
@@ -468,4 +470,46 @@ void MainWindow::setCurrentFile(const QString& fileName) {
 	settings.setValue("recentFileList", files);
 
 	_updateRecentFileActions();
+}
+
+void MainWindow::_options() {
+	QDialog dialog(this);
+	Ui::OptionsDialog options;
+	options.setupUi(&dialog);
+
+	ParameterFile pathsConfig;
+	std::string pathsConfigName =
+			FileManager::instance().configDir().absoluteFilePath(
+					"Paths.config").toAscii().constData();
+	pathsConfig.load(pathsConfigName);
+
+	// set up dialog content
+	options.editCore->setText(
+			pathsConfig.get<std::string>("charon-core-install").c_str());
+	options.editUtils->setText(
+			pathsConfig.get<std::string>("charon-utils-install").c_str());
+	options.editAdd->setText(
+			pathsConfig.get<std::string>("additional-plugin-path").c_str());
+	QSettings settings(
+			"Heidelberg Collaboratory for Image Processing",
+			"Tuchulcha");
+	options.checkWait->setChecked(
+			settings.value("waitAfterExecute", false).toBool());
+
+	// set new values
+	if (dialog.exec() == QDialog::Accepted) {
+		pathsConfig.set<std::string>(
+				"charon-core-install",
+				options.editCore->text().toAscii().constData());
+		pathsConfig.set<std::string>(
+				"charon-utils-install",
+				options.editUtils->text().toAscii().constData());
+		pathsConfig.set<std::string>(
+				"additional-plugin-path",
+				options.editAdd->text().toAscii().constData());
+		settings.setValue(
+				"waitAfterExecute",
+				(options.checkWait->checkState() != Qt::Unchecked));
+		pathsConfig.save(pathsConfigName);
+	}
 }

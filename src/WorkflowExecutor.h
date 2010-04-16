@@ -20,6 +20,7 @@
  *  @date   15.04.2010
  *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
+
 #ifndef WORKFLOWEXECUTOR_H
 #define WORKFLOWEXECUTOR_H
 
