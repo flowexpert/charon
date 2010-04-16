@@ -1,5 +1,9 @@
 PROJECT(charon-core C CXX)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
+# may work with 2.6; but only, if doxygen not found
+# documentation install is marked as optional which works
+# since cmake-2.8.0
+# cmake 2.8.0 is available e.g. on *ubuntu lucid (10.4)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
