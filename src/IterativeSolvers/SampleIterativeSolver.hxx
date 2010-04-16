@@ -107,11 +107,11 @@ void SampleIterativeSolver<T>::execute() {
 				//	ImgTool::warp2D(imgListOut[0].get_channel(1), globalFlowListIn, imgListOut[0].channel(1), this->interpolator());
 				ImgTool::warp2D(img1, globalFlowListIn, img1, this->interpolator());
 
-				imgListOut = globalImgListIn;
-				imgListOut[0].channel(0); // jetzt ist gerade nur noch das erste Bild da
-				imgListOut[0].append(img1,'c'); // hier wir das zweite Bild hinzugefügt
+				this->imgListOut = globalImgListIn;
+				this->imgListOut[0].channel(0); // jetzt ist gerade nur noch das erste Bild da
+				this->imgListOut[0].append(img1,'c'); // hier wir das zweite Bild hinzugefügt
 				
-				int spectrum = imgListOut[0].spectrum();
+				int spectrum = this->imgListOut[0].spectrum();
 
 				//sum calculated flows
 				globalFlowOut[0]+=globalFlowListIn[0];
