@@ -68,8 +68,8 @@ public:
 	/// workaround for what looks like a bug in Qt on Mac OS X
 	/// where it doesn't create a QWidget wrapper for the native file dialog
 	/// so the Qt library ends up assuming the focus was lost to something else
-	/// \param object	event object
-	/// \param event	event
+	/// \param object       event object
+	/// \param event        event
 	bool eventFilter(QObject* object, QEvent* event);
 
 	/// Sets the data for the item at the given index in the model to the
@@ -87,76 +87,6 @@ protected:
 	/// file dialog opened
 	bool _fileDialogFlag;
 
-};
-
-/// Editor widget for editing paths or file paths
-///
-/// based on class QCMakeFileEditor from CMake project
-class InspectorFileEditor : public QLineEdit {
-	Q_OBJECT
-public:
-	/// standart constructor
-	/// \param p	parent widget
-	/// \param var	initial variable value
-	InspectorFileEditor(QWidget* p, const QString& var);
-protected slots:
-	/// handle clicks on the tool button
-	virtual void chooseFile() = 0;
-signals:
-	/// signalize creation and destrucion of open file dialog
-	void fileDialogExists(bool);
-protected:
-	/// handle resize events
-	void resizeEvent(QResizeEvent* e);
-	QToolButton* _toolButton;	///< tool button
-	QString _variable;			///< content
-};
-
-/// editor widget for editing files
-///
-/// based on class QCMakePathEditor from CMake project
-class InspectorPathEditor : public InspectorFileEditor
-{
-	Q_OBJECT
-public:
-	/// standart constructor
-	/// \param p	parent widget
-	/// \param var	parameter name (used in open dialog title)
-	InspectorPathEditor(QWidget* p = 0, const QString& var = QString());
-public slots:
-	virtual void chooseFile();
-};
-
-/// editor widget for editing paths
-///
-/// based on class QCMakeFilePathEditor from CMake project
-class InspectorFilePathEditor : public InspectorFileEditor
-{
-	Q_OBJECT
-public:
-	/// standart constructor
-	/// \param p	parent widget
-	/// \param var	parameter name (used in open dialog title)
-	InspectorFilePathEditor(QWidget* p = 0, const QString& var = QString());
-public slots:
-	virtual void chooseFile();
-};
-
-/// completer class that returns native paths
-///
-/// based on class QCMakeFileCompleter from CMake project
-class InspectorFileCompleter : public QCompleter
-{
-	Q_OBJECT
-public:
-	/// standart constructor
-	/// \param o		parent object
-	/// \param dirs		complete directories (true) or filenames (false)
-	InspectorFileCompleter(QObject* o, bool dirs);
-	/// Returns the path for the given index. The completer object uses this
-	/// to obtain the completion text from the underlying model.
-	/// \param idx		model index
-	virtual QString pathFromIndex(const QModelIndex& idx) const;
 };
 
 #endif // INSPECTORDELEGATE_H

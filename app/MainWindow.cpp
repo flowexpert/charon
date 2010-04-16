@@ -238,7 +238,8 @@ MainWindow::MainWindow(QWidget* myParent) :
 			QKeySequence(tr("Ctrl+R")));
 	editMenu->addAction(QIcon(":/icons/revert_all.png"), tr("clear flowchart"),
 			inspector, SLOT(clear()), QKeySequence(tr("Ctrl+Shift+R")));
-	editMenu->addAction(tr("Options"), this, SLOT(_options()));
+	editMenu->addAction(QIcon(":/icons/configure.png"),tr("Options"),
+			this, SLOT(_options()));
 
 	// view menu
 	QMenu* viewMenu = menuBar()->addMenu(tr("&View"));

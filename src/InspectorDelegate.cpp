@@ -35,6 +35,7 @@
 #include <QToolButton>
 #include <QComboBox>
 #include <QResizeEvent>
+#include "QDirEdit.h"
 
 InspectorDelegate::InspectorDelegate(QObject* p) :
 		QStyledItemDelegate(p) {
@@ -54,16 +55,19 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 					+ "." + param;
 		std::string type = model->metaInfo()->getType(param, model->getClass(param));
 		if (type == "filename") {
-			InspectorFilePathEditor* editor =
-					new InspectorFilePathEditor(p, param.c_str());
-			connect(editor, SIGNAL(fileDialogExists(bool)),
+			QDirEdit* editor =
+					new QDirEdit(param.c_str(), p);
+			editor->acceptFiles();
+			connect(
+					editor, SIGNAL(dialogOpen(bool)),
 					this, SLOT(_setFileDialogFlag(bool)));
 			return editor;
 		}
 		if (type == "path") {
-			InspectorPathEditor* editor =
-					new InspectorPathEditor(p, param.c_str());
-			connect(editor, SIGNAL(fileDialogExists(bool)),
+			QDirEdit* editor =
+					new QDirEdit(param.c_str(), p);
+			connect(
+					editor, SIGNAL(dialogOpen(bool)),
 					this, SLOT(_setFileDialogFlag(bool)));
 			return editor;
 		}
@@ -103,8 +107,9 @@ void InspectorDelegate::_setFileDialogFlag(bool f) {
 bool InspectorDelegate::editorEvent(QEvent* e, QAbstractItemModel* model,
        const QStyleOptionViewItem& option, const QModelIndex& index) {
 	Qt::ItemFlags flags = model->flags(index);
-	if (!(flags & Qt::ItemIsUserCheckable) || !(option.state & QStyle::State_Enabled)
-			|| !(flags & Qt::ItemIsEnabled))
+	if (!(flags & Qt::ItemIsUserCheckable) ||
+			!(option.state & QStyle::State_Enabled) ||
+			!(flags & Qt::ItemIsEnabled))
 		return false;
 
 	QVariant value = index.data(Qt::CheckStateRole);
@@ -135,97 +140,6 @@ bool InspectorDelegate::eventFilter(QObject* object, QEvent* ev)
 	if(ev->type() == QEvent::FocusOut && _fileDialogFlag)
 		return false;
 	return QStyledItemDelegate::eventFilter(object, ev);
-}
-
-
-InspectorFileEditor::InspectorFileEditor(QWidget* p, const QString& var) :
-		QLineEdit(p), _variable(var) {
-	_toolButton = new QToolButton(this);
-	_toolButton->setIcon(QIcon(":/icons/quickopen.png"));
-	_toolButton->setCursor(QCursor(Qt::ArrowCursor));
-	QObject::connect(_toolButton, SIGNAL(clicked(bool)),
-						this, SLOT(chooseFile()));
-}
-
-void InspectorFileEditor::resizeEvent(QResizeEvent* e) {
-	// make the tool button fit on the right side
-	int h = e->size().height();
-	// move the line edit to make room for the tool button
-	setContentsMargins(0, 0, h, 0);
-	// put the tool button in its place
-	_toolButton->resize(h, h);
-	_toolButton->move(width() - h, 0);
-}
-
-InspectorFilePathEditor::InspectorFilePathEditor(QWidget* p, const QString& var)
-		: InspectorFileEditor(p, var) {
-	setCompleter(new InspectorFileCompleter(this, false));
-}
-
-void InspectorFilePathEditor::chooseFile() {
-	// choose a file and set it
-	QString path;
-	QFileInfo info(text());
-	QString title;
-	if (_variable.isEmpty())
-		title = tr("Select File");
-	else
-		title = tr("Select File for %1").arg(_variable);
-
-	emit fileDialogExists(true);
-	path = QFileDialog::getSaveFileName(this, title, info.absoluteFilePath(),QString(),0,QFileDialog::DontConfirmOverwrite);
-	emit fileDialogExists(false);
-
-	if (!path.isEmpty())
-		this->setText(QDir::fromNativeSeparators(path));
-}
-
-InspectorPathEditor::InspectorPathEditor(QWidget* p, const QString& var)
-		: InspectorFileEditor(p, var) {
-	setCompleter(new InspectorFileCompleter(this, true));
-}
-
-void InspectorPathEditor::chooseFile() {
-	// choose a file and set it
-	QString path;
-	QString title;
-	if (_variable.isEmpty())
-		title = tr("Select Path");
-	else
-		title = tr("Select Path for %1").arg(_variable);
-
-	emit fileDialogExists(true);
-	path = QFileDialog::getExistingDirectory(this, title, text());
-	emit fileDialogExists(false);
-	if (!path.isEmpty())
-		setText(QDir::fromNativeSeparators(path));
-}
-
-// use same QDirModel for all completers
-static QDirModel* fileDirModel() {
-	static QDirModel* m = NULL;
-	if (!m)
-		m = new QDirModel();
-	return m;
-}
-
-static QDirModel* pathDirModel() {
-	static QDirModel* m = NULL;
-	if (!m) {
-		m = new QDirModel();
-		m->setFilter(QDir::AllDirs | QDir::Drives | QDir::NoDotAndDotDot);
-	}
-	return m;
-}
-
-InspectorFileCompleter::InspectorFileCompleter(QObject* o, bool dirs)
-		: QCompleter(o) {
-	QDirModel* m = dirs ? pathDirModel() : fileDirModel();
-	this->setModel(m);
-}
-
-QString InspectorFileCompleter::pathFromIndex(const QModelIndex& idx) const {
-	return QDir::fromNativeSeparators(QCompleter::pathFromIndex(idx));
 }
 
 #include "InspectorDelegate.moc"

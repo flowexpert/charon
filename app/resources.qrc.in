@@ -33,5 +33,6 @@
 		<file alias="runbuild.png">@PROJECT_SOURCE_DIR@/icons/oxygen/run-build.png</file>
 		<file alias="execute.png">@PROJECT_SOURCE_DIR@/icons/oxygen/media-playback-start.png</file>
 		<file alias="stop.png">@PROJECT_SOURCE_DIR@/icons/oxygen/media-playback-stop.png</file>
+		<file alias="configure.png">@PROJECT_SOURCE_DIR@/icons/oxygen/configure.png</file>
 	</qresource>
 </RCC>

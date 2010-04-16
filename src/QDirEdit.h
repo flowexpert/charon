@@ -32,14 +32,15 @@ class QDirEdit : public QLineEdit
 {
 	Q_OBJECT
 private:
-	/// true if file dialog is open (to handle focus loss events)
-	bool _dialogOpen;
 	/// browse button
 	QToolButton* _browseButton;
 	/// look for files instead of directories
 	bool _files;
 	/// use saveFile dialog instead of openFile dialog
 	bool _writeFile;
+
+	/// set initial values
+	void _init();
 
 protected:
 	/// handle resize events
@@ -49,14 +50,15 @@ public:
 	/// inherited constructor
 	explicit QDirEdit(QWidget* parent = 0 /** [in] parent widget */);
 
-	/// filter editor events
-	/** workaround for what looks like a bug in Qt on Mac OS X
-	 *  where it doesn't create a QWidget wrapper for the native file dialog
-	 *  so the Qt library ends up assuming the focus was lost to something else
-	 *  \param object   event object
-	 *  \param event    event
-	 */
-	bool eventFilter(QObject* object, QEvent* event);
+	/// inherited constructor setting content
+	explicit QDirEdit(
+			const QString& content /** [in] text content */,
+			QWidget* parent = 0    /** [in] parent widget */);
+
+signals:
+	/// emit status of file dialog
+	/** i.e. true, if dialog is open and false otherwise */
+	void dialogOpen(bool status);
 
 public slots:
 	/// show open dialog and use the selected directory as entry
@@ -64,8 +66,8 @@ public slots:
 
 	/// allow files instead of directories
 	void acceptFiles(
-			bool files=true  /** [in] whether to look for files */,
-			bool write=false /** [in] show saveFile instead of openFile */);
+			bool files=true /** [in] whether to look for files */,
+			bool write=true /** [in] show saveFile instead of openFile */);
 };
 
 #endif // QDIREDIT_H

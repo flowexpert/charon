@@ -28,12 +28,12 @@
 #include <QToolButton>
 #include <QtEvents>
 
-QDirEdit::QDirEdit(QWidget *parent) :
-	QLineEdit(parent),
-	_dialogOpen(false),
-	_files(false),
-	_writeFile(false)
-{
+void QDirEdit::_init() {
+	// initial values
+	_files = false;
+	_writeFile = false;
+
+	// tool button to open browse dialog
 	_browseButton = new QToolButton(this);
 	_browseButton->setText(tr("..."));
 	_browseButton->setCursor(QCursor(Qt::ArrowCursor));
@@ -41,14 +41,27 @@ QDirEdit::QDirEdit(QWidget *parent) :
 	QObject::connect(
 			_browseButton, SIGNAL(clicked()),this, SLOT(fileDialog()));
 
+	// completer
 	QCompleter* completer = new QCompleter(this);
-	completer->setModel(new QDirModel(QStringList(), QDir::AllDirs,
+	completer->setModel(new QDirModel(
+			QStringList(),
+			QDir::AllDirs | QDir::NoDotAndDotDot,
 			QDir::Name, completer));
 	setCompleter(completer);
 }
 
+QDirEdit::QDirEdit(QWidget* p) :
+		QLineEdit(p) {
+	_init();
+}
+
+QDirEdit::QDirEdit(const QString& content, QWidget* p) :
+		QLineEdit(content, p) {
+	_init();
+}
+
 void QDirEdit::fileDialog() {
-	_dialogOpen = true;
+	emit dialogOpen(true);
 	QString newVal;
 	if (_files) {
 		if (_writeFile)
@@ -61,7 +74,7 @@ void QDirEdit::fileDialog() {
 	else
 		newVal = QFileDialog::getExistingDirectory(
 				this, tr("select directory"),text());
-	_dialogOpen = false;
+	emit dialogOpen(false);
 	if(!newVal.isEmpty())
 	setText(newVal);
 }
@@ -72,16 +85,11 @@ void QDirEdit::acceptFiles(bool files, bool write) {
 	QDirModel* dirModel = qobject_cast<QDirModel*>(completer()->model());
 	Q_ASSERT(dirModel);
 	if (_files)
-		dirModel->setFilter(QDir::AllDirs | QDir::Files);
+		dirModel->setFilter(
+				QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
 	else
-		dirModel->setFilter(QDir::AllDirs);
-}
-
-bool QDirEdit::eventFilter(QObject* object, QEvent* ev)
-{
-	if(_dialogOpen && ev->type() == QEvent::FocusOut)
-		return false;
-	return QLineEdit::eventFilter(object, ev);
+		dirModel->setFilter(
+				QDir::AllDirs               | QDir::NoDotAndDotDot);
 }
 
 void QDirEdit::resizeEvent(QResizeEvent* e) {
