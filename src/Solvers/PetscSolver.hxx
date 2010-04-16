@@ -23,8 +23,8 @@
 #ifndef _PETSCSOLVER_HXX_
 #define _PETSCSOLVER_HXX_
 
-#include "../Solver.hxx"
 #include "PetscSolver.h"
+#include "../Solver.hxx"
 #include <charon-utils/ImgTool.hxx>
 #include <sstream>
 

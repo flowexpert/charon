@@ -35,8 +35,8 @@
 #define petscsolver_DECLDIR
 #endif
 
-#include "../Solver.h"
 #include <petscksp.h>
+#include "../Solver.h"
 
 class PetscInit;
 
