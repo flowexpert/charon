@@ -37,7 +37,7 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
 /// @PluginDoc@
 template <typename T>

@@ -36,7 +36,7 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "ParameteredObject.hxx"
+#include <charon-core/ParameteredObject.hxx>
 
 /// sample ParameteredObject class.
 class @pluginNameLower@_DECLDIR @pluginName@ : public ParameteredObject {
