@@ -15,7 +15,7 @@ IF(ENABLE_TEST)
 	ADD_DEFINITIONS(-DPENGUINFILE="${PENGUINFILE}")
 	
 	ADD_DEFINITIONS(-DTESTDIR="${CMAKE_CURRENT_SOURCE_DIR}")
-		IF(WIN32)
+	IF(WIN32)
 		ADD_DEFINITIONS(-DGLOBAL_PLUGIN_DIR="${CHARON_UTILS_ROOT_DIR}/bin")
 		ADD_DEFINITIONS(-DLOCAL_PLUGIN_DIR="${PROJECT_BINARY_DIR}/bin")
 	ELSE(WIN32)
@@ -29,7 +29,10 @@ IF(ENABLE_TEST)
 		charon-plugins
 		${CIMG_LINK_LIBRARIES}
 	)
-	ADD_TEST(ImgManipTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imgManipTest)
+	ADD_TEST(
+		NAME ImgageManip
+		COMMAND imgManipTest
+	)
 
 	# tests for ImgTool routines
 	ADD_EXECUTABLE(imgToolTest
@@ -37,8 +40,14 @@ IF(ENABLE_TEST)
 		${CHARON_UTILS_INCLUDE_DIR}/ImgTool.h
 		${CHARON_UTILS_INCLUDE_DIR}/ImgTool.hxx
 	)
-	TARGET_LINK_LIBRARIES(imgToolTest charon-core ${CIMG_LINK_LIBRARIES})
-	ADD_TEST(ImgToolTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imgToolTest)
+	TARGET_LINK_LIBRARIES(imgToolTest
+		charon-core
+		${CIMG_LINK_LIBRARIES}
+	)
+	ADD_TEST(
+		NAME ImgTool
+		COMMAND imgToolTest
+	)
 	
 	#tests for plugin creation in various ways
 	ADD_EXECUTABLE(pluginTest pluginTest.cpp)
@@ -49,17 +58,28 @@ IF(ENABLE_TEST)
 		filereader
 		${CIMG_LINK_LIBRARIES}
 	)
-	ADD_TEST(PluginTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/pluginTest)
+	ADD_TEST(
+		NAME Plugins
+		COMMAND pluginTest
+	)
 
 	ADD_EXECUTABLE(cImgTest cimgtest.cpp)
 	TARGET_LINK_LIBRARIES(cImgTest ${CIMG_LINK_LIBRARIES})
-	ADD_TEST(CImgTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cImgTest)
+	ADD_TEST(
+		NAME CImgInfo
+		COMMAND cImgTest
+	)
 	
 	ADD_EXECUTABLE(warpTest Warptest.cpp)
-	TARGET_LINK_LIBRARIES(warpTest ${CIMG_LINK_LIBRARIES})
-	TARGET_LINK_LIBRARIES(warpTest crop)
-	TARGET_LINK_LIBRARIES(warpTest charon-plugins)
-	ADD_TEST(WarpTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/warpTest)
+	TARGET_LINK_LIBRARIES(warpTest
+		${CIMG_LINK_LIBRARIES}
+		crop
+		charon-plugins
+	)
+	ADD_TEST(
+		NAME Warp
+		COMMAND warpTest
+	)
 
 	IF(WIN32)
 		# copy needed dll for tests and application run before installing
