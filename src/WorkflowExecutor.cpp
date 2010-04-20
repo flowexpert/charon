@@ -84,11 +84,13 @@ void WorkflowExecutor::_run() {
 		return;
 
 	// setup and start workflow execution
-	const std::string& globalPluginPath =
-			FileManager::instance().getGlobalPluginPath();
-	const std::string& privatePluginPath =
-			FileManager::instance().getPrivatePluginPath();
-	_manager = new PluginManager(globalPluginPath, privatePluginPath);
+	QSettings settings(
+			"Heidelberg Collaboratory for Image Processing",
+			"Tuchulcha");
+	_manager = new PluginManager(
+			settings.value("globalPluginPath").toString().toAscii().data(),
+			settings.value("privatePluginPath").toString().toAscii().data());
+
 	_log = new std::ofstream(_logFileName.c_str(), std::ios::trunc);
 	Q_ASSERT(_log);
 	Q_ASSERT(!_log->fail());

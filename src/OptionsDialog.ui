@@ -27,41 +27,41 @@
       <item row="0" column="0">
        <widget class="QLabel" name="labelCore">
         <property name="text">
-         <string>charon-core install</string>
+         <string>charon-install dir</string>
         </property>
         <property name="buddy">
-         <cstring>editCore</cstring>
+         <cstring>editCharonInstall</cstring>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QDirEdit" name="editCore"/>
+       <widget class="QDirEdit" name="editCharonInstall"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="labelUtils">
         <property name="text">
-         <string>charon-utils install</string>
+         <string>global plugin path</string>
         </property>
         <property name="buddy">
-         <cstring>editUtils</cstring>
+         <cstring>editGlobalPath</cstring>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QDirEdit" name="editUtils"/>
+       <widget class="QDirEdit" name="editGlobalPath"/>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="labelAdd">
         <property name="text">
-         <string>additional plugins</string>
+         <string>private plugin path</string>
         </property>
         <property name="buddy">
-         <cstring>editAdd</cstring>
+         <cstring>editPrivatePath</cstring>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QDirEdit" name="editAdd"/>
+       <widget class="QDirEdit" name="editPrivatePath"/>
       </item>
      </layout>
     </widget>
@@ -107,9 +107,9 @@
  </customwidgets>
  <tabstops>
   <tabstop>buttonBox</tabstop>
-  <tabstop>editCore</tabstop>
-  <tabstop>editUtils</tabstop>
-  <tabstop>editAdd</tabstop>
+  <tabstop>editCharonInstall</tabstop>
+  <tabstop>editGlobalPath</tabstop>
+  <tabstop>editPrivatePath</tabstop>
   <tabstop>checkWait</tabstop>
  </tabstops>
  <resources/>

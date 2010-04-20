@@ -61,7 +61,7 @@ public:
 
 	/// Configures plugin paths
 	/// @param parent Parent Qwidget for dialog boxes
-	/// @param force  Configure even if a configuration file exists
+	/// @param force  Configure even if configuration exists
 	void configure(QWidget * parent = NULL, bool force = false) const;
 
 	/// Compiles a plugin and creates metadata information
@@ -70,19 +70,6 @@ public:
 	/// @return False, if an error occurred
 	bool compileAndLoad(QWidget * parent = NULL) const
 			throw (AbstractPluginLoader::PluginException);
-
-	/**
-	 * Returns the global plugin path
-	 * @return Global plugin path
-	 */
-	std::string getGlobalPluginPath() const;
-
-	/**
-	 * Returns the private plugin path
-	 * An empty string is returned if no path is specified
-	 * @return Private plugin path
-	 */
-	std::string getPrivatePluginPath() const;
 
 private:
 	FileManager();
@@ -94,33 +81,6 @@ private:
 	FileManager(const FileManager&);
 	FileManager& operator=(const FileManager&);
 	//	@}
-
-	/**
-	 * Returns the path where the Paths.config file should be
-	 * @return Path to the file Paths.config
-	 */
-	inline std::string _paramFile() const;
-
-	/**
-	 * Returns the path to the metadata files.
-	 * @return Path to the metadata files.
-	 */
-	inline std::string _metaPath() const;
-
-	/**
-	 * @return True, if a private plugin path is specified
-	 */
-	bool _isPrivatePluginPathSet() const;
-
-	/**
-	 * @return Path to the charon-utils install
-	 */
-	std::string _charonUtilsInstall() const;
-
-	/**
-	 * @return Path to the charon-core install
-	 */
-	std::string _charonCoreInstall() const;
 
 	/// pointer to FileManager instance
 	static FileManager* _inst;

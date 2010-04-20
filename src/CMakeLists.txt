@@ -2,6 +2,8 @@ INCLUDE_DIRECTORIES(${CHARON_CORE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 INCLUDE_DIRECTORIES(${GRAPHVIZ_INCLUDE_DIRS})
 
+ADD_DEFINITIONS(-DCHARON_INSTALL="${CHARON_CORE_ROOT_DIR}")
+
 # source files containing QObject derived classes
 QT4_WRAP_UI(UI_SRC LogDialog.ui OptionsDialog.ui)
 SET(EDITPARAM_SOURCES
@@ -53,13 +55,6 @@ SET(EDITGRAPH_SOURCES
 	TemplateGraphView.h
 	WorkflowExecutor.h
 	WorkflowExecutor.cpp
-)
-
-# Configure Paths.config file
-CONFIGURE_FILE(
-	${CMAKE_CURRENT_SOURCE_DIR}/Paths.config.in
-	${CMAKE_CURRENT_BINARY_DIR}/Paths.config
-	@ONLY
 )
 
 # =============  generate moc files ====================

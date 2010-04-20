@@ -478,39 +478,32 @@ void MainWindow::_options() {
 	Ui::OptionsDialog options;
 	options.setupUi(&dialog);
 
-	ParameterFile pathsConfig;
-	std::string pathsConfigName =
-			FileManager::instance().configDir().absoluteFilePath(
-					"Paths.config").toAscii().constData();
-	pathsConfig.load(pathsConfigName);
-
 	// set up dialog content
-	options.editCore->setText(
-			pathsConfig.get<std::string>("charon-core-install").c_str());
-	options.editUtils->setText(
-			pathsConfig.get<std::string>("charon-utils-install").c_str());
-	options.editAdd->setText(
-			pathsConfig.get<std::string>("additional-plugin-path").c_str());
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
 			"Tuchulcha");
+	options.editCharonInstall->setText(
+			settings.value("charonInstallPath").toString());
+	options.editGlobalPath->setText(
+			settings.value("globalPluginPath").toString());
+	options.editPrivatePath->setText(
+			settings.value("privatePluginPath").toString());
 	options.checkWait->setChecked(
 			settings.value("waitAfterExecute", false).toBool());
 
 	// set new values
 	if (dialog.exec() == QDialog::Accepted) {
-		pathsConfig.set<std::string>(
-				"charon-core-install",
-				options.editCore->text().toAscii().constData());
-		pathsConfig.set<std::string>(
-				"charon-utils-install",
-				options.editUtils->text().toAscii().constData());
-		pathsConfig.set<std::string>(
-				"additional-plugin-path",
-				options.editAdd->text().toAscii().constData());
+		settings.setValue(
+				"charonInstallPath",
+				options.editCharonInstall->text());
+		settings.setValue(
+				"globalPluginPath",
+				options.editGlobalPath->text());
+		settings.setValue(
+				"privatePluginPath",
+				options.editPrivatePath->text());
 		settings.setValue(
 				"waitAfterExecute",
 				(options.checkWait->checkState() != Qt::Unchecked));
-		pathsConfig.save(pathsConfigName);
 	}
 }
