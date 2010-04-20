@@ -5,17 +5,26 @@ IF(ENABLE_TEST)
 	# tests for SplitStream
 	ADD_EXECUTABLE(streamtest splitstreams.cpp)
 	TARGET_LINK_LIBRARIES(streamtest charon-core)
-	ADD_TEST(StreamTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/streamtest)
+	ADD_TEST(
+		NAME SplitStream
+		COMMAND streamtest
+	)
 
 	# tests for ParameterFile
 	ADD_EXECUTABLE(paramtest parameterfiletest.cpp)
 	TARGET_LINK_LIBRARIES(paramtest charon-core)
-	ADD_TEST(ParamTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/paramtest)
+	ADD_TEST(
+		NAME ParameterFile
+		COMMAND paramtest
+	)
 
 	# tests for ParameteredObject etc.
 	ADD_EXECUTABLE(parametertest parametertest.cpp)
 	TARGET_LINK_LIBRARIES(parametertest charon-core)
-	ADD_TEST(ParameterTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parametertest)
+	ADD_TEST(
+		NAME ParameterTest
+		COMMAND parametertest
+	)
 
 	# tests for compile and load routines.
 	IF(WIN32)
@@ -31,9 +40,9 @@ IF(ENABLE_TEST)
 		${CMAKE_CURRENT_BINARY_DIR}/Paths.config
 		@ONLY
 	)
-	IF(COMMAND UNSET)
-		UNSET(CMAKE_INSTALL_PREFIX)
-	ENDIF()
 	TARGET_LINK_LIBRARIES(compileandloadtest charon-plugins)
-	ADD_TEST(CompileAndLoadTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/compileandloadtest)
+	ADD_TEST(
+		NAME CompileAndLoad
+		COMMAND compileandloadtest
+	)
 ENDIF(ENABLE_TEST)
