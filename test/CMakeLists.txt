@@ -11,8 +11,6 @@ IF(ENABLE_TEST)
 	GET_FILENAME_COMPONENT(LOCAL_PLUGIN_DIR ${Diff2d_LOC} PATH)
 	ADD_DEFINITIONS(-DGLOBAL_PLUGIN_DIR="${GLOBAL_PLUGIN_DIR}")
 	ADD_DEFINITIONS(-DLOCAL_PLUGIN_DIR="${LOCAL_PLUGIN_DIR}")
-	#MESSAGE(STATUS "charon GLOBAL_PLUGIN_DIR: ${GLOBAL_PLUGIN_DIR}")
-	#MESSAGE(STATUS "charon LOCAL_PLUGIN_DIR: ${LOCAL_PLUGIN_DIR}")
 
 	IF(ENABLE_BLOCKMATCHING)
 		# tests for imgmanip classes
@@ -23,11 +21,19 @@ IF(ENABLE_TEST)
 			roi
 			filereader
 		)
+		ADD_TEST(
+			NAME ListedPixelSelection
+			COMMAND listedpixelselectiontest
+		)
 
 		ADD_EXECUTABLE(incrementorcountuptest incrementorcountuptest.cpp)
 		TARGET_LINK_LIBRARIES(incrementorcountuptest
 			charon-core
 			${CIMG_LINK_LIBRARIES}
+		)
+		ADD_TEST(
+			NAME IncrementorCountup
+			COMMAND incrementorcountuptest
 		)
 
 		ADD_EXECUTABLE(objectivefunctioncomparingtest objectivefunctioncomparingtest.cpp)
@@ -40,12 +46,20 @@ IF(ENABLE_TEST)
 			mask1d
 			linearfilter
 		)
+		ADD_TEST(
+			NAME ObjectiveFunctionComparing
+			COMMAND objectivefunctioncomparingtest
+		)
 
 		ADD_EXECUTABLE(surfaceanalysisminchangetest surfaceanalysisminchnagetest.cpp)
 		TARGET_LINK_LIBRARIES(surfaceanalysisminchangetest
 			charon-core
 			${CIMG_LINK_LIBRARIES}
 			incrementorparameter
+		)
+		ADD_TEST(
+			NAME SurfaceAnalysisMinchange
+			COMMAND surfaceanalysisminchangetest
 		)
 
 		ADD_EXECUTABLE(blockmatchingliacstest blockmatchingliacstest.cpp)
@@ -65,12 +79,10 @@ IF(ENABLE_TEST)
 			mask1d
 			brightnessmodels_constant
 		)
-
-		ADD_TEST(ListedPixelSelection ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/listedpixelselectiontest)
-		ADD_TEST(IncrementorCountup ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/incrementorcountuptest)
-		ADD_TEST(ObjectiveFunctionComparing ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/objectivefunctioncomparingtest)
-		ADD_TEST(SurfaceAnalysisMinchange ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/surfaceanalysisminchangetest)
-		ADD_TEST(BlockmatchingLiacs ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/blockmatchingliacstest)
+		ADD_TEST(
+			NAME BlockmatchingLiacs
+			COMMAND blockmatchingliacstest
+		)
 		
 		IF(WIN32)
 			# copy needed dll for tests and application run before installing
@@ -104,7 +116,10 @@ IF(ENABLE_TEST)
 			)
 		ENDIF(MSVC)
 		TARGET_LINK_LIBRARIES(petscinittest ${PETSC_LIBRARIES})
-		ADD_TEST(PetscInitialization ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscinittest)
+		ADD_TEST(
+			NAME PetscInitialization
+			COMMAND petscinittest
+		)
 
 		# checking creation of petsc plugins
 		ADD_EXECUTABLE(petscplugintest PetscPluginTest.cpp)
@@ -130,17 +145,34 @@ IF(ENABLE_TEST)
 			linearfilter
 			petscsolver
 		)
-		ADD_TEST(PetscPlugin ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscplugintest)
+		ADD_TEST(
+			NAME PetscPlugin
+			COMMAND petscplugintest
+		)
 
 		# executing test workflow
 		ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
-		TARGET_LINK_LIBRARIES(petscsolvertest charon-core charon-plugins ${CIMG_LINK_LIBRARIES})
-		ADD_TEST(Petsc_HornSchunck_Sinus ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/petscsolvertest)
+		TARGET_LINK_LIBRARIES(petscsolvertest
+			charon-core
+			charon-plugins
+			${CIMG_LINK_LIBRARIES}
+		)
+		ADD_TEST(
+			NAME Petsc_HornSchunck_Sinus
+			COMMAND petscsolvertest
+		)
 
 		# testing Horn&Schunck Method on Yosemite Sequence
 		ADD_EXECUTABLE(hornschunckyosemite HornSchunckYosemite.cpp)
-		TARGET_LINK_LIBRARIES(hornschunckyosemite flowcomparator charon-plugins ${CIMG_LINK_LIBRARIES})
-		ADD_TEST(Petsc_HornSchunck_Yosemite ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hornschunckyosemite)
+		TARGET_LINK_LIBRARIES(hornschunckyosemite
+			flowcomparator
+			charon-plugins
+			${CIMG_LINK_LIBRARIES}
+		)
+		ADD_TEST(
+			NAME Petsc_HornSchunck_Yosemite
+			COMMAND hornschunckyosemite
+		)
 
 		IF(WIN32)
 			# copy needed dll for tests and application run before installing
