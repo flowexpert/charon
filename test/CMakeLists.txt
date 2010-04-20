@@ -13,16 +13,25 @@ IF(ENABLE_TEST)
 	# test usage of graphviz library
     ADD_EXECUTABLE(graphtest graphtest.cpp)
     TARGET_LINK_LIBRARIES(graphtest ${GRAPHVIZ_LIBRARIES})
-    ADD_TEST(GraphTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/graphtest)
+    ADD_TEST(
+		NAME Graphviz
+		COMMAND graphtest
+	)
 
 	# test ParameterFileModel
     ADD_EXECUTABLE(modeltest modeltest.cpp)
     TARGET_LINK_LIBRARIES(modeltest editparam)
-    ADD_TEST(ModelTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/modeltest)
+    ADD_TEST(
+		NAME ParameterFileModel
+		COMMAND modeltest
+	)
 
 	# check for graphviz bug
 	QT4_AUTOMOC(graphTemplateTest.cpp)
 	ADD_EXECUTABLE(graphtemptest graphTemplateTest.cpp)
 	TARGET_LINK_LIBRARIES(graphtemptest editgraph)
-	ADD_TEST(GraphTempTest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/graphtemptest)
+	ADD_TEST(
+		NAME TemplateWidget
+		COMMAND graphtemptest
+	)
 ENDIF(ENABLE_TEST)
