@@ -63,7 +63,7 @@ public:
     /// @param source       source slot ("\<object\>.\<slot\>")
     /// @param target       target slot ("\<object\>.\<slot\>")
     /// @throw std::string  error message if connection is not valid
-    bool connected(const QString& source, const QString& target) const;
+	bool connected(QString source, QString target) const;
 
     /// Get nodes in current graph
     QStringList nodes() const;

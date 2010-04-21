@@ -128,8 +128,9 @@ void GraphView::mousePressEvent(QMouseEvent* mouseEvent) {
 }
 
 void GraphView::save() const {
-    QString fileName = QFileDialog::getSaveFileName(0, tr("Save flowchart"),
-            QDir::currentPath(), tr("graphic files (*.png *.svg *.pdf)"));
+	QString fileName = QFileDialog::getSaveFileName(
+			0, tr("Save flowchart"), QDir::currentPath(),
+			tr("graphic files (*.png *.svg *.pdf *.dot)"));
 
     if(fileName.isEmpty())
         return;
@@ -153,6 +154,9 @@ void GraphView::save() const {
 	else if (extension == "pdf")
         gvRenderFilename(_gvc, _builder->graph(), const_cast<char*>("pdf"),
                 const_cast<char*> (fileName.toAscii().constData()));
+	else if (extension == "dot")
+		gvRenderFilename(_gvc, _builder->graph(), const_cast<char*>("dot"),
+				const_cast<char*> (fileName.toAscii().constData()));
 	else {
 		ok = false;
 		QMessageBox::warning(
