@@ -29,7 +29,7 @@
 #include <QDateTime>
 #include <QSettings>
 #include <exception>
-#include "ui_LogDialog.h"
+#include <ui_LogDialog.h>
 #include <charon-core/PluginManager.h>
 
 #ifdef __GNUG__
