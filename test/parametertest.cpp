@@ -66,6 +66,11 @@ public:
 		_addOutputSlot(out1, "out1", "sample integer output slot");
 		_addOutputSlot(out2, "out2", "sample float output slot");
 	}
+
+	virtual void execute() {
+		PARAMETEREDOBJECT_AVOID_REEXECUTION;
+		ParameteredObject::execute();
+	}
 };
 
 /// sample ParameteredObject class.
@@ -154,6 +159,10 @@ int main() {
 	assert(!outgen->executed());
 	assert(outgen2->executed());
 	assert(sample->executed());
+
+	// check new skip reexecution macro
+	sample->execute();
+	assert(!outgen->executed());
 
 	// check usage of getTargets
 	{

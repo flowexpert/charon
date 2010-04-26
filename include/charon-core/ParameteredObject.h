@@ -343,6 +343,17 @@ public:
 		return _executed;
 	}
 
+	/// Macro to avoid reexecution of Modules
+	/** Use this before the call of ParameteredObject::execute()
+	 *  in overrided execute methods.
+	 */
+#define PARAMETEREDOBJECT_AVOID_REEXECUTION \
+	if (this->executed()) {\
+		sout << "Skipping reexecution of " << this->getClassName()\
+			<< " \"" << this->getName() << "\"" << std::endl;\
+		return;\
+	}
+
 	/// reset execution status
 	/** This sets the propety _executed to false.
 	 *  Per default, all depending objects are resetted too, but setting
