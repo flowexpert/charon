@@ -668,9 +668,6 @@ void ImgTool::createAllScaleRandomPattern(cimg_library::CImg<T>& dst,
     dst.assign(sx, sy, 1, 1, 0);
     Pyramid2DGauss<T> p(dst, 5, 1.4f, 2.0f, eta);
 
-    time_t t;
-    time(&t);
-    srand((unsigned int)t);
     maxLevels = p.getLevels() < maxLevels ? p.getLevels() : maxLevels;
 
     for(int i = p.getLevels()-1; i >= p.getLevels()-maxLevels; --i)

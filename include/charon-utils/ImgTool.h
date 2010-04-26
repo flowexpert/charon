@@ -418,16 +418,19 @@ namespace ImgTool {
                     cimg_library::CImg<T>& to,
               int left = 0, int top = 0, int front = 0);
 
-    /// Generate random pattern with noise in different scales.
-    /// @param  dst         result output
-    /// @param  dimx        result size in x dimension
-    /// @param  dimy        result size in y dimension
-    /// @param  eta         noise amplitude
-    /// @param  maxLevels   maximal scale number (levels of the used pyramid)
-    template <typename T>
-    void createAllScaleRandomPattern(cimg_library::CImg<T>& dst,
-                                     int dimx, int dimy, float eta,
-                                     int maxLevels);
+	/// Generate random pattern with noise in different scales.
+	/** \param  dst         result output
+	 *  \param  dimx        result size in x dimension
+	 *  \param  dimy        result size in y dimension
+	 *  \param  eta         noise amplitude
+	 *  \param  maxLevels   maximal scale number (levels of the used pyramid)
+	 *  \remarks            does not initialize random generator
+	 *                      (i.e. no call to srand is done)
+	 */
+	template <typename T>
+	void createAllScaleRandomPattern(
+		cimg_library::CImg<T>& dst,
+		int dimx, int dimy, float eta, int maxLevels);
 
 #ifdef CHARON_GDI
     /// Generate image from window bmp header.
