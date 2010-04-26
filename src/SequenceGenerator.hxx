@@ -55,6 +55,7 @@ SequenceGenerator<T>::SequenceGenerator(const std::string& name) :
 
 template <typename T>
 void SequenceGenerator<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	// check preconditions

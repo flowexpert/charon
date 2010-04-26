@@ -63,8 +63,7 @@ public:
 
 	/// image input 
 	InputSlot < cimg_library::CImgList<T> > img;
-	/// if connected, calculations are performed on count change only,
-	/// if unconnected, calculations are performed exactly once
+	/// Deprecated, don't use!
 	InputSlot < unsigned int > count;
 	/// derivative wrt x 
 	OutputSlot < cimg_library::CImgList<T> > dx;
@@ -85,10 +84,6 @@ public:
 
 	/// Update object.
 	virtual void execute();
-
-private:
-	/// remember last value of count() to check if recalculation needed
-	int _count;
 };
 
 #endif // _DIFF2D_H_

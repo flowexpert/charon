@@ -42,6 +42,7 @@ FlowComparator<T>::FlowComparator(const std::string& name) :
 
 template <typename T>
 void FlowComparator<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	// shared assignment, no copying

@@ -44,8 +44,7 @@ Diff2D<T>::Diff2D(const std::string& name) :
 		diffMaskXY("0.5;0;-0.5"),
 		smoothMaskXY("0.1875;0.625;0.1875"),
 		diffMaskT("1;-1"),
-		count(true,false), // optional
-		_count(-1)
+		count(true,false) // optional
 {
 	ParameteredObject::_addParameter (
 			diffMaskXY, "diffMaskXY",
@@ -61,9 +60,7 @@ Diff2D<T>::Diff2D(const std::string& name) :
 			img, "img",
 			"image input", "CImgList<T>");
 	ParameteredObject::_addInputSlot(
-			count, "count",
-			"if connected, calculations are performed on count change only, "
-			"if unconnected, calculations are performed exactly once");
+			count, "count", "Deprecated, don't use!");
 	ParameteredObject::_addOutputSlot(
 			dx, "dx", "derivative wrt x", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
@@ -80,21 +77,21 @@ Diff2D<T>::Diff2D(const std::string& name) :
 
 template <typename T>
 void Diff2D<T>::execute() {
-	ParameteredObject::execute();
-
-	// check if calculation needed
-	if (_count < -1 || (count.connected() && _count == int(count()))) {
-		sout << "\tskipping derivative calculation" << std::endl;
-		return;
+	// check for deprecated slot
+	if (count.connected()) {
+		std::ostringstream msg;
+		msg << __FILE__ << ":" << __LINE__ << ":\n\t";
+		msg << "Slot count is deprecated and not used anymore!\n\t";
+		msg << "Please disconnect and check execution log for skip ";
+		msg << "messages.\n\tIf unexpected behaviour occurs, check calls to ";
+		msg << "ParameteredObject::resetExecute()!";
+		throw std::runtime_error(msg.str());
 	}
 
-	sout << "\tcalculating derivatives:" << std::endl;
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
+	ParameteredObject::execute();
 
-	// update "old" counter value
-	if (count.connected())
-		_count = count();
-	else
-		_count = -2;
+	sout << "\tcalculating derivatives:" << std::endl;
 
 	// set up convolution masks
 	cimg_library::CImg<T> maskDx (diffMaskXY().size()  ,1u,1u,1u);
