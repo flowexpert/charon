@@ -1,17 +1,17 @@
 /*  This file is part of Charon.
 
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file InterpolatorCubic.hxx
  *  Implementation of template class InterpolatorCubic.
@@ -33,30 +33,23 @@
 #include "InterpolatorCubic.h"
 
 template <typename T>
-InterpolatorCubic<T>::InterpolatorCubic() :
-           Interpolator<T>("interpolatorcubic", "", "cubic interpolator") {
-}
-
-template <typename T>
 InterpolatorCubic<T>::InterpolatorCubic(const std::string& name) :
-           Interpolator<T>("interpolatorcubic", name, "cubic interpolator") {
+		Interpolator<T>("interpolatorcubic", name, "cubic interpolator") {
 }
 
 template <typename T>
-InterpolatorCubic<T>::~InterpolatorCubic() {
+T InterpolatorCubic<T>::interpolate(
+		const cimg_library::CImg<T>& src,
+		float fx, float fy, int z, int v) const {
+	return static_cast<T>(src.cubic_atXY(fx, fy, z, v));
 }
 
 template <typename T>
-T InterpolatorCubic<T>::interpolate(const cimg_library::CImg<T>& src,
-                                    float fx, float fy, int z, int v) const {
-    return static_cast<T>(src.cubic_atXY(fx, fy, z, v));
-}
-
-template <typename T>
-T InterpolatorCubic<T>::interpolate(const cimg_library::CImg<T>& src,
-                                 float fx, float fy, float fz, int v) const {
-    // this kind of rounding only works for positive values!
-    assert(fz > 0);
+T InterpolatorCubic<T>::interpolate(
+		const cimg_library::CImg<T>& src,
+		float fx, float fy, float fz, int v) const {
+	// this kind of rounding only works for positive values!
+	assert(fz > 0);
 	return static_cast<T>(src.cubic_atXY(fx, fy, static_cast<int>(fz+0.5), v));
 }
 

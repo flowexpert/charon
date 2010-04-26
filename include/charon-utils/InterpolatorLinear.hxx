@@ -1,17 +1,17 @@
 /*  This file is part of Charon.
 
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file InterpolatorLinear.hxx
  *  Implementation of template class InterpolatorLinear.
@@ -33,28 +33,21 @@
 #include "InterpolatorLinear.h"
 
 template <typename T>
-InterpolatorLinear<T>::InterpolatorLinear() :
-         Interpolator<T>("interpolatorlinear", "", "linear interpolator") {
-}
-
-template <typename T>
 InterpolatorLinear<T>::InterpolatorLinear(const std::string& name) :
-         Interpolator<T>("interpolatorlinear", name, "linear interpolator") {
+		Interpolator<T>("interpolatorlinear", name, "linear interpolator") {
 }
 
 template <typename T>
-InterpolatorLinear<T>::~InterpolatorLinear() {
+T InterpolatorLinear<T>::interpolate(
+		const cimg_library::CImg<T>& src,
+		float fx, float fy, int z, int v) const {
+	return static_cast<T>(src.linear_atXY(fx, fy, z, v));
 }
 
 template <typename T>
-T InterpolatorLinear<T>::interpolate(const cimg_library::CImg<T>& src,
-                                    float fx, float fy, int z, int v) const {
-    return static_cast<T>(src.linear_atXY(fx, fy, z, v));
-}
-
-template <typename T>
-T InterpolatorLinear<T>::interpolate(const cimg_library::CImg<T>& src,
-                                 float fx, float fy, float fz, int v) const {
+T InterpolatorLinear<T>::interpolate(
+		const cimg_library::CImg<T>& src,
+		float fx, float fy, float fz, int v) const {
 	return static_cast<T>(src.linear_atXYZ(fx, fy, fz, v));
 }
 

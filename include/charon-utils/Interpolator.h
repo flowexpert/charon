@@ -1,17 +1,17 @@
 /*  This file is part of Charon.
 
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file Interpolator.h
  *  Declaration of template class Interpolator and related classes.
@@ -55,37 +55,40 @@
 /// e.g. InterpolatorLinear or InterpolatorCubic.
 template <typename T>
 class interpolator_DECLDIR Interpolator : public TemplatedParameteredObject<T> {
+protected:
+	/// Init interpolator.
+	/// Parameters are passed to the ParameteredObject constructor.
+	/// @param className        class name
+	/// @param name             instance name
+	/// @param doc              class documentation
+	Interpolator(
+			const std::string& className,
+			const std::string& name,
+			const std::string& doc);
+
 public:
-    /// This pointer as outupt slot.
-    OutputSlot<Interpolator<T>*> out;
+	/// This pointer as outupt slot.
+	OutputSlot<Interpolator<T>*> out;
 
-    /// Init interpolator.
-    /// Parameters are passed to the ParameteredObject constructor.
-    /// @param className        class name
-    /// @param name             instance name
-    /// @param doc              class documentation
-    Interpolator(const std::string& className, const std::string& name,
-        const std::string& doc);
+	virtual ~Interpolator();
 
-    virtual ~Interpolator();
+	/// Calculate 2D interpolation.
+	/// @param src              interpolation source
+	/// @param fx               x position
+	/// @param fy               y position
+	/// @param z                z position
+	/// @param v                4th dimension
+	virtual T interpolate(const cimg_library::CImg<T>& src,
+		float fx, float fy, int z, int v) const = 0;
 
-    /// Calculate 2D interpolation.
-    /// @param src              interpolation source
-    /// @param fx               x position
-    /// @param fy               y position
-    /// @param z                z position
-    /// @param v                4th dimension
-    virtual T interpolate(const cimg_library::CImg<T>& src,
-        float fx, float fy, int z, int v) const = 0;
-
-    /// Calculate 3D interpolation.
-    /// @param src              interpolation source
-    /// @param fx               x position
-    /// @param fy               y position
-    /// @param fz               z position
-    /// @param v                4th dimension
-    virtual T interpolate(const cimg_library::CImg<T>& src,
-        float fx, float fy, float fz, int v) const = 0;
+	/// Calculate 3D interpolation.
+	/// @param src              interpolation source
+	/// @param fx               x position
+	/// @param fy               y position
+	/// @param fz               z position
+	/// @param v                4th dimension
+	virtual T interpolate(const cimg_library::CImg<T>& src,
+		float fx, float fy, float fz, int v) const = 0;
 };
 
 #endif // _Interpolator_H_
