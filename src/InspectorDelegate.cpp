@@ -53,11 +53,23 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 		if (!model->prefix().isEmpty())
 			param = std::string(model->prefix().toAscii().constData())
 					+ "." + param;
-		std::string type = model->metaInfo()->getType(param, model->getClass(param));
-		if (type == "filename") {
+		QString type = model->metaInfo()->getType(
+				param, model->getClass(param)).c_str();
+		type.toLower();
+
+		if (type == "openfile" || type == "fileopen") {
 			QDirEdit* editor =
 					new QDirEdit(param.c_str(), p);
-			editor->acceptFiles();
+			editor->acceptFiles(true, false);
+			connect(
+					editor, SIGNAL(dialogOpen(bool)),
+					this, SLOT(_setFileDialogFlag(bool)));
+			return editor;
+		}
+		if (type == "writefile" || type == "filewrite", type == "filename") {
+			QDirEdit* editor =
+					new QDirEdit(param.c_str(), p);
+			editor->acceptFiles(true, true);
 			connect(
 					editor, SIGNAL(dialogOpen(bool)),
 					this, SLOT(_setFileDialogFlag(bool)));
