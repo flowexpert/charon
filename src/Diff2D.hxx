@@ -82,6 +82,7 @@ void Diff2D<T>::execute() {
 		std::ostringstream msg;
 		msg << __FILE__ << ":" << __LINE__ << ":\n\t";
 		msg << "Slot count is deprecated and not used anymore!\n\t";
+		msg << "This slot will be removed in near future!\n\t";
 		msg << "Please disconnect and check execution log for skip ";
 		msg << "messages.\n\tIf unexpected behaviour occurs, check calls to ";
 		msg << "ParameteredObject::resetExecute()!";
