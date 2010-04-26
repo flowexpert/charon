@@ -31,7 +31,7 @@ FileReader<T>::FileReader(const std::string& name) :
             "read image from image file using cimg")
 {
     this->_addParameter (filename, "filename",
-        "filename to read image from", "filename");
+        "filename to read image from", "fileopen");
     this->_addOutputSlot(out, "out",
         "image output", "CImgList<T>");
 }

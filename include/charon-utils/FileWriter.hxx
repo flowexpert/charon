@@ -31,7 +31,7 @@ FileWriter<T>::FileWriter(const std::string& name) :
 	TemplatedParameteredObject<T>("filewriter", name,
 			"write image file from image using cimg") {
 	this->_addParameter(filename, "filename", "filename to write image to",
-			"filename");
+			"filewrite");
 	this->_addInputSlot(in, "in", "image input", "CImgList<T>");
 }
 
