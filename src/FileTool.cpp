@@ -127,7 +127,7 @@ std::vector<std::string> FileTool::getFilesWithSuffix(std::string suffix) {
 	hFind = FindFirstFile(".\\*", &ffd);
 
 	if (INVALID_HANDLE_VALUE == hFind) {
-		throw (std::string("Error in opening the folder."));
+		throw std::runtime_error("Error in opening the folder.");
 	}
 
 	do {
