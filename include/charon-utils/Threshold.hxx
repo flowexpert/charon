@@ -41,6 +41,7 @@ Threshold<T>::Threshold(const std::string& name) :
 template <typename T>
 void Threshold<T>::execute()
 {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
     ParameteredObject::execute();
 
 	out = in;

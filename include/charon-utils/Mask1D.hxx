@@ -29,16 +29,23 @@
 
 template <typename T>
 Mask1D<T>::Mask1D(const std::string& name) :
-		TemplatedParameteredObject<T>("Mask1D", name, "generate simple 1d mask")
+		TemplatedParameteredObject<T>(
+				"Mask1D", name, "generate simple 1d mask")
 {
-	ParameteredObject::_addParameter(values, "values", "mask values");
-	ParameteredObject::_addParameter(dir, "dir", "mask direction", 0u);
-	ParameteredObject::_addParameter(normalize, "normalize", "divide values by L1Norm", false);
-	ParameteredObject::_addOutputSlot(out, "out", "mask output", "CImgList<T>");
+	ParameteredObject::_addParameter(
+			values, "values", "mask values");
+	ParameteredObject::_addParameter(
+			dir, "dir", "mask direction", 0u);
+	ParameteredObject::_addParameter(
+			normalize, "normalize", "divide values by L1Norm",
+			false);
+	ParameteredObject::_addOutputSlot(
+			out, "out", "mask output", "CImgList<T>");
 }
 
 template <typename T>
 void Mask1D<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	switch (dir()) {

@@ -55,6 +55,7 @@ ImageDisplay<T>::ImageDisplay(const std::string& name) :
 
 template <typename T>
 void ImageDisplay<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	std::ostringstream msg;

@@ -34,14 +34,22 @@ CImg2VigraMultiArray<T>::CImg2VigraMultiArray(const std::string& name) :
 			"to all images. Missing values are filled according to the "
 			"missingValue parameter.")
 {
-	ParameteredObject::_addParameter (missingValue, "missingValue", "Value for locations missing in the CImgList due to smaller image sizes.");
-
-	ParameteredObject::_addInputSlot(in, "in", "The CImg object to be converted", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(out, "out", "A copy of the image stored as vigra::MultiArray<5, T>", "vigra::MultiArrayView<5, T>");
+	ParameteredObject::_addParameter (
+			missingValue, "missingValue",
+			"Value for locations missing in the CImgList due to smaller "
+			"image sizes.");
+	ParameteredObject::_addInputSlot(
+			in, "in",
+			"The CImg object to be converted", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(
+			out, "out",
+			"A copy of the image stored as vigra::MultiArray<5, T>",
+			"vigra::MultiArrayView<5, T>");
 }
 
 template <typename T>
 void CImg2VigraMultiArray<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	sout << "CImg2VigraMultiArray<T>::execute()" << std::endl;

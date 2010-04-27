@@ -40,7 +40,7 @@ ChannelConverter<T>::ChannelConverter(const std::string& name) :
 	ParameteredObject::_addOutputSlot(out,"output",
 		"converted sequence","CImgList<T>");
 	ParameteredObject::_addParameter<std::string>(scheme, "scheme",
-		"Conversion scheme.<br>"
+		"Conversion scheme.<br><br>"
 		"<i>xyzvt</i> or <i>01234</i> leaves dimensions unpermuted.<br>"
 		"Exchange dimensions as needed, e.g. the default <i>xyztv</i> "
 		"will permute the 4th CImg dimension (v) and the list element "
@@ -52,10 +52,6 @@ ChannelConverter<T>::ChannelConverter(const std::string& name) :
 		"time axis in the z-dimension "
 		"(monochrome or color channels in v-dim).",
 		"xyztv", "string");
-}
-
-template <class T>
-ChannelConverter<T>::~ChannelConverter() {
 }
 
 template <typename T>
@@ -99,6 +95,7 @@ inline unsigned int ChannelConverter<T>::_select(
 
 template <class T>
 void ChannelConverter<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	// check permutation scheme

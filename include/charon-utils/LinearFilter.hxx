@@ -30,16 +30,22 @@
 
 template <typename T>
 LinearFilter<T>::LinearFilter(const std::string& name) :
-		TemplatedParameteredObject<T>("LinearFilter", name, "Linear filtering by convolution"),
+		TemplatedParameteredObject<T>(
+				"LinearFilter", name,
+				"Linear filtering by convolution"),
 		masks(false, true)
 {
-	ParameteredObject::_addInputSlot(masks, "masks", "filter mask input", "CImgList<T>");
-	ParameteredObject::_addInputSlot(in, "in", "image input", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(out, "out", "result output", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+			masks, "masks", "filter mask input", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+			in, "in", "image input", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(
+			out, "out", "result output", "CImgList<T>");
 }
 
 template <typename T>
 void LinearFilter<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 	assert(masks[0].size() == 1);
 	assert(in().size() >= 1);

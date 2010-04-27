@@ -51,8 +51,6 @@ public:
 	/// default constructor
 	ChannelConverter(const std::string& name = "");
 	
-	virtual ~ChannelConverter();
-	
 	/// Sequence to be converted.
 	InputSlot<cimg_library::CImgList<T> > in;
 	

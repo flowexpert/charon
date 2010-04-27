@@ -34,23 +34,33 @@ VigraMultiArray2CImg<T>::VigraMultiArray2CImg(const std::string& name) :
 			"strided or has too many dimensions! Dimensions are mapped the "
 			"following way: 0->X, 1->Y, 2->Z, 3->V, 4->ListIndex.")
 {
-    ParameteredObject::_addInputSlot(in, "in", "The vigra::MultiArray<5, T> object to be converted.", "vigra::MultiArrayView<5, T>"); 
-	ParameteredObject::_addOutputSlot(out, "out", "A copy of the same image in CImgList<T> data format.", "CImgList<T>"); 
+	ParameteredObject::_addInputSlot(
+			in, "in",
+			"The vigra::MultiArray<5, T> object to be converted.",
+			"vigra::MultiArrayView<5, T>");
+	ParameteredObject::_addOutputSlot(
+			out, "out",
+			"A copy of the same image in CImgList<T> data format.",
+			"CImgList<T>");
 }
 
 template <typename T>
 void VigraMultiArray2CImg<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	out().assign(in().size(4), in().size(0), in().size(1), in().size(2), in().size(3));
-	for(unsigned int t =0; t < out().size(); ++t)
-	{
-		cimg_forXYZC(out()[t], x, y, z, v)
-		{
-			out()[t](x, y, z, v) =in()(x, y, z, v, t);
+	out().assign(
+			in().size(4), in().size(0), in().size(1),
+			in().size(2), in().size(3));
+	for(unsigned int t = 0; t < out().size(); ++t) {
+		cimg_forXYZC(out()[t], x, y, z, v) {
+			out()[t](x, y, z, v) = in()(x, y, z, v, t);
 		}
 	}
-	//out().assign(inMultiArray().data(), inMultiArray().size(0), inMultiArray().size(1), inMultiArray().size(2), inMultiArray().size(3), true);
+//	out().assign(
+//			inMultiArray().data(), inMultiArray().size(0),
+//			inMultiArray().size(1), inMultiArray().size(2),
+//			inMultiArray().size(3), true);
 }
 
 #endif /* _VIGRAMULTIARRAY2CIMG_HXX_ */

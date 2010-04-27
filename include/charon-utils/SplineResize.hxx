@@ -1,19 +1,19 @@
 /*  Copyright (C) 2009 Daniel Kondermann
 
-    This file is part of Charon.
+	This file is part of Charon.
 
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /// @file SplineResize.hxx
 /// Implementation of the parameter class SplineResize.
@@ -43,36 +43,86 @@ SplineResize<T>::SplineResize(const std::string& name) :
 			"(band limited) using a recursive exponential filter.")
 {
 
-	ParameteredObject::_addParameter (factorX, "factorX", "Factor for resizing. If zero, the parameters newDim* are used."); //1.0
-	ParameteredObject::_addParameter (factorY, "factorY", "Factor for resizing. If zero, the parameters newDim* are used.");
-	ParameteredObject::_addParameter (factorZ, "factorZ", "Factor for resizing. If zero, the parameters newDim* are used.");
-	ParameteredObject::_addParameter (factorV, "factorV", "Factor for resizing. If zero, the parameters newDim* are used.");
-	ParameteredObject::_addParameter (factorT, "factorT", "Factor for resizing. If zero, the parameters newDim* are used.");
-	ParameteredObject::_addParameter (newDimX, "newDimX", "Used if factorX=0. In this case the parameter factorX is ignored.");
-	ParameteredObject::_addParameter (newDimY, "newDimY", "Used if factorY=0. In this case the parameter factorY is ignored.");
-	ParameteredObject::_addParameter (newDimZ, "newDimZ", "Used if factorZ=0. In this case the parameter factorZ is ignored.");
-	ParameteredObject::_addParameter (newDimV, "newDimV", "Used if factorT=0. In this case the parameter factorT is ignored.");
-	ParameteredObject::_addParameter (newDimT, "newDimT", "Used if factorV=0. In this case the parameter factorV is ignored.");
-	ParameteredObject::_addParameter (splineOrder, "splineOrder", "The order of the spline. Minimum is 3, maximum is 10.");
+	ParameteredObject::_addParameter (
+			factorX, "factorX",
+			"Factor for resizing. "
+			"If zero, the parameters newDim* are used.",
+			1.0f);
+	ParameteredObject::_addParameter (
+			factorY, "factorY",
+			"Factor for resizing. "
+			"If zero, the parameters newDim* are used.");
+	ParameteredObject::_addParameter (
+			factorZ, "factorZ",
+			"Factor for resizing. "
+			"If zero, the parameters newDim* are used.");
+	ParameteredObject::_addParameter (
+			factorV, "factorV",
+			"Factor for resizing. "
+			"If zero, the parameters newDim* are used.");
+	ParameteredObject::_addParameter (
+			factorT, "factorT",
+			"Factor for resizing. "
+			"If zero, the parameters newDim* are used.");
+	ParameteredObject::_addParameter (
+			newDimX, "newDimX",
+			"Used if factorX=0. "
+			"In this case the parameter factorX is ignored.");
+	ParameteredObject::_addParameter (
+			newDimY, "newDimY",
+			"Used if factorY=0. "
+			"In this case the parameter factorY is ignored.");
+	ParameteredObject::_addParameter (
+			newDimZ, "newDimZ",
+			"Used if factorZ=0. "
+			"In this case the parameter factorZ is ignored.");
+	ParameteredObject::_addParameter (
+			newDimV, "newDimV",
+			"Used if factorT=0. "
+			"In this case the parameter factorT is ignored.");
+	ParameteredObject::_addParameter (
+			newDimT, "newDimT",
+			"Used if factorV=0. "
+			"In this case the parameter factorV is ignored.");
+	ParameteredObject::_addParameter (
+			splineOrder, "splineOrder",
+			"The order of the spline. "
+			"Minimum is 3, maximum is 10.");
 
-
-	ParameteredObject::_addInputSlot(in, "in", "The source image.", "vigra::MultiArrayView<5, T>");
-	ParameteredObject::_addOutputSlot(out, "out", "The resized image.", "vigra::MultiArrayView<5, T>");
+	ParameteredObject::_addInputSlot(
+			in, "in", "The source image.",
+			"vigra::MultiArrayView<5, T>");
+	ParameteredObject::_addOutputSlot(
+			out, "out", "The resized image.",
+			"vigra::MultiArrayView<5, T>");
 }
 
 template <typename T>
 void SplineResize<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-    typedef typename vigra::MultiArray<5, T>::difference_type Shape;
+	typedef typename vigra::MultiArray<5, T>::difference_type Shape;
 	unsigned int dimx, dimy, dimz, dimv, dimt;
 	//READ THIS! *harhar* :)
-	dimx =(factorX == 0) ? ((newDimX == 0) ? in().size(0) : newDimX()) : in().size(0)*factorX+0.5f;
-	dimy =(factorY == 0) ? ((newDimY == 0) ? in().size(1) : newDimY()) : in().size(1)*factorY+0.5f;
-	dimz =(factorZ == 0) ? ((newDimZ == 0) ? in().size(2) : newDimZ()) : in().size(2)*factorZ+0.5f;
-	dimv =(factorV == 0) ? ((newDimV == 0) ? in().size(3) : newDimV()) : in().size(3)*factorV+0.5f;
-	dimt =(factorT == 0) ? ((newDimT == 0) ? in().size(4) : newDimT()) : in().size(4)*factorT+0.5f;
-	Shape src(in().size(0), in().size(1), in().size(2), in().size(3), in().size(4));
+	dimx = (factorX == 0) ?
+			((newDimX == 0) ? in().size(0) : newDimX())
+				: in().size(0)*factorX+0.5f;
+	dimy = (factorY == 0) ?
+			((newDimY == 0) ? in().size(1) : newDimY())
+				: in().size(1)*factorY+0.5f;
+	dimz = (factorZ == 0) ?
+			((newDimZ == 0) ? in().size(2) : newDimZ())
+				: in().size(2)*factorZ+0.5f;
+	dimv =(factorV == 0) ?
+			((newDimV == 0) ? in().size(3) : newDimV())
+				: in().size(3)*factorV+0.5f;
+	dimt =(factorT == 0) ?
+			((newDimT == 0) ? in().size(4) : newDimT())
+				: in().size(4)*factorT+0.5f;
+	Shape src(
+			in().size(0), in().size(1), in().size(2),
+			in().size(3), in().size(4));
 	Shape dst(dimx, dimy, dimz, dimv, dimt);
 
 	result.reshape(dst);

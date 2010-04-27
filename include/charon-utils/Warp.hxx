@@ -43,10 +43,10 @@ Warp<T>::Warp(const std::string& name) :
 
 template<typename T>
 void Warp<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	//sicherstellen, dass flussbilder gleichgroß wie die anderen bilder
-
+	// check sizes
 	int size = this->image_sequence().size();
 	int width = this->image_sequence()[0].width();
 	int height = this->image_sequence()[0].height();
@@ -62,22 +62,22 @@ void Warp<T>::execute() {
 			- spectrum_increment);
 
 	const bool is3D = (this->flow_sequence().size() == 3);
-cimglist_for(this->warped_image(), i) {
-	cimg_forXYZC(this->warped_image()[i],x,y,z, t) {
-		T x_new = x + this->weight() * this->flow_sequence()[0](x, y, z, t);
-		T y_new = y + this->weight() * this->flow_sequence()[1](x, y, z, t);
-		T z_new = z;
-		if(is3D) {
-			z_new += this->weight() * this->flow_sequence()[2](x, y, z, t);
+	cimglist_for(this->warped_image(), i) {
+		cimg_forXYZC(this->warped_image()[i],x,y,z, t) {
+			T x_new = x+this->weight()*this->flow_sequence()[0](x,y,z,t);
+			T y_new = y+this->weight()*this->flow_sequence()[1](x,y,z,t);
+			T z_new = z;
+			if(is3D) {
+				z_new += this->weight()*this->flow_sequence()[2](x,y,z,t);
+			}
+
+			T res = this->interpolator()->interpolate(
+					this->image_sequence()[i], (float) x_new,
+					(float) y_new, (float) z_new, t + spectrum_increment);
+
+			this->warped_image()[i](x, y, z, t) = res;
 		}
-
-		T res = this->interpolator()->interpolate(
-				this->image_sequence()[i], (float) x_new,
-				(float) y_new, (float) z_new, t + spectrum_increment);
-
-		this->warped_image()[i](x, y, z, t) = res;
 	}
-}
 
 }
 

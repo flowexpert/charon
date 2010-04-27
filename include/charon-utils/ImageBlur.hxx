@@ -38,6 +38,7 @@ ImageBlur<T>::ImageBlur(const std::string& name) :
 
 template<typename T>
 void ImageBlur<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	// check roi ranges

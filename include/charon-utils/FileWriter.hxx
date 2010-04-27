@@ -37,8 +37,8 @@ FileWriter<T>::FileWriter(const std::string& name) :
 
 template<typename T>
 void FileWriter<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
-
 	in().save(filename().c_str());
 }
 

@@ -28,7 +28,8 @@
 
 template<typename T>
 Normalize<T>::Normalize(const std::string& name) :
-	TemplatedParameteredObject<T>("normalize", name, "normalize images using cimg")
+	TemplatedParameteredObject<T>(
+			"normalize", name, "normalize images using cimg")
 {
 	this->_addParameter(lower, "lower", "lower bound",  (T) 0);
 	this->_addParameter(upper, "upper", "upper bound",  (T) 255);
@@ -38,6 +39,7 @@ Normalize<T>::Normalize(const std::string& name) :
 
 template<typename T>
 void Normalize<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	out = in();

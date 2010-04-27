@@ -47,6 +47,7 @@ SteeredDerivative<T>::SteeredDerivative(const std::string& name) :
 
 template <typename T>
 void SteeredDerivative<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 	assert(dX().is_sameNXYZC(dY()));
 	assert(dX().is_sameXYZ(eigenVectors()));
