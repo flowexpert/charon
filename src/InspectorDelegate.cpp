@@ -57,7 +57,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 				param, model->getClass(param)).c_str();
 		type.toLower();
 
-		if (type == "openfile" || type == "fileopen") {
+		if (type=="openfile" || type=="fileopen") {
 			QDirEdit* editor =
 					new QDirEdit(param.c_str(), p);
 			editor->acceptFiles(true, false);
@@ -66,7 +66,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 					this, SLOT(_setFileDialogFlag(bool)));
 			return editor;
 		}
-		if (type == "writefile" || type == "filewrite", type == "filename") {
+		if (type=="writefile" || type=="filewrite" || type=="filename") {
 			QDirEdit* editor =
 					new QDirEdit(param.c_str(), p);
 			editor->acceptFiles(true, true);
