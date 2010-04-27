@@ -28,8 +28,10 @@
 
 template <typename T>
 @pluginName@<T>::@pluginName@(const std::string& name) :
-		TemplatedParameteredObject<T>("@pluginName@", name,
-			"@PluginDocu@")
+		TemplatedParameteredObject<T>(
+				"@pluginName@", name,
+				"@PluginDocu@"
+		)
 {
 	@addParameter@
 
@@ -38,6 +40,7 @@ template <typename T>
 
 template <typename T>
 void @pluginName@<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	// your code goes here :-)

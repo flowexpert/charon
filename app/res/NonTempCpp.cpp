@@ -22,19 +22,20 @@
 #include "@pluginName@.h"
 
 @pluginName@(const std::string& name = "") :
-            ParameteredObject("@pluginName@", name, "@PluginDocu@"),
-
+		ParameteredObject(
+				"@pluginName@", name,
+				"@PluginDocu@"
+		)
 {
 	// parameters
 	@addParameter@
 
-
 	// slots
 	@add-In/Out@
-
 }
 
 void @pluginName@::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	// your code goes here :-)
