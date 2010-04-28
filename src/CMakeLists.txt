@@ -110,6 +110,7 @@ SET(Plugins
 	channelconverter
 	roi
 	crop
+	resize
 	filereader
 	filewriter
 	imageblur
