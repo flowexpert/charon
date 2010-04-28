@@ -45,6 +45,9 @@ Resize<T>::Resize(const std::string& name) :
 			method, "method",
 			"resize method <br><br>"
 			"look at CImg::resize() documentation for provided methods", 1);
+	this->_addParameter(
+			preBlurFactor, "preBlurFactor",
+			"control blur strength on image size reduction", 0.4f);
 }
 
 template <typename T>
@@ -77,17 +80,30 @@ void Resize<T>::execute() {
 		size_t = -100;
 	}
 
-	float
-		sig_x = size_x > 0 ? (float)in()[0].width()/(float)size_x/3.f : 0.f,
-		sig_y = size_y > 0 ? (float)in()[0].height()/(float)size_y/3.f : 0.f,
-		sig_z = size_y > 0 ? (float)in()[0].depth()/(float)size_z/3.f : 0.f;
+	float sig_x = size_x > 0 ?
+				(float)in()[0].width()/(float)size_x
+					: 100.f/((float)-size_x);
+	float sig_y = size_y > 0 ?
+				(float)in()[0].height()/(float)size_y
+					: 100.f/((float)-size_y);
+	float sig_z = size_z > 0 ?
+				(float)in()[0].depth()/(float)size_z
+					: 100.f/((float)-size_z);
+
+	sig_x *= preBlurFactor();
+	sig_y *= preBlurFactor();
+	sig_z *= preBlurFactor();
+
+	bool blur_x = size_x >= 0 ? (in()[0].width()  > size_x) : (size_x > -100);
+	bool blur_y = size_y >= 0 ? (in()[0].height() > size_y) : (size_y > -100);
+	bool blur_z = size_z >= 0 ? (in()[0].depth()  > size_z) : (size_z > -100);
 
 	out() = in();
 	const int m = method();
 	cimglist_for(out(),k) {
-		if(sig_x >= 1.f) out()[k].deriche(sig_x, 0, 'x');
-		if(sig_y >= 1.f) out()[k].deriche(sig_y, 0, 'y');
-		if(sig_z >= 1.f) out()[k].deriche(sig_z, 0, 'z');
+		if (blur_x) out()[k].deriche(sig_x, 0, 'x');
+		if (blur_y) out()[k].deriche(sig_y, 0, 'y');
+		if (blur_z) out()[k].deriche(sig_z, 0, 'z');
 		out()[k].resize(size_x, size_y, size_z, size_t, m);
 	}
 }

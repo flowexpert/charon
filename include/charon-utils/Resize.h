@@ -75,6 +75,9 @@ public:
 	 */
 	Parameter<int> method;
 
+	/// control blur strength on image size reduction
+	Parameter<float> preBlurFactor;
+
 	/// standard constructor
 	/// @param name             Object name
 	Resize(const std::string& name);
