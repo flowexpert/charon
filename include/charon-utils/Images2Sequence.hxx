@@ -25,6 +25,7 @@
 #define _IMAGES2SEQUENCE_HXX_
 
 #include "Images2Sequence.h"
+#include <algorithm>
 
 template<typename T>
 Images2Sequence<T>::Images2Sequence(const std::string& name) :
@@ -52,13 +53,34 @@ void Images2Sequence<T>::execute() {
 	// Initialize image sequence
 	image_sequence().assign(0, width, height, depth, spectrum);
 
+	// assert that images are orderd in lexicographically ascending
+	// order of their instance name
+	std::vector<std::size_t> order;
+	{
+		const std::set<Slot*>& targets = images.getTargets();
+		std::size_t num = targets.size();
+		std::vector <std::pair<std::string, unsigned int> > tNum;
+		tNum.resize(num);
+		std::set<Slot*>::const_iterator tIter;
+		std::size_t i=0;
+		for(tIter = targets.begin();tIter != targets.end(); tIter++) {
+			tNum[i] = std::make_pair((*tIter)->getParent().getName(), i);
+			i++;
+		}
+		std::sort(tNum.begin(),tNum.end());
+		order.resize(num);
+		for (i=0; i < num; i++)
+			order[i] = tNum[i].second;
+	}
+
 	// iterate over the images in multi input slot
-	for (unsigned int i=0; i < images.size(); i++) {
+	for (std::size_t i=0; i < images.size(); i++) {
 		// Create reference to the CImgList in the current input slot
-		const cimg_library::CImgList<T>& imgList = images[i];
+		const cimg_library::CImgList<T>& imgList = images[order[i]];
 
 		// check dimensions of the current image
-		if (imgList[0].width() == width &&
+		if (imgList.size() > 0 &&
+				imgList[0].width()    == width &&
 				imgList[0].height()   == height &&
 				imgList[0].depth()    == depth &&
 				imgList[0].spectrum() == spectrum) {
@@ -67,9 +89,8 @@ void Images2Sequence<T>::execute() {
 				this->image_sequence().push_back(imgList[i]);
 			}
 		}
-		else {
+		else
 			sout << "Error: Image has wrong dimensions" << std::endl;
-		}
 	}
 }
 
