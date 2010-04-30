@@ -75,7 +75,9 @@ IF (DOXYGEN_FOUND)
         COMMENT "Generating ${PROJECT_NAME} html documentation"
     )
     ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_html)
-
+	SET_TARGET_PROPERTIES(${PROJECT_NAME}_doc_html PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+	
+	
     # install html documentation
     INSTALL(
         DIRECTORY       ${PROJECT_BINARY_DIR}/doc/html
@@ -118,6 +120,7 @@ IF (DOXYGEN_FOUND)
         )
 
         ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_pdf)
+		SET_TARGET_PROPERTIES(${PROJECT_NAME}_doc_pdf PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 
         # install pdf documentation
         INSTALL(
