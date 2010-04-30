@@ -42,14 +42,6 @@
 #define TESTDIR ""
 #error TESTDIR not defined!
 #endif
-#ifndef CMAKE_INTDIR
-/// suffix to local plugin dir
-/**	in MSVC this is set to "Debug"
- *	on debug builds and to "Release"
- *	on release builds.
- */
-#define CMAKE_INTDIR
-#endif
 // make assert work for testing
 #ifdef NDEBUG
 #undef NDEBUG
@@ -60,7 +52,7 @@ int test() {
 	assert(log.good());
 	sout.assign(log);
 
-	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR "/" CMAKE_INTDIR);
+	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 	man.loadParameterFile(TESTDIR "/bccetest.wrp");
 
 	man.executeWorkflow();

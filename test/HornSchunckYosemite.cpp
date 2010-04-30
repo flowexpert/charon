@@ -42,14 +42,6 @@
 #define TESTDIR ""
 #error TESTDIR not defined!
 #endif
-#ifndef CMAKE_INTDIR
-/// suffix to local plugin dir
-/** in MSVC this is set to "Debug"
- *  on debug builds and to "Release"
- *  on release builds.
- */
-#define CMAKE_INTDIR
-#endif
 
 #include <charon-core/PluginManager.h>
 #include <charon-core/ParameteredObject.h>
@@ -63,7 +55,7 @@ int test() {
 	sout.assign(log);
 
 	// load plugin manager
-	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR "/" CMAKE_INTDIR);
+	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 
 	// start tests
 	std::cout << "Loading parameter file \"" << TESTDIR "/HornSchunckYosemite.wrp";
@@ -73,6 +65,7 @@ int test() {
 	std::cout << "Executing workflow..." << std::endl;
 	man.executeWorkflow();
 	std::cout << "Workflow execution finished.\n" << std::endl;
+
 
 	// get test instances
 	FlowComparator<double>* comparator = dynamic_cast<FlowComparator<double>*>(
