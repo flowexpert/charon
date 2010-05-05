@@ -17,10 +17,13 @@ ENDIF()
 FIND_PACKAGE(charon-core REQUIRED)
 FIND_PACKAGE(Doxygen QUIET)
 FIND_PACKAGE(Vigra 1.7.0)
+MESSAGE(STATUS "Charon-utils library configuration:")
 OPTION(WITH_VIGRA "enable plugins using Vigra library" ${VIGRA_FOUND})
+MESSAGE(STATUS "    Vigra        : ${WITH_VIGRA}")
 INCLUDE(Documentation)
 INCLUDE(InitFlags)
 INCLUDE(CImgConfig)
+CImgLibInfo()
 INCLUDE(ReleaseSys)
 
 # Test suite

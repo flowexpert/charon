@@ -42,7 +42,9 @@ ENDIF(UNIX)
 # OpenMP support
 FIND_PACKAGE(OpenMP QUIET)
 IF(OPENMP_FOUND)
-	#deactivate openmp in windows by default as it is not supported in Visual Studio Express and will drop you into dll hell
+	# deactivate openmp in windows by default as it is not
+	# supported in Visual Studio Express and will drop you
+	# into dll hell
 	IF(MSVC)
 		OPTION(WITH_OPENMP "use OpenMP" OFF)
 	ELSE(MSVC)
@@ -80,3 +82,13 @@ ENDIF(JPEG_FOUND)
 
 # don't let exception windows pop up 
 ADD_DEFINITIONS(-Dcimg_verbosity=0)
+
+MACRO(CimgLibInfo)
+	MESSAGE(STATUS "    Lapack       : ${WITH_LAPACK}")
+	IF(APPLE)
+		MESSAGE(STATUS "    Carbon       : ${WITH_CARBON}")
+	ENDIF(APPLE)
+	MESSAGE(STATUS "    OpenMP       : ${WITH_OPENMP}")
+	MESSAGE(STATUS "    PNG          : ${WITH_PNG}")
+	MESSAGE(STATUS "    JPEG         : ${WITH_JPEG}")
+ENDMACRO()
