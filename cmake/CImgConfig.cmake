@@ -1,4 +1,5 @@
 SET(CIMG_LINK_LIBRARIES)
+SET(CIMG_INCLUDE_DIRS)
 
 # Lapack support
 OPTION(WITH_LAPACK "enable lapack support for CImg" OFF)
@@ -41,8 +42,9 @@ ENDIF(UNIX)
 # OpenMP support
 FIND_PACKAGE(OpenMP QUIET)
 IF(OPENMP_FOUND)
-	ADD_DEFINITIONS(-Dcimg_use_openmp ${OpenMP_CXX_FLAGS})
-	#deactivate openmp in windows by default as it is not supported in Visual Studio Express and will drop you into dll hell
+	# deactivate openmp in windows by default as it is not
+	# supported in Visual Studio Express and will drop you
+	# into dll hell
 	IF(MSVC)
 		OPTION(WITH_OPENMP "use OpenMP" OFF)
 	ELSE(MSVC)
@@ -63,6 +65,7 @@ IF(PNG_FOUND)
 	IF(WITH_PNG)
 		ADD_DEFINITIONS(-Dcimg_use_png)
 		LIST(APPEND CIMG_LINK_LIBRARIES ${PNG_LIBRARIES})
+		LIST(APPEND CIMG_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
 	ENDIF(WITH_PNG)
 ENDIF(PNG_FOUND)
 
@@ -73,8 +76,19 @@ IF(JPEG_FOUND)
 	IF(WITH_JPEG)
 		ADD_DEFINITIONS(-Dcimg_use_jpeg)
 		LIST(APPEND CIMG_LINK_LIBRARIES ${JPEG_LIBRARIES})
+		LIST(APPEND CIMG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
 	ENDIF(WITH_JPEG)
 ENDIF(JPEG_FOUND)
 
 # don't let exception windows pop up 
 ADD_DEFINITIONS(-Dcimg_verbosity=0)
+
+MACRO(CimgLibInfo)
+	MESSAGE(STATUS "    Lapack       : ${WITH_LAPACK}")
+	IF(APPLE)
+		MESSAGE(STATUS "    Carbon       : ${WITH_CARBON}")
+	ENDIF(APPLE)
+	MESSAGE(STATUS "    OpenMP       : ${WITH_OPENMP}")
+	MESSAGE(STATUS "    PNG          : ${WITH_PNG}")
+	MESSAGE(STATUS "    JPEG         : ${WITH_JPEG}")
+ENDMACRO()
