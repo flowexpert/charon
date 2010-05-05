@@ -2,6 +2,8 @@
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 
 IF(ENABLE_TEST)
+	SET(tests)
+
 	# tests for SplitStream
 	ADD_EXECUTABLE(streamtest splitstreams.cpp)
 	TARGET_LINK_LIBRARIES(streamtest charon-core)
@@ -9,6 +11,7 @@ IF(ENABLE_TEST)
 		NAME SplitStream
 		COMMAND streamtest
 	)
+	LIST(APPEND tests SplitStream)
 
 	# tests for ParameterFile
 	ADD_EXECUTABLE(paramtest parameterfiletest.cpp)
@@ -17,6 +20,7 @@ IF(ENABLE_TEST)
 		NAME ParameterFile
 		COMMAND paramtest
 	)
+	LIST(APPEND tests ParameterFile)
 
 	# tests for ParameteredObject etc.
 	ADD_EXECUTABLE(parametertest parametertest.cpp)
@@ -25,6 +29,7 @@ IF(ENABLE_TEST)
 		NAME ParameterTest
 		COMMAND parametertest
 	)
+	LIST(APPEND tests ParameterTest)
 
 	# tests for compile and load routines.
 	IF(WIN32)
@@ -44,5 +49,11 @@ IF(ENABLE_TEST)
 	ADD_TEST(
 		NAME CompileAndLoad
 		COMMAND compileandloadtest
+	)
+	LIST(APPEND tests CompileAndLoad)
+
+	# add test labels for dashboard submission
+	SET_TESTS_PROPERTIES(${tests}
+		PROPERTIES LABELS charon-core
 	)
 ENDIF(ENABLE_TEST)
