@@ -23,6 +23,8 @@ IF(ENABLE_TEST)
 		ADD_DEFINITIONS(-DLOCAL_PLUGIN_DIR="${PROJECT_BINARY_DIR}/src")
 	ENDIF(WIN32)
 
+	SET(tests)
+
 	# tests for imgmanip classes
 	ADD_EXECUTABLE(imgManipTest imgmaniptest.cpp)
 	TARGET_LINK_LIBRARIES(imgManipTest
@@ -30,9 +32,10 @@ IF(ENABLE_TEST)
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
-		NAME ImgageManip
+		NAME ImageManip
 		COMMAND imgManipTest
 	)
+	LIST(APPEND tests ImageManip)
 
 	# tests for ImgTool routines
 	ADD_EXECUTABLE(imgToolTest
@@ -48,6 +51,7 @@ IF(ENABLE_TEST)
 		NAME ImgTool
 		COMMAND imgToolTest
 	)
+	LIST(APPEND tests ImgTool)
 	
 	#tests for plugin creation in various ways
 	ADD_EXECUTABLE(pluginTest pluginTest.cpp)
@@ -62,6 +66,7 @@ IF(ENABLE_TEST)
 		NAME Plugins
 		COMMAND pluginTest
 	)
+	LIST(APPEND tests Plugins)
 
 	ADD_EXECUTABLE(cImgTest cimgtest.cpp)
 	TARGET_LINK_LIBRARIES(cImgTest ${CIMG_LINK_LIBRARIES})
@@ -69,6 +74,7 @@ IF(ENABLE_TEST)
 		NAME CImgInfo
 		COMMAND cImgTest
 	)
+	LIST(APPEND tests CImgInfo)
 	
 	ADD_EXECUTABLE(warpTest Warptest.cpp)
 	TARGET_LINK_LIBRARIES(warpTest
@@ -80,6 +86,7 @@ IF(ENABLE_TEST)
 		NAME Warp
 		COMMAND warpTest
 	)
+	LIST(APPEND tests Warp)
 
 	IF(WIN32)
 		# copy needed dll for tests and application run before installing
@@ -91,4 +98,9 @@ IF(ENABLE_TEST)
 			COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${PLOC_DIR}"
 		)
 	ENDIF(WIN32)
+
+	# add test labels for dashboard submission
+	SET_TESTS_PROPERTIES(${tests}
+		PROPERTIES LABELS charon-utils
+	)
 ENDIF(ENABLE_TEST)
