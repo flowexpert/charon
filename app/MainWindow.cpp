@@ -174,6 +174,8 @@ MainWindow::MainWindow(QWidget* p)
 	QPushButton* previousButton2 = new QPushButton(tr("< &Back"));
 	QLabel* inputLabel = new QLabel (tr("Input Slots"));
 	QLabel* outputLabel = new QLabel (tr("Output Slots"));
+	_optionalSlot = new QCheckBox("optional slots");
+	_multiSlot = new QCheckBox("multi slots");
 	_table1 = new QTableWidget(0, 3);
 	QStringList longerList = (QStringList() << "Name"  << "Documentation" << "Typ");
 	_table1->setHorizontalHeaderLabels(longerList);
@@ -198,16 +200,18 @@ MainWindow::MainWindow(QWidget* p)
 	_editRowCount(1);
 
 	layout2->addWidget(inputLabel,1,1,1,3);
-	layout2->addWidget(_table1,2,1,1,3);
-	layout2->addWidget(add,3,1);
-	layout2->addWidget(remove,3,2);
+	layout2->addWidget(_optionalSlot,2,1);
+	layout2->addWidget(_multiSlot,3,1);
+	layout2->addWidget(_table1,4,1,1,3);
+	layout2->addWidget(add,5,1);
+	layout2->addWidget(remove,5,2);
 	layout2->setColumnStretch(3,1);
 
-	layout2->addWidget(outputLabel,5,1,1,3);
-	layout2->addWidget(_table2,6,1,1,3);
-	layout2->addWidget(add2,7,1);
-	layout2->addWidget(remove2,7,2);
-	layout2->setRowMinimumHeight(4,10);
+	layout2->addWidget(outputLabel,7,1,1,3);
+	layout2->addWidget(_table2,8,1,1,3);
+	layout2->addWidget(add2,9,1);
+	layout2->addWidget(remove2,9,2);
+	layout2->setRowMinimumHeight(6,10);
 
 	buttonlayout2->addStretch();
 	buttonlayout2->addWidget(previousButton2);
@@ -221,9 +225,9 @@ MainWindow::MainWindow(QWidget* p)
 	connect(add2, SIGNAL(clicked()), signalMapper, SLOT(map()));
 	signalMapper->setMapping(add2, 1);
 	connect(remove, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	signalMapper->setMapping(remove, 3);
+	signalMapper->setMapping(remove, 4);
 	connect(remove2, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	signalMapper->setMapping(remove2, 4);
+	signalMapper->setMapping(remove2, 5);
 
 	connect(previousButton2, SIGNAL(clicked()), tabWidget, SLOT(previousPage()));
 	connect(nextButton2,SIGNAL(clicked()), tabWidget, SLOT(nextPage()));
@@ -264,13 +268,38 @@ MainWindow::MainWindow(QWidget* p)
 	_editRowCount(2);
 	_editRowCount(2);
 
+
+	QLabel* parameterListLabel = new QLabel (tr("ParameterList "));
+	QPushButton* add4 = new QPushButton (tr("&Add"));
+	QPushButton* remove4 = new QPushButton (tr("&Remove"));
+	_table4 = new QTableWidget(0, 4, page3);
+	QStringList paramlist2 = (
+			QStringList() << "Name" << "Documentation" << "Typ" << "Default" );
+	_table4->setHorizontalHeaderLabels(paramlist2);
+	layout3->addWidget(parameterListLabel,4,1,1,3);
+	layout3 -> addWidget(_table4,5,1,1,3);
+	layout3->addWidget(add4,6,1);
+	layout3->addWidget(remove4,6,2);
+
+
+	_editRowCount(3);
+	_editRowCount(3);
+
+
 	connect(add3, SIGNAL(clicked()), signalMapper, SLOT(map()));
 	signalMapper->setMapping(add3, 2);
 	connect(remove3, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	signalMapper->setMapping(remove3, 5);
+	signalMapper->setMapping(remove3, 6);
+	connect(add4, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(add4, 3);
+	connect(remove4, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(remove4, 7);
 
 	_table3->horizontalHeader()->setStretchLastSection(true);
 	_table3->verticalHeader()->hide();
+	_table4->horizontalHeader()->setStretchLastSection(true);
+	_table4->verticalHeader()->hide();
+
 
 	connect(previousButton3, SIGNAL(clicked()), tabWidget, SLOT(previousPage()));
 	connect(createButton, SIGNAL(clicked()), this, SLOT(_save()));
@@ -326,6 +355,7 @@ void MainWindow::_changeExisting() {
 
 	codeString.replace("public:","public: \n\n\t@In/Out@");
 	codeString.replace("public:","public: \n\n\t@Parameter@");
+	codeString.replace("public:","public: \n\n\t@ParameterList@");
 
 	// Zeilenweises Einlesen des Plugins um die alten Parameter und Slots zu entfernen
 	// und den richtigen Ort zum Einfuegen im .hxx File zu finden
@@ -353,10 +383,12 @@ void MainWindow::_changeExisting() {
 				tempString.append(Code.readLine());
 			}
 
-			tempString.replace("{","{\n\n\t@addParameter@\n\n\t@add-In/Out@");
+			tempString.replace("{","\t@ParameterListDefault@\n\t@multi/optional@\n{"
+						"\n\n\t@addParameter@\n\n\t@addParameterList@\n\n\t@add-In/Out@");
 		}
 
 		if(tempString2.contains("Parameter<") || tempString2.contains("_addParameter(") ||
+		   tempString2.contains("ParameterList<") ||
 		   tempString2.contains("InputSlot<") || tempString2.contains("OutputSlot<") ||
 		tempString2.contains("_addInputSlot") || tempString2.contains("_addOutputSlot")){
 
@@ -384,11 +416,23 @@ void MainWindow::_changeExisting() {
 
 			changedCode.replace("@In/Out@",QString("/// @Documentation@ \n\tInputSlot < @Typ@ > @I/O-Name@;"
 				"\n\t@In/Out@"));
+			changedCode.replace("@multi/optional@",QString(",@I/O-Name@(@optional@, @multi@) "
+				"\n\t\t\t@multi/optional@"));
 
 
 			changedCode.replace(QString("@Documentation@"),IDoc->text().replace("\n","\n\t/// ").trimmed());
 			changedCode.replace(QString("@Typ@"),ITyp->text().trimmed());
 			changedCode.replace("@I/O-Name@",IName->text().trimmed());
+
+			if(_multiSlot->isChecked())
+				changedCode.replace("@multi@","true");
+			else
+				changedCode.replace("@multi@","false");
+
+			if(_optionalSlot->isChecked())
+				changedCode.replace("@optional@","true");
+			else
+				changedCode.replace("@optional@","false");
 
 
 			changedCode.replace("@add-In/Out@",QString("ParameteredObject::_addInputSlot(@IOName@,"
@@ -429,6 +473,7 @@ void MainWindow::_changeExisting() {
 	}
 	changedCode.replace("@In/Out@","");
 	changedCode.replace("@add-In/Out@","");
+	changedCode.replace("@multi/optional@","");
 
 
 
@@ -466,6 +511,43 @@ void MainWindow::_changeExisting() {
 	}
 	changedCode.replace("@Parameter@","");
 	changedCode.replace("@addParameter@","");
+
+	for (int l = 0; l < _table4->rowCount(); l++ ) {
+
+		QTableWidgetItem* paraListName = _table4->item(l,0);
+		QTableWidgetItem* paraListDoc = _table4->item(l,1);
+		QTableWidgetItem* paraListTyp = _table4->item(l,2);
+		QTableWidgetItem* paraListDefault = _table4->item(l,3);
+
+		if(!QString(paraListName->text()).isEmpty()){
+			changedCode.replace("@ParameterList@",QString("/// @Documentation@ \n\tParameterList < @Typ@ >"
+				" @ParameterName@;\n\t@ParameterList@"));
+			changedCode.replace("@ParameterListDefault@",QString(" ,@ParameterName@(@Default@)"
+				"\n\t@ParameterListDefault@"));
+			changedCode.replace("@ParameterName@",paraListName->text().trimmed());
+			changedCode.replace("@Typ@",paraListTyp->text().trimmed());
+			changedCode.replace("@Documentation@",paraListDoc->text()
+					.replace("\n","\n\t/// ").trimmed());
+			changedCode.replace("@Default@",paraListDefault->text().trimmed());
+			}
+
+
+
+
+		if(!QString(paraListName->text()).isEmpty()){
+
+			changedCode.replace("@addParameterList@",QString("ParameteredObject::_addParameter "
+				"(@ParaListName@, \"@ParaListName@\", \"@Documentation@\" "
+				");\n\t@addParameterList@"));
+			changedCode.replace("@ParaListName@",paraListName->text().trimmed());
+			changedCode.replace("@Documentation@",paraListDoc->text()
+					.replace("\n"," <br> ").trimmed());
+		}
+
+	}
+	changedCode.replace("@ParameterList@","");
+	changedCode.replace("@addParameterList@","");
+	changedCode.replace("@ParameterListDefault@","");
 
 
 
@@ -661,35 +743,53 @@ void MainWindow::_save() {
 	str.replace(QString("@pluginNameUpper@"),_inputName->text().toUpper().trimmed());
 	str.replace(QString("@pluginNameLower@"),_inputName->text().toLower().trimmed());
 	str.replace("@PluginDoc@", _pluginDoc->toPlainText().replace("\n","\n/// ").trimmed());
-	str.replace("@PluginDocu@", _pluginDoc->toPlainText().replace("\n"," <br> ").trimmed());
+	str.replace("@PluginDocu@", _pluginDoc->toPlainText().replace("\n","\"\n\t\t\t\"").trimmed());
 	str.replace("@date@",date->currentDate().toString("dd.MM.yyyy"));
 
 
 	for(int i = 0; i < _table1->rowCount(); i++) {
 
 		QTableWidgetItem* IName = _table1->item(i,0);
-		QTableWidgetItem* IDoc = _table1->item(i,1);
+		QTableWidgetItem* TempIDoc = _table1->item(i,1);
 		QTableWidgetItem* ITyp = _table1->item(i,2);
+		QString IDoc = TempIDoc->text();
 
-		IName->text();
+		for(int ii = 0; ii < 3 ; ii++){
+			int changeAt = 75 * (ii + 1) + ii * 8;
+			if (IDoc.size() - ii * 8 > 75 * (ii + 1) ){
+				IDoc.insert(changeAt,"\"\n\t\"");
+			}
+		}
+
 
 		if(!QString(IName->text()).isEmpty()){
 
 
 			str.replace("@In/Out@",QString("/// @Documentation@ \n\tInputSlot < @Typ@ > @I/O-Name@;"
 				"\n\t@In/Out@"));
+			str.replace("@multi/optional@",QString(",@I/O-Name@(@optional@, @multi@) "
+				"\n\t\t\t@multi/optional@"));
 
 
-			str.replace(QString("@Documentation@"),IDoc->text().replace("\n","\n\t/// ").trimmed());
+			str.replace(QString("@Documentation@"),TempIDoc->text().replace("\n","\n\t/// ").trimmed());
 			str.replace(QString("@Typ@"),ITyp->text().trimmed());
 			str.replace("@I/O-Name@",IName->text().trimmed());
+			if(_multiSlot->isChecked())
+				str.replace("@multi@","true");
+			else
+				str.replace("@multi@","false");
+
+			if(_optionalSlot->isChecked())
+				str.replace("@optional@","true");
+			else
+				str.replace("@optional@","false");
 
 
 
 			str.replace("@add-In/Out@",QString("ParameteredObject::_addInputSlot(@IOName@,"
-				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
+				" \"@IOName@\", \n\t\"@Documentation@\", \n\t\"@Typ@\"); \n\t@add-In/Out@"));
 
-			str.replace(QString("@Documentation@"),IDoc->text().replace("\n"," <br> ").trimmed());
+			str.replace(QString("@Documentation@"),IDoc.trimmed());
 			str.replace(QString("@Typ@"),ITyp->text().trimmed());
 			str.replace(QString("@IOName@"),IName->text().trimmed());
 		}
@@ -700,8 +800,16 @@ void MainWindow::_save() {
 
 
 		QTableWidgetItem* OName = _table2->item(k,0);
-		QTableWidgetItem* ODoc = _table2->item(k,1);
+		QTableWidgetItem* TempODoc = _table2->item(k,1);
 		QTableWidgetItem* OTyp = _table2->item(k,2);
+		QString ODoc = TempODoc->text();
+
+		for(int ii = 0; ii < 3 ; ii++){
+			int changeAt = 75 * (ii + 1) + ii * 8;
+			if (ODoc.size() - ii * 8 > 75 * (ii + 1) ){
+				ODoc.insert(changeAt,"\"\n\t\"");
+			}
+		}
 
 		if(!QString(OName->text()).isEmpty()){
 
@@ -709,14 +817,14 @@ void MainWindow::_save() {
 			"\n\t@In/Out@"));
 
 
-			str.replace(QString("@Documentation@"),ODoc->text().replace("\n","\n\t/// ").trimmed());
+			str.replace(QString("@Documentation@"),TempODoc->text().replace("\n","\n\t/// ").trimmed());
 			str.replace(QString("@Typ@"),OTyp->text().trimmed());
 			str.replace("@I/O-Name@",OName->text().trimmed());
 
 			str.replace("@add-In/Out@",QString("ParameteredObject::_addOutputSlot(@IOName@,"
-				" \"@IOName@\", \"@Documentation@\", \"@Typ@\"); \n\t@add-In/Out@"));
+				" \"@IOName@\", \n\t\"@Documentation@\", \n\t\"@Typ@\"); \n\t@add-In/Out@"));
 
-			str.replace(QString("@Documentation@"),ODoc->text().replace("\n"," <br> ").trimmed());
+			str.replace(QString("@Documentation@"),ODoc.trimmed());
 			str.replace(QString("@Typ@"),OTyp->text().trimmed());
 			str.replace(QString("@IOName@"),OName->text().trimmed());
 		}
@@ -724,6 +832,7 @@ void MainWindow::_save() {
 	}
 	str.replace("@In/Out@","");
 	str.replace("@add-In/Out@","");
+	str.replace("@multi/optional@","");
 
 
 
@@ -731,16 +840,25 @@ void MainWindow::_save() {
 	for (int j = 0; j < _table3->rowCount(); j++ ) {
 
 		QTableWidgetItem* paraName = _table3->item(j,0);
-		QTableWidgetItem* paraDoc = _table3->item(j,1);
+		QTableWidgetItem* TempParaDoc = _table3->item(j,1);
 		QTableWidgetItem* paraTyp = _table3->item(j,2);
 		QTableWidgetItem* paraDefault = _table3->item(j,3);
+		QString paraDoc = TempParaDoc->text();
+
+		for(int ii = 0; ii < 3 ; ii++){
+			int changeAt = 75 * (ii + 1) + ii * 8;
+			if (paraDoc.size() - ii * 8 > 75 * (ii + 1) ){
+				paraDoc.insert(changeAt,"\"\n\t\"");
+			}
+		}
+
 
 		if(!QString(paraName->text()).isEmpty()){
 			str.replace("@Parameter@",QString("/// @Documentation@ \n\tParameter < @Typ@ >"
 				" @ParameterName@;\n\t@Parameter@"));
 			str.replace("@ParameterName@",paraName->text().trimmed());
 			str.replace("@Typ@",paraTyp->text().trimmed());
-			str.replace("@Documentation@",paraDoc->text()
+			str.replace("@Documentation@",TempParaDoc->text()
 					.replace("\n","\n\t/// ").trimmed());
 			}
 
@@ -750,17 +868,63 @@ void MainWindow::_save() {
 		if(!QString(paraName->text()).isEmpty()){
 
 			str.replace("@addParameter@",QString("ParameteredObject::_addParameter "
-				"(@ParaName@, \"@ParaName@\", \"@Documentation@\", "
-				"@Default@);\n\t@addParameter@"));
+				"(@ParaName@, \"@ParaName@\", \n\t\"@Documentation@\", "
+				"\n\t@Default@);\n\t@addParameter@"));
 			str.replace("@ParaName@",paraName->text().trimmed());
-			str.replace("@Documentation@",paraDoc->text()
-					.replace("\n"," <br> ").trimmed());
+			str.replace("@Documentation@",paraDoc.trimmed());
 			str.replace("@Default@",paraDefault->text().trimmed());
 		}
 
 	}
 	str.replace("@Parameter@","");
 	str.replace("@addParameter@","");
+
+
+
+	for (int l = 0; l < _table4->rowCount(); l++ ) {
+
+		QTableWidgetItem* paraListName = _table4->item(l,0);
+		QTableWidgetItem* TempParaListDoc = _table4->item(l,1);
+		QTableWidgetItem* paraListTyp = _table4->item(l,2);
+		QTableWidgetItem* paraListDefault = _table4->item(l,3);
+		QString paraListDoc = TempParaListDoc->text();
+
+		for(int ii = 0; ii < 3 ; ii++){
+			int changeAt = 75 * (ii + 1) + ii * 8;
+			if (paraListDoc.size() - ii * 8 > 75 * (ii + 1) ){
+				paraListDoc.insert(changeAt,"\"\n\t\"");
+			}
+		}
+
+		if(!QString(paraListName->text()).isEmpty()){
+			str.replace("@ParameterList@",QString("/// @Documentation@ \n\tParameterList < @Typ@ >"
+				" @ParameterName@;\n\t@ParameterList@"));
+			str.replace("@ParameterListDefault@",QString(" ,@ParameterName@(@Default@)"
+				"\n\t@ParameterListDefault@"));
+			str.replace("@ParameterName@",paraListName->text().trimmed());
+			str.replace("@Typ@",paraListTyp->text().trimmed());
+			str.replace("@Documentation@",TempParaListDoc->text()
+					.replace("\n","\n\t/// ").trimmed());
+			str.replace("@Default@",paraListDefault->text().trimmed());
+			}
+
+
+
+
+		if(!QString(paraListName->text()).isEmpty()){
+
+			str.replace("@addParameterList@",QString("ParameteredObject::_addParameter "
+				"(@ParaListName@, \"@ParaListName@\", \n\t\"@Documentation@\" "
+				");\n\t@addParameterList@"));
+			str.replace("@ParaListName@",paraListName->text().trimmed());
+			str.replace("@Documentation@",paraListDoc.trimmed());
+		}
+
+	}
+	str.replace("@ParameterList@","");
+	str.replace("@addParameterList@","");
+	str.replace("@ParameterListDefault@","");
+
 
 
 
@@ -912,22 +1076,36 @@ void MainWindow::_editRowCount(int table) {
 		_table3->setItem(row, 3, new QTableWidgetItem());
 	}
 	if(table == 3){
+		int row = _table4->rowCount();
+		_table4->insertRow(row);
+		_table4->setItem(row, 0, new QTableWidgetItem());
+		_table4->setItem(row, 1, new QTableWidgetItem());
+		_table4->setItem(row, 2, new QTableWidgetItem());
+		_table4->setItem(row, 3, new QTableWidgetItem());
+	}
+	if(table == 4){
 		if(_table1->currentRow()!= -1)
 			_table1->removeRow(_table1->currentRow());
 		else
 			_table1->removeRow(_table1->rowCount() -1);
 	}
-	if(table == 4){
+	if(table == 5){
 		if(_table2->currentRow()!= -1)
 			_table2->removeRow(_table2->currentRow());
 		else
 			_table2->removeRow(_table2->rowCount() -1);
 	}
-	if(table == 5){
+	if(table == 6){
 		if(_table3->currentRow()!= -1)
 			_table3->removeRow(_table3->currentRow());
 		else
 			_table3->removeRow(_table3->rowCount() -1);
+	}
+	if(table == 7){
+		if(_table4->currentRow()!= -1)
+			_table4->removeRow(_table4->currentRow());
+		else
+			_table4->removeRow(_table4->rowCount() -1);
 	}
 
 
@@ -955,14 +1133,17 @@ void MainWindow::_load() {
 		return;
 	}
 
+	for(; 0 < _table4->rowCount();) {
+	_editRowCount(7);
+	}
 	for(; 0 < _table3->rowCount();) {
-	_editRowCount(5);
+	_editRowCount(6);
 	}
 	for(; 0 < _table2->rowCount();) {
-	_editRowCount(4);
+	_editRowCount(5);
 	}
 	for(; 0 < _table1->rowCount();) {
-	_editRowCount(3);
+	_editRowCount(4);
 	}
 
 
@@ -1027,6 +1208,7 @@ void MainWindow::_load() {
 	int incount = 0;
 	int outcount = 0;
 	int paracount = 0;
+	int paralistcount = 0;
 	while(!Code.atEnd()){
 		QString tempString;
 		tempString = Code.readLine();
@@ -1083,6 +1265,49 @@ void MainWindow::_load() {
 				if(editParaName->text() == paraNamex.trimmed()){
 					_table3->item(table,1)->setText(paraDocux);
 					_table3->item(table,3)->setText(paraDefaultx);
+
+				}
+			}
+		}
+
+		if(tempString2.contains("ParameterList<")){
+
+			for(int count = 0; !tempString.contains(";") && count < 5; count++){
+
+				tempString.append(Code.readLine());
+			}
+
+			tempString.replace(";","");
+			_editRowCount(3);
+
+			tempString.remove(0,tempString.indexOf("<") + 1);
+			QString paraTypx = tempString.section(">",0,-2);
+			QString paraNamex = tempString.section(">",-1,-1);
+			_table4->item(paralistcount,0)->setText(paraNamex.trimmed());
+			_table4->item(paralistcount,2)->setText(paraTypx.trimmed());
+
+
+
+			paralistcount++;
+
+		}
+
+
+		if(tempString2.contains("_addParameter(")){
+
+
+			QString paraNamex = tempString.section(",",0,0);
+			QString paraDocux = tempString.section(",",2,2);
+			QString paraDefaultx = tempString.section(",",3,3);
+
+
+
+			for(int table = 0; table < _table4->rowCount(); table++){
+				QTableWidgetItem* editParaName = _table4->item(table,0);
+
+				if(editParaName->text() == paraNamex.trimmed()){
+					_table4->item(table,1)->setText(paraDocux);
+					_table4->item(table,3)->setText(paraDefaultx);
 
 				}
 			}
