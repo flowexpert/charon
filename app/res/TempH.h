@@ -46,6 +46,8 @@ class @pluginNameLower@_DECLDIR @pluginName@ :
 public:
 	@Parameter@
 
+	@ParameterList@
+
 	@In/Out@
 
 	/// create a new @pluginName@ object

@@ -44,11 +44,13 @@ class @pluginNameLower@_DECLDIR @pluginName@ : public ParameteredObject {
 public:
 
     @Parameter@
-    
+
+
+    @ParameterList@
 
 
     @In/Out@
-    
+
 
     /// create a new sample object
     /// @param name             Object name

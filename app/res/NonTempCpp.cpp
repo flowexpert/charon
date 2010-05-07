@@ -22,13 +22,18 @@
 #include "@pluginName@.h"
 
 @pluginName@(const std::string& name = "") :
-		ParameteredObject(
-				"@pluginName@", name,
-				"@PluginDocu@"
-		)
+            ParameteredObject(
+            "@pluginName@", name,
+            "@PluginDocu@")
+            @multi/optional@
+			@ParameterListDefault@
+
 {
 	// parameters
 	@addParameter@
+
+	@addParameterList@
+
 
 	// slots
 	@add-In/Out@

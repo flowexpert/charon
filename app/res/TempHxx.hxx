@@ -32,8 +32,12 @@ template <typename T>
 				"@pluginName@", name,
 				"@PluginDocu@"
 		)
+			@multi/optional@
+			@ParameterListDefault@
 {
 	@addParameter@
+
+	@addParameterList@
 
 	@add-In/Out@
 }
