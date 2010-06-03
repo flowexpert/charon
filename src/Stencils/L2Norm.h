@@ -38,6 +38,7 @@
 #endif
 
 #include "../Stencil.h"
+//#include "../RobustnessTerm.h"
 
 /// Laplacian stencil used for regularization in global methods.
 template <class T>
@@ -52,6 +53,11 @@ private:
 	cimg_library::CImgList<T> _rhsVals;     ///< values for rhs (optional)
 	//  \}
 
+
+	//save point (needed for L2Norm<T>::execute())
+	Point4D<int>() _point;
+
+
 public:
 	/// Number of dimensions (1D, 2D, 3D, 4D).
 	Parameter<unsigned int> dimensions;
@@ -62,6 +68,9 @@ public:
 	Parameter<double> rhsWeight;
 	/// Initial flow guess for rhs calculation
 	InputSlot<cimg_library::CImgList<T> > flowGuess;
+
+	/// RobustnessTerm
+	//InputSlot<RobustnessTerm > robustnessTerm;
 
 	/// default constructor
 	/// \param name instance name

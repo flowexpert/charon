@@ -40,6 +40,8 @@ L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
 			1.);
 	this->_addInputSlot(flowGuess, "flowGuess",
 			"Initial flow guess for rhs calculation", "CImgList<T>");
+//	this->_addInputSlot(robustnessTerm, "robustnessTerm",
+//			"RobustnessTerm for robustness calculation", "RobustnessTerm");
 }
 
 template <class T>
@@ -53,90 +55,219 @@ void L2Norm<T>::execute() {
 		this->_unknowns.insert(*puIt);
 	}
 
-	// create masks in appropriate dimensions,
-	// then fill mask with values and set the center
-	switch (dimensions) {
-	case 1:
-		//already has the correct size
-		_dataMask.assign(3,1,1,1);
-		_dataMask.fill(T(-1), T(2), T(-1));
-		_patternMask.assign(3,1,1,1);
-		_patternMask.fill(1);
-		_center = Point4D<int>(1,0,0,0);
-		break;
-	case 2:
-		_dataMask.assign(3,3,1,1);
-		_dataMask.fill(
-				T( 0), T(-1), T( 0),
-				T(-1), T( 4), T(-1),
-				T( 0), T(-1), T( 0));
-		_patternMask.assign(3,3,1,1);
-		_patternMask.fill(
-				0, 1, 0,
-				1, 1, 1,
-				0, 1, 0);
-		_center = Point4D<int>(1,1,0,0);
-		break;
-	case 3:
-		_dataMask.assign(3,3,3,1,0);
-		_dataMask(1,1,0) = T(-1);
-		_dataMask(1,0,1) = T(-1);
-		_dataMask(0,1,1) = T(-1);
-		_dataMask(1,1,1) = T( 6);
-		_dataMask(2,1,1) = T(-1);
-		_dataMask(1,2,1) = T(-1);
-		_dataMask(1,1,2) = T(-1);
+	//if(robustnessTerm.connected())
+	//{
+	//
+	//	switch (dimensions) {
+	//			case 1:
+	//				//already has the correct size
+	//				_dataMask.assign(3,1,1,1);
 
-		_patternMask.assign(3,3,3,1,0);
-		_patternMask(1,1,0) = 1;
-		_patternMask(1,0,1) = 1;
-		_patternMask(0,1,1) = 1;
-		_patternMask(1,1,1) = 1;
-		_patternMask(2,1,1) = 1;
-		_patternMask(1,2,1) = 1;
-		_patternMask(1,1,2) = 1;
+	//				T u_x, value;
+	//				u_x = flowGuess()(_point.x+1)-flowGuess()(_point.x -1);
+	//				value = u_x*robustnessTerm()->DPsi(flowGuess()(_point.x));
 
-		_center = Point4D<int>(1,1,1,0);
-		break;
-	case 4:
-		_dataMask.assign(3,3,3,3,0);
-		_dataMask(1,1,1,0) = T(-1);
-		_dataMask(1,1,0,1) = T(-1);
-		_dataMask(1,0,1,1) = T(-1);
-		_dataMask(0,1,1,1) = T(-1);
-		_dataMask(1,1,1,1) = T( 8);
-		_dataMask(2,1,1,1) = T(-1);
-		_dataMask(1,2,1,1) = T(-1);
-		_dataMask(1,1,2,1) = T(-1);
-		_dataMask(1,1,1,2) = T(-1);
+	//				_dataMask.fill(T(value), T(0), T(-value));
+	//				_patternMask.assign(3,1,1,1);
+	//				_patternMask.fill(1,0,1);
+	//				_center = Point4D<int>(1,0,0,0);
+	//				break;
 
-		_patternMask.assign(3,3,3,3,0);
-		_patternMask(1,1,1,0) = 1;
-		_patternMask(1,1,0,1) = 1;
-		_patternMask(1,0,1,1) = 1;
-		_patternMask(0,1,1,1) = 1;
-		_patternMask(1,1,1,1) = 1;
-		_patternMask(2,1,1,1) = 1;
-		_patternMask(1,2,1,1) = 1;
-		_patternMask(1,1,2,1) = 1;
-		_patternMask(1,1,1,2) = 1;
+	//			case 2:
 
-		_center = Point4D<int>(1,1,1,1);
-		break;
-	default:
-		throw std::out_of_range("invalid dimensions (too large)");
-	}
 
-	_dataMask *= this->lambda();
+	//				// erste Flusskomponente in flow[0]
+	//				// zweite Flusskomponente in flow[1]
 
-	// precalculate rhs values for whole image
-	if (flowGuess.connected()) {
-		assert(flowGuess().size() == dimensions());
-		const cimg_library::CImgList<T>& flow = flowGuess();
-		_rhsVals.assign(flow);
-		cimglist_for(flow, kk) {
-			_rhsVals[kk] = this->apply(flow, kk);
-			_rhsVals[kk] *= -rhsWeight();
+	//				
+	//				_dataMask.assign(3,3,1,1);
+	//				
+	//				T u_x, u_y, value;
+
+	//				u_x=(flowGuess()(_point.x+1,_point.y)-flowGuess()(_point.x-1,_point.y))/2;
+	//				u_y=(flowGuess()(_point.x,_point.y+1)-flowGuess()(_point.x,_point.y-1))/2;
+
+	//				value=u_x*u_y*robustnessTerm()->DPsi(flowGuess()(_point.x,_point.y));
+
+	//				_dataMask.fill(
+	//						T( 0), value, T( 0),
+	//						value, T( 0), value,
+	//						T( 0), value, T( 0));
+
+	//				_patternMask.assign(3,3,1,1);
+	//				_patternMask.fill(
+	//						0, 1, 0,
+	//						1, 0, 1,
+	//						0, 1, 0);
+
+	//				/*_dataMask.fill(
+	//						T( 0), T(-1), T( 0),
+	//						T(-1), T( 4), T(-1),
+	//						T( 0), T(-1), T( 0));
+
+	//				_patternMask.assign(3,3,1,1);
+	//				_patternMask.fill(
+	//						0, 1, 0,
+	//						1, 1, 1,
+	//						0, 1, 0);*/
+	//			
+
+
+	//				_center = Point4D<int>(1,1,0,0);
+	//				break;
+	//			case 3:
+	//				//_dataMask.assign(3,3,3,1,0);
+	//				//_dataMask(1,1,0) = T(-1);
+	//				//_dataMask(1,0,1) = T(-1);
+	//				//_dataMask(0,1,1) = T(-1);
+	//				//_dataMask(1,1,1) = T( 6);
+	//				//_dataMask(2,1,1) = T(-1);
+	//				//_dataMask(1,2,1) = T(-1);
+	//				//_dataMask(1,1,2) = T(-1);
+
+	//				//_patternMask.assign(3,3,3,1,0);
+	//				//_patternMask(1,1,0) = 1;
+	//				//_patternMask(1,0,1) = 1;
+	//				//_patternMask(0,1,1) = 1;
+	//				//_patternMask(1,1,1) = 1;
+	//				//_patternMask(2,1,1) = 1;
+	//				//_patternMask(1,2,1) = 1;
+	//				//_patternMask(1,1,2) = 1;
+
+	//				//_center = Point4D<int>(1,1,1,0);
+	//				break;
+	//			case 4:
+	//				//_dataMask.assign(3,3,3,3,0);
+	//				//_dataMask(1,1,1,0) = T(-1);
+	//				//_dataMask(1,1,0,1) = T(-1);
+	//				//_dataMask(1,0,1,1) = T(-1);
+	//				//_dataMask(0,1,1,1) = T(-1);
+	//				//_dataMask(1,1,1,1) = T( 8);
+	//				//_dataMask(2,1,1,1) = T(-1);
+	//				//_dataMask(1,2,1,1) = T(-1);
+	//				//_dataMask(1,1,2,1) = T(-1);
+	//				//_dataMask(1,1,1,2) = T(-1);
+
+	//				//_patternMask.assign(3,3,3,3,0);
+	//				//_patternMask(1,1,1,0) = 1;
+	//				//_patternMask(1,1,0,1) = 1;
+	//				//_patternMask(1,0,1,1) = 1;
+	//				//_patternMask(0,1,1,1) = 1;
+	//				//_patternMask(1,1,1,1) = 1;
+	//				//_patternMask(2,1,1,1) = 1;
+	//				//_patternMask(1,2,1,1) = 1;
+	//				//_patternMask(1,1,2,1) = 1;
+	//				//_patternMask(1,1,1,2) = 1;
+
+	//				//_center = Point4D<int>(1,1,1,1);
+	//				break;
+	//			default:
+	//				throw std::out_of_range("invalid dimensions (too large)");
+	//			}
+
+	//			_dataMask *= this->lambda();
+
+	//			// precalculate rhs values for whole image
+	//			if (flowGuess.connected()) {
+	//				assert(flowGuess().size() == dimensions());
+	//				const cimg_library::CImgList<T>& flow = flowGuess();
+	//				_rhsVals.assign(flow);
+	//				cimglist_for(flow, kk) {
+	//					_rhsVals[kk] = this->apply(flow, kk);
+	//					_rhsVals[kk] *= -rhsWeight();
+	//				}
+	//			}
+
+	//}
+
+
+	//else
+	{
+		// create masks in appropriate dimensions,
+		// then fill mask with values and set the center
+		switch (dimensions) {
+		case 1:
+			//already has the correct size
+			_dataMask.assign(3,1,1,1);
+			_dataMask.fill(T(-1), T(2), T(-1));
+			_patternMask.assign(3,1,1,1);
+			_patternMask.fill(1);
+			_center = Point4D<int>(1,0,0,0);
+			break;
+		case 2:
+			_dataMask.assign(3,3,1,1);
+			_dataMask.fill(
+					T( 0), T(-1), T( 0),
+					T(-1), T( 4), T(-1),
+					T( 0), T(-1), T( 0));
+			_patternMask.assign(3,3,1,1);
+			_patternMask.fill(
+					0, 1, 0,
+					1, 1, 1,
+					0, 1, 0);
+			_center = Point4D<int>(1,1,0,0);
+			break;
+		case 3:
+			_dataMask.assign(3,3,3,1,0);
+			_dataMask(1,1,0) = T(-1);
+			_dataMask(1,0,1) = T(-1);
+			_dataMask(0,1,1) = T(-1);
+			_dataMask(1,1,1) = T( 6);
+			_dataMask(2,1,1) = T(-1);
+			_dataMask(1,2,1) = T(-1);
+			_dataMask(1,1,2) = T(-1);
+
+			_patternMask.assign(3,3,3,1,0);
+			_patternMask(1,1,0) = 1;
+			_patternMask(1,0,1) = 1;
+			_patternMask(0,1,1) = 1;
+			_patternMask(1,1,1) = 1;
+			_patternMask(2,1,1) = 1;
+			_patternMask(1,2,1) = 1;
+			_patternMask(1,1,2) = 1;
+
+			_center = Point4D<int>(1,1,1,0);
+			break;
+		case 4:
+			_dataMask.assign(3,3,3,3,0);
+			_dataMask(1,1,1,0) = T(-1);
+			_dataMask(1,1,0,1) = T(-1);
+			_dataMask(1,0,1,1) = T(-1);
+			_dataMask(0,1,1,1) = T(-1);
+			_dataMask(1,1,1,1) = T( 8);
+			_dataMask(2,1,1,1) = T(-1);
+			_dataMask(1,2,1,1) = T(-1);
+			_dataMask(1,1,2,1) = T(-1);
+			_dataMask(1,1,1,2) = T(-1);
+
+			_patternMask.assign(3,3,3,3,0);
+			_patternMask(1,1,1,0) = 1;
+			_patternMask(1,1,0,1) = 1;
+			_patternMask(1,0,1,1) = 1;
+			_patternMask(0,1,1,1) = 1;
+			_patternMask(1,1,1,1) = 1;
+			_patternMask(2,1,1,1) = 1;
+			_patternMask(1,2,1,1) = 1;
+			_patternMask(1,1,2,1) = 1;
+			_patternMask(1,1,1,2) = 1;
+
+			_center = Point4D<int>(1,1,1,1);
+			break;
+		default:
+			throw std::out_of_range("invalid dimensions (too large)");
+		}
+
+		_dataMask *= this->lambda();
+
+		// precalculate rhs values for whole image
+		if (flowGuess.connected()) {
+			assert(flowGuess().size() == dimensions());
+			const cimg_library::CImgList<T>& flow = flowGuess();
+			_rhsVals.assign(flow);
+			cimglist_for(flow, kk) {
+				_rhsVals[kk] = this->apply(flow, kk);
+				_rhsVals[kk] *= -rhsWeight();
+			}
 		}
 	}
 }
@@ -145,6 +276,10 @@ template <class T>
 void L2Norm<T>::updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p, const int&) {
+
+	//save point (needed for L2Norm<T>::execute())
+	_point = Point4D<int>();
+
 	// fill stencil with masks
 	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
 		SubStencil<T> entry;
