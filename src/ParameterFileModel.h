@@ -174,6 +174,9 @@ signals:
     /// @param  msg             message
     void statusMessage(const QString& msg);
 
+	/// inform about modifications
+	void modified(bool val /** new modification status*/);
+
 public slots:
     /// Set new value for Property _fileName
     /// @param  fileName        new value for _fileName

@@ -69,6 +69,12 @@ public slots:
 	/// fit in view
 	void zoomFit();
 
+	/// update title and main window file information
+	void updateFileName(const QString& fileName /** new filename*/);
+
+	/// set modified flag
+	void modify(bool val = true /** [in] new value*/);
+
 signals:
 	/// Inform about changed model
 	///	@param model	new model
@@ -81,6 +87,9 @@ signals:
 
 protected:
 	GraphView* _viewer;	///< graphics view to display
+
+	/// check modification status and ask to save before closing
+	virtual void closeEvent(QCloseEvent* closeEvent);
 };
 
 #endif /* FLOWWIDGET_H_ */

@@ -403,7 +403,7 @@ void ParameterFileModel::load(const QString& fName) {
 				guess, tr("ParameterFile (*.*)"));
 	}
 	if (fromDialog.isEmpty())
-		throw std::invalid_argument("Empty filename");
+		throw std::invalid_argument("Opening cancelled by user.");
 	if (!QFileInfo(fromDialog).isFile())
 		throw std::invalid_argument(
 				std::string("File \"")
@@ -430,6 +430,7 @@ void ParameterFileModel::save(const QString& fName) {
 		setFileName(name);
 		_parameterFile->save(name.toAscii().constData());
 		emit statusMessage(QString("File %1 saved.").arg(name));
+		emit modified(false);
 	} else
 		emit statusMessage("File not saved! (no filename given)");
 }

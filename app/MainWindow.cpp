@@ -298,6 +298,8 @@ void MainWindow::closeEvent(QCloseEvent *cEvent) {
 					   "Tuchulcha");
 	settings.setValue("windowState", saveState());
 
+	_centralArea->closeAllSubWindows();
+
 	// inherited version
 	QMainWindow::closeEvent(cEvent);
 }
@@ -307,15 +309,31 @@ void MainWindow::_showAbout() const {
 	aboutBox.setWindowTitle(tr("About Tuchulcha"));
 	aboutBox.setTextFormat(Qt::RichText);
 	aboutBox.setIcon(QMessageBox::Information);
-	aboutBox.setText(tr("This is <b>Tuchulcha</b> by Jens-Malte Gottfried "
-		"&lt;jmgottfried AT web.de&gt;"
+
+	QString buildSystem =
+#if defined (_MSC_VER)
+	tr("MSVC %1 (%2bit)\n").arg(_MSC_VER).arg(sizeof(void*)*8);
+#elif defined (__GNUC__)
+	tr("GCC %1.%2.%3 (%4bit)\n")
+			.arg(__GNUC__)
+			.arg(__GNUC_MINOR__)
+			.arg(__GNUC_PATCHLEVEL__)
+			.arg(sizeof(void*)*8);
+#else
+	tr("unknown compiler (%1bit)\n").arg(sizeof(*void)*8);
+#endif
+
+	aboutBox.setText(
+		tr("This is <b>Tuchulcha %1</b><br />written by "
+		"<a href=\"mailto:jmgottfriedATweb.de\">Jens-Malte Gottfried</a>"
 		"<br /><br />"
-		"Copyright (C) 2009 Heidelberg Collaboratory for Image Processing"
-		"<br /><br />"
-		"Compilation date:\t" __DATE__ "\t" __TIME__"<br />"
-		SVNINFO "<br />"
-		"<br />"
-		"This program is part of tuchulcha."
+		"Copyright &copy; 2009-2010 "
+		"Heidelberg Collaboratory for Image Processing"
+		"<br /><br />").arg(TUCHULCHA_VERSION)
+		+tr("Built %1 %2<br />with %3<br />")
+			.arg(__DATE__).arg(__TIME__).arg(buildSystem)
+		+tr("SVN Revision: %1<br /><br />").arg(SVNINFO)
+		+tr("This program is part of tuchulcha."
 		"<br /><br />"
 		"tuchulcha is free software; you can redistribute it and/or "
 		"modify it under the terms of the GNU Lesser General Public License as "

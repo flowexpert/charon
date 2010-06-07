@@ -27,11 +27,14 @@
 #include <QVBoxLayout>
 #include <QGraphicsRectItem>
 #include <QGraphicsScene>
+#include <QMessageBox>
 #include <QPen>
 #include <QColor>
 #include <QFile>
+#include <QFileInfo>
 #include <QtDebug>
 #include <string>
+#include <stdexcept>
 #include "HierarchyGraphView.h"
 #include "../app/MainWindow.h"
 
@@ -43,24 +46,40 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 	_viewer = new HierarchyGraphView(this);
 	setWidget(_viewer);
 	setAttribute(Qt::WA_DeleteOnClose, true);
-	setWindowTitle(tr("new file"));
 	connect(_viewer->model(), SIGNAL(fileNameChanged (QString)),
-		this, SLOT(setWindowTitle(QString)));
+		this, SLOT(updateFileName(QString)));
 	MainWindow* main = qobject_cast<MainWindow*>(parent()->parent());
 	Q_ASSERT(main);
 	connect(_viewer->model(), SIGNAL(fileNameChanged (QString)),
 		main, SLOT(setCurrentFile(QString)));
+	connect(_viewer->model(), SIGNAL(modified(bool)),
+		this, SLOT(modify(bool)));
+	connect(_viewer->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+		this, SLOT(modify()));
+	setWindowTitle(tr("New file [*]"));
 }
 
 FlowWidget::~FlowWidget() {
 }
 
+void FlowWidget::updateFileName(const QString& fileName) {
+	setWindowTitle(QString("%1 [*]")
+			.arg(QFileInfo(fileName).absoluteFilePath()));
+}
+
 void FlowWidget::load(const QString& fileName) {
 	try {
 		_viewer->load(fileName);
+		setWindowTitle(QString("%1 [*]")
+			.arg(QFileInfo(_viewer->model()->fileName())
+				.absoluteFilePath()));
 	}
 	catch (const std::string& msg) {
 		qWarning("%s", msg.c_str());
+		close();
+	}
+	catch (const std::invalid_argument& err) {
+		emit statusMessage(err.what(), 5000);
 		close();
 	}
 	catch (const std::exception& err) {
@@ -95,4 +114,20 @@ void FlowWidget::zoomOut() {
 
 void FlowWidget::zoomFit() {
 	_viewer->fitInView(_viewer->sceneRect(), Qt::KeepAspectRatio);
+}
+
+void FlowWidget::modify(bool val) {
+	setWindowModified(val);
+}
+
+void FlowWidget::closeEvent(QCloseEvent* closeEvent) {
+	if (isWindowModified() && !_viewer->model()->fileName().isEmpty()
+		&& QMessageBox::question(
+				this, tr("Save modified content?"),
+				tr("Content has been modified."
+					"Do you want to save to %1 before closing?")
+				.arg(_viewer->model()->fileName()),
+				QMessageBox::Save|QMessageBox::Discard) == QMessageBox::Save)
+		_viewer->model()->save();
+	QMdiSubWindow::closeEvent(closeEvent);
 }
