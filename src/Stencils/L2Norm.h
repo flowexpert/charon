@@ -53,10 +53,8 @@ private:
 	cimg_library::CImgList<T> _rhsVals;     ///< values for rhs (optional)
 	//  \}
 
-
 	//save point (needed for L2Norm<T>::execute())
-	Point4D<int>() _point;
-
+	Point4D<int> _point;
 
 public:
 	/// Number of dimensions (1D, 2D, 3D, 4D).
