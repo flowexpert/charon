@@ -4,7 +4,7 @@ PROJECT(tuchulcha C CXX)
 # since cmake-2.8.0
 # cmake 2.8.0 is available e.g. on *ubuntu lucid (10.4)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-SET(tuchulcha_VERSION 0.2.0)
+SET(tuchulcha_VERSION 0.2.1)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
