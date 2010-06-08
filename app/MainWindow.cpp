@@ -324,31 +324,46 @@ void MainWindow::_showAbout() const {
 #endif
 
 	aboutBox.setText(
-		tr("This is <b>Tuchulcha %1</b><br />written by "
-		"<a href=\"mailto:jmgottfriedATweb.de\">Jens-Malte Gottfried</a>"
-		"<br /><br />"
-		"Copyright &copy; 2009-2010 "
-		"Heidelberg Collaboratory for Image Processing"
-		"<br /><br />").arg(TUCHULCHA_VERSION)
-		+tr("Built %1 %2<br />with %3<br />")
-			.arg(__DATE__).arg(__TIME__).arg(buildSystem)
-		+tr("SVN Revision: %1<br /><br />").arg(SVNINFO)
-		+tr("This program is part of tuchulcha."
-		"<br /><br />"
-		"tuchulcha is free software; you can redistribute it and/or "
+		tr("This is <b>Tuchulcha %1</b><br />written by %2")
+		.arg(TUCHULCHA_VERSION)
+		.arg("<a href=\"mailto:jmgottfriedATweb.de\">Jens-Malte Gottfried</a>")
+		+QString("<br /><br />")
+		+tr("Copyright &copy; %1 Heidelberg Collaboratory for Image Processing")
+		.arg("2009-2010")
+		+QString("<br /><br />")
+		+tr("Built %1 %2<br />with %3")
+		.arg(__DATE__).arg(__TIME__).arg(buildSystem)
+		+QString("<br />")
+#ifdef SVNINFO
+		+tr("SVN Revision: %1 (%2)")
+		.arg(SVNINFO).arg(SVNBRANCH)
+		+QString("<br />")
+#endif
+		+tr("Built against libraries:")
+		+QString("<ul><li>charon-core %1</li><li>graphviz %2</li>"
+				"<li>Qt %3</li></ul>")
+		.arg(CHARON_CORE_VERSION).arg(GRAPHVIZ_VERSION).arg(QT_VERSION_STR)
+#ifdef BUILD_INFO
+		+tr("Build info: %1").arg(BUILD_INFO)+QString("<br />")
+#endif
+		+QString("<br />")
+		+tr("This program is part of tuchulcha.")
+		+QString("<br /><br />")
+		+tr("tuchulcha is free software; you can redistribute it and/or "
 		"modify it under the terms of the GNU Lesser General Public License as "
 		"published by the Free Software Foundation; either version 3 of "
-		"the License, or (at your option) any later version."
-		"<br /><br />"
-		"This program is distributed in the hope that it will be useful, "
+		"the License, or (at your option) any later version.")
+		+QString("<br /><br />")
+		+tr("This program is distributed in the hope that it will be useful, "
 		"but WITHOUT ANY WARRANTY; without even the implied warranty of "
 		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the "
-		"GNU Lesser General Public License for more details."
-		"<br /><br />"
-		"A copy of the GNU Lesser General Public License can be found at "
+		"GNU Lesser General Public License for more details.")
+		+QString("<br /><br />")
+		+tr("A copy of the GNU Lesser General Public License can be found at "
 		"<a href=\"http://www.gnu.org/licenses/\">"
-		"www.gnu.org/licenses/</a>."
-		"<br /><br />"));
+		"www.gnu.org/licenses/</a>.")
+		+QString("<br /><br />")
+	);
 	aboutBox.exec();
 }
 

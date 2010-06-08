@@ -1,40 +1,44 @@
 # enable release system
 SET(CPACK_PACKAGE_VENDOR
-    "Heidelberg Collaboratory for Image Processing"
+	"Heidelberg Collaboratory for Image Processing"
 )
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY
-    "Configuration Graph Tools"
+	"Configuration Graph Tools"
 )
 
 # package version setup
-STRING(REGEX REPLACE "^([0-9]+)\\.[0-9]+\\.[0-9]+" "\\1" CPACK_PACKAGE_VERSION_MAJOR "${${PROJECT_NAME}_VERSION}")
-STRING(REGEX REPLACE "^[0-9]+\\.([0-9])+\\.[0-9]+" "\\1" CPACK_PACKAGE_VERSION_MINOR "${${PROJECT_NAME}_VERSION}")
-STRING(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+)" "\\1" CPACK_PACKAGE_VERSION_PATCH "${${PROJECT_NAME}_VERSION}")
+STRING(REGEX REPLACE "^([0-9]+)\\.[0-9]+\\.[0-9]+" "\\1"
+	CPACK_PACKAGE_VERSION_MAJOR "${${PROJECT_NAME}_VERSION}")
+STRING(REGEX REPLACE "^[0-9]+\\.([0-9])+\\.[0-9]+" "\\1"
+	CPACK_PACKAGE_VERSION_MINOR "${${PROJECT_NAME}_VERSION}")
+STRING(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+)" "\\1"
+	CPACK_PACKAGE_VERSION_PATCH "${${PROJECT_NAME}_VERSION}")
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY     "${PROJECT_NAME}")
 SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY  "${PROJECT_NAME}")
 SET(CPACK_RESOURCE_FILE_LICENSE         "${PROJECT_SOURCE_DIR}/COPYING.txt")
 SET(CPACK_RESOURCE_FILE_README          "${PROJECT_SOURCE_DIR}/README.txt")
 
 SET(CPACK_PACKAGE_EXECUTABLES
-    paramedit "Configuration Graph Editor"
-    paraminspector "ParameterFile Editor"
+	paramedit "Configuration Graph Editor"
+	paraminspector "ParameterFile Editor"
 )
 SET(CPACK_STRIP_FILES FALSE)
 SET(CPACK_SOURCE_IGNORE_FILES
-    .svn
-    ./*/.svn
+	.svn
+	./*/.svn
 	bin
 	build
-    ".#"
-    "#.*~"
+	".#"
+	"#.*~"
 )
-SET(CPACK_PACKAGE_CONTACT
-    "Jens-Malte Gottfried <jmgottfried@web.de>"
-)
+SET(CPACK_PACKAGE_CONTACT "Jens-Malte Gottfried <jmgottfried@web.de>")
 SET(QT_VERSION "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS "charon-core (>=${tuchulcha_VERSION})")
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libgraphviz-dev (>=${GRAPHVIZ_VERSION_STRING})")
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, qt4-dev-tools (>=${QT_VERSION})")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS
+	"charon-core (>=${CHARON_CORE_VERSION})")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS
+	"${CPACK_DEBIAN_PACKAGE_DEPENDS}, libgraphviz-dev (>=${GRAPHVIZ_VERSION_STRING})")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS
+	"${CPACK_DEBIAN_PACKAGE_DEPENDS}, qt4-dev-tools (>=${QT_VERSION})")
 
 # install components
 SET(CPACK_COMPONENTS_ALL applications libraries headers dlls)
@@ -47,13 +51,13 @@ SET(CPACK_COMPONENT_DLLS_DISPLAY_NAME         "Needed DLLs")
 
 # Descriptions
 SET(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION
-    "paramedit and paraminspector executables")
+	"paramedit and paraminspector executables")
 SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION
-    "libraries to link external projects against ${PROJECT_NAME}")
+	"libraries to link external projects against ${PROJECT_NAME}")
 SET(CPACK_COMPONENT_HEADERS_DESCRIPTION
-    "header files for library usage")
+	"header files for library usage")
 SET(CPACK_COMPONENT_DLLS_DESCRIPTION
-    "Qt dlls, C++ runtime; needed if you have no build environment installed")
+	"Qt dlls, C++ runtime; needed if you have no build environment installed")
 
 # headers only useful if libraries are installed
 SET(CPACK_COMPONENT_HEADERS_DEPENDS		libraries)
@@ -65,9 +69,9 @@ SET(CPACK_COMPONENT_LIBRARIES_GROUP     Development)
 SET(CPACK_COMPONENT_HEADERS_GROUP       Development)
 
 SET(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION
-    "applications and shared libraries")
+	"applications and shared libraries")
 SET(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION
-    "Tools you need to develop software that uses ${PROJECT_NAME}")
+	"Tools you need to develop software that uses ${PROJECT_NAME}")
 
 # preselections
 SET(CPACK_COMPONENT_APPLICATIONS_REQUIRED   On)
@@ -76,22 +80,22 @@ SET(CPACK_COMPONENT_HEADERS_DISABLED        On)
 
 # add optional documentation if avaiable
 IF(ENABLE_DOC)
-    LIST(APPEND CPACK_COMPONENTS_ALL htmldoc)
-    SET(CPACK_COMPONENT_HTMLDOC_DISPLAY_NAME "HTML Documentation")
-    SET(CPACK_COMPONENT_HTMLDOC_DESCRIPTION
-        "HTML Documentation (including API doc)")
-    SET(CPACK_COMPONENT_HTMLDOC_GROUP "Documentation")
-    SET(CPACK_COMPONENT_GROUP_DOCUMENTATION_DESCRIPTION
-        "doxygen generated manual and api documentation")
+	LIST(APPEND CPACK_COMPONENTS_ALL htmldoc)
+	SET(CPACK_COMPONENT_HTMLDOC_DISPLAY_NAME "HTML Documentation")
+	SET(CPACK_COMPONENT_HTMLDOC_DESCRIPTION
+		"HTML Documentation (including API doc)")
+	SET(CPACK_COMPONENT_HTMLDOC_GROUP "Documentation")
+	SET(CPACK_COMPONENT_GROUP_DOCUMENTATION_DESCRIPTION
+		"doxygen generated manual and api documentation")
 
-    # separate pdf documentation
-    IF(LATEX_COMPILER)
-        LIST(APPEND CPACK_COMPONENTS_ALL pdfdoc)
-        SET(CPACK_COMPONENT_PDFDOC_DISPLAY_NAME "PDF Documentation")
-        SET(CPACK_COMPONENT_PDFDOC_DESCRIPTION
-            "PDF Documentation (without API doc)")
-        SET(CPACK_COMPONENT_PDFDOC_GROUP "Documentation")
-    ENDIF(LATEX_COMPILER)
+	# separate pdf documentation
+	IF(LATEX_COMPILER)
+		LIST(APPEND CPACK_COMPONENTS_ALL pdfdoc)
+		SET(CPACK_COMPONENT_PDFDOC_DISPLAY_NAME "PDF Documentation")
+		SET(CPACK_COMPONENT_PDFDOC_DESCRIPTION
+			"PDF Documentation (without API doc)")
+		SET(CPACK_COMPONENT_PDFDOC_GROUP "Documentation")
+	ENDIF(LATEX_COMPILER)
 ENDIF(ENABLE_DOC)
 
 INCLUDE (CPack)

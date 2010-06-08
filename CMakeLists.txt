@@ -4,7 +4,7 @@ PROJECT(tuchulcha C CXX)
 # since cmake-2.8.0
 # cmake 2.8.0 is available e.g. on *ubuntu lucid (10.4)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-SET(tuchulcha_VERSION 0.1.3)
+SET(tuchulcha_VERSION 0.2.0)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -54,9 +54,18 @@ FIND_PACKAGE(Subversion QUIET)
 IF(Subversion_FOUND)
 	OPTION(WITH_SVN "try to determine svn revision information" ON)
 	IF(WITH_SVN)
-		Subversion_WC_INFO(${PROJECT_SOURCE_DIR} Project)
+		IF(NOT tuchulcha_SVN_DIR)
+			SET(tuchulcha_SVN_DIR "${PROJECT_SOURCE_DIR}")
+		ENDIF()
+		SET(tuchulcha_SVN_DIR "${tuchulcha_SVN_DIR}"
+			CACHE PATH "Directory to query SVN information from" FORCE)
+		Subversion_WC_INFO(${tuchulcha_SVN_DIR} Tuchulcha_SVN)
 	ENDIF(WITH_SVN)
 ENDIF(Subversion_FOUND)
+
+# Possibility to add additional build info
+SET(tuchulcha_BUILD_INFO "${tuchulcha_BUILD_INFO}"
+	CACHE STRING "additional build information (optional)" FORCE)
 
 FIND_PACKAGE(charon-core REQUIRED)
 INCLUDE(InitFlags)
