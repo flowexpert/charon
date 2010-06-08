@@ -49,9 +49,11 @@ namespace Config {
 
 /// print usage info to stdout
 void printInfo();
+/// print version information
+void printVersion();
 /// parse command line and set up configuration
 /// \param argc,argv     command line options
-int init(int& argc, char**& argv);
+void init(int& argc, char**& argv);
 /// execute workflow with given configuration using exception handler
 int run();
 /// close logfiles, reset plugin manager etc.
@@ -60,11 +62,8 @@ void cleanup();
 /// main routine
 /// \param argc,argv     command line options
 int main(int argc, char* argv[]) {
-	int ret;
-	ret = init(argc, argv);
-	if (ret != EXIT_SUCCESS)
-		return ret;
-	ret = ExceptionHandler::run(run);
+	init(argc, argv);
+	int ret = ExceptionHandler::run(run);
 	cleanup();
 	return ret;
 }
@@ -73,6 +72,7 @@ void printInfo() {
 	std::cout << "\n === charon workflow executor ===\n\n"
 		<< "Usage: " << Config::appName << " [options] parameterFile\n\n"
 		<< "Options:\n\t"
+		<< "-V  --version              Display version information\n\t"
 		<< "-v  --verbose              More verbose output\n\t"
 		<< "-?\n\t"
 		<< "-h  --help                 This message\n\t"
@@ -87,7 +87,17 @@ void printInfo() {
 		<< std::endl;
 }
 
-int init(int& argc, char**& argv) {
+void printVersion() {
+	std::cout << "This is charon workflow executor "
+		<< "from charon-core version " << CHARON_CORE_VERSION << "\n\n"
+		<< "Copyright (C) 2009-2010 "
+		<< "Heidelberg Collaboratory for Image Processing\n"
+		<< "This is free software; see the source for copying conditions. "
+		<< "There is NO\nwarranty; not even for MERCHANTABILITY or "
+		<< "FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
+}
+
+void init(int& argc, char**& argv) {
 	// Parse command line options using GNU getopt.
 	// See http://www.gnu.org/software/libc/manual/html_node/Getopt.html
 	// for more information.
@@ -95,6 +105,7 @@ int init(int& argc, char**& argv) {
 	// Command line options:
 	static struct option getoptLongOptions[] = {
 		{"verbose",    no_argument,       NULL, 'v'},
+		{"version",    no_argument,       NULL, 'V'},
 		{"logfile",    required_argument, NULL, 'o'},
 		{"help",       no_argument,       NULL, 'h'},
 		{"global",     required_argument, NULL, 'g'},
@@ -102,7 +113,7 @@ int init(int& argc, char**& argv) {
 		{"workingdir", required_argument, NULL, 'w'},
 		{NULL,         no_argument,       NULL,  0}
 	};
-	const char* getoptShortOptions = "vo:hg:l:w:?";
+	const char* getoptShortOptions = "vVo:hg:l:w:?";
 	assert(no_argument == 0);
 
 	while (true) {
@@ -116,14 +127,15 @@ int init(int& argc, char**& argv) {
 			break;
 
 		switch (curOpt) {
-			case 'v': Config::verbose = true;      break;
-			case 'o': Config::logfile = optarg;    break;
-			case 'g': Config::globalPath = optarg; break;
-			case 'l': Config::localPath = optarg;  break;
-			case 'w': Config::workingDir = optarg; break;
-			case '?':
-			case 'h': printInfo(); return EXIT_SUCCESS;
-			default : return EXIT_FAILURE;
+		case 'v': Config::verbose = true;      break;
+		case 'V': printVersion(); exit(EXIT_SUCCESS);
+		case 'o': Config::logfile = optarg;    break;
+		case 'g': Config::globalPath = optarg; break;
+		case 'l': Config::localPath = optarg;  break;
+		case 'w': Config::workingDir = optarg; break;
+		case '?':
+		case 'h': printInfo(); exit(EXIT_SUCCESS);
+		default : exit(EXIT_FAILURE);
 		}
 	}
 
@@ -135,7 +147,7 @@ int init(int& argc, char**& argv) {
 		printInfo();
 		std::cerr << "ERROR: "
 				<< "Too many additional arguments specified!\n";
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	// check for parameter file
@@ -143,14 +155,14 @@ int init(int& argc, char**& argv) {
 		printInfo();
 		std::cerr << "ERROR: "
 				<< "You have to specify some parameter file to execute!\n";
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	if (!FileTool::exists(Config::paramFile)){
 		printInfo();
 		std::cerr << "ERROR: "
 				<< "Given parameter file (\"" << Config::paramFile
 				<< "\") does not exist!\n";
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	// check for global plugin directory
@@ -158,7 +170,7 @@ int init(int& argc, char**& argv) {
 		printInfo();
 		std::cerr << "ERROR: "
 				<< "You have to specify a valid global plugin directory!\n";
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	// print configuration
@@ -178,7 +190,6 @@ int init(int& argc, char**& argv) {
 				<< (!Config::workingDir.empty() ? Config::workingDir :
 					FileTool::getCurrentDir()) << "\n\t";
 	}
-	return EXIT_SUCCESS;
 }
 
 int run() {
