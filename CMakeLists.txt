@@ -1,9 +1,6 @@
 PROJECT(charon-core C CXX)
-# may work with 2.6; but only, if doxygen not found
-# documentation install is marked as optional which works
-# since cmake-2.8.0
-# cmake 2.8.0 is available e.g. on *ubuntu lucid (10.4)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+SET(charon-core_VERSION 0.1.3)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -25,7 +22,7 @@ INCLUDE(ReleaseSys)
 # Test suite
 OPTION(ENABLE_TEST "enable test suite" ON)
 IF(ENABLE_TEST)
-    ENABLE_TESTING()
+	ENABLE_TESTING()
 	INCLUDE(CTest)
 ENDIF(ENABLE_TEST)
 
