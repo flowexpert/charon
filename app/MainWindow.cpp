@@ -304,8 +304,8 @@ void MainWindow::closeEvent(QCloseEvent *cEvent) {
 	QMainWindow::closeEvent(cEvent);
 }
 
-void MainWindow::_showAbout() const {
-	QMessageBox aboutBox;
+void MainWindow::_showAbout() {
+	QMessageBox aboutBox(this);
 	aboutBox.setWindowTitle(tr("About Tuchulcha"));
 	aboutBox.setTextFormat(Qt::RichText);
 	aboutBox.setIcon(QMessageBox::Information);
@@ -362,13 +362,12 @@ void MainWindow::_showAbout() const {
 		+tr("A copy of the GNU Lesser General Public License can be found at "
 		"<a href=\"http://www.gnu.org/licenses/\">"
 		"www.gnu.org/licenses/</a>.")
-		+QString("<br /><br />")
 	);
 	aboutBox.exec();
 }
 
-void MainWindow::_showAboutQt() const {
-	QMessageBox::aboutQt(0, tr("About Qt"));
+void MainWindow::_showAboutQt() {
+	QMessageBox::aboutQt(this, tr("About Qt"));
 }
 
 void MainWindow::open(const QString& fileName) {

@@ -92,10 +92,10 @@ protected:
 
 private slots:
 	/// show about dialog
-	void _showAbout() const;
+	void _showAbout();
 
 	/// show about Qt dialog
-	void _showAboutQt() const;
+	void _showAboutQt();
 
 	/// edit options
 	void _options();
