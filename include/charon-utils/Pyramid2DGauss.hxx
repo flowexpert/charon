@@ -97,8 +97,8 @@ template <class T>
 void Pyramid2DGauss<T>::assign(const cimg_library::CImg<T>& src) {
     Pyramid<T>::levels.clear();
     Pyramid<T>::levels.push_back(src);
-    Pyramid<T>::scaleFactorsX.push_back(1.0f);
-    Pyramid<T>::scaleFactorsY.push_back(1.0f);
+    Pyramid<T>::scaleFactorsX.push_back(T(1));
+    Pyramid<T>::scaleFactorsY.push_back(T(1));
 
     cimg_library::CImg<T> maskH;
     cimg_library::CImg<T> maskV;
