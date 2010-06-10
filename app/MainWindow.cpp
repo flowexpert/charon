@@ -43,10 +43,6 @@
 
 #include "ui_OptionsDialog.h"
 
-#ifndef SVNINFO
-#define SVNINFO
-#endif
-
 #include "MainWindow.moc"
 
 MainWindow::MainWindow(QWidget* myParent) :
