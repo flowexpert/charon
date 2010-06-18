@@ -166,7 +166,7 @@ void init(int& argc, char**& argv) {
 	}
 
 	// check for global plugin directory
-	if (Config::globalPath.empty() || !FileTool::exists(Config::globalPath)) {
+	if (Config::globalPath.empty() /*|| !FileTool::exists(Config::globalPath)*/ ) {
 		printInfo();
 		std::cerr << "ERROR: "
 				<< "You have to specify a valid global plugin directory!\n";
@@ -199,6 +199,8 @@ int run() {
 		log.open(Config::logfile.c_str(), std::ios::trunc | std::ios::out);
 		sout.assign(log);
 	}
+	else
+	{	sout.assign(std::cout) ;	}
 
 	if (Config::verbose)
 		std::cout << "\nInitializing plugin manager." << std::endl;
