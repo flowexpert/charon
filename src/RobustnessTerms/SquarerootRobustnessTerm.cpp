@@ -13,26 +13,43 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file SquarerootRobustnessTerm.hxx
+/** @file SquarerootRobustnessTerm.cpp
  *  Implementation of class SquarerootRobustnessTerm.
  *  @author <a href="mailto:techfreaq@web.de">Nina Hernitschek</a>
  *
  *  @date 13.01.2010
  */
-
-#include "SquarerootRobustnessTerm.h"
-//#include "../RobustnessTerm.cpp"
-#include <cmath>
+#define TYPE SquarerootRobustnessTerm
 
 
-SquarerootRobustnessTerm::SquarerootRobustnessTerm(const std::string& name) :
-		RobustnessTerm("SquarerootRobustnessTerm", name, 
-			"This class is used for calculationg Robustness Term using the function \f$\Psi(s^2)=\sqrt{s^2+e^2}\f$")
-{
+
+#if defined(MSVC) && defined (squarerootrobustnessterm_EXPORTS)
+#define robustnessterm_EXPORTS
+#define DECLDIR __declspec(dllexport)
+#else
+///Not needed with GCC
+#define DECLDIR
+#endif
+
+#include "SquarerootRobustnessTerm.hxx"
+
+extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
+	switch(t) {
+	case ParameteredObject::TYPE_DOUBLE:
+		return new TYPE<double>(name);
+		break;
+	case ParameteredObject::TYPE_FLOAT:
+		return new TYPE<float>(name);
+		break;
+	case ParameteredObject::TYPE_INT:
+		return new TYPE<int>(name);
+		break;
+	default:
+		return new TYPE<int>(name);
+		break;
+	}
 }
 
-// calculates derivative of robustness term
-double SquarerootRobustnessTerm::DPsi(double s)  {
-	double dpsi = s/(sqrt(pow(s, 2) + pow(epsilon(), 2)));
-	return dpsi;
+extern "C" DECLDIR void destroy(ParameteredObject * b) {
+	delete b;
 }

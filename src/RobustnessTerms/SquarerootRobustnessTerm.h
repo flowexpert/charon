@@ -35,15 +35,14 @@
 #define squarerootrobustnessterm_DECLDIR
 #endif
 
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 #include "../RobustnessTerm.h"
 
 /// class which uses the function \f$\Psi(s^2)=\sqrt{s^2+e^2}\f$ with
 /// parameter compute the bcce-terms
 
-
-class squarerootrobustnessterm_DECLDIR SquarerootRobustnessTerm:
-		public RobustnessTerm
+template <typename T>
+class squarerootrobustnessterm_DECLDIR SquarerootRobustnessTerm : public RobustnessTerm<T>
 {
 public:
 	
@@ -53,7 +52,6 @@ public:
 
 	/// calculates derivative of robustness term, DPsi
 	virtual double DPsi(double s);
-
 };
 
 #endif
