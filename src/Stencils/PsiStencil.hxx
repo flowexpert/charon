@@ -39,9 +39,12 @@ PsiStencil<T>::PsiStencil(const std::string& name) :
 {
 	this->_addInputSlot(stencilIn, "stencilIn",
 			"Input slot for stencil","Stencil<T>*");
-	this->_addParameter(epsilon,"epsilon","parameter of the Robustness Term",0.001,"double");
+//	this->_addParameter(epsilon,"epsilon","parameter of the Robustness Term",0.001,"double");
 	this->_addInputSlot(parameterListIn, "parameterListIn",
 			"CImgList containing the parameters","CImgList<T>");
+	this->_addInputSlot(robustnessTermIn, "robustnessTermIn",
+			"containing the robustness term","RobustnessTerm<T>*");
+
 }
 
 template <class T>
@@ -79,7 +82,7 @@ void PsiStencil<T>::updateStencil(
 	this->lambda = stencilIn()->lambda;
 
 	// update rhs
-	const double factor = DPsi(stencilIn()->getEnergy(),epsilon());
+	const double factor = robustnessTermIn()->DPsi(stencilIn()->getEnergy());//,epsilon());
 	this->_rhs *= factor;
 
 	// initialize term for all unknowns
@@ -94,19 +97,20 @@ void PsiStencil<T>::updateStencil(
 
 template <class T>
 void PsiStencil<T>::updateEnergy(
-		const cimg_library::CImgList<T>&,
-		const Point4D<int>&, const int&) {
+		const cimg_library::CImgList<T>& flowList,
+		const Point4D<int>& p, const int& v) {
 }
 
-// robustness term
 
+// robustness term
+/*
 template <class T>
 double PsiStencil<T>::DPsi(double s, double e) const {
 	double dpsi = s/(sqrt(pow(s, 2) + pow(e, 2)));
 	return dpsi;
-}
+}*/
 
-//not yet implemented
+//not yet implemented: check this!
 template <class T>
 cimg_library::CImg<T> PsiStencil<T>::apply(
 		const cimg_library::CImgList<T>& seq,

@@ -38,6 +38,7 @@
 #include "../Stencil.h"
 #include "../BrightnessModel.h"
 #include "../MotionModel.h"
+#include "../RobustnessTerm.h"
 
 /// PsiStencil
 /*
@@ -56,9 +57,12 @@ public:
 	InputSlot<Stencil<T>*> stencilIn;
 	/// Input slot for CImgList containing the parameters
 	InputSlot<cimg_library::CImgList<T> > parameterListIn;
+	/// InputSlot for the robustness term
+	InputSlot<RobustnessTerm<T>*> robustnessTermIn;
 
-	/// parameter epsilon for robustness term
-	Parameter<double> epsilon;
+
+	/// parameter epsilon for robustness term. 
+	//Parameter<double> epsilon;
 	//  \}
 
 	/// default constructor
@@ -77,8 +81,8 @@ public:
 		const cimg_library::CImgList<T>& flowList,
 		const Point4D<int>& p=Point4D<int>(), const int& v=0);
 
-	/// calculates derivative of robustness term, DPsi
-	virtual double DPsi(double s, double e) const;
+	/// calculates derivative of robustness term, DPsi ????
+	//virtual double DPsi(double s, double e) const;
 
 	virtual cimg_library::CImg<T> apply(
 			const cimg_library::CImgList<T>& seq,
