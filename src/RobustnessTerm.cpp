@@ -20,7 +20,6 @@
  *  @date 13.01.2010
  */
 
-#define robustnessterm_EXPORTS
 #include "RobustnessTerm.h"
 #include <ParameteredObject.hxx>
 

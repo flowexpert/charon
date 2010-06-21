@@ -58,7 +58,7 @@ public:
 	/// Input slot for CImgList containing the parameters
 	InputSlot<cimg_library::CImgList<T> > parameterListIn;
 	/// InputSlot for the robustness term
-	InputSlot<RobustnessTerm<T>*> robustnessTermIn;
+	InputSlot<RobustnessTerm*> robustnessTermIn;
 
 
 	/// parameter epsilon for robustness term. 

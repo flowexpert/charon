@@ -83,7 +83,7 @@ void PsiStencil<T>::updateStencil(
 
 	// update rhs
 	const double factor = robustnessTermIn()->DPsi(stencilIn()->getEnergy());//,epsilon());
-	this->_rhs *= factor;
+	this->_rhs *= T(factor);
 
 	// initialize term for all unknowns
 	std::set<std::string>::const_iterator uIt;

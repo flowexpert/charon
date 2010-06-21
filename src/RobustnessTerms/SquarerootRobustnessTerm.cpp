@@ -21,35 +21,27 @@
  */
 #define TYPE SquarerootRobustnessTerm
 
+#include "SquarerootRobustnessTerm.h"
+#include <cmath>
 
-
-#if defined(MSVC) && defined (squarerootrobustnessterm_EXPORTS)
-#define robustnessterm_EXPORTS
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define DECLDIR
-#endif
-
-#include "SquarerootRobustnessTerm.hxx"
-
-extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
-	switch(t) {
-	case ParameteredObject::TYPE_DOUBLE:
-		return new TYPE<double>(name);
-		break;
-	case ParameteredObject::TYPE_FLOAT:
-		return new TYPE<float>(name);
-		break;
-	case ParameteredObject::TYPE_INT:
-		return new TYPE<int>(name);
-		break;
-	default:
-		return new TYPE<int>(name);
-		break;
-	}
+SquarerootRobustnessTerm::SquarerootRobustnessTerm(const std::string& name) :
+		RobustnessTerm("SquarerootRobustnessTerm", name, 
+			"This class is used for calculationg Robustness Term using the function Psi(s^2)=sqrt{s^2+e^2}")
+{
+}
+	
+// calculates derivative of robustness term
+double SquarerootRobustnessTerm::DPsi(double s)  {
+	double dpsi = s/(sqrt(pow(s, 2) + pow(this->epsilon(), 2)));
+	return dpsi;
 }
 
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
+extern "C" squarerootrobustnessterm_DECLDIR ParameteredObject*
+		create(const std::string &name, template_type /*t*/) {
+	return new TYPE(name);
+}
+
+extern "C" squarerootrobustnessterm_DECLDIR
+		void destroy(ParameteredObject * b) {
 	delete b;
 }

@@ -69,7 +69,7 @@ public:
 	InputSlot<cimg_library::CImgList<T> > flowGuess;
 
 	/// RobustnessTerm
-	InputSlot<RobustnessTerm<T> > robustnessTerm;
+	InputSlot<RobustnessTerm*> robustnessTerm;
 
 	/// default constructor
 	/// \param name instance name

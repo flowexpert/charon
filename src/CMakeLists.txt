@@ -219,12 +219,16 @@ ENDIF (ENABLE_MOTION)
 
 
 IF(ENABLE_ROBUSTNESS)
-	ADD_LIBRARY(squarerootrobustnessterm SHARED
+	ADD_DEFINITIONS(-DROBUSTNESS)
+	ADD_LIBRARY(robustnessterm SHARED
 		RobustnessTerm.h
 		RobustnessTerm.cpp
+	)
+	ADD_LIBRARY(squarerootrobustnessterm SHARED
 		RobustnessTerms/SquarerootRobustnessTerm.cpp
 		RobustnessTerms/SquarerootRobustnessTerm.h
 	)
+	TARGET_LINK_LIBRARIES(squarerootrobustnessterm robustnessterm)
 	ADD_LIBRARY(sampleiterativesolver SHARED
 		IterativeSolvers/SampleIterativeSolver.cpp
 		IterativeSolvers/SampleIterativeSolver.h
@@ -251,7 +255,8 @@ IF(ENABLE_ROBUSTNESS)
 		Substencil.hxx
 	)
 	TARGET_LINK_LIBRARIES(psistencil squarerootrobustnessterm)
-LIST(APPEND Plugins
+	LIST(APPEND Plugins
+		robustnessterm
 		squarerootrobustnessterm
 		sampleiterativesolver
 		iteratorhelper

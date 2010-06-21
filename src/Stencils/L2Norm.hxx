@@ -40,8 +40,10 @@ L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
 			1.);
 	this->_addInputSlot(flowGuess, "flowGuess",
 			"Initial flow guess for rhs calculation", "CImgList<T>");
+#ifdef ROBUSTNESS
 	this->_addInputSlot(robustnessTerm, "robustnessTerm",
 			"RobustnessTerm for robustness calculation", "RobustnessTerm");
+#endif
 }
 
 template <class T>
@@ -114,7 +116,7 @@ void L2Norm<T>::execute() {
 		//_stencilMap=flowGuess()[0];
 
 		_stencilMap.assign(flowGuess()[0].width(), flowGuess()[0].height(),1,1);
-		int gradsum;
+		double gradsum;
 		int x=0;
 		int y=0;
 		
@@ -129,7 +131,7 @@ void L2Norm<T>::execute() {
 				gradsum+= ( (( flowGuess()[i](x,y+1)-flowGuess()[i](x,y-1) ) / 2)*(( flowGuess()[i](x,y+1)-flowGuess()[i](x,y-1) )/2  ) );
 			}
 
-			_stencilMap(x,y) = gradsum;
+			_stencilMap(x,y) = T(gradsum);
 
 			////TODO: Wie Randpunkte behandeln?
 		}
