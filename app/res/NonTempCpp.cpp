@@ -21,7 +21,7 @@
 /// Needed for class @pluginName@ to work as plugin.
 #include "@pluginName@.h"
 
-@pluginName@(const std::string& name = "") :
+@pluginName@::@pluginName@(const std::string& name) :
             ParameteredObject(
             "@pluginName@", name,
             "@PluginDocu@")
