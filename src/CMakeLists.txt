@@ -220,11 +220,10 @@ ENDIF (ENABLE_MOTION)
 
 IF(ENABLE_ROBUSTNESS)
 	ADD_DEFINITIONS(-DROBUSTNESS)
-	ADD_LIBRARY(robustnessterm SHARED
+	
+	ADD_LIBRARY(squarerootrobustnessterm SHARED
 		RobustnessTerm.h
 		RobustnessTerm.cpp
-	)
-	ADD_LIBRARY(squarerootrobustnessterm SHARED
 		RobustnessTerms/SquarerootRobustnessTerm.cpp
 		RobustnessTerms/SquarerootRobustnessTerm.h
 	)
@@ -256,7 +255,6 @@ IF(ENABLE_ROBUSTNESS)
 	)
 	TARGET_LINK_LIBRARIES(psistencil squarerootrobustnessterm)
 	LIST(APPEND Plugins
-		robustnessterm
 		squarerootrobustnessterm
 		sampleiterativesolver
 		iteratorhelper

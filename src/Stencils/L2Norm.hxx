@@ -109,36 +109,54 @@ void L2Norm<T>::execute() {
 				}
 
 	
-
+#ifdef ROBUSTNESS
 	if(robustnessTerm.connected())
 	{
 
-		//_stencilMap=flowGuess()[0];
-
-		_stencilMap.assign(flowGuess()[0].width(), flowGuess()[0].height(),1,1);
+	_gradientWeight.assign(flowGuess()[0].width(), flowGuess()[0].height(),1,1);
 		double gradsum;
 		int x=0;
 		int y=0;
+		int left=0;
+		int up=0;
 		
-		cimg_forXY(_stencilMap,x,y)
+		cimg_forXY(_gradientWeight,x,y)
 		{
 			gradsum = 0;
 			for(unsigned int i=0; i<this->pUnknowns.size(); i++)
 			{
 				//calculating gradient for each unknown an add
 
-				gradsum+= ( (( flowGuess()[i](x+1,y)-flowGuess()[i](x-1,y) ) / 2)*(( flowGuess()[i](x+1,y)-flowGuess()[i](x-1,y) ) / 2) );
-				gradsum+= ( (( flowGuess()[i](x,y+1)-flowGuess()[i](x,y-1) ) / 2)*(( flowGuess()[i](x,y+1)-flowGuess()[i](x,y-1) )/2  ) );
+				//boundary conditions
+				if(x==0)
+				{
+					left=0;
+				}
+				else
+				{
+					left=x-1;
+				}
+				if(y==0)
+				{
+					up=0;
+				}
+				else
+				{
+					up=y-1;
+				}
+
+				gradsum+= ( (( flowGuess()[i](x+1,y)-flowGuess()[i](left,y) ) / 2)*(( flowGuess()[i](x+1,y)-flowGuess()[i](left,y) ) / 2) );
+				gradsum+= ( (( flowGuess()[i](x,y+1)-flowGuess()[i](x,up) ) / 2)*(( flowGuess()[i](x,y+1)-flowGuess()[i](x,up) )/2  ) );
 			}
 
-			_stencilMap(x,y) = T(gradsum);
+			_gradientWeight(x,y) = robustnessTerm()->DPsi(T(gradsum));
 
-			////TODO: Wie Randpunkte behandeln?
 		}
 
 	}
 
-	//else
+	else
+#endif
 	{
 		// create masks in appropriate dimensions,
 		// then fill mask with values and set the center
@@ -203,35 +221,50 @@ void L2Norm<T>::updateStencil(
 	double b=0;
 	double c=0;
 	double d=0;
-	double value=0;
-	
+	double e=0;
+	std::ostringstream msg;
+#ifdef ROBUSTNESS
 	if(robustnessTerm.connected())
 		{
 			switch (dimensions) {
 							case 1:
+								msg << __FILE__ << ":" << __LINE__ << ":\n\t";
+								msg << "robustness for 1D is not implemented yet!\n\t";
+								throw std::runtime_error(msg.str());
+
 								break;
 
 							case 2:					
-								a=_stencilMap(_point.x,_point.y+1)+_stencilMap(_point.x,_point.y);
-								b=_stencilMap(_point.x,_point.y)+_stencilMap(_point.x,_point.y-1);
-								c=_stencilMap(_point.x+1,_point.y)+_stencilMap(_point.x,_point.y);
-								d=_stencilMap(_point.x,_point.y)+_stencilMap(_point.x-1,_point.y);
-								
-								value = (a+b+c+d)/4;
+								a=(_gradientWeight(_point.x-1,_point.y)+_gradientWeight(_point.x,_point.y))/2;
+								b=(_gradientWeight(_point.x,_point.y)-_gradientWeight(_point.x-1,_point.y))/2;
+								c=-(_gradientWeight(_point.x+1,_point.y)+2*_gradientWeight(_point.x-1,_point.y)
+									+_gradientWeight(_point.x-1,_point.y)+4*_gradientWeight(_point.x,_point.y))/2;
+								c=(_gradientWeight(_point.x+1,_point.y)+_gradientWeight(_point.x,_point.y))/2;
+								d=(_gradientWeight(_point.x,_point.y+1)+_gradientWeight(_point.x,_point.y))/2;
 
 								_dataMask.fill(
-								T( 0), T(0), T( 0),
-								T(0), T(value), T(0),
-								T( 0), T(0), T( 0));
+								T( 0), T(a), T( 0),
+								T(b), T(c), T(d),
+								T( 0), T(e), T( 0));
 								break;
+
 							case 3:
+								msg << __FILE__ << ":" << __LINE__ << ":\n\t";
+								msg << "robustness for 1D is not implemented yet!\n\t";
+								throw std::runtime_error(msg.str());
+
 								break;
+
 							case 4:
+								msg << __FILE__ << ":" << __LINE__ << ":\n\t";
+								msg << "robustness for 1D is not implemented yet!\n\t";
+								throw std::runtime_error(msg.str());
+
 								break;
 					
 			}
 		}
-
+#endif
 	// fill stencil with masks
 		for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
 			SubStencil<T> entry;
