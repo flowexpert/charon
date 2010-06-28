@@ -6,7 +6,7 @@ IF (MSVC)
 ENDIF()
 
 # plugins
-SET(Plugins)
+SET(Plugins) 
 
 IF (ENABLE_STENCILS)
 	ADD_LIBRARY(gbcce SHARED
@@ -220,10 +220,11 @@ ENDIF (ENABLE_MOTION)
 
 IF(ENABLE_ROBUSTNESS)
 	ADD_DEFINITIONS(-DROBUSTNESS)
-	
-	ADD_LIBRARY(squarerootrobustnessterm SHARED
+	ADD_LIBRARY(robustnessterm SHARED
 		RobustnessTerm.h
 		RobustnessTerm.cpp
+	)
+	ADD_LIBRARY(squarerootrobustnessterm SHARED
 		RobustnessTerms/SquarerootRobustnessTerm.cpp
 		RobustnessTerms/SquarerootRobustnessTerm.h
 	)
@@ -255,6 +256,7 @@ IF(ENABLE_ROBUSTNESS)
 	)
 	TARGET_LINK_LIBRARIES(psistencil squarerootrobustnessterm)
 	LIST(APPEND Plugins
+		robustnessterm
 		squarerootrobustnessterm
 		sampleiterativesolver
 		iteratorhelper
@@ -328,4 +330,4 @@ IF(NOT SKIP_EXPORT_INSTALL)
 		DESTINATION     include/${PROJECT_NAME}
 		COMPONENT       libraries
 	)
-ENDIF()
+ENDIF() 
