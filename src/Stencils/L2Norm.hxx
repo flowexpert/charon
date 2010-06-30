@@ -31,7 +31,7 @@
 template <class T>
 L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
 			"Stencil modeling spatial smoothness using laplacian operator."),
-		flowGuess(true, false) // optional
+		flowGuess(true, false), robustnessTerm(true,false) // optional
 {
 	this->_addParameter(dimensions, "dimensions", "Number of dimensions", 2u);
 	this->_addParameter(pUnknowns, "unknowns", "List of unknowns");
@@ -41,8 +41,8 @@ L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
 	this->_addInputSlot(flowGuess, "flowGuess",
 			"Initial flow guess for rhs calculation", "CImgList<T>");
 #ifdef ROBUSTNESS
-	this->_addInputSlot(robustnessTerm, "robustnessTerm",
-			"RobustnessTerm for robustness calculation", "RobustnessTerm");
+		this->_addInputSlot(robustnessTerm, "robustnessTerm",
+			"containing the robustness term","RobustnessTerm*");
 #endif
 }
 
@@ -194,11 +194,12 @@ void L2Norm<T>::execute() {
 		default:
 			throw std::out_of_range("invalid dimensions (too large)");
 		}
-
+	}
 		_dataMask *= this->lambda();
 
 		// precalculate rhs values for whole image
 		if (flowGuess.connected()) {
+
 			assert(flowGuess().size() == dimensions());
 			const cimg_library::CImgList<T>& flow = flowGuess();
 			_rhsVals.assign(flow);
@@ -207,7 +208,7 @@ void L2Norm<T>::execute() {
 				_rhsVals[kk] *= -rhsWeight();
 			}
 		}
-	}
+	
 }
 
 template <class T>
