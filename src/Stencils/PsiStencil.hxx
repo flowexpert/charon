@@ -42,8 +42,8 @@ PsiStencil<T>::PsiStencil(const std::string& name) :
 //	this->_addParameter(epsilon,"epsilon","parameter of the Robustness Term",0.001,"double");
 	this->_addInputSlot(parameterListIn, "parameterListIn",
 			"CImgList containing the parameters","CImgList<T>");
-	this->_addInputSlot(robustnessTermIn, "robustnessTermIn",
-			"containing the robustness term","RobustnessTerm<T>*");
+	this->_addInputSlot(robustnessTerm, "robustnessTerm",
+			"containing the robustness term","RobustnessTerm*");
 
 }
 
@@ -82,7 +82,7 @@ void PsiStencil<T>::updateStencil(
 	this->lambda = stencilIn()->lambda;
 
 	// update rhs
-	const double factor = robustnessTermIn()->DPsi(stencilIn()->getEnergy());//,epsilon());
+	const double factor = robustnessTerm()->DPsi(stencilIn()->getEnergy());//,epsilon());
 	this->_rhs *= T(factor);
 
 	// initialize term for all unknowns
