@@ -229,6 +229,7 @@ IF(ENABLE_ROBUSTNESS)
 		RobustnessTerms/SquarerootRobustnessTerm.h
 	)
 	TARGET_LINK_LIBRARIES(squarerootrobustnessterm robustnessterm)
+	TARGET_LINK_LIBRARIES(l2norm robustnessterm)
 	ADD_LIBRARY(sampleiterativesolver SHARED
 		IterativeSolvers/SampleIterativeSolver.cpp
 		IterativeSolvers/SampleIterativeSolver.h
