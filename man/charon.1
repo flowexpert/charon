@@ -1,0 +1,36 @@
+.TH charon 1 "2010-06-24" "charon-core 0.1.4" "Heidelberg Collaboratory for Image Processing"
+.SH NAME
+charon - Command line workflow executor
+.SH SYNOPSIS
+.B charon
+[Options] [workflowfile]
+.SH DESCRIPTION
+.B charon
+executes the given workflow.
+.SH OPTIONS
+.TP
+-V, --version
+Display version information and exit
+.TP
+-v, --verbose
+More verbose output
+.TP
+-h, --help, -?
+Show usage help message
+.TP
+-o \fIfile\fR, --logfile \fIfile\fR
+Write log to given text file too (optional)
+.TP
+-g \fIpath\fR, --global \fIpath\fR
+Path of global plugin dir (required to execute workflow)
+.TP
+-l \fIpath\fR, --local \fIpath\fR
+Path of local plugin dir (optional)
+.TP
+-w \fIpath\fR, --workingdir \fIpath\fR
+Path of working directory (optional)
+.SH FILES
+.TP
+worflowfile
+Parameter file describing the workflow to execute.
+This may be set up e.g. by Tuchulcha.

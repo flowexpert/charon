@@ -1,6 +1,6 @@
 PROJECT(charon-core C CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-SET(charon-core_VERSION 0.1.3)
+SET(${PROJECT_NAME}_VERSION 0.1.4)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -25,6 +25,9 @@ IF(ENABLE_TEST)
 	ENABLE_TESTING()
 	INCLUDE(CTest)
 ENDIF(ENABLE_TEST)
+
+# Setup CMake config files for package finding
+INCLUDE(GenConfig)
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(app)
