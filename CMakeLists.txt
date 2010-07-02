@@ -1,9 +1,6 @@
 PROJECT(charon C CXX)
-# may work with 2.6; but only, if doxygen not found
-# documentation install is marked as optional which works
-# since cmake-2.8.0
-# cmake 2.8.0 is available e.g. on *ubuntu lucid (10.4)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+SET(charon_VERSION 0.1.4)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -13,8 +10,8 @@ IF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 ENDIF()
 
-FIND_PACKAGE(charon-core REQUIRED)
-FIND_PACKAGE(charon-utils REQUIRED)
+FIND_PACKAGE(charon-core REQUIRED HINTS $ENV{CHARON_DIR})
+FIND_PACKAGE(charon-utils REQUIRED HINTS $ENV{CHARON_DIR})
 INCLUDE(InitFlags)
 INCLUDE(CImgConfig)
 
@@ -54,6 +51,9 @@ IF(ENABLE_TEST)
 	ENABLE_TESTING()
 	INCLUDE(CTest)
 ENDIF(ENABLE_TEST)
+
+# Setup CMake config files for package finding
+INCLUDE(GenConfig)
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(test)

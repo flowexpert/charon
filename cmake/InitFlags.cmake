@@ -35,22 +35,20 @@ IF(NOT CMAKE_FLAGS_INIT)
 	ENDIF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
 	# set install prefix to global install path
 	IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-		SET(CMAKE_INSTALL_PREFIX ${CHARON_UTILS_ROOT_DIR}
+		SET(CMAKE_INSTALL_PREFIX "${charon-core_ROOT_DIR}"
 			CACHE PATH "Install path prefix, prepended onto install directories."
 			FORCE
 		)
-		MESSAGE(STATUS "Using global install prefix: ${CMAKE_INSTALL_PREFIX}")
-	ELSE(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-		MESSAGE(STATUS "Using user-specified install prefix: ${CMAKE_INSTALL_PREFIX}")
 	ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 ENDIF(NOT CMAKE_FLAGS_INIT)
 
-IF(NOT ${CMAKE_INSTALL_PREFIX} STREQUAL ${CHARON_UTILS_ROOT_DIR} AND NOT DEFINED charon-meta_SOURCE_DIR)
-	MESSAGE(WARNING " Warning: Plugins will NOT be installed in standart plugin directory!\n"
-					" Set CMAKE_INSTALL_PREFIX to\n ${CHARON_UTILS_ROOT_DIR}\n"
-					" to install into global plugin path.")
-ENDIF()
-
+IF(charon-core_ROOT_DIR)
+	IF(CMAKE_INSTALL_PREFIX STREQUAL "${charon-core_ROOT_DIR}")
+		MESSAGE(STATUS "Using global install prefix: ${CMAKE_INSTALL_PREFIX}")
+	ELSE(CMAKE_INSTALL_PREFIX STREQUAL "${charon-core_ROOT_DIR}")
+		MESSAGE(STATUS "Using user-specified install prefix: ${CMAKE_INSTALL_PREFIX}")
+	ENDIF(CMAKE_INSTALL_PREFIX STREQUAL "${charon-core_ROOT_DIR}")
+ENDIF(charon-core_ROOT_DIR)
 # set definitions depending on build environment
 IF(WIN32)
 	ADD_DEFINITIONS(-DWINDOWS)
