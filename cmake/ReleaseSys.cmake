@@ -1,10 +1,6 @@
 # enable release system
-SET(CPACK_PACKAGE_VENDOR
-	"Heidelberg Collaboratory for Image Processing"
-)
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY
-	"Configuration Graph Tools"
-)
+SET(CPACK_PACKAGE_VENDOR "Heidelberg Collaboratory for Image Processing")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Configuration Graph Tools")
 
 # package version setup
 STRING(REGEX REPLACE "^([0-9]+)\\.[0-9]+\\.[0-9]+" "\\1"
@@ -17,6 +13,7 @@ SET(CPACK_PACKAGE_INSTALL_DIRECTORY     "${PROJECT_NAME}")
 SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY  "${PROJECT_NAME}")
 SET(CPACK_RESOURCE_FILE_LICENSE         "${PROJECT_SOURCE_DIR}/COPYING.txt")
 SET(CPACK_RESOURCE_FILE_README          "${PROJECT_SOURCE_DIR}/README.txt")
+SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${PROJECT_NAME}-${${PROJECT_NAME}_VERSION}")
 
 SET(CPACK_PACKAGE_EXECUTABLES
 	paramedit "Configuration Graph Editor"
@@ -34,49 +31,34 @@ SET(CPACK_SOURCE_IGNORE_FILES
 SET(CPACK_PACKAGE_CONTACT "Jens-Malte Gottfried <jmgottfried@web.de>")
 SET(QT_VERSION "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS
-	"charon-core (>=${CHARON_CORE_VERSION})")
+	"charon-core (>=${charon-core_VERSION})")
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS
-	"${CPACK_DEBIAN_PACKAGE_DEPENDS}, libgraphviz-dev (>=${GRAPHVIZ_VERSION_STRING})")
+	"${CPACK_DEBIAN_PACKAGE_DEPENDS}, libgraphviz-dev (>=${Graphviz_VERSION})")
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS
 	"${CPACK_DEBIAN_PACKAGE_DEPENDS}, qt4-dev-tools (>=${QT_VERSION})")
 
 # install components
-SET(CPACK_COMPONENTS_ALL applications libraries headers dlls)
+SET(CPACK_COMPONENTS_ALL applications dlls)
 
 # Display name properties
 SET(CPACK_COMPONENT_APPLICATIONS_DISPLAY_NAME "Applications")
-SET(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME    "Static Libraries")
-SET(CPACK_COMPONENT_HEADERS_DISPLAY_NAME      "C++ Headers")
 SET(CPACK_COMPONENT_DLLS_DISPLAY_NAME         "Needed DLLs")
 
 # Descriptions
 SET(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION
 	"paramedit and paraminspector executables")
-SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION
-	"libraries to link external projects against ${PROJECT_NAME}")
-SET(CPACK_COMPONENT_HEADERS_DESCRIPTION
-	"header files for library usage")
 SET(CPACK_COMPONENT_DLLS_DESCRIPTION
 	"Qt dlls, C++ runtime; needed if you have no build environment installed")
-
-# headers only useful if libraries are installed
-SET(CPACK_COMPONENT_HEADERS_DEPENDS		libraries)
 
 # grouping
 SET(CPACK_COMPONENT_APPLICATIONS_GROUP  Runtime)
 SET(CPACK_COMPONENT_DLLS_GROUP          Runtime)
-SET(CPACK_COMPONENT_LIBRARIES_GROUP     Development)
-SET(CPACK_COMPONENT_HEADERS_GROUP       Development)
 
 SET(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION
 	"applications and shared libraries")
-SET(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION
-	"Tools you need to develop software that uses ${PROJECT_NAME}")
 
 # preselections
 SET(CPACK_COMPONENT_APPLICATIONS_REQUIRED   On)
-SET(CPACK_COMPONENT_LIBRARIES_DISABLED      On)
-SET(CPACK_COMPONENT_HEADERS_DISABLED        On)
 
 # add optional documentation if avaiable
 IF(ENABLE_DOC)

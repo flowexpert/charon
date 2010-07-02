@@ -19,38 +19,21 @@ IF(NOT CMAKE_VERSION)
 	SET(CMAKE_VERSION "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
 ENDIF(NOT CMAKE_VERSION)
 
-# find QT4 with required options
-IF(NOT DEFINED WITH_WEBKIT)
-	SET(WITH_WEBKIT TRUE)
-ENDIF()
-IF(${CMAKE_VERSION} VERSION_LESS 2.8.0)
-	# old interface (for compatibility reasons)
-	SET(QT_MIN_VERSION 4.4.0)
-	FIND_PACKAGE(Qt4 REQUIRED)
-	IF(WITH_WEBKIT)
-		SET(QT_USE_QTWEBKIT TRUE)
-	ENDIF()
-	SET(QT_USE_QTSVG TRUE)
-	SET(QT_USE_QTTEST TRUE)
-ELSE(${CMAKE_VERSION} VERSION_LESS 2.8.0)
-	# new and intuitive FindQt4 interface
-	IF(WITH_WEBKIT)
-		SET(QT_COND_WEBKIT QtWebkit)
-	ENDIF()
-	FIND_PACKAGE(Qt4 4.4.0
-		COMPONENTS QtCore QtGui QtSVG QtTest ${QT_COND_WEBKIT}
-		REQUIRED
-	)
-ENDIF(${CMAKE_VERSION} VERSION_LESS 2.8.0)
-OPTION(WITH_WEBKIT "use qt webkit (build help browser)" ${QT_QTWEBKIT_FOUND})
-MARK_AS_ADVANCED(WITH_WEBKIT)
-
+# find QT4 with required options using the
+# new and intuitive FindQt4 interface
+FIND_PACKAGE(Qt4 4.4.0
+	COMPONENTS QtCore QtGui QtSVG QtTest QtWebkit
+	REQUIRED
+)
 # set up Qt environment (e.g. set QT_LIBRARIES)
 INCLUDE(${QT_USE_FILE})
+IF(APPLE)
+	ADD_DEFINITIONS(-DQ_WS_MAC32)
+ENDIF(APPLE)
 
 # determine project svn information if possible
 # make sure to switch WITN_SVN off if not building from svn sources
-FIND_PACKAGE(Subversion QUIET)
+FIND_PACKAGE(Subversion)
 IF(Subversion_FOUND)
 	OPTION(WITH_SVN "try to determine svn revision information" ON)
 	IF(WITH_SVN)
@@ -67,7 +50,7 @@ ENDIF(Subversion_FOUND)
 SET(tuchulcha_BUILD_INFO "${tuchulcha_BUILD_INFO}"
 	CACHE STRING "additional build information (optional)" FORCE)
 
-FIND_PACKAGE(charon-core REQUIRED)
+FIND_PACKAGE(charon-core 0.1.4 REQUIRED HINTS $ENV{CHARON_DIR})
 INCLUDE(InitFlags)
 
 IF(WIN32)
@@ -76,21 +59,10 @@ IF(WIN32)
     INCLUDE(appicon)
 ENDIF(WIN32)
 
-
-IF(MSVC)
-    # visual stiudio is supported since version 2.22
-    FIND_PACKAGE(Graphviz 2.22 REQUIRED)
-ELSE(MSVC)
-    # other builds can use older versions
-    FIND_PACKAGE(Graphviz 2.16 REQUIRED)
-ENDIF(MSVC)
-
-IF(APPLE)
-	ADD_DEFINITIONS(-DQ_WS_MAC32)
-ENDIF(APPLE)
+FIND_PACKAGE(Graphviz 2.20 REQUIRED)
 
 # set up documentation generation
-FIND_PACKAGE(Doxygen QUIET)
+FIND_PACKAGE(Doxygen)
 INCLUDE(Documentation)
 
 # CPack descriptions for package generation
@@ -116,3 +88,4 @@ ADD_SUBDIRECTORY (test)
 ADD_SUBDIRECTORY (app)
 
 INCLUDE(InstallDlls)
+INCLUDE(Features)

@@ -1,5 +1,5 @@
 INCLUDE_DIRECTORIES(${CHARON_UTILS_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${CHARON_CORE_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR}/src)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
@@ -46,8 +46,8 @@ ADD_DEFINITIONS(-DTUCHULCHA_VERSION="${tuchulcha_VERSION}")
 IF(tuchulcha_BUILD_INFO)
 	ADD_DEFINITIONS(-DBUILD_INFO="${tuchulcha_BUILD_INFO}")
 ENDIF()
-ADD_DEFINITIONS(-DCHARON_CORE_VERSION="${CHARON_CORE_VERSION}")
-ADD_DEFINITIONS(-DGRAPHVIZ_VERSION="${GRAPHVIZ_VERSION_STRING}")
+ADD_DEFINITIONS(-DCHARON_CORE_VERSION="${charon-core_VERSION}")
+ADD_DEFINITIONS(-DGRAPHVIZ_VERSION="${Graphviz_VERSION}")
 
 TARGET_LINK_LIBRARIES(tuchulcha editgraph ${QT_QTMAIN_LIBRARY} charon-plugins)
 
@@ -73,8 +73,8 @@ INSTALL(
     COMPONENT   applications
 )
 
-#Create application package
 IF(APPLE)
+	# Create apple application package
 	CONFIGURE_FILE(
 		${CMAKE_CURRENT_SOURCE_DIR}/MacOSInfo.plist.in
 		${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MacOSInfo.plist
@@ -111,19 +111,23 @@ ELSE(APPLE)
 			${PROJECT_SOURCE_DIR}/icons/tc.png
 			DESTINATION share/icons/hicolor/48x48/apps
 			RENAME tuchulcha.png
+	    	COMPONENT   applications
 		)
 		INSTALL(FILES
 			tuchulcha.desktop
 			DESTINATION share/applications
+	    	COMPONENT   applications
 		)
 		INSTALL(FILES
 			${PROJECT_SOURCE_DIR}/icons/tc2.png
 			DESTINATION share/icons/hicolor/48x48/apps
 			RENAME paraminspector.png
+	    	COMPONENT   applications
 		)
 		INSTALL(FILES
 			paraminspector.desktop
 			DESTINATION share/applications
+	    	COMPONENT   applications
 		)
 	ENDIF()
 ENDIF(APPLE)

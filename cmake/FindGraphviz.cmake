@@ -3,15 +3,15 @@
 #
 # Usage:
 #  FIND_PACKAGE(Graphviz[ REQUIRED][ QUIET])
-#  INCLUDE_DIRECTORIES(${GRAPHVIZ_INCLUDE_DIRS})
+#  INCLUDE_DIRECTORIES(${Graphviz_INCLUDE_DIRS})
 #  ADD_EXECUTABLE(bla main.cpp)
-#  TARGET_LINK_LIBRARIES(bla ${GRAPHVIZ_LIBRARIES})
+#  TARGET_LINK_LIBRARIES(bla ${Graphviz_LIBRARIES})
 #
 # This sets the variables:
-#  GRAPHVIZ_INCLUDE_DIRS			graphviz include directory
-#  GRAPHVIZ_LIBRARY_DIRS			graphviz library directory
-#  GRAPHVIZ_DOT_EXECUTABLE			graphviz dot executable
-#  GRAPHVIZ_VERSION_STRING			dot version string (major.minor.patch)
+#  Graphviz_INCLUDE_DIRS            graphviz include directory
+#  Graphviz_LIBRARY_DIRS            graphviz library directory
+#  Graphviz_DOT_EXECUTABLE          graphviz dot executable
+#  Graphviz_VERSION                 dot version string (major.minor.patch)
 #
 # For usage with Visual Studio you need 
 # at least version graphviz-2.22.x.msi
@@ -23,7 +23,7 @@
 # instead!
 
 # search for header files
-FIND_PATH(GRAPHVIZ_ROOT_DIR
+FIND_PATH(Graphviz_ROOT_DIR
 	NAMES			include/graphviz/gvc.h
 					include/graphviz/types.h
 					include/graphviz/graph.h
@@ -36,167 +36,170 @@ FIND_PATH(GRAPHVIZ_ROOT_DIR
 	DOC				"graphviz root directory"
 )
 
-SET(GRAPHVIZ_LIBRARY_DIRS ${GRAPHVIZ_ROOT_DIR}/lib)
-SET(GRAPHVIZ_INCLUDE_DIRS ${GRAPHVIZ_ROOT_DIR}/include ${GRAPHVIZ_ROOT_DIR}/include/graphviz)
+SET(Graphviz_LIBRARY_DIRS ${Graphviz_ROOT_DIR}/lib)
+SET(Graphviz_INCLUDE_DIRS ${Graphviz_ROOT_DIR}/include ${Graphviz_ROOT_DIR}/include/graphviz)
 
 
 # search for graphviz libraries
-FIND_LIBRARY(GRAPHVIZ_CDT_LIBRARY
+FIND_LIBRARY(Graphviz_CDT_LIBRARY
 	NAMES			cdt
-	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
+	PATHS			${Graphviz_LIBRARY_DIRS}
 	DOC				"graphviz container types"
     PATH_SUFFIXES   release release/lib
 	NO_DEFAULT_PATH
 )
-FIND_LIBRARY(GRAPHVIZ_CDT_LIBRARY_DEBUG
+FIND_LIBRARY(Graphviz_CDT_LIBRARY_DEBUG
 	NAMES			cdt
-	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
+	PATHS			${Graphviz_LIBRARY_DIRS}
 	DOC				"graphviz container types"
     PATH_SUFFIXES   debug debug/lib
 	NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY(GRAPHVIZ_GRAPH_LIBRARY
+FIND_LIBRARY(Graphviz_GRAPH_LIBRARY
 	NAMES			graph
-	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
+	PATHS			${Graphviz_LIBRARY_DIRS}
 	DOC				"graphviz container types"
     PATH_SUFFIXES   release release/lib
 	NO_DEFAULT_PATH
 )
-FIND_LIBRARY(GRAPHVIZ_GRAPH_LIBRARY_DEBUG
+FIND_LIBRARY(Graphviz_GRAPH_LIBRARY_DEBUG
 	NAMES			graph
-	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
+	PATHS			${Graphviz_LIBRARY_DIRS}
 	DOC				"graphviz container types"
     PATH_SUFFIXES   debug debug/lib
 	NO_DEFAULT_PATH
 )
 
-FIND_LIBRARY(GRAPHVIZ_GVC_LIBRARY
+FIND_LIBRARY(Graphviz_GVC_LIBRARY
 	NAMES			gvc
-	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
+	PATHS			${Graphviz_LIBRARY_DIRS}
 	DOC				"graphviz container types"
     PATH_SUFFIXES   release release/lib
 	NO_DEFAULT_PATH
 )
-FIND_LIBRARY(GRAPHVIZ_GVC_LIBRARY_DEBUG
+FIND_LIBRARY(Graphviz_GVC_LIBRARY_DEBUG
 	NAMES			gvc
-	PATHS			${GRAPHVIZ_LIBRARY_DIRS}
+	PATHS			${Graphviz_LIBRARY_DIRS}
 	DOC				"graphviz container types"
     PATH_SUFFIXES   debug debug/lib
 	NO_DEFAULT_PATH
 )
 
 # search for dot executable
-FIND_PROGRAM(GRAPHVIZ_DOT_EXECUTABLE
+FIND_PROGRAM(Graphviz_DOT_EXECUTABLE
     NAMES			dot
-	PATHS			${GRAPHVIZ_ROOT_DIR}
+	PATHS			${Graphviz_ROOT_DIR}
 	PATH_SUFFIXES	bin
     DOC				"Graphviz dot tool"
 )
 
 MARK_AS_ADVANCED(
-	GRAPHVIZ_ROOT_DIR
-	GRAPHVIZ_CDT_LIBRARY
-	GRAPHVIZ_GRAPH_LIBRARY
-	GRAPHVIZ_GVC_LIBRARY
-	GRAPHVIZ_CDT_LIBRARY_DEBUG
-	GRAPHVIZ_GRAPH_LIBRARY_DEBUG
-	GRAPHVIZ_GVC_LIBRARY_DEBUG
-	GRAPHVIZ_DOT_EXECUTABLE
+	Graphviz_ROOT_DIR
+	Graphviz_CDT_LIBRARY
+	Graphviz_GRAPH_LIBRARY
+	Graphviz_GVC_LIBRARY
+	Graphviz_CDT_LIBRARY_DEBUG
+	Graphviz_GRAPH_LIBRARY_DEBUG
+	Graphviz_GVC_LIBRARY_DEBUG
+	Graphviz_DOT_EXECUTABLE
 )
 
 # try to get graphviz version (executing dot -V)
 EXECUTE_PROCESS(
-	COMMAND			${GRAPHVIZ_DOT_EXECUTABLE} -V
-	RESULT_VARIABLE	GRAPHVIZ_DOT_RUN_RESULT
-	OUTPUT_VARIABLE	GRAPHVIZ_DOT_RUN_OUTPUT
-	ERROR_VARIABLE	GRAPHVIZ_DOT_RUN_ERROR
+	COMMAND			${Graphviz_DOT_EXECUTABLE} -V
+	RESULT_VARIABLE	Graphviz_DOT_RUN_RESULT
+	OUTPUT_VARIABLE	Graphviz_DOT_RUN_OUTPUT
+	ERROR_VARIABLE	Graphviz_DOT_RUN_ERROR
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 	ERROR_STRIP_TRAILING_WHITESPACE
 )
 
-SET(GRAPHVIZ_DOT_RUN_OUTPUT ${GRAPHVIZ_DOT_RUN_OUTPUT} ${GRAPHVIZ_DOT_RUN_ERROR})
-
-IF(GRAPHVIZ_DOT_RUN_RESULT AND Graphviz_FIND_REQUIRED)
-	MESSAGE(STATUS "Dot returns exit code  ${GRAPHVIZ_DOT_RUN_RESULT}")
-	MESSAGE(STATUS "Dot output: ${GRAPHVIZ_DOT_RUN_OUTPUT}")
-	MESSAGE(FATAL_ERROR "Dot executable NOT working!")
-ENDIF(GRAPHVIZ_DOT_RUN_RESULT AND Graphviz_FIND_REQUIRED)
+SET(Graphviz_DOT_RUN_OUTPUT ${Graphviz_DOT_RUN_OUTPUT} ${Graphviz_DOT_RUN_ERROR})
+IF(Graphviz_DOT_RUN_RESULT AND Graphviz_FIND_REQUIRED)
+	MESSAGE(FATAL_ERROR
+		" Dot executable NOT working:\n"
+		"   Dot returns exit code  ${Graphviz_DOT_RUN_RESULT}\n"
+		"   Dot output: ${Graphviz_DOT_RUN_OUTPUT}"
+	)
+ENDIF()
 
 # parse dot output
 STRING(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
-	GRAPHVIZ_VERSION_STRING "${GRAPHVIZ_DOT_RUN_OUTPUT}")
-IF(NOT GRAPHVIZ_VERSION_STRING)
+	Graphviz_VERSION "${Graphviz_DOT_RUN_OUTPUT}")
+IF(NOT Graphviz_VERSION)
 	# Version String like x.xx (e.g. 2.22)
 	STRING(REGEX MATCH "[0-9]+\\.[0-9]+"
-		GRAPHVIZ_VERSION_STRING "${GRAPHVIZ_DOT_RUN_OUTPUT}")
-ENDIF(NOT GRAPHVIZ_VERSION_STRING)
+		Graphviz_VERSION "${Graphviz_DOT_RUN_OUTPUT}")
+ENDIF()
 
 # check if version matches
-SET(GRAPHVIZ_VERSION_FINE TRUE)
+SET(Graphviz_VERSION_FINE TRUE)
 IF(Graphviz_FIND_VERSION)
-	IF(NOT GRAPHVIZ_VERSION_STRING)
-		MESSAGE("Error: Graphviz version string could not be parsed!")
-		MESSAGE("Version  Output: ${GRAPHVIZ_DOT_RUN_OUTPUT}")
-		MESSAGE("Expected Output: dot - graphviz version x.xx.x(.xxxxxxxx) (xxxxxxxx.xxxx)")
-		MESSAGE(FATAL_ERROR "Version parse Error")
-	ENDIF(NOT GRAPHVIZ_VERSION_STRING)
-	SET(GRAPHVIZ_VERSION_EXPECTED
+	IF(NOT Graphviz_VERSION)
+		MESSAGE(FATAL_ERROR
+			" Version parse Error:\n"
+			"   Error: Graphviz version string could not be parsed!\n"
+			"   Version  Output: ${Graphviz_DOT_RUN_OUTPUT}\n"
+			"   Expected Output: dot - graphviz version x.xx.x(.xxxxxxxx) (xxxxxxxx.xxxx)"
+		)
+	ENDIF()
+	SET(Graphviz_VERSION_EXPECTED
 		"${Graphviz_FIND_VERSION_MAJOR}.${Graphviz_FIND_VERSION_MINOR}.${Graphviz_FIND_VERSION_PATCH}"
 	)
-	IF (${GRAPHVIZ_VERSION_STRING} VERSION_LESS ${GRAPHVIZ_VERSION_EXPECTED})
+	IF(${Graphviz_VERSION} VERSION_LESS ${Graphviz_VERSION_EXPECTED})
 	  MESSAGE(SEND_ERROR
-	      "Found Graphviz version is not high eanough!"
-		  "Version string  : ${GRAPHVIZ_VERSION_STRING}"
-		  "Version expected: ${GRAPHVIZ_VERSION_EXPECTED}"
+	      " Found Graphviz version is not high eanough!\n"
+		  "   Version string  : ${Graphviz_VERSION}"
+		  "   Version expected: ${Graphviz_VERSION_EXPECTED}"
       )
-      SET(GRAPHVIZ_VERSION_FINE FALSE)
-	ENDIF (${GRAPHVIZ_VERSION_STRING} VERSION_LESS ${GRAPHVIZ_VERSION_EXPECTED})
+      SET(Graphviz_VERSION_FINE FALSE)
+	ENDIF()
 ENDIF(Graphviz_FIND_VERSION)
 
 # result output generated by FindPackageHandleStandardArgs
-SET(GRAPHVIZ_FOUND_MESSAGE "${GRAPHVIZ_DOT_EXECUTABLE} (Version ${GRAPHVIZ_VERSION_STRING})")
+SET(Graphviz_FOUND_MESSAGE "${Graphviz_DOT_EXECUTABLE} (Version ${Graphviz_VERSION})")
 INCLUDE(FindPackageHandleStandardArgs)
 
 IF(APPLE)
 	# check if everything went fine
 	FIND_PACKAGE_HANDLE_STANDARD_ARGS(Graphviz DEFAULT_MSG
-		GRAPHVIZ_FOUND_MESSAGE
-		GRAPHVIZ_GRAPH_LIBRARY
-		GRAPHVIZ_ROOT_DIR
-		GRAPHVIZ_CDT_LIBRARY
-		GRAPHVIZ_GVC_LIBRARY
-		GRAPHVIZ_DOT_EXECUTABLE
+		Graphviz_FOUND_MESSAGE
+		Graphviz_GRAPH_LIBRARY
+		Graphviz_ROOT_DIR
+		Graphviz_CDT_LIBRARY
+		Graphviz_GVC_LIBRARY
+		Graphviz_DOT_EXECUTABLE
 		#Disabled because checking does not work currently.
-		#GRAPHVIZ_VERSION_FINE
+		#Graphviz_VERSION_FINE
 	)
 ELSE(APPLE)
 	# check if everything went fine
 	FIND_PACKAGE_HANDLE_STANDARD_ARGS(Graphviz DEFAULT_MSG
-		GRAPHVIZ_FOUND_MESSAGE
-		GRAPHVIZ_GRAPH_LIBRARY
-		GRAPHVIZ_ROOT_DIR
-		GRAPHVIZ_CDT_LIBRARY
-		GRAPHVIZ_GVC_LIBRARY
-		GRAPHVIZ_DOT_EXECUTABLE
-		GRAPHVIZ_VERSION_FINE
+		Graphviz_FOUND_MESSAGE
+		Graphviz_GRAPH_LIBRARY
+		Graphviz_ROOT_DIR
+		Graphviz_CDT_LIBRARY
+		Graphviz_GVC_LIBRARY
+		Graphviz_DOT_EXECUTABLE
+		Graphviz_VERSION_FINE
 	)
 ENDIF(APPLE)
 
-SET(GRAPHVIZ_LIBRARIES
-	optimized ${GRAPHVIZ_GRAPH_LIBRARY}
-	debug ${GRAPHVIZ_GRAPH_LIBRARY_DEBUG}
-	optimized ${GRAPHVIZ_CDT_LIBRARY}
-	debug ${GRAPHVIZ_CDT_LIBRARY_DEBUG}
-	optimized ${GRAPHVIZ_GVC_LIBRARY}
-	debug ${GRAPHVIZ_GVC_LIBRARY_DEBUG}
+SET(Graphviz_LIBRARIES
+	optimized ${Graphviz_GRAPH_LIBRARY}
+	debug ${Graphviz_GRAPH_LIBRARY_DEBUG}
+	optimized ${Graphviz_CDT_LIBRARY}
+	debug ${Graphviz_CDT_LIBRARY_DEBUG}
+	optimized ${Graphviz_GVC_LIBRARY}
+	debug ${Graphviz_GVC_LIBRARY_DEBUG}
 )
-#MESSAGE("Graphviz libraries: ${GRAPHVIZ_LIBRARIES}")
+#MESSAGE("Graphviz libraries: ${Graphviz_LIBRARIES}")
 
 # cleanup
 IF(COMMAND unset)
-    UNSET(GRAPHVIZ_DOT_RUN_RESULT)
-    UNSET(GRAPHVIZ_DOT_RUN_OUTPUT)
-    UNSET(GRAPHVIZ_DOT_RUN_ERROR)
-    UNSET(GRAPHVIZ_FOUND_MESSAGE)
+    UNSET(Graphviz_DOT_RUN_RESULT)
+    UNSET(Graphviz_DOT_RUN_OUTPUT)
+    UNSET(Graphviz_DOT_RUN_ERROR)
+    UNSET(Graphviz_FOUND_MESSAGE)
 ENDIF(COMMAND unset)
