@@ -73,6 +73,16 @@ INSTALL(
     COMPONENT   applications
 )
 
+IF(UNIX)
+	INSTALL(
+		FILES
+			${PROJECT_SOURCE_DIR}/man/tuchulcha.1
+			${PROJECT_SOURCE_DIR}/man/paraminspector.1
+		DESTINATION  share/man/man1
+		COMPONENT    applications
+	)
+ENDIF(UNIX)
+
 IF(APPLE)
 	# Create apple application package
 	CONFIGURE_FILE(
