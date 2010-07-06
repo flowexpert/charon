@@ -23,8 +23,6 @@ SET(CPACK_STRIP_FILES FALSE)
 SET(CPACK_SOURCE_IGNORE_FILES
 	.svn
 	./*/.svn
-	bin
-	build
 	".#"
 	"#.*~"
 )
