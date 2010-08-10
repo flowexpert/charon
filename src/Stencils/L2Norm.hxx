@@ -31,7 +31,10 @@
 template <class T>
 L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
 			"Stencil modeling spatial smoothness using laplacian operator."),
-		flowGuess(true, false), robustnessTerm(true,false) // optional
+		flowGuess(true, false)
+#ifdef ROBUSTNESS
+		, robustnessTerm(true,false) // optional
+#endif
 {
 	this->_addParameter(dimensions, "dimensions", "Number of dimensions", 2u);
 	this->_addParameter(pUnknowns, "unknowns", "List of unknowns");
