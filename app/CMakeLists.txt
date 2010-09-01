@@ -17,14 +17,6 @@ INSTALL(
 	COMPONENT    applications
 )
 
-IF(UNIX)
-	INSTALL(
-		FILES        ${PROJECT_SOURCE_DIR}/man/charon.1
-		DESTINATION  share/man/man1
-		COMPONENT    applications
-	)
-ENDIF(UNIX)
-
 OPTION(ENABLE_LOCAL_GETOPT "Don't use system getopt, build own one" ${WIN32})
 IF(ENABLE_LOCAL_GETOPT)
 	ADD_DEFINITIONS(-DSTANDALONE_GETOPT)
