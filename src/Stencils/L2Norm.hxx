@@ -221,53 +221,46 @@ void L2Norm<T>::updateStencil(
 
 	//save point (needed for L2Norm<T>::execute())
 	_point = Point4D<int>();
-	double a=0;
-	double b=0;
-	double c=0;
-	double d=0;
-	double e=0;
-	std::ostringstream msg;
+
 #ifdef ROBUSTNESS
-	if(robustnessTerm.connected())
-		{
-			switch (dimensions) {
-							case 1:
-								msg << __FILE__ << ":" << __LINE__ << ":\n\t";
-								msg << "robustness for 1D is not implemented yet!\n\t";
-								throw std::runtime_error(msg.str());
+	double a=0, b=0, c=0, d=0, e=0;
+	std::ostringstream msg;
+	if(robustnessTerm.connected()) {
+		switch (dimensions) {
+		case 1:
+			msg << __FILE__ << ":" << __LINE__ << ":\n\t";
+			msg << "robustness for 1D is not implemented yet!\n\t";
+			throw std::runtime_error(msg.str());
 
-								break;
+			break;
 
-							case 2:					
-								a=(_gradientWeight(_point.x-1,_point.y)+_gradientWeight(_point.x,_point.y))/2;
-								b=(_gradientWeight(_point.x,_point.y)-_gradientWeight(_point.x-1,_point.y))/2;
-								c=-(_gradientWeight(_point.x+1,_point.y)+2*_gradientWeight(_point.x-1,_point.y)
-									+_gradientWeight(_point.x-1,_point.y)+4*_gradientWeight(_point.x,_point.y))/2;
-								c=(_gradientWeight(_point.x+1,_point.y)+_gradientWeight(_point.x,_point.y))/2;
-								d=(_gradientWeight(_point.x,_point.y+1)+_gradientWeight(_point.x,_point.y))/2;
+		case 2:
+			a=(_gradientWeight(_point.x-1,_point.y)+_gradientWeight(_point.x,_point.y))/2;
+			b=(_gradientWeight(_point.x,_point.y)-_gradientWeight(_point.x-1,_point.y))/2;
+			c=-(_gradientWeight(_point.x+1,_point.y)+2*_gradientWeight(_point.x-1,_point.y)
+				+_gradientWeight(_point.x-1,_point.y)+4*_gradientWeight(_point.x,_point.y))/2;
+			c=(_gradientWeight(_point.x+1,_point.y)+_gradientWeight(_point.x,_point.y))/2;
+			d=(_gradientWeight(_point.x,_point.y+1)+_gradientWeight(_point.x,_point.y))/2;
 
-								_dataMask.fill(
-								T( 0), T(a), T( 0),
-								T(b), T(c), T(d),
-								T( 0), T(e), T( 0));
-								break;
+			_dataMask.fill(
+			T( 0), T(a), T( 0),
+			T(b), T(c), T(d),
+			T( 0), T(e), T( 0));
+			break;
 
-							case 3:
-								msg << __FILE__ << ":" << __LINE__ << ":\n\t";
-								msg << "robustness for 1D is not implemented yet!\n\t";
-								throw std::runtime_error(msg.str());
+		case 3:
+			msg << __FILE__ << ":" << __LINE__ << ":\n\t";
+			msg << "robustness for 3D is not implemented yet!\n\t";
+			throw std::runtime_error(msg.str());
+			break;
 
-								break;
-
-							case 4:
-								msg << __FILE__ << ":" << __LINE__ << ":\n\t";
-								msg << "robustness for 1D is not implemented yet!\n\t";
-								throw std::runtime_error(msg.str());
-
-								break;
-					
-			}
+		case 4:
+			msg << __FILE__ << ":" << __LINE__ << ":\n\t";
+			msg << "robustness for 4D is not implemented yet!\n\t";
+			throw std::runtime_error(msg.str());
+			break;
 		}
+	}
 #endif
 	// fill stencil with masks
 		for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {

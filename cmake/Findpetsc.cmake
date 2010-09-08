@@ -4,45 +4,79 @@
 #  FIND_PACKAGE(petsc[ REQUIRED][ QUIET])
 #  INCLUDE_DIRECTORIES(${PETSC_INCLUDE_DIRS})
 #  ADD_EXECUTABLE(bla main.cpp)
-#  TARGET_LINK_LIBRARIES(bla petsc)
+#  TARGET_LINK_LIBRARIES(bla ${PETSC_LIBRARIES})
 #
 # This sets the variables:
-#  PETSC_ROOT_DIR 		     petsc installation directory
-#  PETSC_INCLUDE_DIRS        petsc include directory
+#  PETSC_ROOT_DIR            petsc installation directory
+#  PETSC_INCLUDE_DIRS        petsc include directories
+#  PETSC_LIBRARIES           petsc libraries
 
 # search for header files
 FIND_PATH(PETSC_ROOT_DIR
-    NAMES           include/petscksp.h
-	HINTS			$ENV{PETSC_DIR}
-    PATHS           /usr
-                    /usr/local
-                    /opt/petsc
-                    /opt
-    DOC             "petsc root directory"
+	NAMES           include/petscksp.h
+	                include/petsc/petscksp.h
+	HINTS           $ENV{PETSC_DIR}
+	PATHS           /usr
+	                /usr/local
+	                /opt/petsc
+	                /opt
+	DOC             "petsc root directory"
 )
 
 # as multiple compiled version of petsc with different architectures
 # can reside in the root directory, the architecture has to be specified
 # manually using PETSC_ARCH
 # with both the ROOT_DIR and ARCH every needed path can be generated
-IF(WIN32)
-	SET(PETSC_ARCH "win_x86_32_mpiuni"
-		CACHE STRING "selecte petsc architecture"
-)
-ELSE(WIN32)
-	SET(PETSC_ARCH "linux-gnu-c++-debug"
-		CACHE STRING "selecte petsc architecture"
-	)
-ENDIF(WIN32)
-# use value of envirionmental variable if set
-IF(NOT "$ENV{PETSC_ARCH}" STREQUAL "")
-	SET(PETSC_ARCH "$ENV{PETSC_ARCH}"
-		CACHE STRING "selecte petsc architecture"
+IF(NOT PETSC_ARCH)
+	IF(WIN32)
+		SET(PETSC_ARCH "win_x86_32_mpiuni")
+	ELSE()
+		SET(PETSC_ARCH "linux-gnu-cxx-debug")
+	ENDIF()
+
+	# use value of envirionmental variable if set
+	IF(NOT "$ENV{PETSC_ARCH}" STREQUAL "")
+		SET(PETSC_ARCH "$ENV{PETSC_ARCH}")
+	ENDIF(NOT "$ENV{PETSC_ARCH}" STREQUAL "")
+
+	SET(PETSC_ARCH "${PETSC_ARCH}"
+		CACHE STRING "select petsc architecture"
 		FORCE
 	)
-ENDIF(NOT "$ENV{PETSC_ARCH}" STREQUAL "")
+ENDIF(NOT PETSC_ARCH)
+
+FIND_PATH(PETSC_INCLUDE_DIR
+	NAMES           petsc.h
+	                petscksp.h
+	HINTS           $ENV{PETSC_DIR}
+	                ${PETSC_ROOT_DIR}
+	PATH_SUFFIXES   include
+	                include/petsc
+	                petsc/include
+	DOC             "petsc headers"
+)
+FIND_PATH(PETSC_ARCH_INCLUDE_DIR
+	NAMES           petscconf.h
+	HINTS           $ENV{PETSC_DIR}
+	                ${PETSC_ROOT_DIR}
+	                ${PETSC_INCLUDE_DIR}
+	PATH_SUFFIXES   include
+	                include/petsc
+	                include/${PETSC_ARCH}
+	                include/petsc/${PETSC_ARCH}
+	                ${PETSC_ARCH}/include
+	                bmake/${PETSC_ARCH}
+	DOC             "architecture specific headers"
+)
+SET(PETSC_INCLUDE_DIRS
+	${PETSC_INCLUDE_DIR}
+	${PETSC_ARCH_INCLUDE_DIR}
+)
+
 OPTION(WITH_MPI "does PETSc use an external MPI implementation?" OFF)
 OPTION(WITH_FORTRAN "was fortran used for PETSc-compilation?" OFF)
+OPTION(PETSC_SINGLE_LIBRARY
+	"has PETSc been compiled with --with-single-library=1?" OFF)
 
 SET(PETSC_LIBRARY_SEARCH_HINT
 	${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}
@@ -51,72 +85,68 @@ SET(PETSC_LIBRARY_SEARCH_HINT
 
 # cygwin generated msvc libraries are names using the unix
 # naming scheme, therefore we have to add the names with "lib" prefix
+SET(PETSC_LIBVARS)
 FIND_LIBRARY(PETSC_LIBPETSC
 	NAMES petsc libpetsc
 	HINTS ${PETSC_LIBRARY_SEARCH_HINT}
 	PATHS ${PETSC_ROOT_DIR}
 	PATH_SUFFIXES lib lib/${PETSC_ARCH}
 )
-FIND_LIBRARY(PETSC_LIBPETSCCONTRIB
-	NAMES petsccontrib libpetsccontrib
-	HINTS ${PETSC_LIBRARY_SEARCH_HINT}
-	PATHS ${PETSC_ROOT_DIR}
-	PATH_SUFFIXES lib lib/${PETSC_ARCH}
-)
-FIND_LIBRARY(PETSC_LIBPETSCDM
-	NAMES petscdm libpetscdm
-	HINTS ${PETSC_LIBRARY_SEARCH_HINT}
-	PATHS ${PETSC_ROOT_DIR}
-	PATH_SUFFIXES lib lib/${PETSC_ARCH}
-)
-FIND_LIBRARY(PETSC_LIBPETSCKSP
-	NAMES petscksp libpetscksp
-	HINTS ${PETSC_LIBRARY_SEARCH_HINT}
-	PATHS ${PETSC_ROOT_DIR}
-	PATH_SUFFIXES lib lib/${PETSC_ARCH}
-)
-FIND_LIBRARY(PETSC_LIBPETSCMAT
-	NAMES petscmat libpetscmat
-	HINTS ${PETSC_LIBRARY_SEARCH_HINT}
-	PATHS ${PETSC_ROOT_DIR}
-	PATH_SUFFIXES lib lib/${PETSC_ARCH}
-)
-FIND_LIBRARY(PETSC_LIBPETSCSNES
-	NAMES petscsnes libpetscsnes
-	HINTS ${PETSC_LIBRARY_SEARCH_HINT}
-	PATHS ${PETSC_ROOT_DIR}
-	PATH_SUFFIXES lib lib/${PETSC_ARCH}
-)
-FIND_LIBRARY(PETSC_LIBPETSCTS
-	NAMES petscts libpetscts
-	HINTS ${PETSC_LIBRARY_SEARCH_HINT}
-	PATHS ${PETSC_ROOT_DIR}
-	PATH_SUFFIXES lib lib/${PETSC_ARCH}
-)
-FIND_LIBRARY(PETSC_LIBPETSCVEC
-	NAMES petscvec libpetscvec
-	HINTS ${PETSC_LIBRARY_SEARCH_HINT}
-	PATHS ${PETSC_ROOT_DIR}
-	PATH_SUFFIXES lib lib/${PETSC_ARCH}
-)
-FIND_LIBRARY(PETSC_LIBPETSC
-	NAMES petsc libpetsc
-	HINTS ${PETSC_LIBRARY_SEARCH_HINT}
-	PATHS ${PETSC_ROOT_DIR}
-	PATH_SUFFIXES lib lib/${PETSC_ARCH}
-)
+LIST(APPEND PETSC_LIBVARS PETSC_LIBPETSC)
+IF(NOT PETSC_SINGLE_LIBRARY)
+	FIND_LIBRARY(PETSC_LIBPETSCCONTRIB
+		NAMES petsccontrib libpetsccontrib
+		HINTS ${PETSC_LIBRARY_SEARCH_HINT}
+		PATHS ${PETSC_ROOT_DIR}
+		PATH_SUFFIXES lib lib/${PETSC_ARCH}
+	)
+	FIND_LIBRARY(PETSC_LIBPETSCDM
+		NAMES petscdm libpetscdm
+		HINTS ${PETSC_LIBRARY_SEARCH_HINT}
+		PATHS ${PETSC_ROOT_DIR}
+		PATH_SUFFIXES lib lib/${PETSC_ARCH}
+	)
+	FIND_LIBRARY(PETSC_LIBPETSCKSP
+		NAMES petscksp libpetscksp
+		HINTS ${PETSC_LIBRARY_SEARCH_HINT}
+		PATHS ${PETSC_ROOT_DIR}
+		PATH_SUFFIXES lib lib/${PETSC_ARCH}
+	)
+	FIND_LIBRARY(PETSC_LIBPETSCMAT
+		NAMES petscmat libpetscmat
+		HINTS ${PETSC_LIBRARY_SEARCH_HINT}
+		PATHS ${PETSC_ROOT_DIR}
+		PATH_SUFFIXES lib lib/${PETSC_ARCH}
+	)
+	FIND_LIBRARY(PETSC_LIBPETSCSNES
+		NAMES petscsnes libpetscsnes
+		HINTS ${PETSC_LIBRARY_SEARCH_HINT}
+		PATHS ${PETSC_ROOT_DIR}
+		PATH_SUFFIXES lib lib/${PETSC_ARCH}
+	)
+	FIND_LIBRARY(PETSC_LIBPETSCTS
+		NAMES petscts libpetscts
+		HINTS ${PETSC_LIBRARY_SEARCH_HINT}
+		PATHS ${PETSC_ROOT_DIR}
+		PATH_SUFFIXES lib lib/${PETSC_ARCH}
+	)
+	FIND_LIBRARY(PETSC_LIBPETSCVEC
+		NAMES petscvec libpetscvec
+		HINTS ${PETSC_LIBRARY_SEARCH_HINT}
+		PATHS ${PETSC_ROOT_DIR}
+		PATH_SUFFIXES lib lib/${PETSC_ARCH}
+	)
+	LIST(APPEND PETSC_LIBVARS
+		PETSC_LIBPETSCCONTRIB
+		PETSC_LIBPETSCDM
+		PETSC_LIBPETSCKSP
+		PETSC_LIBPETSCMAT
+		PETSC_LIBPETSCSNES
+		PETSC_LIBPETSCTS
+		PETSC_LIBPETSCVEC
+	)
+ENDIF(NOT PETSC_SINGLE_LIBRARY)
 
-SET(PETSC_LIBVARS
-	PETSC_LIBPETSC
-	PETSC_LIBPETSCCONTRIB
-	PETSC_LIBPETSCDM
-	PETSC_LIBPETSCKSP
-	PETSC_LIBPETSCMAT
-	PETSC_LIBPETSCSNES
-	PETSC_LIBPETSCTS
-	PETSC_LIBPETSCVEC
-	PETSC_LIBPETSC
-)
 SET(PETSC_LIBRARIES)
 
 #add blas/lapack of petsc
@@ -155,35 +185,27 @@ IF (WITH_MPI)
 	LIST(APPEND PETSC_LIBRARIES
 		${MPI_LIBRARIES}
 	)
-ELSE (WITH_MPI)
-	FIND_LIBRARY(PETSC_LIBMPIUNI
-		NAMES mpiuni libmpiuni
-		HINTS ${PETSC_LIBRARY_SEARCH_HINT}
-		PATHS ${PETSC_ROOT_DIR}
-		PATH_SUFFIXES lib lib/${PETSC_ARCH}
-	)
-	LIST(APPEND PETSC_LIBVARS
-		PETSC_LIBMPIUNI
-	)
-ENDIF (WITH_MPI)
-
-SET(PETSC_INCLUDE_DIRS
-	${PETSC_ROOT_DIR}/include
-	${PETSC_ROOT_DIR}/${PETSC_ARCH}/include
-	${PETSC_ROOT_DIR}/bmake/${PETSC_ARCH}
-)
-IF (WITH_MPI)
 	LIST(APPEND PETSC_INCLUDE_DIRS
 		${MPI_INCLUDE_PATH}
 	)
 ELSE (WITH_MPI)
+	OPTION(PETSC_NEEDS_LIBMPIUNI "require mpiuni library" ON)
+	IF(PETSC_NEEDS_LIBMPIUNI)
+		FIND_LIBRARY(PETSC_LIBMPIUNI
+			NAMES mpiuni libmpiuni
+			HINTS ${PETSC_LIBRARY_SEARCH_HINT}
+			PATHS ${PETSC_ROOT_DIR}
+			PATH_SUFFIXES lib lib/${PETSC_ARCH}
+		)
+		LIST(APPEND PETSC_LIBVARS
+			PETSC_LIBMPIUNI
+		)
+	ENDIF(PETSC_NEEDS_LIBMPIUNI)
 	LIST(APPEND PETSC_INCLUDE_DIRS
-		${PETSC_ROOT_DIR}/include/mpiuni/
-	)		
+		${PETSC_INCLUDE_DIR}/mpiuni/
+	)
 ENDIF (WITH_MPI)
-MARK_AS_ADVANCED(
-	${PETSC_LIBVARS}
-)
+
 
 # check if everything went fine
 INCLUDE(FindPackageHandleStandardArgs)
@@ -198,7 +220,9 @@ IF(NOT PETSC_ROOT_DIR)
 ENDIF(NOT PETSC_ROOT_DIR)
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(petsc DEFAULT_MSG
-    PETSC_ROOT_DIR
+	PETSC_ROOT_DIR
+	PETSC_INCLUDE_DIR
+	PETSC_ARCH_INCLUDE_DIR
 	${PETSC_LIBVARS}
 )
 
@@ -211,11 +235,13 @@ FOREACH(LIB ${PETSC_LIBVARS})
 ENDFOREACH(LIB ${PETSC_LIBVARS})
 
 MARK_AS_ADVANCED(
-    PETSC_ROOT_DIR
+	PETSC_ROOT_DIR
 	PETSC_ARCH
-    PETSC_CONFIG_DIR
+	PETSC_INCLUDE_DIR
+	PETSC_ARCH_INCLUDE_DIR
+	PETSC_NEEDS_LIBMPIUNI
+	PETSC_SINGLE_LIBRARY
+	${PETSC_LIBVARS}
 )
 
-IF(COMMAND UNSET)
-	UNSET(PETSC_LIBVARS)
-ENDIF(COMMAND UNSET)
+UNSET(PETSC_LIBVARS)
