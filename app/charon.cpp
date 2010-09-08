@@ -228,6 +228,9 @@ int run() {
 	if (Config::verbose)
 		std::cout << "Finished workflow execution." << std::endl;
 
+	//sout is still used after this point, but log may go out of scope
+	sout.assign(std::cout) ;
+	
 	return EXIT_SUCCESS;
 }
 
