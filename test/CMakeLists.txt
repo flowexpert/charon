@@ -174,6 +174,22 @@ IF(ENABLE_TEST)
 			COMMAND hornschunckyosemite
 		)
 
+		# testing Horn&Schunk without plugin usage to simplify profiling
+		ADD_EXECUTABLE(hornschuncknoplugins
+			HornSchunckYosemiteNoPlugins.cpp
+			../src/FlowFunctor.cpp
+			../src/Diff2D.cpp
+		)
+		TARGET_LINK_LIBRARIES(hornschuncknoplugins
+			charon-core
+			${PETSC_LIBRARIES}
+			${CIMG_LINK_LIBRARIES}
+		)
+		ADD_TEST(
+			NAME Petsc_HornSchunck_Yosemite_NoPlugins
+			COMMAND hornschuncknoplugins
+		)
+
 		IF(WIN32)
 			# copy needed dll for tests and application run before installing
 			GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
