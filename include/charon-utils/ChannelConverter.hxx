@@ -99,7 +99,9 @@ void ChannelConverter<T>::execute() {
 	ParameteredObject::execute();
 
 	// check permutation scheme
-	if(scheme().size() != 5) {
+	const std::string& scheme_ = scheme() ;
+	
+	if(scheme_.size() != 5) {
 		std::ostringstream msg;
 		msg << __FILE__ << ":" << __LINE__ << "\n\t";
 		msg << "lenght of scheme string invalid ";
@@ -107,20 +109,20 @@ void ChannelConverter<T>::execute() {
 		msg << "you have to specify 5 dimensions!";
 	}
 	std::string missing;
-	if(StringTool::toLowerCase(scheme()).find('x') == std::string::npos &&
-		scheme().find('0') == std::string::npos)
+	if(StringTool::toLowerCase(scheme_).find('x') == std::string::npos &&
+		scheme_.find('0') == std::string::npos)
 		missing.push_back('x');
-	if(StringTool::toLowerCase(scheme()).find('y') == std::string::npos &&
-		scheme().find('1') == std::string::npos)
+	if(StringTool::toLowerCase(scheme_).find('y') == std::string::npos &&
+		scheme_.find('1') == std::string::npos)
 		missing.push_back('y');
-	if(StringTool::toLowerCase(scheme()).find('z') == std::string::npos &&
-		scheme().find('2') == std::string::npos)
+	if(StringTool::toLowerCase(scheme_).find('z') == std::string::npos &&
+		scheme_.find('2') == std::string::npos)
 		missing.push_back('z');
-	if(StringTool::toLowerCase(scheme()).find('t') == std::string::npos &&
-		scheme().find('3') == std::string::npos)
+	if(StringTool::toLowerCase(scheme_).find('t') == std::string::npos &&
+		scheme_.find('3') == std::string::npos)
 		missing.push_back('t');
-	if(StringTool::toLowerCase(scheme()).find('v') == std::string::npos &&
-		scheme().find('4') == std::string::npos)
+	if(StringTool::toLowerCase(scheme_).find('v') == std::string::npos &&
+		scheme_.find('4') == std::string::npos)
 		missing.push_back('v');
 	if(missing.size()) {
 		std::ostringstream msg;
@@ -129,27 +131,31 @@ void ChannelConverter<T>::execute() {
 		msg << "missing: " << missing;
 	}
 
-	out().assign(
-		_select(in()[0].width(),in()[0].height(),
-				in()[0].depth(),in()[0].spectrum(),in().size(), scheme()[4]),
-		_select(in()[0].width(),in()[0].height(),
-				in()[0].depth(),in()[0].spectrum(),in().size(), scheme()[0]),
-		_select(in()[0].width(),in()[0].height(),
-				in()[0].depth(),in()[0].spectrum(),in().size(), scheme()[1]),
-		_select(in()[0].width(),in()[0].height(),
-				in()[0].depth(),in()[0].spectrum(),in().size(), scheme()[2]),
-		_select(in()[0].width(),in()[0].height(),
-				in()[0].depth(),in()[0].spectrum(),in().size(), scheme()[3])
+	cimg_library::CImgList<T>& out_ = out() ;
+	const cimg_library::CImgList<T>& in_ = in() ;
+
+	out_.assign(
+		_select(in_[0].width(),in_[0].height(),
+				in_[0].depth(),in_[0].spectrum(),in_.size(), scheme_[4]),
+		_select(in_[0].width(),in_[0].height(),
+				in_[0].depth(),in_[0].spectrum(),in_.size(), scheme_[0]),
+		_select(in_[0].width(),in_[0].height(),
+				in_[0].depth(),in_[0].spectrum(),in_.size(), scheme_[1]),
+		_select(in_[0].width(),in_[0].height(),
+				in_[0].depth(),in_[0].spectrum(),in_.size(), scheme_[2]),
+		_select(in_[0].width(),in_[0].height(),
+				in_[0].depth(),in_[0].spectrum(),in_.size(), scheme_[3])
 	);
 
-	cimglist_for(in(), t) 
-		cimg_forXYZC(in()[t],x,y,z,v)
-			out()(
-				_select(x,y,z,v,t,scheme()[4]),
-				_select(x,y,z,v,t,scheme()[0]),
-				_select(x,y,z,v,t,scheme()[1]),
-				_select(x,y,z,v,t,scheme()[2]),
-				_select(x,y,z,v,t,scheme()[3])) = in()(t,x,y,z,v);
+	
+	cimglist_for(in_, t) 
+		cimg_forXYZC(in_[t],x,y,z,v)
+			out_(
+				_select(x,y,z,v,t,scheme_[4]),
+				_select(x,y,z,v,t,scheme_[0]),
+				_select(x,y,z,v,t,scheme_[1]),
+				_select(x,y,z,v,t,scheme_[2]),
+				_select(x,y,z,v,t,scheme_[3])) = in_(t,x,y,z,v);
 }
 
 #endif
