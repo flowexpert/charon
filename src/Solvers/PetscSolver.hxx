@@ -139,11 +139,11 @@ unsigned int PetscSolver<T>::_relativeIndexToGlobalIndex(
 {
 	// offset only changes if new unknown is given
 	static int offset=0;
-	static const std::string* prevUnknown=0;
+	static std::string prevUnknown;
 
 	// update offset
-	if (prevUnknown != &unknown) {
-		prevUnknown = &unknown;
+	if (prevUnknown != unknown) {
+		prevUnknown = unknown;
 
 		// unknown Sizes iterator: usIt
 		std::map<std::string,const Roi<int>* >::const_iterator usIt;
