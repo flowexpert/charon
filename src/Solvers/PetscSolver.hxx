@@ -178,7 +178,6 @@ inline void PetscSolver<T>::_globalIndexToPoint(
 	// detect block
 	static unsigned int blockBegin = 0;
 	static unsigned int blockEnd = 0;
-	static const Roi<int>* dim = 0;
 	static int dx, dy, dz, dt;
 	static Point4D<int> offset;
 	static std::string memUnknown;
@@ -196,7 +195,7 @@ inline void PetscSolver<T>::_globalIndexToPoint(
 
 		assert(usIt != unknownSizes.end());
 		memUnknown = usIt->first;
-		dim = usIt->second;
+		const Roi<int>* dim = usIt->second;
 		dx = dim->getWidth();
 		dy = dim->getHeight();
 		dz = dim->getDepth();
