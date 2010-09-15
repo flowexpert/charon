@@ -164,34 +164,53 @@ void PetscSolver<T>::_globalIndexToPoint(
 		Point4D<int>& p)
 {
 	// detect block
-	unsigned int blockBegin = 0;
-	unsigned int blockEnd;
-	std::map<std::string, const Roi<int>* >::const_iterator usIt;
-	for(usIt=unknownSizes.begin(); usIt !=unknownSizes.end(); usIt++) {
-		blockEnd = blockBegin + usIt->second->getVolume();
-		if(vi >= blockBegin && vi < blockEnd)
-			break;
-		blockBegin = blockEnd;
+	static unsigned int blockBegin = 0;
+	static unsigned int blockEnd = 0;
+	static const Roi<int>* dim = 0;
+	static int dx, dy, dz, dt;
+	static Point4D<int> offset;
+	static std::string memUnknown;
+
+	// check if we are still in the same block
+	// if not, update parameters
+	if (!(vi >= blockBegin && vi < blockEnd)) {
+		std::map<std::string, const Roi<int>* >::const_iterator usIt;
+		for(usIt=unknownSizes.begin(); usIt !=unknownSizes.end(); usIt++) {
+			blockEnd = blockBegin + usIt->second->getVolume();
+			if(vi >= blockBegin && vi < blockEnd)
+				break;
+			blockBegin = blockEnd;
+		}
+
+		assert(usIt != unknownSizes.end());
+		memUnknown = usIt->first;
+		dim = usIt->second;
+		dx = dim->getWidth();
+		dy = dim->getHeight();
+		dz = dim->getDepth();
+		dt = dim->getDuration();
+		Point4D<int> tmp(
+				dim->xBegin, dim->yBegin, dim->zBegin, dim->tBegin);
+		offset = tmp;
 	}
-	assert(usIt != unknownSizes.end());
-	unknown = usIt->first;
+
+	unknown = memUnknown;
 
 	// calculate coordinates relative to block
-	unsigned int diff = vi - blockBegin;
-	const Roi<int>& dim = *(usIt->second);
-	p.x =  diff % (dim.getWidth());
-	assert((int)diff >= p.x);
+	int diff = vi - blockBegin;
+
+	p.x =  diff % dx;
+	assert(diff >= p.x);
 	diff -= p.x;
-	p.y =  (diff/(dim.getWidth()))%dim.getHeight();
-	assert((int)diff >= p.y*dim.getWidth());
-	diff -= (p.y*dim.getWidth());
-	p.z =  (diff/(dim.getWidth()*dim.getHeight()))%dim.getDepth();
-	assert((int)diff >= p.z*dim.getWidth()*dim.getHeight());
-	diff -= (p.z*dim.getWidth()*dim.getHeight());
-	p.t =  (diff/(dim.getWidth()*dim.getHeight()*dim.getDepth()))%dim.getDuration();
+	p.y =  (diff/dx) % dy;
+	assert(diff >= p.y*dx);
+	diff -= (p.y*dx);
+	p.z =  (diff/(dx*dy))%dz;
+	assert(diff >= p.z*dx*dy);
+	diff -= (p.z*dx*dy);
+	p.t =  (diff/(dx*dy*dz))%dt;
 
 	// correct global block coodinates as offset
-	Point4D<int> offset(dim.xBegin, dim.yBegin, dim.zBegin, dim.tBegin);
 	p += offset;
 }
 
