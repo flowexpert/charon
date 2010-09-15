@@ -91,7 +91,7 @@ protected:
 	 *	@see getCoordinate()
 	 *	@return                       Relative vector index.
 	 */
-	static unsigned int _pointToRelativeIndex(
+	inline static unsigned int _pointToRelativeIndex(
 			const Point4D<int>& p /**[in] point to convert*/,
 			const Roi<int>& dim   /**[in] dimensions of the ROI around p*/);
 
@@ -105,7 +105,7 @@ protected:
 	 *	@see getCoordinate()
 	 *	@return                       Global vector index.
 	 */
-	static unsigned int _relativeIndexToGlobalIndex(
+	inline static unsigned int _relativeIndexToGlobalIndex(
 			const unsigned int i,
 			const std::string& unknown,
 			const std::map<std::string,const Roi<int>* >& unknownSizes);
@@ -127,8 +127,8 @@ protected:
 	 *	@see getIndex()
 	 *	@see getVectorIndex()
 	 */
-	static void _globalIndexToPoint(
-			const unsigned int vi,
+	inline static void _globalIndexToPoint(
+			const unsigned int& vi,
 			const std::map<std::string, const Roi<int>* >& unknownSizes,
 			std::string& unknown, Point4D<int>& p);
 
@@ -139,7 +139,7 @@ protected:
 	 *	@param[in] unknownSizes       Map of ROIs associated to their unknown
 	 *	@return                       global index
 	 */
-	static unsigned int _pointToGlobalIndex(
+	inline static unsigned int _pointToGlobalIndex(
 			const Point4D<int>& p,
 			const std::string& unknown,
 			const std::map<std::string, const Roi<int>* >& unknownSizes);

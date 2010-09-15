@@ -39,6 +39,7 @@
 #include <charon-utils/Roi.hxx>
 #include <charon-utils/FileReader.hxx>
 #include <charon-utils/Crop.hxx>
+#include <charon-utils/Convolution.hxx>
 #include <BrightnessModels/Constant.hxx>
 #include <MotionModels/LocalConstant.hxx>
 #include <Diff2D.hxx>

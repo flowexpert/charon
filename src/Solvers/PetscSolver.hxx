@@ -96,7 +96,7 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 }
 
 template <typename T>
-unsigned int PetscSolver<T>::_pointToRelativeIndex(
+inline unsigned int PetscSolver<T>::_pointToRelativeIndex(
 		const Point4D<int>& p,
 		const Roi<int>& dim)
 {
@@ -132,7 +132,7 @@ unsigned int PetscSolver<T>::_pointToRelativeIndex(
 }
 
 template <typename T>
-unsigned int PetscSolver<T>::_relativeIndexToGlobalIndex(
+inline unsigned int PetscSolver<T>::_relativeIndexToGlobalIndex(
 		const unsigned int i,
 		const std::string& unknown,
 		const std::map<std::string,const Roi<int>*>& unknownSizes)
@@ -157,8 +157,20 @@ unsigned int PetscSolver<T>::_relativeIndexToGlobalIndex(
 }
 
 template <typename T>
-void PetscSolver<T>::_globalIndexToPoint(
-		const unsigned int vi,
+inline unsigned int PetscSolver<T>::_pointToGlobalIndex(
+		const Point4D<int>& p,
+		const std::string& unknown,
+		const std::map<std::string,const Roi<int>*>& unknownSizes)
+{
+	unsigned int result;
+	result = _pointToRelativeIndex(p,*(unknownSizes.find(unknown)->second));
+	result = _relativeIndexToGlobalIndex(result, unknown, unknownSizes);
+	return result;
+}
+
+template <typename T>
+inline void PetscSolver<T>::_globalIndexToPoint(
+		const unsigned int& vi,
 		const std::map<std::string, const Roi<int>*>& unknownSizes,
 		std::string& unknown,
 		Point4D<int>& p)
@@ -212,18 +224,6 @@ void PetscSolver<T>::_globalIndexToPoint(
 
 	// correct global block coodinates as offset
 	p += offset;
-}
-
-template <typename T>
-unsigned int PetscSolver<T>::_pointToGlobalIndex(
-		const Point4D<int>& p,
-		const std::string& unknown,
-		const std::map<std::string,const Roi<int>*>& unknownSizes)
-{
-	unsigned int result;
-	result = _pointToRelativeIndex(p,*(unknownSizes.find(unknown)->second));
-	result = _relativeIndexToGlobalIndex(result, unknown, unknownSizes);
-	return result;
 }
 
 template <typename T>
