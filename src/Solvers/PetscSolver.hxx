@@ -229,51 +229,30 @@ template <typename T>
 Point4D<int> PetscSolver<T>::_getBoundary(Point4D<int>& p) const {
 	// we just need read-only acces to the global roi
 	const Roi<int>& globalRoi = *(this->roi());
-	// First, identify the case
-	//
-	// Point4D caseID does not contain coordinates in this scope.
-	// It contains an identification for the different cases of boundary
-	// conditions for easy and efficient handling.
-	Point4D<int> caseID;
-	if (p.x <= globalRoi.xBegin) {caseID.x = 0;}
-	if (p.x > globalRoi.xBegin && p.x < globalRoi.xEnd) {caseID.x = 1;}
-	if (p.x >= globalRoi.xEnd) {caseID.x = 2;}
-	if (p.y <= globalRoi.yBegin) {caseID.y = 0;}
-	if (p.y > globalRoi.yBegin && p.y < globalRoi.yEnd) {caseID.y = 1;}
-	if (p.y >= globalRoi.yEnd) {caseID.y = 2;}
-	if (p.z <= globalRoi.zBegin) {caseID.z = 0;}
-	if (p.z > globalRoi.zBegin && p.z < globalRoi.zEnd) {caseID.z = 1;}
-	if (p.z >= globalRoi.zEnd) {caseID.z = 2;}
-	if (p.t <= globalRoi.tBegin) {caseID.t = 0;}
-	if (p.t > globalRoi.tBegin && p.t < globalRoi.tEnd) {caseID.t = 1;}
-	if (p.t >= globalRoi.tEnd) {caseID.t = 2;}
 
-	Point4D<int> result;
+	// per default, use coordinates of p
+	Point4D<int> result(p);
 
-	//resolve each dimension of the case
-	switch(caseID.x) {
-		case 0: result.x = globalRoi.xBegin; break;
-		case 1: result.x = p.x; break;
-		case 2: result.x = globalRoi.xEnd-1; break;
-	}
+	// now use nearest boundary, if p is outside the global ROI
+	if (p.x <= globalRoi.xBegin)
+		result.x = globalRoi.xBegin;
+	else if (p.x >= globalRoi.xEnd)
+		result.x = globalRoi.xEnd-1;
 
-	switch(caseID.y) {
-		case 0: result.y = globalRoi.yBegin; break;
-		case 1: result.y = p.y; break;
-		case 2: result.y = globalRoi.yEnd-1; break;
-	}
+	if (p.y <= globalRoi.yBegin)
+		result.y = globalRoi.yBegin;
+	else if (p.y >= globalRoi.yEnd)
+		result.y = globalRoi.yEnd-1;
 
-	switch(caseID.z) {
-		case 0: result.z = globalRoi.zBegin; break;
-		case 1: result.z = p.z; break;
-		case 2: result.z = globalRoi.zEnd-1; break;
-	}
+	if (p.z <= globalRoi.zBegin)
+		result.z = globalRoi.zBegin;
+	else if (p.z >= globalRoi.zEnd)
+		result.z = globalRoi.zEnd-1;
 
-	switch(caseID.t) {
-		case 0: result.t = globalRoi.tBegin; break;
-		case 1: result.t = p.t; break;
-		case 2: result.t = globalRoi.tEnd-1; break;
-	}
+	if (p.t <= globalRoi.tBegin)
+		result.t = globalRoi.tBegin;
+	else if (p.t >= globalRoi.tEnd)
+		result.t = globalRoi.tEnd-1;
 
 	return result;
 }
