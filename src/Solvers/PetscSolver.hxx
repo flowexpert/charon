@@ -49,7 +49,7 @@ PetscSolver<T>::PetscMetaStencil::PetscMetaStencil() :
 
 template <typename T>
 unsigned int PetscSolver<T>::PetscMetaStencil::update(
-		const std::string unknown,
+		const std::string& unknown,
 		const Point4D<int>& p,
 		const std::map<std::string,const Roi<int>*>& unknownSizes,
 		PetscInt*& columns,
