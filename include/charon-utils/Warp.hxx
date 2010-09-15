@@ -53,6 +53,9 @@ void Warp<T>::execute() {
 	int depth = this->image_sequence()[0].depth();
 	int spectrum = this->image_sequence()[0].spectrum();
 
+	if(flow_sequence().size() <= 1)
+	{	throw std::runtime_error("Slot \"Image flow\" must contain at least 2 images (XY)") ;	}
+
 	int spectrum_increment = 0;
 	if (spectrum == this->flow_sequence()[0].spectrum() + 1) {
 		sout << "Ignoring first image in sequence." << std::endl;
