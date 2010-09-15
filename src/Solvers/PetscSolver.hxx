@@ -100,16 +100,34 @@ unsigned int PetscSolver<T>::_pointToRelativeIndex(
 		const Point4D<int>& p,
 		const Roi<int>& dim)
 {
+	// many of these parameters do change seldomly
+	static const Roi<int>* pDim = 0;
+	const  int mx=1;
+	static int my=0, mz=0, mt=0;
+	static int ox=0, oy=0, oz=0, ot=0;
+
+	// update parameters if new ROI is used
+	if (pDim != &dim) {
+		pDim = &dim;
+		my = mx * pDim->getWidth();
+		mz = my * pDim->getHeight();
+		mt = mz * pDim->getDepth();
+		ox=pDim->xBegin;
+		oy=pDim->yBegin;
+		oz=pDim->zBegin;
+		ot=pDim->tBegin;
+	}
+
+	assert(mx != 0);
+	assert(my != 0);
+	assert(mz != 0);
+	assert(mt != 0);
+
 	unsigned int res = 0;
-	Point4D<int> offset(dim.xBegin,dim.yBegin,dim.zBegin,dim.tBegin);
-	Point4D<int> cur = p;
-	cur -= offset;
-
-	res += cur.t * (dim.getWidth() * dim.getHeight() * dim.getDepth());
-	res += cur.z * (dim.getWidth() * dim.getHeight());
-	res += cur.y * (dim.getWidth());
-	res += cur.x;
-
+	res += (p.x-ox) * mx;
+	res += (p.y-oy) * my;
+	res += (p.z-oz) * mz;
+	res += (p.t-ot) * mt;
 	return res;
 }
 
@@ -119,15 +137,23 @@ unsigned int PetscSolver<T>::_relativeIndexToGlobalIndex(
 		const std::string& unknown,
 		const std::map<std::string,const Roi<int>*>& unknownSizes)
 {
-	unsigned int res = 0;
+	// offset only changes if new unknown is given
+	static int offset=0;
+	static const std::string* prevUnknown=0;
 
-	// unknown Sizes iterator: usIt
-	std::map<std::string,const Roi<int>* >::const_iterator usIt;
-	for(usIt=unknownSizes.begin(); usIt != unknownSizes.find(unknown); usIt++)
-		res += usIt->second->getVolume();
+	// update offset
+	if (prevUnknown != &unknown) {
+		prevUnknown = &unknown;
 
-	res += i;
-	return res;
+		// unknown Sizes iterator: usIt
+		std::map<std::string,const Roi<int>* >::const_iterator usIt;
+
+		offset = 0;
+		for(usIt=unknownSizes.begin();usIt!=unknownSizes.find(unknown);usIt++)
+			offset += usIt->second->getVolume();
+	}
+
+	return offset + i;
 }
 
 template <typename T>
