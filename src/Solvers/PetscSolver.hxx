@@ -87,8 +87,8 @@ unsigned int PetscSolver<T>::PetscMetaStencil::update(
 		Point4D<int> curArg = *pIt;
 		curArg += p;
 		curArg -= this->center;
-		PetscInt curCol =
-			PetscSolver<T>::_pointToGlobalIndex(curArg,unknown,unknownSizes);
+		PetscInt curCol = PetscSolver<T>::_pointToGlobalIndex(
+				curArg,unknown,unknownSizes);
 		columns[i] = curCol;
 		values[i] = this->data(pIt->x, pIt->y, pIt->z, pIt->t);
 	}

@@ -73,7 +73,7 @@ int test() {
 	assert(comparator);
 	std::cout << "mean endpoint error: "
 			<< comparator->getMeanEndpointError() << std::endl;
-	assert(comparator->getMeanEndpointError() <= 0.2);
+	assert(comparator->getMeanEndpointError() <= 0.12);
 
 	man.reset();
 	sout.assign();

@@ -101,7 +101,7 @@ int test() {
 	analysis.execute();
 	double err = analysis.getMeanEndpointError();
 	std::cout << "mean endpoint error: " << err << std::endl;
-	assert(err <= 0.2);
+	assert(err <= 0.12);
 
 	return EXIT_SUCCESS;
 }
