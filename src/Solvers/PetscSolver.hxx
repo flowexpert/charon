@@ -614,16 +614,16 @@ int PetscSolver<T>::petscExecute() {
 				unknown,p,unknownSizes,columns,values);
 
 			// write values into matrix
-			ierr = MatSetValues(A,1,&j,ne,columns,values,INSERT_VALUES);
+			ierr = MatSetValues(A,1,&j,ne,columns,values,ADD_VALUES);
 				CHKERRQ(ierr);
 
 			// add missing entries (cross terms)
 			ne = _addCrossTerms(unknown, p, unknownSizes, columns, values);
-			ierr = MatSetValues(A,1,&j,ne,columns,values,INSERT_VALUES);
+			ierr = MatSetValues(A,1,&j,ne,columns,values,ADD_VALUES);
 				CHKERRQ(ierr);
 
 			// and right hand side
-			ierr = VecSetValues(b,1,&j,&rhs,INSERT_VALUES); CHKERRQ(ierr);
+			ierr = VecSetValues(b,1,&j,&rhs,ADD_VALUES); CHKERRQ(ierr);
 		}
 		else {
 			/*
@@ -641,7 +641,7 @@ int PetscSolver<T>::petscExecute() {
 			values[1] = -1;
 			columns[0] = j;
 			columns[1] = _pointToGlobalIndex(boundary, unknown, unknownSizes);
-			ierr = MatSetValues(A,1,&j,2,columns,values,INSERT_VALUES);
+			ierr = MatSetValues(A,1,&j,2,columns,values,ADD_VALUES);
 				CHKERRQ(ierr);
 		}				
 	}
@@ -783,7 +783,7 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 		PetscScalar*& values) const
 {
 	typename std::set<AbstractSlot<Stencil<T>*>*>::const_iterator sIt;
-	std::map<PetscInt, PetscScalar> matrixEntries;
+	size_t i = 0;
 
 	for(sIt=this->stencils.begin();sIt!=this->stencils.end();sIt++) {
 		Stencil<T>* s = (*((InputSlot<Stencil<T>*>*)*sIt))();
@@ -806,26 +806,18 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 					Point4D<int> curArg(cx,cy,cz,ct);
 					curArg += Point4D<int>(p);
 					curArg -= entry.center;
-					PetscInt curCol =
+					columns[i] =
 							PetscSolver<T>::_pointToGlobalIndex(
 									curArg,
 									*unk,
 									unknownSizes);
-					// int() should initialize to zero in std::map,
-					// if errors occur here, add further checks
-					matrixEntries[curCol] += entry.data(cx,cy,cz,ct);
+					values[i] = entry.data(cx,cy,cz,ct);
+					i++;
 				}
 			}
 		}
 	}
-	unsigned int cur=0;
-	typename std::map<PetscInt, PetscScalar>::const_iterator entIt;
-	for (entIt = matrixEntries.begin(); entIt != matrixEntries.end(); entIt++) {
-		columns[cur] = entIt->first;
-		values[cur] = entIt->second;
-		cur++;
-	}
-	return matrixEntries.size();
+	return i;
 }
 
 template <typename T>
