@@ -556,7 +556,11 @@ int PetscSolver<T>::petscExecute() {
 	ierr = MatSetFromOptions(A); CHKERRQ(ierr);
 	// Hint for Matrix Preallocation: max_ne+x entries per row
 	// (more entries than max_ne since cross terms are added)
-	PetscInt preallocHint = max_ne+2;
+	PetscInt preallocHint = max_ne*2;
+#ifndef NDEBUG
+	sout << "\tassuming maximal number of entries per row: " << std::endl;
+	sout << "\t\tpreallocHint = " << preallocHint << std::endl;
+#endif
 	std::string matType = MatGetType(A);
 	if (matType == MATSEQAIJ)
 		ierr = MatSeqAIJSetPreallocation(
