@@ -40,30 +40,32 @@ Gbcce<T>::Gbcce(const std::string& name) :  Stencil<T>("GBCCE", name,
 
 template <class T>
 void Gbcce<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
+
 	// erase the old set of unknowns
 	this->_unknowns.clear();
 	std::set<std::string> bmUnknowns = this->brightnessIn()->getUnknowns();
 	std::set<std::string> mmUnknowns = this->motionIn()->getUnknowns();
-	std::set<std::string>::iterator bmIt = bmUnknowns.begin();
-	std::set<std::string>::iterator mmIt = mmUnknowns.begin();
+	std::set<std::string>::iterator bmIt;
+	std::set<std::string>::iterator mmIt;
 
 	// Collision detection
 
-	// go through the BrightnessModel-Vector of unknowns
-	while (bmIt != bmUnknowns.end()) {
-		// go through the MotionModel-Vector of unknowns
-		while (mmIt != mmUnknowns.end()) {
-			// and compare them
+	// check if there are some unknowns in bm and mm witch have the same name
+	for (bmIt = bmUnknowns.begin(); bmIt != bmUnknowns.end(); bmIt++) {
+		for (mmIt = mmUnknowns.begin(); mmIt != mmUnknowns.end(); mmIt++) {
 			if (*bmIt == *mmIt) {
-				throw "name collision in unknowns";
+				std::ostringstream os;
+				os << __FILE__ << ":" << __LINE__ << "\n\t";
+				os << "Name collision in Gbcce::execute():\n\t\t";
+				os << "\"" << *bmIt << "\" occurs in brightness and "
+						<< "motion model";
+				throw std::runtime_error(os.str());
 			}
-			mmIt++;
-		} 				
-		// reset the inner loop iterator
-		mmIt = mmUnknowns.begin();
-		bmIt++;
+		}
 	}
+
 	// if no collision is detected, merge both input vectors into the
 	// unkowns set which was inherited from the Stencil class
 	this->_unknowns.insert(bmUnknowns.begin(),bmUnknowns.end());
@@ -85,33 +87,28 @@ void Gbcce<T>::updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p,
 		const int& v) {
-	//std::map<std::string, T> term;
-	//std::map<std::string, T> termD;
 	this->_rhs = 0;
-	
-	// collect unknowns
-	const std::set<std::string>& mUnknowns = motionIn()->getUnknowns();
-	const std::set<std::string>& bUnknowns = brightnessIn()->getUnknowns();
-	std::set<std::string> allUnknowns;
-	allUnknowns.insert(bUnknowns.begin(), bUnknowns.end());
-	allUnknowns.insert(mUnknowns.begin(), mUnknowns.end());
+	const T& l = this->lambda();
 
 	// initialize term for all unknowns
 	std::set<std::string>::const_iterator unkIt;
-	for (unkIt = allUnknowns.begin(); unkIt != allUnknowns.end(); unkIt++)
+	for (unkIt = this->_unknowns.begin();
+			unkIt != this->_unknowns.end(); unkIt++)
 		this->_term[*unkIt] = T(0);
 
-	// compute term 
-	this->brightnessIn()->compute(p,v,this->_term,this->_rhs,unknown);
-	this->motionIn()->compute(p,v,this->_term,this->_rhs,unknown);
+	// compute term
+	static BrightnessModel<T>& bmIn = *(this->brightnessIn());
+	static MotionModel<T>& mmIn = *(this->motionIn());
+	bmIn.compute(p,v,this->_term,this->_rhs,unknown);
+	mmIn.compute(p,v,this->_term,this->_rhs,unknown);
 
 	// and fill into substencils
 	typename std::map<std::string,T>::iterator termIt;
 	for(termIt=this->_term.begin();termIt!=this->_term.end();termIt++) {
-		const T val = termIt->second * this->lambda();
+		const T val = termIt->second * l;
 		this->_subStencils[termIt->first].data(0,0) = val;
 	}
-	this->_rhs *= this->lambda();
+	this->_rhs *= l;
 }
 
 
@@ -119,26 +116,19 @@ template <class T>
 void Gbcce<T>::updateEnergy(
 		const cimg_library::CImgList<T>& parameterList,
 		const Point4D<int>& p, const int& v) {
-	//std::map<std::string, T> term;
-	//std::map<std::string, T> termD;
-	
 	this->_energy = 0;
-
-	// collect unknowns
-	const std::set<std::string>& mUnknowns = motionIn()->getUnknowns();
-	const std::set<std::string>& bUnknowns = brightnessIn()->getUnknowns();
-	std::set<std::string> allUnknowns;
-	allUnknowns.insert(bUnknowns.begin(), bUnknowns.end());
-	allUnknowns.insert(mUnknowns.begin(), mUnknowns.end());
 
 	// initialize term for all unknowns
 	std::set<std::string>::const_iterator unkIt;
-	for (unkIt = allUnknowns.begin(); unkIt != allUnknowns.end(); unkIt++)
+	for (unkIt = this->_unknowns.begin();
+			unkIt != this->_unknowns.end(); unkIt++)
 		this->_term[*unkIt] = T(0);
 
 	// compute energy 
-	this->brightnessIn()->computeEnergy(p,v,parameterList, this->_energy);
-	this->motionIn()->computeEnergy(p,v,parameterList, this->_energy);
+	static BrightnessModel<T>& bmIn = *(this->brightnessIn());
+	static MotionModel<T>& mmIn = *(this->motionIn());
+	bmIn.computeEnergy(p,v,parameterList, this->_energy);
+	mmIn.computeEnergy(p,v,parameterList, this->_energy);
 }
 
 

@@ -41,7 +41,8 @@ void MotionModels::LocalConstant<T>::compute(
 		std::map<std::string, T>& term, T& rhs,
 		const std::string& unknown)
 {
-	if(!dz.connected())
+	static const bool is3D = dz.connected();
+	if(!is3D)
 		assert(p.z == 0u); // 2D only
 
 	const T& iX = this->dx()(v, p.x, p.y, p.z, p.t);
@@ -56,7 +57,7 @@ void MotionModels::LocalConstant<T>::compute(
 			factor = iX;
 		else if (unknown == "a2")
 			factor = iY;
-		else if (dz.connected() && unknown == "a3")
+		else if (is3D && unknown == "a3")
 			factor = iZ;
 		else {
 			std::ostringstream msg;
@@ -70,7 +71,7 @@ void MotionModels::LocalConstant<T>::compute(
 	// calculate values to return
 	term["a1"] += factor * iX;
 	term["a2"] += factor * iY;
-	if (dz.connected())
+	if (is3D)
 		term["a3"] += factor * iZ;
 	rhs -= factor * iT;
 }
