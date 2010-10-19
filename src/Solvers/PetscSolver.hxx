@@ -554,6 +554,20 @@ int PetscSolver<T>::petscExecute() {
 	ierr = MatSetSizes(A,PETSC_DECIDE,PETSC_DECIDE,n,n); CHKERRQ(ierr);
 	// Set other options from the database
 	ierr = MatSetFromOptions(A); CHKERRQ(ierr);
+	// Hint for Matrix Preallocation: max_ne+x entries per row
+	// (more entries than max_ne since cross terms are added)
+	PetscInt preallocHint = max_ne+2;
+	std::string matType = MatGetType(A);
+	if (matType == MATSEQAIJ)
+		ierr = MatSeqAIJSetPreallocation(
+				A, preallocHint,PETSC_NULL);
+	else if (matType == MATMPIAIJ)
+		ierr = MatMPIAIJSetPreallocation(
+				A, preallocHint, PETSC_NULL, preallocHint, PETSC_NULL);
+	else
+		sout << "No Preallocation options set! Expect terrible performance!"
+				<< std::endl;
+	CHKERRQ(ierr);
 
 	ierr = MatGetOwnershipRange(A,&Istart,&Iend); CHKERRQ(ierr);
 
