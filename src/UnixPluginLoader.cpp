@@ -40,12 +40,12 @@ UnixPluginLoader::UnixPluginLoader(const std::string & n) :
 void UnixPluginLoader::load() throw (PluginException) {
 	std::string path = pluginPath + "/lib" + pluginName + LIBRARY_EXTENSION;
 	if (FileTool::exists(path)) {
-		libHandle = dlopen(path.c_str(), RTLD_LAZY);
+		libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 	} else {
 		path = additionalPluginPath + "/lib" + pluginName + LIBRARY_EXTENSION;
 		std::string oldDir = FileTool::getCurrentDir();
 		FileTool::changeDir(additionalPluginPath);
-		libHandle = dlopen(path.c_str(), RTLD_LAZY);
+		libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 		FileTool::changeDir(oldDir);
 	}
 
