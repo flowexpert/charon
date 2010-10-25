@@ -561,7 +561,9 @@ int PetscSolver<T>::petscExecute() {
 	sout << "\tassuming maximal number of entries per row: " << std::endl;
 	sout << "\t\tpreallocHint = " << preallocHint << std::endl;
 #endif
-	std::string matType = MatGetType(A);
+	const char* res = 0;
+	ierr = MatGetType(A, &res);
+	std::string matType(res);
 	if (matType == MATSEQAIJ)
 		ierr = MatSeqAIJSetPreallocation(
 				A, preallocHint,PETSC_NULL);
