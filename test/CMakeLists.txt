@@ -131,7 +131,6 @@ IF(ENABLE_TEST)
 		ENDIF(MSVC)
 		TARGET_LINK_LIBRARIES(petscplugintest
 			charon-core
-			charon-plugins
 			${CIMG_LINK_LIBRARIES}
 			roi
 			gbcce
@@ -148,6 +147,37 @@ IF(ENABLE_TEST)
 		ADD_TEST(
 			NAME PetscPlugin
 			COMMAND petscplugintest
+		)
+
+		IF(UNIX)
+			# check loading and unloading petsc shared library
+			ADD_LIBRARY(petsctestdll SHARED PetscTestDLL.cpp)
+			TARGET_LINK_LIBRARIES(petsctestdll
+				${PETSC_LIBRARIES}
+			)
+			SET_TARGET_PROPERTIES(petsctestdll
+				PROPERTIES LINK_FLAGS "-Wl,--no-undefined -Wl,--as-needed"
+			)
+			ADD_EXECUTABLE(petsctestdllload PetscTestDLLLoad.cpp)
+			TARGET_LINK_LIBRARIES(petsctestdllload
+				dl
+			)
+			ADD_TEST(
+				NAME Pets_Load_SharedLibrary
+				COMMAND petsctestdllload
+			)
+		ENDIF(UNIX)
+
+		# check loading and unloading petsc plugin
+		ADD_EXECUTABLE(petscsolverdlltest PetscSolverDLLTest.cpp)
+		TARGET_LINK_LIBRARIES(petscsolverdlltest
+			charon-core
+			charon-plugins
+			${CIMG_LINK_LIBRARIES}
+		)
+		ADD_TEST(
+			NAME PetscSolver_DLL
+			COMMAND petscsolverdlltest
 		)
 
 		# executing test workflow
