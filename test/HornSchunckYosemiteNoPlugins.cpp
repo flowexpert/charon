@@ -35,6 +35,7 @@
 #endif
 #include <petsc.h>
 #include <cassert>
+#include <Solvers/PetscSolver.hxx>
 #include <charon-core/ExceptionHandler.h>
 #include <charon-utils/Roi.hxx>
 #include <charon-utils/FileReader.hxx>
@@ -45,7 +46,6 @@
 #include <Diff2D.hxx>
 #include <Stencils/Gbcce.hxx>
 #include <Stencils/L2Norm.hxx>
-#include <Solvers/PetscSolver.hxx>
 #include <FlowComparator.hxx>
 
 int test() {
