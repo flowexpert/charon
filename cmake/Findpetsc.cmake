@@ -59,13 +59,12 @@ FIND_PATH(PETSC_ARCH_INCLUDE_DIR
 	NAMES           petscconf.h
 	HINTS           $ENV{PETSC_DIR}
 	                ${PETSC_ROOT_DIR}
-	                ${PETSC_INCLUDE_DIR}
-	PATH_SUFFIXES   include
-	                include/petsc
+	PATH_SUFFIXES   ${PETSC_ARCH}/include
 	                include/${PETSC_ARCH}
 	                include/petsc/${PETSC_ARCH}
-	                ${PETSC_ARCH}/include
 	                bmake/${PETSC_ARCH}
+	                include
+	                include/petsc
 	DOC             "architecture specific headers"
 )
 SET(PETSC_INCLUDE_DIRS
