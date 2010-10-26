@@ -17,6 +17,7 @@ FIND_PATH(PETSC_ROOT_DIR
 	                include/petsc/petscksp.h
 	HINTS           $ENV{PETSC_DIR}
 	PATHS           /usr
+	                /etc/alternatives/petsc
 	                /usr/local
 	                /opt/petsc
 	                /opt
@@ -31,7 +32,7 @@ IF(NOT PETSC_ARCH)
 	IF(WIN32)
 		SET(PETSC_ARCH "win_x86_32_mpiuni")
 	ELSE()
-		SET(PETSC_ARCH "linux-gnu-cxx-debug")
+		SET(PETSC_ARCH "linux-gnu-c-opt")
 	ENDIF()
 
 	# use value of envirionmental variable if set
@@ -72,10 +73,10 @@ SET(PETSC_INCLUDE_DIRS
 	${PETSC_ARCH_INCLUDE_DIR}
 )
 
-OPTION(WITH_MPI "does PETSc use an external MPI implementation?" OFF)
-OPTION(WITH_FORTRAN "was fortran used for PETSc-compilation?" OFF)
+OPTION(WITH_MPI "does PETSc use an external MPI implementation?" ${UNIX})
+OPTION(WITH_FORTRAN "was fortran used for PETSc-compilation?" ${UNIX})
 OPTION(PETSC_SINGLE_LIBRARY
-	"has PETSc been compiled with --with-single-library=1?" OFF)
+	"has PETSc been compiled with --with-single-library=1?" ${UNIX})
 
 SET(PETSC_LIBRARY_SEARCH_HINT
 	${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}
