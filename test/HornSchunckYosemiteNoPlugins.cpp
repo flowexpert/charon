@@ -33,20 +33,19 @@
 #ifdef NDEBUG
 #undef NDEBUG
 #endif
-#include <petsc.h>
+#include <charon/Solvers/PetscSolver.hxx>
 #include <cassert>
-#include <Solvers/PetscSolver.hxx>
 #include <charon-core/ExceptionHandler.h>
 #include <charon-utils/Roi.hxx>
 #include <charon-utils/FileReader.hxx>
 #include <charon-utils/Crop.hxx>
 #include <charon-utils/Convolution.hxx>
-#include <BrightnessModels/Constant.hxx>
-#include <MotionModels/LocalConstant.hxx>
-#include <Diff2D.hxx>
-#include <Stencils/Gbcce.hxx>
-#include <Stencils/L2Norm.hxx>
-#include <FlowComparator.hxx>
+#include <charon/BrightnessModels/Constant.hxx>
+#include <charon/MotionModels/LocalConstant.hxx>
+#include <charon/Diff2D.hxx>
+#include <charon/Stencils/Gbcce.hxx>
+#include <charon/Stencils/L2Norm.hxx>
+#include <charon/FlowComparator.hxx>
 
 int test() {
 	FileTool::changeDir(TESTDIR);

@@ -20,7 +20,7 @@
 /// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
 /// @date 27.05.2009
 
-#include "FlowFunctor.h"
+#include <charon/FlowFunctor.h>
 
 using namespace std;
 using namespace cimg_library;

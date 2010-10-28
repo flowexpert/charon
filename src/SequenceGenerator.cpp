@@ -24,7 +24,7 @@
 ///Class name of the plugin
 #define TYPE SequenceGenerator
 
-#include "SequenceGenerator.hxx"
+#include <charon/SequenceGenerator.hxx>
 
 ///Creates an instance of the plugin
 extern "C" sequencegenerator_DECLDIR ParameteredObject*

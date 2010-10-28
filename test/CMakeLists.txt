@@ -1,8 +1,8 @@
 # Test suite of application
 IF(ENABLE_TEST)
+	INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 	INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 	INCLUDE_DIRECTORIES(${charon-utils_INCLUDE_DIRS})
-	INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 
 	ADD_DEFINITIONS(-DTESTDIR="${CMAKE_CURRENT_SOURCE_DIR}")
 	GET_TARGET_PROPERTY(Roi_LOC roi LOCATION)
@@ -14,7 +14,9 @@ IF(ENABLE_TEST)
 
 	IF(ENABLE_BLOCKMATCHING)
 		# tests for imgmanip classes
-		ADD_EXECUTABLE(listedpixelselectiontest listedpixelselectiontest.cpp)
+		ADD_EXECUTABLE(listedpixelselectiontest
+			listedpixelselectiontest.cpp
+		)
 		TARGET_LINK_LIBRARIES(listedpixelselectiontest
 			charon-core
 			${CIMG_LINK_LIBRARIES}
@@ -26,7 +28,9 @@ IF(ENABLE_TEST)
 			COMMAND listedpixelselectiontest
 		)
 
-		ADD_EXECUTABLE(incrementorcountuptest incrementorcountuptest.cpp)
+		ADD_EXECUTABLE(incrementorcountuptest
+			incrementorcountuptest.cpp
+		)
 		TARGET_LINK_LIBRARIES(incrementorcountuptest
 			charon-core
 			${CIMG_LINK_LIBRARIES}
@@ -36,7 +40,9 @@ IF(ENABLE_TEST)
 			COMMAND incrementorcountuptest
 		)
 
-		ADD_EXECUTABLE(objectivefunctioncomparingtest objectivefunctioncomparingtest.cpp)
+		ADD_EXECUTABLE(objectivefunctioncomparingtest
+			objectivefunctioncomparingtest.cpp
+		)
 		TARGET_LINK_LIBRARIES(objectivefunctioncomparingtest
 			charon-core
 			${CIMG_LINK_LIBRARIES}
@@ -51,7 +57,9 @@ IF(ENABLE_TEST)
 			COMMAND objectivefunctioncomparingtest
 		)
 
-		ADD_EXECUTABLE(surfaceanalysisminchangetest surfaceanalysisminchnagetest.cpp)
+		ADD_EXECUTABLE(surfaceanalysisminchangetest
+			surfaceanalysisminchnagetest.cpp
+		)
 		TARGET_LINK_LIBRARIES(surfaceanalysisminchangetest
 			charon-core
 			${CIMG_LINK_LIBRARIES}
@@ -92,16 +100,25 @@ IF(ENABLE_TEST)
 			GET_TARGET_PROPERTY(Mask1d_LOC mask1d LOCATION)
 			GET_TARGET_PROPERTY(LinearFilter_LOC linearfilter LOCATION)
 			GET_TARGET_PROPERTY(ChannelConverter_LOC channelconverter LOCATION)
-			GET_TARGET_PROPERTY(InterpolatorLinear_LOC interpolatorlinear LOCATION)
+			GET_TARGET_PROPERTY(InterpolatorLinear_LOC
+				interpolatorlinear LOCATION)
 			ADD_CUSTOM_COMMAND(TARGET POST_BUILD listedpixelselectiontest
-				COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${LOCAL_PLUGIN_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${Roi_LOC}" "${LOCAL_PLUGIN_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${Filereader_LOC}" "${LOCAL_PLUGIN_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${Filewriter_LOC}" "${LOCAL_PLUGIN_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${LinearFilter_LOC}" "${LOCAL_PLUGIN_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${ChannelConverter_LOC}" "${LOCAL_PLUGIN_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${Mask1d_LOC}" "${LOCAL_PLUGIN_DIR}"
-				COMMAND ${CMAKE_COMMAND} -E copy "${InterpolatorLinear_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E
+					copy "${CLOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E
+					copy "${Roi_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E
+					copy "${Filereader_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E
+					copy "${Filewriter_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E
+					copy "${LinearFilter_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E
+					copy "${ChannelConverter_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E
+					copy "${Mask1d_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND ${CMAKE_COMMAND} -E
+					copy "${InterpolatorLinear_LOC}" "${LOCAL_PLUGIN_DIR}"
 			)
 		ENDIF(WIN32)
 	ENDIF(ENABLE_BLOCKMATCHING)
@@ -154,9 +171,6 @@ IF(ENABLE_TEST)
 			ADD_LIBRARY(petsctestdll SHARED PetscTestDLL.cpp)
 			TARGET_LINK_LIBRARIES(petsctestdll
 				${PETSC_LIBRARIES}
-			)
-			SET_TARGET_PROPERTIES(petsctestdll
-				PROPERTIES LINK_FLAGS "-Wl,--no-undefined -Wl,--as-needed"
 			)
 			ADD_EXECUTABLE(petsctestdllload PetscTestDLLLoad.cpp)
 			TARGET_LINK_LIBRARIES(petsctestdllload

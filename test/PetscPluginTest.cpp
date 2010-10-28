@@ -22,17 +22,17 @@
  *  @date 8.09.2009
  */
 
-#include <Solvers/PetscSolver.h>
+#include <charon/Solvers/PetscSolver.h>
 #include <charon-utils/Roi.h>
-#include <Stencils/Gbcce.h>
-#include <Stencils/L2Norm.h>
-#include <BrightnessModels/Constant.h>
-#include <MotionModels/LocalConstant.h>
 #include <charon-utils/LinearFilter.h>
 #include <charon-utils/Mask1D.h>
 #include <charon-utils/ChannelConverter.h>
 #include <charon-utils/FileReader.h>
 #include <charon-utils/FileWriter.h>
+#include <charon/Stencils/Gbcce.h>
+#include <charon/Stencils/L2Norm.h>
+#include <charon/BrightnessModels/Constant.h>
+#include <charon/MotionModels/LocalConstant.h>
 
 int main() {
 	// test creation of all necessary objects

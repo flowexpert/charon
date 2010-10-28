@@ -24,7 +24,7 @@
 ///Class name of the plugin
 #define TYPE FlowComparator
 
-#include "FlowComparator.hxx"
+#include <charon/FlowComparator.hxx>
 
 ///Creates an instance of the plugin
 extern "C" flowcomparator_DECLDIR ParameteredObject*

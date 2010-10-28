@@ -13,7 +13,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Gbcce.cpp
+/** @file L2Norm.cpp
  *  Implementation of class Gbcce.
  *  This is the General Brightness Change Constraint Equation stencil which is
  *  derived from the stencil class.
@@ -24,9 +24,9 @@
  *  @date 14.09.2009
  */
 
-#define TYPE Gbcce
+#define TYPE L2Norm
 
-#if defined(MSVC) && defined (gbcce_EXPORTS)
+#if defined(MSVC) && defined (l2norm_EXPORTS)
 #define stencil_EXPORTS
 #define DECLDIR __declspec(dllexport)
 #else
@@ -34,7 +34,7 @@
 #define DECLDIR
 #endif
 
-#include "Gbcce.hxx"
+#include <charon/Stencils/L2Norm.hxx>
 
 extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {

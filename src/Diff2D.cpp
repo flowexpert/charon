@@ -24,8 +24,8 @@
 ///Class name of the plugin
 #define TYPE Diff2D
 
-#include "Diff2D.hxx"
 #include <charon-utils/Convolution.hxx>
+#include <charon/Diff2D.hxx>
 
 /// Creates an instance of the plugin
 extern "C" diff2d_DECLDIR ParameteredObject*

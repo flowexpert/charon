@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2009 Jens-Malte Gottfried
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -13,24 +15,26 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file PetscSolver.cpp
- *  Implementation of class PetscSolver.
- *  This is the PETSc implementation of a solver. It has been designed to run on
- *  multiple instances simultaneously.
- *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
- *      Oliver Stengele</a>
- *
- *  @date 8.09.2009
- */
-#define TYPE PetscSolver
+/// @file LocalConstant.cpp
+/// This file is needed for the Roi class to work as a plugin.
+/// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
+/// @date 24.08.2009
 
-#if defined(MSVC) && defined (petscsolver_EXPORTS) 
-#define solver_EXPORTS
+///Class name of the plugin
+#define TYPE MotionModels::LocalConstant
+
+#if defined(MSVC) && defined (motionmodels_localconstant_EXPORTS)
+#define motionmodel_EXPORTS
+#define DECLDIR __declspec(dllexport)
+#else
+///Not needed with GCC
+#define DECLDIR
 #endif
-#include "PetscSolver.hxx"
 
-extern "C" petscsolver_DECLDIR ParameteredObject * create(
-		const std::string &name, template_type t) {
+#include <charon/MotionModels/LocalConstant.hxx>
+
+///Creates an instance of the plugin
+extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -47,6 +51,7 @@ extern "C" petscsolver_DECLDIR ParameteredObject * create(
 	}
 }
 
-extern "C" petscsolver_DECLDIR void destroy(ParameteredObject * b) {
+///Deletes an instance of the plugin
+extern "C" DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
