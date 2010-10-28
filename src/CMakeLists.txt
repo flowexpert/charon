@@ -21,6 +21,16 @@ IF (ENABLE_STENCILS)
 		${charon_INCLUDE_DIR}/Substencil.h
 		${charon_INCLUDE_DIR}/Substencil.hxx
 	)
+	ADD_LIBRARY(rfmc SHARED
+		Rfmc.cpp
+		${charon_INCLUDE_DIR}/Stencils/Rfmc.h
+		${charon_INCLUDE_DIR}/Stencils/Rfmc.hxx
+		${charon_INCLUDE_DIR}/Stencil.h
+		${charon_INCLUDE_DIR}/Stencil.hxx
+		${charon_INCLUDE_DIR}/Point4D.h
+		${charon_INCLUDE_DIR}/Substencil.h
+		${charon_INCLUDE_DIR}/Substencil.hxx
+	)
 	ADD_LIBRARY(l2norm SHARED
 		L2Norm.cpp
 		${charon_INCLUDE_DIR}/Stencils/L2Norm.h
@@ -33,6 +43,7 @@ IF (ENABLE_STENCILS)
 	)
 	LIST(APPEND Plugins
 		gbcce
+		rfmc
 		l2norm
 	)
 ENDIF (ENABLE_STENCILS)
