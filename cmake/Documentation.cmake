@@ -62,10 +62,10 @@ IF (DOXYGEN_FOUND)
     ENDIF()
 
     SET(DOXY_DOC_PATTERN        "*.h *_doc.txt")
-    SET(DOXY_DOC_PATHS          "doc src")
+    SET(DOXY_DOC_PATHS          "doc include/${PROJECT_NAME}")
     SET(DOXY_GENERATE_HTML      YES)
     SET(DOXY_GENERATE_LATEX     NO )
-    SET(DOXY_TAGFILE_INPUT      "\"${PROJECT_SOURCE_DIR}/doc/CImg.tag=http://cimg.sourceforge.net/reference\" ${charon-core_TAG_IMPORT} ${charon-utils_TAG_IMPORT}")
+    SET(DOXY_TAGFILE_INPUT      "${charon-core_TAG_IMPORT} ${charon-utils_TAG_IMPORT} \"${PROJECT_SOURCE_DIR}/doc/CImg.tag=http://cimg.sourceforge.net/reference\"")
     SET(DOXY_TAGFILE_OUTPUT     "${PROJECT_BINARY_DIR}/doc/${PROJECT_NAME}.tag")
     CONFIGURE_FILE(${DOXY_TEMPLATE} ${DOXY_CONFIG}     @ONLY)
 

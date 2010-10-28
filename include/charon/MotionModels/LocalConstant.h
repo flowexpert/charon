@@ -17,7 +17,8 @@
  */
 /// @file LocalConstant.h
 /// defines class MotionModels::LocalConstant
-/// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
+/// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">
+///		René Steinbrügge</a>
 /// @date 27.05.2009
 
 #ifndef _MotionModels_LocalConstant_h_
@@ -47,11 +48,12 @@ namespace MotionModels
 {
 
 /** @brief motion model with local constant flow
- * @details Computes the bcce-term for the parameters @f$ a_i @f$ for an optical flow of the form
- * @f[
- *	\vec f \left( \begin{array}{c} x \\ y \\ z \end{array} \right) =
- *		\left( \begin{array}{c} a_1 \\ a_2 \\ a_3 \end{array} \right)
- * @f]
+ *  @details Computes the bcce-term for the parameters
+ *  @f$ a_i @f$ for an optical flow of the form
+ *  @f[
+		\vec f \left( \begin{array}{c} x \\ y \\ z \end{array} \right) =
+			\left( \begin{array}{c} a_1 \\ a_2 \\ a_3 \end{array} \right)
+	@f]
  */
 template<class T>
 class motionmodels_localconstant_DECLDIR LocalConstant: public MotionModel<T>
@@ -88,26 +90,27 @@ public:
 	/**
 	 * flow will be computed:
 	 * @f[
-	      \vec f \left( \begin{array}{c} x \\ y \\ z \end{array} \right) =
-	          \left( \begin{array}{c} a_1 \\ a_2 \\ a_3 \end{array} \right)
+			\vec f \left( \begin{array}{c} x \\ y \\ z \end{array} \right) =
+				\left( \begin{array}{c} a_1 \\ a_2 \\ a_3 \end{array} \right)
 	   @f]
 	 * 
 	 */
 	void setFlowFunctorParams(const float a1, const float a2, const float a3);
 
-	/** 
+	/**
 	 *  compute motion changes with the inserted Parameters
 	 *  @param inPixel insert pixel for which is the birghtness changes has to 
 	 *  be done
 	 *  @param modifier vector of Parameters to compute the modification
 	 *  @param outPixel return value of Pixel type
 	 */
-	virtual void apply(const Pixel<T> & inPixel, const std::vector<
-			IncrementorParameter<T>*> & /*modifier*/, Pixel<T> & outPixel);
-
+	virtual void apply(
+			const Pixel<T> & inPixel,
+			const std::vector<IncrementorParameter<T>*> & modifier,
+			Pixel<T> & outPixel);
 };
 
-}
+} // namespace
 
 #endif
 
