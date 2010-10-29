@@ -84,66 +84,6 @@ IF (ENABLE_SOLVERS)
 	)
 ENDIF (ENABLE_SOLVERS)
 
-IF (ENABLE_BLOCKMATCHING)
-	ADD_LIBRARY(incrementorparameter SHARED
-		IncrementorParameter.cpp
-		${charon_INCLUDE_DIR}/IncrementorParameter.h
-		${charon_INCLUDE_DIR}/IncrementorParameter.hxx
-	)
-	ADD_LIBRARY(incrementorcountup SHARED
-		IncrementorCountUp.cpp
-		${charon_INCLUDE_DIR}/Incrementors/IncrementorCountUp.h
-		${charon_INCLUDE_DIR}/Incrementors/IncrementorCountUp.hxx
-		${charon_INCLUDE_DIR}/Incrementor.h
-		${charon_INCLUDE_DIR}/Incrementor.hxx
-	)
-	TARGET_LINK_LIBRARIES(incrementorcountup incrementorparameter)
-	ADD_LIBRARY(objectivefunctioncomparing SHARED
-		ObjectiveFunctionComparing.cpp
-		${charon_INCLUDE_DIR}/ObjectiveFunctions/ObjectiveFunctionComparing.h
-		${charon_INCLUDE_DIR}/ObjectiveFunctions/ObjectiveFunctionComparing.hxx
-		${charon_INCLUDE_DIR}/ObjectiveFunction.h
-		${charon_INCLUDE_DIR}/ObjectiveFunction.hxx
-	)
-	ADD_LIBRARY(listedpixelselection SHARED
-		ListedPixelSelection.cpp
-		${charon_INCLUDE_DIR}/PixelSelections/ListedPixelSelection.h
-		${charon_INCLUDE_DIR}/PixelSelections/ListedPixelSelection.hxx
-		${charon_INCLUDE_DIR}/PixelSelection.h
-		${charon_INCLUDE_DIR}/PixelSelection.hxx
-		${charon_INCLUDE_DIR}/Pixel.h
-		${charon_INCLUDE_DIR}/Pixel.hxx
-	)
-	TARGET_LINK_LIBRARIES(listedpixelselection roi)
-	ADD_LIBRARY(surfaceanalysisminchange SHARED
-		SurfaceAnalysisMinChange.cpp
-		${charon_INCLUDE_DIR}/SurfaceAnalysis/SurfaceAnalysisMinChange.h
-		${charon_INCLUDE_DIR}/SurfaceAnalysis/SurfaceAnalysisMinChange.hxx
-		${charon_INCLUDE_DIR}/SurfaceAnalysis.h
-		${charon_INCLUDE_DIR}/SurfaceAnalysis.hxx
-	)
-	TARGET_LINK_LIBRARIES(surfaceanalysisminchange incrementorparameter)
-	ADD_LIBRARY(blockmatchingliacs SHARED
-		BlockMatchingLIACS.cpp
-		${charon_INCLUDE_DIR}/BlockMatching/BlockMatchingLIACS.h
-		${charon_INCLUDE_DIR}/BlockMatching/BlockMatchingLIACS.hxx
-		${charon_INCLUDE_DIR}/BlockMatching.h
-		${charon_INCLUDE_DIR}/BlockMatching.hxx
-	)
-	TARGET_LINK_LIBRARIES(blockmatchingliacs
-		incrementorcountup
-		listedpixelselection
-	)
-	LIST(APPEND Plugins
-		incrementorparameter
-		incrementorcountup
-		objectivefunctioncomparing
-		listedpixelselection
-		surfaceanalysisminchange
-		blockmatchingliacs
-	)
-ENDIF (ENABLE_BLOCKMATCHING)
-
 IF (ENABLE_BRIGHTNESS)
 	ADD_LIBRARY(brightnessmodels_constant SHARED
 		BrightnessModelConstant.cpp
