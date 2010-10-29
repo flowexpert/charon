@@ -28,16 +28,35 @@ FIND_PATH(PETSC_ROOT_DIR
 # can reside in the root directory, the architecture has to be specified
 # manually using PETSC_ARCH
 # with both the ROOT_DIR and ARCH every needed path can be generated
+#
+# On debian based systems, the petsc package provides an one-line-script
+# indicating the petsc arch variable used during package creation
+# The result of this indicator may be overridden by the PETSC_ARCH
+# environmental variable (or by -DPETSC_ARCH=<arch>)
 IF(NOT PETSC_ARCH)
 	IF(WIN32)
 		SET(PETSC_ARCH "win_x86_32_mpiuni")
 	ELSE()
-		SET(PETSC_ARCH "linux-gnu-c-opt")
+		SET(PETSC_ARCH "linux-gnu-cxx-debug")
 	ENDIF()
+
+	# use value of debian petscarch indicator (if present)
+	FIND_PROGRAM(PETSC_ARCH_INDICATOR
+		NAMES petscarch
+		PATHS /etc/alternatives
+		DOC "debian petsc arch indicator"
+	)
+	IF(PETSC_ARCH_INDICATOR)
+		EXECUTE_PROCESS(
+			COMMAND ${PETSC_ARCH_INDICATOR}
+			OUTPUT_VARIABLE PETSC_ARCH
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+		)
+	ENDIF(PETSC_ARCH_INDICATOR)
 
 	# use value of envirionmental variable if set
 	IF(NOT "$ENV{PETSC_ARCH}" STREQUAL "")
-		SET(PETSC_ARCH "$ENV{PETSC_ARCH}")
+		SET(  "$ENV{PETSC_ARCH}")
 	ENDIF(NOT "$ENV{PETSC_ARCH}" STREQUAL "")
 
 	SET(PETSC_ARCH "${PETSC_ARCH}"
@@ -150,34 +169,41 @@ ENDIF(NOT PETSC_SINGLE_LIBRARY)
 SET(PETSC_LIBRARIES)
 
 #add blas/lapack of petsc
-IF (WITH_FORTRAN)
-	FIND_LIBRARY(PETSC_LIBLAPACK
-		NAMES 	flapack lapackgf lapackgf-3 lapack
-		HINTS 	${PETSC_LIBRARY_SEARCH_HINT}
-		PATHS	${PETSC_ROOT_DIR}
-		PATH_SUFFIXES externalpackages/fblaslapack/${PETSC_ARCH}
-	)
+IF (LAPACK_FOUND)
 	LIST(APPEND PETSC_LIBVARS
-		PETSC_LIBLAPACK
+		BLAS_LIBRARIES
+		LAPACK_LIBRARIES
 	)
-ELSE (WITH_FORTRAN)
-	FIND_LIBRARY(PETSC_LIBBLAS
-		NAMES   f2cblas libf2cblas blas
-		HINTS	${PETSC_LIBRARY_SEARCH_HINT}
-		PATHS	${PETSC_ROOT_DIR}
-		PATH_SUFFIXES externalpackages/f2cblaslapack/${PETSC_ARCH}
-	)
-	FIND_LIBRARY(PETSC_LIBLAPACK
-		NAMES   f2clapack libf2clapack lapack
-		HINTS	${PETSC_LIBRARY_SEARCH_HINT}
-		PATHS	${PETSC_ROOT_DIR}
-		PATH_SUFFIXES externalpackages/f2cblaslapack/${PETSC_ARCH}
-	)
-	LIST(APPEND PETSC_LIBVARS
-		PETSC_LIBBLAS
-		PETSC_LIBLAPACK
-	)
-ENDIF (WITH_FORTRAN)
+ELSE (LAPACK_FOUND)
+	IF (WITH_FORTRAN)
+		FIND_LIBRARY(PETSC_LIBLAPACK
+			NAMES 	flapack lapackgf lapackgf-3 lapack
+			HINTS 	${PETSC_LIBRARY_SEARCH_HINT}
+			PATHS	${PETSC_ROOT_DIR}
+			PATH_SUFFIXES externalpackages/fblaslapack/${PETSC_ARCH}
+		)
+		LIST(APPEND PETSC_LIBVARS
+			PETSC_LIBLAPACK
+		)
+	ELSE (WITH_FORTRAN)
+		FIND_LIBRARY(PETSC_LIBBLAS
+			NAMES   f2cblas libf2cblas blas
+			HINTS	${PETSC_LIBRARY_SEARCH_HINT}
+			PATHS	${PETSC_ROOT_DIR}
+			PATH_SUFFIXES externalpackages/f2cblaslapack/${PETSC_ARCH}
+		)
+		FIND_LIBRARY(PETSC_LIBLAPACK
+			NAMES   f2clapack libf2clapack lapack
+			HINTS	${PETSC_LIBRARY_SEARCH_HINT}
+			PATHS	${PETSC_ROOT_DIR}
+			PATH_SUFFIXES externalpackages/f2cblaslapack/${PETSC_ARCH}
+		)
+		LIST(APPEND PETSC_LIBVARS
+			PETSC_LIBBLAS
+			PETSC_LIBLAPACK
+		)
+	ENDIF (WITH_FORTRAN)
+ENDIF (LAPACK_FOUND)
 
 #add MPI support
 IF (WITH_MPI)
@@ -220,6 +246,7 @@ IF(NOT PETSC_ROOT_DIR)
 ENDIF(NOT PETSC_ROOT_DIR)
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(petsc DEFAULT_MSG
+	PETSC_LIBPETSC
 	PETSC_ROOT_DIR
 	PETSC_INCLUDE_DIR
 	PETSC_ARCH_INCLUDE_DIR

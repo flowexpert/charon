@@ -7,188 +7,178 @@ IF (MSVC)
 	ADD_DEFINITIONS(-DHANDLE_DLL)
 ENDIF()
 
-# plugins
-SET(Plugins) 
+# list of all plugins to be built
+SET(Plugins)
 
-IF (ENABLE_STENCILS)
-	ADD_LIBRARY(gbcce SHARED
-		Gbcce.cpp
-		${charon_INCLUDE_DIR}/Stencils/Gbcce.h
-		${charon_INCLUDE_DIR}/Stencils/Gbcce.hxx
-		${charon_INCLUDE_DIR}/Stencil.h
-		${charon_INCLUDE_DIR}/Stencil.hxx
-		${charon_INCLUDE_DIR}/Point4D.h
-		${charon_INCLUDE_DIR}/Substencil.h
-		${charon_INCLUDE_DIR}/Substencil.hxx
-	)
-	ADD_LIBRARY(rfmc SHARED
-		Rfmc.cpp
-		${charon_INCLUDE_DIR}/Stencils/Rfmc.h
-		${charon_INCLUDE_DIR}/Stencils/Rfmc.hxx
-		${charon_INCLUDE_DIR}/Stencil.h
-		${charon_INCLUDE_DIR}/Stencil.hxx
-		${charon_INCLUDE_DIR}/Point4D.h
-		${charon_INCLUDE_DIR}/Substencil.h
-		${charon_INCLUDE_DIR}/Substencil.hxx
-	)
-	ADD_LIBRARY(l2norm SHARED
-		L2Norm.cpp
-		${charon_INCLUDE_DIR}/Stencils/L2Norm.h
-		${charon_INCLUDE_DIR}/Stencils/L2Norm.hxx
-		${charon_INCLUDE_DIR}/Stencil.h
-		${charon_INCLUDE_DIR}/Stencil.hxx
-		${charon_INCLUDE_DIR}/Point4D.h
-		${charon_INCLUDE_DIR}/Substencil.h
-		${charon_INCLUDE_DIR}/Substencil.hxx
-	)
-	LIST(APPEND Plugins
-		gbcce
-		rfmc
-		l2norm
-	)
-ENDIF (ENABLE_STENCILS)
+# Stencils
+ADD_LIBRARY(gbcce SHARED
+	Gbcce.cpp
+	${charon_INCLUDE_DIR}/Stencils/Gbcce.h
+	${charon_INCLUDE_DIR}/Stencils/Gbcce.hxx
+	${charon_INCLUDE_DIR}/Stencil.h
+	${charon_INCLUDE_DIR}/Stencil.hxx
+	${charon_INCLUDE_DIR}/Point4D.h
+	${charon_INCLUDE_DIR}/Substencil.h
+	${charon_INCLUDE_DIR}/Substencil.hxx
+)
+ADD_LIBRARY(rfmc SHARED
+	Rfmc.cpp
+	${charon_INCLUDE_DIR}/Stencils/Rfmc.h
+	${charon_INCLUDE_DIR}/Stencils/Rfmc.hxx
+	${charon_INCLUDE_DIR}/Stencil.h
+	${charon_INCLUDE_DIR}/Stencil.hxx
+	${charon_INCLUDE_DIR}/Point4D.h
+	${charon_INCLUDE_DIR}/Substencil.h
+	${charon_INCLUDE_DIR}/Substencil.hxx
+)
+ADD_LIBRARY(l2norm SHARED
+	L2Norm.cpp
+	${charon_INCLUDE_DIR}/Stencils/L2Norm.h
+	${charon_INCLUDE_DIR}/Stencils/L2Norm.hxx
+	${charon_INCLUDE_DIR}/Stencil.h
+	${charon_INCLUDE_DIR}/Stencil.hxx
+	${charon_INCLUDE_DIR}/Point4D.h
+	${charon_INCLUDE_DIR}/Substencil.h
+	${charon_INCLUDE_DIR}/Substencil.hxx
+)
+LIST(APPEND Plugins
+	gbcce
+	rfmc
+	l2norm
+)
 
-IF (ENABLE_SOLVERS AND NOT WITH_PETSC)
-	MESSAGE(SEND_ERROR
-		"Trying to compile solvers without petsc "
-		"is currently not supported. "
-		"Please activate WITH_PETSC. "
+# Solvers
+INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
+ADD_LIBRARY(petscsolver SHARED
+	PetscSolver.cpp
+	${charon_INCLUDE_DIR}/Solvers/PetscSolver.h
+	${charon_INCLUDE_DIR}/Solvers/PetscSolver.hxx
+	${charon_INCLUDE_DIR}/Solver.h
+	${charon_INCLUDE_DIR}/Solver.hxx
+)
+IF (MSVC)
+	SET_TARGET_PROPERTIES(petscsolver
+		PROPERTIES LINK_FLAGS
+			/NODEFAULTLIB:"LIBCMT"
 	)
 ENDIF()
+TARGET_LINK_LIBRARIES(petscsolver
+	${PETSC_LIBRARIES}
+	roi
+	gbcce
+)
+LIST(APPEND Plugins
+	petscsolver
+)
+SET_TARGET_PROPERTIES(petscsolver
+	PROPERTIES INSTALL_RPATH ${PETSC_ROOT_DIR}/${PETSC_ARCH}/lib
+)
 
-IF (ENABLE_SOLVERS)
-	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
-	ADD_LIBRARY(petscsolver SHARED
-		PetscSolver.cpp
-		${charon_INCLUDE_DIR}/Solvers/PetscSolver.h
-		${charon_INCLUDE_DIR}/Solvers/PetscSolver.hxx
-		${charon_INCLUDE_DIR}/Solver.h
-		${charon_INCLUDE_DIR}/Solver.hxx
-	)
-	IF (MSVC)
-		SET_TARGET_PROPERTIES(petscsolver
-			PROPERTIES LINK_FLAGS
-				/NODEFAULTLIB:"LIBCMT"
-		)
-	ENDIF()
-	TARGET_LINK_LIBRARIES(petscsolver
-		${PETSC_LIBRARIES}
-		roi
-		gbcce
-	)
-	LIST(APPEND Plugins
-		petscsolver
-	)
-	SET_TARGET_PROPERTIES(petscsolver
-		PROPERTIES INSTALL_RPATH ${PETSC_ROOT_DIR}/${PETSC_ARCH}/lib
-	)
-ENDIF (ENABLE_SOLVERS)
+# Brightness models (currently only constant brightness available,
+# others only partially ported and untested)
+ADD_LIBRARY(brightnessmodels_constant SHARED
+	BrightnessModelConstant.cpp
+	${charon_INCLUDE_DIR}/BrightnessModels/Constant.h
+	${charon_INCLUDE_DIR}/BrightnessModels/Constant.hxx
+	${charon_INCLUDE_DIR}/BrightnessModel.h
+)
+#ADD_LIBRARY(brightnessmodels_diffusion SHARED
+#	BrightnessModelDiffusion.cpp
+#	${charon_INCLUDE_DIR}/BrightnessModels/Diffusion.h
+#	${charon_INCLUDE_DIR}/BrightnessModels/Diffusion.hxx
+#	${charon_INCLUDE_DIR}/BrightnessModel.h
+#)
+#ADD_LIBRARY(brightnessmodels_exponential SHARED
+#	BrightnessModelExponential.cpp
+#	${charon_INCLUDE_DIR}/BrightnessModels/Exponential.h
+#	${charon_INCLUDE_DIR}/BrightnessModels/Exponential.hxx
+#	${charon_INCLUDE_DIR}/BrightnessModel.h
+#)
+#ADD_LIBRARY(brightnessmodels_movingillumination SHARED
+#	BrightnessModelMovingIllumination.cpp
+#	${charon_INCLUDE_DIR}/BrightnessModels/MovingIllumination.h
+#	${charon_INCLUDE_DIR}/BrightnessModels/MovingIllumination.hxx
+#	${charon_INCLUDE_DIR}/BrightnessModel.h
+#)
+LIST(APPEND Plugins
+	brightnessmodels_constant
+#	brightnessmodels_diffusion
+#	brightnessmodels_exponential
+#	brightnessmodels_movingillumination
+)
 
-IF (ENABLE_BRIGHTNESS)
-	ADD_LIBRARY(brightnessmodels_constant SHARED
-		BrightnessModelConstant.cpp
-		${charon_INCLUDE_DIR}/BrightnessModels/Constant.h
-		${charon_INCLUDE_DIR}/BrightnessModels/Constant.hxx
-		${charon_INCLUDE_DIR}/BrightnessModel.h
-	)
-#	ADD_LIBRARY(brightnessmodels_diffusion SHARED
-#		BrightnessModelDiffusion.cpp
-#		${charon_INCLUDE_DIR}/BrightnessModels/Diffusion.h
-#		${charon_INCLUDE_DIR}/BrightnessModels/Diffusion.hxx
-#		${charon_INCLUDE_DIR}/BrightnessModel.h
-#	)
-#	ADD_LIBRARY(brightnessmodels_exponential SHARED
-#		BrightnessModelExponential.cpp
-#		${charon_INCLUDE_DIR}/BrightnessModels/Exponential.h
-#		${charon_INCLUDE_DIR}/BrightnessModels/Exponential.hxx
-#		${charon_INCLUDE_DIR}/BrightnessModel.h
-#	)
-#	ADD_LIBRARY(brightnessmodels_movingillumination SHARED
-#		BrightnessModelMovingIllumination.cpp
-#		${charon_INCLUDE_DIR}/BrightnessModels/MovingIllumination.h
-#		${charon_INCLUDE_DIR}/BrightnessModels/MovingIllumination.hxx
-#		${charon_INCLUDE_DIR}/BrightnessModel.h
-#	)
-	LIST(APPEND Plugins
-		brightnessmodels_constant
-#		brightnessmodels_diffusion
-#		brightnessmodels_exponential
-#		brightnessmodels_movingillumination
-	)
-ENDIF (ENABLE_BRIGHTNESS)
+# Motion models (currently only constant brightness available,
+# others only partially ported and untested)
+ADD_LIBRARY(flowfunctor SHARED
+	FlowFunctor.cpp
+	${charon_INCLUDE_DIR}/FlowFunctor.h
+	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
+)
+#ADD_LIBRARY(motionmodels_localaffiness SHARED
+#	MotionModelLocalAffiness.cpp
+#	${charon_INCLUDE_DIR}/MotionModels/LocalAffiness.h
+#	${charon_INCLUDE_DIR}/MotionModels/LocalAffiness.hxx
+#	${charon_INCLUDE_DIR}/FlowFunctor.h
+#	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
+#	${charon_INCLUDE_DIR}/MotionModel.h
+#)
+#TARGET_LINK_LIBRARIES(motionmodels_localaffiness
+#	flowfunctor
+#)
+ADD_LIBRARY(motionmodels_localconstant SHARED
+	MotionModelLocalConstant.cpp
+	${charon_INCLUDE_DIR}/MotionModels/LocalConstant.h
+	${charon_INCLUDE_DIR}/MotionModels/LocalConstant.hxx
+	${charon_INCLUDE_DIR}/FlowFunctor.h
+	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
+	${charon_INCLUDE_DIR}/MotionModel.h
+)
+TARGET_LINK_LIBRARIES(motionmodels_localconstant
+	flowfunctor
+)
+#ADD_LIBRARY(motionmodels_localplanarity SHARED
+#	MotionModelLocalPlanarity.cpp
+#	${charon_INCLUDE_DIR}/MotionModels/LocalPlanarity.h
+#	${charon_INCLUDE_DIR}/MotionModels/LocalPlanarity.hxx
+#	${charon_INCLUDE_DIR}/FlowFunctor.h
+#	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
+#	${charon_INCLUDE_DIR}/MotionModel.h
+#)
+#TARGET_LINK_LIBRARIES(motionmodels_localplanarity
+#	flowfunctor
+#)
+#ADD_LIBRARY(motionmodels_localrotation SHARED
+#	MotionModelLocalRotation.cpp
+#	${charon_INCLUDE_DIR}/MotionModels/LocalRotation.h
+#	${charon_INCLUDE_DIR}/MotionModels/LocalRotation.hxx
+#	${charon_INCLUDE_DIR}/FlowFunctor.h
+#	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
+#	${charon_INCLUDE_DIR}/MotionModel.h
+#)
+#TARGET_LINK_LIBRARIES(motionmodels_localrotation
+#	flowfunctor
+#)
+#ADD_LIBRARY(motionmodels_localstretch SHARED
+#	MotionModelLocalStretch.cpp
+#	${charon_INCLUDE_DIR}/MotionModels/LocalStretch.h
+#	${charon_INCLUDE_DIR}/MotionModels/LocalStretch.hxx
+#	${charon_INCLUDE_DIR}/FlowFunctor.h
+#	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
+#	${charon_INCLUDE_DIR}/MotionModel.h
+#)
+#TARGET_LINK_LIBRARIES(motionmodels_localstretch
+#	flowfunctor
+#)
+LIST(APPEND Plugins
+	flowfunctor
+#	motionmodels_localaffiness
+	motionmodels_localconstant
+#	motionmodels_localplanarity
+#	motionmodels_localrotation
+#	motionmodels_localstretch
+)
 
-IF (ENABLE_MOTION)
-	ADD_LIBRARY(flowfunctor SHARED
-		FlowFunctor.cpp
-		${charon_INCLUDE_DIR}/FlowFunctor.h
-		${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-	)
-#	ADD_LIBRARY(motionmodels_localaffiness SHARED
-#		MotionModelLocalAffiness.cpp
-#		${charon_INCLUDE_DIR}/MotionModels/LocalAffiness.h
-#		${charon_INCLUDE_DIR}/MotionModels/LocalAffiness.hxx
-#		${charon_INCLUDE_DIR}/FlowFunctor.h
-#		${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-#		${charon_INCLUDE_DIR}/MotionModel.h
-#	)
-#	TARGET_LINK_LIBRARIES(motionmodels_localaffiness
-#		flowfunctor
-#	)
-	ADD_LIBRARY(motionmodels_localconstant SHARED
-		MotionModelLocalConstant.cpp
-		${charon_INCLUDE_DIR}/MotionModels/LocalConstant.h
-		${charon_INCLUDE_DIR}/MotionModels/LocalConstant.hxx
-		${charon_INCLUDE_DIR}/FlowFunctor.h
-		${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-		${charon_INCLUDE_DIR}/MotionModel.h
-	)
-	TARGET_LINK_LIBRARIES(motionmodels_localconstant
-		flowfunctor
-	)
-#	ADD_LIBRARY(motionmodels_localplanarity SHARED
-#		MotionModelLocalPlanarity.cpp
-#		${charon_INCLUDE_DIR}/MotionModels/LocalPlanarity.h
-#		${charon_INCLUDE_DIR}/MotionModels/LocalPlanarity.hxx
-#		${charon_INCLUDE_DIR}/FlowFunctor.h
-#		${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-#		${charon_INCLUDE_DIR}/MotionModel.h
-#	)
-#	TARGET_LINK_LIBRARIES(motionmodels_localplanarity
-#		flowfunctor
-#	)
-#	ADD_LIBRARY(motionmodels_localrotation SHARED
-#		MotionModelLocalRotation.cpp
-#		${charon_INCLUDE_DIR}/MotionModels/LocalRotation.h
-#		${charon_INCLUDE_DIR}/MotionModels/LocalRotation.hxx
-#		${charon_INCLUDE_DIR}/FlowFunctor.h
-#		${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-#		${charon_INCLUDE_DIR}/MotionModel.h
-#	)
-#	TARGET_LINK_LIBRARIES(motionmodels_localrotation
-#		flowfunctor
-#	)
-#	ADD_LIBRARY(motionmodels_localstretch SHARED
-#		MotionModelLocalStretch.cpp
-#		${charon_INCLUDE_DIR}/MotionModels/LocalStretch.h
-#		${charon_INCLUDE_DIR}/MotionModels/LocalStretch.hxx
-#		${charon_INCLUDE_DIR}/FlowFunctor.h
-#		${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-#		${charon_INCLUDE_DIR}/MotionModel.h
-#	)
-#	TARGET_LINK_LIBRARIES(motionmodels_localstretch
-#		flowfunctor
-#	)
-	LIST(APPEND Plugins
-		flowfunctor
-#		motionmodels_localaffiness
-		motionmodels_localconstant
-#		motionmodels_localplanarity
-#		motionmodels_localrotation
-#		motionmodels_localstretch
-	)
-ENDIF (ENABLE_MOTION)
-
-IF(ENABLE_ROBUSTNESS)
+IF(BUILD_ROBUSTNESS)
 	ADD_DEFINITIONS(-DROBUSTNESS)
 	ADD_LIBRARY(robustnessterm SHARED
 		RobustnessTerm.cpp
@@ -233,8 +223,9 @@ IF(ENABLE_ROBUSTNESS)
 		iteratorhelper
 		psistencil
 	)
-ENDIF(ENABLE_ROBUSTNESS)
+ENDIF(BUILD_ROBUSTNESS)
 
+# Misc plugins
 ADD_LIBRARY(sequencegenerator SHARED
 	SequenceGenerator.cpp
 	${charon_INCLUDE_DIR}/SequenceGenerator.h
@@ -257,6 +248,7 @@ ADD_LIBRARY(flowcomparator SHARED
 )
 LIST(APPEND Plugins flowcomparator)
 
+# Plugin configuration (linking, common libraries)
 SET(GLOBAL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins")
 SET(GLOBAL_RPATH "${GLOBAL_RPATH}:${charon-core_ROOT_DIR}/lib${LIB_SUFFIX}")
 SET(LOCAL_RPATH "${charon-utils_ROOT_DIR}/lib${LIB_SUFFIX}/charon-plugins")

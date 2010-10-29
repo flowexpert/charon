@@ -23,32 +23,20 @@ INCLUDE(Documentation)
 INCLUDE(ReleaseSys)
 
 # select wich plugins to compile
-MESSAGE(STATUS "Charon plugin configuration:")
-OPTION(ENABLE_BRIGHTNESS "compile brightnessmodel plugins" ON)
-MESSAGE(STATUS "    brightness m.: ${ENABLE_BRIGHTNESS}")
-OPTION(ENABLE_MOTION "compile motionmodel plugins" ON)
-MESSAGE(STATUS "    motion models: ${ENABLE_MOTION}")
-OPTION(ENABLE_STENCILS "compile stencil pugins" ON)
-MESSAGE(STATUS "    stencils     : ${ENABLE_STENCILS}")
-OPTION(ENABLE_SOLVERS "compile solver pugins" ON)
-MESSAGE(STATUS "    solvers      : ${ENABLE_SOLVERS}")
-OPTION(ENABLE_ROBUSTNESS "compile solver pugins" OFF)
-MESSAGE(STATUS "    robustness   : ${ENABLE_ROBUSTNESS}")
+OPTION(BUILD_ROBUSTNESS "compile robustness pugins" OFF)
 
-MESSAGE(STATUS "Charon library configuration:")
-OPTION(WITH_PETSC "use PETSc library" ON)
-MESSAGE(STATUS "    PETSc        : ${WITH_PETSC}")
-IF(WITH_PETSC)
-	FIND_PACKAGE(petsc REQUIRED)
-ENDIF(WITH_PETSC)
-CImgLibInfo()
+# Petsc actually required
+FIND_PACKAGE(petsc REQUIRED)
 
 # Test suite
-OPTION(ENABLE_TEST "enable test suite" ON)
-IF(ENABLE_TEST)
-	ENABLE_TESTING()
-	INCLUDE(CTest)
-ENDIF(ENABLE_TEST)
+INCLUDE(CTest)
+
+# Print infos about found packages
+MESSAGE(STATUS "Charon plugin configuration:")
+MESSAGE(STATUS "    robustness   : ${BUILD_ROBUSTNESS}\n")
+INCLUDE(Features)
+MESSAGE(STATUS "CImg configuration:")
+CImgLibInfo()
 
 # Setup CMake config files for package finding
 INCLUDE(GenConfig)
