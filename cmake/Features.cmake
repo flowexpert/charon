@@ -10,7 +10,7 @@ SET_FEATURE_INFO(charon-utils
 	"Version ${charon-core_VERSION}"
 )
 SET_FEATURE_INFO(Threads
-	"system tread library"
+	"system thread library"
 )
 SET_FEATURE_INFO(BLAS
 	"linear algebra interface"
