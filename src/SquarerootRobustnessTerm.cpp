@@ -21,12 +21,13 @@
  */
 #define TYPE SquarerootRobustnessTerm
 
-#include "SquarerootRobustnessTerm.h"
+#include <charon/RobustnessTerms/SquarerootRobustnessTerm.h>
 #include <cmath>
 
 SquarerootRobustnessTerm::SquarerootRobustnessTerm(const std::string& name) :
 		RobustnessTerm("SquarerootRobustnessTerm", name, 
-			"This class is used for calculationg Robustness Term using the function Psi(s^2)=sqrt{s^2+e^2}")
+			"This class is used for calculationg Robustness Term using the "
+			"function Psi(s^2)=sqrt{s^2+e^2}")
 {
 }
 	

@@ -60,6 +60,7 @@ protected:
 		const std::string& doc         ///  [in] class docstring
 	);
 
+	/// iteration result output
 	cimg_library::CImgList<T> imgListOut;
 
 public:

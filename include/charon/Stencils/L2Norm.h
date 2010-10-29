@@ -54,12 +54,10 @@ private:
 	cimg_library::CImgList<T> _rhsVals;     ///< values for rhs (optional)
 	
 	#ifdef ROBUSTNESS
-	cimg_library::CImg<T>     _gradientWeight;    ///< precalculated gradient sum
+	cimg_library::CImg<T>     _gradientWeight; ///< precalculated gradient sum
 	#endif
 	//  \}
 
-	//save point (needed for L2Norm<T>::execute())
-	Point4D<int> _point;
 
 public:
 	/// Number of dimensions (1D, 2D, 3D, 4D).

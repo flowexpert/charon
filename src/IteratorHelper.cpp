@@ -22,7 +22,7 @@
  */
 #define TYPE IteratorHelper
 
-#include "IteratorHelper.hxx"
+#include <charon/IteratorHelper.hxx>
 
 extern "C" iteratorhelper_DECLDIR ParameteredObject* create(
 		const std::string &name, template_type t) {

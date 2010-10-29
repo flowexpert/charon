@@ -70,9 +70,10 @@ public:
 	InputSlot<cimg_library::CImgList<T> > img;
 
 	/// compute the bcce term
-	/** @param xs,ys,zs,t,v  coordinates (5D)
-	 *  @param term          map to which the result is written
-	 *  @param rhs           right hand side
+	/** \param p             coordinates (4D)
+	 *  \param v             channel
+	 *  \param term          map to which the result is written
+	 *  \param rhs           right hand side
 	 *  \param unknown       name of the unknown to compute the term for
 	 *                       (this is used for global methods)
 	 */
@@ -81,6 +82,12 @@ public:
 			std::map<std::string, T>& term, T& rhs,
 			const std::string& unknown = "") = 0;
 
+	/// compute the bcce energy term
+	/** \param p             coordinates (4D)
+	 *  \param v             channel
+	 *  \param parameterList parameter list
+	 *  \param energy        energy result
+	 */
 	virtual void computeEnergy(
 				const Point4D<int>& p, const int& v,
 				const cimg_library::CImgList<T>& parameterList,

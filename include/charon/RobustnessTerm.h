@@ -56,10 +56,10 @@ public:
 			const std::string& doc /**[in] stencil documentation*/);
 
 	/// calculates robustness term, Psi
-	//virtual double Psi(double s) const;
+	//virtual double Psi(double s /** [in] sigma */) const;
 
 	/// calculates derivative of robustness term, DPsi
-	virtual double DPsi(double s);
+	virtual double DPsi(double s /** [in] sigma */);
 
 };
 

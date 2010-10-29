@@ -27,17 +27,10 @@
 
 #define TYPE PsiStencil
 
-#if defined(MSVC) && defined (psistencil_EXPORTS)
-#define stencil_EXPORTS
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define DECLDIR
-#endif
+#include <charon/Stencils/PsiStencil.hxx>
 
-#include "PsiStencil.hxx"
-
-extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
+extern "C" psistencil_DECLDIR
+ParameteredObject* create(const std::string &name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -54,6 +47,7 @@ extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_
 	}
 }
 
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
+extern "C" psistencil_DECLDIR
+void destroy(ParameteredObject * b) {
 	delete b;
 }

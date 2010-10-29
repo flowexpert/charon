@@ -25,7 +25,7 @@
 #define solver_EXPORTS
 #define iterativesolver_EXPORTS
 
-#include "SampleIterativeSolver.hxx"
+#include <charon/IterativeSolvers/SampleIterativeSolver.hxx>
 
 extern "C" sampleiterativesolver_DECLDIR ParameteredObject* create(
 		const std::string &name, template_type t) {

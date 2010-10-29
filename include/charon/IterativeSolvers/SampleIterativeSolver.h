@@ -49,9 +49,8 @@ public:
 	virtual void execute();
 
 private:
+	/// output buffer
 	cimg_library::CImgList<T> globalFlowOut;
-
-
 };
 
 #endif // _SAMPLEITERATIVESOLVER_H_

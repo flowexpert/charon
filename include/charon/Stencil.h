@@ -89,15 +89,16 @@ protected:
 	/// Map to store and manage all the right hand side.
 	/** This has to be updated to represent the correct unknown
 	 *  during Stencil::updateStencil.
-	 * \todo (Nina) add documentation here for the following three members:
-	 *        - _rhsD
-	 *        - _term
-	 *        - _termD
 	 */
 	T _rhs;
+
+	/// \name robustness related variables
+	/// \todo (Nina) add documentation here
+	//\{
 	T _rhsD;
 	std::map<std::string, T> _term;
 	std::map<std::string, T> _termD;
+	//\}
 
 	/// calculated energy of the stencil
 	double _energy;
@@ -129,7 +130,7 @@ public:
 	 *  \param[in] unknown    query substencils for this unknown,
 	 *                        e.g. the Euler-Lagrange equation after
 	 *                        deriving wrt the given unknown.
-	 *  @param[in] x,y,z,t,v  coordinates
+	 *  @param[in] p,v        coordinates
 	 */
 	virtual void updateStencil(
 		const std::string& unknown,
@@ -141,11 +142,12 @@ public:
      *  code that does not implement this interface yet.
 	 *  \todo add more documentation here, what this function is good
      *        for and how to implement it in derived stencils.
+	 *  \param[in] flowList   flow list
+	 *  \param[in] p,v        coordinates (5D)
 	 */
 	virtual void updateEnergy(
 		const cimg_library::CImgList<T>& flowList,
 		const Point4D<int>& p=Point4D<int>(), const int& v=0);
-
 
 	/// Getter function for the SubStencils of the stencil.
 	/** @return reference to the map of SubStencils.

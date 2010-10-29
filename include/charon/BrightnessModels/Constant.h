@@ -53,6 +53,7 @@ public:
 	/// default constructor
 	Constant(const std::string& name = "");
 
+	/// \copydoc ParameteredObject::execute()
 	virtual void execute();
 
 	virtual void compute(

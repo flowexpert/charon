@@ -219,10 +219,9 @@ void L2Norm<T>::updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p, const int&) {
 
-	//save point (needed for L2Norm<T>::execute())
-	_point = Point4D<int>();
 
 #ifdef ROBUSTNESS
+	Point4D<int> point;
 	double a=0, b=0, c=0, d=0, e=0;
 	std::ostringstream msg;
 	if(robustnessTerm.connected()) {
@@ -235,12 +234,12 @@ void L2Norm<T>::updateStencil(
 			break;
 
 		case 2:
-			a=(_gradientWeight(_point.x-1,_point.y)+_gradientWeight(_point.x,_point.y))/2;
-			b=(_gradientWeight(_point.x,_point.y)-_gradientWeight(_point.x-1,_point.y))/2;
-			c=-(_gradientWeight(_point.x+1,_point.y)+2*_gradientWeight(_point.x-1,_point.y)
-				+_gradientWeight(_point.x-1,_point.y)+4*_gradientWeight(_point.x,_point.y))/2;
-			c=(_gradientWeight(_point.x+1,_point.y)+_gradientWeight(_point.x,_point.y))/2;
-			d=(_gradientWeight(_point.x,_point.y+1)+_gradientWeight(_point.x,_point.y))/2;
+			a=(_gradientWeight(point.x-1,point.y)+_gradientWeight(point.x,point.y))/2;
+			b=(_gradientWeight(point.x,point.y)-_gradientWeight(point.x-1,point.y))/2;
+			c=-(_gradientWeight(point.x+1,point.y)+2*_gradientWeight(point.x-1,point.y)
+				+_gradientWeight(point.x-1,point.y)+4*_gradientWeight(point.x,point.y))/2;
+			c=(_gradientWeight(point.x+1,point.y)+_gradientWeight(point.x,point.y))/2;
+			d=(_gradientWeight(point.x,point.y+1)+_gradientWeight(point.x,point.y))/2;
 
 			_dataMask.fill(
 			T( 0), T(a), T( 0),

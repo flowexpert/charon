@@ -13,8 +13,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file RobustnessTerm.h
- *  Implementation of class RobustnessTerm.
+/** @file SquarerootRobustnessTerm.h
+ *  Implementation of class SquarerootRobustnessTerm.
  *  @author <a href="mailto:techfreaq@web.de">Nina Hernitschek</a>
  *  @date 13.01.2010
  */
@@ -40,17 +40,15 @@
 
 /// class which uses the function \f$\Psi(s^2)=\sqrt{s^2+e^2}\f$ with
 /// parameter compute the bcce-terms
-
-class squarerootrobustnessterm_DECLDIR SquarerootRobustnessTerm : public RobustnessTerm
-{
+class squarerootrobustnessterm_DECLDIR SquarerootRobustnessTerm :
+		public RobustnessTerm {
 public:
 	
 	/// default constructor
 	/// \param name instance name
 	SquarerootRobustnessTerm(const std::string& name = "");
 
-	/// calculates derivative of robustness term, DPsi
-	virtual double DPsi(double s);
+	virtual double DPsi(double s /** [in] sigma */);
 };
 
 #endif

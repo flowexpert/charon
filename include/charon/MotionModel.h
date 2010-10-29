@@ -17,7 +17,8 @@
  */
 /// @file MotionModel.h
 /// defines abstract class MotionModel
-/// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">René Steinbrügge</a>
+/// @author <a href="mailto:Steinbruegge@stud.uni-heidelberg.de">
+///     René Steinbrügge</a>
 /// @date 27.05.2009
 
 #ifndef _MotionModel_h_
@@ -78,6 +79,13 @@ public:
 			std::map<std::string, T>& term, T& rhs,
 			const std::string& unknown = "") = 0;
 
+	/// compute the bcce-term energy of the motion model
+	/**
+	 *  \param[in]  p         coordinates of the current pixel (including time)
+	 *  \param[in]  v         channel
+	 *  \param[out] parameterList parameter list
+	 *  \param[in]  energy    return energy value
+	 */
 	virtual void computeEnergy(
 			const Point4D<int>& p, const int& v,
 			const cimg_library::CImgList<T>& parameterList,
@@ -86,7 +94,6 @@ public:
 	/// returns a vector of names of unknowns of the model
 	/// by asking the vectors length, you get the number of unknowns
 	virtual std::set<std::string>& getUnknowns() = 0;
-
 };
 
 #endif

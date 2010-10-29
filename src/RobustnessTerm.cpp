@@ -20,15 +20,19 @@
  *  @date 13.01.2010
  */
 
-#include "RobustnessTerm.h"
 #include <ParameteredObject.hxx>
+#include <charon/RobustnessTerm.h>
 
-RobustnessTerm::RobustnessTerm(const std::string& classname, const std::string& name,
+RobustnessTerm::RobustnessTerm(
+		const std::string& classname, const std::string& name,
 		const std::string& doc) :
 		ParameteredObject(classname,name,doc +
 				"<br><br>This class is used for calculationg Robustness Term")
-{this->_addOutputSlot(out,"this","Pointer to itself","RobustnessTerm*");
-	this->_addParameter(epsilon,"epsilon","parameter of the Robustness Term",0.001,"double"); 
+{
+	this->_addOutputSlot(out,"this","Pointer to itself","RobustnessTerm*");
+	this->_addParameter(
+			epsilon,"epsilon",
+			"parameter of the Robustness Term",0.001,"double");
 	out = this;
 }
 
