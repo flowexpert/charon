@@ -37,9 +37,9 @@
 #define brightnessmodels_constant_DECLDIR
 #endif
 
-#include <CImg.h>
-#include "../BrightnessModel.h"
 #include <string>
+#include <charon-utils/CImg.h>
+#include "../BrightnessModel.h"
 #include "../functions.h"
 
 /// namespace including the different brightness models
@@ -52,14 +52,12 @@ namespace BrightnessModels
 	{
 	private:
 		/// the brightness functor for no brightness change
-		class Functor: public BrightnessFunctorInterface<T>
+		class Functor : public BrightnessFunctorInterface<T>
 		{
 		public:
-			virtual void operator()(cimg_library::CImg<T>&) const
-			{
+			virtual void operator()(cimg_library::CImg<T>&) const {
 			}
-			virtual void get3d(cimg_library::CImgList<T>&) const
-			{
+			virtual void get3d(cimg_library::CImgList<T>&) const {
 			}
 		} functor;
 
@@ -81,18 +79,6 @@ namespace BrightnessModels
 
 		virtual std::set<std::string>& getUnknowns();
 		//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
-
-		/**
-		 *  compute brightness changes with the inserted Parameters
-		 *  @param inPixel   insert pixel for which is the birghtness changes
-		 *                   has to be done
-		 *  @param modifier  vector of Parameters to compute the modification
-		 *  @param outPixel  return value of Pixel type
-		 */
-		virtual void apply(
-				const Pixel<T>& inPixel,
-				const std::vector<IncrementorParameter<T>*>& modifier,
-				Pixel<T>& outPixel);
 	};
 
 }

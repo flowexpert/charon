@@ -37,8 +37,7 @@
 
 //#include "Derivative.h"
 #include "FlowFunctorInterface.h"
-#include "IncrementorParameter.h"
-#include "Pixel.h"
+#include "Point4D.h"
 #include <set>
 
 /// abstract base class for the different motion models
@@ -111,16 +110,6 @@ public:
 	/// returns a vector of names of unknowns of the model
 	/// by asking the vectors length, you get the number of unknowns
 	virtual std::set<std::string>& getUnknowns() = 0;
-
-	/** 
-	 *  compute motion changes with the inserted Parameters
-	 *  @param inPixel insert pixel for which is the birghtness changes has to 
-	 *  be done
-	 *  @param modifier vector of Parameters to compute the modification
-	 *  @param outPixel return value of Pixel type
-	 */
-	virtual void apply(const Pixel<T> & inPixel, const std::vector<
-			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel) = 0;
 
 };
 

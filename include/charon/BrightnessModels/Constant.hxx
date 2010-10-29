@@ -25,7 +25,6 @@
 #define _BrightnessModels_Constant_HXX_
 
 #include "Constant.h"
-#include "../Pixel.hxx"
 
 template<class T>
 BrightnessModels::Constant<T>::Constant(const std::string& name) :
@@ -33,7 +32,6 @@ BrightnessModels::Constant<T>::Constant(const std::string& name) :
 {
 	_addFunction(BrightnessModels::Constant<T>::getUnknowns);
 	_addFunction(BrightnessModels::Constant<T>::compute);
-	_addFunction(BrightnessModels::Constant<T>::apply);
 }
 
 template<class T>
@@ -61,14 +59,6 @@ void BrightnessModels::Constant<T>::computeEnergy(
 		const Point4D<int>&, const int&,
 		const cimg_library::CImgList<T>&, double&)
 {
-	// no brightness change
-}
-
-template<class T>
-void BrightnessModels::Constant<T>::apply(const Pixel<T> & inPixel,
-		const std::vector<IncrementorParameter<T>*> &, Pixel<T> & outPixel)
-{
-	outPixel = inPixel;
 	// no brightness change
 }
 

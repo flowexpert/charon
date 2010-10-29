@@ -120,17 +120,12 @@ template<class T>
 void MotionModels::LocalConstant<T>::setFlowFunctorParams(const float a1,
 		const float a2, const float a3)
 {
-	flowfunc.setParams3d(a1, a2, a3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			0.0, 0.0, 0.0, 0.0);
-}
-
-template<class T>
-void MotionModels::LocalConstant<T>::apply(const Pixel<T> & inPixel,
-		const std::vector<IncrementorParameter<T>*> & /*modifier*/,
-		Pixel<T> & outPixel)
-{
-	outPixel = inPixel;
-	//no change in movement
+	flowfunc.setParams3d(
+			a1, a2, a3,
+			0.0, 0.0, 0.0,
+			0.0, 0.0, 0.0,
+			0.0, 0.0, 0.0,
+			0.0, 0.0, 0.0);
 }
 
 #endif

@@ -38,13 +38,13 @@
 
 #include <ParameteredObject.hxx>
 #include <set>
+#include "Point4D.h"
 #include "BrightnessModels/BrightnessFunctorInterface.h"
-#include "Pixel.h"
-#include "IncrementorParameter.h"
 
 /// abstract base class for the different BrightnessModels
 template<class T>
-class brightnessmodel_DECLDIR BrightnessModel: public TemplatedParameteredObject<T>
+class brightnessmodel_DECLDIR BrightnessModel :
+		public TemplatedParameteredObject<T>
 {
 protected:
 	/// Set of unknowns
@@ -97,16 +97,6 @@ public:
 	 * @return Set of strings which contains the names of the unknowns
 	 */
 	virtual std::set<std::string>& getUnknowns() = 0;
-
-	/** 
-	 *  compute brightness changes with the inserted Parameters
-	 *  @param inPixel insert pixel for which is the birghtness changes has to 
-	 *  be done
-	 *  @param modifier vector of Parameters to compute the modification
-	 *  @param outPixel return value of Pixel type
-	 */
-	virtual void apply(const Pixel<T> & inPixel, const std::vector<
-			IncrementorParameter<T>*> & modifier, Pixel<T> & outPixel) =0;
 };
 
 #endif

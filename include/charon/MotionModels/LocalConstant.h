@@ -37,11 +37,9 @@
 #endif
 
 #include <charon-utils/CImg.h>
-#include "../Pixel.hxx"
 #include <string>
 #include "../MotionModel.h"
 #include "../FlowFunctor.h"
-#include "../IncrementorParameter.h"
 
 /// namespace for the different motion models
 namespace MotionModels
@@ -96,18 +94,6 @@ public:
 	 * 
 	 */
 	void setFlowFunctorParams(const float a1, const float a2, const float a3);
-
-	/**
-	 *  compute motion changes with the inserted Parameters
-	 *  @param inPixel insert pixel for which is the birghtness changes has to 
-	 *  be done
-	 *  @param modifier vector of Parameters to compute the modification
-	 *  @param outPixel return value of Pixel type
-	 */
-	virtual void apply(
-			const Pixel<T> & inPixel,
-			const std::vector<IncrementorParameter<T>*> & modifier,
-			Pixel<T> & outPixel);
 };
 
 } // namespace
