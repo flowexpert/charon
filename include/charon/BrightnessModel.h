@@ -36,10 +36,10 @@
 #define brightnessmodel_DECLDIR
 #endif
 
-#include <ParameteredObject.hxx>
+#include <charon-core/ParameteredObject.h>
+#include <charon-utils/CImg.h>
 #include <set>
 #include "Point4D.h"
-#include "BrightnessModels/BrightnessFunctorInterface.h"
 
 /// abstract base class for the different BrightnessModels
 template<class T>
@@ -59,18 +59,12 @@ public:
 				"computes the vectors for brightness-modeling")
 	{
 		_addOutputSlot(out, "this", "Pointer to itself", "BrightnessModel<T>");
-		_addOutputSlot(brightnessFunctor, "brightnessfunctor",
-				"Pointer to BrightnessFunctor of the Model",
-				"BrightnessFunctorInterface*");
 		_addInputSlot(img, "image", "Image to work with", "CImgList<T>");
 		out = this;
 	}
 
 	/// OutputSlot containing pointer to this BrightnessModel
 	OutputSlot<BrightnessModel*> out;
-
-	/// OutputSlot containing pointer to the brightness functor of this BrightnessModel
-	OutputSlot<BrightnessFunctorInterface<T>*> brightnessFunctor;
 
 	/// imagelist to work on
 	InputSlot<cimg_library::CImgList<T> > img;

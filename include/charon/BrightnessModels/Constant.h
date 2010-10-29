@@ -40,47 +40,34 @@
 #include <string>
 #include <charon-utils/CImg.h>
 #include "../BrightnessModel.h"
-#include "../functions.h"
 
 /// namespace including the different brightness models
 namespace BrightnessModels
 {
 
-	/// a brightness model for no brightness change
-	template<class T>
-	class brightnessmodels_constant_DECLDIR Constant: public BrightnessModel<T>
-	{
-	private:
-		/// the brightness functor for no brightness change
-		class Functor : public BrightnessFunctorInterface<T>
-		{
-		public:
-			virtual void operator()(cimg_library::CImg<T>&) const {
-			}
-			virtual void get3d(cimg_library::CImgList<T>&) const {
-			}
-		} functor;
+/// a brightness model for no brightness change
+template<class T>
+class brightnessmodels_constant_DECLDIR Constant :
+		public BrightnessModel<T> {
+public:
+	/// default constructor
+	Constant(const std::string& name = "");
 
-	public:
-		/// default constructor
-		Constant(const std::string& name = "");
+	virtual void execute();
 
-		virtual void execute();
+	virtual void compute(
+			const Point4D<int>& p, const int& v,
+			std::map<std::string, T>& term, T& rhs,
+			const std::string& unknown = "");
 
-		virtual void compute(
-				const Point4D<int>& p, const int& v,
-				std::map<std::string, T>& term, T& rhs,
-				const std::string& unknown = "");
+	virtual void computeEnergy(
+			const Point4D<int>& p, const int& v,
+			const cimg_library::CImgList<T>& parameterList,
+			double& energy);
 
-		virtual void computeEnergy(
-				const Point4D<int>& p, const int& v,
-				const cimg_library::CImgList<T>& parameterList,
-				double& energy);
+	virtual std::set<std::string>& getUnknowns();
+};
 
-		virtual std::set<std::string>& getUnknowns();
-		//virtual BrightnessFunctorInterface& getFunctor() {return functor;}
-	};
-
-}
+} // namespace
 
 #endif

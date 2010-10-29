@@ -35,10 +35,10 @@
 #define motionmodel_DECLDIR
 #endif
 
-//#include "Derivative.h"
-#include "FlowFunctorInterface.h"
-#include "Point4D.h"
 #include <set>
+#include <charon-core/ParameteredObject.h>
+#include <charon-utils/CImg.h>
+#include "Point4D.h"
 
 /// abstract base class for the different motion models
 /** If you need some input slots implementing your own MotionModel,
@@ -58,30 +58,11 @@ public:
 	{
 		this->_addOutputSlot(out, "this",
 				"Pointer to itself", "MotionModel<T>");
-		this->_addOutputSlot(flowFunctor, "flowfunctor",
-				"flowFunctor of MotionModel", "FlowFunctorInterface*");
-		this->_addParameter(x, "x",
-				"x-coordinate of the center of the stencil", 0);
-		this->_addParameter(y, "y",
-				"y-coordinate of the center of the stencil", 0);
-		this->_addParameter(z, "z",
-				"z-coordinate of the center of the stencil", 0);
 		out = this;
 	}
 
-	//InputSlot<cimg_library::CImg<> > img;
-	//InputSlot<Derivative*> deriv;
-
 	/// output slot containing pointer to this class
 	OutputSlot<MotionModel<T>*> out;
-
-	/// output slot containing pointer to the flow functor of the motion model
-	OutputSlot<FlowFunctorInterface*> flowFunctor;
-
-	/// \name coordinates of center of mask
-	//\{
-	Parameter<int> x, y, z;
-	//\}
 
 	/// compute the bcce-term of the motion model
 	/**
@@ -101,11 +82,6 @@ public:
 			const Point4D<int>& p, const int& v,
 			const cimg_library::CImgList<T>& parameterList,
 			double& energy) = 0;
-
-	// returns the width of the bcce-terms
-	// @details = number of parameters of the model + 1
-	//virtual int count()=0; // Anzahl der Parameter + 1
-	//virtual FlowFunctorInterface& getFlowFunctor()=0;
 
 	/// returns a vector of names of unknowns of the model
 	/// by asking the vectors length, you get the number of unknowns

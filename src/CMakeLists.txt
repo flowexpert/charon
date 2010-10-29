@@ -74,108 +74,35 @@ SET_TARGET_PROPERTIES(petscsolver
 	PROPERTIES INSTALL_RPATH ${PETSC_ROOT_DIR}/${PETSC_ARCH}/lib
 )
 
-# Brightness models (currently only constant brightness available,
-# others only partially ported and untested)
+# Brightness models (currently only constant brightness available)
+# to-be-ported and yet untested (ask for work of René):
+# - BrightnessModelDiffusion
+# - BrightnessModelExponential
+# - BrightnessModelMovingIllumination
 ADD_LIBRARY(brightnessmodels_constant SHARED
 	BrightnessModelConstant.cpp
 	${charon_INCLUDE_DIR}/BrightnessModels/Constant.h
 	${charon_INCLUDE_DIR}/BrightnessModels/Constant.hxx
 	${charon_INCLUDE_DIR}/BrightnessModel.h
 )
-#ADD_LIBRARY(brightnessmodels_diffusion SHARED
-#	BrightnessModelDiffusion.cpp
-#	${charon_INCLUDE_DIR}/BrightnessModels/Diffusion.h
-#	${charon_INCLUDE_DIR}/BrightnessModels/Diffusion.hxx
-#	${charon_INCLUDE_DIR}/BrightnessModel.h
-#)
-#ADD_LIBRARY(brightnessmodels_exponential SHARED
-#	BrightnessModelExponential.cpp
-#	${charon_INCLUDE_DIR}/BrightnessModels/Exponential.h
-#	${charon_INCLUDE_DIR}/BrightnessModels/Exponential.hxx
-#	${charon_INCLUDE_DIR}/BrightnessModel.h
-#)
-#ADD_LIBRARY(brightnessmodels_movingillumination SHARED
-#	BrightnessModelMovingIllumination.cpp
-#	${charon_INCLUDE_DIR}/BrightnessModels/MovingIllumination.h
-#	${charon_INCLUDE_DIR}/BrightnessModels/MovingIllumination.hxx
-#	${charon_INCLUDE_DIR}/BrightnessModel.h
-#)
 LIST(APPEND Plugins
 	brightnessmodels_constant
-#	brightnessmodels_diffusion
-#	brightnessmodels_exponential
-#	brightnessmodels_movingillumination
 )
 
-# Motion models (currently only constant brightness available,
-# others only partially ported and untested)
-ADD_LIBRARY(flowfunctor SHARED
-	FlowFunctor.cpp
-	${charon_INCLUDE_DIR}/FlowFunctor.h
-	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-)
-#ADD_LIBRARY(motionmodels_localaffiness SHARED
-#	MotionModelLocalAffiness.cpp
-#	${charon_INCLUDE_DIR}/MotionModels/LocalAffiness.h
-#	${charon_INCLUDE_DIR}/MotionModels/LocalAffiness.hxx
-#	${charon_INCLUDE_DIR}/FlowFunctor.h
-#	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-#	${charon_INCLUDE_DIR}/MotionModel.h
-#)
-#TARGET_LINK_LIBRARIES(motionmodels_localaffiness
-#	flowfunctor
-#)
+# Motion models (currently only local constant motion available)
+# to-be-ported and yet untested (ask for work of René):
+# - MotionModelLocalAffiness
+# - MotionModelLocalPlanarity
+# - MotionModelLocalRotation
+# - MotionModelLocalStretch
 ADD_LIBRARY(motionmodels_localconstant SHARED
 	MotionModelLocalConstant.cpp
 	${charon_INCLUDE_DIR}/MotionModels/LocalConstant.h
 	${charon_INCLUDE_DIR}/MotionModels/LocalConstant.hxx
-	${charon_INCLUDE_DIR}/FlowFunctor.h
-	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
 	${charon_INCLUDE_DIR}/MotionModel.h
 )
-TARGET_LINK_LIBRARIES(motionmodels_localconstant
-	flowfunctor
-)
-#ADD_LIBRARY(motionmodels_localplanarity SHARED
-#	MotionModelLocalPlanarity.cpp
-#	${charon_INCLUDE_DIR}/MotionModels/LocalPlanarity.h
-#	${charon_INCLUDE_DIR}/MotionModels/LocalPlanarity.hxx
-#	${charon_INCLUDE_DIR}/FlowFunctor.h
-#	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-#	${charon_INCLUDE_DIR}/MotionModel.h
-#)
-#TARGET_LINK_LIBRARIES(motionmodels_localplanarity
-#	flowfunctor
-#)
-#ADD_LIBRARY(motionmodels_localrotation SHARED
-#	MotionModelLocalRotation.cpp
-#	${charon_INCLUDE_DIR}/MotionModels/LocalRotation.h
-#	${charon_INCLUDE_DIR}/MotionModels/LocalRotation.hxx
-#	${charon_INCLUDE_DIR}/FlowFunctor.h
-#	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-#	${charon_INCLUDE_DIR}/MotionModel.h
-#)
-#TARGET_LINK_LIBRARIES(motionmodels_localrotation
-#	flowfunctor
-#)
-#ADD_LIBRARY(motionmodels_localstretch SHARED
-#	MotionModelLocalStretch.cpp
-#	${charon_INCLUDE_DIR}/MotionModels/LocalStretch.h
-#	${charon_INCLUDE_DIR}/MotionModels/LocalStretch.hxx
-#	${charon_INCLUDE_DIR}/FlowFunctor.h
-#	${charon_INCLUDE_DIR}/FlowFunctorInterface.h
-#	${charon_INCLUDE_DIR}/MotionModel.h
-#)
-#TARGET_LINK_LIBRARIES(motionmodels_localstretch
-#	flowfunctor
-#)
 LIST(APPEND Plugins
-	flowfunctor
-#	motionmodels_localaffiness
 	motionmodels_localconstant
-#	motionmodels_localplanarity
-#	motionmodels_localrotation
-#	motionmodels_localstretch
 )
 
 IF(BUILD_ROBUSTNESS)
@@ -253,7 +180,7 @@ SET(GLOBAL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins")
 SET(GLOBAL_RPATH "${GLOBAL_RPATH}:${charon-core_ROOT_DIR}/lib${LIB_SUFFIX}")
 SET(LOCAL_RPATH "${charon-utils_ROOT_DIR}/lib${LIB_SUFFIX}/charon-plugins")
 FOREACH (X ${Plugins})
-	TARGET_LINK_LIBRARIES(${X} charon-core ${CIMG_LIBRARIES})
+	TARGET_LINK_LIBRARIES(${X} charon-core ${CIMG_LINK_LIBRARIES})
 	IF (UNIX)
 		GET_TARGET_PROPERTY(PLUGIN_RPATH ${X} INSTALL_RPATH)
 		IF(PLUGIN_RPATH)

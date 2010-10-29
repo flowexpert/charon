@@ -36,10 +36,8 @@
 #define motionmodels_localconstant_DECLDIR
 #endif
 
-#include <charon-utils/CImg.h>
 #include <string>
 #include "../MotionModel.h"
-#include "../FlowFunctor.h"
 
 /// namespace for the different motion models
 namespace MotionModels
@@ -54,16 +52,11 @@ namespace MotionModels
 	@f]
  */
 template<class T>
-class motionmodels_localconstant_DECLDIR LocalConstant: public MotionModel<T>
-{
-private:
-	//cimg_library::CImg<> dx,dy,dt;
-	FlowFunctor flowfunc;
-
+class motionmodels_localconstant_DECLDIR LocalConstant :
+		public MotionModel<T> {
 public:
 	/// default constructor
 	LocalConstant(const std::string& name = "");
-	//virtual void calculateDerivatives();
 
 	/// @name input slots for the derivatives
 	//@{
@@ -81,19 +74,6 @@ public:
 			double& energy);
 
 	virtual std::set<std::string>& getUnknowns();
-	//	virtual FlowFunctorInterface& getFlowFunctor() {return flowfunc;};
-
-
-	/// set the parameters of the flow functor
-	/**
-	 * flow will be computed:
-	 * @f[
-			\vec f \left( \begin{array}{c} x \\ y \\ z \end{array} \right) =
-				\left( \begin{array}{c} a_1 \\ a_2 \\ a_3 \end{array} \right)
-	   @f]
-	 * 
-	 */
-	void setFlowFunctorParams(const float a1, const float a2, const float a3);
 };
 
 } // namespace

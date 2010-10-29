@@ -115,7 +115,6 @@ IF(BUILD_TESTING)
 	# testing Horn&Schunk without plugin usage to simplify profiling
 	ADD_EXECUTABLE(hornschuncknoplugins
 		HornSchunckYosemiteNoPlugins.cpp
-		../src/FlowFunctor.cpp
 		../src/Diff2D.cpp
 	)
 	TARGET_LINK_LIBRARIES(hornschuncknoplugins

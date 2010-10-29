@@ -23,18 +23,12 @@
 ///Class name of the plugin
 #define TYPE BrightnessModels::Constant
 
-#if defined(MSVC) && defined (brightnessmodels_constant_EXPORTS)
-#define brightnessmodel_EXPORTS
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define DECLDIR
-#endif
-
+#include <charon-core/ParameteredObject.hxx>
 #include <charon/BrightnessModels/Constant.hxx>
 
 ///Creates an instance of the plugin
-extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
+extern "C" brightnessmodels_constant_DECLDIR
+ParameteredObject* create(const std::string & name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -52,6 +46,7 @@ extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_
 }
 
 ///Deletes an instance of the plugin
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
+extern "C" brightnessmodels_constant_DECLDIR
+void destroy(ParameteredObject * b) {
 	delete b;
 }
