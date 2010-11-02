@@ -25,11 +25,7 @@ CImgLibInfo()
 INCLUDE(ReleaseSys)
 
 # Test suite
-OPTION(ENABLE_TEST "enable test suite" ON)
-IF(ENABLE_TEST)
-    ENABLE_TESTING()
-    INCLUDE(CTest)
-ENDIF(ENABLE_TEST)
+INCLUDE(CTest)
 
 # Setup CMake config files for package finding
 INCLUDE(GenConfig)
