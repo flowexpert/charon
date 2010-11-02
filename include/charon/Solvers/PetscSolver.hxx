@@ -185,6 +185,7 @@ inline void PetscSolver<T>::_globalIndexToPoint(
 	// check if we are still in the same block
 	// if not, update parameters
 	if (!(vi >= blockBegin && vi < blockEnd)) {
+		blockBegin = blockEnd = 0;
 		std::map<std::string, const Roi<int>* >::const_iterator usIt;
 		for(usIt=unknownSizes.begin(); usIt !=unknownSizes.end(); usIt++) {
 			blockEnd = blockBegin + usIt->second->getVolume();
@@ -264,9 +265,13 @@ template <typename T>
 PetscSolver<T>::PetscSolver(const std::string& name) : 
 		Solver<T>("PetscSolver", name)
 {
-	// add petsc command line
-	ParameteredObject::_addParameter(commandLine, "commandLine",
-		"petsc command line");
+	ParameteredObject::_addParameter(
+			commandLine, "commandLine",
+			"petsc command line");
+	ParameteredObject::_addParameter(
+			entriesPerRowHint, "entriesPerRowHint",
+			"add hint how many entries to allocate per row "
+			"(zero = auto guess)", 0u);
 }
 
 template <typename T>
@@ -556,7 +561,9 @@ int PetscSolver<T>::petscExecute() {
 	ierr = MatSetFromOptions(A); CHKERRQ(ierr);
 	// Hint for Matrix Preallocation: max_ne+x entries per row
 	// (more entries than max_ne since cross terms are added)
-	PetscInt preallocHint = max_ne*2;
+	PetscInt preallocHint = entriesPerRowHint();
+	if (preallocHint <= 0)
+		preallocHint = max_ne*2;
 #ifndef NDEBUG
 	sout << "\tassuming maximal number of entries per row: " << std::endl;
 	sout << "\t\tpreallocHint = " << preallocHint << std::endl;
@@ -796,6 +803,10 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 		// stencil has already been updated ealier (avoid duplicate call)
 		//s->updateStencil(unknown,p);
 		const std::set<std::string>& allUnk = s->getUnknowns();
+		// check if stencil knows about the current unknown,
+		// otherwise no cross terms may occur
+		if(allUnk.find(unknown) == allUnk.end())
+			continue;
 		typename std::set<std::string>::const_iterator unk;
 		for(unk = allUnk.begin(); unk != allUnk.end(); unk++) {
 			// current unknown already handled by MetaStencil

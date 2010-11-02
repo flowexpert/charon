@@ -57,8 +57,10 @@ protected:
 	{
 	public:
 		/// default constructor
-		PetscMetaStencil(const std::string& unknown  /**[in] unknown name*/,
-			const std::vector<Stencil<T>*>& stencils /**[in] stencils for this unknown*/);
+		PetscMetaStencil(
+				const std::string& unknown  /**[in] unknown name*/,
+				const std::vector<Stencil<T>*>& stencils
+					/**[in] stencils for this unknown*/);
 
 		/// copy constructor
 		PetscMetaStencil(const PetscMetaStencil& rhs /**[in] copy source*/);
@@ -176,6 +178,10 @@ protected:
 public:
 	/// default constructor
 	PetscSolver(const std::string& name = "" /**[in] instance name*/);
+
+	/// add hint how many entries to allocate per row
+	/// (zero = auto guess)
+	Parameter<unsigned int> entriesPerRowHint;
 
 	/// Petsc command line options
 	Parameter<std::string> commandLine;
