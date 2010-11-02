@@ -74,6 +74,11 @@ ADD_LIBRARY(threshold SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/Threshold.h
 	${CHARON_UTILS_INCLUDE_DIR}/Threshold.hxx
 )
+ADD_LIBRARY(rgb2hsv SHARED
+	Rgb2Hsv.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/Rgb2Hsv.h
+	${CHARON_UTILS_INCLUDE_DIR}/Rgb2Hsv.hxx
+)
 ADD_LIBRARY(linearfilter SHARED
 	LinearFilter.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/LinearFilter.h
@@ -125,6 +130,7 @@ SET(Plugins
 	steeredderivative
 	images2sequence
 	warp
+	rgb2hsv
 )
 SET(Plugins_CImg
 	${Plugins}
@@ -181,19 +187,19 @@ IF(NOT EXPORT_NAME)
 	SET(EXPORT_NAME ${PROJECT_NAME}-export)
 ENDIF()
 INSTALL(
-    TARGETS      	${Plugins}
-    EXPORT      	${EXPORT_NAME}
-    RUNTIME      	DESTINATION bin
-    LIBRARY      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
-    ARCHIVE      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
-    COMPONENT    	libraries
+	TARGETS      	${Plugins}
+	EXPORT      	${EXPORT_NAME}
+	RUNTIME      	DESTINATION bin
+	LIBRARY      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	ARCHIVE      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	COMPONENT    	libraries
 )
 
 # install header files to include directory
 INSTALL(
-    DIRECTORY   ${CHARON_UTILS_INCLUDE_DIR}
-    DESTINATION include
-    COMPONENT   headers
+	DIRECTORY   ${CHARON_UTILS_INCLUDE_DIR}
+	DESTINATION include
+	COMPONENT   headers
 	PATTERN ".svn" EXCLUDE
 )
 
