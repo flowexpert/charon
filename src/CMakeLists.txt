@@ -163,6 +163,24 @@ IF(USE_VIGRA)
 		cimg2vigramultiarray
 		vigramultiarray2cimg
 	)
+	IF(USE_HDF5)
+		INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
+		IF(USE_MPI)
+			INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
+		ENDIF()
+		ADD_LIBRARY(filewriterhdf5 SHARED
+			FileWriterHDF5.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/FileWriterHDF5.h
+			${CHARON_UTILS_INCLUDE_DIR}/FileWriterHDF5.hxx
+		)
+		TARGET_LINK_LIBRARIES(filewriterhdf5 ${HDF5_LIBRARIES})
+		IF(USE_MPI)
+			TARGET_LINK_LIBRARIES(filewriterhdf5 ${MPI_LIBRARIES})
+		ENDIF()
+		LIST(APPEND Plugins_Vigra
+			filewriterhdf5
+		)
+	ENDIF(USE_HDF5)
 	LIST(APPEND Plugins
 		${Plugins_Vigra}
 	)
@@ -187,20 +205,20 @@ IF(NOT EXPORT_NAME)
 	SET(EXPORT_NAME ${PROJECT_NAME}-export)
 ENDIF()
 INSTALL(
-	TARGETS      	${Plugins}
-	EXPORT      	${EXPORT_NAME}
-	RUNTIME      	DESTINATION bin
-	LIBRARY      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
-	ARCHIVE      	DESTINATION lib${LIB_SUFFIX}/charon-plugins
-	COMPONENT    	libraries
+	TARGETS          ${Plugins}
+	EXPORT           ${EXPORT_NAME}
+	RUNTIME          DESTINATION bin
+	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	COMPONENT        libraries
 )
 
 # install header files to include directory
 INSTALL(
-	DIRECTORY   ${CHARON_UTILS_INCLUDE_DIR}
-	DESTINATION include
-	COMPONENT   headers
-	PATTERN ".svn" EXCLUDE
+	DIRECTORY        ${CHARON_UTILS_INCLUDE_DIR}
+	DESTINATION      include
+	COMPONENT        headers
+	PATTERN          ".svn" EXCLUDE
 )
 
 IF(NOT SKIP_EXPORT_INSTALL)
