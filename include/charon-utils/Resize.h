@@ -80,7 +80,7 @@ public:
 
 	/// standard constructor
 	/// @param name             Object name
-	Resize(const std::string& name);
+	Resize(const std::string& name = "");
 
 	/// \implements ParameteredObject::execute
 	virtual void execute();

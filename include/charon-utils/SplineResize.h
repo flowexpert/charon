@@ -93,7 +93,7 @@ public:
 
 	/// create a new SplineResize object
 	/// @param name             Object name
-	SplineResize(const std::string& name);
+	SplineResize(const std::string& name = "");
 
 	/// Update object.
 	virtual void execute();

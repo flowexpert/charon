@@ -69,7 +69,7 @@ public:
 
 	/// create a new Threshold object
 	/// @param name             Object name
-	Crop(const std::string& name);
+	Crop(const std::string& name = "");
 
 	/// \implements ParameteredObject::execute
 	virtual void execute();

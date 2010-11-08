@@ -59,7 +59,7 @@ public:
     OutputSlot<cimg_library::CImgList<T> > out;
 
 	/// default constructor
-	Rgb2Hsv(const std::string& name /** [in] instance name*/);
+	Rgb2Hsv(const std::string& name = "" /** [in] instance name*/);
 
 	/// \implements ParameteredObject::execute
     virtual void execute ();

@@ -82,7 +82,7 @@ public:
 
 	/// create a new sample object
 	/** @param name             Object name*/
-	ImageDisplay(const std::string& name);
+	ImageDisplay(const std::string& name = "");
 
 	/// \implements ParameteredObject::execute
 	virtual void execute();

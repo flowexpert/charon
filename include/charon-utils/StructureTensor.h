@@ -47,7 +47,8 @@
  * sequently.
  */
 template <typename T>
-class structuretensor_DECLDIR StructureTensor : public TemplatedParameteredObject<T> {
+class structuretensor_DECLDIR StructureTensor :
+		public TemplatedParameteredObject<T> {
 public:
 	/// standart constructor
 	/// \param name		instance name

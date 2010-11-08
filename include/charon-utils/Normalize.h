@@ -62,7 +62,7 @@ public:
 
     /// create a new Normalize object
     /// @param name             Object name
-    Normalize(const std::string& name);
+	Normalize(const std::string& name = "");
 
 	/// apply threshold to all given images
 	/// \implements ParameteredObject::execute

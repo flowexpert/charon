@@ -58,7 +58,7 @@ public:
 
     /// create a new sample object
     /// @param name             Object name
-    FileReader(const std::string& name);
+	FileReader(const std::string& name = "");
 
     /// Update object.
     /// Reload image and put new data into the output slot.

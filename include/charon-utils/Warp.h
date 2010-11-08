@@ -58,7 +58,7 @@ public:
 
 	/// create a new Warp object
 	/// \param name          Instance name
-	Warp(const std::string& name);
+	Warp(const std::string& name = "");
 
 	/// Update object.
 	virtual void execute();

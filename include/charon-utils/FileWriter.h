@@ -55,7 +55,7 @@ public:
 
     /// create a new sample object
     /// @param name             Object name
-    FileWriter(const std::string& name);
+	FileWriter(const std::string& name = "");
 
     /// Update object.
     virtual void execute();

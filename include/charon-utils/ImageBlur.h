@@ -66,7 +66,7 @@ public:
 
     /// create a new Threshold object
     /// @param name             Object name
-    ImageBlur(const std::string& name);
+	ImageBlur(const std::string& name = "");
 
 	/// \implements ParameteredObject::execute
     virtual void execute();
