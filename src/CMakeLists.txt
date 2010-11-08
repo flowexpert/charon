@@ -213,9 +213,10 @@ INSTALL(
 
 # install header files to include directory
 INSTALL(
-	DIRECTORY       ${charon_INCLUDE_DIR}/
+	DIRECTORY       ${charon_INCLUDE_DIR}
 	DESTINATION     include
 	COMPONENT       headers
+	PATTERN         ".svn" EXCLUDE
 )
 
 IF(NOT SKIP_EXPORT_INSTALL)
