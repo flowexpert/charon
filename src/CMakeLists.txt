@@ -136,7 +136,7 @@ SET(Plugins_CImg
 	${Plugins}
 )
 
-IF(WITH_VIGRA)
+IF(USE_VIGRA)
 	# additional vigra modules
 	INCLUDE_DIRECTORIES(${VIGRA_INCLUDE_DIRS})
 	ADD_LIBRARY(cimg2vigramultiarray SHARED
@@ -169,7 +169,7 @@ IF(WITH_VIGRA)
 	FOREACH(X ${Plugins_Vigra})
 		TARGET_LINK_LIBRARIES(${X} ${VIGRA_LIBRARIES})
 	ENDFOREACH(X)
-ENDIF(WITH_VIGRA)
+ENDIF(USE_VIGRA)
 
 FOREACH(X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core)

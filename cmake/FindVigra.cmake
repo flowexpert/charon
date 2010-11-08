@@ -12,7 +12,7 @@
 #  VIGRA_LIBRARIES           vigra libraries
 #  VIGRA_VERSION             vigra version string (e.g. "1.7.0")
 
-IF(DEFINED WITH_VIGRA AND NOT WITH_VIGRA)
+IF(DEFINED USE_VIGRA AND NOT USE_VIGRA)
 	RETURN()
 ENDIF()
 

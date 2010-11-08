@@ -7,7 +7,7 @@ SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # executables and dll files are moved to the same directory
 IF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-    SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 ENDIF()
 
 # set up documentation generation
@@ -19,8 +19,8 @@ INCLUDE(InitFlags)
 INCLUDE(CImgConfig)
 
 MESSAGE(STATUS "Charon-utils library configuration:")
-OPTION(WITH_VIGRA "enable plugins using Vigra library" ${VIGRA_FOUND})
-MESSAGE(STATUS "    Vigra        : ${WITH_VIGRA}")
+OPTION(USE_VIGRA "enable plugins using Vigra library" ${VIGRA_FOUND})
+MESSAGE(STATUS "    Vigra        : ${USE_VIGRA}")
 CImgLibInfo()
 INCLUDE(ReleaseSys)
 
