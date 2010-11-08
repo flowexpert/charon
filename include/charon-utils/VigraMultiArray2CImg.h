@@ -63,7 +63,7 @@ public:
 
 	/// create a new VigraMultiArray2CImg object
 	/// @param name             Object name
-	VigraMultiArray2CImg(const std::string& name);
+	VigraMultiArray2CImg(const std::string& name = "");
 
 	/// Update object.
 	virtual void execute();

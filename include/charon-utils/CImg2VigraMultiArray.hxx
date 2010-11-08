@@ -47,6 +47,7 @@ void CImg2VigraMultiArray<T>::execute() {
 
 	// store reference to input list to avoid function calls (-> slow)
 	const cimg_library::CImgList<T>& i = in();
+	vigra::MultiArray<5, T>& o = out();
 
 	if(i.size() <= 0) {
 		std::ostringstream msg;
@@ -61,10 +62,10 @@ void CImg2VigraMultiArray<T>::execute() {
 	const int dt = i[0].spectrum();
 	const int dv = i.size();
 
-	result.reshape(typename vigra::MultiArray<5, T>::difference_type(
+	o.reshape(typename vigra::MultiArray<5, T>::difference_type(
 			dx, dy, dz, dt, dv));
 
-	// all elements of result will be overwritten since CImgList does not
+	// all output elements will be overwritten since CImgList does not
 	// support images of different dimensions
 	// (see e.g. header of some CImg file)
 
@@ -76,10 +77,9 @@ void CImg2VigraMultiArray<T>::execute() {
 		assert(i[v].spectrum() == dt);
 
 		cimg_forXYZC(i[v], x, y, z, t) {
-			result(x, y, z, t, v) = i(v, x, y, z, t);
+			o(x, y, z, t, v) = i(v, x, y, z, t);
 		}
 	}
-	out() = result.view();
 }
 
 #endif /* _CIMG2VIGRAMULTIARRAY_HXX_ */

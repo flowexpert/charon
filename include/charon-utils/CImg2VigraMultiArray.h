@@ -47,13 +47,12 @@
 template <typename T>
 class cimg2vigramultiarray_DECLDIR CImg2VigraMultiArray :
 	public TemplatedParameteredObject<T> {
-private:
-	vigra::MultiArray<5, T> result; ///< temporary result storage
+
 public:
 	/// The CImgList object to be converted 
 	InputSlot < cimg_library::CImgList<T> > in;
 	/// A copy of the image stored as vigra::MultiArray<5, T>
-	OutputSlot < vigra::MultiArrayView<5, T> > out;
+	OutputSlot < vigra::MultiArray<5, T> > out;
 
 	/// create a new CImg2VigraMultiArray object
 	/// \param name             Instance name

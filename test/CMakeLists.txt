@@ -1,7 +1,7 @@
 # Test suite of application
+INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 
 IF(BUILD_TESTING)
@@ -84,17 +84,32 @@ IF(BUILD_TESTING)
 	)
 	LIST(APPEND tests CImgInfo)
 	
-	ADD_EXECUTABLE(warpTest Warptest.cpp)
-	TARGET_LINK_LIBRARIES(warpTest
+	ADD_EXECUTABLE(warptest Warptest.cpp)
+	TARGET_LINK_LIBRARIES(warptest
 		${CIMG_LINK_LIBRARIES}
 		crop
 		charon-plugins
 	)
 	ADD_TEST(
 		NAME Warp
-		COMMAND warpTest
+		COMMAND warptest
 	)
 	LIST(APPEND tests Warp)
+
+	IF(USE_VIGRA)
+		ADD_EXECUTABLE(vigraconversion vigraConversion.cpp)
+		TARGET_LINK_LIBRARIES(vigraconversion
+			${CIMG_LINK_LIBRARIES}
+			${VIGRA_LIBRARIES}
+			filereader
+			cimg2vigramultiarray
+			vigramultiarray2cimg
+		)
+		ADD_TEST(
+			NAME VigraConversion
+			COMMAND vigraconversion
+		)
+	ENDIF(USE_VIGRA)
 
 	IF(WIN32)
 		# copy needed dll for tests and application run before installing
