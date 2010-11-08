@@ -42,9 +42,7 @@
 #include <charon-utils/CImg.h>
 
 /// Convert a CImgList-Object to a vigra::MultiArray<5, T>
-/** The data copied. As the MultiArray may not have images of varying size,
- *  the maximum image size of the CImgList is applied to all images.
- *  Missing values are filled according to the missingValue parameter.
+/** The data is copied.
  */
 template <typename T>
 class cimg2vigramultiarray_DECLDIR CImg2VigraMultiArray :
@@ -52,18 +50,14 @@ class cimg2vigramultiarray_DECLDIR CImg2VigraMultiArray :
 private:
 	vigra::MultiArray<5, T> result; ///< temporary result storage
 public:
-
-	/// Value for locations missing in the CImgList due to smaller image sizes.
-	Parameter < double > missingValue;
-
 	/// The CImgList object to be converted 
-    InputSlot < cimg_library::CImgList<T> > in;
+	InputSlot < cimg_library::CImgList<T> > in;
 	/// A copy of the image stored as vigra::MultiArray<5, T>
 	OutputSlot < vigra::MultiArrayView<5, T> > out;
 
 	/// create a new CImg2VigraMultiArray object
-	/// @param name             Object name
-	CImg2VigraMultiArray(const std::string& name);
+	/// \param name             Instance name
+	CImg2VigraMultiArray(const std::string& name = "");
 
 	/// Update object.
 	virtual void execute();

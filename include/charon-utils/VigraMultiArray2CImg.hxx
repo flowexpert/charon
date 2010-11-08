@@ -37,7 +37,7 @@ VigraMultiArray2CImg<T>::VigraMultiArray2CImg(const std::string& name) :
 	ParameteredObject::_addInputSlot(
 			in, "in",
 			"The vigra::MultiArray<5, T> object to be converted.",
-			"vigra::MultiArrayView<5, T>");
+			"vigraArray5<T>");
 	ParameteredObject::_addOutputSlot(
 			out, "out",
 			"A copy of the same image in CImgList<T> data format.",
@@ -49,18 +49,16 @@ void VigraMultiArray2CImg<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	out().assign(
-			in().size(4), in().size(0), in().size(1),
-			in().size(2), in().size(3));
-	for(unsigned int t = 0; t < out().size(); ++t) {
-		cimg_forXYZC(out()[t], x, y, z, v) {
-			out()[t](x, y, z, v) = in()(x, y, z, v, t);
+	// store references to input/output to avoid function calls (-> slow)
+	const vigra::MultiArrayView<5, T>& i = in();
+	cimg_library::CImgList<T>& o = out();
+
+	o.assign(i.size(4), i.size(0), i.size(1), i.size(2), i.size(3));
+	cimglist_for(o, v) {
+		cimg_forXYZC(o[v], x, y, z, t) {
+			o(v, x, y, z, t) = i(x, y, z, t, v);
 		}
 	}
-//	out().assign(
-//			inMultiArray().data(), inMultiArray().size(0),
-//			inMultiArray().size(1), inMultiArray().size(2),
-//			inMultiArray().size(3), true);
 }
 
 #endif /* _VIGRAMULTIARRAY2CIMG_HXX_ */

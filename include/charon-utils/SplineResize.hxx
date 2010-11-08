@@ -91,10 +91,10 @@ SplineResize<T>::SplineResize(const std::string& name) :
 
 	ParameteredObject::_addInputSlot(
 			in, "in", "The source image.",
-			"vigra::MultiArrayView<5, T>");
+			"vigraArray5<T>");
 	ParameteredObject::_addOutputSlot(
 			out, "out", "The resized image.",
-			"vigra::MultiArrayView<5, T>");
+			"vigraArray5<T>");
 }
 
 template <typename T>
