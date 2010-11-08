@@ -23,6 +23,7 @@
 ///Class name of the plugin
 #define TYPE VigraMultiArray2CImg
 
+#include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/VigraMultiArray2CImg.hxx>
 
 ///Creates an instance of the plugin

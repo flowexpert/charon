@@ -36,9 +36,8 @@
 #define cimg2vigramultiarray_DECLDIR
 #endif
 
-#include <charon-core/ParameteredObject.hxx>
+#include <charon-core/ParameteredObject.h>
 #include <vigra/multi_array.hxx>
-#include <vigra/windows.h>
 #include <charon-utils/CImg.h>
 
 /// Convert a CImgList-Object to a vigra::MultiArray<5, T>

@@ -38,10 +38,8 @@
 #define vigramultiarray2cimg_DECLDIR
 #endif
 
-#include <charon-core/ParameteredObject.hxx>
+#include <charon-core/ParameteredObject.h>
 #include <vigra/multi_array.hxx>
-//#include <vigra/multi_iterator.hxx>
-#include <vigra/windows.h>
 #include <charon-utils/CImg.h>
 using namespace cimg_library;
 
