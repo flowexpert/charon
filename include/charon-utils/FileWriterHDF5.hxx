@@ -40,6 +40,11 @@ FileWriterHDF5<T>::FileWriterHDF5(const std::string& name) :
 			pathInFile, "pathInFile",
 			"path to the dataset to be created within the hdf5 file",
 			"/data", "string");
+	ParameteredObject::_addParameter(
+			comment, "comment",
+			"string that is written into the comment attribute of the "
+			"dataset to be stored (no comment attribute is set if empty)",
+			"string");
 	ParameteredObject::_addInputSlot(
 			in, "in", "data input", "vigraArray5<T>");
 }
@@ -49,7 +54,31 @@ void FileWriterHDF5<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	vigra::writeHDF5(filename().c_str(), pathInFile().c_str(), in());
+	const std::string& filePath = filename();
+	vigra::writeHDF5(filePath.c_str(), pathInFile().c_str(), in());
+	if (!comment().empty()) {
+		const std::string& inPath = pathInFile();
+		std::string::size_type pos = inPath.rfind("/");
+		assert(pos != std::string::npos);
+		std::string dName(inPath.begin()+pos+1, inPath.end());
+		std::string gName(inPath.begin(), inPath.begin()+pos+1);
+		// groups have trailing slashes
+		assert(*(gName.rbegin()) == '/');
+		// the only group that is allowed to start with a slash is the
+		// root group
+		assert(gName == "/" || gName[0] != '/');
+
+		//create or open file
+		hid_t file = H5Fopen(filePath.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+		assert(file >= 0);
+		hid_t group = H5Gopen(file, gName.c_str(), H5P_DEFAULT);
+		assert(group >= 0);
+
+		H5LTset_attribute_string(
+				group, dName.c_str(), "comment", comment().c_str());
+		H5Gclose(group);
+		H5Fclose(file);
+	}
 }
 
 #endif /* _FILEWRITERHDF5_HXX_ */

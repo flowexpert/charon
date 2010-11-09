@@ -52,6 +52,10 @@ public:
 	/// path to the image data within the hdf5 file
 	Parameter<std::string> pathInFile;
 
+	/// string that is written into the comment attribute of the
+	/// dataset to be stored (no comment attribute is set if empty)
+	Parameter<std::string> comment;
+
 	/// The vigra::MultiArray object to be written to a hdf5 file.
 	InputSlot < vigra::MultiArrayView<5, T> > in;
 
