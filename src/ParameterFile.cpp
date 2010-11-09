@@ -100,10 +100,10 @@ bool ParameterFile::load(std::string fileName) {
 				"does not exist.");
 	std::ifstream file;
 	file.open(fileName.c_str());
-	if (file.bad()) {
+	if (file.fail()) {
 		throw ParameterFile::IoError(
 				"Parameter file \"" + fileName + "\" could not be opened. "
-				"(file.bad())");
+				"(file.fail())");
 	} else {
 		clear();
 		fromStream(file);
@@ -184,7 +184,7 @@ void ParameterFile::toStream(std::ostream& strm) const {
 }
 
 void ParameterFile::fromStream(std::istream& strm) {
-	while (!strm.eof()) {
+	while (strm.good()) {
 		std::string key, value, line;
 		if (strm.peek() == '\n')
 			_parameterLines.push_back(""); //preserve empty lines
