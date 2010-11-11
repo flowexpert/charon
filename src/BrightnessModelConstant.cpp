@@ -23,6 +23,7 @@
 ///Class name of the plugin
 #define TYPE BrightnessModels::Constant
 
+#define brightnessmodel_EXPORTS
 #include <charon-core/ParameteredObject.hxx>
 #include <charon/BrightnessModels/Constant.hxx>
 

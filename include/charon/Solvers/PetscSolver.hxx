@@ -673,7 +673,7 @@ int PetscSolver<T>::petscExecute() {
 	// temporary file for view info output
 	std::string viewFileName;
 	do {
-		srand(time(0));
+		srand((unsigned)time(0));
 		const int randNum = rand();
 		std::ostringstream viewFileNameGen;
 		viewFileNameGen << "file" << randNum << ".tmp";

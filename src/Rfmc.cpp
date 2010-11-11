@@ -22,6 +22,7 @@
 
 #define TYPE Rfmc
 
+#define stencil_EXPORTS
 #include <charon/Stencils/Rfmc.hxx>
 
 extern "C" rfmc_DECLDIR

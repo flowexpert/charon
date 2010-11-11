@@ -117,6 +117,12 @@ IF(BUILD_TESTING)
 		HornSchunckYosemiteNoPlugins.cpp
 		../src/Diff2D.cpp
 	)
+	IF(MSVC)
+		SET_TARGET_PROPERTIES(hornschuncknoplugins
+			PROPERTIES LINK_FLAGS
+				/NODEFAULTLIB:"LIBCMT"
+		)
+	ENDIF(MSVC)
 	TARGET_LINK_LIBRARIES(hornschuncknoplugins
 		charon-core
 		${PETSC_LIBRARIES}
