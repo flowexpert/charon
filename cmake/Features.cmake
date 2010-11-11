@@ -22,6 +22,6 @@ SET_FEATURE_INFO(Doxygen
 	"Documentation system"
 	"http://doxygen.org"
 )
-_PRINT_FEATURES(ENABLED_FEATURES "Found packages:")
-_PRINT_FEATURES(DISABLED_FEATURES "Not found (disabled):")
+PRINT_ENABLED_FEATURES()
+PRINT_DISABLED_FEATURES()
 
