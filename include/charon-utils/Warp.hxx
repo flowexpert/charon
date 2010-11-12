@@ -30,7 +30,29 @@
 
 template<typename T>
 Warp<T>::Warp(const std::string& name) :
-	TemplatedParameteredObject<T> ("Warp", name, "Warps an image") {
+	TemplatedParameteredObject<T> (
+			"Warp", name,
+			"Warping of images and image sequences<br><br>"
+			"This module performs warping of single images or images sequences "
+			"with a given flow. This is useful e.g. to check if a calculated "
+			"optical flow explains the changes in a consecutive image pair."
+			"<br><br>"
+			"Usually, the flow information has one time step less than the "
+			"input sequence. In this case, the first image will stay "
+			"untouched. A message is printed to sout showing how much images "
+			"have been ignored. If there are more time steps in the flow "
+			"image, the last ones are ignored (also with message printed to "
+			"sout).<br><br>"
+			"If the flow is correct, the two resulting images "
+			"(-&gt; image pair) "
+			"of this warping step should look much more similar than before. "
+			"The difference between the two output images is called residual. "
+			"<br><br>"
+			"The flow is multiplied with the weight parameter before the "
+			"warping is actually performed, this way warping into the opposite "
+			"direction (weight = -1) or warping half-way (weight = 0.5) "
+			"is possible."
+			) {
 	ParameteredObject::_addInputSlot(seqInput, "seqInput",
 			"Image sequence", "CImgList<T>");
 	ParameteredObject::_addInputSlot(flowInput, "flowInput",
@@ -41,9 +63,6 @@ Warp<T>::Warp(const std::string& name) :
 			"Warped Images", "CImgList<T>");
 
 	ParameteredObject::_addParameter(weight, "weight", "Flow weight", 1.f);
-	ParameteredObject::_addParameter(warpSymmetric, "warpSymmetric",
-		"warp both frames symmetrically "
-		"(works with two consecutive images only)", false);
 }
 
 template<typename T>
@@ -62,15 +81,8 @@ void Warp<T>::execute() {
 	unsigned int dz = seq[0].depth();
 	unsigned int dt = seq[0].spectrum();
 
-	const bool& symmetric = warpSymmetric();
 	const bool is3D = (dz > 1);
 	const double& l = weight();
-
-	if (symmetric && dt != 2u) {
-		throw std::runtime_error(
-				"For symmetric warping, only two consecutive "
-				"images are allowed!");
-	}
 
 	if(flow.size() < 2 || (is3D && flow.size() < 3)) {
 		throw std::runtime_error(
@@ -81,38 +93,34 @@ void Warp<T>::execute() {
 
 	warped.assign(seq);
 
-	if (symmetric) {
+	int ignore = dt - flow[0].spectrum();
+	if(ignore < 0) {
+		sout << "\tgiven flow has more time steps than sequence. "
+				<< "Ignoring last ones." << std::endl;
+		ignore = 0;
 	}
-	else {
-		int ignore = dt - flow[0].spectrum();
-		if(ignore < 0) {
-			sout << "\tgiven flow has more time steps than sequence. "
-					<< "Ignoring last ones." << std::endl;
-			ignore = 0;
-		}
-		if(ignore > 0)
-			sout << "\tignoring first " << ignore << " image(s) of sequence "
-					<< "(leaving them untouched)" << std::endl;
+	if(ignore > 0)
+		sout << "\tignoring first " << ignore << " image(s) of sequence "
+				<< "(leaving them untouched)" << std::endl;
 
-		float xn, yn, zn, res;
-		int tf;
-		cimglist_for(warped, i) {
-			cimg_forC(warped[i], t) {
-				tf = t - ignore;
-				if(tf < 0)
-					continue;
+	float xn, yn, zn, res;
+	int tf;
+	cimglist_for(warped, i) {
+		cimg_forC(warped[i], t) {
+			tf = t - ignore;
+			if(tf < 0)
+				continue;
 
-				cimg_forXYZ(warped[i],x,y,z) {
-					xn = x+l*flow(0u,x,y,z,tf);
-					yn = y+l*flow(1u,x,y,z,tf);
-					zn = z;
-					if(is3D) {
-						zn += l*flow(2u,x,y,z,tf);
-					}
-					res = interp.interpolate(
-							seq[i], xn, yn, zn, t);
-					warped(i,x,y,z,t) = res;
+			cimg_forXYZ(warped[i],x,y,z) {
+				xn = x+l*flow(0u,x,y,z,tf);
+				yn = y+l*flow(1u,x,y,z,tf);
+				zn = z;
+				if(is3D) {
+					zn += l*flow(2u,x,y,z,tf);
 				}
+				res = interp.interpolate(
+						seq[i], xn, yn, zn, t);
+				warped(i,x,y,z,t) = res;
 			}
 		}
 	}

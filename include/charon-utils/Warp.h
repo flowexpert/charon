@@ -45,7 +45,25 @@
 #include <charon-utils/CImg.h>
 #include <charon-utils/Interpolator.h>
 
-/// Warps an image
+/// Warping of images and image sequences
+/** This module performs warping of single images or images sequences
+ *  with a given flow. This is useful e.g. to check if a calculated optical
+ *  flow explains the changes in a consecutive image pair.
+ *
+ *  Usually, the flow information has one time step less than the input
+ *  sequence. In this case, the first image will stay untouched.
+ *  A message is printed to sout showing how much images have been ignored.
+ *  If there are more time steps in the flow image, the last ones are
+ *  ignored (also with message printed to sout).
+ *
+ *  If the flow is correct, the two resulting images (-\> image pair)
+ *  of this warping step should look much more similar than before.
+ *  The difference between the two output images is called residual.
+ *
+ *  The flow is multiplied with the weight parameter before the warping is
+ *  actually performed, this way warping into the opposite direction
+ *  (weight = -1) or warping half-way (weight = 0.5) is possible.
+ */
 template <typename T>
 class warp_DECLDIR Warp :
 		public TemplatedParameteredObject<T> {
@@ -60,8 +78,6 @@ public:
 	OutputSlot < cimg_library::CImgList<T> > out;
 	/// Flow weight
 	Parameter< float > weight;
-	/// warp both frames symmetrically
-	Parameter < bool > warpSymmetric;
 
 	/// create a new Warp object
 	/// \param name          Instance name
