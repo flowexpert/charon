@@ -72,23 +72,14 @@ public:
 
 	virtual ~Interpolator();
 
-	/// Calculate 2D interpolation.
-	/// @param src              interpolation source
-	/// @param fx               x position
-	/// @param fy               y position
-	/// @param z                z position
-	/// @param v                4th dimension
-	virtual T interpolate(const cimg_library::CImg<T>& src,
-		float fx, float fy, int z, int v) const = 0;
-
-	/// Calculate 3D interpolation.
+	/// Calculate interpolation (up to 3D).
 	/// @param src              interpolation source
 	/// @param fx               x position
 	/// @param fy               y position
 	/// @param fz               z position
 	/// @param v                4th dimension
 	virtual T interpolate(const cimg_library::CImg<T>& src,
-		float fx, float fy, float fz, int v) const = 0;
+		float fx, float fy = 0.f, float fz = 0.f, int v = 0) const = 0;
 };
 
 #endif // _Interpolator_H_

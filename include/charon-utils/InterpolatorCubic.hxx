@@ -40,17 +40,8 @@ InterpolatorCubic<T>::InterpolatorCubic(const std::string& name) :
 template <typename T>
 T InterpolatorCubic<T>::interpolate(
 		const cimg_library::CImg<T>& src,
-		float fx, float fy, int z, int v) const {
-	return static_cast<T>(src.cubic_atXY(fx, fy, z, v));
-}
-
-template <typename T>
-T InterpolatorCubic<T>::interpolate(
-		const cimg_library::CImg<T>& src,
 		float fx, float fy, float fz, int v) const {
-	// this kind of rounding only works for positive values!
-	assert(fz > 0);
-	return static_cast<T>(src.cubic_atXY(fx, fy, static_cast<int>(fz+0.5), v));
+	return static_cast<T>(src.cubic_atXYZ(fx, fy, fz, v));
 }
 
 #endif /*_Interpolator_Cubic_HXX_*/

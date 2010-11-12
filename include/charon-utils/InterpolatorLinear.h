@@ -54,10 +54,7 @@ public:
 	InterpolatorLinear(const std::string& name = "");
 
 	T interpolate(const cimg_library::CImg<T>& src,
-		float fx, float fy, int z = 0, int v = 0) const;
-
-	T interpolate(const cimg_library::CImg<T>& src,
-		float fx, float fy, float fz, int v = 0) const;
+		float fx, float fy = 0.f, float fz = 0.f, int v = 0) const;
 };
 
 #endif /* _Interpolator_Linear_H_ */

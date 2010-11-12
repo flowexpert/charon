@@ -18,6 +18,8 @@
 /** \file Warp.hxx
  *  Implementation of the parameter class Warp.
  *  \author Cornelius Ratsch
+ *  \author <a href="mailto:Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried</a>
  *  \date 08.03.2010
  */
 
@@ -29,16 +31,19 @@
 template<typename T>
 Warp<T>::Warp(const std::string& name) :
 	TemplatedParameteredObject<T> ("Warp", name, "Warps an image") {
-	ParameteredObject::_addInputSlot(image_sequence, "image_sequence",
+	ParameteredObject::_addInputSlot(seqInput, "seqInput",
 			"Image sequence", "CImgList<T>");
-	ParameteredObject::_addInputSlot(flow_sequence, "flow_sequence",
+	ParameteredObject::_addInputSlot(flowInput, "flowInput",
 			"Image flow", "CImgList<T>");
 	ParameteredObject::_addInputSlot(interpolator, "interpolator",
 			"Interpolator", "Interpolator<T>*");
-	ParameteredObject::_addOutputSlot(warped_image, "warped_image",
-			"Warped Image", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(out, "out",
+			"Warped Images", "CImgList<T>");
 
-	ParameteredObject::_addParameter(weight, "weight", "Flow weight", 1.);
+	ParameteredObject::_addParameter(weight, "weight", "Flow weight", 1.f);
+	ParameteredObject::_addParameter(warpSymmetric, "warpSymmetric",
+		"warp both frames symmetrically "
+		"(works with two consecutive images only)", false);
 }
 
 template<typename T>
@@ -47,41 +52,70 @@ void Warp<T>::execute() {
 	ParameteredObject::execute();
 
 	// check sizes
-	int size = this->image_sequence().size();
-	int width = this->image_sequence()[0].width();
-	int height = this->image_sequence()[0].height();
-	int depth = this->image_sequence()[0].depth();
-	int spectrum = this->image_sequence()[0].spectrum();
+	const cimg_library::CImgList<T>& seq = seqInput();
+	const cimg_library::CImgList<T>& flow = flowInput();
+	cimg_library::CImgList<T>& warped = out();
+	Interpolator<T>& interp = *interpolator();
 
-	if(flow_sequence().size() <= 1)
-	{	throw std::runtime_error("Slot \"Image flow\" must contain at least 2 images (XY)") ;	}
+	unsigned int dv = seq.size();
+	assert(dv >= 1);
+	unsigned int dz = seq[0].depth();
+	unsigned int dt = seq[0].spectrum();
 
-	int spectrum_increment = 0;
-	if (spectrum == this->flow_sequence()[0].spectrum() + 1) {
-		sout << "Ignoring first image in sequence." << std::endl;
-		spectrum_increment = 1;
+	const bool& symmetric = warpSymmetric();
+	const bool is3D = (dz > 1);
+	const double& l = weight();
+
+	if (symmetric && dt != 2u) {
+		throw std::runtime_error(
+				"For symmetric warping, only two consecutive "
+				"images are allowed!");
 	}
-	this->warped_image().assign(size, width, height, depth, spectrum
-			- spectrum_increment);
 
-	const bool is3D = (this->flow_sequence().size() == 3);
-	cimglist_for(this->warped_image(), i) {
-		cimg_forXYZC(this->warped_image()[i],x,y,z, t) {
-			T x_new = x+this->weight()*this->flow_sequence()[0](x,y,z,t);
-			T y_new = y+this->weight()*this->flow_sequence()[1](x,y,z,t);
-			T z_new = z;
-			if(is3D) {
-				z_new += this->weight()*this->flow_sequence()[2](x,y,z,t);
+	if(flow.size() < 2 || (is3D && flow.size() < 3)) {
+		throw std::runtime_error(
+				"Given flow must contain at "
+				"least 2 images (uv for 2D sequences)"
+				"or at least 3 images (uvw for 3D sequences).");
+	}
+
+	warped.assign(seq);
+
+	if (symmetric) {
+	}
+	else {
+		int ignore = dt - flow[0].spectrum();
+		if(ignore < 0) {
+			sout << "\tgiven flow has more time steps than sequence. "
+					<< "Ignoring last ones." << std::endl;
+			ignore = 0;
+		}
+		if(ignore > 0)
+			sout << "\tignoring first " << ignore << " image(s) of sequence "
+					<< "(leaving them untouched)" << std::endl;
+
+		float xn, yn, zn, res;
+		int tf;
+		cimglist_for(warped, i) {
+			cimg_forC(warped[i], t) {
+				tf = t - ignore;
+				if(tf < 0)
+					continue;
+
+				cimg_forXYZ(warped[i],x,y,z) {
+					xn = x+l*flow(0u,x,y,z,tf);
+					yn = y+l*flow(1u,x,y,z,tf);
+					zn = z;
+					if(is3D) {
+						zn += l*flow(2u,x,y,z,tf);
+					}
+					res = interp.interpolate(
+							seq[i], xn, yn, zn, t);
+					warped(i,x,y,z,t) = res;
+				}
 			}
-
-			T res = this->interpolator()->interpolate(
-					this->image_sequence()[i], (float) x_new,
-					(float) y_new, (float) z_new, t + spectrum_increment);
-
-			this->warped_image()[i](x, y, z, t) = res;
 		}
 	}
-
 }
 
 #endif /* _WARP_HXX_ */

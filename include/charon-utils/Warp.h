@@ -18,7 +18,12 @@
 /** \file Warp.h
  *  Declaration of the parameter class Warp.
  *  \author Cornelius Ratsch
+ *  \author <a href="mailto:Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried</a>
  *  \date 08.03.2010
+ *
+ *  \b Changes:
+ *  - added option to warp symmetrically
  */
 
 #ifndef _WARP_H_
@@ -46,15 +51,17 @@ class warp_DECLDIR Warp :
 		public TemplatedParameteredObject<T> {
 public:
 	/// Image sequence 
-	InputSlot < cimg_library::CImgList<T> > image_sequence;
+	InputSlot < cimg_library::CImgList<T> > seqInput;
 	/// Image flow 
-	InputSlot < cimg_library::CImgList<T> > flow_sequence;
+	InputSlot < cimg_library::CImgList<T> > flowInput;
 	/// Interpolator 
 	InputSlot < Interpolator<T> * > interpolator;
 	/// Warped Image 
-	OutputSlot < cimg_library::CImgList<T> > warped_image;
+	OutputSlot < cimg_library::CImgList<T> > out;
 	/// Flow weight
-	Parameter<double> weight;
+	Parameter< float > weight;
+	/// warp both frames symmetrically
+	Parameter < bool > warpSymmetric;
 
 	/// create a new Warp object
 	/// \param name          Instance name

@@ -40,13 +40,6 @@ InterpolatorLinear<T>::InterpolatorLinear(const std::string& name) :
 template <typename T>
 T InterpolatorLinear<T>::interpolate(
 		const cimg_library::CImg<T>& src,
-		float fx, float fy, int z, int v) const {
-	return static_cast<T>(src.linear_atXY(fx, fy, z, v));
-}
-
-template <typename T>
-T InterpolatorLinear<T>::interpolate(
-		const cimg_library::CImg<T>& src,
 		float fx, float fy, float fz, int v) const {
 	return static_cast<T>(src.linear_atXYZ(fx, fy, fz, v));
 }

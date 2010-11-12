@@ -87,7 +87,9 @@ IF(BUILD_TESTING)
 	ADD_EXECUTABLE(warptest Warptest.cpp)
 	TARGET_LINK_LIBRARIES(warptest
 		${CIMG_LINK_LIBRARIES}
-		crop
+		filereader
+		warp
+		interpolatorlinear
 		charon-plugins
 	)
 	ADD_TEST(
