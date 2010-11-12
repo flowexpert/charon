@@ -88,8 +88,9 @@ IF(BUILD_TESTING)
 	TARGET_LINK_LIBRARIES(warptest
 		${CIMG_LINK_LIBRARIES}
 		filereader
-		warp
 		interpolatorlinear
+		warp
+		warpsymmetric
 		charon-plugins
 	)
 	ADD_TEST(

@@ -36,8 +36,9 @@
 
 #include <charon-core/ExceptionHandler.h>
 #include <charon-utils/FileReader.h>
-#include <charon-utils/Warp.h>
 #include <charon-utils/InterpolatorLinear.h>
+#include <charon-utils/Warp.h>
+#include <charon-utils/WarpSymmetric.h>
 #include<limits>
 
 int test() {
@@ -120,6 +121,40 @@ int test() {
 			std::numeric_limits<double>::min());
 	assert((res[0].get_channel(1u) - store).abs().sum() <=
 			std::numeric_limits<double>::min());
+
+	seq[0]=orig.get_append(orig.get_shift(1,-2),'c');
+	warp.resetExecuted();
+	warp.execute();
+	tmp = res[0].get_crop(5,5,dx-6,dx-6);
+	assert((tmp.get_channel(0)-tmp.get_channel(1)).abs().sum() <=
+			std::numeric_limits<double>::min());
+
+	// tests for WarpSymmetric
+	std::cout << "-- Symmetric warping" << std::endl;
+	WarpSymmetric<double> warpSymm;
+	imgObj.out.connect(warpSymm.seqInput);
+	flowObj.out.connect(warpSymm.flowInput);
+	interp.out.connect(warpSymm.interpolator);
+	const cimg_library::CImgList<double>& resSymm = warpSymm.out();
+
+	seq[0]=orig.get_append(orig.get_shift(1,-2),'c');
+	warpSymm.execute();
+
+	// temp(.,.,.,0) and temp(.,.,.,1) should now be different
+	// from orig and store because both are warped half-way.
+	tmp = resSymm[0];
+	assert((tmp.get_shared_channel(0)-orig).abs().sum()
+			> std::numeric_limits<double>::min());
+	assert((tmp.get_shared_channel(0)-store).abs().sum()
+			> std::numeric_limits<double>::min());
+	assert((tmp.get_shared_channel(1)-orig).abs().sum()
+			> std::numeric_limits<double>::min());
+	assert((tmp.get_shared_channel(1)-store).abs().sum()
+			> std::numeric_limits<double>::min());
+	// but they should not differer from each other in the central region
+	tmp.crop(5,5,dx-6,dx-6);
+	assert((tmp.get_shared_channel(0)-tmp.get_shared_channel(1)).abs().sum()
+			<= std::numeric_limits<double>::min());
 
 	return EXIT_SUCCESS;
 }

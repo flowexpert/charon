@@ -110,6 +110,11 @@ ADD_LIBRARY(warp SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/Warp.h
 	${CHARON_UTILS_INCLUDE_DIR}/Warp.hxx
 )
+ADD_LIBRARY(warpsymmetric SHARED
+	WarpSymmetric.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/WarpSymmetric.h
+	${CHARON_UTILS_INCLUDE_DIR}/WarpSymmetric.hxx
+)
 
 SET(Plugins
 	channelconverter
@@ -124,13 +129,14 @@ SET(Plugins
 	interpolatorlinear
 	normalize
 	threshold
+	rgb2hsv
 	linearfilter
 	mask1d
 	structuretensor
 	steeredderivative
 	images2sequence
 	warp
-	rgb2hsv
+	warpsymmetric
 )
 SET(Plugins_CImg
 	${Plugins}
