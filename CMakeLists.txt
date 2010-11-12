@@ -54,9 +54,9 @@ FIND_PACKAGE(charon-core 0.1.4 REQUIRED HINTS $ENV{CHARON_DIR})
 INCLUDE(InitFlags)
 
 IF(WIN32)
-    # Provide option to install/package needed dlls as well
-    OPTION(INSTALL_DLLS "install/package needed (third-party) dlls" ON)
-    INCLUDE(appicon)
+	# Provide option to install/package needed dlls as well
+	OPTION(INSTALL_DLLS "install/package needed (third-party) dlls" OFF)
+	INCLUDE(appicon)
 ENDIF(WIN32)
 
 FIND_PACKAGE(Graphviz 2.20 REQUIRED)
