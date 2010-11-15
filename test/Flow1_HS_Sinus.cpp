@@ -13,7 +13,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file PetscSolverTest.cpp
+/** @file Flow1_HS_Sinus.cpp
  *  Test programm for PetscSolver, which implements Horn-Schunk.
  *  @see PetscSolver.h
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
@@ -53,7 +53,7 @@ int test() {
 	sout.assign(log);
 
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
-	man.loadParameterFile(TESTDIR "/bccetest.wrp");
+	man.loadParameterFile(TESTDIR "/flow1.wrp");
 
 	man.executeWorkflow();
 	assert(FileTool::exists("flow1_HS_Sinus.cimg"));

@@ -15,8 +15,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file HornSchunckYosemite.cpp
- *  Unit tests for class SimpleIterator
+/** \file Flow2_HS_Yosemite.cpp
+ *  Horn&Schunck algo on Yosemite seq
  *  \author Jens-Malte Gottfried <jmgottfried@web.de>
  *  \date 02.02.2010
  */
@@ -58,10 +58,10 @@ int test() {
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 
 	// start tests
-	std::cout << "Loading parameter file \"" << TESTDIR "/HornSchunckYosemite.wrp";
+	std::cout << "Loading parameter file \"" << TESTDIR "/flow2.wrp";
 	std::cout << "\"" << std::endl;
 	FileTool::changeDir(TESTDIR);
-	man.loadParameterFile(TESTDIR "/HornSchunckYosemite.wrp");
+	man.loadParameterFile(TESTDIR "/flow2.wrp");
 	std::cout << "Executing workflow..." << std::endl;
 	man.executeWorkflow();
 	std::cout << "Workflow execution finished.\n" << std::endl;

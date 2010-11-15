@@ -14,28 +14,28 @@ IF(BUILD_TESTING)
 
 	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
 	# test petsc initialization
-	ADD_EXECUTABLE(petscinittest PetscInitializationTest.cpp)
+	ADD_EXECUTABLE(petsc1_init Petsc1_Init.cpp)
 	IF(MSVC)
-		SET_TARGET_PROPERTIES(petscinittest
+		SET_TARGET_PROPERTIES(petsc1_init
 			PROPERTIES LINK_FLAGS
 				/NODEFAULTLIB:"LIBCMT"
 		)
 	ENDIF(MSVC)
-	TARGET_LINK_LIBRARIES(petscinittest ${PETSC_LIBRARIES})
+	TARGET_LINK_LIBRARIES(petsc1_init ${PETSC_LIBRARIES})
 	ADD_TEST(
 		NAME PETSc1:_PetscInitialization
-		COMMAND petscinittest
+		COMMAND petsc1_init
 	)
 
 	# checking creation of petsc plugins
-	ADD_EXECUTABLE(petscplugintest PetscPluginTest.cpp)
+	ADD_EXECUTABLE(petsc2_plugins Petsc2_Plugins.cpp)
 	IF(MSVC)
-		SET_TARGET_PROPERTIES(petscplugintest
+		SET_TARGET_PROPERTIES(petsc2_plugins
 			PROPERTIES LINK_FLAGS
 				/NODEFAULTLIB:"LIBCMT"
 		)
 	ENDIF(MSVC)
-	TARGET_LINK_LIBRARIES(petscplugintest
+	TARGET_LINK_LIBRARIES(petsc2_plugins
 		charon-core
 		${CIMG_LINK_LIBRARIES}
 		roi
@@ -51,20 +51,20 @@ IF(BUILD_TESTING)
 		petscsolver
 	)
 	ADD_TEST(
-		NAME PETSc2:_PetscPlugin
-		COMMAND petscplugintest
+		NAME PETSc2:_ModuleCreation
+		COMMAND petsc2_plugins
 	)
 
 	# check loading and unloading petsc plugin
-	ADD_EXECUTABLE(petscsolverdlltest PetscSolverDLLTest.cpp)
-	TARGET_LINK_LIBRARIES(petscsolverdlltest
+	ADD_EXECUTABLE(petsc3_pluginLoad Petsc3_PluginLoad.cpp)
+	TARGET_LINK_LIBRARIES(petsc3_pluginLoad
 		charon-core
 		charon-plugins
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
 		NAME PETSc3:_Load_PetscSolver_SharedLib
-		COMMAND petscsolverdlltest
+		COMMAND petsc3_pluginLoad
 	)
 
 	IF(UNIX)
@@ -74,90 +74,90 @@ IF(BUILD_TESTING)
 		# use a more recent version in this case,
 		# e.g. from the charon-suite ppa (see
 		# https://launchpad.net/~jmgottfried/+archive/charon)
-		ADD_LIBRARY(petsctestdll SHARED PetscTestDLL.cpp)
-		TARGET_LINK_LIBRARIES(petsctestdll
+		ADD_LIBRARY(petsc4_lib SHARED Petsc4_PetscSharedLib.cpp)
+		TARGET_LINK_LIBRARIES(petsc4_lib
 			${PETSC_LIBRARIES}
 		)
-		ADD_EXECUTABLE(petsctestdllload PetscTestDLLLoad.cpp)
-		TARGET_LINK_LIBRARIES(petsctestdllload
+		ADD_EXECUTABLE(petsc4_libLoad Petsc4_PetscSharedLibLoad.cpp)
+		TARGET_LINK_LIBRARIES(petsc4_libLoad
 			dl
 		)
 		ADD_TEST(
 			NAME PETSc4:_Load_PETSc_SharedLib
-			COMMAND petsctestdllload
+			COMMAND petsc4_libLoad
 		)
 	ENDIF(UNIX)
 
 	# executing test workflow
-	ADD_EXECUTABLE(petscsolvertest PetscSolverTest.cpp)
-	TARGET_LINK_LIBRARIES(petscsolvertest
+	ADD_EXECUTABLE(flow1_hsSinus Flow1_HS_Sinus.cpp)
+	TARGET_LINK_LIBRARIES(flow1_hsSinus
 		charon-core
 		charon-plugins
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
 		NAME Flow1:_HornSchunck_Sinus
-		COMMAND petscsolvertest
+		COMMAND flow1_hsSinus
 	)
 
 	# testing Horn&Schunck Method on Yosemite Sequence
-	ADD_EXECUTABLE(hornschunckyosemite HornSchunckYosemite.cpp)
-	TARGET_LINK_LIBRARIES(hornschunckyosemite
+	ADD_EXECUTABLE(flow2_hsYosemite Flow2_HS_Yosemite.cpp)
+	TARGET_LINK_LIBRARIES(flow2_hsYosemite
 		flowcomparator
 		charon-plugins
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
 		NAME Flow2:_HornSchunck_Yosemite
-		COMMAND hornschunckyosemite
+		COMMAND flow2_hsYosemite
 	)
 
 	# testing Horn&Schunk without plugin usage to simplify profiling
-	ADD_EXECUTABLE(hornschuncknoplugins
-		HornSchunckYosemiteNoPlugins.cpp
+	ADD_EXECUTABLE(flow3_hsYosemiteNP
+		Flow3_HS_Yosemite_NP.cpp
 		../src/Diff2D.cpp
 	)
 	IF(MSVC)
-		SET_TARGET_PROPERTIES(hornschuncknoplugins
+		SET_TARGET_PROPERTIES(flow3_hsYosemiteNP
 			PROPERTIES LINK_FLAGS
 				/NODEFAULTLIB:"LIBCMT"
 		)
 	ENDIF(MSVC)
-	TARGET_LINK_LIBRARIES(hornschuncknoplugins
+	TARGET_LINK_LIBRARIES(flow3_hsYosemiteNP
 		charon-core
 		${PETSC_LIBRARIES}
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
 		NAME Flow3:_HornSchunck_Yosemite_NoPlugins
-		COMMAND hornschuncknoplugins
+		COMMAND flow3_hsYosemiteNP
 	)
 
 	# tests for iteration plugins
-	ADD_EXECUTABLE(simpleiteratortest SimpleIteratorTest.cpp)
-	TARGET_LINK_LIBRARIES(simpleiteratortest
+	ADD_EXECUTABLE(iterator1_simple iterator1_simple.cpp)
+	TARGET_LINK_LIBRARIES(iterator1_simple
 		simpleiterator
 		charon-plugins
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
 		NAME Iterations1:_SimpleIterator
-		COMMAND simpleiteratortest
+		COMMAND iterator1_simple
 	)
 
-	ADD_EXECUTABLE(nestediteratortest NestedIteratorTest.cpp)
-	TARGET_LINK_LIBRARIES(nestediteratortest
+	ADD_EXECUTABLE(iterator2_nested iterator2_nested.cpp)
+	TARGET_LINK_LIBRARIES(iterator2_nested
 		simpleiterator
 		charon-plugins
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
 		NAME Iterations2:_Nested_Iterators
-		COMMAND nestediteratortest
+		COMMAND iterator2_nested
 	)
 
-	ADD_EXECUTABLE(relaxingtest RelaxingTest.cpp)
-	TARGET_LINK_LIBRARIES(relaxingtest
+	ADD_EXECUTABLE(iterator3_relaxing iterator3_relaxing.cpp)
+	TARGET_LINK_LIBRARIES(iterator3_relaxing
 		charon-plugins
 		relaxingiterator
 		l2norm
@@ -165,12 +165,12 @@ IF(BUILD_TESTING)
 	)
 	ADD_TEST(
 		NAME Iterations3:_RelaxingIterator
-		COMMAND relaxingtest
+		COMMAND iterator3_relaxing
 	)
 
 	# iterative flow estimation
-	ADD_EXECUTABLE(hornschunckiteratortest HornSchunckIteratorTest.cpp)
-	TARGET_LINK_LIBRARIES(hornschunckiteratortest
+	ADD_EXECUTABLE(flowIterated1_HS_Sinus flowIterated1_HS_Sinus.cpp)
+	TARGET_LINK_LIBRARIES(flowIterated1_HS_Sinus
 		flowcomparator
 		simpleiterator
 		charon-plugins
@@ -178,19 +178,19 @@ IF(BUILD_TESTING)
 	)
 	ADD_TEST(
 		NAME FlowIterated1:_HornSchunck_Sinus
-		COMMAND hornschunckiteratortest
+		COMMAND flowIterated1_HS_Sinus
 	)
 
-	ADD_EXECUTABLE(hornschunckiteratoryosemitetest
-		HornSchunckIteratorYosemiteTest.cpp)
-	TARGET_LINK_LIBRARIES(hornschunckiteratoryosemitetest
+	ADD_EXECUTABLE(flowIterated2_HS_Yosemite
+		flowIterated2_HS_Yosemite.cpp)
+	TARGET_LINK_LIBRARIES(flowIterated2_HS_Yosemite
 		flowcomparator
 		charon-plugins
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
 		NAME FlowIterated2:_HornSchunck_Yosemite
-		COMMAND hornschunckiteratoryosemitetest
+		COMMAND flowIterated2_HS_Yosemite
 	)
 
 	IF(WIN32)

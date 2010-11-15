@@ -13,7 +13,7 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file PetscTestDLLLoad.cpp
+/** @file Petsc4_PetscSharedLibLoad.cpp
  *  Load generated library with dlopen and execute the run function.
  *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  *  @date 25.10.2010
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 	std::cout << "closing libmpi.so.0" << std::endl;
 	dlclose(handle);
 
-	std::string fName = "libpetsctestdll.so";
+	std::string fName = "libpetsc4_lib.so";
 	std::cout << "opening PetscTestDLL (" << fName << ")" << std::endl;
 	handle = dlopen(
 			fName.c_str(),

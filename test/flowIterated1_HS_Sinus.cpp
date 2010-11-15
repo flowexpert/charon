@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file HornSchunckIteratorTest.cpp
+/** \file flowIterated1_HS_Sinus.cpp
  *  Iterated Horn&Schunck Algo
  *  \author Jens-Malte Gottfried <jmgottfried@web.de>
  *  \date 02.02.2010

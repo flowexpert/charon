@@ -15,7 +15,7 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file HornSchunckYosemiteNoPlugins.cpp
+/** \file Flow3_HS_Yosemite_NP.cpp
  *  Test file performing the same as HornSchunckYosemite.cpp
  *  but without using the plugin mechanism. All needed modules are
  *  compiled-in using their .hxx implementations.
@@ -49,7 +49,7 @@
 
 int test() {
 	FileTool::changeDir(TESTDIR);
-	ParameterFile testfileRW("HornSchunckYosemite.wrp");
+	ParameterFile testfileRW("flow2.wrp");
 	const ParameterFile& tData = testfileRW;
 
 	Roi<int> roi("roi");
