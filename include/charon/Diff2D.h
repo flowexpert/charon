@@ -63,8 +63,6 @@ public:
 
 	/// image input 
 	InputSlot < cimg_library::CImgList<T> > img;
-	/// Deprecated, don't use!
-	InputSlot < unsigned int > count;
 	/// derivative wrt x 
 	OutputSlot < cimg_library::CImgList<T> > dx;
 	/// derivative wrt y 

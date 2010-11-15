@@ -43,8 +43,7 @@ Diff2D<T>::Diff2D(const std::string& name) :
 			),
 		diffMaskXY("0.5;0;-0.5"),
 		smoothMaskXY("0.1875;0.625;0.1875"),
-		diffMaskT("1;-1"),
-		count(true,false) // optional
+		diffMaskT("1;-1")
 {
 	ParameteredObject::_addParameter (
 			diffMaskXY, "diffMaskXY",
@@ -59,8 +58,6 @@ Diff2D<T>::Diff2D(const std::string& name) :
 	ParameteredObject::_addInputSlot(
 			img, "img",
 			"image input", "CImgList<T>");
-	ParameteredObject::_addInputSlot(
-			count, "count", "Deprecated, don't use!");
 	ParameteredObject::_addOutputSlot(
 			dx, "dx", "derivative wrt x", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
@@ -77,18 +74,6 @@ Diff2D<T>::Diff2D(const std::string& name) :
 
 template <typename T>
 void Diff2D<T>::execute() {
-	// check for deprecated slot
-	if (count.connected()) {
-		std::ostringstream msg;
-		msg << __FILE__ << ":" << __LINE__ << ":\n\t";
-		msg << "Slot count is deprecated and not used anymore!\n\t";
-		msg << "This slot will be removed in near future!\n\t";
-		msg << "Please disconnect and check execution log for skip ";
-		msg << "messages.\n\tIf unexpected behaviour occurs, check calls to ";
-		msg << "ParameteredObject::resetExecute()!";
-		throw std::runtime_error(msg.str());
-	}
-
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
