@@ -32,9 +32,6 @@ template <class T>
 L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
 			"Stencil modeling spatial smoothness using laplacian operator."),
 		flowGuess(true, false)
-#ifdef ROBUSTNESS
-		, robustnessTerm(true,false) // optional
-#endif
 {
 	this->_addParameter(dimensions, "dimensions", "Number of dimensions", 2u);
 	this->_addParameter(pUnknowns, "unknowns", "List of unknowns");
@@ -43,10 +40,6 @@ L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
 			1.);
 	this->_addInputSlot(flowGuess, "flowGuess",
 			"Initial flow guess for rhs calculation", "CImgList<T>");
-#ifdef ROBUSTNESS
-		this->_addInputSlot(robustnessTerm, "robustnessTerm",
-			"containing the robustness term","RobustnessTerm*");
-#endif
 }
 
 template <class T>
@@ -60,228 +53,134 @@ void L2Norm<T>::execute() {
 		this->_unknowns.insert(*puIt);
 	}
 
-	
 	switch (dimensions) {
-			case 1:
-				//already has the correct size
-				_dataMask.assign(3,1,1,1);
-				_patternMask.assign(3,1,1,1);
-				_patternMask.fill(1,0,1);
-				_center = Point4D<int>(1,0,0,0);
-				break;
+	case 1:
+		//already has the correct size
+		_dataMask.assign(3,1,1,1);
+		_patternMask.assign(3,1,1,1);
+		_patternMask.fill(1,0,1);
+		_center = Point4D<int>(1,0,0,0);
+		break;
 
-			case 2:					
-				_dataMask.assign(3,3,1,1);
-				_patternMask.assign(3,3,1,1);
-				_patternMask.fill(
-						0, 1, 0,
-						1, 0, 1,
-						0, 1, 0);
-				_center = Point4D<int>(1,1,0,0);
-				break;
+	case 2:
+		_dataMask.assign(3,3,1,1);
+		_patternMask.assign(3,3,1,1);
+		_patternMask.fill(
+				0, 1, 0,
+				1, 0, 1,
+				0, 1, 0);
+		_center = Point4D<int>(1,1,0,0);
+		break;
 
-			case 3:
-				_dataMask.assign(3,3,3,1,0);
-				_patternMask.assign(3,3,3,1,0);
-				_patternMask(1,1,0) = 1;
-				_patternMask(1,0,1) = 1;
-				_patternMask(0,1,1) = 1;
-				_patternMask(1,1,1) = 1;
-				_patternMask(2,1,1) = 1;
-				_patternMask(1,2,1) = 1;
-				_patternMask(1,1,2) = 1;
-				_center = Point4D<int>(1,1,1,0);
-				break;
+	case 3:
+		_dataMask.assign(3,3,3,1,0);
+		_patternMask.assign(3,3,3,1,0);
+		_patternMask(1,1,0) = 1;
+		_patternMask(1,0,1) = 1;
+		_patternMask(0,1,1) = 1;
+		_patternMask(1,1,1) = 1;
+		_patternMask(2,1,1) = 1;
+		_patternMask(1,2,1) = 1;
+		_patternMask(1,1,2) = 1;
+		_center = Point4D<int>(1,1,1,0);
+		break;
 
-			case 4:
-				_dataMask.assign(3,3,3,3,0);
-				_patternMask.assign(3,3,3,3,0);
-				_patternMask(1,1,1,0) = 1;
-				_patternMask(1,1,0,1) = 1;
-				_patternMask(1,0,1,1) = 1;
-				_patternMask(0,1,1,1) = 1;
-				_patternMask(1,1,1,1) = 1;
-				_patternMask(2,1,1,1) = 1;
-				_patternMask(1,2,1,1) = 1;
-				_patternMask(1,1,2,1) = 1;
-				_patternMask(1,1,1,2) = 1;
-				_center = Point4D<int>(1,1,1,1);
-				break;
-				default:
-					throw std::out_of_range("invalid dimensions (too large)");
-				}
-
-	
-#ifdef ROBUSTNESS
-	if(robustnessTerm.connected())
-	{
-
-	_gradientWeight.assign(flowGuess()[0].width(), flowGuess()[0].height(),1,1);
-		double gradsum;
-		int x=0;
-		int y=0;
-		int left=0;
-		int up=0;
-		
-		cimg_forXY(_gradientWeight,x,y)
-		{
-			gradsum = 0;
-			for(unsigned int i=0; i<this->pUnknowns.size(); i++)
-			{
-				//calculating gradient for each unknown an add
-
-				//boundary conditions
-				if(x==0)
-				{
-					left=0;
-				}
-				else
-				{
-					left=x-1;
-				}
-				if(y==0)
-				{
-					up=0;
-				}
-				else
-				{
-					up=y-1;
-				}
-
-				gradsum+= ( (( flowGuess()[i](x+1,y)-flowGuess()[i](left,y) ) / 2)*(( flowGuess()[i](x+1,y)-flowGuess()[i](left,y) ) / 2) );
-				gradsum+= ( (( flowGuess()[i](x,y+1)-flowGuess()[i](x,up) ) / 2)*(( flowGuess()[i](x,y+1)-flowGuess()[i](x,up) )/2  ) );
-			}
-
-			_gradientWeight(x,y) = robustnessTerm()->DPsi(T(gradsum));
-
-		}
-
+	case 4:
+		_dataMask.assign(3,3,3,3,0);
+		_patternMask.assign(3,3,3,3,0);
+		_patternMask(1,1,1,0) = 1;
+		_patternMask(1,1,0,1) = 1;
+		_patternMask(1,0,1,1) = 1;
+		_patternMask(0,1,1,1) = 1;
+		_patternMask(1,1,1,1) = 1;
+		_patternMask(2,1,1,1) = 1;
+		_patternMask(1,2,1,1) = 1;
+		_patternMask(1,1,2,1) = 1;
+		_patternMask(1,1,1,2) = 1;
+		_center = Point4D<int>(1,1,1,1);
+		break;
+	default:
+		throw std::out_of_range("invalid dimensions (too large)");
 	}
 
-	else
-#endif
-	{
-		// create masks in appropriate dimensions,
-		// then fill mask with values and set the center
-		switch (dimensions) {
-		case 1:
-			//already has the correct size
-			_dataMask.fill(T(-1), T(2), T(-1));
-			break;
-		case 2:
-			_dataMask.fill(
-					T( 0), T(-1), T( 0),
-					T(-1), T( 4), T(-1),
-					T( 0), T(-1), T( 0));
-			break;
-		case 3:
-			_dataMask(1,1,0) = T(-1);
-			_dataMask(1,0,1) = T(-1);
-			_dataMask(0,1,1) = T(-1);
-			_dataMask(1,1,1) = T( 6);
-			_dataMask(2,1,1) = T(-1);
-			_dataMask(1,2,1) = T(-1);
-			_dataMask(1,1,2) = T(-1);
-			break;
-		case 4:
-			_dataMask(1,1,1,0) = T(-1);
-			_dataMask(1,1,0,1) = T(-1);
-			_dataMask(1,0,1,1) = T(-1);
-			_dataMask(0,1,1,1) = T(-1);
-			_dataMask(1,1,1,1) = T( 8);
-			_dataMask(2,1,1,1) = T(-1);
-			_dataMask(1,2,1,1) = T(-1);
-			_dataMask(1,1,2,1) = T(-1);
-			_dataMask(1,1,1,2) = T(-1);
-			break;
-		default:
-			throw std::out_of_range("invalid dimensions (too large)");
+	// create masks in appropriate dimensions,
+	// then fill mask with values and set the center
+	switch (dimensions) {
+	case 1:
+		//already has the correct size
+		_dataMask.fill(T(-1), T(2), T(-1));
+		break;
+	case 2:
+		_dataMask.fill(
+				T( 0), T(-1), T( 0),
+				T(-1), T( 4), T(-1),
+				T( 0), T(-1), T( 0));
+		break;
+	case 3:
+		_dataMask(1,1,0) = T(-1);
+		_dataMask(1,0,1) = T(-1);
+		_dataMask(0,1,1) = T(-1);
+		_dataMask(1,1,1) = T( 6);
+		_dataMask(2,1,1) = T(-1);
+		_dataMask(1,2,1) = T(-1);
+		_dataMask(1,1,2) = T(-1);
+		break;
+	case 4:
+		_dataMask(1,1,1,0) = T(-1);
+		_dataMask(1,1,0,1) = T(-1);
+		_dataMask(1,0,1,1) = T(-1);
+		_dataMask(0,1,1,1) = T(-1);
+		_dataMask(1,1,1,1) = T( 8);
+		_dataMask(2,1,1,1) = T(-1);
+		_dataMask(1,2,1,1) = T(-1);
+		_dataMask(1,1,2,1) = T(-1);
+		_dataMask(1,1,1,2) = T(-1);
+		break;
+	default:
+		throw std::out_of_range("invalid dimensions (too large)");
+	}
+
+	_dataMask *= this->lambda();
+
+	// precalculate rhs values for whole image
+	if (flowGuess.connected()) {
+
+		assert(flowGuess().size() == dimensions());
+		const cimg_library::CImgList<T>& flow = flowGuess();
+		_rhsVals.assign(flow);
+		cimglist_for(flow, kk) {
+			_rhsVals[kk] = this->apply(flow, kk);
+			_rhsVals[kk] *= -rhsWeight();
 		}
 	}
-		_dataMask *= this->lambda();
-
-		// precalculate rhs values for whole image
-		if (flowGuess.connected()) {
-
-			assert(flowGuess().size() == dimensions());
-			const cimg_library::CImgList<T>& flow = flowGuess();
-			_rhsVals.assign(flow);
-			cimglist_for(flow, kk) {
-				_rhsVals[kk] = this->apply(flow, kk);
-				_rhsVals[kk] *= -rhsWeight();
-			}
-		}
-	
 }
 
 template <class T>
 void L2Norm<T>::updateStencil(
 		const std::string& unknown,
-		const Point4D<int>& p, const int&) {
-
-
-#ifdef ROBUSTNESS
-	Point4D<int> point;
-	double a=0, b=0, c=0, d=0, e=0;
-	std::ostringstream msg;
-	if(robustnessTerm.connected()) {
-		switch (dimensions) {
-		case 1:
-			msg << __FILE__ << ":" << __LINE__ << ":\n\t";
-			msg << "robustness for 1D is not implemented yet!\n\t";
-			throw std::runtime_error(msg.str());
-
-			break;
-
-		case 2:
-			a=(_gradientWeight(point.x-1,point.y)+_gradientWeight(point.x,point.y))/2;
-			b=(_gradientWeight(point.x,point.y)-_gradientWeight(point.x-1,point.y))/2;
-			c=-(_gradientWeight(point.x+1,point.y)+2*_gradientWeight(point.x-1,point.y)
-				+_gradientWeight(point.x-1,point.y)+4*_gradientWeight(point.x,point.y))/2;
-			c=(_gradientWeight(point.x+1,point.y)+_gradientWeight(point.x,point.y))/2;
-			d=(_gradientWeight(point.x,point.y+1)+_gradientWeight(point.x,point.y))/2;
-
-			_dataMask.fill(
-			T( 0), T(a), T( 0),
-			T(b), T(c), T(d),
-			T( 0), T(e), T( 0));
-			break;
-
-		case 3:
-			msg << __FILE__ << ":" << __LINE__ << ":\n\t";
-			msg << "robustness for 3D is not implemented yet!\n\t";
-			throw std::runtime_error(msg.str());
-			break;
-
-		case 4:
-			msg << __FILE__ << ":" << __LINE__ << ":\n\t";
-			msg << "robustness for 4D is not implemented yet!\n\t";
-			throw std::runtime_error(msg.str());
-			break;
-		}
-	}
-#endif
+		const Point4D<int>& p, const int&)
+{
 	// fill stencil with masks
-		for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
-			SubStencil<T> entry;
-			if(pUnknowns[i] == unknown) {
-				entry.center  = _center;
-				// shared assignment (no copying of values)
-				entry.data.assign(_dataMask,true);
-				entry.pattern.assign(_patternMask,true);
-				if(flowGuess.connected())
-					this->_rhs = _rhsVals[i](p.x,p.y,p.z,p.t);
-				else
-					this->_rhs = T(0);
-			}
-			else {
-				// empty substencil for other unknowns
-				entry.center = Point4D<int>();
-				entry.data.clear();
-				entry.pattern.clear();
-			}
-			this->_subStencils[pUnknowns[i]] = entry;
+	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
+		SubStencil<T> entry;
+		if(pUnknowns[i] == unknown) {
+			entry.center  = _center;
+			// shared assignment (no copying of values)
+			entry.data.assign(_dataMask,true);
+			entry.pattern.assign(_patternMask,true);
+			if(flowGuess.connected())
+				this->_rhs = _rhsVals[i](p.x,p.y,p.z,p.t);
+			else
+				this->_rhs = T(0);
 		}
+		else {
+			// empty substencil for other unknowns
+			entry.center = Point4D<int>();
+			entry.data.clear();
+			entry.pattern.clear();
+		}
+		this->_subStencils[pUnknowns[i]] = entry;
+	}
 }
 
 template <class T>

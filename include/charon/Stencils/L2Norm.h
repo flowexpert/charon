@@ -38,9 +38,7 @@
 #endif
 
 #include "../Stencil.h"
-#ifdef ROBUSTNESS
-#include "../RobustnessTerm.h"
-#endif
+
 /// Laplacian stencil used for regularization in global methods.
 template <class T>
 class l2norm_DECLDIR L2Norm : public Stencil<T>
@@ -52,10 +50,6 @@ private:
 	cimg_library::CImg<char>  _patternMask; ///< common pattern
 	Point4D<int>              _center;      ///< common center
 	cimg_library::CImgList<T> _rhsVals;     ///< values for rhs (optional)
-	
-	#ifdef ROBUSTNESS
-	cimg_library::CImg<T>     _gradientWeight; ///< precalculated gradient sum
-	#endif
 	//  \}
 
 
@@ -70,10 +64,6 @@ public:
 	/// Initial flow guess for rhs calculation
 	InputSlot<cimg_library::CImgList<T> > flowGuess;
 
-	#ifdef ROBUSTNESS
-	/// RobustnessTerm
-	InputSlot<RobustnessTerm*> robustnessTerm;
-	#endif
 	/// default constructor
 	/// \param name instance name
 	L2Norm(const std::string& name = "");

@@ -59,23 +59,12 @@ const T& Stencil<T>::getRhs() const {
 }
 
 template <typename T>
-double Stencil<T>::getEnergy() const {
-	return _energy;
-}
-
-template <typename T>
 const std::set<std::string>& Stencil<T>::getUnknowns() const {
 	return _unknowns;
 }
 
 template <typename T>
 Stencil<T>::~Stencil() {
-}
-
-template <typename T>
-void Stencil<T>::updateEnergy(
-	const cimg_library::CImgList<T>&,
-	const Point4D<int>&, const int&) {
 }
 
 #endif //_stencil_HXX_

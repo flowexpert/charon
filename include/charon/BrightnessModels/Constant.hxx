@@ -54,12 +54,4 @@ void BrightnessModels::Constant<T>::compute(
 	// no brightness change
 }
 
-template<class T>
-void BrightnessModels::Constant<T>::computeEnergy(
-		const Point4D<int>&, const int&,
-		const cimg_library::CImgList<T>&, double&)
-{
-	// no brightness change
-}
-
 #endif

@@ -82,17 +82,6 @@ public:
 			std::map<std::string, T>& term, T& rhs,
 			const std::string& unknown = "") = 0;
 
-	/// compute the bcce energy term
-	/** \param p             coordinates (4D)
-	 *  \param v             channel
-	 *  \param parameterList parameter list
-	 *  \param energy        energy result
-	 */
-	virtual void computeEnergy(
-				const Point4D<int>& p, const int& v,
-				const cimg_library::CImgList<T>& parameterList,
-				double& energy) = 0;
-
 	/**
 	 * Get the unknowns of the model.
 	 * @return Set of strings which contains the names of the unknowns

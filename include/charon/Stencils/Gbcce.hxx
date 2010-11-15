@@ -92,53 +92,33 @@ void Gbcce<T>::updateStencil(
 
 	// initialize term for all unknowns
 	std::set<std::string>::const_iterator unkIt;
+	static std::map<std::string, T> term;
 	for (unkIt = this->_unknowns.begin();
 			unkIt != this->_unknowns.end(); unkIt++)
-		this->_term[*unkIt] = T(0);
+		term[*unkIt] = T(0);
 
 	// compute term
 	static BrightnessModel<T>& bmIn = *(this->brightnessIn());
 	static MotionModel<T>& mmIn = *(this->motionIn());
-	bmIn.compute(p,v,this->_term,this->_rhs,unknown);
-	mmIn.compute(p,v,this->_term,this->_rhs,unknown);
+	bmIn.compute(p,v,term,this->_rhs,unknown);
+	mmIn.compute(p,v,term,this->_rhs,unknown);
 
 	// and fill into substencils
 	typename std::map<std::string,T>::iterator termIt;
-	for(termIt=this->_term.begin();termIt!=this->_term.end();termIt++) {
+	for(termIt=term.begin();termIt!=term.end();termIt++) {
 		const T val = termIt->second * l;
 		this->_subStencils[termIt->first].data(0,0) = val;
 	}
 	this->_rhs *= l;
 }
 
-
-template <class T>
-void Gbcce<T>::updateEnergy(
-		const cimg_library::CImgList<T>& parameterList,
-		const Point4D<int>& p, const int& v) {
-	this->_energy = 0;
-
-	// initialize term for all unknowns
-	std::set<std::string>::const_iterator unkIt;
-	for (unkIt = this->_unknowns.begin();
-			unkIt != this->_unknowns.end(); unkIt++)
-		this->_term[*unkIt] = T(0);
-
-	// compute energy 
-	static BrightnessModel<T>& bmIn = *(this->brightnessIn());
-	static MotionModel<T>& mmIn = *(this->motionIn());
-	bmIn.computeEnergy(p,v,parameterList, this->_energy);
-	mmIn.computeEnergy(p,v,parameterList, this->_energy);
-}
-
-
 //not yet implemented
 template <class T>
-cimg_library::CImg<T> Gbcce<T>::apply(const cimg_library::CImgList<T>& seq,
-                                      const unsigned int frame) const {
+cimg_library::CImg<T> Gbcce<T>::apply(
+		const cimg_library::CImgList<T>& seq,
+		const unsigned int frame) const {
 	return seq[frame];
 }
-
 
 template <class T>
 Gbcce<T>::~Gbcce() {

@@ -92,17 +92,6 @@ protected:
 	 */
 	T _rhs;
 
-	/// \name robustness related variables
-	/// \todo (Nina) add documentation here
-	//\{
-	T _rhsD;
-	std::map<std::string, T> _term;
-	std::map<std::string, T> _termD;
-	//\}
-
-	/// calculated energy of the stencil
-	double _energy;
-
 public:
 	/// Lambda coefficient of the stencil.
 	Parameter<T> lambda;
@@ -136,19 +125,6 @@ public:
 		const std::string& unknown,
 		const Point4D<int>& p=Point4D<int>(), const int& v=0) = 0;
 
-	/// updates the energy
-	/** This function is inteded to be pure virtual, is yet only for
-     *  interface purposes. Making it pure virtual will break current
-     *  code that does not implement this interface yet.
-	 *  \todo add more documentation here, what this function is good
-     *        for and how to implement it in derived stencils.
-	 *  \param[in] flowList   flow list
-	 *  \param[in] p,v        coordinates (5D)
-	 */
-	virtual void updateEnergy(
-		const cimg_library::CImgList<T>& flowList,
-		const Point4D<int>& p=Point4D<int>(), const int& v=0);
-
 	/// Getter function for the SubStencils of the stencil.
 	/** @return reference to the map of SubStencils.
 	 */
@@ -156,16 +132,6 @@ public:
 
 	/// Getter function for the right hand side.
 	const T& getRhs() const;
-
-	/// Getter function for the right hand side of D.
-	const T& getRhsD() const;
-
-	/// Getter function for the energy.
-	double getEnergy() const;
-
-	/// Getter function for the term of D.
-	const std::map<std::string, T>& getTermD() const;
-
 
 	/// apply stencil to a sequence
 	/** \param seq           sequence to apply stencil on

@@ -68,11 +68,6 @@ public:
 			std::map<std::string, T>& term, T& rhs,
 			const std::string& unknown = "");
 
-	virtual void computeEnergy(
-			const Point4D<int>& p, const int& v,
-			const cimg_library::CImgList<T>& parameterList,
-			double& energy);
-
 	virtual std::set<std::string>& getUnknowns();
 };
 

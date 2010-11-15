@@ -64,10 +64,6 @@ public:
 		const std::string& unknown,
 		const Point4D<int>& p=Point4D<int>(), const int& v=0);
 
-	virtual void updateEnergy(
-		const cimg_library::CImgList<T>& flowList,
-		const Point4D<int>& p=Point4D<int>(), const int& v=0);
-
 	virtual cimg_library::CImg<T> apply(
 			const cimg_library::CImgList<T>& seq,
 			const unsigned int frame) const;

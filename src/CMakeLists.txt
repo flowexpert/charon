@@ -105,53 +105,6 @@ LIST(APPEND Plugins
 	motionmodels_localconstant
 )
 
-IF(BUILD_ROBUSTNESS)
-	ADD_DEFINITIONS(-DROBUSTNESS)
-	ADD_LIBRARY(robustnessterm SHARED
-		RobustnessTerm.cpp
-		${charon_INCLUDE_DIR}/RobustnessTerm.h
-	)
-	ADD_LIBRARY(squarerootrobustnessterm SHARED
-		SquarerootRobustnessTerm.cpp
-		${charon_INCLUDE_DIR}/RobustnessTerms/SquarerootRobustnessTerm.h
-	)
-	TARGET_LINK_LIBRARIES(squarerootrobustnessterm robustnessterm)
-	TARGET_LINK_LIBRARIES(l2norm robustnessterm)
-	ADD_LIBRARY(sampleiterativesolver SHARED
-		SampleIterativeSolver.cpp
-		${charon_INCLUDE_DIR}/IterativeSolvers/SampleIterativeSolver.h
-		${charon_INCLUDE_DIR}/IterativeSolvers/SampleIterativeSolver.hxx
-		${charon_INCLUDE_DIR}/IterativeSolver.h
-		${charon_INCLUDE_DIR}/IterativeSolver.hxx
-		${charon_INCLUDE_DIR}/Solver.h
-		${charon_INCLUDE_DIR}/Solver.hxx
-	)
-	TARGET_LINK_LIBRARIES(sampleiterativesolver squarerootrobustnessterm)
-	ADD_LIBRARY(iteratorhelper SHARED
-		IteratorHelper.cpp
-		${charon_INCLUDE_DIR}/IteratorHelper.h
-		${charon_INCLUDE_DIR}/IteratorHelper.hxx
-	)
-	ADD_LIBRARY(psistencil SHARED
-		PsiStencil.cpp
-		${charon_INCLUDE_DIR}/Stencils/PsiStencil.h
-		${charon_INCLUDE_DIR}/Stencils/PsiStencil.hxx
-		${charon_INCLUDE_DIR}/Stencil.h
-		${charon_INCLUDE_DIR}/Stencil.hxx
-		${charon_INCLUDE_DIR}/Point4D.h
-		${charon_INCLUDE_DIR}/Substencil.h
-		${charon_INCLUDE_DIR}/Substencil.hxx
-	)
-	TARGET_LINK_LIBRARIES(psistencil squarerootrobustnessterm)
-	LIST(APPEND Plugins
-		robustnessterm
-		squarerootrobustnessterm
-		sampleiterativesolver
-		iteratorhelper
-		psistencil
-	)
-ENDIF(BUILD_ROBUSTNESS)
-
 # Misc plugins
 ADD_LIBRARY(sequencegenerator SHARED
 	SequenceGenerator.cpp

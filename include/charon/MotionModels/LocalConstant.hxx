@@ -75,31 +75,6 @@ void MotionModels::LocalConstant<T>::compute(
 	rhs -= factor * iT;
 }
 
-
-template<class T>
-void MotionModels::LocalConstant<T>::computeEnergy(
-		const Point4D<int>& p, const int& vs,
-		const cimg_library::CImgList<T>& parameterList, double &energy)
-{
-	if(!dz.connected())
-		assert(p.z == 0u); // 2D only
-
-	// derivatives
-	const T& iX = this->dx()(vs, p.x, p.y, p.z, p.t);
-	const T& iY = this->dy()(vs, p.x, p.y, p.z, p.t);
-	const T& iZ = dz.connected() ? this->dz()(vs, p.x, p.y, p.z, p.t) : T(0);
-	const T& iT = this->dt()(vs, p.x, p.y, p.z, p.t);
-
-	// flow components
-	const T& u = parameterList[0](p.x,p.y,p.z,p.t);
-	const T& v = parameterList[1](p.x,p.y,p.z,p.t);
-	const T& w = dz.connected() ? parameterList[2](p.x,p.y,p.z,p.t) : T(0);
-
-	energy += pow(double(iX*u+iY*v+iZ+w-iT),2);
-
-}
-
-
 template<class T>
 MotionModels::LocalConstant<T>::LocalConstant(const std::string& name) :
 		MotionModel<T>::MotionModel("motionmodels_localconstant", name),

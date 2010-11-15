@@ -22,9 +22,6 @@ INCLUDE(Documentation)
 # CPack descriptions for package generation
 INCLUDE(ReleaseSys)
 
-# select wich plugins to compile
-OPTION(BUILD_ROBUSTNESS "compile robustness pugins" OFF)
-
 # Petsc actually required
 FIND_PACKAGE(petsc REQUIRED)
 
@@ -32,8 +29,6 @@ FIND_PACKAGE(petsc REQUIRED)
 INCLUDE(CTest)
 
 # Print infos about found packages
-MESSAGE(STATUS "Charon plugin configuration:")
-MESSAGE(STATUS "    robustness   : ${BUILD_ROBUSTNESS}\n")
 INCLUDE(Features)
 MESSAGE(STATUS "CImg configuration:")
 CImgLibInfo()
