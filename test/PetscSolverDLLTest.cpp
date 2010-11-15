@@ -47,7 +47,7 @@
 
 int main() {
 	// test creation of all necessary objects
-	std::ofstream log("PetscDLLTest.txt", std::ios::trunc);
+	std::ofstream log("petsc3_plugin.log", std::ios::trunc);
 	assert(log.good());
 	sout.assign(log);
 

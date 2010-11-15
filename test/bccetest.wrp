@@ -27,11 +27,11 @@ sequence.sequence		diff.img;bm.image
 diff.dx		mm.dx
 diff.dy		mm.dy
 diff.dt		mm.dt
-writer.filename		bcceTest_flow_calc.cimg
+writer.filename		flow1_HS_Sinus_calc.cimg
 origwriter.type		filewriter
 origwriter.in		sequence.flow
 sequence.flow		origwriter.in
-origwriter.filename		bcceTest_flow.cimg
+origwriter.filename		flow1_HS_Sinus.cimg
 roi.xend		20
 roi.yend		20
 solver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ksp_max_it 1000

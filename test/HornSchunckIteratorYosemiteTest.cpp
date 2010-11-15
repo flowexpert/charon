@@ -15,8 +15,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file HornSchunckYosemite.cpp
- *  Unit tests for class SimpleIterator
+/** \file HornSchunckIteratorYosemiteTest.cpp
+ *  Iterated Horn&Schunck algo on Yosemite seq
  *  \author Jens-Malte Gottfried <jmgottfried@web.de>
  *  \date 02.02.2010
  */
@@ -38,9 +38,9 @@
 #error LOCAL_PLUGIN_DIR not defined!
 #endif
 #ifndef TESTDIR
-/// global testing directory
+/// local test source directory
 #define TESTDIR ""
-#error TESTDIR not defined!
+#error  TESTDIR not defined!
 #endif
 
 #include <charon-core/PluginManager.h>
@@ -50,7 +50,7 @@
 #include <charon/FlowComparator.h>
 
 int test() {
-	std::ofstream log("flow2_HS_Yosemite.log", std::ios::trunc);
+	std::ofstream log("iteratedFlow2_HS_Yosemite.log", std::ios::trunc);
 	assert(log.good());
 	sout.assign(log);
 
@@ -58,22 +58,22 @@ int test() {
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 
 	// start tests
-	std::cout << "Loading parameter file \"" << TESTDIR "/HornSchunckYosemite.wrp";
+	std::string testfile(TESTDIR "/iteratedFlow2.wrp");
+	std::cout << "Loading parameter file \"" << testfile;
 	std::cout << "\"" << std::endl;
-	FileTool::changeDir(TESTDIR);
-	man.loadParameterFile(TESTDIR "/HornSchunckYosemite.wrp");
+	man.loadParameterFile(testfile);
 	std::cout << "Executing workflow..." << std::endl;
+	FileTool::changeDir(TESTDIR);
 	man.executeWorkflow();
 	std::cout << "Workflow execution finished.\n" << std::endl;
 
-
 	// get test instances
 	FlowComparator<double>* comparator = dynamic_cast<FlowComparator<double>*>(
-			man.getInstance("analysis"));
+			man.getInstance("analyzer"));
 	assert(comparator);
 	std::cout << "mean endpoint error: "
 			<< comparator->getMeanEndpointError() << std::endl;
-	assert(comparator->getMeanEndpointError() <= 0.12);
+	assert(comparator->getMeanEndpointError() <= 0.1);
 
 	man.reset();
 	sout.assign();

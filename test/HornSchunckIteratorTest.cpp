@@ -15,8 +15,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file HornSchunckYosemite.cpp
- *  Unit tests for class SimpleIterator
+/** \file HornSchunckIteratorTest.cpp
+ *  Iterated Horn&Schunck Algo
  *  \author Jens-Malte Gottfried <jmgottfried@web.de>
  *  \date 02.02.2010
  */
@@ -38,42 +38,69 @@
 #error LOCAL_PLUGIN_DIR not defined!
 #endif
 #ifndef TESTDIR
-/// global testing directory
+/// local test source directory
 #define TESTDIR ""
-#error TESTDIR not defined!
+#error  TESTDIR not defined!
 #endif
 
+#include <iomanip>
 #include <charon-core/PluginManager.h>
 #include <charon-core/ParameteredObject.h>
 #include <charon-core/FileTool.h>
 #include <charon-core/ExceptionHandler.h>
 #include <charon/FlowComparator.h>
+#include <charon/IteratorHelper.h>
+#include <charon/SimpleIterator.h>
 
 int test() {
-	std::ofstream log("flow2_HS_Yosemite.log", std::ios::trunc);
+	std::ofstream log("iteratedFlow1_HS_Sinus.log", std::ios::trunc);
 	assert(log.good());
 	sout.assign(log);
+	std::ofstream epeLog("iteratedFlow1_HS_Sinus.csv", std::ios::trunc);
+	assert(epeLog.good());
 
 	// load plugin manager
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 
 	// start tests
-	std::cout << "Loading parameter file \"" << TESTDIR "/HornSchunckYosemite.wrp";
+	std::string testfile(TESTDIR "/iteratedFlow1.wrp");
+	std::cout << "Loading parameter file \"" << testfile;
 	std::cout << "\"" << std::endl;
-	FileTool::changeDir(TESTDIR);
-	man.loadParameterFile(TESTDIR "/HornSchunckYosemite.wrp");
-	std::cout << "Executing workflow..." << std::endl;
-	man.executeWorkflow();
-	std::cout << "Workflow execution finished.\n" << std::endl;
-
+	man.loadParameterFile(testfile);
 
 	// get test instances
 	FlowComparator<double>* comparator = dynamic_cast<FlowComparator<double>*>(
-			man.getInstance("analysis"));
+			man.getInstance("analyzer"));
 	assert(comparator);
+	SimpleIterator<double>* iterator =
+			dynamic_cast<SimpleIterator<double>*>(
+					man.getInstance("iterator"));
+	assert(iterator);
+	IteratorHelper<double>* helper =
+			dynamic_cast<IteratorHelper<double>*>(
+					man.getInstance("helper"));
+	assert(helper);
+
+	comparator->result.disconnect();
+	comparator->result.connect(helper->flow);
+
+	std::cout << "Executing workflow..." << std::endl;
+	iterator->initialize();
+	bool cont;
+	do {
+		cont = iterator->singleStep();
+		epeLog << std::setw(4) << helper->count() << " "
+				<< std::setw(13) << std::scientific << std::setprecision(6)
+				<< comparator->getMeanEndpointError() << std::endl;
+	} while (cont);
+	iterator->finalize();
+
+	std::cout << "Workflow execution finished.\n" << std::endl;
+
 	std::cout << "mean endpoint error: "
 			<< comparator->getMeanEndpointError() << std::endl;
-	assert(comparator->getMeanEndpointError() <= 0.12);
+	assert(comparator->getMeanEndpointError() <= 0.05);
+	epeLog.close();
 
 	man.reset();
 	sout.assign();

@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2009 Jens-Malte Gottfried <jmgottfried@web.de>
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -13,114 +15,94 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file IterativeSolver.hxx
- *  Implementation of class IteratorHelper.
- *  @author <a href="mailto:techfreaq@web.de">
- *      Nina Hernitschek</a>
- *  @date 26.02.2010
+/** \file IteratorHelper.hxx
+ *  Implementation of the parameter class IteratorHelper.
+ *  \author Jens-Malte Gottfried <jmgottfried@web.de>
+ *  \date 01.02.2010
  */
 
-#ifndef _ITERATORHELPER_HXX_
-#define _ITERATORHELPER_HXX_
+#ifndef _ITERATOR_HELPER_HXX_
+#define _ITERATOR_HELPER_HXX_
 
 #include "IteratorHelper.h"
+#include <ImgTool.h>
 
 template <typename T>
-void IteratorHelper<T>::_init() {
-
-	this->_addInputSlot(imgListFileIn,"imgListFileIn",
-		"CImgList from IterativeSolver","CImgList<T>");
-	this->_addParameter(maxIterations,"maxIterations",
-		"maximum number of iteration steps",5);
-	this->_addOutputSlot(imgListOut,"imgListOut",
-		"CImgList containing the CImgList used in iteration","CImgList<T>");
-	this->_addOutputSlot(flowListOut,"flowListOut",
-		"CImgList containing the flow from iterativeSolver","CImgList<T>");
-	this->_addOutputSlot(iterationStepOut,"iterationStepOut",
-		"current iteration step");
-	this->_addOutputSlot(out,"this",
-		"Pointer to itself", "IteratorHelper<T>*");
-
-	out = this;
-
-	iterationStep = 1;
-}
-
-template <typename T>
-IteratorHelper<T>::IteratorHelper(
-		const std::string& classname,
-		const std::string& name,
-		const std::string& doc) :
-		TemplatedParameteredObject<T>(classname,name,
-			doc + "<br><br>derived by class IteratorHelper")
+IteratorHelper<T>::IteratorHelper(const std::string& name) :
+		TemplatedParameteredObject<T>("IteratorHelper", name,
+			"Helper for iterative image processing algorithms. <br>"
+			"This provides current values/initial values for further "
+			"processing. And performs warping with the actual flow."),
+		initFlow(true, false),
+		count(0u),
+		countAll(0u)
 {
-	_init();
-}
+	ParameteredObject::_addInputSlot(in, "in",
+		"original sequence input", "CImgList<T>");
+	ParameteredObject::_addInputSlot(initFlow, "initFlow",
+		"initial flow guess", "CImgList<T>");
+	ParameteredObject::_addParameter(flowDimensions, "flowDimensions",
+		"number of flow components for initialization", 2u);
+	ParameteredObject::_addOutputSlot(sequence, "sequence",
+		"original sequence output", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(flow, "flow",
+		"current flow solution", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(count, "count",
+		"iteration counter");
+	ParameteredObject::_addOutputSlot(self, "self",
+		"self-pointer", "IteratorHelper<T>*");
 
-template <typename T>
-IteratorHelper<T>::IteratorHelper(
-		const std::string& name) :
-		TemplatedParameteredObject<T>("IteratorHelper",name,
-			"Helper for iterative solvers")
-{
-	_init();
-}
-
-template <typename T>
-void IteratorHelper<T>::update(cimg_library::CImgList<T> imgList, cimg_library::CImgList<T> flowList)
-{
-	imgListIn = imgList;
-	flowListIn = flowList;
+	self() = this;
 }
 
 template <typename T>
 void IteratorHelper<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	sout << "IteratorHelper, iteration " << iterationStep << std::endl;
-
-		if(iterationStep==1) // first iteration step
-		{
-			// read from file, use imgListFile In
-
-			imgListOut=imgListFileIn;	
-
-			// initial guess: flow is 0
-
-		/*	unsigned int width = imgListFileIn()[0].width();
-			unsigned int height = imgListFileIn()[0].height();
-			unsigned int depth = imgListFileIn()[0].depth();
-		*/
-			flowListOut().assign(3,imgListFileIn()[0].width(),imgListFileIn()[0].height(),imgListFileIn()[0].depth(), 1, 0);
-		}
-		else
-		{
-			// read from IterativeSolver, use imgListIn
-			imgListOut=imgListIn;
-			
-			// use calculated flow
-			flowListOut=flowListIn;
-		}
-
-}
-
-
-template <typename T>
-void IteratorHelper<T>::nextStep() {
-	iterationStep++;
-	iterationStepOut = iterationStep;
+	// first initialization
+	// later updated by iterator
+	if(sequence().empty())
+		reset();
 }
 
 template <typename T>
-int IteratorHelper<T>::getCurrentStep() {
-	return iterationStep;
+void IteratorHelper<T>::update(bool c) {
+	sout << "Updating " << this->getClassName();
+	sout << " \"" << this->getName() << "\"" << std::endl;
+	if (c) {
+		count()++;
+		countAll()++;
+	}
 }
 
 template <typename T>
-int IteratorHelper<T>::getMaxIterations() {
-	return maxIterations;
+void IteratorHelper<T>::reset() {
+	count() = 0;
+	const cimg_library::CImgList<T>& seqIn = in();
+	assert(seqIn.size() > 0);
+
+	// copy input sequence
+	sequence().assign(seqIn);
+
+	// copy input flow if present, otherwise create dummy flow with zeros
+	const unsigned int df = flowDimensions();
+	if(initFlow.connected()) {
+		if(initFlow().size() != df)
+			sout << "\t*** Warning: Dimensions of initial flow ("
+					<< initFlow().size()
+					<< ") do not match given flow dimensions ("
+					<< flowDimensions() << ")!" << std::endl;
+		assert(initFlow().size() > 0);
+		assert(initFlow()[0].is_sameXYZ(seqIn[0]));
+		assert(initFlow()[0].spectrum() == seqIn[0].spectrum() - 1);
+		flow().assign(initFlow());
+	}
+	else {
+		flow().assign(df,
+			seqIn[0].width(),seqIn[0].height(),seqIn[0].depth(),
+			seqIn[0].spectrum()-1,T(0));
+	}
 }
 
-#endif // _ITERATORHELPER_HXX_
-
-
+#endif /* _ITERATOR_HELPER_HXX_ */

@@ -105,28 +105,52 @@ LIST(APPEND Plugins
 	motionmodels_localconstant
 )
 
+# Iterator plugins
+ADD_LIBRARY(iteratorhelper SHARED
+	${charon_INCLUDE_DIR}/IteratorHelper.h
+	${charon_INCLUDE_DIR}/IteratorHelper.hxx
+	IteratorHelper.cpp
+)
+ADD_LIBRARY(simpleiterator SHARED
+	${charon_INCLUDE_DIR}/SimpleIterator.h
+	${charon_INCLUDE_DIR}/SimpleIterator.hxx
+	SimpleIterator.cpp
+)
+TARGET_LINK_LIBRARIES(simpleiterator iteratorhelper)
+ADD_LIBRARY(relaxingiterator SHARED
+	${charon_INCLUDE_DIR}/RelaxingIterator.h
+	${charon_INCLUDE_DIR}/RelaxingIterator.hxx
+	RelaxingIterator.cpp
+)
+TARGET_LINK_LIBRARIES(relaxingiterator simpleiterator gbcce)
+LIST(APPEND Plugins
+	iteratorhelper
+	simpleiterator
+	relaxingiterator
+)
+
 # Misc plugins
 ADD_LIBRARY(sequencegenerator SHARED
 	SequenceGenerator.cpp
 	${charon_INCLUDE_DIR}/SequenceGenerator.h
 	${charon_INCLUDE_DIR}/SequenceGenerator.hxx
 )
-LIST(APPEND Plugins sequencegenerator)
-
 ADD_LIBRARY(diff2d SHARED
 	Diff2D.cpp
 	${charon_INCLUDE_DIR}/Diff2D.h
 	${charon_INCLUDE_DIR}/Diff2D.hxx
 )
 TARGET_LINK_LIBRARIES(diff2d interpolatorlinear)
-LIST(APPEND Plugins diff2d)
-
 ADD_LIBRARY(flowcomparator SHARED
 	FlowComparator.cpp
 	${charon_INCLUDE_DIR}/FlowComparator.h
 	${charon_INCLUDE_DIR}/FlowComparator.hxx
 )
-LIST(APPEND Plugins flowcomparator)
+LIST(APPEND Plugins
+	sequencegenerator
+	diff2d
+	flowcomparator
+)
 
 # Plugin configuration (linking, common libraries)
 SET(GLOBAL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins")

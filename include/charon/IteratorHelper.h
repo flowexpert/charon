@@ -1,6 +1,6 @@
+/*  Copyright (C) 2009 Jens-Malte Gottfried <jmgottfried@web.de>
 
-
-/*  This file is part of Charon.
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -15,15 +15,14 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file IteratorHelper.h
- *  Implementation of class IteratorHelper.
- *  @author <a href="mailto:techfreaq@web.de">
- *      Nina Hernitschek</a>
- *  @date 26.02.2010
+/** \file IteratorHelper.h
+ *  Declaration of the parameter class IteratorHelper.
+ *  \author Jens-Malte Gottfried <jmgottfried@web.de>
+ *  \date 01.02.2010
  */
 
-#ifndef _ITERATORHELPER_H_
-#define _ITERATORHELPER_H_
+#ifndef _ITERATOR_HELPER_H_
+#define _ITERATOR_HELPER_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef iteratorhelper_EXPORTS
@@ -38,77 +37,42 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <charon-utils/CImg.h>
+#include <CImg.h>
 
-/// helper class used for iterative solving
+/// Helper for iterative image processing algorithms.
+/// This provides current values/initial values for further processing.
 template <typename T>
 class iteratorhelper_DECLDIR IteratorHelper :
 		public TemplatedParameteredObject<T> {
-
-protected:
-	/// constructor for derived classes
-	IteratorHelper(
-		const std::string& classname  /** [in] class name          */,
-		const std::string& name       /** [in] instance name       */,
-		const std::string& doc        /** [in] class documentation */
-	);
-
 public:
-	/// \name pointers used by the IteratorHelper
-	//  \{
-	/// CImgList from file
-	InputSlot<cimg_library::CImgList<T> > imgListFileIn;
-	/// CImgList from IterativeSolver
-	//InputSlot<cimg_library::CImgList<T> > imgListIn;
-	/// output imgList
-	OutputSlot<cimg_library::CImgList<T> > imgListOut;
-	/// output imgList for flow from iterativeSolver
-	OutputSlot<cimg_library::CImgList<T> > flowListOut;
-	/// Output slot containing current iteration step
-	OutputSlot < unsigned int > iterationStepOut;
-	/// Output slot containing the this-pointer of the object
-	OutputSlot<IteratorHelper<T>*> out;
-
-
-	/// number of iterations
-	Parameter<int> maxIterations;
-
-	//  \}
+	/// original sequence input
+	InputSlot < cimg_library::CImgList<T> > in;
+	/// initial flow guess
+	InputSlot < cimg_library::CImgList<T> > initFlow;
+	/// number of flow components for initialization
+	Parameter < unsigned int > flowDimensions;
+	/// original sequence output
+	OutputSlot < cimg_library::CImgList<T> > sequence;
+	/// current flow solution
+	OutputSlot < cimg_library::CImgList<T> > flow;
+	/// iteration counter (resetted on iteration start, e.g. inner loop)
+	OutputSlot < unsigned int > count;
+	/// iteration counter (not resetted, increasing only)
+	OutputSlot < unsigned int > countAll;
+	/// self-pointer
+	OutputSlot < IteratorHelper<T>* > self;
 
 	/// default constructor
-	IteratorHelper(const std::string& name = "" /**[in] instance name*/);
+	IteratorHelper(const std::string& name = "" /** [in] Instance name*/);
 
-	/// main function
+	/// Update object.
 	virtual void execute();
 
+	/// reset helper, copy input data to output slots, reset counter count
+	void reset();
 
-	/// increments iterationStep
-	virtual void nextStep();
-
-	/// update image
-	virtual void update(cimg_library::CImgList<T> imgList, cimg_library::CImgList<T> flowList);
-
-	/// get current iteration step
-	virtual int getCurrentStep();
-
-	/// get maximum number of iteration steps
-	virtual int getMaxIterations();
-
-
-private:
-	/// common initialization code
-	void _init();
-
-	/// image list
-	cimg_library::CImgList<T> imgListIn;
-
-	/// flow list
-	cimg_library::CImgList<T> flowListIn;
-
-	/// current iteration
-	int iterationStep;
+	/// perform warping
+	virtual void update(bool count = true /**[in] increase counters */);
 };
 
-
-#endif // _ITERATORHELPER_H_
-
+#endif // _ITERATOR_HELPER_H_

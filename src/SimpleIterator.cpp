@@ -15,20 +15,45 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file IteratorHelper.cpp
- *  This file is needed for class WarpingIteratorHelper to work as a plugin.
+/** \file SimpleIterator.cpp
+ *  This file is needed for class SimpleIterator to work as a plugin.
  *  \author Jens-Malte Gottfried <jmgottfried@web.de>
  *  \date 01.02.2010
  */
 
 /// Class name of the plugin
-#define TYPE IteratorHelper
+#define TYPE SimpleIterator
 
-#include <charon-utils/ImgTool.hxx>
-#include <charon/IteratorHelper.hxx>
+#include <charon/SimpleIterator.hxx>
+
+#ifndef NO_BASE_CTOR_HACK
+// These two classes are pure dummy classes.
+// They cause the base constructor of
+// SimpleIterator compiled and added into the
+// generated library.
+/// dummy class 1
+template<typename T>
+class Vktpmfxr : public SimpleIterator<T> {
+public:
+	Vktpmfxr() : SimpleIterator<T>("","","") {
+	}
+};
+
+/// dummy class 2
+class Mhvkcwgm {
+public:
+	Mhvkcwgm();
+};
+
+Mhvkcwgm::Mhvkcwgm() {
+	_addConstructor(Vktpmfxr<double>());
+	_addConstructor(Vktpmfxr<float>());
+	_addConstructor(Vktpmfxr<int>());
+}
+#endif
 
 /// Creates an instance of the plugin
-extern "C" iteratorhelper_DECLDIR ParameteredObject*
+extern "C" simpleiterator_DECLDIR ParameteredObject*
 		create(const std::string & name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
@@ -47,7 +72,9 @@ extern "C" iteratorhelper_DECLDIR ParameteredObject*
 }
 
 /// Deletes an instance of the plugin
-extern "C" iteratorhelper_DECLDIR void destroy(ParameteredObject* b) {
+extern "C" simpleiterator_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
+
+
 

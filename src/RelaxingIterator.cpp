@@ -15,20 +15,19 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file IteratorHelper.cpp
- *  This file is needed for class WarpingIteratorHelper to work as a plugin.
+/** \file RelaxingIterator.cpp
+ *  This file is needed for class RelaxingIterator to work as a plugin.
  *  \author Jens-Malte Gottfried <jmgottfried@web.de>
- *  \date 01.02.2010
+ *  \date 05.02.2010
  */
 
 /// Class name of the plugin
-#define TYPE IteratorHelper
+#define TYPE RelaxingIterator
 
-#include <charon-utils/ImgTool.hxx>
-#include <charon/IteratorHelper.hxx>
+#include <charon/RelaxingIterator.hxx>
 
 /// Creates an instance of the plugin
-extern "C" iteratorhelper_DECLDIR ParameteredObject*
+extern "C" relaxingiterator_DECLDIR ParameteredObject*
 		create(const std::string & name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
@@ -46,8 +45,10 @@ extern "C" iteratorhelper_DECLDIR ParameteredObject*
 	}
 }
 
-/// Deletes an instance of the plugin
-extern "C" iteratorhelper_DECLDIR void destroy(ParameteredObject* b) {
+///Deletes an instance of the plugin
+extern "C" relaxingiterator_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
+
+
 

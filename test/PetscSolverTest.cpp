@@ -48,7 +48,7 @@
 #endif
 
 int test() {
-	std::ofstream log("bcceTestLog.txt", std::ios::trunc);
+	std::ofstream log("flow1_HS_Sinus.log", std::ios::trunc);
 	assert(log.good());
 	sout.assign(log);
 
@@ -56,12 +56,12 @@ int test() {
 	man.loadParameterFile(TESTDIR "/bccetest.wrp");
 
 	man.executeWorkflow();
-	assert(FileTool::exists("bcceTest_flow.cimg"));
-	assert(FileTool::exists("bcceTest_flow_calc.cimg"));
+	assert(FileTool::exists("flow1_HS_Sinus.cimg"));
+	assert(FileTool::exists("flow1_HS_Sinus_calc.cimg"));
 
 	// load original and calculated flow
-	cimg_library::CImgList<double> flowOrig("bcceTest_flow.cimg");
-	cimg_library::CImgList<double> flowCalc("bcceTest_flow_calc.cimg");
+	cimg_library::CImgList<double> flowOrig("flow1_HS_Sinus.cimg");
+	cimg_library::CImgList<double> flowCalc("flow1_HS_Sinus_calc.cimg");
 
 	assert(flowOrig.size() == 2);
 	assert(flowOrig.is_sameNXYZC(flowCalc));
