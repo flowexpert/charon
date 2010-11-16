@@ -13,7 +13,7 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Petsc4_PetscSharedLibLoad.cpp
+/** @file petsc4_PetscSharedLibLoad.cpp
  *  Load generated library with dlopen and execute the run function.
  *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  *  @date 25.10.2010

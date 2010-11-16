@@ -14,7 +14,7 @@ IF(BUILD_TESTING)
 
 	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
 	# test petsc initialization
-	ADD_EXECUTABLE(petsc1_init Petsc1_Init.cpp)
+	ADD_EXECUTABLE(petsc1_init petsc1_Init.cpp)
 	IF(MSVC)
 		SET_TARGET_PROPERTIES(petsc1_init
 			PROPERTIES LINK_FLAGS
@@ -28,7 +28,7 @@ IF(BUILD_TESTING)
 	)
 
 	# checking creation of petsc plugins
-	ADD_EXECUTABLE(petsc2_plugins Petsc2_Plugins.cpp)
+	ADD_EXECUTABLE(petsc2_plugins petsc2_Plugins.cpp)
 	IF(MSVC)
 		SET_TARGET_PROPERTIES(petsc2_plugins
 			PROPERTIES LINK_FLAGS
@@ -56,7 +56,7 @@ IF(BUILD_TESTING)
 	)
 
 	# check loading and unloading petsc plugin
-	ADD_EXECUTABLE(petsc3_pluginLoad Petsc3_PluginLoad.cpp)
+	ADD_EXECUTABLE(petsc3_pluginLoad petsc3_PluginLoad.cpp)
 	TARGET_LINK_LIBRARIES(petsc3_pluginLoad
 		charon-core
 		charon-plugins
@@ -74,11 +74,11 @@ IF(BUILD_TESTING)
 		# use a more recent version in this case,
 		# e.g. from the charon-suite ppa (see
 		# https://launchpad.net/~jmgottfried/+archive/charon)
-		ADD_LIBRARY(petsc4_lib SHARED Petsc4_PetscSharedLib.cpp)
+		ADD_LIBRARY(petsc4_lib SHARED petsc4_PetscSharedLib.cpp)
 		TARGET_LINK_LIBRARIES(petsc4_lib
 			${PETSC_LIBRARIES}
 		)
-		ADD_EXECUTABLE(petsc4_libLoad Petsc4_PetscSharedLibLoad.cpp)
+		ADD_EXECUTABLE(petsc4_libLoad petsc4_PetscSharedLibLoad.cpp)
 		TARGET_LINK_LIBRARIES(petsc4_libLoad
 			dl
 		)
@@ -89,7 +89,7 @@ IF(BUILD_TESTING)
 	ENDIF(UNIX)
 
 	# executing test workflow
-	ADD_EXECUTABLE(flow1_hsSinus Flow1_HS_Sinus.cpp)
+	ADD_EXECUTABLE(flow1_hsSinus flow1_HS_Sinus.cpp)
 	TARGET_LINK_LIBRARIES(flow1_hsSinus
 		charon-core
 		charon-plugins
@@ -101,7 +101,7 @@ IF(BUILD_TESTING)
 	)
 
 	# testing Horn&Schunck Method on Yosemite Sequence
-	ADD_EXECUTABLE(flow2_hsYosemite Flow2_HS_Yosemite.cpp)
+	ADD_EXECUTABLE(flow2_hsYosemite flow2_HS_Yosemite.cpp)
 	TARGET_LINK_LIBRARIES(flow2_hsYosemite
 		flowcomparator
 		charon-plugins
@@ -114,7 +114,7 @@ IF(BUILD_TESTING)
 
 	# testing Horn&Schunk without plugin usage to simplify profiling
 	ADD_EXECUTABLE(flow3_hsYosemiteNP
-		Flow3_HS_Yosemite_NP.cpp
+		flow3_HS_Yosemite_NP.cpp
 		../src/Diff2D.cpp
 	)
 	IF(MSVC)

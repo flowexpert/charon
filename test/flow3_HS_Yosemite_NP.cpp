@@ -15,7 +15,7 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file Flow3_HS_Yosemite_NP.cpp
+/** \file flow3_HS_Yosemite_NP.cpp
  *  Test file performing the same as HornSchunckYosemite.cpp
  *  but without using the plugin mechanism. All needed modules are
  *  compiled-in using their .hxx implementations.

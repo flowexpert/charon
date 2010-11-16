@@ -13,7 +13,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file Petsc1_Init.cpp
+/** \file petsc1_Init.cpp
  *  Test programm for Petsc
  *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  *

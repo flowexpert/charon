@@ -53,17 +53,17 @@
 #include <charon/SimpleIterator.h>
 
 int test() {
-	std::ofstream log("iteratedFlow1_HS_Sinus.log", std::ios::trunc);
+	std::ofstream log("flowIterated1_HS_Sinus.log", std::ios::trunc);
 	assert(log.good());
 	sout.assign(log);
-	std::ofstream epeLog("iteratedFlow1_HS_Sinus.csv", std::ios::trunc);
+	std::ofstream epeLog("flowIterated1_HS_Sinus.csv", std::ios::trunc);
 	assert(epeLog.good());
 
 	// load plugin manager
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 
 	// start tests
-	std::string testfile(TESTDIR "/iteratedFlow1.wrp");
+	std::string testfile(TESTDIR "/flowIterated1.wrp");
 	std::cout << "Loading parameter file \"" << testfile;
 	std::cout << "\"" << std::endl;
 	man.loadParameterFile(testfile);

@@ -13,7 +13,7 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file Petsc3_PluginLoad.cpp
+/** @file petsc3_PluginLoad.cpp
  *  Test programm for PetscSolver, which implements Horn-Schunk.
  *  @see PetscSolver.h
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">

@@ -50,7 +50,7 @@
 #include <charon/FlowComparator.h>
 
 int test() {
-	std::ofstream log("iteratedFlow2_HS_Yosemite.log", std::ios::trunc);
+	std::ofstream log("flowIterated2_HS_Yosemite.log", std::ios::trunc);
 	assert(log.good());
 	sout.assign(log);
 
@@ -58,7 +58,7 @@ int test() {
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 
 	// start tests
-	std::string testfile(TESTDIR "/iteratedFlow2.wrp");
+	std::string testfile(TESTDIR "/flowIterated2.wrp");
 	std::cout << "Loading parameter file \"" << testfile;
 	std::cout << "\"" << std::endl;
 	man.loadParameterFile(testfile);

@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file Flow2_HS_Yosemite.cpp
+/** \file flow2_HS_Yosemite.cpp
  *  Horn&Schunck algo on Yosemite seq
  *  \author Jens-Malte Gottfried <jmgottfried@web.de>
  *  \date 02.02.2010
