@@ -129,6 +129,26 @@ LIST(APPEND Plugins
 	relaxingiterator
 )
 
+# Function plugins
+ADD_LIBRARY(cdfitfunction SHARED
+	CDFitFunction.cpp
+	${charon_INCLUDE_DIR}/CDFitFunction.h
+	${charon_INCLUDE_DIR}/Functions/Function.h
+)
+ADD_LIBRARY(mixtureofgaussians SHARED
+	MixtureOfGaussians.cpp
+	${charon_INCLUDE_DIR}/CDFitFunction.h
+	${charon_INCLUDE_DIR}/MixtureOfGaussians.h
+	${charon_INCLUDE_DIR}/Functions/Function.h
+	${charon_INCLUDE_DIR}/Functions/DiffFunction.h
+	${charon_INCLUDE_DIR}/Functions/Diff2Function.h
+)
+TARGET_LINK_LIBRARIES(mixtureofgaussians cdfitfunction)
+LIST(APPEND Plugins
+	cdfitfunction
+	mixtureofgaussians
+)
+
 # Misc plugins
 ADD_LIBRARY(sequencegenerator SHARED
 	SequenceGenerator.cpp
