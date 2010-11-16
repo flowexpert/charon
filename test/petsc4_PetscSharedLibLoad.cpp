@@ -23,6 +23,14 @@
 #include <cassert>
 #include <iostream>
 
+/// test run
+/** Check for errors on loading and unloading libmpi.so.0 and
+ *  the self-compiled libpetsc4_lib.so.
+ *  There are some errors on ubuntu with built-in petsc implementation,
+ *  this test checks for this problem.
+ *  This Unix-specific, so not available on Win platforms.
+ *  \param argc,argv Command line options passed to MPI and PETSc
+ */
 int main(int argc, char** argv) {
 	std::cout << "opening libmpi.so.0" << std::endl;
 	void* handle = dlopen("libmpi.so.0", RTLD_LAZY | RTLD_GLOBAL);

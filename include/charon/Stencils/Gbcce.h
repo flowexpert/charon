@@ -14,7 +14,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file Gbcce.h
- *  Implementation of class Gbcce.
+ *  Declaration of the parameter class Gbcce.
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *  @date 8.09.2009

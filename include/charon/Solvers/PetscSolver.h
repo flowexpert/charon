@@ -14,7 +14,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file PetscSolver.h
- *  Implementation of class PetscSolver.
+ *  Declaration of the parameter class PetscSolver.
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *  @date 8.09.2009

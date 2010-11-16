@@ -49,6 +49,7 @@
 #include <charon-core/ExceptionHandler.h>
 #include <charon/FlowComparator.h>
 
+/// unit tests
 int test() {
 	std::ofstream log("flowIterated2_HS_Yosemite.log", std::ios::trunc);
 	assert(log.good());
@@ -82,6 +83,7 @@ int test() {
 	return EXIT_SUCCESS;
 }
 
+/// start tests with exception handling
 int main() {
 	return ExceptionHandler::run(test);
 }

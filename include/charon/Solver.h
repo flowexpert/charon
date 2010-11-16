@@ -14,7 +14,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file Solver.h
- *  Implementation of class Solver.
+ *  Declaration of the parameter class Solver.
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *  @date 8.09.2009

@@ -13,13 +13,13 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file flow1_HS_Sinus.cpp
- *  Test programm for PetscSolver, which implements Horn-Schunk.
- *  @see PetscSolver.h
- *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
+/** \file flow1_HS_Sinus.cpp
+ *  Horn&Schunck algo on Sinus seq
+ *  \see PetscSolver.h
+ *  \author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *
- *  @date 8.09.2009
+ *  \date 8.09.2009
  */
 
 #include <charon-core/PluginManager.h>
@@ -47,6 +47,7 @@
 #undef NDEBUG
 #endif
 
+/// unit tests
 int test() {
 	std::ofstream log("flow1_HS_Sinus.log", std::ios::trunc);
 	assert(log.good());
@@ -80,6 +81,7 @@ int test() {
 	return 0;
 }
 
+/// start tests with exception handling
 int main() {
 	return ExceptionHandler::run(test);
 }

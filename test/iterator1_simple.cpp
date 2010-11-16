@@ -51,6 +51,7 @@
 #include <charon/SimpleIterator.h>
 #include <charon/IteratorHelper.h>
 
+/// unit tests
 int test() {
 	std::ofstream log("iteratorTest1_simple.log", std::ios::trunc);
 	assert(log.good());
@@ -118,6 +119,7 @@ int test() {
 	return EXIT_SUCCESS;
 }
 
+/// start tests with exception handling
 int main() {
 	return ExceptionHandler::run(test);
 }

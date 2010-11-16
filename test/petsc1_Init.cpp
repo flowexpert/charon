@@ -14,7 +14,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file petsc1_Init.cpp
- *  Test programm for Petsc
+ *  Petsc installation tests.
  *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  *
  *  \date 16.11.2009
@@ -23,6 +23,12 @@
 #include <petscksp.h>
 
 /// test application
+/** This will call some petsc routines, including initialization
+ *  and finalization. If there are no problems with linking and your
+ *  PETSc installation, these tests should run fine.
+ *  There is no charon related code inside.
+ *  \param argc,argv Command line options passed to PETSc
+ */
 int main(int argc, char** argv) {
 	// testing Petsc Initialization
 	PetscErrorCode ierr = MPI_Init(&argc,&argv);

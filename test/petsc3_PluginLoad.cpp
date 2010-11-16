@@ -14,7 +14,7 @@
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file petsc3_PluginLoad.cpp
- *  Test programm for PetscSolver, which implements Horn-Schunk.
+ *  Check PetscSolver shared lib (module).
  *  @see PetscSolver.h
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
@@ -45,6 +45,9 @@
 #undef NDEBUG
 #endif
 
+/// unit tests
+/** Try to load the PetscSolver plugin using the plugin manager.
+ */
 int main() {
 	// test creation of all necessary objects
 	std::ofstream log("petsc3_plugin.log", std::ios::trunc);

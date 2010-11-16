@@ -16,6 +16,7 @@
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file flow3_HS_Yosemite_NP.cpp
+ *  Horn&Schunck algo on Yosemite seq without shared libs.
  *  Test file performing the same as HornSchunckYosemite.cpp
  *  but without using the plugin mechanism. All needed modules are
  *  compiled-in using their .hxx implementations.
@@ -35,7 +36,6 @@
 #endif
 #include <charon/Solvers/PetscSolver.hxx>
 #include <cassert>
-#include <charon-core/ExceptionHandler.h>
 #include <charon-utils/Roi.hxx>
 #include <charon-utils/FileReader.hxx>
 #include <charon-utils/Crop.hxx>
@@ -47,6 +47,7 @@
 #include <charon/Stencils/L2Norm.hxx>
 #include <charon/FlowComparator.hxx>
 
+/// unit tests
 int test() {
 	FileTool::changeDir(TESTDIR);
 	ParameterFile testfileRW("flow2.wrp");
@@ -105,6 +106,7 @@ int test() {
 	return EXIT_SUCCESS;
 }
 
+/// start tests with exception handling
 int main() {
 	try{
 		return test();

@@ -54,6 +54,7 @@
 #include <charon/IteratorHelper.h>
 #include <charon/RelaxingIterator.h>
 
+/// unit tests
 int test() {
 	std::ofstream log("iteratorTest3_relaxing.log", std::ios::trunc);
 	assert(log.good());
@@ -142,6 +143,7 @@ int test() {
 	return error ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
+/// start tests with exception handling
 int main() {
 	return ExceptionHandler::run(test);
 }

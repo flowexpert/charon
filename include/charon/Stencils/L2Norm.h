@@ -14,7 +14,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file L2Norm.h
- *  Implementation of class L2Norm.
+ *  Declaration of the parameter class L2Norm.
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *

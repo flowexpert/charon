@@ -16,7 +16,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file flowIterated1_HS_Sinus.cpp
- *  Iterated Horn&Schunck Algo
+ *  Iterated Horn&Schunck algo
  *  \author Jens-Malte Gottfried <jmgottfried@web.de>
  *  \date 02.02.2010
  */
@@ -52,6 +52,7 @@
 #include <charon/IteratorHelper.h>
 #include <charon/SimpleIterator.h>
 
+/// unit tests
 int test() {
 	std::ofstream log("flowIterated1_HS_Sinus.log", std::ios::trunc);
 	assert(log.good());
@@ -109,6 +110,7 @@ int test() {
 	return EXIT_SUCCESS;
 }
 
+/// start tests with exception handling
 int main() {
 	return ExceptionHandler::run(test);
 }

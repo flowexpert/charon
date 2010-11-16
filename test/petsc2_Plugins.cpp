@@ -14,7 +14,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file petsc2_Plugins.cpp
- *  Test programm for PetscSolver, which implements Horn-Schunk.
+ *  Check flow plugins.
  *  @see PetscSolver.h
  *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
@@ -34,6 +34,7 @@
 #include <charon/BrightnessModels/Constant.h>
 #include <charon/MotionModels/LocalConstant.h>
 
+/// try to load some plugins and check for errors
 int main() {
 	// test creation of all necessary objects
 	delete new FileReader<float>("reader");
