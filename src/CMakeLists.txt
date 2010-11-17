@@ -150,6 +150,22 @@ LIST(APPEND Plugins
 	mixtureofgaussians
 )
 
+# sampling and CD fitter
+ADD_LIBRARY(sampler SHARED
+	${charon_INCLUDE_DIR}/Sampler.h
+	Sampler.cpp
+)
+ADD_LIBRARY(mcmcsampler SHARED
+	${charon_INCLUDE_DIR}/McmcSampler.h
+	McmcSampler.cpp
+)
+TARGET_LINK_LIBRARIES(mcmcsampler sampler)
+
+LIST(APPEND Plugins
+	sampler
+	mcmcsampler
+)
+
 # Misc plugins
 ADD_LIBRARY(sequencegenerator SHARED
 	SequenceGenerator.cpp
