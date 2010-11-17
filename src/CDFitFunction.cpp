@@ -28,3 +28,11 @@ void CDFitFunction::normalize() {
 double CDFitFunction::rangeHint(std::vector<double>::size_type) const {
 	return 1.;
 }
+
+void CDFitFunction::printResults() {
+	sout << "CDFitFunction \"" << getName() << "\" fit results:\n\t";
+	std::vector<double>::size_type ii;
+	for(ii = 0; ii < fitParameters.size(); ii++)
+		sout << fitParameters[ii] << ";";
+	sout << std::endl;
+}

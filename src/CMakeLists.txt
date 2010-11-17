@@ -142,6 +142,7 @@ ADD_LIBRARY(mixtureofgaussians SHARED
 	${charon_INCLUDE_DIR}/Functions/Function.h
 	${charon_INCLUDE_DIR}/Functions/DiffFunction.h
 	${charon_INCLUDE_DIR}/Functions/Diff2Function.h
+	${charon_INCLUDE_DIR}/Functions/Diff2LinFunction.h
 )
 TARGET_LINK_LIBRARIES(mixtureofgaussians cdfitfunction)
 LIST(APPEND Plugins

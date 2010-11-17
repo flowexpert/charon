@@ -27,7 +27,7 @@
 #include "DiffFunction.h"
 
 /// Function interface providing first (partial) derivative(s)
-class Diff2Function : public DiffFunction {
+class Diff2Function : public virtual DiffFunction {
 public:
 	/// Calculate second partial derivative wrt \f$x_i\f$ and \f$x_j\f$.
 	/** For convenience and to simplify handling of 1-dim functions,

@@ -14,7 +14,7 @@ MixtureOfGaussians::ProbabilityFunction::ProbabilityFunction(
 {
 }
 
-inline double MixtureOfGaussians::ProbabilityFunction::_normPdf(
+inline double MixtureOfGaussians::ProbabilityFunction::normPdf(
 		double x, double mu, double s) {
 	return std::exp(-(x-mu)*(x-mu)/(2.*s*s))/s*M_2_SQRTPI*M_SQRT1_2/2.;
 }
@@ -26,7 +26,7 @@ double MixtureOfGaussians::ProbabilityFunction::calculate(
 	size_t NN = _weights.size();
 	assert (NN == _sigmas.size());
 	for(unsigned int ii=0; ii<NN; ii++)
-		res += _weights[ii]*_normPdf(x[0],0.,_sigmas[ii]);
+		res += _weights[ii]*normPdf(x[0],0.,_sigmas[ii]);
 	return res;
 }
 
@@ -38,7 +38,7 @@ double MixtureOfGaussians::ProbabilityFunction::diff(
 	assert (NN == _sigmas.size());
 	for(unsigned int ii=0; ii<NN; ii++)
 		res += _weights[ii]/pow(_sigmas[ii],2)
-			* _normPdf(x[0],0.,_sigmas[ii]);
+			* normPdf(x[0],0.,_sigmas[ii]);
 	return (-x[0] * res);
 }
 
@@ -51,12 +51,14 @@ double MixtureOfGaussians::ProbabilityFunction::diff2(
 	assert (NN == _sigmas.size());
 	for(unsigned int ii=0; ii<NN; ii++)
 		res += _weights[ii]*(x[0]*x[0]/pow(_sigmas[ii],4)
-				- 1/pow(_sigmas[ii],2)) * _normPdf(x[0],0.,_sigmas[ii]);
+				- 1/pow(_sigmas[ii],2)) * normPdf(x[0],0.,_sigmas[ii]);
 	return res;
 }
 
-MixtureOfGaussians::EnergyFunction::EnergyFunction(const Diff2Function& p) :
-		_prob(p)
+MixtureOfGaussians::EnergyFunction::EnergyFunction(
+		const Diff2Function& p, const std::vector<double>& sigmas) :
+		_prob(p),
+		_sigmas(sigmas)
 {
 }
 
@@ -76,17 +78,33 @@ double MixtureOfGaussians::EnergyFunction::diff2(
 	return std::pow(_prob.diff(x)/_prob.calculate(x),2)
 			- _prob.diff2(x)/_prob.calculate(x);
 }
+double MixtureOfGaussians::EnergyFunction::diff2Linearized(
+		std::vector<double> x,
+		std::vector<double>::size_type i,
+		std::vector<double>::size_type j) {
+	// avoid division by zero
+	if(x[j] <= std::numeric_limits<double>::min())
+		return diff2(x,i,j);
+
+	// assume largest sigma to be the last one
+	const double maxSigma = _sigmas[_sigmas.size()-1];
+	if (std::abs(x[0]) < 3*maxSigma)
+		return Diff2LinFunction::diff2Linearized(x,i,j);
+	return std::pow(maxSigma,-2);
+}
 
 MixtureOfGaussians::MixtureOfGaussians(const std::string& name) :
 		CDFitFunction("mixtureofgaussians", name, "mixture of gaussians"),
 		_weights(CDFitFunction::fitParameters),
 		_probability(CDFitFunction::fitParameters, _sigmas),
-		_energy(_probability)
+		_energy(_probability, _sigmas)
 {
 	ParameteredObject::_addParameter(weights, "weights",
 			"Gaussian function weights");
 	ParameteredObject::_addParameter(sigmas, "sigmas",
 			"Gaussian function widths");
+	probability = &_probability;
+	energy = &_energy;
 }
 
 MixtureOfGaussians::~MixtureOfGaussians() {
@@ -94,23 +112,7 @@ MixtureOfGaussians::~MixtureOfGaussians() {
 
 double MixtureOfGaussians::diffLog(
 		std::vector<double> x, std::vector<double>::size_type ii) const {
-	if (_weights[ii] <= std::numeric_limits<double>::min()) {
-		std::ostringstream msg;
-		msg << __FILE__ << ":" << __LINE__ << "\n\t";
-		msg << "Parameter weight[" << ii << "] too small.\n\t";
-		msg << "weight[" << ii << "] = " << _weights[ii];
-		throw std::out_of_range(msg.str());
-	}
-	double d = 0;
-	unsigned int NN = _weights.size();
-	assert (NN == _sigmas.size());
-	for(unsigned int jj=0; jj<NN; jj++) {
-		if (ii==jj)
-			continue;
-		d += (_weights[jj]/_weights[ii])
-			 * ProbabilityFunction::_normPdf(x[0],0,_sigmas[jj]);
-	}
-	return 1./(1.+d);
+	return ProbabilityFunction::normPdf(x[0],0,_sigmas[ii])/_probability(x);
 }
 
 void MixtureOfGaussians::normalize() {
@@ -128,13 +130,52 @@ void MixtureOfGaussians::normalize() {
 }
 
 double MixtureOfGaussians::rangeHint(std::vector<double>::size_type) const {
-	// only one-dimensional
-	double maxWidth = 0;
-	for(std::vector<double>::size_type ii=0; ii<sigmas().size(); ii++)
-		if(sigmas()[ii] > maxWidth)
-			maxWidth = sigmas()[ii];
+	// only one-dimensional, assume largest sigma at the last position
+	double maxWidth = _sigmas[_sigmas.size()-1];
 	return 3*maxWidth;
 }
+
+void MixtureOfGaussians::execute() {
+	std::vector<double>::size_type ii, siz = sigmas.size();
+	if(siz != weights.size()) {
+		throw std::runtime_error(
+				"MixtureOfGaussians: sigmas and weights have to contain "
+				"the same number of elements!");
+	}
+	if(siz <= 0) {
+		throw std::runtime_error(
+				"MixtureOfGaussians: sigmas and weights have to contain "
+				"at least one element!");
+	}
+
+	// copy sigmas and weights
+	_sigmas.clear();
+	_sigmas.resize(siz, sigmas[0]);
+	_weights.clear();
+	_weights.resize(siz, weights[0]);
+	for(ii = 1; ii < siz; ii++) {
+		_sigmas[ii] = sigmas[ii];
+		_weights[ii] = weights[ii];
+		// check if sigmas are in ascending order which is assumed later on
+		if(_sigmas[ii] < _sigmas[ii-1])
+			throw std::runtime_error(
+					"MixtureOfGaussians: sigmas have to be specified in "
+					"ascending order!");
+	}
+}
+
+void MixtureOfGaussians::printResults() {
+	sout << "MixtureOfGaussian \"" << getName() << "\" fit results:";
+	std::vector<double>::size_type ii;
+	sout << "\n\tweights: ";
+	for(ii = 0; ii < _weights.size(); ii++)
+		sout << _weights[ii] << ";";
+	sout << "\n\tsigmas : ";
+	for(ii = 0; ii < _sigmas.size(); ii++)
+		sout << _sigmas[ii] << ";";
+	sout << std::endl;
+}
+
 
 extern "C" mixtureofgaussians_DECLDIR ParameteredObject* create(
 		const std::string& name, template_type /*t*/) {

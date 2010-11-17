@@ -66,16 +66,21 @@ public:
 	/// normalize
 	virtual void normalize();
 
+	/// print fit results
+	virtual void printResults();
+
 	/// Range hint for histogram generation.
 	/** Default implementation simply returns 1.
 	 *  \param i    select dimension to query range hint for
 	 */
 	virtual double rangeHint(std::vector<double>::size_type i = 0) const;
 
-	/// calculate log of the derivative wrt i-th fit-parameter
-	/** \param x    evaluation location
+	/// Calculate derivative of the log probability wrt i-th fit-parameter.
+	/** This is needed by the Contrastive Divergence algorithm proposed
+	 *  by Geoffrey Hinton, Neural Computation 2002.
+	 *  \param x    evaluation location
 	 *  \param i    derivation wrt i-th parameter
-	 *  \returns \f$\frac{\partial}{\partial p_i}\log f(x)\f$
+	 *  \returns \f$\frac{\partial}{\partial p_i}\log p(x)\f$
 	 */
 	virtual double diffLog(
 			std::vector<double> x,
