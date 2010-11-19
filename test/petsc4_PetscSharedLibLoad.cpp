@@ -22,6 +22,7 @@
 #include <dlfcn.h>
 #include <cassert>
 #include <iostream>
+#include <cstdlib>
 
 /// test run
 /** Check for errors on loading and unloading libmpi.so.0 and
@@ -34,26 +35,43 @@
 int main(int argc, char** argv) {
 	std::cout << "opening libmpi.so.0" << std::endl;
 	void* handle = dlopen("libmpi.so.0", RTLD_LAZY | RTLD_GLOBAL);
+	if (!handle) {
+		std::cerr << dlerror() << std::endl;
+		return EXIT_FAILURE;
+	}
 	std::cout << "calling MPI_Init" << std::endl;
 	void* func = dlsym(handle, "MPI_Init");
-	assert(func);
+	if (!func) {
+		std::cerr << dlerror() << std::endl;
+		return EXIT_FAILURE;
+	}
 	int (&MPI_Init)(int*, char***) = *((int (*)(int*, char***)) func);
 	MPI_Init(&argc,&argv);
 	std::cout << "calling MPI_Finalize" << std::endl;
 	func = dlsym(handle, "MPI_Finalize");
-	assert(func);
+	if (!func) {
+		std::cerr << dlerror() << std::endl;
+		return EXIT_FAILURE;
+	}
 	int (&MPI_Finalize)(void) = *((int (*)(void))func);
 	MPI_Finalize();
 	std::cout << "closing libmpi.so.0" << std::endl;
 	dlclose(handle);
 
-	std::string fName = "libpetsc4_lib.so";
+	std::string fName = "./libpetsc4_lib.so";
 	std::cout << "opening PetscTestDLL (" << fName << ")" << std::endl;
 	handle = dlopen(
 			fName.c_str(),
 			RTLD_LAZY | RTLD_GLOBAL);
+	if (!handle) {
+		std::cerr << dlerror() << std::endl;
+		return EXIT_FAILURE;
+	}
 	func = dlsym(handle, "run");
-	assert(func);
+	if (!func) {
+		std::cerr << dlerror() << std::endl;
+		return EXIT_FAILURE;
+	}
 	int (&run)(int&, char**&) = *((int (*)(int&, char**&)) func);
 	run(argc, argv);
 	std::cout << "closing PetscTestDLL" << std::endl;
@@ -62,5 +80,5 @@ int main(int argc, char** argv) {
 	// fixed in petsc 3.1 used in maverick -> upstream
 	dlclose(handle);
 
-	return 0;
+	return EXIT_SUCCESS;
 }
