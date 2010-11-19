@@ -46,6 +46,7 @@
 
 #include <charon-core/PluginManager.h>
 #include <charon-core/ExceptionHandler.h>
+#include <charon-utils/FileWriter.h>
 
 /// unit tests
 int test() {
@@ -63,6 +64,30 @@ int test() {
 	man.loadParameterFile(testfile);
 
 	man.executeWorkflow();
+
+	// get test instances
+	FileWriter<double>* writer = dynamic_cast<FileWriter<double>*>(
+			man.getInstance("writer"));
+	assert(writer);
+
+	const cimg_library::CImg<double>& res = writer->in()[0];
+	assert(res.is_sameXYZC(300u,300u,1u,1u));
+
+	double mean, var = res.variance_mean(0, mean);
+	double sigma = std::sqrt(var);
+	double med = res.median();
+	std::cout << "Sample generation result:\n\t"
+			<< "Mean value : " << mean << "\n\t"
+			<< "Median     : " << med << "\n\t"
+			<< "Variance   : " << var << "\n\t"
+			<< "Std.Dev.   : " << sigma << std::endl;
+
+	// since sampling is a random process, this may fail
+	// but only in rare cases.
+	assert(sigma > 0.5);
+	assert(sigma < 10.);
+	assert(mean  < 0.5);
+	assert(med   < 0.2);
 
 	man.reset();
 	sout.assign();

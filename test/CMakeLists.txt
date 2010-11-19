@@ -196,10 +196,11 @@ IF(BUILD_TESTING)
 	# Sample generation and Contrastive Divergence fitter
 	ADD_EXECUTABLE(fit1_SampleGeneration
 		fit1_SampleGeneration.cpp
-		fit1.wrp
 	)
 	TARGET_LINK_LIBRARIES(fit1_SampleGeneration
 		charon-plugins
+		filewriter
+		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
 		NAME fit1_SampleGeneration
