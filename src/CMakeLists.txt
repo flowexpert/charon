@@ -161,16 +161,23 @@ ADD_LIBRARY(mcmcsampler SHARED
 )
 TARGET_LINK_LIBRARIES(mcmcsampler sampler)
 ADD_LIBRARY(samplegenerator SHARED
-        ${charon_INCLUDE_DIR}/SampleGenerator.h
-        ${charon_INCLUDE_DIR}/SampleGenerator.hxx
-        SampleGenerator.cpp
+	${charon_INCLUDE_DIR}/SampleGenerator.h
+	${charon_INCLUDE_DIR}/SampleGenerator.hxx
+	SampleGenerator.cpp
 )
 TARGET_LINK_LIBRARIES(samplegenerator sampler roi)
+ADD_LIBRARY(cdfitter SHARED
+	${charon_INCLUDE_DIR}/CdFitter.h
+	${charon_INCLUDE_DIR}/CdFitter.hxx
+	CdFitter.cpp
+)
+TARGET_LINK_LIBRARIES(cdfitter mcmcsampler cdfitfunction roi)
 
 LIST(APPEND Plugins
 	sampler
 	mcmcsampler
 	samplegenerator
+	cdfitter
 )
 
 # Misc plugins

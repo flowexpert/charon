@@ -206,6 +206,18 @@ IF(BUILD_TESTING)
 		NAME fit1_SampleGeneration
 		COMMAND fit1_SampleGeneration
 	)
+	ADD_EXECUTABLE(fit2_CdFitter
+		fit2_CdFitter.cpp
+	)
+	TARGET_LINK_LIBRARIES(fit2_CdFitter
+		charon-plugins
+		mixtureofgaussians
+		${CIMG_LINK_LIBRARIES}
+	)
+	ADD_TEST(
+		NAME fit2_CdFitter
+		COMMAND fit2_CdFitter
+	)
 
 	IF(WIN32)
 		# copy needed dll for tests and application run before installing

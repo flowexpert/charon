@@ -1,0 +1,16 @@
+fitter.type		cdfitter
+fitter.training		reader1.out
+fitter.tofit		gsm.self
+fitter.results		fit2_CDFitter.csv
+fitter.runs		10
+fitter.mcmcsigma		0.5
+reader1.type		filereader
+reader1.out		fitter.training
+reader1.filename		fit1.cimg
+gsm.type		mixtureofgaussians
+gsm.self		fitter.tofit
+gsm.weights		.5;.5
+gsm.sigmas		1;10
+fitter.agressiveness		10
+fitter.showprogress		0
+fitter.showhistogram		0
