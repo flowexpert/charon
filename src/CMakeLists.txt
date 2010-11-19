@@ -160,10 +160,17 @@ ADD_LIBRARY(mcmcsampler SHARED
 	McmcSampler.cpp
 )
 TARGET_LINK_LIBRARIES(mcmcsampler sampler)
+ADD_LIBRARY(samplegenerator SHARED
+        ${charon_INCLUDE_DIR}/SampleGenerator.h
+        ${charon_INCLUDE_DIR}/SampleGenerator.hxx
+        SampleGenerator.cpp
+)
+TARGET_LINK_LIBRARIES(samplegenerator sampler roi)
 
 LIST(APPEND Plugins
 	sampler
 	mcmcsampler
+	samplegenerator
 )
 
 # Misc plugins
