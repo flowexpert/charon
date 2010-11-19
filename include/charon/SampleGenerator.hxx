@@ -23,8 +23,9 @@ template<typename T>
 void SampleGenerator<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
+
+	cimg_library::CImgList<T>& res = out();
 	try {
-		cimg_library::CImgList<T>& res = out();
 		res.clear();
 		unsigned int
 			dx = size()->getWidth(),
@@ -40,7 +41,7 @@ void SampleGenerator<T>::execute() {
 				*ptr = T(sampler()->sample());
 	}
 	catch (std::bad_alloc) {
-			out() = cimg_library::CImgList<T>();
+		res.clear();
 	}
 }
 

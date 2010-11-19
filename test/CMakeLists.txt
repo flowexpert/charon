@@ -193,6 +193,19 @@ IF(BUILD_TESTING)
 		COMMAND flowIterated2_HS_Yosemite
 	)
 
+	# Sample generation and Contrastive Divergence fitter
+	ADD_EXECUTABLE(fit1_SampleGeneration
+		fit1_SampleGeneration.cpp
+		fit1.wrp
+	)
+	TARGET_LINK_LIBRARIES(fit1_SampleGeneration
+		charon-plugins
+	)
+	ADD_TEST(
+		NAME fit1_SampleGeneration
+		COMMAND fit1_SampleGeneration
+	)
+
 	IF(WIN32)
 		# copy needed dll for tests and application run before installing
 		GET_TARGET_PROPERTY(CLOC charon-core LOCATION)

@@ -16,7 +16,7 @@ gsm.weights		0.25;0.75
 gsm.sigmas		1;10
 sampler.skip		100
 sampler.steps		10
-size.xend		801
-size.yend		801
-writer.filename		/home/jmg/Desktop/samples.cimg
-sampler.sigma		0.5
+size.xend		300
+size.yend		300
+writer.filename		fit1.cimg
+sampler.sigma		1
