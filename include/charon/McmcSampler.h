@@ -49,7 +49,7 @@ public:
 	/// skip first n steps
 	Parameter<unsigned int> skip;
 	/// seed, current value
-	Parameter<double> seed;
+	ParameterList<double> seed;
 	
 	/// create instance with given name
 	/// \name	instance name
@@ -57,7 +57,7 @@ public:
 
 	virtual ~McmcSampler();
 
-	virtual double sample();
+	virtual const std::vector<double>& sample();
 };
 
 #endif // MCMC_SAMPLER_H

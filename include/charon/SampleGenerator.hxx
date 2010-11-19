@@ -2,6 +2,7 @@
 #define SAMPLE_GENERATOR_HXX
 
 #include <charon-core/ParameteredObject.hxx>
+#include <charon/Functions/Function.h>
 #include "SampleGenerator.h"
 #include <cassert>
 
@@ -27,18 +28,24 @@ void SampleGenerator<T>::execute() {
 	cimg_library::CImgList<T>& res = out();
 	try {
 		res.clear();
-		unsigned int
+		std::vector<double>::size_type kk,
 			dx = size()->getWidth(),
 			dy = size()->getHeight(),
 			dz = size()->getDepth(),
-			dt = size()->getDuration();
+			dt = size()->getDuration(),
+			n  = sampler()->pdf()->dims();
 		assert(dx > 0);
 		assert(dy > 0);
 		assert(dz > 0);
 		assert(dt > 0);
-		res.push_back(cimg_library::CImg<T>(dx,dy,dz,dt,T(0.)));
-		cimg_for(res[0], ptr, T)
-				*ptr = T(sampler()->sample());
+		assert(n  > 0);
+		res.assign(n,dx,dy,dz,dt,T(0.));
+		cimg_forXYZC(res[0],x,y,z,t) {
+			const std::vector<double>& spl = sampler()->sample();
+			assert(spl.size() == n);
+			for (kk = 0; kk < n; kk++)
+				res(kk,x,y,z,t) = spl[kk];
+		}
 	}
 	catch (std::bad_alloc) {
 		res.clear();

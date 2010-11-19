@@ -41,7 +41,7 @@ public:
 	virtual double calculate(std::vector<double> x) const = 0;
 
 	/// return number of dimensions accepted
-	virtual std::vector<double>::size_type dims() = 0;
+	virtual std::vector<double>::size_type dims() const = 0;
 
 	/// easy calculation call
 	/** \param x    evaluation location

@@ -100,7 +100,7 @@ private:
 		/** \copydetails Function::dims()
 		 *  Here, the number of dimensions is fixed to one.
 		 */
-		virtual std::vector<double>::size_type dims() {
+		virtual std::vector<double>::size_type dims() const {
 			return 1u;
 		}
 	};
@@ -151,7 +151,7 @@ private:
 		/** \copydetails Function::dims()
 		 *  Here, the number of dimensions is fixed to one.
 		 */
-		virtual std::vector<double>::size_type dims() {
+		virtual std::vector<double>::size_type dims() const {
 			return 1u;
 		}
 		/// \copybrief Diff2LinFunction::diff2Linearized()

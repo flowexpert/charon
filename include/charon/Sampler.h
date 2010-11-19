@@ -44,8 +44,8 @@ public:
 	/// self-pointer
 	OutputSlot<Sampler*> out;
 
-	/// draw sample from the given distribution
-	virtual double sample() = 0;
+	/// draw a sample from the given distribution (may be multi-dimensional)
+	virtual const std::vector<double>& sample() = 0;
 	virtual ~Sampler();
 
 protected:
