@@ -144,7 +144,8 @@ SET(Plugins_CImg
 
 IF(USE_VIGRA)
 	# additional vigra modules
-	INCLUDE_DIRECTORIES(${VIGRA_INCLUDE_DIRS})
+	INCLUDE_DIRECTORIES(${Vigra_INCLUDE_DIRS})
+	SET(VIGRA_LIBRARIES vigraimpex)
 	ADD_LIBRARY(cimg2vigramultiarray SHARED
 		CImg2VigraMultiArray.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/CImg2VigraMultiArray.h
