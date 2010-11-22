@@ -41,10 +41,16 @@ ADD_LIBRARY(l2norm SHARED
 	${charon_INCLUDE_DIR}/Substencil.h
 	${charon_INCLUDE_DIR}/Substencil.hxx
 )
+ADD_LIBRARY(dataconstant SHARED
+	${charon_INCLUDE_DIR}/Stencils/DataConstant.h
+	${charon_INCLUDE_DIR}/Stencils/DataConstant.hxx
+	DataConstant.cpp
+)
 LIST(APPEND Plugins
 	gbcce
 	rfmc
 	l2norm
+	dataconstant
 )
 
 # Solvers
