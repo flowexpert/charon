@@ -198,7 +198,7 @@ template <class T>
 double DataConstant<T>::getEnergy() const {
 	const cimg_library::CImg<T>& cit = it()[0];
 	assert(cit.depth()    == 1);
-	assert(cit.spectrum() == 1);
+	assert(cit.spectrum() == 2 || cit.spectrum() == 1);
 
 	cimg_library::CImg<double> res(cit.width(), cit.height());
 	res.fill(0.);

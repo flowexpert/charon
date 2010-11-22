@@ -112,4 +112,5 @@ warper.interpolator		interpolator.out
 dataterm_learned.psi		phibc.energy
 phibc.energy		dataterm_learned.psi
 diff2.img		warper.out
-warper.out		diff2.img
+warper.out		diff2.img;bm.image
+bm.image		warper.out
