@@ -62,6 +62,7 @@ void printHeader(
 /// print current information to given stream
 void printInfos(
 		std::ostream& strm                /** [out] output stream*/,
+		const std::string& outDir         /** [in]  output dir name*/,
 		double cur                        /** [in]  relaxation status*/,
 		IteratorHelper<double>* h1        /** [in]  inner iterator helper*/,
 		IteratorHelper<double>* h2        /** [in]  outer iterator helper*/,
@@ -130,7 +131,8 @@ int test() {
 	analyzer->result.connect(helper->flow);
 
 	// write ground truth
-	analyzer->groundtruth().get_append('c').save_cimg(PREFIX "_gt.cimg",true);
+	analyzer->groundtruth().get_append('c').save_cimg(
+			(curDir + "/" PREFIX "_gt.cimg").c_str(),true);
 
 	relaxator->initialize();
 	printHeader(energy);
@@ -140,11 +142,12 @@ int test() {
 	do {
 		relaxator->prepareStep();
 		double cur = relaxator->getCur();
-		printInfos(energy, cur, helper, relaxinghelper, dataBC, analyzer);
+		printInfos(energy,curDir,cur,helper,relaxinghelper,dataBC,analyzer);
 		iterator->initialize();
 		do {
 			contIn = iterator->singleStep();
-			printInfos(energy, cur, helper, relaxinghelper, dataBC, analyzer);
+			printInfos(energy,curDir,cur,helper,relaxinghelper,
+					dataBC,analyzer);
 			std::cout << helper->countAll() << " " << std::flush;
 		} while (contIn);
 		iterator->finalize();
@@ -184,6 +187,7 @@ void printHeader(std::ostream& strm) {
 
 void printInfos(
 		std::ostream& strm,
+		const std::string& outDir,
 		double cur,
 		IteratorHelper<double>* helper1,
 		IteratorHelper<double>* helper2,
@@ -224,7 +228,7 @@ void printInfos(
 	// update weight map
 	static cimg_library::CImgList<double> weightMap, dummy;
 	const std::string weightsFName =
-			(PREFIX "_weightMaps.cimg");
+			(outDir + PREFIX "_weightMaps.cimg");
 
 	// arguments of apply are ignored and may be set arbitrarily
 	helper1->resetExecuted();
