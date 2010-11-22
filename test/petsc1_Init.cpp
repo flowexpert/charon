@@ -31,20 +31,23 @@
  */
 int main(int argc, char** argv) {
 	// testing Petsc Initialization
-	PetscErrorCode ierr = MPI_Init(&argc,&argv);
-	CHKERRQ(ierr);
-	ierr = PetscInitialize(&argc,&argv,PETSC_NULL,PETSC_NULL);
-	CHKERRQ(ierr);
-	Vec	x;
-	ierr = VecCreate(PETSC_COMM_WORLD,&x);
-	CHKERRQ(ierr);
-	ierr = PetscFinalize();
-	CHKERRQ(ierr);
+	PetscErrorCode ierr = MPI_Init(&argc,&argv); CHKERRQ(ierr);
+	ierr = PetscInitialize(&argc,&argv,PETSC_NULL,PETSC_NULL); CHKERRQ(ierr);
+	Vec x;
+	ierr = VecCreate(PETSC_COMM_WORLD,&x); CHKERRQ(ierr);
+
+	// check initialization of linear equation solver
+	KSP ksp;
+	ierr = KSPCreate(PETSC_COMM_WORLD, &ksp); CHKERRQ(ierr);
+	ierr = KSPSetFromOptions(ksp); CHKERRQ(ierr);
+
+	// cleanup
+	ierr = KSPDestroy(ksp); CHKERRQ(ierr);
+	ierr = PetscFinalize(); CHKERRQ(ierr);
 	int initialized = 0;
 	MPI_Initialized(&initialized);
 	if (initialized) {
-		ierr = MPI_Finalize();
-		CHKERRQ(ierr);
+		ierr = MPI_Finalize(); CHKERRQ(ierr);
 	}
 	return 0;
 }
