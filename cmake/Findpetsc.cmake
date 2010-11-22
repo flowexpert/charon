@@ -56,7 +56,7 @@ IF(NOT PETSC_ARCH)
 
 	# use value of envirionmental variable if set
 	IF(NOT "$ENV{PETSC_ARCH}" STREQUAL "")
-		SET(  "$ENV{PETSC_ARCH}")
+		SET(PETSC_ARCH "$ENV{PETSC_ARCH}")
 	ENDIF(NOT "$ENV{PETSC_ARCH}" STREQUAL "")
 
 	SET(PETSC_ARCH "${PETSC_ARCH}"
