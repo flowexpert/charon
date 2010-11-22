@@ -192,6 +192,16 @@ IF(BUILD_TESTING)
 		NAME FlowIterated2:_HornSchunck_Yosemite
 		COMMAND flowIterated2_HS_Yosemite
 	)
+	ADD_EXECUTABLE(flowIterated3_DataConstant flowIterated3_DataConstant.cpp)
+	TARGET_LINK_LIBRARIES(flowIterated3_DataConstant
+		relaxingiterator
+		flowcomparator
+		charon-plugins
+		${CIMG_LINK_LIBRARIES})
+	ADD_TEST(
+		NAME flowIterated3_DataConstant
+		COMMAND flowIterated3_DataConstant
+	)
 
 	# Sample generation and Contrastive Divergence fitter
 	ADD_EXECUTABLE(fit1_SampleGeneration

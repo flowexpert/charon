@@ -33,22 +33,22 @@
 
 template <class T>
 DataConstant<T>::DataConstant(const std::string& name) :
-		Stencil<T>("DataBC", name,
-			"Stencil modeling weighted brightness constancy."
-			"Weights are calculated using a given Psi function."
-			"See doxygen documentation for detailed derivation.")
+		Stencil<T>("DataConstant", name,
+			"Stencil modeling weighted brightness constancy. "
+			"Weights are calculated using a given Psi function. "
+			"See doxygen documentation for detailed derivation. ")
 {
 	ParameteredObject::_addInputSlot(flowGuess, "flowGuess",
 		"initial guess of real flow, no zeros, even in warped mode",
 		"CImgList<T>");
 	ParameteredObject::_addInputSlot(psi, "psi",
 		"brightness constancy probability function", "Function*");
-	ParameteredObject::_addInputSlot(it, "it",
-		"time derivative of warped image sequence", "CImgList<T>");
 	ParameteredObject::_addInputSlot(ix, "ix",
 		"image sequence derivative (wrt x)", "CImgList<T>");
 	ParameteredObject::_addInputSlot(iy, "iy",
 		"image sequence derivative (wrt y)", "CImgList<T>");
+	ParameteredObject::_addInputSlot(it, "it",
+		"time derivative of warped image sequence", "CImgList<T>");
 	ParameteredObject::_addParameter(calcDifferences, "calcDifferences",
 		"set to true if you want to calculate only increments<br><br>"
 		"This skips writing an offset caused by the current flow into "
