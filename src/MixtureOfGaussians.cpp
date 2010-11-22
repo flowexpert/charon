@@ -81,7 +81,7 @@ double MixtureOfGaussians::EnergyFunction::diff2(
 double MixtureOfGaussians::EnergyFunction::diff2Linearized(
 		std::vector<double> x,
 		std::vector<double>::size_type i,
-		std::vector<double>::size_type j) {
+		std::vector<double>::size_type j) const {
 	// avoid division by zero
 	if(x[j] <= std::numeric_limits<double>::min())
 		return diff2(x,i,j);

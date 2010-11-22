@@ -46,10 +46,10 @@ public:
 	 *  \returns
 	 *      \f$\frac{1}{x_j}\cdot\frac{\partial}{\partial x_i}f(\mathbf{x})\f$
 	 */
-	virtual double diff2Linearized(
+	virtual double diff2Linearized (
 			std::vector<double> x,
 			std::vector<double>::size_type i = 0,
-			std::vector<double>::size_type j = 0) {
+			std::vector<double>::size_type j = 0) const {
 		return diff(x, i)/x[j];
 	}
 };

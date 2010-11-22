@@ -167,7 +167,7 @@ private:
 		virtual double diff2Linearized(
 				std::vector<double> x,
 				std::vector<double>::size_type i = 0,
-				std::vector<double>::size_type j = 0);
+				std::vector<double>::size_type j = 0) const;
 	};
 
 	/// probabilty function instance
