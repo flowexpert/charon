@@ -64,7 +64,7 @@ int test() {
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 
 	// start tests
-	std::string testfile(TESTDIR "/iteratorTest3.wrp");
+	std::string testfile(TESTDIR "/iterator3.wrp");
 	std::cout << "Loading parameter file \"" << testfile;
 	std::cout << "\"" << std::endl;
 	man.loadParameterFile(testfile);
