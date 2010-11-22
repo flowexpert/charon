@@ -65,10 +65,6 @@ int test() {
 	std::cout << "Loading parameter file \"" << testfile;
 	std::cout << "\"" << std::endl;
 	man.loadParameterFile(testfile);
-	std::cout << "Executing workflow..." << std::endl;
-	sout << std::endl;
-	man.executeWorkflow();
-	std::cout << "Workflow execution finished.\n" << std::endl;
 
 	// get test instances
 	SimpleIterator<double>* iterator =
@@ -84,11 +80,29 @@ int test() {
 	assert(helper);
 	std::cout << "\thelper:   " << (void*) helper << std::endl;
 
+	// check if data from sequence generator really reach the iteration
+	// helper output slots after helper->execute()
+	// this detects a bug fixed in IteratorHelper (for regression testing)
+	const cimg_library::CImgList<double>& helperSeq =
+			helper->sequence();
+	helper->execute();
+	assert(helperSeq.size() > 0);
+	std::cout << "Sequence output: " << helperSeq.size() << " element(s) "
+			<< "-- max=" << helperSeq.max() << ", min=" << helperSeq.min()
+			<< std::endl;
+
 	std::cout << "\nTry to get some parameters:" << std::endl;
 	std::cout << "\tmaxRuns:  " << iterator->maxRuns() << "\n";
 	std::cout << "\tcount:    " << helper->count() << std::endl;
 	// check if there should be 3 iterations
 	assert(iterator->maxRuns() == 3u);
+
+	// execute whole workflow
+	std::cout << "Executing workflow..." << std::endl;
+	sout << std::endl;
+	man.executeWorkflow();
+	std::cout << "Workflow execution finished.\n" << std::endl;
+
 	// check if helper has been updated 3 times
 	assert(helper->count() == 3u);
 	// check if there were really 3 iterations
