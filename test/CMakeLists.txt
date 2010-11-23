@@ -202,6 +202,17 @@ IF(BUILD_TESTING)
 		NAME flowIterated3_DataConstant
 		COMMAND flowIterated3_DataConstant
 	)
+	ADD_EXECUTABLE(flowIterated4_SpatialPW flowIterated4_SpatialPW.cpp)
+	TARGET_LINK_LIBRARIES(flowIterated4_SpatialPW
+		relaxingiterator
+		flowcomparator
+		charon-plugins
+		${CIMG_LINK_LIBRARIES}
+	)
+	ADD_TEST(
+		NAME flowIterated4_SpatialPW
+		COMMAND flowIterated4_SpatialPW
+	)
 
 	# Sample generation and Contrastive Divergence fitter
 	ADD_EXECUTABLE(fit1_SampleGeneration
