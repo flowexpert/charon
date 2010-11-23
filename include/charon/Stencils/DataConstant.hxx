@@ -126,9 +126,7 @@ void DataConstant<T>::updateStencil(
 
 	// deviation from brightness constancy (BC error) = -i_t,
 	// argument to be passed to the psi function
-	std::vector<double> bce;
-	bce.resize(1,0.);
-	bce[0] = -cit;
+	const std::vector<double> bce(1u,-cit);
 
 	double weight;
 	if (useDiff2Lin()) {
@@ -170,8 +168,7 @@ cimg_library::CImg<T> DataConstant<T>::apply(
 		const unsigned int /*frame*/) const {
 	const cimg_library::CImg<T>& cit = it()[0];
 	cimg_library::CImg<T> res(cit.width(),cit.height(),cit.depth(),1,T(0));
-	std::vector<double> bce;
-	bce.resize(1,0.);
+	std::vector<double> bce(1u,0.);
 
 	if(useDiff2Lin()) {
 		const Diff2LinFunction* psi2 =
@@ -205,8 +202,7 @@ double DataConstant<T>::getEnergy() const {
 
 	const Function* psi0 = psi();
 
-	std::vector<double> bce;
-	bce.resize(1,0.);
+	std::vector<double> bce(1u,0.);
 	cimg_forXY(res,x,y) {
 		bce[0] = -cit(x,y);
 		res(x,y) += psi0->calculate(bce);

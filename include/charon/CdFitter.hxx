@@ -164,9 +164,8 @@ void CdFitter<T>::execute() {
 			diff2[ii] = diff [ii];
 			diff [ii] = 0;
 			assert(modified.is_sameNXYZC(trainCollection));
-			std::vector<double> tval, mval;
-			tval.resize(dims, 0.);
-			mval.resize(dims, 0.);
+			std::vector<double> tval(dims,0.), mval(dims,0.);
+
 			// iterate over all pixels and calculate update values
 			cimg_forXYZC(modified[0],x,y,z,t) {
 				for(kk=0;kk<dims;kk++) {
@@ -316,8 +315,7 @@ void CdFitter<T>::_updateProgress(unsigned int run,
 			throw std::ios_base::failure("file " + histValFile
 				+ " could not be opened for writing.");
 		valWriter << "# fittet function values" << std::endl;
-		std::vector<double> cur;
-		cur.resize(1u);
+		std::vector<double> cur(1u);
 		for(cur[0] = -range; cur[0] < range; cur[0] += range/200)
 			valWriter << cur[0] << "\t" << fun.probability()->calculate(cur)
 				<< std::endl;
