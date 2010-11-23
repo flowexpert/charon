@@ -46,11 +46,17 @@ ADD_LIBRARY(dataconstant SHARED
 	${charon_INCLUDE_DIR}/Stencils/DataConstant.hxx
 	DataConstant.cpp
 )
+ADD_LIBRARY(spatialpw SHARED
+	${charon_INCLUDE_DIR}/Stencils/SpatialPW.h
+	${charon_INCLUDE_DIR}/Stencils/SpatialPW.hxx
+	SpatialPW.cpp
+)
 LIST(APPEND Plugins
 	gbcce
 	rfmc
 	l2norm
 	dataconstant
+	spatialpw
 )
 
 # Solvers
