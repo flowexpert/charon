@@ -198,6 +198,15 @@ ADD_LIBRARY(sequencegenerator SHARED
 	${charon_INCLUDE_DIR}/SequenceGenerator.h
 	${charon_INCLUDE_DIR}/SequenceGenerator.hxx
 )
+ADD_LIBRARY(edgysequencegenerator SHARED
+	${charon_INCLUDE_DIR}/EdgySequenceGenerator.h
+	${charon_INCLUDE_DIR}/EdgySequenceGenerator.hxx
+	EdgySequenceGenerator.cpp
+)
+TARGET_LINK_LIBRARIES(edgysequencegenerator
+	interpolatorlinear
+	roi
+)
 ADD_LIBRARY(diff2d SHARED
 	Diff2D.cpp
 	${charon_INCLUDE_DIR}/Diff2D.h
@@ -211,6 +220,7 @@ ADD_LIBRARY(flowcomparator SHARED
 )
 LIST(APPEND Plugins
 	sequencegenerator
+	edgysequencegenerator
 	diff2d
 	flowcomparator
 )
