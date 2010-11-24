@@ -50,9 +50,7 @@
  */
 int main() {
 	// test creation of all necessary objects
-	std::ofstream log("petsc3_plugin.log", std::ios::trunc);
-	assert(log.good());
-	sout.assign(log);
+	sout.assign(std::cout);
 
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 	man.loadPlugin("PetscSolver");
