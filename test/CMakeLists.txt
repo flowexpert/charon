@@ -199,7 +199,7 @@ IF(BUILD_TESTING)
 		charon-plugins
 		${CIMG_LINK_LIBRARIES})
 	ADD_TEST(
-		NAME flowIterated3_DataConstant
+		NAME FlowIterated3:_DataConstant
 		COMMAND flowIterated3_DataConstant
 	)
 	ADD_EXECUTABLE(flowIterated4_SpatialPW flowIterated4_SpatialPW.cpp)
@@ -210,7 +210,7 @@ IF(BUILD_TESTING)
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
-		NAME flowIterated4_SpatialPW
+		NAME FlowIterated4:_SpatialPW
 		COMMAND flowIterated4_SpatialPW
 	)
 
@@ -224,7 +224,7 @@ IF(BUILD_TESTING)
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
-		NAME fit1_SampleGeneration
+		NAME Fit1:_SampleGeneration
 		COMMAND fit1_SampleGeneration
 	)
 	ADD_EXECUTABLE(fit2_CdFitter
@@ -236,7 +236,7 @@ IF(BUILD_TESTING)
 		${CIMG_LINK_LIBRARIES}
 	)
 	ADD_TEST(
-		NAME fit2_CdFitter
+		NAME Fit2:_CdFitter
 		COMMAND fit2_CdFitter
 	)
 
