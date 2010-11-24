@@ -276,9 +276,11 @@ cimg_library::CImg<T> SpatialPW<T>::apply(
 	cimg_for2x2(u, x,y,0,0, u_, T) {
 		ux[0] = u_nc - u_cc;
 		uy[0] = u_cn - u_cc;
-		if(useDiff2Lin) {
-			dudx(x,y) = T(_puL->diff2Linearized(ux));
-			dudy(x,y) = T(_puL->diff2Linearized(uy));
+		if(useDiff2Lin()) {
+			const T& tmp1 = _puL->diff2Linearized(ux);
+			const T& tmp2 = _puL->diff2Linearized(uy);
+			dudx(x,y) = tmp1;
+			dudy(x,y) = tmp2;
 		}
 		else {
 			dudx(x,y) = T(_pu2->diff2(ux));
@@ -290,7 +292,7 @@ cimg_library::CImg<T> SpatialPW<T>::apply(
 	cimg_for2x2(v, x,y,0,0, v_, T) {
 		vx[0] = v_nc - v_cc;
 		vy[0] = v_cn - v_cc;
-		if(useDiff2Lin) {
+		if(useDiff2Lin()) {
 			dvdx(x,y) = T(_pvL->diff2Linearized(vx));
 			dvdy(x,y) = T(_pvL->diff2Linearized(vy));
 		}

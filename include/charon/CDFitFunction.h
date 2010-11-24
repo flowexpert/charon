@@ -66,8 +66,8 @@ public:
 	/// normalize
 	virtual void normalize();
 
-	/// print fit results
-	virtual void printResults();
+	/// print function parameters
+	virtual void printParameters();
 
 	/// Range hint for histogram generation.
 	/** Default implementation simply returns 1.

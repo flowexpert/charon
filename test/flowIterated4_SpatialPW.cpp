@@ -55,6 +55,9 @@
 #include <charon/IteratorHelper.h>
 #include <charon/Stencils/SpatialPW.h>
 
+/// prefix for output files
+#define PREFIX "flowIterated4"
+
 /// print header to inform about csv columns
 void printHeader(
 		std::ostream& strm                /** [out] output stream*/);
@@ -62,7 +65,7 @@ void printHeader(
 /// print current information to given stream
 void printInfos(
 		std::ostream& strm                /** [out] output stream*/,
-		const std::string& curDir         /** [in]  data output directory*/,
+		const std::string& oDir           /** [in]  output dir*/,
 		double cur                        /** [in]  relaxation status*/,
 		IteratorHelper<double>* h1        /** [in]  inner iterator helper*/,
 		IteratorHelper<double>* h2        /** [in]  outer iterator helper*/,
@@ -72,7 +75,7 @@ void printInfos(
 /// unit tests
 int test() {
 	std::ofstream log("flowIterated4_SpatialPW.log", std::ios::trunc);
-	std::ofstream csv("iteratorTest4_energy.csv", std::ios::trunc);
+	std::ofstream csv("flowIterated4_energy.csv", std::ios::trunc);
 	assert(log.good());
 	sout.assign(log);
 
@@ -128,7 +131,7 @@ int test() {
 
 	// write ground truth
 	analyzer->groundtruth().get_append('c').save_cimg(
-			(curDir+"_gt.cimg").c_str(),true);
+			(curDir+"/" PREFIX "_gt.cimg").c_str(),true);
 
 	relaxator->initialize();
 	printHeader(csv);
@@ -183,7 +186,7 @@ void printHeader(std::ostream& strm) {
 
 void printInfos(
 		std::ostream& strm,
-		const std::string& curDir,
+		const std::string& oDir,
 		double cur,
 		IteratorHelper<double>* helper1,
 		IteratorHelper<double>* helper2,
@@ -223,7 +226,7 @@ void printInfos(
 		static cimg_library::CImgList<double> lambdas;
 		lambdas.push_back(stencil->apply(helper1->flow(), 0u));
 		lambdas.save_cimg(
-				(curDir + "_lambdas.cimg").c_str(),true);
+				(oDir + "/" PREFIX "_lambdas.cimg").c_str(),true);
 	}
 }
 

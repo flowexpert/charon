@@ -15,9 +15,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file fit2_CdFitter.cpp
- *  Run Contrastive Divergence fitter on known distribution to recover
- *  its parameters.
+/** \file fit3_GSM.cpp
+ *  Generate MixtureOfGaussian Sample using MCMC Sampler
  *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de>
  *      Jens-Malte Gottfried </a>
  *  \date 19.11.2010
@@ -51,15 +50,13 @@
 
 /// unit tests
 int test() {
-	std::ofstream log("fit2_CdFitter.log", std::ios::trunc);
-	assert(log.good());
-	sout.assign(log);
+	sout.assign(std::cout);
 
 	// load plugin manager
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 
 	// start tests
-	std::string testfile(TESTDIR "/fit2.wrp");
+	std::string testfile(TESTDIR "/fit1.wrp");
 	std::cout << "Loading parameter file \"" << testfile;
 	std::cout << "\"" << std::endl;
 	man.loadParameterFile(testfile);
@@ -70,29 +67,9 @@ int test() {
 	assert(gsm);
 
 	// print results to stdout
-	std::cout << "Parameters on start:" << std::endl;
 	gsm->execute();
-	sout.assign(std::cout);
 	gsm->printParameters();
-	sout.assign(log);
 
-	man.executeWorkflow();
-
-	std::cout << "Parameters after fitting:" << std::endl;
-	sout.assign(std::cout);
-	gsm->printParameters();
-	sout.assign(log);
-
-	// since sampling is a random process, this may fail
-	// but only in rare cases.
-	assert(gsm->fitParameters[0]>0.2);
-	assert(gsm->fitParameters[0]<0.3);
-	assert(gsm->fitParameters[1]>0.7);
-	assert(gsm->fitParameters[1]<0.8);
-
-	man.reset();
-	sout.assign();
-	log.close();
 
 	return EXIT_SUCCESS;
 }

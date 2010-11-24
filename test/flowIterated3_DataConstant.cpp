@@ -228,7 +228,7 @@ void printInfos(
 	// update weight map
 	static cimg_library::CImgList<double> weightMap, dummy;
 	const std::string weightsFName =
-			(outDir + PREFIX "_weightMaps.cimg");
+			(outDir + "/" PREFIX "_weightMaps.cimg");
 
 	// arguments of apply are ignored and may be set arbitrarily
 	helper1->resetExecuted();

@@ -232,7 +232,7 @@ void CdFitter<T>::execute() {
 	resOut << "\n#     agressiveness\t" << agressiveness << std::endl;
 	resOut.close();
 
-	fun.printResults();
+	fun.printParameters();
 	sout << "\t\tagressiveness\t" << agressiveness << std::endl;
 
 	delete[] diff;

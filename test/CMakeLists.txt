@@ -239,6 +239,18 @@ IF(BUILD_TESTING)
 		NAME Fit2:_CdFitter
 		COMMAND fit2_CdFitter
 	)
+	ADD_EXECUTABLE(fit3_GSM
+		fit3_GSM.cpp
+	)
+	TARGET_LINK_LIBRARIES(fit3_GSM
+		charon-plugins
+		mixtureofgaussians
+		${CIMG_LINK_LIBRARIES}
+	)
+	ADD_TEST(
+		NAME Fit3:_GSM
+		COMMAND fit3_GSM
+	)
 
 	IF(WIN32)
 		# copy needed dll for tests and application run before installing

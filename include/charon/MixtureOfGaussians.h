@@ -183,7 +183,7 @@ public:
 
 	virtual ~MixtureOfGaussians();
 	virtual void normalize();
-	virtual void printResults();
+	virtual void printParameters();
 
 	/// \copybrief CDFitFunction::rangeHint()
 	/** \copydetails CDFitFunction::rangeHint()

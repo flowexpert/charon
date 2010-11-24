@@ -164,13 +164,13 @@ void MixtureOfGaussians::execute() {
 	}
 }
 
-void MixtureOfGaussians::printResults() {
-	sout << "MixtureOfGaussian \"" << getName() << "\" fit results:";
+void MixtureOfGaussians::printParameters() {
+	sout << "MixtureOfGaussian \"" << getName() << "\" parameters:";
 	std::vector<double>::size_type ii;
-	sout << "\n\tweights: ";
+	sout << "\n\tweights (to-fit): ";
 	for(ii = 0; ii < _weights.size(); ii++)
 		sout << _weights[ii] << ";";
-	sout << "\n\tsigmas : ";
+	sout << "\n\tsigmas  (fixed) : ";
 	for(ii = 0; ii < _sigmas.size(); ii++)
 		sout << _sigmas[ii] << ";";
 	sout << std::endl;
