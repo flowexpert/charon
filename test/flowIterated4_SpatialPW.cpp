@@ -71,7 +71,7 @@ void printInfos(
 
 /// unit tests
 int test() {
-	std::ofstream log("SpatialPW.log", std::ios::trunc);
+	std::ofstream log("flowIterated4_SpatialPW.log", std::ios::trunc);
 	std::ofstream csv("iteratorTest4_energy.csv", std::ios::trunc);
 	assert(log.good());
 	sout.assign(log);
