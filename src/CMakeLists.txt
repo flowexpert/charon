@@ -79,6 +79,11 @@ ADD_LIBRARY(rgb2hsv SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/Rgb2Hsv.h
 	${CHARON_UTILS_INCLUDE_DIR}/Rgb2Hsv.hxx
 )
+ADD_LIBRARY(flow2hsv SHARED
+	Flow2HSV.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/Flow2HSV.h
+	${CHARON_UTILS_INCLUDE_DIR}/Flow2HSV.hxx
+)
 ADD_LIBRARY(linearfilter SHARED
 	LinearFilter.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/LinearFilter.h
@@ -130,6 +135,7 @@ SET(Plugins
 	normalize
 	threshold
 	rgb2hsv
+	flow2hsv
 	linearfilter
 	mask1d
 	structuretensor
@@ -193,6 +199,9 @@ IF(USE_VIGRA)
 	)
 	FOREACH(X ${Plugins_Vigra})
 		TARGET_LINK_LIBRARIES(${X} ${VIGRA_LIBRARIES})
+		IF(USE_MPI)
+			TARGET_LINK_LIBRARIES(${X} ${MPI_LIBRARIES})
+		ENDIF()
 	ENDFOREACH(X)
 ENDIF(USE_VIGRA)
 
