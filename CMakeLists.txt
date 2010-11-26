@@ -25,7 +25,7 @@ INCLUDE(InitFlags)
 INCLUDE(CImgConfig)
 
 MESSAGE(STATUS "Charon-utils library configuration:")
-OPTION(USE_VIGRA "enable plugins using Vigra library" ${VIGRA_FOUND})
+OPTION(USE_VIGRA "enable plugins using Vigra library" ${Vigra_FOUND})
 OPTION(USE_HDF5 "enable plugins using HDF5 library" ${HDF5_FOUND})
 OPTION(USE_MPI "enable plugins using MPI" ${MPI_FOUND})
 MESSAGE(STATUS "    Vigra        : ${USE_VIGRA}")
