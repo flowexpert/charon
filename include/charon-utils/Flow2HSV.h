@@ -45,19 +45,24 @@ class flow2hsv_DECLDIR Flow2HSV : public TemplatedParameteredObject<T>
 {
 public:
 	/// standard constructor
-	Flow2HSV(const std::string& name = "" /** [in] instance name*/) ;
+	Flow2HSV(const std::string& name = "" /** [in] instance name*/);
 
 	/// \copybrief ParameteredObject::execute()
 	/** \copydetails ParameteredObject::execute() */
-	virtual void execute() ;
+	virtual void execute();
 
 	/// select how image is scaled: 0 saturation, 1 value, 2 none
-	Parameter<int> scaleChannel ;
+	Parameter<unsigned int> scaleChannel;
+
+	/// normalization factor (0=auto)
+	Parameter<T> normalizationFactor;
 
 	/// flow input
 	InputSlot<cimg_library::CImgList<T> > flow;
 
-	/// hsv output
+	/// HSV output (converted to RGB).
+	/** The CImg list uses the convention [t](x,y,z,c) to be able to be
+	 *  displayed properly. */
 	OutputSlot<cimg_library::CImgList<T> > out;
 };
 

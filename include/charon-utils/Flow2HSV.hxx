@@ -37,10 +37,14 @@ Flow2HSV<T>::Flow2HSV(const std::string& name) :
 	ParameteredObject::_addParameter(
 			scaleChannel, "scaleChannel",
 			"select how image is scaled: 0 saturation, 1 value, 2 none");
+	ParameteredObject::_addParameter(
+			normalizationFactor, "normalizationFactor",
+			"normalization factor (0=auto)");
 	ParameteredObject::_addInputSlot(
 			flow, "flow", "flow input", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
-			out, "out", "hsv representation output", "CImgList<T>");
+			out, "out", "hsv representation output [t](x,y,z,c)",
+			"CImgList<T>");
 }
 
 template<typename T>
@@ -78,6 +82,9 @@ void Flow2HSV<T>::execute() {
 
 	// normalize lenth (max lenth will be set to 1)
 	double maxLen = interm[0].max();
+	// use given normalization factor, if not zero
+	if(normalizationFactor() > 0)
+		maxLen = normalizationFactor();
 	interm[0] /= maxLen;
 
 	// in argos code, the following calculation was applied to len:
@@ -88,15 +95,13 @@ void Flow2HSV<T>::execute() {
 	cimg_forXYZC(i[0],x,y,z,t) {
 		const double& len = interm(0,x,y,z,t);
 		const double& phi = interm(1,x,y,z,t);
-		cimg_library::CImg<double>tmp(1,1,1,3,1.);
-		tmp(0,0,0,0) = phi;
-		if(sc==0)tmp(0,0,0,1) = len; // length is saturation
-		if(sc==1)tmp(0,0,0,2) = len; // length is value
-		tmp.HSVtoRGB();
 		// here conversion from double to T is performed
-		o(0,x,y,z,t) = tmp(0,0,0,0);
-		o(1,x,y,z,t) = tmp(0,0,0,1);
-		o(2,x,y,z,t) = tmp(0,0,0,2);
+		o(t,x,y,z,0) = phi;
+		if(sc==0)o(t,x,y,z,1) = len; // length is saturation
+		if(sc==1)o(t,x,y,z,2) = len; // length is value
+	}
+	cimglist_for(o,kk) {
+		o[kk].HSVtoRGB();
 	}
 }
 
