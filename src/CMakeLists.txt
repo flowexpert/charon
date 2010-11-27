@@ -84,6 +84,11 @@ ADD_LIBRARY(flow2hsv SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/Flow2HSV.h
 	${CHARON_UTILS_INCLUDE_DIR}/Flow2HSV.hxx
 )
+ADD_LIBRARY(colormask SHARED
+	ColorMask.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/ColorMask.h
+	${CHARON_UTILS_INCLUDE_DIR}/ColorMask.hxx
+)
 ADD_LIBRARY(linearfilter SHARED
 	LinearFilter.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/LinearFilter.h
@@ -136,6 +141,7 @@ SET(Plugins
 	threshold
 	rgb2hsv
 	flow2hsv
+	colormask
 	linearfilter
 	mask1d
 	structuretensor

@@ -27,6 +27,7 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
+#include <charon-core/ParameteredObject.hxx>
 #include "Flow2HSV.h"
 
 template<typename T>
@@ -39,7 +40,7 @@ Flow2HSV<T>::Flow2HSV(const std::string& name) :
 			"select how image is scaled: 0 saturation, 1 value, 2 none");
 	ParameteredObject::_addParameter(
 			normalizationFactor, "normalizationFactor",
-			"normalization factor (0=auto)");
+			"normalization factor (0=auto)", "T");
 	ParameteredObject::_addInputSlot(
 			flow, "flow", "flow input", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
