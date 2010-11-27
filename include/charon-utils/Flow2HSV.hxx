@@ -77,7 +77,7 @@ void Flow2HSV<T>::execute() {
 		const double u = i(0,x,y,z,t);
 		const double v = i(1,x,y,z,t);
 		double len = std::sqrt(std::pow(u,2)+std::pow(v,2));
-		double phi = std::atan2(u, v);
+		double phi = std::atan2(v, u);
 		interm(0,x,y,z,t) = len;
 		interm(1,x,y,z,t) = phi;
 	}
@@ -88,23 +88,29 @@ void Flow2HSV<T>::execute() {
 	if(normalizationFactor() > 0)
 		maxLen = normalizationFactor();
 	interm[0] /= maxLen;
+	// This was included in argos code
+	// (perhaps to avoid lenght of exaclty zero)
+	//interm[0] += 0.05;
+	//interm[0] /= 1.05;
 
-	// in argos code, the following calculation was applied to len:
-	// len = (len+0.05)/1.05 --> why?
+	// phi is now in (-pi;pi], should be [0;255]
+	interm[1] += M_PI;
+	interm[1] *= 255./(2.*M_PI);
 
 	// use lenght and angle for HSV values, respect value of "scaleChannels"
 	// convert HSV to RGB and store final result in out
 	o.assign(i[0].spectrum(),i[0].width(),i[0].height(),i[0].depth(),3u);
 	cimg_forXYZC(i[0],x,y,z,t) {
 		const double& len = interm(0,x,y,z,t);
-		const double& phi = interm(1,x,y,z,t);
+		const double& hue = interm(1,x,y,z,t);
+		assert(hue >= 0. && hue <= 255.);
 		// here conversion from double to T is performed
-		o(t,x,y,z,0) = phi;
-		if(sc==0)o(t,x,y,z,1) = len; // length is saturation
-		if(sc==1)o(t,x,y,z,2) = len; // length is value
+		o(t,x,y,z,0) = hue;
+		o(t,x,y,z,1) = (sc==0) ? len : 1.; // length is saturation
+		o(t,x,y,z,2) = (sc==1) ? len : 1.; // length is value
 	}
 	cimglist_for(o,kk) {
-		o[kk].HSVtoRGB();
+		o.at(kk).HSVtoRGB();
 	}
 }
 
