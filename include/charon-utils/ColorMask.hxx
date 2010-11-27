@@ -50,6 +50,9 @@ ColorMask<T>::ColorMask(const std::string& name) :
 
 template<typename T>
 void ColorMask<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
+	ParameteredObject::execute();
+
 	if (in().size() == 0)
 		throw std::invalid_argument("Empty sequence given!");
 	if(in()[0].spectrum() != 1u)
