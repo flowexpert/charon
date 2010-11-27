@@ -69,12 +69,10 @@ void Flow2HSV<T>::execute() {
 		throw std::invalid_argument(
 				"scale channel has to be in {0;1;2}!");
 
-	cimg_library::CImgList<double> interm(
-			2u,i[0].width(),i[0].height(),i[0].depth(),i[0].spectrum());
-	o.assign(3u,i[0].width(),i[0].height(),i[0].depth(),i[0].spectrum());
-
 	// calculate lenght and angle of the flow vector,
 	// store intermediate result in interm[0] (lenght) and interm[1] (angle)
+	cimg_library::CImgList<double> interm(
+			2u,i[0].width(),i[0].height(),i[0].depth(),i[0].spectrum());
 	cimg_forXYZC(i[0],x,y,z,t) {
 		const double u = i(0,x,y,z,t);
 		const double v = i(1,x,y,z,t);
@@ -96,6 +94,7 @@ void Flow2HSV<T>::execute() {
 
 	// use lenght and angle for HSV values, respect value of "scaleChannels"
 	// convert HSV to RGB and store final result in out
+	o.assign(i[0].spectrum(),i[0].width(),i[0].height(),i[0].depth(),3u);
 	cimg_forXYZC(i[0],x,y,z,t) {
 		const double& len = interm(0,x,y,z,t);
 		const double& phi = interm(1,x,y,z,t);
