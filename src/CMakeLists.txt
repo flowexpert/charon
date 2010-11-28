@@ -89,6 +89,11 @@ ADD_LIBRARY(colormask SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/ColorMask.h
 	${CHARON_UTILS_INCLUDE_DIR}/ColorMask.hxx
 )
+ADD_LIBRARY(flowquiver SHARED
+	FlowQuiver.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/FlowQuiver.h
+	${CHARON_UTILS_INCLUDE_DIR}/FlowQuiver.hxx
+)
 ADD_LIBRARY(linearfilter SHARED
 	LinearFilter.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/LinearFilter.h
@@ -142,6 +147,7 @@ SET(Plugins
 	rgb2hsv
 	flow2hsv
 	colormask
+	flowquiver
 	linearfilter
 	mask1d
 	structuretensor
