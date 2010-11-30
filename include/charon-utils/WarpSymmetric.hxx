@@ -79,8 +79,7 @@ void WarpSymmetric<T>::execute() {
 	cimg_library::CImgList<T>& warped = out();
 	Interpolator<T>& interp = *interpolator();
 
-	unsigned int dv = seq.size();
-	assert(dv >= 1);
+	assert(seq.size() >= 1);
 	unsigned int dz = seq[0].depth();
 	unsigned int dt = seq[0].spectrum();
 	if(dt != 2u) {
