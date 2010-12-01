@@ -24,6 +24,10 @@
 #ifndef FlOW_TO_HSV_HXX_
 #define FlOW_TO_HSV_HXX_
 
+#ifndef M_PI
+#define M_PI 3.14159265
+#endif
+
 #include <cassert>
 #include <vector>
 #include <algorithm>
