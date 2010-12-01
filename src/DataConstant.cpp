@@ -23,9 +23,7 @@
  */
 #define TYPE DataConstant
 
-#if defined(MSVC) && defined (databc_EXPORTS)
 #define stencil_EXPORTS
-#endif
 #include <charon/Stencils/DataConstant.hxx>
 
 extern "C" dataconstant_DECLDIR ParameteredObject*

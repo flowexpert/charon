@@ -15,9 +15,7 @@
 */
 #define TYPE SpatialPW
 
-#if defined(MSVC) && defined (spatialpw_EXPORTS)
 #define stencil_EXPORTS
-#endif
 #include <charon/Stencils/SpatialPW.hxx>
 
 extern "C" spatialpw_DECLDIR ParameteredObject*
