@@ -34,7 +34,7 @@
 	#endif /*Export or import*/
 #else /* No DLL handling or GCC */
 	/// Not needed with GCC
-	#define argosdisplay_DECLDIR
+	#define charonwidgets_DECLDIR
 #endif
 
 #endif /* _CHARONWIDGETS_H_ */
