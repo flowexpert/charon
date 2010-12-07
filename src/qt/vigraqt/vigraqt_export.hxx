@@ -39,10 +39,10 @@
 #include <math.h>
 
 namespace vigraqt {
-
-static int round(float val)
-{	return int(floor(val + 0.5)) ;	}
-
+	template <typename T>
+	inline int round(T val) {
+		return std::floor(val + T(0.5));
+	}
 }
 
 #endif // VIGRAQT_EXPORT_HXX

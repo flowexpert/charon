@@ -24,7 +24,7 @@
 #ifndef _ARGOSDISPLAY_HXX_
 #define _ARGOSDISPLAY_HXX_
 
-#include <ArgosDisplay.h>
+#include <charon-utils/ArgosDisplay.h>
 #include <sstream>
 #include <MainWindow.hpp>
 #include <ViewStack.hpp>

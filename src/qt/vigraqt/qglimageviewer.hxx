@@ -4,8 +4,8 @@
 #include "qimageviewer.hxx"
 #include "vigraqt_export.hxx"
 #include <QGLWidget>
-#include <gl/GL.h>
-#include <gl/GLU.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 class QGLImageWidget;
 

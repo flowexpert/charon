@@ -1,14 +1,15 @@
-
 SET(charonwidgets_HEADERS
-	MainWindow.hpp
-	ViewStack.hpp
 	charonwidgets.h
 )
-
+SET(charonwidgets_QT_HEADERS
+	MainWindow.hpp
+	ViewStack.hpp
+)
 SET(charonwidgets_SOURCES
 	MainWindow.cpp
 	ViewStack.cpp
-)	
+)
+QT4_WRAP_CPP(charonwidgets_MOCS ${charonwidgets_QT_HEADERS})
 
 IF(USE_VIGRA)
 	SET(USE_VIGRAQT True)
@@ -22,24 +23,26 @@ IF(USE_VIGRAQT)
 	
 	SET(vigraqt_HEADERS
 		vigraqt/vigraqt_export.hxx
-		vigraqt/cmeditor.hxx
-		vigraqt/cmgradient.hxx
 		vigraqt/colormap.hxx
 		vigraqt/createqimage.hxx
-		vigraqt/fimageviewer.hxx
-		vigraqt/imagecaption.hxx
 		vigraqt/linear_colormap.hxx
-		vigraqt/overlayviewer.hxx
 		vigraqt/qglimageviewer.hxx
-		vigraqt/qimageviewer.hxx
 		vigraqt/qrgbvalue.hxx
 		vigraqt/rgbavalue.hxx
 		vigraqt/vigraqimage.hxx
 	)
+	SET(vigraqt_QT_HEADERS
+		vigraqt/cmeditor.hxx
+		vigraqt/cmgradient.hxx
+		vigraqt/fimageviewer.hxx
+		vigraqt/imagecaption.hxx
+		vigraqt/overlayviewer.hxx
+		vigraqt/qimageviewer.hxx
+	)
 	
 	SET(vigraqt_SOURCES
 		vigraqt/cmgradient.cxx
-		vigraqt/colormap.cxx	
+		vigraqt/colormap.cxx
 		vigraqt/fimageviewer.cxx
 		vigraqt/imagecaption.cxx
 		vigraqt/linear_colormap.cxx
@@ -50,31 +53,32 @@ IF(USE_VIGRAQT)
 		vigraqt/cmeditor.cxx
 	)
 	
-	QT4_WRAP_CPP(vigraqt_MOCS ${vigraqt_HEADERS})
+	QT4_WRAP_CPP(vigraqt_MOCS ${vigraqt_QT_HEADERS})
 	
 	SOURCE_GROUP("vigraqt moc files" FILES ${vigraqt_MOCS})
-	SOURCE_GROUP("vigraqt headers" FILES ${vigraqt_HEADERS})
+	SOURCE_GROUP("vigraqt headers" FILES
+		${vigraqt_HEADERS} ${vigraqt_QT_HEADERS})
 	SOURCE_GROUP("vigraqt sources" FILES ${vigraqt_SOURCES})
 	
 ENDIF(USE_VIGRAQT)
-
-	
-QT4_WRAP_CPP(charonwidgets_MOCS ${charonwidgets_HEADERS})
 
 SOURCE_GROUP("moc files" FILES ${charonwidgets_MOCS})
 
 ADD_LIBRARY(charonwidgets SHARED 
 	${charonwidgets_HEADERS}
+	${charonwidgets_QT_HEADERS}
 	${charonwidgets_SOURCES}
 	${charonwidgets_MOCS}
 	${vigraqt_HEADERS}
+	${vigraqt_QT_HEADERS}
 	${vigraqt_SOURCES}
 	${vigraqt_MOCS}
 )
 
 TARGET_LINK_LIBRARIES(charonwidgets ${QT_LIBRARIES})
 IF(USE_VIGRAQT)
-	TARGET_LINK_LIBRARIES(charonwidgets ${VIGRA_LIBRARIES} ${QT_OPENGL_LIBRARIES} ${OPENGL_LIBRARIES})
+	TARGET_LINK_LIBRARIES(charonwidgets
+		${VIGRA_LIBRARIES} ${QT_OPENGL_LIBRARIES} ${OPENGL_LIBRARIES})
 ENDIF(USE_VIGRAQT)
 
 SET_TARGET_PROPERTIES(charonwidgets
