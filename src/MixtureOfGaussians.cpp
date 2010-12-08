@@ -6,14 +6,6 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <charon/MixtureOfGaussians.h>
 
-#ifndef  M_2_SQRTPI
-#define M_2_SQRTPI 1.12837916709551 // 2/sqrt(PI)
-#endif
-
-#ifndef M_SQRT1_2
-#define M_SQRT1_2 0.70710678118654752440  // 1/sqrt(2)
-#endif
-
 MixtureOfGaussians::ProbabilityFunction::ProbabilityFunction(
 		const std::vector<double>& weights,
 		const std::vector<double>& sigmas) :

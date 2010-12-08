@@ -5,6 +5,7 @@ SET(charon_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME})
 
 IF (MSVC)
 	ADD_DEFINITIONS(-DHANDLE_DLL)
+	ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
 ENDIF()
 
 # list of all plugins to be built
