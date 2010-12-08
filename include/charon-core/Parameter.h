@@ -78,12 +78,12 @@ public:
 	AbstractParameter();
 
 	/// Initialize new parameter.
-	/// Assign name, parent etc.
-	/// Set these variables to their final values, they can not be changed
-	/// later because this would mess up the parameter store
-	/// @param parent           parent object
-	/// @param name             parameter name
-	/// @throws std::string     Error message if invalid parent set.
+	/** Assign name, parent etc.
+	 *  Set these variables to their final values, they can not be changed
+	 *  later because this would mess up the parameter store
+	 *  \param parent           parent object
+	 *  \param name             parameter name
+	 */
 	void init(ParameteredObject* parent, const std::string& name);
 
 	virtual ~AbstractParameter();
@@ -98,26 +98,31 @@ public:
 	std::string getName() const;
 
 	/// Try to guess type
+	/** \returns string representation of T */
 	virtual std::string guessType() const = 0;
 
 	/// Save to ParameterFile.
-	/// This stores the value to the paremeter name
-	/// parent_name._name in the given parameter file.
-	/// If the parameter has not been changed (i.e. has the
-	/// same value as its default value), the parameter
-	/// string will not be written to the parameter file.
-	/// @param pf               ParameterFile to write to.
+	/** This stores the value to the paremeter name
+	 *  parent_name._name in the given parameter file.
+	 *  If the parameter has not been changed (i.e. has the
+	 *  same value as its default value), the parameter
+	 *  string will not be written to the parameter file.
+	 *  \param pf               ParameterFile to write to.
+	 */
 	virtual void save(ParameterFile& pf) const = 0;
 
 	/// Load from ParameterFile.
-	/// This restores the value from the paremeter named
-	/// "name"."_name" in the given parameter file.
-	/// @param pf               ParameterFile to load from.
+	/** This restores the value from the paremeter named
+	 *  "name"."_name" in the given parameter file.
+	 *  \param pf               ParameterFile to load from.
+	 */
 	virtual void load(const ParameterFile& pf) = 0;
 
 	/// Get default value.
-	/// This string representation will be saved in the
-	/// metadata parameter file.
+	/** This string representation will be saved in the
+	 *  metadata parameter file.
+	 *  \returns default value string
+	 */
 	virtual std::string getDefaultString() = 0;
 
 	/**
@@ -130,10 +135,13 @@ public:
 	virtual void intoStream(std::ostream & os) const = 0;
 };
 
-/**
- * Stream output operator
+/// Parameter stream output operator
+/** \param os          output stream
+ *  \param param       parameter to be printed
+ *  \returns modified os
  */
-std::ostream charon_core_DECLDIR &operator<<(std::ostream & os, const AbstractParameter & param);
+std::ostream charon_core_DECLDIR & operator<< (
+		std::ostream& os, const AbstractParameter& param);
 
 /// Implementation of the AbstractParameter interface for one single
 /// parameter.
@@ -156,14 +164,18 @@ public:
 	virtual ~Parameter();
 
 	/// Assignment operator for internal value.
-	/// This modifies only the current value.
-	/// @param B				Value to assign.
+	/** This modifies only the current value.
+	 *  \param B                Value to assign.
+	 *  \returns updated object
+	 */
 	virtual T& operator=(const T& B);
 
 	/// Assign new current and default value
-	/// by copying an existing parameter (which has not to be assigned
-	/// to some object)
-	/// @param B                Copy source
+	/** by copying an existing parameter (which has not to be assigned
+	 *  to some object)
+	 *  \param B                Copy source
+	 *  \returns updated object
+	 */
 	virtual Parameter<T>& operator=(const Parameter<T>& B);
 
 	/// Cast operator to get internal value.
@@ -174,12 +186,27 @@ public:
 	void    setDefault(const T& value);
 
 	// overload inherited functions
+	/// Try to guess type
+	/** \returns string representation of T */
 	virtual std::string guessType() const;
-	virtual const T& operator()() const;
-	virtual T& operator()();
+	/// Save to ParameterFile
+	/** \copydetails AbstractParameter::save() */
 	virtual void save(ParameterFile& pf) const;
+	/// Load from ParameterFile
+	/** \copydetails AbstractParameter::load() */
 	virtual void load(const ParameterFile& pf);
+	/// Get default value
+	/** \copydetails AbstractParameter::getDefaultString() */
 	virtual std::string getDefaultString();
+
+	/// Call operator.
+	/** \returns data content (const reference, no copy) */
+	virtual const T& operator()() const;
+
+	/// Call operator.
+	/** Non const version
+	 *  \returns data content (no copy) */
+	virtual T& operator()();
 
 	/**
 	 * Inserts the value of the Parameter at the end of a stream.
@@ -203,26 +230,31 @@ private:
 
 public:
 	/// Create parameter list
-	/// Assign parameter name, description and content.
-	/// Internal value will be set to defaultValue, the given string
-	/// representation will be split up at ";".
-	/// @param defaultValue     Default value.
+	/** Assign parameter name, description and content.
+	 *  Internal value will be set to defaultValue, the given string
+	 *  representation will be split up at ";".
+	 *  \param defaultValue     Default value.
+	 */
 	ParameterList(std::string defaultValue = "");
 
 	virtual ~ParameterList();
 
 	/// Set default value
-	/// @param value            New default value
+	/** \param value            New default value */
 	void    setDefault(const std::string& value);
 
 	/// Assign parameter content.
-	/// Default value remains unchanged.
-	/// @param B				Copy source.
+	/** Default value remains unchanged.
+	 *  \param[in] B            Copy source.
+	 *  \returns                updated list content
+	 */
 	virtual std::vector<T>& operator=(const std::vector<T>& B);
 
 	/// Assign parameter content.
-	/// Default value remains unchanged.
-	/// @param B                Copy source.
+	/** Default value remains unchanged.
+	 *  \param B                Copy source.
+	 *  \returns                updated list content
+	 */
 	virtual ParameterList<T>& operator=(const ParameterList<T>& B);
 
 	/// Cast operator to get copy of internal value.
@@ -234,9 +266,17 @@ public:
 	/// Call operator to get a const reference to the parameter list content.
 	const std::vector<T>& operator()() const;
 
+	/// Try to guess type
+	/** \returns string representation of T */
 	virtual std::string guessType() const;
+	/// Save to ParameterFile
+	/** \copydetails AbstractParameter::save() */
 	virtual void save(ParameterFile& pf) const;
+	/// Load from ParameterFile
+	/** \copydetails AbstractParameter::load() */
 	virtual void load(const ParameterFile& pf);
+	/// Get default value
+	/** \copydetails AbstractParameter::getDefaultString() */
 	virtual std::string getDefaultString();
 
 	// inherited by AbstractMultiData<T>

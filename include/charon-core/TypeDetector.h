@@ -56,16 +56,20 @@ private:
 
 public:
 	/// Get a TypeDetector instance.
-	/// If no instance exists, this creates one.
+	/** If no instance exists, this creates one.
+	 *  \returns sigleton instance
+	 */
 	static const TypeDetector& instance();
 
 	/// Cleanup, free memory
 	static void destroy();
 
 	/// Get type representation.
-	/// Known types will result the proper representation,
-	/// unknown types will cause the original string to be returned.
-	/// @param typeInfo		result of typeid(bla).name()
+	/** Known types will result the proper representation,
+	 *  unknown types will cause the original string to be returned.
+	 *  \param typeInfo     result of typeid(bla).name()
+	 *  \returns            string representation
+	 */
 	std::string type(const std::string& typeInfo) const;
 };
 

@@ -96,12 +96,14 @@ private:
 	/** This parameterfile is used for metadata generation
 	 *  and stores the class names with their parameters
 	 *  and slots.
+	 *  \returns nothing (this is no function, fix warning due to doxygen bug)
 	 */
 	ParameterFile _metadata;
 
 	/// Create unique name.
 	/** The name consists of the class name and a number.
 	 *  The number is increased on every function call.
+	 *  \returns unique name
 	 */
 	std::string _genericName();
 
@@ -120,9 +122,7 @@ private:
 	/// Output slots.
 	std::map<std::string, Slot*> _outputs;
 
-	/// status of execution
-	/** this is set to true on ParameteredObject::execute()
-	 */
+	/// status of execution (set to true during ParameteredObject::execute())
 	bool _executed;
 
 	/// forbid copying
@@ -132,7 +132,7 @@ private:
 	 *  ParameteredObject::ParameteredObject(class ParameteredObject const &)"
 	 *  (__imp_??0ParameteredObject\@\@AAE\@ABV0\@\@Z)"
 	 */
-	ParameteredObject(const ParameteredObject&){}
+	ParameteredObject(const ParameteredObject&) {}
 
 	/// forbid instantiation without className etc.
 	ParameteredObject();
@@ -167,6 +167,7 @@ private:
 	 *  \param target       Target object.
 	 *  \param ownSlot      Slot of the *this object (in or out).
 	 *  \param targetSlot   Slot of the target (out or in).
+	 *  \retval true operation successful
 	 */
 	bool _connect(
 			ParameteredObject* target,
@@ -179,6 +180,7 @@ private:
 	 *  \param target       Target object.
 	 *  \param ownSlot      Slot of the *this object (in or out).
 	 *  \param targetSlot   Slot of the target (out or in).
+	 *  \retval true operation successful
 	 */
 	bool _disconnect(
 			ParameteredObject* target,
@@ -300,6 +302,7 @@ protected:
 	/// get target nodes
 	/** Determine target leaves of the execution workflow (i.e. Parametered
 	 *  Objects with no targets connected to output slots).
+	 *  \returns set of target nodes
 	 */
 	std::set<ParameteredObject*> _getTargetNodes();
 
@@ -315,6 +318,7 @@ public:
 
 	/// Converts template_type to std::string
 	/** \param t            template type to convert
+	 *  \returns            string representation of t
 	 */
 	static std::string templateTypeToString(template_type t);
 
@@ -383,25 +387,27 @@ public:
 	/// Get pointer to some slot (by name)
 	/** \param slotName     Name of the slot to look for
 	 *  \throws std::invalid_argument if slot does not exist
+	 *  \returns requested slot
 	 */
 	Slot* getSlot(const std::string& slotName);
 
 	/// Const version
 	/** \param slotName     Name of the slot to look for
 	 *  \throws std::invalid_argument if slot does not exist
+	 *  \returns requested slot
 	 */
 	const Slot* getSlot(const std::string& slotName) const;
 
 	/// Get all input slots as map
 	/** Returns a map linking the names of the input slots to the Slots itself.
-	 *  \return Map containing all input slots
+	 *  \returns Map containing all input slots
 	 */
 	const std::map<std::string, Slot *> & getInputSlots() const;
 
 
 	/// Get all output slots as map
 	/** Returns a map linking the names of the output slots to the Slots itself.
-	 *  \return Map containing all output slots
+	 *  \returns Map containing all output slots
 	 */
 	const std::map<std::string, Slot *> & getOutputSlots() const;
 
@@ -434,6 +440,7 @@ public:
 	/// Get connected neighbours of the current object.
 	/** This is based on the "real" slot connections,
 	 *  i.e. independend of some parameter file content.
+	 *  \returns set of neighbours
 	 */
 	std::set<std::string> getNeighbours() const;
 
@@ -445,12 +452,14 @@ public:
 	 *  in the parameter file.
 	 *  Nonexistent objects are created.
 	 *  \param pf           ParameterFile to read connections from.
+	 *  \returns set of neighbours
 	 */
 	std::set<std::string> getNeighbours(const ParameterFile& pf) const;
 
 	/// Check if object is ready for work.
 	/** Check if all slots with property <i>optional</i> set to false
 	 *  are connected.
+	 *  \retval true all neccessary slots are connected
 	 */
 	virtual bool connected() const;
 

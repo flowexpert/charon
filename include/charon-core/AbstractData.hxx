@@ -13,12 +13,12 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file AbstractData.hxx
+/** \file AbstractData.hxx
  *  Declaration and implementation of the abstract class
  *  AbstractData.
- *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+ *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  *
- *  @date 10.04.2009
+ *  \date 10.04.2009
  */
 
 #include <vector>
@@ -27,36 +27,41 @@
 #define _ABSTRACT_DATA_HXX_
 
 /// Interface for data acces.
-/// This is the common interface for parameters and
-/// slots.
-/// Data access is only provided read only.
+/** This is the common interface for parameters and
+ *  slots.  Data access is only provided read only.
+ */
 template<typename T>
 class AbstractROData {
 public:
-	virtual ~AbstractROData() {};
+	virtual ~AbstractROData() {}
 
 	/// Cast operator to get data (get copy)
+	/** \returns data content (copy) */
 	virtual operator T() const = 0;
 
 	/// Call operator.
-	/// Also returns internal data (const reference)
+	/** \returns data content (const reference, no copy) */
 	virtual const T& operator()() const = 0;
 };
 
 /// Interface for data assignment and readout.
-/// This is the common interface for parameters and
-/// output slots. (Input slots are read only.)
+/** This is the common interface for parameters and
+ *  output slots. (Input slots are read only.)
+ */
 template<typename T>
 class AbstractData : public AbstractROData<T> {
 public:
-	virtual ~AbstractData() {};
+	virtual ~AbstractData() {}
 
 	/// data assignment operator
-	/// @param B         data to assign
+	/** \param B         data to assign
+	 *  \returns updated object
+	 */
 	virtual T& operator=(const T& B) = 0;
 
 	/// Call operator.
-	/// Non const version.
+	/** Non const version
+	 *  \returns data content (no copy) */
 	virtual T& operator()() = 0;
 };
 
@@ -65,15 +70,18 @@ public:
 template<typename T>
 class AbstractMultiROData {
 public:
-	virtual ~AbstractMultiROData() {};
+	virtual ~AbstractMultiROData() {}
 
 	/// Access to specific member (read-only).
-	/// @param pos              data position
-	/// @throws std::string     error message if pos out of range
+	/** \param pos              data position
+	 *  \returns data content at given position (read-only, no copy)
+	 */
 	virtual const T& operator[](std::size_t pos) const = 0;
 
-	/// Access to number of members
-	/// (for iterations using operator[])
+	/// Access to number of members.
+	/** For iterations using operator[]
+	 *  \returns number of elements
+	 */
 	virtual std::size_t size() const = 0;
 };
 
@@ -82,11 +90,12 @@ public:
 template<typename T>
 class AbstractMultiData : public AbstractMultiROData<T> {
 public:
-	virtual ~AbstractMultiData() {};
+	virtual ~AbstractMultiData() {}
 
 	/// Access to specific member (read-write).
-	/// @param pos              data position
-	/// @throws std::string     error message if pos out of range
+	/** \param pos              data position
+	 *  \returns data content at given position (read-write, no copy)
+	 */
 	virtual T& operator[](std::size_t pos) = 0;
 };
 

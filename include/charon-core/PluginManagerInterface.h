@@ -63,16 +63,18 @@ public:
 	}
 
 	/// Recurse into object list and find connected objects.
-	/// This is based on the content of the given ParameterFile,
-	/// i.e. the connected objects need not to exist really.
-	/// This is also independend of the existing connections of the
-	/// current object, it is only based on the connections saved
-	/// in the parameter file.
-	/// Nonexistent objects are created, so you have to make sure,
-	/// that the object factory is up and running.
-	/// The root object itself is also part of the connected component.
-	/// @param root         Starting point for connected object search
-	/// @param pf           ParameterFile to read connections from.
+	/** This is based on the content of the given ParameterFile,
+	 *  i.e. the connected objects need not to exist really.
+	 *  This is also independend of the existing connections of the
+	 *  current object, it is only based on the connections saved
+	 *  in the parameter file.
+	 *  Nonexistent objects are created, so you have to make sure,
+	 *  that the object factory is up and running.
+	 *  The root object itself is also part of the connected component.
+	 *  \param root         Starting point for connected object search
+	 *  \param pf           ParameterFile to read connections from.
+	 *  \returns            set of connected object names
+	 */
 	virtual std::set<std::string> getConnected(const std::string & root,
 			const ParameterFile & pf) const = 0;
 

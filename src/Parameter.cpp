@@ -21,13 +21,8 @@
  */
 #include <charon-core/Parameter.h>
 
-/**
- * Lets you insert the value of a Parameter into a stream.
- *
- * @param os Stream to write into
- * @param parameter Value to write into the stream
- */
-std::ostream & operator<<(std::ostream & os, const AbstractParameter & parameter) {
+std::ostream & operator<<(
+		std::ostream& os, const AbstractParameter& parameter) {
 	parameter.intoStream(os);
 	return os;
 }

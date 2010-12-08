@@ -398,30 +398,36 @@ public:
 	 */
 	virtual ~PluginManager();
 
-	/// @name Formerly part of the ParameteredObject class
-	//  @{
+	/// \name Formerly part of the ParameteredObject class
+	//  \{
 
 	/// Convenience function to get neighbours of given object.
-	/// @param root         name of the root object to start neighbour search
+	/** \param root         name of the root object to start neighbour search
+	 *  \returns            set of neighbour object names
+	 */
 	std::set<std::string> getNeighbours(const std::string& root) const;
 
 	/// Convenience function to get neighbours of given object.
-	/// @param root         name of the root object to start neighbour search
-	/// @param pf           ParameterFile to read connections from.
+	/** \param root         name of the root object to start neighbour search
+	 *  \param pf           ParameterFile to read connections from.
+	 *  \returns            set of neighbour object names
+	 */
 	std::set<std::string> getNeighbours(const std::string& root,
 			const ParameterFile& pf) const;
 
 	/// Recurse into object list and find connected objects.
-	/// This is based on the content of the given ParameterFile,
-	/// i.e. the connected objects need not to exist really.
-	/// This is also independend of the existing connections of the
-	/// current object, it is only based on the connections saved
-	/// in the parameter file.
-	/// Nonexistent objects are created, so you have to make sure,
-	/// that the object factory is up and running.
-	/// The root object itself is also part of the connected component.
-	/// @param root         Starting point for connected object search
-	/// @param pf           ParameterFile to read connections from.
+	/** This is based on the content of the given ParameterFile,
+	 *  i.e. the connected objects need not to exist really.
+	 *  This is also independend of the existing connections of the
+	 *  current object, it is only based on the connections saved
+	 *  in the parameter file.
+	 *  Nonexistent objects are created, so you have to make sure,
+	 *  that the object factory is up and running.
+	 *  The root object itself is also part of the connected component.
+	 *  \param root         Starting point for connected object search
+	 *  \param pf           ParameterFile to read connections from.
+	 *  \returns            set of connected object names
+	 */
 	virtual std::set<std::string> getConnected(const std::string& root,
 			const ParameterFile& pf) const;
 
@@ -429,48 +435,59 @@ public:
 			ParameteredObject * obj) const;
 
 	/// Recurse into object list and find connected objects.
-	/// This is based on the "real" slot connections,
-	/// i.e. independend of some parameter file content.
-	/// The root object itself is also part of the connected component.
-	/// @param root         Starting point for connected object search
+	/** This is based on the "real" slot connections,
+	 *  i.e. independend of some parameter file content.
+	 *  The root object itself is also part of the connected component.
+	 *  \param root         Starting point for connected object search
+	 *  \returns            set of connected object names
+	 */
 	std::set<std::string> getConnected(const std::string& root) const;
 
 	/// Connect slots.
-	/// Both slots are connected with each other.
-	/// @param slot1        Slot1 (in or out)
-	/// @param slot2        Slot2 (out or in)
+	/** Both slots are connected with each other.
+	 *  \param slot1        Slot1 (in or out)
+	 *  \param slot2        Slot2 (out or in)
+	 *  \retval true        operation successful
+	 */
 	bool connect(Slot& slot1, Slot& slot2);
 
-	/// Same method, but taking pointers. Mostly, you will have to handle
-	/// pointers.
-	/// @param slot1        Slot1 (in or out)
-	/// @param slot2        Slot2 (out or in)
+	/// Same method, but taking pointers.
+	/** \param slot1        Slot1 (in or out)
+	 *  \param slot2        Slot2 (out or in)
+	 *  \retval true        operation successful
+	 */
 	bool connect(Slot* slot1, Slot* slot2);
 
 	/// Connect slots by name.
-	/// You have to provide the slot names as "objectname.slotname",
-	/// i.e. the same way you find them in the parameter file.
-	/// Both slots are connected with each other.
-	/// You have to make sure, that both objects already exist.
-	/// @param slot1        Slot1 (e.g. "object1.slot1")
-	/// @param slot2        Slot2 (e.g. "object2.slot1")
+	/** You have to provide the slot names as "objectname.slotname",
+	 *  i.e. the same way you find them in the parameter file.
+	 *  Both slots are connected with each other.
+	 *  You have to make sure, that both objects already exist.
+	 *  \param slot1        Slot1 (e.g. "object1.slot1")
+	 *  \param slot2        Slot2 (e.g. "object2.slot1")
+	 *  \retval true        operation successful
+	 */
 	bool connect(const std::string& slot1, const std::string& slot2);
 
 	/// Disconnect slots.
-	/// Both slots are disconnected from each other.
-	/// @param slot1        Slot1 (in or out)
-	/// @param slot2        Slot2 (out or in)
+	/** Both slots are disconnected from each other.
+	 *  \param slot1        Slot1 (in or out)
+	 *  \param slot2        Slot2 (out or in)
+	 *  \retval true        operation successful
+	 */
 	bool disconnect(Slot& slot1, Slot& slot2);
 
 	/// Disconnect slots by name.
-	/// You have to provide the slot names as "objectname.slotname",
-	/// i.e. the same way you find them in the parameter file.
-	/// Both slots are disconnected with each other.
-	/// @param slot1        Slot1 (e.g. "object1.slot1")
-	/// @param slot2        Slot2 (e.g. "object2.slot1")
+	/** You have to provide the slot names as "objectname.slotname",
+	 *  i.e. the same way you find them in the parameter file.
+	 * Both slots are disconnected with each other.
+	 *  \param slot1        Slot1 (e.g. "object1.slot1")
+	 *  \param slot2        Slot2 (e.g. "object2.slot1")
+	 *  \retval true        operation successful
+	 */
 	bool disconnect(const std::string& slot1, const std::string& slot2);
 
-	// @}
+	// \}
 };
 
 #endif /* PLUGINMANAGER_H_ */

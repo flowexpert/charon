@@ -460,15 +460,6 @@ bool PluginManager::connect(Slot& slot1, Slot& slot2) {
 	std::string obj1sl = slot1.getName();
 	std::string obj2sl = slot2.getName();
 
-	/*#ifdef CREATE_METADATA
-	 // check slot types
-	 std::string type1 = _metadata.get<std::string>(obj1->_className +
-	 "." + obj1sl + ".type");
-	 std::string type2 = _metadata.get<std::string>(obj2->_className +
-	 "." + obj2sl + ".type");
-	 assert(type1 == type2);
-	 #endif*/
-
 	// connect those objects
 	bool ret = obj1->_connect(obj2, obj1sl, obj2sl);
 	ret = obj2->_connect(obj1, obj2sl, obj1sl) && ret;

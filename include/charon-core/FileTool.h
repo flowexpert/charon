@@ -49,7 +49,8 @@ namespace FileTool {
 
 	/// This function creates all directories contained
 	/// in path provided they do not already exist.
-	/// @param path     path to create
+	/// \param path     path to create
+	/// \returns result of final mkdir
 	int DLLEX makePath(std::string& path);
 
 	/// Create a new directory using MODE 711 (in unix)
