@@ -39,11 +39,9 @@ public:
 	///CImg containing the actual data of the SubStencil.
 	cimg_library::CImg<T> data;
 
-	/**
-	 * CImg containing the pattern of the SubStencil.
-	 * All positions that could potentially contain data are 1.
-	 * Positions that will never contain data are 0.
-	 */
+	/// CImg containing the pattern of the SubStencil
+	/// (positions that potentially contain data set to 1, everything else
+	/// set to zero)
 	cimg_library::CImg<char> pattern;
 
 	/// center of the substencil pattern

@@ -30,17 +30,19 @@
 /** Provides function call method and operator().
  *  Function arguments are passed as std::vector<double> which may
  *  be one-dimensional or multidimensional, i.e. mappings
- *  \f$\mathcal{R^n}\to\mathcal{R}\f$ may be represented.
+ *  \f$\mathcal{R}^n\to\mathcal{R}\f$ may be represented.
  *  The dimensionality is given as static member function.
  */
 class Function {
 public:
 	/// calculate function value at location x
 	/** \param x    evaluation location
+	 *  \returns    \f$f(\mathbf{x})\f$
 	 */
 	virtual double calculate(std::vector<double> x) const = 0;
 
-	/// return number of dimensions accepted
+	/// function dimensionality
+	/** \returns number of input argument dimensions */
 	virtual std::vector<double>::size_type dims() const = 0;
 
 	/// easy calculation call
@@ -51,7 +53,7 @@ public:
 		return calculate(x);
 	}
 
-	virtual ~Function(){};
+	virtual ~Function(){}
 };
 
 #endif // _SIMPLE_FUNCTION_H_

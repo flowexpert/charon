@@ -60,24 +60,16 @@ protected:
 	class MetaStencil
 	{
 	protected:
-		/**
-		 * Vector of pointers to the SubStencils.
-		 * The data for the solver will be pulled from here.
-		 */
+		/// Vector of pointers to the SubStencils
+		/// (the data for the solver will be pulled from here)
 		std::vector<const SubStencil<T>* > substencils;
 
-		/**
-		 * CImg representing the MetaStencil.
-		 * This is a dummy to pre-allocate memory and to store the
-		 * dimensions of the MetaStencil.
-		 * Later, the data of the SubStencils will be merged here.
-		 */
+		/// CImg representing the MetaStencil
+		/// (SubStencils data will be merged here)
 		cimg_library::CImg<T> data;
 
-		/**
-		 * Set of points that belong to this MetaStencil.
-		 * @remark The size of the MetaStencil has to be extracted from the pattern.
-		 */
+		/// Set of points that belong to this MetaStencil
+		/// (the size of the MetaStencil has to be extracted from here)
 		std::set<Point4D<int> > pattern;
 
 		/// \name expansions in all 8 directions
@@ -93,11 +85,12 @@ protected:
 
 	public:
 		/// default constructor
-		/**
-		 *	\param[in] unknown		name of the unknown for this stencil group
-		 *	\param[in] stencils		list of stencils to group
+		/** \param[in] unknown		name of the unknown for this stencil group
+		 *  \param[in] stencils		list of stencils to group
 		 */
-		MetaStencil(const std::string& unknown, const std::vector<Stencil<T>*>& stencils);
+		MetaStencil(
+				const std::string& unknown,
+				const std::vector<Stencil<T>*>& stencils);
 
 		/// copy constructor
 		MetaStencil(const MetaStencil& rhs /**< [in] copy source*/);
@@ -106,22 +99,25 @@ protected:
 		MetaStencil();
 
 		/// assignment operator
-		virtual MetaStencil& operator= (const MetaStencil& rhs /**< [in] copy source*/);
+		/** \param[in] rhs copy source
+		 *  \returns assigned object
+		 */
+		virtual MetaStencil& operator=(const MetaStencil& rhs);
 
 		/// getter for MetaStencil::center
 		const Point4D<int>& getCenter() const;
 
 		/// getter for MetaStencil::pattern
-		/**
-		 *	The only necessary getter to determine the maximum number of
-		 *	entries.
+		/** The only necessary getter to determine the maximum number of
+		 *  entries.
+		 *  \returns pattern
 		 */
 		virtual std::set<Point4D<int> >& getPattern();
 
-		/// Expand the given region of interest to include the necessary ghost nodes.
-		/**
-		 * @param[in,out] inRoi		Region of interest to expand.
-		 *							Will be set to the epxanded region of interest.
+		/// Expand the given region of interest to include the necessary
+		/// ghost nodes.
+		/** @param[in,out] inRoi  Region of interest to expand
+		 *      (Will be set to the epxanded region of interest)
 		 */
 		virtual void expand(Roi<int>& inRoi) const;
 	};

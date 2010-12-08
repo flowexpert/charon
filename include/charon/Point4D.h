@@ -62,7 +62,10 @@ public:
 	}
 
 	/// assignment operator
-	Point4D& operator= (const Point4D<T>& rhs /**<[in] copy source*/) {
+	/** \param[in] rhs copy source
+	 *  \returns resulting object
+	 */
+	Point4D& operator= (const Point4D<T>& rhs) {
 		if(&rhs == this)
 			return *this;
 		for (unsigned int i=0; i<4u; i++)
@@ -71,32 +74,47 @@ public:
 	}
 
 	/// compound addition operator
-	Point4D<T>& operator+= (const Point4D<T>& rhs /**<[in] second summand*/) {
+	/** \param[in] rhs second summand
+	 *  \returns sum
+	 */
+	Point4D<T>& operator+= (const Point4D<T>& rhs) {
 		for (unsigned int i=0; i<4u; i++)
 			_c[i] += rhs._c[i];
 		return *this;
 	}
 
-	///compound subtraction operator
-	Point4D<T>& operator-= (const Point4D<T>&rhs /**<[in] subtrahend*/) {
+	/// compound subtraction operator
+	/** \param[in] rhs subtrahend
+	 *  \returns difference
+	 */
+	Point4D<T>& operator-= (const Point4D<T>&rhs) {
 		for (unsigned int i=0; i<4u; i++)
 			_c[i] -= rhs._c[i];
 		return *this;
 	}
 
 	/// addition operator
-	/** \param[in] rhs second summand */
+	/** \param[in] rhs second summand
+	 *  \returns sum
+	 */
 	Point4D<T>& operator+ (const Point4D<T> &rhs) const {
 		return Point4D(*this) += rhs;
 	}
 
 	/// subtraction operator
-	Point4D<T>& operator- (const Point4D<T> &rhs /**<[in] subtrahend*/) const {
+	/** \param[in] rhs subtrahend
+	 *  \returns difference
+	 */
+	Point4D<T>& operator- (const Point4D<T> &rhs) const {
 		return Point4D(*this) -= rhs;
 	}
 
 	/// comparison operator
-	/** \param[in] rhs values to compare with */
+	/** \param[in] rhs values to compare with
+	 *  \returns true if one of the coordinates is less than the
+	 *      corresponding of rhs, the first different coordinate counts.
+	 *      If *this==rhs, false is returned.
+	 */
 	bool operator < (const Point4D<T> &rhs) const {
 		for (int i=3u; i>=0; i--) {
 			if (_c[i] < rhs._c[i])
@@ -104,20 +122,24 @@ public:
 			if (_c[i] > rhs._c[i])
 				return false;
 		}
-		// if it got this far, either x=y=z=t in which case it has to be
-		// false or something fishy is going on, in which case it should also
-		// be false, so not much of a control here
+		// all coordinates equal
 		return false;
 	}
 
 	/// comparison operator
-	/** \param[in] rhs values to compare with */
+	/** \param[in] rhs values to compare with
+	 *  \returns true if one of the coordinates is greater than the
+	 *      corresponding of rhs, the first different coordinate counts.
+	 *      If *this==rhs, false is returned.
+	 */
 	bool operator > (const Point4D<T>& rhs) const {
 		return rhs < *this;
 	}
 
 	/// comparison operator
-	/** \param[in] rhs values to compare with */
+	/** \param[in] rhs values to compare with
+	 *  \return true if all coordinates are equal
+	 */
 	bool operator== (const Point4D<T>& rhs) const {
 		bool ret = true;
 		for (unsigned int i=0; i<4u; i++)
@@ -126,13 +148,21 @@ public:
 	}
 
 	/// comparison operator
-	/** \param[in] rhs values to compare with */
+	/** \param[in] rhs values to compare with
+	 *  \returns true if one of the coordinates is less than the
+	 *      corresponding of rhs, the first different coordinate counts.
+	 *      If *this==rhs, true is returned.
+	 */
 	bool operator <= (const Point4D<T>& rhs) const {
 		return !(*this > rhs);
 	}
 
 	/// comparison operator
-	/** \param[in] rhs values to compare with */
+	/** \param[in] rhs values to compare with
+	 *  \returns true if one of the coordinates is greater than the
+	 *      corresponding of rhs, the first different coordinate counts.
+	 *      If *this==rhs, true is returned.
+	 */
 	bool operator >= (const Point4D<T>& rhs) const {
 		return !(*this < rhs);
 	}

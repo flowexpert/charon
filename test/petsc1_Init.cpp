@@ -28,6 +28,7 @@
  *  PETSc installation, these tests should run fine.
  *  There is no charon related code inside.
  *  \param argc,argv Command line options passed to PETSc
+ *  \returns zero in case of success
  */
 int main(int argc, char** argv) {
 	// testing Petsc Initialization

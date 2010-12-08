@@ -78,18 +78,14 @@ protected:
 	///Set of the names of unknowns on which this stencil works.
 	std::set<std::string> _unknowns;
 
-	/**
-	 * Map to store and manage all the SubStencils.
-	 * @remarks
-	 * -   This member must never be erased as long as the stencil exists
-	 *     because this would break the pointers of following objects
-	 */
+	/// Map to store and manage all the SubStencils
+	/// (don't erase it as long as the stencil exists,
+	/// this would break the pointers of following objects)
 	std::map<std::string, SubStencil<T> > _subStencils;
 
-	/// Map to store and manage all the right hand side.
-	/** This has to be updated to represent the correct unknown
-	 *  during Stencil::updateStencil.
-	 */
+	/// Map to store and manage all the right hand side
+	/// (has to be updated to represent the correct unknown
+	/// during Stencil::updateStencil)
 	T _rhs;
 
 public:
@@ -119,14 +115,14 @@ public:
 	 *  \param[in] unknown    query substencils for this unknown,
 	 *                        e.g. the Euler-Lagrange equation after
 	 *                        deriving wrt the given unknown.
-	 *  @param[in] p,v        coordinates
+	 *  \param[in] p,v        coordinates
 	 */
 	virtual void updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p=Point4D<int>(), const int& v=0) = 0;
 
 	/// Getter function for the SubStencils of the stencil.
-	/** @return reference to the map of SubStencils.
+	/** \return reference to the map of SubStencils.
 	 */
 	const std::map<std::string, SubStencil<T> >& get() const;
 

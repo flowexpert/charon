@@ -34,6 +34,7 @@ public:
 	 *  a default of i=j=0 is specified.
 	 *  \param x    evaluation location
 	 *  \param i,j  select arguments for partial derivatives
+	 *  \returns    \f$\partial_{x_i}\partial_{x_j} f(\mathbf{x})\f$
 	 */
 	virtual double diff2(
 			std::vector<double> x,

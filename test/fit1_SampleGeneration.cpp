@@ -49,6 +49,7 @@
 #include <charon-utils/FileWriter.h>
 
 /// unit tests
+/// \returns zero in case of success
 int test() {
 	std::ofstream log("fit1_SampleGeneration.log", std::ios::trunc);
 	assert(log.good());
@@ -97,6 +98,7 @@ int test() {
 }
 
 /// start tests with exception handling
+/// \returns zero in case of success
 int main() {
 	return ExceptionHandler::run(test);
 }

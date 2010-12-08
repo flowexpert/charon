@@ -47,6 +47,7 @@
 
 /// unit tests
 /** Try to load the PetscSolver plugin using the plugin manager.
+ *  \returns zero in case of success
  */
 int main() {
 	// test creation of all necessary objects

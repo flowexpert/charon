@@ -88,8 +88,8 @@ public:
 	Parameter < double > epsilon;
 	/// norm postprocessing (implemented: "max", "mean")
 	Parameter < std::string > norm;
-	/// set to true if iteration calculates flow difference,
-	/// i.e. operates with zero initial guess
+	/// set to true if iteration calculates flow difference
+	/// (operates with zero initial guess)
 	Parameter < bool > accumulate;
 	/// update rate, i.e. ratio of change that is used
 	Parameter < double > updateRate;
@@ -102,15 +102,15 @@ public:
 	OutputSlot < cimg_library::CImgList<T> > result;
 
 	/// create a new SimpleIterator object
-	/// \param name          Instance name
+	/** \param name          Instance name */
 	SimpleIterator(const std::string& name);
 
-	/// Update object.
+	/// Update object
+	/** \copydetails ParameteredObject::execute() */
 	virtual void execute();
 
 	/// initialize iterator
-	/** initialize helper object and run pre iteration hook
-	 */
+	/** initialize helper object and run pre iteration hook */
 	void initialize();
 
 	/// perform one Iteration
@@ -119,7 +119,7 @@ public:
 	 *  - prepareStep()
 	 *  - performStep()
 	 *  - finishStep()
-	 *  \return  true if no stop criterion has been fulfilled
+	 *  \retval true    no stop criterion has been fulfilled
 	 */
 	bool singleStep();
 
@@ -132,7 +132,9 @@ public:
 	void performStep();
 
 	/// finish one Iteration
-	/** update result and check stop criteria */
+	/** update result and check stop criteria
+	 *  \retval true    no stop criterion has been fulfilled
+	 */
 	bool finishStep();
 
 	/// perform all Iterations

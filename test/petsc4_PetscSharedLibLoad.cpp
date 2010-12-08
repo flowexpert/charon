@@ -31,6 +31,7 @@
  *  this test checks for this problem.
  *  This Unix-specific, so not available on Win platforms.
  *  \param argc,argv Command line options passed to MPI and PETSc
+ *  \returns zero in case of success
  */
 int main(int argc, char** argv) {
 	std::cout << "opening libmpi.so.0" << std::endl;

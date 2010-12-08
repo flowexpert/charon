@@ -78,6 +78,7 @@ public:
 	 *  a value of 1 means that only the final stencils are used.
 	 *  Values in between cause a weighted mean with weight <i>(1-cur)</i>
 	 *  of the initial and weight <i>cur</i> of the final stencils.
+	 *  \returns current relaxation status
 	 */
 	double getCur() const;
 };

@@ -112,15 +112,9 @@ public:
 	/// brightness constancy energy function
 	InputSlot<Function*> psi;
 
-	/// set to true if you want to calculate flow increments
-	/** This skips writing an offset caused by the current flow into
-	 *  the RHS. The solver will then calculate flow differences to
-	 *  the previous iteration. Set option "accumulate" to true in the
-	 *  iterator.
-	 */
+	/// Calculate flow increments
 	Parameter<bool> calcDifferences;
-	/// use derivatives of img2
-	/** Use derivatives \f$I_x,I_y\f$ of Img2 istead of Img1. */
+	/// Use derivatives \f$I_x,I_y\f$ of Img2 istead of Img1
 	Parameter<bool> useImg2;
 	/// use linearization of second derivative
 	Parameter<bool> useDiff2Lin;

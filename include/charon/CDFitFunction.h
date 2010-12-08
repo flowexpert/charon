@@ -15,8 +15,8 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// \file CDFitFunction.h
-/** Declaration of abstract class CDFitFunction.
+/** \file CDFitFunction.h
+ *  Declaration of abstract class CDFitFunction.
  *  \author Jens-Malte Gottfried
  *  \date 16.09.2009
  */
@@ -26,6 +26,7 @@
 #include <charon-core/ParameteredObject.h>
 #include <charon/Functions/Function.h>
 
+/// DLL handling
 #ifdef HANDLE_DLL
 #ifdef cdfitfunction_EXPORTS
 #define cdfitfunction_DECLDIR __declspec(dllexport)
@@ -72,6 +73,7 @@ public:
 	/// Range hint for histogram generation.
 	/** Default implementation simply returns 1.
 	 *  \param i    select dimension to query range hint for
+	 *  \returns default implementation returns dummy value 1.
 	 */
 	virtual double rangeHint(std::vector<double>::size_type i = 0) const;
 
