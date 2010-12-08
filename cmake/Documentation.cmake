@@ -106,6 +106,9 @@ IF (DOXYGEN_FOUND)
         ADD_CUSTOM_COMMAND(
             OUTPUT  ${PROJECT_BINARY_DIR}/doc/latex/refman.tex
             COMMAND ${DOXYGEN_EXECUTABLE} "${DOXY_CONFIG_PDF}"
+            COMMAND ${CMAKE_COMMAND} -E copy
+                "${PROJECT_SOURCE_DIR}/doc/doxygen.sty"
+                "${PROJECT_BINARY_DIR}/doc/latex/doxygen.sty"
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         )
 
