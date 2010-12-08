@@ -1,5 +1,6 @@
 # Test suite of application
 IF(BUILD_TESTING)
+	FIND_PACKAGE(Gnuplot)
 	INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 	INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 	INCLUDE_DIRECTORIES(${charon-utils_INCLUDE_DIRS})
@@ -241,6 +242,7 @@ IF(BUILD_TESTING)
 	)
 	ADD_EXECUTABLE(fit3_GSM
 		fit3_GSM.cpp
+		fit3_GSM.plt
 	)
 	TARGET_LINK_LIBRARIES(fit3_GSM
 		charon-plugins
@@ -251,6 +253,13 @@ IF(BUILD_TESTING)
 		NAME Fit3:_GSM
 		COMMAND fit3_GSM
 	)
+	IF(GNUPLOT_FOUND)
+		CONFIGURE_FILE(fit3_GSM.plt fit3_GSM.plt COPYONLY)
+		ADD_TEST(
+			NAME Fit3:_GSM_plot
+			COMMAND ${GNUPLOT_EXECUTABLE} fit3_GSM.plt
+		)
+	ENDIF(GNUPLOT_FOUND)
 
 	IF(WIN32)
 		# copy needed dll for tests and application run before installing

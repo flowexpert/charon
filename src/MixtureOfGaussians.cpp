@@ -91,7 +91,7 @@ double MixtureOfGaussians::EnergyFunction::diff2Linearized(
 		std::vector<double>::size_type i,
 		std::vector<double>::size_type j) const {
 	// avoid division by zero
-	if(x[j] <= std::numeric_limits<double>::min())
+	if(std::abs(x[j]) <= std::numeric_limits<double>::min())
 		return diff2(x,i,j);
 
 	// assume largest sigma to be the last one
