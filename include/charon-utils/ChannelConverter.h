@@ -79,8 +79,10 @@ public:
 
 private:
 	/// dimension select for permutation
-	/// \param x,y,z,v,t input
-	/// \param sel	select wich variable to return
+	/** \param x,y,z,v,t  input
+	 *  \param sel        select wich variable to return
+	 *  \returns          selected variable (x,y,z,v or t)
+	 */
 	unsigned int _select(
 		unsigned int x, unsigned int y, unsigned int z,
 		unsigned int v, unsigned int t, char sel) const;

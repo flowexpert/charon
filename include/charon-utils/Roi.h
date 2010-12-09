@@ -151,8 +151,10 @@ public:
 		const T& vBegin = T(0), const T& vEnd = T(1));
 
 	/// Assign values from another region.
-	/// This does copy the region limits.
-	/// @param rhs          copy source
+	/** This does copy the region limits.
+	 *  \param rhs          copy source
+	 *  \returns            updated object
+	 */
 	Roi<T>& operator=(const Roi<T>& rhs);
 
 	/// Enlarge region so that all elements of this region and
@@ -167,7 +169,9 @@ public:
 	void intersectionWith(const Roi<T>& rhs);
 
 	/// Check if a given point is inside the region.
-	/// \param x,y,z,t,v	point coordinates
+	/** \param x,y,z,t,v    point coordinates
+	 *  \retval true        point is within ROI
+	 */
 	bool isInside(T x, T y = 0, T z = 0, T t = 0, T v = 0) const;
 
 	/// Load region parameters from the given parameter file.
@@ -179,21 +183,23 @@ public:
 };
 
 /// Simplify roi output to some std::ostream.
-/// @param strm             output stream
-/// @param roi              roi instance to print
+/** \param strm             output stream
+ *  \param roi              roi instance to print
+ *  \returns                modified os
+ */
 template<typename T>
 roi_DECLDIR std::ostream& operator<<(std::ostream& strm, const Roi<T>& roi);
 
 /// for loop over the x dimension
-#define forRoiX(roi,x)		for(int x=(int)((roi).xBegin); x<(int)((roi).xEnd); ++x)
+#define forRoiX(roi,x)       for(int x=(int)((roi).xBegin); x<(int)((roi).xEnd); ++x)
 /// for loop over the y dimension
-#define forRoiY(roi,y)		for(int y=(int)((roi).yBegin); y<(int)((roi).yEnd); ++y)
+#define forRoiY(roi,y)       for(int y=(int)((roi).yBegin); y<(int)((roi).yEnd); ++y)
 /// for loop over the z dimension
-#define forRoiZ(roi,z)		for(int z=(int)((roi).zBegin); z<(int)((roi).zEnd); ++z)
-/// for loop over the t dimesnion
-#define forRoiT(roi,t)		for(int t=(int)((roi).tBegin); t<(int)((roi).tEnd); ++t)
+#define forRoiZ(roi,z)       for(int z=(int)((roi).zBegin); z<(int)((roi).zEnd); ++z)
+/// for loop over the t dimension
+#define forRoiT(roi,t)       for(int t=(int)((roi).tBegin); t<(int)((roi).tEnd); ++t)
 /// for loop over the v dimension
-#define forRoiV(roi,v)		for(int v=(ind)((roi).vBegin); v<(int)((roi).vEnd); ++v)
+#define forRoiV(roi,v)       for(int v=(ind)((roi).vBegin); v<(int)((roi).vEnd); ++v)
 /// for loop over the xy plane
 #define forRoiXY(roi,x,y)    forRoiY(roi,y) forRoiX(roi,x)
 /// for loop over the xz plane

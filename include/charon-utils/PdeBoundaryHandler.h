@@ -107,21 +107,23 @@ private:
     /// of any node-CImg by correcting the coordinates wrt the stencilWidths
     /// @param  x,y,z,t         value position coordinates
     /// @param  data            image to read from
+	/// @returns data at requested value positions
     T* get(int x, int y, int z, int t,
            const cimg_library::CImg<T*>* data);
 
     /// Const version of get(int, int, int, int, cimg_library::CImg<T*>*).
     /// @param  x,y,z,t         value position coordinates
     /// @param  data            image to read from
-    const T* getC(int x, int y, int z, int t,
+	/// @returns data at requested value positions
+	const T* getC(int x, int y, int z, int t,
                   const cimg_library::CImg<T*>* data) const;
 
     /// Retrieves the next boundary position beginning at an arbitrary
     /// location. This function can be used to set constant boundary values
     /// or initial boundary values.
-    /// The function returns false if no more boundary points exist.
     /// @param  position        current position output
-    bool getNextBoundaryPosition(Position& position);
+	/// @retval false           no more boundary points exist
+	bool getNextBoundaryPosition(Position& position);
 
     /// Resets the boundary iterator to the first position.
     void resetBoundaryPositionIterator();
@@ -241,9 +243,11 @@ public:
     //  @{
     /// Return unknowns array of size nDof.
     /// @param  x,y,z,t         position coordinates
+	/// @returns unknowns array
     const T* getU(int x, int y=0, int z=0, int t=0) const;
     /// Get residuals at given position
     /// @param  x,y,z,t         position coordinates
+	/// @returns residual array
     /// @todo check if really needed
     const T* getR(int x, int y=0, int z=0, int t=0) const;
     /// Set unknowns.
@@ -258,6 +262,7 @@ public:
     void setR(int x, int y, int z, int t, int p, T v);
     /// Get value of the boundaryMask at the stored value position.
     /// @param x,y,z,t          position coordinates
+	/// @returns                boundary mask value
     bool isBoundary(int x, int y, int z, int t) const;
     //  @}
 

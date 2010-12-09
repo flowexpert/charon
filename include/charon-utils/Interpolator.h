@@ -48,19 +48,22 @@
 #include <charon-utils/CImg.h>
 
 /// Abstract interpolation scheme.
-/// This class is used to choose an interpolation
-/// scheme during runtime without the
-/// the need for if or switch-statements.
-/// To use an interpolator use subclasses of Interpolator
-/// e.g. InterpolatorLinear or InterpolatorCubic.
+/** This class is used to choose an interpolation
+ *  scheme during runtime without the
+ *  the need for if or switch-statements.
+ *  To use an interpolator use subclasses of Interpolator
+ *  e.g. InterpolatorLinear or InterpolatorCubic.
+ */
 template <typename T>
-class interpolator_DECLDIR Interpolator : public TemplatedParameteredObject<T> {
+class interpolator_DECLDIR Interpolator :
+		public TemplatedParameteredObject<T> {
 protected:
 	/// Init interpolator.
-	/// Parameters are passed to the ParameteredObject constructor.
-	/// @param className        class name
-	/// @param name             instance name
-	/// @param doc              class documentation
+	/** Parameters are passed to the ParameteredObject constructor.
+	 *  \param className        class name
+	 *  \param name             instance name
+	 *  \param doc              class documentation
+	 */
 	Interpolator(
 			const std::string& className,
 			const std::string& name,
@@ -73,11 +76,13 @@ public:
 	virtual ~Interpolator();
 
 	/// Calculate interpolation (up to 3D).
-	/// @param src              interpolation source
-	/// @param fx               x position
-	/// @param fy               y position
-	/// @param fz               z position
-	/// @param v                4th dimension
+	/** \param src              interpolation source
+	 *  \param fx               x position
+	 *  \param fy               y position
+	 *  \param fz               z position
+	 *  \param v                4th dimension
+	 *  \returns                interpolated value
+	 */
 	virtual T interpolate(const cimg_library::CImg<T>& src,
 		float fx, float fy = 0.f, float fz = 0.f, int v = 0) const = 0;
 };

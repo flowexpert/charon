@@ -178,20 +178,19 @@ namespace ImgTool {
                                    T& mean, T& variance);
 
     /// Calculate covariance of two images from their joint Hisotgram.
-    /// imgMin and imgMax are used for normalization of x and dx and should
-    /// be the same values that have been used for the histogram generation.
-    /**
-        \f[
-            \text{ret} = \int_{i=0}^n\int_{j=0}^n
-                i \cdot j \cdot \text{jointHist}(i,j)~di~dj
-                - \text{mean1} \cdot \text{mean2}
-        \f]
-      */
-    /// @param  jointHist   joint hisogram of img1 and img2
-    /// @param  imgMin      min from histogram generation
-    /// @param  imgMax      max from histogram generation
-    /// @param  mean1       mean of img1
-    /// @param  mean2       mean of img2
+	/** imgMin and imgMax are used for normalization of x and dx and should
+	 *  be the same values that have been used for the histogram generation.
+	 *  \f[ \text{ret} = \int_{i=0}^n\int_{j=0}^n
+			i \cdot j \cdot \text{jointHist}(i,j)~di~dj
+				- \text{mean1} \cdot \text{mean2} \f]
+	 *
+	 *  \param  jointHist   joint hisogram of img1 and img2
+	 *  \param  imgMin      min from histogram generation
+	 *  \param  imgMax      max from histogram generation
+	 *  \param  mean1       mean of img1
+	 *  \param  mean2       mean of img2
+	 *  \returns            ret (s.o.)
+	 */
     template <typename T>
     T covariance(const cimg_library::CImg<T>& jointHist,
                  T mean1, T mean2, T imgMin, T imgMax);
@@ -714,65 +713,58 @@ namespace ImgTool {
                              cimg_library::CImg<T>& result);
 
     /// Calculate Baroon/Fleet (angular) error.
-    /// The result is defined as:
-    /**
-        \f[
-            \text{res} = \text{acos}~\frac{\vec{x}\cdot\vec{y}+1}
-                {(\vec{x}^2+1)\cdot(\vec{y}^2+1)}
-        \f]
-     */
-    /// @param  fx          \f$\vec{x}_1\f$
-    /// @param  fy          \f$\vec{x}_2\f$
-    /// @param  gtFx        \f$\vec{y}_1\f$
-    /// @param  gtFy        \f$\vec{y}_2\f$
-    template <typename T>
+	/** The result is defined as:
+	 *  \f[ \text{res} = \text{acos}~\frac{\vec{x}\cdot\vec{y}+1}
+				{(\vec{x}^2+1)\cdot(\vec{y}^2+1)} \f]
+	 *  \param  fx          \f$\vec{x}_1\f$
+	 *  \param  fy          \f$\vec{x}_2\f$
+	 *  \param  gtFx        \f$\vec{y}_1\f$
+	 *  \param  gtFy        \f$\vec{y}_2\f$
+	 *  \returns            res (s.o.)
+	 */
+	template <typename T>
     T barronFleetError(const T& fx,   const T& fy,
                        const T& gtFx, const T& gtFy);
 
     /// Calculate amplitude error.
-    /// The result is defined as:
-    /**
-        \f[
-            \text{res} = \left\vert\sqrt{\vec{x}^2}-\sqrt{\vec{y}^2}\right\vert
-        \f]
-     */
-    /// @param  fx          \f$\vec{x}_1\f$
-    /// @param  fy          \f$\vec{x}_2\f$
-    /// @param  gtFx        \f$\vec{y}_1\f$
-    /// @param  gtFy        \f$\vec{y}_2\f$
-    /// @param  relative    divide result by \f$\sqrt{\vec{x}^2}\f$
+	/** The result is defined as:
+	 *  \f[\text{res} = \left\vert\sqrt{\vec{x}^2}
+			-\sqrt{\vec{y}^2}\right\vert \f]
+	 *  \param  fx          \f$\vec{x}_1\f$
+	 *  \param  fy          \f$\vec{x}_2\f$
+	 *  \param  gtFx        \f$\vec{y}_1\f$
+	 *  \param  gtFy        \f$\vec{y}_2\f$
+	 *  \param  relative    divide result by \f$\sqrt{\vec{x}^2}\f$
+	 *  \returns            res (s.o.)
+	 */
     template <typename T>
     T amplitudeError(const T& fx,   const T& fy,
                      const T& gtFx, const T& gtFy,
                      bool relative);
 
     /// Calculate angular error.
-    /// The result is defined as:
-    /**
-        \f[
-            \text{res} = \text{acos}~\frac{\vec{x}\cdot\vec{y}}
-                {\sqrt{\vec{x}^2\cdot\vec{y}^2}}
-        \f]
-     */
-    /// @param  fx          \f$\vec{x}_1\f$
-    /// @param  fy          \f$\vec{x}_2\f$
-    /// @param  gtFx        \f$\vec{y}_1\f$
-    /// @param  gtFy        \f$\vec{y}_2\f$
+	/** The result is defined as:
+	 *  \f[ \text{res} = \text{acos}~\frac{\vec{x}\cdot\vec{y}}
+			{\sqrt{\vec{x}^2\cdot\vec{y}^2}} \f]
+	 *  \param  fx          \f$\vec{x}_1\f$
+	 *  \param  fy          \f$\vec{x}_2\f$
+	 *  \param  gtFx        \f$\vec{y}_1\f$
+	 *  \param  gtFy        \f$\vec{y}_2\f$
+	 *  \returns            res (s.o.)
+	 */
     template <typename T>
     T angleError(const T& fx,   const T& fy,
                  const T& gtFx, const T& gtFy);
 
     /// Calculate endpoint error.
-    /// The result is defined as:
-    /**
-        \f[
-            \text{res} = \left\vert\vec{x}-\vec{y}\right\vert_2
-        \f]
-     */
-    /// @param  fx          \f$\vec{x}_1\f$
-    /// @param  fy          \f$\vec{x}_2\f$
-    /// @param  gtFx        \f$\vec{y}_1\f$
-    /// @param  gtFy        \f$\vec{y}_2\f$
+	/** The result is defined as:
+	 *  \f[ \text{res} = \left\vert\vec{x}-\vec{y}\right\vert_2 \f]
+	 *  \param  fx          \f$\vec{x}_1\f$
+	 *  \param  fy          \f$\vec{x}_2\f$
+	 *  \param  gtFx        \f$\vec{y}_1\f$
+	 *  \param  gtFy        \f$\vec{y}_2\f$
+	 *  \returns            res (s.o.)
+	 */
     template <typename T>
     T endPointError(const T& fx,   const T& fy,
                     const T& gtFx, const T& gtFy);
@@ -838,12 +830,16 @@ namespace ImgTool {
     void crop3d(cimg_library::CImg<T>& src, Roi<T2> roi);
 
 	/// get string with image size information
-	/// \param  img			image input
+	/** \param  img         image input
+	 *  \returns            image size information
+	 */
 	template <typename T>
 	std::string sizeString(const cimg_library::CImg<T>& img);
 
 	/// get string with image data information
-	/// \param  img			image input
+	/** \param  img         image input
+	 *  \returns            image data description
+	 */
 	template <typename T>
 	std::string dataString(const cimg_library::CImg<T>& img);
 
@@ -852,6 +848,7 @@ namespace ImgTool {
 	 *  matrix representation.
 	 *  \param  img         image input
 	 *  \param  maxEntries  maximal number of matrix rows/cols to print
+	 *  \returns            image content string representation
 	 */
 	template <typename T>
 	std::string contentString(
@@ -859,11 +856,14 @@ namespace ImgTool {
 			unsigned int maxEntries = 5u);
 
 	/// print image information
+	/** \param[in,out] os   output stream to print to
+	 *  \param[in] img      input image
+	 *  \param[in] prefix    prefix to print on new lines first
+	 */
 	template <typename T>
 	void printInfo(
-		std::ostream& os                 /**[in,out] output stream to print to*/,
-		const cimg_library::CImg<T>& img /**[in]     input image*/,
-		const std::string& prefix = ""   /**[in]     prefix to print on new lines first*/);
+		std::ostream& os, const cimg_library::CImg<T>& img,
+		const std::string& prefix = "");
 }
 
 #endif // _ImgTool_H

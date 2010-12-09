@@ -2,7 +2,7 @@
 
 IF (DOXYGEN_FOUND)
 	# Possibility to enable/disable documentation creation
-	OPTION(USE_LATEX "activate pdfdoc generation" ON)
+	OPTION(USE_LATEX "activate pdfdoc generation" OFF)
 	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
 	SET(${PROJECT_NAME}_INSTALL_DOC doc/${PROJECT_NAME}
 		CACHE PATH "${PROJECT_NAME} documentation install prefix")
@@ -31,9 +31,6 @@ IF (DOXYGEN_FOUND)
 	ELSE(ENABLE_DOC_VERBOSE)
 		SET(DOXY_QUIET          YES)
 	ENDIF(ENABLE_DOC_VERBOSE)
-	IF(NOT USE_LATEX)
-		SET(DOXY_SKIP_PDFDOC    YES)
-	ENDIF(NOT USE_LATEX)
 
 	# LaTeX needed to generate formula
 	FIND_PACKAGE(LATEX QUIET)
@@ -75,7 +72,8 @@ IF (DOXYGEN_FOUND)
 		COMMENT "Generating ${PROJECT_NAME} html documentation"
 	)
 	ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_html)
-	SET_TARGET_PROPERTIES(${PROJECT_NAME}_doc_html PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+	SET_TARGET_PROPERTIES(${PROJECT_NAME}_doc_html
+		PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 
 	# install html documentation
 	INSTALL(
@@ -93,7 +91,7 @@ IF (DOXYGEN_FOUND)
 		COMPONENT       htmldoc
 	)
 
-	IF(LATEX_COMPILER AND NOT DOXY_SKIP_PDFDOC)
+	IF(LATEX_COMPILER AND USE_LATEX)
 		SET(DOXY_DOC_RECURSIVE      NO)
 		SET(DOXY_DOC_PATTERN        *_doc.txt)
 		SET(DOXY_DOC_PATHS          doc)
@@ -113,7 +111,8 @@ IF (DOXYGEN_FOUND)
 		ADD_CUSTOM_COMMAND(
 			OUTPUT  ${PROJECT_BINARY_DIR}/doc/latex/refman.pdf
 			DEPENDS ${PROJECT_BINARY_DIR}/doc/latex/refman.tex
-			COMMAND ${CMAKE_COMMAND} -E remove *.aux *.toc *.idx *.ind *.ilg *.log *.out
+			COMMAND ${CMAKE_COMMAND} -E remove
+				*.aux *.toc *.idx *.ind *.ilg *.log *.out
 			COMMAND ${PDFLATEX_COMPILER}  refman.tex
 			COMMAND ${MAKEINDEX_COMPILER} refman.idx
 			COMMAND ${PDFLATEX_COMPILER}  refman.tex
@@ -127,7 +126,8 @@ IF (DOXYGEN_FOUND)
 		)
 
 		ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_pdf)
-		SET_TARGET_PROPERTIES(${PROJECT_NAME}_doc_pdf PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+		SET_TARGET_PROPERTIES(${PROJECT_NAME}_doc_pdf
+			PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 
 		# install pdf documentation
 		INSTALL(
@@ -137,5 +137,5 @@ IF (DOXYGEN_FOUND)
 			OPTIONAL
 			COMPONENT       pdfdoc
 		)
-	ENDIF(LATEX_COMPILER AND NOT DOXY_SKIP_PDFDOC)
+	ENDIF(LATEX_COMPILER AND USE_LATEX)
 ENDIF (DOXYGEN_FOUND)

@@ -78,13 +78,13 @@ public:
     /// Copy content to another pyramid and return pointer to it.
     virtual Pyramid<T>* getCopy() = 0;
 
-    // virtual Roi<T> getRoi(Roi<int> srRoi, int n) = 0;
-
     /// Get number of pyramid levels.
+	/// \returns pyramid level number
     int getLevels() const;
 
     /// Return single level from the pyramid.
     /// @param  n                   number of the level to get
+	/// \returns                    selected pyramid level
     cimg_library::CImg<T>* getLevel(int n);
 
     /// Returns the factor that was used to resize the image from
@@ -95,6 +95,7 @@ public:
     ///
     /// Version for x-dimension.
     /// @param n                    level to select
+	/// \returns                    x scale factor for selected level
     T getScaleFactorX(int n) const;
 
     /// Returns the factor that was used to resize the image from
@@ -105,18 +106,10 @@ public:
     ///
     /// Version for y-dimension.
     /// @param n                    level to select
-    T getScaleFactorY(int n) const;
+	/// \returns                    y scale factor for selected level
+	T getScaleFactorY(int n) const;
 
-    /*
-    /// Returns the factor that was used to resize the image
-    /// from the scale 'from' to the scale 'to'.
-    /// Thus, getLevel(from)->dimx()*factor - getLevel(to)->dimx() < epsilon
-    /// where epsilon is the error which occured due to integer rounding
-    /// of the image dimensions.
-    T getScaleBetweenLevels(int from, int to);
-    */
-
-    /// Save pyramid properties to a ParameterFile.
+	/// Save pyramid properties to a ParameterFile.
     /// Content is not saved.
     /// @param  pf                  ParameterFile to write to.
     /// @param  name                name prefix
