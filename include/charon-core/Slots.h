@@ -75,7 +75,8 @@ protected:
 	/// flag to mark this slot as optional
 	bool _optional;
 
-	/// Mark this slot as a multislot that can have multiple sources/targets
+	/// flag to mark this slot as a multislot,
+	/// that can have multiple sources/targets.
 	bool _multiSlot;
 
 public:
@@ -222,14 +223,8 @@ public:
 	virtual ~InputSlot();
 
 	// overload Slot functions
-	/// Call operator.
-	/** Non const version
-	 *  \returns data content (no copy) */
 	virtual operator T() const;
-	/// Call operator.
-	/** \returns data content (const reference, no copy) */
 	virtual const T& operator()() const;
-
 	virtual const T& operator[](std::size_t pos) const;
 	virtual std::size_t size() const;
 };

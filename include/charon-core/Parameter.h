@@ -186,27 +186,12 @@ public:
 	void    setDefault(const T& value);
 
 	// overload inherited functions
-	/// Try to guess type
-	/** \returns string representation of T */
 	virtual std::string guessType() const;
-	/// Save to ParameterFile
-	/** \copydetails AbstractParameter::save() */
-	virtual void save(ParameterFile& pf) const;
-	/// Load from ParameterFile
-	/** \copydetails AbstractParameter::load() */
-	virtual void load(const ParameterFile& pf);
-	/// Get default value
-	/** \copydetails AbstractParameter::getDefaultString() */
-	virtual std::string getDefaultString();
-
-	/// Call operator.
-	/** \returns data content (const reference, no copy) */
 	virtual const T& operator()() const;
-
-	/// Call operator.
-	/** Non const version
-	 *  \returns data content (no copy) */
 	virtual T& operator()();
+	virtual void save(ParameterFile& pf) const;
+	virtual void load(const ParameterFile& pf);
+	virtual std::string getDefaultString();
 
 	/**
 	 * Inserts the value of the Parameter at the end of a stream.
@@ -266,17 +251,9 @@ public:
 	/// Call operator to get a const reference to the parameter list content.
 	const std::vector<T>& operator()() const;
 
-	/// Try to guess type
-	/** \returns string representation of T */
 	virtual std::string guessType() const;
-	/// Save to ParameterFile
-	/** \copydetails AbstractParameter::save() */
 	virtual void save(ParameterFile& pf) const;
-	/// Load from ParameterFile
-	/** \copydetails AbstractParameter::load() */
 	virtual void load(const ParameterFile& pf);
-	/// Get default value
-	/** \copydetails AbstractParameter::getDefaultString() */
 	virtual std::string getDefaultString();
 
 	// inherited by AbstractMultiData<T>

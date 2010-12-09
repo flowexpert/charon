@@ -96,7 +96,6 @@ private:
 	/** This parameterfile is used for metadata generation
 	 *  and stores the class names with their parameters
 	 *  and slots.
-	 *  \returns nothing (this is no function, fix warning due to doxygen bug)
 	 */
 	ParameterFile _metadata;
 
