@@ -1,25 +1,25 @@
-/*	Copyright (C) 2009 Jens-Malte Gottfried
+/*  Copyright (C) 2009 Jens-Malte Gottfried
 
 	This file is part of Tuchulcha.
-    
-    Tuchulcha is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
 
-    Tuchulcha is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Tuchulcha is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
+	Tuchulcha is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License
+	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
 */
-/**	@file MainWindow.h
- *	@brief Declaration of class MainWindow
+/** \file   MainWindow.h
+ *  \brief  Declaration of class MainWindow
  *
- *	@date	27.08.2008
- *	@author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+ *  \date   27.08.2008
+ *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
 #ifndef MAINWINDOW_H_
@@ -40,7 +40,7 @@ class MainWindow : public QMainWindow {
 
 public:
 	/**	Default constructor.
-	 *	@param parent	pointer to parent widget
+	 *	\param parent	pointer to parent widget
 	 */
 	MainWindow(QWidget* parent = 0);
 	virtual ~MainWindow();
@@ -77,17 +77,17 @@ public slots:
 
 signals:
 	/// inform about changed graph to edit
-	/// @param model	new model to edit, 0 if no model exists
+	/// \param model	new model to edit, 0 if no model exists
 	void activeGraphModelChanged(ParameterFileModel* model);
 
 	/// enable/disable edit widgets
-	/// @param enable	if to enable widgets or not
+	/// \param enable	if to enable widgets or not
 	void enableEditors(bool enable);
 
 protected:
 	/// Close event handler.
 	/// Save window state and close the window.
-	/// @param event	close event
+	/// \param event	close event
 	virtual void closeEvent(QCloseEvent* event);
 
 private slots:
@@ -101,7 +101,7 @@ private slots:
 	void _options();
 
 	/// update windows when new flowchart has been selected
-	/// @param window	activated window
+	/// \param window	activated window
 	void _windowActivated(QMdiSubWindow* window);
 
 	/// open recent file
@@ -126,7 +126,9 @@ private:
 	QAction* _recentFileActs[_maxRecentFiles];
 
 	/// strip file name
-	/// \param fullFileName    filenane to strip
+	/** \param fullFileName    filenane to strip
+	 *  \returns               stripped name
+	 */
 	QString _strippedName(const QString& fullFileName) const;
 };
 

@@ -31,9 +31,6 @@ PrefixValidator::PrefixValidator(const ParameterFile& data, QObject* myParent) :
 		_parameterFile(data) {
 }
 
-PrefixValidator::~PrefixValidator() {
-}
-
 QValidator::State PrefixValidator::validate(QString& input, int&) const {
 	if(input.isEmpty())
 		return QValidator::Acceptable;

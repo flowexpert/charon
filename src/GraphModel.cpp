@@ -35,7 +35,9 @@
 #include "GraphModel.moc"
 
 /// transform std::string into lowercase
-/** \param[in] input  string to transform */
+/** \param[in] input  string to transform
+ *  \returns          lowercase version
+ */
 inline std::string _toLower(std::string input) {
 	std::transform(
 		input.begin(), input.end(), input.begin(),
