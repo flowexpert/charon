@@ -35,7 +35,9 @@
 #include <QToolButton>
 #include <QComboBox>
 #include <QResizeEvent>
+#include <QDoubleSpinBox>
 #include "QDirEdit.h"
+#include <cfloat>
 
 InspectorDelegate::InspectorDelegate(QObject* p) :
 		QStyledItemDelegate(p) {
@@ -98,16 +100,30 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 				editor->setCurrentIndex(2);
 			return editor;
 		}
+		if(type == "double" || type == "float") {
+			QDoubleSpinBox* editor =
+				new QDoubleSpinBox(p) ;
+			editor->setObjectName("doublespinbox") ;
+			editor->setDecimals(6) ;
+			editor->setMinimum(DBL_MIN) ;
+			editor->setMaximum(DBL_MAX) ;
+			return editor ;
+		}
 	}
 	return QStyledItemDelegate::createEditor(p,opt,ind);
 }
 
 void InspectorDelegate::setModelData (QWidget* editor,
-		QAbstractItemModel* model, const QModelIndex & index ) const {
-	QComboBox* box = qobject_cast<QComboBox*>(editor);
+	QAbstractItemModel* model, const QModelIndex & index ) const {
+	
 	if(editor && (editor->objectName() == "templatetypeBox")) {
+		QComboBox* box = qobject_cast<QComboBox*>(editor);
 		model->setData(index,box->currentText());
 		return;
+	}
+	else if(editor && (editor->objectName() == "doublespinbox")) {
+		QDoubleSpinBox* box = qobject_cast<QDoubleSpinBox*>(editor) ;
+		model->setData(index, box->value()) ;
 	}
 	QStyledItemDelegate::setModelData(editor, model, index);
 }
