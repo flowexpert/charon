@@ -21,42 +21,41 @@
  *  \date 26.11.2010
  */
 
-#ifndef _ARGOSDISPLAY_H_
-#define _ARGOSDISPLAY_H_
+#ifndef _STATISTICSDISPLAY_H_
+#define _STATISTICSDISPLAY_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef argosdisplay_EXPORTS
+#ifdef statisticsdisplay_EXPORTS
 /// Visual C++ specific code
-#define argosdisplay_DECLDIR __declspec(dllexport)
+#define statisticsdisplay_DECLDIR __declspec(dllexport)
 #else
-#define argosdisplay_DECLDIR __declspec(dllimport)
+#define statisticsdisplay_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 /// Not needed with GCC
-#define argosdisplay_DECLDIR
+#define statisticsdisplay_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
 #include <vigra/multi_array.hxx>
-#include <QWidget>
 
-namespace ArgosDisplay
-{
-	class MainWindow ;
-	//class QWidget ;
 
-/// Charon Plugin Frontend for advanced Argos Display
+class QWidget ;
+
+/// Charon Plugin Frontend for statistics calculation and display widget
 template <typename T>
-class argosdisplay_DECLDIR ArgosDisplayPlugin :
+class statisticsdisplay_DECLDIR StatisticsDisplay :
 		public TemplatedParameteredObject<T> {
 public:
 	
-	/// create a new ArgosDisplay
+	typedef std::map<std::string, double> StatMap ;
+
+	/// create a new StatisticsDisplay
 	/// \param name          Instance name
-	ArgosDisplayPlugin(const std::string& name);
+	StatisticsDisplay(const std::string& name);
 
 	/// Destruct Object
-	~ArgosDisplayPlugin() ;
+	~StatisticsDisplay() ;
 
 	/// Update object.
 	virtual void execute();
@@ -64,17 +63,22 @@ public:
 	/// The vigra::MultiArray input
 	InputSlot < vigra::MultiArrayView<5, T> > _in;
 
-	InputSlot <QWidget*> _widgets ;
-
+	OutputSlot < QWidget*> _display ;
+	
+	Parameter <bool> _writeToSout ;
+	
 private:
 
-	///main plugin window
-	MainWindow* _mainWindow ;
+	QWidget* _exportWidget ;
+	
+	std::vector<std::map<std::string, double> > _statistics ;
+
+	void createWidget() ;
 
 };
 
-} ;
-#endif // _ARGOSDISPLAY_H_
+#endif // _STATISTICSDISPLAY_H_
+
 
 
 

@@ -31,10 +31,13 @@ using namespace ArgosDisplay ;
 ViewStack::ViewStack(QWidget* parent) : QWidget(parent)
 {
 	_tabWidget = new QTabWidget(this) ;
+		_tabWidget->setUsesScrollButtons(true) ;
 
 	QVBoxLayout* layout = new QVBoxLayout ;
 		layout->addWidget(_tabWidget) ;
 	this->setLayout(layout) ;
+	QSizePolicy policy(QSizePolicy::Minimum, QSizePolicy::Minimum) ;
+	this->setSizePolicy(policy) ;
 }
 
 ViewStack::~ViewStack()

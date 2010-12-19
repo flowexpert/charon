@@ -38,13 +38,19 @@ template <typename T>
 ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("ArgosDisplay", name,
 			"Advanced Display Plugin"),
-			in(false, true),
+			_in(false, true),
+			_widgets(true, true),
 			_mainWindow(0)
 {
 	ParameteredObject::_addInputSlot(
-			in, "in",
+			_in, "in",
 			"The vigra::MultiArray<5, T> input.",
 			"vigraArray5<T>");
+
+	ParameteredObject::_addInputSlot(
+			_widgets, "widgets",
+			"QWidgets to display in Dock areas.",
+			"QWidget*") ;
 
 	if(!qApp)
 	{
@@ -76,8 +82,11 @@ void ArgosDisplayPlugin<T>::execute() {
 	
 	_mainWindow->show() ;
 	
-	for(std::size_t ii = 0 ; ii < in.size() ; ii++)
-	{	_mainWindow->viewStack().linkImage(in[ii]) ;	}
+	for(std::size_t ii = 0 ; ii < _in.size() ; ii++)
+	{	_mainWindow->viewStack().linkImage(_in[ii]) ;	}
+	
+	for(std::size_t ii = 0 ; ii < _widgets.size() ; ii++)
+	{	_mainWindow->addDockWidget(_widgets[ii]) ;	}
 	//#pragma warning(pop)
 }
 

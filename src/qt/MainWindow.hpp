@@ -48,6 +48,8 @@ namespace ArgosDisplay
 		/// link images to the Windows central ViewStack widget
 		ViewStack& viewStack() ;
 
+		void addDockWidget(QWidget* widget) ;
+
 	private:
 
 		/// central Widget for image view management

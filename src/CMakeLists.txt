@@ -1,6 +1,7 @@
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
 SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 
 IF(MSVC)
@@ -179,6 +180,7 @@ IF(USE_VIGRA)
 		${CHARON_UTILS_INCLUDE_DIR}/SplineResize.h
 		${CHARON_UTILS_INCLUDE_DIR}/SplineResize.hxx
 	)
+	
 	SET(Plugins_Vigra
 		cimg2vigramultiarray
 		vigramultiarray2cimg
@@ -230,15 +232,23 @@ IF(USE_QT)
 		${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.hxx
 	)
 	
+	ADD_LIBRARY(statisticsdisplay SHARED
+		StatisticsDisplay.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/StatisticsDisplay.h
+		${CHARON_UTILS_INCLUDE_DIR}/StatisticsDisplay.hxx
+	)
+
+	
 	SET(Plugins_Qt
 		argosdisplay
+		statisticsdisplay
 	)
 
 	LIST(APPEND Plugins
 		${Plugins_Qt}
 	)
 	FOREACH(X ${Plugins_Qt})
-		TARGET_LINK_LIBRARIES(${X} charonwidgets)
+		TARGET_LINK_LIBRARIES(${X} charonwidgets ${QT_LIBRARIES})
 	ENDFOREACH(X)
 	
 	
