@@ -30,11 +30,7 @@
 #include <vigra/multi_iterator.hxx>
 #include <vigra/navigator.hxx>
 #include <vigra/multi_pointoperators.hxx>
-#include <QApplication>
-#include <QWidget>
-#include <QLabel>
-#include <QLayout>
-
+#include <QtGui>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -161,16 +157,27 @@ void StatisticsDisplay<T>::createWidget()
 	if(!_display.connected())
 	{	return ;	}
 	_exportWidget = new QWidget ;
-	QVBoxLayout* layout = new QVBoxLayout ;
+	_exportWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum) ;
+	_exportWidget->setObjectName(QString("Statistics")) ;
+	QVBoxLayout* vLayout = new QVBoxLayout ;
+	QGridLayout* layout = new QGridLayout ;
 	const StatMap& statistics = _statistics[0] ;
+	layout->setContentsMargins(1,1,1,1) ;
 
 	StatMap::const_iterator it = statistics.begin() ;
+	int row = 0 ;
 	for(; it != statistics.end() ; it++)
 	{
-		QLabel* label = new QLabel(QString("%1: %2").arg(QString::fromStdString(it->first)).arg(it->second), _exportWidget) ;
-		layout->addWidget(label) ;
+		QLabel* label = new QLabel(QString::fromStdString(it->first), _exportWidget) ;
+		QLineEdit* line = new QLineEdit(QString("%2").arg(it->second), _exportWidget) ;
+		line->setReadOnly(true) ;
+		line->setFrame(false) ;
+		layout->addWidget(label, row, 0) ;
+		layout->addWidget(line, row++, 1) ;
 	}
-	_exportWidget->setLayout(layout) ;
+	vLayout->addLayout(layout) ;
+	vLayout->addStretch() ;
+	_exportWidget->setLayout(vLayout) ;
 
 	_display() = _exportWidget ;
 }
