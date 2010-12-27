@@ -42,8 +42,8 @@
 
 namespace ArgosDisplay
 {
-	class MainWindow ;
-	//class QWidget ;
+	
+class MainWindow ;
 
 /// Charon Plugin Frontend for advanced Argos Display
 template <typename T>
@@ -70,10 +70,10 @@ private:
 
 	///main plugin window
 	MainWindow* _mainWindow ;
+} ; //class ArgosDisplayPlugin
 
-};
 
-} ;
+} ; //namespace ArgosDisplay
 #endif // _ARGOSDISPLAY_H_
 
 

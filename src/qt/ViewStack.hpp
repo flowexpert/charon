@@ -28,13 +28,23 @@
 //#include <charon-core/ParameteredObject.hxx>
 #include <QWidget>
 #include "vigraqt/vigraqimage.hxx"
-#include <vigra/multi_array.hxx>
 #include <vigra/stdimage.hxx>
+#include <vigra/multi_array.hxx>
+#include <map>
+
+#include <QMessageBox>
 
 class QTabWidget ;
-
+class QStatusBar ;
 
 namespace ArgosDisplay {
+
+	typedef vigra::MultiArrayView<5, int> VigraIntArray ;
+	typedef vigra::MultiArrayView<5, float> VigraFloatArray ;
+	typedef vigra::MultiArrayView<5, double> VigraDoubleArray ;
+
+	class PixelInspector ;
+
 
 	/// creates and manages all imageviewer instances
 	class charonwidgets_DECLDIR ViewStack : public QWidget
@@ -49,27 +59,54 @@ namespace ArgosDisplay {
 		/// default destructor
 		~ViewStack() ;
 
-		/// copys vigra MuliArray into display capable image object
-		template<typename T>
-		void linkImage(const vigra::MultiArrayView<5, T>& img) ;
-
-	private:
-
 		/// create new FImageViewer and display float image
 		void linkFloatImage(const vigra::FImage& img) ;
 		
 		/// create new QImageViewer and display color image
 		void linkRgbaImage(const vigra::QRGBImage& img) ;
 
+		template<typename T>
+		void linkImage(const vigra::MultiArrayView<5, T>&, const std::string& type) ;
+		//void linkImage(const VigraIntArray&) ;
+		//void linkImage(const VigraFloatArray&) ;
+		//void linkImage(const VigraDoubleArray&) ;
+
+
+	private:
+
+
 		/// image stack
 		QTabWidget* _tabWidget ;
 
+		QStatusBar* _statusBar ;
+
+		std::vector<const VigraIntArray* const> _intImgMap ;
+		std::vector<const VigraFloatArray* const> _floatImgMap ;
+		std::vector<const VigraDoubleArray* const> _doubleImgMap ;
+
+	private slots:
+
+		/// handle mouse movement in ImageDisplays
+		void processMouseMovement(int x, int y) ;
+
+	signals:
+
+		/// export status messages as signal
+		void exportStatusMessage(QString message) ;
 	} ;
 
 	template<typename T>
-	void ViewStack::linkImage(const vigra::MultiArrayView<5, T>& mArray)
-	{	//interpret Array as color image
-		//TODO: add some sanity checks and error checks
+	void ViewStack::linkImage(const vigra::MultiArrayView<5, T>& mArray, const std::string& type)
+	{
+		if(type == std::string("vigraarray5<int>"))
+		{	_intImgMap.push_back(reinterpret_cast<const vigra::MultiArrayView<5, int>* >(&mArray))	;	}
+		else if(type == std::string("vigraarray5<float>"))
+		{	_floatImgMap.push_back(reinterpret_cast<const vigra::MultiArrayView<5, float>* >(&mArray))	;	}
+		else if(type == std::string("vigraarray5<double>"))
+		{	_doubleImgMap.push_back(reinterpret_cast<const vigra::MultiArrayView<5, double>* >(&mArray))	;	}
+		else
+		{	throw std::runtime_error("ViewStack::linkImage: unknown template type! only int, float and double are supported!") ;	}
+
 		if(mArray.size(3) == 3)
 		{	vigra::QRGBImage img(mArray.size(0), mArray.size(1)) ;
 			for(int xx = 0 ; xx < mArray.size(0) ; ++xx)
@@ -86,9 +123,9 @@ namespace ArgosDisplay {
 				for(int yy = 0 ; yy < mArray.size(1) ; ++yy)
 				{	img(xx,yy) = mArray(xx,yy,0,0,0) ;	}
 			linkFloatImage(img) ;
-
 		}
 	}
+
 } ;
 
 #endif /* _ARGOSDISPLAY_VIEWSTACK_HPP_ */

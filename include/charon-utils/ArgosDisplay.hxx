@@ -60,6 +60,7 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 	}
 
 	_mainWindow = new MainWindow ;
+
 }
 
 template <typename T>
@@ -83,11 +84,16 @@ void ArgosDisplayPlugin<T>::execute() {
 	_mainWindow->show() ;
 	
 	for(std::size_t ii = 0 ; ii < _in.size() ; ii++)
-	{	_mainWindow->viewStack().linkImage(_in[ii]) ;	}
+	{
+		_mainWindow->viewStack().linkImage(_in[ii], _in.getType()) ;
+	}		
 	
 	for(std::size_t ii = 0 ; ii < _widgets.size() ; ii++)
-	{	_mainWindow->addDockWidget(_widgets[ii]) ;	}
+	{	
+		_mainWindow->addDockWidget(_widgets[ii]) ;
+	}
 	//#pragma warning(pop)
+
 }
 
 #endif /* _ARGOSDISPLAY_HXX_ */

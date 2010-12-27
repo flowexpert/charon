@@ -25,6 +25,7 @@
 #include <QtGui>
 #include "vigraqt/qimageviewer.hxx"
 #include "vigraqt/fimageviewer.hxx"
+#include <charon-utils/ArgosDisplay.h>
 
 using namespace ArgosDisplay ;
 
@@ -33,8 +34,11 @@ ViewStack::ViewStack(QWidget* parent) : QWidget(parent)
 	_tabWidget = new QTabWidget(this) ;
 		_tabWidget->setUsesScrollButtons(true) ;
 
+	_statusBar = new QStatusBar(this) ;
+
 	QVBoxLayout* layout = new QVBoxLayout ;
 		layout->addWidget(_tabWidget) ;
+		layout->addWidget(_statusBar) ;
 	this->setLayout(layout) ;
 	QSizePolicy policy(QSizePolicy::Minimum, QSizePolicy::Minimum) ;
 	this->setSizePolicy(policy) ;
@@ -48,13 +52,36 @@ ViewStack::~ViewStack()
 void ViewStack::linkFloatImage(const vigra::FImage& img)
 {
 	FImageViewer* viewer = new FImageViewer(0) ;
+	//_imgList.insert(std::pair<QWidget*, const vigra::MultiArrayView<5, T>*>(viewer, &mArray)) ;
+
 	_tabWidget->addTab(viewer, QString("%1").arg(_tabWidget->count())) ;
 	viewer->setImage(img) ;
+	connect(viewer->imageViewer(), SIGNAL(mouseOver(int, int)), this, SLOT(processMouseMovement(int, int))) ;
 }
 
 void ViewStack::linkRgbaImage(const vigra::QRGBImage& img)
 {
 	QImageViewer* viewer = new QImageViewer(0) ;
+	//_imgList.insert(std::pair<QWidget*, const vigra::MultiArrayView<5, T>*>(viewer, &mArray)) ;
 	_tabWidget->addTab(viewer, QString("%1").arg(_tabWidget->count())) ;
 	viewer->setImage(img.qImage()) ;
+	connect(viewer, SIGNAL(mouseOver(int, int)), this, SLOT(processMouseMovement(int, int))) ;
 }
+
+
+
+void ViewStack::processMouseMovement(int x, int y)
+{
+	QString message = QString("%1, %2").arg(x).arg(y) ;
+	std::vector<const VigraDoubleArray* const>::iterator it = _doubleImgMap.begin() ;
+	for(; it != _doubleImgMap.end() ; it++)
+	{
+		const VigraDoubleArray& array = *(*it) ;
+		if(x < 0 || y < 0 || array.size() <= 0 || x >= array.size(0) || y >= array.size(1))
+		{	continue ;	}
+		message += QString(", %1").arg(array(x,y,0,0,0)) ;
+	}
+	
+	_statusBar->showMessage(message) ;
+}
+
