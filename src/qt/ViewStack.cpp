@@ -49,21 +49,20 @@ ViewStack::~ViewStack()
 	;
 }
 
-void ViewStack::linkFloatImage(const vigra::FImage& img)
+void ViewStack::linkFloatImage(const vigra::FImage& img, const std::string& name)
 {
 	FImageViewer* viewer = new FImageViewer(0) ;
 	//_imgList.insert(std::pair<QWidget*, const vigra::MultiArrayView<5, T>*>(viewer, &mArray)) ;
-
-	_tabWidget->addTab(viewer, QString("%1").arg(_tabWidget->count())) ;
+	_tabWidget->addTab(viewer, QString::fromStdString(name)) ;
 	viewer->setImage(img) ;
 	connect(viewer->imageViewer(), SIGNAL(mouseOver(int, int)), this, SLOT(processMouseMovement(int, int))) ;
 }
 
-void ViewStack::linkRgbaImage(const vigra::QRGBImage& img)
+void ViewStack::linkRgbaImage(const vigra::QRGBImage& img, const std::string& name)
 {
 	QImageViewer* viewer = new QImageViewer(0) ;
 	//_imgList.insert(std::pair<QWidget*, const vigra::MultiArrayView<5, T>*>(viewer, &mArray)) ;
-	_tabWidget->addTab(viewer, QString("%1").arg(_tabWidget->count())) ;
+	_tabWidget->addTab(viewer, QString::fromStdString(name)) ;
 	viewer->setImage(img.qImage()) ;
 	connect(viewer, SIGNAL(mouseOver(int, int)), this, SLOT(processMouseMovement(int, int))) ;
 }
@@ -81,7 +80,7 @@ void ViewStack::processMouseMovement(int x, int y)
 		{	continue ;	}
 		message += QString(", %1").arg(array(x,y,0,0,0)) ;
 	}
-	
+
 	_statusBar->showMessage(message) ;
 }
 
