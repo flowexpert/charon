@@ -22,9 +22,11 @@
  */
 
 ///Class name of the plugin
-#define TYPE StatisticsDisplay
+#define TYPE StatisticsDisplayPlugin
 
 #include <charon-utils/StatisticsDisplay.hxx>
+
+using namespace StatisticsDisplay ;
 
 ///Creates an instance of the plugin
 extern "C" statisticsdisplay_DECLDIR ParameteredObject*

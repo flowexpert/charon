@@ -43,12 +43,14 @@
 #include <boost/accumulators/statistics/count.hpp>
 using namespace boost::accumulators;
 
+namespace StatisticsDisplay {
 
 template <typename T>
-StatisticsDisplay<T>::StatisticsDisplay(const std::string& name) :
+StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("StatisticsDisplay", name,
-			"Calculates various statistical properties of input object and extports a QWidget for display"),
+			"Calculates various statistical properties of input object and exports a QWidget for display"),
 			_in(false, true),
+			_mask(true, false),
 			_writeToSout(true),
 			_exportWidget(0)
 {
@@ -56,6 +58,14 @@ StatisticsDisplay<T>::StatisticsDisplay(const std::string& name) :
 			_in, "in",
 			"The vigra::MultiArray<5, T> input.",
 			"vigraArray5<T>");
+
+	ParameteredObject::_addInputSlot(
+			_mask, "mask",
+			"Mask to determine where the statistics should be calculated.<br>"
+			"This is not a multislot as there is no possibility to map multiple mask to the corresponding images in \"in\"<br>"
+			"The mask will be applied to all images as long as their dimensions match.",
+			"vigraArray5<T>");
+
 
 	ParameteredObject::_addOutputSlot(
 			_display, "display",
@@ -76,13 +86,13 @@ StatisticsDisplay<T>::StatisticsDisplay(const std::string& name) :
 }
 
 template <typename T>
-StatisticsDisplay<T>::~StatisticsDisplay()
+StatisticsDisplayPlugin<T>::~StatisticsDisplayPlugin()
 {
 	//dont't delete _exportWidget, its parent widget will take care of this
 }
 
 template <typename T>
-void StatisticsDisplay<T>::execute() {
+void StatisticsDisplayPlugin<T>::execute() {
 	//#pragma warning(push)
 	//#pragma warning(disable : 4244)
 	typedef vigra::MultiArrayView<5, T> Array ;
@@ -95,6 +105,7 @@ void StatisticsDisplay<T>::execute() {
 	std::set<AbstractSlot<Array>*>::const_iterator it = _in.begin() ;
 	std::set<AbstractSlot<Array>*>::const_iterator end = _in.end() ;
 
+	/*
 	size_t index = 0 ;
 	for(; it != end ; it++, index++)
 	{
@@ -104,14 +115,41 @@ void StatisticsDisplay<T>::execute() {
 		//WARNING: It is not clear that the slot iterators and the operator[] of _in will return their objects in the same order
 		//pointer-to-name correspondences may be wrong
 		parentNames.insert(std::pair<const Array* const, std::string> ( &(_in[index]),name)) ;
-	}
+	}*/
 	
-	for(std::size_t ii = 0 ; ii < _in.size() ; ii++)
+	for(std::size_t ii = 0 ; (ii < _in.size()) && (it != end) ; ii++, it++)
 	{
+		std::string name = (*it)->getParent().getName() ;
+
 		accumulator_set<double, stats<tag::min, tag::max, tag::count, tag::sum, tag::mean, tag::variance, tag::median> > acc;
 
 		const Array& img = _in[ii] ;
-		vigra::inspectMultiArray(srcMultiArrayRange(img), acc);
+		if(!_mask.connected())
+		{	
+			vigra::inspectMultiArray(srcMultiArrayRange(img), acc);
+		}
+		else
+		{
+			const Array& mask = _mask() ;
+			if(mask.size(0) != img.size(0) ||
+				mask.size(1) != img.size(1) ||
+				mask.size(2) != img.size(2) ||
+				mask.size(3) != img.size(3) ||
+				mask.size(4) != img.size(4))
+			{	sout << "Dimensions of mask and input array do not match" << std::endl ;
+				continue ;
+			}
+			//can we do this with iterators? or with OpenMP if boost::accumulator is thread-safe?
+			for(int xx = 0 ; xx < mask.size(0) ; xx++)
+				for(int yy = 0 ; yy < mask.size(0) ; yy++)
+					for(int zz = 0 ; zz < mask.size(0) ; zz++)
+						for(int tt = 0 ; tt < mask.size(0) ; tt++)
+							for(int vv = 0 ; vv < mask.size(0) ; vv++)
+								if(mask(xx,yy,zz,tt,vv) != 0)
+									acc(img(xx,yy,zz,tt,vv)) ;
+		}
+		
+
 
 		/*
 		typedef vigra::MultiArray<5, T>  Array;
@@ -127,24 +165,36 @@ void StatisticsDisplay<T>::execute() {
 			{	acc(*i) ;	}
 		}
 		*/
-		_statistics.push_back(StatMap()) ;
-		StatMap& statistics = _statistics.back() ;
+		
+		Statistics s ;
+
 		typedef std::pair<std::string, double> StatPair ;
-		statistics.insert(StatPair("number of pixels",count(acc))) ;
-		statistics.insert(StatPair("sum",sum(acc))) ;
-		statistics.insert(StatPair("min",min(acc))) ;
-		statistics.insert(StatPair("max",max(acc))) ;
-		statistics.insert(StatPair("mean",mean(acc))) ;
-		statistics.insert(StatPair("variance",variance(acc))) ;
-		statistics.insert(StatPair("stddev",sqrt(variance(acc)))) ;
-		statistics.insert(StatPair("median",median(acc))) ;
+		s.stats.insert(StatPair("dim0 : width",img.size(0))) ;
+		s.stats.insert(StatPair("dim1 : height",img.size(1))) ;
+		s.stats.insert(StatPair("dim2 : depth",img.size(2))) ;
+		s.stats.insert(StatPair("dim3 : slices",img.size(3))) ;
+		s.stats.insert(StatPair("dim4 : spectrum",img.size(4))) ;
+		s.stats.insert(StatPair("number of pixels",count(acc))) ;
+		s.stats.insert(StatPair("sum",sum(acc))) ;
+		s.stats.insert(StatPair("min",min(acc))) ;
+		s.stats.insert(StatPair("max",max(acc))) ;
+		s.stats.insert(StatPair("mean",mean(acc))) ;
+		s.stats.insert(StatPair("variance",variance(acc))) ;
+		s.stats.insert(StatPair("stddev",sqrt(variance(acc)))) ;
+		s.stats.insert(StatPair("median",median(acc))) ;
+		s.origin = name ;
+
+		_statistics.push_back(s) ;
 
 		//get name of parent name if present in map
-		sout << "Statistics for " << ((parentNames.count(&img) == 1) ? parentNames[&img] : "unknown") ;
-		std::map<std::string,double>::const_iterator it = statistics.begin() ;
-		for(; it != statistics.end() ; it++)
-		{	sout << "\n\t" << it->first << ": " << it->second ;	}
-		sout << std::endl ;
+		if(_writeToSout())
+		{
+			sout << "Statistics for " << name ;
+			std::map<std::string,double>::const_iterator it = s.stats.begin() ;
+			for(; it != s.stats.end() ; it++)
+			{	sout << "\n\t" << it->first << ": " << it->second ;	}
+			sout << std::endl ;
+		}
 	}
 	
 	createWidget() ;
@@ -152,34 +202,45 @@ void StatisticsDisplay<T>::execute() {
 }
 
 template <typename T>
-void StatisticsDisplay<T>::createWidget()
+void StatisticsDisplayPlugin<T>::createWidget()
 {
 	if(!_display.connected())
 	{	return ;	}
-	_exportWidget = new QWidget ;
+
+	QTabWidget* tabWidget = new QTabWidget ;
+		tabWidget->setUsesScrollButtons(true) ;
+		tabWidget->setTabPosition(QTabWidget::East) ;
+	_exportWidget = tabWidget ;
 	_exportWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum) ;
 	_exportWidget->setObjectName(QString("Statistics")) ;
-	QVBoxLayout* vLayout = new QVBoxLayout ;
-	QGridLayout* layout = new QGridLayout ;
-	const StatMap& statistics = _statistics[0] ;
-	layout->setContentsMargins(1,1,1,1) ;
-
-	StatMap::const_iterator it = statistics.begin() ;
-	int row = 0 ;
-	for(; it != statistics.end() ; it++)
+	std::vector<Statistics>::const_iterator it1 = _statistics.begin() ;
+	for(; it1 != _statistics.end() ; it1++)
 	{
-		QLabel* label = new QLabel(QString::fromStdString(it->first), _exportWidget) ;
-		QLineEdit* line = new QLineEdit(QString("%2").arg(it->second), _exportWidget) ;
-		line->setReadOnly(true) ;
-		line->setFrame(false) ;
-		layout->addWidget(label, row, 0) ;
-		layout->addWidget(line, row++, 1) ;
-	}
-	vLayout->addLayout(layout) ;
-	vLayout->addStretch() ;
-	_exportWidget->setLayout(vLayout) ;
+		QWidget* tab = new QWidget ;
+		QVBoxLayout* vLayout = new QVBoxLayout ;
+		vLayout->setContentsMargins(1,1,1,1) ;
+		QGridLayout* layout = new QGridLayout ;
+		const Statistics& s = (*it1) ;
+		layout->setContentsMargins(1,1,1,1) ;
 
+		std::map<std::string, double>::const_iterator it = s.stats.begin() ;
+		int row = 0 ;
+		for(; it != s.stats.end() ; it++)
+		{
+			QLabel* label = new QLabel(QString::fromStdString(it->first), _exportWidget) ;
+			QLineEdit* line = new QLineEdit(QString("%2").arg(it->second), _exportWidget) ;
+			line->setReadOnly(true) ;
+			line->setFrame(false) ;
+			layout->addWidget(label, row, 0) ;
+			layout->addWidget(line, row++, 1) ;
+		}
+		vLayout->addLayout(layout) ;
+		vLayout->addStretch() ;
+		tab->setLayout(vLayout) ;
+		tabWidget->addTab(tab, QString::fromStdString(s.origin)) ;
+	}
 	_display() = _exportWidget ;
 }
 
+} // namespace StatisticsDisplay
 #endif /* _STATISTICSDISPLAY_HXX_ */

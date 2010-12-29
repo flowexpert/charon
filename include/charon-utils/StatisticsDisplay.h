@@ -39,44 +39,56 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <vigra/multi_array.hxx>
 
-
 class QWidget ;
 
-/// Charon Plugin Frontend for statistics calculation and display widget
-template <typename T>
-class statisticsdisplay_DECLDIR StatisticsDisplay :
-		public TemplatedParameteredObject<T> {
-public:
+namespace StatisticsDisplay {
+
+	struct Statistics
+	{
+		///all calculated statistic values and properties
+		std::map<std::string, double> stats ;
+		///name of parent object
+		std::string origin ;
+	} ;
+
+	/// Charon Plugin Frontend for statistics calculation and display widget
+	template <typename T>
+	class statisticsdisplay_DECLDIR StatisticsDisplayPlugin :
+			public TemplatedParameteredObject<T> {
+	public:
 	
-	typedef std::map<std::string, double> StatMap ;
+		typedef std::map<std::string, double> StatMap ;
 
-	/// create a new StatisticsDisplay
-	/// \param name          Instance name
-	StatisticsDisplay(const std::string& name);
+		/// create a new StatisticsDisplay
+		/// \param name          Instance name
+		StatisticsDisplayPlugin(const std::string& name);
 
-	/// Destruct Object
-	~StatisticsDisplay() ;
+		/// Destruct Object
+		~StatisticsDisplayPlugin() ;
 
-	/// Update object.
-	virtual void execute();
+		/// Update object.
+		virtual void execute();
 
-	/// The vigra::MultiArray input
-	InputSlot < vigra::MultiArrayView<5, T> > _in;
+		/// The vigra::MultiArray input
+		InputSlot < vigra::MultiArrayView<5, T> > _in;
 
-	OutputSlot < QWidget*> _display ;
+		InputSlot < vigra::MultiArrayView<5, T> > _mask;
+
+		OutputSlot < QWidget*> _display ;
 	
-	Parameter <bool> _writeToSout ;
+		Parameter <bool> _writeToSout ;
 	
-private:
+	private:
 
-	QWidget* _exportWidget ;
+		QWidget* _exportWidget ;
 	
-	std::vector<std::map<std::string, double> > _statistics ;
+		std::vector<Statistics> _statistics ;
 
-	void createWidget() ;
+		void createWidget() ;
 
-};
+	}; //class StatisticsDisplayPlugin
 
+} ; //namespace StatisticsDisplay
 #endif // _STATISTICSDISPLAY_H_
 
 
