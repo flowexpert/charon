@@ -71,16 +71,57 @@ void ViewStack::linkRgbaImage(const vigra::QRGBImage& img, const std::string& na
 
 void ViewStack::processMouseMovement(int x, int y)
 {
-	QString message = QString("%1, %2").arg(x).arg(y) ;
-	std::vector<const VigraDoubleArray* const>::iterator it = _doubleImgMap.begin() ;
-	for(; it != _doubleImgMap.end() ; it++)
+	QString message = QString("x : %1 y : %2").arg(x).arg(y) ;
+	std::vector<std::pair<std::string, const VigraDoubleArray* const> >::iterator dit = _doubleImgMap.begin() ;
+	for(; dit != _doubleImgMap.end() ; dit++)
 	{
-		const VigraDoubleArray& array = *(*it) ;
+		const VigraDoubleArray& array = *(dit->second) ;
 		if(x < 0 || y < 0 || array.size() <= 0 || x >= array.size(0) || y >= array.size(1))
 		{	continue ;	}
-		message += QString(", %1").arg(array(x,y,0,0,0)) ;
+		message += QString("  %1 : { ").arg(QString::fromStdString(dit->first)) ;
+
+		for(size_t i = 0 ; i < array.size(4) ; i++)
+		{	message += QString("%1 ").arg(array(x,y,0,0,i)) ;	}
+		message += QString("}") ;
+	}
+	std::vector<std::pair<std::string, const VigraFloatArray* const> >::iterator fit = _floatImgMap.begin() ;
+	for(; fit != _floatImgMap.end() ; fit++)
+	{
+		const VigraFloatArray& array = *(fit->second) ;
+		if(x < 0 || y < 0 || array.size() <= 0 || x >= array.size(0) || y >= array.size(1))
+		{	continue ;	}
+		message += QString("  %1 : { ").arg(QString::fromStdString(dit->first)) ;
+
+		for(size_t i = 0 ; i < array.size(4) ; i++)
+		{	message += QString("%1 ").arg(array(x,y,0,0,i)) ;	}
+		message += QString("}") ;
+	}
+	std::vector<std::pair<std::string, const VigraIntArray* const> >::iterator it = _intImgMap.begin() ;
+	for(; it != _intImgMap.end() ; it++)
+	{
+		const VigraIntArray& array = *(it->second) ;
+		if(x < 0 || y < 0 || array.size() <= 0 || x >= array.size(0) || y >= array.size(1))
+		{	continue ;	}
+		message += QString("  %1 : { ").arg(QString::fromStdString(dit->first)) ;
+
+		for(size_t i = 0 ; i < array.size(4) ; i++)
+		{	message += QString("%1 ").arg(array(x,y,0,0,i)) ;	}
+		message += QString("}") ;
 	}
 
+
 	_statusBar->showMessage(message) ;
+}
+
+void ViewStack::keyPressEvent(QKeyEvent * event )
+{
+	int key = event->key() ;
+	
+	//assume the int values of Key_1 to Key_9 are in ascending order
+	if(key >= Qt::Key_1 && key <= Qt::Key_9)
+	{	_tabWidget->setCurrentIndex(key % Qt::Key_1) ;	} //<- this will give 0 for Key_1, 1 for Key_2 ...
+	//QTabWidget will check the range for us (at least in Qt 4.6 it did)
+	else
+	{	this->QWidget::keyPressEvent(event) ;	} //pass event to base class
 }
 

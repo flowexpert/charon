@@ -37,14 +37,15 @@ using namespace ArgosDisplay ;
 template <typename T>
 ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("ArgosDisplay", name,
-			"Advanced Display Plugin"),
+			"Advanced Display Plugin<br>Allows inspection and display of "),
 			_in(false, true),
 			_widgets(true, true),
 			_mainWindow(0)
 {
 	ParameteredObject::_addInputSlot(
 			_in, "in",
-			"The vigra::MultiArray<5, T> input.",
+			"Multislot for input images.<br>"
+			"Will display the first slice of an array (meaning all dimensions except 0 and 1 are set to 0)",
 			"vigraArray5<T>");
 
 	ParameteredObject::_addInputSlot(
@@ -52,10 +53,15 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"QWidgets to display in Dock areas.",
 			"QWidget*") ;
 
+	ParameteredObject::_addParameter<bool>(_inputIsRGB, "inputIsRGB",
+		"try to interpret input as 8bit (0-255) RGB images if 3. dimension is exaclty of size 3,<br"
+		"otherwise use grayscale", false, "bool");
+
+
 	if(!qApp)
 	{
 		sout << "ArgosDisplayPlugin::No QApplication found! " 
-			<< "ArgosDisplay can only be used in a Qt GUI Application!" << std::endl ;
+			<< "ArgosDisplay can only be used in a Qt GUI Application! (e.g. Tuchulcha)" << std::endl ;
 		return ;
 	}
 
@@ -93,7 +99,7 @@ void ArgosDisplayPlugin<T>::execute() {
 	{
 		std::string name = (*it)->getParent().getName() ;
 		//register all Arrays with the ViewStack
-		_mainWindow->viewStack().linkImage(_in[index], _in.getType(), name) ;
+		_mainWindow->viewStack().linkImage(_in[index], _in.getType(), name, _inputIsRGB()) ;
 	}
 	
 	for(std::size_t ii = 0 ; ii < _widgets.size() ; ii++)

@@ -66,6 +66,8 @@ public:
 
 	InputSlot <QWidget*> _widgets ;
 
+	Parameter<bool> _inputIsRGB ;
+
 private:
 
 	///main plugin window
