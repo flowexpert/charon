@@ -91,8 +91,8 @@ void ArgosDisplayPlugin<T>::execute() {
 	
 	//std::map<const Array* const, std::string> parentNames ;
 	//get pointers to all OutputSlots of the _in Multislot to get the names of the corresponding Plugin Instances
-	std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>::const_iterator it = _in.begin() ;
-	std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>::const_iterator end = _in.end() ;
+	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>::const_iterator it = _in.begin() ;
+	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>::const_iterator end = _in.end() ;
 
 	//the double range check here is redundante but better to be sure
 	for(int index = 0 ; (it != end) && (index < _in.size()) ; it++, index++)
