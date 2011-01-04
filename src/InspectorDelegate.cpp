@@ -37,7 +37,7 @@
 #include <QResizeEvent>
 #include <QDoubleSpinBox>
 #include "QDirEdit.h"
-#include <cfloat>
+#include <limits>
 
 InspectorDelegate::InspectorDelegate(QObject* p) :
 		QStyledItemDelegate(p) {
@@ -60,8 +60,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 		type.toLower();
 
 		if (type=="openfile" || type=="fileopen") {
-			QDirEdit* editor =
-					new QDirEdit(param.c_str(), p);
+			QDirEdit* editor = new QDirEdit(param.c_str(), p);
 			editor->acceptFiles(true, false);
 			connect(
 					editor, SIGNAL(dialogOpen(bool)),
@@ -69,8 +68,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 			return editor;
 		}
 		if (type=="writefile" || type=="filewrite" || type=="filename") {
-			QDirEdit* editor =
-					new QDirEdit(param.c_str(), p);
+			QDirEdit* editor = new QDirEdit(param.c_str(), p);
 			editor->acceptFiles(true, true);
 			connect(
 					editor, SIGNAL(dialogOpen(bool)),
@@ -78,8 +76,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 			return editor;
 		}
 		if (type == "path") {
-			QDirEdit* editor =
-					new QDirEdit(param.c_str(), p);
+			QDirEdit* editor = new QDirEdit(param.c_str(), p);
 			connect(
 					editor, SIGNAL(dialogOpen(bool)),
 					this, SLOT(_setFileDialogFlag(bool)));
@@ -100,14 +97,19 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 				editor->setCurrentIndex(2);
 			return editor;
 		}
-		if(type == "double" || type == "float") {
-			QDoubleSpinBox* editor =
-				new QDoubleSpinBox(p) ;
-			editor->setObjectName("doublespinbox") ;
+		if(type == "float") {
+			QDoubleSpinBox* editor = new QDoubleSpinBox(p) ;
 			editor->setDecimals(6) ;
-			editor->setMinimum(DBL_MIN) ;
-			editor->setMaximum(DBL_MAX) ;
-			return editor ;
+			editor->setMinimum(-std::numeric_limits<float>::max()) ;
+			editor->setMaximum(std::numeric_limits<float>::max()) ;
+			return editor;
+		}
+		else if(type == "double") {
+			QDoubleSpinBox* editor = new QDoubleSpinBox(p) ;
+			editor->setDecimals(6) ;
+			editor->setMinimum(-std::numeric_limits<double>::max()) ;
+			editor->setMaximum(std::numeric_limits<double>::max()) ;
+			return editor;
 		}
 	}
 	return QStyledItemDelegate::createEditor(p,opt,ind);
@@ -120,10 +122,6 @@ void InspectorDelegate::setModelData (QWidget* editor,
 		QComboBox* box = qobject_cast<QComboBox*>(editor);
 		model->setData(index,box->currentText());
 		return;
-	}
-	else if(editor && (editor->objectName() == "doublespinbox")) {
-		QDoubleSpinBox* box = qobject_cast<QDoubleSpinBox*>(editor) ;
-		model->setData(index, box->value()) ;
 	}
 	QStyledItemDelegate::setModelData(editor, model, index);
 }
