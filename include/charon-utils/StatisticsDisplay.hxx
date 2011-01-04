@@ -74,9 +74,7 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 template <typename T>
 StatisticsDisplayPlugin<T>::~StatisticsDisplayPlugin()
 {
-	//delete _exportWidget only if it has no parent, otherwise the parent will take care of this
-	if(_exportWidget && _exportWidget->parent() == 0)
-	{	delete _exportWidget ;	}
+	//don't delete the exportWidget as the parent Widget will take care of this 
 }
 
 template <typename T>
