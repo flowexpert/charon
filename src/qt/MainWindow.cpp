@@ -49,6 +49,8 @@ ViewStack& MainWindow::viewStack()
 void MainWindow::addDockWidget(QWidget* widget)
 {
 	Q_ASSERT(widget) ;
+	if(widget->parent() != 0)
+	{	return ;	}
 	QDockWidget* dockWidget = new QDockWidget(this) ;
 	dockWidget->setWidget(widget) ;
 	this->QMainWindow::addDockWidget(Qt::LeftDockWidgetArea, dockWidget) ;
