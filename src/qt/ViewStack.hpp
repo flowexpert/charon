@@ -77,9 +77,9 @@ namespace ArgosDisplay {
 		QStatusBar* _statusBar ;
 
 		///pointers to pixel data for each possible template type
-		std::vector<std::pair<std::string, const VigraIntArray* const> > _intImgMap ;
-		std::vector<std::pair<std::string, const VigraFloatArray* const> > _floatImgMap ;
-		std::vector<std::pair<std::string, const VigraDoubleArray* const> > _doubleImgMap ;
+                std::vector<std::pair<std::string, const VigraIntArray* > > _intImgMap ;
+                std::vector<std::pair<std::string, const VigraFloatArray* > > _floatImgMap ;
+                std::vector<std::pair<std::string, const VigraDoubleArray* > > _doubleImgMap ;
 
 		/// create new FImageViewer and display float image
 		void linkFloatImage(const vigra::FImage& img, const std::string& name) ;
@@ -109,17 +109,17 @@ namespace ArgosDisplay {
 		//This section needs to be reworked when new base template types for Plugins would ever be introduced
 		if(type == std::string("vigraarray5<int>"))
 		{	
-			std::pair<std::string, const VigraIntArray* const> val(name, reinterpret_cast<const vigra::MultiArrayView<5, int>* >(&mArray)) ;
+                        std::pair<std::string, const VigraIntArray*> val(name, reinterpret_cast<const vigra::MultiArrayView<5, int>* >(&mArray)) ;
 			_intImgMap.push_back(val)	;
 		}
 		else if(type == std::string("vigraarray5<float>"))
 		{	
-			std::pair<std::string, const VigraFloatArray* const> val(name, reinterpret_cast<const vigra::MultiArrayView<5, float>* >(&mArray)) ;
+                        std::pair<std::string, const VigraFloatArray* > val(name, reinterpret_cast<const vigra::MultiArrayView<5, float>* >(&mArray)) ;
 			_floatImgMap.push_back(val)	;
 		}
 		else if(type == std::string("vigraarray5<double>"))
 		{	
-			std::pair<std::string, const VigraDoubleArray* const> val(name, reinterpret_cast<const vigra::MultiArrayView<5, double>* >(&mArray)) ;
+                        std::pair<std::string, const VigraDoubleArray* > val(name, reinterpret_cast<const vigra::MultiArrayView<5, double>* >(&mArray)) ;
 			_doubleImgMap.push_back(val)	;	
 		}
 		else

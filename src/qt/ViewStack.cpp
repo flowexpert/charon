@@ -72,19 +72,21 @@ void ViewStack::linkRgbaImage(const vigra::QRGBImage& img, const std::string& na
 void ViewStack::processMouseMovement(int x, int y)
 {
 	QString message = QString("x : %1 y : %2").arg(x).arg(y) ;
-	std::vector<std::pair<std::string, const VigraDoubleArray* const> >::iterator dit = _doubleImgMap.begin() ;
+		std::vector<std::pair<std::string, const VigraDoubleArray* > >::iterator dit = _doubleImgMap.begin() ;
 	for(; dit != _doubleImgMap.end() ; dit++)
 	{
 		const VigraDoubleArray& array = *(dit->second) ;
 		if(x < 0 || y < 0 || array.size() <= 0 || x >= array.size(0) || y >= array.size(1))
 		{	continue ;	}
-		message += QString("  %1 : { ").arg(QString::fromStdString(dit->first)) ;
+				//append name of parent node
+				message += QString("  %1 : { ").arg(QString::fromStdString(dit->first)) ;
 
-		for(size_t i = 0 ; i < array.size(4) ; i++)
+				//append pixel values
+				for(int i = 0 ; i < array.size(4) ; i++)
 		{	message += QString("%1 ").arg(array(x,y,0,0,i)) ;	}
 		message += QString("}") ;
 	}
-	std::vector<std::pair<std::string, const VigraFloatArray* const> >::iterator fit = _floatImgMap.begin() ;
+		std::vector<std::pair<std::string, const VigraFloatArray* > >::iterator fit = _floatImgMap.begin() ;
 	for(; fit != _floatImgMap.end() ; fit++)
 	{
 		const VigraFloatArray& array = *(fit->second) ;
@@ -92,11 +94,11 @@ void ViewStack::processMouseMovement(int x, int y)
 		{	continue ;	}
 		message += QString("  %1 : { ").arg(QString::fromStdString(dit->first)) ;
 
-		for(size_t i = 0 ; i < array.size(4) ; i++)
+				for(int i = 0 ; i < array.size(4) ; i++)
 		{	message += QString("%1 ").arg(array(x,y,0,0,i)) ;	}
 		message += QString("}") ;
 	}
-	std::vector<std::pair<std::string, const VigraIntArray* const> >::iterator it = _intImgMap.begin() ;
+		std::vector<std::pair<std::string, const VigraIntArray* > >::iterator it = _intImgMap.begin() ;
 	for(; it != _intImgMap.end() ; it++)
 	{
 		const VigraIntArray& array = *(it->second) ;
@@ -104,7 +106,7 @@ void ViewStack::processMouseMovement(int x, int y)
 		{	continue ;	}
 		message += QString("  %1 : { ").arg(QString::fromStdString(dit->first)) ;
 
-		for(size_t i = 0 ; i < array.size(4) ; i++)
+				for(int i = 0 ; i < array.size(4) ; i++)
 		{	message += QString("%1 ").arg(array(x,y,0,0,i)) ;	}
 		message += QString("}") ;
 	}

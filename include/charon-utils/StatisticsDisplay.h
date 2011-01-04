@@ -43,7 +43,8 @@ class QWidget ;
 
 namespace StatisticsDisplay {
 
-	struct Statistics
+        ///Struct holding all statistics data for an object
+        struct Statistics
 	{
 		///all calculated statistic values and properties
 		std::map<std::string, double> stats ;
@@ -57,7 +58,8 @@ namespace StatisticsDisplay {
 			public TemplatedParameteredObject<T> {
 	public:
 	
-		typedef std::map<std::string, double> StatMap ;
+                ///Name-Statistics Map
+                typedef std::map<std::string, double> StatMap ;
 
 		/// create a new StatisticsDisplay
 		/// \param name          Instance name
@@ -72,19 +74,25 @@ namespace StatisticsDisplay {
 		/// The vigra::MultiArray input
 		InputSlot < vigra::MultiArrayView<5, T> > _in;
 
-		InputSlot < vigra::MultiArrayView<5, T> > _mask;
+                /// A mask to decide where to compute the statistics
+                InputSlot < vigra::MultiArrayView<5, T> > _mask;
 
-		OutputSlot < QWidget*> _display ;
+                /// exported QWidget to display the results
+                OutputSlot < QWidget*> _display ;
 	
-		Parameter <bool> _writeToSout ;
+                /// also write the results to sout stream
+                Parameter <bool> _writeToSout ;
 	
 	private:
 
-		QWidget* _exportWidget ;
+                /// pointer to the export widget
+                QWidget* _exportWidget ;
 	
-		std::vector<Statistics> _statistics ;
+                /// statistics data for all input slots
+                std::vector<Statistics> _statistics ;
 
-		void createWidget() ;
+                /// creates the export widget
+                void createWidget() ;
 
 	}; //class StatisticsDisplayPlugin
 

@@ -77,8 +77,6 @@ ArgosDisplayPlugin<T>::~ArgosDisplayPlugin()
 
 template <typename T>
 void ArgosDisplayPlugin<T>::execute() {
-	//#pragma warning(push)
-	//#pragma warning(disable : 4244)
 
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
@@ -91,22 +89,24 @@ void ArgosDisplayPlugin<T>::execute() {
 	
 	//std::map<const Array* const, std::string> parentNames ;
 	//get pointers to all OutputSlots of the _in Multislot to get the names of the corresponding Plugin Instances
-	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>::const_iterator it = _in.begin() ;
-	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>::const_iterator end = _in.end() ;
+        typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>::const_iterator it = _in.begin() ;
+        typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>::const_iterator end = _in.end() ;
 
-	//the double range check here is redundante but better to be sure
-	for(int index = 0 ; (it != end) && (index < _in.size()) ; it++, index++)
+        for( ; it != end ; it++)
 	{
 		std::string name = (*it)->getParent().getName() ;
+                OutputSlot<vigra::MultiArrayView<5, T> >* temp = dynamic_cast< OutputSlot<vigra::MultiArrayView<5, T> >*>(*it);
+                if(!temp)
+                {   throw std::runtime_error("cast of vigra::MultiArrayView failed! In/Output slot may be invalid!") ;  }
+
 		//register all Arrays with the ViewStack
-		_mainWindow->viewStack().linkImage(_in[index], _in.getType(), name, _inputIsRGB()) ;
-	}
+                _mainWindow->viewStack().linkImage(temp->operator ()(), temp->getType(), name, _inputIsRGB()) ;
+        }
 	
 	for(std::size_t ii = 0 ; ii < _widgets.size() ; ii++)
 	{	
 		_mainWindow->addDockWidget(_widgets[ii]) ;
 	}
-	//#pragma warning(pop)
 
 }
 

@@ -64,9 +64,11 @@ public:
 	/// The vigra::MultiArray input
 	InputSlot < vigra::MultiArrayView<5, T> > _in;
 
-	InputSlot <QWidget*> _widgets ;
+        /// Pointers to widgets which will be displayed as QDockWidgets
+        InputSlot <QWidget*> _widgets ;
 
-	Parameter<bool> _inputIsRGB ;
+        /// interpret image as RGB(0-255) if dim 5 is of size 3
+        Parameter<bool> _inputIsRGB ;
 
 private:
 
