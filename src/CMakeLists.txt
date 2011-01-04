@@ -1,7 +1,7 @@
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
+
 SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 
 IF(MSVC)
@@ -217,42 +217,51 @@ IF(USE_VIGRA)
 			TARGET_LINK_LIBRARIES(${X} ${MPI_LIBRARIES})
 		ENDIF()
 	ENDFOREACH(X)
+
+	IF(USE_QT)
+		SET(QT_USE_QTOPENGL 1)
+		INCLUDE(${QT_USE_FILE})
+		INCLUDE_DIRECTORIES(qt)
+		ADD_SUBDIRECTORY(qt)
+
+		SET(Plugins_QT)	
+
+		ADD_LIBRARY(argosdisplay SHARED
+			ArgosDisplay.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.h
+			${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.hxx
+		)
+	
+		IF(USE_Boost)
+			INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+			ADD_LIBRARY(statisticsdisplay SHARED
+				StatisticsDisplay.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/StatisticsDisplay.h
+				${CHARON_UTILS_INCLUDE_DIR}/StatisticsDisplay.hxx
+			)
+			LIST(APPEND Plugins_Qt
+				statisticsdisplay
+			)
+		ENDIF(USE_Boost)
+
+	
+		LIST(APPEND Plugins_Qt
+			argosdisplay
+		)
+
+		LIST(APPEND Plugins
+			${Plugins_Qt}
+		)
+		FOREACH(X ${Plugins_Qt})
+			TARGET_LINK_LIBRARIES(${X} charonwidgets ${QT_LIBRARIES})
+		ENDFOREACH(X)
+	
+	
+	ENDIF(USE_QT)
+
+
 ENDIF(USE_VIGRA)
 
-IF(USE_QT)
-	SET(QT_USE_QTOPENGL 1)
-	INCLUDE(${QT_USE_FILE})
-	INCLUDE_DIRECTORIES(qt)
-	ADD_SUBDIRECTORY(qt)
-
-	
-	ADD_LIBRARY(argosdisplay SHARED
-		ArgosDisplay.cpp
-		${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.h
-		${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.hxx
-	)
-	
-	ADD_LIBRARY(statisticsdisplay SHARED
-		StatisticsDisplay.cpp
-		${CHARON_UTILS_INCLUDE_DIR}/StatisticsDisplay.h
-		${CHARON_UTILS_INCLUDE_DIR}/StatisticsDisplay.hxx
-	)
-
-	
-	SET(Plugins_Qt
-		argosdisplay
-		statisticsdisplay
-	)
-
-	LIST(APPEND Plugins
-		${Plugins_Qt}
-	)
-	FOREACH(X ${Plugins_Qt})
-		TARGET_LINK_LIBRARIES(${X} charonwidgets ${QT_LIBRARIES})
-	ENDFOREACH(X)
-	
-	
-ENDIF(USE_QT)
 
 
 FOREACH(X ${Plugins})
