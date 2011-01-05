@@ -217,13 +217,6 @@ IF(USE_VIGRA)
 		ENDFOREACH(X)
 		LIST(APPEND Plugins_Vigra ${Plugins_HDF5})
 	ENDIF(USE_HDF5)
-	FOREACH(X ${Plugins_Vigra})
-		TARGET_LINK_LIBRARIES(${X} ${VIGRA_LIBRARIES})
-		IF(USE_MPI)
-			TARGET_LINK_LIBRARIES(${X} ${MPI_LIBRARIES})
-		ENDIF()
-	ENDFOREACH(X)
-	LIST(APPEND Plugins ${Plugins_Vigra})
 
 	IF(USE_QT)
 		SET(QT_USE_QTOPENGL 1)
@@ -237,8 +230,14 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.h
 			${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.hxx
 		)
+		ADD_LIBRARY(frameselect SHARED
+			FrameSelect.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.h
+			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.hxx
+		)
 		LIST(APPEND Plugins_Qt
 			argosdisplay
+			frameselect
 		)
 
 		IF(USE_Boost)
@@ -260,6 +259,14 @@ IF(USE_VIGRA)
 			TARGET_LINK_LIBRARIES(${X} charonwidgets ${QT_LIBRARIES})
 		ENDFOREACH(X)
 	ENDIF(USE_QT)
+
+	FOREACH(X ${Plugins_Vigra})
+		TARGET_LINK_LIBRARIES(${X} ${VIGRA_LIBRARIES})
+		IF(USE_MPI)
+			TARGET_LINK_LIBRARIES(${X} ${MPI_LIBRARIES})
+		ENDIF()
+	ENDFOREACH(X)
+	LIST(APPEND Plugins ${Plugins_Vigra})
 ENDIF(USE_VIGRA)
 
 FOREACH(X ${Plugins})

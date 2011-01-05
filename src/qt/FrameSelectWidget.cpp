@@ -1,0 +1,115 @@
+/*  Copyright (C) 2011 Jens-Malte Gottfried
+
+	This file is part of Charon.
+
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/** \file FrameSelectWidget.cpp
+ *  Implementation of class FrameSelectWidget.
+ *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+ *  \date 05.01.2011
+ */
+
+#include "FrameSelectWidget.hpp"
+#include "ui_FrameSelectWidget.h"
+
+FrameSelectWidget::FrameSelectWidget(
+		ParameteredObject* pp,
+		Parameter<bool>& cV,
+		Parameter<uint>& z,
+		Parameter<uint>& t,
+		Parameter<uint>& v,
+		QWidget* pw) :
+	QWidget(pw),
+	_ui(new Ui::FrameSelectWidget),
+	_parent(pp),
+	_cropV(cV),
+	_z(z),
+	_t(t),
+	_v(v)
+{
+	_ui->setupUi(this);
+}
+
+FrameSelectWidget::~FrameSelectWidget()
+{
+	delete _ui;
+}
+
+void FrameSelectWidget::setDisplay(ParameteredObject* d) {
+	_display = d;
+}
+
+void FrameSelectWidget::setShape(uint dz, uint dt, uint dv) {
+	_ui->spinBox2->setSuffix(QString(" / %1").arg(dz));
+	_ui->spinBox3->setSuffix(QString(" / %1").arg(dt));
+	_ui->spinBox4->setSuffix(QString(" / %1").arg(dv));
+
+	// max val is dz/t/v - 1 since values are starting at zero
+	_ui->spinBox2->setMaximum(dz-1);
+	_ui->spinBox3->setMaximum(dt-1);
+	_ui->spinBox4->setMaximum(dv-1);
+	_ui->slider2->setMaximum(dz-1);
+	_ui->slider3->setMaximum(dt-1);
+	_ui->slider4->setMaximum(dv-1);
+
+	_ui->slider2->setValue(_z());
+	_ui->slider3->setValue(_t());
+	_ui->slider4->setValue(_v());
+	bool& cV = _cropV();
+	if (dv != 3) {
+		cV = true;
+		_ui->checkCropV->setEnabled(false);
+	}
+	_ui->checkCropV->setChecked(cV);
+}
+
+void FrameSelectWidget::setCropV(bool val) {
+	bool& cV = _cropV();
+	if(cV == val)
+		return;
+	cV = val;
+	_update();
+}
+
+void FrameSelectWidget::setDim2(int val) {
+	if((int)_z==val)
+		return;
+	_ui->slider2->setValue(val);
+	_z() = val;
+	_update();
+}
+
+void FrameSelectWidget::setDim3(int val) {
+	if((int)_t==val)
+		return;
+	_ui->slider3->setValue(val);
+	_t() = val;
+	_update();
+}
+
+void FrameSelectWidget::setDim4(int val) {
+	if((int)_v==val)
+		return;
+	_ui->slider4->setValue(val);
+	_v() = val;
+	_update();
+}
+
+void FrameSelectWidget::_update() {
+	if(_display->executed()) {
+		_parent->resetExecuted();
+		_display->execute();
+	}
+}

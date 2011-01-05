@@ -1,17 +1,23 @@
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 SET(charonwidgets_HEADERS
 	charonwidgets.h
 )
 SET(charonwidgets_QT_HEADERS
 	MainWindow.hpp
 	ViewStack.hpp
+	FrameSelectWidget.hpp
 )
 SET(charonwidgets_SOURCES
 	MainWindow.cpp
 	ViewStack.cpp
+	FrameSelectWidget.cpp
+)
+QT4_WRAP_UI(charonwidgets_UIS
+	FrameSelectWidget.ui
 )
 QT4_WRAP_CPP(charonwidgets_MOCS ${charonwidgets_QT_HEADERS})
 SOURCE_GROUP("moc files" FILES ${charonwidgets_MOCS})
-
+SOURCE_GROUP("ui headers" FILES ${charonwidgets_UIS})
 
 ###### Set up VigraQt ##################
 
@@ -66,13 +72,14 @@ ADD_LIBRARY(charonwidgets SHARED
 	${charonwidgets_QT_HEADERS}
 	${charonwidgets_SOURCES}
 	${charonwidgets_MOCS}
+	${charonwidgets_UIS}
 	${vigraqt_HEADERS}
 	${vigraqt_QT_HEADERS}
 	${vigraqt_SOURCES}
 	${vigraqt_MOCS}
 )
 
-TARGET_LINK_LIBRARIES(charonwidgets ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(charonwidgets ${QT_LIBRARIES} charon-core)
 TARGET_LINK_LIBRARIES(charonwidgets
 	${VIGRA_LIBRARIES} ${QT_OPENGL_LIBRARIES} ${OPENGL_LIBRARIES})
 
