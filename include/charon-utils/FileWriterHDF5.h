@@ -16,7 +16,7 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file FileWriter.h
+/** @file FileWriterHDF5.h
  *  Declaration of the parameter class FileWriterHDF5.
  *  \author <a href="mailto:Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
  *      Jens-Malte Gottfried</a>

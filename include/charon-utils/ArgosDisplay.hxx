@@ -45,7 +45,8 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 	ParameteredObject::_addInputSlot(
 			_in, "in",
 			"Multislot for input images.<br>"
-			"Will display the first slice of an array (meaning all dimensions except 0 and 1 are set to 0)",
+			"Will display the first slice of an array "
+			"(meaning all dimensions except 0 and 1 are set to 0)",
 			"vigraArray5<T>");
 
 	ParameteredObject::_addInputSlot(
@@ -53,15 +54,18 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"QWidgets to display in Dock areas.",
 			"QWidget*") ;
 
-	ParameteredObject::_addParameter<bool>(_inputIsRGB, "inputIsRGB",
-		"try to interpret input as 8bit (0-255) RGB images if 3. dimension is exaclty of size 3,<br"
-		"otherwise use grayscale", false, "bool");
+	ParameteredObject::_addParameter<bool>(
+			_inputIsRGB, "inputIsRGB",
+			"try to interpret input as 8bit (0-255) RGB images if last "
+			"dimension is exaclty of size 3<br>"
+			"(otherwise use grayscale)", false, "bool");
 
 
 	if(!qApp)
 	{
 		sout << "ArgosDisplayPlugin::No QApplication found! " 
-			<< "ArgosDisplay can only be used in a Qt GUI Application! (e.g. Tuchulcha)" << std::endl ;
+			<< "ArgosDisplay can only be used in a Qt GUI Application! "
+			"(e.g. Tuchulcha)" << std::endl ;
 		return ;
 	}
 
@@ -81,37 +85,43 @@ void ArgosDisplayPlugin<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 	
-	//exit if QApplication is not running (when opened with command line charon)
+	// exit if QApplication is not running
+	// (when opened with command line charon)
 	if(!qApp)
 	{	return ;	}
 	
 	_mainWindow->show() ;
 	
 	//std::map<const Array* const, std::string> parentNames ;
-	//get pointers to all OutputSlots of the _in Multislot to get the names of the corresponding Plugin Instances
-		typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>::const_iterator it = _in.begin() ;
-		typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>::const_iterator end = _in.end() ;
+	// get pointers to all OutputSlots of the _in Multislot to get the names
+	// of the corresponding Plugin Instances
+	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>
+			::const_iterator it = _in.begin() ;
+	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>
+			::const_iterator end = _in.end() ;
 
 	for( ; it != end ; it++)
 	{
 		std::string name = (*it)->getParent().getName() ;
-		//dynamic_cast fails for unknown reasons, therefore this horrible piece of code
-		const OutputSlot<vigra::MultiArrayView<5, T> >* temp = reinterpret_cast<const OutputSlot<vigra::MultiArrayView<5, T> >*>(*it);
+		// dynamic_cast fails for unknown reasons, therefore this
+		// horrible piece of code
+		const OutputSlot<vigra::MultiArrayView<5, T> >* temp =
+				reinterpret_cast<
+				const OutputSlot<vigra::MultiArrayView<5, T> >*>(*it);
 		if(!temp)
-		{	throw std::runtime_error("cast of vigra::MultiArrayView failed! In/Output slot may be invalid!")	;	}
+			vigra_fail(
+					"cast of vigra::MultiArrayView failed! "
+					"In/Output slot may be invalid!");
 
-		//register all Arrays with the ViewStack
-		_mainWindow->viewStack().linkImage(temp->operator ()(), temp->getType(), name, _inputIsRGB()) ;
-		}
+		// register all Arrays with the ViewStack
+		_mainWindow->viewStack().linkImage(
+				temp->operator ()(), temp->getType(), name, _inputIsRGB()) ;
+	}
 	
 	for(std::size_t ii = 0 ; ii < _widgets.size() ; ii++)
-	{	
+	{
 		_mainWindow->addDockWidget(_widgets[ii]) ;
 	}
-
 }
 
 #endif /* _ARGOSDISPLAY_HXX_ */
-
-
-
