@@ -31,7 +31,7 @@ FrameSelectWidget::FrameSelectWidget(
 		Parameter<uint>& t,
 		Parameter<uint>& v,
 		QWidget* pw) :
-	QWidget(pw),
+	QDockWidget(pw),
 	_ui(new Ui::FrameSelectWidget),
 	_parent(pp),
 	_cropV(cV),

@@ -59,6 +59,8 @@ namespace ArgosDisplay {
 		/// default destructor
 		~ViewStack() ;
 
+		/// removes all tab widgets
+		void clear();
 
 		/// add image to ViewStack for display
 		template<typename T>
@@ -73,8 +75,6 @@ namespace ArgosDisplay {
 
 		/// image stack
 		QTabWidget* _tabWidget ;
-
-		QStatusBar* _statusBar ;
 
 		///pointers to pixel data for each possible template type
                 std::vector<std::pair<std::string, const VigraIntArray* > > _intImgMap ;

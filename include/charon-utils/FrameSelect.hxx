@@ -25,6 +25,7 @@
 #define _CROP_HXX_
 
 #include "FrameSelect.h"
+#include <QString>
 
 template <typename T>
 FrameSelect<T>::FrameSelect(const std::string& name) :
@@ -60,6 +61,8 @@ void FrameSelect<T>::execute() {
 	if(!_gui)
 		_gui = new FrameSelectWidget(this,cropV,z,t,v);
 	_gui->setDisplay(&(*widget.getTargets().begin())->getParent());
+	_gui->setWindowTitle(QString("FrameSelect [%1]").arg(
+			ParameteredObject::getName().c_str()));
 	_gui->setShape(s[2],s[3],s[4]);
 	widget = _gui;
 

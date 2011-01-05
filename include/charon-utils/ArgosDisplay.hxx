@@ -100,6 +100,8 @@ void ArgosDisplayPlugin<T>::execute() {
 	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>
 			::const_iterator end = _in.end() ;
 
+	_mainWindow->viewStack().clear();
+
 	for( ; it != end ; it++)
 	{
 		std::string name = (*it)->getParent().getName() ;

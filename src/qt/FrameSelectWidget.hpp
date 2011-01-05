@@ -24,14 +24,14 @@
 #ifndef FRAMESELECTWIDGET_H
 #define FRAMESELECTWIDGET_H
 
-#include <QWidget>
+#include <QDockWidget>
 #include <charon-core/ParameteredObject.h>
 
 namespace Ui {
 	class FrameSelectWidget;
 }
 
-class FrameSelectWidget : public QWidget
+class FrameSelectWidget : public QDockWidget
 {
 	Q_OBJECT
 

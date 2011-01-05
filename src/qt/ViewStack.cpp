@@ -34,11 +34,8 @@ ViewStack::ViewStack(QWidget* parent) : QWidget(parent)
 	_tabWidget = new QTabWidget(this) ;
 		_tabWidget->setUsesScrollButtons(true) ;
 
-	_statusBar = new QStatusBar(this) ;
-
 	QVBoxLayout* layout = new QVBoxLayout ;
 		layout->addWidget(_tabWidget) ;
-		layout->addWidget(_statusBar) ;
 	this->setLayout(layout) ;
 	QSizePolicy policy(QSizePolicy::Minimum, QSizePolicy::Minimum) ;
 	this->setSizePolicy(policy) ;
@@ -47,6 +44,15 @@ ViewStack::ViewStack(QWidget* parent) : QWidget(parent)
 ViewStack::~ViewStack()
 {
 	;
+}
+
+void ViewStack::clear() {
+	while(_tabWidget->count() > 0) {
+		int c = _tabWidget->count() - 1;
+		QWidget* cur = _tabWidget->widget(c);
+		_tabWidget->removeTab(c);
+		delete cur;
+	}
 }
 
 void ViewStack::linkFloatImage(const vigra::FImage& img, const std::string& name)
@@ -112,7 +118,7 @@ void ViewStack::processMouseMovement(int x, int y)
 	}
 
 
-	_statusBar->showMessage(message) ;
+	emit exportStatusMessage(message) ;
 }
 
 void ViewStack::keyPressEvent(QKeyEvent * event )
