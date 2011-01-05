@@ -200,38 +200,47 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FileWriterHDF5.h
 			${CHARON_UTILS_INCLUDE_DIR}/FileWriterHDF5.hxx
 		)
-		TARGET_LINK_LIBRARIES(filewriterhdf5 ${HDF5_LIBRARIES})
-		IF(USE_MPI)
-			TARGET_LINK_LIBRARIES(filewriterhdf5 ${MPI_LIBRARIES})
-		ENDIF()
-		LIST(APPEND Plugins_Vigra
-			filewriterhdf5
+		ADD_LIBRARY(filereaderhdf5 SHARED
+			FileReaderHDF5.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.h
+			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.hxx
 		)
+		SET(Plugins_HDF5
+			filewriterhdf5
+			filereaderhdf5
+		)
+		FOREACH(X ${Plugins_HDF5})
+			TARGET_LINK_LIBRARIES(${X} ${HDF5_LIBRARIES})
+			IF(USE_MPI)
+				TARGET_LINK_LIBRARIES(${X} ${MPI_LIBRARIES})
+			ENDIF()
+		ENDFOREACH(X)
+		LIST(APPEND Plugins_Vigra ${Plugins_HDF5})
 	ENDIF(USE_HDF5)
-	LIST(APPEND Plugins
-		${Plugins_Vigra}
-	)
 	FOREACH(X ${Plugins_Vigra})
 		TARGET_LINK_LIBRARIES(${X} ${VIGRA_LIBRARIES})
 		IF(USE_MPI)
 			TARGET_LINK_LIBRARIES(${X} ${MPI_LIBRARIES})
 		ENDIF()
 	ENDFOREACH(X)
+	LIST(APPEND Plugins ${Plugins_Vigra})
 
 	IF(USE_QT)
 		SET(QT_USE_QTOPENGL 1)
 		INCLUDE(${QT_USE_FILE})
 		INCLUDE_DIRECTORIES(qt)
 		ADD_SUBDIRECTORY(qt)
-
-		SET(Plugins_QT)	
+		SET(Plugins_QT)
 
 		ADD_LIBRARY(argosdisplay SHARED
 			ArgosDisplay.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.h
 			${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.hxx
 		)
-	
+		LIST(APPEND Plugins_Qt
+			argosdisplay
+		)
+
 		IF(USE_Boost)
 			INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 			ADD_LIBRARY(statisticsdisplay SHARED
@@ -244,25 +253,14 @@ IF(USE_VIGRA)
 			)
 		ENDIF(USE_Boost)
 
-	
-		LIST(APPEND Plugins_Qt
-			argosdisplay
-		)
-
 		LIST(APPEND Plugins
 			${Plugins_Qt}
 		)
 		FOREACH(X ${Plugins_Qt})
 			TARGET_LINK_LIBRARIES(${X} charonwidgets ${QT_LIBRARIES})
 		ENDFOREACH(X)
-	
-	
 	ENDIF(USE_QT)
-
-
 ENDIF(USE_VIGRA)
-
-
 
 FOREACH(X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core)
