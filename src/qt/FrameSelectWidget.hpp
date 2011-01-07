@@ -26,12 +26,13 @@
 
 #include <QDockWidget>
 #include <charon-core/ParameteredObject.h>
+#include "charonwidgets.h"
 
 namespace Ui {
 	class FrameSelectWidget;
 }
 
-class FrameSelectWidget : public QDockWidget
+class charonwidgets_DECLDIR FrameSelectWidget : public QDockWidget
 {
 	Q_OBJECT
 

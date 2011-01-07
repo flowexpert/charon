@@ -21,8 +21,8 @@
  *  \date 11.04.2009
  */
 
-#ifndef NORMALIZE_H
-#define NORMALIZE_H
+#ifndef MEDIANFILTER_H
+#define MEDIANFILTER_H
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef medianfilter_EXPORTS
@@ -54,7 +54,7 @@ public:
 	OutputSlot<cimg_library::CImgList<T> > out;
 
 	/// radius \f$r\f$ of image windows (size is \f$2*r+1\f$)
-	Parameter<uint> windowRadius;
+	Parameter<unsigned int> windowRadius;
 
 	/// create a new MedianFilter object
 	/** \param name             Object name */
@@ -65,4 +65,4 @@ public:
 	virtual void execute();
 };
 
-#endif // NORMALIZE_H
+#endif // MEDIANFILTER_H

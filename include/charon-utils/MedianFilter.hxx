@@ -21,8 +21,8 @@
  *  \date 07.01.2011
  */
 
-#ifndef _NORMALIZE_HXX_
-#define _NORMALIZE_HXX_
+#ifndef _MEDIANFILTER_HXX_
+#define _MEDIANFILTER_HXX_
 
 #include "MedianFilter.h"
 
@@ -50,7 +50,7 @@ void MedianFilter<T>::execute() {
 
 	const cimg_library::CImgList<T>& i = in();
 	cimg_library::CImgList<T>& o = out();
-	const uint& r = windowRadius();
+	const unsigned int& r = windowRadius();
 	o = i;
 
 	cimg_library::CImg<T> window;
@@ -64,4 +64,4 @@ void MedianFilter<T>::execute() {
 	}
 }
 
-#endif /* _NORMALIZE_HXX_ */
+#endif /* _MEDIANFILTER_HXX_ */

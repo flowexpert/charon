@@ -220,7 +220,7 @@ public slots:
          *
          * See zoomLevel(), zoomUp(), zoomDown()
          */
-    virtual void setZoomLevel(int level);
+    virtual void setZoomLevel(int level = 0);
 
         /**
          * Changes the zoom level to (zoomLevel()+1) (useful for
