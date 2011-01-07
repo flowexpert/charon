@@ -29,7 +29,9 @@
 template<typename T>
 ImageBlur<T>::ImageBlur(const std::string& name) :
 	TemplatedParameteredObject<T> ("imageblur", name,
-			"apply a blur effect on an image") {
+			"apply a blur effect on an image"),
+	roi(true,false) // optional
+{
 	this->_addInputSlot(roi, "roi", "region to blur", "Roi<int>");
 	this->_addInputSlot(in, "in", "image input", "CImgList<T>");
 	this->_addOutputSlot(out, "out", "image output", "CImgList<T>");
@@ -41,28 +43,40 @@ void ImageBlur<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	// check roi ranges
-	assert(roi());
-	assert(roi()->xBegin() < roi()->xEnd());
-	assert(roi()->yBegin() < roi()->yEnd());
-	assert(roi()->zBegin() < roi()->zEnd());
-	assert(roi()->tBegin() < roi()->tEnd());
-	assert(roi()->vBegin() < roi()->vEnd());
+	const cimg_library::CImgList<T>& i = in();
+	cimg_library::CImgList<T>& o = out();
+	const float& s = strength();
 
-	out() = in();
-	cimg_library::CImgList<T> region = in().get_images(
-			roi()->vBegin(), roi()->vEnd()-1);
-	cimglist_for(region, i) {
-		region[i].crop(
-			roi()->xBegin(), roi()->yBegin(), roi()->zBegin(), roi()->tBegin(),
-			roi()->xEnd()-1, roi()->yEnd()-1, roi()->zEnd()-1, roi()->tEnd()-1);
-		region[i].blur(strength());
-		out()[roi()->vBegin()+i].draw_image(
-				roi()->xBegin(), roi()->yBegin(),
-				roi()->zBegin(),roi()->tBegin(),
-				region[i]
-		);
+	o = i;
+
+	if(roi.connected()) {
+		// check roi ranges
+		assert(roi());
+		const Roi<int>& r = *roi();
+		assert(r.xBegin() < r.xEnd());
+		assert(r.yBegin() < r.yEnd());
+		assert(r.zBegin() < r.zEnd());
+		assert(r.tBegin() < r.tEnd());
+		assert(r.vBegin() < r.vEnd());
+
+		cimg_library::CImgList<T> region = i.get_images(
+				r.vBegin(), r.vEnd()-1);
+		cimglist_for(region, kk) {
+			region[kk].crop(
+				r.xBegin(), r.yBegin(), r.zBegin(), r.tBegin(),
+				r.xEnd()-1, r.yEnd()-1, r.zEnd()-1, r.tEnd()-1);
+			region[kk].blur(s);
+			o[r.vBegin()+kk].draw_image(
+					r.xBegin(), r.yBegin(), r.zBegin(), r.tBegin(),
+					region[kk]
+			);
+		}
 	}
-
+	else {
+		// blur whole image(list)
+		cimglist_for(o,kk){
+			o[kk].blur(s);
+		}
+	}
 }
 #endif // _IMAGEBLUR_HXX_
