@@ -99,6 +99,19 @@ IF(BUILD_TESTING)
 	)
 	LIST(APPEND tests Warp)
 
+	ADD_EXECUTABLE(flowToHSV flowToHSV.cpp)
+	TARGET_LINK_LIBRARIES(flowToHSV
+		${CIMG_LINK_LIBRARIES}
+		charon-plugins
+		flow2hsv
+		filereader
+	)
+	ADD_TEST(
+		NAME flowToHSV
+		COMMAND flowToHSV
+	)
+	LIST(APPEND tests flowToHSV)
+
 	IF(USE_VIGRA)
 		INCLUDE_DIRECTORIES(${Vigra_INCLUDE_DIRS})
 		SET(VIGRA_LIBRARIES vigraimpex)

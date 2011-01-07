@@ -97,9 +97,9 @@ void Flow2HSV<T>::execute() {
 	//interm[0] += 0.05;
 	//interm[0] /= 1.05;
 
-	// phi is now in (-pi;pi], should be [0;255]
+	// phi is now in (-pi;pi], should be [0;360]
 	interm[1] += M_PI;
-	interm[1] *= 255./(2.*M_PI);
+	interm[1] *= 360./(2.*M_PI);
 
 	// use lenght and angle for HSV values, respect value of "scaleChannels"
 	// convert HSV to RGB and store final result in out
@@ -107,7 +107,7 @@ void Flow2HSV<T>::execute() {
 	cimg_forXYZC(i[0],x,y,z,t) {
 		const double& len = interm(0,x,y,z,t);
 		const double& hue = interm(1,x,y,z,t);
-		assert(hue >= 0. && hue <= 255.);
+		assert(hue >= 0. && hue <= 360.);
 		// here conversion from double to T is performed
 		o(t,x,y,z,0) = hue;
 		o(t,x,y,z,1) = (sc==0) ? len : 1.; // length is saturation
