@@ -37,7 +37,6 @@
 #include <QResizeEvent>
 #include <QDoubleSpinBox>
 #include "QDirEdit.h"
-#include <limits>
 
 InspectorDelegate::InspectorDelegate(QObject* p) :
 		QStyledItemDelegate(p) {
@@ -97,18 +96,16 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 				editor->setCurrentIndex(2);
 			return editor;
 		}
-		if(type == "float") {
-			QDoubleSpinBox* editor = new QDoubleSpinBox(p) ;
+		// fix decimals for double editors
+		// (also handles parameters of type T)
+		else if(ind.model()->data(ind).type() == QVariant::Double) {
+			QDoubleSpinBox* editor = qobject_cast<QDoubleSpinBox*>(
+					QStyledItemDelegate::createEditor(p,opt,ind));
+			Q_ASSERT(editor);
+			// using the provided standart editor, min/max values
+			// have already been set to reasonable values,
+			// decimals have to be corrected only
 			editor->setDecimals(6) ;
-			editor->setMinimum(-std::numeric_limits<float>::max()) ;
-			editor->setMaximum(std::numeric_limits<float>::max()) ;
-			return editor;
-		}
-		else if(type == "double") {
-			QDoubleSpinBox* editor = new QDoubleSpinBox(p) ;
-			editor->setDecimals(6) ;
-			editor->setMinimum(-std::numeric_limits<double>::max()) ;
-			editor->setMaximum(std::numeric_limits<double>::max()) ;
 			return editor;
 		}
 	}
