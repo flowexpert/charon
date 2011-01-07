@@ -158,10 +158,20 @@ ADD_LIBRARY(mixtureofgaussians SHARED
 	${charon_INCLUDE_DIR}/Functions/Diff2LinFunction.h
 )
 TARGET_LINK_LIBRARIES(mixtureofgaussians cdfitfunction)
+ADD_LIBRARY(psifunction SHARED
+	PsiFunction.cpp
+	${charon_INCLUDE_DIR}/PsiFunction.h
+	${charon_INCLUDE_DIR}/Functions/Function.h
+	${charon_INCLUDE_DIR}/Functions/DiffFunction.h
+	${charon_INCLUDE_DIR}/Functions/Diff2Function.h
+	${charon_INCLUDE_DIR}/Functions/Diff2LinFunction.h
+)
 LIST(APPEND Plugins
 	cdfitfunction
 	mixtureofgaussians
+	psifunction
 )
+
 
 # sampling and CD fitter
 ADD_LIBRARY(sampler SHARED
