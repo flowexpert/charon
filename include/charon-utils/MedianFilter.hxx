@@ -49,7 +49,7 @@ void MedianFilter<T>::execute() {
 	ParameteredObject::execute();
 
 	const cimg_library::CImgList<T>& i = in();
-	cimg_library::CImgList<T> o = out();
+	cimg_library::CImgList<T>& o = out();
 	const uint& r = windowRadius();
 	o = i;
 
