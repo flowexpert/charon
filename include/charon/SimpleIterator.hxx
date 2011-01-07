@@ -95,9 +95,11 @@ void SimpleIterator<T>::_afterIterationHook() {
 
 template <typename T>
 void SimpleIterator<T>::execute() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	initialize();
 	iterate();
 	finalize();
+	assert(ParameteredObject::executed());
 }
 
 template <typename T>

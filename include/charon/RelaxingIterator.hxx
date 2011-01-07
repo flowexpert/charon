@@ -86,10 +86,14 @@ void RelaxingIterator<T>::_preIterationHook() {
 			throw std::invalid_argument(msg.str().c_str());
 		}
 	}
+	_initialLambdas.clear();
 	for (unsigned int i=0; i<initial.size(); i++)
 		_initialLambdas.push_back(initial[i]->lambda());
+	assert(_initialLambdas.size() == initial.size());
+	_finalLambdas.clear();
 	for (unsigned int i=0; i<final.size(); i++)
 		_finalLambdas.push_back(final[i]->lambda());
+	assert(_finalLambdas.size() == final.size());
 }
 
 template <typename T>

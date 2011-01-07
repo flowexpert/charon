@@ -114,6 +114,7 @@ int test() {
 	std::cout << std::endl;
 	iterator->maxRuns() = 0u;
 	iterator->epsilon() = 1.;
+	iterator->resetExecuted();
 
 	sout << std::endl;
 	man.executeWorkflow();
