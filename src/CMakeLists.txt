@@ -70,6 +70,11 @@ ADD_LIBRARY(normalize SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/Normalize.h
 	${CHARON_UTILS_INCLUDE_DIR}/Normalize.hxx
 )
+ADD_LIBRARY(medianfilter SHARED
+	MedianFilter.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/MedianFilter.h
+	${CHARON_UTILS_INCLUDE_DIR}/MedianFilter.hxx
+)
 ADD_LIBRARY(threshold SHARED
 	Threshold.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/Threshold.h
@@ -144,6 +149,7 @@ SET(Plugins
 	interpolatorcubic
 	interpolatorlinear
 	normalize
+	medianfilter
 	threshold
 	rgb2hsv
 	flow2hsv
