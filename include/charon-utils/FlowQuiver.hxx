@@ -68,7 +68,7 @@ void FlowQuiver<T>::execute() {
 	}
 
 	const cimg_library::CImgList<T>& f = flow();
-	if (f.size() <= 2)
+	if (f.size() < 2)
 		throw std::invalid_argument(
 				"FlowQuiver: At least 2 flow components required!");
 
