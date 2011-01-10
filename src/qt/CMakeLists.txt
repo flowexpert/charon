@@ -6,11 +6,13 @@ SET(charonwidgets_QT_HEADERS
 	MainWindow.hpp
 	ViewStack.hpp
 	FrameSelectWidget.hpp
+	StatisticsDisplayWidget.hpp
 )
 SET(charonwidgets_SOURCES
 	MainWindow.cpp
 	ViewStack.cpp
 	FrameSelectWidget.cpp
+	StatisticsDisplayWidget.cpp
 )
 QT4_WRAP_UI(charonwidgets_UIS
 	FrameSelectWidget.ui

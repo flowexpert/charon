@@ -15,9 +15,8 @@
 #include <vigra/multi_iterator.hxx>
 #include <vigra/navigator.hxx>
 #include <vigra/multi_pointoperators.hxx>
-#include <QtGui>
 #include <set>
-//#include <charon-core/Slots.h>
+#include <StatisticsDisplayWidget.hpp>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -74,17 +73,20 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 template <typename T>
 StatisticsDisplayPlugin<T>::~StatisticsDisplayPlugin()
 {
-	//don't delete the exportWidget as the parent Widget will take care of this 
+	//don't delete the exportWidget as the parent Widget will eventually take care of this 
 }
 
 template <typename T>
 void StatisticsDisplayPlugin<T>::execute() {
+	
 	using namespace boost::accumulators;
 
 	typedef vigra::MultiArrayView<5, T> Array ;
 
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
+
+	_statistics.clear() ;
 
 	//get pointer to each object in Multislot and the name of the corresponding parent object
 	std::map<const Array* const, std::string> parentNames ;
@@ -154,52 +156,16 @@ void StatisticsDisplayPlugin<T>::execute() {
 			}
 	}
 
-	createWidget() ;
-}
-
-template <typename T>
-void StatisticsDisplayPlugin<T>::createWidget()
-{
-	if(!_display.connected())
-	{	return ;	}
-
-	//create tab widget with one tab for each input image
-	QTabWidget* tabWidget = new QTabWidget ;
-		tabWidget->setUsesScrollButtons(true) ;
-		tabWidget->setTabPosition(QTabWidget::East) ;
-	_exportWidget = tabWidget ;
-	_exportWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum) ;
-	_exportWidget->setObjectName(QString("Statistics")) ;
-	std::vector<Statistics>::const_iterator it1 = _statistics.begin() ;
-	for(; it1 != _statistics.end() ; it1++)
-	{
-		QWidget* tab = new QWidget ;
-		QVBoxLayout* vLayout = new QVBoxLayout ;
-		vLayout->setContentsMargins(1,1,1,1) ;
-		QGridLayout* layout = new QGridLayout ;
-		layout->setContentsMargins(1,1,1,1) ;
-
-		const Statistics& s = (*it1) ;
-		std::map<std::string, double>::const_iterator it = s.stats.begin() ;
-		int row = 0 ;
-		for(; it != s.stats.end() ; it++)
-		{
-			QLabel* label = new QLabel(QString::fromStdString(it->first), _exportWidget) ;
-			//use a line edit for the values to make copy possible
-			QLineEdit* line = new QLineEdit(QString("%2").arg(it->second), _exportWidget) ;
-			line->setReadOnly(true) ;
-			line->setFrame(false) ;
-			layout->addWidget(label, row, 0) ;
-			layout->addWidget(line, row++, 1) ;
+	if(_display.connected())
+	{	
+		if(_exportWidget == 0)
+		{	_exportWidget = new StatisticsDisplayWidget(this->getName(), 0) ;	
+			_display = _exportWidget ;
 		}
-		//set the layout so it does not spread over the whole available size
-		vLayout->addLayout(layout) ;
-		vLayout->addStretch() ;
-		tab->setLayout(vLayout) ;
-		tabWidget->addTab(tab, QString::fromStdString(s.origin)) ;
+		_exportWidget->updateStats(_statistics) ;
 	}
-	_display() = _exportWidget ;
 }
+
 
 } // namespace StatisticsDisplay
 #endif /* _STATISTICSDISPLAY_HXX_ */
