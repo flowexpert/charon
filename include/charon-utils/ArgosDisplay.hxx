@@ -100,7 +100,12 @@ void ArgosDisplayPlugin<T>::execute() {
 	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>
 			::const_iterator end = _in.end() ;
 
-	_mainWindow->viewStack().clear();
+	ViewStack& viewStack = _mainWindow->viewStack() ;
+	
+	//save current top view to reset it in case of reexecution
+	int index = viewStack.currentIndex() ;
+	
+	viewStack.clear();
 
 	for( ; it != end ; it++)
 	{
@@ -116,9 +121,9 @@ void ArgosDisplayPlugin<T>::execute() {
 					"In/Output slot may be invalid!");
 
 		// register all Arrays with the ViewStack
-		_mainWindow->viewStack().linkImage(
-				temp->operator ()(), temp->getType(), name, _inputIsRGB()) ;
+		viewStack.linkImage(temp->operator ()(), temp->getType(), name, _inputIsRGB()) ;
 	}
+	viewStack.setCurrentIndex(index) ;
 	
 	for(std::size_t ii = 0 ; ii < _widgets.size() ; ii++)
 	{

@@ -54,8 +54,8 @@ namespace ArgosDisplay
 
 		/// central Widget for image view management
 		ViewStack* _viewStack ;
-	} ;
+	} ; /* class MainWindow */
 
-} ;
+} ; /* namespace ArgosDisplay */
 
 #endif /* _ARGOSDISPLAY_MAINWINDOW_HPP_ */

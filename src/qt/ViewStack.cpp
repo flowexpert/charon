@@ -55,6 +55,19 @@ void ViewStack::clear() {
 	}
 }
 
+int ViewStack::currentIndex() const
+{
+	return _tabWidget->currentIndex() ;
+}
+
+void ViewStack::setCurrentIndex(int index)
+{
+	if(index < _tabWidget->count()) 
+	{	_tabWidget->setCurrentIndex(index) ;	}
+}
+
+
+
 void ViewStack::linkFloatImage(const vigra::FImage& img, const std::string& name)
 {
 	FImageViewer* viewer = new FImageViewer(0) ;
