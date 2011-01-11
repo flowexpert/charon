@@ -241,6 +241,7 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.h
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.hxx
 		)
+		TARGET_LINK_LIBRARIES(frameselect roi)
 		LIST(APPEND Plugins_Qt
 			argosdisplay
 			frameselect

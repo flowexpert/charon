@@ -39,6 +39,7 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <vigra/multi_array.hxx>
 #include <FrameSelectWidget.hpp>
+#include <charon-utils/Roi.h>
 
 /// Select frames to be displayed (GUI-capable version of Crop)
 /** This class is able to crop images along dimensions 2-4.
@@ -55,6 +56,8 @@ public:
 	OutputSlot< vigra::MultiArray<5,T> > out;
 	/// QWidget to be displayed in ArgosDisplay
 	OutputSlot< QWidget* > widget;
+	/// Crop border output
+	OutputSlot< Roi<int>* > roi;
 
 	/// enable cropping last (RGB) dimension
 	Parameter<bool> cropV;
@@ -73,6 +76,8 @@ public:
 private:
 	/// manipulation widget to be docked somewhere
 	FrameSelectWidget* _gui;
+	/// ROI containing crop borders
+	Roi<int> _roi;
 };
 
 #endif // _CROP_H_
