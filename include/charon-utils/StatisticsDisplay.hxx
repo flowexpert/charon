@@ -159,7 +159,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 	if(_display.connected())
 	{	
 		if(_exportWidget == 0)
-		{	_exportWidget = new StatisticsDisplayWidget(this->getName(), 0) ;	
+		{	_exportWidget = new StatisticsDisplayWidget(this->getName(), 0) ;
 			_display = _exportWidget ;
 		}
 		_exportWidget->updateStats(_statistics) ;

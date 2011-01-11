@@ -40,9 +40,9 @@
 #include <vigra/multi_array.hxx>
 
 class QWidget ;
-class StatisticsDisplayWidget ;
 
 namespace StatisticsDisplay {
+	class StatisticsDisplayWidget ;
 
 	///Struct holding all statistics data for an object
 	struct Statistics
