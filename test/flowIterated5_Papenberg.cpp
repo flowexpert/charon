@@ -1,4 +1,4 @@
-/*  Copyright (C) 2009 Jens-Malte Gottfried <jmgottfried@web.de>
+/*  Copyright (C) 2011 Jens-Malte Gottfried
 
     This file is part of Charon.
 
@@ -15,10 +15,10 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file flowIterated4_SpatialPW.cpp
- *  Unit tests for class DataBC
+/** \file flowIterated5_Papenberg.cpp
+ *  Unit tests for class DataBC and SpatialPW as well as Psi functions
  *  \author Jens-Malte Gottfried <jmgottfried@web.de>
- *  \date 02.02.2010
+ *  \date 13.01.2011
  */
 
 #ifdef NDEBUG
@@ -54,9 +54,10 @@
 #include <charon/RelaxingIterator.h>
 #include <charon/IteratorHelper.h>
 #include <charon/Stencils/SpatialPW.h>
+#include <charon/Stencils/DataConstant.h>
 
 /// prefix for output files
-#define PREFIX "flowIterated4"
+#define PREFIX "flowIterated5"
 
 /// print header to inform about csv columns
 void printHeader(
@@ -69,13 +70,14 @@ void printInfos(
 		double cur                        /** [in]  relaxation status*/,
 		IteratorHelper<double>* h1        /** [in]  inner iterator helper*/,
 		IteratorHelper<double>* h2        /** [in]  outer iterator helper*/,
-		SpatialPW<double>* stencil        /** [in]  stencil to watch*/,
+		SpatialPW<double>* spatial        /** [in]  stencil1 to watch*/,
+		DataConstant<double>* data        /** [in]  stencil2 to watch*/,
 		FlowComparator<double>* analyzer  /** [in]  result analyzer*/);
 
 /// unit tests
 int test() {
-	std::ofstream log("flowIterated4_SpatialPW.log", std::ios::trunc);
-	std::ofstream csv("flowIterated4_energy.csv", std::ios::trunc);
+	std::ofstream log("flowIterated5_Papenberg.log", std::ios::trunc);
+	std::ofstream csv("flowIterated5_energy.csv", std::ios::trunc);
 	assert(log.good());
 	sout.assign(log);
 
@@ -83,7 +85,7 @@ int test() {
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 
 	// start tests
-	std::string testfile(TESTDIR "/flowIterated4.wrp");
+	std::string testfile(TESTDIR "/flowIterated5.wrp");
 	std::cout << "Loading parameter file \"" << testfile;
 	std::cout << "\"" << std::endl;
 	man.loadParameterFile(testfile);
@@ -110,8 +112,12 @@ int test() {
 	assert(helper);
 
 	SpatialPW<double>* spatialPW = dynamic_cast<SpatialPW<double>*>(
-			man.getInstance("spatialterm_learned"));
+			man.getInstance("spatial_pb"));
 	assert(spatialPW);
+
+	DataConstant<double>* dataBC = dynamic_cast<DataConstant<double>*>(
+			man.getInstance("data_pb"));
+	assert(dataBC);
 
 	FlowComparator<double>* analyzer = dynamic_cast<FlowComparator<double>*>(
 			man.getInstance("analyzer"));
@@ -121,7 +127,7 @@ int test() {
 	FileTool::changeDir(TESTDIR);
 
 	// make sure that ground truth is available
-	ParameteredObject* gen = man.getInstance("seqgen");
+	ParameteredObject* gen = man.getInstance("read_flow");
 	assert(gen);
 	gen->execute();
 
@@ -141,11 +147,15 @@ int test() {
 	do {
 		relaxator->prepareStep();
 		double cur = relaxator->getCur();
-		printInfos(csv,curDir,cur,helper,relaxinghelper,spatialPW,analyzer);
+		printInfos(
+				csv,curDir,cur,helper,relaxinghelper,
+				spatialPW,dataBC,analyzer);
 		iterator->initialize();
 		do {
 			contIn = iterator->singleStep();
-			printInfos(csv,curDir,cur,helper,relaxinghelper,spatialPW,analyzer);
+			printInfos(
+					csv,curDir,cur,helper,relaxinghelper,
+					spatialPW,dataBC,analyzer);
 			std::cout << helper->countAll() << " " << std::flush;
 		} while (contIn);
 		iterator->finalize();
@@ -166,7 +176,8 @@ int test() {
 	log.close();
 
 	// check results
-	if (meanEndpointError >= 0.11) {
+	// should be masked due to false values at black "cloud-area"
+	if (meanEndpointError >= 0.25) {
 		std::cout << "Mean endpoint error too bad!" << std::endl;
 		return EXIT_FAILURE;
 	}
@@ -190,14 +201,15 @@ void printInfos(
 		double cur,
 		IteratorHelper<double>* helper1,
 		IteratorHelper<double>* helper2,
-		SpatialPW<double>* stencil,
+		SpatialPW<double>* spatial,
+		DataConstant<double>* data,
 		FlowComparator<double>* analyzer) {
 	// only print informations once for each counter value
 	static int count = -1;
 	if(count == int(helper1->countAll()))
 		return;
 
-	stencil->execute();
+	spatial->execute();
 
 	// print out information
 	strm << std::setw(5) << (count = helper1->countAll())
@@ -211,22 +223,41 @@ void printInfos(
 		// took place
 		strm << "       na    ";
 
-
-	assert(helper1->flow().size() == 2u);
-	cimglist_for(helper1->flow(),kk)
+	const cimg_library::CImgList<double>& curFlow = helper1->flow();
+	assert(curFlow.size() == 2u);
+	assert(curFlow[0].spectrum() == 1u);
+	assert(curFlow[1].spectrum() == 1u);
+	cimglist_for(curFlow,kk)
 		strm << std::setw(15) << std::scientific << std::setprecision(6)
-				<< helper1->flow()[kk].mean();
+				<< curFlow[kk].mean();
 
 	strm << " " << std::setw(13) << std::scientific
 			<< std::setprecision(6) << analyzer->getMeanEndpointError();
 	strm << std::endl;
 
-	// write out stencil values
+	// write out stencil values and flow
 	if(count > 0) {
+		static cimg_library::CImgList<double> flow(curFlow);
+		cimglist_for(flow,cc)
+			flow[cc].append(curFlow[cc],'c');
+		std::string flowFName = oDir + "/" PREFIX "_flows.cimg";
+		flow.save_cimg(flowFName.c_str(),true);
+
 		static cimg_library::CImgList<double> lambdas;
-		lambdas.push_back(stencil->apply(helper1->flow(), 0u));
+		lambdas.push_back(spatial->apply(curFlow, 0u));
 		lambdas.save_cimg(
 				(oDir + "/" PREFIX "_lambdas.cimg").c_str(),true);
+
+		// update weight map
+		static cimg_library::CImgList<double> weightMap, dummy;
+		const std::string weightsFName =
+				(oDir + "/" PREFIX "_weightMaps.cimg");
+
+		// arguments of apply are ignored and may be set arbitrarily
+		helper1->resetExecuted();
+		data->execute();
+		weightMap.push_back(data->apply(dummy,0u));
+		weightMap.save_cimg(weightsFName.c_str(),true);
 	}
 }
 

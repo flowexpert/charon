@@ -214,6 +214,17 @@ IF(BUILD_TESTING)
 		NAME FlowIterated4:_SpatialPW
 		COMMAND flowIterated4_SpatialPW
 	)
+	ADD_EXECUTABLE(flowIterated5_Papenberg flowIterated5_Papenberg.cpp)
+	TARGET_LINK_LIBRARIES(flowIterated5_Papenberg
+		relaxingiterator
+		flowcomparator
+		charon-plugins
+		${CIMG_LINK_LIBRARIES}
+	)
+	ADD_TEST(
+		NAME FlowIterated5:_Papenberg
+		COMMAND flowIterated5_Papenberg
+	)
 
 	# Sample generation and Contrastive Divergence fitter
 	ADD_EXECUTABLE(fit1_SampleGeneration

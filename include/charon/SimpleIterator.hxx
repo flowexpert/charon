@@ -74,8 +74,11 @@ void SimpleIterator<T>::_init() {
 	ParameteredObject::_addOutputSlot(result, "result",
 		"final flow result after all iterations", "CImgList<T>");
 
+	// avoid undefined references
 	_addConstructor(SimpleIterator<T>(
 			std::string(),std::string(),std::string()));
+	_addFunction(SimpleIterator<T>::singleStep);
+	_addFunction(SimpleIterator<T>::finalize);
 }
 
 template <typename T>
