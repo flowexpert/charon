@@ -211,6 +211,7 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.h
 			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.hxx
 		)
+		TARGET_LINK_LIBRARIES(filereaderhdf5 roi)
 		SET(Plugins_HDF5
 			filewriterhdf5
 			filereaderhdf5

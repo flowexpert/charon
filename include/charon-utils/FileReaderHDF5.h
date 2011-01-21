@@ -39,6 +39,7 @@
 
 #include <charon-core/ParameteredObject.h>
 #include <vigra/multi_array.hxx>
+#include <charon-utils/Roi.h>
 
 /// Read 5D vigra::MultiArray from a HDF5 file
 template <typename T>
@@ -50,6 +51,9 @@ public:
 
 	/// path to the data within the hdf5 file
 	Parameter<std::string> pathInFile;
+
+	/// roi input to select region to read (optional)
+	InputSlot < Roi<int>* > roi;
 
 	/// The vigra::MultiArray object to be read from a hdf5 file.
 	OutputSlot < vigra::MultiArray<5, T> > out;

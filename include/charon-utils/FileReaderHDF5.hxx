@@ -30,8 +30,10 @@
 
 template<typename T>
 FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
-	TemplatedParameteredObject<T>("FileReaderHDF5", name,
-			"Read 5D vigra::MultiArray from a HDF5 file") {
+			TemplatedParameteredObject<T>("FileReaderHDF5", name,
+					"Read 5D vigra::MultiArray from a HDF5 file"),
+			roi(true,false) // optional
+{
 	ParameteredObject::_addParameter(
 			filename, "filename",
 			"name of the hdf5 file to be read", "fileopen");
@@ -39,6 +41,9 @@ FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
 			pathInFile, "pathInFile",
 			"path to the dataset within the hdf5 file",
 			"/data", "string");
+	ParameteredObject::_addInputSlot(
+			roi, "roi", "roi input to select region to read",
+			"Roi<int>");
 	ParameteredObject::_addOutputSlot(
 			out, "out", "data output", "vigraArray5<T>");
 }
@@ -50,16 +55,38 @@ void FileReaderHDF5<T>::execute() {
 
 	vigra::MultiArray<5,T>& o = out();
 
-	vigra::HDF5ImportInfo info(filename().c_str(),pathInFile().c_str());
-	vigra_precondition(info.numDimensions() == 5, "Dataset has to be 5D.");
-	const vigra::ArrayVector<hsize_t>& is = info.shape();
-	vigra_precondition(is.size() == 5, "infoShape has != 5 elements");
-	vigra::MultiArrayShape<5>::type shape(is[0],is[1],is[2],is[3],is[4]);
-	o.reshape(shape);
-	vigra::readHDF5(info,o);
+	vigra::HDF5File file(filename().c_str(), vigra::HDF5File::Open);
+	std::string dSet = pathInFile().c_str();
+	vigra_precondition(
+			file.getDatasetDimensions(dSet) == 5, "Dataset has to be 5D.");
+	const vigra::ArrayVector<hsize_t>& shape = file.getDatasetShape(dSet);
+	vigra_postcondition(shape.size() == 5, "infoShape has != 5 elements");
+	if(roi.connected()) {
+		// partial read of dataset
+		const Roi<int>& r = *roi();
+		vigra_precondition(
+				r.xBegin >= 0 && r.yBegin >= 0 && r.zBegin >= 0 &&
+				r.tBegin >= 0 && r.vBegin >= 0, "offset has to be positive!");
+		vigra::MultiArrayShape<5>::type blockOffset(
+				r.xBegin,r.yBegin,r.zBegin,r.tBegin,r.vBegin);
+		vigra_precondition(r.getVolume() > 0, "size has to be positive!");
+		vigra::MultiArrayShape<5>::type blockShape(
+				r.getWidth(),r.getHeight(),r.getDepth(),
+				r.getDuration(),r.getChannels());
+		o.reshape(blockShape);
+		file.readBlock(dSet,blockOffset,blockShape,o);
+	}
+	else {
+		// read whole dataset
+		vigra::MultiArrayShape<5>::type tShape;
+		for(unsigned int ii=0; ii<5; ii++)
+			tShape[ii]=shape[ii];
+		o.reshape(tShape);
+		file.read(dSet,o);
 
-	sout << "\tRead data has shape " << is[0] << "x" << is[1] << "x"
-			<< is[2] << "x" << is[3] << "x" << is[4] << std::endl;
+		sout << "\tRead data has shape " << shape[0] << "x" << shape[1] << "x"
+				<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;
+	}
 }
 
 #endif /* _FILEWRITERHDF5_HXX_ */

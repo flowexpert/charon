@@ -55,33 +55,10 @@ void FileWriterHDF5<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	const std::string& filePath = filename();
-	vigra::writeHDF5(filePath.c_str(), pathInFile().c_str(), in());
-	if (!comment().empty()) {
-		const std::string& inPath = pathInFile();
-		std::string::size_type pos = inPath.rfind("/");
-		vigra_assert(pos != std::string::npos, "pathInFile has no \"/\"");
-		std::string dName(inPath.begin()+pos+1, inPath.end());
-		std::string gName(inPath.begin(), inPath.begin()+pos+1);
-		// groups have trailing slashes
-		vigra_assert(*(gName.rbegin()) == '/', "group has no trailing slash");
-		// the only group that is allowed to start with a slash is the
-		// root group
-		vigra_assert(
-				gName == "/" || gName[0] != '/',
-				"root-group only starts with slash");
-
-		//create or open file
-		hid_t file = H5Fopen(filePath.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
-		vigra_assert(file >= 0, "Opening file to write comment failed.");
-		hid_t group = H5Gopen(file, gName.c_str(), H5P_DEFAULT);
-		vigra_assert(group >= 0, "Opening group to write comment failed.");
-
-		H5LTset_attribute_string(
-				group, dName.c_str(), "comment", comment().c_str());
-		H5Gclose(group);
-		H5Fclose(file);
-	}
+	vigra::HDF5File file(filename().c_str(),vigra::HDF5File::New);
+	file.write(pathInFile().c_str(), in());
+	if (!comment().empty())
+		file.setAttribute(pathInFile(),"comment",comment().c_str());
 }
 
 #endif /* _FILEWRITERHDF5_HXX_ */
