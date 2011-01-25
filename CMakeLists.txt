@@ -25,7 +25,10 @@ FIND_PACKAGE(Boost 1.40)
 
 INCLUDE(Documentation)
 INCLUDE(InitFlags)
-INCLUDE(CImgConfig)
+OPTION(USE_CIMG "enable plugins using CImg" ON)
+IF(USE_CIMG)
+	INCLUDE(CImgConfig)
+ENDIF()
 
 MESSAGE(STATUS "Charon-utils library configuration:")
 OPTION(USE_VIGRA "enable plugins using Vigra library" ${Vigra_FOUND})
@@ -33,14 +36,16 @@ OPTION(USE_HDF5 "enable plugins using HDF5 library" ${HDF5_FOUND})
 OPTION(USE_MPI "enable plugins using MPI" ${MPI_FOUND})
 OPTION(USE_QT "enable plugins using QT (needs Vigra)" ${QT_FOUND})
 OPTION(USE_Boost "enable plugins using QT" ${Boost_FOUND})
+MESSAGE(STATUS "    CImg         : ${USE_CIMG}")
 MESSAGE(STATUS "    Vigra        : ${USE_VIGRA}")
 MESSAGE(STATUS "    HDF5         : ${USE_HDF5}")
 MESSAGE(STATUS "    MPI          : ${USE_MPI}")
 MESSAGE(STATUS "    QT           : ${USE_QT}")
 MESSAGE(STATUS "    Boost        : ${USE_Boost}")
 
-
-CImgLibInfo()
+IF(USE_CIMG)
+	CImgLibInfo()
+ENDIF()
 INCLUDE(ReleaseSys)
 
 # Test suite

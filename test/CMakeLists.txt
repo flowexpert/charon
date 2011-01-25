@@ -1,7 +1,6 @@
 # Test suite of application
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
 SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 
 IF(BUILD_TESTING)
@@ -33,112 +32,115 @@ IF(BUILD_TESTING)
 
 	SET(tests)
 
-	# tests for imgmanip classes
-	ADD_EXECUTABLE(imgManipTest imgmaniptest.cpp)
-	TARGET_LINK_LIBRARIES(imgManipTest
-		charon-plugins
-		${CIMG_LINK_LIBRARIES}
-	)
-	ADD_TEST(
-		NAME ImageManip
-		COMMAND imgManipTest
-	)
-	LIST(APPEND tests ImageManip)
+	IF(USE_CIMG)
+		INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
 
-	# tests for ImgTool routines
-	ADD_EXECUTABLE(imgToolTest
-		imgToolTest.cpp
-		${CHARON_UTILS_INCLUDE_DIR}/ImgTool.h
-		${CHARON_UTILS_INCLUDE_DIR}/ImgTool.hxx
-	)
-	TARGET_LINK_LIBRARIES(imgToolTest
-		charon-core
-		${CIMG_LINK_LIBRARIES}
-	)
-	ADD_TEST(
-		NAME ImgTool
-		COMMAND imgToolTest
-	)
-	LIST(APPEND tests ImgTool)
-	
-	#tests for plugin creation in various ways
-	ADD_EXECUTABLE(pluginTest pluginTest.cpp)
-	TARGET_LINK_LIBRARIES(pluginTest
-		charon-core
-		charon-plugins
-		roi
-		filereader
-		${CIMG_LINK_LIBRARIES}
-	)
-	ADD_TEST(
-		NAME Plugins
-		COMMAND pluginTest
-	)
-	LIST(APPEND tests Plugins)
-
-	ADD_EXECUTABLE(cImgTest cimgtest.cpp)
-	TARGET_LINK_LIBRARIES(cImgTest ${CIMG_LINK_LIBRARIES})
-	ADD_TEST(
-		NAME CImgInfo
-		COMMAND cImgTest
-	)
-	LIST(APPEND tests CImgInfo)
-	
-	ADD_EXECUTABLE(warptest Warptest.cpp)
-	TARGET_LINK_LIBRARIES(warptest
-		${CIMG_LINK_LIBRARIES}
-		filereader
-		interpolatorlinear
-		warp
-		warpsymmetric
-		charon-plugins
-	)
-	ADD_TEST(
-		NAME Warp
-		COMMAND warptest
-	)
-	LIST(APPEND tests Warp)
-
-	ADD_EXECUTABLE(flowToHSV flowToHSV.cpp)
-	TARGET_LINK_LIBRARIES(flowToHSV
-		${CIMG_LINK_LIBRARIES}
-		charon-plugins
-		flow2hsv
-		filereader
-	)
-	ADD_TEST(
-		NAME flowToHSV
-		COMMAND flowToHSV
-	)
-	LIST(APPEND tests flowToHSV)
-
-	IF(USE_VIGRA)
-		INCLUDE_DIRECTORIES(${Vigra_INCLUDE_DIRS})
-		SET(VIGRA_LIBRARIES vigraimpex)
-		ADD_EXECUTABLE(vigraconversion vigraConversion.cpp)
-		TARGET_LINK_LIBRARIES(vigraconversion
+		# tests for imgmanip classes
+		ADD_EXECUTABLE(imgManipTest imgmaniptest.cpp)
+		TARGET_LINK_LIBRARIES(imgManipTest
+			charon-plugins
 			${CIMG_LINK_LIBRARIES}
-			${VIGRA_LIBRARIES}
-			filereader
-			cimg2vigramultiarray
-			vigramultiarray2cimg
 		)
 		ADD_TEST(
-			NAME VigraConversion
-			COMMAND vigraconversion
+			NAME ImageManip
+			COMMAND imgManipTest
 		)
-	ENDIF(USE_VIGRA)
+		LIST(APPEND tests ImageManip)
 
-	IF(WIN32)
-		# copy needed dll for tests and application run before installing
-		GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
-		GET_TARGET_PROPERTY(PLOC imgManipTest LOCATION)
-		GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
-
-		ADD_CUSTOM_COMMAND(TARGET imgToolTest POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${PLOC_DIR}"
+		# tests for ImgTool routines
+		ADD_EXECUTABLE(imgToolTest
+			imgToolTest.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/ImgTool.h
+			${CHARON_UTILS_INCLUDE_DIR}/ImgTool.hxx
 		)
-	ENDIF(WIN32)
+		TARGET_LINK_LIBRARIES(imgToolTest
+			charon-core
+			${CIMG_LINK_LIBRARIES}
+		)
+		ADD_TEST(
+			NAME ImgTool
+			COMMAND imgToolTest
+		)
+		LIST(APPEND tests ImgTool)
+
+		ADD_EXECUTABLE(cImgTest cimgtest.cpp)
+		TARGET_LINK_LIBRARIES(cImgTest ${CIMG_LINK_LIBRARIES})
+		ADD_TEST(
+			NAME CImgInfo
+			COMMAND cImgTest
+		)
+		LIST(APPEND tests CImgInfo)
+
+		ADD_EXECUTABLE(warptest Warptest.cpp)
+		TARGET_LINK_LIBRARIES(warptest
+			${CIMG_LINK_LIBRARIES}
+			filereader
+			interpolatorlinear
+			warp
+			warpsymmetric
+			charon-plugins
+		)
+		ADD_TEST(
+			NAME Warp
+			COMMAND warptest
+		)
+		LIST(APPEND tests Warp)
+
+		ADD_EXECUTABLE(flowToHSV flowToHSV.cpp)
+		TARGET_LINK_LIBRARIES(flowToHSV
+			${CIMG_LINK_LIBRARIES}
+			charon-plugins
+			flow2hsv
+			filereader
+		)
+		ADD_TEST(
+			NAME flowToHSV
+			COMMAND flowToHSV
+		)
+		LIST(APPEND tests flowToHSV)
+
+		# tests for plugin creation in various ways
+		ADD_EXECUTABLE(pluginTest pluginTest.cpp)
+		TARGET_LINK_LIBRARIES(pluginTest
+			charon-core
+			charon-plugins
+			roi
+			filereader
+			${CIMG_LINK_LIBRARIES}
+		)
+		ADD_TEST(
+			NAME Plugins
+			COMMAND pluginTest
+		)
+		LIST(APPEND tests Plugins)
+
+		IF(USE_VIGRA)
+			INCLUDE_DIRECTORIES(${Vigra_INCLUDE_DIRS})
+			ADD_EXECUTABLE(vigraconversion vigraConversion.cpp)
+			TARGET_LINK_LIBRARIES(vigraconversion
+				${CIMG_LINK_LIBRARIES}
+				${VIGRA_LIBRARIES}
+				filereader
+				cimg2vigramultiarray
+				vigramultiarray2cimg
+			)
+			ADD_TEST(
+				NAME VigraConversion
+				COMMAND vigraconversion
+			)
+		ENDIF(USE_VIGRA)
+
+		IF(WIN32)
+			# copy needed dll for tests and application run before installing
+			GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
+			GET_TARGET_PROPERTY(PLOC pluginTest LOCATION)
+			GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
+
+			ADD_CUSTOM_COMMAND(TARGET pluginTest POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${PLOC_DIR}"
+			)
+		ENDIF(WIN32)
+	ENDIF(USE_CIMG)
 
 	# add test labels for dashboard submission
 	SET_TESTS_PROPERTIES(${tests}
