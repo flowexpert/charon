@@ -185,11 +185,17 @@ IF(USE_VIGRA)
 		${CHARON_UTILS_INCLUDE_DIR}/BinOperator.h
 		${CHARON_UTILS_INCLUDE_DIR}/BinOperator.hxx
 	)
+	ADD_LIBRARY(dilationerosion SHARED
+		DilationErosion.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/DilationErosion.h
+		${CHARON_UTILS_INCLUDE_DIR}/DilationErosion.hxx
+	)
 
 	SET(Plugins_Vigra
 		splineresize
 		threshold
 		binoperator
+		dilationerosion
 	)
 	IF(USE_CIMG)
 		ADD_LIBRARY(cimg2vigramultiarray SHARED
@@ -211,6 +217,7 @@ IF(USE_VIGRA)
 			vigramultiarray2cimg
 		)
 	ENDIF(USE_CIMG)
+
 	IF(USE_HDF5)
 		INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
 		IF(USE_MPI)

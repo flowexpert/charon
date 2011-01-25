@@ -25,7 +25,6 @@
 #define _THRESHOLD_HXX_
 
 #include "Threshold.h"
-#include <vigra/transformimage.hxx>
 #include <vigra/multi_pointoperators.hxx>
 
 template <typename T>
