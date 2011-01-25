@@ -29,21 +29,18 @@
 
 using namespace ArgosDisplay ;
 
-ViewStack::ViewStack(QWidget* parent) : QWidget(parent)
-{
+ViewStack::ViewStack(QWidget* p) : QWidget(p) {
 	_tabWidget = new QTabWidget(this) ;
-		_tabWidget->setUsesScrollButtons(true) ;
+	_tabWidget->setUsesScrollButtons(true) ;
 
 	QVBoxLayout* layout = new QVBoxLayout ;
 		layout->addWidget(_tabWidget) ;
 	this->setLayout(layout) ;
-	QSizePolicy policy(QSizePolicy::Minimum, QSizePolicy::Minimum) ;
-	this->setSizePolicy(policy) ;
+	this->setSizePolicy(
+			QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 }
 
-ViewStack::~ViewStack()
-{
-	;
+ViewStack::~ViewStack() {
 }
 
 void ViewStack::clear() {
@@ -53,98 +50,100 @@ void ViewStack::clear() {
 		_tabWidget->removeTab(c);
 		delete cur;
 	}
+	_intImgMap.clear();
+	_floatImgMap.clear();
+	_doubleImgMap.clear();
 }
 
-int ViewStack::currentIndex() const
-{
+int ViewStack::currentIndex() const {
 	return _tabWidget->currentIndex() ;
 }
 
-void ViewStack::setCurrentIndex(int index)
-{
-	if(index < _tabWidget->count()) 
-	{	_tabWidget->setCurrentIndex(index) ;	}
+void ViewStack::setCurrentIndex(int index) {
+	if (index < _tabWidget->count())
+		_tabWidget->setCurrentIndex(index);
 }
 
-
-
-void ViewStack::linkFloatImage(const vigra::FImage& img, const std::string& name)
-{
+void ViewStack::linkFloatImage(
+		const vigra::FImage& img, const std::string& name) {
 	FImageViewer* viewer = new FImageViewer(0) ;
-	//_imgList.insert(std::pair<QWidget*, const vigra::MultiArrayView<5, T>*>(viewer, &mArray)) ;
 	_tabWidget->addTab(viewer, QString::fromStdString(name)) ;
 	viewer->setImage(img) ;
-	//viewer->imageViewer()->autoZoom() ;
-	connect(viewer->imageViewer(), SIGNAL(mouseOver(int, int)), this, SLOT(processMouseMovement(int, int))) ;
+	connect(
+			viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
+			this, SLOT(processMouseMovement(int, int)));
 }
 
-void ViewStack::linkRgbaImage(const vigra::QRGBImage& img, const std::string& name)
-{
+void ViewStack::linkRgbaImage(
+		const vigra::QRGBImage& img, const std::string& name) {
 	QImageViewer* viewer = new QImageViewer(0) ;
-	//_imgList.insert(std::pair<QWidget*, const vigra::MultiArrayView<5, T>*>(viewer, &mArray)) ;
 	_tabWidget->addTab(viewer, QString::fromStdString(name)) ;
 	viewer->setImage(img.qImage()) ;
-	//viewer->autoZoom() ;
-	connect(viewer, SIGNAL(mouseOver(int, int)), this, SLOT(processMouseMovement(int, int))) ;
+	connect(
+			viewer, SIGNAL(mouseOver(int, int)),
+			this, SLOT(processMouseMovement(int, int))) ;
 }
 
-
-
-void ViewStack::processMouseMovement(int x, int y)
-{
+void ViewStack::processMouseMovement(int x, int y) {
 	QString message = QString("x : %1 y : %2").arg(x).arg(y) ;
-	std::vector<std::pair<std::string, const VigraDoubleArray* > >::iterator dit = _doubleImgMap.begin() ;
-	for(; dit != _doubleImgMap.end() ; dit++)
-	{
+	std::vector<std::pair<std::string, const VigraDoubleArray* > >::iterator
+			dit = _doubleImgMap.begin() ;
+	for (; dit != _doubleImgMap.end() ; dit++) {
 		const VigraDoubleArray& array = *(dit->second) ;
-		if(x < 0 || y < 0 || array.size() <= 0 || x >= array.size(0) || y >= array.size(1))
-		{	continue ;	}
-				//append name of parent node
-				message += QString("  %1 : { ").arg(QString::fromStdString(dit->first)) ;
+		if(x < 0 || y < 0 || array.size() <= 0 ||
+				x >= array.size(0) || y >= array.size(1))
+			continue;
+		// append name of parent node
+		message += QString("  %1 : { ").arg(
+				QString::fromStdString(dit->first)) ;
 
-				//append pixel values
-				for(int i = 0 ; i < array.size(4) ; i++)
-		{	message += QString("%1 ").arg(array(x,y,0,0,i)) ;	}
+		// append pixel values
+		for(int i = 0 ; i < array.size(4) ; i++)
+			message += QString("%1 ").arg(array(x,y,0,0,i));
 		message += QString("}") ;
 	}
-	std::vector<std::pair<std::string, const VigraFloatArray* > >::iterator fit = _floatImgMap.begin() ;
-	for(; fit != _floatImgMap.end() ; fit++)
-	{
+	std::vector<std::pair<std::string, const VigraFloatArray* > >::iterator
+			fit = _floatImgMap.begin() ;
+	for(; fit != _floatImgMap.end() ; fit++) {
 		const VigraFloatArray& array = *(fit->second) ;
-		if(x < 0 || y < 0 || array.size() <= 0 || x >= array.size(0) || y >= array.size(1))
-		{	continue ;	}
-		message += QString("  %1 : { ").arg(QString::fromStdString(fit->first)) ;
+		if(x < 0 || y < 0 || array.size() <= 0 ||
+				x >= array.size(0) || y >= array.size(1))
+			continue;
+		message += QString("  %1 : { ").arg(
+				QString::fromStdString(fit->first)) ;
 
-				for(int i = 0 ; i < array.size(4) ; i++)
-		{	message += QString("%1 ").arg(array(x,y,0,0,i)) ;	}
+		for(int i = 0 ; i < array.size(4) ; i++)
+			message += QString("%1 ").arg(array(x,y,0,0,i)) ;
 		message += QString("}") ;
 	}
-	std::vector<std::pair<std::string, const VigraIntArray* > >::iterator it = _intImgMap.begin() ;
-	for(; it != _intImgMap.end() ; it++)
-	{
+	std::vector<std::pair<std::string, const VigraIntArray* > >::iterator
+			it = _intImgMap.begin() ;
+	for(; it != _intImgMap.end() ; it++) {
 		const VigraIntArray& array = *(it->second) ;
-		if(x < 0 || y < 0 || array.size() <= 0 || x >= array.size(0) || y >= array.size(1))
-		{	continue ;	}
-		message += QString("  %1 : { ").arg(QString::fromStdString(it->first)) ;
+		if(x < 0 || y < 0 || array.size() <= 0 ||
+				x >= array.size(0) || y >= array.size(1))
+			continue;
+		message += QString("  %1 : { ").arg(
+				QString::fromStdString(it->first)) ;
 
-				for(int i = 0 ; i < array.size(4) ; i++)
-		{	message += QString("%1 ").arg(array(x,y,0,0,i)) ;	}
+		for(int i = 0 ; i < array.size(4) ; i++)
+			message += QString("%1 ").arg(array(x,y,0,0,i));
 		message += QString("}") ;
 	}
-
 
 	emit exportStatusMessage(message) ;
 }
 
-void ViewStack::keyPressEvent(QKeyEvent * event )
-{
+void ViewStack::keyPressEvent(QKeyEvent* event) {
 	int key = event->key() ;
 	
-	//assume the int values of Key_1 to Key_9 are in ascending order
+	// assume the int values of Key_1 to Key_9 are in ascending order
 	if(key >= Qt::Key_1 && key <= Qt::Key_9)
-	{	_tabWidget->setCurrentIndex(key % Qt::Key_1) ;	} //<- this will give 0 for Key_1, 1 for Key_2 ...
-	//QTabWidget will check the range for us (at least in Qt 4.6 it did)
+		// this will give 0 for Key_1, 1 for Key_2 ...
+		_tabWidget->setCurrentIndex(key % Qt::Key_1) ;
+	// QTabWidget will check the range for us (at least in Qt 4.6 it did)
 	else
-	{	this->QWidget::keyPressEvent(event) ;	} //pass event to base class
+		// pass event to base class
+		this->QWidget::keyPressEvent(event) ;
 }
 

@@ -45,14 +45,11 @@ namespace ArgosDisplay {
 
 	class PixelInspector ;
 
-
 	/// creates and manages all imageviewer instances
-	class charonwidgets_DECLDIR ViewStack : public QWidget
-	{
-	Q_OBJECT ;
+	class charonwidgets_DECLDIR ViewStack : public QWidget {
+		Q_OBJECT
 	
 	public :
-		
 		/// default constructor
 		ViewStack(QWidget* parent = 0) ;
 		
@@ -64,7 +61,11 @@ namespace ArgosDisplay {
 
 		/// add image to ViewStack for display
 		template<typename T>
-		void linkImage(const vigra::MultiArrayView<5, T>&, const std::string& type, const std::string& name = "", bool rgb = false) ;
+		void linkImage(
+				const vigra::MultiArrayView<5, T>&,
+				const std::string& type,
+				const std::string& name = "",
+				bool rgb = false) ;
 
 		/// get index of current tab widget
 		int currentIndex() const ;
@@ -73,66 +74,84 @@ namespace ArgosDisplay {
 		void setCurrentIndex(int index) ;
 
 	protected:
-
 		/// set active tab widget by keypress
 		virtual void keyPressEvent(QKeyEvent * event ) ;
 
 	private:
-
-
 		/// image stack
 		QTabWidget* _tabWidget ;
 
-		///pointers to pixel data for each possible template type
-		std::vector<std::pair<std::string, const VigraIntArray* > > _intImgMap ;
-		std::vector<std::pair<std::string, const VigraFloatArray* > > _floatImgMap ;
-		std::vector<std::pair<std::string, const VigraDoubleArray* > > _doubleImgMap ;
+		/// \name pointers to pixel data for each possible template type
+		//\{
+		std::vector<std::pair<std::string, const VigraIntArray*> >
+				_intImgMap ;
+		std::vector<std::pair<std::string, const VigraFloatArray*> >
+				_floatImgMap ;
+		std::vector<std::pair<std::string, const VigraDoubleArray*> >
+				_doubleImgMap ;
+		//\}
 
 		/// create new FImageViewer and display float image
-		void linkFloatImage(const vigra::FImage& img, const std::string& name) ;
+		void linkFloatImage(
+				const vigra::FImage& img, const std::string& name) ;
 		
 		/// create new QImageViewer and display color image
-		void linkRgbaImage(const vigra::QRGBImage& img, const std::string& name) ;
+		void linkRgbaImage(
+				const vigra::QRGBImage& img, const std::string& name) ;
 
 
 	private slots:
-
 		/// handle mouse movement in ImageDisplays
 		void processMouseMovement(int x, int y) ;
 
 	signals:
-
 		/// export status messages as signal
 		void exportStatusMessage(QString message) ;
 	} ; // class ViewStack
 
 	template<typename T>
-	void ViewStack::linkImage(const vigra::MultiArrayView<5, T>& mArray, const std::string& type, const std::string& name, bool rgb)
+	void ViewStack::linkImage(
+			const vigra::MultiArrayView<5, T>& mArray,
+			const std::string& type, const std::string& name, bool rgb)
 	{
-		//cast the array from the template to the real type and save a pointer in a vector
+		// cast the array from the template to the real type
+		// and save a pointer in a vector
 	
-		//otherwise ViewStack and several other Widget classes would need to be template classes themself, but Q_OBJECTS may not be templated.
-		//The other solution for the widget to access the individual pixel values would be to make extra double-precission copies of every input image, which would be expensive
-		//This section needs to be reworked when new base template types for Plugins would ever be introduced
-		if(type == std::string("vigraarray5<int>"))
-		{	
-			std::pair<std::string, const VigraIntArray*> val(name, reinterpret_cast<const vigra::MultiArrayView<5, int>* >(&mArray)) ;
-			_intImgMap.push_back(val)	;
+		// otherwise ViewStack and several other Widget classes would need
+		// to be template classes themself, but Q_OBJECTS may not be templated.
+		// The other solution for the widget to access the individual
+		// pixel values would be to make extra double-precission copies
+		// of every input image, which would be expensive.
+		// This section needs to be reworked when new base template types
+		// for Plugins would ever be introduced
+		if (type == std::string("vigraarray5<int>")) {
+			std::pair<std::string, const VigraIntArray*> val(
+					name,
+					reinterpret_cast<const vigra::MultiArrayView<5,int>*>(
+							&mArray)) ;
+			_intImgMap.push_back(val);
 		}
-		else if(type == std::string("vigraarray5<float>"))
-		{	
-			std::pair<std::string, const VigraFloatArray* > val(name, reinterpret_cast<const vigra::MultiArrayView<5, float>* >(&mArray)) ;
-			_floatImgMap.push_back(val)	;
+		else if (type == std::string("vigraarray5<float>")) {
+			std::pair<std::string, const VigraFloatArray* > val(
+					name,
+					reinterpret_cast<const vigra::MultiArrayView<5,float>*>(
+							&mArray)) ;
+			_floatImgMap.push_back(val);
 		}
-		else if(type == std::string("vigraarray5<double>"))
-		{	
-			std::pair<std::string, const VigraDoubleArray* > val(name, reinterpret_cast<const vigra::MultiArrayView<5, double>* >(&mArray)) ;
+		else if (type == std::string("vigraarray5<double>")) {
+			std::pair<std::string, const VigraDoubleArray* > val(
+					name,
+					reinterpret_cast<const vigra::MultiArrayView<5,double>*>(
+							&mArray)) ;
 			_doubleImgMap.push_back(val)	;	
 		}
 		else
-		{	throw std::runtime_error("ViewStack::linkImage: unknown template type! only int, float and double are supported!") ;	}
+			vigra_fail(
+					"ViewStack::linkImage: unknown template type! only "
+					"int, float and double are supported!");
 
-		//intepret image as color image with range (0-255) if exactly 3 channels are present
+		// intepret image as color image with range (0-255)
+		// if exactly 3 channels are present
 		if(rgb && mArray.size(4) == 3)
 		{	vigra::QRGBImage img(mArray.size(0), mArray.size(1)) ;
 			for(int xx = 0 ; xx < mArray.size(0) ; ++xx)
@@ -151,8 +170,8 @@ namespace ArgosDisplay {
 				{	img(xx,yy) = mArray(xx,yy,0,0,0) ;	}
 			linkFloatImage(img, name) ;
 		}
-	} //ViewStack::linkImage
+	} // ViewStack::linkImage
 
-} ; //namespace ArgosDisplay
+} ; // namespace ArgosDisplay
 
 #endif /* _ARGOSDISPLAY_VIEWSTACK_HPP_ */
