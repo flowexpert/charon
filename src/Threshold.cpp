@@ -1,39 +1,34 @@
-/*  Copyright (C) 2009 Jens-Malte Gottfried
+/*  Copyright (C) 2011 Jens-Malte Gottfried
 
-    This file is part of Charon.
+	This file is part of Charon.
 
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file Threshold.cpp
-/// This file is needed for the Threshold class to work as a plugin.
-/// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
-/// @date 24.08.2009
+/** \file Threshold.cpp
+ *  This file is needed for the Threshold class to work as a plugin.
+ *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+ *  \date 25.01.2011
+ */
 
-///Class name of the plugin
+/// Class name of the plugin
 #define TYPE Threshold
 
 #include <charon-utils/Threshold.hxx>
 
-#if defined(MSVC) && defined (threshold_EXPORTS)
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define DECLDIR
-#endif
-
-///Creates an instance of the plugin
-extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
+/// Creates an instance of the plugin
+extern "C" threshold_DECLDIR ParameteredObject* create(
+		const std::string& name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -51,6 +46,7 @@ extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_
 }
 
 ///Deletes an instance of the plugin
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
+extern "C" threshold_DECLDIR void destroy(
+		ParameteredObject* b) {
 	delete b;
 }
