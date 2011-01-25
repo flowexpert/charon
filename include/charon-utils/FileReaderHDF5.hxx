@@ -69,10 +69,12 @@ void FileReaderHDF5<T>::execute() {
 				r.tBegin >= 0 && r.vBegin >= 0, "offset has to be positive!");
 		vigra::MultiArrayShape<5>::type blockOffset(
 				r.xBegin,r.yBegin,r.zBegin,r.tBegin,r.vBegin);
-		vigra_precondition(r.getVolume() > 0, "size has to be positive!");
 		vigra::MultiArrayShape<5>::type blockShape(
-				r.getWidth(),r.getHeight(),r.getDepth(),
-				r.getDuration(),r.getChannels());
+				r.xEnd>r.xBegin?r.getWidth():shape[0u]-r.xBegin,
+				r.yEnd>r.yBegin?r.getHeight():shape[1u]-r.yBegin,
+				r.zEnd>r.zBegin?r.getDepth():shape[2u]-r.zBegin,
+				r.tEnd>r.tBegin?r.getDuration():shape[3u]-r.tBegin,
+				r.vEnd>r.vBegin?r.getChannels():shape[4u]-r.vBegin);
 		o.reshape(blockShape);
 		file.readBlock(dSet,blockOffset,blockShape,o);
 	}
