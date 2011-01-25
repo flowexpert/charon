@@ -136,6 +136,8 @@ QString DocGenerator::_docList(const std::vector<std::string>& parList,
             ret += "<td class=\"leftcol\"></td>";
             QString parType = _model->metaInfo()->
                 getType(*parIter, className).c_str();
+			if (parType.contains(QRegExp("^\\s*\\{\\s*\\w.*\\}\\s*$")))
+				parType = "Selection";
             parType.replace("<", "&lt;").replace(">", "&gt;");
             ret	+= QString("<td class=\"dtype firstrow\">%1</td>")
                 .arg(parType);

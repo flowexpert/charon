@@ -83,7 +83,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 		}
 		if (param.substr(param.find(".")+1) == "templatetype") {
 			QComboBox* editor = new QComboBox(p);
-			editor->setObjectName("templatetypeBox");
+			editor->setObjectName("selectBox");
 			editor->addItem("int");
 			editor->addItem("float");
 			editor->addItem("double");
@@ -94,6 +94,19 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 				editor->setCurrentIndex(1);
 			if (cur == "double")
 				editor->setCurrentIndex(2);
+			return editor;
+		}
+		if (type.contains(QRegExp("^\\s*\\{\\s*\\w.*\\}\\s*$"))) {
+			QComboBox* editor = new QComboBox(p);
+			editor->setObjectName("selectBox");
+			QStringList options = type.trimmed().mid(
+					1,type.length()-2).trimmed().split(
+							";",QString::SkipEmptyParts);
+			editor->addItems(options);
+			QString cur = ind.model()->data(ind).toString();
+			int curInd = options.indexOf(cur);
+			if (curInd >= 0)
+				editor->setCurrentIndex(curInd);
 			return editor;
 		}
 		// fix decimals for double editors
@@ -115,7 +128,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 void InspectorDelegate::setModelData (QWidget* editor,
 	QAbstractItemModel* model, const QModelIndex & index ) const {
 	
-	if(editor && (editor->objectName() == "templatetypeBox")) {
+	if(editor && (editor->objectName() == "selectBox")) {
 		QComboBox* box = qobject_cast<QComboBox*>(editor);
 		model->setData(index,box->currentText());
 		return;
@@ -125,37 +138,6 @@ void InspectorDelegate::setModelData (QWidget* editor,
 
 void InspectorDelegate::_setFileDialogFlag(bool f) {
 	_fileDialogFlag = f;
-}
-
-bool InspectorDelegate::editorEvent(QEvent* e, QAbstractItemModel* model,
-       const QStyleOptionViewItem& option, const QModelIndex& index) {
-	Qt::ItemFlags flags = model->flags(index);
-	if (!(flags & Qt::ItemIsUserCheckable) ||
-			!(option.state & QStyle::State_Enabled) ||
-			!(flags & Qt::ItemIsEnabled))
-		return false;
-
-	QVariant value = index.data(Qt::CheckStateRole);
-	if (!value.isValid())
-		return false;
-
-	if ((e->type() == QEvent::MouseButtonRelease)
-			|| (e->type() == QEvent::MouseButtonDblClick)) {
-		// eat the double click events inside the check rect
-		if (e->type() == QEvent::MouseButtonDblClick)
-			return true;
-	}
-	else if (e->type() == QEvent::KeyPress) {
-		if(static_cast<QKeyEvent*>(e)->key() != Qt::Key_Space &&
-			static_cast<QKeyEvent*>(e)->key() != Qt::Key_Select)
-				return false;
-	}
-	else
-		return false;
-
-	Qt::CheckState state = (static_cast<Qt::CheckState>(value.toInt()) ==
-		Qt::Checked ? Qt::Unchecked : Qt::Checked);
-	return model->setData(index, state, Qt::CheckStateRole);
 }
 
 bool InspectorDelegate::eventFilter(QObject* object, QEvent* ev)

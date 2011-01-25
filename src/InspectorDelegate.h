@@ -63,11 +63,6 @@ public:
 			QWidget* parent, const QStyleOptionViewItem& option,
 			const QModelIndex& index ) const;
 
-	/// handle editor events
-	virtual bool editorEvent (
-			QEvent* event, QAbstractItemModel* model,
-			const QStyleOptionViewItem& option, const QModelIndex& index);
-
 	/// filter editor events
 	/** workaround for what looks like a bug in Qt on Mac OS X
 	 *  where it doesn't create a QWidget wrapper for the native file dialog
