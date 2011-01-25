@@ -75,11 +75,6 @@ ADD_LIBRARY(medianfilter SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/MedianFilter.h
 	${CHARON_UTILS_INCLUDE_DIR}/MedianFilter.hxx
 )
-ADD_LIBRARY(threshold SHARED
-	Threshold.cpp
-	${CHARON_UTILS_INCLUDE_DIR}/Threshold.h
-	${CHARON_UTILS_INCLUDE_DIR}/Threshold.hxx
-)
 ADD_LIBRARY(rgb2hsv SHARED
 	Rgb2Hsv.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/Rgb2Hsv.h
@@ -150,7 +145,6 @@ SET(Plugins
 	interpolatorlinear
 	normalize
 	medianfilter
-	threshold
 	rgb2hsv
 	flow2hsv
 	colormask
@@ -186,11 +180,23 @@ IF(USE_VIGRA)
 		${CHARON_UTILS_INCLUDE_DIR}/SplineResize.h
 		${CHARON_UTILS_INCLUDE_DIR}/SplineResize.hxx
 	)
-	
+	ADD_LIBRARY(threshold SHARED
+		Threshold.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Threshold.h
+		${CHARON_UTILS_INCLUDE_DIR}/Threshold.hxx
+	)
+	ADD_LIBRARY(binoperator SHARED
+		BinOperator.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/BinOperator.h
+		${CHARON_UTILS_INCLUDE_DIR}/BinOperator.hxx
+	)
+
 	SET(Plugins_Vigra
 		cimg2vigramultiarray
 		vigramultiarray2cimg
 		splineresize
+		threshold
+		binoperator
 	)
 	LIST(APPEND Plugins_CImg
 		cimg2vigramultiarray
