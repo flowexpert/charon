@@ -190,12 +190,19 @@ IF(USE_VIGRA)
 		${CHARON_UTILS_INCLUDE_DIR}/DilationErosion.h
 		${CHARON_UTILS_INCLUDE_DIR}/DilationErosion.hxx
 	)
+	ADD_LIBRARY(subarray SHARED
+		Subarray.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Subarray.h
+		${CHARON_UTILS_INCLUDE_DIR}/Subarray.hxx
+	)
+	TARGET_LINK_LIBRARIES(subarray roi)
 
 	SET(Plugins_Vigra
 		splineresize
 		threshold
 		binoperator
 		dilationerosion
+		subarray
 	)
 	IF(USE_CIMG)
 		ADD_LIBRARY(cimg2vigramultiarray SHARED
