@@ -44,8 +44,11 @@ void ParameteredObject::_addParameter(Parameter<T>& param,
 template <typename T>
 void ParameteredObject::setParameter(std::string name, T value) {
 	if(_parameters.find(name) != _parameters.end()) {
-		*((Parameter<T>*)_parameters[name]) = value;
+		Parameter<T>& p = dynamic_cast<Parameter<T>&>(*_parameters[name]);
+		p.operator T() = value;
 	}
+	else
+		throw std::invalid_argument("parameter not found");
 }
 
 template<typename T>
@@ -53,8 +56,9 @@ TemplatedParameteredObject<T>::TemplatedParameteredObject(
 		const std::string& className, const std::string& name,
 		const std::string& doc) :
 	ParameteredObject(className, name, doc) {
-		_addSomething("parameters", "templatetype", "template type", "string", "double");
-
+		_addSomething(
+				"parameters", "templatetype", "template type",
+				"{int;float;double}", "double");
 }
 
 template<typename T>
