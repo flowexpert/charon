@@ -345,7 +345,9 @@ void CdFitter<T>::_updateProgress(unsigned int run,
 		CloseHandle(info.hThread);
 		delete[] comLine;
 #else
-		system((gnuplotCall() + " \"" + histPltFile + "\"").c_str());
+		int res;
+		res = system((gnuplotCall() + " \"" + histPltFile + "\"").c_str());
+		assert(res == 0);
 #endif
 		cimg_library::CImg<unsigned short> img;
 		img.load(histImgFile.c_str());
@@ -425,7 +427,9 @@ void CdFitter<T>::_updateProgress(unsigned int run,
 		CloseHandle(info.hThread);
 		delete[] comLine;
 #else
-		system((gnuplotCall() + " \"" + progPltFile + "\"").c_str());
+		int res;
+		res = system((gnuplotCall() + " \"" + progPltFile + "\"").c_str());
+		assert(res == 0);
 #endif
 		cimg_library::CImg<unsigned short> img;
 		img.load(progImgFile.c_str());
