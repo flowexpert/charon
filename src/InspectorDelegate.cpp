@@ -81,21 +81,6 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 					this, SLOT(_setFileDialogFlag(bool)));
 			return editor;
 		}
-		if (param.substr(param.find(".")+1) == "templatetype") {
-			QComboBox* editor = new QComboBox(p);
-			editor->setObjectName("selectBox");
-			editor->addItem("int");
-			editor->addItem("float");
-			editor->addItem("double");
-			QString cur = ind.model()->data(ind).toString();
-			if (cur == "int")
-				editor->setCurrentIndex(0);
-			if (cur == "float")
-				editor->setCurrentIndex(1);
-			if (cur == "double")
-				editor->setCurrentIndex(2);
-			return editor;
-		}
 		if (type.contains(QRegExp("^\\s*\\{\\s*\\w.*\\}\\s*$"))) {
 			QComboBox* editor = new QComboBox(p);
 			editor->setObjectName("selectBox");
@@ -111,7 +96,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 		}
 		// fix decimals for double editors
 		// (also handles parameters of type T)
-		else if(ind.model()->data(ind).type() == QVariant::Double) {
+		if (ind.model()->data(ind).type() == QVariant::Double) {
 			QDoubleSpinBox* editor = qobject_cast<QDoubleSpinBox*>(
 					QStyledItemDelegate::createEditor(p,opt,ind));
 			Q_ASSERT(editor);
