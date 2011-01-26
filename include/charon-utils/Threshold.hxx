@@ -42,10 +42,10 @@ Threshold<T>::Threshold(const std::string& name) :
 			higher, "higher", "upper bound", 1, "T");
 	ParameteredObject::_addParameter<T>(
 			noresult,   "noresult",
-			"result if value between boundaries", 1, "T");
+			"result if out of bounds", 0, "T");
 	ParameteredObject::_addParameter<T>(
 			yesresult, "yesresult",
-			"result if out of bounds", 0, "T");
+			"result if value between boundaries", 1, "T");
 	ParameteredObject::_addInputSlot (
 			in,     "in",     "image input",  "vigraArray5<T>");
 	ParameteredObject::_addOutputSlot(
