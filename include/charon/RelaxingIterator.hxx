@@ -40,8 +40,8 @@ RelaxingIterator<T>::RelaxingIterator(const std::string& name) :
 			"This helps to use convex optimization to generate a good "
 			"initial guess and then switch to some non-convex optimization "
 			"problem."),
-		initial(false, true), // multiSlots
-		final(false, true)
+		initial(true, true), // multiSlots
+		final(true, true)
 {
 	ParameteredObject::_addInputSlot(initial, "initial",
 		"Stencils which weight will be decreased, starting with full weight.",
