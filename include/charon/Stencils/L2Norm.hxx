@@ -135,7 +135,7 @@ void L2Norm<T>::execute() {
 	// precalculate rhs values for whole image
 	if (flowGuess.connected()) {
 
-		assert(flowGuess().size() == dimensions());
+		assert(flowGuess().size() == pUnknowns.size());
 		const cimg_library::CImgList<T>& flow = flowGuess();
 		_rhsVals.assign(flow);
 		cimglist_for(flow, kk) {
