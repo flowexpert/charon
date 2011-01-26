@@ -61,6 +61,11 @@ public:
 	InputSlot< cimg_library::CImgList<T> > zy;
 	InputSlot< cimg_library::CImgList<T> > zt;
 	//@}
+	/// Mask to be able to omit some parts of the image
+	/** This may be neccessary if some values of the image
+	 *  or the derivatives are known to have bad or wrong values.
+	 */
+	InputSlot< cimg_library::CImgList<T> > mask;
 
 	/// default constructor
 	Rfmc(const std::string& name = "" /**[in] instance name*/);

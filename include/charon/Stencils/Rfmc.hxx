@@ -27,10 +27,12 @@
 #include "Rfmc.h"
 
 template <class T>
-Rfmc<T>::Rfmc(const std::string& name) :  Stencil<T>(
+Rfmc<T>::Rfmc(const std::string& name) :
+	Stencil<T>(
 		"Rfmc", name,
 		"Stencil modeling the range flow motion constraint equation<br>"
-	)
+	),
+	mask(true,false) // optional
 {
 	ParameteredObject::_addParameter(
 			channelSelect, "channelSelect",
@@ -43,6 +45,10 @@ Rfmc<T>::Rfmc(const std::string& name) :  Stencil<T>(
 			zy, "zy", "derivative of the depth data wrt y", "CImgList<T>");
 	ParameteredObject::_addInputSlot(
 			zt, "zt", "derivative of the depth data wrt t", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+			mask, "mask",
+			"Mask to be able to omit some parts of the image",
+			"CImgList<T>");
 }
 
 template <class T>
@@ -75,40 +81,48 @@ void Rfmc<T>::updateStencil(
 	const T& l = this->lambda();
 	assert(p.z==0); // 2D only
 
-	// query derivative values at the given coordinates
-	const T& zX = zx().atNXYZC(channelSelect,p.x,p.y,p.z,p.t);
-	const T& zY = zy().atNXYZC(channelSelect,p.x,p.y,p.z,p.t);
-	const T& zT = zt().atNXYZC(channelSelect,p.x,p.y,p.z,p.t);
+	if(!mask.connected() || mask().atNXYZC(channelSelect,p.x,p.y,p.z,p.t)>0) {
+		// query derivative values at the given coordinates
+		const T& zX = zx().atNXYZC(channelSelect,p.x,p.y,p.z,p.t);
+		const T& zY = zy().atNXYZC(channelSelect,p.x,p.y,p.z,p.t);
+		const T& zT = zt().atNXYZC(channelSelect,p.x,p.y,p.z,p.t);
 
-	// term values
-	T tu, tv, tw, r;
+		// term values
+		T tu, tv, tw, r;
 
-	// compute term regarding the given unknown
-	if (unknown == "a1") {
-		tu =  zX * zX;
-		tv =  zX * zY;
-		tw =  zX;
-		r  = -zX * zT;
-	} else if (unknown == "a2") {
-		tu =  zY * zX;
-		tv =  zY * zY;
-		tw =  zY;
-		r  = -zY * zT;
-	} else if (unknown == "a3") {
-		tu =      zX;
-		tv =      zY;
-		tw = T(1);
-		r  =     -zT;
-	} else {
-		std::ostringstream msg;
-		msg << __FILE__ << ":" << __LINE__ << "\n\t";
-		msg << "Invalid unknown given: " << unknown;
-		throw std::runtime_error(msg.str());
+		// compute term regarding the given unknown
+		if (unknown == "a1") {
+			tu =  zX * zX;
+			tv =  zX * zY;
+			tw =  zX;
+			r  = -zX * zT;
+		} else if (unknown == "a2") {
+			tu =  zY * zX;
+			tv =  zY * zY;
+			tw =  zY;
+			r  = -zY * zT;
+		} else if (unknown == "a3") {
+			tu =      zX;
+			tv =      zY;
+			tw = T(1);
+			r  =     -zT;
+		} else {
+			std::ostringstream msg;
+			msg << __FILE__ << ":" << __LINE__ << "\n\t";
+			msg << "Invalid unknown given: " << unknown;
+			throw std::runtime_error(msg.str());
+		}
+		this->_subStencils["a1"].data(0) = tu * l;
+		this->_subStencils["a2"].data(0) = tv * l;
+		this->_subStencils["a3"].data(0) = tw * l;
+		this->_rhs = r * l;
 	}
-	this->_subStencils["a1"].data(0) = tu * l;
-	this->_subStencils["a2"].data(0) = tv * l;
-	this->_subStencils["a3"].data(0) = tw * l;
-	this->_rhs = r * l;
+	else {
+		this->_subStencils["a1"].data(0) = 0;
+		this->_subStencils["a2"].data(0) = 0;
+		this->_subStencils["a3"].data(0) = 0;
+		this->_rhs = 0;
+	}
 }
 
 
