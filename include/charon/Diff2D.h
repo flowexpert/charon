@@ -44,11 +44,6 @@
  *  Although derivatives may be calculated using class LinearFilter,
  *  this plugin makes derivative calculations more compact.
  *  Only the derivatives of connected output slots are calculated.
- *
- *  If you perform some kind of iterations, it is essential to connect
- *  the count input slot, because recalculation takes place on count changes
- *  only. If count is not connected, only one calculation is performed
- *  and reused later.
  */
 template <typename T>
 class diff2d_DECLDIR Diff2D :
