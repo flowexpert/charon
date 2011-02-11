@@ -21,8 +21,8 @@
  *  \date 05.01.2011
  */
 
-#ifndef _CROP_H_
-#define _CROP_H_
+#ifndef _FRAMESELECT_H_
+#define _FRAMESELECT_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef frameselect_EXPORTS
@@ -80,4 +80,4 @@ private:
 	Roi<int> _roi;
 };
 
-#endif // _CROP_H_
+#endif // _FRAMESELECT_H_

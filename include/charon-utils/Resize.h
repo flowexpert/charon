@@ -21,8 +21,8 @@
  *  @date 11.04.2009
  */
 
-#ifndef _CROP_H_
-#define _CROP_H_
+#ifndef _RESIZE_H_
+#define _RESIZE_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef resize_EXPORTS
@@ -86,4 +86,4 @@ public:
 	virtual void execute();
 };
 
-#endif // _CROP_H_
+#endif // _RESIZE_H_

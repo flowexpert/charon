@@ -21,8 +21,8 @@
  *  \date 05.01.2011
  */
 
-#ifndef _CROP_HXX_
-#define _CROP_HXX_
+#ifndef _FRAMESELECT_HXX_
+#define _FRAMESELECT_HXX_
 
 #include "FrameSelect.h"
 #include <QString>
@@ -99,4 +99,4 @@ void FrameSelect<T>::execute() {
 		sout << "\tnot cropping anything since in not connected" << std::endl;
 	}
 }
-#endif // _CROP_HXX_
+#endif // _FRAMESELECT_HXX_

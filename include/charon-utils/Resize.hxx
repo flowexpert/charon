@@ -21,8 +21,8 @@
  *  @date 28.04.2010
  */
 
-#ifndef _CROP_HXX_
-#define _CROP_HXX_
+#ifndef _RESIZE_HXX_
+#define _RESIZE_HXX_
 
 #include "Resize.h"
 
@@ -107,4 +107,4 @@ void Resize<T>::execute() {
 		out()[k].resize(size_x, size_y, size_z, size_t, m);
 	}
 }
-#endif // _CROP_HXX_
+#endif // _RESIZE_HXX_
