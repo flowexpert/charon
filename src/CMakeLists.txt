@@ -224,6 +224,12 @@ ADD_LIBRARY(diff2d SHARED
 	${charon_INCLUDE_DIR}/Diff2D.hxx
 )
 TARGET_LINK_LIBRARIES(diff2d interpolatorlinear)
+ADD_LIBRARY(pyramidrescale SHARED
+	PyramidRescale.cpp
+	${charon_INCLUDE_DIR}/PyramidRescale.h
+	${charon_INCLUDE_DIR}/PyramidRescale.hxx
+)
+TARGET_LINK_LIBRARIES(pyramidrescale interpolatorlinear)
 ADD_LIBRARY(flowcomparator SHARED
 	FlowComparator.cpp
 	${charon_INCLUDE_DIR}/FlowComparator.h
@@ -233,6 +239,7 @@ LIST(APPEND Plugins
 	sequencegenerator
 	edgysequencegenerator
 	diff2d
+	pyramidrescale
 	flowcomparator
 )
 
