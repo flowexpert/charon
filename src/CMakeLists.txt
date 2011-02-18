@@ -229,7 +229,7 @@ ADD_LIBRARY(pyramidrescale SHARED
 	${charon_INCLUDE_DIR}/PyramidRescale.h
 	${charon_INCLUDE_DIR}/PyramidRescale.hxx
 )
-TARGET_LINK_LIBRARIES(pyramidrescale interpolatorlinear)
+TARGET_LINK_LIBRARIES(pyramidrescale interpolatorlinear roi)
 ADD_LIBRARY(flowcomparator SHARED
 	FlowComparator.cpp
 	${charon_INCLUDE_DIR}/FlowComparator.h

@@ -26,6 +26,7 @@
 
 #include "PyramidRescale.h"
 #include <charon-utils/Convolution.h>
+#include <iomanip>
 
 template <typename T>
 PyramidRescale<T>::PyramidRescale(const std::string& name) :
@@ -42,6 +43,8 @@ PyramidRescale<T>::PyramidRescale(const std::string& name) :
 			seqOut, "seqOut", "sequence output", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 			flowOut, "flowOut", "flow output", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(
+			size, "size", "current size", "Roi<int>");
 	ParameteredObject::_addParameter (
 			scaleFactor, "scaleFactor", "scale factor", 0.5);
 	ParameteredObject::_addParameter (
@@ -51,6 +54,8 @@ PyramidRescale<T>::PyramidRescale(const std::string& name) :
 	ParameteredObject::_addParameter (
 			interpolation, "interpolation",
 			"interpolation type (see CImg::resize() documentation)", 3);
+
+	size() = &_size;
 }
 
 template <typename T>
@@ -64,10 +69,12 @@ void PyramidRescale<T>::execute() {
 	const cimg_library::CImgList<T>& fi = flowIn();
 	cimg_library::CImgList<T>& fo = flowOut();
 
-	const unsigned int cur = level();
-	const unsigned int stepsDown = levels()-cur-1;
+	const unsigned int curL = level();
+	const unsigned int endL = levels();
+	const unsigned int maxL = endL-1;
+	const unsigned int stepsDown = maxL-curL;
 
-	if(cur > level()-1)
+	if(curL > maxL)
 		throw std::invalid_argument("current level too large");
 
 	// input sequence remains unscaled over time and is the pyramid base
@@ -75,8 +82,8 @@ void PyramidRescale<T>::execute() {
 
 	// target sizes
 	const double shrink = std::pow(scaleFactor(),stepsDown);
-	const int tx = sx * shrink;
-	const int ty = sy * shrink;
+	const int tx = _size.xEnd = sx * shrink;
+	const int ty = _size.yEnd = sy * shrink;
 
 	// rescale sequence
 	so = si;
@@ -91,8 +98,11 @@ void PyramidRescale<T>::execute() {
 
 	// rescale flow
 	fo = fi;
-	if(cur == 0) {
-		// first iteration scale down initial guess
+	if(fo.is_sameXY(si)) {
+		// scale down (initial guess)
+#ifndef NDEBUG
+		sout << "\t" << "scaling down to " << tx << "x" << ty << std::endl;
+#endif
 		const double blur = sigma * stepsDown;
 		cimglist_for(fo,kk) {
 			assert(fo.at(kk).is_sameXY(sx,sy));
@@ -103,10 +113,17 @@ void PyramidRescale<T>::execute() {
 		}
 	}
 	else {
-		// further iterations: scale up last result
+		// scale up last result
+#ifndef NDEBUG
+		sout << "\t" << "scaling up to "
+				<< tx << "x" << ty << ": got "
+				<< fo[0].width() << "x" << fo[0].height()
+				<< " expected: "
+				<< std::fixed << std::setprecision(0)
+				<< tx*scaleFactor() << "x" << ty*scaleFactor()
+				<< std::endl;
+#endif
 		cimglist_for(fo,kk) {
-			// perhaps this may fail due to rounding errors
-			assert(fo.at(kk).is_sameXY(tx*scaleFactor(),ty*scaleFactor()));
 			fo.at(kk).resize(tx,ty,-100,-100,interpolation());
 			fo.at(kk) /= scaleFactor();
 		}

@@ -96,6 +96,8 @@ public:
 
 	/// flow result calculaged during current iteration 
 	InputSlot < cimg_library::CImgList<T> > flow;
+	/// initial flow guess if different from helper
+	InputSlot < cimg_library::CImgList<T> > flowInit;
 	/// iterator helper input
 	InputSlot < IteratorHelper<T>* > helper;
 	/// final flow result after all iterations 

@@ -38,6 +38,7 @@
 
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
+#include <charon-utils/Roi.h>
 
 /// Rescaling for pyramid-based flow-estimation algorithms.
 template <typename T>
@@ -55,6 +56,8 @@ public:
 	OutputSlot < cimg_library::CImgList<T> > seqOut;
 	/// flow output
 	OutputSlot < cimg_library::CImgList<T> > flowOut;
+	/// current size
+	OutputSlot < const Roi<int>* > size;
 
 	/// scale factor
 	Parameter < double > scaleFactor;
@@ -71,6 +74,10 @@ public:
 
 	/// Update object.
 	virtual void execute();
+
+private:
+	/// content for roi pointer output slot
+	Roi<int> _size;
 };
 
 #endif // _PYRAMID_RESCALE_H_

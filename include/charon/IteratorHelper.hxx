@@ -62,18 +62,8 @@ void IteratorHelper<T>::execute() {
 
 	// first initialization
 	// later updated by iterator
-	const cimg_library::CImgList<T>& seq = sequence();
-	if(seq.is_empty())
+	if(sequence().is_empty())
 		reset();
-#ifndef NDEBUG
-	sout << "\tSequence: " << seq.size() << " element(s) (";
-	if(seq.size() > 0)
-		sout << seq[0].width() << "x" << seq[0].height() << "x"
-				<< seq[0].depth() << "x" << seq[0].spectrum() << ")";
-	else
-		sout << "empty)";
-	sout << std::endl;
-#endif
 }
 
 template <typename T>

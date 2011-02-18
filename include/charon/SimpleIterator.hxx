@@ -36,7 +36,8 @@ SimpleIterator<T>::SimpleIterator(const std::string& name) :
 			"is reached.<br><br>"
 			"You have to activate at least one stop criterion by "
 			"setting maxRuns or epsilon to a value greater than "
-			"zero.")
+			"zero."),
+		flowInit(true,false) // optional
 {
 	_init();
 }
@@ -47,7 +48,8 @@ SimpleIterator<T>::SimpleIterator(
 		const std::string& instanceName,
 		const std::string& doc) :
 	TemplatedParameteredObject<T>(className, instanceName,
-			doc + "<br><br>This class inherits SimpleIterator.")
+			doc + "<br><br>This class inherits SimpleIterator."),
+	flowInit(true,false) // optional
 {
 	_init();
 }
@@ -69,6 +71,8 @@ void SimpleIterator<T>::_init() {
 
 	ParameteredObject::_addInputSlot(flow, "flow",
 		"flow result calculaged during current iteration", "CImgList<T>");
+	ParameteredObject::_addInputSlot(flowInit, "flowInit",
+		"initial flow guess if different from helper", "CImgList<T>");
 	ParameteredObject::_addInputSlot(helper, "helper",
 		"iteration helper input", "IteratorHelper<T>*");
 	ParameteredObject::_addOutputSlot(result, "result",
@@ -169,47 +173,60 @@ void SimpleIterator<T>::performStep() {
 
 template <typename T>
 bool SimpleIterator<T>::finishStep() {
-	sout << "\titeration " << helper()->count()+1 << " of ";
+	IteratorHelper<T>* help = helper();
+	sout << "\titeration " << help->count()+1 << " of ";
 	sout << this->getClassName() << " \"";
 	sout << this->getName() << "\" finished\n";
 
 	assert(updateRate() >= 0.);
 	assert(updateRate() <= 1.);
+	cimg_library::CImgList<T>& helpFlow = help->flow();
+	const cimg_library::CImgList<T>& oldFlow =
+			(flowInit.connected() ? flowInit() : help->flow());
 	static cimg_library::CImgList<T> newFlow;
 	static cimg_library::CImgList<T> diffFlow;
+	const cimg_library::CImgList<T>& curFlow = flow();
 	double curChange;
 
-	sout << "\t\told flow mean: (";
-	cimglist_for(helper()->flow(),kk)
-		sout << helper()->flow()[kk].mean() << "; ";
+	sout << "\t\told flow size: "
+			<< oldFlow[0].width() << "x"
+			<< oldFlow[0].height() << "\n\t\tq";
 
-	sout << ")\n\t\tmean flow result from iteration: (";
-	cimglist_for(flow(),kk)
-			sout << flow()[kk].mean() << "; ";
+	sout << "old flow mean: (";
+	cimglist_for(oldFlow,kk)
+		sout << oldFlow[kk].mean() << "; ";
+
+	sout << ")\n\t\titeration flow size: "
+			<< curFlow[0].width() << "x"
+			<< curFlow[0].height() << "\n\t\t";
+
+	sout << "mean flow result from iteration: (";
+	cimglist_for(curFlow,kk)
+			sout << curFlow[kk].mean() << "; ";
 	sout << ")" << std::endl;
 
 	// calculate new flow
 	curChange = 0.;
-	newFlow.assign(flow());
+	newFlow.assign(curFlow);
 	if (accumulate()) {
 		cimglist_for(newFlow, kk)
-			newFlow[kk] += helper()->flow()[kk];
+			newFlow[kk] += oldFlow[kk];
 		sout << "\t\tadding results to previous flow (accumulate)\n";
 	}
 
 	// maximum runs criterion (count() is updated later -> -1)
-	bool cont = !maxRuns() || helper()->count() < (maxRuns()-1);
+	bool cont = !maxRuns() || help->count() < (maxRuns()-1);
 	if (cont && epsilon() > 0) {
 		// calculate flow changes
 		diffFlow.assign(newFlow);
 		sout << "\t\tdifference flow mean: (";
 		cimglist_for(diffFlow, kk) {
-			diffFlow[kk] -= helper()->flow()[kk];
+			diffFlow[kk] -= oldFlow[kk];
 			sout << diffFlow[kk].mean() << "; ";
 		}
 		sout << ")" << std::endl;
 
-		cimg_library::CImg<T> norms(flow()[0]);
+		cimg_library::CImg<T> norms(curFlow[0]);
 
 		// calculate 2-norm of flow difference (for each pixel)
 		norms.fill(T(0));
@@ -236,21 +253,24 @@ bool SimpleIterator<T>::finishStep() {
 	}
 	if(updateRate() != 1.) {
 		// implement possibility to change step size
-		cimg_library::CImgList<T> temp(helper()->flow());
+		cimg_library::CImgList<T> temp(oldFlow);
 		cimglist_for(temp, kk) {
 			temp[kk] += updateRate() * (newFlow[kk]-temp[kk]);
 		}
 		sout << "\t\tupdate rate: " << updateRate() << "\n";
-		helper()->flow().assign(temp);
+		helpFlow.assign(temp);
 	}
 	else
-		helper()->flow().assign(newFlow);
+		helpFlow.assign(newFlow);
 
+	sout << "\t\tnew flow size: "
+			<< helpFlow[0].width() << "x"
+			<< helpFlow[0].height() << "\n";
 	sout << "\t\tnew flow mean: (";
-	cimglist_for(helper()->flow(), kk)
-		sout << helper()->flow()[kk].mean() << "; ";
+	cimglist_for(helpFlow, kk)
+		sout << helpFlow[kk].mean() << "; ";
 	sout << ")" << std::endl;
-	helper()->update();
+	help->update();
 	return cont;
 }
 

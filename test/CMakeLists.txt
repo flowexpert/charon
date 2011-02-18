@@ -225,6 +225,17 @@ IF(BUILD_TESTING)
 		NAME FlowIterated5:_Papenberg
 		COMMAND flowIterated5_Papenberg
 	)
+	ADD_EXECUTABLE(flowIterated6_Pyramid flowIterated6_Pyramid.cpp)
+	TARGET_LINK_LIBRARIES(flowIterated6_Pyramid
+		relaxingiterator
+		flowcomparator
+		charon-plugins
+		${CIMG_LINK_LIBRARIES}
+	)
+	ADD_TEST(
+		NAME FlowIterated6:_Pyramid
+		COMMAND flowIterated6_Pyramid
+	)
 
 	# Sample generation and Contrastive Divergence fitter
 	ADD_EXECUTABLE(fit1_SampleGeneration
