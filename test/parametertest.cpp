@@ -22,6 +22,7 @@
 #include <iostream>
 
 #include <charon-core/ParameteredObject.hxx>
+#include <charon-core/ExceptionHandler.h>
 
 // make sure that assert() works (nothing is tested otherwise)
 #undef NDEBUG
@@ -102,7 +103,10 @@ public:
 };
 
 /// Main test application.
-int main() {
+int test() {
+	// output to standart out
+	sout.assign(std::cout);
+
 	ParameterFile testfile;
 	ParameteredObject::setCreateMetadata(true);
 
@@ -218,4 +222,8 @@ int main() {
 	assert(testfile.get<bool>("sample.in2.optional"));
 
 	return EXIT_SUCCESS;
+}
+
+int main() {
+	return ExceptionHandler::run(test);
 }

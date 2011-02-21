@@ -19,24 +19,36 @@ int main() {
 // Compile and load fails if compiled as debug with Visual Studio.
 // Plug-ins are always compiled as Release and a Debug compiled main
 // application cannot load Release compiled Plug-ins.
-#if !defined(_DEBUG) || !defined(MSVC)
-#ifdef MSVC
-	std::cout << "Copying " << (FileTool::getCurrentDir()
-			+ "\\..\\src\\Release\\charon-core.lib").c_str()
-			<< " to " << (FileTool::getCurrentDir() + "\\charon-core.lib")
-			.c_str() << std::endl;
+	sout.assign(std::cout);
 
-	if(!CopyFile((FileTool::getCurrentDir() +
-			"\\..\\src\\Release\\charon-core.lib").c_str(),
-			(FileTool::getCurrentDir()+"\\charon-core.lib").c_str(), false)) {
+	std::string pluginDir = PLUGIN_DIR;
+#ifdef CMAKE_INTDIR
+	pluginDir += "/" CMAKE_INTDIR;
+#endif
+
+#if !defined(_DEBUG) || !defined(MSVC)
+#ifdef _MSC_VER
+
+#ifndef   LIBDIR
+#define   LIBDIR
+#warning  LIBDIR not defined
+#endif
+
+	const std::string charonLibSource = LIBDIR "/" CMAKE_INTDIR "/charon-core.lib";
+	const std::string charonLibTarget = FileTool::getCurrentDir() + "/charon-core.lib";
+
+	std::cout << "Copying " << charonLibSource.c_str()
+			<< " to " << charonLibTarget.c_str() << std::endl;
+
+	if (!CopyFile(charonLibSource.c_str(),charonLibTarget.c_str(), false)) {
 		std::cout << "Error on copying library file, error #"
 				<< GetLastError() << std::endl;
 		return -1;
 	}
 #endif /* MSVC */
 	try{
-		std::cout << "Using plugin directory " << PLUGIN_DIR << std::endl;
-		PluginManager man(PLUGIN_DIR);
+		std::cout << "Using plugin directory " << pluginDir << std::endl;
+		PluginManager man(pluginDir,FileTool::getCurrentDir());
 
 		std::string testfile = TESTPLUGIN_SOURCE_DIR "/testplugin1.cpp";
 		std::cout << "Trying to compile and load " << testfile << std::endl;

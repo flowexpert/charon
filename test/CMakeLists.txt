@@ -24,7 +24,7 @@ IF(ENABLE_TEST)
 
 	# tests for ParameteredObject etc.
 	ADD_EXECUTABLE(parametertest parametertest.cpp)
-	TARGET_LINK_LIBRARIES(parametertest charon-core)
+	TARGET_LINK_LIBRARIES(parametertest charon-core charon-plugins)
 	ADD_TEST(
 		NAME ParameterTest
 		COMMAND parametertest
@@ -33,7 +33,8 @@ IF(ENABLE_TEST)
 
 	# tests for compile and load routines.
 	IF(WIN32)
-		ADD_DEFINITIONS(-DPLUGIN_DIR=".")
+		ADD_DEFINITIONS(-DLIBDIR="${PROJECT_BINARY_DIR}/src")
+		ADD_DEFINITIONS(-DPLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 	ELSE(WIN32)
 		ADD_DEFINITIONS(-DPLUGIN_DIR="${PROJECT_BINARY_DIR}/src")
 	ENDIF(WIN32)
