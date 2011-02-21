@@ -245,6 +245,11 @@ IF(USE_VIGRA)
 			filewriterhdf5
 			filereaderhdf5
 		)
+		# workaround to avoid linking against debug libraries in release mode,
+		# setup of variable HDF5_LIBRARIES is buggy, perhaps fixed in future
+		# versions
+		SET(HDF5_LIBRARIES ${HDF5_hdf5_LIBRARY} ${HDF5_hdf5_hl_LIBRARY})
+		#MESSAGE("HDF5_LIBRARIES: ${HDF5_LIBRARIES}")
 		FOREACH(X ${Plugins_HDF5})
 			TARGET_LINK_LIBRARIES(${X} ${HDF5_LIBRARIES})
 			IF(USE_MPI)
