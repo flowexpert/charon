@@ -13,7 +13,7 @@ ENDIF()
 # set up documentation generation
 FIND_PACKAGE(charon-core REQUIRED HINTS $ENV{CHARON_DIR})
 FIND_PACKAGE(Doxygen QUIET)
-FIND_PACKAGE(Vigra)
+FIND_PACKAGE(Vigra 1.7.1)
 IF(NOT Vigra_FOUND)
 	MESSAGE(STATUS "Set Vigra_DIR to point to the vigra lib directory")
 ENDIF(NOT Vigra_FOUND)
