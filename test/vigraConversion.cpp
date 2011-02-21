@@ -13,6 +13,7 @@
 
 int main() {
 	// read penguin file and convert it to vigra array and back
+	sout.assign(std::cout);
 	sout << "Testing using PENGUINFILE" << std::endl;
 	FileReader<double> reader;
 	reader.filename = PENGUINFILE;

@@ -38,8 +38,8 @@ int test() {
 	std::cout << "-- Create test flow image" << std::endl;
 	cimg_library::CImgList<float> test(2,201,201,1,1,0.f);
 	cimg_forXYZC(test[0u],xx,yy,zz,tt) {
-		test(0u,xx,yy,zz,tt)=xx-101;
-		test(1u,xx,yy,zz,tt)=yy-101;
+		test(0u,xx,yy,zz,tt)=(float)xx-101.f;
+		test(1u,xx,yy,zz,tt)=(float)yy-101.f;
 	}
 	test.save_cimg("testFlow.cimg",true);
 
@@ -51,8 +51,10 @@ int test() {
 	assert(viz.out().size() == 1u);
 	const cimg_library::CImg<float>& o = viz.out()[0];
 	o.save_cimg("flow2hsvColorwheel.cimg",true);
+#ifndef _MSC_VER
 #ifdef cimg_use_png
-	o.save("flow2hsvColorwheel.png");
+	o.save_png("flow2hsvColorwheel.png",1u);
+#endif
 #endif
 
 	std::cout << "-- Check for steps at quadrant borders" << std::endl;

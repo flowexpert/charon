@@ -29,6 +29,15 @@
 #include <charon-utils/Roi.h>
 #include <list>
 
+#ifndef GLOBAL_PLUGIN_DIR
+#error GLOBAL_PLUGIN_DIR not defined
+#define GLOBAL_PLUGIN_DIR
+#endif
+#ifndef LOCAL_PLUGIN_DIR
+#error LOCAL_PLUGIN_DIR not defined
+#define LOCAL_PLUGIN_DIR
+#endif
+
 #ifdef NDEBUG
 #undef NDEBUG
 #endif
@@ -40,14 +49,10 @@ int main() {
 	sout.assign(std::cout, log);
 
     // load plugins
-#ifdef WINDOWS
-#ifdef _DEBUG
-    PluginManager man("../bin/debug");
-#else /* _DEBUG */
-    PluginManager man("../bin/release");
-#endif /* _DEBUG */
+#ifdef CMAKE_INTDIR
+    PluginManager man(GLOBAL_PLUGIN_DIR "/" CMAKE_INTDIR, LOCAL_PLUGIN_DIR "/" CMAKE_INTDIR);
 #else
-    PluginManager man("../src");
+	PluginManager man(GLOBAL_PLUGIN_DIR,LOCAL_PLUGIN_DIR);
 #endif
 
     // create test instances (automatically loads the plugin)

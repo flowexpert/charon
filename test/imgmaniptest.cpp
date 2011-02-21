@@ -23,26 +23,32 @@
 #include <charon-core/PluginManager.h>
 #include <charon-core/ParameteredObject.h>
 #include <charon-core/FileTool.h>
+#include <charon-core/ExceptionHandler.h>
 
 #ifndef TESTWRPFILE
 #define TESTWRPFILE "cropsample.wrp"
 #warning using "cropsample.wrp"
 #endif
 
+#ifndef GLOBAL_PLUGIN_DIR
+#error GLOBAL_PLUGIN_DIR not defined
+#define GLOBAL_PLUGIN_DIR
+#endif
+#ifndef LOCAL_PLUGIN_DIR
+#error LOCAL_PLUGIN_DIR not defined
+#define LOCAL_PLUGIN_DIR
+#endif
 
-int main() {
+/// unit tests
+int test() {
     // load plugins
 	sout.assign(std::cout);
 
     try{
-#ifdef WINDOWS
-#ifdef _DEBUG
-    PluginManager man("../bin/Debug");
-#else /* _DEBUG */
-    PluginManager man("../bin/Release");
-#endif /* _DEBUG */
+#ifdef CMAKE_INTDIR
+    PluginManager man(GLOBAL_PLUGIN_DIR "/" CMAKE_INTDIR, LOCAL_PLUGIN_DIR "/" CMAKE_INTDIR);
 #else
-    PluginManager man("../src");
+	PluginManager man(GLOBAL_PLUGIN_DIR,LOCAL_PLUGIN_DIR);
 #endif
 
     man.loadPlugin("filereader");
@@ -91,4 +97,9 @@ int main() {
     }
 
     return 0;
+}
+
+/// main application
+int main() {
+	return ExceptionHandler::run(test);
 }

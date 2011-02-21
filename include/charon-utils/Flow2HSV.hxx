@@ -101,6 +101,9 @@ void Flow2HSV<T>::execute() {
 	interm[1] += M_PI;
 	interm[1] *= 360./(2.*M_PI);
 
+	// fix rounding errors
+	interm[1].threshold(360.,true,true);
+
 	// use lenght and angle for HSV values, respect value of "scaleChannels"
 	// convert HSV to RGB and store final result in out
 	o.assign(i[0].spectrum(),i[0].width(),i[0].height(),i[0].depth(),3u);
