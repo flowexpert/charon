@@ -296,15 +296,15 @@ IF(BUILD_TESTING)
 		GET_TARGET_PROPERTY(InterpolatorLinear_LOC interpolatorlinear LOCATION)
 		GET_TARGET_PROPERTY(Crop_LOC crop LOCATION)
 		ADD_CUSTOM_COMMAND(TARGET POST_BUILD hornschunckyosemite
-			COMMAND ${CMAKE_COMMAND} -E copy "${CLOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND ${CMAKE_COMMAND} -E copy "${Roi_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND ${CMAKE_COMMAND} -E copy "${Filereader_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND ${CMAKE_COMMAND} -E copy "${Filewriter_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND ${CMAKE_COMMAND} -E copy "${LinearFilter_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND ${CMAKE_COMMAND} -E copy "${ChannelConverter_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND ${CMAKE_COMMAND} -E copy "${Mask1d_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND ${CMAKE_COMMAND} -E copy "${Crop_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND ${CMAKE_COMMAND} -E copy "${InterpolatorLinear_LOC}" "${LOCAL_PLUGIN_DIR}"
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CLOC}" "${LOCAL_PLUGIN_DIR}"
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${Roi_LOC}" "${LOCAL_PLUGIN_DIR}"
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${Filereader_LOC}" "${LOCAL_PLUGIN_DIR}"
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${Filewriter_LOC}" "${LOCAL_PLUGIN_DIR}"
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${LinearFilter_LOC}" "${LOCAL_PLUGIN_DIR}"
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${ChannelConverter_LOC}" "${LOCAL_PLUGIN_DIR}"
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${Mask1d_LOC}" "${LOCAL_PLUGIN_DIR}"
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${Crop_LOC}" "${LOCAL_PLUGIN_DIR}"
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${InterpolatorLinear_LOC}" "${LOCAL_PLUGIN_DIR}"
 		)
 	ENDIF(WIN32)
 ENDIF(BUILD_TESTING)
