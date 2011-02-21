@@ -49,6 +49,7 @@
 
 /// unit tests
 int test() {
+	sout.assign(std::cout);
 	FileTool::changeDir(TESTDIR);
 	ParameterFile testfileRW("flow2.wrp");
 	const ParameterFile& tData = testfileRW;
