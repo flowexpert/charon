@@ -81,7 +81,7 @@ void PyramidRescale<T>::execute() {
 	const int sx = si[0].width(), sy = si[0].height();
 
 	// target sizes
-	const double shrink = std::pow(scaleFactor(),stepsDown);
+	const double shrink = std::pow(scaleFactor(),(double)stepsDown);
 	const int tx = _size.xEnd = sx * shrink;
 	const int ty = _size.yEnd = sy * shrink;
 
