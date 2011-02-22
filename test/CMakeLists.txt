@@ -295,17 +295,19 @@ IF(BUILD_TESTING)
 		GET_TARGET_PROPERTY(ChannelConverter_LOC channelconverter LOCATION)
 		GET_TARGET_PROPERTY(InterpolatorLinear_LOC interpolatorlinear LOCATION)
 		GET_TARGET_PROPERTY(Crop_LOC crop LOCATION)
-		ADD_CUSTOM_COMMAND(TARGET POST_BUILD flow1_hsSinus
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${CLOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${Roi_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${Filereader_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${Filewriter_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${LinearFilter_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${ChannelConverter_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${Mask1d_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${Crop_LOC}" "${LOCAL_PLUGIN_DIR}"
-			COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${InterpolatorLinear_LOC}" "${LOCAL_PLUGIN_DIR}"
-		)
+		IF(NOT DEFINED charon-meta_SOURCE_DIR)
+			ADD_CUSTOM_COMMAND(TARGET POST_BUILD flow1_hsSinus
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${CLOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${Roi_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${Filereader_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${Filewriter_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${LinearFilter_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${ChannelConverter_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${Mask1d_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${Crop_LOC}" "${LOCAL_PLUGIN_DIR}"
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${InterpolatorLinear_LOC}" "${LOCAL_PLUGIN_DIR}"
+			)
+		ENDIF(NOT DEFINED charon-meta_SOURCE_DIR)
 		FOREACH(X ${ADDITIONAL_DLL_DEPENDS})
 			ADD_CUSTOM_COMMAND(TARGET POST_BUILD flow1_hsSinus
 				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${X}" "${LOCAL_PLUGIN_DIR}"
