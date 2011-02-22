@@ -17,9 +17,9 @@ INSTALL(
 	COMPONENT    applications
 )
 
-OPTION(ENABLE_LOCAL_GETOPT "Don't use system getopt, build own one" ${WIN32})
-IF(ENABLE_LOCAL_GETOPT)
+OPTION(USE_GETOPT "Use system getopt, build own one if disabled" ${UNIX})
+IF(NOT USE_GETOPT)
 	ADD_DEFINITIONS(-DSTANDALONE_GETOPT)
 	ADD_LIBRARY(getopt STATIC getopt.c getopt_standalone.h)
 	TARGET_LINK_LIBRARIES(charon getopt)
-ENDIF(ENABLE_LOCAL_GETOPT)
+ENDIF(NOT USE_GETOPT)
