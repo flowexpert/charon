@@ -1,0 +1,11 @@
+SET(MSVC @MSVC@)
+IF(MSVC)
+	# compile and load fails on MSVC in release
+	# and is skipped in debug mode.
+	# Perhaps this feature will be completely removed
+	# since it is used rarely.
+	SET(CTEST_CUSTOM_TESTS_IGNORE
+		${CTEST_CUSTOM_TESTS_IGNORE}
+		CompileAndLoad
+	)
+ENDIF(MSVC)
