@@ -5,7 +5,9 @@ INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CHARON_UTILS_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${Graphviz_INCLUDE_DIRS})
 
-IF(ENABLE_TEST)
+IF(BUILD_TESTING)
+	SET(tests)
+
 	# common definitions
 	ADD_DEFINITIONS(-DDEFAULTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/sampleclasses.wrp")
 	ADD_DEFINITIONS(-DTESTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/testClasses.wrp")
@@ -17,6 +19,7 @@ IF(ENABLE_TEST)
 		NAME Graphviz
 		COMMAND graphtest
 	)
+	LIST(APPEND tests Graphviz)
 
 	# test ParameterFileModel
     ADD_EXECUTABLE(modeltest modeltest.cpp)
@@ -25,6 +28,7 @@ IF(ENABLE_TEST)
 		NAME ParameterFileModel
 		COMMAND modeltest
 	)
+	LIST(APPEND tests ParameterFileModel)
 
 	# check for graphviz bug
 	QT4_AUTOMOC(graphTemplateTest.cpp)
@@ -34,6 +38,8 @@ IF(ENABLE_TEST)
 		NAME TemplateWidget
 		COMMAND graphtemptest
 	)
+	LIST(APPEND tests TemplateWidget)
+
 	IF(WIN32)
 		GET_TARGET_PROPERTY(test_loc modeltest LOCATION)
 		GET_FILENAME_COMPONENT(LOCAL_PLUGIN_DIR ${test_loc} PATH)
@@ -48,4 +54,9 @@ IF(ENABLE_TEST)
 			)
 		ENDFOREACH(X)
 	ENDIF(WIN32)
-ENDIF(ENABLE_TEST)
+
+	# add test labels for dashboard submission
+	SET_TESTS_PROPERTIES(${tests}
+		PROPERTIES LABELS tuchulcha
+	)
+ENDIF(BUILD_TESTING)
