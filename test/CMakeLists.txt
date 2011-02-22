@@ -1,7 +1,7 @@
 # Test suite of application
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 
-IF(ENABLE_TEST)
+IF(BUILD_TESTING)
 	SET(tests)
 
 	# tests for SplitStream
@@ -57,4 +57,4 @@ IF(ENABLE_TEST)
 	SET_TESTS_PROPERTIES(${tests}
 		PROPERTIES LABELS charon-core
 	)
-ENDIF(ENABLE_TEST)
+ENDIF(BUILD_TESTING)
