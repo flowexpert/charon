@@ -2,7 +2,7 @@
 
 IF (DOXYGEN_FOUND)
 	# Possibility to enable/disable documentation creation
-	OPTION(WITH_LATEX "activate pdfdoc generation" ON)
+	OPTION(USE_LATEX "activate pdfdoc generation" ON)
 	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
 	SET(${PROJECT_NAME}_INSTALL_DOC doc/${PROJECT_NAME}
 		CACHE PATH "${PROJECT_NAME} documentation install prefix")
@@ -32,9 +32,9 @@ IF (DOXYGEN_FOUND)
 	ELSE(ENABLE_DOC_VERBOSE)
 		SET(DOXY_QUIET          YES)
 	ENDIF(ENABLE_DOC_VERBOSE)
-	IF(NOT WITH_LATEX)
+	IF(NOT USE_LATEX)
 		SET(DOXY_SKIP_PDFDOC    YES)
-	ENDIF(NOT WITH_LATEX)
+	ENDIF(NOT USE_LATEX)
 
 	# LaTeX needed to generate formula
 	FIND_PACKAGE(LATEX QUIET)
