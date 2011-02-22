@@ -26,14 +26,13 @@ int main() {
 	pluginDir += "/" CMAKE_INTDIR;
 #endif
 
-#if !defined(_DEBUG) || !defined(MSVC)
 #ifdef _MSC_VER
 
 #ifndef   LIBDIR
 #define   LIBDIR
 #warning  LIBDIR not defined
 #endif
-
+	// copy lib file to the needed location
 	const std::string charonLibSource = LIBDIR "/" CMAKE_INTDIR "/charon-core.lib";
 	const std::string charonLibTarget = FileTool::getCurrentDir() + "/charon-core.lib";
 
@@ -46,6 +45,7 @@ int main() {
 		return -1;
 	}
 #endif /* MSVC */
+
 	try{
 		std::cout << "Using plugin directory " << pluginDir << std::endl;
 		PluginManager man(pluginDir,FileTool::getCurrentDir());
@@ -96,10 +96,6 @@ int main() {
 		std::cout << "Error during cleanup." << std::endl;
 		return EXIT_FAILURE;
 	}
-#else
-	std::cout << "Compile and load does not work with Visual C++ when "
-			<< "compiled as Debug." << std::endl;
-#endif /* !defined(_DEBUG) || !defined(MSVC) */
 
 	return EXIT_SUCCESS;
 }
