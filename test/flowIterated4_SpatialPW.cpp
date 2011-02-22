@@ -166,7 +166,7 @@ int test() {
 	log.close();
 
 	// check results
-	if (meanEndpointError >= 0.11) {
+	if (meanEndpointError >= 0.15) {
 		std::cout << "Mean endpoint error too bad!" << std::endl;
 		return EXIT_FAILURE;
 	}
