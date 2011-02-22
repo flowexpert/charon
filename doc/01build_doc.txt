@@ -43,7 +43,7 @@ They are visible in the <em>simple view</em>.
 -   <b>ENABLE_DOC:</b><br>
     (only avaiable if doxygen et al are installed and found)<br>
     Enable generation of html api-documentation and offer pdf-doc generation.
--   <b>WITH_LATEX:</b><br>
+-   <b>USE_LATEX:</b><br>
     (only avaiable if LaTeX is installed and found)<br>
     Enable generation of pdf documentation using \c pdflatex.
 -   <b>ENABLE_TEST:</b><br>
