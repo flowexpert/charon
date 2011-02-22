@@ -597,17 +597,26 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 			<< "emtpy pluginName given!" << std::endl;
 		return;
 	}
-#ifdef MSVC
-	if (pluginName.find("msvc")!=std::string::npos) {
-		sout << __FILE__ << ":" << __LINE__ << "\t"
-			<< "discarding \"" << pluginName << "\"" << std::endl;
-		return;
-	}
+	std::vector<std::string> excludeList;
+#ifdef _MSC_VER
+	excludeList.push_back("charon-core");
+	excludeList.push_back("msvc");
+	excludeList.push_back("Qt");
+	excludeList.push_back("phonon");
+	excludeList.push_back("libpng");
+	excludeList.push_back("libtiff");
+	excludeList.push_back("zlib");
+	excludeList.push_back("vigraimpex");
+	excludeList.push_back("dll");
 #endif
-	if (pluginName.find("Qt")!=std::string::npos) {
-		sout << __FILE__ << ":" << __LINE__ << "\t"
-			<< "discarding \"" << pluginName << "\"" << std::endl;
-		return;
+	std::vector<std::string>::const_iterator iter;
+	for(iter = excludeList.begin(); iter != excludeList.end(); iter++) {
+		if (pluginName.find(*iter)!=std::string::npos) {
+			sout << "Discarding non-plugin file \"" << pluginName
+				<< ".dll\" (matched pattern \"*" << *iter
+				<< "*\" of exclude list)" << std::endl;
+			return;
+		}
 	}
 	try {
 		bool alreadyLoaded = isLoaded(pluginName);

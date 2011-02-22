@@ -58,102 +58,116 @@ LPCTSTR WindowsPluginLoader::lastError(LPTSTR func) const {
 #endif
 
 void WindowsPluginLoader::load() throw (PluginException) {
+	std::string pluginFullPath;
 #ifdef MSVC
-	if (FileTool::exists(pluginPath + "\\" + pluginName + ".dll")) {
-		hInstLibrary = LoadLibrary(
-			(pluginPath + "\\" + pluginName + ".dll").c_str());
+	pluginFullPath = pluginPath + "\\" + pluginName + ".dll";
 #else
-	if (FileTool::exists(pluginPath + "\\lib" + pluginName + ".dll")) {
-		hInstLibrary = LoadLibrary(
-			(pluginPath + "\\lib" + pluginName + ".dll").c_str());
+	pluginFullPath = pluginPath + "\\lib" + pluginName + ".dll";
 #endif
+	if (FileTool::exists(pluginFullPath)) {
+		hInstLibrary = LoadLibrary(pluginFullPath.c_str());
 	} else {
+#ifdef MSVC
+		pluginFullPath = additionalPluginPath + "\\" + pluginName + ".dll";
+#else
+		pluginFullPath = additionalPluginPath + "\\lib" + pluginName + ".dll";
+#endif
+		if (!FileTool::exists(pluginFullPath)) {
+			throw PluginException("Failed to load the plugin \"" + pluginName
+				+ "\". The file " + pluginName
+				+ ".dll could not be found.", pluginName,
+				PluginException::FILE_NOT_FOUND);
+		}
+
 		std::string oldDir = FileTool::getCurrentDir();
 		FileTool::changeDir(additionalPluginPath);
-		hInstLibrary = LoadLibrary(
-#ifdef MSVC
-			(additionalPluginPath + "\\" + pluginName + ".dll").c_str());
-#else
-			(additionalPluginPath + "\\lib" + pluginName + ".dll").c_str());
-#endif
+		hInstLibrary = LoadLibrary(pluginFullPath.c_str());
 		FileTool::changeDir(oldDir);
 	}
 
-	if (!hInstLibrary) {
+	sout << "File: " << pluginFullPath << std::endl;
 
+	if (!hInstLibrary) {
+		// error loading dll file
 #ifdef MSVC
-		if (!FileTool::exists(pluginPath + "\\" + pluginName + ".dll")) {
-			throw PluginException("Failed to load the plugin \"" + pluginName
-					+ "\". The file " + pluginName
-					+ ".dll could not be found. \nDescription of the error: \n"
-					+ lastError("load()"), pluginName,
-					PluginException::FILE_NOT_FOUND);
-		} else {
-			throw PluginException("Failed to load the plugin \"" + pluginName
-					+ "\". Maybe the file is damaged."
-					+ "\nDescription of the error: \n" + lastError("load()"),
-					pluginName, PluginException::FILE_DAMAGED);
+		std::string addInfo;
+		if (GetLastError() == 0) {
+			addInfo += "This is usually caused by missing dll dependencies.";
 		}
+		else {
+			addInfo += "Maybe the file is damaged.\n";
+			addInfo += "Description of the error:\n";
+			addInfo += lastError("load()");
+		}
+		throw PluginException(
+				"Failed to load the plugin \"" + pluginName
+				+ "\".\n" + addInfo,
+				pluginName, PluginException::FILE_DAMAGED);
 #else
-		if (!FileTool::exists(pluginPath + "\\lib" + pluginName + ".dll")) {
-			throw PluginException("Failed to load the plugin \"" + pluginName
-					+ "\". The file lib" + pluginName
-					+ ".dll could not be found.", pluginName,
-					PluginException::FILE_NOT_FOUND);
-		} else {
-			throw PluginException("Failed to load the plugin \"" + pluginName
-					+ "\". Maybe the file is damaged.", pluginName,
-					PluginException::FILE_DAMAGED);
-		}
+		throw PluginException("Failed to load the plugin \"" + pluginName
+				+ "\". Maybe the file is damaged.", pluginName,
+				PluginException::FILE_DAMAGED);
 #endif
 	}
 
-	create
-			= (ParameteredObject * (*)(const std::string &, template_type)) GetProcAddress(
-					hInstLibrary, "create");
-
-	destroy = (void(*)(ParameteredObject *)) GetProcAddress(hInstLibrary,
-			"destroy");
-
+	create  = (ParameteredObject*(*)(const std::string&, template_type))
+				GetProcAddress(hInstLibrary,"create");
 	if (!create) {
 		FreeLibrary(hInstLibrary);
 		hInstLibrary = NULL;
 #ifdef MSVC
+		std::string errorMsg;
+		if (GetLastError() == ERROR_PROC_NOT_FOUND) {
+			errorMsg += "This is no Plugin, function \"create\" is missing.";
+		}
+		else {
+			errorMsg += "Invalid plugin format.\nDescription of the error:\n";
+			errorMsg += lastError("load()");
+		}
 		throw PluginException(
-				"Failed to create the function pointer to the Constructor of the plugin \""
-				+ pluginName
-				+ "\". Invalid plugin format.\nDescription of the error:\n"
-				+ lastError("load()"), pluginName,
+				"Failed to get plugin constructor of \""
+				+ pluginName + "\".\n" + errorMsg, pluginName,
 				PluginException::INVALID_PLUGIN_FORMAT);
 #else
 		throw PluginException(
-				"Failed to create the function pointer to the Constructor of the plugin \""
+				"Failed to get plugin constructor of \""
 						+ pluginName + "\". Invalid plugin format.",
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 #endif
 	}
+
+	destroy = (void(*)(ParameteredObject*))
+				GetProcAddress(hInstLibrary,"destroy");
 	if (!destroy) {
 		create = NULL;
 		FreeLibrary(hInstLibrary);
 		hInstLibrary = NULL;
 #ifdef MSVC
+		std::string errorMsg;
+		if (GetLastError() == ERROR_PROC_NOT_FOUND) {
+			errorMsg += "This is no Plugin, function \"destroy\" is missing.";
+		}
+		else {
+			errorMsg += "Invalid plugin format.\nDescription of the error:\n";
+			errorMsg += lastError("load()");
+		}
 		throw PluginException(
-				"Failed to create the function pointer to the Destructor of the plugin \""
-				+ pluginName
-				+ "\". Invalid plugin format.\nDescription of the error:\n"
-				+ lastError("load()"), pluginName,
+				"Failed to get plugin destructor of \""
+				+ pluginName + "\".\n" + errorMsg, pluginName,
 				PluginException::INVALID_PLUGIN_FORMAT);
 #else
 		throw PluginException(
-				"Failed to create the function pointer to the Destructor of the plugin \""
+				"Failed to get plugin destructor of \""
 						+ pluginName + "\". Invalid plugin format.",
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 #endif
 	}
 }
 
-void WindowsPluginLoader::compileAndLoad(const std::string & sourceFile, std::vector<
-										 std::string> &references, const std::string & metadataPath) throw (PluginException) {
+void WindowsPluginLoader::compileAndLoad(
+		const std::string & sourceFile,
+		std::vector<std::string> &references,
+		const std::string & metadataPath) throw (PluginException) {
 
 	//Load paths from the path file
 	ParameterFile p;
