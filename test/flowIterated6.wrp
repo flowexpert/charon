@@ -99,3 +99,4 @@ median.type		medianfilter
 median.in		solver.out
 median.out		tohsv.flow;quiv.flow;iter2.flow
 median.windowradius		4
+iterator.accumulate		0

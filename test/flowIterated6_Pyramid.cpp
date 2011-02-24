@@ -60,8 +60,85 @@
 #include <charon-utils/FlowQuiver.h>
 #include <charon-utils/WarpSymmetric.h>
 
-/// unit tests
-int test() {
+/// dummy class providing CImg output slot
+class Dummy : public ParameteredObject {
+public:
+	/// dummy output slot
+	OutputSlot<cimg_library::CImgList<double> > out;
+	/// standard constructor
+	Dummy(const std::string& name = "" /** [in] instance name*/) :
+			ParameteredObject("dummy",name, "dummy class") {
+		_addOutputSlot(out, "out", "out", "CImgList<double>");
+	}
+};
+
+/// simple pyramid test
+int testPyramid() {
+	std::cout << "Executing simple workflow..." << std::endl;
+	std::ofstream log("flowIterated6_PyramidSimple.log", std::ios::trunc);
+	assert(log.good());
+	sout.assign(log);
+
+	Dummy dummy1, dummy2;
+	IteratorHelper<double> helper;
+	SimpleIterator<double> iter;
+	PyramidRescale<double> pyramid;
+
+	// set up connections
+	dummy1.out.connect(helper.in);
+	dummy2.out.connect(helper.initFlow);
+	helper.sequence.connect(pyramid.seqIn);
+	helper.flow.connect(pyramid.flowIn);
+	helper.self.connect(iter.helper);
+	helper.count.connect(pyramid.level);
+	pyramid.flowOut.connect(iter.flow);
+	pyramid.flowOut.connect(iter.flowInit);
+
+	// set iterations
+	const unsigned int levels = 4;
+	pyramid.levels() = iter.maxRuns() = levels;
+	iter.accumulate() = false;
+
+	// set up images
+	cimg_library::CImgList<double>& seq = dummy1.out();
+	cimg_library::CImgList<double>& flow = dummy2.out();
+	const cimg_library::CImgList<double>& pyFlow = pyramid.flowOut();
+	const unsigned int& cur = helper.count();
+	const double fx = 256., fy = -128.;
+
+	seq.assign(1,128,64,1,2,0.);
+	flow.assign(
+			cimg_library::CImg<double>(128,64,1,1,fx),
+			cimg_library::CImg<double>(128,64,1,1,fy));
+
+	// emulate iter.execute()
+	iter.initialize();
+	bool cont;
+	do {
+		// test in single step mode
+		cont = iter.singleStep();
+
+		// check actual flow values
+		assert(std::abs(
+				pyFlow[0].mean()-fx*std::pow(2.,-(double)levels+cur))<1.e-5);
+		assert(std::abs(
+				pyFlow[1].mean()-fy*std::pow(2.,-(double)levels+cur))<1.e-5);
+		assert(pyFlow[0].variance() < 1.e-5);
+		assert(pyFlow[1].variance() < 1.e-5);
+	} while (cont);
+	iter.finalize();
+
+	assert(std::abs(pyFlow[0].mean()-fx) < 1.e-5);
+	assert(std::abs(pyFlow[1].mean()-fy) < 1.e-5);
+
+	sout.assign();
+	std::cout << "Workflow execution finished.\n" << std::endl;
+
+	return EXIT_SUCCESS;
+}
+
+/// test using workflow "flowIterated6.wrp"
+int testWorkflow() {
 	std::ofstream log("flowIterated6_Pyramid.log", std::ios::trunc);
 	assert(log.good());
 	sout.assign(log);
@@ -181,7 +258,7 @@ int test() {
 
 	std::cout << "mean endpoint error: "
 			<< comparator->getMeanEndpointError() << std::endl;
-	assert(comparator->getMeanEndpointError() <= 12);
+	assert(comparator->getMeanEndpointError() <= 0.5);
 	epeLog.close();
 
 	man.reset();
@@ -193,5 +270,10 @@ int test() {
 
 /// start tests with exception handling
 int main() {
-	return ExceptionHandler::run(test);
+	int ret = ExceptionHandler::run(testPyramid);
+	if (ret != EXIT_SUCCESS)
+		return ret;
+
+	ret = ExceptionHandler::run(testWorkflow);
+	return ret;
 }

@@ -105,7 +105,7 @@ public:
 
 	/// create a new SimpleIterator object
 	/** \param name          Instance name */
-	SimpleIterator(const std::string& name);
+	SimpleIterator(const std::string& name = "");
 
 	/// Update object
 	/** \copydetails ParameteredObject::execute() */

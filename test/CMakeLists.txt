@@ -250,6 +250,7 @@ IF(BUILD_TESTING)
 	TARGET_LINK_LIBRARIES(flowIterated6_Pyramid
 		relaxingiterator
 		flowcomparator
+		pyramidrescale
 		charon-plugins
 		${CIMG_LINK_LIBRARIES}
 	)
