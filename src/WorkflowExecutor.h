@@ -24,16 +24,22 @@
 #ifndef WORKFLOWEXECUTOR_H
 #define WORKFLOWEXECUTOR_H
 
-#include <QObject>
+
 #include <QAction>
+#include <QThread>
+#include <QMutex>
+#include <ui_LogDialog.h>
 class PluginManager;
 class ObjectInspector;
+class QFile;
+class QTimer;
+//class Ui::LogDialog;
 
 /// Management of workflow execution
 /** This class provides the run workflow action to add to toolbars and menus.
  *  It manages execution state etc.
  */
-class WorkflowExecutor : public QObject
+class WorkflowExecutor : protected QThread 
 {
 	Q_OBJECT
 
@@ -52,10 +58,36 @@ private:
 	QString _pathBak;
 	/// pointer to ObjectInspector holding model information
 	ObjectInspector* _inspector;
-	/// execute workflow
-	void _run();
+	/// mutex for access to members
+	QMutex _mutex ;
+	/// exception messages caught during execution
+	QString _executionMessage ;
+	/// log file
+	QFile* _logFile ;
+	/// dialog for log messages
+	Ui::LogDialog* _logDialog ;
+	/// timer to update log dialog
+	QTimer* _logTimer ;
+
 	/// cleanup plugins
 	void _cleanup();
+
+	/// load current workflow and prepare log system
+	void _execute() ;
+
+	/// thread entry function, executes the workflow
+	virtual void run() ;
+
+private slots:
+
+	//called when workflow finished gracefully
+	void _executionFinished() ;
+
+	//called when workflow was terminated
+	void _executionTerminated() ;
+
+	//read newest lines from _logFile und show in dialog
+	void _updateLogDialog() ;
 
 public:
 	/// standard constructor
@@ -83,7 +115,7 @@ public slots:
 	 *  If <i>waitAfterExecute</i> is set to false, a plugin cleanup is
 	 *  performed on execution termination which unloads all plugins.
 	 */
-	void run();
+	void execute();
 };
 
 #endif // WORKFLOWEXECUTOR_H
