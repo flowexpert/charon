@@ -48,6 +48,7 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 			"enable cropping last (RGB) dimension", true);
 
 	roi() = &_roi;
+	_gui = new FrameSelectWidget(this,cropV,z,t,v);
 }
 
 template <typename T>
@@ -74,11 +75,8 @@ void FrameSelect<T>::execute() {
 		if(z() >= s[2] || t() >= s[3] || v() >= s[4])
 			throw std::out_of_range("z/t/v coorinate too large");
 
-		if(!_gui)
-			_gui = new FrameSelectWidget(this,cropV,z,t,v);
 		_gui->setDisplay(&(*widget.getTargets().begin())->getParent());
-		_gui->setWindowTitle(QString("FrameSelect [%1]").arg(
-				ParameteredObject::getName().c_str()));
+		_gui->setTitle(ParameteredObject::getName());
 		_gui->setShape(s[2],s[3],s[4]);
 		widget = _gui;
 

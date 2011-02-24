@@ -26,6 +26,7 @@
 
 #include <QDockWidget>
 #include <QVector>
+#include <QString>
 #include "charonwidgets.h"
 #include <charon-utils/StatisticsDisplay.h>
 #include <string>
@@ -51,6 +52,7 @@ public:
 	/// create new tabs and populate with values
 	void updateStats(const std::vector<Statistics>& stats) ;
 
+	void setTitle(const std::string& title) ;
 
 private:
 	
@@ -59,6 +61,20 @@ private:
 
 	/// central widget
 	QTabWidget* _tabWidget ;
+
+	QString _title ;
+
+	bool _updatePending ;
+
+	std::vector<Statistics> _stats ;
+
+private slots:
+
+	void _updateStats() ;
+
+signals:
+
+	void statsUpdated() ;
 
 } ; /* class StatisticsDisplayWidget */
 

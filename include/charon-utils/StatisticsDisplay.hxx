@@ -68,6 +68,10 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 		return ;
 	}
 	*/
+
+	_exportWidget = new StatisticsDisplayWidget() ;
+	_display = _exportWidget ;
+		
 }
 
 template <typename T>
@@ -96,7 +100,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 	for(std::size_t ii = 0 ; (ii < _in.size()) && (it != end) ; ii++, it++)
 	{
 			std::string name = (*it)->getParent().getName() ;
-
+			sout << "Calculating statistics for " << name << std::endl ;
 			//create accumulators for each image, add tags as needed
 			accumulator_set<double, stats<tag::min, tag::max, tag::count, tag::sum, tag::mean, tag::variance, tag::median> > acc;
 
@@ -158,10 +162,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 
 	if(_display.connected())
 	{	
-		if(_exportWidget == 0)
-		{	_exportWidget = new StatisticsDisplayWidget(this->getName(), 0) ;
-			_display = _exportWidget ;
-		}
+		//_exportWidget->setTitle(this->getName()) ;
 		_exportWidget->updateStats(_statistics) ;
 	}
 }

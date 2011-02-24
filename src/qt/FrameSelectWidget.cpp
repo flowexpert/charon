@@ -37,9 +37,11 @@ FrameSelectWidget::FrameSelectWidget(
 	_cropV(cV),
 	_z(z),
 	_t(t),
-	_v(v)
+	_v(v),
+	_updatePending(false)
 {
 	_ui->setupUi(this);
+	QObject::connect(this, SIGNAL(updatePending()), this, SLOT(_updateWidget()), Qt::QueuedConnection) ;
 }
 
 FrameSelectWidget::~FrameSelectWidget()
@@ -52,27 +54,23 @@ void FrameSelectWidget::setDisplay(ParameteredObject* d) {
 }
 
 void FrameSelectWidget::setShape(uint dz, uint dt, uint dv) {
-	_ui->spinBox2->setSuffix(QString(" / %1").arg(dz));
-	_ui->spinBox3->setSuffix(QString(" / %1").arg(dt));
-	_ui->spinBox4->setSuffix(QString(" / %1").arg(dv));
 
-	// max val is dz/t/v - 1 since values are starting at zero
-	_ui->spinBox2->setMaximum(dz-1);
-	_ui->spinBox3->setMaximum(dt-1);
-	_ui->spinBox4->setMaximum(dv-1);
-	_ui->slider2->setMaximum(dz-1);
-	_ui->slider3->setMaximum(dt-1);
-	_ui->slider4->setMaximum(dv-1);
+	_dz = dz ; _dt = dt ; _dv = dv ;
 
-	_ui->slider2->setValue(_z());
-	_ui->slider3->setValue(_t());
-	_ui->slider4->setValue(_v());
-	bool& cV = _cropV();
-	if (dv != 3) {
-		cV = true;
-		_ui->checkCropV->setEnabled(false);
+	if(!_updatePending)
+	{
+		_updatePending = true ;
+		emit updatePending() ;
 	}
-	_ui->checkCropV->setChecked(cV);
+}
+
+void FrameSelectWidget::setTitle(const std::string& title) {
+	_title = QString::fromStdString(title) ;
+	if(!_updatePending)
+	{
+		_updatePending = true ;
+		emit updatePending() ;
+	}
 }
 
 void FrameSelectWidget::setCropV(bool val) {
@@ -80,7 +78,7 @@ void FrameSelectWidget::setCropV(bool val) {
 	if(cV == val)
 		return;
 	cV = val;
-	_update();
+	_updatePlugin();
 }
 
 void FrameSelectWidget::setDim2(int val) {
@@ -88,7 +86,7 @@ void FrameSelectWidget::setDim2(int val) {
 		return;
 	_ui->slider2->setValue(val);
 	_z() = val;
-	_update();
+	_updatePlugin();
 }
 
 void FrameSelectWidget::setDim3(int val) {
@@ -96,7 +94,7 @@ void FrameSelectWidget::setDim3(int val) {
 		return;
 	_ui->slider3->setValue(val);
 	_t() = val;
-	_update();
+	_updatePlugin();
 }
 
 void FrameSelectWidget::setDim4(int val) {
@@ -104,12 +102,44 @@ void FrameSelectWidget::setDim4(int val) {
 		return;
 	_ui->slider4->setValue(val);
 	_v() = val;
-	_update();
+	_updatePlugin();
 }
 
-void FrameSelectWidget::_update() {
+void FrameSelectWidget::_updatePlugin() {
 	if(_display->executed()) {
 		_parent->resetExecuted();
 		_display->execute();
 	}
+}
+
+void FrameSelectWidget::_updateWidget() {
+	if(!_updatePending)
+		return ;
+
+	
+	_ui->spinBox2->setSuffix(QString(" / %1").arg(_dz));
+	_ui->spinBox3->setSuffix(QString(" / %1").arg(_dt));
+	_ui->spinBox4->setSuffix(QString(" / %1").arg(_dv));
+
+	// max val is dz/t/v - 1 since values are starting at zero
+	_ui->spinBox2->setMaximum(_dz-1);
+	_ui->spinBox3->setMaximum(_dt-1);
+	_ui->spinBox4->setMaximum(_dv-1);
+	_ui->slider2->setMaximum(_dz-1);
+	_ui->slider3->setMaximum(_dt-1);
+	_ui->slider4->setMaximum(_dv-1);
+
+	_ui->slider2->setValue(_z());
+	_ui->slider3->setValue(_t());
+	_ui->slider4->setValue(_v());
+	bool& cV = _cropV();
+	if (_dv != 3) {
+		cV = true;
+		_ui->checkCropV->setEnabled(false);
+	}
+	_ui->checkCropV->setChecked(cV);
+
+
+	_updatePending = false ;
+
 }

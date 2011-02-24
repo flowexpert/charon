@@ -26,6 +26,7 @@
 
 #include <QDockWidget>
 #include <charon-core/ParameteredObject.h>
+#include <QString>
 #include "charonwidgets.h"
 
 namespace Ui {
@@ -47,6 +48,7 @@ public:
 	~FrameSelectWidget();
 	void setDisplay(ParameteredObject* display);
 	void setShape(uint dz, uint dt, uint dv);
+	void setTitle(const std::string& title) ;
 
 public slots:
 	void setCropV(bool val);
@@ -62,7 +64,19 @@ private:
 	Parameter<uint>& _z;
 	Parameter<uint>& _t;
 	Parameter<uint>& _v;
-	void _update();
+
+	uint _dz, _dt, _dv ;
+	void _updatePlugin();
+	bool _updatePending ;
+	QString _title ;
+
+private slots:
+
+	void _updateWidget() ;
+
+signals:
+
+	void updatePending() ;
 };
 
 #endif // FRAMESELECTWIDGET_H

@@ -29,7 +29,9 @@ namespace StatisticsDisplay {
 
 StatisticsDisplayWidget::StatisticsDisplayWidget(const std::string& title,QWidget* parent) : 
 	QDockWidget(parent),
-	_tabWidget(0)
+	_tabWidget(0),
+	_updatePending(false),
+	_title(QString::fromStdString(title))
 {
 	//create tab widget with one tab for each input image
 	this->setObjectName(QString("Statistics")) ;
@@ -40,9 +42,21 @@ StatisticsDisplayWidget::StatisticsDisplayWidget(const std::string& title,QWidge
 
 	this->setWidget(_tabWidget) ;
 	this->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea) ;
-	this->setWindowTitle(QString("StatisticsDisplay [") + QString::fromStdString(title) + QString("]") ) ;
+	
+	this->setWindowTitle(QString("StatisticsDisplay [") + _title + QString("]") ) ;
 	this->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable) ;
 
+	connect(this, SIGNAL(statsUpdated()), this, SLOT(_updateStats()), Qt::QueuedConnection) ;
+}
+
+void StatisticsDisplayWidget::setTitle(const std::string& title)
+{
+	_title = QString::fromStdString(title) ;
+	if(!_updatePending)
+	{
+		_updatePending = true ;
+		emit statsUpdated() ;
+	}
 }
 
 StatisticsDisplayWidget::~StatisticsDisplayWidget()
@@ -59,16 +73,21 @@ void StatisticsDisplayWidget::clearContent()
 	}
 }
 
-void StatisticsDisplayWidget::updateStats(const std::vector<Statistics>& stats)
+void StatisticsDisplayWidget::_updateStats()
 {
+	if(!_updatePending)
+		return ;
+
+	this->setWindowTitle(QString("StatisticsDisplay [") + _title + QString("]") ) ;
+
 	//rember the current index and set it again if possible once the new Stats have been entered
 	int index = _tabWidget->currentIndex() ;
 	
 	clearContent() ;
 	
 	//create a tab for every Statistics object
-	std::vector<Statistics>::const_iterator it1 = stats.begin() ;
-	for(; it1 != stats.end() ; it1++)
+	std::vector<Statistics>::const_iterator it1 = _stats.begin() ;
+	for(; it1 != _stats.end() ; it1++)
 	{
 		QWidget* tab = new QWidget ;
 		QVBoxLayout* vLayout = new QVBoxLayout ;
@@ -98,6 +117,18 @@ void StatisticsDisplayWidget::updateStats(const std::vector<Statistics>& stats)
 	}
 	if(index < _tabWidget->count())
 	{	_tabWidget->setCurrentIndex(index) ;	}
+
+	_updatePending = false ;
 }
 
-} ;
+void StatisticsDisplayWidget::updateStats(const std::vector<Statistics>& stats)
+{
+	_stats = stats ;
+	if(!_updatePending)
+	{
+		_updatePending = true ;
+		emit statsUpdated() ;
+	}
+}
+
+} //namespace StatisticsDisplay
