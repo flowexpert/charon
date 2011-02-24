@@ -52,8 +52,21 @@ namespace ArgosDisplay
 
 	private:
 
+		
 		/// central Widget for image view management
 		ViewStack* _viewStack ;
+
+		std::vector<QWidget* > _widgets ;
+
+		bool _updatePending ;
+
+	private slots:
+		void _addDockWidgets() ;
+
+	signals:
+		void widgetAdded() ;
+
+
 	} ; /* class MainWindow */
 
 } ; /* namespace ArgosDisplay */

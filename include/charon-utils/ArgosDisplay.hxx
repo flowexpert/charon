@@ -30,6 +30,7 @@
 #include <ViewStack.hpp>
 #include <QApplication>
 
+
 //using namespace cimg_library ;
 using namespace ArgosDisplay ;
 
@@ -90,8 +91,6 @@ void ArgosDisplayPlugin<T>::execute() {
 	if(!qApp)
 	{	return ;	}
 	
-	_mainWindow->show() ;
-	
 	//std::map<const Array* const, std::string> parentNames ;
 	// get pointers to all OutputSlots of the _in Multislot to get the names
 	// of the corresponding Plugin Instances
@@ -104,8 +103,7 @@ void ArgosDisplayPlugin<T>::execute() {
 	
 	//save current top view to reset it in case of reexecution
 	int index = viewStack.currentIndex() ;
-	
-	viewStack.clear();
+	viewStack.clear() ;
 
 	for( ; it != end ; it++)
 	{
@@ -121,7 +119,7 @@ void ArgosDisplayPlugin<T>::execute() {
 					"In/Output slot may be invalid!");
 
 		// register all Arrays with the ViewStack
-		viewStack.linkImage(temp->operator ()(), temp->getType(), name, _inputIsRGB()) ;
+		viewStack.linkImage(new PixelInspector<T>(temp->operator ()(), name, _inputIsRGB())) ;
 	}
 	viewStack.setCurrentIndex(index) ;
 	
@@ -129,6 +127,67 @@ void ArgosDisplayPlugin<T>::execute() {
 	{
 		_mainWindow->addDockWidget(_widgets[ii]) ;
 	}
+
+}
+
+
+AbstractPixelInspector::AbstractPixelInspector(const std::string& name, bool rgb) :
+	name(name),
+	isRGBA(rgb)
+{
+	;
+}
+
+template <typename T>
+PixelInspector<T>::PixelInspector (const vigra::MultiArrayView<5, T>& mArray, 
+	const std::string& name, bool rgb) :
+	AbstractPixelInspector(name, rgb),
+	_mArray(mArray)
+{
+		;
+}
+
+template <typename T>
+const std::vector<double> PixelInspector<T>::operator()(int x, int y) const
+{
+	static int maxDimSize = 5 ; //don't return more values
+	std::vector<double> result ;
+	result.reserve(maxDimSize) ;
+	if(x < 0 || y < 0 || _mArray.size() == 0 || x >= _mArray.size(0) || y >= _mArray.size(1))
+		return result ;
+	
+	for(int i = 0 ; i < _mArray.size(4) && i < maxDimSize ; i++)
+		result.push_back(double(_mArray(x,y,0,0,i))) ;
+	return result ;
+
+}
+
+template <typename T>
+const vigra::QRGBImage PixelInspector<T>::getRGBAImage()
+{
+	if(isRGBA && _mArray.size(4) == 3)
+	{	vigra::QRGBImage img(_mArray.size(0), _mArray.size(1)) ;
+		for(int xx = 0 ; xx < _mArray.size(0) ; ++xx)
+			for(int yy = 0 ; yy < _mArray.size(1) ; ++yy)
+			{	img(xx,yy).red() = _mArray(xx,yy,0,0,0) ;
+				img(xx,yy).green() = _mArray(xx,yy,0,0,1) ;
+				img(xx,yy).blue() = _mArray(xx,yy,0,0,2) ;
+			}
+		return img ;
+	}
+	else
+	{	return vigra::QRGBImage(1, 1) ;	}
+
+}
+
+template <typename T>
+const vigra::FImage PixelInspector<T>::getFImage()
+{
+	vigra::FImage img(_mArray.size(0), _mArray.size(1)) ;
+	for(int xx = 0 ; xx < _mArray.size(0) ; ++xx)
+		for(int yy = 0 ; yy < _mArray.size(1) ; ++yy)
+		{	img(xx,yy) = _mArray(xx,yy,0,0,0) ;	}
+	return img ;
 }
 
 #endif /* _ARGOSDISPLAY_HXX_ */

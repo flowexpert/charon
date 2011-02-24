@@ -29,7 +29,10 @@
 
 using namespace ArgosDisplay ;
 
-ViewStack::ViewStack(QWidget* p) : QWidget(p) {
+ViewStack::ViewStack(QWidget* p) : QWidget(p),
+	_updatePending(false),
+	_index(0)
+{
 	_tabWidget = new QTabWidget(this) ;
 	_tabWidget->setUsesScrollButtons(true) ;
 
@@ -38,6 +41,8 @@ ViewStack::ViewStack(QWidget* p) : QWidget(p) {
 	this->setLayout(layout) ;
 	this->setSizePolicy(
 			QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
+
+	connect(this, SIGNAL(imageLinked()), this, SLOT(linkImages()), Qt::QueuedConnection) ;
 }
 
 ViewStack::~ViewStack() {
@@ -50,85 +55,79 @@ void ViewStack::clear() {
 		_tabWidget->removeTab(c);
 		delete cur;
 	}
-	_intImgMap.clear();
-	_floatImgMap.clear();
-	_doubleImgMap.clear();
+	_inspectors.clear() ;
 }
+
+void ViewStack:: linkImage(AbstractPixelInspector* inspector)
+{
+	if(inspector == 0)
+	{	return ;	}
+	_inspectors.push_back(inspector) ;
+	
+	//TODO: make this thread safe?
+	if(!_updatePending)
+	{	_updatePending = true ;
+		emit imageLinked() ;
+	}
+}
+
 
 int ViewStack::currentIndex() const {
 	return _tabWidget->currentIndex() ;
 }
 
 void ViewStack::setCurrentIndex(int index) {
-	if (index < _tabWidget->count())
-		_tabWidget->setCurrentIndex(index);
+	_index = index ;
+	if(!_updatePending)
+	{	_updatePending = true ;
+		emit imageLinked() ;
+	}
 }
 
-void ViewStack::linkFloatImage(
-		const vigra::FImage& img, const std::string& name) {
-	FImageViewer* viewer = new FImageViewer(0) ;
-	_tabWidget->addTab(viewer, QString::fromStdString(name)) ;
-	viewer->setImage(img) ;
-	connect(
-			viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
-			this, SLOT(processMouseMovement(int, int)));
-}
+void ViewStack::linkImages()
+{
+	//this->clear() ;
+	for(size_t ii = 0 ; ii < _inspectors.size() ; ii++)
+	{
+		if(_inspectors[ii] == 0)
+			continue ;
+		if(_inspectors[ii]->isRGBA)
+		{
+			QImageViewer* viewer = new QImageViewer(0) ;
+			_tabWidget->addTab(viewer, QString::fromStdString(_inspectors[ii]->name)) ;
+			viewer->setImage(_inspectors[ii]->getRGBAImage().qImage()) ;
+			connect(
+					viewer, SIGNAL(mouseOver(int, int)),
+					this, SLOT(processMouseMovement(int, int))) ;
+		}
+		else
+		{
+			FImageViewer* viewer = new FImageViewer(0) ;
+			_tabWidget->addTab(viewer, QString::fromStdString(_inspectors[ii]->name)) ;
+			viewer->setImage(_inspectors[ii]->getFImage()) ;
+			connect(
+					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
+					this, SLOT(processMouseMovement(int, int)));
 
-void ViewStack::linkRgbaImage(
-		const vigra::QRGBImage& img, const std::string& name) {
-	QImageViewer* viewer = new QImageViewer(0) ;
-	_tabWidget->addTab(viewer, QString::fromStdString(name)) ;
-	viewer->setImage(img.qImage()) ;
-	connect(
-			viewer, SIGNAL(mouseOver(int, int)),
-			this, SLOT(processMouseMovement(int, int))) ;
+		}
+	}
+	_tabWidget->setCurrentIndex(_index) ;
+	_updatePending = false ;
+	this->parentWidget()->show() ;
 }
 
 void ViewStack::processMouseMovement(int x, int y) {
-	QString message = QString("x : %1 y : %2").arg(x).arg(y) ;
-	std::vector<std::pair<std::string, const VigraDoubleArray* > >::iterator
-			dit = _doubleImgMap.begin() ;
-	for (; dit != _doubleImgMap.end() ; dit++) {
-		const VigraDoubleArray& array = *(dit->second) ;
-		if(x < 0 || y < 0 || array.size() <= 0 ||
-				x >= array.size(0) || y >= array.size(1))
-			continue;
-		// append name of parent node
-		message += QString("  %1 : { ").arg(
-				QString::fromStdString(dit->first)) ;
+	QString message = QString("x : %1 y : %2  ").arg(x).arg(y) ;
 
-		// append pixel values
-		for(int i = 0 ; i < array.size(4) ; i++)
-			message += QString("%1 ").arg(array(x,y,0,0,i));
-		message += QString("}") ;
-	}
-	std::vector<std::pair<std::string, const VigraFloatArray* > >::iterator
-			fit = _floatImgMap.begin() ;
-	for(; fit != _floatImgMap.end() ; fit++) {
-		const VigraFloatArray& array = *(fit->second) ;
-		if(x < 0 || y < 0 || array.size() <= 0 ||
-				x >= array.size(0) || y >= array.size(1))
-			continue;
-		message += QString("  %1 : { ").arg(
-				QString::fromStdString(fit->first)) ;
-
-		for(int i = 0 ; i < array.size(4) ; i++)
-			message += QString("%1 ").arg(array(x,y,0,0,i)) ;
-		message += QString("}") ;
-	}
-	std::vector<std::pair<std::string, const VigraIntArray* > >::iterator
-			it = _intImgMap.begin() ;
-	for(; it != _intImgMap.end() ; it++) {
-		const VigraIntArray& array = *(it->second) ;
-		if(x < 0 || y < 0 || array.size() <= 0 ||
-				x >= array.size(0) || y >= array.size(1))
-			continue;
-		message += QString("  %1 : { ").arg(
-				QString::fromStdString(it->first)) ;
-
-		for(int i = 0 ; i < array.size(4) ; i++)
-			message += QString("%1 ").arg(array(x,y,0,0,i));
-		message += QString("}") ;
+	for(size_t ii = 0 ; ii < _inspectors.size() ; ii++)
+	{
+		message += QString::fromStdString(_inspectors[ii]->name) + QString(" {") ;
+		std::vector<double> vals = _inspectors[ii]->operator()(x,y) ;
+		for(size_t jj = 0 ; jj < vals.size() ; jj++)
+		{
+			message += QString("%1 ").arg(vals[jj]) ;
+		}
+		message += QString("} ") ;
 	}
 
 	emit exportStatusMessage(message) ;

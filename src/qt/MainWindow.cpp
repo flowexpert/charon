@@ -27,7 +27,8 @@
 using namespace ArgosDisplay ;
 //using namespace vigraqt ;
 
-MainWindow::MainWindow() : _viewStack(0)
+MainWindow::MainWindow() : _viewStack(0),
+	_updatePending(false)
 {
 	_viewStack = new ViewStack(this);
 	this->setCentralWidget(_viewStack);
@@ -35,6 +36,7 @@ MainWindow::MainWindow() : _viewStack(0)
 	QObject::connect(
 			_viewStack, SIGNAL(exportStatusMessage(QString)),
 			this->statusBar(),SLOT(showMessage(QString)));
+	QObject::connect(this, SIGNAL(widgetAdded()), this, SLOT(_addDockWidgets()), Qt::QueuedConnection) ;
 }
 
 MainWindow::~MainWindow()
@@ -50,23 +52,42 @@ ViewStack& MainWindow::viewStack()
 void MainWindow::addDockWidget(QWidget* widget)
 {
 	Q_ASSERT(widget);
-	if (widget->parent() != 0)
-		return;
-	QDockWidget* dockWidget = qobject_cast<QDockWidget*>(widget);
-	if(!dockWidget) {
-		dockWidget = new QDockWidget(this);
-		dockWidget->setWidget(widget);
+	_widgets.push_back(widget) ;
+	if(!_updatePending)
+	{	_updatePending = true ;
+		emit widgetAdded() ;
 	}
-	Qt::DockWidgetArea area = Qt::LeftDockWidgetArea; // = 0x1
-	// area values are 0x1, 0x2, 0x4, 0x8
-	while(!dockWidget->isAreaAllowed(area) && area <= 0x8)
-		area=(Qt::DockWidgetArea)((int)area<<1);
-	if (!(area&Qt::AllDockWidgetAreas)) {
-		qDebug("%s",tr("No usable DockArea found for %1, using left one.").arg(
-				dockWidget->windowTitle()).toAscii().constData());
-		area = Qt::LeftDockWidgetArea;
+}
+
+void MainWindow::_addDockWidgets()
+{
+	if(!_updatePending)
+		return ;
+	
+	for(size_t ii = 0 ; ii < _widgets.size() ; ii++)
+	{
+		QWidget* widget = _widgets[ii] ;
+		Q_ASSERT(widget) ;
+		if (widget->parent() != 0)
+			return;
+		QDockWidget* dockWidget = qobject_cast<QDockWidget*>(widget);
+		if(!dockWidget) {
+			dockWidget = new QDockWidget(this);
+			dockWidget->setWidget(widget);
+		}
+		Qt::DockWidgetArea area = Qt::LeftDockWidgetArea; // = 0x1
+		// area values are 0x1, 0x2, 0x4, 0x8
+		while(!dockWidget->isAreaAllowed(area) && area <= 0x8)
+			area=(Qt::DockWidgetArea)((int)area<<1);
+		if (!(area&Qt::AllDockWidgetAreas)) {
+			qDebug("%s",tr("No usable DockArea found for %1, using left one.").arg(
+					dockWidget->windowTitle()).toAscii().constData());
+			area = Qt::LeftDockWidgetArea;
+		}
+		QMainWindow::addDockWidget(area, dockWidget);
+		Q_ASSERT(widget->parent() != 0);
+		Q_ASSERT(dockWidget->parent() != 0);
 	}
-	QMainWindow::addDockWidget(area, dockWidget);
-	Q_ASSERT(widget->parent() != 0);
-	Q_ASSERT(dockWidget->parent() != 0);
+	_updatePending = false ;
+
 }

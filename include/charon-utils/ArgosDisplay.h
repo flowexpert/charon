@@ -38,7 +38,10 @@
 
 #include <charon-core/ParameteredObject.hxx>
 #include <vigra/multi_array.hxx>
-#include <QWidget>
+#include "vigraqt/vigraqimage.hxx"
+#include <vigra/stdimage.hxx>
+
+class QWidget ;
 
 namespace ArgosDisplay
 {
@@ -50,7 +53,6 @@ template <typename T>
 class argosdisplay_DECLDIR ArgosDisplayPlugin :
 		public TemplatedParameteredObject<T> {
 public:
-	
 	/// create a new ArgosDisplay
 	/// \param name          Instance name
 	ArgosDisplayPlugin(const std::string& name);
@@ -64,17 +66,68 @@ public:
 	/// The vigra::MultiArray input
 	InputSlot < vigra::MultiArrayView<5, T> > _in;
 
-        /// Pointers to widgets which will be displayed as QDockWidgets
-        InputSlot <QWidget*> _widgets ;
+	/// Pointers to widgets which will be displayed as QDockWidgets
+	InputSlot <QWidget*> _widgets ;
 
-        /// interpret image as RGB(0-255) if dim 5 is of size 3
-        Parameter<bool> _inputIsRGB ;
+	/// interpret image as RGB(0-255) if dim 5 is of size 3
+	
+	Parameter<bool> _inputIsRGB ;
 
 private:
 
 	///main plugin window
 	MainWindow* _mainWindow ;
+
 } ; //class ArgosDisplayPlugin
+
+///abstract adapter class which allows ViewStack access to templated image data
+class AbstractPixelInspector
+{
+public :	
+	
+	///constructor
+	AbstractPixelInspector(const std::string& name, bool rgb) ;
+	
+	///destructor
+	~AbstractPixelInspector() {;}
+
+	///access pixel values at xy-position
+	virtual const std::vector<double> operator()(int x, int y) const = 0;
+
+	///return RGBA copy of image data
+	virtual const vigra::QRGBImage getRGBAImage() = 0;
+
+	///return float copy of image data
+	virtual const vigra::FImage getFImage() = 0;
+
+	///name of parent plugin instance
+	const std::string name ;
+
+	///is image data RGBA
+	const bool isRGBA ;
+
+} ;
+
+///concrete template instances of PixelInspector
+template<typename T>
+class PixelInspector : public AbstractPixelInspector
+{
+public:
+
+	PixelInspector(const vigra::MultiArrayView<5, T>& mArray, const std::string& name, bool rgb) ;
+	~PixelInspector() ;
+
+	virtual const std::vector<double> operator()(int x, int y) const ;
+
+	virtual const vigra::QRGBImage getRGBAImage() ;
+
+	virtual const vigra::FImage getFImage() ;
+
+private:
+
+	const vigra::MultiArrayView<5, T>& _mArray ;
+
+} ;
 
 
 } ; //namespace ArgosDisplay
