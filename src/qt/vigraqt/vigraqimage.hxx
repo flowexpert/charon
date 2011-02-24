@@ -31,6 +31,7 @@
 #include "qrgbvalue.hxx"
 
 #include <QImage>
+#include <QColor>
 
 namespace vigra {
 
