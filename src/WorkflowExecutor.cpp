@@ -290,7 +290,7 @@ void WorkflowExecutor::execute() {
 		msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
 		msgBox.setDefaultButton(QMessageBox::No);
 		int ret = msgBox.exec();	
-		if(ret = QMessageBox::Yes)
+		if(ret == QMessageBox::Yes)
 		{	this->terminate() ;	}
 	}
 	else

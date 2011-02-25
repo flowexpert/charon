@@ -165,9 +165,12 @@ void FileManager::loadPluginInformation() const {
 			tr("Content of logfile <tt>%1</tt>:").arg(logFileName));
 	QFile logFile(logFileName);
 	logFile.open(QIODevice::ReadOnly | QIODevice::Text);
+	
 	logDialog.logText->insertPlainText(logFile.readAll());
+	logDialog.progressBar->hide() ;
 	logFile.close();
 	dialog->exec();
+	QApplication::processEvents() ;
 }
 
 void FileManager::updateMetadata() const {
