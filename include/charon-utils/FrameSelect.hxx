@@ -62,12 +62,16 @@ void FrameSelect<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
+	uint lz = z() ;
+	uint lt = t() ;
+	uint lv = v() ;
+	
 	// update roi boundaries
 	_roi.xEnd =  _roi.xBegin = 0; // no crop in x-dim
 	_roi.yEnd =  _roi.yBegin = 0; // no crop in y-dim
-	_roi.zEnd = (_roi.zBegin = z()) + 1;
-	_roi.tEnd = (_roi.tBegin = t()) + 1;
-	_roi.vEnd = (_roi.vBegin = v()) + 1;
+	_roi.zEnd = (_roi.zBegin = lz) + 1;
+	_roi.tEnd = (_roi.tBegin = lt) + 1;
+	_roi.vEnd = (_roi.vBegin = lv) + 1;
 	if(!cropV())
 		_roi.vEnd = _roi.vBegin = 0; // no crop in v-dim
 
@@ -78,7 +82,7 @@ void FrameSelect<T>::execute() {
 		const vigra::MultiArrayShape<5>::type& s = i.shape();
 		vigra_assert(s.size() == 5, "s has != 5 elements");
 
-		if(z() >= s[2] || t() >= s[3] || v() >= s[4])
+		if(lz >= s[2] || lt >= s[3] || lv >= s[4])
 			throw std::out_of_range("z/t/v coorinate too large");
 
 		_gui->setDisplay(&(*widget.getTargets().begin())->getParent());
@@ -86,13 +90,13 @@ void FrameSelect<T>::execute() {
 		_gui->setShape(s[2],s[3],s[4]);
 		widget = _gui;
 
-		const bool& cV = cropV();
+		const bool cV = cropV();
 		vigra_assert(cV||s[4]==3u,"last dim has to be 3 if not cropping");
 		vigra::MultiArrayShape<5>::type os(s[0],s[1],1u,1u,(cV?1u:3u));
 		o.reshape(os);
-		const uint& zz=z();
-		const uint& tt=t();
-		uint vBegin = cV?v():0u, vEnd = cV?v()+1:3u;
+		const uint zz=lz;
+		const uint tt=lt;
+		uint vBegin = cV?v():0u, vEnd = cV?lv+1:3u;
 
 		for(uint vv=vBegin;vv<vEnd;vv++)
 			for(uint yy=0u;yy<s[1];yy++)
