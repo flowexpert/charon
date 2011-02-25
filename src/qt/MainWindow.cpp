@@ -41,7 +41,11 @@ MainWindow::MainWindow() : _viewStack(0),
 
 MainWindow::~MainWindow()
 {
-	;
+	//seize parentship of all connected dock widgets so they can be deleted in their respective Parametered Objects
+	for(size_t ii = 0 ; ii < _widgets.size() ; ii++)
+	{
+		_widgets[ii]->setParent(0) ;
+	}
 }
 
 ViewStack& MainWindow::viewStack()

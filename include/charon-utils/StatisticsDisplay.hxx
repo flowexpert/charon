@@ -71,13 +71,12 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 
 	_exportWidget = new StatisticsDisplayWidget() ;
 	_display = _exportWidget ;
-		
 }
 
 template <typename T>
 StatisticsDisplayPlugin<T>::~StatisticsDisplayPlugin()
 {
-	//don't delete the exportWidget as the parent Widget will eventually take care of this 
+	delete _exportWidget ;
 }
 
 template <typename T>

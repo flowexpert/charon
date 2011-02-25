@@ -48,7 +48,7 @@ namespace ArgosDisplay {
 		ViewStack(QWidget* parent = 0) ;
 		
 		/// default destructor
-		~ViewStack() ;
+		virtual ~ViewStack() ;
 
 		/// removes all tab widgets
 		void clear();

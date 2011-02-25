@@ -47,7 +47,7 @@ public:
 	StatisticsDisplayWidget(const std::string& title = "", QWidget* parent = 0) ;
 	
 	/// default destructor
-	~StatisticsDisplayWidget() ;
+	virtual ~StatisticsDisplayWidget() ;
 	
 	/// create new tabs and populate with values
 	void updateStats(const std::vector<Statistics>& stats) ;

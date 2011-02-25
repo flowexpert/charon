@@ -52,6 +52,12 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 }
 
 template <typename T>
+FrameSelect<T>::~FrameSelect()
+{
+	delete _gui ;
+}
+
+template <typename T>
 void FrameSelect<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();

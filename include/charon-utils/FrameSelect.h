@@ -70,6 +70,8 @@ public:
 	/// @param name             instance name
 	FrameSelect(const std::string& name = "");
 
+	~FrameSelect() ;
+
 	/// \implements ParameteredObject::execute
 	virtual void execute();
 

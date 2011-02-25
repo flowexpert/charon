@@ -45,7 +45,7 @@ public:
 			Parameter<uint>& t,
 			Parameter<uint>& v,
 			QWidget* parentWidget = 0);
-	~FrameSelectWidget();
+	virtual ~FrameSelectWidget();
 	void setDisplay(ParameteredObject* display);
 	void setShape(uint dz, uint dt, uint dv);
 	void setTitle(const std::string& title) ;
