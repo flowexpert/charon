@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>585</width>
-    <height>255</height>
+    <height>283</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,6 +76,13 @@
        <widget class="QCheckBox" name="checkWait">
         <property name="text">
          <string>wait after workflow execution</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkThreaded">
+        <property name="text">
+         <string>execute workflow in separate thread</string>
         </property>
        </widget>
       </item>

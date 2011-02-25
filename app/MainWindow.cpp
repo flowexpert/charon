@@ -518,6 +518,9 @@ void MainWindow::_options() {
 			settings.value("privatePluginPath").toString());
 	options.checkWait->setChecked(
 			settings.value("waitAfterExecute", false).toBool());
+	options.checkThreaded->setChecked(
+			settings.value("executeThreaded", false).toBool()) ;
+
 
 	// set new values
 	if (dialog.exec() == QDialog::Accepted) {
@@ -533,5 +536,8 @@ void MainWindow::_options() {
 		settings.setValue(
 				"waitAfterExecute",
 				(options.checkWait->checkState() != Qt::Unchecked));
+		settings.setValue(
+				"executeThreaded",
+				(options.checkThreaded->checkState() != Qt::Unchecked)) ;
 	}
 }

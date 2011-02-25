@@ -161,6 +161,22 @@ void WorkflowExecutor::_execute() {
 	sout << "Time: " << startTime.toString(Qt::ISODate)
 			.toAscii().constData();
 	sout << std::endl;
+
+	_logDialog = new Ui::LogDialog;
+	QDialog* dialog = new QDialog(FileManager::dialogParent);
+	_logDialog->setupUi(dialog);
+	_logDialog->progressBar->show() ;
+	_logDialog->logLabel->setText(
+			tr("Content of logfile <tt>%1</tt>:").arg(_logFileName.c_str()));
+	_logFile = new QFile(_logFileName.c_str());
+	_logFile->open(QIODevice::ReadOnly | QIODevice::Text);
+	dialog->show();
+	dialog->raise() ;
+	dialog->activateWindow() ;
+	_updateLogDialog() ;
+	_logTimer->setInterval(settings.value("logTimerInveral", 1000).toInt()) ;
+	QApplication::processEvents() ;
+	
 	_pathBak = QDir::currentPath();
 	const ParameterFileModel& model = *(_inspector->model());
 	QString fileName = model.fileName();
@@ -170,7 +186,16 @@ void WorkflowExecutor::_execute() {
 		sout << "loading Parameter file" << std::endl;
 		_manager->loadParameterFile(parameterFile);
 		sout << "executing Parameter file" << std::endl;
-		this->start() ;
+		_updateLogDialog() ;
+		QApplication::processEvents() ;
+		if(settings.value("executeThreaded",false).toBool())
+		{	this->start() ;	
+			_logTimer->start() ;
+		}
+		else
+		{	this->run() ;	
+			this->_executionFinished() ;
+		}
 	}
 	catch (const std::string& msg) {
 		QMessageBox::warning(0, tr("error during execution"),
@@ -198,20 +223,6 @@ void WorkflowExecutor::_execute() {
 				.toAscii().constData());
 	}
 
-	_logDialog = new Ui::LogDialog;
-	QDialog* dialog = new QDialog(FileManager::dialogParent);
-	_logDialog->setupUi(dialog);
-	_logDialog->progressBar->show() ;
-	_logDialog->logLabel->setText(
-			tr("Content of logfile <tt>%1</tt>:").arg(_logFileName.c_str()));
-	_logFile = new QFile(_logFileName.c_str());
-	_logFile->open(QIODevice::ReadOnly | QIODevice::Text);
-	dialog->show();
-	dialog->raise() ;
-	dialog->activateWindow() ;
-	_updateLogDialog() ;
-	_logTimer->setInterval(settings.value("logTimerInveral", 1000).toInt()) ;
-	_logTimer->start() ;
 }
 
 void WorkflowExecutor::_cleanup() {
@@ -235,6 +246,7 @@ void WorkflowExecutor::_cleanup() {
 
 void WorkflowExecutor::_executionFinished()
 {
+	_updateLogDialog() ;
 	_logDialog->infoLabel->setText(tr("Workflow execution finished."));
 	_logDialog->progressBar->hide() ;
 	QString message ;
@@ -273,9 +285,13 @@ void WorkflowExecutor::_executionTerminated()
 
 void WorkflowExecutor::_updateLogDialog()
 {
+	
 	if(_logDialog && _logFile && _logFile->isReadable())
 		while(!_logFile->atEnd() && _logFile->error() == QFile::NoError)
+		{
+			_logDialog->logText->moveCursor(QTextCursor::End) ;
 			_logDialog->logText->insertPlainText(_logFile->readLine());
+		}
 }
 
 
@@ -295,7 +311,7 @@ void WorkflowExecutor::execute() {
 	}
 	else
 	{
-		if(this->isFinished() && _manager) //workflow is finished but still loaded
+		if(_manager) //workflow is finished but still loaded
 
 		{
 			_cleanup() ;
