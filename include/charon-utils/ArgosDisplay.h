@@ -40,6 +40,8 @@
 #include <vigra/multi_array.hxx>
 #include "vigraqt/vigraqimage.hxx"
 #include <vigra/stdimage.hxx>
+#include <charon-utils/CImg.h>
+
 
 class QWidget ;
 
@@ -64,7 +66,9 @@ public:
 	virtual void execute();
 
 	/// The vigra::MultiArray input
-	InputSlot < vigra::MultiArrayView<5, T> > _in;
+	InputSlot < vigra::MultiArrayView<5, T> > _vigraIn;
+
+	InputSlot < cimg_library::CImgList<T> > _cimgIn ;
 
 	/// Pointers to widgets which will be displayed as QDockWidgets
 	InputSlot <QWidget*> _widgets ;
@@ -110,12 +114,12 @@ public :
 
 ///concrete template instances of PixelInspector
 template<typename T>
-class PixelInspector : public AbstractPixelInspector
+class VigraPixelInspector : public AbstractPixelInspector
 {
 public:
 
-	PixelInspector(const vigra::MultiArrayView<5, T>& mArray, const std::string& name, bool rgb) ;
-	~PixelInspector() ;
+	VigraPixelInspector(const vigra::MultiArrayView<5, T>& mArray, const std::string& name, bool rgb) ;
+	~VigraPixelInspector() ;
 
 	virtual const std::vector<double> operator()(int x, int y) const ;
 
@@ -129,6 +133,25 @@ private:
 
 } ;
 
+template<typename T>
+class CImgPixelInspector : public AbstractPixelInspector
+{
+public :
+
+	CImgPixelInspector(const cimg_library::CImgList<T>& mArray, const std::string& name, bool rgb) ;
+	~CImgPixelInspector() ;
+
+	virtual const std::vector<double> operator()(int x, int y) const ;
+
+	virtual const vigra::QRGBImage getRGBAImage() ;
+
+	virtual const vigra::FImage getFImage() ;
+
+private:
+
+	const cimg_library::CImgList<T>& _mArray ;
+
+} ;
 
 } ; //namespace ArgosDisplay
 #endif // _ARGOSDISPLAY_H_
