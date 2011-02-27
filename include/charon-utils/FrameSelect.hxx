@@ -41,9 +41,9 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 			"QWidget to be displayed in ArgosDisplay", "QWidget*");
 	ParameteredObject::_addOutputSlot(roi, "roi",
 			"Crop border output", "Roi<int>");
-	ParameteredObject::_addParameter(z, "z", "select z slice");
-	ParameteredObject::_addParameter(t, "t", "select t slice");
-	ParameteredObject::_addParameter(v, "v", "select v slice");
+	ParameteredObject::_addParameter(z, "z", "select z slice",uint(0),"");
+	ParameteredObject::_addParameter(t, "t", "select t slice", uint(0),"");
+	ParameteredObject::_addParameter(v, "v", "select v slice", uint(0),"");
 	ParameteredObject::_addParameter(cropV, "cropV",
 			"enable cropping last (RGB) dimension", true);
 
@@ -65,14 +65,15 @@ void FrameSelect<T>::execute() {
 	uint lz = z() ;
 	uint lt = t() ;
 	uint lv = v() ;
-	
+	bool cV = cropV() ;
+
 	// update roi boundaries
 	_roi.xEnd =  _roi.xBegin = 0; // no crop in x-dim
 	_roi.yEnd =  _roi.yBegin = 0; // no crop in y-dim
 	_roi.zEnd = (_roi.zBegin = lz) + 1;
 	_roi.tEnd = (_roi.tBegin = lt) + 1;
 	_roi.vEnd = (_roi.vBegin = lv) + 1;
-	if(!cropV())
+	if(!cV)
 		_roi.vEnd = _roi.vBegin = 0; // no crop in v-dim
 
 	// crop input if neccessary
@@ -90,13 +91,12 @@ void FrameSelect<T>::execute() {
 		_gui->setShape(s[2],s[3],s[4]);
 		widget = _gui;
 
-		const bool cV = cropV();
 		vigra_assert(cV||s[4]==3u,"last dim has to be 3 if not cropping");
 		vigra::MultiArrayShape<5>::type os(s[0],s[1],1u,1u,(cV?1u:3u));
 		o.reshape(os);
 		const uint zz=lz;
 		const uint tt=lt;
-		uint vBegin = cV?v():0u, vEnd = cV?lv+1:3u;
+		uint vBegin = cV?lv:0u, vEnd = cV?lv+1:3u;
 
 		for(uint vv=vBegin;vv<vEnd;vv++)
 			for(uint yy=0u;yy<s[1];yy++)

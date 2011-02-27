@@ -42,6 +42,7 @@ FrameSelectWidget::FrameSelectWidget(
 {
 	_ui->setupUi(this);
 	QObject::connect(this, SIGNAL(updatePending()), this, SLOT(_updateWidget()), Qt::QueuedConnection) ;
+	_updateWidget() ;
 }
 
 FrameSelectWidget::~FrameSelectWidget()
@@ -117,9 +118,9 @@ void FrameSelectWidget::_updateWidget() {
 		return ;
 
 	
-	_ui->spinBox2->setSuffix(QString(" / %1").arg(_dz));
-	_ui->spinBox3->setSuffix(QString(" / %1").arg(_dt));
-	_ui->spinBox4->setSuffix(QString(" / %1").arg(_dv));
+	_ui->spinBox2->setSuffix(QString(" / %1").arg(_dz -1));
+	_ui->spinBox3->setSuffix(QString(" / %1").arg(_dt -1));
+	_ui->spinBox4->setSuffix(QString(" / %1").arg(_dv - 1));
 
 	// max val is dz/t/v - 1 since values are starting at zero
 	_ui->spinBox2->setMaximum(_dz-1);
