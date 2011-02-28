@@ -38,6 +38,7 @@
 
 #include <charon-core/ParameteredObject.hxx>
 #include <vigra/multi_array.hxx>
+#include <charon-utils/CImg.h>
 
 class QWidget ;
 
@@ -73,10 +74,16 @@ namespace StatisticsDisplay {
 		virtual void execute();
 
 		/// The vigra::MultiArray input
-		InputSlot < vigra::MultiArrayView<5, T> > _in;
+		InputSlot < vigra::MultiArrayView<5, T> > _vigraIn;
+
+		/// The CImgList input
+		InputSlot < cimg_library::CImgList<T> > _cimgIn;
 
 		/// A mask to decide where to compute the statistics
-		InputSlot < vigra::MultiArrayView<5, T> > _mask;
+		InputSlot < vigra::MultiArrayView<5, T> > _vigraMask;
+
+		/// A mask to decide where to compute the statistics
+		InputSlot < cimg_library::CImgList<T> > _cimgMask;
 
 		/// exported QWidget to display the results
 		OutputSlot < QWidget*> _display ;
