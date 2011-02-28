@@ -39,8 +39,8 @@ template <typename T>
 ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("ArgosDisplay", name,
 			"Advanced Display Plugin<br>Allows inspection and display of "),
-			_vigraIn(false, true),
-			_cimgIn(false, true),
+			_vigraIn(true, true),
+			_cimgIn(true, true),
 			_widgets(true, true),
 			_mainWindow(0)
 {
