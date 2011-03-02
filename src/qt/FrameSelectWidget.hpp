@@ -50,6 +50,8 @@ public:
 	void setShape(uint dz, uint dt, uint dv);
 	void setTitle(const std::string& title) ;
 
+	void updateWidget() ;
+
 public slots:
 	void setCropV(bool val);
 	void setDim2(int val);
@@ -57,6 +59,7 @@ public slots:
 	void setDim4(int val);
 
 private:
+	bool _active ;
 	Ui::FrameSelectWidget* _ui;
 	ParameteredObject* _parent;
 	ParameteredObject* _display;

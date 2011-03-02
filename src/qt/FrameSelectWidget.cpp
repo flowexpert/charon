@@ -32,17 +32,22 @@ FrameSelectWidget::FrameSelectWidget(
 		Parameter<uint>& v,
 		QWidget* pw) :
 	QDockWidget(pw),
+	_active(false),
 	_ui(new Ui::FrameSelectWidget),
 	_parent(pp),
+	_display(0),
 	_cropV(cV),
 	_z(z),
 	_t(t),
 	_v(v),
+	_dz(0),
+	_dt(0),
+	_dv(0),
 	_updatePending(false)
 {
+	this->setEnabled(false) ;
 	_ui->setupUi(this);
 	QObject::connect(this, SIGNAL(updatePending()), this, SLOT(_updateWidget()), Qt::QueuedConnection) ;
-	_updateWidget() ;
 }
 
 FrameSelectWidget::~FrameSelectWidget()
@@ -54,27 +59,27 @@ void FrameSelectWidget::setDisplay(ParameteredObject* d) {
 	_display = d;
 }
 
+void FrameSelectWidget::updateWidget() {
+	if(!_updatePending)
+	{
+		_updatePending = true ;
+		emit updatePending() ;
+	}
+}
+
 void FrameSelectWidget::setShape(uint dz, uint dt, uint dv) {
 
 	_dz = dz ; _dt = dt ; _dv = dv ;
 
-	if(!_updatePending)
-	{
-		_updatePending = true ;
-		emit updatePending() ;
-	}
 }
 
 void FrameSelectWidget::setTitle(const std::string& title) {
 	_title = QString::fromStdString(title) ;
-	if(!_updatePending)
-	{
-		_updatePending = true ;
-		emit updatePending() ;
-	}
 }
 
 void FrameSelectWidget::setCropV(bool val) {
+	if(!_active)
+		return ;
 	bool& cV = _cropV();
 	if(cV == val)
 		return;
@@ -83,6 +88,8 @@ void FrameSelectWidget::setCropV(bool val) {
 }
 
 void FrameSelectWidget::setDim2(int val) {
+	if(!_active)
+		return ;
 	if((int)_z==val)
 		return;
 	_ui->slider2->setValue(val);
@@ -91,6 +98,8 @@ void FrameSelectWidget::setDim2(int val) {
 }
 
 void FrameSelectWidget::setDim3(int val) {
+	if(!_active)
+		return ;
 	if((int)_t==val)
 		return;
 	_ui->slider3->setValue(val);
@@ -99,6 +108,8 @@ void FrameSelectWidget::setDim3(int val) {
 }
 
 void FrameSelectWidget::setDim4(int val) {
+	if(!_active)
+		return ;
 	if((int)_v==val)
 		return;
 	_ui->slider4->setValue(val);
@@ -107,7 +118,7 @@ void FrameSelectWidget::setDim4(int val) {
 }
 
 void FrameSelectWidget::_updatePlugin() {
-	if(_display->executed()) {
+	if(_active && _display && _display->executed()) {
 		_parent->resetExecuted();
 		_display->execute();
 	}
@@ -116,8 +127,15 @@ void FrameSelectWidget::_updatePlugin() {
 void FrameSelectWidget::_updateWidget() {
 	if(!_updatePending)
 		return ;
-
-	
+	int lz = _z() ;
+	int lt = _t() ;
+	int lv = _v() ;
+	if(_dz <= 0 || _dt <= 0 || _dv <= 0 || lz < 0 || lv < 0 || lt< 0)
+	{	this->setEnabled(false) ;
+		return ;
+	}
+	this->setEnabled(true) ;
+	_active = true ;
 	_ui->spinBox2->setSuffix(QString(" / %1").arg(_dz -1));
 	_ui->spinBox3->setSuffix(QString(" / %1").arg(_dt -1));
 	_ui->spinBox4->setSuffix(QString(" / %1").arg(_dv - 1));
@@ -130,9 +148,9 @@ void FrameSelectWidget::_updateWidget() {
 	_ui->slider3->setMaximum(_dt-1);
 	_ui->slider4->setMaximum(_dv-1);
 
-	_ui->slider2->setValue(_z());
-	_ui->slider3->setValue(_t());
-	_ui->slider4->setValue(_v());
+	_ui->slider2->setValue(lz);
+	_ui->slider3->setValue(lt);
+	_ui->slider4->setValue(lv);
 	bool& cV = _cropV();
 	if (_dv != 3) {
 		cV = true;
@@ -140,7 +158,5 @@ void FrameSelectWidget::_updateWidget() {
 	}
 	_ui->checkCropV->setChecked(cV);
 
-
 	_updatePending = false ;
-
 }

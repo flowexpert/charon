@@ -49,6 +49,7 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 
 	roi() = &_roi;
 	_gui = new FrameSelectWidget(this,cropV,z,t,v);
+	widget = _gui;
 }
 
 template <typename T>
@@ -89,7 +90,6 @@ void FrameSelect<T>::execute() {
 		_gui->setDisplay(&(*widget.getTargets().begin())->getParent());
 		_gui->setTitle(ParameteredObject::getName());
 		_gui->setShape(s[2],s[3],s[4]);
-		widget = _gui;
 
 		vigra_assert(cV||s[4]==3u,"last dim has to be 3 if not cropping");
 		vigra::MultiArrayShape<5>::type os(s[0],s[1],1u,1u,(cV?1u:3u));
@@ -106,5 +106,6 @@ void FrameSelect<T>::execute() {
 	else {
 		sout << "\tnot cropping anything since in not connected" << std::endl;
 	}
+	_gui->updateWidget() ;
 }
 #endif // _FRAMESELECT_HXX_
