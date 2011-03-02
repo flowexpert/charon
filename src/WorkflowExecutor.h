@@ -80,20 +80,20 @@ private:
 
 private slots:
 
-	//called when workflow finished gracefully
+	/// called when workflow finished gracefully
 	void _executionFinished() ;
 
-	//called when workflow was terminated
+	/// called when workflow was terminated
 	void _executionTerminated() ;
 
-	//read newest lines from _logFile und show in dialog
+	/// read newest lines from _logFile und show in dialog
 	void _updateLogDialog() ;
 
 public:
 	/// standard constructor
 	explicit WorkflowExecutor(
-			ObjectInspector* inspector  /** [in] object inspector widget*/,
-			QObject* parent = 0          /** [in] parent parent object*/);
+			ObjectInspector* inspector  /** [in] object inspector widget */,
+			QObject* parent = 0         /** [in] parent qobject */);
 	virtual ~WorkflowExecutor();
 
 	/// get pointer to the action for usage in menus or toolbars
