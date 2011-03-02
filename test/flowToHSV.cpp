@@ -51,10 +51,8 @@ int test() {
 	assert(viz.out().size() == 1u);
 	const cimg_library::CImg<float>& o = viz.out()[0];
 	o.save_cimg("flow2hsvColorwheel.cimg",true);
-#ifndef _MSC_VER
 #ifdef cimg_use_png
 	o.save_png("flow2hsvColorwheel.png",1u);
-#endif
 #endif
 
 	std::cout << "-- Check for steps at quadrant borders" << std::endl;
