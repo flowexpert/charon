@@ -253,6 +253,7 @@ void WorkflowExecutor::_executionFinished()
 	{
 		QMutexLocker locker(&_mutex) ;
 		message = _executionMessage ;
+		_executionMessage.clear() ;
 	}
 
 	if(!message.isEmpty())
