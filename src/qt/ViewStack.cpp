@@ -21,8 +21,8 @@
  *  \date 29.11.2010
  */
 
-#include "ViewStack.hpp"
 #include <QtGui>
+#include "ViewStack.hpp"
 #include "vigraqt/qimageviewer.hxx"
 #include "vigraqt/fimageviewer.hxx"
 #include <charon-utils/ArgosDisplay.h>

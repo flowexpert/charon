@@ -9,6 +9,7 @@
 #ifndef _STATISTICSDISPLAY_HXX_
 #define _STATISTICSDISPLAY_HXX_
 
+#include <StatisticsDisplayWidget.hpp>
 #include <charon-utils/StatisticsDisplay.h>
 #include <sstream>
 #include <vigra/multi_array.hxx>
@@ -16,7 +17,6 @@
 #include <vigra/navigator.hxx>
 #include <vigra/multi_pointoperators.hxx>
 #include <set>
-#include <StatisticsDisplayWidget.hpp>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -34,8 +34,8 @@ template <typename T>
 StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("StatisticsDisplay", name,
 			"Calculates various statistical properties of input object and exports a QWidget for display"),
-			_cimgIn(true, true),
 			_vigraIn(true, true),
+			_cimgIn(true, true),
 			_vigraMask(true, false),
 			_cimgMask(true, false),
 			_writeToSout(true),

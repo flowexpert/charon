@@ -21,8 +21,9 @@
  *  \date 05.01.2011
  */
 
-#include "StatisticsDisplayWidget.hpp"
 #include <QtGui>
+#include "StatisticsDisplayWidget.hpp"
+
 
 
 namespace StatisticsDisplay {
@@ -30,8 +31,8 @@ namespace StatisticsDisplay {
 StatisticsDisplayWidget::StatisticsDisplayWidget(const std::string& title,QWidget* parent) : 
 	QDockWidget(parent),
 	_tabWidget(0),
-	_updatePending(false),
-	_title(QString::fromStdString(title))
+	_title(QString::fromStdString(title)),
+	_updatePending(false)
 {
 	//create tab widget with one tab for each input image
 	this->setObjectName(QString("Statistics")) ;

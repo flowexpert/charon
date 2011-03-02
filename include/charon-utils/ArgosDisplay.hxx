@@ -24,11 +24,11 @@
 #ifndef _ARGOSDISPLAY_HXX_
 #define _ARGOSDISPLAY_HXX_
 
-#include <charon-utils/ArgosDisplay.h>
-#include <sstream>
+#include <QApplication>
 #include <MainWindow.hpp>
 #include <ViewStack.hpp>
-#include <QApplication>
+#include <sstream>
+#include <charon-utils/ArgosDisplay.h>
 
 
 //using namespace cimg_library ;

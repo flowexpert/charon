@@ -25,8 +25,8 @@
 #ifndef _ARGOSDISPLAY_MAINWINDOW_HPP_
 #define _ARGOSDISPLAY_MAINWINDOW_HPP_
 
-#include <QMainWindow>
 #include "charonwidgets.h"
+#include <QMainWindow>
 
 namespace ArgosDisplay
 {

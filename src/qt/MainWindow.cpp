@@ -21,9 +21,10 @@
  *  \date 26.11.2010
  */
 
+#include <QtGui>
 #include "MainWindow.hpp"
 #include "ViewStack.hpp"
-#include <QtGui>
+
 using namespace ArgosDisplay ;
 //using namespace vigraqt ;
 
