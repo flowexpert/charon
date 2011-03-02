@@ -105,6 +105,7 @@ int testPyramid() {
 	const cimg_library::CImgList<double>& pyFlow = pyramid.flowOut();
 	const unsigned int& cur = helper.count();
 	const double fx = 256., fy = -128.;
+	const double tolerance = 1.e-4;
 
 	seq.assign(1,128,64,1,2,0.);
 	flow.assign(
@@ -119,17 +120,17 @@ int testPyramid() {
 		cont = iter.singleStep();
 
 		// check actual flow values
-		assert(std::abs(
-				pyFlow[0].mean()-fx*std::pow(2.,-(double)levels+cur))<1.e-5);
-		assert(std::abs(
-				pyFlow[1].mean()-fy*std::pow(2.,-(double)levels+cur))<1.e-5);
-		assert(pyFlow[0].variance() < 1.e-5);
-		assert(pyFlow[1].variance() < 1.e-5);
+		double diff = pyFlow[0].mean()-fx*std::pow(2.,-(double)levels+cur);
+		assert(std::abs(diff) < tolerance);
+		diff = pyFlow[1].mean()-fy*std::pow(2.,-(double)levels+cur);
+		assert(std::abs(diff) < tolerance);
+		assert(pyFlow[0].variance() < tolerance);
+		assert(pyFlow[1].variance() < tolerance);
 	} while (cont);
 	iter.finalize();
 
-	assert(std::abs(pyFlow[0].mean()-fx) < 1.e-5);
-	assert(std::abs(pyFlow[1].mean()-fy) < 1.e-5);
+	assert(std::abs(pyFlow[0].mean()-fx) < tolerance);
+	assert(std::abs(pyFlow[1].mean()-fy) < tolerance);
 
 	sout.assign();
 	std::cout << "Workflow execution finished.\n" << std::endl;
