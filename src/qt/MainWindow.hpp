@@ -35,10 +35,9 @@ namespace ArgosDisplay
 	/// ArgosDisplay MainWindow
 	class charonwidgets_DECLDIR MainWindow : public QMainWindow
 	{
-		Q_OBJECT ;
+		Q_OBJECT
 
 	public:
-		
 		/// standard constructor
 		MainWindow() ;
 
@@ -51,8 +50,6 @@ namespace ArgosDisplay
 		void addDockWidget(QWidget* widget) ;
 
 	private:
-
-		
 		/// central Widget for image view management
 		ViewStack* _viewStack ;
 
@@ -69,6 +66,6 @@ namespace ArgosDisplay
 
 	} ; /* class MainWindow */
 
-} ; /* namespace ArgosDisplay */
+} /* namespace ArgosDisplay */
 
 #endif /* _ARGOSDISPLAY_MAINWINDOW_HPP_ */

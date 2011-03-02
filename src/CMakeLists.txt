@@ -281,6 +281,9 @@ IF(USE_VIGRA)
 			argosdisplay
 			frameselect
 		)
+		LIST(APPEND Plugins_CImg
+			argosdisplay
+		)
 
 		IF(USE_Boost)
 			INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
@@ -290,6 +293,9 @@ IF(USE_VIGRA)
 				${CHARON_UTILS_INCLUDE_DIR}/StatisticsDisplay.hxx
 			)
 			LIST(APPEND Plugins_Qt
+				statisticsdisplay
+			)
+			LIST(APPEND Plugins_CImg
 				statisticsdisplay
 			)
 		ENDIF(USE_Boost)

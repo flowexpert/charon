@@ -102,7 +102,7 @@ namespace StatisticsDisplay {
 
 	}; //class StatisticsDisplayPlugin
 
-} ; //namespace StatisticsDisplay
+} //namespace StatisticsDisplay
 #endif // _STATISTICSDISPLAY_H_
 
 

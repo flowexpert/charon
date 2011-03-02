@@ -46,7 +46,7 @@ class VIGRAQT_EXPORT Overlay : public QObject
         ScaledPixel = Scaled | Pixel,
         UnscaledPixel = Unscaled | Pixel,
         ScaledGrid = Scaled | Grid,
-        UnscaledGrid = Unscaled | Grid,
+		UnscaledGrid = Unscaled | Grid
     };
 
     Overlay(QObject* parent = 0);

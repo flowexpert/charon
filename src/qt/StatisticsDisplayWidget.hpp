@@ -40,7 +40,7 @@ namespace StatisticsDisplay {
 /// Widget for Displaying Image Statistics
 class charonwidgets_DECLDIR StatisticsDisplayWidget : public QDockWidget
 {
-	Q_OBJECT ;
+	Q_OBJECT
 public:
 	
 	/// default constructor
@@ -76,8 +76,8 @@ signals:
 
 	void statsUpdated() ;
 
-} ; /* class StatisticsDisplayWidget */
+} ; // class StatisticsDisplayWidget
 
-} ; /* namespace StatisticsDisplay */
+} // namespace StatisticsDisplay
 
-#endif /* STATSDISPLAYWIDGET_HPP_ */
+#endif // STATSDISPLAYWIDGET_HPP_

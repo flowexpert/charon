@@ -67,7 +67,7 @@ enum BuiltinColorMap
     CMGray, // enhanced gray map (uses color variations of gray)
     CMLinearGray, // LinearColorMap instance w/ black..white gradient
     CMFire,
-    CMFireNegativeBlue,
+	CMFireNegativeBlue
 };
 
 VIGRAQT_EXPORT ColorMap *createColorMap(BuiltinColorMap cm);

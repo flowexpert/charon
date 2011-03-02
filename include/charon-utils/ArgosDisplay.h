@@ -47,113 +47,122 @@ class QWidget ;
 
 namespace ArgosDisplay
 {
-	
-class MainWindow ;
+	class MainWindow ;
 
-/// Charon Plugin Frontend for advanced Argos Display
-template <typename T>
-class argosdisplay_DECLDIR ArgosDisplayPlugin :
-		public TemplatedParameteredObject<T> {
-public:
-	/// create a new ArgosDisplay
-	/// \param name          Instance name
-	ArgosDisplayPlugin(const std::string& name);
+	/// Charon Plugin Frontend for advanced Argos Display
+	template <typename T>
+	class argosdisplay_DECLDIR ArgosDisplayPlugin :
+			public TemplatedParameteredObject<T> {
+	public:
+		/// create a new ArgosDisplay
+		/// \param name          Instance name
+		ArgosDisplayPlugin(const std::string& name);
 
-	/// Destruct Object
-	~ArgosDisplayPlugin() ;
+		/// Destruct Object
+		~ArgosDisplayPlugin() ;
 
-	/// Update object.
-	virtual void execute();
+		/// Update object.
+		virtual void execute();
 
-	/// The vigra::MultiArray input
-	InputSlot < vigra::MultiArrayView<5, T> > _vigraIn;
+		/// The vigra::MultiArray input
+		InputSlot < vigra::MultiArrayView<5, T> > _vigraIn;
 
-	InputSlot < cimg_library::CImgList<T> > _cimgIn ;
+		/// The CimgList input
+		InputSlot < cimg_library::CImgList<T> > _cimgIn ;
 
-	/// Pointers to widgets which will be displayed as QDockWidgets
-	InputSlot <QWidget*> _widgets ;
+		/// Pointers to widgets which will be displayed as QDockWidgets
+		InputSlot <QWidget*> _widgets ;
 
-	/// interpret image as RGB(0-255) if dim 5 is of size 3
-	
-	Parameter<bool> _inputIsRGB ;
+		/// interpret image as RGB(0-255) if dim 5 is of size 3
 
-private:
+		Parameter<bool> _inputIsRGB ;
 
-	///main plugin window
-	MainWindow* _mainWindow ;
+	private:
 
-} ; //class ArgosDisplayPlugin
+		/// main plugin window
+		MainWindow* _mainWindow ;
 
-///abstract adapter class which allows ViewStack access to templated image data
-class AbstractPixelInspector
-{
-public :	
-	
-	///constructor
-	AbstractPixelInspector(const std::string& name, bool rgb) ;
-	
-	///destructor
-	~AbstractPixelInspector() {;}
+	}; // class ArgosDisplayPlugin
 
-	///access pixel values at xy-position
-	virtual const std::vector<double> operator()(int x, int y) const = 0;
+	/// abstract adapter class which allows ViewStack access to
+	/// templated image data
+	class AbstractPixelInspector
+	{
+	public :
+		/// constructor
+		/** \param name          displayed name
+		 *  \param rgb           RGB handling
+		 */
+		AbstractPixelInspector(const std::string& name, bool rgb) ;
 
-	///return RGBA copy of image data
-	virtual const vigra::QRGBImage getRGBAImage() = 0;
+		/// destructor
+		virtual ~AbstractPixelInspector() {}
 
-	///return float copy of image data
-	virtual const vigra::FImage getFImage() = 0;
+		/// access pixel values at xy-position
+		virtual const std::vector<double> operator()(int x, int y) const = 0;
 
-	///name of parent plugin instance
-	const std::string name ;
+		/// return RGBA copy of image data
+		virtual const vigra::QRGBImage getRGBAImage() = 0;
 
-	///is image data RGBA
-	const bool isRGBA ;
+		/// return float copy of image data
+		virtual const vigra::FImage getFImage() = 0;
 
-} ;
+		/// name of parent plugin instance
+		const std::string name ;
 
-///concrete template instances of PixelInspector
-template<typename T>
-class VigraPixelInspector : public AbstractPixelInspector
-{
-public:
+		/// is image data RGBA
+		const bool isRGBA ;
 
-	VigraPixelInspector(const vigra::MultiArrayView<5, T>& mArray, const std::string& name, bool rgb) ;
-	~VigraPixelInspector() ;
+	} ;
 
-	virtual const std::vector<double> operator()(int x, int y) const ;
+	/// vigra specific template instances of PixelInspector
+	template<typename T>
+	class VigraPixelInspector : public AbstractPixelInspector
+	{
+	public:
+		/// constructor
+		/** \param mArray        Image Data
+		 *  \param name          displayed name
+		 *  \param rgb           RGB handling
+		 */
+		VigraPixelInspector(
+				const vigra::MultiArrayView<5, T>& mArray,
+				const std::string& name, bool rgb) ;
+		virtual ~VigraPixelInspector() {}
 
-	virtual const vigra::QRGBImage getRGBAImage() ;
+		virtual const std::vector<double> operator()(int x, int y) const ;
+		virtual const vigra::QRGBImage getRGBAImage() ;
+		virtual const vigra::FImage getFImage() ;
 
-	virtual const vigra::FImage getFImage() ;
+	private:
+		/// data store
+		const vigra::MultiArrayView<5, T>& _mArray ;
+	} ;
 
-private:
+	/// CImg specific template instances of PixelInspector
+	template<typename T>
+	class CImgPixelInspector : public AbstractPixelInspector {
+	public :
+		/// constructor
+		/** \param mArray        Image Data
+		 *  \param name          displayed name
+		 *  \param rgb           RGB handling
+		 */
+		CImgPixelInspector(
+				const cimg_library::CImgList<T>& mArray,
+				const std::string& name, bool rgb) ;
+		virtual ~CImgPixelInspector() {}
 
-	const vigra::MultiArrayView<5, T>& _mArray ;
+		virtual const std::vector<double> operator()(int x, int y) const ;
+		virtual const vigra::QRGBImage getRGBAImage() ;
+		virtual const vigra::FImage getFImage() ;
 
-} ;
+	private:
+		/// data store
+		const cimg_library::CImgList<T>& _mArray ;
+	};
 
-template<typename T>
-class CImgPixelInspector : public AbstractPixelInspector
-{
-public :
-
-	CImgPixelInspector(const cimg_library::CImgList<T>& mArray, const std::string& name, bool rgb) ;
-	~CImgPixelInspector() ;
-
-	virtual const std::vector<double> operator()(int x, int y) const ;
-
-	virtual const vigra::QRGBImage getRGBAImage() ;
-
-	virtual const vigra::FImage getFImage() ;
-
-private:
-
-	const cimg_library::CImgList<T>& _mArray ;
-
-} ;
-
-} ; //namespace ArgosDisplay
+} // namespace ArgosDisplay
 #endif // _ARGOSDISPLAY_H_
 
 

@@ -94,6 +94,6 @@ namespace ArgosDisplay {
 	} ; // class ViewStack
 
 
-} ; // namespace ArgosDisplay
+} // namespace ArgosDisplay
 
 #endif /* _ARGOSDISPLAY_VIEWSTACK_HPP_ */
