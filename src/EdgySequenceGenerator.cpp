@@ -24,6 +24,7 @@
 ///Class name of the plugin
 #define TYPE EdgySequenceGenerator
 
+#include <charon-utils/Interpolator.hxx>
 #include <charon/EdgySequenceGenerator.hxx>
 
 ///Creates an instance of the plugin
