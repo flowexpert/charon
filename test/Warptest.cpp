@@ -36,7 +36,7 @@
 
 #include <charon-core/ExceptionHandler.h>
 #include <charon-utils/FileReader.h>
-#include <charon-utils/InterpolatorLinear.h>
+#include <charon-utils/InterpolatorLinear.hxx>
 #include <charon-utils/Warp.h>
 #include <charon-utils/WarpSymmetric.h>
 #include<limits>
