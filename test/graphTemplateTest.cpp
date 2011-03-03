@@ -49,5 +49,5 @@ void TestViz::test() {
     }
 }
 
-QTEST_MAIN(TestViz);
+QTEST_MAIN(TestViz)
 

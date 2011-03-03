@@ -42,12 +42,12 @@ void QDirEdit::_init() {
 			_browseButton, SIGNAL(clicked()),this, SLOT(fileDialog()));
 
 	// completer
-	QCompleter* completer = new QCompleter(this);
-	completer->setModel(new QDirModel(
+	QCompleter* complt = new QCompleter(this);
+	complt->setModel(new QDirModel(
 			QStringList(),
 			QDir::AllDirs | QDir::NoDotAndDotDot,
-			QDir::Name, completer));
-	setCompleter(completer);
+			QDir::Name, complt));
+	setCompleter(complt);
 }
 
 QDirEdit::QDirEdit(QWidget* p) :

@@ -37,10 +37,10 @@ class PrefixValidator;
 /// instance. It can be used in a TableView.
 class ParameterFileModel: public QAbstractTableModel {
 	Q_OBJECT
-	Q_PROPERTY(QString _fileName    READ fileName       WRITE setFileName);
-	Q_PROPERTY(QString _prefix      READ prefix         WRITE setPrefix);
-	Q_PROPERTY(bool _useMetaInfo    READ useMetaInfo    WRITE setUseMetaInfo);
-	Q_PROPERTY(bool _onlyParams     READ onlyParams     WRITE setOnlyParams);
+	Q_PROPERTY(QString _fileName    READ fileName       WRITE setFileName)
+	Q_PROPERTY(QString _prefix      READ prefix         WRITE setPrefix)
+	Q_PROPERTY(bool _useMetaInfo    READ useMetaInfo    WRITE setUseMetaInfo)
+	Q_PROPERTY(bool _onlyParams     READ onlyParams     WRITE setOnlyParams)
 
 public:
 	/// Constructor initializing the model with the given file.

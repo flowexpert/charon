@@ -120,7 +120,7 @@ void FlowWidget::modify(bool val) {
 	setWindowModified(val);
 }
 
-void FlowWidget::closeEvent(QCloseEvent* closeEvent) {
+void FlowWidget::closeEvent(QCloseEvent* clEvent) {
 	if (isWindowModified() && !_viewer->model()->fileName().isEmpty()
 		&& QMessageBox::question(
 				this, tr("Save modified content?"),
@@ -129,5 +129,5 @@ void FlowWidget::closeEvent(QCloseEvent* closeEvent) {
 				.arg(_viewer->model()->fileName()),
 				QMessageBox::Save|QMessageBox::Discard) == QMessageBox::Save)
 		_viewer->model()->save();
-	QMdiSubWindow::closeEvent(closeEvent);
+	QMdiSubWindow::closeEvent(clEvent);
 }
