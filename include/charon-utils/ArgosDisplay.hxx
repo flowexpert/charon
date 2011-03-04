@@ -64,13 +64,6 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"QWidgets to display in Dock areas.",
 			"QWidget*") ;
 
-	ParameteredObject::_addParameter<bool>(
-			_inputIsRGB, "inputIsRGB",
-			"try to interpret input as 8bit (0-255) RGB images if last "
-			"dimension is exaclty of size 3<br>"
-			"(otherwise use grayscale)", false, "bool");
-
-
 	if(!qApp)
 	{
 		sout << "ArgosDisplayPlugin::No QApplication found! " 
@@ -128,7 +121,7 @@ void ArgosDisplayPlugin<T>::execute() {
 					"In/Output slot may be invalid!");
 
 		// register all Arrays with the ViewStack
-		viewStack.linkImage(new VigraPixelInspector<T>(temp->operator ()(), name, _inputIsRGB())) ;
+		viewStack.linkImage(new VigraPixelInspector<T>(temp->operator ()(), name)) ;
 	}
 	typename std::set<AbstractSlot<cimg_library::CImgList<T> >*>
 			::const_iterator cit = _cimgIn.begin() ;
@@ -144,7 +137,7 @@ void ArgosDisplayPlugin<T>::execute() {
 		if(!temp)
 			throw std::runtime_error("cast of cimg_library::CImgList failed! "
 				"In/Output slot may be invalid!");
-		viewStack.linkImage(new CImgPixelInspector<T>(temp->operator ()(), name, _inputIsRGB())) ;
+		viewStack.linkImage(new CImgPixelInspector<T>(temp->operator ()(), name)) ;
 	}
 
 	viewStack.setCurrentIndex(index) ;
@@ -156,16 +149,15 @@ void ArgosDisplayPlugin<T>::execute() {
 
 
 AbstractPixelInspector::AbstractPixelInspector(
-		const std::string& name, bool rgb) :
-	name(name),
-	isRGBA(rgb)
+		const std::string& name) :
+	name(name)
 {
 }
 
 template <typename T>
 VigraPixelInspector<T>::VigraPixelInspector (const vigra::MultiArrayView<5, T>& mArray, 
-	const std::string& name, bool rgb) :
-	AbstractPixelInspector(name, rgb),
+	const std::string& name) :
+	AbstractPixelInspector(name),
 	_mArray(mArray)
 {
 }
@@ -185,24 +177,31 @@ const std::vector<double> VigraPixelInspector<T>::operator()(
 }
 
 template <typename T>
-const vigra::QRGBImage VigraPixelInspector<T>::getRGBAImage() {
-	if(isRGBA && _mArray.size(4) == 3) {
-		vigra::QRGBImage img(_mArray.size(0), _mArray.size(1)) ;
+const vigra::QRGBImage VigraPixelInspector<T>::getRGBImage() const{
+	vigra::QRGBImage img(_mArray.size(0), _mArray.size(1)) ;
+	if(_mArray.size(4) >= 3) {
+		for (int xx = 0 ; xx < _mArray.size(0) ; ++xx) {
+			for (int yy = 0 ; yy < _mArray.size(1) ; ++yy) {
+				vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference pixel = img(xx,yy) ; 
+				pixel.red() = _mArray(xx,yy,0,0,0) ;
+				pixel.green() = _mArray(xx,yy,0,0,1) ;
+				pixel.blue() = _mArray(xx,yy,0,0,2) ;
+			}
+		}
+	}
+	else {
 		for (int xx = 0 ; xx < _mArray.size(0) ; ++xx)
 			for (int yy = 0 ; yy < _mArray.size(1) ; ++yy) {
-				img(xx,yy).red() = _mArray(xx,yy,0,0,0) ;
-				img(xx,yy).green() = _mArray(xx,yy,0,0,1) ;
-				img(xx,yy).blue() = _mArray(xx,yy,0,0,2) ;
+				vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference pixel = img(xx,yy) ; 
+				pixel.red() = pixel.green() = pixel.blue() = _mArray(xx,yy,0,0,0) ;
 			}
-		return img ;
 	}
-	else
-		return vigra::QRGBImage(1, 1);
+		return img ;
 
 }
 
 template <typename T>
-const vigra::FImage VigraPixelInspector<T>::getFImage() {
+const vigra::FImage VigraPixelInspector<T>::getFImage() const{
 	vigra::FImage img(_mArray.size(0), _mArray.size(1)) ;
 	for(int xx = 0 ; xx < _mArray.size(0) ; ++xx)
 		for(int yy = 0 ; yy < _mArray.size(1) ; ++yy)
@@ -211,10 +210,15 @@ const vigra::FImage VigraPixelInspector<T>::getFImage() {
 }
 
 template <typename T>
+const bool VigraPixelInspector<T>::isRGB() const {
+	return _mArray.size(4) >= 3 ;
+}
+
+template <typename T>
 CImgPixelInspector<T>::CImgPixelInspector (
 		const cimg_library::CImgList<T>& mArray,
-		const std::string& name, bool rgb) :
-	AbstractPixelInspector(name, rgb),
+		const std::string& name) :
+	AbstractPixelInspector(name),
 	_mArray(mArray)
 {
 }
@@ -238,25 +242,33 @@ const std::vector<double> CImgPixelInspector<T>::operator()(
 }
 
 template <typename T>
-const vigra::QRGBImage CImgPixelInspector<T>::getRGBAImage()
+const vigra::QRGBImage CImgPixelInspector<T>::getRGBImage() const
 {
-	if(isRGBA && _mArray.width() == 3)
-	{	vigra::QRGBImage img(_mArray(0).width(), _mArray(0).height()) ;
+	vigra::QRGBImage img(_mArray(0).width(), _mArray(0).height()) ;
+	if(_mArray.width() >= 3)
+	{	
 		for(int xx = 0 ; xx < _mArray(0).width() ; ++xx)
 			for(int yy = 0 ; yy < _mArray(0).height() ; ++yy)
-			{	img(xx,yy).red() = _mArray(0,xx,yy,0,0) ;
-				img(xx,yy).green() = _mArray(1,xx,yy,0,0) ;
-				img(xx,yy).blue() = _mArray(2,xx,yy,0,0) ;
+			{	vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference pixel = img(xx,yy) ;
+				pixel.red() = _mArray(0,xx,yy,0,0) ;
+				pixel.green() = _mArray(1,xx,yy,0,0) ;
+				pixel.blue() = _mArray(2,xx,yy,0,0) ;
 			}
-		return img ;
 	}
 	else
-	{	return vigra::QRGBImage(1, 1) ;	}
+	{	
+		for(int xx = 0 ; xx < _mArray(0).width() ; ++xx)
+			for(int yy = 0 ; yy < _mArray(0).height() ; ++yy)
+			{	vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference pixel = img(xx,yy) ;
+				pixel.red() = pixel.green() = pixel.blue() = _mArray(0,xx,yy,0,0) ;
+			}
+	}
+	return img ;
 
 }
 
 template <typename T>
-const vigra::FImage CImgPixelInspector<T>::getFImage()
+const vigra::FImage CImgPixelInspector<T>::getFImage() const
 {
 	const cimg_library::CImg<T>& cimg = _mArray(0) ;
 	vigra::FImage img(cimg.width(), cimg.height()) ;
@@ -266,5 +278,10 @@ const vigra::FImage CImgPixelInspector<T>::getFImage()
 	return img ;
 }
 
+template <typename T>
+const bool CImgPixelInspector<T>::isRGB() const
+{
+	return _mArray.width() >= 3 ;
+}
 
 #endif /* _ARGOSDISPLAY_HXX_ */

@@ -73,9 +73,6 @@ namespace ArgosDisplay
 		/// Pointers to widgets which will be displayed as QDockWidgets
 		InputSlot <QWidget*> _widgets ;
 
-		/// interpret image as RGB(0-255) if dim 5 is of size 3
-
-		Parameter<bool> _inputIsRGB ;
 
 	private:
 
@@ -93,7 +90,7 @@ namespace ArgosDisplay
 		/** \param name          displayed name
 		 *  \param rgb           RGB handling
 		 */
-		AbstractPixelInspector(const std::string& name, bool rgb) ;
+		AbstractPixelInspector(const std::string& name) ;
 
 		/// destructor
 		virtual ~AbstractPixelInspector() {}
@@ -102,16 +99,16 @@ namespace ArgosDisplay
 		virtual const std::vector<double> operator()(int x, int y) const = 0;
 
 		/// return RGBA copy of image data
-		virtual const vigra::QRGBImage getRGBAImage() = 0;
+		virtual const vigra::QRGBImage getRGBImage() const = 0;
 
 		/// return float copy of image data
-		virtual const vigra::FImage getFImage() = 0;
+		virtual const vigra::FImage getFImage() const = 0;
 
+		/// is last dimension at least of size 3
+		virtual const bool isRGB() const = 0;
+		
 		/// name of parent plugin instance
 		const std::string name ;
-
-		/// is image data RGBA
-		const bool isRGBA ;
 
 	} ;
 
@@ -123,16 +120,18 @@ namespace ArgosDisplay
 		/// constructor
 		/** \param mArray        Image Data
 		 *  \param name          displayed name
-		 *  \param rgb           RGB handling
 		 */
 		VigraPixelInspector(
 				const vigra::MultiArrayView<5, T>& mArray,
-				const std::string& name, bool rgb) ;
+				const std::string& name) ;
 		virtual ~VigraPixelInspector() {}
 
 		virtual const std::vector<double> operator()(int x, int y) const ;
-		virtual const vigra::QRGBImage getRGBAImage() ;
-		virtual const vigra::FImage getFImage() ;
+		virtual const vigra::QRGBImage getRGBImage() const;
+		virtual const vigra::FImage getFImage() const;
+		virtual const bool isRGB() const ;
+
+
 
 	private:
 		/// data store
@@ -146,16 +145,16 @@ namespace ArgosDisplay
 		/// constructor
 		/** \param mArray        Image Data
 		 *  \param name          displayed name
-		 *  \param rgb           RGB handling
 		 */
 		CImgPixelInspector(
 				const cimg_library::CImgList<T>& mArray,
-				const std::string& name, bool rgb) ;
+				const std::string& name) ;
 		virtual ~CImgPixelInspector() {}
 
 		virtual const std::vector<double> operator()(int x, int y) const ;
-		virtual const vigra::QRGBImage getRGBAImage() ;
-		virtual const vigra::FImage getFImage() ;
+		virtual const vigra::QRGBImage getRGBImage() const;
+		virtual const vigra::FImage getFImage() const;
+		virtual const bool isRGB() const ;
 
 	private:
 		/// data store

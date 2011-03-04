@@ -43,6 +43,11 @@ ViewStack::ViewStack(QWidget* p) : QWidget(p),
 			QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 
 	connect(this, SIGNAL(imageLinked()), this, SLOT(linkImages()), Qt::QueuedConnection) ;
+
+	_switchColorModeAct = new QAction(QString("switch color mode"), this) ;
+	connect(_switchColorModeAct, SIGNAL(triggered()), this, SLOT(switchColorMode())) ;
+	this->addAction(_switchColorModeAct) ;
+	this->setContextMenuPolicy(Qt::ActionsContextMenu) ;
 }
 
 ViewStack::~ViewStack() {
@@ -91,11 +96,11 @@ void ViewStack::linkImages()
 	{
 		if(_inspectors[ii] == 0)
 			continue ;
-		if(_inspectors[ii]->isRGBA)
+		if(_inspectors[ii]->isRGB()) //default: register image as RGB image
 		{
 			QImageViewer* viewer = new QImageViewer(0) ;
 			_tabWidget->addTab(viewer, QString::fromStdString(_inspectors[ii]->name)) ;
-			viewer->setImage(_inspectors[ii]->getRGBAImage().qImage()) ;
+			viewer->setImage(_inspectors[ii]->getRGBImage().qImage()) ;
 			connect(
 					viewer, SIGNAL(mouseOver(int, int)),
 					this, SLOT(processMouseMovement(int, int))) ;
@@ -114,6 +119,40 @@ void ViewStack::linkImages()
 	_tabWidget->setCurrentIndex(_index) ;
 	_updatePending = false ;
 	this->parentWidget()->show() ;
+}
+
+void ViewStack::switchColorMode()
+{
+	int index = _tabWidget->currentIndex() ;
+	if(index < 0 || _inspectors[index] ==0)
+	{	return ;	}
+	QString className = _tabWidget->currentWidget()->metaObject()->className() ;
+	if(className == "FImageViewer")
+	{
+		_tabWidget->removeTab(index) ;
+		QImageViewer* viewer = new QImageViewer(0) ;
+		_tabWidget->insertTab(index, viewer, QString::fromStdString(_inspectors[index]->name)) ;
+		viewer->setImage(_inspectors[index]->getRGBImage().qImage()) ;
+		connect(
+					viewer, SIGNAL(mouseOver(int, int)),
+					this, SLOT(processMouseMovement(int, int))) ;
+	}
+	else if(className == "QImageViewer")
+	{
+		_tabWidget->removeTab(index) ;
+		FImageViewer* viewer = new FImageViewer(0) ;
+		_tabWidget->insertTab(index, viewer, QString::fromStdString(_inspectors[index]->name)) ;
+		viewer->setImage(_inspectors[index]->getFImage()) ;
+		connect(
+					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
+					this, SLOT(processMouseMovement(int, int))) ;
+	}
+	else //unknown tab type
+	{
+		//maybe use later when we implement OpenGL displays
+		;
+	}
+	_tabWidget->setCurrentIndex(index) ;
 }
 
 void ViewStack::processMouseMovement(int x, int y) {
@@ -140,7 +179,7 @@ void ViewStack::keyPressEvent(QKeyEvent* event) {
 	if(key >= Qt::Key_1 && key <= Qt::Key_9)
 		// this will give 0 for Key_1, 1 for Key_2 ...
 		_tabWidget->setCurrentIndex(key % Qt::Key_1) ;
-	// QTabWidget will check the range for us (at least in Qt 4.6 it did)
+	// QTabWidget will check if the range is valid (at least in Qt 4.6 it did)
 	else
 		// pass event to base class
 		this->QWidget::keyPressEvent(event) ;

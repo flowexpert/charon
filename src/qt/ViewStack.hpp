@@ -59,6 +59,7 @@ namespace ArgosDisplay {
 		/// set active tab widget (does check for valid index)
 		void setCurrentIndex(int index) ;
 
+		///register instance of PixelInspector whose image will be displayed on the next call to linkImage()
 		void linkImage(AbstractPixelInspector*) ;
 
 	protected:
@@ -68,6 +69,9 @@ namespace ArgosDisplay {
 	private:
 		/// image stack
 		QTabWidget* _tabWidget ;
+
+		/// switch the display of the current view between RGB and grayscale float
+		QAction* _switchColorModeAct ;
 
 		/// objects to access pixel data
 		std::vector<AbstractPixelInspector*> _inspectors ;
@@ -84,6 +88,9 @@ namespace ArgosDisplay {
 
 		/// create tab widgets for each instance in _inspectors
 		void linkImages() ;
+
+		///switch the display of the current view between RGB and grayscale float
+		void switchColorMode() ;
 
 	signals:
 		/// export status messages as signal
