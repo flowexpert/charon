@@ -27,7 +27,7 @@
 
 #include <QMdiSubWindow>
 
-class GraphView;
+class NodeView;
 class QGraphicsScene;
 class GraphModel;
 
@@ -87,7 +87,7 @@ signals:
 	void statusMessage(const QString& msg, int timeout) const;
 
 protected:
-	GraphView* _viewer;	///< graphics view to display
+	NodeView* _viewer;	///< graphics view to display
 
 	/// check modification status and ask to save before closing
 	virtual void closeEvent(QCloseEvent* closeEvent);

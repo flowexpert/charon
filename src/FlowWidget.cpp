@@ -24,6 +24,7 @@
 
 #include "FlowWidget.h"
 #include "GraphModel.h"
+#include "NodeView.h"
 #include <QVBoxLayout>
 #include <QGraphicsRectItem>
 #include <QGraphicsScene>
@@ -43,7 +44,7 @@
 FlowWidget::FlowWidget(QWidget* myParent) :
 		QMdiSubWindow(myParent) {
 	// init GUI
-	_viewer = new HierarchyGraphView(this);
+	_viewer = new NodeView(this);
 	setWidget(_viewer);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 	connect(_viewer->model(), SIGNAL(fileNameChanged (QString)),

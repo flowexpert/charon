@@ -32,6 +32,7 @@
 #include "ObjectInspector.h"
 #include "FlowWidget.h"
 #include "SelectorWidget.h"
+#include "NodeTreeView.h"
 #include "GraphModel.h"
 #include "ModelToolBar.h"
 #include "FileManager.h"
@@ -82,7 +83,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	// select widget
 	QDockWidget* selectWidget = new QDockWidget(tr("Selector"), this);
 	selectWidget->setObjectName("selectwidget");
-	_selector = new SelectorWidget(selectWidget);
+	_selector = new NodeTreeView(selectWidget);
 	selectWidget->setWidget(_selector);
 
 	// object inspector connections

@@ -31,7 +31,7 @@ class QMdiArea;
 class QMdiSubWindow;
 class FlowWidget;
 class ParameterFileModel;
-class SelectorWidget;
+class NodeTreeView;
 class QAction;
 
 ///	Management of the application's main window.
@@ -113,7 +113,7 @@ private:
 	/// current flow widget
 	FlowWidget* _flow;
 	/// selector widget
-	SelectorWidget * _selector;
+	NodeTreeView* _selector;
 
 	/// separator above recent files
 	QAction* _separatorAct;
