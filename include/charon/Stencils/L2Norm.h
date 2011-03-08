@@ -63,6 +63,8 @@ public:
 	Parameter<double> rhsWeight;
 	/// Initial flow guess for rhs calculation
 	InputSlot<cimg_library::CImgList<T> > flowGuess;
+	/// Mask input (precalculated regularization strength)
+	InputSlot<cimg_library::CImgList<T> > mask;
 
 	/// default constructor
 	/// \param name instance name

@@ -30,12 +30,18 @@ template <class T>
 Gbcce<T>::Gbcce(const std::string& name) :  Stencil<T>("GBCCE", name,
 			"Stencil modeling general brightness change constraint.<br>"
 			"General means that it can be customized using different "
-			"brightness and motion models.")
+			"brightness and motion models."),
+		mask(true, false)
 {
-	this->_addInputSlot(brightnessIn, "brightnessmodel",
-		"Brightness Model","BrightnessModel<T>");
-	this->_addInputSlot(motionIn, "motionmodel",
-		"Motion Model", "MotionModel<T>");
+	ParameteredObject::_addInputSlot(
+			brightnessIn, "brightnessmodel",
+			"Brightness Model","BrightnessModel<T>");
+	ParameteredObject::_addInputSlot(
+			motionIn, "motionmodel",
+			"Motion Model", "MotionModel<T>");
+	ParameteredObject::_addInputSlot(
+			mask, "mask",
+			"Mask input (precalculated strength)", "CImgList<T>");
 }
 
 template <class T>
@@ -103,13 +109,17 @@ void Gbcce<T>::updateStencil(
 	bmIn.compute(p,v,term,this->_rhs,unknown);
 	mmIn.compute(p,v,term,this->_rhs,unknown);
 
+	T weight = T(1.);
+	if (mask.connected())
+		weight = mask().atNXYZC(v,p.x,p.y,p.z,p.t);
+
 	// and fill into substencils
 	typename std::map<std::string,T>::iterator termIt;
 	for(termIt=term.begin();termIt!=term.end();termIt++) {
-		const T val = termIt->second * l;
+		const T val = termIt->second * l * weight;
 		this->_subStencils[termIt->first].data(0,0) = val;
 	}
-	this->_rhs *= l;
+	this->_rhs *= l * weight;
 }
 
 //not yet implemented
@@ -118,10 +128,6 @@ cimg_library::CImg<T> Gbcce<T>::apply(
 		const cimg_library::CImgList<T>& seq,
 		const unsigned int frame) const {
 	return seq[frame];
-}
-
-template <class T>
-Gbcce<T>::~Gbcce() {
 }
 
 #endif //_GBCCE_HXX_

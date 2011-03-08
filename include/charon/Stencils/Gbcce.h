@@ -54,6 +54,9 @@ public:
 	/// InputSlot for the motion model to use.
 	InputSlot<MotionModel<T>*> motionIn;
 
+	/// Mask input (precalculated strength)
+	InputSlot<cimg_library::CImgList<T> > mask;
+
 	/// default constructor
 	Gbcce(const std::string& name = "" /**[in] instance name*/);
 
@@ -67,8 +70,6 @@ public:
 	virtual cimg_library::CImg<T> apply(
 			const cimg_library::CImgList<T>& seq,
 			const unsigned int frame) const;
-
-	virtual ~Gbcce();
 };
 
 #endif //_GBCCE_H_

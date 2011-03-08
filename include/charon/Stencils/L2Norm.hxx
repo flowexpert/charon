@@ -31,15 +31,24 @@
 template <class T>
 L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
 			"Stencil modeling spatial smoothness using laplacian operator."),
-		flowGuess(true, false)
+		flowGuess(true, false), // optional
+		mask(true, false)
 {
-	this->_addParameter(dimensions, "dimensions", "Number of dimensions", 2u);
-	this->_addParameter(pUnknowns, "unknowns", "List of unknowns");
-	this->_addParameter(rhsWeight, "rhsWeight",
+	ParameteredObject::_addParameter(
+			dimensions, "dimensions", "Number of dimensions", 2u);
+	ParameteredObject::_addParameter(
+			pUnknowns, "unknowns", "List of unknowns");
+	ParameteredObject::_addParameter(
+			rhsWeight, "rhsWeight",
 			"Weight of the calculated RHS (only if initial guess is given)",
 			1.);
-	this->_addInputSlot(flowGuess, "flowGuess",
+	ParameteredObject::_addInputSlot(
+			flowGuess, "flowGuess",
 			"Initial flow guess for rhs calculation", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+			mask, "mask",
+			"Mask input (precalculated regularization strength)",
+			"CImgList<T>");
 }
 
 template <class T>
@@ -148,18 +157,25 @@ void L2Norm<T>::execute() {
 template <class T>
 void L2Norm<T>::updateStencil(
 		const std::string& unknown,
-		const Point4D<int>& p, const int&)
+		const Point4D<int>& p, const int& v)
 {
 	// fill stencil with masks
 	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
 		SubStencil<T> entry;
 		if(pUnknowns[i] == unknown) {
 			entry.center  = _center;
-			// shared assignment (no copying of values)
-			entry.data.assign(_dataMask,true);
+			T weight = T(1.);
+			if(mask.connected()) {
+				weight = mask().atNXYZC(v,p.x,p.y,p.z,p.t);
+				entry.data.assign(_dataMask * weight,true);
+			}
+			else {
+				// shared assignment (no copying of values)
+				entry.data.assign(_dataMask,true);
+			}
 			entry.pattern.assign(_patternMask,true);
 			if(flowGuess.connected())
-				this->_rhs = _rhsVals[i](p.x,p.y,p.z,p.t);
+				this->_rhs = weight * _rhsVals[i](p.x,p.y,p.z,p.t);
 			else
 				this->_rhs = T(0);
 		}
