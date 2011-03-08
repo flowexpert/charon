@@ -61,8 +61,7 @@ void SimpleIterator<T>::_init() {
 	ParameteredObject::_addParameter (epsilon, "epsilon",
 		"flow change threshold (0 to disable)", 0.);
 	ParameteredObject::_addParameter<std::string>(norm, "norm",
-		"norm postprocessing (implemented: \"max\", \"mean\")",
-		"max", "string");
+		"norm postprocessing", "max", "{max;mean}");
 	ParameteredObject::_addParameter (accumulate, "accumulate",
 		"set to true if iteration calculates flow difference, "
 		"i.e. operates with zero initial guess", true);
