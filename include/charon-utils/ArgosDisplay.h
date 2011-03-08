@@ -42,7 +42,6 @@
 #include <vigra/stdimage.hxx>
 #include <charon-utils/CImg.h>
 
-
 class QWidget ;
 
 namespace ArgosDisplay
@@ -73,9 +72,7 @@ namespace ArgosDisplay
 		/// Pointers to widgets which will be displayed as QDockWidgets
 		InputSlot <QWidget*> _widgets ;
 
-
 	private:
-
 		/// main plugin window
 		MainWindow* _mainWindow ;
 
@@ -88,7 +85,6 @@ namespace ArgosDisplay
 	public :
 		/// constructor
 		/** \param name          displayed name
-		 *  \param rgb           RGB handling
 		 */
 		AbstractPixelInspector(const std::string& name) ;
 
@@ -105,11 +101,10 @@ namespace ArgosDisplay
 		virtual const vigra::FImage getFImage() const = 0;
 
 		/// is last dimension at least of size 3
-		virtual const bool isRGB() const = 0;
+		virtual bool isRGB() const = 0;
 		
 		/// name of parent plugin instance
 		const std::string name ;
-
 	} ;
 
 	/// vigra specific template instances of PixelInspector
@@ -129,9 +124,7 @@ namespace ArgosDisplay
 		virtual const std::vector<double> operator()(int x, int y) const ;
 		virtual const vigra::QRGBImage getRGBImage() const;
 		virtual const vigra::FImage getFImage() const;
-		virtual const bool isRGB() const ;
-
-
+		virtual bool isRGB() const ;
 
 	private:
 		/// data store
@@ -154,7 +147,7 @@ namespace ArgosDisplay
 		virtual const std::vector<double> operator()(int x, int y) const ;
 		virtual const vigra::QRGBImage getRGBImage() const;
 		virtual const vigra::FImage getFImage() const;
-		virtual const bool isRGB() const ;
+		virtual bool isRGB() const ;
 
 	private:
 		/// data store

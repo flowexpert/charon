@@ -210,7 +210,7 @@ const vigra::FImage VigraPixelInspector<T>::getFImage() const{
 }
 
 template <typename T>
-const bool VigraPixelInspector<T>::isRGB() const {
+bool VigraPixelInspector<T>::isRGB() const {
 	return _mArray.size(4) >= 3 ;
 }
 
@@ -279,7 +279,7 @@ const vigra::FImage CImgPixelInspector<T>::getFImage() const
 }
 
 template <typename T>
-const bool CImgPixelInspector<T>::isRGB() const
+bool CImgPixelInspector<T>::isRGB() const
 {
 	return _mArray.width() >= 3 ;
 }

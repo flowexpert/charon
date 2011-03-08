@@ -102,7 +102,10 @@ void Flow2HSV<T>::execute() {
 	interm[1] *= 360./(2.*M_PI);
 
 	// fix rounding errors
-	interm[1].threshold(360.,true,true);
+	cimg_for(interm[1],cur,double) {
+		const double v = *cur;
+		*cur = v>=360. ? 360. : (v<=0.?0.:v);
+	}
 
 	// use lenght and angle for HSV values, respect value of "scaleChannels"
 	// convert HSV to RGB and store final result in out
