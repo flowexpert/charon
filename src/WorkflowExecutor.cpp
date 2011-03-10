@@ -92,6 +92,10 @@ void WorkflowExecutor::_updateIcon() {
 }
 
 void WorkflowExecutor::run() {
+	const QDateTime& startTime = QDateTime::currentDateTime();
+	sout << "Time: " << startTime.toString(Qt::ISODate)
+			.toAscii().constData() << std::endl;
+
 	try {
 		_manager->executeWorkflow();
 	}
@@ -126,11 +130,11 @@ void WorkflowExecutor::run() {
 	sout << "Execution finished.\n";
 	const QDateTime& endTime = QDateTime::currentDateTime();
 	sout << "Time   : " << endTime.toString(Qt::ISODate).toAscii().constData();
-	sout << "\n";
-	//QTime runTime = QTime().addSecs(startTime.secsTo(endTime));
-	//sout << "Runtime: " << runTime.toString("hh:mm:ss.zzz")
-	//		.toAscii().constData() << std::endl;
-	sout.flush() ;
+	sout << std::endl;
+
+	QTime runTime = QTime().addSecs(startTime.secsTo(endTime));
+	sout << "Runtime: " << runTime.toString("hh:mm:ss.zzz")
+			.toAscii().constData() << std::endl;
 }
 
 void WorkflowExecutor::_execute() {
@@ -138,7 +142,8 @@ void WorkflowExecutor::_execute() {
 		return;
 	if(_manager)
 		return;
-	_executionMessage = QString("") ;
+	_executionMessage = QString("");
+
 	// setup and start workflow execution
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
@@ -156,12 +161,6 @@ void WorkflowExecutor::_execute() {
 #else
 	sout.assign(*_log, std::cout);
 #endif
-	sout << "Opened execution logfile." << std::endl;
-	const QDateTime& startTime = QDateTime::currentDateTime();
-	sout << "Time: " << startTime.toString(Qt::ISODate)
-			.toAscii().constData();
-	sout << std::endl;
-
 	_logDialog = new Ui::LogDialog;
 	QDialog* dialog = new QDialog(FileManager::dialogParent);
 	_logDialog->setupUi(dialog);
@@ -174,7 +173,7 @@ void WorkflowExecutor::_execute() {
 	dialog->raise() ;
 	dialog->activateWindow() ;
 	_updateLogDialog() ;
-	_logTimer->setInterval(settings.value("logTimerInveral", 1000).toInt()) ;
+	_logTimer->setInterval(settings.value("logTimerInveral", 500).toInt()) ;
 	QApplication::processEvents() ;
 	
 	_pathBak = QDir::currentPath();
@@ -182,47 +181,54 @@ void WorkflowExecutor::_execute() {
 	QString fileName = model.fileName();
 	const ParameterFile& parameterFile = model.parameterFile();
 	QDir::setCurrent(QFileInfo(fileName).path());
+	// error occurs in _manager->executeWorkflow.
+	// perhaps try/catch-block unneccessary.
+	QString unexpectedErrorMsg;
 	try {
 		sout << "loading Parameter file" << std::endl;
 		_manager->loadParameterFile(parameterFile);
 		sout << "executing Parameter file" << std::endl;
 		_updateLogDialog() ;
 		QApplication::processEvents() ;
-		if(settings.value("executeThreaded",false).toBool())
-		{	this->start() ;	
-			_logTimer->start() ;
+		if (settings.value("executeThreaded",false).toBool()) {
+			this->start();
+			_logTimer->start();
 		}
-		else
-		{	this->run() ;	
-			this->_executionFinished() ;
+		else {
+			this->run();
+			this->_executionFinished();
 		}
 	}
 	catch (const std::string& msg) {
-		QMessageBox::warning(0, tr("error during execution"),
-			tr("Caught exception of type <b>std::string</b>."
-				"<br><br>Message:<br>%1")
-				.arg(msg.c_str()).replace("\n", "<br>"));
+		unexpectedErrorMsg = tr(
+				"Caught exception of type \"std::string\".\n\nMessage:\n%1")
+				.arg(msg.c_str());
 	}
 	catch (const std::exception& excpt) {
 		const char* name = typeid(excpt).name();
 #ifdef __GNUG__
 		name = abi::__cxa_demangle(name, 0, 0, 0);
 #endif // __GNUG__
-		qWarning("%s",
-				 tr("Caught exception of type \"%1\"\n\nMessage:\n%2")
-				.arg(name).arg(excpt.what()).toAscii().constData());
+		unexpectedErrorMsg =
+			tr("Caught exception of type \"%1\".\n\nMessage:\n%2")
+			.arg(name).arg(excpt.what());
 	}
 	catch (const char* &msg) {
-		QMessageBox::warning(0, tr("error during execution"),
-			tr("Caught exception of type <b>char*</b>."
-				"<br><br>Message:<br>%1")
-				.arg(msg).replace("\n", "<br>"));
+		unexpectedErrorMsg =
+			tr("Caught exception of type \"char*\".\n\nMessage:\n%1").arg(msg);
 	}
 	catch (...) {
-		qWarning("%s", tr("Caught exception of unknown type")
-				.toAscii().constData());
+		unexpectedErrorMsg = tr("Caught exception of unknown type");
 	}
-
+	if (!unexpectedErrorMsg.isEmpty()) {
+		sout << "\n****************************************************\n\n"
+				<< "Unexpected error during load or after execute.\n"
+				<< "Please report this to the charon-developers!\n\n"
+				<< unexpectedErrorMsg.toAscii().constData() << "\n\n"
+				<< "****************************************************"
+				<< std::endl;
+		_updateLogDialog();
+	}
 }
 
 void WorkflowExecutor::_cleanup() {
@@ -258,17 +264,24 @@ void WorkflowExecutor::_executionFinished()
 
 	if(!message.isEmpty())
 	{
-		QMessageBox::warning(0, tr("error during execution"),message);
+		sout << "\n****************************************************\n\n"
+				<< "Error during execution:\n\n"
+				<< message.toAscii().constData() << "\n\n"
+				<< "****************************************************"
+				<< std::endl;
+		_updateLogDialog();
 	}
 
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
 			"Tuchulcha");
 	if (settings.value("waitAfterExecute", false).toBool()) {
-			QMessageBox::information(0, tr("execution finished"),
-					tr("Workflow execution finished.\n"
-						"Plugins stay loaded until "
-						"the stop button is pressed."));
+		sout << "\n---------------------------------------------------\n\n"
+				<< "Workflow execution finished.\n"
+				<< "Plugins stay loaded until the stop button is pressed.\n\n"
+				<< "---------------------------------------------------"
+				<< std::endl;
+		_updateLogDialog();
 	}
 	else
 		_cleanup();
