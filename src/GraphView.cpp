@@ -66,7 +66,7 @@ GraphView::~GraphView() {
 
 bool GraphView::load(const QString& fileName) throw() {
 	QString errorMSG;
-	bool ok;
+	bool ok = true;
 	try {
 		ok = _model->load(fileName);
 	}

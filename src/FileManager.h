@@ -70,7 +70,7 @@ public:
 private:
 	FileManager();
 	/// forbid copying
-	Q_DISABLE_COPY(FileManager);
+	Q_DISABLE_COPY(FileManager)
 	virtual ~FileManager();
 
 	/// pointer to FileManager instance
