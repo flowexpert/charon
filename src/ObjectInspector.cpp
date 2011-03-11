@@ -84,8 +84,8 @@ ObjectInspector::~ObjectInspector() {
 		delete _model;
 }
 
-void ObjectInspector::openFile() {
-	_model->load();
+void ObjectInspector::openFile(QString fName) {
+	_model->load(fName);
 }
 
 void ObjectInspector::saveFile() const {

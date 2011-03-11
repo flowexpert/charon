@@ -40,7 +40,7 @@ public:
 	
 public slots:
 	/// open file and update window title
-	void openFile();
+	void openFile(QString fName = "");
 
 private:
 	QMenu*	fileMenu;				///< File menu

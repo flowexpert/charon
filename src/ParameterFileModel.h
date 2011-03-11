@@ -219,8 +219,9 @@ public slots:
 	/// Load model content from parameterFile.
 	/** Shows OpenFile Dialog and loads the selected file.
 	 *  \param fName            file to load, shows OpenFile dialog if empty.
+	 *  \retval false           error during load
 	 */
-	virtual void load(const QString& fName = "");
+	virtual bool load(const QString& fName = "");
 
 	/// Clear ParameterFile content.
 	virtual void clear();

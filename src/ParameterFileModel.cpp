@@ -30,6 +30,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QSettings>
+#include <QMessageBox>
 
 #include "ParameterFileModel.moc"
 
@@ -382,7 +383,7 @@ void ParameterFileModel::_update() {
 	}
 }
 
-void ParameterFileModel::load(const QString& fName) {
+bool ParameterFileModel::load(const QString& fName) {
 	// determine which file to load
 	// (file dialog if fName is empty)
 	QString fromDialog = fName;
@@ -403,21 +404,23 @@ void ParameterFileModel::load(const QString& fName) {
 				guess, tr("ParameterFile (*.*)"));
 	}
 	if (fromDialog.isEmpty())
-		throw std::invalid_argument("Opening cancelled by user.");
-	if (!QFileInfo(fromDialog).isFile())
-		throw std::invalid_argument(
-				std::string("File \"")
-				+ fromDialog.toAscii().constData()
-				+ "\" does not exist!");
-	if (!QFileInfo(fromDialog).isReadable())
-		throw std::invalid_argument(
-				std::string("File \"")
-				+ fromDialog.toAscii().constData()
-				+ "\" is not readable!");
+		return false;
+	if (!QFileInfo(fromDialog).isFile()) {
+		QMessageBox::warning(0, tr("Error loading file"),
+				tr("File <em>%1</em> does not exist or is no file!")
+						.arg(fromDialog));
+		return false;
+	}
+	if (!QFileInfo(fromDialog).isReadable()) {
+		QMessageBox::warning(0, tr("Error loading file"),
+				tr("File <em>%1</em> is not readable!").arg(fromDialog));
+		return false;
+	}
 
 	// fromDialog is a readable file now
 	setFileName(fromDialog);
 	_load();
+	return true;
 }
 
 void ParameterFileModel::save(const QString& fName) {

@@ -64,8 +64,57 @@ GraphView::~GraphView() {
         delete _model;
 }
 
-void GraphView::load(const QString& fileName) {
-    _model->load(fileName);
+bool GraphView::load(const QString& fileName) throw() {
+	QString errorMSG;
+	bool ok;
+	try {
+		ok = _model->load(fileName);
+	}
+	catch (const std::string& msg) {
+		errorMSG = msg.c_str();
+	}
+	catch (const std::exception& err) {
+		errorMSG = err.what();
+	}
+	catch (...) {
+		errorMSG = tr("Got unhandled and unexpected exception during load!");
+	}
+	if (!errorMSG.isEmpty()) {
+		if (errorMSG.indexOf("neither input nor output slot") >= 0) {
+			errorMSG += tr(
+				"<br><br>"
+				"This is usually a hint "
+				"that there is a mismatch of your parameter file "
+				"and the actual plugin information. "
+				"This may be caused by changed slots or typos in the "
+				"parameter file.<br><br>"
+				"Please update the plugin information and check if all "
+				"plugins used in the parameter file to load have been "
+				"successfully recognized.<br>"
+				"Make sure that the path where the plugin is loaded from "
+				"is the path you expect. Perhaps an older version of the "
+				"plugin has been found in the global plugin path or "
+				"something similar happened."
+			);
+		}
+		QRegExp regex("^Parameter\\s(\\w*)\\.parameters\\snot\\sset\\s*$");
+		if (errorMSG.indexOf(regex) >= 0) {
+			errorMSG += tr(
+				"<br><br>"
+				"This is usually a hint that you are trying to use a "
+				"plugin unknown to tuchulcha (<b>%1</b>).<br><br>"
+				"Please check your path configuration and "
+				"update the plugin information.<br>"
+				"Check the update log and make sure the <em>%1</em> plugin "
+				"has been successfully found and loaded."
+			).arg(regex.cap(1));
+		}
+		QMessageBox::warning(
+			this,"Error loading parameter file",
+			tr("Message: %1").arg(errorMSG));
+		return false;
+	}
+	return ok;
 }
 
 GraphModel* GraphView::model() {

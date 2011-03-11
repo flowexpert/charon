@@ -52,9 +52,10 @@ public:
 
 public slots:
 	/// Load ParameterFile and display content.
-	/// The file to load can be specified in an openFile
-	/// dialog.
-	/// \param fileName     file to open (file dialog if empty)
+	/** The file to load can be specified in an openFile
+	 *  dialog.
+	 *  \param fileName     file to open (file dialog if empty)
+	 */
 	void load(const QString& fileName = "");
 
 	/// Save flowchart diagram to graphics file.

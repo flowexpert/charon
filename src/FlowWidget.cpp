@@ -68,28 +68,13 @@ void FlowWidget::updateFileName(const QString& fileName) {
 }
 
 void FlowWidget::load(const QString& fileName) {
-	try {
-		_viewer->load(fileName);
+	if (_viewer->load(fileName)) {
 		setWindowTitle(QString("%1 [*]")
 			.arg(QFileInfo(_viewer->model()->fileName())
 				.absoluteFilePath()));
 	}
-	catch (const std::string& msg) {
-		qWarning("%s", msg.c_str());
+	else
 		close();
-	}
-	catch (const std::invalid_argument& err) {
-		emit statusMessage(err.what(), 5000);
-		close();
-	}
-	catch (const std::exception& err) {
-		qWarning("%s", err.what());
-		close();
-	}
-	catch (...) {
-		qWarning("Got exception during load!");
-		close();
-	}
 }
 
 GraphModel* FlowWidget::model() {

@@ -156,11 +156,10 @@ void WorkflowExecutor::_execute() {
 	Q_ASSERT(_log);
 	Q_ASSERT(!_log->fail());
 	Q_ASSERT(_log->good());
-#ifdef WIN32
+
+	// only log to file wich is shown in progress dialog
 	sout.assign(*_log);
-#else
-	sout.assign(*_log, std::cout);
-#endif
+
 	_logDialog = new Ui::LogDialog;
 	QDialog* dialog = new QDialog(FileManager::dialogParent);
 	_logDialog->setupUi(dialog);

@@ -38,8 +38,14 @@ int main(int argc, char *argv[]) {
 	FileManager::dialogParent = &window;
 	window.resize(320, 480);
 	window.show();
+#ifndef UNIX
 	QErrorMessage* handler = QErrorMessage::qtHandler();
-	//handler->setParent(FileManager::dialogParent);
 	handler->setModal(true);
+#endif
+	QStringList args = app.arguments();
+	QFileInfo lastArgInfo(args.last());
+	if (lastArgInfo.exists() && (lastArgInfo.absoluteFilePath()
+			!= QFileInfo(app.applicationFilePath()).absoluteFilePath()))
+		window.openFile(lastArgInfo.absoluteFilePath());
 	return app.exec();
 }

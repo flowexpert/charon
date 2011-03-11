@@ -23,6 +23,7 @@
 
 #include <QtGui>
 #include <QDir>
+#include <QMessageBox>
 #include "ParamInspectorWindow.h"
 #include "AdvancedInspector.h"
 #include "ParameterFileModel.h"
@@ -53,13 +54,14 @@ ParamInspectorWindow::ParamInspectorWindow() :
 	setWindowTitle(tr("Object Inspector"));
 }
 
-void ParamInspectorWindow::openFile() {
+void ParamInspectorWindow::openFile(QString fName) {
 	try {
-		_inspector->openFile();
+		_inspector->openFile(fName);
 	} catch (std::string errorMsg) {
 		// empty filenames are harmless, simply do nothing
 		if (errorMsg.find("Empty filename") == std::string::npos)
-			qWarning() << tr("Error opening file:\n%1").arg(errorMsg.c_str());
+			QMessageBox::warning(
+				this, tr("Error opening file"), errorMsg.c_str());
 	}
 	if(_inspector->model()
 			&& _inspector->model()->fileName() != QDir::homePath())

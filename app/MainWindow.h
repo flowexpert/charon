@@ -69,9 +69,6 @@ public slots:
 	/// update plugin information
 	void updateMetadata();
 
-	/// compiles and loads a plug-in
-	void compileAndLoad();
-
 	/// insert file as current file to recent file list
 	void setCurrentFile(const QString& fileName);
 

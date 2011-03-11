@@ -1,24 +1,24 @@
-/*	Copyright (C) 2009 Jens-Malte Gottfried
+/*  Copyright (C) 2009 Jens-Malte Gottfried
 
- This file is part of Tuchulcha.
+	This file is part of Tuchulcha.
 
- Tuchulcha is free software: you can redistribute it and/or modify
- it under the terms of the GNU Lesser General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
+	Tuchulcha is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
- Tuchulcha is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Lesser General Public License for more details.
+	Tuchulcha is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
- You should have received a copy of the GNU Lesser General Public License
- along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**	@file	FileManager.cpp
- *	@brief	Implementation of class FileManager.
- *	@date	02.12.2008
- *	@author	<a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+/** \file   FileManager.cpp
+ *  \brief  Implementation of class FileManager.
+ *  \date   02.12.2008
+ *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
 #include <QFile>
@@ -127,11 +127,7 @@ void FileManager::loadPluginInformation() const {
 	QString logFileName = configDir().absoluteFilePath("updateLog.txt");
 	std::ofstream log(logFileName.toAscii().constData(), std::ios::trunc);
 	Q_ASSERT(log.good());
-#ifdef WIN32
 	sout.assign(log);
-#else
-	sout.assign(log, std::cout);
-#endif
 
 	QDir metaPath(configDir().absoluteFilePath("metadata"));
 
@@ -167,24 +163,24 @@ void FileManager::loadPluginInformation() const {
 	logFile.open(QIODevice::ReadOnly | QIODevice::Text);
 	
 	logDialog.logText->insertPlainText(logFile.readAll());
-	logDialog.progressBar->hide() ;
 	logFile.close();
+	logDialog.progressBar->hide() ;
 	dialog->exec();
-	QApplication::processEvents() ;
 }
 
 void FileManager::updateMetadata() const {
 	QFile cFile(classesFile());
 	if (!cFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		qWarning("%s", tr("could not open classes file for writing")
-				 .toAscii().constData());
+		QMessageBox::warning(
+			dialogParent, tr("error updating meta data"),
+			tr("could not open classes file for writing"));
 		return;
 	}
 	QTextStream cStream(&cFile);
 	Q_ASSERT(cStream.status() == QTextStream::Ok);
-	cStream << "# Tuchulcha class information file" << endl;
-	cStream << "# Content is copied from files in metadata directory" << endl;
-	cStream << "# This is generated during update plugins," << endl;
+	cStream << "# Tuchulcha class information file\n";
+	cStream << "# Content is copied from files in metadata directory\n";
+	cStream << "# This is generated during update plugins,\n";
 	cStream << "# do not edit by hand!" << endl;
 
 	QDir metaPath(configDir().absoluteFilePath("metadata"));
@@ -219,82 +215,25 @@ void FileManager::configure(QWidget* parentWidget, bool force) const {
 		settings.setValue("privatePluginPath", QString());
 
 		QMessageBox::information(
-				parentWidget, tr("path information"),
-				tr("Your paths are set to the following values:<br>"
-				   "charon-install dir: <tt>%1</tt><br>"
-				   "global plugin path: <tt>%2</tt><br>"
-				   "private plugin path: <tt>%3</tt><br>"
-				   "These paths may be changed in the options dialog.<br>"
-				   "(Edit-&gt;Options)")
-					.arg(settings.value("charonInstallPath").toString())
-					.arg(settings.value("globalPluginPath").toString())
-					.arg(settings.value("privatePluginPath").toString()));
+			parentWidget, tr("path information"), tr(
+				"Your configuration paths are set to the "
+				"following values:<br><br>"
+				"<b>charon-install dir:</b> <tt>%1</tt><br>"
+				"<b>global plugin path:</b> <tt>%2</tt><br>"
+				"<b>private plugin path:</b> <tt>%3</tt><br><br>"
+				"This is just a <em>guess</em> based on information "
+				"during the build of tuchulcha. "
+				"Since information about where you "
+				"install it were not available at this stage, "
+				"these paths may be wrong.<br><br>"
+				"These config values may be changed in the options "
+				"dialog.<br>"
+				"(Edit-&gt;Options)")
+				.arg(settings.value("charonInstallPath").toString())
+				.arg(settings.value("globalPluginPath").toString())
+				.arg(settings.value("privatePluginPath").toString())
+		);
 	}
-}
-
-bool FileManager::compileAndLoad(QWidget* parentWidget) const
-		throw (AbstractPluginLoader::PluginException) {
-	QSettings settings(
-			"Heidelberg Collaboratory for Image Processing",
-			"Tuchulcha");
-	if (!settings.value("privatePluginPath").toString().isEmpty()) {
-		QMessageBox::warning(
-				parentWidget, tr("no private plugin path"),
-				tr("You do not have any privat plugin path set!<br>"
-				   "Please set it in the options dialog (Edit-&gt;Options)!"));
-		return false;
-	}
-
-	QString fileName = QFileDialog::getOpenFileName(
-			parentWidget, tr("Select source file"),
-			QDir::homePath(), tr("Source files (*.cpp)"));
-
-	if (fileName.size()) {
-		try {
-			bool ok;
-			QString text = QInputDialog::getText(
-					parentWidget, tr("Library dependencies"),
-					tr("Specify referenced Libraries.<br>"
-					   "Separate multiple libraries with ';'.<br>"
-					   "Leave empty if no dependencies exist."),
-					QLineEdit::Normal, "", &ok);
-			if (!ok)
-				return false;
-
-			std::vector<std::string> libsVector;
-			QStringList list = text.split(";", QString::SkipEmptyParts);
-			for (int i = 0; i < list.size(); i++)
-				libsVector.push_back(list[i].trimmed().toAscii().data());
-
-			PluginManager man(
-					settings.value("globalPluginPath")
-							.toString().toAscii().data(),
-					settings.value("privatePluginPath")
-							.toString().toAscii().data());
-
-			QString oldDir = QDir::currentPath();
-			ok = QDir::setCurrent(
-					settings.value("charonInstallPath").toString());
-			if(!ok) {
-				QMessageBox::warning(
-						parentWidget, tr("failed to change directory"),
-						tr("could not change into charon install directory "
-						   "(%1)").arg(
-							settings.value("charonInstallPath").toString()));
-				return false;
-			}
-			man.compileAndLoadPlugin(
-					fileName.toAscii().data(), libsVector,
-					configDir().absoluteFilePath("metadata")
-							.toAscii().constData());
-			QDir::setCurrent(oldDir);
-			updateMetadata();
-		}
-		catch (std::string s) {
-			throw AbstractPluginLoader::PluginException(s);
-		}
-	}
-	return false;
 }
 
 #include "FileManager.moc"
