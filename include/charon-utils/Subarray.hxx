@@ -29,7 +29,7 @@
 template <typename T>
 Subarray<T>::Subarray(const std::string& name) :
 	TemplatedParameteredObject<T>("subarray", name,
-		"morphology operation to dilate or erode")
+		"vigra implementation of crop")
 {
 	ParameteredObject::_addInputSlot(
 			in,"in","data input","vigraArray5<T>");

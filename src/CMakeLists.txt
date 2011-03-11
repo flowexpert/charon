@@ -196,6 +196,11 @@ IF(USE_VIGRA)
 		${CHARON_UTILS_INCLUDE_DIR}/Subarray.hxx
 	)
 	TARGET_LINK_LIBRARIES(subarray roi)
+	ADD_LIBRARY(mirror SHARED
+		Mirror.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Mirror.h
+		${CHARON_UTILS_INCLUDE_DIR}/Mirror.hxx
+	)
 
 	SET(Plugins_Vigra
 		splineresize
@@ -203,6 +208,7 @@ IF(USE_VIGRA)
 		binoperator
 		dilationerosion
 		subarray
+		mirror
 	)
 	IF(USE_CIMG)
 		ADD_LIBRARY(cimg2vigramultiarray SHARED
