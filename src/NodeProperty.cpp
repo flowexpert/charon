@@ -31,48 +31,49 @@
 #include "NodeHandler.h"
 #include "Node.h"
 
-
-
-using namespace std;
-
 NodeProperty::NodeProperty() {
-
 }
 
-NodeProperty::NodeProperty(QGraphicsItem *parentNode, QString name, int propNr, QString ptypeName, PropType::NodePropertyIOType p_iotype) : QGraphicsItem(parentNode) {
-	this->isConnected = false;
-	this->drawType = false;
-	this->name = name;
-	this->setAcceptHoverEvents(true);
-	this->ptype = new PropType();
-	if (TypeHandler::hasType(ptypeName)) ptype->ptype = TypeHandler::getType(ptypeName);
+NodeProperty::NodeProperty(
+		QGraphicsItem* parentNode, QString nn, int pNr,
+		QString ptypeName, PropType::NodePropertyIOType p_iotype) :
+		QGraphicsItem(parentNode) {
+	isConnected = false;
+	drawType = false;
+	name = nn;
+	setAcceptHoverEvents(true);
+	ptype = new PropType();
+	if (TypeHandler::hasType(ptypeName))
+		ptype->ptype = TypeHandler::getType(ptypeName);
 	else {
 		ParameterType *paramtype = new ParameterType(ptypeName);
 		TypeHandler::addType(paramtype);
 		ptype->ptype = paramtype;
 	}
 	ptype->iotype = p_iotype;
-	this->propNr = propNr;
+	propNr = pNr;
 
-	int y = 25 + this->propNr * 25;
+	int yy = 25 + propNr * 25;
 
 	Node *n = dynamic_cast<Node*> (this->parentItem());
 	if (n != 0) {
-		this->node = n;
-		this->width = node->getWidth() - 10;
+		node = n;
+		width = node->getWidth() - 10;
 	}
 
 	switch (this->getIOType()) {
 		case PropType::IN:
 		{
-			this->socket = new ConnectionSocket(this, QPointF(0, y + 10));
-			this->multiConnect = false;
+			socket = new ConnectionSocket(
+						this, QPointF(0, yy + 10));
+			multiConnect = false;
 			break;
 		}
 		case PropType::OUT:
 		{
-			this->socket = new ConnectionSocket(this, QPointF(this->width + 10, y + 10));
-			this->multiConnect = true;
+			socket = new ConnectionSocket(
+						this, QPointF(this->width + 10, yy + 10));
+			multiConnect = true;
 			break;
 		}
 		case PropType::NONE:
@@ -86,9 +87,13 @@ void NodeProperty::moveBy(qreal, qreal) {
 	for (int i = 0; i < connectionList.size(); i++) {
 		ConnectionLine *cline = connectionList.at(i);
 		if (cline->getStartProp() == this) {
-			cline->setStartPoint(this->scenePos()+(dynamic_cast<ConnectionSocket*> (this->children().at(0)))->getCenter()); //ugly as hell!!
+			cline->setStartPoint(
+				this->scenePos()+(dynamic_cast<ConnectionSocket*> (
+					this->children().at(0)))->getCenter()); // ugly as hell!!
 		} else {
-			cline->setEndPoint(this->scenePos()+(dynamic_cast<ConnectionSocket*> (this->children().at(0)))->getCenter()); //ugly as hell!!
+			cline->setEndPoint(
+				this->scenePos()+(dynamic_cast<ConnectionSocket*> (
+					this->children().at(0)))->getCenter()); // ugly as hell!!
 		}
 	}
 
@@ -115,26 +120,26 @@ PropType *NodeProperty::getPropType() {
 	return this->ptype;
 }
 
-void NodeProperty::mousePressEvent(QGraphicsSceneMouseEvent *) {
-
-	//TODO open property edit dialog
+void NodeProperty::mousePressEvent(QGraphicsSceneMouseEvent*) {
+	// TODO open property edit dialog
 }
 
 QRectF NodeProperty::boundingRect() const {
 	if(this->ptype->iotype == PropType::NONE) QRectF(0, 0, 0, 0);
-	int y = 25 + this->propNr * 25;
-	return QRectF(5, y, this->width, 20);
+	int yy = 25 + this->propNr * 25;
+	return QRectF(5, yy, this->width, 20);
 }
 
-void NodeProperty::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+void NodeProperty::paint(
+		QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) {
 	if(this->ptype->iotype == PropType::NONE) return;
 	this->width = node->getWidth() - 10;
-	int y = 25 + this->propNr * 25;
+	int yy = 25 + this->propNr * 25;
 	painter->setOpacity(1);
 	painter->setBrush(Qt::lightGray);
-	painter->drawRoundRect(5, y, this->width, 20, 10, 100);
+	painter->drawRoundRect(5, yy, this->width, 20, 10, 100);
 	painter->setBrush(Qt::black);
-	painter->drawText(10, y + 13, name);
+	painter->drawText(10, yy + 13, name);
 	if (this->drawType) {
 		switch (ptype->iotype) {
 			case PropType::IN:

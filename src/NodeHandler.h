@@ -44,14 +44,14 @@ public:
 	void keyReleaseEvent(QKeyEvent * keyEvent);
 	void addNode(QString name, QPointF pos);
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-	void connectNodes(QString node0,QString prop0,QString node1,QString prop1);
+	bool connectNodes(QString node0,QString prop0,QString node1,QString prop1);
 	void toXMLFile(QString filename);
 	void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 	void deleteNode(Node *node);
 	void setModel(GraphModel *model);
 	GraphModel *model();
-	void loadFromModel(); // fehlt: Verbindungen laden
-	void load(QString fname);
+	bool loadFromModel();
+	bool load(QString fname);
 	void dragEnterEvent(QGraphicsSceneDragDropEvent * event);
 	void dropEvent(QGraphicsSceneDragDropEvent * event);
 	void dragMoveEvent(QGraphicsSceneDragDropEvent * event);

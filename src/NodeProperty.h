@@ -29,14 +29,13 @@
 #include "ParameterType.h"
 
 
-struct PropType{
-	enum NodePropertyIOType
-	{
+struct PropType {
+	enum NodePropertyIOType {
 		IN,
 		OUT,
-		NONE //Parameter for Node - no input or output
+		NONE // Parameter for Node - no input or output
 	} iotype;
-	ParameterType *ptype;
+	ParameterType* ptype;
 };
 
 class ConnectionLine;

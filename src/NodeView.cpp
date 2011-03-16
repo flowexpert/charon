@@ -20,19 +20,20 @@
  *  \date   15.03.2011
  *  \author <a href="mailto:wuest.jonathan@gmail.com">Jonathan Wuest</a>
  */
+
 #include "NodeView.h"
 #include "GraphModel.h"
 #include "FileManager.h"
 #include <QMessageBox>
 
-NodeView::NodeView(QWidget *parent,QString classesFile) :
-		QGraphicsView(parent),_model(0) {
-	this->setRenderHints( QPainter::Antialiasing );
-	this->setMinimumSize(500,500);
-	this->setAcceptDrops(true);
-	this->show();
-	this->nodehandler = new NodeHandler(this,classesFile);
-	this->setScene(this->nodehandler);
+NodeView::NodeView(QWidget* p,QString classesFile) :
+		QGraphicsView(p),_model(0) {
+	setRenderHints( QPainter::Antialiasing );
+	setMinimumSize(500,500);
+	setAcceptDrops(true);
+	show();
+	nodehandler = new NodeHandler(this,classesFile);
+	setScene(this->nodehandler);
 }
 
 GraphModel *NodeView::model(){
@@ -41,8 +42,9 @@ GraphModel *NodeView::model(){
 
 bool NodeView::load(QString fname){
 	QString errorMSG;
+	bool ok = true;
 	try {
-		this->nodehandler->load(fname);
+		ok = nodehandler->load(fname);
 	}
 	catch (const std::string& msg) {
 		errorMSG = msg.c_str();
@@ -88,18 +90,18 @@ bool NodeView::load(QString fname){
 			tr("Message: %1").arg(errorMSG));
 		return false;
 	}
-	return true;
+	return ok;
 }
 
-void NodeView::setModel(GraphModel *model){
-	this->nodehandler->setModel(model);
+void NodeView::setModel(GraphModel* md){
+	nodehandler->setModel(md);
 }
 
 void NodeView::save(){
 }
 
 void NodeView::updateDisplay(){
-	this->update();
+	update();
 }
 
 NodeView::~NodeView() {
