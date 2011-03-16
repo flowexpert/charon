@@ -39,16 +39,8 @@ SET(EDITGRAPH_SOURCES
     GraphModel.h
     GraphBuilder.cpp
     GraphBuilder.h
-    HierarchyGraphBuilder.cpp
-    HierarchyGraphBuilder.h
-    TemplateGraphBuilder.cpp
-    TemplateGraphBuilder.h
     FlowWidget.cpp
     FlowWidget.h
-    SelectorWidget.cpp
-    SelectorWidget.h
-    GraphView.cpp
-    GraphView.h
     ConnectionSocket.cpp
     ConnectionSocket.h
     ConnectionLine.cpp
@@ -69,10 +61,6 @@ SET(EDITGRAPH_SOURCES
     NodeTreeView.h
     NodeView.cpp
     NodeView.h
-    HierarchyGraphView.cpp
-    HierarchyGraphView.h
-    TemplateGraphView.cpp
-    TemplateGraphView.h
     WorkflowExecutor.h
     WorkflowExecutor.cpp
 )

@@ -22,7 +22,6 @@
  */
 
 #include <QtTest>
-#include "SelectorWidget.h"
 #include "GraphModel.h"
 #include "graphTemplateTest.h"
 #include "graphTemplateTest.moc"
@@ -39,8 +38,6 @@ void TestViz::test() {
 
     try{
         GraphModel model("", 0, TESTCLASSFILE);
-        SelectorWidget selector(0, TESTCLASSFILE);
-        selector.setModel(&model);
     }
     catch (std::string msg) {
         qWarning() << "Caught exception of type std::string";

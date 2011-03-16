@@ -31,7 +31,6 @@
 #include "MainWindow.h"
 #include "ObjectInspector.h"
 #include "FlowWidget.h"
-#include "SelectorWidget.h"
 #include "NodeTreeView.h"
 #include "GraphModel.h"
 #include "ModelToolBar.h"
@@ -95,8 +94,6 @@ MainWindow::MainWindow(QWidget* myParent) :
 			inspector, SLOT(setEnabled(bool)));
 
 	// selector widget connections
-	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
-			_selector, SLOT(setModel(ParameterFileModel*)));
 	connect(this, SIGNAL(enableEditors(bool)),
 			_selector, SLOT(setEnabled(bool)));
 

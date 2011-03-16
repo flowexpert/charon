@@ -1,25 +1,26 @@
-/*  Copyright (C) 2009 Jens-Malte Gottfried
+/*	Copyright (C) 2009 Jens-Malte Gottfried
 
 	This file is part of Tuchulcha.
 
-	Tuchulcha is free software: you can redistribute it and/or modify
-	it under the terms of the GNU Lesser General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Tuchulcha is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Tuchulcha is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU Lesser General Public License for more details.
+    Tuchulcha is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
 
-	You should have received a copy of the GNU Lesser General Public License
-	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Lesser General Public License
+    along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file GraphModel.cpp
- *  @brief Implementation of class GraphModel
+/** \file   GraphModel.cpp
+ *  \brief  Implementation of class GraphModel
  *
- *  @date 10.09.2008
- *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+ *  \date   10.09.2008
+ *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+ *  @author <a href="mailto:wuest.jonathan@gmail.com">Jonathan Wuest</a>
  */
 
 #include "GraphModel.h"
@@ -526,6 +527,7 @@ void GraphModel::deleteNode(const QString& nodename, bool draw) {
 	}
 }
 
+
 QStringList GraphModel::nodes() const {
 	std::set<std::string> nodeSet;
 
@@ -571,7 +573,7 @@ void GraphModel::selectNext(bool back, bool draw) {
 	setPrefix(curNodes[pos], draw);
 }
 
-void GraphModel::addNode(const QString& className, bool draw) {
+QString GraphModel::addNode(const QString& className, bool draw) {
 	// new name input and check if valid
 	QString newName, info;
 	do {
@@ -580,7 +582,7 @@ void GraphModel::addNode(const QString& className, bool draw) {
 										info + tr("Enter a name for the new node:"),
 										QLineEdit::Normal, tr("newnode"), &ok);
 		if(!ok)
-			return;
+			return "";
 		if(nodeValid(newName))
 			info = tr("This name is already in use.\n"
 					  "Please use another name.\n");
@@ -592,25 +594,26 @@ void GraphModel::addNode(const QString& className, bool draw) {
 		|| newName.contains(QRegExp("\\s"))
 		);
 
-setPrefix("", false);
-setOnlyParams(false);
+	setPrefix("", false);
+	setOnlyParams(false);
 
-std::vector<std::string> inputs =
-		metaInfo()->getInputs(className.toAscii().constData());
-std::vector<std::string> outputs =
-		metaInfo()->getOutputs(className.toAscii().constData());
+	std::vector<std::string> inputs =
+			metaInfo()->getInputs(className.toAscii().constData());
+	std::vector<std::string> outputs =
+			metaInfo()->getOutputs(className.toAscii().constData());
 
-insertRow(rowCount());
-setData(index(rowCount()-1, 0), newName + ".type");
-setData(index(rowCount()-1, 1), className);
-setPrefix(newName, false);
-setOnlyParams(true);
+	insertRow(rowCount());
+	setData(index(rowCount()-1, 0), newName + ".type");
+	setData(index(rowCount()-1, 1), className);
+	setPrefix(newName, false);
+	setOnlyParams(true);
 
-emit statusMessage(tr("add node %1 of class %2").arg(newName)
-				   .arg(className));
+	emit statusMessage(tr("add node %1 of class %2").arg(newName)
+					   .arg(className));
 
-if(draw)
-	emit graphChanged();
+	if(draw)
+		emit graphChanged();
+	return newName;
 }
 
 bool GraphModel::setData(const QModelIndex& ind, const QVariant& value,

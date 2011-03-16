@@ -36,7 +36,6 @@
 #include <QtDebug>
 #include <string>
 #include <stdexcept>
-#include "HierarchyGraphView.h"
 #include "../app/MainWindow.h"
 
 #include "FlowWidget.moc"

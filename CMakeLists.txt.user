@@ -29,7 +29,16 @@
      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Make</value>
      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">CMakeProjectManager.MakeStep</value>
     </valuemap>
-    <value key="ProjectExplorer.BuildConfiguration.BuildStepsCount" type="int">1</value>
+    <valuemap key="ProjectExplorer.BuildConfiguration.BuildStep.1" type="QVariantMap">
+     <valuelist key="CMakeProjectManager.MakeStep.AdditionalArguments" type="QVariantList">
+      <value type="QString">-doc</value>
+     </valuelist>
+     <valuelist key="CMakeProjectManager.MakeStep.BuildTargets" type="QVariantList"/>
+     <value key="CMakeProjectManager.MakeStep.Clean" type="bool">false</value>
+     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Make</value>
+     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">CMakeProjectManager.MakeStep</value>
+    </valuemap>
+    <value key="ProjectExplorer.BuildConfiguration.BuildStepsCount" type="int">2</value>
     <valuemap key="ProjectExplorer.BuildConfiguration.CleanStep.0" type="QVariantMap">
      <valuelist key="CMakeProjectManager.MakeStep.AdditionalArguments" type="QVariantList">
       <value type="QString">clean</value>

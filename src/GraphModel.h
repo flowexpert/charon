@@ -70,6 +70,7 @@ public:
 	 */
 	bool connected(QString source, QString target) const;
 
+
 	/// Get nodes in current graph
 	QStringList nodes() const;
 
@@ -101,8 +102,9 @@ public slots:
 	/// add new node of given kind
 	/** \param className    name of the class to create a new node
 	 *  \param draw         emit display refresh signal if true
+	 *  \returns QString    name of new node (entered by user)
 	 */
-	void addNode(
+	QString addNode(
 			const QString& className, bool draw = true);
 
 	/// rename node
