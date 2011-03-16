@@ -24,7 +24,7 @@
 #include "TypeHandler.h"
 #include <math.h>
 #include <iostream>
-#include <qt4/QtCore/qregexp.h>
+#include <QRegExp>
 using namespace std;
 QMap<QString, ParameterType*> TypeHandler::types;
 

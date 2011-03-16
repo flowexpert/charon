@@ -29,7 +29,6 @@
 NodeView::NodeView(QWidget* p,QString classesFile) :
 		QGraphicsView(p),_model(0) {
 	setRenderHints( QPainter::Antialiasing );
-	setMinimumSize(500,500);
 	setAcceptDrops(true);
 	show();
 	nodehandler = new NodeHandler(this,classesFile);

@@ -505,7 +505,7 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 	}
 }
 
-void GraphModel::deleteNode(const QString& nodename, bool draw) {
+bool GraphModel::deleteNode(const QString& nodename, bool draw) {
 	QMessageBox mbox(QMessageBox::Question, tr("confirm delete"),
 					 tr("Do you really want to delete node \"%1\"?").arg(nodename));
 	mbox.addButton(QMessageBox::Yes);
@@ -524,7 +524,9 @@ void GraphModel::deleteNode(const QString& nodename, bool draw) {
 			emit graphChanged();
 
 		emit statusMessage(tr("delete node %1").arg(nodename));
+		return true;
 	}
+	return false;
 }
 
 

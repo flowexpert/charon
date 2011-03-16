@@ -25,8 +25,6 @@
 #include "ParameterFile.h"
 #include "NodeHandler.h"
 #include "GraphModel.h"
-#include <QtXml/QDomDocument>
-#include <QtXml/QDomElement>
 #include <QFile>
 #include <QTextStream>
 #include <QPainter>
@@ -185,80 +183,6 @@ void Node::checkWidth(){
 	if(this->name.size() > 14){
 		this->width = 100 + (this->name.size() - 14)*5;
 	}
-}
-
-void Node::loadFromFile(QString fname)
-{
-	QFile file(fname);
-	if( !file.open( QIODevice::ReadOnly) ) {
-		QMessageBox::warning(
-					0, "I/O error",
-					QString("could not read configfile: %1").arg(fname));
-		return;
-	}
-	QDomDocument doc;
-	doc.setContent(&file);
-	QDomNode n = doc.firstChild();
-	if(n.isElement()){
-		QDomElement root = n.toElement();
-		if(root.tagName() == "Config"){
-			QString nname = root.attribute("name");
-			if(nname != "") this->name = nname;
-			checkWidth();
-			QDomElement prop = root.firstChildElement("prop");
-			while(!prop.isNull()){
-				QString pname = prop.attribute("name");
-				QString piotype = prop.attribute("io-type");
-				QString ptype = prop.attribute("type");
-				PropType::NodePropertyIOType priotype =
-						NodeProperty::iotypeFromString(piotype);
-
-				this->addProperty(pname,ptype,priotype);
-
-				prop = prop.nextSibling().toElement();
-			}
-		}
-	} else {
-		QMessageBox::warning(
-					0, "I/O error",
-					QString("wrong config fileformat: %1").arg(fname));
-		return;
-	}
-	configFileName = fname;
-
-}
-
-void Node::generateFile(QString fname)
-{
-	QDomDocument doc("NodeConfig");
-	QDomElement root = doc.createElement("Config");
-
-		root.setAttribute("name",this->name);
-
-	for(int i=0;i<properties.size();i++){
-		QDomElement propElement = doc.createElement("prop");
-				propElement.setAttribute("name",properties[i]->getName());
-				propElement.setAttribute("io-type",NodeProperty::iotypeToString(properties[i]->getIOType()));
-				propElement.setAttribute("type",properties[i]->getPropType()->ptype->getTypeName());
-				root.appendChild(propElement);
-	}
-
-		doc.appendChild(root);
-
-		QFile file(fname);
-		if( !file.open( QIODevice::WriteOnly ) ) {
-			QMessageBox::warning(
-						0, "I/O error",
-						QString("could not create config file:: %1")
-						.arg(fname));
-			return;
-		}
-		QTextStream ts( &file );
-	ts << doc.toString();
-
-	file.close();
-
-	configFileName = fname;
 }
 
 QString Node::getConfigFileName(){

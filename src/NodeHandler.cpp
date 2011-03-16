@@ -33,8 +33,6 @@
 #include "MetaData.h"
 #include "FileManager.h"
 
-#include <QtXml/QDomDocument>
-#include <QtXml/QDomElement>
 #include <QList>
 #include <QFileDialog>
 #include <QFile>
@@ -153,7 +151,7 @@ bool NodeHandler::load(QString fname){
 }
 
 bool NodeHandler::loadFromModel(){
-	const MetaData *mi = _model->metaInfo();
+	const MetaData* mi = _model->metaInfo();
 	QVector<QString> nodes = _model->nodes().toVector();
 
 	QVector<QString> nodesOut,nodesIn;
@@ -207,12 +205,14 @@ bool NodeHandler::loadFromModel(){
 		node->moveBy(0,0);
 	}
 	update();
+
 	bool ok = true;
 	for (int i=0;i<slotOut.size();i++) {
 		ok = this->connectNodes(nodesOut[i],slotOut[i],nodesIn[i],slotIn[i])
 				&& ok;
 	}
 	update();
+
 	deselectAllNodes();
 	return ok;
 }
@@ -264,67 +264,7 @@ bool NodeHandler::connectNodes(
 	return true;
 }
 
-void NodeHandler::toXMLFile(QString filename)	//unused
-{
-	QDomDocument doc("Workflow");
-	QDomElement root = doc.createElement("Nodes");
-	QDomElement lroot = doc.createElement("Edges");
-	int nodeID=0;
-	for(int i=0;i<this->items().size();i++)
-	{
-		Node *n = dynamic_cast<Node*>(this->items().at(i));
-		if(n != 0)
-		{
-			QDomElement nodeElement = doc.createElement("Node");
-						nodeElement.setAttribute("name",n->getName());
-			nodeElement.setAttribute("config_file",n->getConfigFileName());
-			nodeElement.setAttribute("position_x",n->scenePos().x());
-			nodeElement.setAttribute("position_y",n->scenePos().y());
-			nodeElement.setAttribute("id",n->getId());
-			nodeID++;
-			root.appendChild(nodeElement);
-		} else {
-			ConnectionLine *l = dynamic_cast<ConnectionLine*>(
-						this->items().at(i));
-			if(l != 0){
-				QDomElement line = doc.createElement("Edge");
-				line.setAttribute(
-							"node0",l->getStartProp()->getNode()->getId());
-				line.setAttribute(
-							"prop0",l->getStartProp()->getNr());
-				line.setAttribute(
-							"node1",l->getEndProp()->getNode()->getId());
-				line.setAttribute(
-							"prop1",l->getEndProp()->getNr());
-				lroot.appendChild(line);
-			}
-		}
-	}
-	doc.appendChild(root);
-	doc.appendChild(lroot);
-	QDomElement editProps = doc.createElement("Editor");
-	if(this->views().size()>0)
-	{
-		editProps.setAttribute(
-				"center_x",this->views().at(0)->sceneRect().center().x());
-		editProps.setAttribute(
-				"center_y",this->views().at(0)->sceneRect().center().y());
-		editProps.setAttribute(
-				"zoom",this->scaleFactor);
-	}
-
-	doc.appendChild(editProps);
-	QFile file(filename);
-	if( !file.open( QIODevice::WriteOnly ) )
-	return ;
-
-	QTextStream ts( &file );
-	ts << doc.toString();
-
-	file.close();
-}
-
-void NodeHandler::keyReleaseEvent (QKeyEvent * keyEvent )
+void NodeHandler::keyReleaseEvent (QKeyEvent* keyEvent)
 {
 	if(keyEvent->key() == Qt::Key_F12){
 		QString fname = QFileDialog::getOpenFileName();
@@ -349,18 +289,10 @@ void NodeHandler::keyReleaseEvent (QKeyEvent * keyEvent )
 }
 
 void NodeHandler::deleteNode(Node *node) {
-	for(int i=0;i<items().size();i++) {
-		Node *n = dynamic_cast<Node*>(items().at(i));
-		if(n != 0) {
-			if(node->getId() == n->getId()){
-				n->remove();
-				removeItem(items().at(i));
-				update();
-				break;
-			}
-		}
+	if(_model->deleteNode(node->getName())) {
+		clear();
+		loadFromModel();
 	}
-	_model->deleteNode(node->getName());
 }
 
 void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {

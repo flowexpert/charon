@@ -45,7 +45,6 @@ public:
 	void addNode(QString name, QPointF pos);
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 	bool connectNodes(QString node0,QString prop0,QString node1,QString prop1);
-	void toXMLFile(QString filename);
 	void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 	void deleteNode(Node *node);
 	void setModel(GraphModel *model);

@@ -39,13 +39,17 @@ public:
 	QRectF boundingRect() const;
 	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 	void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-	void addProperty(QString name,QString typeName,PropType::NodePropertyIOType iotype=PropType::NONE);
-	void loadFromFile(QString fname);
-	void generateFile(QString fname);
+	void addProperty(
+		QString name,
+		QString typeName,
+		PropType::NodePropertyIOType iotype=PropType::NONE);
 	void setId(unsigned int id);
 	void setName(QString name);
 	void loadFromParameterFile(QString fname);
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+	void paint(
+		QPainter *painter,
+		const QStyleOptionGraphicsItem *option,
+		QWidget *widget = 0);
 	void remove();
 	int getWidth();
 	int getHeight();

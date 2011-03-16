@@ -118,7 +118,7 @@ public slots:
 	/** \param nodename     name of the node to delete
 	 *  \param draw         emit display refresh signal if true
 	 */
-	void deleteNode(
+	bool deleteNode(
 			const QString& nodename, bool draw = true);
 
 	/// connect slots
