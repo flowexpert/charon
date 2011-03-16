@@ -26,6 +26,8 @@
 
 #include "FrameSelect.h"
 #include <QString>
+#include <QApplication>
+
 
 template <typename T>
 FrameSelect<T>::FrameSelect(const std::string& name) :
@@ -39,6 +41,7 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 			"image output", "vigraArray5<T>");
 	ParameteredObject::_addOutputSlot(widget, "widget",
 			"QWidget to be displayed in ArgosDisplay", "QWidget*");
+	widget = 0 ;
 	ParameteredObject::_addOutputSlot(roi, "roi",
 			"Crop border output", "Roi<int>");
 	ParameteredObject::_addParameter(z, "z", "select z slice",uint(0),"");
@@ -47,7 +50,16 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 	ParameteredObject::_addParameter(cropV, "cropV",
 			"enable cropping last (RGB) dimension", true);
 
+
 	roi() = &_roi;
+	if(!qApp)
+	{
+		sout << "FrameSelect::No QApplication found! " 
+				"FrameSelect can only be used in a Qt GUI Application! "
+				"(e.g. Tuchulcha)" << std::endl ;
+		return ;
+	}
+
 	_gui = new FrameSelectWidget(this,cropV,z,t,v);
 	widget = _gui;
 }
@@ -87,9 +99,11 @@ void FrameSelect<T>::execute() {
 		if(lz >= s[2] || lt >= s[3] || lv >= s[4])
 			throw std::out_of_range("z/t/v coorinate too large");
 
-		_gui->setDisplay(&(*widget.getTargets().begin())->getParent());
-		_gui->setTitle(ParameteredObject::getName());
-		_gui->setShape(s[2],s[3],s[4]);
+		if(_gui) {
+			_gui->setDisplay(&(*widget.getTargets().begin())->getParent());
+			_gui->setTitle(ParameteredObject::getName());
+			_gui->setShape(s[2],s[3],s[4]);
+		}
 
 		vigra_assert(cV||s[4]==3u,"last dim has to be 3 if not cropping");
 		vigra::MultiArrayShape<5>::type os(s[0],s[1],1u,1u,(cV?1u:3u));
@@ -106,6 +120,7 @@ void FrameSelect<T>::execute() {
 	else {
 		sout << "\tnot cropping anything since in not connected" << std::endl;
 	}
-	_gui->updateWidget() ;
+	if(_gui)
+		_gui->updateWidget() ;
 }
 #endif // _FRAMESELECT_HXX_

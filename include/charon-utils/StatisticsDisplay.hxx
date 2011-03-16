@@ -17,6 +17,7 @@
 #include <vigra/navigator.hxx>
 #include <vigra/multi_pointoperators.hxx>
 #include <set>
+#include <QApplication>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -71,17 +72,19 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 			"A QWidget displaying all results, can for example be connected to a ArgosDisplay instance",
 			"QWidget*") ;
 			
+	_display = 0 ;
+
 	ParameteredObject::_addParameter<bool>(_writeToSout, "writeToSout",
 		"write results to stdout and status console", true, "bool");
 	
-	/*
+	
 	if(!qApp)
 	{
 		sout << "StatisticsDisplay::No QApplication found! " 
-			<< "ArgosDisplay can only be used in a Qt GUI Application!" << std::endl ;
+				"StatisticsDisplay can only be used in a Qt GUI Application!" << std::endl ;
 		return ;
 	}
-	*/
+	
 
 	_exportWidget = new StatisticsDisplayWidget() ;
 	_display = _exportWidget ;
@@ -254,7 +257,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 	
 	}
 
-	if(_display.connected())
+	if(_display.connected() && _exportWidget)
 	{	
 		//_exportWidget->setTitle(this->getName()) ;
 		_exportWidget->updateStats(_statistics) ;
