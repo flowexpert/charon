@@ -37,7 +37,7 @@ public:
 	virtual ~NodeView();
 	GraphModel *model();
 public slots:
-	void load(QString fname);
+	bool load(QString fname);
 	void save();
 	void setModel(GraphModel* model);
 	virtual void updateDisplay();
