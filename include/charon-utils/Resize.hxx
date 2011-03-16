@@ -44,7 +44,15 @@ Resize<T>::Resize(const std::string& name) :
 	this->_addParameter(
 			method, "method",
 			"resize method <br><br>"
-			"look at CImg::resize() documentation for provided methods", 1);
+			"-1 = no interpolation : raw memory resizing. when expanding, image will be filled with uninitialized values!<br>"
+			"0 = no interpolation : additional space is filled according to border_condition. default is dirichlet -> filled with zeros<br>"
+			"1 = nearest-neighbor interpolation.<br>"
+			"2 = moving average interpolation.<br>"
+			"3 = linear interpolation<br>."
+			"4 = grid interpolation.<br>"
+			"5 = bicubic interpolation.<br>"
+			"6 = lanczos interpolation.<br>", 1);
+
 	this->_addParameter(
 			preBlurFactor, "preBlurFactor",
 			"control blur strength on image size reduction", 0.4f);
