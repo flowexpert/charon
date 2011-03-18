@@ -1,0 +1,887 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Wizard</class>
+ <widget class="QWizard" name="Wizard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>523</width>
+    <height>589</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Template Generator</string>
+  </property>
+  <property name="options">
+   <set>QWizard::CancelButtonOnLeft|QWizard::HaveFinishButtonOnEarlyPages|QWizard::HaveNextButtonOnLastPage</set>
+  </property>
+  <widget class="WizardPageStart" name="wizardPageStart">
+   <property name="title">
+    <string>Template-Generator</string>
+   </property>
+   <property name="subTitle">
+    <string>This setup wizard belongs to charon and helps you to create simple plugins with common code parts.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGroupBox" name="boxStart">
+      <property name="title">
+       <string>Start</string>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QRadioButton" name="selNewMod">
+         <property name="text">
+          <string>create new plugin</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="selLoadMod">
+         <property name="text">
+          <string>load existing plugin</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="boxLoad">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="title">
+       <string>Load</string>
+      </property>
+      <layout class="QFormLayout" name="formLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelLoadMod">
+         <property name="text">
+          <string>Path of module to load:</string>
+         </property>
+         <property name="buddy">
+          <cstring>editLoadMod</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDirEdit" name="editLoadMod"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="wizardPageMetadata">
+   <property name="title">
+    <string>Module information</string>
+   </property>
+   <property name="subTitle">
+    <string>Set up plugin name, output directory and metadata information.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QGroupBox" name="boxNameDir">
+      <property name="title">
+       <string>Name and Directory</string>
+      </property>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelAuthor">
+         <property name="text">
+          <string>Author Name:</string>
+         </property>
+         <property name="buddy">
+          <cstring>editAuthor</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="editAuthor"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelModName">
+         <property name="text">
+          <string>Module name:</string>
+         </property>
+         <property name="buddy">
+          <cstring>editModName</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="editModName"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="labelEmail">
+         <property name="text">
+          <string>Author Email:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="editEmail"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="boxDesc">
+      <property name="title">
+       <string>Module metadata information</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="labelModDesc">
+         <property name="text">
+          <string>Plugin Description:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QPlainTextEdit" name="editModDesc"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="wizardPageSlots">
+   <property name="title">
+    <string>Slots</string>
+   </property>
+   <property name="subTitle">
+    <string>Set up your input and output slots.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <widget class="QGroupBox" name="boxInputSlots">
+      <property name="title">
+       <string>Input Slots</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="1" column="0">
+        <widget class="QPushButton" name="buttonAddInput">
+         <property name="text">
+          <string>Add Input Slot</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="buttonDelInput">
+         <property name="text">
+          <string>Remove Input Slot</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QTableWidget" name="tableInputSlots">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Documentation</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Type</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Optional</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>MultiSlot</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="boxOutputSlots">
+      <property name="title">
+       <string>Output Slots</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0" colspan="2">
+        <widget class="QTableWidget" name="tableOutputSlots">
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Documentation</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Type</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="buttonAddOutput">
+         <property name="text">
+          <string>Add Output Slot</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="buttonDelOutput">
+         <property name="text">
+          <string>Remove Output Slot</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="wizardPageParameters">
+   <property name="title">
+    <string>Parameters</string>
+   </property>
+   <property name="subTitle">
+    <string>Set up parameters and their default values.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_5">
+    <item>
+     <widget class="QGroupBox" name="boxParameters">
+      <property name="title">
+       <string>Parameters</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="labelParamDesc">
+         <property name="text">
+          <string>Warning: String values have to be encapsulated into &quot;&quot;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QPushButton" name="buttonAddParam">
+         <property name="text">
+          <string>Add Parameter</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPushButton" name="buttonDelParam">
+         <property name="text">
+          <string>Remove Parameter</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QTableWidget" name="tableParameters">
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Documentation</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Type</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Default</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>List</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="wizardPageSummary">
+   <property name="title">
+    <string>Summary</string>
+   </property>
+   <property name="subTitle">
+    <string>Overview of what is to be written.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_7">
+    <item>
+     <widget class="QGroupBox" name="boxModConfig">
+      <property name="title">
+       <string>Module Configuration</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="checkTemplated">
+         <property name="text">
+          <string>Templated</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="checkNonTemplated">
+         <property name="text">
+          <string>Non-Templated</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QCheckBox" name="checkGenCMake">
+         <property name="text">
+          <string>generate CMake project file (in source directory)</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QCheckBox" name="checkHeaderSep">
+         <property name="text">
+          <string>save header and source files in separate directories</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="boxOutConfig">
+      <property name="title">
+       <string>Output Configuration</string>
+      </property>
+      <layout class="QFormLayout" name="formLayout_2">
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelSourceOut">
+         <property name="text">
+          <string>Source Output Path:</string>
+         </property>
+         <property name="buddy">
+          <cstring>editSourceOut</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDirEdit" name="editSourceOut"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="labelHeaderOut">
+         <property name="text">
+          <string>Header Output Path:</string>
+         </property>
+         <property name="buddy">
+          <cstring>editHeaderOut</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDirEdit" name="editHeaderOut"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelOut">
+         <property name="text">
+          <string>Output Path:</string>
+         </property>
+         <property name="buddy">
+          <cstring>editOutPath</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDirEdit" name="editOutPath"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="boxOutSummary">
+      <property name="title">
+       <string>Output File Summary</string>
+      </property>
+      <layout class="QFormLayout" name="formLayout_4">
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelHOut">
+         <property name="text">
+          <string>Header File (.h):</string>
+         </property>
+         <property name="buddy">
+          <cstring>editHOut</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="editHOut">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="labelHxxOut">
+         <property name="text">
+          <string>Template Implamentation (.hxx):</string>
+         </property>
+         <property name="buddy">
+          <cstring>editHxxOut</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="editHxxOut">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelCppOut">
+         <property name="text">
+          <string>C++ Source File (.cpp):</string>
+         </property>
+         <property name="buddy">
+          <cstring>editCppOut</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="editCppOut">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="labelCMakeOut">
+         <property name="text">
+          <string>CMake project file:</string>
+         </property>
+         <property name="buddy">
+          <cstring>editCMakeOut</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="editCMakeOut">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QDirEdit</class>
+   <extends>QLineEdit</extends>
+   <header>QDirEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WizardPageStart</class>
+   <extends>QWizardPage</extends>
+   <header>WizardPageStart.h</header>
+   <container>1</container>
+   <slots>
+    <slot>checkComplete()</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>selNewMod</tabstop>
+  <tabstop>selLoadMod</tabstop>
+  <tabstop>editLoadMod</tabstop>
+  <tabstop>editAuthor</tabstop>
+  <tabstop>editEmail</tabstop>
+  <tabstop>editModName</tabstop>
+  <tabstop>editModDesc</tabstop>
+  <tabstop>tableInputSlots</tabstop>
+  <tabstop>buttonAddInput</tabstop>
+  <tabstop>buttonDelInput</tabstop>
+  <tabstop>tableOutputSlots</tabstop>
+  <tabstop>buttonAddOutput</tabstop>
+  <tabstop>buttonDelOutput</tabstop>
+  <tabstop>tableParameters</tabstop>
+  <tabstop>buttonAddParam</tabstop>
+  <tabstop>buttonDelParam</tabstop>
+  <tabstop>checkTemplated</tabstop>
+  <tabstop>checkNonTemplated</tabstop>
+  <tabstop>checkHeaderSep</tabstop>
+  <tabstop>checkGenCMake</tabstop>
+  <tabstop>editOutPath</tabstop>
+  <tabstop>editHeaderOut</tabstop>
+  <tabstop>editSourceOut</tabstop>
+  <tabstop>editHOut</tabstop>
+  <tabstop>editHxxOut</tabstop>
+  <tabstop>editCppOut</tabstop>
+  <tabstop>editCMakeOut</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>selLoadMod</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>boxLoad</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>77</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkGenCMake</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelCMakeOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>152</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>200</x>
+     <y>427</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkGenCMake</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editCMakeOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>159</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>503</x>
+     <y>427</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkTemplated</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelHxxOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>91</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>105</x>
+     <y>373</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkTemplated</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editHxxOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>230</x>
+     <y>105</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>429</x>
+     <y>373</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelOut</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>110</x>
+     <y>128</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>220</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editOutPath</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>171</x>
+     <y>130</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>169</x>
+     <y>221</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelHeaderOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>49</x>
+     <y>128</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>64</x>
+     <y>246</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editHeaderOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>268</x>
+     <y>128</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>247</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelSourceOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>128</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>127</x>
+     <y>271</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editSourceOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>296</x>
+     <y>128</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>267</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddParam</sender>
+   <signal>clicked()</signal>
+   <receiver>Wizard</receiver>
+   <slot>_addParameter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>53</x>
+     <y>517</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>85</x>
+     <y>543</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonDelParam</sender>
+   <signal>clicked()</signal>
+   <receiver>Wizard</receiver>
+   <slot>_delParameter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>340</x>
+     <y>521</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>543</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddInput</sender>
+   <signal>clicked()</signal>
+   <receiver>Wizard</receiver>
+   <slot>_addInputSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>272</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>136</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonDelInput</sender>
+   <signal>clicked()</signal>
+   <receiver>Wizard</receiver>
+   <slot>_delInputSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>276</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>412</x>
+     <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonDelOutput</sender>
+   <signal>clicked()</signal>
+   <receiver>Wizard</receiver>
+   <slot>_delOutputSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>357</x>
+     <y>519</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>516</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddOutput</sender>
+   <signal>clicked()</signal>
+   <receiver>Wizard</receiver>
+   <slot>_addOutputSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>516</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>134</x>
+     <y>518</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selLoadMod</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wizardPageStart</receiver>
+   <slot>checkComplete()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>383</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>444</x>
+     <y>86</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editLoadMod</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>wizardPageStart</receiver>
+   <slot>checkComplete()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>328</x>
+     <y>167</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_addInputSlot()</slot>
+  <slot>_addOutputSlot()</slot>
+  <slot>_addParameter()</slot>
+  <slot>_delInputSlot()</slot>
+  <slot>_delOutputSlot()</slot>
+  <slot>_delParameter()</slot>
+ </slots>
+</ui>

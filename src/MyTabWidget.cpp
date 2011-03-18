@@ -19,5 +19,3 @@ void MyTabWidget::previousPage() {
 	if (temp >= 0)
 		setCurrentIndex(temp);
 }
-
-#include "MyTabWidget.moc"

@@ -2,7 +2,7 @@
 
 #include <QFile>
 #include <QtGui>
-#include <MyTabWidget.h>
+#include "MyTabWidget.h"
 #include <QComboBox>
 
 MainWindow::MainWindow(QWidget* p)
@@ -1385,5 +1385,3 @@ void MainWindow::closeEvent(QCloseEvent* cEvent)
 		QMainWindow::closeEvent(cEvent);
 	}
 }
-
-#include "MainWindow.moc"
