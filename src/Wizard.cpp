@@ -3,68 +3,28 @@
 #include <QDir>
 #include <QSettings>
 #include <QMessageBox>
+#include "WizardPageStart.h"
+#include "WizardPageMetadata.h"
+#include "WizardPageSummary.h"
 
 Wizard::Wizard(QWidget* p) :
 		QWizard(p),
 		_ui(new Ui::Wizard) {
+	addPage(new WizardPageStart(this));
+	addPage(new WizardPageMetadata(this));
 	_ui->setupUi(this);
+	addPage(new WizardPageSummary(this));
+
+	_addInputSlot();
+	_addInputSlot();
+	_addOutputSlot();
+	_addOutputSlot();
+	_addParameter();
+	_addParameter();
 }
 
 Wizard::~Wizard() {
 	delete _ui;
-}
-
-void Wizard::initializePage(int id) {
-	QWizard::initializePage(id);
-
-	QSettings settings(
-			"Heidelberg Collaboratory for Image Processing",
-			"TemplateGenerator");
-
-	switch(id) {
-	case 1:
-		// metadata page
-		_ui->editAuthor->setText(
-				settings.value("author", tr("Unknown")).toString());
-		_ui->editEmail->setText(
-				settings.value("email", "").toString());
-		break;
-
-	case 2:
-		// slot page
-		_addInputSlot();
-		_addInputSlot();
-		_addOutputSlot();
-		_addOutputSlot();
-		break;
-
-	case 3:
-		// parameter page
-		_addParameter();
-		_addParameter();
-		break;
-
-	case 4:
-		// summary page
-		_ui->checkHeaderSep->setChecked(Qt::Checked);
-		_ui->checkHeaderSep->setChecked(Qt::Unchecked);
-
-		settings.beginGroup("Paths");
-		_ui->checkHeaderSep->setChecked(
-				settings.value("headerSeparate", false).toBool() ?
-				Qt::Checked : Qt::Unchecked);
-		_ui->editOutPath->setText(
-				settings.value("commonOut", QDir::homePath()).toString());
-		_ui->editHeaderOut->setText(
-				settings.value("headerOut", QDir::homePath()).toString());
-		_ui->editSourceOut->setText(
-				settings.value("sourceOut", QDir::homePath()).toString());
-		settings.endGroup();
-		break;
-
-	default:
-		break;
-	}
 }
 
 void Wizard::_addInputSlot(
@@ -115,7 +75,7 @@ void Wizard::_delRow(QTableWidget* table) {
 	if(curRow < 0)
 		curRow = table->rowCount()-1;
 	if(curRow >= 0)
-		_ui->tableInputSlots->removeRow(curRow);
+		table->removeRow(curRow);
 }
 
 void Wizard::_delInputSlot() {
@@ -135,17 +95,17 @@ void Wizard::done(int res) {
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
 			"TemplateGenerator");
-	if(_ui->selLoadMod->isChecked()) {
-		settings.setValue("recentInput", _ui->editLoadMod->text());
+	if(field("loadExisting").toBool()) {
+		settings.setValue("recentInput", field("loadPath"));
 	}
-	settings.setValue("author", _ui->editAuthor->text());
-	settings.setValue("email", _ui->editEmail->text());
+	settings.setValue("author", field("author"));
+	settings.setValue("email", field("email"));
 
 	settings.beginGroup("Paths");
-	settings.setValue("headerSeparate", _ui->checkHeaderSep->isChecked());
-	settings.setValue("commonOut", _ui->editOutPath->text());
-	settings.setValue("headerOut",_ui->editHeaderOut->text());
-	settings.setValue("sourceOut", _ui->editSourceOut->text());
+	settings.setValue("headerSeparate", field("headerSeparate"));
+	settings.setValue("commonOut", field("commonOut"));
+	settings.setValue("headerOut", field("headerOut"));
+	settings.setValue("sourceOut", field("sourceOut"));
 	settings.endGroup();
 
 	QWizard::done(res);

@@ -5,6 +5,8 @@ SET(MOC_SRC
 	QDirEdit.h
 	Wizard.h
 	WizardPageStart.h
+	WizardPageMetadata.h
+	WizardPageSummary.h
 	MainWindow.h
 	MyTabWidget.h
 )
@@ -12,14 +14,22 @@ SET(TG_SRC
 	QDirEdit.cpp
 	Wizard.cpp
 	WizardPageStart.cpp
+	WizardPageMetadata.cpp
+	WizardPageSummary.cpp
 	MyTabWidget.cpp
 	main.cpp
 	MainWindow.cpp
 )
+SET(UI_SRC
+	Wizard.ui
+	WizardPageStart.ui
+	WizardPageMetadata.ui
+	WizardPageSummary.ui
+)
 
 QT4_WRAP_CPP(MOC_OUT ${MOC_SRC})
 SOURCE_GROUP(MOCS FILES ${MOC_OUT})
-QT4_WRAP_UI(UI_OUT Wizard.ui)
+QT4_WRAP_UI(UI_OUT ${UI_SRC})
 QT4_ADD_RESOURCES(QRC_OUT resource.qrc)
 
 ADD_EXECUTABLE(templategenerator

@@ -35,8 +35,6 @@ private slots:
 	// \}
 
 protected:
-	/// set up wizard page
-	virtual void initializePage (int id);
 	/// generate module
 	virtual void done(int result);
 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WizardPageMetadata</class>
+ <widget class="QWizardPage" name="WizardPageMetadata">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WizardPage</string>
+  </property>
+  <property name="title">
+   <string>Module information</string>
+  </property>
+  <property name="subTitle">
+   <string>Set up plugin name, output directory and metadata information.</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="boxNameDir">
+     <property name="title">
+      <string>Name and Directory</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelAuthor">
+        <property name="text">
+         <string>Author Name:</string>
+        </property>
+        <property name="buddy">
+         <cstring>editAuthor</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="editAuthor"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelModName">
+        <property name="text">
+         <string>Module name:</string>
+        </property>
+        <property name="buddy">
+         <cstring>editModName</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="editModName"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelEmail">
+        <property name="text">
+         <string>Author Email:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="editEmail"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="boxDesc">
+     <property name="title">
+      <string>Module metadata information</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="labelModDesc">
+        <property name="text">
+         <string>Plugin Description:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QPlainTextEdit" name="editModDesc"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>editAuthor</tabstop>
+  <tabstop>editEmail</tabstop>
+  <tabstop>editModName</tabstop>
+  <tabstop>editModDesc</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -3,6 +3,10 @@
 
 #include <QWizardPage>
 
+namespace Ui {
+	class WizardPageStart;
+}
+
 /// class providing validators for start page
 class WizardPageStart : public QWizardPage
 {
@@ -23,6 +27,8 @@ public slots:
 private:
 	/// complete flag
 	bool _complete;
+	/// designer GUI
+	Ui::WizardPageStart* _ui;
 };
 
 #endif // WIZARDPAGESTART_H
