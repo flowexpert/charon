@@ -15,6 +15,7 @@ class WizardPageMetadata : public QWizardPage
 public:
 	/// default constructor
 	explicit WizardPageMetadata(QWidget* parent = 0);
+	virtual ~WizardPageMetadata();
 	/// initialize page
 	virtual void initializePage();
 

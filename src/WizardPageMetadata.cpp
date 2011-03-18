@@ -17,7 +17,13 @@ WizardPageMetadata::WizardPageMetadata(QWidget* p) :
 			"plainText", SIGNAL(textChanged()));
 }
 
+WizardPageMetadata::~WizardPageMetadata() {
+	delete _ui;
+}
+
 void WizardPageMetadata::initializePage() {
+	QWizardPage::initializePage();
+
 	QSettings settings(
 		"Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");

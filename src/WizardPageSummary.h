@@ -15,8 +15,13 @@ class WizardPageSummary : public QWizardPage
 public:
 	/// default constructor
 	explicit WizardPageSummary(QWidget* parent = 0);
+	virtual ~WizardPageSummary();
 	/// initialize page
 	virtual void initializePage();
+
+private slots:
+	/// update output file summary
+	void _updateOut();
 
 private:
 	/// designer GUI

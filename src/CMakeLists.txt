@@ -6,6 +6,8 @@ SET(MOC_SRC
 	Wizard.h
 	WizardPageStart.h
 	WizardPageMetadata.h
+	WizardPageSlots.h
+	WizardPageParameters.h
 	WizardPageSummary.h
 	MainWindow.h
 	MyTabWidget.h
@@ -15,15 +17,18 @@ SET(TG_SRC
 	Wizard.cpp
 	WizardPageStart.cpp
 	WizardPageMetadata.cpp
+	WizardPageSlots.cpp
+	WizardPageParameters.cpp
 	WizardPageSummary.cpp
 	MyTabWidget.cpp
 	main.cpp
 	MainWindow.cpp
 )
 SET(UI_SRC
-	Wizard.ui
 	WizardPageStart.ui
 	WizardPageMetadata.ui
+	WizardPageSlots.ui
+	WizardPageParameters.ui
 	WizardPageSummary.ui
 )
 

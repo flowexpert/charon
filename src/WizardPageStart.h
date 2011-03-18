@@ -15,6 +15,7 @@ class WizardPageStart : public QWizardPage
 public:
 	/// standart constructor
 	explicit WizardPageStart(QWidget *parent = 0);
+	virtual ~WizardPageStart();
 	/// return complete state
 	virtual bool isComplete() const;
 	/// initialize page

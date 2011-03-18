@@ -7,15 +7,22 @@
 #include "QDirEdit.h"
 
 WizardPageStart::WizardPageStart(QWidget* p) :
-	QWizardPage(p), _complete(true), _ui(new Ui::WizardPageStart)
-{
+			QWizardPage(p),
+			_complete(true),
+			_ui(new Ui::WizardPageStart) {
 	_ui->setupUi(this);
 	_ui->editLoadMod->acceptFiles(true,false);
 	registerField("loadPath",_ui->editLoadMod);
 	registerField("loadExisting",_ui->selLoadMod);
 }
 
+WizardPageStart::~WizardPageStart() {
+	delete _ui;
+}
+
 void WizardPageStart::initializePage() {
+	QWizardPage::initializePage();
+
 	QSettings settings(
 		"Heidelberg Collaboratory for Image Processing",
 		"TemplateGenerator");

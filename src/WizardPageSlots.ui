@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WizardPageSlots</class>
+ <widget class="QWizardPage" name="WizardPageSlots">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>530</width>
+    <height>526</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WizardPage</string>
+  </property>
+  <property name="title">
+   <string>Slots</string>
+  </property>
+  <property name="subTitle">
+   <string>Set up your input and output slots.</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="boxInputSlots">
+     <property name="title">
+      <string>Input Slots</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="1" column="0">
+       <widget class="QPushButton" name="buttonAddInput">
+        <property name="text">
+         <string>Add Input Slot</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="buttonDelInput">
+        <property name="text">
+         <string>Remove Input Slot</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QTableWidget" name="tableInputSlots">
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Name</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Documentation</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Type</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Optional</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>MultiSlot</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="boxOutputSlots">
+     <property name="title">
+      <string>Output Slots</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0" colspan="2">
+       <widget class="QTableWidget" name="tableOutputSlots">
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Name</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Documentation</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Type</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="buttonAddOutput">
+        <property name="text">
+         <string>Add Output Slot</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="buttonDelOutput">
+        <property name="text">
+         <string>Remove Output Slot</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonAddInput</sender>
+   <signal>clicked()</signal>
+   <receiver>WizardPageSlots</receiver>
+   <slot>_addInputSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>74</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>161</x>
+     <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonDelInput</sender>
+   <signal>clicked()</signal>
+   <receiver>WizardPageSlots</receiver>
+   <slot>_delInputSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>333</x>
+     <y>238</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>423</x>
+     <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddOutput</sender>
+   <signal>clicked()</signal>
+   <receiver>WizardPageSlots</receiver>
+   <slot>_addOutputSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>503</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>501</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonDelOutput</sender>
+   <signal>clicked()</signal>
+   <receiver>WizardPageSlots</receiver>
+   <slot>_delOutputSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>327</x>
+     <y>505</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>412</x>
+     <y>501</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_addInputSlot()</slot>
+  <slot>_addOutputSlot()</slot>
+  <slot>_delInputSlot()</slot>
+  <slot>_delOutputSlot()</slot>
+ </slots>
+</ui>

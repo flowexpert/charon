@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>337</width>
-    <height>379</height>
+    <width>563</width>
+    <height>556</height>
    </rect>
   </property>
   <property name="title">
@@ -203,12 +203,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>249</x>
-     <y>96</y>
+     <x>238</x>
+     <y>138</y>
     </hint>
     <hint type="destinationlabel">
-     <x>250</x>
-     <y>356</y>
+     <x>238</x>
+     <y>495</y>
     </hint>
    </hints>
   </connection>
@@ -220,11 +220,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>162</x>
-     <y>67</y>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>152</x>
-     <y>155</y>
+     <y>218</y>
     </hint>
    </hints>
   </connection>
@@ -235,12 +235,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>172</x>
-     <y>66</y>
+     <x>173</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
-     <x>171</x>
-     <y>187</y>
+     <x>173</x>
+     <y>245</y>
     </hint>
    </hints>
   </connection>
@@ -252,11 +252,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>188</x>
-     <y>68</y>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
      <x>191</x>
-     <y>210</y>
+     <y>272</y>
     </hint>
    </hints>
   </connection>
@@ -268,11 +268,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>59</x>
-     <y>66</y>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
      <x>59</x>
-     <y>158</y>
+     <y>218</y>
     </hint>
    </hints>
   </connection>
@@ -284,11 +284,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>77</x>
-     <y>67</y>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>75</x>
-     <y>184</y>
+     <y>245</y>
     </hint>
    </hints>
   </connection>
@@ -299,12 +299,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>66</y>
+     <x>92</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
-     <x>98</x>
-     <y>214</y>
+     <x>92</x>
+     <y>272</y>
     </hint>
    </hints>
   </connection>
@@ -315,12 +315,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>128</x>
-     <y>94</y>
+     <x>124</x>
+     <y>139</y>
     </hint>
     <hint type="destinationlabel">
-     <x>134</x>
-     <y>359</y>
+     <x>124</x>
+     <y>485</y>
     </hint>
    </hints>
   </connection>
@@ -331,12 +331,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>37</x>
-     <y>41</y>
+     <x>110</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel">
-     <x>39</x>
-     <y>304</y>
+     <x>110</x>
+     <y>443</y>
     </hint>
    </hints>
   </connection>
@@ -347,14 +347,81 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>111</x>
-     <y>44</y>
+     <x>215</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
-     <x>225</x>
-     <y>304</y>
+     <x>215</x>
+     <y>442</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editOutPath</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>WizardPageSummary</receiver>
+   <slot>_updateOut()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>423</x>
+     <y>229</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>463</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editHeaderOut</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>WizardPageSummary</receiver>
+   <slot>_updateOut()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>424</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>466</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editSourceOut</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>WizardPageSummary</receiver>
+   <slot>_updateOut()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>425</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>465</x>
+     <y>283</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>WizardPageSummary</receiver>
+   <slot>_updateOut()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>26</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>44</x>
+     <y>370</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>_updateOut()</slot>
+ </slots>
 </ui>
