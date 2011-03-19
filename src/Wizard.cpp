@@ -1,5 +1,4 @@
 #include "Wizard.h"
-#include "ui_Wizard.h"
 #include <QDir>
 #include <QSettings>
 #include <QMessageBox>
