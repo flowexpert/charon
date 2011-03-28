@@ -31,7 +31,7 @@ void WizardPageStart::initializePage() {
 }
 
 bool WizardPageStart::isComplete() const {
-	return _complete;
+	return QWizardPage::isComplete() && _complete;
 }
 
 void WizardPageStart::checkComplete() {

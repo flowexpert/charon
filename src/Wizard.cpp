@@ -38,14 +38,19 @@ void Wizard::done(int res) {
 	if(field("loadExisting").toBool()) {
 		settings.setValue("recentInput", field("loadPath"));
 	}
-	settings.setValue("author", field("author"));
-	settings.setValue("email", field("email"));
+	if (!field("author").toString().isEmpty())
+		settings.setValue("author", field("author"));
+	if (!field("email").toString().isEmpty())
+		settings.setValue("email", field("email"));
 
 	settings.beginGroup("Paths");
 	settings.setValue("headerSeparate", field("headerSeparate"));
-	settings.setValue("commonOut", field("commonOut"));
-	settings.setValue("headerOut", field("headerOut"));
-	settings.setValue("sourceOut", field("sourceOut"));
+	if (!field("commonOut").toString().isEmpty())
+		settings.setValue("commonOut", field("commonOut"));
+	if (!field("headerOut").toString().isEmpty())
+		settings.setValue("headerOut", field("headerOut"));
+	if (!field("sourceOut").toString().isEmpty())
+		settings.setValue("sourceOut", field("sourceOut"));
 	settings.endGroup();
 
 	settings.beginGroup("MainWindow");
