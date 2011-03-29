@@ -77,9 +77,5 @@ QStringList WizardPageParameters::paramTypes() const {
 }
 
 QStringList WizardPageParameters::paramLists() const {
-	QStringList res;
-	for (int ii=0; ii< _params.list.size(); ii++) {
-		res.append(QVariant(_params.list[ii]).toString());
-	}
-	return res;
+	return ParamSlotModel::toStringList(_params.list);
 }

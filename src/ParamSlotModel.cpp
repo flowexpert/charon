@@ -181,3 +181,11 @@ bool ParamSlotModel::removeRows(
 	return QAbstractTableModel::removeRows(row,count,pp);
 }
 
+QStringList ParamSlotModel::toStringList(const QList<bool>& l) {
+	QStringList res;
+	for (int ii=0; ii< l.size(); ii++) {
+		res.append(QVariant(l[ii]).toString());
+	}
+	return res;
+}
+

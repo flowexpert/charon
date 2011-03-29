@@ -44,6 +44,9 @@ public:
 	virtual bool removeRows(
 			int row, int count, const QModelIndex& parent = QModelIndex());
 	// \}
+
+	/// list conversion (for convenience)
+	static QStringList toStringList(const QList<bool>& list);
 };
 
 #endif // PARAMSLOTMODEL_H

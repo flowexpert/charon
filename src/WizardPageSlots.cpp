@@ -104,19 +104,11 @@ QStringList WizardPageSlots::inputSlotTypes() const {
 }
 
 QStringList WizardPageSlots::inputSlotOptional() const {
-	QStringList res;
-	for (int ii=0; ii< _inputSlots.optional.size(); ii++) {
-		res.append(QVariant(_inputSlots.optional[ii]).toString());
-	}
-	return res;
+	return ParamSlotModel::toStringList(_inputSlots.optional);
 }
 
 QStringList WizardPageSlots::inputSlotMulti() const {
-	QStringList res;
-	for (int ii=0; ii< _inputSlots.multi.size(); ii++) {
-		res.append(QVariant(_inputSlots.multi[ii]).toString());
-	}
-	return res;
+	return ParamSlotModel::toStringList(_inputSlots.multi);
 }
 
 QStringList WizardPageSlots::outputSlotNames() const {
