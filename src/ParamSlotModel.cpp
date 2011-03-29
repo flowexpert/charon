@@ -6,7 +6,7 @@ int ParamSlotModel::rowCount(const QModelIndex&) const {
 }
 
 int ParamSlotModel::columnCount(const QModelIndex&) const {
-	return 6;
+	return 7;
 }
 
 QVariant ParamSlotModel::data(
@@ -29,10 +29,12 @@ QVariant ParamSlotModel::data(
 			return types[idx.row()].isEmpty() ?
 					tr("auto") : types[idx.row()];
 		case 3:
-			return optional[idx.row()] ? tr("optional") : tr("required");
+			return defaults[idx.row()];
 		case 4:
-			return multi[idx.row()] ? tr("multi") : tr("single");
+			return optional[idx.row()] ? tr("optional") : tr("required");
 		case 5:
+			return multi[idx.row()] ? tr("multi") : tr("single");
+		case 6:
 			return list[idx.row()] ?
 					tr("parameter list") : tr("simple parameter");
 		}
@@ -40,11 +42,11 @@ QVariant ParamSlotModel::data(
 
 	case Qt::CheckStateRole:
 		switch(idx.column()) {
-		case 3:
-			return optional[idx.row()] ? Qt::Checked : Qt::Unchecked;
 		case 4:
-			return multi[idx.row()] ? Qt::Checked : Qt::Unchecked;
+			return optional[idx.row()] ? Qt::Checked : Qt::Unchecked;
 		case 5:
+			return multi[idx.row()] ? Qt::Checked : Qt::Unchecked;
+		case 6:
 			return list[idx.row()] ? Qt::Checked : Qt::Unchecked;
 		}
 		break;
@@ -81,11 +83,13 @@ QVariant ParamSlotModel::headerData(
 		case 2:
 			return tr("Type");
 		case 3:
-			return tr("Optional");
+			return tr("Default");
 		case 4:
-			return tr("Multi");
+			return tr("Optional");
 		case 5:
-			return tr("List");
+			return tr("MultiSlot");
+		case 6:
+			return tr("ParameterList");
 		}
 	}
 	return QVariant();
@@ -94,10 +98,10 @@ QVariant ParamSlotModel::headerData(
 Qt::ItemFlags ParamSlotModel::flags(
 		const QModelIndex& idx) const {
 	Qt::ItemFlags ret = QAbstractTableModel::flags(idx);
-	if (idx.column() < 3) {
+	if (idx.column() < 4) {
 		return ret | Qt::ItemIsEditable;
 	}
-	else if (idx.column() >= 3) {
+	else if (idx.column() >= 4) {
 		return ret | Qt::ItemIsUserCheckable;
 	}
 	return ret;
@@ -120,6 +124,9 @@ bool ParamSlotModel::setData(
 		case 2:
 			types[idx.row()] = nv;
 			break;
+		case 3:
+			defaults[idx.row()] = nv;
+			break;
 		default:
 			return false;
 		}
@@ -128,13 +135,13 @@ bool ParamSlotModel::setData(
 	}
 	if (role == Qt::CheckStateRole) {
 		switch (idx.column()) {
-		case 3:
+		case 4:
 			optional[idx.row()] = value.toBool();
 			break;
-		case 4:
+		case 5:
 			multi[idx.row()] = value.toBool();
 			break;
-		case 5:
+		case 6:
 			list[idx.row()] = value.toBool();
 			break;
 		default:
@@ -155,6 +162,7 @@ bool ParamSlotModel::insertRows(
 			names.append("");
 			docs.append("");
 			types.append("");
+			defaults.append("");
 			optional.append(false);
 			multi.append(false);
 			list.append(false);
@@ -171,6 +179,7 @@ bool ParamSlotModel::removeRows(
 			names.removeAt(row+ii);
 			docs.removeAt(row+ii);
 			types.removeAt(row+ii);
+			defaults.removeAt(row+ii);
 			optional.removeAt(row+ii);
 			multi.removeAt(row+ii);
 			list.removeAt(row+ii);

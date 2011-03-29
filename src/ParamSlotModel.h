@@ -32,6 +32,7 @@ public:
 	QStringList names;
 	QStringList docs;
 	QStringList types;
+	QStringList defaults;
 	QList<bool> optional;
 	QList<bool> multi;
 	QList<bool> list;

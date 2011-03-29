@@ -7,11 +7,13 @@ WizardPageSlots::WizardPageSlots(QWidget* p) :
 		_ui(new Ui::WizardPageSlots) {
 	_ui->setupUi(this);
 	_ui->tableInputSlots->setModel(&_inputSlots);
-	_ui->tableInputSlots->hideColumn(5);
+	_ui->tableInputSlots->hideColumn(3);
+	_ui->tableInputSlots->hideColumn(6);
 	_ui->tableOutputSlots->setModel(&_outputSlots);
 	_ui->tableOutputSlots->hideColumn(3);
 	_ui->tableOutputSlots->hideColumn(4);
 	_ui->tableOutputSlots->hideColumn(5);
+	_ui->tableOutputSlots->hideColumn(6);
 
 	registerField("inputSlotNames", this, "inputSlotNames",
 			SIGNAL(completeChanged()));

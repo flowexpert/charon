@@ -16,10 +16,11 @@ class WizardPageParameters : public QWizardPage
 	Q_OBJECT
 	/// \name properties for result fields
 	// \{
-	Q_PROPERTY(QStringList paramNames  READ paramNames)
-	Q_PROPERTY(QStringList paramDocs   READ paramDocs)
-	Q_PROPERTY(QStringList paramTypes  READ paramTypes)
-	Q_PROPERTY(QStringList paramLists  READ paramLists)
+	Q_PROPERTY(QStringList paramNames    READ paramNames)
+	Q_PROPERTY(QStringList paramDocs     READ paramDocs)
+	Q_PROPERTY(QStringList paramTypes    READ paramTypes)
+	Q_PROPERTY(QStringList paramDefaults READ paramDefaults)
+	Q_PROPERTY(QStringList paramLists    READ paramLists)
 	// \}
 
 public:
@@ -36,6 +37,7 @@ public:
 	QStringList paramNames() const;
 	QStringList paramDocs() const;
 	QStringList paramTypes() const;
+	QStringList paramDefaults() const;
 	QStringList paramLists() const;
 	// \}
 

@@ -7,14 +7,16 @@ WizardPageParameters::WizardPageParameters(QWidget* p) :
 			_ui(new Ui::WizardPageParameters) {
 	_ui->setupUi(this);
 	_ui->tableParameters->setModel(&_params);
-	_ui->tableParameters->hideColumn(3);
 	_ui->tableParameters->hideColumn(4);
+	_ui->tableParameters->hideColumn(5);
 
 	registerField("paramNames", this, "paramNames",
 			SIGNAL(completeChanged()));
 	registerField("paramDocs", this, "paramDocs",
 			SIGNAL(completeChanged()));
 	registerField("paramTypes", this, "paramTypes",
+			SIGNAL(completeChanged()));
+	registerField("paramDefaults", this, "paramDefaults",
 			SIGNAL(completeChanged()));
 	registerField("paramLists", this, "paramLists",
 			SIGNAL(completeChanged()));
@@ -74,6 +76,10 @@ QStringList WizardPageParameters::paramDocs() const {
 
 QStringList WizardPageParameters::paramTypes() const {
 	return _params.types;
+}
+
+QStringList WizardPageParameters::paramDefaults() const {
+	return _params.defaults;
 }
 
 QStringList WizardPageParameters::paramLists() const {
