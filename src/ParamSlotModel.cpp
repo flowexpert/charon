@@ -15,10 +15,6 @@ QVariant ParamSlotModel::data(
 
 	switch (role) {
 	case Qt::EditRole:
-		// special case: auto guess
-		// all other cases: identical to Display role
-		if(idx.column() == 2)
-			return types[idx.row()];
 	case Qt::DisplayRole:
 		switch (idx.column()) {
 		case 0:
@@ -26,8 +22,7 @@ QVariant ParamSlotModel::data(
 		case 1:
 			return docs[idx.row()];
 		case 2:
-			return types[idx.row()].isEmpty() ?
-					tr("auto") : types[idx.row()];
+			return types[idx.row()];
 		case 3:
 			return defaults[idx.row()];
 		case 4:
@@ -59,6 +54,10 @@ QVariant ParamSlotModel::data(
 			break;
 		case 1:
 			if (docs[idx.row()].isEmpty())
+				return redBG;
+			break;
+		case 2:
+			if (types[idx.row()].isEmpty())
 				return redBG;
 			break;
 		}
@@ -188,6 +187,12 @@ bool ParamSlotModel::removeRows(
 		return true;
 	}
 	return QAbstractTableModel::removeRows(row,count,pp);
+}
+
+bool ParamSlotModel::isValid() const {
+	return names.indexOf("") < 0 &&
+			docs.indexOf("") < 0 &&
+			types.indexOf("") < 0;
 }
 
 QStringList ParamSlotModel::toStringList(const QList<bool>& l) {

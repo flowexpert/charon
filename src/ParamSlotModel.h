@@ -46,6 +46,9 @@ public:
 			int row, int count, const QModelIndex& parent = QModelIndex());
 	// \}
 
+	/// check if all required fields are filled
+	bool isValid() const;
+
 	/// list conversion (for convenience)
 	static QStringList toStringList(const QList<bool>& list);
 };

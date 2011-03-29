@@ -44,10 +44,7 @@ WizardPageSlots::~WizardPageSlots() {
 
 bool WizardPageSlots::isComplete() const {
 	return QWizardPage::isComplete()
-			&& (_inputSlots.names.indexOf("") < 0)
-			&& (_inputSlots.docs.indexOf("") < 0)
-			&& (_outputSlots.names.indexOf("") < 0)
-			&& (_outputSlots.docs.indexOf("") < 0);
+			&& _inputSlots.isValid() && _outputSlots.isValid();
 }
 
 bool WizardPageSlots::validatePage() {

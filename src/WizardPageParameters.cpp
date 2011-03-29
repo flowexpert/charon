@@ -26,9 +26,7 @@ WizardPageParameters::WizardPageParameters(QWidget* p) :
 }
 
 bool WizardPageParameters::isComplete() const {
-	return QWizardPage::isComplete()
-			&& (_params.names.indexOf("") < 0)
-			&& (_params.docs.indexOf("") < 0);
+	return QWizardPage::isComplete() && _params.isValid();
 }
 
 bool WizardPageParameters::validatePage() {
