@@ -16,7 +16,6 @@ public:
 protected:
 	/// generate module
 	virtual void done(int result);
-
 };
 
 #endif // WIZARD_H

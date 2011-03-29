@@ -7,6 +7,7 @@
 #include "WizardPageSlots.h"
 #include "WizardPageParameters.h"
 #include "WizardPageSummary.h"
+#include "SideWidget.h"
 
 Wizard::Wizard(QWidget* p) :
 		QWizard(p) {
@@ -15,6 +16,7 @@ Wizard::Wizard(QWidget* p) :
 	addPage(new WizardPageSlots(this));
 	addPage(new WizardPageParameters(this));
 	addPage(new WizardPageSummary(this));
+	setSideWidget(new SideWidget(this));
 
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
@@ -25,6 +27,9 @@ Wizard::Wizard(QWidget* p) :
 		restoreGeometry(settings.value("geometry").toByteArray());
 	}
 	settings.endGroup();
+
+	connect(this,SIGNAL(currentIdChanged(int)),
+			sideWidget(),SLOT(updateProgress(int)));
 }
 
 Wizard::~Wizard() {
