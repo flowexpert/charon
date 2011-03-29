@@ -1,0 +1,49 @@
+#ifndef PARAMSLOTMODEL_H
+#define PARAMSLOTMODEL_H
+
+#include <QAbstractTableModel>
+#include <QStringList>
+
+/// model used for parameter and slots edit table
+class ParamSlotModel : public QAbstractTableModel
+{
+	Q_OBJECT
+public:
+	/// \name implement model interface
+	// \{
+	virtual int rowCount(
+			const QModelIndex& parent = QModelIndex()) const;
+	virtual int columnCount(
+			const QModelIndex& parent = QModelIndex()) const;
+	virtual QVariant data(
+			const QModelIndex& index, int role = Qt::DisplayRole) const;
+	virtual QVariant headerData(
+			int section, Qt::Orientation orientation,
+			int role = Qt::DisplayRole ) const;
+	virtual Qt::ItemFlags flags(
+			const QModelIndex& index) const;
+	virtual bool setData(
+			const QModelIndex& index, const QVariant& value,
+			int role = Qt::EditRole);
+	// \}
+
+	/// \name store parameter config
+	// \{
+	QStringList names;
+	QStringList docs;
+	QStringList types;
+	QList<bool> optional;
+	QList<bool> multi;
+	QList<bool> list;
+	// \}
+
+	/// \name add and remove table rows
+	// \{
+	virtual bool insertRows(
+			int row, int count, const QModelIndex& parent = QModelIndex());
+	virtual bool removeRows(
+			int row, int count, const QModelIndex& parent = QModelIndex());
+	// \}
+};
+
+#endif // PARAMSLOTMODEL_H

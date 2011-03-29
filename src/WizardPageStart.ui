@@ -38,6 +38,9 @@
       </item>
       <item>
        <widget class="QRadioButton" name="selLoadMod">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>load existing plugin</string>
         </property>

@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 SET(MOC_SRC
 	QDirEdit.h
+	ParamSlotModel.h
 	Wizard.h
 	WizardPageStart.h
 	WizardPageMetadata.h
@@ -14,6 +15,7 @@ SET(MOC_SRC
 )
 SET(TG_SRC
 	QDirEdit.cpp
+	ParamSlotModel.cpp
 	Wizard.cpp
 	WizardPageStart.cpp
 	WizardPageMetadata.cpp

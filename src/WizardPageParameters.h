@@ -3,6 +3,7 @@
 
 #include <QWizardPage>
 #include <QAbstractTableModel>
+#include "ParamSlotModel.h"
 class QTableWidget;
 
 namespace Ui {
@@ -13,6 +14,13 @@ namespace Ui {
 class WizardPageParameters : public QWizardPage
 {
 	Q_OBJECT
+	/// \name properties for result fields
+	// \{
+	Q_PROPERTY(QStringList paramNames  READ paramNames)
+	Q_PROPERTY(QStringList paramDocs   READ paramDocs)
+	Q_PROPERTY(QStringList paramTypes  READ paramTypes)
+	Q_PROPERTY(QStringList paramLists  READ paramLists)
+	// \}
 
 public:
 	/// default constructor
@@ -20,60 +28,29 @@ public:
 	~WizardPageParameters();
 	/// return complete state
 	virtual bool isComplete() const;
+	/// check for name collisions
+	virtual bool validatePage();
+
+	/// \name property getters
+	// \{
+	QStringList paramNames() const;
+	QStringList paramDocs() const;
+	QStringList paramTypes() const;
+	QStringList paramLists() const;
+	// \}
 
 private slots:
 	/// \name add and remove table rows
 	// \{
-	void _addParameter(
-			QString name="",QString doc="",QString type="",
-			QString defVal="", bool list=false);
+	void _addParameter();
 	void _delParameter();
 	// \}
 
 private:
-	/// model used for parameter edit table
-	class ParamModel : public QAbstractTableModel {
-	public:
-		/// \name implement model interface
-		// \{
-		virtual int rowCount(
-				const QModelIndex& parent = QModelIndex()) const;
-		virtual int columnCount(
-				const QModelIndex& parent = QModelIndex()) const;
-		virtual QVariant data(
-				const QModelIndex& index, int role = Qt::DisplayRole) const;
-		virtual QVariant headerData(
-				int section, Qt::Orientation orientation,
-				int role = Qt::DisplayRole ) const;
-		virtual Qt::ItemFlags flags(
-				const QModelIndex& index) const;
-		virtual bool setData(
-				const QModelIndex& index, const QVariant& value,
-				int role = Qt::EditRole);
-		// \}
-
-		/// \name store parameter config
-		// \{
-		QStringList names;
-		QStringList docs;
-		QStringList types;
-		QStringList defaults;
-		QList<bool> list;
-		// \}
-
-		/// \name add and remove table rows
-		// \{
-		virtual bool insertRows(
-				int row, int count, const QModelIndex& parent = QModelIndex());
-		virtual bool removeRows(
-				int row, int count, const QModelIndex& parent = QModelIndex());
-		// \}
-	};
-
 	/// designer GUI
 	Ui::WizardPageParameters* _ui;
 	/// parameter table model
-	ParamModel _model;
+	ParamSlotModel _params;
 };
 
 #endif // WIZARDPAGEPARAMETERS_H
