@@ -1,9 +1,9 @@
 <RCC>
-    <qresource prefix="/templates" >
-        <file>res/NonTempCpp.cpp</file>
-        <file>res/NonTempH.h</file>
-        <file>res/TempCpp.cpp</file>
-        <file>res/TempH.h</file>
-        <file>res/TempHxx.hxx</file>
+    <qresource prefix="/templates">
+        <file alias="NonTemp.cpp">res/NonTemp.cpp</file>
+        <file alias="NonTemp.h">res/NonTemp.h</file>
+        <file alias="Temp.cpp">res/Temp.cpp</file>
+        <file alias="Temp.h">res/Temp.h</file>
+        <file alias="Temp.hxx">res/Temp.hxx</file>
     </qresource>
 </RCC>

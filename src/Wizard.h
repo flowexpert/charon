@@ -16,6 +16,16 @@ public:
 protected:
 	/// generate module
 	virtual void done(int result);
+
+private:
+	/// write files using resource templates
+	bool _writeFiles();
+	/// replace patterns using the field values
+	/** \param src     source filename
+	 *  \param dst     target filename
+	 *  \retval true   successful write
+	 */
+	bool _replacePlaceholders(QString src, QString dst);
 };
 
 #endif // WIZARD_H

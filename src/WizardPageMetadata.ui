@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>442</width>
+    <height>378</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,15 +71,25 @@
       <string>Module metadata information</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0" colspan="2">
+      <item row="2" column="0" colspan="2">
        <widget class="QLabel" name="labelModDesc">
         <property name="text">
-         <string>Plugin Description:</string>
+         <string>Detailed Documentation (simple html markup possible):</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="2">
+      <item row="3" column="0">
        <widget class="QPlainTextEdit" name="editModDesc"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelBriefDesc">
+        <property name="text">
+         <string>Brief description (one sentence, do not use &quot;.&quot;):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLineEdit" name="editBriefDesc"/>
       </item>
      </layout>
     </widget>
@@ -88,6 +98,7 @@
  </widget>
  <tabstops>
   <tabstop>editModName</tabstop>
+  <tabstop>editBriefDesc</tabstop>
   <tabstop>editModDesc</tabstop>
   <tabstop>editAuthor</tabstop>
   <tabstop>editEmail</tabstop>

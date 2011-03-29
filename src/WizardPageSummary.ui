@@ -61,6 +61,35 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="boxHeaders">
+     <property name="title">
+      <string>Header includes</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkCImg">
+        <property name="text">
+         <string>use CImg.h</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkVigra">
+        <property name="text">
+         <string>use vigra MultiArrays</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="boxOutConfig">
      <property name="title">
       <string>Output Configuration</string>

@@ -11,8 +11,6 @@ SET(MOC_SRC
 	WizardPageSlots.h
 	WizardPageParameters.h
 	WizardPageSummary.h
-	MainWindow.h
-	MyTabWidget.h
 )
 SET(TG_SRC
 	QDirEdit.cpp
@@ -24,9 +22,7 @@ SET(TG_SRC
 	WizardPageSlots.cpp
 	WizardPageParameters.cpp
 	WizardPageSummary.cpp
-	MyTabWidget.cpp
 	main.cpp
-	MainWindow.cpp
 )
 SET(UI_SRC
 	SideWidget.ui

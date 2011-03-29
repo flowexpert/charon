@@ -12,9 +12,20 @@ WizardPageMetadata::WizardPageMetadata(QWidget* p) :
 	registerField("author*", _ui->editAuthor);
 	registerField("email*", _ui->editEmail);
 	registerField("name*", _ui->editModName);
+	registerField("briefDesc*", _ui->editBriefDesc);
 	registerField(
 			"description*", _ui->editModDesc,
 			"plainText", SIGNAL(textChanged()));
+
+	// validators
+	_ui->editAuthor->setValidator(new QRegExpValidator(
+			QRegExp("[\\w\\s\\.\\-]+"),this));
+	_ui->editEmail->setValidator(new QRegExpValidator(
+			QRegExp("[\\w\\.\\-]+@\\w+\\.[\\w\\.]+"),this));
+	_ui->editModName->setValidator(new QRegExpValidator(
+			QRegExp("[a-zA-Z]\\w*"),this));
+	_ui->editBriefDesc->setValidator(new QRegExpValidator(
+			QRegExp("[\\w\\s]+"),this));
 }
 
 WizardPageMetadata::~WizardPageMetadata() {

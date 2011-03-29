@@ -14,6 +14,15 @@ WizardPageSummary::WizardPageSummary(QWidget* p) :
 	registerField("commonOut", _ui->editOutPath);
 	registerField("headerOut", _ui->editHeaderOut);
 	registerField("sourceOut", _ui->editSourceOut);
+
+	registerField("templated", _ui->checkTemplated);
+	registerField("genCmake", _ui->checkGenCMake);
+	registerField("hFileOut", _ui->editHOut);
+	registerField("hxxFileOut", _ui->editHxxOut);
+	registerField("cppFileOut", _ui->editCppOut);
+	registerField("cmakeFileOut", _ui->editCMakeOut);
+	registerField("useCImg", _ui->checkCImg);
+	registerField("useVigra", _ui->checkVigra);
 }
 
 WizardPageSummary::~WizardPageSummary() {
