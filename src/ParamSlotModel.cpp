@@ -11,7 +11,8 @@ int ParamSlotModel::columnCount(const QModelIndex&) const {
 
 QVariant ParamSlotModel::data(
 		const QModelIndex& idx, int role) const {
-	QBrush redBG(QColor("#FAA"));
+	QBrush redBG(QColor(0xFF,0,0,0x33));
+	QBrush greenBG(QColor(0,0xFF,0,0x22));
 
 	switch (role) {
 	case Qt::EditRole:
@@ -49,24 +50,13 @@ QVariant ParamSlotModel::data(
 	case Qt::BackgroundRole:
 		switch(idx.column()) {
 		case 0:
-			if (names[idx.row()].isEmpty())
-				return redBG;
-			break;
+			return (names[idx.row()].isEmpty()) ? redBG : greenBG;
 		case 1:
-			if (docs[idx.row()].isEmpty())
-				return redBG;
-			break;
+			return (docs[idx.row()].isEmpty()) ? redBG : greenBG;
 		case 2:
-			if (types[idx.row()].isEmpty())
-				return redBG;
-			break;
+			return (types[idx.row()].isEmpty()) ? redBG : greenBG;
 		}
-		break;
-
-	case Qt::ForegroundRole:
-		if( idx.column() == 2 && types[idx.row()] == "")
-			return QBrush(QColor(Qt::gray));
-		break;
+		return greenBG;
 	}
 	return QVariant();
 }

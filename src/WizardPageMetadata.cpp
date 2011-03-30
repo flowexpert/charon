@@ -44,3 +44,37 @@ void WizardPageMetadata::initializePage() {
 	_ui->editEmail->setText(
 			settings.value("email", "").toString());
 }
+
+bool WizardPageMetadata::isComplete() const {
+	int p;
+	QPalette pv = palette();
+	pv.setColor(QPalette::Base, QColor("#EFE"));
+	QPalette pi = palette();
+	pi.setColor(QPalette::Base, QColor("#FCC"));
+
+	QString s = _ui->editAuthor->text();
+	bool valid = _ui->editAuthor->validator()->validate(s, p) ==
+				 QValidator::Acceptable;
+	_ui->editAuthor->setPalette(valid?pv:pi);
+
+	s = _ui->editEmail->text();
+	valid = _ui->editEmail->validator()->validate(s, p) ==
+					 QValidator::Acceptable;
+	_ui->editEmail->setPalette(valid?pv:pi);
+
+	s = _ui->editModName->text();
+	valid = _ui->editModName->validator()->validate(s, p) ==
+					 QValidator::Acceptable;
+	_ui->editModName->setPalette(valid?pv:pi);
+
+	s = _ui->editBriefDesc->text();
+	valid = _ui->editBriefDesc->validator()->validate(s, p) ==
+					 QValidator::Acceptable;
+	_ui->editBriefDesc->setPalette(valid?pv:pi);
+
+	s = _ui->editModDesc->toPlainText();
+	valid = !s.isEmpty();
+	_ui->editModDesc->setPalette(valid?pv:pi);
+
+	return QWizardPage::isComplete();
+}
