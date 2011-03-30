@@ -99,41 +99,43 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 	QTextStream srcStrm(&srcFile);
 	QString txt = srcStrm.readAll();
 
+	// setup fill texts
 	QString author = field("author").toString().trimmed();
-	QString authoremail = QString("<a href=\"mailto:%2\">%1</a>")
+	QString authoremail = QString("<a href=\"mailto:%2\">\n *      %1</a>")
 			.arg(author).arg(field("email").toString().trimmed());
 	QString name = field("name").toString().trimmed();
-
-	// setup fill texts
 	QString doxyDoc = QString("/// %1\n/** %2\n */")
-			.arg(field("briefDesc").toString())
-			.arg(field("description").toString());
-	QString pluginDoc;
-
+			.arg(breakLines(
+					field("briefDesc").toString(), "\n/// "))
+			.arg(breakLines(
+					field("description").toString(), "\n *  "));
+	QString pluginDoc = QString("<h2>%1</h2>\n%2")
+			.arg(field("briefDesc").toString().trimmed())
+			.arg(field("description").toString().trimmed());
+	pluginDoc = breakLines(pluginDoc, " \"\n\t\t\t\"", "<br>");
 	QString addHeaders;
 	if(field("useVigra").toBool())
 		addHeaders += "#include <vigra/multi_array.hxx>\n";
 	if(field("useCImg").toBool())
 		addHeaders += "#include <charon-utils/CImg.h>\n";
-
 	QString paramSlots;
 	QString ctorAdd;
 	QString ctorCont;
 
 	// replace placeholders
-	txt.replace("@Author@", author);
-	txt.replace("@AuthorEmail@", authoremail);
+	txt.replace("@Author@",     author);
+	txt.replace("@AuthorEmail@",authoremail);
 	txt.replace("@ModuleName@", name, Qt::CaseSensitive);
-	txt.replace("@modulename@",name.toLower(), Qt::CaseSensitive);
-	txt.replace("@MODULENAME@",name.toUpper(), Qt::CaseSensitive);
-	txt.replace("@Year@",QDate::currentDate().toString("yyyy"));
-	txt.replace("@Date@",QDate::currentDate().toString("dd.MM.yyyy"));
-	txt.replace("@DoxyDocstring@", doxyDoc);
+	txt.replace("@modulename@", name.toLower(), Qt::CaseSensitive);
+	txt.replace("@MODULENAME@", name.toUpper(), Qt::CaseSensitive);
+	txt.replace("@Year@",       QDate::currentDate().toString("yyyy"));
+	txt.replace("@Date@",       QDate::currentDate().toString("dd.MM.yyyy"));
+	txt.replace("@DoxyDoc@",    doxyDoc);
 	txt.replace("@addHeaders@", addHeaders);
 	txt.replace("@ParamSlots@", paramSlots);
-	txt.replace("@PluginDoc@", pluginDoc);
-	txt.replace("@ctorAdd@", ctorAdd);
-	txt.replace("@ctorCont@", ctorCont);
+	txt.replace("@PluginDoc@",  pluginDoc);
+	txt.replace("@ctorAdd@",    ctorAdd);
+	txt.replace("@ctorCont@",   ctorCont);
 
 	// write result to dst
 	QFile dstFile(dst);
@@ -147,4 +149,41 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 	dstStrm << txt;
 
 	return true;
+}
+
+QString Wizard::breakLines(QString src, QString dlm, QString nl, uint ll) {
+	// replace newlines to get single line string
+	src = src.trimmed();
+	src.replace("\n", QString("@nl@ ").leftJustified(nl.length(), ' '));
+
+	// reduced string width regarding delimiter (assuming tab width 4)
+	int width = ll - dlm.length() - 3*dlm.count('\t');
+	Q_ASSERT(width >= 40); // too small widths do not work
+
+	QString dst = "";
+	while (src.length() >= width) {
+		// find split position
+		int pos=src.indexOf(QRegExp("@nl@\\s*"))+4;
+		if (pos < 4 || pos >= width) {
+			for(int cur=0; cur<width && cur>=0;
+					cur=src.indexOf(QRegExp("\\s"),cur+1)) {
+				pos = cur;
+			}
+		}
+		if (pos <= 0)
+			break;
+
+		// append beginning of src to dst, adding dlm if neccessary
+		dst.append(src.left(pos).trimmed());
+		src.remove(0,pos);
+		src = src.trimmed();
+		if(!src.isEmpty())
+			dst.append(dlm);
+	}
+	dst.append(src.trimmed());
+
+	// newline fixup
+	dst.replace(QRegExp("@nl@ *"), nl);
+
+	return dst;
 }

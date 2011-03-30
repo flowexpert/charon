@@ -36,7 +36,7 @@
 
 #include <charon-core/ParameteredObject.h>
 @addHeaders@
-@DoxyDocstring@
+@DoxyDoc@
 class @modulename@_DECLDIR @pluginName@ : public ParameteredObject {
 public:
 	/// default constructor

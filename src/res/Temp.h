@@ -38,7 +38,7 @@
 
 #include <charon-core/ParameteredObject.h>
 @addHeaders@
-@DoxyDocstring@
+@DoxyDoc@
 template <typename T>
 class @modulename@_DECLDIR @ModuleName@ :
 		public TemplatedParameteredObject<T> {

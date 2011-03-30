@@ -13,6 +13,15 @@ public:
 	explicit Wizard(QWidget *parent = 0);
 	virtual ~Wizard();
 
+	/// warp long lines adding specified delimiters
+	/** \param src     source string
+	 *  \param delim   line delimiter to be used to wrap
+	 *  \param ll      desired line lenght
+	 *  \param nl      replacement for newlines in src (prepended to delim)
+	 *  \returns       modified string
+	 */
+	static QString breakLines(
+		QString src, QString delim = "\n", QString nl = "", uint ll=80);
 protected:
 	/// generate module
 	virtual void done(int result);

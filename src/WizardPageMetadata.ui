@@ -97,11 +97,11 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>editAuthor</tabstop>
+  <tabstop>editEmail</tabstop>
   <tabstop>editModName</tabstop>
   <tabstop>editBriefDesc</tabstop>
   <tabstop>editModDesc</tabstop>
-  <tabstop>editAuthor</tabstop>
-  <tabstop>editEmail</tabstop>
  </tabstops>
  <resources/>
  <connections/>
