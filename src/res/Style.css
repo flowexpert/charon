@@ -14,14 +14,15 @@ QListView#sideWidget:!active {
 
 QListView#sideWidget::item:!active {
 	border: 0px solid transparent;
-	border-left-width: 22px;
+	border-left-width: 16px;
 	margin: 6px 0px 6px 0px;
+	padding: 0px 0px 0px 3px;
 	color: gray;
 }
 
 QListView#sideWidget::item:selected:!active {
 	color: black;
-	border-image: url(:/look/arrow.png) 0 0 0 22
+	border-image: url(:/look/arrow.png) 0 0 0 16
 }
 
 QListView#sideWidget::item:hover:!active {
