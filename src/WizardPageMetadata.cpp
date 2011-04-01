@@ -26,11 +26,6 @@ WizardPageMetadata::WizardPageMetadata(QWidget* p) :
 			QRegExp("[a-zA-Z]\\w*"),this));
 	_ui->editBriefDesc->setValidator(new QRegExpValidator(
 			QRegExp("[\\w\\s,;\\-]+"),this));
-	_ui->editAuthor->setProperty("required", true);
-	_ui->editEmail->setProperty("required", true);
-	_ui->editModName->setProperty("required", true);
-	_ui->editBriefDesc->setProperty("required", true);
-	_ui->editModDesc->setProperty("required", true);
 }
 
 WizardPageMetadata::~WizardPageMetadata() {
