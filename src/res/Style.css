@@ -1,0 +1,42 @@
+/* Style sheet to tune appearance of the side widget
+ * and the parameter/slot tables
+ */
+
+QListView#sideWidget {
+	font-size: 11pt;
+	min-width: 120px;
+}
+
+QListView#sideWidget:!active {
+	color: black;
+	background: transparent;
+}
+
+QListView#sideWidget::item:!active {
+	border: 1px solid transparent;
+	border-left-width: 28px;
+	padding: 2px;
+	color: gray;
+}
+
+QListView#sideWidget::item:selected:!active {
+	color: black;
+	border-image: url(:/look/arrow.png) 0 0 0 32
+/*
+	border-radius: 3px;
+	border-color: #009;
+	background: qlineargradient(
+		x1: 0, y1: 0, x2: 0, y2: 1
+		stop: 0 #9AF, stop: 1 #BCF);
+*/
+}
+
+QListView#sideWidget::item:hover:!active {
+	background: white;
+	color: black;
+}
+
+QTableView {
+	selection-background-color: #89F;
+	alternate-background-color: #EEF;
+}

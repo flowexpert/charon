@@ -18,39 +18,9 @@
   </property>
   <layout class="QVBoxLayout">
    <item>
-    <widget class="QListWidget" name="listProgress">
+    <widget class="QListWidget" name="sideWidget">
      <property name="enabled">
       <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QListView {
-	font-size: 11pt;
- }
-
-QListView:!active {
-	color: black;
-	background: transparent;
-}
-
-QListView::item {
-	border: 1px solid transparent;
-	border-radius: 3px;
-	padding: 3px;
-}
-
-QListView::item:selected {
-	border-color: #00A;
- }
-
- QListView::item:selected:!active {
-	color: black;
-	background: #CCF;
- }
-
-QListView::item:hover {
-	background: white;
-	color: black;
- }</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>

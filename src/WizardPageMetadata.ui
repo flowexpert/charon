@@ -14,7 +14,7 @@
    <string>WizardPage</string>
   </property>
   <property name="title">
-   <string>Module information</string>
+   <string>Description</string>
   </property>
   <property name="subTitle">
    <string>Set up plugin name, output directory and metadata information.</string>

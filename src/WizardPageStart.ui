@@ -14,7 +14,7 @@
    <string>WizardPage</string>
   </property>
   <property name="title">
-   <string>Template-Generator</string>
+   <string>Start</string>
   </property>
   <property name="subTitle">
    <string>This setup wizard belongs to charon and helps you to create simple plugins with common code parts.</string>

@@ -18,7 +18,13 @@ Wizard::Wizard(QWidget* p) :
 	addPage(new WizardPageSlots(this));
 	addPage(new WizardPageParameters(this));
 	addPage(new WizardPageSummary(this));
-	setSideWidget(new SideWidget(this));
+
+	QListWidget* sWidget = new SideWidget(this);
+	setSideWidget(sWidget);
+	const QList<int>& pId = pageIds();
+	for(int ii=0; ii < pId.size(); ii++) {
+		sWidget->addItem(page(pId[ii])->title());
+	}
 
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
@@ -31,7 +37,13 @@ Wizard::Wizard(QWidget* p) :
 	settings.endGroup();
 
 	connect(this,SIGNAL(currentIdChanged(int)),
-			sideWidget(),SLOT(updateProgress(int)));
+			sWidget,SLOT(updateProgress(int)));
+
+	QFile styleFile(":/look/Style.css");
+	styleFile.open(QFile::ReadOnly|QFile::Text);
+	QTextStream styleStrm(&styleFile);
+	QString styleString(styleStrm.readAll());
+	setStyleSheet(styleString);
 }
 
 Wizard::~Wizard() {

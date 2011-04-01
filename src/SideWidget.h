@@ -1,29 +1,20 @@
 #ifndef SIDEWIDGET_H
 #define SIDEWIDGET_H
 
-#include <QWidget>
-
-namespace Ui {
-	class SideWidget;
-}
+#include <QListWidget>
 
 /// side widget with progress display
-class SideWidget : public QWidget
+class SideWidget : public QListWidget
 {
 	Q_OBJECT
 
 public:
 	/// default constructor
-	explicit SideWidget(QWidget *parent = 0);
-	~SideWidget();
+	explicit SideWidget(QWidget* parent = 0);
 
 public slots:
 	/// update progress status
 	void updateProgress(int id);
-
-private:
-	/// designer GUI
-	Ui::SideWidget* _ui;
 };
 
 #endif // SIDEWIDGET_H

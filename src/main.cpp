@@ -1,6 +1,8 @@
 #include <QtGui/QApplication>
 //#include "MainWindow.h"
 #include "Wizard.h"
+#include <QFile>
+#include <QTextStream>
 
 int main(int argc, char *argv[])
 {

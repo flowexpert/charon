@@ -1,18 +1,11 @@
 #include "SideWidget.h"
-#include "ui_SideWidget.h"
-
 SideWidget::SideWidget(QWidget* pp) :
-	QWidget(pp),
-	_ui(new Ui::SideWidget)
-{
-	_ui->setupUi(this);
-}
-
-SideWidget::~SideWidget()
-{
-	delete _ui;
+		QListWidget(pp) {
+	setObjectName("sideWidget");
+	setEnabled(false);
+	setFrameStyle(QFrame::NoFrame);
 }
 
 void SideWidget::updateProgress(int id) {
-	_ui->listProgress->setCurrentRow(id);
+	setCurrentRow(id);
 }

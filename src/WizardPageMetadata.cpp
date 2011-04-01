@@ -47,10 +47,9 @@ void WizardPageMetadata::initializePage() {
 
 bool WizardPageMetadata::isComplete() const {
 	int p;
-	QPalette pv = palette();
-	pv.setColor(QPalette::Base, QColor("#EFE"));
+	const QPalette& pv = palette();
 	QPalette pi = palette();
-	pi.setColor(QPalette::Base, QColor("#FCC"));
+	pi.setColor(QPalette::Base, QColor("#FFE"));
 
 	QString s = _ui->editAuthor->text();
 	bool valid = _ui->editAuthor->validator()->validate(s, p) ==
@@ -72,9 +71,8 @@ bool WizardPageMetadata::isComplete() const {
 					 QValidator::Acceptable;
 	_ui->editBriefDesc->setPalette(valid?pv:pi);
 
-	s = _ui->editModDesc->toPlainText();
-	valid = !s.isEmpty();
-	_ui->editModDesc->setPalette(valid?pv:pi);
+	_ui->editModDesc->setPalette(
+			_ui->editModDesc->toPlainText().isEmpty()?pi:pv);
 
 	return QWizardPage::isComplete();
 }

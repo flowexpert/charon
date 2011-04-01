@@ -25,7 +25,6 @@ SET(TG_SRC
 	main.cpp
 )
 SET(UI_SRC
-	SideWidget.ui
 	WizardPageStart.ui
 	WizardPageMetadata.ui
 	WizardPageSlots.ui

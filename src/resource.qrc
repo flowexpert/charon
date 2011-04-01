@@ -6,4 +6,8 @@
         <file alias="Temp.h">res/Temp.h</file>
         <file alias="Temp.hxx">res/Temp.hxx</file>
     </qresource>
+    <qresource prefix="/look">
+        <file alias="Style.css">res/Style.css</file>
+        <file alias="arrow.png">res/arrow-right.png</file>
+    </qresource>
 </RCC>
