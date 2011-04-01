@@ -44,6 +44,9 @@
         <property name="text">
          <string>Author Email:</string>
         </property>
+        <property name="buddy">
+         <cstring>editEmail</cstring>
+        </property>
        </widget>
       </item>
       <item row="1" column="1">
@@ -76,6 +79,9 @@
         <property name="text">
          <string>Detailed Documentation (simple html markup possible):</string>
         </property>
+        <property name="buddy">
+         <cstring>editModDesc</cstring>
+        </property>
        </widget>
       </item>
       <item row="3" column="0">
@@ -85,6 +91,9 @@
        <widget class="QLabel" name="labelBriefDesc">
         <property name="text">
          <string>Brief description (one sentence, do not use &quot;.&quot;):</string>
+        </property>
+        <property name="buddy">
+         <cstring>editBriefDesc</cstring>
         </property>
        </widget>
       </item>

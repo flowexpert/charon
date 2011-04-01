@@ -4,7 +4,11 @@
 
 QListView#sideWidget {
 	font-size: 11pt;
-	min-width: 110px;
+	min-width: 115px;
+	border-style: solid;
+	border-color: rgb(0,0,0,30);
+	border-width: 0px 1px 0px 0px;
+	padding: 0px 15px 0px 0px;
 }
 
 QListView#sideWidget:!active {
@@ -26,11 +30,25 @@ QListView#sideWidget::item:selected:!active {
 }
 
 QListView#sideWidget::item:hover:!active {
-	background: white;
-	color: black;
+	background: transparent;
 }
 
 QTableView {
 	selection-background-color: #89F;
 	alternate-background-color: #EEF;
 }
+
+QLineEdit:read-only {
+	background: lightblue;
+	border: 1px inset palette(dark);
+	border-radius: 3px;
+}
+
+/*
+QPlainTextEdit[required="true"],
+QLineEdit[required="true"] {
+	background: lightyellow;
+	border: 1px inset palette(dark);
+	border-radius: 3px;
+}
+*/

@@ -26,6 +26,11 @@ WizardPageMetadata::WizardPageMetadata(QWidget* p) :
 			QRegExp("[a-zA-Z]\\w*"),this));
 	_ui->editBriefDesc->setValidator(new QRegExpValidator(
 			QRegExp("[\\w\\s,;\\-]+"),this));
+	_ui->editAuthor->setProperty("required", true);
+	_ui->editEmail->setProperty("required", true);
+	_ui->editModName->setProperty("required", true);
+	_ui->editBriefDesc->setProperty("required", true);
+	_ui->editModDesc->setProperty("required", true);
 }
 
 WizardPageMetadata::~WizardPageMetadata() {
@@ -43,36 +48,4 @@ void WizardPageMetadata::initializePage() {
 			settings.value("author", tr("Unknown")).toString());
 	_ui->editEmail->setText(
 			settings.value("email", "").toString());
-}
-
-bool WizardPageMetadata::isComplete() const {
-	int p;
-	const QPalette& pv = palette();
-	QPalette pi = palette();
-	pi.setColor(QPalette::Base, QColor("#FFE"));
-
-	QString s = _ui->editAuthor->text();
-	bool valid = _ui->editAuthor->validator()->validate(s, p) ==
-				 QValidator::Acceptable;
-	_ui->editAuthor->setPalette(valid?pv:pi);
-
-	s = _ui->editEmail->text();
-	valid = _ui->editEmail->validator()->validate(s, p) ==
-					 QValidator::Acceptable;
-	_ui->editEmail->setPalette(valid?pv:pi);
-
-	s = _ui->editModName->text();
-	valid = _ui->editModName->validator()->validate(s, p) ==
-					 QValidator::Acceptable;
-	_ui->editModName->setPalette(valid?pv:pi);
-
-	s = _ui->editBriefDesc->text();
-	valid = _ui->editBriefDesc->validator()->validate(s, p) ==
-					 QValidator::Acceptable;
-	_ui->editBriefDesc->setPalette(valid?pv:pi);
-
-	_ui->editModDesc->setPalette(
-			_ui->editModDesc->toPlainText().isEmpty()?pi:pv);
-
-	return QWizardPage::isComplete();
 }

@@ -18,8 +18,6 @@ public:
 	virtual ~WizardPageMetadata();
 	/// initialize page
 	virtual void initializePage();
-	/// return complete state
-	virtual bool isComplete() const;
 
 private:
 	/// designer GUI
