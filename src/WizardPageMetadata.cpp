@@ -44,3 +44,31 @@ void WizardPageMetadata::initializePage() {
 	_ui->editEmail->setText(
 			settings.value("email", "").toString());
 }
+
+bool WizardPageMetadata::isComplete() const {
+	int p;
+	QString s = _ui->editAuthor->text();
+	bool v = _ui->editAuthor->validator()->validate(s, p) ==
+				 QValidator::Acceptable;
+	_ui->buttonValid1->setChecked(!v);
+
+	s = _ui->editEmail->text();
+	v = _ui->editEmail->validator()->validate(s, p) ==
+					 QValidator::Acceptable;
+	_ui->buttonValid2->setChecked(!v);
+
+	s = _ui->editModName->text();
+	v = _ui->editModName->validator()->validate(s, p) ==
+					 QValidator::Acceptable;
+	_ui->buttonValid3->setChecked(!v);
+
+	s = _ui->editBriefDesc->text();
+	v = _ui->editBriefDesc->validator()->validate(s, p) ==
+					 QValidator::Acceptable;
+	_ui->buttonValid4->setChecked(!v);
+
+	_ui->buttonValid5->setChecked(
+			_ui->editModDesc->toPlainText().isEmpty());
+
+	return QWizardPage::isComplete();
+}
