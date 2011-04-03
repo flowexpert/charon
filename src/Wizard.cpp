@@ -111,7 +111,7 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 	QTextStream srcStrm(&srcFile);
 	QString txt = srcStrm.readAll();
 
-	// setup fill texts
+	// setup fill texts - name, date, doc
 	QString author = field("author").toString().trimmed();
 	QString authoremail = QString("<a href=\"mailto:%2\">\n *      %1</a>")
 			.arg(author).arg(field("email").toString().trimmed());
@@ -130,9 +130,141 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 		addHeaders += "#include <vigra/multi_array.hxx>\n";
 	if(field("useCImg").toBool())
 		addHeaders += "#include <charon-utils/CImg.h>\n";
+
 	QString paramSlots;
 	QString ctorAdd;
 	QString ctorCont;
+
+	// set up input slot declaration/registration
+	if(field("inputSlotNames").toStringList().size() > 0) {
+		const QStringList& slotNames =
+				field("inputSlotNames").toStringList();
+		const QStringList& slotDocs =
+				field("inputSlotDocs").toStringList();
+		const QStringList& slotTypes =
+				field("inputSlotTypes").toStringList();
+		const QList<bool>& slotOptional = ParamSlotModel::toBoolList(
+				field("inputSlotOptional").toStringList());
+		const QList<bool>& slotMulti = ParamSlotModel::toBoolList(
+				field("inputSlotMulti").toStringList());
+
+		Q_ASSERT(slotNames.size() == slotDocs.size());
+		Q_ASSERT(slotNames.size() == slotTypes.size());
+		Q_ASSERT(slotNames.size() == slotOptional.size());
+		Q_ASSERT(slotNames.size() == slotMulti.size());
+
+		paramSlots.append("\n");
+		ctorCont.append("\n");
+		for(int ii=0; ii<slotNames.size(); ii++) {
+			paramSlots.append(
+				QString("\t/// %2\n\tInputSlot<%3> %1;\n")
+					.arg(slotNames[ii])
+					.arg(breakLines(slotDocs[ii],"\n\t/// "))
+					.arg(slotTypes[ii])
+			);
+			ctorCont.append(QString(
+				"\tParameteredObject::_addInputSlot(\n\t\t"
+				"%1, \"%1\",\n\t\t\"%2\",\n\t\t\"%3\");\n")
+				.arg(slotNames[ii])
+				.arg(breakLines(slotDocs[ii],"\"\n\t\t\""))
+				.arg(slotTypes[ii])
+			);
+			if (slotOptional[ii] || slotMulti[ii]) {
+				ctorAdd.append(QString(",\n\t\t%1(%2,%3)")
+					.arg(slotNames[ii])
+					.arg(slotOptional[ii]?"true":"false")
+					.arg(slotMulti[ii]?"true":"false"));
+			}
+		}
+	}
+
+	// set up output slot declaration/registration
+	if(field("outputSlotNames").toStringList().size() > 0) {
+		const QStringList& slotNames =
+				field("outputSlotNames").toStringList();
+		const QStringList& slotDocs =
+				field("outputSlotDocs").toStringList();
+		const QStringList& slotTypes =
+				field("outputSlotTypes").toStringList();
+
+		Q_ASSERT(slotNames.size() == slotDocs.size());
+		Q_ASSERT(slotNames.size() == slotTypes.size());
+
+		paramSlots.append("\n");
+		ctorCont.append("\n");
+		for(int ii=0; ii<slotNames.size(); ii++) {
+			paramSlots.append(
+				QString("\t/// %2\n\tOutputSlot<%3> %1;\n")
+					.arg(slotNames[ii])
+					.arg(breakLines(slotDocs[ii],"\n\t/// "))
+					.arg(slotTypes[ii])
+			);
+			ctorCont.append(QString(
+				"\tParameteredObject::_addOutputSlot(\n\t\t"
+				"%1, \"%1\",\n\t\t\"%2\",\n\t\t\"%3\");\n")
+				.arg(slotNames[ii])
+				.arg(breakLines(slotDocs[ii],"\"\n\t\t\""))
+				.arg(slotTypes[ii])
+			);
+		}
+	}
+
+	// set up parameter declaration/registration
+	if(field("paramNames").toStringList().size() > 0) {
+		const QStringList& paramNames =
+				field("paramNames").toStringList();
+		const QStringList& paramDocs =
+				field("paramDocs").toStringList();
+		const QStringList& paramTypes =
+				field("paramTypes").toStringList();
+		const QStringList& paramDefaults =
+				field("paramDefaults").toStringList();
+		const QList<bool>& paramLists = ParamSlotModel::toBoolList(
+				field("paramLists").toStringList());
+
+		Q_ASSERT(paramNames.size() == paramDocs.size());
+		Q_ASSERT(paramNames.size() == paramTypes.size());
+		Q_ASSERT(paramNames.size() == paramDefaults.size());
+		Q_ASSERT(paramNames.size() == paramLists.size());
+
+		paramSlots.append("\n");
+		ctorCont.append("\n");
+		for(int ii=0; ii<paramNames.size(); ii++) {
+			paramSlots.append(
+				QString("\t/// %2\n\t%4<%3> %1;\n")
+					.arg(paramNames[ii])
+					.arg(breakLines(paramDocs[ii],"\n\t/// "))
+					.arg(paramTypes[ii])
+					.arg(paramLists[ii]?"ParameterList":"Parameter")
+			);
+			QString tempTypeSpec;
+			QString devVal;
+			if(!paramDefaults[ii].isEmpty()) {
+				if (paramLists[ii]) {
+					ctorAdd.append(QString(",\n\t\t%1(\"%2\")")
+						.arg(paramNames[ii])
+						.arg(paramDefaults[ii]));
+				}
+				else {
+					if(paramTypes[ii].trimmed() == "std::string") {
+						tempTypeSpec = QString("<%1>").arg(paramTypes[ii]);
+						devVal = QString("\"%1\", ").arg(paramDefaults[ii]);
+					}
+					else
+						devVal = QString("%1, ").arg(paramDefaults[ii]);
+				}
+			}
+			ctorCont.append(QString(
+				"\tParameteredObject::_addParameter%3(\n\t\t"
+				"%1, \"%1\",\n\t\t\"%2\",\n\t\t%4\"%5\");\n")
+				.arg(paramNames[ii])
+				.arg(breakLines(paramDocs[ii],"\"\n\t\t\""))
+				.arg(tempTypeSpec)
+				.arg(devVal)
+				.arg(paramTypes[ii])
+			);
+		}
+	}
 
 	// replace placeholders
 	txt.replace("@Author@",     author);

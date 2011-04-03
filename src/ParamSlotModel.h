@@ -49,8 +49,10 @@ public:
 	/// check if all required fields are filled
 	bool isValid() const;
 
-	/// list conversion (for convenience)
+	/// list conversion to string list (for convenience)
 	static QStringList toStringList(const QList<bool>& list);
+	/// list conversion to bool list (for convenience)
+	static QList<bool> toBoolList(const QStringList& list);
 };
 
 #endif // PARAMSLOTMODEL_H

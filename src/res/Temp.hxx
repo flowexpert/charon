@@ -33,8 +33,7 @@ template <typename T>
 			"@ModuleName@", name,
 			"@PluginDoc@"
 		)@ctorAdd@
-{
-@ctorCont@
+{@ctorCont@
 }
 
 template <typename T>

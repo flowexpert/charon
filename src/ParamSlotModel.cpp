@@ -191,3 +191,10 @@ QStringList ParamSlotModel::toStringList(const QList<bool>& l) {
 	return res;
 }
 
+QList<bool> ParamSlotModel::toBoolList(const QStringList& l) {
+	QList<bool> res;
+	for (int ii=0; ii< l.size(); ii++) {
+		res.append(QVariant(l[ii]).toBool());
+	}
+	return res;
+}
