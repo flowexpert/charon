@@ -9,7 +9,7 @@
     <qresource prefix="/look">
         <file alias="Style.css">res/Style.css</file>
         <file alias="arrow.png">res/go-next.png</file>
-        <file alias="invalid.png">res/dialog-close.png</file>
-        <file alias="ok.png">res/dialog-ok.png</file>
+        <file alias="complete.png">res/task-complete.png</file>
+        <file alias="reject.png">res/task-reject.png</file>
     </qresource>
 </RCC>
