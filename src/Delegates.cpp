@@ -29,27 +29,15 @@ TypeDelegate::TypeDelegate(QObject* pp) :
 QWidget* TypeDelegate::createEditor(
 			QWidget* pp, const QStyleOptionViewItem& opt,
 			const QModelIndex& idx) const {
-	switch (idx.model()->data(idx).type()) {
-	case QVariant::String:
-		{
-			QComboBox* ed = new QComboBox(pp);
-			ed->addItem("");
-			ed->setInsertPolicy(QComboBox::InsertAlphabetically);
-			ed->addItems(ParamSlotModel::typeMap.uniqueKeys());
-			ed->setEditable(true);
-			return ed;
-		}
-	case QVariant::Double:
-		{
-			QDoubleSpinBox* ed = qobject_cast<QDoubleSpinBox*>(
-					QStyledItemDelegate::createEditor(pp, opt, idx));
-			Q_ASSERT(ed);
-			ed->setDecimals(6);
-			return ed;
-		}
-	default:
-		return QStyledItemDelegate::createEditor(pp, opt, idx);
+	if (idx.model()->data(idx).type() == QVariant::String) {
+		QComboBox* ed = new QComboBox(pp);
+		ed->addItem("");
+		ed->setInsertPolicy(QComboBox::InsertAlphabetically);
+		ed->addItems(ParamSlotModel::typeMap.uniqueKeys());
+		ed->setEditable(true);
+		return ed;
 	}
+	return QStyledItemDelegate::createEditor(pp, opt, idx);
 }
 
 void TypeDelegate::setEditorData(
@@ -68,4 +56,20 @@ void TypeDelegate::setModelData(
 		md->setData(idx,box->currentText());
 	else
 		QStyledItemDelegate::setModelData(ed,md,idx);
+}
+
+DefaultDelegate::DefaultDelegate(QObject* pp) :
+		QStyledItemDelegate(pp) {
+}
+
+QWidget* DefaultDelegate::createEditor(
+			QWidget* pp, const QStyleOptionViewItem& opt,
+			const QModelIndex& idx) const {
+	QWidget* res = QStyledItemDelegate::createEditor(pp, opt, idx);
+	if(idx.model()->data(idx).type() == QVariant::Double) {
+		QDoubleSpinBox* ed = qobject_cast<QDoubleSpinBox*>(res);
+		Q_ASSERT(ed);
+		ed->setDecimals(6);
+	}
+	return res;
 }

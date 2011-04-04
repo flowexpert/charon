@@ -16,7 +16,7 @@ WizardPageParameters::WizardPageParameters(QWidget* p) :
 	_ui->tableParameters->setItemDelegateForColumn(
 			2, new TypeDelegate(this));
 	_ui->tableParameters->setItemDelegateForColumn(
-			3, new TypeDelegate(this));
+			3, new DefaultDelegate(this));
 
 	registerField("paramNames", this, "paramNames",
 			SIGNAL(completeChanged()));

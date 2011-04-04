@@ -13,11 +13,6 @@ public:
 
 	/// Returns the widget used to edit the item
 	/// specified by index for editing
-	/** \param parent       parent widget
-	 *  \param option       style options
-	 *  \param index        model index
-	 *  \returns            editor widget
-	 */
 	virtual QWidget* createEditor(
 			QWidget* parent, const QStyleOptionViewItem& option,
 			const QModelIndex& index) const;
@@ -47,6 +42,21 @@ public:
 	virtual void setModelData(
 			QWidget* editor, QAbstractItemModel* model,
 			const QModelIndex& index ) const;
+};
+
+/// delegate using a line edit with regExp validator for string data
+class DefaultDelegate : public QStyledItemDelegate
+{
+	Q_OBJECT
+public:
+	/// default constructor
+	DefaultDelegate(QObject* parent = 0);
+
+	/// Returns the widget used to edit the item
+	/// specified by index for editing
+	virtual QWidget* createEditor(
+			QWidget* parent, const QStyleOptionViewItem& option,
+			const QModelIndex& index) const;
 };
 
 #endif // DELEGATES_H
