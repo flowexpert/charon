@@ -72,6 +72,18 @@ void Wizard::done(int res) {
 		settings.setValue("sourceOut", field("sourceOut"));
 		settings.endGroup();
 	}
+	else {
+		if(visitedPages().size() > 1 && QMessageBox::question(
+				this,tr("confirm exit"),
+				tr("Do you really want to close?<br>"
+					"All input done so far will be lost."),
+				QMessageBox::Ok,QMessageBox::Cancel) ==
+					QMessageBox::Cancel)
+		{
+			// abort closing
+			return;
+		}
+	}
 
 	settings.beginGroup("MainWindow");
 	settings.setValue("geometry",saveGeometry());
