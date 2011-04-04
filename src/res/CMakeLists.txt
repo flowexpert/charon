@@ -1,22 +1,26 @@
 # CMake project file for @ModuleName@.
 # This file has been set up by the charon TemplateGenerator.
 # It may be modified to be adapted to your needs.
+#
+# The last line (add additional modules here) serves as
+# mark where the TemplateGenerator inserts new module
+# code if requested, so please do not edit this line.
+# new module code is inserted just above this mark.
 PROJECT(@ModuleName@)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
-# set by template generator options
-SET(USE_CIMG @useCImg@)
+# Template generator options.
+# This is not changed later, i.e. if new modules are
+# added. If the new modules need CImg/Vigra and this
+# flag was disabled on first setup, please activate
+# it by hand.
+SET(USE_CIMG  @useCImg@)
 SET(USE_VIGRA @useVigra@)
 
 # required packages
 FIND_PACKAGE(charon-core REQUIRED HINTS $ENV{CHARON_DIR})
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
-
-# Feel free to remove what you don't need.
-# Unset variables default to an empty string,
-# so the TARGET_LINK_LIBRARIES below won't link
-# to CImg or Vigra if USE_... is not ON.
 IF(USE_CIMG)
 	FIND_PACKAGE(charon-utils REQUIRED HINTS $ENV{CHARON_DIR})
 	INCLUDE(CImgConfig)
@@ -34,10 +38,11 @@ INCLUDE(InitFlags)
 ADD_LIBRARY(@modulename@ SHARED
 	@ModuleName@.cpp
 	@ModuleName@.h
-	@ModuleName@.hxx
-)
+@ModHxx@)
 TARGET_LINK_LIBRARIES(@modulename@
 	charon-core
 	${CIMG_LINK_LIBRARIES}
 	${Vigra_LIBRARIES}
 )
+
+# add additional modules here

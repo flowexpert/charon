@@ -22,7 +22,7 @@
 #ifndef _@MODULENAME@_H_
 #define _@MODULENAME@_H_
 
-#ifdef HANDLE_DLL
+#ifdef __msc_ver
 #ifdef @modulename@_EXPORTS
 ///Visual C++ specific code
 #define @modulename@_DECLDIR __declspec(dllexport)
