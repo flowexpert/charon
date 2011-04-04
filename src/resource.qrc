@@ -5,6 +5,9 @@
         <file alias="Temp.cpp">res/Temp.cpp</file>
         <file alias="Temp.h">res/Temp.h</file>
         <file alias="Temp.hxx">res/Temp.hxx</file>
+        <file alias="CImgConfig.cmake">res/CImgConfig.cmake</file>
+        <file alias="CMakeLists.txt">res/CMakeLists.txt</file>
+        <file alias="InitFlags.cmake">res/InitFlags.cmake</file>
     </qresource>
     <qresource prefix="/look">
         <file alias="Style.css">res/Style.css</file>

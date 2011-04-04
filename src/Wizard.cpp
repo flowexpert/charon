@@ -93,8 +93,9 @@ void Wizard::done(int res) {
 }
 
 bool Wizard::_writeFiles() {
+	bool res = true;
 	if(field("templated").toBool()) {
-		return
+		res =
 			_replacePlaceholders(
 				":/templates/Temp.h", field("hFileOut").toString()) &&
 			_replacePlaceholders(
@@ -103,13 +104,53 @@ bool Wizard::_writeFiles() {
 				":/templates/Temp.cpp", field("cppFileOut").toString());
 	}
 	else {
-		return
+		res =
 			_replacePlaceholders(
 				":/templates/NonTemp.h", field("hFileOut").toString()) &&
 			_replacePlaceholders(
 				":/templates/NonTemp.cpp", field("cppFileOut").toString());
 	}
-	return false;
+	if (field("genCMake").toBool()) {
+		if(field("headerSeparate").toBool()) {
+			QMessageBox::warning(
+					this,tr("unimplemented"),
+					tr("CMake project file generation for "
+						"split header/src configuration "
+						"not yet implemented."));
+			return false;
+		}
+		res = res &&
+			_replacePlaceholders(
+				":/templates/CMakeLists.txt",
+				field("cmakeFileOut").toString());
+		{
+			QFile fin(":/templates/InitFlags.cmake");
+			QFile fout(QString("%1/InitFlags.cmake")
+							.arg(field("commonOut").toString()));
+			if (fin.copy(fout.fileName()))
+				fout.setPermissions(fin.permissions() | QFile::WriteUser);
+			else
+				QMessageBox::warning(
+						this, tr("error copying cmake files"),
+						tr("Error writing file <tt>%1</tt>.<br>"
+							"Perhaps it does already exist. "
+							"Skipping copy.").arg(fout.fileName()));
+		}
+		if (field("useCImg").toBool()) {
+			QFile fin(":/templates/CImgConfig.cmake");
+			QFile fout(QString("%1/CImgConfig.cmake")
+							.arg(field("commonOut").toString()));
+			if (fin.copy(fout.fileName()))
+				fout.setPermissions(fin.permissions() | QFile::WriteUser);
+			else
+				QMessageBox::warning(
+						this, tr("error copying cmake files"),
+						tr("Error writing file <tt>%1</tt>.<br>"
+							"Perhaps it does already exist. "
+							"Skipping copy.").arg(fout.fileName()));
+		}
+	}
+	return res;
 }
 
 bool Wizard::_replacePlaceholders(QString src, QString dst) {
@@ -292,6 +333,8 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 	txt.replace("@PluginDoc@",  pluginDoc);
 	txt.replace("@ctorAdd@",    ctorAdd);
 	txt.replace("@ctorCont@",   ctorCont);
+	txt.replace("@useCImg@",    field("useCImg" ).toBool() ? "1" : "0");
+	txt.replace("@useVigra@",   field("useVigra").toBool() ? "1" : "0");
 
 	// write result to dst
 	QFile dstFile(dst);

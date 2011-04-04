@@ -16,7 +16,7 @@ WizardPageSummary::WizardPageSummary(QWidget* p) :
 	registerField("sourceOut", _ui->editSourceOut);
 
 	registerField("templated", _ui->checkTemplated);
-	registerField("genCmake", _ui->checkGenCMake);
+	registerField("genCMake", _ui->checkGenCMake);
 	registerField("hFileOut", _ui->editHOut);
 	registerField("hxxFileOut", _ui->editHxxOut);
 	registerField("cppFileOut", _ui->editCppOut);
