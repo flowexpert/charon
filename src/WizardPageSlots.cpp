@@ -1,6 +1,7 @@
 #include "WizardPageSlots.h"
 #include "ui_WizardPageSlots.h"
 #include <QMessageBox>
+#include "Delegates.h"
 
 WizardPageSlots::WizardPageSlots(QWidget* p) :
 		QWizardPage(p),
@@ -14,6 +15,17 @@ WizardPageSlots::WizardPageSlots(QWidget* p) :
 	_ui->tableOutputSlots->hideColumn(4);
 	_ui->tableOutputSlots->hideColumn(5);
 	_ui->tableOutputSlots->hideColumn(6);
+
+	_ui->tableInputSlots->setItemDelegateForColumn(
+			0, new ObjNameDelegate(this));
+	_ui->tableInputSlots->setItemDelegateForColumn(
+			2, new TypeDelegate(this));
+
+	_ui->tableOutputSlots->setItemDelegateForColumn(
+			0, new ObjNameDelegate(this));
+	_ui->tableOutputSlots->setItemDelegateForColumn(
+			2, new TypeDelegate(this));
+
 
 	registerField("inputSlotNames", this, "inputSlotNames",
 			SIGNAL(completeChanged()));

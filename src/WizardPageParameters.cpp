@@ -1,6 +1,7 @@
 #include "WizardPageParameters.h"
 #include "ui_WizardPageParameters.h"
 #include <QMessageBox>
+#include "Delegates.h"
 
 WizardPageParameters::WizardPageParameters(QWidget* p) :
 			QWizardPage(p),
@@ -9,6 +10,13 @@ WizardPageParameters::WizardPageParameters(QWidget* p) :
 	_ui->tableParameters->setModel(&_params);
 	_ui->tableParameters->hideColumn(4);
 	_ui->tableParameters->hideColumn(5);
+
+	_ui->tableParameters->setItemDelegateForColumn(
+			0, new ObjNameDelegate(this));
+	_ui->tableParameters->setItemDelegateForColumn(
+			2, new TypeDelegate(this));
+	_ui->tableParameters->setItemDelegateForColumn(
+			3, new TypeDelegate(this));
 
 	registerField("paramNames", this, "paramNames",
 			SIGNAL(completeChanged()));

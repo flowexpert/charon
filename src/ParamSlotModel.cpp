@@ -1,6 +1,29 @@
 #include "ParamSlotModel.h"
 #include <QBrush>
 
+ParamSlotModel::ParamSlotModel() {
+	if (_typeMap.isEmpty()) {
+		// add types
+		_typeMap["bool"]        = QVariant::Bool;
+		_typeMap["int"]         = QVariant::Int;
+		_typeMap["uint"]        = QVariant::UInt;
+		_typeMap["char"]        = QVariant::Char;
+		_typeMap["float"]       = QVariant::Double;
+		_typeMap["double"]      = QVariant::Double;
+		_typeMap["longlong"]    = QVariant::LongLong;
+		_typeMap["ulonglong"]   = QVariant::ULongLong;
+		_typeMap["string"]      = QVariant::String;
+	}
+}
+
+QVariant::Type ParamSlotModel::typeLookup(QString type) {
+	return _typeMap.value(type, QVariant::String);
+}
+
+QMap<QString, QVariant::Type> ParamSlotModel::_typeMap;
+
+const QMap<QString, QVariant::Type>& ParamSlotModel::typeMap = _typeMap;
+
 int ParamSlotModel::rowCount(const QModelIndex&) const {
 	return names.size();
 }
@@ -24,7 +47,11 @@ QVariant ParamSlotModel::data(
 		case 2:
 			return types[idx.row()];
 		case 3:
-			return defaults[idx.row()];
+			{
+				QVariant res(defaults[idx.row()]);
+				res.convert(typeLookup(types[idx.row()]));
+				return res;
+			}
 		case 4:
 			return optional[idx.row()] ? tr("optional") : tr("required");
 		case 5:
@@ -55,6 +82,10 @@ QVariant ParamSlotModel::data(
 		case 2:
 			return (types[idx.row()].isEmpty()) ? invBG : QVariant();
 		}
+
+	case Qt::UserRole:
+		if(idx.column() == 3)
+			return types[idx.row()];
 	}
 	return QVariant();
 }

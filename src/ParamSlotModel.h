@@ -8,7 +8,13 @@
 class ParamSlotModel : public QAbstractTableModel
 {
 	Q_OBJECT
+private:
+	/// QVariant type mapping usied in types
+	static QMap<QString, QVariant::Type> _typeMap;
+
 public:
+	ParamSlotModel();
+
 	/// \name implement model interface
 	// \{
 	virtual int rowCount(
@@ -53,6 +59,18 @@ public:
 	static QStringList toStringList(const QList<bool>& list);
 	/// list conversion to bool list (for convenience)
 	static QList<bool> toBoolList(const QStringList& list);
+
+	/// map access
+	static const QMap<QString, QVariant::Type>& typeMap;
+	/// type map lookup with string default
+	static QVariant::Type typeLookup(QString type);
+
+	/// user types
+	enum Type {
+		FileOpen = 257,
+		FileWrite = 258,
+		Path = 259
+	};
 };
 
 #endif // PARAMSLOTMODEL_H

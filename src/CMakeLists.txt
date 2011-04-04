@@ -11,6 +11,7 @@ SET(MOC_SRC
 	WizardPageSlots.h
 	WizardPageParameters.h
 	WizardPageSummary.h
+	Delegates.h
 )
 SET(CPP_SRC
 	QDirEdit.cpp
@@ -22,6 +23,7 @@ SET(CPP_SRC
 	WizardPageSlots.cpp
 	WizardPageParameters.cpp
 	WizardPageSummary.cpp
+	Delegates.cpp
 	main.cpp
 )
 SET(UI_SRC
