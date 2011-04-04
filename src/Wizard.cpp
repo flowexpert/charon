@@ -123,89 +123,17 @@ bool Wizard::_writeFiles() {
 						"not yet implemented."));
 			return false;
 		}
-		QFile cMakeOut(field("cmakeFileOut").toString());
-		if(cMakeOut.exists()) {
+		QString cMakeOut(field("cmakeFileOut").toString());
+		if (QFile::exists(cMakeOut)) {
 			// modify existing CMakeLists.txt to append the new module
-			QString modName = field("name").toString().trimmed();
-			if (QMessageBox::question(
-					this, tr("Append Module?"),
-					tr("An existing <tt>CMakeLists.txt</tt> "
-						"has been found.<br>"
-						"Please inspect the file after adding a new module, "
-						"Changing some options or e.g. the project "
-						"title could be useful.<br><br>"
-						"Try to append new module <em>%1<em>?")
-					.arg(modName),
-					QMessageBox::Yes, QMessageBox::No) ==
-						QMessageBox::Yes) {
-				QString coStr;
-				if (cMakeOut.open(QFile::ReadOnly | QIODevice::Text)) {
-					QTextStream coStrm(&cMakeOut);
-					coStr = coStrm.readAll();
-					cMakeOut.close();
-				}
-				else {
-					QMessageBox::warning(
-							this, tr("I/O error"),
-							tr("Error reading <tt>%1</tt>")
-								.arg(cMakeOut.fileName()));
-					return res;
-				}
-				int pp = coStr.indexOf("# add additional modules here");
-				if (pp < 0) {
-					QMessageBox::warning(
-							this, tr("placeholder missing"),
-							tr("Placeholder for new module data "
-								"not found.<br>"
-								"Skipping add."));
-					return res;
-				}
-				if (coStr.indexOf(QRegExp(QString(
-						"\\W%1\\W").arg(modName))) >= 0) {
-					QMessageBox::warning(
-							this, tr("module found"),
-							tr("Some CMake object called <em>%1</em> "
-								"has been found.<br>"
-								"Skipping add.").arg(modName));
-					return res;
-				}
-				QString newMod = QString(
-						"ADD_LIBRARY(%2 SHARED\n\t"
-						"%1.cpp\n\t"
-						"%1.h\n"
-						"%3)\n"
-						"TARGET_LINK_LIBRARIES(%2\n\t"
-						"charon-core\n\t"
-						"${CIMG_LINK_LIBRARIES}\n\t"
-						"${Vigra_LIBRARIES}\n)\n\n")
-						.arg(modName)
-						.arg(modName.toLower())
-						.arg(field("templated").toBool()?
-							QString("\t%1.hxx\n").arg(modName) : "");
-
-				coStr.insert(pp, newMod);
-
-				if (cMakeOut.open(QFile::WriteOnly| QIODevice::Text |
-									QIODevice::Truncate)) {
-					QTextStream coStrm(&cMakeOut);
-					coStrm << coStr;
-					cMakeOut.close();
-				}
-				else {
-					QMessageBox::warning(
-							this, tr("I/O error"),
-							tr("Error writing <tt>%1</tt>")
-								.arg(cMakeOut.fileName()));
-					return res;
-				}
-			}
+			_updateCMakeFile();
 		}
 		else {
 			// generate new CMakeLists.txt and copy needed files
 			res = res &&
 				_replacePlaceholders(
 					":/templates/CMakeLists.txt",
-					cMakeOut.fileName());
+					cMakeOut);
 			QStringList ll;
 			ll << "InitFlags.cmake";
 			ll << "CImgConfig.cmake";
@@ -220,6 +148,83 @@ bool Wizard::_writeFiles() {
 		}
 	}
 	return res;
+}
+
+void Wizard::_updateCMakeFile() {
+	QFile cMakeOut(field("cmakeFileOut").toString());
+	QString modName = field("name").toString().trimmed();
+	if (QMessageBox::question(
+			this, tr("Append Module?"),
+			tr("An existing <tt>CMakeLists.txt</tt> "
+				"has been found.<br>"
+				"Please inspect the file after adding a new module, "
+				"Changing some options or e.g. the project "
+				"title could be useful.<br><br>"
+				"Append new module <em>%1<em>?")
+			.arg(modName),
+			QMessageBox::Yes, QMessageBox::No) ==
+				QMessageBox::Yes) {
+		QString coStr;
+		if (cMakeOut.open(QFile::ReadOnly | QIODevice::Text)) {
+			QTextStream coStrm(&cMakeOut);
+			coStr = coStrm.readAll();
+			cMakeOut.close();
+		}
+		else {
+			QMessageBox::warning(
+					this, tr("I/O error"),
+					tr("Error reading <tt>%1</tt>")
+						.arg(cMakeOut.fileName()));
+			return;
+		}
+		int pp = coStr.indexOf("# add additional modules here");
+		if (pp < 0) {
+			QMessageBox::warning(
+					this, tr("placeholder missing"),
+					tr("Placeholder for new module data "
+						"not found.<br>"
+						"Skipping add."));
+			return;
+		}
+		if (coStr.indexOf(QRegExp(QString(
+				"\\W%1\\W").arg(modName))) >= 0) {
+			QMessageBox::warning(
+					this, tr("module found"),
+					tr("Some CMake object called <em>%1</em> "
+						"has been found.<br>"
+						"Skipping add.").arg(modName));
+			return;
+		}
+		QString newMod = QString(
+				"ADD_LIBRARY(%2 SHARED\n\t"
+				"%1.cpp\n\t"
+				"%1.h\n"
+				"%3)\n"
+				"TARGET_LINK_LIBRARIES(%2\n\t"
+				"charon-core\n\t"
+				"${CIMG_LINK_LIBRARIES}\n\t"
+				"${Vigra_LIBRARIES}\n)\n\n")
+				.arg(modName)
+				.arg(modName.toLower())
+				.arg(field("templated").toBool()?
+					QString("\t%1.hxx\n").arg(modName) : "");
+
+		coStr.insert(pp, newMod);
+
+		if (cMakeOut.open(QFile::WriteOnly| QIODevice::Text |
+							QIODevice::Truncate)) {
+			QTextStream coStrm(&cMakeOut);
+			coStrm << coStr;
+			cMakeOut.close();
+		}
+		else {
+			QMessageBox::warning(
+					this, tr("I/O error"),
+					tr("Error writing <tt>%1</tt>")
+						.arg(cMakeOut.fileName()));
+			return;
+		}
+	}
 }
 
 bool Wizard::_replacePlaceholders(QString src, QString dst) {

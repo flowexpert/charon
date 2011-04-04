@@ -29,6 +29,9 @@ protected:
 private:
 	/// write files using resource templates
 	bool _writeFiles();
+	/// update existing CMake file adding the new module
+	void _updateCMakeFile();
+
 	/// replace patterns using the field values
 	/** \param src     source filename
 	 *  \param dst     target filename
