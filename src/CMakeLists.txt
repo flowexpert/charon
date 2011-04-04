@@ -12,7 +12,7 @@ SET(MOC_SRC
 	WizardPageParameters.h
 	WizardPageSummary.h
 )
-SET(TG_SRC
+SET(CPP_SRC
 	QDirEdit.cpp
 	ParamSlotModel.cpp
 	SideWidget.cpp
@@ -38,7 +38,7 @@ QT4_WRAP_UI(UI_OUT ${UI_SRC})
 QT4_ADD_RESOURCES(QRC_OUT resource.qrc)
 
 ADD_EXECUTABLE(templategenerator
-	${TG_SRC}
+	${CPP_SRC}
 	${MOC_SRC}
 	${QRC_OUT}
 	${MOC_OUT}
