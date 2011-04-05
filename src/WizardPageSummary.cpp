@@ -42,6 +42,16 @@ void WizardPageSummary::initializePage() {
 			Qt::Unchecked : Qt::Checked);
 	_ui->checkHeaderSep->toggle();
 
+	QStringList typeSummary;
+	typeSummary << field("inputSlotTypes").toStringList();
+	typeSummary << field("outputSlotTypes").toStringList();
+	typeSummary << field("paramTypes").toStringList();
+
+	bool templ = typeSummary.indexOf(QRegExp(
+			"^\\s*(.*<\\s*T\\s*>.*|T)\\s*$",Qt::CaseInsensitive)) >= 0;
+	_ui->checkTemplated->setChecked(templ);
+	_ui->checkNonTemplated->setChecked(!templ);
+
 	_ui->editOutPath->setText(
 			settings.value("commonOut", QDir::homePath()).toString());
 	_ui->editHeaderOut->setText(

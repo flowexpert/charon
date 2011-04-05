@@ -14,7 +14,7 @@ WizardPageParameters::WizardPageParameters(QWidget* p) :
 	_ui->tableParameters->setItemDelegateForColumn(
 			0, new ObjNameDelegate(this));
 	_ui->tableParameters->setItemDelegateForColumn(
-			2, new TypeDelegate(this));
+			2, new TypeDelegate("Parameters", this));
 	_ui->tableParameters->setItemDelegateForColumn(
 			3, new DefaultDelegate(this));
 

@@ -3,6 +3,7 @@
 
 #include <QAbstractTableModel>
 #include <QStringList>
+#include <QSettings>
 
 /// model used for parameter and slots edit table
 class ParamSlotModel : public QAbstractTableModel
@@ -60,8 +61,6 @@ public:
 	/// list conversion to bool list (for convenience)
 	static QList<bool> toBoolList(const QStringList& list);
 
-	/// map access
-	static const QMap<QString, QVariant::Type>& typeMap;
 	/// type map lookup with string default
 	static QVariant::Type typeLookup(QString type);
 

@@ -38,6 +38,9 @@ private:
 	 *  \retval true   successful write
 	 */
 	bool _replacePlaceholders(QString src, QString dst);
+
+	/// type lookup in cppTypeMap
+	QString _cppTypeLookup(QString type, QString prefix);
 };
 
 #endif // WIZARD_H

@@ -227,6 +227,22 @@ void Wizard::_updateCMakeFile() {
 	}
 }
 
+QString Wizard::_cppTypeLookup(QString type, QString prefix) {
+	QSettings s(":/templates/cppTypeMap.ini", QSettings::IniFormat);
+	if (s.contains(type)) {
+		return s.value(type).toString();
+	}
+	else if (s.contains(prefix+"/"+type)) {
+		return s.value(prefix+"/"+type).toString();
+	}
+	else if (prefix == "Parameters") {
+		return "std::string";
+	}
+	else {
+		return type;
+	}
+}
+
 bool Wizard::_replacePlaceholders(QString src, QString dst) {
 	if (QFile::exists(dst)) {
 		QMessageBox::warning(this, tr("output file exists"),
@@ -288,11 +304,12 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 		paramSlots.append("\n");
 		ctorCont.append("\n");
 		for(int ii=0; ii<slotNames.size(); ii++) {
+			QString cppType = _cppTypeLookup(slotTypes[ii], "Slots");
 			paramSlots.append(
-				QString("\t/// %2\n\tInputSlot<%3> %1;\n")
+				QString("\t/// %2\n\tInputSlot< %3 > %1;\n")
 					.arg(slotNames[ii])
 					.arg(breakLines(slotDocs[ii],"\n\t/// "))
-					.arg(slotTypes[ii])
+					.arg(cppType)
 			);
 			ctorCont.append(QString(
 				"\tParameteredObject::_addInputSlot(\n\t\t"
@@ -325,11 +342,12 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 		paramSlots.append("\n");
 		ctorCont.append("\n");
 		for(int ii=0; ii<slotNames.size(); ii++) {
+			QString cppType = _cppTypeLookup(slotTypes[ii], "Slots");
 			paramSlots.append(
-				QString("\t/// %2\n\tOutputSlot<%3> %1;\n")
+				QString("\t/// %2\n\tOutputSlot< %3 > %1;\n")
 					.arg(slotNames[ii])
 					.arg(breakLines(slotDocs[ii],"\n\t/// "))
-					.arg(slotTypes[ii])
+					.arg(cppType)
 			);
 			ctorCont.append(QString(
 				"\tParameteredObject::_addOutputSlot(\n\t\t"
@@ -362,11 +380,12 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 		paramSlots.append("\n");
 		ctorCont.append("\n");
 		for(int ii=0; ii<paramNames.size(); ii++) {
+			QString cppType = _cppTypeLookup(paramTypes[ii], "Parameters");
 			paramSlots.append(
-				QString("\t/// %2\n\t%4<%3> %1;\n")
+				QString("\t/// %2\n\t%4< %3 > %1;\n")
 					.arg(paramNames[ii])
 					.arg(breakLines(paramDocs[ii],"\n\t/// "))
-					.arg(paramTypes[ii])
+					.arg(cppType)
 					.arg(paramLists[ii]?"ParameterList":"Parameter")
 			);
 			QString tempTypeSpec;
@@ -378,8 +397,13 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 						.arg(paramDefaults[ii]));
 				}
 				else {
-					if(paramTypes[ii].trimmed() == "std::string") {
-						tempTypeSpec = QString("<%1>").arg(paramTypes[ii]);
+					if (cppType.contains(QRegExp(
+							"^(T|.*<\\s*T\\s*>)\\s*$"))) {
+						tempTypeSpec = QString("<%1>").arg(cppType);
+						devVal = QString("%1, ").arg(paramDefaults[ii]);
+					}
+					else if (cppType == "std::string") {
+						tempTypeSpec = QString("<%1>").arg(cppType);
 						devVal = QString("\"%1\", ").arg(paramDefaults[ii]);
 					}
 					else

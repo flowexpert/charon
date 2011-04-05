@@ -19,12 +19,12 @@ WizardPageSlots::WizardPageSlots(QWidget* p) :
 	_ui->tableInputSlots->setItemDelegateForColumn(
 			0, new ObjNameDelegate(this));
 	_ui->tableInputSlots->setItemDelegateForColumn(
-			2, new TypeDelegate(this));
+			2, new TypeDelegate("Slots", this));
 
 	_ui->tableOutputSlots->setItemDelegateForColumn(
 			0, new ObjNameDelegate(this));
 	_ui->tableOutputSlots->setItemDelegateForColumn(
-			2, new TypeDelegate(this));
+			2, new TypeDelegate("Slots",this));
 
 
 	registerField("inputSlotNames", this, "inputSlotNames",

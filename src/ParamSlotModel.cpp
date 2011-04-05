@@ -3,16 +3,13 @@
 
 ParamSlotModel::ParamSlotModel() {
 	if (_typeMap.isEmpty()) {
-		// add types
-		_typeMap["bool"]        = QVariant::Bool;
-		_typeMap["int"]         = QVariant::Int;
-		_typeMap["uint"]        = QVariant::UInt;
-		_typeMap["char"]        = QVariant::Char;
-		_typeMap["float"]       = QVariant::Double;
-		_typeMap["double"]      = QVariant::Double;
-		_typeMap["longlong"]    = QVariant::LongLong;
-		_typeMap["ulonglong"]   = QVariant::ULongLong;
-		_typeMap["string"]      = QVariant::String;
+		// load types from variantTypeMap.ini
+		QSettings s(":/templates/variantTypeMap.ini", QSettings::IniFormat);
+		QStringList keys = s.childKeys();
+		for (int ii=0; ii<keys.size(); ii++) {
+			_typeMap.insert(keys[ii],QVariant::nameToType(
+					s.value(keys[ii]).toString().toAscii()));
+		}
 	}
 }
 
@@ -21,8 +18,6 @@ QVariant::Type ParamSlotModel::typeLookup(QString type) {
 }
 
 QMap<QString, QVariant::Type> ParamSlotModel::_typeMap;
-
-const QMap<QString, QVariant::Type>& ParamSlotModel::typeMap = _typeMap;
 
 int ParamSlotModel::rowCount(const QModelIndex&) const {
 	return names.size();
@@ -47,11 +42,12 @@ QVariant ParamSlotModel::data(
 		case 2:
 			return types[idx.row()];
 		case 3:
-			{
+			if (!list[idx.row()]) {
 				QVariant res(defaults[idx.row()]);
 				res.convert(typeLookup(types[idx.row()]));
 				return res;
 			}
+			return defaults[idx.row()];
 		case 4:
 			return optional[idx.row()] ? tr("optional") : tr("required");
 		case 5:
@@ -82,10 +78,12 @@ QVariant ParamSlotModel::data(
 		case 2:
 			return (types[idx.row()].isEmpty()) ? invBG : QVariant();
 		}
+		break;
 
 	case Qt::UserRole:
-		if(idx.column() == 3)
+		if (idx.column() == 3 && !list[idx.row()])
 			return types[idx.row()];
+		break;
 	}
 	return QVariant();
 }
@@ -143,7 +141,12 @@ bool ParamSlotModel::setData(
 			types[idx.row()] = nv;
 			break;
 		case 3:
-			defaults[idx.row()] = nv;
+			if(types[idx.row()] == "bool") {
+				defaults[idx.row()] = value.toBool() ? "1" : "0";
+			}
+			else {
+				defaults[idx.row()] = nv;
+			}
 			break;
 		default:
 			return false;
