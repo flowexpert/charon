@@ -15,10 +15,11 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// \file @ModuleName@.h
-/// \author @AuthorEmail@
-/// \date @Date@
-/// Declaraion of parameter class @ModuleName@.
+/** \file @ModuleName@.h
+ *  \author @AuthorEmail@
+ *  \date @Date@
+ *  Declaraion of parameter class @ModuleName@.
+ */
 #ifndef _@MODULENAME@_H_
 #define _@MODULENAME@_H_
 
@@ -37,7 +38,7 @@
 #include <charon-core/ParameteredObject.h>
 @addHeaders@
 @DoxyDoc@
-class @modulename@_DECLDIR @pluginName@ : public ParameteredObject {
+class @modulename@_DECLDIR @ModuleName@ : public ParameteredObject {
 public:
 	/// default constructor
 	/// \param name             instance name

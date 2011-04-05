@@ -18,14 +18,15 @@ WizardPageMetadata::WizardPageMetadata(QWidget* p) :
 			"plainText", SIGNAL(textChanged()));
 
 	// validators
+	QSettings c(":/config/config.ini", QSettings::IniFormat);
 	_ui->editAuthor->setValidator(new QRegExpValidator(
-			QRegExp("[\\w\\s\\.\\-]+"),this));
+			QRegExp(c.value("authorValid").toString()),this));
 	_ui->editEmail->setValidator(new QRegExpValidator(
-			QRegExp("[\\w\\.\\-\\+%]+@[\\w\\.\\-]+\\.[\\w]{2,4}"),this));
+			QRegExp(c.value("emailValid").toString()),this));
 	_ui->editModName->setValidator(new QRegExpValidator(
-			QRegExp("[a-zA-Z]\\w*"),this));
+			QRegExp(c.value("modNameValid").toString()),this));
 	_ui->editBriefDesc->setValidator(new QRegExpValidator(
-			QRegExp("[\\w\\s,;\\-]+"),this));
+			QRegExp(c.value("briefDescValid").toString()),this));
 }
 
 WizardPageMetadata::~WizardPageMetadata() {

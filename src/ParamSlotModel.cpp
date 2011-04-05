@@ -4,11 +4,13 @@
 ParamSlotModel::ParamSlotModel() {
 	if (_typeMap.isEmpty()) {
 		// load types from variantTypeMap.ini
-		QSettings s(":/templates/variantTypeMap.ini", QSettings::IniFormat);
+		QSettings s(":/config/variantTypeMap.ini", QSettings::IniFormat);
 		QStringList keys = s.childKeys();
 		for (int ii=0; ii<keys.size(); ii++) {
-			_typeMap.insert(keys[ii],QVariant::nameToType(
-					s.value(keys[ii]).toString().toAscii()));
+			const QString& kk = keys[ii];
+			const QString& ll = s.value(kk).toString();
+			const QVariant::Type& tt = QVariant::nameToType(ll.toAscii());
+			_typeMap.insert(kk,tt);
 		}
 	}
 }
@@ -44,7 +46,9 @@ QVariant ParamSlotModel::data(
 		case 3:
 			if (!list[idx.row()]) {
 				QVariant res(defaults[idx.row()]);
-				res.convert(typeLookup(types[idx.row()]));
+				const QString& ts = types[idx.row()];
+				const QVariant::Type& t = typeLookup(ts);
+				res.convert(t);
 				return res;
 			}
 			return defaults[idx.row()];

@@ -47,8 +47,9 @@ void WizardPageSummary::initializePage() {
 	typeSummary << field("outputSlotTypes").toStringList();
 	typeSummary << field("paramTypes").toStringList();
 
-	bool templ = typeSummary.indexOf(QRegExp(
-			"^\\s*(.*<\\s*T\\s*>.*|T)\\s*$",Qt::CaseInsensitive)) >= 0;
+	QSettings c(":/config/config.ini", QSettings::IniFormat);
+	bool templ = typeSummary.indexOf(QRegExp(c.value(
+			"summTemplRgx").toString(),Qt::CaseInsensitive)) >= 0;
 	_ui->checkTemplated->setChecked(templ);
 	_ui->checkNonTemplated->setChecked(!templ);
 

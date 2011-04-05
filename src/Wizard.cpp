@@ -153,6 +153,8 @@ bool Wizard::_writeFiles() {
 void Wizard::_updateCMakeFile() {
 	QFile cMakeOut(field("cmakeFileOut").toString());
 	QString modName = field("name").toString().trimmed();
+	QSettings c(":/config/config.ini", QSettings::IniFormat);
+	c.beginGroup("CMake");
 	if (QMessageBox::question(
 			this, tr("Append Module?"),
 			tr("An existing <tt>CMakeLists.txt</tt> "
@@ -186,8 +188,8 @@ void Wizard::_updateCMakeFile() {
 						"Skipping add."));
 			return;
 		}
-		if (coStr.indexOf(QRegExp(QString(
-				"\\W%1\\W").arg(modName))) >= 0) {
+		if (coStr.indexOf(QRegExp(
+				c.value("findModRgx").toString().arg(modName))) >= 0) {
 			QMessageBox::warning(
 					this, tr("module found"),
 					tr("Some CMake object called <em>%1</em> "
@@ -195,15 +197,7 @@ void Wizard::_updateCMakeFile() {
 						"Skipping add.").arg(modName));
 			return;
 		}
-		QString newMod = QString(
-				"ADD_LIBRARY(%2 SHARED\n\t"
-				"%1.cpp\n\t"
-				"%1.h\n"
-				"%3)\n"
-				"TARGET_LINK_LIBRARIES(%2\n\t"
-				"charon-core\n\t"
-				"${CIMG_LINK_LIBRARIES}\n\t"
-				"${Vigra_LIBRARIES}\n)\n\n")
+		QString newMod = c.value("newModStr").toString()
 				.arg(modName)
 				.arg(modName.toLower())
 				.arg(field("templated").toBool()?
@@ -228,7 +222,7 @@ void Wizard::_updateCMakeFile() {
 }
 
 QString Wizard::_cppTypeLookup(QString type, QString prefix) {
-	QSettings s(":/templates/cppTypeMap.ini", QSettings::IniFormat);
+	QSettings s(":/config/cppTypeMap.ini", QSettings::IniFormat);
 	if (s.contains(type)) {
 		return s.value(type).toString();
 	}
@@ -249,6 +243,9 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 				tr("File <tt>%1</tt> exists. Write failed.").arg(dst));
 		return false;
 	}
+	QSettings c(":/config/config.ini", QSettings::IniFormat);
+	c.beginGroup("PlaceHolderCont");
+
 	// load template file from src
 	QFile srcFile(src);
 	if (!srcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -261,23 +258,28 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 
 	// setup fill texts - name, date, doc
 	QString author = field("author").toString().trimmed();
-	QString authoremail = QString("<a href=\"mailto:%2\">\n *      %1</a>")
+	QString authoremail = c.value("authorEmail").toString()
 			.arg(author).arg(field("email").toString().trimmed());
 	QString name = field("name").toString().trimmed();
-	QString doxyDoc = QString("/// %1\n/** %2\n */")
+	QString doxyDoc = c.value("doxyDoc").toString()
 			.arg(breakLines(
-					field("briefDesc").toString(), "\n/// "))
+					field("briefDesc").toString(),
+					c.value("doxyDocBSep").toString()))
 			.arg(breakLines(
-					field("description").toString(), "\n *  "));
-	QString pluginDoc = QString("<h2>%1</h2>\n%2")
+					field("description").toString(),
+					c.value("doxyDocDSep").toString()));
+	QString pluginDoc = c.value("pluginDoc").toString()
 			.arg(field("briefDesc").toString().trimmed())
 			.arg(field("description").toString().trimmed());
-	pluginDoc = breakLines(pluginDoc, " \"\n\t\t\t\"", "<br>");
+	pluginDoc = breakLines(
+			pluginDoc,
+			c.value("pluginDocSep").toString(),
+			c.value("pluginDocDlm").toString());
 	QString addHeaders;
 	if(field("useVigra").toBool())
-		addHeaders += "#include <vigra/multi_array.hxx>\n";
+		addHeaders += c.value("includeVigra").toString();
 	if(field("useCImg").toBool())
-		addHeaders += "#include <charon-utils/CImg.h>\n";
+		addHeaders += c.value("includeCImg").toString();
 
 	QString paramSlots;
 	QString ctorAdd;
@@ -305,21 +307,20 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 		ctorCont.append("\n");
 		for(int ii=0; ii<slotNames.size(); ii++) {
 			QString cppType = _cppTypeLookup(slotTypes[ii], "Slots");
-			paramSlots.append(
-				QString("\t/// %2\n\tInputSlot< %3 > %1;\n")
+			paramSlots.append(c.value("inputSlotDecl").toString()
 					.arg(slotNames[ii])
-					.arg(breakLines(slotDocs[ii],"\n\t/// "))
+					.arg(breakLines(
+							slotDocs[ii],c.value("memDocSep").toString()))
 					.arg(cppType)
 			);
-			ctorCont.append(QString(
-				"\tParameteredObject::_addInputSlot(\n\t\t"
-				"%1, \"%1\",\n\t\t\"%2\",\n\t\t\"%3\");\n")
+			ctorCont.append(c.value("inputSlotReg").toString()
 				.arg(slotNames[ii])
-				.arg(breakLines(slotDocs[ii],"\"\n\t\t\""))
+				.arg(breakLines(
+						slotDocs[ii],c.value("regDocSep").toString()))
 				.arg(slotTypes[ii])
 			);
 			if (slotOptional[ii] || slotMulti[ii]) {
-				ctorAdd.append(QString(",\n\t\t%1(%2,%3)")
+				ctorAdd.append(c.value("inputSlotOptMulti").toString()
 					.arg(slotNames[ii])
 					.arg(slotOptional[ii]?"true":"false")
 					.arg(slotMulti[ii]?"true":"false"));
@@ -343,17 +344,16 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 		ctorCont.append("\n");
 		for(int ii=0; ii<slotNames.size(); ii++) {
 			QString cppType = _cppTypeLookup(slotTypes[ii], "Slots");
-			paramSlots.append(
-				QString("\t/// %2\n\tOutputSlot< %3 > %1;\n")
+			paramSlots.append(c.value("outputSlotDecl").toString()
 					.arg(slotNames[ii])
-					.arg(breakLines(slotDocs[ii],"\n\t/// "))
+					.arg(breakLines(
+							slotDocs[ii],c.value("memDocSep").toString()))
 					.arg(cppType)
 			);
-			ctorCont.append(QString(
-				"\tParameteredObject::_addOutputSlot(\n\t\t"
-				"%1, \"%1\",\n\t\t\"%2\",\n\t\t\"%3\");\n")
+			ctorCont.append(c.value("outputSlotReg").toString()
 				.arg(slotNames[ii])
-				.arg(breakLines(slotDocs[ii],"\"\n\t\t\""))
+				.arg(breakLines(
+						slotDocs[ii],c.value("regDocSep").toString()))
 				.arg(slotTypes[ii])
 			);
 		}
@@ -382,9 +382,10 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 		for(int ii=0; ii<paramNames.size(); ii++) {
 			QString cppType = _cppTypeLookup(paramTypes[ii], "Parameters");
 			paramSlots.append(
-				QString("\t/// %2\n\t%4< %3 > %1;\n")
+				c.value("parameterDecl").toString()
 					.arg(paramNames[ii])
-					.arg(breakLines(paramDocs[ii],"\n\t/// "))
+					.arg(breakLines(
+							paramDocs[ii],c.value("memDocSep").toString()))
 					.arg(cppType)
 					.arg(paramLists[ii]?"ParameterList":"Parameter")
 			);
@@ -392,29 +393,25 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 			QString devVal;
 			if(!paramDefaults[ii].isEmpty()) {
 				if (paramLists[ii]) {
-					ctorAdd.append(QString(",\n\t\t%1(\"%2\")")
+					ctorAdd.append(c.value("paramListCtor").toString()
 						.arg(paramNames[ii])
 						.arg(paramDefaults[ii]));
 				}
 				else {
+					tempTypeSpec = QString("< %1 >").arg(cppType);
+					devVal = QString("%1, ").arg(paramDefaults[ii]);
+
+					// string values encapsulated into ""
 					if (cppType.contains(QRegExp(
-							"^(T|.*<\\s*T\\s*>)\\s*$"))) {
-						tempTypeSpec = QString("<%1>").arg(cppType);
-						devVal = QString("%1, ").arg(paramDefaults[ii]);
-					}
-					else if (cppType == "std::string") {
-						tempTypeSpec = QString("<%1>").arg(cppType);
+							c.value("parameterListString").toString()))) {
 						devVal = QString("\"%1\", ").arg(paramDefaults[ii]);
 					}
-					else
-						devVal = QString("%1, ").arg(paramDefaults[ii]);
 				}
 			}
-			ctorCont.append(QString(
-				"\tParameteredObject::_addParameter%3(\n\t\t"
-				"%1, \"%1\",\n\t\t\"%2\",\n\t\t%4\"%5\");\n")
+			ctorCont.append(c.value("parameterReg").toString()
 				.arg(paramNames[ii])
-				.arg(breakLines(paramDocs[ii],"\"\n\t\t\""))
+				.arg(breakLines(
+						paramDocs[ii], c.value("regDocSep").toString()))
 				.arg(tempTypeSpec)
 				.arg(devVal)
 				.arg(paramTypes[ii])
@@ -422,24 +419,43 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 		}
 	}
 
+	c.endGroup();
+	c.beginGroup("PlaceHolders");
+
 	// replace placeholders
-	txt.replace("@Author@",     author);
-	txt.replace("@AuthorEmail@",authoremail);
-	txt.replace("@ModuleName@", name, Qt::CaseSensitive);
-	txt.replace("@modulename@", name.toLower(), Qt::CaseSensitive);
-	txt.replace("@MODULENAME@", name.toUpper(), Qt::CaseSensitive);
-	txt.replace("@Year@",       QDate::currentDate().toString("yyyy"));
-	txt.replace("@Date@",       QDate::currentDate().toString("dd.MM.yyyy"));
-	txt.replace("@DoxyDoc@",    doxyDoc);
-	txt.replace("@addHeaders@", addHeaders);
-	txt.replace("@ParamSlots@", paramSlots);
-	txt.replace("@PluginDoc@",  pluginDoc);
-	txt.replace("@ctorAdd@",    ctorAdd);
-	txt.replace("@ctorCont@",   ctorCont);
-	txt.replace("@useCImg@",    field("useCImg" ).toBool() ? "1" : "0");
-	txt.replace("@useVigra@",   field("useVigra").toBool() ? "1" : "0");
-	txt.replace("@ModHxx@",     field("templated").toBool() ?
-			QString("\t%1.hxx\n").arg(name) : "");
+	txt.replace(c.value("author").toString(),
+				author);
+	txt.replace(c.value("authorEmail").toString(),
+				authoremail);
+	txt.replace(c.value("name").toString(),
+				name, Qt::CaseSensitive);
+	txt.replace(c.value("nameLower").toString(),
+				name.toLower(), Qt::CaseSensitive);
+	txt.replace(c.value("nameUpper").toString(),
+				name.toUpper(), Qt::CaseSensitive);
+	txt.replace(c.value("year").toString(),
+				QDate::currentDate().toString("yyyy"));
+	txt.replace(c.value("date").toString(),
+				QDate::currentDate().toString("dd.MM.yyyy"));
+	txt.replace(c.value("doxyDoc").toString(),
+				doxyDoc);
+	txt.replace(c.value("pluginDoc").toString(),
+				pluginDoc);
+	txt.replace(c.value("headers").toString(),
+				addHeaders);
+	txt.replace(c.value("paramSlots").toString(),
+				paramSlots);
+	txt.replace(c.value("ctorAdd").toString(),
+				ctorAdd);
+	txt.replace(c.value("ctorCont").toString(),
+				ctorCont);
+	txt.replace(c.value("useCImg").toString(),
+				field("useCImg" ).toBool() ? "1" : "0");
+	txt.replace(c.value("useVigra").toString(),
+				field("useVigra").toBool() ? "1" : "0");
+	txt.replace(c.value("modHxx").toString(),
+				field("templated").toBool() ?
+					c.value("modHxxStr").toString().arg(name) : "");
 
 	// write result to dst
 	QFile dstFile(dst);
@@ -452,6 +468,7 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 	QTextStream dstStrm(&dstFile);
 	dstStrm << txt;
 
+	c.endGroup();
 	return true;
 }
 
