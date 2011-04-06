@@ -7,6 +7,7 @@ INCLUDE_DIRECTORIES(${Graphviz_INCLUDE_DIRS})
 
 IF(BUILD_TESTING)
 	SET(tests)
+	SET(testTargets)
 
 	# common definitions
 	ADD_DEFINITIONS(-DDEFAULTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/sampleclasses.wrp")
@@ -20,6 +21,7 @@ IF(BUILD_TESTING)
 		COMMAND graphtest
 	)
 	LIST(APPEND tests Graphviz)
+	LIST(APPEND testTargets graphtest)
 
 	# test ParameterFileModel
     ADD_EXECUTABLE(modeltest modeltest.cpp)
@@ -29,6 +31,7 @@ IF(BUILD_TESTING)
 		COMMAND modeltest
 	)
 	LIST(APPEND tests ParameterFileModel)
+	LIST(APPEND testTargets modeltest)
 
 	# check for graphviz bug
 	QT4_AUTOMOC(graphTemplateTest.cpp)
@@ -39,6 +42,7 @@ IF(BUILD_TESTING)
 		COMMAND graphtemptest
 	)
 	LIST(APPEND tests TemplateWidget)
+	LIST(APPEND testTargets graphtemptest)
 
 	IF(WIN32)
 		GET_TARGET_PROPERTY(test_loc modeltest LOCATION)
@@ -56,7 +60,6 @@ IF(BUILD_TESTING)
 	ENDIF(WIN32)
 
 	# add test labels for dashboard submission
-	SET_TESTS_PROPERTIES(${tests}
-		PROPERTIES LABELS tuchulcha
-	)
+	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS tuchulcha)
+	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "Tuchulcha Tests")
 ENDIF(BUILD_TESTING)

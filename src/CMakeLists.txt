@@ -70,3 +70,4 @@ ADD_LIBRARY(editgraph ${EDITGRAPH_SOURCES})
 # add dependencies
 TARGET_LINK_LIBRARIES(editparam charon-plugins charon-core ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(editgraph editparam ${Graphviz_LIBRARIES})
+SET_TARGET_PROPERTIES(editparam editgraph PROPERTIES FOLDER "Tuchulcha")

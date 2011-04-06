@@ -24,6 +24,7 @@ SET(INSPECTOR_SOURCES
 QT4_AUTOMOC(${INSPECTOR_SOURCES})
 ADD_EXECUTABLE(paraminspector WIN32 ${INSPECTOR_SOURCES} ${INSP_ICO})
 TARGET_LINK_LIBRARIES(paraminspector editparam ${QT_QTMAIN_LIBRARY})
+SET_TARGET_PROPERTIES(paraminspector PROPERTIES FOLDER "Tuchulcha")
 
 # main application
 SET(TUCHULCHA_SOURCES
@@ -50,6 +51,7 @@ ADD_DEFINITIONS(-DCHARON_CORE_VERSION="${charon-core_VERSION}")
 ADD_DEFINITIONS(-DGRAPHVIZ_VERSION="${Graphviz_VERSION}")
 
 TARGET_LINK_LIBRARIES(tuchulcha editgraph ${QT_QTMAIN_LIBRARY} charon-plugins)
+SET_TARGET_PROPERTIES(tuchulcha PROPERTIES FOLDER "Tuchulcha")
 
 IF(WIN32)
 	# copy needed dll for tests and application run before installing
