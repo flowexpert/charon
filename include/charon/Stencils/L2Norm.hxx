@@ -143,8 +143,10 @@ void L2Norm<T>::execute() {
 
 	// precalculate rhs values for whole image
 	if (flowGuess.connected()) {
-
-		assert(flowGuess().size() == pUnknowns.size());
+		if (flowGuess().size() != pUnknowns.size()) {
+			throw std::invalid_argument(
+					"l2norm: flow guess and unknown size mismatch");
+		}
 		const cimg_library::CImgList<T>& flow = flowGuess();
 		_rhsVals.assign(flow);
 		cimglist_for(flow, kk) {
