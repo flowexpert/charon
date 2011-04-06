@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 
 IF(BUILD_TESTING)
 	SET(tests)
+	SET(testTargets)
 
 	# tests for SplitStream
 	ADD_EXECUTABLE(streamtest splitstreams.cpp)
@@ -12,6 +13,7 @@ IF(BUILD_TESTING)
 		COMMAND streamtest
 	)
 	LIST(APPEND tests SplitStream)
+	LIST(APPEND testTargets streamtest)
 
 	# tests for ParameterFile
 	ADD_EXECUTABLE(paramtest parameterfiletest.cpp)
@@ -21,6 +23,7 @@ IF(BUILD_TESTING)
 		COMMAND paramtest
 	)
 	LIST(APPEND tests ParameterFile)
+	LIST(APPEND testTargets paramtest)
 
 	# tests for ParameteredObject etc.
 	ADD_EXECUTABLE(parametertest parametertest.cpp)
@@ -30,6 +33,7 @@ IF(BUILD_TESTING)
 		COMMAND parametertest
 	)
 	LIST(APPEND tests ParameterTest)
+	LIST(APPEND testTargets parametertest)
 
 	# tests for compile and load routines.
 	IF(WIN32)
@@ -52,9 +56,9 @@ IF(BUILD_TESTING)
 		COMMAND compileandloadtest
 	)
 	LIST(APPEND tests CompileAndLoad)
+	LIST(APPEND testTargets compileandloadtest)
 
 	# add test labels for dashboard submission
-	SET_TESTS_PROPERTIES(${tests}
-		PROPERTIES LABELS charon-core
-	)
+	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS charon-core)
+	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon-core Tests")
 ENDIF(BUILD_TESTING)
