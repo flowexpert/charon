@@ -15,6 +15,7 @@ IF(BUILD_TESTING)
 	ADD_DEFINITIONS(-DGLOBAL_PLUGIN_DIR="${GLOBAL_PLUGIN_DIR}")
 	ADD_DEFINITIONS(-DLOCAL_PLUGIN_DIR="${LOCAL_PLUGIN_DIR}")
 	SET(tests)
+	SET(testTargets)
 
 	# test petsc initialization
 	ADD_EXECUTABLE(petsc1_init petsc1_Init.cpp)
@@ -30,6 +31,7 @@ IF(BUILD_TESTING)
 		COMMAND petsc1_init
 	)
 	LIST(APPEND tests PETSc1:_PetscInitialization)
+	LIST(APPEND testTargets petsc1_init)
 
 	# checking creation of petsc plugins
 	ADD_EXECUTABLE(petsc2_plugins petsc2_Plugins.cpp)
@@ -59,6 +61,7 @@ IF(BUILD_TESTING)
 		COMMAND petsc2_plugins
 	)
 	LIST(APPEND tests PETSc2:_ModuleCreation)
+	LIST(APPEND testTargets petsc2_plugins)
 
 	# check loading and unloading petsc plugin
 	ADD_EXECUTABLE(petsc3_pluginLoad petsc3_PluginLoad.cpp)
@@ -72,6 +75,7 @@ IF(BUILD_TESTING)
 		COMMAND petsc3_pluginLoad
 	)
 	LIST(APPEND tests PETSc3:_Load_PetscSolver_SharedLib)
+	LIST(APPEND testTargets petsc3_pluginLoad)
 
 	IF(UNIX)
 		# check loading and unloading petsc shared library
@@ -93,6 +97,7 @@ IF(BUILD_TESTING)
 			COMMAND petsc4_libLoad
 		)
 		LIST(APPEND tests PETSc4:_Load_PETSc_SharedLib)
+		LIST(APPEND testTargets petsc4_libLoad)
 	ENDIF(UNIX)
 
 	# executing test workflow
@@ -107,6 +112,7 @@ IF(BUILD_TESTING)
 		COMMAND flow1_hsSinus
 	)
 	LIST(APPEND tests Flow1:_HornSchunck_Sinus)
+	LIST(APPEND testTargets flow1_hsSinus)
 
 	# testing Horn&Schunck Method on Yosemite Sequence
 	ADD_EXECUTABLE(flow2_hsYosemite flow2_HS_Yosemite.cpp)
@@ -120,6 +126,7 @@ IF(BUILD_TESTING)
 		COMMAND flow2_hsYosemite
 	)
 	LIST(APPEND tests Flow2:_HornSchunck_Yosemite)
+	LIST(APPEND testTargets flow2_hsYosemite)
 
 	# testing Horn&Schunk without plugin usage to simplify profiling
 	ADD_EXECUTABLE(flow3_hsYosemiteNP
@@ -142,6 +149,7 @@ IF(BUILD_TESTING)
 		COMMAND flow3_hsYosemiteNP
 	)
 	LIST(APPEND tests Flow3:_HornSchunck_Yosemite_NoPlugins)
+	LIST(APPEND testTargets flow3_hsYosemiteNP)
 
 	# tests for iteration plugins
 	ADD_EXECUTABLE(iterator1_simple iterator1_simple.cpp)
@@ -155,6 +163,7 @@ IF(BUILD_TESTING)
 		COMMAND iterator1_simple
 	)
 	LIST(APPEND tests Iterations1:_SimpleIterator)
+	LIST(APPEND testTargets iterator1_simple)
 
 	ADD_EXECUTABLE(iterator2_nested iterator2_nested.cpp)
 	TARGET_LINK_LIBRARIES(iterator2_nested
@@ -167,6 +176,7 @@ IF(BUILD_TESTING)
 		COMMAND iterator2_nested
 	)
 	LIST(APPEND tests Iterations2:_Nested_Iterators)
+	LIST(APPEND testTargets iterator2_nested)
 
 	ADD_EXECUTABLE(iterator3_relaxing iterator3_relaxing.cpp)
 	TARGET_LINK_LIBRARIES(iterator3_relaxing
@@ -180,6 +190,7 @@ IF(BUILD_TESTING)
 		COMMAND iterator3_relaxing
 	)
 	LIST(APPEND tests Iterations3:_RelaxingIterator)
+	LIST(APPEND testTargets iterator3_relaxing)
 
 	# iterative flow estimation
 	ADD_EXECUTABLE(flowIterated1_HS_Sinus flowIterated1_HS_Sinus.cpp)
@@ -194,6 +205,7 @@ IF(BUILD_TESTING)
 		COMMAND flowIterated1_HS_Sinus
 	)
 	LIST(APPEND tests FlowIterated1:_HornSchunck_Sinus)
+	LIST(APPEND testTargets flowIterated1_HS_Sinus)
 
 	ADD_EXECUTABLE(flowIterated2_HS_Yosemite
 		flowIterated2_HS_Yosemite.cpp)
@@ -207,6 +219,7 @@ IF(BUILD_TESTING)
 		COMMAND flowIterated2_HS_Yosemite
 	)
 	LIST(APPEND tests FlowIterated2:_HornSchunck_Yosemite)
+	LIST(APPEND testTargets flowIterated2_HS_Yosemite)
 
 	ADD_EXECUTABLE(flowIterated3_DataConstant flowIterated3_DataConstant.cpp)
 	TARGET_LINK_LIBRARIES(flowIterated3_DataConstant
@@ -219,6 +232,7 @@ IF(BUILD_TESTING)
 		COMMAND flowIterated3_DataConstant
 	)
 	LIST(APPEND tests FlowIterated3:_DataConstant)
+	LIST(APPEND testTargets flowIterated3_DataConstant)
 
 	ADD_EXECUTABLE(flowIterated4_SpatialPW flowIterated4_SpatialPW.cpp)
 	TARGET_LINK_LIBRARIES(flowIterated4_SpatialPW
@@ -232,6 +246,7 @@ IF(BUILD_TESTING)
 		COMMAND flowIterated4_SpatialPW
 	)
 	LIST(APPEND tests FlowIterated4:_SpatialPW)
+	LIST(APPEND testTargets flowIterated4_SpatialPW)
 
 	ADD_EXECUTABLE(flowIterated5_Papenberg flowIterated5_Papenberg.cpp)
 	TARGET_LINK_LIBRARIES(flowIterated5_Papenberg
@@ -245,6 +260,7 @@ IF(BUILD_TESTING)
 		COMMAND flowIterated5_Papenberg
 	)
 	LIST(APPEND tests FlowIterated5:_Papenberg)
+	LIST(APPEND testTargets flowIterated5_Papenberg)
 
 	ADD_EXECUTABLE(flowIterated6_Pyramid flowIterated6_Pyramid.cpp)
 	TARGET_LINK_LIBRARIES(flowIterated6_Pyramid
@@ -259,6 +275,7 @@ IF(BUILD_TESTING)
 		COMMAND flowIterated6_Pyramid
 	)
 	LIST(APPEND tests FlowIterated6:_Pyramid)
+	LIST(APPEND testTargets flowIterated6_Pyramid)
 
 	# Sample generation and Contrastive Divergence fitter
 	ADD_EXECUTABLE(fit1_SampleGeneration
@@ -274,6 +291,7 @@ IF(BUILD_TESTING)
 		COMMAND fit1_SampleGeneration
 	)
 	LIST(APPEND tests Fit1:_SampleGeneration)
+	LIST(APPEND testTargets fit1_SampleGeneration)
 
 	ADD_EXECUTABLE(fit2_CdFitter
 		fit2_CdFitter.cpp
@@ -288,6 +306,7 @@ IF(BUILD_TESTING)
 		COMMAND fit2_CdFitter
 	)
 	LIST(APPEND tests Fit2:_CdFitter)
+	LIST(APPEND testTargets fit2_CdFitter)
 
 	ADD_EXECUTABLE(fit3_GSM
 		fit3_GSM.cpp
@@ -303,6 +322,7 @@ IF(BUILD_TESTING)
 		COMMAND fit3_GSM
 	)
 	LIST(APPEND tests Fit3:_GSM)
+	LIST(APPEND testTargets fit3_GSM)
 	IF(GNUPLOT_FOUND)
 		CONFIGURE_FILE(fit3_GSM.plt fit3_GSM.plt COPYONLY)
 		ADD_TEST(
@@ -344,7 +364,6 @@ IF(BUILD_TESTING)
 	ENDIF(WIN32)
 
 	# add test labels for dashboard submission
-	SET_TESTS_PROPERTIES(${tests}
-		PROPERTIES LABELS charon
-	)
+	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS charon)
+	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon Tests")
 ENDIF(BUILD_TESTING)
