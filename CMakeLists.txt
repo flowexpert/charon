@@ -4,10 +4,14 @@ SET(charon-utils_VERSION 0.1.4)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # executables and dll files are moved to the same directory
 IF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+ENDIF()
+IF(NOT EXPORT_NAME)
+	SET(EXPORT_NAME ${PROJECT_NAME}-export)
 ENDIF()
 
 # set up documentation generation

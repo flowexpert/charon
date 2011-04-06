@@ -31,6 +31,7 @@ IF(BUILD_TESTING)
 	ENDIF(WIN32)
 
 	SET(tests)
+	SET(testTargets)
 
 	IF(USE_CIMG)
 		INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
@@ -46,6 +47,7 @@ IF(BUILD_TESTING)
 			COMMAND imgManipTest
 		)
 		LIST(APPEND tests ImageManip)
+		LIST(APPEND testTargets imgManipTest)
 
 		# tests for ImgTool routines
 		ADD_EXECUTABLE(imgToolTest
@@ -62,6 +64,7 @@ IF(BUILD_TESTING)
 			COMMAND imgToolTest
 		)
 		LIST(APPEND tests ImgTool)
+		LIST(APPEND testTargets imgToolTest)
 
 		ADD_EXECUTABLE(cImgTest cimgtest.cpp)
 		TARGET_LINK_LIBRARIES(cImgTest ${CIMG_LINK_LIBRARIES})
@@ -70,6 +73,7 @@ IF(BUILD_TESTING)
 			COMMAND cImgTest
 		)
 		LIST(APPEND tests CImgInfo)
+		LIST(APPEND testTargets cImgTest)
 
 		ADD_EXECUTABLE(warptest Warptest.cpp)
 		TARGET_LINK_LIBRARIES(warptest
@@ -84,6 +88,7 @@ IF(BUILD_TESTING)
 			COMMAND warptest
 		)
 		LIST(APPEND tests Warp)
+		LIST(APPEND testTargets warptest)
 
 		ADD_EXECUTABLE(flowToHSV flowToHSV.cpp)
 		TARGET_LINK_LIBRARIES(flowToHSV
@@ -97,6 +102,7 @@ IF(BUILD_TESTING)
 			COMMAND flowToHSV
 		)
 		LIST(APPEND tests flowToHSV)
+		LIST(APPEND testTargets flowToHSV)
 
 		# tests for plugin creation in various ways
 		ADD_EXECUTABLE(pluginTest pluginTest.cpp)
@@ -112,6 +118,7 @@ IF(BUILD_TESTING)
 			COMMAND pluginTest
 		)
 		LIST(APPEND tests Plugins)
+		LIST(APPEND testTargets pluginTest)
 
 		IF(USE_VIGRA)
 			INCLUDE_DIRECTORIES(${Vigra_INCLUDE_DIRS})
@@ -127,6 +134,8 @@ IF(BUILD_TESTING)
 				NAME VigraConversion
 				COMMAND vigraconversion
 			)
+			LIST(APPEND tests VigraConversion)
+			LIST(APPEND testTargets vigraconversion)
 		ENDIF(USE_VIGRA)
 
 		IF(WIN32)
@@ -149,7 +158,6 @@ IF(BUILD_TESTING)
 	ENDIF(USE_CIMG)
 
 	# add test labels for dashboard submission
-	SET_TESTS_PROPERTIES(${tests}
-		PROPERTIES LABELS charon-utils
-	)
+	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS charon-utils)
+	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon-utils Tests")
 ENDIF(BUILD_TESTING)

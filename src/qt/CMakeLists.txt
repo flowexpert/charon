@@ -68,7 +68,6 @@ SOURCE_GROUP("vigraqt sources" FILES ${vigraqt_SOURCES})
 	
 ############################################################
 
-
 ADD_LIBRARY(charonwidgets SHARED 
 	${charonwidgets_HEADERS}
 	${charonwidgets_QT_HEADERS}
@@ -81,19 +80,18 @@ ADD_LIBRARY(charonwidgets SHARED
 	${vigraqt_MOCS}
 )
 
-TARGET_LINK_LIBRARIES(charonwidgets ${QT_LIBRARIES} charon-core)
 TARGET_LINK_LIBRARIES(charonwidgets
-	${VIGRA_LIBRARIES} ${QT_OPENGL_LIBRARIES} ${OPENGL_LIBRARIES})
-
-SET_TARGET_PROPERTIES(charonwidgets
-	PROPERTIES INSTALL_RPATH
-	${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
+	charon-core
+	${QT_LIBRARIES}
+	${VIGRA_LIBRARIES}
+	${QT_OPENGL_LIBRARIES}
+	${OPENGL_LIBRARIES}
 )
 
-IF(NOT EXPORT_NAME)
-	SET(EXPORT_NAME ${PROJECT_NAME}-export)
-ENDIF()
-
+SET_TARGET_PROPERTIES(charonwidgets PROPERTIES
+	INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
+	FOLDER "charon-utils Modules"
+)
 
 INSTALL(
 	TARGETS          charonwidgets

@@ -12,7 +12,6 @@ ADD_LIBRARY(roi SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.h
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.hxx
 )
-
 SET(Plugins
 	roi
 )
@@ -136,7 +135,6 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/WarpSymmetric.h
 		${CHARON_UTILS_INCLUDE_DIR}/WarpSymmetric.hxx
 	)
-
 	SET(Plugins_CImg
 		channelconverter
 		crop
@@ -331,6 +329,7 @@ ENDIF(USE_CIMG)
 
 FOREACH(X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core)
+	SET_TARGET_PROPERTIES(${X} PROPERTIES FOLDER "charon-utils Modules")
 ENDFOREACH(X)
 
 # install library
@@ -338,9 +337,6 @@ SET_TARGET_PROPERTIES(${Plugins}
 	PROPERTIES INSTALL_RPATH
 	${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
 )
-IF(NOT EXPORT_NAME)
-	SET(EXPORT_NAME ${PROJECT_NAME}-export)
-ENDIF()
 INSTALL(
 	TARGETS          ${Plugins}
 	EXPORT           ${EXPORT_NAME}
