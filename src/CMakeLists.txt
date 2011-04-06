@@ -33,18 +33,25 @@ SET(UI_SRC
 	WizardPageParameters.ui
 	WizardPageSummary.ui
 )
+SET(QRC_SRC
+	resource.qrc
+)
 
 QT4_WRAP_CPP(MOC_OUT ${MOC_SRC})
-SOURCE_GROUP(MOCS FILES ${MOC_OUT})
 QT4_WRAP_UI(UI_OUT ${UI_SRC})
-QT4_ADD_RESOURCES(QRC_OUT resource.qrc)
+QT4_ADD_RESOURCES(QRC_OUT ${QRC_SRC})
 
-ADD_EXECUTABLE(templategenerator
+ADD_EXECUTABLE(templategenerator WIN32
 	${CPP_SRC}
 	${MOC_SRC}
 	${QRC_OUT}
 	${MOC_OUT}
 	${UI_OUT}
 )
-TARGET_LINK_LIBRARIES(templategenerator ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(templategenerator ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY})
+
+SOURCE_GROUP("Moc Files" FILES ${MOC_OUT})
+SOURCE_GROUP("Ui Files" FILES ${UI_SRC} ${UI_OUT})
+SOURCE_GROUP("qrc Files" FILES ${QRC_SRC} ${QRC_OUT})
+
 INSTALL(TARGETS templategenerator DESTINATION bin)

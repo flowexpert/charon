@@ -24,15 +24,15 @@
 #ifndef _@MODULENAME@_H_
 #define _@MODULENAME@_H_
 
-#ifdef __msc_ver
+#ifdef _MSC_VER
 #ifdef @modulename@_EXPORTS
 /// Visual C++ specific code
 #define @modulename@_DECLDIR __declspec(dllexport)
 #else
 #define @modulename@_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
-#else /* No DLL handling or GCC */
-/// Not needed with GCC
+#else
+/// Not needed without MSVC
 #define @modulename@_DECLDIR
 #endif
 
