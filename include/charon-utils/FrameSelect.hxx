@@ -24,10 +24,10 @@
 #ifndef _FRAMESELECT_HXX_
 #define _FRAMESELECT_HXX_
 
-#include "FrameSelect.h"
-#include <QString>
 #include <QApplication>
+#include <QString>
 
+#include "FrameSelect.h"
 
 template <typename T>
 FrameSelect<T>::FrameSelect(const std::string& name) :

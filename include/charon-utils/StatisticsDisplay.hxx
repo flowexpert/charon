@@ -9,15 +9,13 @@
 #ifndef _STATISTICSDISPLAY_HXX_
 #define _STATISTICSDISPLAY_HXX_
 
-#include <StatisticsDisplayWidget.hpp>
-#include <charon-utils/StatisticsDisplay.h>
+#include <QApplication>
 #include <sstream>
 #include <vigra/multi_array.hxx>
 #include <vigra/multi_iterator.hxx>
 #include <vigra/navigator.hxx>
 #include <vigra/multi_pointoperators.hxx>
 #include <set>
-#include <QApplication>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -28,6 +26,9 @@
 #include <boost/accumulators/statistics/variance.hpp>
 #include <boost/accumulators/statistics/sum.hpp>
 #include <boost/accumulators/statistics/count.hpp>
+
+#include <StatisticsDisplayWidget.hpp>
+#include "StatisticsDisplay.h"
 
 namespace StatisticsDisplay {
 
