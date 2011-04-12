@@ -94,6 +94,7 @@ public:
 	/// loads the GraphModel from the given filename
 	/// and calls loadFromModel to fill the scene
 	/// @param fname     name of workflow parameter file
+	/// @returns    true if file has successfully been loaded
 	bool load(QString fname);
 
 	/// handles drop events
