@@ -1,21 +1,5 @@
 /*	Copyright (C) 2011 Jonathan Wuest
-
-	This file is part of Tuchulcha.
-
-    Tuchulcha is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Tuchulcha is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
-*/
-/** @file   NodeProperty.cpp
+ * @file   NodeProperty.cpp
  *  @brief  Implementationof class NodeProperty
  *  @date   15.03.2011
  *  @author <a href="mailto:wuest.jonathan@gmail.com">Jonathan Wuest</a>
@@ -31,49 +15,48 @@
 #include "NodeHandler.h"
 #include "Node.h"
 
+
+
+using namespace std;
+
 NodeProperty::NodeProperty() {
+
 }
 
-NodeProperty::NodeProperty(
-		QGraphicsItem* parentNode, QString nn, int pNr,
-		QString ptypeName, PropType::NodePropertyIOType p_iotype) :
-		QGraphicsItem(parentNode) {
-	isConnected = false;
-	drawType = false;
-	name = nn;
-	setAcceptHoverEvents(true);
-	ptype = new PropType();
-	if (TypeHandler::hasType(ptypeName))
-		ptype->ptype = TypeHandler::getType(ptypeName);
+NodeProperty::NodeProperty(QGraphicsItem *parentNode, QString name, int propNr, QString ptypeName, PropType::NodePropertyIOType p_iotype) : QGraphicsItem(parentNode) {
+	this->_isConnected = false;
+	this->_drawType = false;
+	this->_name = name;
+	this->setAcceptHoverEvents(true);
+	this->_ptype = new PropType();
+	if (TypeHandler::hasType(ptypeName)) _ptype->ptype = TypeHandler::getType(ptypeName);
 	else {
 		ParameterType *paramtype = new ParameterType(ptypeName);
 		TypeHandler::addType(paramtype);
-		ptype->ptype = paramtype;
+		_ptype->ptype = paramtype;
 	}
-	ptype->iotype = p_iotype;
-	propNr = pNr;
+	_ptype->iotype = p_iotype;
+	this->_propNr = propNr;
 
-	int yy = 25 + propNr * 25;
+	int y = 45 + this->_propNr * 25;
 
 	Node *n = dynamic_cast<Node*> (this->parentItem());
 	if (n != 0) {
-		node = n;
-		width = node->getWidth() - 10;
+		this->_node = n;
+		this->_width = _node->getWidth() - 10;
 	}
 
 	switch (this->getIOType()) {
 		case PropType::IN:
 		{
-			socket = new ConnectionSocket(
-						this, QPointF(0, yy + 10));
-			multiConnect = false;
+			this->_socket = new ConnectionSocket(this, QPointF(0, y + 10));
+			this->_multiConnect = false;
 			break;
 		}
 		case PropType::OUT:
 		{
-			socket = new ConnectionSocket(
-						this, QPointF(this->width + 10, yy + 10));
-			multiConnect = true;
+			this->_socket = new ConnectionSocket(this, QPointF(this->_width + 10, y + 10));
+			this->_multiConnect = true;
 			break;
 		}
 		case PropType::NONE:
@@ -84,86 +67,78 @@ NodeProperty::NodeProperty(
 }
 
 void NodeProperty::moveBy(qreal, qreal) {
-	for (int i = 0; i < connectionList.size(); i++) {
-		ConnectionLine *cline = connectionList.at(i);
+	for (int i = 0; i < _connectionList.size(); i++) {
+		ConnectionLine *cline = _connectionList.at(i);
 		if (cline->getStartProp() == this) {
-			cline->setStartPoint(
-				this->scenePos()+(dynamic_cast<ConnectionSocket*> (
-					this->children().at(0)))->getCenter()); // ugly as hell!!
+			cline->setStartPoint(this->scenePos()+(dynamic_cast<ConnectionSocket*> (this->children().at(0)))->getCenter()); //ugly as hell!!
 		} else {
-			cline->setEndPoint(
-				this->scenePos()+(dynamic_cast<ConnectionSocket*> (
-					this->children().at(0)))->getCenter()); // ugly as hell!!
+			cline->setEndPoint(this->scenePos()+(dynamic_cast<ConnectionSocket*> (this->children().at(0)))->getCenter()); //ugly as hell!!
 		}
 	}
 
 }
 
 unsigned int NodeProperty::getNr() {
-	return this->propNr;
+	return this->_propNr;
 }
 
 QList<ConnectionLine*> NodeProperty::getConnections() {
-	return this->connectionList;
+	return this->_connectionList;
 }
 
 QString NodeProperty::getName() {
-	return this->name;
+	return this->_name;
 }
 
 void NodeProperty::addConnection(ConnectionLine *nl) {
-	this->isConnected = true;
-	this->connectionList.push_back(nl);
+	this->_isConnected = true;
+	this->_connectionList.push_back(nl);
 }
 
 PropType *NodeProperty::getPropType() {
-	return this->ptype;
+	return this->_ptype;
 }
 
-void NodeProperty::mousePressEvent(QGraphicsSceneMouseEvent*) {
-	// TODO open property edit dialog
-}
 
 QRectF NodeProperty::boundingRect() const {
-	if(this->ptype->iotype == PropType::NONE) QRectF(0, 0, 0, 0);
-	int yy = 25 + this->propNr * 25;
-	return QRectF(5, yy, this->width, 20);
+	if(this->_ptype->iotype == PropType::NONE) QRectF(0, 0, 0, 0);
+	int y = 45 + this->_propNr * 25;
+	return QRectF(5, y, this->_width, 20);
 }
 
-void NodeProperty::paint(
-		QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) {
-	if(this->ptype->iotype == PropType::NONE) return;
-	this->width = node->getWidth() - 10;
-	int yy = 25 + this->propNr * 25;
+void NodeProperty::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+	if(this->_ptype->iotype == PropType::NONE) return;
+	this->_width = _node->getWidth() - 10;
+	int y = 45 + this->_propNr * 25;
 	painter->setOpacity(1);
 	painter->setBrush(Qt::lightGray);
-	painter->drawRoundRect(5, yy, this->width, 20, 10, 100);
+	painter->drawRoundRect(5, y, this->_width, 20, 10, 100);
 	painter->setBrush(Qt::black);
-	painter->drawText(10, yy + 13, name);
-	if (this->drawType) {
-		switch (ptype->iotype) {
+	painter->drawText(10, y + 13, _name);
+	if (this->_drawType) {
+		switch (_ptype->iotype) {
 			case PropType::IN:
 			{
 				painter->setBrush(Qt::white);
 				painter->setOpacity(0.8);
-				QPointF p = socket->getCenter() - QPointF(ptype->ptype->getTypeNameUnTemplated().size()*7 + 10, 10);
-				int length = ptype->ptype->getTypeNameUnTemplated().size()*7;
+				QPointF p = _socket->getCenter() - QPointF(_ptype->ptype->getTypeNameUnTemplated().size()*7 + 10, 10);
+				int length = _ptype->ptype->getTypeNameUnTemplated().size()*7;
 				painter->drawRoundRect(p.x(), p.y(), length, 20, 60, 70);
 				painter->setBrush(Qt::black);
 				painter->setOpacity(1);
-				painter->drawText(p.x() + 5, p.y() + 13, ptype->ptype->getTypeNameUnTemplated());
+				painter->drawText(p.x() + 5, p.y() + 13, _ptype->ptype->getTypeNameUnTemplated());
 				break;
 			}
 			case PropType::OUT:
 			{
 				painter->setBrush(Qt::white);
 				painter->setOpacity(0.8);
-				QPointF p = socket->getCenter() + QPointF(10, -10);
-				int length = ptype->ptype->getTypeNameUnTemplated().size()*7;
+				QPointF p = _socket->getCenter() + QPointF(10, -10);
+				int length = _ptype->ptype->getTypeNameUnTemplated().size()*7;
 				painter->drawRoundRect(p.x(), p.y(), length, 20, 60, 70);
 				painter->setBrush(Qt::black);
 				painter->setOpacity(1);
-				painter->drawText(p.x() + 5, p.y() + 13, ptype->ptype->getTypeNameUnTemplated());
+				painter->drawText(p.x() + 5, p.y() + 13, _ptype->ptype->getTypeNameUnTemplated());
 				break;
 			}
 			case PropType::NONE:
@@ -200,49 +175,49 @@ QString NodeProperty::iotypeToString(PropType::NodePropertyIOType type) {
 }
 
 bool NodeProperty::canConnect(NodeProperty *prop) {
-    bool sameTemp = false;
-    if(this->ptype->ptype->isTemplated()){
-	sameTemp = (ptype->ptype->getTempName() == prop->getPropType()->ptype->getTempName());
-    }else{
+	bool sameTemp = false;
+	if(this->_ptype->ptype->isTemplated()){
+	sameTemp = (_ptype->ptype->getTempName() == prop->getPropType()->ptype->getTempName());
+	}else{
 	sameTemp = true;
-    }
+	}
 
 	if (this->canNewConnect() && prop->canNewConnect() &&
-			prop->getPropType()->iotype != this->ptype->iotype &&
+			prop->getPropType()->iotype != this->_ptype->iotype &&
 			prop->getPropType()->ptype->getTypeNameUnTemplated() ==
-			this->ptype->ptype->getTypeNameUnTemplated() &&
+			this->_ptype->ptype->getTypeNameUnTemplated() &&
 			sameTemp) return true;
 	return false;
 }
 
 PropType::NodePropertyIOType NodeProperty::getIOType() {
-	return this->ptype->iotype;
+	return this->_ptype->iotype;
 }
 
 void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
-	this->drawType = true;
+	this->_drawType = true;
 }
 
 void NodeProperty::hoverLeaveEvent(QGraphicsSceneHoverEvent *) {
-	this->drawType = false;
+	this->_drawType = false;
 }
 
 bool NodeProperty::canNewConnect() {
-	return (!this->isConnected || (this->isConnected && this->multiConnect));
+	return (!this->_isConnected || (this->_isConnected && this->_multiConnect));
 }
 
 bool NodeProperty::hasConnection() {
-	return this->isConnected;
+	return this->_isConnected;
 }
 
 void NodeProperty::removeAllConnections(GraphModel *model) {
 	if(!model) model = ((NodeHandler*)this->scene())->model();
 	//cout<<"removing all connections"<<endl;
-	for (int i = 0; i<this->connectionList.size(); i++) {
-		ConnectionLine *l = connectionList[i];
+	for (int i = 0; i<this->_connectionList.size(); i++) {
+		ConnectionLine *l = _connectionList[i];
 		model->disconnectSlot(l->getStartProp()->getNode()->getName()+"."+l->getStartProp()->getName(),
-				      l->getEndProp()->getNode()->getName()+"."+l->getEndProp()->getName());
-		switch (ptype->iotype) {
+					  l->getEndProp()->getNode()->getName()+"."+l->getEndProp()->getName());
+		switch (_ptype->iotype) {
 			case PropType::IN:
 			{
 				l->getStartProp()->removeConnection(l);
@@ -260,17 +235,17 @@ void NodeProperty::removeAllConnections(GraphModel *model) {
 		}
 		delete l;
 	}
-	connectionList.clear();
-	this->isConnected = false;
+	_connectionList.clear();
+	this->_isConnected = false;
 }
 
 void NodeProperty::removeConnection(ConnectionLine *line) {
-	connectionList.removeAll(line);
-	if (this->connectionList.size() == 0) this->isConnected = false;
+	_connectionList.removeAll(line);
+	if (this->_connectionList.size() == 0) this->_isConnected = false;
 }
 
 Node *NodeProperty::getNode() {
-	return this->node;
+	return this->_node;
 }
 
 NodeProperty::~NodeProperty() {

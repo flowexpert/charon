@@ -1,4 +1,4 @@
-/*  Copyright (C) 2011 Jonathan Wuest
+/*	Copyright (C) 2011 Jonathan Wuest
 
 	This file is part of Tuchulcha.
 
@@ -30,87 +30,106 @@ using namespace std;
 #include "ConnectionSocket.h"
 #include "NodeProperty.h"
 
-ConnectionLine::ConnectionLine() : QGraphicsItem() {
+
+
+
+ConnectionLine::ConnectionLine() : QGraphicsItem()
+{
+
+}
+ConnectionLine::ConnectionLine(QGraphicsScene* scene) : QGraphicsItem(0,scene)
+{
+	this->setZValue(-1);
+	this->_startProp = 0;
+	this->_endProp = 0;
+	this->setZValue(-1);
 }
 
-ConnectionLine::ConnectionLine(QGraphicsScene* sc) :
-		QGraphicsItem(0,sc) {
-	setZValue(-1);
-	startProp = 0;
-	endProp = 0;
-	setZValue(-1);
+QRectF ConnectionLine::boundingRect()  const
+{
+	return QRectF(_startPoint,_endPoint);
 }
 
-QRectF ConnectionLine::boundingRect()  const {
-	return QRectF(startPoint,endPoint);
+void ConnectionLine::setEndPoint(int x, int y)
+{
+	this->_endPoint.setX(x);
+	this->_endPoint.setY(y);
 }
 
-void ConnectionLine::setEndPoint(int xx, int yy) {
-	endPoint.setX(xx);
-	endPoint.setY(yy);
+void ConnectionLine::setStartPoint(int x, int y)
+{
+	this->_startPoint.setX(x);
+	this->_startPoint.setY(y);
 }
 
-void ConnectionLine::setStartPoint(int xx, int yy) {
-	startPoint.setX(xx);
-	startPoint.setY(yy);
+void ConnectionLine::setStartEndProp(NodeProperty *start,NodeProperty *end)
+{
+	this->_startProp = start;
+	this->_endProp = end;
 }
 
-void ConnectionLine::setStartEndProp(NodeProperty* start, NodeProperty* end) {
-	startProp = start;
-	endProp = end;
+void ConnectionLine::setStartPoint(QPointF pos)
+{
+	this->_startPoint = pos;
 }
 
-void ConnectionLine::setStartPoint(QPointF p) {
-	startPoint = p;
+void ConnectionLine::setEndPoint(QPointF pos)
+{
+	this->_endPoint = pos;
 }
 
-void ConnectionLine::setEndPoint(QPointF p) {
-	endPoint = p;
-}
-
-void ConnectionLine::paint(
-		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
+void ConnectionLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+{
 	painter->setBrush(Qt::black);
 	QPainterPath path;
-	path.moveTo(startPoint);
-	QPointF c0((startPoint.x()+50),startPoint.y());
-	QPointF c1(endPoint.x()-50,endPoint.y());
-	path.cubicTo(c0,c1,endPoint);
+	path.moveTo(_startPoint);
+	QPointF c0((_startPoint.x()+50),_startPoint.y());
+	QPointF c1(_endPoint.x()-50,_endPoint.y());
+	path.cubicTo(c0,c1,_endPoint);
 	painter->setBrush(Qt::NoBrush);
+	/*for(int i=0;i<5;i++)
+	{
+		painter->setPen(QPen(Qt::black,11-i*2));
+		painter->setOpacity(0.1);
+		painter->drawPath(path);
+	}*/
 	QPen p(Qt::black,2);
-	if (startProp == 0 || endProp == 0) {
-		p.setBrush(Qt::gray);
-		p.setWidth(2);
-		p.setStyle(Qt::DashLine);
-	}
+	if(this->_startProp == 0 || this->_endProp == 0){p.setBrush(Qt::gray); p.setWidth(2); p.setStyle(Qt::DashLine);}
 	painter->setPen(p);
 	painter->setOpacity(1);
 	painter->drawPath(path);
 }
 
 ConnectionLine::~ConnectionLine() {
+	// TODO Auto-generated destructor stub
 }
 
-NodeProperty *ConnectionLine::getEndProp() const {
-	return endProp;
+NodeProperty *ConnectionLine::getEndProp() const
+{
+	return _endProp;
 }
 
-NodeProperty *ConnectionLine::getStartProp() const {
-	return startProp;
+NodeProperty *ConnectionLine::getStartProp() const
+{
+	return _startProp;
 }
 
-void ConnectionLine::setEndProp(NodeProperty* ep) {
-	endProp = ep;
+void ConnectionLine::setEndProp(NodeProperty *endProp)
+{
+	this->_endProp = endProp;
 }
 
-void ConnectionLine::setStartProp(NodeProperty* sp) {
-	startProp = sp;
+void ConnectionLine::setStartProp(NodeProperty *startProp)
+{
+	this->_startProp = startProp;
 }
 
-void ConnectionLine::moveStartPoint(qreal dx,qreal dy) {
-	startPoint += QPointF(dx,dy);
+void ConnectionLine::moveStartPoint(qreal dx,qreal dy)
+{
+	this->_startPoint += QPointF(dx,dy);
 }
 
-void ConnectionLine::moveEndPoint(qreal dx,qreal dy) {
-	endPoint += QPointF(dx,dy);
+void ConnectionLine::moveEndPoint(qreal dx,qreal dy)
+{
+	this->_endPoint += QPointF(dx,dy);
 }

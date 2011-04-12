@@ -1,4 +1,4 @@
-/*  Copyright (C) 2011 Jonathan Wuest
+/*	Copyright (C) 2011 Jonathan Wuest
 
 	This file is part of Tuchulcha.
 
@@ -15,95 +15,48 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file   NodeView.cpp
- *  \brief  Implementation of class NodeView
- *  \date   15.03.2011
- *  \author <a href="mailto:wuest.jonathan@gmail.com">Jonathan Wuest</a>
+/** @file   NodeView.cpp
+ *  @brief  Implementation of class NodeView
+ *  @date   15.03.2011
+ *  @author <a href="mailto:wuest.jonathan@gmail.com">Jonathan Wuest</a>
  */
-
+#include <iostream>
 #include "NodeView.h"
 #include "GraphModel.h"
 #include "FileManager.h"
-#include <QMessageBox>
 
-NodeView::NodeView(QWidget* p,QString classesFile) :
-		QGraphicsView(p),_model(0) {
-	setRenderHints( QPainter::Antialiasing );
-	setAcceptDrops(true);
-	show();
-	nodehandler = new NodeHandler(this,classesFile);
-	setScene(this->nodehandler);
+#include "NodeView.moc"
+
+using namespace std;
+
+NodeView::NodeView(QWidget *parent,QString classesFile) : QGraphicsView(parent),_model(0) {
+	this->setRenderHints( QPainter::Antialiasing );
+	this->setAcceptDrops(true);
+	this->show();
+	this->_nodehandler = new NodeHandler(this,classesFile);
+	this->setScene(this->_nodehandler);
 }
 
 GraphModel *NodeView::model(){
-	return nodehandler->model();
+	return _nodehandler->model();
 }
 
-bool NodeView::load(QString fname){
-	QString errorMSG;
-	bool ok = true;
-	try {
-		ok = nodehandler->load(fname);
-	}
-	catch (const std::string& msg) {
-		errorMSG = msg.c_str();
-	}
-	catch (const std::exception& err) {
-		errorMSG = err.what();
-	}
-	catch (...) {
-		errorMSG = tr("Got unhandled and unexpected exception during load!");
-	}
-	if (!errorMSG.isEmpty()) {
-		if (errorMSG.indexOf("neither input nor output slot") >= 0) {
-			errorMSG += tr(
-				"<br><br>"
-				"This is usually a hint "
-				"that there is a mismatch of your parameter file "
-				"and the actual plugin information. "
-				"This may be caused by changed slots or typos in the "
-				"parameter file.<br><br>"
-				"Please update the plugin information and check if all "
-				"plugins used in the parameter file to load have been "
-				"successfully recognized.<br>"
-				"Make sure that the path where the plugin is loaded from "
-				"is the path you expect. Perhaps an older version of the "
-				"plugin has been found in the global plugin path or "
-				"something similar happened."
-			);
-		}
-		QRegExp regex("^Parameter\\s(\\w*)\\.parameters\\snot\\sset\\s*$");
-		if (errorMSG.indexOf(regex) >= 0) {
-			errorMSG += tr(
-				"<br><br>"
-				"This is usually a hint that you are trying to use a "
-				"plugin unknown to tuchulcha (<b>%1</b>).<br><br>"
-				"Please check your path configuration and "
-				"update the plugin information.<br>"
-				"Check the update log and make sure the <em>%1</em> plugin "
-				"has been successfully found and loaded."
-			).arg(regex.cap(1));
-		}
-		QMessageBox::warning(
-			this,"Error loading parameter file",
-			tr("Message: %1").arg(errorMSG));
-		return false;
-	}
-	return ok;
+bool NodeView::load(const QString& fileName){
+	bool ret = this->_nodehandler->load(fileName);
+	fitInView(sceneRect(),Qt::KeepAspectRatio);
+	return ret;
 }
 
-void NodeView::setModel(GraphModel* md){
-	nodehandler->setModel(md);
+void NodeView::setModel(GraphModel *model){
+	this->_nodehandler->setModel(model);
 }
 
 void NodeView::save(){
 }
-
 void NodeView::updateDisplay(){
-	update();
+	_nodehandler->update();
 }
 
 NodeView::~NodeView() {
 }
 
-#include "NodeView.moc"

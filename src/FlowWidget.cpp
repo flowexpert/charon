@@ -41,7 +41,7 @@
 #include "FlowWidget.moc"
 
 FlowWidget::FlowWidget(QWidget* myParent) :
-		QMdiSubWindow(myParent) {
+	QMdiSubWindow(myParent) {
 	// init GUI
 	_viewer = new NodeView(this);
 	setWidget(_viewer);
@@ -57,6 +57,7 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 	connect(_viewer->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
 		this, SLOT(modify()));
 	setWindowTitle(tr("New file [*]"));
+
 }
 
 FlowWidget::~FlowWidget() {

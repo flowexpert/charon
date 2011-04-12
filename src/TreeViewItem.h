@@ -30,16 +30,29 @@
 
 class Node;
 
+/// QStandardItem that uses a node for data generatrion
 class TreeViewItem : public QStandardItem{
 
 public:
+
+	/// default constructor
+	/// @param node     node to load data from
 	TreeViewItem(Node *node);
+
+	/// @returns the nodes config file (if set)
 	QString getInfoString();
+
+	/// @returns the set node
 	Node *getNode();
+
+	/// default destructor
 	virtual ~TreeViewItem();
 private:
-	QString text;
-	Node *node;
+	/// text of the item
+	QString _text;
+
+	/// set node
+	Node *_node;
 
 };
 
