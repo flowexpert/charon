@@ -99,7 +99,7 @@ void FrameSelect<T>::execute() {
 		if(lz >= s[2] || lt >= s[3] || lv >= s[4])
 			throw std::out_of_range("z/t/v coorinate too large");
 
-		if(_gui) {
+		if(_gui && widget.connected()) {
 			_gui->setDisplay(&(*widget.getTargets().begin())->getParent());
 			_gui->setTitle(ParameteredObject::getName());
 			_gui->setShape(s[2],s[3],s[4]);
@@ -120,7 +120,7 @@ void FrameSelect<T>::execute() {
 	else {
 		sout << "\tnot cropping anything since in not connected" << std::endl;
 	}
-	if(_gui)
+	if(_gui && widget.connected())
 		_gui->updateWidget() ;
 }
 #endif // _FRAMESELECT_HXX_
