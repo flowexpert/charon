@@ -13,36 +13,15 @@ IF(BUILD_TESTING)
 	ADD_DEFINITIONS(-DDEFAULTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/sampleclasses.wrp")
 	ADD_DEFINITIONS(-DTESTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/testClasses.wrp")
 
-	# test usage of graphviz library
-    ADD_EXECUTABLE(graphtest graphtest.cpp)
-    TARGET_LINK_LIBRARIES(graphtest ${Graphviz_LIBRARIES})
-    ADD_TEST(
-		NAME Graphviz
-		COMMAND graphtest
-	)
-	LIST(APPEND tests Graphviz)
-	LIST(APPEND testTargets graphtest)
-
 	# test ParameterFileModel
-    ADD_EXECUTABLE(modeltest modeltest.cpp)
-    TARGET_LINK_LIBRARIES(modeltest editparam)
-    ADD_TEST(
+	ADD_EXECUTABLE(modeltest modeltest.cpp)
+	TARGET_LINK_LIBRARIES(modeltest editparam)
+	ADD_TEST(
 		NAME ParameterFileModel
 		COMMAND modeltest
 	)
 	LIST(APPEND tests ParameterFileModel)
 	LIST(APPEND testTargets modeltest)
-
-	# check for graphviz bug
-	QT4_AUTOMOC(graphTemplateTest.cpp)
-	ADD_EXECUTABLE(graphtemptest graphTemplateTest.cpp)
-	TARGET_LINK_LIBRARIES(graphtemptest editgraph)
-	ADD_TEST(
-		NAME TemplateWidget
-		COMMAND graphtemptest
-	)
-	LIST(APPEND tests TemplateWidget)
-	LIST(APPEND testTargets graphtemptest)
 
 	IF(WIN32)
 		GET_TARGET_PROPERTY(test_loc modeltest LOCATION)

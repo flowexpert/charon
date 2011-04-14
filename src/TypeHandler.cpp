@@ -22,10 +22,8 @@
  */
 
 #include "TypeHandler.h"
-#include <math.h>
-#include <iostream>
 #include <QRegExp>
-using namespace std;
+
 QMap<QString, ParameterType*> TypeHandler::_types;
 
 void TypeHandler::addType(ParameterType *ptype) {
@@ -35,20 +33,25 @@ void TypeHandler::addType(ParameterType *ptype) {
 	exp.setPatternSyntax(QRegExp::Wildcard);
 	if (exp.exactMatch(ptype->getTypeName())) {
 		QString tname = ptype->getTypeName();
-		type = ptype->getTypeName().remove(QRegExp("<?*>*", Qt::CaseSensitive, QRegExp::Wildcard));
-		QString tmpname = ptype->getTypeName().remove(QRegExp("*<", Qt::CaseSensitive, QRegExp::Wildcard));
-		tmpname = tmpname.remove(QRegExp(">*", Qt::CaseSensitive, QRegExp::Wildcard));
-		/*cout << "has template: " << tname.toStdString() << endl;
-		cout << "w.o.:" << type.toStdString() << endl;
-		cout << "type:" << tmpname.toStdString() << endl;*/
+		type = ptype->getTypeName().remove(
+				QRegExp("<?*>*", Qt::CaseSensitive, QRegExp::Wildcard));
+		QString tmpname = ptype->getTypeName().remove(
+				QRegExp("*<", Qt::CaseSensitive, QRegExp::Wildcard));
+		tmpname = tmpname.remove(
+				QRegExp(">*", Qt::CaseSensitive, QRegExp::Wildcard));
 		ptype->setTempName(tmpname);
 		ptype->setTemplated(true);
 		ptype->setTypeName(type);
 	}
-	if(ptype->getTypeNameUnTemplated().contains("cimg",Qt::CaseInsensitive)) color = Qt::yellow;
-	else if(ptype->getTypeNameUnTemplated().contains("vigra",Qt::CaseInsensitive)) color = Qt::darkYellow;
-	else if(ptype->getTypeNameUnTemplated().contains("roi",Qt::CaseInsensitive)) color = Qt::green;
-	else if(ptype->getTypeNameUnTemplated().contains("interpolator",Qt::CaseInsensitive)) color = Qt::blue;
+	QString tName = ptype->getTypeNameUnTemplated();
+	if (tName.contains("cimg",Qt::CaseInsensitive))
+		color = Qt::yellow;
+	else if (tName.contains("vigra",Qt::CaseInsensitive))
+		color = Qt::darkYellow;
+	else if(tName.contains("roi",Qt::CaseInsensitive))
+		color = Qt::green;
+	else if(tName.contains("interpolator",Qt::CaseInsensitive))
+		color = Qt::blue;
 	// add more color presets here
 	else color = Qt::gray;
 	ptype->setColor(color);
@@ -59,7 +62,8 @@ bool TypeHandler::hasType(QString parameterTypeName) {
 	QRegExp exp("*<?*>*");
 	exp.setPatternSyntax(QRegExp::Wildcard);
 	if (exp.exactMatch(parameterTypeName)) {
-		parameterTypeName = parameterTypeName.remove(QRegExp("<?*>*", Qt::CaseSensitive, QRegExp::Wildcard));
+		parameterTypeName = parameterTypeName.remove(
+				QRegExp("<?*>*", Qt::CaseSensitive, QRegExp::Wildcard));
 	}
 	ParameterType *pt = _types.value(parameterTypeName);
 	if (pt != 0) {
@@ -68,21 +72,18 @@ bool TypeHandler::hasType(QString parameterTypeName) {
 	return false;
 }
 
-ParameterType *TypeHandler::getType(QString typeName) {
+ParameterType* TypeHandler::getType(QString typeName) {
 	QRegExp exp("*<?*>*");
 	exp.setPatternSyntax(QRegExp::Wildcard);
 	if (exp.exactMatch(typeName)) {
-		typeName = typeName.remove(QRegExp("<?*>*", Qt::CaseSensitive, QRegExp::Wildcard));
+		typeName = typeName.remove(
+				QRegExp("<?*>*", Qt::CaseSensitive, QRegExp::Wildcard));
 	}
 	ParameterType *pt = _types.value(typeName);
 	if (pt != 0) {
 		return pt;
 	} else {
-		cout << "error: requested unknown type:" << typeName.toStdString() << endl;
+		qDebug("requested unknown type: %s", typeName.toAscii().constData());
 		return 0;
 	}
-}
-
-void TypeHandler::inizialize() {
-	_types = QMap<QString, ParameterType*>();
 }

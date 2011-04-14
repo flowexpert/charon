@@ -32,7 +32,7 @@ ConnectionSocket::ConnectionSocket() {
 
 void ConnectionSocket::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-	NodeProperty *np = dynamic_cast<NodeProperty*>(this->parentItem());
+	NodeProperty *np = dynamic_cast<NodeProperty*>(parentItem());
 	if(np != 0)
 	{
 		painter->setBrush(np->getPropType()->ptype->getColor());
@@ -42,17 +42,17 @@ void ConnectionSocket::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 QPointF ConnectionSocket::getCenter()
 {
-	return this->_center;
+	return _center;
 }
 
 ConnectionSocket::ConnectionSocket(QGraphicsItem *parent,QPointF center) : QGraphicsItem(parent)
 {
-	this->_center = center;
+	_center = center;
 }
 
 QRectF ConnectionSocket::boundingRect() const
 {
-	return QRectF(this->_center.x()-5,this->_center.y()-5,10,10);
+	return QRectF(_center.x()-5,_center.y()-5,10,10);
 }
 
 ConnectionSocket::~ConnectionSocket() {

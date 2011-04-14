@@ -190,12 +190,12 @@ void WorkflowExecutor::_execute() {
 		_updateLogDialog() ;
 		QApplication::processEvents() ;
 		if (settings.value("executeThreaded",false).toBool()) {
-			this->start();
+			start();
 			_logTimer->start();
 		}
 		else {
-			this->run();
-			this->_executionFinished();
+			run();
+			_executionFinished();
 		}
 	}
 	catch (const std::string& msg) {
@@ -310,7 +310,7 @@ void WorkflowExecutor::_updateLogDialog()
 
 void WorkflowExecutor::execute() {
 	
-	if(this->isRunning()) //workflow is executing, kill it?
+	if(isRunning()) //workflow is executing, kill it?
 	{
 		QMessageBox msgBox;
 		msgBox.setText("Terminate Workflow?");
@@ -320,7 +320,7 @@ void WorkflowExecutor::execute() {
 		msgBox.setDefaultButton(QMessageBox::No);
 		int ret = msgBox.exec();	
 		if(ret == QMessageBox::Yes)
-		{	this->terminate() ;	}
+		{	terminate() ;	}
 	}
 	else
 	{
@@ -332,7 +332,7 @@ void WorkflowExecutor::execute() {
 		}
 		else //workflow ready to start
 		{
-			this->_execute() ;
+			_execute() ;
 		}
 	}
 }

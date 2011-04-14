@@ -65,8 +65,6 @@ public:
 	/// @param name    name to set
 	void setTypeName(QString name);
 
-	/// default destructor
-	virtual ~ParameterType();
 private:
 	/// name of the type
 	QString _typeName;

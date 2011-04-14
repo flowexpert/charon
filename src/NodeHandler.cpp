@@ -1,8 +1,24 @@
-/*	Copyright (C) 2011 Jonathan Wuest
- * @file   NodeHandler.cpp
- *  @brief  Implementation of class NodeHandler
- *  @date   15.03.2011
- *  @author <a href="mailto:wuest.jonathan@gmail.com">Jonathan Wuest</a>
+/*  Copyright (C) 2011 Jonathan Wuest
+
+	This file is part of Tuchulcha.
+
+	Tuchulcha is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Tuchulcha is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License
+	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/** \file   NodeHandler.cpp
+ *  \brief  Implementation of class NodeHandler
+ *  \date   15.03.2011
+ *  \author <a href="mailto:wuest.jonathan@gmail.com">Jonathan Wuest</a>
  */
 
 #include "Node.h"
@@ -17,159 +33,131 @@
 #include "MetaData.h"
 #include "FileManager.h"
 
-#include<QList>
+#include <QList>
 #include <QFileDialog>
-#include<QFile>
-#include<QTextStream>
-#include<QErrorMessage>
-#include<QGraphicsView>
-#include<QStandardItem>
-#include<iostream>
-#include<math.h>
+#include <QFile>
+#include <QTextStream>
+#include <QMessageBox>
+#include <QGraphicsView>
+#include <QStandardItem>
 
-#include "NodeHandler.moc"
-
-using namespace std;
-NodeHandler::NodeHandler(QObject *parent,QString classesFile) : QGraphicsScene(parent),_model(0) {
+NodeHandler::NodeHandler(QObject* pp,QString classesFile) :
+		QGraphicsScene(pp),_model(0) {
 	_addLine = false;
-	this->_cline = NULL;
+	_cline = NULL;
 	_scaleFactor = 1;
 
-	TypeHandler::inizialize();
 	if (classesFile.isEmpty())
 		classesFile = FileManager::instance().classesFile();
 	_model	= new GraphModel("", this, classesFile);
 }
 
 void NodeHandler::_deselectAllNodes(){
-	for(int i=0;i<this->items().size();i++)
-		{
-			Node *n = dynamic_cast<Node*>(this->items().at(i));
-			if(n != 0)
-			{
-				n->setSelectedNode(false);
-			}
+	for(int i=0; i < items().size();i++) {
+		Node *n = dynamic_cast<Node*>(items().at(i));
+		if(n != 0) {
+			n->setSelectedNode(false);
 		}
-	this->_selectedNode = 0;
-}
-
-void NodeHandler::wheelEvent(QGraphicsSceneWheelEvent *event)
-{
-	int f = event->delta();
-	qreal factor = max(0.7,1.0 + ((double)f * 0.001));
-	QList<QGraphicsView*> views(this->views());
-	this->_scaleFactor*=factor;
-	if(views.size()>0)
-	{
-		views.at(0)->scale(factor,factor);
 	}
-	QGraphicsScene::wheelEvent(event);
+	_selectedNode = 0;
 }
 
+void NodeHandler::wheelEvent(QGraphicsSceneWheelEvent* ev) {
+	int f = ev->delta();
+	qreal factor = std::max(0.7,1.0 + ((double)f * 0.001));
+	QList<QGraphicsView*> vs (views());
+	_scaleFactor*=factor;
+	if (vs.size()>0) {
+		vs.at(0)->scale(factor,factor);
+	}
+	QGraphicsScene::wheelEvent(ev);
+}
 
-
-void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-	this->_deselectAllNodes();
-	QGraphicsItem *itm = this->itemAt(event->scenePos());
+void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
+	_deselectAllNodes();
+	QGraphicsItem *itm = itemAt(ev->scenePos());
 	Node *np = dynamic_cast<Node*>(itm);
-	if(np != 0)
-	{
-		this->_deselectAllNodes();
-		this->_selectedNode = np;
+	if (np != 0) {
+		_deselectAllNodes();
+		_selectedNode = np;
 		_model->setPrefix(np->getName());
 		np->setSelectedNode(true);
-	}else{
-		for(int i=0;i<this->items().size();i++) this->items().at(i)->setSelected(false);  //Deselect all
+	} else {
+		for (int i=0; i < items().size(); i++)
+			items().at(i)->setSelected(false); // Deselect all
 	}
 	ConnectionSocket *cs = dynamic_cast<ConnectionSocket*>(itm);
-	if(cs != 0)
-	{
+	if (cs != 0) {
 		NodeProperty *prop = dynamic_cast<NodeProperty*>(cs->parentItem());
-		if(prop->canNewConnect()){
-			if(prop->hasConnection()){
+		if (prop->canNewConnect()) {
+			if (prop->hasConnection()) {
 				prop->removeAllConnections(_model);
-			}else{
-				this->_startProp = prop;
-				this->_cline = new ConnectionLine(this);
-				this->_cline->setStartPoint(event->scenePos().x(),event->scenePos().y());
-				this->_cline->setEndPoint(event->scenePos().x(),event->scenePos().y());
-				this->_addLine = true;
+			} else {
+				_startProp = prop;
+				_cline = new ConnectionLine(this);
+				_cline->setStartPoint(
+						ev->scenePos().x(),ev->scenePos().y());
+				_cline->setEndPoint(
+						ev->scenePos().x(),ev->scenePos().y());
+				_addLine = true;
 			}
 		}
-	}else{
-		QGraphicsScene::mousePressEvent(event);
+	} else {
+		QGraphicsScene::mousePressEvent(ev);
 	}
 	update();
 }
 
-void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-	/*QGraphicsItem *itm = this->itemAt(event->scenePos());				//TODO move scene
-	Node *np = dynamic_cast<Node*>(itm);
-	if(np == 0 and event->button() == Qt::LeftButton){
-		QRectF rect = this->sceneRect();
-		QPointF mv = event->scenePos()-event->lastScenePos();
-		cout<<mv.x()<<","<<mv.y()<<endl;
-		rect.moveTo(mv);
-		this->setSceneRect(rect);
-	}*/
-	if(_addLine)
-	{
-		if(this->_startProp->getPropType()->iotype == PropType::OUT)
-		{
-			this->_cline->setEndPoint(event->scenePos().x(),event->scenePos().y());
-		}else{
-			this->_cline->setStartPoint(event->scenePos().x(),event->scenePos().y());
+void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
+	if (_addLine) {
+		if(_startProp->getPropType()->iotype == PropType::OUT) {
+			_cline->setEndPoint(ev->scenePos().x(),ev->scenePos().y());
+		} else {
+			_cline->setStartPoint(ev->scenePos().x(),ev->scenePos().y());
 		}
 	}
-	else{
-		QGraphicsScene::mouseMoveEvent(event);
+	else {
+		QGraphicsScene::mouseMoveEvent(ev);
 	}
 	update();
 }
 
-GraphModel *NodeHandler::model(){
-	return this->_model;
+GraphModel* NodeHandler::model(){
+	return _model;
 }
 
-void NodeHandler::setModel(GraphModel *model){
-	this->_model = model;
+void NodeHandler::setModel(GraphModel* m){
+	_model = m;
 }
 
 
-bool NodeHandler::load(QString fname){
+bool NodeHandler::load(QString fname) {
 	bool loaded = _model->load(fname);
-	cout<<"model loaded: "<<loaded<<endl;
-	this->loadFromModel();
+	loadFromModel();
 	return loaded;
 }
 
-void NodeHandler::loadFromModel(){
-	const MetaData *mi = _model->metaInfo();
+void NodeHandler::loadFromModel() {
+	const MetaData* mi = _model->metaInfo();
 	QVector<QString> nodes = _model->nodes().toVector();
-
 	QVector<QString> nodesout,nodesin;
 	QVector<QString> slotout,slotin;
-	//cout<<"loading nodes"<<endl;
 	_model->setPrefix("");
 
+	for (int ii=0;ii<nodes.size();ii++) {
+		QString name = nodes[ii];
+		std::string cname = _model->getClass(nodes[ii].toStdString());
 
-
-	for(int i=0;i<nodes.size();i++){
-		//cout<<"loading node"<<endl;
-		QString name = nodes[i];
-		string cname = _model->getClass(nodes[i].toStdString());
-
-		Node *node = new Node(name,10*i,10*i,this);
+		Node* node = new Node(name,10*ii,10*ii,this);
 		_model->setPrefix("");
 		_model->setOnlyParams(false);
 		for(int j=0;j<_model->rowCount();j++){
-			if(_model->data(_model->index(j,0)).toString() == name+".editorinfo"){
-			QString pdata = _model->data(_model->index(j,1)).toString();
-			float x = pdata.split(" ").at(0).toFloat();
-			float y = pdata.split(" ").at(1).toFloat();
-			node->setPos(x,y);
+			if (_model->data(_model->index(j,0)).toString()
+					== name+".editorinfo") {
+				QString pdata = _model->data(_model->index(j,1)).toString();
+				float x = pdata.split(" ").at(0).toFloat();
+				float y = pdata.split(" ").at(1).toFloat();
+				node->setPos(x,y);
 			}
 			if(_model->data(_model->index(j,0)).toString() == name+".type"){
 				QString modname = _model->data(_model->index(j,1)).toString();
@@ -178,86 +166,96 @@ void NodeHandler::loadFromModel(){
 		}
 		_model->setOnlyParams(true);
 
-		//cout<<"adding parameters"<<endl;
+		std::vector<std::string> ins = mi->getInputs(cname);
+		std::vector<std::string> outs = mi->getOutputs(cname);
+		std::vector<std::string> params = mi->getParameters(cname);
 
-		vector<string> ins = mi->getInputs(cname);
-		vector<string> outs = mi->getOutputs(cname);
-		vector<string> params = mi->getParameters(cname);
+		for (size_t jj=0; jj < ins.size(); jj++) {
+			node->addProperty(
+					QString::fromStdString(ins[jj]),
+					QString::fromStdString(mi->getType(ins[jj],cname)),
+					PropType::IN);
+		}
+		for (size_t jj=0; jj < outs.size(); jj++) {
+			node->addProperty(
+					QString::fromStdString(outs[jj]),
+					QString::fromStdString(mi->getType(outs[jj],cname)),
+					PropType::OUT);
+		}
+		for (size_t jj=0; jj < params.size(); jj++) {
+			node->addProperty(
+					QString::fromStdString(params[jj]),
+					QString::fromStdString(mi->getType(params[jj],cname)),
+					PropType::NONE);
+		}
 
-		for(unsigned int j=0;j<ins.size();j++){
-			node->addProperty(QString::fromStdString(ins[j]),QString::fromStdString(mi->getType(ins[j],cname)),PropType::IN);
-		}
-		for(unsigned int j=0;j<outs.size();j++){
-			node->addProperty(QString::fromStdString(outs[j]),QString::fromStdString(mi->getType(outs[j],cname)),PropType::OUT);
-		}
-		for(unsigned int j=0;j<params.size();j++){
-			node->addProperty(QString::fromStdString(params[j]),QString::fromStdString(mi->getType(params[j],cname)),PropType::NONE);
-		}
-
-		for(unsigned int i=0;i<outs.size();i++){
-			if(_model->parameterFile().isSet(name.toStdString()+"."+outs[i])){
-				vector<string> conns = _model->parameterFile().getList<string>(name.toStdString()+"."+outs[i]);
-				for(unsigned int j=0;j<conns.size();j++){
-					slotout.push_back(QString::fromStdString(outs[i]));
-					slotin.push_back(QString::fromStdString(conns[j]).remove(QRegExp("*.",Qt::CaseSensitive,QRegExp::Wildcard)));
-					nodesin.push_back(QString::fromStdString(conns[j]).remove(QRegExp(".*",Qt::CaseSensitive,QRegExp::Wildcard)));
+		for (size_t jj=0; jj < outs.size(); jj++) {
+			std::string curO = name.toStdString()+"."+outs[jj];
+			if (_model->parameterFile().isSet(curO)) {
+				std::vector<std::string> conns =
+						_model->parameterFile().getList<std::string>(curO);
+				for (size_t kk=0; kk < conns.size(); kk++) {
+					slotout.push_back(QString::fromStdString(outs[jj]));
+					slotin.push_back(QString::fromStdString(conns[kk]).remove(
+						QRegExp("*.",Qt::CaseSensitive,QRegExp::Wildcard)));
+					nodesin.push_back(QString::fromStdString(conns[kk]).remove(
+						QRegExp(".*",Qt::CaseSensitive,QRegExp::Wildcard)));
 					nodesout.push_back(name);
 				}
 			}
-		 }
+		}
 		node->moveBy(0,0);
 	}
-	//cout<<"connecting nodes!"<<endl;
-	update();
-	for(int i=0;i<slotout.size();i++){
-		try{
-		this->connectNodes(nodesout[i],slotout[i],nodesin[i],slotin[i]);
-		}catch(...){
-		QErrorMessage errorMessage;
-		errorMessage.showMessage("Failed to connect "+nodesout[i]+"."+slotout[i]+
-					 " to "+nodesin[i]+"."+slotin[i]+". "+
-					 "Disconnected nodes in graphmodel.");
-		errorMessage.exec();
-		_model->disconnectSlot(nodesout[i]+"."+slotout[i],nodesin[i]+"."+slotin[i]);
-		}
 
+	update();
+	for (int ii=0; ii<slotout.size(); ii++) {
+		try {
+			connectNodes(nodesout[ii],slotout[ii],nodesin[ii],slotin[ii]);
+		}
+		catch(...) {
+			QMessageBox::warning(
+					0, "connection error",
+					"Failed to connect "+nodesout[ii]+"."+slotout[ii]+
+					" to "+nodesin[ii]+"."+slotin[ii]+". "+
+					 "Disconnected nodes in graphmodel.");
+			_model->disconnectSlot(
+					nodesout[ii]+"."+slotout[ii],nodesin[ii]+"."+slotin[ii]);
+		}
 	}
 	update();
 	_deselectAllNodes();
-	//cout<<"all done"<<endl;
 }
 
-void NodeHandler::connectNodes(QString node0, QString prop0, QString node1, QString prop1){
-	Node *out,*in;
-	for(int i=0;i<this->items().size();i++){
-	Node *n = dynamic_cast<Node*>(items().at(i));
-	if(n){
-		if(n->getName() == node0) out = n;
-		if(n->getName() == node1) in = n;
+void NodeHandler::connectNodes(
+		QString node0, QString prop0, QString node1, QString prop1) {
+	Node *out, *in;
+	for (int i=0; i < items().size(); i++) {
+		Node *n = dynamic_cast<Node*>(items().at(i));
+		if (n) {
+			if(n->getName() == node0) out = n;
+			if(n->getName() == node1) in = n;
+		}
 	}
+	if (!(out && in)) {
+		QMessageBox::warning(
+				0, "connection error",
+				QString("failed to connect: %1.%2 to %3.%4")
+					.arg(node0,prop0,node1,prop1));
+		return;
 	}
-	if(!(out && in)){
-	cout<<"failed to connect: "<<node0.toStdString()<<"."<<prop0.toStdString();
-	cout<<" to "<<node1.toStdString()<<"."<<prop1.toStdString()<<endl;
-	return;
-	}
+
 	NodeProperty *inp,*outp;
-	for(int i=0;i<in->getProperties().size();i++){
-	if(in->getProperties().at(i)->getName() == prop1){
-		inp = in->getProperties().at(i);
-		break;
+	for (int i=0;i<in->getProperties().size();i++) {
+		if (in->getProperties().at(i)->getName() == prop1) {
+			inp = in->getProperties().at(i);
+			break;
+		}
 	}
-	}
-	for(int i=0;i<out->getProperties().size();i++){
-	if(out->getProperties().at(i)->getName() == prop0){
-		outp = out->getProperties().at(i);
-		break;
-	}
-	}
-	if(inp == 0 || outp == 0){
-	cout<<"failed to connect: "<<node0.toStdString()<<"."<<prop0.toStdString();
-	cout<<" to "<<node1.toStdString()<<"."<<prop1.toStdString()<<endl;
-	return;
+	for(int i=0;i<out->getProperties().size();i++) {
+		if (out->getProperties().at(i)->getName() == prop0) {
+			outp = out->getProperties().at(i);
+			break;
+		}
 	}
 
 	ConnectionLine *l = new ConnectionLine(this);
@@ -269,57 +267,53 @@ void NodeHandler::connectNodes(QString node0, QString prop0, QString node1, QStr
 }
 
 
-void NodeHandler::keyReleaseEvent (QKeyEvent * keyEvent )
-{
-	if(keyEvent->key() == Qt::Key_F12){
+void NodeHandler::keyReleaseEvent(QKeyEvent* keyEvent) {
+	if(keyEvent->key() == Qt::Key_F12) {
 		QString fname = QFileDialog::getOpenFileName();
-		if(!fname.isEmpty()){
-		QPixmap pixmap(this->width()+10,this->height()+10);
-		QPainter painter(&pixmap);
-		painter.setRenderHint(QPainter::Antialiasing);
-		painter.fillRect(0, 0, this->width()+10,this->height()+10, Qt::white);
-		this->render(&painter);
+		if (!fname.isEmpty()) {
+			QPixmap pixmap(width()+10,height()+10);
+			QPainter painter(&pixmap);
+			painter.setRenderHint(QPainter::Antialiasing);
+			painter.fillRect(0, 0, width()+10,height()+10, Qt::white);
+			render(&painter);
 
-		if(fname.endsWith(".png")){
-			pixmap.save(fname,"PNG");
-		}else if(fname.endsWith(".jpg")){
-			pixmap.save(fname,"JPG",90);
-		}
+			if (fname.endsWith(".png")) {
+				pixmap.save(fname,"PNG");
+			} else if(fname.endsWith(".jpg")) {
+				pixmap.save(fname,"JPG",90);
+			}
 		}
 	}
 
-	if(keyEvent->key() == Qt::Key_Delete && this->_selectedNode != 0){
-		this->deleteNode(this->_selectedNode);
+	if (keyEvent->key() == Qt::Key_Delete && _selectedNode != 0) {
+		deleteNode(_selectedNode);
 	}
 }
 
-void NodeHandler::deleteNode(Node *node){
-	if(_model->deleteNode(node->getName())){
-	this->clear();
-	this->loadFromModel();
+void NodeHandler::deleteNode(Node *node) {
+	if(_model->deleteNode(node->getName())) {
+		clear();
+		loadFromModel();
 	}
 }
 
-void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
 {
-	QGraphicsItem *itm = this->itemAt(event->scenePos());
+	QGraphicsItem *itm = itemAt(ev->scenePos());
 	ConnectionSocket *cs = dynamic_cast<ConnectionSocket*>(itm);
 	NodeProperty *prop = 0;
-	if(_addLine && cs != 0)
-	{
+	if (_addLine && cs != 0) {
 		prop = dynamic_cast<NodeProperty*>(cs->parentItem());
-		if(prop != 0 && prop != _startProp)
-		{
-			if(_startProp->getIOType()==PropType::IN) //swap buffers
-			{
+		if (prop != 0 && prop != _startProp) {
+			if (_startProp->getIOType()==PropType::IN) { //swap buffers
 				NodeProperty *b = _startProp;
 				_startProp = prop;
 				prop = b;
 			}
-			try{
-				_model->connected(_startProp->getNode()->getName()+"."+_startProp->getName(),
-									prop->getNode()->getName()+"."+prop->getName());
-				//this->cline->setEndPoint(event->scenePos().x(),event->scenePos().y());
+			try {
+				_model->connected(
+					_startProp->getNode()->getName()+"."+_startProp->getName(),
+					prop->getNode()->getName()+"."+prop->getName());
 				_cline->setStartEndProp(_startProp,prop);
 				_startProp->addConnection(_cline);
 				prop->addConnection(_cline);
@@ -327,64 +321,62 @@ void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 				prop->moveBy(0,0);
 				_cline = NULL;
 				_model->connectSlot(
-						_startProp->getNode()->getName()+"."+_startProp->getName(),
-						prop->getNode()->getName()+"."+prop->getName());
-			}catch(std::runtime_error){
-				this->removeItem(_cline);
+					_startProp->getNode()->getName()+"."+_startProp->getName(),
+					prop->getNode()->getName()+"."+prop->getName());
+			} catch (std::runtime_error) {
+				removeItem(_cline);
 				_cline = NULL;
 			}
 			_addLine = false;
-		}else{
-			this->removeItem(_cline);
+		} else {
+			removeItem(_cline);
 			_cline = NULL;
 			_addLine = false;
 		}
-	}else if(_addLine){
-		this->removeItem(_cline);
+	} else if(_addLine) {
+		removeItem(_cline);
 		_cline = NULL;
 		_addLine = false;
 	}
 
-	QGraphicsScene::mouseReleaseEvent(event);
+	QGraphicsScene::mouseReleaseEvent(ev);
 	update();
 }
 
-void NodeHandler::addNode(QString name, QPointF pos)
-{
+void NodeHandler::addNode(QString name, QPointF pos) {
 	new Node(name,pos.x(),pos.y(),this);
 }
 
 
 
-void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* event){
+void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
+	NodeTreeView *ntv = (NodeTreeView*)(ev->source());
+	if (ntv != 0) {
+		Node *node = new Node(
+				ntv->getSelectedItem()->getNode()->getName(),
+				ev->scenePos().x(),ev->scenePos().y(),this);
 
-	NodeTreeView *ntv = (NodeTreeView*)(event->source());
-	if(ntv != 0){
-		Node *node = new Node(ntv->getSelectedItem()->getNode()->getName(), event->scenePos().x(),event->scenePos().y(),this);
-
-		QVector<NodeProperty*> props = ntv->getSelectedItem()->getNode()->getProperties();
-		for(int i=0;i<props.size();i++){
-			node->addProperty(props[i]->getName(),
-					  props[i]->getPropType()->ptype->getTypeName(),
-					  props[i]->getIOType());
+		QVector<NodeProperty*> props =
+				ntv->getSelectedItem()->getNode()->getProperties();
+		for (int i=0;i<props.size();i++) {
+			node->addProperty(
+					props[i]->getName(),
+					props[i]->getPropType()->ptype->getTypeName(),
+					props[i]->getIOType());
 		}
 
-		this->_deselectAllNodes();
+		_deselectAllNodes();
 		node->setSelectedNode(true);
-		this->_selectedNode = node;
+		_selectedNode = node;
 
 		QString newname = _model->addNode(node->getName());
 		node->setModulName(node->getName());
-		if(!(newname == "")) node->setName(newname);
-		else this->removeItem(node);
+		if (!(newname == ""))
+			node->setName(newname);
+		else
+			removeItem(node);
 		_model->setPrefix(node->getName());
 	}
 }
 
-void NodeHandler::dragEnterEvent(QGraphicsSceneDragDropEvent *){}
-void NodeHandler::dragMoveEvent(QGraphicsSceneDragDropEvent *){}
-
-
-NodeHandler::~NodeHandler() {
-	// TODO Auto-generated destructor stub
-}
+#include "NodeHandler.moc"

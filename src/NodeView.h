@@ -36,13 +36,10 @@ public:
 	/// default constructor
 	/// @param parent         parent QWidget
 	/// @param classesFile    filename of the classesFile
-	NodeView(QWidget *parent,QString classesFile="");
+	NodeView(QWidget* parent, QString classesFile="");
 
 	/// @returns the set GraphModel
-	GraphModel *model();
-
-	/// default destructor
-	virtual ~NodeView();
+	GraphModel* model();
 
 public slots:
 	/// Load ParameterFile and display content.
@@ -62,10 +59,10 @@ public slots:
 	virtual void updateDisplay();
 private:
 	/// NodeHandler scene
-	NodeHandler *_nodehandler;
+	NodeHandler* _nodehandler;
 
 	/// the current set GraphModel
-	GraphModel *_model;
+	GraphModel* _model;
 };
 
 #endif	/* NODEVIEW_H */

@@ -1,4 +1,4 @@
-/*	Copyright (C) 2011 Jonathan Wuest
+/*  Copyright (C) 2011 Jonathan Wuest
 
 	This file is part of Tuchulcha.
 
@@ -46,7 +46,9 @@ public:
 	QPointF getCenter();
 
 	/// paints the socket
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+	void paint(
+			QPainter* painter, const QStyleOptionGraphicsItem* option,
+			QWidget* widget = 0);
 
 	/// default destructor
 	virtual ~ConnectionSocket();

@@ -28,12 +28,10 @@
 #include "FileManager.h"
 #include <FileTool.h>
 #include <ParameterFile.h>
-#include <fstream>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QStringList>
-#include <iostream>
 #include <QSettings>
 #include <QTextStream>
 #include "PluginManager.h"

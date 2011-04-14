@@ -41,10 +41,8 @@ public:
 
 	/// @returns the ParameterType if set
 	/// @param typeName   name of the type to return
-	static ParameterType *getType(QString typeName);
+	static ParameterType* getType(QString typeName);
 
-	/// initalizes the Handler
-	static void inizialize();
 private:
 	/// map containing all types in use
 	static QMap<QString,ParameterType*> _types;

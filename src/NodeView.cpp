@@ -1,4 +1,4 @@
-/*	Copyright (C) 2011 Jonathan Wuest
+/*  Copyright (C) 2011 Jonathan Wuest
 
 	This file is part of Tuchulcha.
 
@@ -20,21 +20,17 @@
  *  @date   15.03.2011
  *  @author <a href="mailto:wuest.jonathan@gmail.com">Jonathan Wuest</a>
  */
-#include <iostream>
 #include "NodeView.h"
 #include "GraphModel.h"
 #include "FileManager.h"
 
-#include "NodeView.moc"
-
-using namespace std;
-
-NodeView::NodeView(QWidget *parent,QString classesFile) : QGraphicsView(parent),_model(0) {
-	this->setRenderHints( QPainter::Antialiasing );
-	this->setAcceptDrops(true);
-	this->show();
-	this->_nodehandler = new NodeHandler(this,classesFile);
-	this->setScene(this->_nodehandler);
+NodeView::NodeView(QWidget* pp,QString classesFile) :
+			QGraphicsView(pp),_model(0) {
+	setRenderHints(QPainter::Antialiasing);
+	setAcceptDrops(true);
+	show();
+	_nodehandler = new NodeHandler(this,classesFile);
+	setScene(_nodehandler);
 }
 
 GraphModel *NodeView::model(){
@@ -42,21 +38,20 @@ GraphModel *NodeView::model(){
 }
 
 bool NodeView::load(const QString& fileName){
-	bool ret = this->_nodehandler->load(fileName);
+	bool ret = _nodehandler->load(fileName);
 	fitInView(sceneRect(),Qt::KeepAspectRatio);
 	return ret;
 }
 
-void NodeView::setModel(GraphModel *model){
-	this->_nodehandler->setModel(model);
+void NodeView::setModel(GraphModel* mm){
+	_nodehandler->setModel(mm);
 }
 
 void NodeView::save(){
 }
+
 void NodeView::updateDisplay(){
 	_nodehandler->update();
 }
 
-NodeView::~NodeView() {
-}
-
+#include "NodeView.moc"

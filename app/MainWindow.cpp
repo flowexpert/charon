@@ -37,7 +37,6 @@
 #include "FileManager.h"
 #include <ParameterFile.hxx>
 #include <PluginManager.h>
-#include <iostream>
 #include "AbstractPluginLoader.h"
 #include "WorkflowExecutor.h"
 

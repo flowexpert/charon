@@ -455,7 +455,7 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 			tr("Enter new name for node \"%1\":").arg(nodename),
 			QLineEdit::Normal, nodename, &ok);
 	if (ok) {
-		if(this->nodeValid(newName)) {
+		if(nodeValid(newName)) {
 			QMessageBox::warning(
 					0, tr("node exists"),
 					tr("A node named <i>%1</i> does already exist.<br/>"

@@ -49,21 +49,24 @@ class Node;
 class ConnectionSocket;
 class GraphModel;
 
-
-
 /// Property(/Parameter) of a node
 class NodeProperty : public QGraphicsItem {
 public:
 	/// default constructor
-	NodeProperty();
-
-	/// default constructor
-	/// @param parentNode      the node which the property belongs to
-	/// @param name            name of the property
-	/// @param propNr          number of the property (needed for correct positioning)
-	/// @param ptype           property type (will be checked with TypeHandler to group types)
-	/// @param p_iotype        input output type of the property (note: NONE (default value) will not draw the property)
-	NodeProperty(QGraphicsItem *parentNode,QString name,int propNr,QString ptype,PropType::NodePropertyIOType p_iotype=PropType::NONE);
+	/** \param parentNode      the node which the property belongs to
+	 *  \param name            name of the property
+	 *  \param propNr          number of the property
+	 *                         (needed for correct positioning)
+	 *  \param ptype           property type (will be checked with TypeHandler
+	 *                         to group types)
+	 *  \param p_iotype        input output type of the property
+	 *                         (note: NONE (default value) will not draw
+	 *                         the property)
+	 */
+	NodeProperty(
+			QGraphicsItem* parentNode, QString name,
+			int propNr, QString ptype,
+			PropType::NodePropertyIOType p_iotype=PropType::NONE);
 
 	/// area for hover event
 	QRectF boundingRect() const;

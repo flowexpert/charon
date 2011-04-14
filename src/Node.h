@@ -18,18 +18,13 @@
 
 /// QGraphicsItem that contains nodeproperties and draws the node
 class Node : public QGraphicsItem {
-
 public:
-
-	/// default constructor
-	Node();
-
 	/// default constructor
 	/// @param title    name of the node
 	/// @param xpos     x coordinate of upper left corner of the node
 	/// @param ypos     y coordinate of upper left corner of the node
 	/// @param parent   parent graphics scene
-	Node(QString title,int xpos,int ypos,QGraphicsScene *parent);
+	Node(QString title = "", int xpos=0, int ypos=0,QGraphicsScene* parent=0);
 
 	/// area where node is clickable
 	QRectF boundingRect() const;

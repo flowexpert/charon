@@ -1,4 +1,4 @@
-/*	Copyright (C) 2011 Jonathan Wuest
+/*  Copyright (C) 2011 Jonathan Wuest
 
 	This file is part of Tuchulcha.
 
@@ -29,42 +29,50 @@
 #include "TreeViewItem.h"
 #include "FileManager.h"
 #include "MetaData.h"
-#include "NodeTreeView.moc"
-#include <iostream>
-using namespace std;
 
-NodeTreeView::NodeTreeView(QWidget *parent) : QTreeView(parent) {
-	this->setAnimated(true);
-	_model = new QStandardItemModel(1,1);
-	this->setModel(_model);
-	_root = new QStandardItem("Modules");
+NodeTreeView::NodeTreeView(QWidget* pp) :
+			QTreeView(pp),
+			_model(new QStandardItemModel(1,1)),
+			_root(new QStandardItem("Modules"))
+{
+	setAnimated(true);
+	setModel(_model);
 	_root->setDragEnabled(false);
 	_model->setItem(0,0,_root);
 	_model->setHorizontalHeaderItem(0,new QStandardItem("Modules"));
-	this->setDragEnabled(true);
+	setDragEnabled(true);
 	load(FileManager::instance().classesFile());
 }
 
 void NodeTreeView::load(QString classesFile){
 	MetaData md(classesFile.toStdString());
-	vector<string> classes = md.getClasses();
-	for(unsigned int i=0;i<classes.size();i++){
-		QString name = QString::fromStdString(classes[i]);
-		vector<string> ins = md.getInputs(classes[i]);
-		vector<string> outs = md.getOutputs(classes[i]);
-		vector<string> params = md.getParameters(classes[i]);
-		Node *node = new Node();
+	std::vector<std::string> classes = md.getClasses();
+	for(size_t ii=0; ii < classes.size(); ii++){
+		QString name = QString::fromStdString(classes[ii]);
+		std::vector<std::string> ins = md.getInputs(classes[ii]);
+		std::vector<std::string> outs = md.getOutputs(classes[ii]);
+		std::vector<std::string> params = md.getParameters(classes[ii]);
+		Node* node = new Node();
 		node->setName(name);
-		for(unsigned int j=0;j<ins.size();j++){
-			node->addProperty(QString::fromStdString(ins[j]),QString::fromStdString(md.getType(ins[j],classes[i])),PropType::IN);
+		for (unsigned int j=0;j<ins.size();j++) {
+			node->addProperty(
+					QString::fromStdString(ins[j]),
+					QString::fromStdString(md.getType(ins[j],classes[ii])),
+					PropType::IN);
 		}
-		for(unsigned int j=0;j<outs.size();j++){
-			node->addProperty(QString::fromStdString(outs[j]),QString::fromStdString(md.getType(outs[j],classes[i])),PropType::OUT);
+		for (unsigned int j=0;j<outs.size();j++) {
+			node->addProperty (
+					QString::fromStdString(outs[j]),
+					QString::fromStdString(md.getType(outs[j],classes[ii])),
+					PropType::OUT);
 		}
-		for(unsigned int j=0;j<params.size();j++){
-			node->addProperty(QString::fromStdString(params[j]),QString::fromStdString(md.getType(params[j],classes[i])),PropType::NONE);
+		for (unsigned int j=0;j<params.size();j++) {
+			node->addProperty(
+					QString::fromStdString(params[j]),
+					QString::fromStdString(md.getType(params[j],classes[ii])),
+					PropType::NONE);
 		}
-		this->addNode(node);
+		addNode(node);
 	}
 }
 
@@ -85,27 +93,29 @@ void NodeTreeView::addNode(Node* n){
 			case PropType::OUT:{pname = "out"; break;}
 			case PropType::NONE:{break;}
 		}
-		pname += "\t"+props[i]->getName()+ "\t["+props[i]->getPropType()->ptype->getTypeName()+"]";
+		pname += "\t"+props[i]->getName()+
+				 "\t["+props[i]->getPropType()->ptype->getTypeName()+"]";
 		prop->setText(pname);
 		prop->setDragEnabled(false);
 		node->appendRow(prop);
 	}
 	_root->appendRow(node);
-	this->sortByColumn(0,Qt::AscendingOrder);
+	sortByColumn(0,Qt::AscendingOrder);
 }
 
-void NodeTreeView::mousePressEvent(QMouseEvent *event){
-	QTreeView::mousePressEvent(event);
-	TreeViewItem *sel = this->getSelectedItem();
-	if(sel) emit this->showClassDoc(sel->getNode()->getName());
+void NodeTreeView::mousePressEvent(QMouseEvent* ev){
+	QTreeView::mousePressEvent(ev);
+	TreeViewItem *sel = getSelectedItem();
+	if(sel) emit showClassDoc(sel->getNode()->getName());
 }
 
 
 TreeViewItem *NodeTreeView::getSelectedItem(){
-	QModelIndexList list = this->selectedIndexes();
+	QModelIndexList list = selectedIndexes();
 
 	for(int i=0;i<list.size();i++){
-		TreeViewItem *tvi = (TreeViewItem*)_root->child(list[i].row(),list[i].column());
+		TreeViewItem *tvi = (TreeViewItem*)_root->child(
+				list[i].row(),list[i].column());
 		if(tvi != 0){
 			return tvi;
 		}
@@ -113,3 +123,4 @@ TreeViewItem *NodeTreeView::getSelectedItem(){
 	return 0;
 }
 
+#include "NodeTreeView.moc"

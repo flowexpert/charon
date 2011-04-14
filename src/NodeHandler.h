@@ -1,4 +1,4 @@
-/*	Copyright (C) 2011 Jonathan Wuest
+/*  Copyright (C) 2011 Jonathan Wuest
 
 	This file is part of Tuchulcha.
 
@@ -100,14 +100,6 @@ public:
 	/// handles drop events
 	void dropEvent(QGraphicsSceneDragDropEvent * event);
 
-	/// function needed for drag&drop
-	void	dragMoveEvent (QGraphicsSceneDragDropEvent * event);
-
-	/// function needed for drag&drop
-	void dragEnterEvent(QGraphicsSceneDragDropEvent * event);
-
-	/// default destructor
-	virtual ~NodeHandler();
 private:
 	/// deselects all nodes
 	void _deselectAllNodes();

@@ -29,15 +29,9 @@
 
 class NodeProperty;
 
-
 /// Line that connects two slots of two different nodes
 class ConnectionLine : public QGraphicsItem {
-
 public:
-
-	/// Default constructor
-	ConnectionLine();
-
 	/// Default constructor
 	/// @param scene parent scene to use
 	ConnectionLine(QGraphicsScene *scene);
@@ -54,7 +48,6 @@ public:
 	/// @param pos   start point
 	void setStartPoint(QPointF pos);
 
-
 	/// sets end point (for drawing)
 	/// @param x     x coordinate of end point
 	/// @param y     y coordinate of end point
@@ -70,10 +63,9 @@ public:
 	void setStartEndProp(NodeProperty *start,NodeProperty *end);
 
 	/// paints the line
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-
-	/// default destructor
-	virtual ~ConnectionLine();
+	void paint(
+			QPainter *painter, const QStyleOptionGraphicsItem *option,
+			QWidget *widget = 0);
 
 	/// get property at end of line
 	/// @return   property at end of line

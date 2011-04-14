@@ -21,18 +21,18 @@ INCLUDE(${QT_USE_FILE})
 
 # determine project svn information if possible
 # make sure to switch USE_SVN off if not building from svn sources
-#FIND_PACKAGE(Subversion)
-#IF(Subversion_FOUND)
-#	OPTION(USE_SVN "try to determine svn revision information" ON)
-#	IF(USE_SVN)
-#		IF(NOT tuchulcha_SVN_DIR)
-#			SET(tuchulcha_SVN_DIR "${PROJECT_SOURCE_DIR}")
-#		ENDIF()
-#		SET(tuchulcha_SVN_DIR "${tuchulcha_SVN_DIR}"
-#			CACHE PATH "Directory to query SVN information from" FORCE)
-#		Subversion_WC_INFO(${tuchulcha_SVN_DIR} Tuchulcha_SVN)
-#	ENDIF(USE_SVN)
-#ENDIF(Subversion_FOUND)
+FIND_PACKAGE(Subversion)
+IF(Subversion_FOUND)
+	OPTION(USE_SVN "try to determine svn revision information" ON)
+	IF(USE_SVN)
+		IF(NOT tuchulcha_SVN_DIR)
+			SET(tuchulcha_SVN_DIR "${PROJECT_SOURCE_DIR}")
+		ENDIF()
+		SET(tuchulcha_SVN_DIR "${tuchulcha_SVN_DIR}"
+			CACHE PATH "Directory to query SVN information from" FORCE)
+		Subversion_WC_INFO(${tuchulcha_SVN_DIR} Tuchulcha_SVN)
+	ENDIF(USE_SVN)
+ENDIF(Subversion_FOUND)
 
 # Possibility to add additional build info
 SET(tuchulcha_BUILD_INFO "${tuchulcha_BUILD_INFO}"
@@ -46,8 +46,6 @@ IF(WIN32)
 	OPTION(INSTALL_DLLS "install/package needed (third-party) dlls" OFF)
 	INCLUDE(appicon)
 ENDIF(WIN32)
-
-FIND_PACKAGE(Graphviz 2.20 REQUIRED)
 
 # set up documentation generation
 FIND_PACKAGE(Doxygen)
