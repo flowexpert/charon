@@ -320,9 +320,9 @@ void MainWindow::_showAbout() {
 		+tr("Built %1 %2<br />with %3")
 		.arg(__DATE__).arg(__TIME__).arg(buildSystem)
 		+QString("<br />")
-#ifdef SVNINFO
-		+tr("SVN Revision: %1 (%2)")
-		.arg(SVNINFO).arg(SVNBRANCH)
+#ifdef VCSINFO
+		+tr("VCS Info: %1")
+		.arg(VCSINFO)
 		+QString("<br />")
 #endif
 		+tr("Built against libraries:")

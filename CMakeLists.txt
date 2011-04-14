@@ -10,33 +10,11 @@ IF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 ENDIF()
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
-FIND_PACKAGE(Qt4 4.4.0
-	COMPONENTS QtCore QtGui QtSVG QtTest QtWebkit
-	REQUIRED
-)
+FIND_PACKAGE(Qt4 4.4.0 COMPONENTS QtCore QtGui QtWebkit REQUIRED)
 IF(APPLE)
 	ADD_DEFINITIONS(-DQ_WS_MAC32)
 ENDIF(APPLE)
 INCLUDE(${QT_USE_FILE})
-
-# determine project svn information if possible
-# make sure to switch USE_SVN off if not building from svn sources
-FIND_PACKAGE(Subversion)
-IF(Subversion_FOUND)
-	OPTION(USE_SVN "try to determine svn revision information" ON)
-	IF(USE_SVN)
-		IF(NOT tuchulcha_SVN_DIR)
-			SET(tuchulcha_SVN_DIR "${PROJECT_SOURCE_DIR}")
-		ENDIF()
-		SET(tuchulcha_SVN_DIR "${tuchulcha_SVN_DIR}"
-			CACHE PATH "Directory to query SVN information from" FORCE)
-		Subversion_WC_INFO(${tuchulcha_SVN_DIR} Tuchulcha_SVN)
-	ENDIF(USE_SVN)
-ENDIF(Subversion_FOUND)
-
-# Possibility to add additional build info
-SET(tuchulcha_BUILD_INFO "${tuchulcha_BUILD_INFO}"
-	CACHE STRING "additional build information (optional)" FORCE)
 
 FIND_PACKAGE(charon-core 0.1.4 REQUIRED HINTS $ENV{CHARON_DIR})
 INCLUDE(InitFlags)
@@ -51,11 +29,10 @@ ENDIF(WIN32)
 FIND_PACKAGE(Doxygen)
 INCLUDE(Documentation)
 
-# CPack descriptions for package generation
-INCLUDE(ReleaseSys)
-
 # Test suite
 INCLUDE(CTest)
+# try to query VCS revision information
+INCLUDE(RevInfo)
 
 # the RPATH to be used when installing
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
