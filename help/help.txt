@@ -22,9 +22,7 @@
 		The flow window shows the flowchart representation of the object
 		structures found in the associated parameterfile document.
 		This structure can be edited by drag&drop (see introduction).
-		The parameterfile content can be saved and reloaded. The position
-		of the objects is calculated dynamically by graphviz and cannot be
-		changed manually.
+		The parameterfile content can be saved and reloaded.
 	</p>
 	
 	<h3>Object inspector</h3>

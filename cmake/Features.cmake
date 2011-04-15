@@ -13,11 +13,6 @@ SET_FEATURE_INFO(charon-core
 	"http://charon-suite.sourceforge.net"
 	"Version ${charon-core_VERSION}"
 )
-SET_FEATURE_INFO(Graphviz
-	"Graph Visualization Software"
-	"http://www.graphviz.org"
-	"Version ${Graphviz_VERSION}"
-)
 SET_FEATURE_INFO(Doxygen
 	"Documentation system"
 	"http://doxygen.org"

@@ -90,9 +90,6 @@ This is a list of the used libraries and software:
     <a href="http://www.qtsoftware.com/products/appdev">QT library</a>
     (Version >= 4.5.0)<br>
     License: <a href="http://www.qtsoftware.com/products/licensing">LGPL</a>
--   graph/flowchart creation is managed by
-    <a href="http://www.graphviz.org/">graphviz</a> (Version >= 2.22)<br>
-    License: <a href="http://www.graphviz.org/License.php">Common Public License</a>
 -   icons from the Oxygen icon set from the
     <a href="http://websvn.kde.org/trunk/kdesupport/oxygen-icons/">
     KDE Project</a><br>

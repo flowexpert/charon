@@ -31,19 +31,6 @@ source directory will be kept clean.
 -   Win32 gcc (mingw >= 4.3)
 -   Win32 Microsoft Visual Studio 2005, 2008
 
-Useful hints:
-
-For Windows users, there are two different Graphviz binaries avaiable:
--   Graphviz compiled with Visual Studio (e.g.
-	<a href="http://www.graphviz.org/pub/graphviz/development/windows/
-	graphviz-2.22.msi">graphviz-mingw-2.22.msi</a>)
--	Graphviz compiled with MinGW (e.g. file <a href="http://www.graphviz.org/pub/graphviz/
-	development/windows/graphviz-mingw-2.23.20090306.2213.msi">
-	graphviz-mingw-2.23.20090306.2213.msi</a>).
-
-These files can be found on the
-<a href="http://www.graphviz.org/Download_windows.php">graphiz download page</a>
-
 \subsection cflags Compiler flags
 When using the <b>GNU gcc compiler</b>, some compiler flags are are very useful
 for debugging. The used flags can be modified in the CMake Cache editor.

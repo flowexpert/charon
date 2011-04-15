@@ -326,9 +326,9 @@ void MainWindow::_showAbout() {
 		+QString("<br />")
 #endif
 		+tr("Built against libraries:")
-		+QString("<ul><li>charon-core %1</li><li>graphviz %2</li>"
+		+QString("<ul><li>charon-core %1</li>"
 				"<li>Qt %3</li></ul>")
-		.arg(CHARON_CORE_VERSION).arg(GRAPHVIZ_VERSION).arg(QT_VERSION_STR)
+		.arg(CHARON_CORE_VERSION).arg(QT_VERSION_STR)
 #ifdef BUILD_INFO
 		+tr("Build info: %1").arg(BUILD_INFO)+QString("<br />")
 #endif
