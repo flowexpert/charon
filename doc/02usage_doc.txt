@@ -41,9 +41,7 @@ existing documents or creating new ones.
 The flow window shows the flowchart representation of the object
 structures found in the associated parameterfile document.
 This structure can be edited by drag&drop (see above).
-The parameterfile content can be saved and reloaded. The position
-of the objects is calculated dynamically by Graphviz and cannot be
-changed manually.
+The parameterfile content can be saved and reloaded.
 
 \subsection inspector Object inspector
 The object inspector shows parameters for the currently selected

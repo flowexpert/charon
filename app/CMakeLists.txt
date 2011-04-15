@@ -43,7 +43,6 @@ IF(tuchulcha_BUILD_INFO)
 	ADD_DEFINITIONS(-DBUILD_INFO="${tuchulcha_BUILD_INFO}")
 ENDIF()
 ADD_DEFINITIONS(-DCHARON_CORE_VERSION="${charon-core_VERSION}")
-ADD_DEFINITIONS(-DGRAPHVIZ_VERSION="${Graphviz_VERSION}")
 
 TARGET_LINK_LIBRARIES(tuchulcha editgraph ${QT_QTMAIN_LIBRARY} charon-plugins)
 SET_TARGET_PROPERTIES(tuchulcha PROPERTIES FOLDER "Tuchulcha")
@@ -67,9 +66,9 @@ ENDIF(WIN32)
 
 # install into bin subdirectory
 INSTALL(
-    TARGETS     paraminspector
-    RUNTIME     DESTINATION    bin
-    COMPONENT   applications
+	TARGETS     paraminspector
+	RUNTIME     DESTINATION    bin
+	COMPONENT   applications
 )
 
 IF(APPLE)
@@ -80,29 +79,29 @@ IF(APPLE)
 		@ONLY
 	)
 	INSTALL(
-	    FILES       ${PROJECT_SOURCE_DIR}/icons/MacOSIcon.icns
-	    DESTINATION /Applications/Tuchulcha.app/Contents/Resources
-	    COMPONENT   applications
-	    PERMISSIONS WORLD_WRITE
+		FILES       ${PROJECT_SOURCE_DIR}/icons/MacOSIcon.icns
+		DESTINATION /Applications/Tuchulcha.app/Contents/Resources
+		COMPONENT   applications
+		PERMISSIONS WORLD_WRITE
 	)
 	INSTALL(
-	    FILES       ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MacOSInfo.plist
-	    DESTINATION /Applications/Tuchulcha.app/Contents
-	    COMPONENT   applications
-	    RENAME	Info.plist
-	    PERMISSIONS WORLD_WRITE
+		FILES       ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MacOSInfo.plist
+		DESTINATION /Applications/Tuchulcha.app/Contents
+		COMPONENT   applications
+		RENAME      Info.plist
+		PERMISSIONS WORLD_WRITE
 	)
 	INSTALL(
-	    TARGETS     tuchulcha
-	    RUNTIME     DESTINATION    /Applications/Tuchulcha.app/Contents/MacOS
-	    COMPONENT   applications
-	    PERMISSIONS WORLD_WRITE
+		TARGETS     tuchulcha
+		RUNTIME     DESTINATION    /Applications/Tuchulcha.app/Contents/MacOS
+		COMPONENT   applications
+		PERMISSIONS WORLD_WRITE
 	)
 ELSE(APPLE)
 	INSTALL(
-	    TARGETS     tuchulcha
-	    RUNTIME     DESTINATION    bin
-	    COMPONENT   applications
+		TARGETS     tuchulcha
+		RUNTIME     DESTINATION    bin
+		COMPONENT   applications
 	)
 	IF(UNIX)
 		# application icons
@@ -110,23 +109,23 @@ ELSE(APPLE)
 			${PROJECT_SOURCE_DIR}/icons/tc.png
 			DESTINATION share/icons/hicolor/48x48/apps
 			RENAME tuchulcha.png
-	    	COMPONENT   applications
+			COMPONENT   applications
 		)
 		INSTALL(FILES
 			tuchulcha.desktop
 			DESTINATION share/applications
-	    	COMPONENT   applications
+			COMPONENT   applications
 		)
 		INSTALL(FILES
 			${PROJECT_SOURCE_DIR}/icons/tc2.png
 			DESTINATION share/icons/hicolor/48x48/apps
 			RENAME paraminspector.png
-	    	COMPONENT   applications
+			COMPONENT   applications
 		)
 		INSTALL(FILES
 			paraminspector.desktop
 			DESTINATION share/applications
-	    	COMPONENT   applications
+			COMPONENT   applications
 		)
 	ENDIF()
 ENDIF(APPLE)
