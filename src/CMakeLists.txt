@@ -6,7 +6,6 @@ ADD_DEFINITIONS(-DCHARON_INSTALL="${charon-core_ROOT_DIR}")
 # source files containing QObject derived classes
 QT4_WRAP_UI(UI_SRC LogDialog.ui OptionsDialog.ui)
 SET(EDITPARAM_SOURCES
-	${UI_SRC}
 	ParameterFileModel.cpp
 	ParameterFileModel.h
 	PrefixValidator.cpp
@@ -15,8 +14,6 @@ SET(EDITPARAM_SOURCES
 	ObjectInspector.h
 	InspectorDelegate.cpp
 	InspectorDelegate.h
-	DocGenerator.cpp
-	DocGenerator.h
 	ModelToolBar.cpp
 	ModelToolBar.h
 	Qtiostream.cpp
@@ -32,6 +29,12 @@ SET(EDITPARAM_SOURCES
 	QDirEdit.cpp
 	QDirEdit.h
 )
+IF(QT_QTWEBKIT_FOUND)
+LIST(APPEND EDITPARAM_SOURCES
+	DocGenerator.cpp
+	DocGenerator.h
+)
+ENDIF(QT_QTWEBKIT_FOUND)
 
 SET(EDITGRAPH_SOURCES
 	GraphModel.cpp
@@ -69,7 +72,7 @@ QT4_AUTOMOC(${EDITPARAM_SOURCES})
 QT4_AUTOMOC(${EDITGRAPH_SOURCES})
 
 # create libraries
-ADD_LIBRARY(editparam ${EDITPARAM_SOURCES})
+ADD_LIBRARY(editparam ${EDITPARAM_SOURCES} ${UI_SRC})
 ADD_LIBRARY(editgraph ${EDITGRAPH_SOURCES})
 
 # add dependencies

@@ -29,7 +29,6 @@
 
 class QWebView;
 class QUrl;
-class ParameterFileModel;
 
 /// handle documentation page generation
 class DocGenerator : public QObject {
@@ -69,10 +68,6 @@ public slots:
 	 */
 	void showDocString(const QString& doc);
 
-	/// set used ParameterFileModel
-	/** \param model        new model to generate the documentation for */
-	void setModel(ParameterFileModel* model);
-
 protected:
 	/// Generate documentation for the given list of parameters.
 	/** The documentation is arranged in a bullte point list.
@@ -87,9 +82,6 @@ protected:
 
 	/// pointer to used viewer instance
 	QWebView* _viewer;
-
-	/// used ParameterFileModel
-	ParameterFileModel* _model;
 
 	/// stylesheet for help doc
 	QString _stylesheet;

@@ -92,14 +92,8 @@ MainWindow::MainWindow(QWidget* myParent) :
 	connect(this, SIGNAL(enableEditors(bool)),
 			inspector, SLOT(setEnabled(bool)));
 
-	// selector widget connections
-	connect(this, SIGNAL(enableEditors(bool)),
-			_selector, SLOT(setEnabled(bool)));
-
 #ifdef QT_WEBKIT_LIB
 	// help browser connections
-	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
-			docGen, SLOT(setModel(ParameterFileModel*)));
 	connect(_selector, SIGNAL(showClassDoc(QString)), docGen, SLOT(
 			showClassDoc(QString)));
 	connect(_selector, SIGNAL(showDocPage(QString)), docGen, SLOT(showDocPage(
