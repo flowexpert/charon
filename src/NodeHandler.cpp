@@ -28,7 +28,6 @@
 #include "NodeHandler.h"
 #include "NodeTreeView.h"
 #include "TypeHandler.h"
-#include "TreeViewItem.h"
 #include "GraphModel.h"
 #include "MetaData.h"
 #include "FileManager.h"
@@ -347,15 +346,14 @@ void NodeHandler::addNode(QString name, QPointF pos) {
 	new Node(name,pos.x(),pos.y(),this);
 }
 
-
-
 void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
+#warning fixme
+/*
 	NodeTreeView *ntv = (NodeTreeView*)(ev->source());
 	if (ntv != 0) {
 		Node *node = new Node(
-				ntv->getSelectedItem()->getNode()->getName(),
+				ntv->getSelectedItem()->text(),
 				ev->scenePos().x(),ev->scenePos().y(),this);
-
 		QVector<NodeProperty*> props =
 				ntv->getSelectedItem()->getNode()->getProperties();
 		for (int i=0;i<props.size();i++) {
@@ -377,6 +375,8 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 			removeItem(node);
 		_model->setPrefix(node->getName());
 	}
+*/
+	QGraphicsScene::dropEvent(ev);
 }
 
 #include "NodeHandler.moc"

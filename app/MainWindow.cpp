@@ -84,6 +84,12 @@ MainWindow::MainWindow(QWidget* myParent) :
 	_selector = new NodeTreeView(selectWidget);
 	selectWidget->setWidget(_selector);
 
+#ifdef QT_WEBKIT_LIB
+	// help browser connections
+	connect(_selector, SIGNAL(showClassDoc(QString)), docGen, SLOT(
+			showClassDoc(QString)));
+#endif
+
 	// object inspector connections
 	connect(inspector, SIGNAL(statusMessage(const QString&, int)),
 			statusBar(), SLOT(showMessage(const QString&, int)));
@@ -91,14 +97,6 @@ MainWindow::MainWindow(QWidget* myParent) :
 			inspector, SLOT(setModel(ParameterFileModel*)));
 	connect(this, SIGNAL(enableEditors(bool)),
 			inspector, SLOT(setEnabled(bool)));
-
-#ifdef QT_WEBKIT_LIB
-	// help browser connections
-	connect(_selector, SIGNAL(showClassDoc(QString)), docGen, SLOT(
-			showClassDoc(QString)));
-	connect(_selector, SIGNAL(showDocPage(QString)), docGen, SLOT(showDocPage(
-			QString)));
-#endif
 
 	// add widgets to dock area
 	addDockWidget(Qt::RightDockWidgetArea, inspectorWidget);

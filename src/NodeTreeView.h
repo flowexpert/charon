@@ -39,43 +39,25 @@ class NodeTreeView : public QTreeView {
 
 public:
 	/// default constructor
-	NodeTreeView(QWidget *parent);
+	NodeTreeView(QWidget* parent = 0);
 
-	/// adds a Node to the view
-	/// @param n    node to the view
-	void addNode(Node *n);
+public slots:
+	/// loads nodes/modules from the classesFile
+	void reload();
 
-	/// returns the selected item
-	/// @returns the selected item
-	TreeViewItem *getSelectedItem();
-
-	/// loads nodes/modules from the given classesFile
-	/// @param classesFile      filename of classesfile
-	void load(QString classesFile);
-
-	/// default destructor
-	virtual ~NodeTreeView();
 signals:
 	/// show documentation page
-	/// @param fileName	fileName of doc page
-	void showDocPage(const QString& fileName);
+	/// @param className    class to show doc for
+	void showClassDoc(const QString& className);
 
-	/// show documentation page
-	/// @param doc		strint containing help page (html)
-	void showClassDoc(const QString& doc);
+protected:
+	/// handle documentation display on selection change
+	virtual void currentChanged(
+			const QModelIndex& current, const QModelIndex& previous);
 
 private:
-	/// handles mouse press event
-	void mousePressEvent(QMouseEvent * event);
-
 	/// the model of the view
-	QStandardItemModel *_model;
-
-	/// the first element of the view
-	QStandardItem *_root;
-
-	/// pointer of the used ParameterFileModel
-	ParameterFileModel *_pfmodel;
+	QStandardItemModel* _model;
 };
 
 #endif	/* NODETREEVIEW_H */

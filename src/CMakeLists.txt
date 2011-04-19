@@ -55,8 +55,6 @@ SET(EDITGRAPH_SOURCES
 	ParameterType.h
 	NodeHandler.cpp
 	NodeHandler.h
-	TreeViewItem.cpp
-	TreeViewItem.h
 	NodeTreeView.cpp
 	NodeTreeView.h
 	NodeView.cpp

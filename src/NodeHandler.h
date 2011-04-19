@@ -40,8 +40,6 @@ class NodeHandler: public QGraphicsScene {
 	Q_OBJECT
 
 public:
-
-
 	/// default constructor
 	/// @param parent         parent QObject
 	/// @param classesFile    file for module lookup
