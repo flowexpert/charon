@@ -366,9 +366,8 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 		QString className = m.item(0)->text();
 		QString instName = _model->addNode(className);
 		if(!instName.isEmpty()) {
-			loadFromModel();
-			_deselectAllNodes();
 			_model->setPrefix(instName);
+			loadFromModel();
 			ev->accept();
 			return;
 		}
