@@ -96,10 +96,12 @@ public:
 	bool load(QString fname);
 
 protected:
+	/// \name drag/drop handling
+	// \{
 	virtual void dragEnterEvent(QGraphicsSceneDragDropEvent* event);
 	virtual void dragMoveEvent(QGraphicsSceneDragDropEvent * event);
-	/// handles drop events
 	virtual void dropEvent(QGraphicsSceneDragDropEvent* event);
+	// \}
 
 private:
 	/// deselects all nodes

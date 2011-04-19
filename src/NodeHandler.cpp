@@ -53,7 +53,7 @@ NodeHandler::NodeHandler(QObject* pp, QString classesFile) :
 
 void NodeHandler::_deselectAllNodes() {
 	for(int i=0; i < items().size();i++) {
-		Node* n = qgraphicsitem_cast<Node*>(items().at(i));
+		Node* n = dynamic_cast<Node*>(items().at(i));
 		if(n != 0) {
 			n->setSelectedNode(false);
 		}
@@ -73,9 +73,8 @@ void NodeHandler::wheelEvent(QGraphicsSceneWheelEvent* ev) {
 }
 
 void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
-	_deselectAllNodes();
-	QGraphicsItem *itm = itemAt(ev->scenePos());
-	Node* np = qgraphicsitem_cast<Node*>(itm);
+	QGraphicsItem* itm = itemAt(ev->scenePos());
+	Node* np = dynamic_cast<Node*>(itm);
 	if (np != 0) {
 		_deselectAllNodes();
 		_selectedNode = np;
@@ -85,10 +84,10 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 		for (int i=0; i < items().size(); i++)
 			items().at(i)->setSelected(false); // Deselect all
 	}
-	ConnectionSocket* cs = qgraphicsitem_cast<ConnectionSocket*>(itm);
+	ConnectionSocket* cs = dynamic_cast<ConnectionSocket*>(itm);
 	if (cs != 0) {
-		NodeProperty* prop = qgraphicsitem_cast<NodeProperty*>(
-				cs->parentItem());
+		NodeProperty* prop = dynamic_cast<NodeProperty*>(cs->parentItem());
+		Q_ASSERT(prop);
 		if (prop->canNewConnect()) {
 			if (prop->hasConnection()) {
 				prop->removeAllConnections(_model);
@@ -298,10 +297,10 @@ void NodeHandler::deleteNode(Node* node) {
 
 void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 	QGraphicsItem* itm = itemAt(ev->scenePos());
-	ConnectionSocket *cs = qgraphicsitem_cast<ConnectionSocket*>(itm);
+	ConnectionSocket *cs = dynamic_cast<ConnectionSocket*>(itm);
 	NodeProperty* prop = 0;
 	if (_addLine && cs != 0) {
-		prop = qgraphicsitem_cast<NodeProperty*>(cs->parentItem());
+		prop = dynamic_cast<NodeProperty*>(cs->parentItem());
 		if (prop != 0 && prop != _startProp) {
 			if (_startProp->getIOType()==PropType::IN) { //swap buffers
 				NodeProperty *b = _startProp;
