@@ -40,7 +40,7 @@
 #include <QGraphicsView>
 #include <QStandardItem>
 
-NodeHandler::NodeHandler(QObject* pp,QString classesFile) :
+NodeHandler::NodeHandler(QObject* pp, QString classesFile) :
 		QGraphicsScene(pp),_model(0) {
 	_addLine = false;
 	_cline = NULL;
@@ -51,9 +51,9 @@ NodeHandler::NodeHandler(QObject* pp,QString classesFile) :
 	_model	= new GraphModel("", this, classesFile);
 }
 
-void NodeHandler::_deselectAllNodes(){
+void NodeHandler::_deselectAllNodes() {
 	for(int i=0; i < items().size();i++) {
-		Node *n = dynamic_cast<Node*>(items().at(i));
+		Node* n = qgraphicsitem_cast<Node*>(items().at(i));
 		if(n != 0) {
 			n->setSelectedNode(false);
 		}
@@ -65,8 +65,8 @@ void NodeHandler::wheelEvent(QGraphicsSceneWheelEvent* ev) {
 	int f = ev->delta();
 	qreal factor = std::max(0.7,1.0 + ((double)f * 0.001));
 	QList<QGraphicsView*> vs (views());
-	_scaleFactor*=factor;
-	if (vs.size()>0) {
+	_scaleFactor *= factor;
+	if (vs.size() > 0) {
 		vs.at(0)->scale(factor,factor);
 	}
 	QGraphicsScene::wheelEvent(ev);
@@ -75,7 +75,7 @@ void NodeHandler::wheelEvent(QGraphicsSceneWheelEvent* ev) {
 void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 	_deselectAllNodes();
 	QGraphicsItem *itm = itemAt(ev->scenePos());
-	Node *np = dynamic_cast<Node*>(itm);
+	Node* np = qgraphicsitem_cast<Node*>(itm);
 	if (np != 0) {
 		_deselectAllNodes();
 		_selectedNode = np;
@@ -85,9 +85,10 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 		for (int i=0; i < items().size(); i++)
 			items().at(i)->setSelected(false); // Deselect all
 	}
-	ConnectionSocket *cs = dynamic_cast<ConnectionSocket*>(itm);
+	ConnectionSocket* cs = qgraphicsitem_cast<ConnectionSocket*>(itm);
 	if (cs != 0) {
-		NodeProperty *prop = dynamic_cast<NodeProperty*>(cs->parentItem());
+		NodeProperty* prop = qgraphicsitem_cast<NodeProperty*>(
+				cs->parentItem());
 		if (prop->canNewConnect()) {
 			if (prop->hasConnection()) {
 				prop->removeAllConnections(_model);
@@ -121,14 +122,13 @@ void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 	update();
 }
 
-GraphModel* NodeHandler::model(){
+GraphModel* NodeHandler::model() {
 	return _model;
 }
 
-void NodeHandler::setModel(GraphModel* m){
+void NodeHandler::setModel(GraphModel* m) {
 	_model = m;
 }
-
 
 bool NodeHandler::load(QString fname) {
 	bool loaded = _model->load(fname);
@@ -289,20 +289,19 @@ void NodeHandler::keyReleaseEvent(QKeyEvent* keyEvent) {
 	}
 }
 
-void NodeHandler::deleteNode(Node *node) {
+void NodeHandler::deleteNode(Node* node) {
 	if(_model->deleteNode(node->getName())) {
 		clear();
 		loadFromModel();
 	}
 }
 
-void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
-{
-	QGraphicsItem *itm = itemAt(ev->scenePos());
-	ConnectionSocket *cs = dynamic_cast<ConnectionSocket*>(itm);
-	NodeProperty *prop = 0;
+void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
+	QGraphicsItem* itm = itemAt(ev->scenePos());
+	ConnectionSocket *cs = qgraphicsitem_cast<ConnectionSocket*>(itm);
+	NodeProperty* prop = 0;
 	if (_addLine && cs != 0) {
-		prop = dynamic_cast<NodeProperty*>(cs->parentItem());
+		prop = qgraphicsitem_cast<NodeProperty*>(cs->parentItem());
 		if (prop != 0 && prop != _startProp) {
 			if (_startProp->getIOType()==PropType::IN) { //swap buffers
 				NodeProperty *b = _startProp;
@@ -346,36 +345,34 @@ void NodeHandler::addNode(QString name, QPointF pos) {
 	new Node(name,pos.x(),pos.y(),this);
 }
 
+void NodeHandler::dragEnterEvent(QGraphicsSceneDragDropEvent* ev) {
+	if (ev->mimeData()->hasFormat("application/x-qstandarditemmodeldatalist"))
+		ev->accept();
+	else
+		QGraphicsScene::dragEnterEvent(ev);
+}
+
+void NodeHandler::dragMoveEvent(QGraphicsSceneDragDropEvent* ev) {
+	if (ev->mimeData()->hasFormat("application/x-qstandarditemmodeldatalist"))
+		ev->accept();
+	else
+		QGraphicsScene::dragMoveEvent(ev);
+}
+
 void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
-#warning fixme
-/*
-	NodeTreeView *ntv = (NodeTreeView*)(ev->source());
-	if (ntv != 0) {
-		Node *node = new Node(
-				ntv->getSelectedItem()->text(),
-				ev->scenePos().x(),ev->scenePos().y(),this);
-		QVector<NodeProperty*> props =
-				ntv->getSelectedItem()->getNode()->getProperties();
-		for (int i=0;i<props.size();i++) {
-			node->addProperty(
-					props[i]->getName(),
-					props[i]->getPropType()->ptype->getTypeName(),
-					props[i]->getIOType());
+	QStandardItemModel m;
+	bool res = m.dropMimeData(ev->mimeData(),Qt::CopyAction,0,0,QModelIndex());
+	if(res && m.rowCount() == 1 && m.columnCount() == 1) {
+		QString className = m.item(0)->text();
+		QString instName = _model->addNode(className);
+		if(!instName.isEmpty()) {
+			loadFromModel();
+			_deselectAllNodes();
+			_model->setPrefix(instName);
+			ev->accept();
+			return;
 		}
-
-		_deselectAllNodes();
-		node->setSelectedNode(true);
-		_selectedNode = node;
-
-		QString newname = _model->addNode(node->getName());
-		node->setModulName(node->getName());
-		if (!(newname == ""))
-			node->setName(newname);
-		else
-			removeItem(node);
-		_model->setPrefix(node->getName());
 	}
-*/
 	QGraphicsScene::dropEvent(ev);
 }
 

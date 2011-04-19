@@ -39,11 +39,16 @@ NodeTreeView::NodeTreeView(QWidget* pp) :
 void NodeTreeView::reload() {
 	// reset content
 	_model->clear();
-	QStandardItem* root = new QStandardItem("Modules");
-	root->setDragEnabled(false);
-	root->setEditable(false);
-	root->setSelectable(false);
-	_model->setItem(0,0,root);
+	QList<QStandardItem*> root;
+	root << new QStandardItem("Modules");
+	root << new QStandardItem("");
+	root << new QStandardItem("");
+	for(int ii=0; ii<root.size(); ii++) {
+		root[ii]->setDragEnabled(false);
+		root[ii]->setEditable(false);
+		root[ii]->setSelectable(false);
+		_model->setItem(0,ii,root[ii]);
+	}
 	QStringList labels;
 	labels << "Name" << "Parameter/Slot" << "Type";
 	_model->setHorizontalHeaderLabels(labels);

@@ -49,7 +49,7 @@ public:
 	void wheelEvent(QGraphicsSceneWheelEvent *event);
 
 	/// handles mouse press events
-	void mousePressEvent(QGraphicsSceneMouseEvent *event);
+	void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 	/// handles key release events
 	/// del -  deletes the selected node
@@ -62,7 +62,7 @@ public:
 	void addNode(QString name, QPointF pos);
 
 	/// handles all mousebutton release events
-	void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+	void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 
 	/// connects two node with its slots: node0.prop0 to node1.prop1
 	/// @param node0     name of the first node
@@ -72,19 +72,19 @@ public:
 	void connectNodes(QString node0,QString prop0,QString node1,QString prop1);
 
 	/// handles mouse movement
-	void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
 
 	/// deletes a node and all connections to it
 	/// @param node     node to delete
-	void deleteNode(Node *node);
+	void deleteNode(Node* node);
 
 	/// sets the model for the scene
 	/// @param model     model to set
-	void setModel(GraphModel *model);
+	void setModel(GraphModel* model);
 
 	/// returns the current set GraphModel
 	/// @return the current set GraphModel
-	GraphModel *model();
+	GraphModel* model();
 
 	/// loads the scene from the set GraphModel
 	void loadFromModel();
@@ -95,8 +95,11 @@ public:
 	/// @returns    true if file has successfully been loaded
 	bool load(QString fname);
 
+protected:
+	virtual void dragEnterEvent(QGraphicsSceneDragDropEvent* event);
+	virtual void dragMoveEvent(QGraphicsSceneDragDropEvent * event);
 	/// handles drop events
-	void dropEvent(QGraphicsSceneDragDropEvent * event);
+	virtual void dropEvent(QGraphicsSceneDragDropEvent* event);
 
 private:
 	/// deselects all nodes
