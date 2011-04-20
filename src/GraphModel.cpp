@@ -58,7 +58,7 @@ GraphModel::~GraphModel() {
 }
 
 void GraphModel::clear(bool draw) {
-	setPrefix("", false);
+	setPrefix("");
 	ParameterFileModel::clear();
 	if(draw)
 		emit graphChanged();
@@ -75,6 +75,7 @@ void GraphModel::reDraw() {
 void GraphModel::_load() {
 	ParameterFileModel::_load();
 	QStringList n = nodes();
+	emit graphChanged();
 	if(n.size())
 		setPrefix(n[0]);
 }
@@ -209,25 +210,6 @@ bool GraphModel::connected(QString source,
 	return established;
 }
 
-QString GraphModel::setPrefix(const QString& nodename, bool draw) {
-	// avoid loops
-	if(nodename == prefix())
-		return prefix();
-
-	// set parameterfileModel prefix
-	QString ret = ParameterFileModel::setPrefix(nodename);
-
-	if(!draw)
-		return ret;
-
-	// check if prefix is valid
-	if (!prefixValid())
-		return ret;
-
-	emit graphChanged();
-	return ret;
-}
-
 void GraphModel::loadMetaFile(const QString& fName) {
 	if(fName.isEmpty())
 		qFatal("Tried to set emtpy metaFile in GraphModel!");
@@ -274,7 +256,7 @@ void GraphModel::connectSlot(const QString& source, const QString& target,
 	}
 
 	// add target to source
-	QString pref = setPrefix(sourceObj.c_str(), false);
+	QString pref = setPrefix(sourceObj.c_str());
 	setOnlyParams(false);
 	if (parameterFile().isSet(sourceStr)) {
 		for(int i=0; i<rowCount(); i++) {
@@ -299,7 +281,7 @@ void GraphModel::connectSlot(const QString& source, const QString& target,
 	}
 
 	// add source to target
-	setPrefix(targetObj.c_str(), false);
+	setPrefix(targetObj.c_str());
 	if (parameterFile().isSet(targetStr)) {
 		for(int i=0; i<rowCount(); i++) {
 			if (data(index(i, 0)) == targetPar.c_str()) {
@@ -325,7 +307,7 @@ void GraphModel::connectSlot(const QString& source, const QString& target,
 
 	// restore prefix and onlyparams
 	setOnlyParams(true);
-	setPrefix(pref, false);
+	setPrefix(pref);
 
 	if(draw)
 		emit graphChanged();
@@ -340,7 +322,7 @@ void GraphModel::disconnectSlot(const QString& source, const QString& target,
 	QStringList targetSep = target.toLower().split(".");
 	Q_ASSERT(sourceSep.size() == 2);
 	Q_ASSERT(targetSep.size() == 2);
-	QString prefixSave = setPrefix(sourceSep[0], false);
+	QString prefixSave = setPrefix(sourceSep[0]);
 	setOnlyParams(false);
 	Q_ASSERT(prefixValid());
 	for(int i=0; i<rowCount(); i++) {
@@ -355,7 +337,7 @@ void GraphModel::disconnectSlot(const QString& source, const QString& target,
 			setData(createIndex(i, 1), targets.join(";"));
 		}
 	}
-	setPrefix(targetSep[0], false);
+	setPrefix(targetSep[0]);
 	for(int i=0; i<rowCount(); i++) {
 		if (data(createIndex(i, 0)) == targetSep[1]) {
 			// check target is in list
@@ -370,7 +352,7 @@ void GraphModel::disconnectSlot(const QString& source, const QString& target,
 	}
 
 	setOnlyParams(true);
-	setPrefix(prefixSave, false);
+	setPrefix(prefixSave);
 
 	if(draw)
 		emit graphChanged();
@@ -462,7 +444,7 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 					   "Please choose another name.").arg(newName));
 			return;
 		}
-		setPrefix("", false);
+		setPrefix("");
 		setOnlyParams(false);
 		// sweep through all parameters
 		for(int i = 0; i < rowCount(); i++) {
@@ -495,7 +477,7 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 			}
 		}
 		setOnlyParams(true);
-		setPrefix(newName, false);
+		setPrefix(newName);
 
 		if(draw)
 			emit graphChanged();
@@ -516,7 +498,7 @@ bool GraphModel::deleteNode(const QString& nodename, bool draw) {
 	if(mbox.result() == QMessageBox::Yes) {
 		disconnectAllSlots(nodename, false);
 		setOnlyParams(false);
-		setPrefix(nodename, false);
+		setPrefix(nodename);
 		removeRows(0, rowCount());
 		setOnlyParams(true);
 
@@ -552,7 +534,7 @@ QStringList GraphModel::nodes() const {
 	return result;
 }
 
-void GraphModel::selectNext(bool back, bool draw) {
+void GraphModel::selectNext(bool back) {
 	QStringList curNodes = nodes();
 
 	// skip, if no nodes to select avaiable
@@ -572,7 +554,7 @@ void GraphModel::selectNext(bool back, bool draw) {
 	else
 		pos = (pos + 1) % curNodes.size();
 
-	setPrefix(curNodes[pos], draw);
+	setPrefix(curNodes[pos]);
 }
 
 QString GraphModel::addNode(const QString& className, bool draw) {
@@ -580,9 +562,10 @@ QString GraphModel::addNode(const QString& className, bool draw) {
 	QString newName, info;
 	do {
 		bool ok = false;
-		newName = QInputDialog::getText(0, tr("add new node"),
-										info + tr("Enter a name for the new node:"),
-										QLineEdit::Normal, tr("newnode"), &ok);
+		newName = QInputDialog::getText(
+				0, tr("add new node"),
+				info + tr("Enter a name for the new node:"),
+				QLineEdit::Normal, tr("newnode"), &ok);
 		if(!ok)
 			return "";
 		if(nodeValid(newName))
@@ -591,12 +574,11 @@ QString GraphModel::addNode(const QString& className, bool draw) {
 		if(newName.contains(QRegExp("[\\s.]")))
 			info = tr("Whitespace and dots in names are not allowed.\n"
 					  "Please use a valid name.\n");
-	} while (newName.isEmpty()
-		|| nodeValid(newName)
+	} while (newName.isEmpty() || nodeValid(newName)
 		|| newName.contains(QRegExp("\\s"))
 		);
 
-	setPrefix("", false);
+	setPrefix("");
 	setOnlyParams(false);
 
 	std::vector<std::string> inputs =
@@ -607,12 +589,11 @@ QString GraphModel::addNode(const QString& className, bool draw) {
 	insertRow(rowCount());
 	setData(index(rowCount()-1, 0), newName + ".type");
 	setData(index(rowCount()-1, 1), className);
-	setPrefix(newName, false);
+	setPrefix(newName);
 	setOnlyParams(true);
 
-	emit statusMessage(tr("add node %1 of class %2").arg(newName)
-					   .arg(className));
-
+	emit statusMessage(
+			tr("add node %1 of class %2").arg(newName).arg(className));
 	if(draw)
 		emit graphChanged();
 	return newName;
@@ -631,10 +612,12 @@ bool GraphModel::setData(const QModelIndex& ind, const QVariant& value,
 		QStringList l = _connections(prefix());
 		for (int i = 0; i < l.size(); i++) {
 			QStringList connection = l[i].split(";");
-			std::string slotType = metaInfo()->getType(connection[0].toAscii().constData(),
-													   getClass(prefix().toAscii().constData()));
+			std::string slotType = metaInfo()->getType(
+					connection[0].toAscii().constData(),
+					getClass(prefix().toAscii().constData()));
 			if (StringTool::toLowerCase(slotType).find("<t>")) {
-				disconnectSlot(prefix() + "." + connection[0], connection[1], false);
+				disconnectSlot(
+						prefix()+"."+connection[0],connection[1], false);
 			}
 		}
 		reDraw();

@@ -85,7 +85,7 @@ const GraphModel* FlowWidget::model() const {
 }
 
 void FlowWidget::saveFlowChart() const {
-	_nodehandler->save();
+	_nodehandler->saveFlowchart();
 }
 
 void FlowWidget::zoomIn() {

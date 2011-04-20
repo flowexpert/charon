@@ -37,10 +37,11 @@
 #include "FileManager.h"
 
 NodeHandler::NodeHandler(QObject* pp) :
-		QGraphicsScene(pp),_model(0) {
+		QGraphicsScene(pp) {
 	_addLine = false;
 	_cline = NULL;
-	_model	= new GraphModel("", this, FileManager::instance().classesFile());
+	_model = new GraphModel("", this, FileManager::instance().classesFile());
+	connect(_model, SIGNAL(graphChanged()), this, SLOT(loadFromModel()));
 }
 
 void NodeHandler::_deselectAllNodes() {
@@ -107,12 +108,11 @@ GraphModel* NodeHandler::model() {
 }
 
 bool NodeHandler::load(QString fname) {
-	bool loaded = _model->load(fname);
-	loadFromModel();
-	return loaded;
+	return _model->load(fname);
 }
 
 void NodeHandler::loadFromModel() {
+	clear();
 	const MetaData* mi = _model->metaInfo();
 	QVector<QString> nodes = _model->nodes().toVector();
 	QVector<QString> nodesout,nodesin;
@@ -120,26 +120,22 @@ void NodeHandler::loadFromModel() {
 	_model->setPrefix("");
 
 	for (int ii=0;ii<nodes.size();ii++) {
-		QString name = nodes[ii];
+		std::string name = nodes[ii].toStdString();
 		std::string cname = _model->getClass(nodes[ii].toStdString());
 
-		Node* node = new Node(name,10*ii,10*ii,this);
-		_model->setPrefix("");
-		_model->setOnlyParams(false);
-		for(int j=0;j<_model->rowCount();j++){
-			if (_model->data(_model->index(j,0)).toString()
-					== name+".editorinfo") {
-				QString pdata = _model->data(_model->index(j,1)).toString();
-				float x = pdata.split(" ").at(0).toFloat();
-				float y = pdata.split(" ").at(1).toFloat();
-				node->setPos(x,y);
-			}
-			if(_model->data(_model->index(j,0)).toString() == name+".type"){
-				QString modname = _model->data(_model->index(j,1)).toString();
-				node->setModulName(modname);
-			}
+		Node* node = new Node(QString::fromStdString(name),10*ii,10*ii,this);
+		QString modname = QString::fromStdString(
+				_model->parameterFile().get<std::string>(name+".type"));
+		node->setModulName(modname);
+
+		if (_model->parameterFile().isSet(name+".editorinfo")) {
+			QString pdata = QString::fromStdString(
+					_model->parameterFile().get<std::string>(
+							name+".editorinfo"));
+			float x = pdata.split(" ").at(0).toFloat();
+			float y = pdata.split(" ").at(1).toFloat();
+			node->setPos(x,y);
 		}
-		_model->setOnlyParams(true);
 
 		std::vector<std::string> ins = mi->getInputs(cname);
 		std::vector<std::string> outs = mi->getOutputs(cname);
@@ -163,9 +159,8 @@ void NodeHandler::loadFromModel() {
 					QString::fromStdString(mi->getType(params[jj],cname)),
 					PropType::NONE);
 		}
-
 		for (size_t jj=0; jj < outs.size(); jj++) {
-			std::string curO = name.toStdString()+"."+outs[jj];
+			std::string curO = name+"."+outs[jj];
 			if (_model->parameterFile().isSet(curO)) {
 				std::vector<std::string> conns =
 						_model->parameterFile().getList<std::string>(curO);
@@ -175,14 +170,12 @@ void NodeHandler::loadFromModel() {
 						QRegExp("*.",Qt::CaseSensitive,QRegExp::Wildcard)));
 					nodesin.push_back(QString::fromStdString(conns[kk]).remove(
 						QRegExp(".*",Qt::CaseSensitive,QRegExp::Wildcard)));
-					nodesout.push_back(name);
+					nodesout.push_back(QString::fromStdString(name));
 				}
 			}
 		}
 		node->moveBy(0,0);
 	}
-
-	update();
 	for (int ii=0; ii<slotout.size(); ii++) {
 		try {
 			connectNodes(nodesout[ii],slotout[ii],nodesin[ii],slotin[ii]);
@@ -198,7 +191,6 @@ void NodeHandler::loadFromModel() {
 		}
 	}
 	update();
-	_deselectAllNodes();
 }
 
 void NodeHandler::connectNodes(
@@ -250,7 +242,7 @@ void NodeHandler::connectNodes(
 	inp->moveBy(0,0);
 }
 
-void NodeHandler::save() {
+void NodeHandler::saveFlowchart() {
 	QString fname = QFileDialog::getOpenFileName();
 	if (!fname.isEmpty()) {
 		QPixmap pixmap(width()+10,height()+10);
@@ -269,18 +261,11 @@ void NodeHandler::save() {
 
 void NodeHandler::keyReleaseEvent(QKeyEvent* keyEvent) {
 	if(keyEvent->key() == Qt::Key_F12) {
-		save();
+		saveFlowchart();
 	}
 
 	if (keyEvent->key() == Qt::Key_Delete && _selectedNode != 0) {
-		deleteNode(_selectedNode);
-	}
-}
-
-void NodeHandler::deleteNode(Node* node) {
-	if(_model->deleteNode(node->getName())) {
-		clear();
-		loadFromModel();
+		_model->deleteNode(_selectedNode->getName());
 	}
 }
 
@@ -308,7 +293,7 @@ void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 				_cline = NULL;
 				_model->connectSlot(
 					_startProp->getNode()->getName()+"."+_startProp->getName(),
-					prop->getNode()->getName()+"."+prop->getName());
+					prop->getNode()->getName()+"."+prop->getName(),false);
 			} catch (std::runtime_error) {
 				removeItem(_cline);
 				_cline = NULL;
@@ -327,10 +312,6 @@ void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 
 	QGraphicsScene::mouseReleaseEvent(ev);
 	update();
-}
-
-void NodeHandler::addNode(QString name, QPointF pos) {
-	new Node(name,pos.x(),pos.y(),this);
 }
 
 void NodeHandler::dragEnterEvent(QGraphicsSceneDragDropEvent* ev) {
@@ -354,9 +335,8 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 		QString className = m.item(0)->text();
 		QString instName = _model->addNode(className);
 		if(!instName.isEmpty()) {
-			_model->setPrefix(instName);
-			loadFromModel();
 			ev->accept();
+			_model->setPrefix(instName);
 			return;
 		}
 	}

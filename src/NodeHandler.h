@@ -40,12 +40,6 @@ public:
 	 */
 	NodeHandler(QObject* parent = 0);
 
-	/// adds a node
-	/** \param name    name of the node
-	 *  \param pos     point where node is added
-	 */
-	void addNode(QString name, QPointF pos);
-
 	/// connects two node with its slots: node0.prop0 to node1.prop1
 	/** \param node0     name of the first node
 	 *  \param node1     name of the second node
@@ -53,9 +47,6 @@ public:
 	 *  \param prop1     name of the second nodes property
 	 */
 	void connectNodes(QString node0,QString prop0,QString node1,QString prop1);
-
-	/// deletes a node and all connections to it
-	void deleteNode(Node* node);
 
 	/// get the current GraphModel
 	GraphModel* model();
@@ -73,7 +64,7 @@ public slots:
 
 	/// save flowchart to file
 	/** shows file open dialog */
-	void save();
+	void saveFlowchart();
 
 protected:
 	/** \name drag/drop handling

@@ -82,22 +82,10 @@ public:
 			const QModelIndex& parent = QModelIndex());
 
 public slots:
-	/// \name edit graph
-	//  \{
-	/// Select node.
-	/** \param nodename     name of the node to select
-	 *  \param draw         emit display refresh signal if true
-	 *  \returns            previous prefix
-	 */
-	virtual QString setPrefix(
-			const QString& nodename, bool draw = true);
-
 	/// select next item
 	/** \param back         select previous item, if back is true
-	 *  \param draw         emit display refresh signal if true
 	 */
-	void selectNext(
-			bool back = false, bool draw = true);
+	void selectNext(bool back = false);
 
 	/// add new node of given kind
 	/** \param className    name of the class to create a new node
