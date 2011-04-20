@@ -22,33 +22,25 @@
  */
 
 #include "Node.h"
+
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QGraphicsView>
+#include <QStandardItemModel>
+#include <QKeyEvent>
+
 #include "ConnectionSocket.h"
-#include "NodeProperty.h"
 #include "ConnectionLine.h"
 #include "NodeHandler.h"
-#include "NodeTreeView.h"
-#include "TypeHandler.h"
 #include "GraphModel.h"
 #include "MetaData.h"
 #include "FileManager.h"
 
-#include <QList>
-#include <QFileDialog>
-#include <QFile>
-#include <QTextStream>
-#include <QMessageBox>
-#include <QGraphicsView>
-#include <QStandardItem>
-
-NodeHandler::NodeHandler(QObject* pp, QString classesFile) :
+NodeHandler::NodeHandler(QObject* pp) :
 		QGraphicsScene(pp),_model(0) {
 	_addLine = false;
 	_cline = NULL;
-	_scaleFactor = 1;
-
-	if (classesFile.isEmpty())
-		classesFile = FileManager::instance().classesFile();
-	_model	= new GraphModel("", this, classesFile);
+	_model	= new GraphModel("", this, FileManager::instance().classesFile());
 }
 
 void NodeHandler::_deselectAllNodes() {
@@ -59,17 +51,6 @@ void NodeHandler::_deselectAllNodes() {
 		}
 	}
 	_selectedNode = 0;
-}
-
-void NodeHandler::wheelEvent(QGraphicsSceneWheelEvent* ev) {
-	int f = ev->delta();
-	qreal factor = std::max(0.7,1.0 + ((double)f * 0.001));
-	QList<QGraphicsView*> vs (views());
-	_scaleFactor *= factor;
-	if (vs.size() > 0) {
-		vs.at(0)->scale(factor,factor);
-	}
-	QGraphicsScene::wheelEvent(ev);
 }
 
 void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
@@ -123,10 +104,6 @@ void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 
 GraphModel* NodeHandler::model() {
 	return _model;
-}
-
-void NodeHandler::setModel(GraphModel* m) {
-	_model = m;
 }
 
 bool NodeHandler::load(QString fname) {
@@ -273,23 +250,26 @@ void NodeHandler::connectNodes(
 	inp->moveBy(0,0);
 }
 
+void NodeHandler::save() {
+	QString fname = QFileDialog::getOpenFileName();
+	if (!fname.isEmpty()) {
+		QPixmap pixmap(width()+10,height()+10);
+		QPainter painter(&pixmap);
+		painter.setRenderHint(QPainter::Antialiasing);
+		painter.fillRect(0, 0, width()+10,height()+10, Qt::white);
+		render(&painter);
+
+		if (fname.endsWith(".png")) {
+			pixmap.save(fname,"PNG");
+		} else if(fname.endsWith(".jpg")) {
+			pixmap.save(fname,"JPG",90);
+		}
+	}
+}
 
 void NodeHandler::keyReleaseEvent(QKeyEvent* keyEvent) {
 	if(keyEvent->key() == Qt::Key_F12) {
-		QString fname = QFileDialog::getOpenFileName();
-		if (!fname.isEmpty()) {
-			QPixmap pixmap(width()+10,height()+10);
-			QPainter painter(&pixmap);
-			painter.setRenderHint(QPainter::Antialiasing);
-			painter.fillRect(0, 0, width()+10,height()+10, Qt::white);
-			render(&painter);
-
-			if (fname.endsWith(".png")) {
-				pixmap.save(fname,"PNG");
-			} else if(fname.endsWith(".jpg")) {
-				pixmap.save(fname,"JPG",90);
-			}
-		}
+		save();
 	}
 
 	if (keyEvent->key() == Qt::Key_Delete && _selectedNode != 0) {

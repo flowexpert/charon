@@ -24,11 +24,6 @@
 #define NODEHANDLER_H_
 
 #include <QGraphicsScene>
-#include <QGraphicsSceneWheelEvent>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsSceneDragDropEvent>
-#include <QKeyEvent>
-
 class NodeProperty;
 class ConnectionLine;
 class Node;
@@ -41,86 +36,87 @@ class NodeHandler: public QGraphicsScene {
 
 public:
 	/// default constructor
-	/// @param parent         parent QObject
-	/// @param classesFile    file for module lookup
-	NodeHandler(QObject *parent,QString classesFile);
-
-	/// zooms in and out on mousewheel event
-	void wheelEvent(QGraphicsSceneWheelEvent *event);
-
-	/// handles mouse press events
-	void mousePressEvent(QGraphicsSceneMouseEvent* event);
-
-	/// handles key release events
-	/// del -  deletes the selected node
-	/// F12 -  renders a workflow to a given png or jpg file
-	void keyReleaseEvent(QKeyEvent * keyEvent);
+	/** \param parent         parent QObject
+	 */
+	NodeHandler(QObject* parent = 0);
 
 	/// adds a node
-	/// @param name    name of the node
-	/// @param pos     point where node is added
+	/** \param name    name of the node
+	 *  \param pos     point where node is added
+	 */
 	void addNode(QString name, QPointF pos);
 
-	/// handles all mousebutton release events
-	void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-
 	/// connects two node with its slots: node0.prop0 to node1.prop1
-	/// @param node0     name of the first node
-	/// @param node1     name of the second node
-	/// @param prop0     name of the first nodes property
-	/// @param prop1     name of the second nodes property
+	/** \param node0     name of the first node
+	 *  \param node1     name of the second node
+	 *  \param prop0     name of the first nodes property
+	 *  \param prop1     name of the second nodes property
+	 */
 	void connectNodes(QString node0,QString prop0,QString node1,QString prop1);
 
-	/// handles mouse movement
-	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-
 	/// deletes a node and all connections to it
-	/// @param node     node to delete
 	void deleteNode(Node* node);
 
-	/// sets the model for the scene
-	/// @param model     model to set
-	void setModel(GraphModel* model);
-
-	/// returns the current set GraphModel
-	/// @return the current set GraphModel
+	/// get the current GraphModel
 	GraphModel* model();
 
+	/// load the GraphModel from the given filename
+	/// and calls loadFromModel to fill the scene
+	/** \param fname     workflow parameter file name
+	 *  \retval true     file has successfully been loaded
+	 */
+	bool load(QString fname);
+
+public slots:
 	/// loads the scene from the set GraphModel
 	void loadFromModel();
 
-	/// loads the GraphModel from the given filename
-	/// and calls loadFromModel to fill the scene
-	/// @param fname     name of workflow parameter file
-	/// @returns    true if file has successfully been loaded
-	bool load(QString fname);
+	/// save flowchart to file
+	/** shows file open dialog */
+	void save();
 
 protected:
-	/// \name drag/drop handling
+	/** \name drag/drop handling
+	 *  Accepts drag events with mime data as they are set by
+	 *  standart item models. This way it is possible to use arbitrary
+	 *  standart item views as drag sources.
+	 *  Checks if the contained data represent a class name.
+	 */
 	// \{
 	virtual void dragEnterEvent(QGraphicsSceneDragDropEvent* event);
 	virtual void dragMoveEvent(QGraphicsSceneDragDropEvent * event);
 	virtual void dropEvent(QGraphicsSceneDragDropEvent* event);
 	// \}
 
+	/// handles mouse press events
+	virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+
+	/// handles key release events
+	/// del -  deletes the selected node
+	/// F12 -  renders a workflow to a given png or jpg file
+	virtual void keyReleaseEvent(QKeyEvent* keyEvent);
+
+	/// handles all mousebutton release events
+	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+
+	/// handles mouse movement
+	virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+
 private:
 	/// deselects all nodes
 	void _deselectAllNodes();
 
 	/// buffered connection line for slot connection drawing
-	ConnectionLine *_cline;
+	ConnectionLine* _cline;
 
 	/// buffer that stores the slot connection start property
-	NodeProperty *_startProp;
+	NodeProperty* _startProp;
 
 	/// pointer to currently selected node (zero if none selected)
 	Node* _selectedNode;
 
 	/// current set GraphModel
-	GraphModel *_model;
-
-	/// current scaleFactor
-	qreal _scaleFactor;
+	GraphModel* _model;
 
 	/// state of slot connection mode
 	bool _addLine;

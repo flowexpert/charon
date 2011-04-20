@@ -57,8 +57,6 @@ SET(EDITGRAPH_SOURCES
 	NodeHandler.h
 	NodeTreeView.cpp
 	NodeTreeView.h
-	NodeView.cpp
-	NodeView.h
 	WorkflowExecutor.h
 	WorkflowExecutor.cpp
 )

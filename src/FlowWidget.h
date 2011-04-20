@@ -27,8 +27,8 @@
 
 #include <QMdiSubWindow>
 
-class NodeView;
-class QGraphicsScene;
+class QGraphicsView;
+class NodeHandler;
 class GraphModel;
 
 ///	Widget to display data flow diagram.
@@ -87,10 +87,16 @@ signals:
 	void statusMessage(const QString& msg, int timeout) const;
 
 protected:
-	NodeView* _viewer;	///< graphics view to display
+	/// viewer
+	QGraphicsView* _viewer;
+	/// graphics scene to display
+	NodeHandler* _nodehandler;
 
 	/// check modification status and ask to save before closing
 	virtual void closeEvent(QCloseEvent* closeEvent);
+
+	/// zooms in and out on mousewheel event
+	virtual void wheelEvent(QWheelEvent* event);
 };
 
 #endif /* FLOWWIDGET_H_ */

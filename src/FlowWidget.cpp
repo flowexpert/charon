@@ -23,41 +23,38 @@
  */
 
 #include "FlowWidget.h"
-#include "GraphModel.h"
-#include "NodeView.h"
-#include <QVBoxLayout>
-#include <QGraphicsRectItem>
-#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QMessageBox>
-#include <QPen>
-#include <QColor>
-#include <QFile>
 #include <QFileInfo>
-#include <QtDebug>
-#include <string>
-#include <stdexcept>
+#include <QWheelEvent>
 #include "../app/MainWindow.h"
+#include "GraphModel.h"
+#include "NodeHandler.h"
 
 #include "FlowWidget.moc"
 
 FlowWidget::FlowWidget(QWidget* myParent) :
-	QMdiSubWindow(myParent) {
+		QMdiSubWindow(myParent) {
 	// init GUI
-	_viewer = new NodeView(this);
+	_viewer = new QGraphicsView(this);
+	_viewer->setRenderHints(QPainter::Antialiasing);
+	_viewer->setAcceptDrops(true);
+	_nodehandler = new NodeHandler(_viewer);
+	_viewer->setScene(_nodehandler);
+
 	setWidget(_viewer);
 	setAttribute(Qt::WA_DeleteOnClose, true);
-	connect(_viewer->model(), SIGNAL(fileNameChanged (QString)),
+	connect(model(), SIGNAL(fileNameChanged (QString)),
 		this, SLOT(updateFileName(QString)));
 	MainWindow* main = qobject_cast<MainWindow*>(parent()->parent());
 	Q_ASSERT(main);
-	connect(_viewer->model(), SIGNAL(fileNameChanged (QString)),
+	connect(model(), SIGNAL(fileNameChanged (QString)),
 		main, SLOT(setCurrentFile(QString)));
-	connect(_viewer->model(), SIGNAL(modified(bool)),
+	connect(model(), SIGNAL(modified(bool)),
 		this, SLOT(modify(bool)));
-	connect(_viewer->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+	connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
 		this, SLOT(modify()));
 	setWindowTitle(tr("New file [*]"));
-
 }
 
 FlowWidget::~FlowWidget() {
@@ -69,25 +66,26 @@ void FlowWidget::updateFileName(const QString& fileName) {
 }
 
 void FlowWidget::load(const QString& fileName) {
-	if (_viewer->load(fileName)) {
+	if (_nodehandler->load(fileName)) {
 		setWindowTitle(QString("%1 [*]")
-			.arg(QFileInfo(_viewer->model()->fileName())
+			.arg(QFileInfo(model()->fileName())
 				.absoluteFilePath()));
+		zoomFit();
 	}
 	else
 		close();
 }
 
 GraphModel* FlowWidget::model() {
-	return _viewer->model();
+	return _nodehandler->model();
 }
 
 const GraphModel* FlowWidget::model() const {
-	return _viewer->model();
+	return _nodehandler->model();
 }
 
 void FlowWidget::saveFlowChart() const {
-	_viewer->save();
+	_nodehandler->save();
 }
 
 void FlowWidget::zoomIn() {
@@ -106,14 +104,26 @@ void FlowWidget::modify(bool val) {
 	setWindowModified(val);
 }
 
+void FlowWidget::wheelEvent(QWheelEvent* ev) {
+	if(ev->modifiers() & Qt::ControlModifier) {
+		if(ev->delta() > 0)
+			zoomIn();
+		else
+			zoomOut();
+		ev->accept();
+	}
+	else
+		QMdiSubWindow::wheelEvent(ev);
+}
+
 void FlowWidget::closeEvent(QCloseEvent* clEvent) {
-	if (isWindowModified() && !_viewer->model()->fileName().isEmpty()
+	if (isWindowModified() && !model()->fileName().isEmpty()
 		&& QMessageBox::question(
 				this, tr("Save modified content?"),
 				tr("Content has been modified."
 					"Do you want to save to %1 before closing?")
-				.arg(_viewer->model()->fileName()),
+				.arg(model()->fileName()),
 				QMessageBox::Save|QMessageBox::Discard) == QMessageBox::Save)
-		_viewer->model()->save();
+		model()->save();
 	QMdiSubWindow::closeEvent(clEvent);
 }
