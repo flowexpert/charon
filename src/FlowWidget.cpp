@@ -106,11 +106,11 @@ void FlowWidget::modify(bool val) {
 
 void FlowWidget::wheelEvent(QWheelEvent* ev) {
 	if(ev->modifiers() & Qt::ControlModifier) {
+		ev->accept();
 		if(ev->delta() > 0)
 			zoomIn();
 		else
 			zoomOut();
-		ev->accept();
 	}
 	else
 		QMdiSubWindow::wheelEvent(ev);

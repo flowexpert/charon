@@ -46,8 +46,8 @@ NodeHandler::NodeHandler(QObject* pp) :
 }
 
 void NodeHandler::_deselectAllNodes() {
-	for(int i=0; i < items().size();i++) {
-		Node* n = dynamic_cast<Node*>(items().at(i));
+	for(int i=0; i < items().size(); i++) {
+		Node* n = dynamic_cast<Node*>(items()[i]);
 		if(n != 0) {
 			n->setSelectedNode(false);
 		}
@@ -56,16 +56,23 @@ void NodeHandler::_deselectAllNodes() {
 }
 
 void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
+	QGraphicsScene::mousePressEvent(ev);
+
 	QGraphicsItem* itm = itemAt(ev->scenePos());
+	if (!itm) {
+		return;
+	}
 	Node* np = dynamic_cast<Node*>(itm);
-	if (np != 0) {
+	if (!np) {
+		np = dynamic_cast<Node*>(itm->parentItem());
+	}
+	if (np) {
 		_deselectAllNodes();
 		_selectedNode = np;
 		_model->setPrefix(np->getName());
 		np->setSelectedNode(true);
 	} else {
-		for (int i=0; i < items().size(); i++)
-			items().at(i)->setSelected(false); // Deselect all
+		_deselectAllNodes();
 	}
 	ConnectionSocket* cs = dynamic_cast<ConnectionSocket*>(itm);
 	if (cs != 0) {
@@ -84,10 +91,8 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 				_addLine = true;
 			}
 		}
-	} else {
-		QGraphicsScene::mousePressEvent(ev);
+		update();
 	}
-	update();
 }
 
 void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
@@ -114,6 +119,7 @@ bool NodeHandler::load(QString fname) {
 
 void NodeHandler::loadFromModel() {
 	clear();
+	_deselectAllNodes();
 	const MetaData* mi = _model->metaInfo();
 	QStringList nodes = _model->nodes();
 	QStringList nodesout,nodesin;

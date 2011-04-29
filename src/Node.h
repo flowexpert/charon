@@ -30,10 +30,10 @@ public:
 	QRectF boundingRect() const;
 
 	/// handles mouse press events
-	void mousePressEvent(QGraphicsSceneMouseEvent *event);
+	void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 	/// handles mouse move events
-	void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
 
 	/// adds a property to the node
 	/// @param name     name of parameter
@@ -67,10 +67,6 @@ public:
 	/// height of the node
 	/// @return height of the node
 	int getHeight();
-
-	/// returns parameterfilename if set else ""
-	/// @return parameterfilename
-	QString getConfigFileName();
 
 	/// returns all nodeproperties of the node
 	/// @return nodeproperties
@@ -116,9 +112,6 @@ private:
 	/// name of the module the node is representing
 	QString _modulname;
 
-	/// filename of the parameterfile
-	QString _configFileName;
-
 	/// width of the node
 	int _width;
 
@@ -136,7 +129,6 @@ private:
 
 	/// static id counter for id creation
 	static unsigned int _idCount;
-
 };
 
 #endif /* NODE_H_ */

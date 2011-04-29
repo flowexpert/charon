@@ -22,6 +22,7 @@ Node::Node(QString title, int xpos, int ypos,QGraphicsScene *parent) :
 		_width(100),
 		_height(50),
 		_nProps(0),
+		_selectedNode(false),
 		_id(_idCount++)
 {
 	setPos(xpos,ypos);
@@ -60,64 +61,59 @@ void Node::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 	update();
 }
 
-void Node::setSelectedNode(bool s){
+void Node::setSelectedNode(bool s) {
 	_selectedNode = s;
 }
-bool Node::isSelectedNode(){
+
+bool Node::isSelectedNode() {
 	return _selectedNode;
 }
 
-
-void Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-
-	QGraphicsItem::mouseMoveEvent(event);
-	qreal dx = (event->scenePos()-event->lastScenePos()).x();
-	qreal dy = (event->scenePos()-event->lastScenePos()).y();
-	for(int i=0;i<children().size();i++)
-	{
-		NodeProperty *np = dynamic_cast<NodeProperty*>(children().at(i));
-		if(np != 0)
-		{
+void Node::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
+	QGraphicsItem::mouseMoveEvent(ev);
+	qreal dx = (ev->scenePos()-ev->lastScenePos()).x();
+	qreal dy = (ev->scenePos()-ev->lastScenePos()).y();
+	for (int i=0; i<children().size(); i++) {
+		NodeProperty *np = dynamic_cast<NodeProperty*>(children()[i]);
+		if(np != 0) {
 			np->moveBy(dx,dy);
 		}
 	}
 
 	// update model
 	GraphModel *model = ((NodeHandler*)scene())->model();
-	QString posstring = QString("%0 %1").arg(pos().x()).arg(pos().y());
+	QString posString = QString("%0 %1").arg(pos().x()).arg(pos().y());
 	model->setOnlyParams(false);
 	bool found = false;
-	//search for entry
-	for(int i=0;i<model->rowCount();i++){
+	// search for entry
+	for(int i=0; i<model->rowCount(); i++) {
 		if(model->data(model->index(i,0)).toString() == "editorinfo"){
-		model->setData(model->index(i,1),posstring);
+		model->setData(model->index(i,1),posString);
 		found = true;
 		break;
 		}
 	}
-	//insert editor info
-	if(!found){
+	// insert editor info
+	if (!found) {
 		model->insertRow(model->rowCount());
 		model->setData(model->index(model->rowCount()-1,0),"editorinfo");
-		model->setData(model->index(model->rowCount()-1,1),posstring);
+		model->setData(model->index(model->rowCount()-1,1),posString);
 	}
-
 	model->setOnlyParams(true);
-
 }
 
-void Node::remove(){
+void Node::remove() {
 	for(int i=0;i<_properties.size();i++){
 		_properties.at(i)->removeAllConnections();
 	}
 	_properties.clear();
 }
 
-void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
-{
+void Node::paint(
+		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
 	if(_selectedNode){
-		QRadialGradient gradient(_width/2, _height/2, _width*0.7, _width/2, _height/2);
+		QRadialGradient gradient(
+				_width/2, _height/2, _width*0.7, _width/2, _height/2);
 		gradient.setColorAt(0, QColor::fromRgbF(0, 0.2, 1, 1));
 		gradient.setColorAt(1, QColor::fromRgbF(0, 0, 0, 0));
 		QBrush brush(gradient);
@@ -139,45 +135,35 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 	painter->drawText(5,24,"["+_modulname+"]");
 }
 
-unsigned int Node::getId()
-{
+unsigned int Node::getId() {
 	return _id;
 }
 
-int Node::getWidth()
-{
+int Node::getWidth() {
 	return _width;
 }
 
-int Node::getHeight()
-{
+int Node::getHeight() {
 	return _height;
 }
 
-void Node::checkWidth(){
-	if(_name.size() > 14){
-		_width = 100 + (_name.size() - 14)*5;
-	}else{
-		if(_modulname.size() > 14) _width = 100 + (_modulname.size()-14)*5;
+void Node::checkWidth() {
+	int s = qMax(_name.size(), _modulname.size());
+	if (s > 14) {
+		_width = 50 + s * 5;
 	}
-
-}
-
-
-QString Node::getConfigFileName(){
-	return _configFileName;
 }
 
 QVector<NodeProperty*> Node::getProperties(){
 	return _properties;
 }
 
-void Node::setModulName(QString modname){
+void Node::setModulName(QString modname) {
 	_modulname = modname;
 	checkWidth();
 }
 
-QString Node::getModulName(){
+QString Node::getModulName() {
 	return _modulname;
 }
 
