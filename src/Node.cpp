@@ -6,7 +6,6 @@
  */
 
 #include "Node.h"
-#include "ParameterFile.h"
 #include "NodeHandler.h"
 #include "GraphModel.h"
 #include <QFile>
@@ -171,61 +170,6 @@ QString Node::getConfigFileName(){
 
 QVector<NodeProperty*> Node::getProperties(){
 	return _properties;
-}
-
-
-void Node::loadFromParameterFile(QString fname){
-	_configFileName = fname;
-	ParameterFile pfile(fname.toStdString());
-	std::string modname = pfile.getEveryParameter("")[0];
-	modname = modname.substr(0,modname.find("."));
-	_name = QString::fromStdString(modname);
-	checkWidth();
-	std::string params = pfile.get<std::string>(modname + ".inputs");
-	std::vector<std::string> ins;
-	size_t pp = 0;
-	while(pp != params.npos){
-		pp = params.find(";");
-		ins.push_back(params.substr(0,pp));
-		params = params.substr(pp+1);
-	}
-	for(size_t i=0;i<ins.size();i++){
-		if (ins[i]!= "") {
-			QString tname = QString::fromStdString(
-					pfile.get<std::string>(modname+"."+ins[i]+".type"));
-			addProperty(QString::fromStdString(ins[i]),tname,PropType::IN);
-		}
-	}
-	params = pfile.get<std::string>(modname + ".outputs");
-	std::vector<std::string> outs;
-	pp = 0;
-	while (pp != params.npos) {
-		pp = params.find(";");
-		outs.push_back(params.substr(0,pp));
-		params = params.substr(pp+1);
-	}
-	for (size_t ii=0; ii<outs.size(); ii++) {
-		if (outs[ii]!= "") {
-			QString tname = QString::fromStdString(
-					pfile.get<std::string>(modname+"."+outs[ii]+".type"));
-			addProperty(QString::fromStdString(outs[ii]),tname,PropType::OUT);
-		}
-	}
-	params = pfile.get<std::string>(modname + ".parameters");
-	std::vector<std::string> pars;
-	pp = 0;
-	while (pp != params.npos) {
-		pp = params.find(";");
-		pars.push_back(params.substr(0,pp));
-		params = params.substr(pp+1);
-	}
-	for (size_t i=0; i<pars.size(); i++) {
-		if (pars[i]!= "") {
-			QString tname = QString::fromStdString(pfile.get<std::string>(
-					modname+"."+pars[i]+".type"));
-			addProperty(QString::fromStdString(pars[i]),tname,PropType::NONE);
-		}
-	}
 }
 
 void Node::setModulName(QString modname){

@@ -27,7 +27,6 @@
 #include <fstream>
 #include "FileManager.h"
 #include <FileTool.h>
-#include <ParameterFile.h>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>

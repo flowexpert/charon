@@ -39,7 +39,9 @@ public:
 	/// @param name     name of parameter
 	/// @param typeName type name of parameter
 	/// @param iotype   input or output type of property (IN,OUT,NONE)
-	void addProperty(QString name,QString typeName,PropType::NodePropertyIOType iotype=PropType::NONE);
+	void addProperty(
+			QString name, QString typeName,
+			PropType::NodePropertyIOType iotype=PropType::NONE);
 
 	/// sets the id of the node
 	/// @param id      ID to set
@@ -49,12 +51,10 @@ public:
 	/// @param name    name to set
 	void setName(QString name);
 
-	/// loads the node with all properties from a .wrp / parameter file
-	/// @param fname    file name of the parameter file
-	void loadFromParameterFile(QString fname);
-
 	/// paints the node
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+	void paint(
+			QPainter* painter, const QStyleOptionGraphicsItem* option,
+			QWidget *widget = 0);
 
 	/// removes all properties correctly
 	/// also removes connectionlines of each property

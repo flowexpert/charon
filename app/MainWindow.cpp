@@ -35,7 +35,6 @@
 #include "GraphModel.h"
 #include "ModelToolBar.h"
 #include "FileManager.h"
-#include <ParameterFile.hxx>
 #include <PluginManager.h>
 #include "AbstractPluginLoader.h"
 #include "WorkflowExecutor.h"
