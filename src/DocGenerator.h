@@ -77,8 +77,9 @@ protected:
 	 *  \param slotType     slot type (if needed), can be "in" or "out"
 	 *  \returns            html formatted docstring
 	 */
-	QString _docList(const std::vector<std::string>& parList,
-		const std::string& className, const std::string& slotType = "") const;
+	QString _docList(
+			QStringList parList, QString className,
+			QString slotType = "") const;
 
 	/// pointer to used viewer instance
 	QWebView* _viewer;

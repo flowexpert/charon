@@ -21,28 +21,30 @@
  *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 #include "MetaData.h"
-#include "ParameterFile.hxx"
-#include <set>
-#include <cassert>
+#include "QParameterFile.h"
+#include <QSet>
+#include <QVariant>
 
-/// transform std::string into lowercase
-/** \param[in,out] input  string to transform
- *  \returns          lowercase version
- */
-inline std::string& _toLower(std::string& input) {
-	std::transform(
-		input.begin(), input.end(), input.begin(),
-		(int(*)(int)) tolower);
-	return input;
-}
+MetaData::MetaData(QString fileName) :
+		_data(new QParameterFile(fileName)) {
+	Q_ASSERT(!fileName.isEmpty());
+	QStringList keyList = _data->getKeyList();
+	 // contains all keys in _metadata
+	QSet<QString> keys = QSet<QString>::fromList(keyList);
+	QSet<QString> classes; // contains all classes in _metadata
+	QSet<QString>::const_iterator keyIter;
 
-MetaData::MetaData(const std::string& fileName) :
-		_data(0),
-		_valid(false) {
-	if(fileName.size() > 0) {
-		_data = new ParameterFile(fileName);
-		_check();
+	// each key needs a separator (classes cannot have a default value)
+	for(keyIter = keys.begin(); keyIter != keys.end(); keyIter++) {
+		int pos = keyIter->indexOf(".");
+		if (pos < 0)
+			qFatal("Invalid key (separator missing): %s",
+					keyIter->toAscii().constData());
+		classes.insert(keyIter->left(pos));
 	}
+
+	// create/update class vector
+	_classes = classes.toList();
 }
 
 MetaData::~MetaData() {
@@ -50,183 +52,86 @@ MetaData::~MetaData() {
 		delete _data;
 }
 
-bool MetaData::valid() const {
-	return _valid;
-}
-
-void MetaData::_check() {
-	std::set<std::string> keys; // contains all keys in _metadata
-	std::vector<std::string> keyList = _data->getKeyList();
-	keys.insert(keyList.begin(), keyList.end());
-	std::set<std::string> classes; // contains all classes in _metadata
-	std::set<std::string>::const_iterator keyIter;
-
-	// each key needs a separator (classes cannot have a default value)
-	for(keyIter = keys.begin(); keyIter != keys.end(); keyIter++) {
-		std::string::size_type pos = keyIter->find(".");
-		if (pos == std::string::npos)
-			throw "Invalid key (separator missing): " + *keyIter;
-		classes.insert(keyIter->substr(0, pos));
-	}
-
-	// create/update class vector
-	_classes = std::vector<std::string>(classes.begin(), classes.end());
-
-	// check required parameters
-	std::set<std::string>::const_iterator cIter;
-	for(cIter = classes.begin(); cIter != classes.end(); cIter++) {
-		// this vector will contain all parameters and slots of this class
-		std::vector<std::string> pList;
-		std::vector<std::string> temp;
-
-		// add inputs
-		if(keys.find(*cIter + ".inputs") == keys.end())
-			throw "parameter \"inputs\" missing in class " + *cIter;
-		temp = _data->getList<std::string>(*cIter+".inputs");
-		pList.insert(pList.end(), temp.begin(), temp.end());
-
-		// add outputs
-		if(keys.find(*cIter + ".outputs") == keys.end())
-			throw "parameter \"outputs\" missing in class " + *cIter;
-		temp = _data->getList<std::string>(*cIter+".outputs");
-		pList.insert(pList.end(), temp.begin(), temp.end());
-
-		// add parameters
-		if(keys.find(*cIter + ".parameters") == keys.end())
-			throw "parameter \"parameters\" missing in class " + *cIter;
-		temp = _data->getList<std::string>(*cIter+".parameters");
-		pList.insert(pList.end(), temp.begin(), temp.end());
-
-		// check if parameters are given
-		// (i.e. "className.parName.type" is set)
-		std::vector<std::string>::const_iterator pIter;
-		for(pIter = pList.begin(); pIter != pList.end(); pIter++) {
-			std::string test ="incrementorparameter.stepsize.type";
-			std::string p =*pIter;
-			_toLower(p);
-			if(keys.find(*cIter + "." + p + ".type") == keys.end())
-				throw "parameter " + p
-					+ " missing in class " + *cIter;
-		}
-	}
-	_valid = true;
-}
-
-const std::vector<std::string>& MetaData::getClasses() const {
+QStringList MetaData::getClasses() const {
 	return _classes;
 }
 
-std::vector<std::string> MetaData::getOutputs (
-										  const std::string& className) const {
-	return _data->getList<std::string>(className + ".outputs");
+QStringList MetaData::getOutputs (QString className) const {
+	return _data->getList(className + ".outputs");
 }
 
-std::vector<std::string> MetaData::getInputs
-										 (const std::string& className) const {
-	return _data->getList<std::string>(className + ".inputs");
+QStringList MetaData::getInputs(QString className) const {
+	return _data->getList(className + ".inputs");
 }
 
-std::vector<std::string> MetaData::getParameters
-										 (const std::string& className) const {
-	return _data->getList<std::string>(className + ".parameters");
+QStringList MetaData::getParameters(QString className) const {
+	return _data->getList(className + ".parameters");
 }
 
-std::string MetaData::getType(std::string parName,
-										  const std::string& className) const {
-	parName = ParameterFile::parName(parName);
-	std::string par = className + "." + parName + ".type";
-	std::string result = "string";
-	if(_data->isSet(par))
-		result = _data->get<std::string>(par);
+QString MetaData::getType(QString parName, QString className) const {
+	parName = parName.section(".",0,0);
+	QString par = className + "." + parName + ".type";
+	QString result = _data->get(par);
+	if(result.isEmpty())
+		result = "string";
 	return result;
 }
 
-std::string MetaData::getDefault(std::string parName,
-										  const std::string& className) const {
-	parName = ParameterFile::parName(parName);
-	std::string par = className + "." + parName;
-	std::string result;
-	if(_data->isSet(par))
-		result = _data->get<std::string>(par);
+QString MetaData::getDefault(QString parName, QString className) const {
+	parName =  parName.section(".",0,0);
+	QString par = className + "." + parName;
+	QString result = _data->get(par);
 	return result;
 }
 
-std::string MetaData::getDocString(std::string parName,
-										  const std::string& className) const {
-	parName = ParameterFile::parName(parName);
-	std::string par;
-	if(parName.size())
-		par = className + "." + parName + ".doc";
-	else
-		par = className + ".doc";
-
-	std::string result;
-	if(_data->isSet(par))
-		result = _data->get<std::string>(par);
+QString MetaData::getDocString(QString parName, QString className) const {
+	parName =  parName.section(".",0,0);
+	QString par =  parName.isEmpty() ?
+			className + ".doc" :
+			className + "." + parName + ".doc";
+	QString result = _data->get(par);
 	return result;
 }
 
-std::string MetaData::getDocFile(std::string parName,
-										  const std::string& className) const {
-	parName = ParameterFile::parName(parName);
-	std::string par;
-	if(parName.size())
-		par = className + "." + parName + ".docfile";
-	else
-		par = className + ".docfile";
-
-	std::string result;
-	if(_data->isSet(par))
-		result = _data->get<std::string>(par);
+QString MetaData::getDocFile(QString parName, QString className) const {
+	parName =  parName.section(".",0,0).toLower();
+	QString par = parName.isEmpty() ?
+			className + ".docfile" :
+			className + "." + parName + ".docfile";
+	QString result = _data->get(par);
 	return result;
 }
 
-bool MetaData::isParameter(std::string name,
-										  const std::string& className) const {
-	name = ParameterFile::parName(name);
-	std::vector<std::string> paramList = getParameters(className);
-	return (std::find(paramList.begin(), paramList.end(), name) !=
-					 paramList.end());
+bool MetaData::isParameter(QString name, QString className) const {
+	name =  name.section(".",-1,-1);
+	QStringList list = getParameters(className);
+	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
 }
 
-bool MetaData::isInputSlot(std::string name,
-										  const std::string& className) const {
-	name = ParameterFile::parName(name);
-	_toLower(name);
-	std::vector<std::string> inputList = getInputs(className);
-	std::transform(
-			inputList.begin(), inputList.end(), inputList.begin(),
-			_toLower);
-	return (std::find(inputList.begin(), inputList.end(), name) !=
-					 inputList.end());
+bool MetaData::isInputSlot(QString name, QString className) const {
+	name =  name.section(".",-1,-1);
+	QStringList list = getInputs(className);
+	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
 }
 
-bool MetaData::isOutputSlot(std::string name,
-										  const std::string& className) const {
-	name = ParameterFile::parName(name);
-	_toLower(name);
-	std::vector<std::string> outputList = getOutputs(className);
-	std::transform(
-			outputList.begin(), outputList.end(), outputList.begin(),
-			_toLower);
-	return (std::find(outputList.begin(), outputList.end(), name) !=
-					 outputList.end());
+bool MetaData::isOutputSlot(QString name, QString className) const {
+	name =  name.section(".",-1,-1);
+	QStringList list = getOutputs(className);
+	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
 }
 
-bool MetaData::isOptionalSlot(std::string slotName,
-										  const std::string& className) const {
-	slotName = ParameterFile::parName(slotName);
+bool MetaData::isOptionalSlot(QString slotName, QString className) const {
+	slotName = slotName.section(".",-1,-1);
 	bool slotIsIn = isInputSlot(slotName, className);
-	if (!_data->isSet(className + "." + slotName + ".optional"))
-		return !slotIsIn;
-	return _data->get<bool>(className + "." + slotName + ".optional");
+	QString optName = className + "." + slotName + ".optional";
+	return _data->isSet(optName) ?
+			QVariant(_data->get(optName)).toBool() : !slotIsIn;
 }
 
-bool MetaData::isMultiSlot(std::string slotName,
-										  const std::string& className) const {
-	slotName = ParameterFile::parName(slotName);
+bool MetaData::isMultiSlot(QString slotName, QString className) const {
+	slotName = slotName.section(".",-1,-1);
 	bool slotIsIn = isInputSlot(slotName, className);
-	if (!_data->isSet(className + "." + slotName + ".multi"))
-		return !slotIsIn;
-	return _data->get<bool>(className + "." + slotName + ".multi");
+	QString optName = className + "." + slotName + ".multi";
+	return _data->isSet(optName) ?
+			QVariant(_data->get(optName)).toBool() : !slotIsIn;
 }

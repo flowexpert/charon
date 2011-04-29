@@ -18,6 +18,8 @@ SET(EDITPARAM_SOURCES
 	ModelToolBar.h
 	Qtiostream.cpp
 	Qtiostream.h
+	QParameterFile.h
+	QParameterFile.cpp
 	imageManip.cpp
 	imageManip.h
 	VarTypeMap.cpp

@@ -25,11 +25,9 @@
 #define PARAMETERFILEMODEL_H_
 
 #include <QAbstractTableModel>
-#include <vector>
-#include <map>
-#include <set>
+#include <QStringList>
 
-class ParameterFile;
+class QParameterFile;
 class MetaData;
 class PrefixValidator;
 
@@ -132,7 +130,7 @@ public:
 	// \} // model/view interface
 
 	/// Get property _fileName
-	QString	fileName() const;
+	QString fileName() const;
 
 	/// Get property _prefix
 	QString prefix() const;
@@ -144,26 +142,26 @@ public:
 	bool onlyParams() const;
 
 	/// Get const pointer of ParameterFile
-	const ParameterFile& parameterFile() const;
+	const QParameterFile& parameterFile() const;
 
 	/// Check prefix
 	bool prefixValid() const;
 
-	///	Metadata access
+	/// Metadata access
 	const MetaData* metaInfo() const;
 
 	/// get class of some given object
 	/** \param  objName         name of the object
 	 *  \returns                empty string if class is unknown
 	 */
-	std::string getClass(std::string objName) const;
+	QString getClass(QString objName) const;
 
 	/// Get type of some parameter or slot.
 	/** This also handles presence of some template parameters.
 	 *  \param parName          name of the parameter
 	 *  \returns                parameter/slot type
 	 */
-	std::string getType(std::string parName) const;
+	QString getType(QString parName) const;
 
 signals:
 	/// Property _fileName has changed
@@ -242,10 +240,10 @@ protected slots:
 
 private:
 	/// Pointer to the ParameterFile instance storing the model content
-	ParameterFile* _parameterFile;
+	QParameterFile* _parameterFile;
 
 	/// Cache stored parameter names
-	std::vector<std::string> _keys;
+	QStringList _keys;
 
 	/// Store filename of the model data file
 	QString _fileName;
@@ -263,26 +261,22 @@ private:
 	bool _onlyParams;
 
 	/// Return set of objects contained in given parameter list.
-	/** Aditionally checks if objects and types are valid.
-	 *  \param list             parameter list
-	 *  \returns                set of objects
+	/** \param list             parameter list
+	 *  \returns                set of objects (no duplicates)
 	 */
-	std::set<std::string> _collectObjects(
-			const std::vector<std::string>& list) const;
+	QStringList _collectObjects(QStringList list) const;
 
 	/// filter keys starting with the given prefix
 	/** \param list             list to filter
 	 *  \returns                filtered list (only with given prefix)
 	 */
-	std::vector<std::string> _prefixFilter(
-			const std::vector<std::string>& list) const;
+	QStringList _prefixFilter(QStringList list) const;
 
 	/// filter keys listed in the classes parameter section
 	/** \param list             list to filter
 	 *  \returns                filtered list (only parameters)
 	 */
-	std::vector<std::string> _paramFilter(
-			const std::vector<std::string>& list) const;
+	QStringList _paramFilter(QStringList list) const;
 };
 
 #endif /* PARAMETERFILEMODEL_H_ */

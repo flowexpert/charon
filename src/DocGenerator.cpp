@@ -100,31 +100,31 @@ void DocGenerator::showDocString(const QString& doc) {
 	_viewer->setHtml(html);
 }
 
-QString DocGenerator::_docList(const std::vector<std::string>& parList,
-		const std::string& className, const std::string& slotType) const {
+QString DocGenerator::_docList(QStringList parList,
+		QString className, QString slotType) const {
 	QString ret;
-	std::vector<std::string>::const_iterator parIter;
+	QStringList::const_iterator parIter;
 
 	if(parList.size()) {
-		MetaData meta(FileManager::instance().classesFile().toStdString());
+		MetaData meta(FileManager::instance().classesFile());
 		ret += "<p><ul>";
 		for(parIter=parList.begin(); parIter!=parList.end(); parIter++) {
 			ret += "<tr>";
 
 			// show parameter name and type
 			ret += "<td class=\"leftcol\"></td>";
-			QString parType = meta.getType(*parIter, className).c_str();
+			QString parType = meta.getType(*parIter, className);
 			if (parType.contains(QRegExp("^\\s*\\{\\s*\\w.*\\}\\s*$")))
 				parType = "Selection";
 			parType.replace("<", "&lt;").replace(">", "&gt;");
-			ret	+= QString("<td class=\"dtype firstrow\">%1</td>")
+			ret += QString("<td class=\"dtype firstrow\">%1</td>")
 				.arg(parType);
 			ret += QString("<td class=\"firstrow\"><span class=\"parname\">"
 				"%1</span></td>\n")
-				.arg(parIter->c_str());
+				.arg(*parIter);
 
 			// show default value, if any
-			QString def = meta.getDefault(*parIter, className).c_str();
+			QString def = meta.getDefault(*parIter, className);
 			ret += "<td class=\"firstrow\">";
 
 			if(!def.isEmpty())
@@ -159,8 +159,7 @@ QString DocGenerator::_docList(const std::vector<std::string>& parList,
 			// show documentation
 			ret += "<tr><td class=\"leftcol\"></td><td></td>";
 			ret += QString("<td colspan=\"2\">%1</td></tr>\n")
-				.arg(meta.getDocString(*parIter, className)
-					.c_str());
+				.arg(meta.getDocString(*parIter, className));
 		}
 	}
 	else
@@ -170,15 +169,14 @@ QString DocGenerator::_docList(const std::vector<std::string>& parList,
 }
 
 void DocGenerator::showClassDoc(const QString& className) {
-	MetaData meta(FileManager::instance().classesFile().toStdString());
+	MetaData meta(FileManager::instance().classesFile());
 	QString page =
 		tr("<h1>ClassDocumentation: %1</h1>\n").arg(className)
 		+ tr("<h2>Description</h2>\n")
 		+ QString("<p>%1</p>\n")
-		.arg(meta.getDocString("", className.toAscii().constData()).c_str());
+		.arg(meta.getDocString("", className));
 
-	QString docFileName =
-		meta.getDocFile("", className.toAscii().constData()).c_str();
+	QString docFileName = meta.getDocFile("", className);
 
 	if(!docFileName.isEmpty()) {
 		// load docfile and add content
@@ -192,26 +190,26 @@ void DocGenerator::showClassDoc(const QString& className) {
 		docFile.close();
 	}
 
-	std::vector<std::string> parList;
+	QStringList parList;
 
 	page += "<table class=\"parlist\">";
 
 	// input slots
-	parList = meta.getInputs(className.toAscii().constData());
+	parList = meta.getInputs(className);
 	page += "<tr><td colspan=\"5\"><h2>" + tr("input slots")
 		+ "</h2></td></tr>\n";
-	page += _docList(parList, className.toAscii().constData(), "in");
+	page += _docList(parList, className, "in");
 
 	// output slots
-	parList = meta.getOutputs(className.toAscii().constData());
+	parList = meta.getOutputs(className);
 	page += "<tr><td colspan=\"5\"><h2>" + tr("output slots")
 		+ "</h2></td></tr>\n";
-	page += _docList(parList, className.toAscii().constData(), "out");
+	page += _docList(parList, className, "out");
 
 	// parameters
-	parList = meta.getParameters(className.toAscii().constData());
+	parList = meta.getParameters(className);
 	page += "<tr><td colspan=\"5\"><h2>"+tr("parameters")+"</h2></td></tr>\n";
-	page += _docList(parList, className.toAscii().constData());
+	page += _docList(parList, className);
 
 	page += "</table>";
 

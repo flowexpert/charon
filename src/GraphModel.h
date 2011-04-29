@@ -92,38 +92,33 @@ public slots:
 	 *  \param draw         emit display refresh signal if true
 	 *  \returns QString    name of new node (entered by user)
 	 */
-	QString addNode(
-			const QString& className, bool draw = true);
+	QString addNode(QString className, bool draw = true);
 
 	/// rename node
 	/** \param nodename     name of the node to rename
 	 *  \param draw         emit display refresh signal if true
 	 */
-	void renameNode(QString nodename,
-		bool draw = true);
+	void renameNode(QString nodename, bool draw = true);
 
 	/// delete node
 	/** \param nodename     name of the node to delete
 	 *  \param draw         emit display refresh signal if true
 	 */
-	bool deleteNode(
-			const QString& nodename, bool draw = true);
+	bool deleteNode(QString nodename, bool draw = true);
 
 	/// connect slots
 	/** \param source       source slot ("\<object\>.\<slot\>")
 	 *  \param target       target slot ("\<object\>.\<slot\>")
 	 *  \param draw         emit display refresh signal if true
 	 */
-	void connectSlot(
-			const QString& source, const QString& target, bool draw = true);
+	void connectSlot(QString source, QString target, bool draw = true);
 
 	/// disconnect slots
 	/** \param source       source slot ("\<object\>.\<slot\>")
 	 *  \param target       target slot ("\<object\>.\<slot\>")
 	 *  \param draw         emit display refresh signal if true
 	 */
-	void disconnectSlot(
-			const QString& source, const QString& target, bool draw = true);
+	void disconnectSlot(QString source, QString target, bool draw = true);
 
 	/// disconnect all slots of given node
 	/** \param node         node name ("\<object\>")
@@ -134,7 +129,7 @@ public slots:
 
 	/// load metaFile
 	/** \param fileName         filename to load from */
-	virtual void loadMetaFile(const QString& fileName);
+	virtual void loadMetaFile(QString fileName);
 
 	/// emit graph changed signal to update displays
 	/** this has to be done, when the ParameterFileModel content

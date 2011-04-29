@@ -23,47 +23,42 @@
 #ifndef METADATA_H_
 #define METADATA_H_
 
-#include <string>
-#include <vector>
+#include <QStringList>
 
-class ParameterFile;
+class QParameterFile;
 
 /// Handle metadata management for ParameterFileModel classes.
-class MetaData
-{
+class MetaData {
 public:
 	/// Load metadata from given file
-	MetaData(const std::string& fileName);
-	virtual ~MetaData();
-
-	/// Check metadata status
-	bool valid() const;
+	MetaData(QString fileName);
+	~MetaData();
 
 	/// \name Data queries
 	//  \{
 	/// get classes contained in this metadata file
-	const std::vector<std::string>& getClasses() const;
+	QStringList getClasses() const;
 
 	/// get input slots of some given object
 	/** \param className        object class name
 	 *                          (use ParameterFileModel::getClass to get this)
 	 *  \returns                list of input slots
 	 */
-	std::vector<std::string> getOutputs(const std::string& className) const;
+	QStringList getOutputs(QString className) const;
 
 	/// get output slots of some given object
 	/** \param className        object class name
 	 *                          (use ParameterFileModel::getClass to get this)
 	 *  \returns                list of output slots
 	 */
-	std::vector<std::string> getInputs(const std::string& className) const;
+	QStringList getInputs(QString className) const;
 
 	/// get parameters of some given object
 	/** \param className        object class name
 	 *                          (use ParameterFileModel::getClass to get this)
 	 *  \returns                list of parameters
 	 */
-	std::vector<std::string> getParameters(const std::string& className) const;
+	QStringList getParameters(QString className) const;
 
 	/// Get type of some parameter or slot.
 	/** Use GraphModel::getType if there are template arguments and you need to
@@ -73,63 +68,49 @@ public:
 	 *                          (use ParameterFileModel::getClass to get this)
 	 *  \returns                slot type
 	 */
-	std::string getType(
-			std::string parName,
-			const std::string& className) const;
+	QString getType(QString parName, QString className) const;
 
 	/// get default value for some editable parameter
 	/** \param parName          name of the parameter
 	 *  \param className        object class name
 	 *  \returns                empty string, if no default given
 	 */
-	std::string getDefault(
-			std::string parName,
-			const std::string& className) const;
+	QString getDefault(QString parName, QString className) const;
 
 	/// get docstring for some parameter or some class.
 	/** \param parName          name of the parameter
 	 *  \param className        object class name
 	 *  \returns                empty string, if no docstring given
 	 */
-	std::string getDocString(
-			std::string parName,
-			const std::string& className) const;
+	QString getDocString(QString parName, QString className) const;
 
 	/// get filename for some parameter or class documentation.
 	/** \param parName          name of the parameter
 	 *  \param className        object class name
 	 *  \returns                empty string, if no docfile given
 	 */
-	std::string getDocFile(
-			std::string parName,
-			const std::string& className) const;
+	QString getDocFile(QString parName, QString className) const;
 
 	/// Check if some parameter/slot is a parameter.
 	/** \param  name            name of the parameter/slot
 	 *  \param  className       object class name
 	 *  \retval true            given object is a parameter
 	 */
-	bool isParameter(
-			std::string name,
-			const std::string& className) const;
+	bool isParameter(QString name, QString className) const;
 
 	/// Check if some parameter/slot is an input slot.
 	/** \param  name            name of the slot
 	 *  \param  className       object class name
 	 *  \retval true            given object is an input slot
 	 */
-	bool isInputSlot(
-			std::string name,
-			const std::string& className) const;
+	bool isInputSlot(QString name, QString className) const;
 
 	/// Check if some parameter/slot is an output slot.
 	/** \param  name            name of the slot
 	 *  \param  className       object class name
 	 *  \retval true            given object is an output slot
 	 */
-	bool isOutputSlot(
-			std::string name,
-			const std::string& className) const;
+	bool isOutputSlot(QString name, QString className) const;
 
 	/// Check if some slot is optional.
 	/** \param  slotName        name of the slot
@@ -138,9 +119,7 @@ public:
 	 *                          (i.e. does not exists, etc.)
 	 *  \retval true            slot is optional
 	 */
-	bool isOptionalSlot(
-			std::string slotName,
-			const std::string& className) const;
+	bool isOptionalSlot(QString slotName, QString className) const;
 
 	/// Check if some slot is a multi slot.
 	/** \param  slotName        name of the slot
@@ -149,23 +128,15 @@ public:
 	 *                          (i.e. does not exists, etc.)
 	 *  \retval true            slot may have multiple targets
 	 */
-	bool isMultiSlot(
-			std::string slotName,
-			const std::string& className) const;
+	bool isMultiSlot(QString slotName, QString className) const;
 	//  \}  // queries
 
 private:
-	/// check metadata file
-	/** \throws std::string     error message */
-	void _check();
-
 	/// contained classes
-	std::vector<std::string> _classes;
+	QStringList _classes;
 
 	/// used ParameterFile (read only)
-	const ParameterFile* _data;
-	/// validity status
-	bool _valid;
+	const QParameterFile* _data;
 };
 
 #endif /*METADATA_H_*/

@@ -35,6 +35,7 @@
 #include "GraphModel.h"
 #include "MetaData.h"
 #include "FileManager.h"
+#include "QParameterFile.h"
 
 NodeHandler::NodeHandler(QObject* pp) :
 		QGraphicsScene(pp) {
@@ -114,63 +115,52 @@ bool NodeHandler::load(QString fname) {
 void NodeHandler::loadFromModel() {
 	clear();
 	const MetaData* mi = _model->metaInfo();
-	QVector<QString> nodes = _model->nodes().toVector();
-	QVector<QString> nodesout,nodesin;
-	QVector<QString> slotout,slotin;
-	_model->setPrefix("");
+	QStringList nodes = _model->nodes();
+	QStringList nodesout,nodesin;
+	QStringList slotout,slotin;
 
 	for (int ii=0;ii<nodes.size();ii++) {
-		std::string name = nodes[ii].toStdString();
-		std::string cname = _model->getClass(nodes[ii].toStdString());
+		QString name = nodes[ii];
+		QString cname = _model->getClass(nodes[ii]);
 
-		Node* node = new Node(QString::fromStdString(name),10*ii,10*ii,this);
-		QString modname = QString::fromStdString(
-				_model->parameterFile().get<std::string>(name+".type"));
-		node->setModulName(modname);
+		Node* node = new Node(name,10*ii,10*ii,this);
+		node->setModulName(cname);
 
 		if (_model->parameterFile().isSet(name+".editorinfo")) {
-			QString pdata = QString::fromStdString(
-					_model->parameterFile().get<std::string>(
-							name+".editorinfo"));
-			float x = pdata.split(" ").at(0).toFloat();
-			float y = pdata.split(" ").at(1).toFloat();
+			QString pdata = _model->parameterFile().get(name+".editorinfo");
+			float x = pdata.split(" ")[0].toFloat();
+			float y = pdata.split(" ")[1].toFloat();
 			node->setPos(x,y);
 		}
 
-		std::vector<std::string> ins = mi->getInputs(cname);
-		std::vector<std::string> outs = mi->getOutputs(cname);
-		std::vector<std::string> params = mi->getParameters(cname);
+		QStringList ins = mi->getInputs(cname);
+		QStringList outs = mi->getOutputs(cname);
+		QStringList params = mi->getParameters(cname);
 
-		for (size_t jj=0; jj < ins.size(); jj++) {
+		for (int jj=0; jj < ins.size(); jj++) {
 			node->addProperty(
-					QString::fromStdString(ins[jj]),
-					QString::fromStdString(mi->getType(ins[jj],cname)),
+					ins[jj], mi->getType(ins[jj],cname),
 					PropType::IN);
 		}
-		for (size_t jj=0; jj < outs.size(); jj++) {
+		for (int jj=0; jj < outs.size(); jj++) {
 			node->addProperty(
-					QString::fromStdString(outs[jj]),
-					QString::fromStdString(mi->getType(outs[jj],cname)),
+					outs[jj], mi->getType(outs[jj],cname),
 					PropType::OUT);
 		}
-		for (size_t jj=0; jj < params.size(); jj++) {
+		for (int jj=0; jj < params.size(); jj++) {
 			node->addProperty(
-					QString::fromStdString(params[jj]),
-					QString::fromStdString(mi->getType(params[jj],cname)),
+					params[jj], mi->getType(params[jj],cname),
 					PropType::NONE);
 		}
-		for (size_t jj=0; jj < outs.size(); jj++) {
-			std::string curO = name+"."+outs[jj];
+		for (int jj=0; jj < outs.size(); jj++) {
+			QString curO = name+"."+outs[jj];
 			if (_model->parameterFile().isSet(curO)) {
-				std::vector<std::string> conns =
-						_model->parameterFile().getList<std::string>(curO);
-				for (size_t kk=0; kk < conns.size(); kk++) {
-					slotout.push_back(QString::fromStdString(outs[jj]));
-					slotin.push_back(QString::fromStdString(conns[kk]).remove(
-						QRegExp("*.",Qt::CaseSensitive,QRegExp::Wildcard)));
-					nodesin.push_back(QString::fromStdString(conns[kk]).remove(
-						QRegExp(".*",Qt::CaseSensitive,QRegExp::Wildcard)));
-					nodesout.push_back(QString::fromStdString(name));
+				QStringList conns = _model->parameterFile().getList(curO);
+				for (int kk=0; kk < conns.size(); kk++) {
+					nodesout << name;
+					slotout << outs[jj];
+					slotin << conns[kk].section(".",-1,-1);
+					nodesin << conns[kk].section(".",0,0);
 				}
 			}
 		}

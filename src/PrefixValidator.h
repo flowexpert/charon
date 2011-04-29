@@ -25,7 +25,7 @@
 #define PREFIXVALIDATOR_H_
 
 #include <QValidator>
-class ParameterFile;
+class QParameterFile;
 
 /// Validator for prefix edit widgets.
 /**  It serves to check if an entered prefix is valid or not. */
@@ -36,7 +36,7 @@ public:
 	/** \param data     input parameter file
 	 *  \param parent   parent object
 	 */
-	PrefixValidator(const ParameterFile& data, QObject* parent = 0);
+	PrefixValidator(const QParameterFile& data, QObject* parent = 0);
 
 	/// Validate input string.
 	/** This virtual function returns Invalid if input is invalid according to
@@ -59,7 +59,7 @@ public:
 	virtual void fixup(QString& input) const;
 
 private:
-	const ParameterFile& _parameterFile;		///< parent ParameterFile
+	const QParameterFile& _parameterFile;	///< parent ParameterFile
 };
 
 #endif /*PREFIXVALIDATOR_H_*/

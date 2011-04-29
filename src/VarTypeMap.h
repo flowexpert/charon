@@ -23,8 +23,8 @@
 #ifndef VARTYPEMAP_H_
 #define VARTYPEMAP_H_
 
-#include <map>
-#include <string>
+#include <QMap>
+#include <QString>
 #include <QVariant>
 #include <QMutex>
 
@@ -41,7 +41,7 @@ private:
     VarTypeMap& operator= (const VarTypeMap&);	///< not assignable
 
     /// mapping from given type values to QVariant types
-    std::map<std::string, QVariant::Type> _typeMap;
+	QMap<QString, QVariant::Type> _typeMap;
     /// pointer to the singleMapper instance
     static VarTypeMap* _address;
     /// Mutex to avoid multiple creation
@@ -51,7 +51,7 @@ public:
 	static VarTypeMap& instance();
 
 	/// return type map
-	QVariant::Type operator[](std::string type) const;
+	QVariant::Type operator[](QString type) const;
 };
 
 #endif /*VARTYPEMAP_H_*/

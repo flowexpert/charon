@@ -58,13 +58,13 @@ void NodeTreeView::reload() {
 	resizeColumnToContents(1);
 
 	// load modules
-	MetaData md(FileManager::instance().classesFile().toStdString());
-	std::vector<std::string> classes = md.getClasses();
-	for (size_t ii=0; ii < classes.size(); ii++) {
-		QString name = QString::fromStdString(classes[ii]);
-		std::vector<std::string> ins = md.getInputs(classes[ii]);
-		std::vector<std::string> outs = md.getOutputs(classes[ii]);
-		std::vector<std::string> params = md.getParameters(classes[ii]);
+	MetaData md(FileManager::instance().classesFile());
+	QStringList classes = md.getClasses();
+	for (int ii=0; ii < classes.size(); ii++) {
+		QString name = classes[ii];
+		QStringList ins = md.getInputs(classes[ii]);
+		QStringList outs = md.getOutputs(classes[ii]);
+		QStringList params = md.getParameters(classes[ii]);
 
 		// new node to be added
 		QStandardItem* node = new QStandardItem(name);
@@ -72,26 +72,20 @@ void NodeTreeView::reload() {
 		node->setDragEnabled(true);
 		QList<QStandardItem*> names, sTypes, cTypes, all;
 
-		for (size_t jj=0; jj<ins.size(); jj++) {
-			names << new QStandardItem(
-					QString::fromStdString(ins[jj]));
+		for (int jj=0; jj<ins.size(); jj++) {
+			names << new QStandardItem(ins[jj]);
 			sTypes << new QStandardItem("InputSlot");
-			cTypes << new QStandardItem(
-					QString::fromStdString(md.getType(ins[jj],classes[ii])));
+			cTypes << new QStandardItem(md.getType(ins[jj],classes[ii]));
 		}
-		for (size_t jj=0; jj<outs.size(); jj++) {
-			names << new QStandardItem(
-					QString::fromStdString(outs[jj]));
+		for (int jj=0; jj<outs.size(); jj++) {
+			names << new QStandardItem(outs[jj]);
 			sTypes << new QStandardItem("OutputSlot");
-			cTypes << new QStandardItem(
-					QString::fromStdString(md.getType(outs[jj],classes[ii])));
+			cTypes << new QStandardItem(md.getType(outs[jj],classes[ii]));
 		}
-		for (size_t jj=0; jj<params.size(); jj++) {
-			names << new QStandardItem(
-					QString::fromStdString(params[jj]));
+		for (int jj=0; jj<params.size(); jj++) {
+			names << new QStandardItem(params[jj]);
 			sTypes << new QStandardItem("Parameter");
-			cTypes << new QStandardItem(
-					QString::fromStdString(md.getType(params[jj],classes[ii])));
+			cTypes << new QStandardItem(md.getType(params[jj],classes[ii]));
 		}
 		all << names << sTypes << cTypes;
 		for (int jj=0; jj < all.size(); jj++) {

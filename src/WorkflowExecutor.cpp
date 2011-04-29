@@ -22,9 +22,6 @@
  */
 
 #include "WorkflowExecutor.h"
-#include "FileManager.h"
-#include "ObjectInspector.h"
-#include "ParameterFileModel.h"
 #include <QMessageBox>
 #include <QDateTime>
 #include <QSettings>
@@ -33,6 +30,10 @@
 #include <QMutex>
 #include <ui_LogDialog.h>
 #include <charon-core/PluginManager.h>
+#include "FileManager.h"
+#include "ObjectInspector.h"
+#include "ParameterFileModel.h"
+#include "QParameterFile.h"
 
 #ifdef __GNUG__
 #include <cxxabi.h>
@@ -48,8 +49,7 @@ WorkflowExecutor::WorkflowExecutor(ObjectInspector* inspector, QObject* p) :
 		_logDialog(0),
 		_logTimer(0)
 {
-	_logFileName = FileManager::instance().configDir().path().toAscii()
-			.constData();
+	_logFileName = FileManager::instance().configDir().path().toStdString();
 	_logFileName += "/executeLog.txt";
 	connect(this, SIGNAL(finished()), this, SLOT(_executionFinished())) ;
 	connect(this, SIGNAL(terminated()), this, SLOT(_executionTerminated())) ;
@@ -93,8 +93,8 @@ void WorkflowExecutor::_updateIcon() {
 
 void WorkflowExecutor::run() {
 	const QDateTime& startTime = QDateTime::currentDateTime();
-	sout << "Time: " << startTime.toString(Qt::ISODate)
-			.toAscii().constData() << std::endl;
+	sout << "Time: " << startTime.toString(Qt::ISODate).toStdString()
+			<< std::endl;
 
 	try {
 		_manager->executeWorkflow();
@@ -129,12 +129,12 @@ void WorkflowExecutor::run() {
 
 	sout << "Execution finished.\n";
 	const QDateTime& endTime = QDateTime::currentDateTime();
-	sout << "Time   : " << endTime.toString(Qt::ISODate).toAscii().constData();
+	sout << "Time   : " << endTime.toString(Qt::ISODate).toStdString();
 	sout << std::endl;
 
 	QTime runTime = QTime().addSecs(startTime.secsTo(endTime));
-	sout << "Runtime: " << runTime.toString("hh:mm:ss.zzz")
-			.toAscii().constData() << std::endl;
+	sout << "Runtime: " << runTime.toString("hh:mm:ss.zzz").toStdString()
+			<< std::endl;
 }
 
 void WorkflowExecutor::_execute() {
@@ -149,8 +149,8 @@ void WorkflowExecutor::_execute() {
 			"Heidelberg Collaboratory for Image Processing",
 			"Tuchulcha");
 	_manager = new PluginManager(
-			settings.value("globalPluginPath").toString().toAscii().data(),
-			settings.value("privatePluginPath").toString().toAscii().data());
+			settings.value("globalPluginPath").toString().toStdString(),
+			settings.value("privatePluginPath").toString().toStdString());
 	_updateIcon() ;
 	_log = new std::ofstream(_logFileName.c_str(), std::ios::trunc);
 	Q_ASSERT(_log);
@@ -178,14 +178,14 @@ void WorkflowExecutor::_execute() {
 	_pathBak = QDir::currentPath();
 	const ParameterFileModel& model = *(_inspector->model());
 	QString fileName = model.fileName();
-	const ParameterFile& parameterFile = model.parameterFile();
+	const QParameterFile& parameterFile = model.parameterFile();
 	QDir::setCurrent(QFileInfo(fileName).path());
 	// error occurs in _manager->executeWorkflow.
 	// perhaps try/catch-block unneccessary.
 	QString unexpectedErrorMsg;
 	try {
 		sout << "loading Parameter file" << std::endl;
-		_manager->loadParameterFile(parameterFile);
+		_manager->loadParameterFile(parameterFile.toParameterFile());
 		sout << "executing Parameter file" << std::endl;
 		_updateLogDialog() ;
 		QApplication::processEvents() ;
@@ -223,7 +223,7 @@ void WorkflowExecutor::_execute() {
 		sout << "\n****************************************************\n\n"
 				<< "Unexpected error during load or after execute.\n"
 				<< "Please report this to the charon-developers!\n\n"
-				<< unexpectedErrorMsg.toAscii().constData() << "\n\n"
+				<< unexpectedErrorMsg.toStdString() << "\n\n"
 				<< "****************************************************"
 				<< std::endl;
 		_updateLogDialog();
@@ -265,7 +265,7 @@ void WorkflowExecutor::_executionFinished()
 	{
 		sout << "\n****************************************************\n\n"
 				<< "Error during execution:\n\n"
-				<< message.toAscii().constData() << "\n\n"
+				<< message.toStdString() << "\n\n"
 				<< "****************************************************"
 				<< std::endl;
 		_updateLogDialog();

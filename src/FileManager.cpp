@@ -94,7 +94,7 @@ QDir FileManager::configDir() const {
 	if (!ok)
 		qFatal("%s", (tr("failed to change to directory \"%1\"")
 				.arg(QDir::homePath() + "/" + TUCHULCHA_DIR))
-			   .toAscii().constData());
+				.toAscii().constData());
 	return ret;
 }
 
@@ -144,9 +144,9 @@ void FileManager::loadPluginInformation() const {
 			"Heidelberg Collaboratory for Image Processing",
 			"Tuchulcha");
 	PluginManager man(
-			settings.value("globalPluginPath").toString().toAscii().data(),
-			settings.value("privatePluginPath").toString().toAscii().data());
-	man.createMetadata(metaPath.absolutePath().toAscii().constData());
+			settings.value("globalPluginPath").toString().toStdString(),
+			settings.value("privatePluginPath").toString().toStdString());
+	man.createMetadata(metaPath.absolutePath().toStdString());
 
 	sout.assign();
 	log.close();

@@ -33,7 +33,7 @@ int main() {
     QString fileName = DEFAULTCLASSFILE;
 
     // Check if file can be loaded and display content
-    ParameterFile file(fileName.toAscii().constData());
+	ParameterFile file(fileName.toStdString());
     std::cout << "Set Params (should be empty):" << std::endl;
     file.showSetParams();
     std::cout << "\nParameter list:" << std::endl;

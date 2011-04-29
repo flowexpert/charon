@@ -49,17 +49,15 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 	const ParameterFileModel* model =
 			qobject_cast<const ParameterFileModel*>(ind.model());
 	if (model && model->onlyParams()) {
-		std::string param = model->data(
-				ind.sibling(ind.row(),0)).toString().toAscii().constData();
+		QString param = model->data(ind.sibling(ind.row(),0)).toString();
 		if (!model->prefix().isEmpty())
-			param = std::string(model->prefix().toAscii().constData())
-					+ "." + param;
+			param = model->prefix() + "." + param;
 		QString type = model->metaInfo()->getType(
-				param, model->getClass(param)).c_str();
+				param, model->getClass(param));
 		type.toLower();
 
 		if (type=="openfile" || type=="fileopen") {
-			QDirEdit* editor = new QDirEdit(param.c_str(), p);
+			QDirEdit* editor = new QDirEdit(param, p);
 			editor->acceptFiles(true, false);
 			connect(
 					editor, SIGNAL(dialogOpen(bool)),
@@ -67,7 +65,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 			return editor;
 		}
 		if (type=="writefile" || type=="filewrite" || type=="filename") {
-			QDirEdit* editor = new QDirEdit(param.c_str(), p);
+			QDirEdit* editor = new QDirEdit(param, p);
 			editor->acceptFiles(true, true);
 			connect(
 					editor, SIGNAL(dialogOpen(bool)),
@@ -75,7 +73,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 			return editor;
 		}
 		if (type == "path") {
-			QDirEdit* editor = new QDirEdit(param.c_str(), p);
+			QDirEdit* editor = new QDirEdit(param, p);
 			connect(
 					editor, SIGNAL(dialogOpen(bool)),
 					this, SLOT(_setFileDialogFlag(bool)));

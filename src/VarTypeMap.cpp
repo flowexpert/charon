@@ -50,12 +50,12 @@ VarTypeMap& VarTypeMap::instance() {
 	return *_address;
 }
 
-QVariant::Type VarTypeMap::operator[](std::string type) const {
-	std::map<std::string, QVariant::Type>::const_iterator found;
+QVariant::Type VarTypeMap::operator[](QString type) const {
+	QMap<QString, QVariant::Type>::const_iterator found;
 	found = _typeMap.find(type);
 	if (found == _typeMap.end())
 		return QVariant::String;
 	else
-		return found->second;
+		return found.value();
 }
 

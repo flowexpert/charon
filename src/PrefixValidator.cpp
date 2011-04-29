@@ -22,26 +22,25 @@
  */
 
 #include "PrefixValidator.h"
-#include "ParameterFile.hxx"
+#include "QParameterFile.h"
 
 #include "PrefixValidator.moc"
 
-PrefixValidator::PrefixValidator(const ParameterFile& data, QObject* myParent) :
-		QValidator(myParent),
-		_parameterFile(data) {
+PrefixValidator::PrefixValidator(const QParameterFile& data, QObject* pp) :
+		QValidator(pp),
+		_parameterFile(data)
+{
 }
 
 QValidator::State PrefixValidator::validate(QString& input, int&) const {
 	if(input.isEmpty())
 		return QValidator::Acceptable;
-    if (_parameterFile.getKeyList(std::string(input.toAscii()
-            .constData())+".").size())
+	if (_parameterFile.getKeyList(input+".").size() > 0)
 		return QValidator::Acceptable;
-	std::vector<std::string> keyList = 
-		_parameterFile.getKeyList(input.toAscii().constData());
-	std::vector<std::string>::const_iterator iter;
-	for(iter = keyList.begin(); iter != keyList.end(); iter++)
-		if (iter->find(".") != std::string::npos)
+	QStringList keyList =  _parameterFile.getKeyList(input);
+	for (int ii=0; ii < keyList.size(); ii++)
+		if (keyList[ii].contains(QRegExp(
+				"^\\s*"+ input + ".*\\..*",Qt::CaseInsensitive)))
 			return QValidator::Intermediate;
 	return QValidator::Invalid;
 }
@@ -51,12 +50,11 @@ void PrefixValidator::fixup(QString& input) const {
 	if(input.isEmpty())
 		return;
 	
-	std::vector<std::string> res =
-		_parameterFile.getKeyList(input.toAscii().constData());
-	for(uint i=0; i<res.size(); i++) {
-		std::string::size_type pos = res[i].find(".", input.length());
-		if (pos != std::string::npos) {
-			input = res[i].substr(0, pos).c_str();
+	QStringList keyList = _parameterFile.getKeyList(input);
+	for(int ii=0; ii < keyList.size(); ii++) {
+		if (keyList[ii].contains(QRegExp(
+				"^\\s*"+ input + ".*\\..*",Qt::CaseInsensitive))) {
+			input = keyList[ii];
 			return;
 		}
 	}
