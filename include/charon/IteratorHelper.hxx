@@ -26,6 +26,7 @@
 
 #include "IteratorHelper.h"
 #include <ImgTool.h>
+#include <sstream>
 
 template <typename T>
 IteratorHelper<T>::IteratorHelper(const std::string& name) :
@@ -80,8 +81,11 @@ template <typename T>
 void IteratorHelper<T>::reset() {
 	count() = 0;
 	const cimg_library::CImgList<T>& seqIn = in();
-	assert(seqIn.size() > 0);
-
+	if(seqIn.size() <= 0) {
+		std::stringstream s ;
+		s << this->getClassName() << " \"" << this->getName() << "\" input sequence is empty!" << std::endl ;
+		throw std::runtime_error(s.str()) ;
+	}
 	// copy input sequence
 	sequence().assign(seqIn);
 
@@ -93,9 +97,16 @@ void IteratorHelper<T>::reset() {
 					<< initFlow().size()
 					<< ") do not match given flow dimensions ("
 					<< flowDimensions() << ")!" << std::endl;
-		assert(initFlow().size() > 0);
-		assert(initFlow()[0].is_sameXYZ(seqIn[0]));
-		assert(initFlow()[0].spectrum() == seqIn[0].spectrum() - 1);
+		
+		if(initFlow().size() <= 0 ||
+			!initFlow()[0].is_sameXYZ(seqIn[0]) ||
+			(initFlow()[0].spectrum() != seqIn[0].spectrum() - 1)
+		) {
+			std::stringstream s ;
+			s << this->getClassName() << " \"" << this->getName() << "\" Error:initila flow is empty or does not match the dimensions of the input image" << std::endl ;
+			throw std::runtime_error(s.str()) ;
+		}
+			
 		flow().assign(initFlow());
 	}
 	else {
