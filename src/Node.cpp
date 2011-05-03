@@ -18,7 +18,7 @@ unsigned int Node::_idCount = 0;
 
 Node::Node(QString title, int xpos, int ypos,QGraphicsScene *parent) :
 		QGraphicsItem(0,parent),
-		_name(title),
+		_instanceName(title),
 		_width(100),
 		_height(50),
 		_nProps(0),
@@ -37,12 +37,12 @@ void Node::setId(unsigned int id) {
 }
 
 void Node::setName(QString name) {
-	_name = name;
-	checkWidth();
+	_instanceName = name;
+	_checkWidth();
 }
 
-QString Node::getName() {
-	return _name;
+QString Node::getInstanceName() {
+	return _instanceName;
 }
 
 void Node::addProperty(
@@ -125,10 +125,10 @@ void Node::paint(
 	f.setBold(true);
 	f.setCapitalization(QFont::SmallCaps);
 	painter->setFont(f);
-	painter->drawText(0,0,_width,22,Qt::AlignCenter,_modulname);
+	painter->drawText(0,0,_width,22,Qt::AlignCenter,_className);
 	f.setCapitalization(QFont::MixedCase);
 	painter->setFont(f);
-	painter->drawText(0,_height-22,_width,22,Qt::AlignCenter,_name);
+	painter->drawText(0,_height-22,_width,22,Qt::AlignCenter,_instanceName);
 }
 
 unsigned int Node::getId() {
@@ -143,8 +143,8 @@ int Node::getHeight() {
 	return _height;
 }
 
-void Node::checkWidth() {
-	int s = qMax(_name.size(), _modulname.size());
+void Node::_checkWidth() {
+	int s = qMax(_instanceName.size(), _className.size());
 	if (s > 10) {
 		_width = 50 + s * 6;
 	}
@@ -154,14 +154,7 @@ QVector<NodeProperty*> Node::getProperties(){
 	return _properties;
 }
 
-void Node::setModulName(QString modname) {
-	_modulname = modname;
-	checkWidth();
-}
-
-QString Node::getModulName() {
-	return _modulname;
-}
-
-Node::~Node() {
+void Node::setClassName(QString modname) {
+	_className = modname;
+	_checkWidth();
 }

@@ -78,15 +78,11 @@ public:
 
 	/// returns the node name
 	/// @return the node name
-	QString getName();
+	QString getInstanceName();
 
 	/// set the _modulname
 	/// @param modname    name of the module
-	void setModulName(QString modname);
-
-	/// get _modulname
-	/// @returns modulname
-	QString getModulName();
+	void setClassName(QString modname);
 
 	/// sets the node selected or not
 	/// @param s    select state
@@ -96,21 +92,18 @@ public:
 	/// @return state of node selection
 	bool isSelectedNode();
 
-	/// default destructor
-	virtual ~Node();
-
 private:
 	/// cecks the node width in reference to the node name
-	void checkWidth();
+	void _checkWidth();
 
 	/// list of nodeproperties
 	QVector<NodeProperty*> _properties;
 
 	/// name of the node
-	QString _name;
+	QString _instanceName;
 
 	/// name of the module the node is representing
-	QString _modulname;
+	QString _className;
 
 	/// width of the node
 	int _width;

@@ -227,9 +227,9 @@ void NodeProperty::removeAllConnections(GraphModel *model) {
 	for (int i = 0; i<_connectionList.size(); i++) {
 		ConnectionLine *l = _connectionList[i];
 		model->disconnectSlot(
-				l->getStartProp()->getNode()->getName()+"."
+				l->getStartProp()->getNode()->getInstanceName()+"."
 					+l->getStartProp()->getName(),
-				l->getEndProp()->getNode()->getName()+"."
+				l->getEndProp()->getNode()->getInstanceName()+"."
 					+l->getEndProp()->getName());
 		switch (_ptype->iotype) {
 		case PropType::IN:

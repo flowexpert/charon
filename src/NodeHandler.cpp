@@ -69,7 +69,7 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 	if (np) {
 		_deselectAllNodes();
 		_selectedNode = np;
-		_model->setPrefix(np->getName());
+		_model->setPrefix(np->getInstanceName());
 		np->setSelectedNode(true);
 	} else {
 		_deselectAllNodes();
@@ -130,7 +130,7 @@ void NodeHandler::loadFromModel() {
 		QString cname = _model->getClass(nodes[ii]);
 
 		Node* node = new Node(name,10*ii,10*ii,this);
-		node->setModulName(cname);
+		node->setClassName(cname);
 
 		if (_model->parameterFile().isSet(name+".editorinfo")) {
 			QString pdata = _model->parameterFile().get(name+".editorinfo");
@@ -191,8 +191,8 @@ void NodeHandler::connectNodes(
 	for (int i=0; i < items().size(); i++) {
 		Node *n = dynamic_cast<Node*>(items().at(i));
 		if (n) {
-			if(n->getName() == node0) out = n;
-			if(n->getName() == node1) in = n;
+			if(n->getInstanceName() == node0) out = n;
+			if(n->getInstanceName() == node1) in = n;
 		}
 	}
 	if (!(out && in)) {
@@ -256,7 +256,7 @@ void NodeHandler::keyReleaseEvent(QKeyEvent* keyEvent) {
 	}
 
 	if (keyEvent->key() == Qt::Key_Delete && _selectedNode != 0) {
-		_model->deleteNode(_selectedNode->getName());
+		_model->deleteNode(_selectedNode->getInstanceName());
 	}
 }
 
@@ -274,8 +274,8 @@ void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 			}
 			try {
 				_model->connected(
-					_startProp->getNode()->getName()+"."+_startProp->getName(),
-					prop->getNode()->getName()+"."+prop->getName());
+					_startProp->getNode()->getInstanceName()+"."+_startProp->getName(),
+					prop->getNode()->getInstanceName()+"."+prop->getName());
 				_cline->setStartEndProp(_startProp,prop);
 				_startProp->addConnection(_cline);
 				prop->addConnection(_cline);
@@ -283,8 +283,8 @@ void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 				prop->moveBy(0,0);
 				_cline = NULL;
 				_model->connectSlot(
-					_startProp->getNode()->getName()+"."+_startProp->getName(),
-					prop->getNode()->getName()+"."+prop->getName(),false);
+					_startProp->getNode()->getInstanceName()+"."+_startProp->getName(),
+					prop->getNode()->getInstanceName()+"."+prop->getName(),false);
 			} catch (std::runtime_error) {
 				removeItem(_cline);
 				_cline = NULL;
