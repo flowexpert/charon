@@ -31,6 +31,7 @@ class ConnectionLine;
 class Node;
 class ConnectionSocket;
 class GraphModel;
+class QParameterFile;
 
 /// Property(/Parameter) of a node
 class NodeProperty : public QGraphicsItem {
@@ -42,11 +43,12 @@ public:
 	 *                         (needed for correct positioning)
 	 *  \param propType        property type string
 	 *  \param input           input output type of the property
+	 *  \param pFile           link to given parameter file
 	 */
 	NodeProperty(
-			QGraphicsItem* parentNode, QString name,
+			Node* parentNode, QString name,
 			int propNr, QString propType,
-			bool input);
+			bool input, const QParameterFile* pFile);
 
 	/// area for hover event
 	QRectF boundingRect() const;
@@ -110,17 +112,16 @@ public:
 			const QStyleOptionGraphicsItem* option,
 			QWidget* widget = 0);
 
-	/// default destructor
-	virtual ~NodeProperty();
+protected:
+	/// update tool tip
+	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
+
 private:
 	/// width of the property
 	int _width;
 
 	/// state of connection
 	bool _isConnected;
-
-	/// true on mouse over
-	bool _drawType;
 
 	/// can handle more than one connection
 	bool _multiConnect;
@@ -141,10 +142,13 @@ private:
 	QString _propType;
 
 	/// pointer to parent node
-	Node *_node;
+	Node* _node;
 
 	/// the properties socket
 	ConnectionSocket *_socket;
+
+	/// link to parameter file
+	const QParameterFile* _pFile;
 };
 
 #endif /* NODEPROPERTY_H_ */

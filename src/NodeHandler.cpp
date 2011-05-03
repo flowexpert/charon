@@ -129,7 +129,8 @@ void NodeHandler::loadFromModel() {
 		QString name = nodes[ii];
 		QString cname = _model->getClass(nodes[ii]);
 
-		Node* node = new Node(name,10*ii,10*ii,this);
+		Node* node = new Node(
+				&_model->parameterFile(),name,10*ii,10*ii,this);
 		node->setClassName(cname);
 
 		if (_model->parameterFile().isSet(name+".editorinfo")) {

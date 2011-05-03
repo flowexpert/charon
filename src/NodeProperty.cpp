@@ -23,45 +23,36 @@
 
 #include "NodeProperty.h"
 #include <QPainter>
+#include <QHelpEvent>
 #include "ConnectionSocket.h"
 #include "ConnectionLine.h"
 #include "GraphModel.h"
 #include "NodeHandler.h"
 #include "Node.h"
+#include "QParameterFile.h"
 
 NodeProperty::NodeProperty(
-		QGraphicsItem* parentNode, QString name, int propNr,
-		QString pType, bool input) :
+		Node* parentNode, QString name, int propNr,
+		QString pType, bool input, const QParameterFile* pF) :
 			QGraphicsItem(parentNode),
 			_isConnected(false),
-			_drawType(false),
+			_multiConnect(!input),
+			_propNr(propNr),
 			_name(name),
 			_isInput(input),
-			_propType(pType)
+			_propType(pType),
+			_node(parentNode),
+			_pFile(pF)
 {
-	_propNr = propNr;
-
-	setToolTip(pType);
+	Q_ASSERT(_node);
 
 	int yy = 28 + _propNr * 25;
+	_width = _node->getWidth() - 10;
 
-	Node *n = dynamic_cast<Node*> (parentItem());
-	if (n != 0) {
-		_node = n;
-		_width = _node->getWidth() - 10;
-	}
+	_socket = new ConnectionSocket(
+			this, _isInput ? QPointF(0, yy+10) : QPointF(_width+10, yy+10));
 
-	if (_isInput) {
-		_socket = new ConnectionSocket(this, QPointF(0, yy + 10));
-		_multiConnect = false;
-	}
-	else {
-		_socket = new ConnectionSocket(this, QPointF(_width + 10, yy + 10));
-		_multiConnect = true;
-	}
-}
-
-NodeProperty::~NodeProperty() {
+	setAcceptHoverEvents(true);
 }
 
 void NodeProperty::moveBy(qreal, qreal) {
@@ -98,7 +89,21 @@ void NodeProperty::addConnection(ConnectionLine *nl) {
 }
 
 QString NodeProperty::getType() const {
-	return _propType;
+	QString type;
+	type = _propType;
+
+	// handle templated types
+	NodeHandler* h = qobject_cast<NodeHandler*>(scene()); Q_ASSERT(h);
+	if (_pFile) {
+		QString ttype = _pFile->get(
+				_node->getInstanceName()+".templatetype");
+		if (!ttype.isEmpty()) {
+			type.replace(
+					QRegExp("<\\s*T\\s*>",Qt::CaseInsensitive),
+					QString("&lt;%1&gt;").arg(ttype));
+		}
+	}
+	return type;
 }
 
 
@@ -112,7 +117,7 @@ void NodeProperty::paint(
 	_width = _node->getWidth() - 10;
 	int yy = 28 + _propNr * 25;
 	painter->setOpacity(1);
-	painter->setBrush(Qt::lightGray);
+	painter->setBrush(isUnderMouse() ? Qt::yellow : Qt::lightGray);
 	painter->drawRoundRect(5, yy, _width, 20, 10, 100);
 	painter->setBrush(Qt::black);
 	painter->drawText(10, yy + 13, _name);
@@ -121,7 +126,7 @@ void NodeProperty::paint(
 bool NodeProperty::canConnect(NodeProperty* prop) {
 	if (canNewConnect() && prop->canNewConnect() &&
 			_isInput != prop->_isInput &&
-			_propType == prop->_propType)
+			getType() == prop->getType())
 		return true;
 	return false;
 }
@@ -167,4 +172,10 @@ Node* NodeProperty::getNode() {
 
 bool NodeProperty::isInput() const {
 	return _isInput;
+}
+
+void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent* ev) {
+	setToolTip(QString("<b>Slot: <i>%1</i><br>Type:</b><br>%2")
+				.arg(_name).arg(getType()));
+	QGraphicsItem::hoverEnterEvent(ev);
 }

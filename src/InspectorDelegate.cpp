@@ -54,7 +54,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 			param = model->prefix() + "." + param;
 		QString type = model->metaInfo()->getType(
 				param, model->getClass(param));
-		type.toLower();
+		type = type.toLower();
 
 		if (type=="openfile" || type=="fileopen") {
 			QDirEdit* editor = new QDirEdit(param, p);

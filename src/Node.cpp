@@ -16,14 +16,16 @@
 
 unsigned int Node::_idCount = 0;
 
-Node::Node(QString title, int xpos, int ypos,QGraphicsScene *parent) :
+Node::Node(const QParameterFile* pFile, QString title,
+			int xpos, int ypos,QGraphicsScene *parent) :
 		QGraphicsItem(0,parent),
 		_instanceName(title),
 		_width(100),
 		_height(50),
 		_nProps(0),
 		_selectedNode(false),
-		_id(_idCount++)
+		_id(_idCount++),
+		_pFile(pFile)
 {
 	setPos(xpos,ypos);
 	setFlag(QGraphicsItem::ItemIsMovable);
@@ -47,7 +49,8 @@ QString Node::getInstanceName() {
 
 void Node::addProperty(
 		QString name, QString typeName, bool input) {
-	NodeProperty* prop = new NodeProperty(this,name,_nProps,typeName,input);
+	NodeProperty* prop = new NodeProperty(
+			this,name,_nProps,typeName,input,_pFile);
 	_height += 25;
 	_properties.push_back(prop);
 	_nProps++;
@@ -157,4 +160,8 @@ QVector<NodeProperty*> Node::getProperties(){
 void Node::setClassName(QString modname) {
 	_className = modname;
 	_checkWidth();
+}
+
+QString Node::getClassName() const {
+	return _className;
 }

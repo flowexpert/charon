@@ -8,8 +8,8 @@
 #ifndef NODE_H_
 #define NODE_H_
 
-#include<QGraphicsItem>
-#include<QRect>
+#include <QGraphicsItem>
+#include <QRect>
 #include <QGraphicsSceneWheelEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QVector>
@@ -20,11 +20,15 @@
 class Node : public QGraphicsItem {
 public:
 	/// default constructor
-	/// @param title    name of the node
-	/// @param xpos     x coordinate of upper left corner of the node
-	/// @param ypos     y coordinate of upper left corner of the node
-	/// @param parent   parent graphics scene
-	Node(QString title = "", int xpos=0, int ypos=0,QGraphicsScene* parent=0);
+	/** \param title    name of the node
+	 *  \param xpos     x coordinate of upper left corner of the node
+	 *  \param ypos     y coordinate of upper left corner of the node
+	 *  \param parent   parent graphics scene
+	 *  \param pFile    link to parameter file
+	 */
+	Node(
+			const QParameterFile* pFile, QString title,
+			int xpos, int ypos, QGraphicsScene* parent);
 
 	/// area where node is clickable
 	QRectF boundingRect() const;
@@ -84,6 +88,9 @@ public:
 	/// @param modname    name of the module
 	void setClassName(QString modname);
 
+	/// get class name
+	QString getClassName() const;
+
 	/// sets the node selected or not
 	/// @param s    select state
 	void setSelectedNode(bool s);
@@ -122,6 +129,9 @@ private:
 
 	/// static id counter for id creation
 	static unsigned int _idCount;
+
+	/// link to parameter file
+	const QParameterFile* _pFile;
 };
 
 #endif /* NODE_H_ */
