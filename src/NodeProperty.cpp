@@ -26,31 +26,22 @@
 #include "ConnectionSocket.h"
 #include "ConnectionLine.h"
 #include "GraphModel.h"
-#include "TypeHandler.h"
 #include "NodeHandler.h"
 #include "Node.h"
 
 NodeProperty::NodeProperty(
 		QGraphicsItem* parentNode, QString name, int propNr,
-		QString ptypeName, PropType::NodePropertyIOType p_iotype) :
+		QString pType, bool input) :
 			QGraphicsItem(parentNode),
 			_isConnected(false),
 			_drawType(false),
-			_name(name)
+			_name(name),
+			_isInput(input),
+			_propType(pType)
 {
-	setAcceptHoverEvents(true);
-	_ptype = new PropType();
-
-	if (TypeHandler::hasType(ptypeName)) _ptype->ptype =
-			TypeHandler::getType(ptypeName);
-	else {
-		ParameterType* paramtype = new ParameterType(ptypeName);
-		TypeHandler::addType(paramtype);
-		_ptype->ptype = paramtype;
-	}
-
-	_ptype->iotype = p_iotype;
 	_propNr = propNr;
+
+	setToolTip(pType);
 
 	int yy = 28 + _propNr * 25;
 
@@ -60,17 +51,13 @@ NodeProperty::NodeProperty(
 		_width = _node->getWidth() - 10;
 	}
 
-	switch (getIOType()) {
-	case PropType::IN:
+	if (_isInput) {
 		_socket = new ConnectionSocket(this, QPointF(0, yy + 10));
 		_multiConnect = false;
-		break;
-	case PropType::OUT:
+	}
+	else {
 		_socket = new ConnectionSocket(this, QPointF(_width + 10, yy + 10));
 		_multiConnect = true;
-		break;
-	default:
-		break;
 	}
 }
 
@@ -101,7 +88,7 @@ QList<ConnectionLine*> NodeProperty::getConnections() {
 	return _connectionList;
 }
 
-QString NodeProperty::getName() {
+QString NodeProperty::getName() const {
 	return _name;
 }
 
@@ -110,8 +97,8 @@ void NodeProperty::addConnection(ConnectionLine *nl) {
 	_connectionList.push_back(nl);
 }
 
-PropType *NodeProperty::getPropType() {
-	return _ptype;
+QString NodeProperty::getType() const {
+	return _propType;
 }
 
 
@@ -129,88 +116,14 @@ void NodeProperty::paint(
 	painter->drawRoundRect(5, yy, _width, 20, 10, 100);
 	painter->setBrush(Qt::black);
 	painter->drawText(10, yy + 13, _name);
-	if (_drawType) {
-		switch (_ptype->iotype) {
-		case PropType::IN: {
-			painter->setBrush(Qt::white);
-			painter->setOpacity(0.8);
-			QPointF p = _socket->getCenter() - QPointF(
-					_ptype->ptype->getTypeNameUnTemplated().size()*7 + 10, 10);
-			int length = _ptype->ptype->getTypeNameUnTemplated().size()*7;
-			painter->drawRoundRect(p.x(), p.y(), length, 20, 60, 70);
-			painter->setBrush(Qt::black);
-			painter->setOpacity(1);
-			painter->drawText(
-					p.x() + 5, p.y() + 13,
-					_ptype->ptype->getTypeNameUnTemplated());
-			break;
-		}
-		case PropType::OUT: {
-			painter->setBrush(Qt::white);
-			painter->setOpacity(0.8);
-			QPointF p = _socket->getCenter() + QPointF(10, -10);
-			int length = _ptype->ptype->getTypeNameUnTemplated().size()*7;
-			painter->drawRoundRect(p.x(), p.y(), length, 20, 60, 70);
-			painter->setBrush(Qt::black);
-			painter->setOpacity(1);
-			painter->drawText(
-					p.x() + 5, p.y() + 13,
-					_ptype->ptype->getTypeNameUnTemplated());
-			break;
-		}
-		default:
-			break;
-		}
-	}
 }
 
-PropType::NodePropertyIOType NodeProperty::iotypeFromString(QString str) {
-	if (str == "in")
-		return PropType::IN;
-	else if (str == "out")
-		return PropType::OUT;
-	qWarning("Invalid node property type: %s", str.toAscii().constData());
-	return PropType::OUT;
-}
-
-QString NodeProperty::iotypeToString(PropType::NodePropertyIOType type) {
-	switch (type) {
-	case PropType::IN:
-		return "in";
-	case PropType::OUT:
-		return "out";
-	}
-	return QString();
-}
-
-bool NodeProperty::canConnect(NodeProperty *prop) {
-	bool sameTemp = false;
-	if (_ptype->ptype->isTemplated()) {
-		sameTemp = (_ptype->ptype->getTempName() ==
-					prop->getPropType()->ptype->getTempName());
-	} else {
-		sameTemp = true;
-	}
-
+bool NodeProperty::canConnect(NodeProperty* prop) {
 	if (canNewConnect() && prop->canNewConnect() &&
-			prop->getPropType()->iotype != _ptype->iotype &&
-			prop->getPropType()->ptype->getTypeNameUnTemplated() ==
-			_ptype->ptype->getTypeNameUnTemplated() &&
-			sameTemp)
+			_isInput != prop->_isInput &&
+			_propType == prop->_propType)
 		return true;
 	return false;
-}
-
-PropType::NodePropertyIOType NodeProperty::getIOType() {
-	return _ptype->iotype;
-}
-
-void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
-	_drawType = true;
-}
-
-void NodeProperty::hoverLeaveEvent(QGraphicsSceneHoverEvent *) {
-	_drawType = false;
 }
 
 bool NodeProperty::canNewConnect() {
@@ -231,13 +144,11 @@ void NodeProperty::removeAllConnections(GraphModel *model) {
 					+l->getStartProp()->getName(),
 				l->getEndProp()->getNode()->getInstanceName()+"."
 					+l->getEndProp()->getName());
-		switch (_ptype->iotype) {
-		case PropType::IN:
+		if (_isInput) {
 			l->getStartProp()->removeConnection(l);
-			break;
-		case PropType::OUT:
+		}
+		else {
 			l->getEndProp()->removeConnection(l);
-			break;
 		}
 		delete l;
 	}
@@ -250,6 +161,10 @@ void NodeProperty::removeConnection(ConnectionLine *line) {
 	if (_connectionList.size() == 0) _isConnected = false;
 }
 
-Node *NodeProperty::getNode() {
+Node* NodeProperty::getNode() {
 	return _node;
+}
+
+bool NodeProperty::isInput() const {
+	return _isInput;
 }

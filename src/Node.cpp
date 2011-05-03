@@ -46,8 +46,8 @@ QString Node::getInstanceName() {
 }
 
 void Node::addProperty(
-		QString name,QString typeName,PropType::NodePropertyIOType iotype) {
-	NodeProperty* prop = new NodeProperty(this,name,_nProps,typeName,iotype);
+		QString name, QString typeName, bool input) {
+	NodeProperty* prop = new NodeProperty(this,name,_nProps,typeName,input);
 	_height += 25;
 	_properties.push_back(prop);
 	_nProps++;

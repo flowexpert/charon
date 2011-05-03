@@ -53,6 +53,8 @@ public:
 	/// default destructor
 	virtual ~ConnectionSocket();
 private:
+	/// get color from type
+	static QColor _getColor(QString typeName);
 
 	/// point at center of the socket
 	QPointF _center;

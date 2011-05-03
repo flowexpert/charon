@@ -97,10 +97,10 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 
 void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 	if (_addLine) {
-		if(_startProp->getPropType()->iotype == PropType::OUT) {
-			_cline->setEndPoint(ev->scenePos().x(),ev->scenePos().y());
-		} else {
+		if(_startProp->isInput()) {
 			_cline->setStartPoint(ev->scenePos().x(),ev->scenePos().y());
+		} else {
+			_cline->setEndPoint(ev->scenePos().x(),ev->scenePos().y());
 		}
 	}
 	else {
@@ -146,12 +146,12 @@ void NodeHandler::loadFromModel() {
 		for (int jj=0; jj < ins.size(); jj++) {
 			node->addProperty(
 					ins[jj], mi->getType(ins[jj],cname),
-					PropType::IN);
+					true);
 		}
 		for (int jj=0; jj < outs.size(); jj++) {
 			node->addProperty(
 					outs[jj], mi->getType(outs[jj],cname),
-					PropType::OUT);
+					false);
 		}
 		for (int jj=0; jj < outs.size(); jj++) {
 			QString curO = name+"."+outs[jj];
@@ -267,7 +267,8 @@ void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 	if (_addLine && cs != 0) {
 		prop = dynamic_cast<NodeProperty*>(cs->parentItem());
 		if (prop != 0 && prop != _startProp) {
-			if (_startProp->getIOType()==PropType::IN) { //swap buffers
+			if (_startProp->isInput()) {
+				//swap buffers
 				NodeProperty *b = _startProp;
 				_startProp = prop;
 				prop = b;

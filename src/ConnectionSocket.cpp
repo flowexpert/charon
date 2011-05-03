@@ -35,7 +35,7 @@ void ConnectionSocket::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	NodeProperty *np = dynamic_cast<NodeProperty*>(parentItem());
 	if(np != 0)
 	{
-		painter->setBrush(np->getPropType()->ptype->getColor());
+		painter->setBrush(_getColor(np->getType()));
 		painter->drawEllipse(_center,6,6);
 	}
 }
@@ -57,4 +57,22 @@ QRectF ConnectionSocket::boundingRect() const
 
 ConnectionSocket::~ConnectionSocket() {
 	// TODO Auto-generated destructor stub
+}
+
+QColor ConnectionSocket::_getColor(QString tName) {
+	if (tName.contains("cimg",Qt::CaseInsensitive)) {
+		return Qt::yellow;
+	}
+	else if (tName.contains("vigra",Qt::CaseInsensitive)) {
+		return Qt::darkYellow;
+	}
+	else if(tName.contains("roi",Qt::CaseInsensitive)) {
+		return Qt::green;
+	}
+	else if(tName.contains("interpolator",Qt::CaseInsensitive)) {
+		return Qt::blue;
+	}
+	// add more color presets here
+
+	return Qt::gray;
 }

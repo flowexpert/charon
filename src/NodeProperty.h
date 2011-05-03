@@ -26,22 +26,6 @@
 
 #include <QGraphicsItem>
 #include <QList>
-#include "ParameterType.h"
-
-/// struct to store property settings
-struct PropType{
-	/// enum to select different input output types
-	enum NodePropertyIOType
-	{
-		IN,
-		OUT
-	}
-	/// enum to select different input output types
-	iotype;
-
-	/// pointer to parameter type
-	ParameterType *ptype;
-};
 
 class ConnectionLine;
 class Node;
@@ -56,16 +40,13 @@ public:
 	 *  \param name            name of the property
 	 *  \param propNr          number of the property
 	 *                         (needed for correct positioning)
-	 *  \param ptype           property type (will be checked with TypeHandler
-	 *                         to group types)
-	 *  \param p_iotype        input output type of the property
-	 *                         (note: NONE (default value) will not draw
-	 *                         the property)
+	 *  \param propType        property type string
+	 *  \param input           input output type of the property
 	 */
 	NodeProperty(
 			QGraphicsItem* parentNode, QString name,
-			int propNr, QString ptype,
-			PropType::NodePropertyIOType p_iotype);
+			int propNr, QString propType,
+			bool input);
 
 	/// area for hover event
 	QRectF boundingRect() const;
@@ -79,37 +60,20 @@ public:
 	/// @param cl     ConnectionLine to add
 	void addConnection(ConnectionLine *cl);
 
-	/// handles hover events (turns drawType on)
-	void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-
-	/// handles hover events (turns drawType off)
-	void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-
 	/// returns the PropType of the property
 	/// @returns the PropType of the property
-	PropType *getPropType();
+	bool isInput() const;
 
 	/// returns the name of the property
 	/// @returns the name of the property
-	QString getName();
+	QString getName() const;
+
+	/// get property type
+	QString getType() const;
 
 	/// returns the number of the property
 	/// @return the number of the property
 	unsigned int getNr();
-
-	/// returns input/output type
-	/// @returns input/output type
-	PropType::NodePropertyIOType getIOType();
-
-	/// returns a QString with value of type
-	/// @returns    a QString with value of type
-	/// @param type     type to convert
-	static QString iotypeToString(PropType::NodePropertyIOType type);
-
-	/// gets the iotype form a given string
-	/// @param str     string containing type
-	/// @return the iotype form a given string
-	static PropType::NodePropertyIOType iotypeFromString(QString str);
 
 	/// checks if connection is possible
 	/// @param prop     property to connect to
@@ -130,7 +94,7 @@ public:
 
 	/// node which property is child of
 	/// @return node which property is child of
-	Node *getNode();
+	Node* getNode();
 
 	/// removes given connectionline
 	/// @param line     line to delete
@@ -141,7 +105,10 @@ public:
 	QList<ConnectionLine*> getConnections();
 
 	/// draws the property
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+	void paint(
+			QPainter* painter,
+			const QStyleOptionGraphicsItem* option,
+			QWidget* widget = 0);
 
 	/// default destructor
 	virtual ~NodeProperty();
@@ -168,7 +135,10 @@ private:
 	QList<ConnectionLine *> _connectionList;
 
 	/// pointer to PropType of the property
-	PropType *_ptype;
+	bool _isInput;
+
+	/// Property type
+	QString _propType;
 
 	/// pointer to parent node
 	Node *_node;
