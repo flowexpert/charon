@@ -103,7 +103,7 @@ QString NodeProperty::getType() const {
 
 
 QRectF NodeProperty::boundingRect() const {
-	int yy = 45 + _propNr * 25;
+	int yy = 28 + _propNr * 25;
 	return QRectF(5, yy, _width, 20);
 }
 
