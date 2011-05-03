@@ -52,7 +52,7 @@ NodeProperty::NodeProperty(
 	_ptype->iotype = p_iotype;
 	_propNr = propNr;
 
-	int yy = 45 + _propNr * 25;
+	int yy = 28 + _propNr * 25;
 
 	Node *n = dynamic_cast<Node*> (parentItem());
 	if (n != 0) {
@@ -116,18 +116,14 @@ PropType *NodeProperty::getPropType() {
 
 
 QRectF NodeProperty::boundingRect() const {
-	if(_ptype->iotype == PropType::NONE) QRectF(0, 0, 0, 0);
 	int yy = 45 + _propNr * 25;
 	return QRectF(5, yy, _width, 20);
 }
 
 void NodeProperty::paint(
 		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
-	if (_ptype->iotype == PropType::NONE)
-		return;
-
 	_width = _node->getWidth() - 10;
-	int yy = 45 + _propNr * 25;
+	int yy = 28 + _propNr * 25;
 	painter->setOpacity(1);
 	painter->setBrush(Qt::lightGray);
 	painter->drawRoundRect(5, yy, _width, 20, 10, 100);
@@ -173,7 +169,8 @@ PropType::NodePropertyIOType NodeProperty::iotypeFromString(QString str) {
 		return PropType::IN;
 	else if (str == "out")
 		return PropType::OUT;
-	return PropType::NONE;
+	qWarning("Invalid node property type: %s", str.toAscii().constData());
+	return PropType::OUT;
 }
 
 QString NodeProperty::iotypeToString(PropType::NodePropertyIOType type) {
@@ -182,9 +179,8 @@ QString NodeProperty::iotypeToString(PropType::NodePropertyIOType type) {
 		return "in";
 	case PropType::OUT:
 		return "out";
-	default:
-		return "none";
 	}
+	return QString();
 }
 
 bool NodeProperty::canConnect(NodeProperty *prop) {
@@ -230,23 +226,18 @@ void NodeProperty::removeAllConnections(GraphModel *model) {
 	//cout<<"removing all connections"<<endl;
 	for (int i = 0; i<_connectionList.size(); i++) {
 		ConnectionLine *l = _connectionList[i];
-		model->disconnectSlot(l->getStartProp()->getNode()->getName()+"."+l->getStartProp()->getName(),
-					  l->getEndProp()->getNode()->getName()+"."+l->getEndProp()->getName());
+		model->disconnectSlot(
+				l->getStartProp()->getNode()->getName()+"."
+					+l->getStartProp()->getName(),
+				l->getEndProp()->getNode()->getName()+"."
+					+l->getEndProp()->getName());
 		switch (_ptype->iotype) {
-			case PropType::IN:
-			{
-				l->getStartProp()->removeConnection(l);
-				break;
-			}
-			case PropType::OUT:
-			{
-				l->getEndProp()->removeConnection(l);
-				break;
-			}
-			case PropType::NONE:
-			{
-				break;
-			}
+		case PropType::IN:
+			l->getStartProp()->removeConnection(l);
+			break;
+		case PropType::OUT:
+			l->getEndProp()->removeConnection(l);
+			break;
 		}
 		delete l;
 	}

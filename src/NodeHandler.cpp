@@ -153,11 +153,6 @@ void NodeHandler::loadFromModel() {
 					outs[jj], mi->getType(outs[jj],cname),
 					PropType::OUT);
 		}
-		for (int jj=0; jj < params.size(); jj++) {
-			node->addProperty(
-					params[jj], mi->getType(params[jj],cname),
-					PropType::NONE);
-		}
 		for (int jj=0; jj < outs.size(); jj++) {
 			QString curO = name+"."+outs[jj];
 			if (_model->parameterFile().isSet(curO)) {

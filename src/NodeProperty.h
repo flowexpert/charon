@@ -34,8 +34,7 @@ struct PropType{
 	enum NodePropertyIOType
 	{
 		IN,
-		OUT,
-		NONE //Parameter for Node - no input or output
+		OUT
 	}
 	/// enum to select different input output types
 	iotype;
@@ -66,7 +65,7 @@ public:
 	NodeProperty(
 			QGraphicsItem* parentNode, QString name,
 			int propNr, QString ptype,
-			PropType::NodePropertyIOType p_iotype=PropType::NONE);
+			PropType::NodePropertyIOType p_iotype);
 
 	/// area for hover event
 	QRectF boundingRect() const;

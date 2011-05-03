@@ -38,10 +38,10 @@ public:
 	/// adds a property to the node
 	/// @param name     name of parameter
 	/// @param typeName type name of parameter
-	/// @param iotype   input or output type of property (IN,OUT,NONE)
+	/// @param iotype   input or output type of property (IN,OUT)
 	void addProperty(
 			QString name, QString typeName,
-			PropType::NodePropertyIOType iotype=PropType::NONE);
+			PropType::NodePropertyIOType iotype);
 
 	/// sets the id of the node
 	/// @param id      ID to set
