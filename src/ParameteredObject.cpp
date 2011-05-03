@@ -430,7 +430,7 @@ Slot* ParameteredObject::getSlot(const std::string& slotName) {
 		slot = _outputs.find(slotName);
 		if (slot == _outputs.end())
 			throw std::invalid_argument(
-					std::string("Slot ") + slotName + " not found!");
+					std::string("Slot \"") + slotName + "\" in instance \"" + getName() + "\" of plugin \"" + getClassName() + "\" not found!");
 	}
 	return slot->second;
 }
@@ -442,7 +442,7 @@ const Slot* ParameteredObject::getSlot(const std::string& slotName) const {
 		slot = _outputs.find(slotName);
 		if (slot == _outputs.end())
 			throw std::invalid_argument(
-					std::string("Slot ") + slotName + " not found!");
+					std::string("Slot \"") + slotName + "\" in instance \"" + getName() + "\" of plugin \"" + getClassName() + "\" not found!");
 	}
 	return slot->second;
 }
@@ -469,7 +469,7 @@ AbstractParameter & ParameteredObject::getParameter(const std::string & name) co
 		return *(_parameters.find(name)->second);
 	} else {
 		throw std::invalid_argument(
-				"Parameter " + name + " does not exist.");
+			std::string("Parameter ") + name + " in instance \"" + getName() + "\" of plugin \"" + getClassName() + "\" does not exist!");
 	}
 }
 
