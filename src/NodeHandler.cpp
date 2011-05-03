@@ -226,7 +226,8 @@ void NodeHandler::loadFromModel() {
 
 void NodeHandler::connectNodes(
 		QString node0, QString prop0, QString node1, QString prop1) {
-	Node *out, *in;
+	Node *out = 0 ;
+	Node *in = 0;
 	for (int i=0; i < items().size(); i++) {
 		Node *n = dynamic_cast<Node*>(items().at(i));
 		if (n) {
@@ -242,7 +243,8 @@ void NodeHandler::connectNodes(
 		return;
 	}
 
-	NodeProperty *inp,*outp;
+	NodeProperty *inp = 0 ;
+	NodeProperty *outp = 0;
 	for (int i=0;i<in->getProperties().size();i++) {
 		if (in->getProperties().at(i)->getName() == prop1) {
 			inp = in->getProperties().at(i);
@@ -254,6 +256,13 @@ void NodeHandler::connectNodes(
 			outp = out->getProperties().at(i);
 			break;
 		}
+	}
+	if (!(inp && outp)) {
+		QMessageBox::warning(
+				0, "connection error",
+				QString("failed to connect: %1.%2 to %3.%4")
+					.arg(node0,prop0,node1,prop1));
+		return;
 	}
 
 	ConnectionLine *l = new ConnectionLine(this);
