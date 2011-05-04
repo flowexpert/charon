@@ -523,29 +523,29 @@ QString GraphModel::addNode(QString className, bool draw) {
 	static int nameNr = 0 ;
 	QString newName = QString("newnode%1").arg(nameNr++) ;
 	QString	info;
+	bool ok ;
 	do {
-		bool ok = false;
+		ok = false;
 		newName = QInputDialog::getText(
 				0, tr("add new node"),
 				info + tr("Enter a name for the new node:"),
 				QLineEdit::Normal, newName, &ok);
 		if(!ok)
 			return "";
-		if(nodeValid(newName))
+		if(ok = nodeValid(newName))
 			info = tr("This name is already in use.\n"
 					  "Please use another name.\n");
-		if(newName.contains(QRegExp("[\\s.]")))
+		if(newName.contains(QRegExp("[\\s\\.]")))
+		{	
+			ok = true ;
 			info = tr("Whitespace and dots in names are not allowed.\n"
 					  "Please use a valid name.\n");
-	} while (newName.isEmpty() || nodeValid(newName)
-		|| newName.contains(QRegExp("\\s"))
-		);
+		}
+	} while (newName.isEmpty() || ok) ;
 
 	setPrefix("");
 	setOnlyParams(false);
 
-	QStringList inputs = metaInfo()->getInputs(className);
-	QStringList outputs = metaInfo()->getOutputs(className);
 
 	insertRow(rowCount());
 	setData(index(rowCount()-1, 0), newName + ".type");

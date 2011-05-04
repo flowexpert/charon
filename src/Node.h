@@ -109,6 +109,8 @@ private:
 	/// width of the node
 	int _width;
 
+	int _maxPropertyWidth ;
+
 	/// height of the node
 	int _height;
 

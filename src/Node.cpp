@@ -21,6 +21,7 @@ Node::Node(const QParameterFile* pFile, QString title,
 		QGraphicsItem(0,parent),
 		_instanceName(title),
 		_width(100),
+		_maxPropertyWidth(0),
 		_height(50),
 		_nProps(0),
 		_selectedNode(false),
@@ -51,9 +52,11 @@ void Node::addProperty(
 		QString name, QString typeName, bool input) {
 	NodeProperty* prop = new NodeProperty(
 			this,name,_nProps,typeName,input,_pFile);
+	_maxPropertyWidth = qMax(name.size(), _maxPropertyWidth) ;
 	_height += 25;
 	_properties.insert(name.toLower(),prop);
 	_nProps++;
+	_checkWidth();
 }
 
 QRectF Node::boundingRect() const {
@@ -149,7 +152,7 @@ int Node::getHeight() const {
 }
 
 void Node::_checkWidth() {
-	int s = qMax(_instanceName.size(), _className.size());
+	int s = qMax(_maxPropertyWidth,qMax(_instanceName.size(), _className.size()));
 	if (s > 10) {
 		_width = 50 + s * 6;
 	}
