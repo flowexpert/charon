@@ -69,7 +69,7 @@ QStringList MetaData::getParameters(QString className) const {
 }
 
 QString MetaData::getType(QString parName, QString className) const {
-	parName = parName.section(".",0,0);
+	parName = parName.section(".",-1,-1);
 	QString par = className + "." + parName + ".type";
 	QString result = _data->get(par);
 	if(result.isEmpty())

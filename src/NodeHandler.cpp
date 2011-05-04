@@ -39,11 +39,16 @@
 
 NodeHandler::NodeHandler(QObject* pp) :
 		QGraphicsScene(pp),
-		_cline(NULL),
+		_cline(0),
 		_addLine(false)
 {
 	_model = new GraphModel("", this, FileManager::instance().classesFile());
 	connect(_model, SIGNAL(graphChanged()), this, SLOT(loadFromModel()));
+}
+
+NodeHandler::~NodeHandler()
+{
+	delete _cline ;
 }
 
 void NodeHandler::_deselectAllNodes() {
@@ -78,19 +83,15 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 	if (cs != 0) {
 		NodeProperty* prop = dynamic_cast<NodeProperty*>(cs->parentItem());
 		Q_ASSERT(prop);
-		if (prop->canNewConnect()) {
-			if (prop->hasConnection()) {
-				prop->removeAllConnections(_model);
-			} else {
-				_startProp = prop;
-				_cline = new ConnectionLine(this);
-				_cline->setStartPoint(
-						ev->scenePos().x(),ev->scenePos().y());
-				_cline->setEndPoint(
-						ev->scenePos().x(),ev->scenePos().y());
-				_addLine = true;
-			}
-		}
+		
+		_startProp = prop;
+		delete _cline ; _cline = 0 ;
+		_cline = new ConnectionLine(this);
+		_cline->setStartPoint(
+				ev->scenePos().x(),ev->scenePos().y());
+		_cline->setEndPoint(
+				ev->scenePos().x(),ev->scenePos().y());
+		_addLine = true;
 		update();
 	}
 }
@@ -108,6 +109,35 @@ void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 	}
 	update();
 }
+
+void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
+	QGraphicsScene::mouseReleaseEvent(ev);
+	QGraphicsItem* itm = itemAt(ev->scenePos());
+	ConnectionSocket *cs = dynamic_cast<ConnectionSocket*>(itm);
+	NodeProperty* prop = 0;
+
+	delete _cline ;
+	_cline = 0 ;
+
+	if (_addLine && cs != 0) {
+		prop = dynamic_cast<NodeProperty*>(cs->parentItem());
+		if (prop != 0 && prop != _startProp) {
+			try {
+				_model->connectSlot(
+					_startProp->getNode()->getInstanceName()+"."
+						+_startProp->getName(),
+					prop->getNode()->getInstanceName()+"."
+						+prop->getName(),true);
+			} catch (const std::runtime_error& err) {
+				err.what() ;
+			}
+		}
+	}
+	_addLine = false;
+			
+	//update();
+}
+
 
 GraphModel* NodeHandler::model() {
 	return _model;
@@ -230,55 +260,6 @@ void NodeHandler::keyReleaseEvent(QKeyEvent* keyEvent) {
 	}
 }
 
-void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
-	QGraphicsItem* itm = itemAt(ev->scenePos());
-	ConnectionSocket *cs = dynamic_cast<ConnectionSocket*>(itm);
-	NodeProperty* prop = 0;
-	if (_addLine && cs != 0) {
-		prop = dynamic_cast<NodeProperty*>(cs->parentItem());
-		if (prop != 0 && prop != _startProp) {
-			if (_startProp->isInput()) {
-				//swap buffers
-				NodeProperty *b = _startProp;
-				_startProp = prop;
-				prop = b;
-			}
-			try {
-				_model->connected(
-					_startProp->getNode()->getInstanceName()+"."
-						+_startProp->getName(),
-					prop->getNode()->getInstanceName()+"."
-						+prop->getName());
-				_cline->setStartEndProp(_startProp,prop);
-				_startProp->addConnection(_cline);
-				prop->addConnection(_cline);
-				_startProp->moveBy(0,0);
-				prop->moveBy(0,0);
-				_cline = NULL;
-				_model->connectSlot(
-					_startProp->getNode()->getInstanceName()+"."
-						+_startProp->getName(),
-					prop->getNode()->getInstanceName()+"."
-						+prop->getName(),false);
-			} catch (std::runtime_error) {
-				removeItem(_cline);
-				_cline = NULL;
-			}
-			_addLine = false;
-		} else {
-			removeItem(_cline);
-			_cline = NULL;
-			_addLine = false;
-		}
-	} else if(_addLine) {
-		removeItem(_cline);
-		_cline = NULL;
-		_addLine = false;
-	}
-
-	QGraphicsScene::mouseReleaseEvent(ev);
-	update();
-}
 
 void NodeHandler::dragEnterEvent(QGraphicsSceneDragDropEvent* ev) {
 	if (ev->mimeData()->hasFormat("application/x-qstandarditemmodeldatalist"))

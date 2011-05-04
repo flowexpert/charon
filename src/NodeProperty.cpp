@@ -148,7 +148,7 @@ void NodeProperty::removeAllConnections(GraphModel *model) {
 				l->getStartProp()->getNode()->getInstanceName()+"."
 					+l->getStartProp()->getName(),
 				l->getEndProp()->getNode()->getInstanceName()+"."
-					+l->getEndProp()->getName());
+					+l->getEndProp()->getName(), false);
 		if (_isInput) {
 			l->getStartProp()->removeConnection(l);
 		}

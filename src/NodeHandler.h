@@ -40,6 +40,9 @@ public:
 	 */
 	NodeHandler(QObject* parent = 0);
 
+	/// default destructor
+	virtual ~NodeHandler() ;
+
 	/// connects two node with its slots: node0.prop0 to node1.prop1
 	/** \param node0     name of the first node
 	 *  \param node1     name of the second node

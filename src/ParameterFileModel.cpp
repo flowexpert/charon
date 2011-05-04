@@ -499,11 +499,7 @@ void ParameterFileModel::setOnlyParams(bool on) {
 
 QString ParameterFileModel::getClass(QString name) const {
 	name = name.section(".",0,0);
-	QString className =_parameterFile->get(name + ".type");
-	if (className.isEmpty()) {
-		qWarning("Class name of %s not set.", name.toAscii().constData());
-	}
-	return className;
+	return _parameterFile->get(name + ".type");
 }
 
 QStringList ParameterFileModel::_prefixFilter(QStringList list) const {

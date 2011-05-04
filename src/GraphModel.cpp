@@ -154,7 +154,7 @@ bool GraphModel::connected(QString source,
 		established = false;
 	else {
 		QString outList = parameterFile().get(source);
-		if (outList.contains(QRegExp(target,Qt::CaseInsensitive)))
+		if (!outList.contains(QRegExp(target,Qt::CaseInsensitive)))
 			established = false;
 	}
 
@@ -167,7 +167,7 @@ bool GraphModel::connected(QString source,
 	}
 	else {
 		QString inList = parameterFile().get(target);
-		if (inList.contains(QRegExp(source,Qt::CaseInsensitive))
+		if (!inList.contains(QRegExp(source,Qt::CaseInsensitive))
 				&& established)
 			throw std::runtime_error(
 					"Node " + source.toStdString() + " missing in List "
@@ -209,6 +209,18 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 
 	Q_ASSERT(metaInfo()->isInputSlot (source, sourceClass));
 	Q_ASSERT(metaInfo()->isOutputSlot(target, targetClass));
+
+	// check slot types
+	QString inSlotType  = getType(target);
+	QString outSlotType = getType(source);
+	if (inSlotType != outSlotType)
+		throw std::runtime_error(
+				"Type of \"" + target.toStdString()
+				+ "\" (" + inSlotType.toStdString()
+				+ ") does not match type of \""
+				+ source.toStdString() + "\" ("
+				+ outSlotType.toStdString() + ")");
+
 
 	// disconnect input slot, if assigned and not multi slot
 	if (!metaInfo()->isMultiSlot(source, sourceClass)) {
@@ -508,13 +520,15 @@ void GraphModel::selectNext(bool back) {
 
 QString GraphModel::addNode(QString className, bool draw) {
 	// new name input and check if valid
-	QString newName, info;
+	static int nameNr = 0 ;
+	QString newName = QString("newnode%1").arg(nameNr++) ;
+	QString	info;
 	do {
 		bool ok = false;
 		newName = QInputDialog::getText(
 				0, tr("add new node"),
 				info + tr("Enter a name for the new node:"),
-				QLineEdit::Normal, tr("newnode"), &ok);
+				QLineEdit::Normal, newName, &ok);
 		if(!ok)
 			return "";
 		if(nodeValid(newName))
@@ -580,3 +594,4 @@ bool GraphModel::removeRows(int row, int count,
 		reDraw();
 	return res;
 }
+
