@@ -34,8 +34,11 @@
 
 DocGenerator::DocGenerator(QWebView* viewer, QObject* myParent) :
 		QObject(myParent),
-		_viewer(viewer) {
+		_viewer(viewer),
+		_meta(0) {
 	Q_ASSERT(_viewer);
+
+	updateMetaData() ;
 
 	// load stylesheet
 	QFile stylesheetFile(":/help/styles.css");
@@ -56,6 +59,7 @@ DocGenerator::DocGenerator(QWebView* viewer, QObject* myParent) :
 }
 
 DocGenerator::~DocGenerator() {
+	delete _meta ;
 }
 
 void DocGenerator::showHelp() {
@@ -100,20 +104,25 @@ void DocGenerator::showDocString(const QString& doc) {
 	_viewer->setHtml(html);
 }
 
+void DocGenerator::updateMetaData() {
+	delete _meta ;
+	_meta = 0 ;
+	_meta = new MetaData(FileManager::instance().classesFile()) ;
+}
+
 QString DocGenerator::_docList(QStringList parList,
-		QString className, QString slotType) const {
+	QString className, QString slotType) const {
 	QString ret;
 	QStringList::const_iterator parIter;
 
 	if(parList.size()) {
-		MetaData meta(FileManager::instance().classesFile());
 		ret += "<p><ul>";
 		for(parIter=parList.begin(); parIter!=parList.end(); parIter++) {
 			ret += "<tr>";
 
 			// show parameter name and type
 			ret += "<td class=\"leftcol\"></td>";
-			QString parType = meta.getType(*parIter, className);
+			QString parType = _meta->getType(*parIter, className);
 			if (parType.contains(QRegExp("^\\s*\\{\\s*\\w.*\\}\\s*$")))
 				parType = "Selection";
 			parType.replace("<", "&lt;").replace(">", "&gt;");
@@ -124,7 +133,7 @@ QString DocGenerator::_docList(QStringList parList,
 				.arg(*parIter);
 
 			// show default value, if any
-			QString def = meta.getDefault(*parIter, className);
+			QString def = _meta->getDefault(*parIter, className);
 			ret += "<td class=\"firstrow\">";
 
 			if(!def.isEmpty())
@@ -133,9 +142,9 @@ QString DocGenerator::_docList(QStringList parList,
 			// show slot flags (if necessary)
 			QString flags;
 			if (slotType == "in") {
-				if(meta.isMultiSlot(*parIter, className))
+				if(_meta->isMultiSlot(*parIter, className))
 					flags += "MultiSlot";
-				if(meta.isOptionalSlot(*parIter, className)) {
+				if(_meta->isOptionalSlot(*parIter, className)) {
 					if(!flags.isEmpty())
 						flags += "; ";
 					flags += "optional";
@@ -143,9 +152,9 @@ QString DocGenerator::_docList(QStringList parList,
 			}
 
 			if (slotType == "out") {
-				if(!meta.isMultiSlot(*parIter, className))
+				if(!_meta->isMultiSlot(*parIter, className))
 					flags += "SingleSlot";
-				if(!meta.isOptionalSlot(*parIter, className)) {
+				if(!_meta->isOptionalSlot(*parIter, className)) {
 					if(!flags.isEmpty())
 						flags += "; ";
 					flags += "required";
@@ -159,7 +168,7 @@ QString DocGenerator::_docList(QStringList parList,
 			// show documentation
 			ret += "<tr><td class=\"leftcol\"></td><td></td>";
 			ret += QString("<td colspan=\"2\">%1</td></tr>\n")
-				.arg(meta.getDocString(*parIter, className));
+				.arg(_meta->getDocString(*parIter, className));
 		}
 	}
 	else
@@ -169,14 +178,13 @@ QString DocGenerator::_docList(QStringList parList,
 }
 
 void DocGenerator::showClassDoc(const QString& className) {
-	MetaData meta(FileManager::instance().classesFile());
 	QString page =
 		tr("<h1>ClassDocumentation: %1</h1>\n").arg(className)
 		+ tr("<h2>Description</h2>\n")
 		+ QString("<p>%1</p>\n")
-		.arg(meta.getDocString("", className));
+		.arg(_meta->getDocString("", className));
 
-	QString docFileName = meta.getDocFile("", className);
+	QString docFileName = _meta->getDocFile("", className);
 
 	if(!docFileName.isEmpty()) {
 		// load docfile and add content
@@ -195,19 +203,19 @@ void DocGenerator::showClassDoc(const QString& className) {
 	page += "<table class=\"parlist\">";
 
 	// input slots
-	parList = meta.getInputs(className);
+	parList = _meta->getInputs(className);
 	page += "<tr><td colspan=\"5\"><h2>" + tr("input slots")
 		+ "</h2></td></tr>\n";
 	page += _docList(parList, className, "in");
 
 	// output slots
-	parList = meta.getOutputs(className);
+	parList = _meta->getOutputs(className);
 	page += "<tr><td colspan=\"5\"><h2>" + tr("output slots")
 		+ "</h2></td></tr>\n";
 	page += _docList(parList, className, "out");
 
 	// parameters
-	parList = meta.getParameters(className);
+	parList = _meta->getParameters(className);
 	page += "<tr><td colspan=\"5\"><h2>"+tr("parameters")+"</h2></td></tr>\n";
 	page += _docList(parList, className);
 

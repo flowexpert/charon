@@ -102,6 +102,7 @@ void NodeTreeView::reload() {
 	for(int ii=0; ii < root[0]->rowCount(); ii++) {
 		root[0]->child(ii)->sortChildren(1);
 	}
+	setExpanded(root[0]->index(), true) ;
 }
 
 void NodeTreeView::currentChanged(

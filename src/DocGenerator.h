@@ -29,6 +29,7 @@
 
 class QWebView;
 class QUrl;
+class MetaData ;
 
 /// handle documentation page generation
 class DocGenerator : public QObject {
@@ -68,6 +69,9 @@ public slots:
 	 */
 	void showDocString(const QString& doc);
 
+	///update internal MetaData Object, call when plugins are updated
+	void updateMetaData() ;
+
 protected:
 	/// Generate documentation for the given list of parameters.
 	/** The documentation is arranged in a bullte point list.
@@ -92,6 +96,11 @@ protected:
 
 	/// current docstring in help browser
 	QString _helpDoc;
+
+private:
+
+	///MetaData of all loaded Plugins
+	MetaData* _meta ;
 };
 
 #endif /*DOCGENERATOR_H_*/

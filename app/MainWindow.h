@@ -81,6 +81,9 @@ signals:
 	/// \param enable	if to enable widgets or not
 	void enableEditors(bool enable);
 
+	/// meta data has been updated, plugins reloaded
+	void metaDataUpdated() ;
+
 protected:
 	/// Close event handler.
 	/// Save window state and close the window.

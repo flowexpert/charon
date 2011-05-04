@@ -75,13 +75,18 @@ MainWindow::MainWindow(QWidget* myParent) :
 	helpWidget->setWidget(helpBrowser);
 	DocGenerator* docGen = new DocGenerator(helpBrowser, this);
 	docGen->showIntro();
+
+	connect(this, SIGNAL(metaDataUpdated()), docGen, SLOT(updateMetaData())) ;
 #endif
+
 
 	// select widget
 	QDockWidget* selectWidget = new QDockWidget(tr("Selector"), this);
 	selectWidget->setObjectName("selectwidget");
 	_selector = new NodeTreeView(selectWidget);
 	selectWidget->setWidget(_selector);
+
+	connect(this, SIGNAL(metaDataUpdated()), _selector, SLOT(reload())) ;
 
 #ifdef QT_WEBKIT_LIB
 	// help browser connections
@@ -411,8 +416,9 @@ void MainWindow::zoomFit() {
 void MainWindow::updateMetadata() {
 	FileManager::instance().loadPluginInformation();
 	FileManager::instance().updateMetadata();
+	
 	_centralArea->closeAllSubWindows();
-	_selector->update();
+	emit metaDataUpdated() ;
 }
 
 void MainWindow::_openRecentFile() {

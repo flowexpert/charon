@@ -189,9 +189,11 @@ void NodeHandler::connectNodes(
 		QString node0, QString prop0, QString node1, QString prop1) {
 	Node* out = _nodeMap[node0];
 	Node* in = _nodeMap[node1];
+	Q_ASSERT(out && in) ;
+	NodeProperty* outp = out->getProperty(prop0.toLower());
+	NodeProperty* inp = in->getProperty(prop1.toLower());
 
-	NodeProperty* outp = out->getProperty(prop0);
-	NodeProperty* inp = in->getProperty(prop1);
+	Q_ASSERT(outp && inp) ;
 
 	ConnectionLine* l = new ConnectionLine(this);
 	l->setStartEndProp(outp,inp);

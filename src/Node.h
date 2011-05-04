@@ -61,7 +61,7 @@ public:
 
 	/// removes all properties correctly
 	/// also removes connectionlines of each property
-	void remove() __attribute__ ((deprecated));
+	//void remove() __attribute__ ((deprecated));
 
 	/// width of the node
 	int getWidth() const;

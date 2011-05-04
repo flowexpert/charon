@@ -52,7 +52,7 @@ void Node::addProperty(
 	NodeProperty* prop = new NodeProperty(
 			this,name,_nProps,typeName,input,_pFile);
 	_height += 25;
-	_properties.insert(name,prop);
+	_properties.insert(name.toLower(),prop);
 	_nProps++;
 }
 
@@ -105,6 +105,7 @@ void Node::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 	model->setOnlyParams(true);
 }
 
+/*
 void Node::remove() {
 	QMapIterator<QString,NodeProperty*> iter(_properties);
 	while (iter.hasNext()) {
@@ -112,7 +113,7 @@ void Node::remove() {
 	}
 	_properties.clear();
 }
-
+*/
 void Node::paint(
 		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
 	painter->setPen(Qt::black);
