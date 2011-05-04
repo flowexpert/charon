@@ -110,9 +110,9 @@ void NodeTreeView::currentChanged(
 
 	// check if a module is selected, if below, go up to module name
 	// show doc for selected module
-	if (current.parent() != QModelIndex()) {
+	if (current.parent().isValid()) {
 		QModelIndex idx = current;
-		while (idx.parent().parent() != QModelIndex()) {
+		while (idx.parent().parent().isValid()) {
 			idx = idx.parent();
 		}
 		emit showClassDoc(_model->data(idx).toString());
