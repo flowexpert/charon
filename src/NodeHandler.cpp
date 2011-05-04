@@ -38,19 +38,19 @@
 #include "QParameterFile.h"
 
 NodeHandler::NodeHandler(QObject* pp) :
-		QGraphicsScene(pp) {
-	_addLine = false;
-	_cline = NULL;
+		QGraphicsScene(pp),
+		_cline(NULL),
+		_addLine(false)
+{
 	_model = new GraphModel("", this, FileManager::instance().classesFile());
 	connect(_model, SIGNAL(graphChanged()), this, SLOT(loadFromModel()));
 }
 
 void NodeHandler::_deselectAllNodes() {
-	for(int i=0; i < items().size(); i++) {
-		Node* n = dynamic_cast<Node*>(items()[i]);
-		if(n != 0) {
-			n->setSelectedNode(false);
-		}
+	QMapIterator<QString,Node*> iter(_nodeMap);
+	while(iter.hasNext()) {
+		Node* n = iter.next().value();
+		n->setSelectedNode(false);
 	}
 	_selectedNode = 0;
 }
@@ -119,6 +119,7 @@ bool NodeHandler::load(QString fname) {
 
 void NodeHandler::loadFromModel() {
 	clear();
+	_nodeMap.clear();
 	_deselectAllNodes();
 	const MetaData* mi = _model->metaInfo();
 	QStringList nodes = _model->nodes();
@@ -132,6 +133,7 @@ void NodeHandler::loadFromModel() {
 		Node* node = new Node(
 				&_model->parameterFile(),name,10*ii,10*ii,this);
 		node->setClassName(cname);
+		_nodeMap.insert(name,node);
 
 		if (_model->parameterFile().isSet(name+".editorinfo")) {
 			QString pdata = _model->parameterFile().get(name+".editorinfo");
@@ -142,8 +144,6 @@ void NodeHandler::loadFromModel() {
 
 		QStringList ins = mi->getInputs(cname);
 		QStringList outs = mi->getOutputs(cname);
-		QStringList params = mi->getParameters(cname);
-
 		for (int jj=0; jj < ins.size(); jj++) {
 			node->addProperty(
 					ins[jj], mi->getType(ins[jj],cname),
@@ -187,46 +187,13 @@ void NodeHandler::loadFromModel() {
 
 void NodeHandler::connectNodes(
 		QString node0, QString prop0, QString node1, QString prop1) {
-	Node *out = 0 ;
-	Node *in = 0;
-	for (int i=0; i < items().size(); i++) {
-		Node *n = dynamic_cast<Node*>(items().at(i));
-		if (n) {
-			if(n->getInstanceName() == node0) out = n;
-			if(n->getInstanceName() == node1) in = n;
-		}
-	}
-	if (!(out && in)) {
-		QMessageBox::warning(
-				0, "connection error",
-				QString("failed to connect: %1.%2 to %3.%4")
-					.arg(node0,prop0,node1,prop1));
-		return;
-	}
+	Node* out = _nodeMap[node0];
+	Node* in = _nodeMap[node1];
 
-	NodeProperty *inp = 0 ;
-	NodeProperty *outp = 0;
-	for (int i=0;i<in->getProperties().size();i++) {
-		if (in->getProperties().at(i)->getName() == prop1) {
-			inp = in->getProperties().at(i);
-			break;
-		}
-	}
-	for(int i=0;i<out->getProperties().size();i++) {
-		if (out->getProperties().at(i)->getName() == prop0) {
-			outp = out->getProperties().at(i);
-			break;
-		}
-	}
-	if (!(inp && outp)) {
-		QMessageBox::warning(
-				0, "connection error",
-				QString("failed to connect: %1.%2 to %3.%4")
-					.arg(node0,prop0,node1,prop1));
-		return;
-	}
+	NodeProperty* outp = out->getProperty(prop0);
+	NodeProperty* inp = in->getProperty(prop1);
 
-	ConnectionLine *l = new ConnectionLine(this);
+	ConnectionLine* l = new ConnectionLine(this);
 	l->setStartEndProp(outp,inp);
 	outp->addConnection(l);
 	inp->addConnection(l);
@@ -276,8 +243,10 @@ void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 			}
 			try {
 				_model->connected(
-					_startProp->getNode()->getInstanceName()+"."+_startProp->getName(),
-					prop->getNode()->getInstanceName()+"."+prop->getName());
+					_startProp->getNode()->getInstanceName()+"."
+						+_startProp->getName(),
+					prop->getNode()->getInstanceName()+"."
+						+prop->getName());
 				_cline->setStartEndProp(_startProp,prop);
 				_startProp->addConnection(_cline);
 				prop->addConnection(_cline);
@@ -285,8 +254,10 @@ void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 				prop->moveBy(0,0);
 				_cline = NULL;
 				_model->connectSlot(
-					_startProp->getNode()->getInstanceName()+"."+_startProp->getName(),
-					prop->getNode()->getInstanceName()+"."+prop->getName(),false);
+					_startProp->getNode()->getInstanceName()+"."
+						+_startProp->getName(),
+					prop->getNode()->getInstanceName()+"."
+						+prop->getName(),false);
 			} catch (std::runtime_error) {
 				removeItem(_cline);
 				_cline = NULL;

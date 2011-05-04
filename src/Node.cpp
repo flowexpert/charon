@@ -52,7 +52,7 @@ void Node::addProperty(
 	NodeProperty* prop = new NodeProperty(
 			this,name,_nProps,typeName,input,_pFile);
 	_height += 25;
-	_properties.push_back(prop);
+	_properties.insert(name,prop);
 	_nProps++;
 }
 
@@ -106,8 +106,9 @@ void Node::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 }
 
 void Node::remove() {
-	for(int i=0;i<_properties.size();i++){
-		_properties.at(i)->removeAllConnections();
+	QMapIterator<QString,NodeProperty*> iter(_properties);
+	while (iter.hasNext()) {
+		iter.next().value()->removeAllConnections();
 	}
 	_properties.clear();
 }
@@ -134,15 +135,15 @@ void Node::paint(
 	painter->drawText(0,_height-22,_width,22,Qt::AlignCenter,_instanceName);
 }
 
-unsigned int Node::getId() {
+unsigned int Node::getId() const {
 	return _id;
 }
 
-int Node::getWidth() {
+int Node::getWidth() const {
 	return _width;
 }
 
-int Node::getHeight() {
+int Node::getHeight() const {
 	return _height;
 }
 
@@ -153,8 +154,8 @@ void Node::_checkWidth() {
 	}
 }
 
-QVector<NodeProperty*> Node::getProperties(){
-	return _properties;
+NodeProperty* Node::getProperty(QString propName) const {
+	return _properties[propName];
 }
 
 void Node::setClassName(QString modname) {

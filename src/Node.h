@@ -26,8 +26,7 @@ public:
 	 *  \param parent   parent graphics scene
 	 *  \param pFile    link to parameter file
 	 */
-	Node(
-			const QParameterFile* pFile, QString title,
+	Node(const QParameterFile* pFile, QString title,
 			int xpos, int ypos, QGraphicsScene* parent);
 
 	/// area where node is clickable
@@ -62,29 +61,24 @@ public:
 
 	/// removes all properties correctly
 	/// also removes connectionlines of each property
-	void remove();
+	void remove() __attribute__ ((deprecated));
 
 	/// width of the node
-	/// @return width of the node
-	int getWidth();
+	int getWidth() const;
 
 	/// height of the node
-	/// @return height of the node
-	int getHeight();
+	int getHeight() const;
 
-	/// returns all nodeproperties of the node
-	/// @return nodeproperties
-	QVector<NodeProperty*> getProperties();
+	/// get node property
+	NodeProperty* getProperty(QString propName) const;
 
-	/// returns the node id
-	/// @return node id
-	unsigned int getId();
+	/// get node id
+	unsigned int getId() const;
 
-	/// returns the node name
-	/// @return the node name
+	/// get node name
 	QString getInstanceName();
 
-	/// set the _modulname
+	/// set node class name
 	/// @param modname    name of the module
 	void setClassName(QString modname);
 
@@ -104,7 +98,7 @@ private:
 	void _checkWidth();
 
 	/// list of nodeproperties
-	QVector<NodeProperty*> _properties;
+	QMap<QString,NodeProperty*> _properties;
 
 	/// name of the node
 	QString _instanceName;

@@ -111,6 +111,9 @@ private:
 
 	/// state of slot connection mode
 	bool _addLine;
+
+	/// map for node lookup
+	QMap<QString,Node*> _nodeMap;
 };
 
 #endif /* NODEHANDLER_H_ */
