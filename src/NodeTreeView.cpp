@@ -96,8 +96,11 @@ void NodeTreeView::reload() {
 		node->appendColumn(names);
 		node->appendColumn(sTypes);
 		node->appendColumn(cTypes);
-		node->sortChildren(1);
-		_model->item(0,0)->appendRow(node);
+		root[0]->appendRow(node);
+	}
+	root[0]->sortChildren(0);
+	for(int ii=0; ii < root[0]->rowCount(); ii++) {
+		root[0]->child(ii)->sortChildren(1);
 	}
 }
 
