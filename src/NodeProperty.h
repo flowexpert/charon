@@ -29,8 +29,6 @@
 
 class ConnectionLine;
 class Node;
-class ConnectionSocket;
-class GraphModel;
 class ParameterFileModel;
 
 /// Property(/Parameter) of a node
@@ -71,10 +69,6 @@ public:
 	/// get property type
 	QString getType() const;
 
-	/// returns the number of the property
-	/// @return the number of the property
-	unsigned int getNr();
-
 	/// checks if connection is possible
 	/// @param prop     property to connect to
 	/// @return  true if connection is possible
@@ -82,9 +76,6 @@ public:
 
 	/// socket center including node position
 	QPointF getSocketCenter() const;
-
-	/// returns all connectionLines of the property
-	QList<ConnectionLine*> getConnections();
 
 	/// draws the property
 	void paint(

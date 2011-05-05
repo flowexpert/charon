@@ -55,14 +55,6 @@ void NodeProperty::moveBy(qreal, qreal) {
 	}
 }
 
-unsigned int NodeProperty::getNr() {
-	return _propNr;
-}
-
-QList<ConnectionLine*> NodeProperty::getConnections() {
-	return _connectionList;
-}
-
 void NodeProperty::addConnection(ConnectionLine *nl) {
 	_connectionList.push_back(nl);
 }
