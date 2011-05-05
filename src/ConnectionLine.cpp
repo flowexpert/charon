@@ -25,7 +25,6 @@
 #include <QPainterPath>
 #include <QBrush>
 #include <QRect>
-#include "ConnectionSocket.h"
 #include "NodeProperty.h"
 
 ConnectionLine::ConnectionLine(QGraphicsScene* sc) :

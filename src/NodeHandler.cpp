@@ -29,7 +29,6 @@
 #include <QStandardItemModel>
 #include <QKeyEvent>
 
-#include "ConnectionSocket.h"
 #include "ConnectionLine.h"
 #include "NodeHandler.h"
 #include "GraphModel.h"
@@ -44,6 +43,8 @@ NodeHandler::NodeHandler(QObject* pp) :
 {
 	_model = new GraphModel("", this, FileManager::instance().classesFile());
 	connect(_model, SIGNAL(graphChanged()), this, SLOT(loadFromModel()));
+	connect(_model, SIGNAL(prefixChanged(QString)),
+			this, SLOT(selectNode(QString)));
 }
 
 NodeHandler::~NodeHandler()
@@ -60,6 +61,20 @@ void NodeHandler::_deselectAllNodes() {
 	_selectedNode = 0;
 }
 
+void NodeHandler::selectNode(QString name) {
+	if(_selectedNode) {
+		if (_selectedNode->getInstanceName() == name) {
+			return;
+		}
+		_selectedNode->setSelectedNode(false);
+	}
+	_selectedNode = _nodeMap[name];
+	if (_selectedNode) {
+		_selectedNode->setSelectedNode(true);
+	}
+	update();
+}
+
 void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 	QGraphicsScene::mousePressEvent(ev);
 
@@ -72,27 +87,20 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 		np = dynamic_cast<Node*>(itm->parentItem());
 	}
 	if (np) {
-		_deselectAllNodes();
-		_selectedNode = np;
 		_model->setPrefix(np->getInstanceName());
-		np->setSelectedNode(true);
-	} else {
-		_deselectAllNodes();
 	}
-	ConnectionSocket* cs = dynamic_cast<ConnectionSocket*>(itm);
-	if (cs != 0) {
-		NodeProperty* prop = dynamic_cast<NodeProperty*>(cs->parentItem());
-		Q_ASSERT(prop);
-		
+	NodeProperty* prop = dynamic_cast<NodeProperty*>(itm);
+	if (prop != 0) {
 		_startProp = prop;
 		delete _cline ; _cline = 0 ;
 		_cline = new ConnectionLine(this);
-		_cline->setStartPoint(
-				ev->scenePos().x(),ev->scenePos().y());
-		_cline->setEndPoint(
-				ev->scenePos().x(),ev->scenePos().y());
+		QPointF sckPos(prop->pos()+prop->getSocketCenter());
+		QPointF curPos(ev->scenePos().x(),ev->scenePos().y());
+		const bool isIn = prop->isInput();
+		_cline->setStartPoint(isIn ? curPos : sckPos);
+		_cline->setEndPoint  (isIn ? sckPos : curPos);
 		_addLine = true;
-		update();
+		update(_cline->boundingRect());
 	}
 }
 
@@ -112,31 +120,21 @@ void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 
 void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 	QGraphicsScene::mouseReleaseEvent(ev);
-	QGraphicsItem* itm = itemAt(ev->scenePos());
-	ConnectionSocket *cs = dynamic_cast<ConnectionSocket*>(itm);
-	NodeProperty* prop = 0;
+	NodeProperty* prop = dynamic_cast<NodeProperty*>(itemAt(ev->scenePos()));
 
-	delete _cline ;
-	_cline = 0 ;
+	delete _cline;
+	_cline = 0;
 
-	if (_addLine && cs != 0) {
-		prop = dynamic_cast<NodeProperty*>(cs->parentItem());
-		if (prop != 0 && prop != _startProp) {
-			try {
-				_model->connectSlot(
-					_startProp->getNode()->getInstanceName()+"."
-						+_startProp->getName(),
-					prop->getNode()->getInstanceName()+"."
-						+prop->getName(),true);
-			} catch (const std::runtime_error& err) {
-				emit statusMessage(err.what(), 8000) ; //8 sec timeout
-
-			}
+	if (_addLine && prop && (prop != _startProp)) {
+		try {
+			_model->connectSlot(
+					_startProp->getFullName(),
+					prop->getFullName(),true);
+		} catch (const std::runtime_error& err) {
+			emit statusMessage(err.what(), 8000); // 8 sec timeout
 		}
 	}
 	_addLine = false;
-			
-	//update();
 }
 
 
@@ -175,14 +173,10 @@ void NodeHandler::loadFromModel() {
 		QStringList ins = mi->getInputs(cname);
 		QStringList outs = mi->getOutputs(cname);
 		for (int jj=0; jj < ins.size(); jj++) {
-			node->addProperty(
-					ins[jj], mi->getType(ins[jj],cname),
-					true);
+			node->addProperty(ins[jj], true);
 		}
 		for (int jj=0; jj < outs.size(); jj++) {
-			node->addProperty(
-					outs[jj], mi->getType(outs[jj],cname),
-					false);
+			node->addProperty(outs[jj], false);
 		}
 		for (int jj=0; jj < outs.size(); jj++) {
 			QString curO = name+"."+outs[jj];
@@ -251,12 +245,24 @@ void NodeHandler::saveFlowchart() {
 }
 
 void NodeHandler::keyReleaseEvent(QKeyEvent* keyEvent) {
-	if(keyEvent->key() == Qt::Key_F12) {
+	switch(keyEvent->key()) {
+	case Qt::Key_F12:
 		saveFlowchart();
-	}
+		break;
 
-	if (keyEvent->key() == Qt::Key_Delete && _selectedNode != 0) {
-		_model->deleteNode(_selectedNode->getInstanceName());
+	case Qt::Key_Delete:
+		if (_selectedNode) {
+			_model->deleteNode(_selectedNode->getInstanceName());
+		}
+		break;
+
+	case Qt::Key_Right:
+		_model->selectNext(false);
+		break;
+
+	case Qt::Key_Left:
+		_model->selectNext(true);
+		break;
 	}
 }
 
@@ -280,6 +286,7 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 	bool res = m.dropMimeData(ev->mimeData(),Qt::CopyAction,0,0,QModelIndex());
 	if(res && m.rowCount() == 1 && m.columnCount() == 1) {
 		QString className = m.item(0)->text();
+		_selectedNode = 0;
 		QString instName = _model->addNode(className,false);
 		
 		//if plugin instanziation was successfull, set its coordinates to the drop position
@@ -293,7 +300,8 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 			_model->setData(_model->index(_model->rowCount()-1,0),"editorinfo");
 			_model->setData(_model->index(_model->rowCount()-1,1),posString);
 			_model->setOnlyParams(true) ;
-			loadFromModel() ;
+			loadFromModel();
+			selectNode(_model->prefix());
 			ev->accept();
 			return ;
 		}

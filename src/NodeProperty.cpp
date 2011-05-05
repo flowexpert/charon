@@ -24,7 +24,6 @@
 #include "NodeProperty.h"
 #include <QPainter>
 #include <QHelpEvent>
-#include "ConnectionSocket.h"
 #include "ConnectionLine.h"
 #include "GraphModel.h"
 #include "NodeHandler.h"
@@ -33,25 +32,15 @@
 
 NodeProperty::NodeProperty(
 		Node* parentNode, QString name, int propNr,
-		QString pType, bool input, const ParameterFileModel* pF) :
+		bool input, const ParameterFileModel* pF) :
 			QGraphicsItem(parentNode),
-			_isConnected(false),
-			_multiConnect(!input),
 			_propNr(propNr),
 			_name(name),
 			_isInput(input),
-			_propType(pType),
 			_node(parentNode),
 			_pFile(pF)
 {
 	Q_ASSERT(_node);
-
-	int yy = 28 + _propNr * 25;
-	_width = _node->getWidth() - 10;
-
-	_socket = new ConnectionSocket(
-			this, _isInput ? QPointF(0, yy+10) : QPointF(_width+10, yy+10));
-
 	setAcceptHoverEvents(true);
 }
 
@@ -59,16 +48,11 @@ void NodeProperty::moveBy(qreal, qreal) {
 	for (int i = 0; i < _connectionList.size(); i++) {
 		ConnectionLine *cline = _connectionList.at(i);
 		if (cline->getStartProp() == this) {
-			cline->setStartPoint(
-					scenePos()+(dynamic_cast<ConnectionSocket*>(
-							children().at(0)))->getCenter()); //ugly as hell!!
+			cline->setStartPoint(scenePos()+_getSocketRect().center());
 		} else {
-			cline->setEndPoint(
-					scenePos()+(dynamic_cast<ConnectionSocket*>(
-							children().at(0)))->getCenter()); //ugly as hell!!
+			cline->setEndPoint(scenePos()+_getSocketRect().center());
 		}
 	}
-
 }
 
 unsigned int NodeProperty::getNr() {
@@ -79,12 +63,7 @@ QList<ConnectionLine*> NodeProperty::getConnections() {
 	return _connectionList;
 }
 
-QString NodeProperty::getName() const {
-	return _name;
-}
-
 void NodeProperty::addConnection(ConnectionLine *nl) {
-	_isConnected = true;
 	_connectionList.push_back(nl);
 }
 
@@ -97,68 +76,43 @@ QString NodeProperty::getType() const {
 	return type;
 }
 
-
 QRectF NodeProperty::boundingRect() const {
 	int yy = 28 + _propNr * 25;
-	return QRectF(5, yy, _width, 20);
+	return QRectF(-6, yy, _node->getWidth()+12, 20);
+}
+
+QRectF NodeProperty::_getSocketRect() const {
+	QRectF ret = boundingRect();
+	ret.adjust(0,4,0,-4);
+	if (isInput()) {
+		ret.setRight(ret.left()+12);
+	}
+	else {
+		ret.setLeft(ret.right()-12);
+	}
+	return ret;
+}
+
+QPointF NodeProperty::getSocketCenter() const {
+	return _node->pos() + _getSocketRect().center();
 }
 
 void NodeProperty::paint(
 		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
-	_width = _node->getWidth() - 10;
-	int yy = 28 + _propNr * 25;
+	QRectF inner = boundingRect();
+	inner.adjust(12,0,-12,0);
 	painter->setOpacity(1);
-	painter->setBrush(isUnderMouse() ? Qt::yellow : Qt::lightGray);
-	painter->drawRoundRect(5, yy, _width, 20, 10, 100);
+	painter->setBrush(isUnderMouse() ? Qt::green : Qt::lightGray);
+	painter->drawRoundRect(inner, 10, 100);
 	painter->setBrush(Qt::black);
-	painter->drawText(10, yy + 13, _name);
+	inner.adjust(10,0,-10,0);
+	painter->drawText(inner, _name);
+	painter->setBrush(_getSocketColor(getType()));
+	painter->drawEllipse(_getSocketRect());
 }
 
-bool NodeProperty::canConnect(NodeProperty* prop) {
-	if (canNewConnect() && prop->canNewConnect() &&
-			_isInput != prop->_isInput &&
-			getType() == prop->getType())
-		return true;
-	return false;
-}
-
-bool NodeProperty::canNewConnect() {
-	return (!_isConnected || (_isConnected && _multiConnect));
-}
-
-bool NodeProperty::hasConnection() {
-	return _isConnected;
-}
-
-void NodeProperty::removeAllConnections(GraphModel *model) {
-	if(!model) model = ((NodeHandler*)scene())->model();
-	//cout<<"removing all connections"<<endl;
-	for (int i = 0; i<_connectionList.size(); i++) {
-		ConnectionLine *l = _connectionList[i];
-		model->disconnectSlot(
-				l->getStartProp()->getNode()->getInstanceName()+"."
-					+l->getStartProp()->getName(),
-				l->getEndProp()->getNode()->getInstanceName()+"."
-					+l->getEndProp()->getName(), false);
-		if (_isInput) {
-			l->getStartProp()->removeConnection(l);
-		}
-		else {
-			l->getEndProp()->removeConnection(l);
-		}
-		delete l;
-	}
-	_connectionList.clear();
-	_isConnected = false;
-}
-
-void NodeProperty::removeConnection(ConnectionLine *line) {
-	_connectionList.removeAll(line);
-	if (_connectionList.size() == 0) _isConnected = false;
-}
-
-Node* NodeProperty::getNode() {
-	return _node;
+QString NodeProperty::getFullName() const {
+	return _node->getInstanceName() + "." + _name;
 }
 
 bool NodeProperty::isInput() const {
@@ -166,7 +120,26 @@ bool NodeProperty::isInput() const {
 }
 
 void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent* ev) {
-	setToolTip(QString("<p style='white-space:pre'><b>Slot: <i>%1</i><br>Type:</b><br>%2</p>")
-				.arg(_name).arg(getType()));
+	setToolTip(QString(
+			"<p style='white-space:pre'><b>Slot: <i>%1</i><br>"
+			"Type:</b><br>%2</p>").arg(_name).arg(getType()));
 	QGraphicsItem::hoverEnterEvent(ev);
+}
+
+QColor NodeProperty::_getSocketColor(QString tName) {
+	if (tName.contains("cimg",Qt::CaseInsensitive)) {
+		return Qt::yellow;
+	}
+	else if (tName.contains("vigra",Qt::CaseInsensitive)) {
+		return Qt::darkYellow;
+	}
+	else if(tName.contains("roi",Qt::CaseInsensitive)) {
+		return Qt::green;
+	}
+	else if(tName.contains("interpolator",Qt::CaseInsensitive)) {
+		return Qt::blue;
+	}
+	// add more color presets here
+
+	return Qt::gray;
 }

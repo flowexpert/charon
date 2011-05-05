@@ -41,17 +41,16 @@ public:
 	 *  \param name            name of the property
 	 *  \param propNr          number of the property
 	 *                         (needed for correct positioning)
-	 *  \param propType        property type string
 	 *  \param input           input output type of the property
 	 *  \param pFile           link to given parameter file
 	 */
 	NodeProperty(
 			Node* parentNode, QString name,
-			int propNr, QString propType,
-			bool input, const ParameterFileModel* pFile);
+			int propNr, bool input,
+			const ParameterFileModel* pFile);
 
 	/// area for hover event
-	QRectF boundingRect() const;
+	virtual QRectF boundingRect() const;
 
 	/// moves the property and if connected all connectionlines
 	/// @param dx     x coordinate of movement
@@ -66,9 +65,8 @@ public:
 	/// @returns the PropType of the property
 	bool isInput() const;
 
-	/// returns the name of the property
-	/// @returns the name of the property
-	QString getName() const;
+	/// property name including node instance name
+	QString getFullName() const;
 
 	/// get property type
 	QString getType() const;
@@ -82,28 +80,10 @@ public:
 	/// @return  true if connection is possible
 	bool canConnect(NodeProperty* prop);
 
-	/// checks if property can accept more connections
-	/// @returns true if property can accept more connections
-	bool canNewConnect();
-
-	/// checks wheather property is connected
-	/// @returns true if connected
-	bool hasConnection();
-
-	/// removes all connections from node
-	/// @param model    model where connection will be removed too
-	void removeAllConnections(GraphModel* model=0);
-
-	/// node which property is child of
-	/// @return node which property is child of
-	Node* getNode();
-
-	/// removes given connectionline
-	/// @param line     line to delete
-	void removeConnection(ConnectionLine *line);
+	/// socket center including node position
+	QPointF getSocketCenter() const;
 
 	/// returns all connectionLines of the property
-	/// @returns all connectionLines of the property
 	QList<ConnectionLine*> getConnections();
 
 	/// draws the property
@@ -117,15 +97,6 @@ protected:
 	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
 
 private:
-	/// width of the property
-	int _width;
-
-	/// state of connection
-	bool _isConnected;
-
-	/// can handle more than one connection
-	bool _multiConnect;
-
 	/// number of property
 	unsigned int _propNr;
 
@@ -138,17 +109,17 @@ private:
 	/// pointer to PropType of the property
 	bool _isInput;
 
-	/// Property type
-	QString _propType;
-
 	/// pointer to parent node
 	Node* _node;
 
-	/// the properties socket
-	ConnectionSocket *_socket;
-
 	/// link to parameter file
 	const ParameterFileModel* _pFile;
+
+	/// center of the socket, used to draw end and start of connectionline
+	QRectF _getSocketRect() const;
+
+	/// get color from type
+	static QColor _getSocketColor(QString typeName);
 };
 
 #endif /* NODEPROPERTY_H_ */

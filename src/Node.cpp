@@ -21,7 +21,6 @@ Node::Node(const ParameterFileModel* pFile, QString title,
 		QGraphicsItem(0,parent),
 		_instanceName(title),
 		_width(100),
-		_maxPropertyWidth(0),
 		_height(50),
 		_nProps(0),
 		_selectedNode(false),
@@ -48,15 +47,13 @@ QString Node::getInstanceName() {
 	return _instanceName;
 }
 
-void Node::addProperty(
-		QString name, QString typeName, bool input) {
+void Node::addProperty(QString name, bool input) {
 	NodeProperty* prop = new NodeProperty(
-			this,name,_nProps,typeName,input,_pFile);
-	_maxPropertyWidth = qMax(name.size(), _maxPropertyWidth) ;
+			this,name,_nProps,input,_pFile);
 	_height += 25;
 	_properties.insert(name.toLower(),prop);
 	_nProps++;
-	_checkWidth();
+	_checkWidth(name.size());
 }
 
 QRectF Node::boundingRect() const {
@@ -108,15 +105,6 @@ void Node::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 	model->setOnlyParams(true);
 }
 
-/*
-void Node::remove() {
-	QMapIterator<QString,NodeProperty*> iter(_properties);
-	while (iter.hasNext()) {
-		iter.next().value()->removeAllConnections();
-	}
-	_properties.clear();
-}
-*/
 void Node::paint(
 		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
 	painter->setPen(Qt::black);
@@ -151,11 +139,9 @@ int Node::getHeight() const {
 	return _height;
 }
 
-void Node::_checkWidth() {
-	int s = qMax(_maxPropertyWidth,qMax(_instanceName.size(), _className.size()));
-	if (s > 10) {
-		_width = 50 + s * 6;
-	}
+void Node::_checkWidth(int s) {
+	s = qMax(s,qMax(_instanceName.size(), _className.size()));
+	_width = qMax(_width, 50 + s * 6);
 }
 
 NodeProperty* Node::getProperty(QString propName) const {

@@ -69,6 +69,9 @@ public slots:
 	/** shows file open dialog */
 	void saveFlowchart();
 
+	/// select some node
+	void selectNode(QString name);
+
 protected:
 	/** \name drag/drop handling
 	 *  Accepts drag events with mime data as they are set by
@@ -119,7 +122,7 @@ private:
 	QMap<QString,Node*> _nodeMap;
 
 signals:
-
+	/// message to display on status bar
 	void statusMessage(QString msg, int timeout) ;
 };
 

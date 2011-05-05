@@ -40,11 +40,8 @@ public:
 
 	/// adds a property to the node
 	/// @param name     name of parameter
-	/// @param typeName type name of parameter
 	/// @param input    input or output type of property
-	void addProperty(
-			QString name, QString typeName,
-			bool input);
+	void addProperty(QString name, bool input);
 
 	/// sets the id of the node
 	/// @param id      ID to set
@@ -57,16 +54,12 @@ public:
 	/// paints the node
 	void paint(
 			QPainter* painter, const QStyleOptionGraphicsItem* option,
-			QWidget *widget = 0);
+			QWidget* widget = 0);
 
-	/// removes all properties correctly
-	/// also removes connectionlines of each property
-	//void remove() __attribute__ ((deprecated));
-
-	/// width of the node
+	/// node width
 	int getWidth() const;
 
-	/// height of the node
+	/// node height
 	int getHeight() const;
 
 	/// get node property
@@ -95,7 +88,7 @@ public:
 
 private:
 	/// cecks the node width in reference to the node name
-	void _checkWidth();
+	void _checkWidth(int nChars=0);
 
 	/// list of nodeproperties
 	QMap<QString,NodeProperty*> _properties;
@@ -108,8 +101,6 @@ private:
 
 	/// width of the node
 	int _width;
-
-	int _maxPropertyWidth ;
 
 	/// height of the node
 	int _height;

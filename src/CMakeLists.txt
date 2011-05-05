@@ -43,8 +43,6 @@ SET(EDITGRAPH_SOURCES
 	GraphModel.h
 	FlowWidget.cpp
 	FlowWidget.h
-	ConnectionSocket.cpp
-	ConnectionSocket.h
 	ConnectionLine.cpp
 	ConnectionLine.h
 	Node.cpp
