@@ -280,13 +280,25 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 	bool res = m.dropMimeData(ev->mimeData(),Qt::CopyAction,0,0,QModelIndex());
 	if(res && m.rowCount() == 1 && m.columnCount() == 1) {
 		QString className = m.item(0)->text();
-		QString instName = _model->addNode(className);
+		QString instName = _model->addNode(className,false);
+		
+		//if plugin instanziation was successfull, set its coordinates to the drop position
 		if(!instName.isEmpty()) {
-			ev->accept();
 			_model->setPrefix(instName);
-			return;
+			QPointF pos = ev->scenePos() ; //classic DropEvent->pos is always zero for this case
+			QString posString = QString("%0 %1").arg(pos.x()).arg(pos.y());
+			_model->setOnlyParams(false);
+			// insert editor info
+			_model->insertRow(_model->rowCount());
+			_model->setData(_model->index(_model->rowCount()-1,0),"editorinfo");
+			_model->setData(_model->index(_model->rowCount()-1,1),posString);
+			_model->setOnlyParams(true) ;
+			loadFromModel() ;
+			ev->accept();
+			return ;
 		}
 	}
+
 	QGraphicsScene::dropEvent(ev);
 }
 
