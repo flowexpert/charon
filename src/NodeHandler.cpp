@@ -129,7 +129,8 @@ void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 					prop->getNode()->getInstanceName()+"."
 						+prop->getName(),true);
 			} catch (const std::runtime_error& err) {
-				err.what() ;
+				emit statusMessage(err.what(), 8000) ; //8 sec timeout
+
 			}
 		}
 	}
@@ -160,8 +161,7 @@ void NodeHandler::loadFromModel() {
 		QString name = nodes[ii];
 		QString cname = _model->getClass(nodes[ii]);
 
-		Node* node = new Node(
-				&_model->parameterFile(),name,10*ii,10*ii,this);
+		Node* node = new Node(_model,name,10*ii,10*ii,this);
 		node->setClassName(cname);
 		_nodeMap.insert(name,node);
 

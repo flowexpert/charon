@@ -16,7 +16,7 @@
 
 unsigned int Node::_idCount = 0;
 
-Node::Node(const QParameterFile* pFile, QString title,
+Node::Node(const ParameterFileModel* pFile, QString title,
 			int xpos, int ypos,QGraphicsScene *parent) :
 		QGraphicsItem(0,parent),
 		_instanceName(title),

@@ -69,7 +69,7 @@ QStringList MetaData::getParameters(QString className) const {
 }
 
 QString MetaData::getType(QString parName, QString className) const {
-	parName = parName.section(".",-1,-1);
+	parName = parName.section(".",-1,-1).toLower();
 	QString par = className + "." + parName + ".type";
 	QString result = _data->get(par);
 	if(result.isEmpty())
@@ -78,14 +78,14 @@ QString MetaData::getType(QString parName, QString className) const {
 }
 
 QString MetaData::getDefault(QString parName, QString className) const {
-	parName =  parName.section(".",0,0);
+	parName =  parName.section(".",-1,-1).toLower();
 	QString par = className + "." + parName;
 	QString result = _data->get(par);
 	return result;
 }
 
 QString MetaData::getDocString(QString parName, QString className) const {
-	parName =  parName.section(".",0,0);
+	parName =  parName.section(".",-1,-1).toLower();
 	QString par =  parName.isEmpty() ?
 			className + ".doc" :
 			className + "." + parName + ".doc";
@@ -94,7 +94,7 @@ QString MetaData::getDocString(QString parName, QString className) const {
 }
 
 QString MetaData::getDocFile(QString parName, QString className) const {
-	parName =  parName.section(".",0,0).toLower();
+	parName =  parName.section(".",-1,-1).toLower();
 	QString par = parName.isEmpty() ?
 			className + ".docfile" :
 			className + "." + parName + ".docfile";
@@ -103,25 +103,25 @@ QString MetaData::getDocFile(QString parName, QString className) const {
 }
 
 bool MetaData::isParameter(QString name, QString className) const {
-	name =  name.section(".",-1,-1);
+	name =  name.section(".",-1,-1).toLower();
 	QStringList list = getParameters(className);
 	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
 }
 
 bool MetaData::isInputSlot(QString name, QString className) const {
-	name =  name.section(".",-1,-1);
+	name =  name.section(".",-1,-1).toLower();
 	QStringList list = getInputs(className);
 	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
 }
 
 bool MetaData::isOutputSlot(QString name, QString className) const {
-	name =  name.section(".",-1,-1);
+	name =  name.section(".",-1,-1).toLower();
 	QStringList list = getOutputs(className);
 	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
 }
 
 bool MetaData::isOptionalSlot(QString slotName, QString className) const {
-	slotName = slotName.section(".",-1,-1);
+	slotName = slotName.section(".",-1,-1).toLower();
 	bool slotIsIn = isInputSlot(slotName, className);
 	QString optName = className + "." + slotName + ".optional";
 	return _data->isSet(optName) ?
@@ -129,7 +129,7 @@ bool MetaData::isOptionalSlot(QString slotName, QString className) const {
 }
 
 bool MetaData::isMultiSlot(QString slotName, QString className) const {
-	slotName = slotName.section(".",-1,-1);
+	slotName = slotName.section(".",-1,-1).toLower();
 	bool slotIsIn = isInputSlot(slotName, className);
 	QString optName = className + "." + slotName + ".multi";
 	return _data->isSet(optName) ?

@@ -117,6 +117,10 @@ private:
 
 	/// map for node lookup
 	QMap<QString,Node*> _nodeMap;
+
+signals:
+
+	void statusMessage(QString msg, int timeout) ;
 };
 
 #endif /* NODEHANDLER_H_ */

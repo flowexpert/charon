@@ -26,7 +26,7 @@ public:
 	 *  \param parent   parent graphics scene
 	 *  \param pFile    link to parameter file
 	 */
-	Node(const QParameterFile* pFile, QString title,
+	Node(const ParameterFileModel* pFile, QString title,
 			int xpos, int ypos, QGraphicsScene* parent);
 
 	/// area where node is clickable
@@ -127,7 +127,7 @@ private:
 	static unsigned int _idCount;
 
 	/// link to parameter file
-	const QParameterFile* _pFile;
+	const ParameterFileModel* _pFile;
 };
 
 #endif /* NODE_H_ */

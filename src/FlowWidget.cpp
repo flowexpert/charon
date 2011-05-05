@@ -40,6 +40,7 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 	_viewer->setRenderHints(QPainter::Antialiasing);
 	_viewer->setAcceptDrops(true);
 	_nodehandler = new NodeHandler(_viewer);
+	connect(_nodehandler, SIGNAL(statusMessage(QString, int)), this, SIGNAL(statusMessage(QString, int))) ;
 	_viewer->setScene(_nodehandler);
 
 	setWidget(_viewer);

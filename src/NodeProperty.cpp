@@ -29,11 +29,11 @@
 #include "GraphModel.h"
 #include "NodeHandler.h"
 #include "Node.h"
-#include "QParameterFile.h"
+#include "ParameterFileModel.h"
 
 NodeProperty::NodeProperty(
 		Node* parentNode, QString name, int propNr,
-		QString pType, bool input, const QParameterFile* pF) :
+		QString pType, bool input, const ParameterFileModel* pF) :
 			QGraphicsItem(parentNode),
 			_isConnected(false),
 			_multiConnect(!input),
@@ -90,18 +90,9 @@ void NodeProperty::addConnection(ConnectionLine *nl) {
 
 QString NodeProperty::getType() const {
 	QString type;
-	type = _propType;
-
-	// handle templated types
-	NodeHandler* h = qobject_cast<NodeHandler*>(scene()); Q_ASSERT(h);
 	if (_pFile) {
-		QString ttype = _pFile->get(
-				_node->getInstanceName()+".templatetype");
-		if (!ttype.isEmpty()) {
-			type.replace(
-					QRegExp("<\\s*T\\s*>",Qt::CaseInsensitive),
-					QString("&lt;%1&gt;").arg(ttype));
-		}
+		type = _pFile->getType(_node->getInstanceName()+"."+_name);
+		type.replace("<","&lt;").replace(">","&gt;");
 	}
 	return type;
 }
@@ -175,7 +166,7 @@ bool NodeProperty::isInput() const {
 }
 
 void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent* ev) {
-	setToolTip(QString("<b>Slot: <i>%1</i><br>Type:</b><br>%2")
+	setToolTip(QString("<p style='white-space:pre'><b>Slot: <i>%1</i><br>Type:</b><br>%2</p>")
 				.arg(_name).arg(getType()));
 	QGraphicsItem::hoverEnterEvent(ev);
 }

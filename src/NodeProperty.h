@@ -31,7 +31,7 @@ class ConnectionLine;
 class Node;
 class ConnectionSocket;
 class GraphModel;
-class QParameterFile;
+class ParameterFileModel;
 
 /// Property(/Parameter) of a node
 class NodeProperty : public QGraphicsItem {
@@ -48,7 +48,7 @@ public:
 	NodeProperty(
 			Node* parentNode, QString name,
 			int propNr, QString propType,
-			bool input, const QParameterFile* pFile);
+			bool input, const ParameterFileModel* pFile);
 
 	/// area for hover event
 	QRectF boundingRect() const;
@@ -148,7 +148,7 @@ private:
 	ConnectionSocket *_socket;
 
 	/// link to parameter file
-	const QParameterFile* _pFile;
+	const ParameterFileModel* _pFile;
 };
 
 #endif /* NODEPROPERTY_H_ */
