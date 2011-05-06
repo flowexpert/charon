@@ -92,7 +92,7 @@ namespace ArgosDisplay
 		virtual ~AbstractPixelInspector() {}
 
 		/// access pixel values at xy-position
-		virtual const std::vector<double> operator()(int x, int y) const = 0;
+		inline virtual const std::vector<double>& operator()(int x, int y) const = 0;
 
 		/// return RGBA copy of image data
 		virtual const vigra::QRGBImage getRGBImage() const = 0;
@@ -121,7 +121,7 @@ namespace ArgosDisplay
 				const std::string& name) ;
 		virtual ~VigraPixelInspector() {}
 
-		virtual const std::vector<double> operator()(int x, int y) const ;
+		inline virtual const std::vector<double>& operator()(int x, int y) const ;
 		virtual const vigra::QRGBImage getRGBImage() const;
 		virtual const vigra::FImage getFImage() const;
 		virtual bool isRGB() const ;
@@ -144,7 +144,7 @@ namespace ArgosDisplay
 				const std::string& name) ;
 		virtual ~CImgPixelInspector() {}
 
-		virtual const std::vector<double> operator()(int x, int y) const ;
+		inline virtual const std::vector<double>& operator()(int x, int y) const ;
 		virtual const vigra::QRGBImage getRGBImage() const;
 		virtual const vigra::FImage getFImage() const;
 		virtual bool isRGB() const ;

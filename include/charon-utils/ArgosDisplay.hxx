@@ -38,7 +38,11 @@ using namespace ArgosDisplay ;
 template <typename T>
 ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("ArgosDisplay", name,
-			"Advanced Display Plugin<br>Allows inspection and display of "),
+			"Advanced Display Plugin<br>Allows inspection and display of vigra and cimg images as well as the use of connected QWidget instances<br><br>"
+			"Images with a size greater than 2 in the last dimension (CImgList.size() or vigra::MultiArray.size(0)) will be interpreted as RGB images<br>"
+			"(can be switched via the context menu)<br><br>"
+			"It's safe to use this plugin in a non-gui workflow (e.g. for use with command-line charon)<br>"
+			"Although it's execution will just be omitted"),
 			_vigraIn(true, true),
 			_cimgIn(true, true),
 			_widgets(true, true),
@@ -48,14 +52,14 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			_vigraIn, "vigraIn",
 			"Multislot for input images.<br>"
 			"Will display the first slice of an array "
-			"(meaning all dimensions except 0 and 1 are set to 0)",
+			"(meaning all dimensions except 0(width) and 1(height) are set to 0)",
 			"vigraArray5<T>");
 
 	ParameteredObject::_addInputSlot(
 			_cimgIn, "cimgIn",
 			"Multislot for input images.<br>"
 			"Will display the first slice of an array "
-			"(meaning all dimensions except 0 and 1 are set to 0)",
+			"(meaning all dimensions except 0(width) and 1(height) are set to 0)",
 			"CImgList<T>");
 
 
@@ -72,7 +76,7 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 		return ;
 	}
 
-	_mainWindow = new MainWindow ;
+	_mainWindow = new MainWindow(getName()) ;
 
 }
 
@@ -107,9 +111,10 @@ void ArgosDisplayPlugin<T>::execute() {
 	int index = viewStack.currentIndex() ;
 	viewStack.clear() ;
 
+	//register connected vigra images
 	for( ; it != end ; it++)
 	{
-		std::string name = (*it)->getParent().getName() ;
+		std::string name = (*it)->getParent().getName() + "." + (*it)->getName() ; 
 		// dynamic_cast fails for unknown reasons, therefore this
 		// horrible piece of code
 		const OutputSlot<vigra::MultiArrayView<5, T> >* temp =
@@ -123,20 +128,22 @@ void ArgosDisplayPlugin<T>::execute() {
 		// register all Arrays with the ViewStack
 		viewStack.linkImage(new VigraPixelInspector<T>(temp->operator ()(), name)) ;
 	}
+
 	typename std::set<AbstractSlot<cimg_library::CImgList<T> >*>
 			::const_iterator cit = _cimgIn.begin() ;
 	typename std::set<AbstractSlot<cimg_library::CImgList<T> >*>
 			::const_iterator cend = _cimgIn.end() ;
 	
+	//register connected cimg images
 	for( ; cit != cend ; cit++)
 	{
-		std::string name = (*cit)->getParent().getName() ;
+		std::string name = (*cit)->getParent().getName() + "." + (*cit)->getName() ;
 		const OutputSlot<cimg_library::CImgList<T> >* temp =
 				reinterpret_cast<
 				const OutputSlot<cimg_library::CImgList<T> >*>(*cit);
 		if(!temp)
-			throw std::runtime_error("cast of cimg_library::CImgList failed! "
-				"In/Output slot may be invalid!");
+			throw std::runtime_error(getClassName() + " : " + getName() + " : cast of cimg_library::CImgList failed! "
+				"In/Output slot \"" + name + "\" may be invalid!");
 		viewStack.linkImage(new CImgPixelInspector<T>(temp->operator ()(), name)) ;
 	}
 
@@ -163,16 +170,22 @@ VigraPixelInspector<T>::VigraPixelInspector (const vigra::MultiArrayView<5, T>& 
 }
 
 template <typename T>
-const std::vector<double> VigraPixelInspector<T>::operator()(
+const std::vector<double>& VigraPixelInspector<T>::operator()(
 		int x, int y) const {
 	static int maxDimSize = 5 ; //don't return more values
-	std::vector<double> result ;
-	result.reserve(maxDimSize) ;
+	static std::vector<double> result = std::vector<double>(maxDimSize, 0.0) ;
 	if(x < 0 || y < 0 || _mArray.size() == 0 || x >= _mArray.size(0) || y >= _mArray.size(1))
+	{
+		result.clear() ;
 		return result ;
+	}
+
+	int width = _mArray.size(4) ;
+	if(result.size() != width)	
+	{	result.resize(width <= maxDimSize ? width : maxDimSize) ;	}
 	
 	for(int i = 0 ; i < _mArray.size(4) && i < maxDimSize ; i++)
-		result.push_back(double(_mArray(x,y,0,0,i))) ;
+		result[i] = (double(_mArray(x,y,0,0,i))) ;
 	return result ;
 }
 
@@ -225,18 +238,23 @@ CImgPixelInspector<T>::CImgPixelInspector (
 
 
 template <typename T>
-const std::vector<double> CImgPixelInspector<T>::operator()(
+const std::vector<double>& CImgPixelInspector<T>::operator()(
 		int x, int y) const {
 	static int maxDimSize = 5 ; //don't return more values
-	std::vector<double> result ;
-	result.reserve(maxDimSize) ;
+	static std::vector<double> result = std::vector<double>(maxDimSize, 0.0) ;
+	
 	if(
 			x < 0 || y < 0 || _mArray.size() == 0 ||
 			x >= _mArray(0).width() || y >= _mArray(0).height())
+	{
+		result.clear() ;
 		return result ;
-	
+	}	
+	int width = _mArray.width() ;
+	if(result.size() != width)	
+	{	result.resize(width <= maxDimSize ? width : maxDimSize) ;	}
 	for(int i = 0 ; i < _mArray.width() && i < maxDimSize ; i++)
-		result.push_back(double(_mArray(i,x,y,0,0))) ;
+		result[i] = (double(_mArray(i,x,y,0,0))) ;
 	return result ;
 
 }
@@ -244,6 +262,8 @@ const std::vector<double> CImgPixelInspector<T>::operator()(
 template <typename T>
 const vigra::QRGBImage CImgPixelInspector<T>::getRGBImage() const
 {
+	if(_mArray.size() <= 0)
+	{	return vigra::QRGBImage(0,0) ;	}
 	vigra::QRGBImage img(_mArray(0).width(), _mArray(0).height()) ;
 	if(_mArray.width() >= 3)
 	{	
@@ -270,6 +290,8 @@ const vigra::QRGBImage CImgPixelInspector<T>::getRGBImage() const
 template <typename T>
 const vigra::FImage CImgPixelInspector<T>::getFImage() const
 {
+	if(_mArray.size() <= 0)
+	{	return vigra::FImage(0, 0) ;	}
 	const cimg_library::CImg<T>& cimg = _mArray(0) ;
 	vigra::FImage img(cimg.width(), cimg.height()) ;
 	for(int xx = 0 ; xx < cimg.width() ; ++xx)

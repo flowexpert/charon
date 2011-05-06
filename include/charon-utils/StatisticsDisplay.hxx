@@ -65,7 +65,7 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 			"Mask to determine where the statistics should be calculated.<br>"
 			"This is not a multislot as there is no possibility to map multiple mask to the corresponding images in \"in\"<br>"
 			"The mask will be applied to all cimg images as long as their dimensions match.",
-			"vigraArray5<T>");
+			"CImgList<T>");
 
 
 	ParameteredObject::_addOutputSlot(
@@ -116,7 +116,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 
 	for(std::size_t ii = 0 ; (ii < _vigraIn.size()) && (it != end) ; ii++, it++)
 	{
-		std::string name = (*it)->getParent().getName() ;
+		std::string name = (*it)->getParent().getName() + "." + (*it)->getName();
 		sout << "Calculating statistics for " << name << std::endl ;
 		//create accumulators for each image, add tags as needed
 		accumulator_set<double, stats<tag::min, tag::max, tag::count, tag::sum, tag::mean, tag::variance, tag::median> > acc;
@@ -187,7 +187,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 	
 	for(std::size_t ii = 0 ; (ii < _cimgIn.size()) && (cit != cend) ; ii++, cit++)
 	{
-		std::string name = (*cit)->getParent().getName() ;
+		std::string name = (*cit)->getParent().getName() + "." + (*cit)->getName();
 		sout << "Calculating statistics for " << name << std::endl ;
 		//create accumulators for each image, add tags as needed
 		accumulator_set<double, stats<tag::min, tag::max, tag::count, tag::sum, tag::mean, tag::variance, tag::median> > acc;
