@@ -42,15 +42,33 @@ ViewStack::ViewStack(QWidget* p) : QWidget(p),
 	this->setSizePolicy(
 			QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 
-	connect(this, SIGNAL(imageLinked()), this, SLOT(linkImages()), Qt::QueuedConnection) ;
+	connect(this, SIGNAL(imageLinked()), this, SLOT(_linkImages()), Qt::QueuedConnection) ;
 
-	_switchColorModeAct = new QAction(QString("switch color mode"), this) ;
-	connect(_switchColorModeAct, SIGNAL(triggered()), this, SLOT(switchColorMode())) ;
-	this->addAction(_switchColorModeAct) ;
+	_createActions() ;
+	
 	this->setContextMenuPolicy(Qt::ActionsContextMenu) ;
 }
 
 ViewStack::~ViewStack() {
+}
+
+void ViewStack::_createActions()
+{
+	_switchColorModeAct = new QAction(QString("switch color mode"), this) ;
+	_switchColorModeAct->setStatusTip(QString("switch between RGB and grayscale display")) ;
+	connect(_switchColorModeAct, SIGNAL(triggered()), this, SLOT(_switchColorMode())) ;
+	this->addAction(_switchColorModeAct) ;
+	
+	_saveCurrentViewAct = new QAction(QString("save current view"), this) ;
+	_saveCurrentViewAct->setStatusTip(QString("save current view to image file")) ;
+	connect(_saveCurrentViewAct, SIGNAL(triggered()), this, SLOT(_saveCurrentView())) ;
+	this->addAction(_saveCurrentViewAct) ;
+
+	_centerAndResetZoomAct = new QAction(QString("reset view"), this) ;
+	_centerAndResetZoomAct->setStatusTip(QString("set zoom level to 0 and move view to center of window")) ;
+	connect(_centerAndResetZoomAct, SIGNAL(triggered()), this, SLOT(_centerAndResetZoom())) ;
+	this->addAction(_centerAndResetZoomAct) ;
+
 }
 
 void ViewStack::clear() {
@@ -89,7 +107,7 @@ void ViewStack::setCurrentIndex(int index) {
 	}
 }
 
-void ViewStack::linkImages()
+void ViewStack::_linkImages()
 {
 	//this->clear() ;
 	for(size_t ii = 0 ; ii < _inspectors.size() ; ii++)
@@ -103,7 +121,7 @@ void ViewStack::linkImages()
 			viewer->setImage(_inspectors[ii]->getRGBImage().qImage()) ;
 			connect(
 					viewer, SIGNAL(mouseOver(int, int)),
-					this, SLOT(processMouseMovement(int, int))) ;
+					this, SLOT(_processMouseMovement(int, int))) ;
 		}
 		else
 		{
@@ -112,7 +130,7 @@ void ViewStack::linkImages()
 			viewer->setImage(_inspectors[ii]->getFImage()) ;
 			connect(
 					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
-					this, SLOT(processMouseMovement(int, int)));
+					this, SLOT(_processMouseMovement(int, int)));
 
 		}
 	}
@@ -121,7 +139,7 @@ void ViewStack::linkImages()
 	this->parentWidget()->show() ;
 }
 
-void ViewStack::switchColorMode()
+void ViewStack::_switchColorMode()
 {
 	int index = _tabWidget->currentIndex() ;
 	if(index < 0 || _inspectors[index] ==0)
@@ -135,7 +153,7 @@ void ViewStack::switchColorMode()
 		viewer->setImage(_inspectors[index]->getRGBImage().qImage()) ;
 		connect(
 					viewer, SIGNAL(mouseOver(int, int)),
-					this, SLOT(processMouseMovement(int, int))) ;
+					this, SLOT(_processMouseMovement(int, int))) ;
 	}
 	else if(className == "QImageViewer")
 	{
@@ -145,7 +163,7 @@ void ViewStack::switchColorMode()
 		viewer->setImage(_inspectors[index]->getFImage()) ;
 		connect(
 					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
-					this, SLOT(processMouseMovement(int, int))) ;
+					this, SLOT(_processMouseMovement(int, int))) ;
 	}
 	else //unknown tab type
 	{
@@ -155,7 +173,7 @@ void ViewStack::switchColorMode()
 	_tabWidget->setCurrentIndex(index) ;
 }
 
-void ViewStack::processMouseMovement(int x, int y) {
+void ViewStack::_processMouseMovement(int x, int y) {
 	QString message = QString("x : %1 y : %2  ").arg(x).arg(y) ;
 
 	for(size_t ii = 0 ; ii < _inspectors.size() ; ii++)
@@ -180,8 +198,82 @@ void ViewStack::keyPressEvent(QKeyEvent* event) {
 		// this will give 0 for Key_1, 1 for Key_2 ...
 		_tabWidget->setCurrentIndex(key % Qt::Key_1) ;
 	// QTabWidget will check if the range is valid (at least in Qt 4.6 it did)
+	else if(key == Qt::Key_Left)
+	{
+		int index = _tabWidget->currentIndex() ;
+		_tabWidget->setCurrentIndex((index - 1) % _tabWidget->count()) ;
+	}
+	else if(key == Qt::Key_Right)
+	{
+		int index = _tabWidget->currentIndex() ;
+		_tabWidget->setCurrentIndex((index + 1) % _tabWidget->count()) ;
+	}
 	else
 		// pass event to base class
 		this->QWidget::keyPressEvent(event) ;
 }
 
+QImageViewer& ViewStack::_currentViewer() const
+{
+	int index = _tabWidget->currentIndex() ;
+	if(index < 0 || _inspectors.size() <= size_t(index) || _inspectors[index] ==0)
+	{	throw std::runtime_error("No active Viewer instance available!") ;	}
+	
+	QString className = _tabWidget->currentWidget()->metaObject()->className() ;
+	if(className == "FImageViewer")
+	{
+		FImageViewer* fViewer = qobject_cast<FImageViewer*>(_tabWidget->currentWidget()) ;
+		if(!fViewer)
+		{	throw std::runtime_error("Unknown Tab Widget!") ;	}
+		return *(fViewer->imageViewer()) ;
+	}
+	else if(className == "QImageViewer")
+	{
+		QImageViewer* viewer = qobject_cast<QImageViewer*>(_tabWidget->currentWidget()) ;
+		if(!viewer)
+		{	throw std::runtime_error("Unknown Tab Widget!") ;	}
+		return *viewer ;
+	}
+	throw std::runtime_error("Unknown Tab Widget!") ;
+
+}
+
+void ViewStack::_saveCurrentView()
+{
+	static QString workingDir = QString() ;
+	int index = _tabWidget->currentIndex() ;
+	if(index < 0 || _inspectors.size() <= size_t(index) || _inspectors[index] ==0)
+	{	return ;	}
+	try
+	{	const QImageViewer& viewer = _currentViewer() ;
+		QString destination = QFileDialog::getSaveFileName(this, QString("Image Filename"),	workingDir) ;
+		if(destination.isEmpty())
+		{	return ;	}
+		QDir prevDir(destination) ;
+		if(prevDir.cdUp())
+		{	workingDir = prevDir.path() ;	}
+		if(!viewer.originalImage().save(destination))
+		{
+			QMessageBox::warning(this, QString("ViewStack::saveCurrentView()"),
+				QString("Could not save current view")) ;
+		}
+	}
+	catch(std::exception& err)
+	{
+		QMessageBox::warning(this, QString("ViewStack::saveCurrentView()"),
+			QString("Could not save current view: \n") + QString::fromStdString(err.what())) ;
+	}
+}
+
+void ViewStack::_centerAndResetZoom()
+{
+	try
+	{	QImageViewer& viewer = _currentViewer() ;
+		viewer.setZoomLevel(0) ;
+		viewer.centerOn(QPoint(viewer.originalWidth() / 2,viewer.originalHeight() / 2)) ;
+	}
+	catch(std::exception& err)
+	{
+		return ;
+	}
+}

@@ -28,16 +28,18 @@
 using namespace ArgosDisplay ;
 //using namespace vigraqt ;
 
-MainWindow::MainWindow() : _viewStack(0),
+MainWindow::MainWindow(const std::string& title) : _viewStack(0),
 	_updatePending(false)
 {
 	_viewStack = new ViewStack(this);
 	this->setCentralWidget(_viewStack);
-	this->setWindowTitle("ArgosDisplay");
+	this->setWindowTitle("ArgosDisplay : " + QString::fromStdString(title));
 	QObject::connect(
 			_viewStack, SIGNAL(exportStatusMessage(QString)),
 			this->statusBar(),SLOT(showMessage(QString)));
 	QObject::connect(this, SIGNAL(widgetAdded()), this, SLOT(_addDockWidgets()), Qt::QueuedConnection) ;
+
+	_createMenus() ;
 }
 
 MainWindow::~MainWindow()
@@ -47,6 +49,13 @@ MainWindow::~MainWindow()
 	{
 		_widgets[ii]->setParent(0) ;
 	}
+}
+
+void MainWindow::_createMenus()
+{
+	QMenuBar* menu = menuBar() ;
+	QMenu* viewMenu = menu->addMenu(QString("View")) ;
+	viewMenu->addActions(_viewStack->actions()) ;
 }
 
 ViewStack& MainWindow::viewStack()

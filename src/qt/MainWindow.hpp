@@ -27,6 +27,7 @@
 
 #include "charonwidgets.h"
 #include <QMainWindow>
+#include <string>
 
 namespace ArgosDisplay
 {
@@ -39,7 +40,7 @@ namespace ArgosDisplay
 
 	public:
 		/// standard constructor
-		MainWindow() ;
+		MainWindow(const std::string& title = std::string()) ;
 
 		/// standard destructor
 		~MainWindow() ;
@@ -50,6 +51,8 @@ namespace ArgosDisplay
 		void addDockWidget(QWidget* widget) ;
 
 	private:
+		void _createMenus() ;
+		
 		/// central Widget for image view management
 		ViewStack* _viewStack ;
 

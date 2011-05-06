@@ -28,6 +28,7 @@
 //#include <charon-core/ParameteredObject.hxx>
 #include <QWidget>
 #include "vigraqt/vigraqimage.hxx"
+#include "vigraqt/qimageviewer.hxx"
 #include <vigra/stdimage.hxx>
 #include <vigra/multi_array.hxx>
 #include <charon-utils/ArgosDisplay.h>
@@ -67,11 +68,24 @@ namespace ArgosDisplay {
 		virtual void keyPressEvent(QKeyEvent * event ) ;
 
 	private:
+
+		/// create all QActions
+		void _createActions() ;
+		
+		/// get reference to currently active viewer
+		QImageViewer& _currentViewer() const ;
+
 		/// image stack
 		QTabWidget* _tabWidget ;
 
 		/// switch the display of the current view between RGB and grayscale float
 		QAction* _switchColorModeAct ;
+
+		/// save current view as image file
+		QAction* _saveCurrentViewAct ;
+
+		/// move current view to center and reset zoom level
+		QAction* _centerAndResetZoomAct ;
 
 		/// objects to access pixel data
 		std::vector<AbstractPixelInspector*> _inspectors ;
@@ -84,13 +98,19 @@ namespace ArgosDisplay {
 
 	private slots:
 		/// handle mouse movement in ImageDisplays
-		void processMouseMovement(int x, int y) ;
+		void _processMouseMovement(int x, int y) ;
 
 		/// create tab widgets for each instance in _inspectors
-		void linkImages() ;
+		void _linkImages() ;
 
 		///switch the display of the current view between RGB and grayscale float
-		void switchColorMode() ;
+		void _switchColorMode() ;
+
+		/// save current view as image file
+		void _saveCurrentView() ;
+
+		/// move current view to center and reset zoom level
+		void _centerAndResetZoom() ;
 
 	signals:
 		/// export status messages as signal
