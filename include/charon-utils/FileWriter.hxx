@@ -25,6 +25,7 @@
 #define _FILEWRITER_HXX_
 
 #include "FileWriter.h"
+#include <string>
 
 template<typename T>
 FileWriter<T>::FileWriter(const std::string& name) :
@@ -32,6 +33,8 @@ FileWriter<T>::FileWriter(const std::string& name) :
 			"write image file from image using cimg") {
 	this->_addParameter(filename, "filename", "filename to write image to",
 			"filewrite");
+	this->_addParameter(exitOnError, "exitOnError",
+		"Should the plugin raise an exception and stop the workflow if an write error occurs?", true) ;
 	this->_addInputSlot(in, "in", "image input", "CImgList<T>");
 }
 
@@ -39,7 +42,17 @@ template<typename T>
 void FileWriter<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
-	in().save(filename().c_str());
+
+	try
+	{	in().save(filename().c_str());	}
+	catch(const cimg_library::CImgException& err)
+	{
+		std::string error = getClassName() + " instance \"" + getName() + "\" Could not write file\n\t" + err.what() + " \n";
+		if(exitOnError())
+		{	throw std::runtime_error(error) ;	}
+		else
+		{	sout << error << std::endl ;	}
+	}
 }
 
 #endif /* _FILEWRITER_HXX_ */

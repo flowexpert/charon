@@ -50,6 +50,9 @@ public:
     /// filename to write image to
     Parameter<std::string> filename;
 
+    ///should the plugin continue or throw an exception when an error occurs
+    Parameter<bool> exitOnError ;
+
     /// image data as input slot
     InputSlot<cimg_library::CImgList<T> > in;
 

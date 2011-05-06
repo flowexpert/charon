@@ -40,7 +40,11 @@ template <typename T>
 void FileReader<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
-	out().load(filename().c_str());
+	try
+	{	out().load(filename().c_str());	}
+	catch(const cimg_library::CImgException& err)
+	{	throw std::runtime_error(getClassName() + " instance \"" + getName() + "\" Could not read file\n\t" + err.what()) ;	}
+
 }
 
 #endif /* _FILEREADER_HXX_ */
