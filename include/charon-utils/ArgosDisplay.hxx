@@ -76,8 +76,7 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 		return ;
 	}
 
-	_mainWindow = new MainWindow(getName()) ;
-
+	_mainWindow = new MainWindow(this->getName());
 }
 
 template <typename T>
@@ -130,21 +129,25 @@ void ArgosDisplayPlugin<T>::execute() {
 	}
 
 	typename std::set<AbstractSlot<cimg_library::CImgList<T> >*>
-			::const_iterator cit = _cimgIn.begin() ;
+			::const_iterator cit;
 	typename std::set<AbstractSlot<cimg_library::CImgList<T> >*>
 			::const_iterator cend = _cimgIn.end() ;
 	
 	//register connected cimg images
-	for( ; cit != cend ; cit++)
-	{
-		std::string name = (*cit)->getParent().getName() + "." + (*cit)->getName() ;
+	for(cit = _cimgIn.begin(); cit != cend ; cit++) {
+		std::string name = (*cit)->getParent().getName() + "."
+				+ (*cit)->getName() ;
 		const OutputSlot<cimg_library::CImgList<T> >* temp =
 				reinterpret_cast<
 				const OutputSlot<cimg_library::CImgList<T> >*>(*cit);
-		if(!temp)
-			throw std::runtime_error(getClassName() + " : " + getName() + " : cast of cimg_library::CImgList failed! "
-				"In/Output slot \"" + name + "\" may be invalid!");
-		viewStack.linkImage(new CImgPixelInspector<T>(temp->operator ()(), name)) ;
+		if(!temp) {
+			throw std::runtime_error(
+					this->getClassName() + " : " + this->getName()
+						+ " : cast of cimg_library::CImgList failed! "
+					"In/Output slot \"" + name + "\" may be invalid!");
+		}
+		viewStack.linkImage(new CImgPixelInspector<T>(
+				temp->operator()(), name)) ;
 	}
 
 	viewStack.setCurrentIndex(index) ;
@@ -157,36 +160,39 @@ void ArgosDisplayPlugin<T>::execute() {
 
 AbstractPixelInspector::AbstractPixelInspector(
 		const std::string& name) :
-	name(name)
-{
+		name(name) {
 }
 
 template <typename T>
-VigraPixelInspector<T>::VigraPixelInspector (const vigra::MultiArrayView<5, T>& mArray, 
+VigraPixelInspector<T>::VigraPixelInspector (
+	const vigra::MultiArrayView<5, T>& mArray,
 	const std::string& name) :
-	AbstractPixelInspector(name),
-	_mArray(mArray)
+		AbstractPixelInspector(name),
+		_mArray(mArray)
 {
 }
 
 template <typename T>
 const std::vector<double>& VigraPixelInspector<T>::operator()(
 		int x, int y) const {
-	static int maxDimSize = 5 ; //don't return more values
-	static std::vector<double> result = std::vector<double>(maxDimSize, 0.0) ;
-	if(x < 0 || y < 0 || _mArray.size() == 0 || x >= _mArray.size(0) || y >= _mArray.size(1))
+	static size_t maxDimSize = 5 ; //don't return more values
+	static std::vector<double> result = std::vector<double>(maxDimSize, 0.0);
+	if(x < 0 || y < 0 || _mArray.size() == 0
+			|| x >= _mArray.size(0) || y >= _mArray.size(1))
 	{
-		result.clear() ;
-		return result ;
+		result.clear();
+		return result;
 	}
 
-	int width = _mArray.size(4) ;
-	if(result.size() != width)	
-	{	result.resize(width <= maxDimSize ? width : maxDimSize) ;	}
+	size_t width = _mArray.size(4);
+	if (result.size() != width) {
+		result.resize(width <= maxDimSize ? width : maxDimSize);
+	}
 	
-	for(int i = 0 ; i < _mArray.size(4) && i < maxDimSize ; i++)
-		result[i] = (double(_mArray(x,y,0,0,i))) ;
-	return result ;
+	for(size_t i = 0; i<(size_t)_mArray.size(4) && i<maxDimSize; i++) {
+		result[i] = (double(_mArray(x,y,0,0,i)));
+	}
+	return result;
 }
 
 template <typename T>
@@ -195,18 +201,21 @@ const vigra::QRGBImage VigraPixelInspector<T>::getRGBImage() const{
 	if(_mArray.size(4) >= 3) {
 		for (int xx = 0 ; xx < _mArray.size(0) ; ++xx) {
 			for (int yy = 0 ; yy < _mArray.size(1) ; ++yy) {
-				vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference pixel = img(xx,yy) ; 
-				pixel.red() = _mArray(xx,yy,0,0,0) ;
-				pixel.green() = _mArray(xx,yy,0,0,1) ;
-				pixel.blue() = _mArray(xx,yy,0,0,2) ;
+				vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference
+						pixel = img(xx,yy);
+				pixel.red() = _mArray(xx,yy,0,0,0);
+				pixel.green() = _mArray(xx,yy,0,0,1);
+				pixel.blue() = _mArray(xx,yy,0,0,2);
 			}
 		}
 	}
 	else {
 		for (int xx = 0 ; xx < _mArray.size(0) ; ++xx)
 			for (int yy = 0 ; yy < _mArray.size(1) ; ++yy) {
-				vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference pixel = img(xx,yy) ; 
-				pixel.red() = pixel.green() = pixel.blue() = _mArray(xx,yy,0,0,0) ;
+				vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference
+						pixel = img(xx,yy) ;
+				pixel.red() = pixel.green() = pixel.blue() =
+						_mArray(xx,yy,0,0,0) ;
 			}
 	}
 		return img ;
@@ -240,21 +249,23 @@ CImgPixelInspector<T>::CImgPixelInspector (
 template <typename T>
 const std::vector<double>& CImgPixelInspector<T>::operator()(
 		int x, int y) const {
-	static int maxDimSize = 5 ; //don't return more values
-	static std::vector<double> result = std::vector<double>(maxDimSize, 0.0) ;
+	static size_t maxDimSize = 5 ; //don't return more values
+	static std::vector<double> result = std::vector<double>(maxDimSize, 0.0);
 	
-	if(
-			x < 0 || y < 0 || _mArray.size() == 0 ||
+	if(x < 0 || y < 0 || _mArray.size() == 0 ||
 			x >= _mArray(0).width() || y >= _mArray(0).height())
 	{
-		result.clear() ;
-		return result ;
+		result.clear();
+		return result;
 	}	
-	int width = _mArray.width() ;
-	if(result.size() != width)	
-	{	result.resize(width <= maxDimSize ? width : maxDimSize) ;	}
-	for(int i = 0 ; i < _mArray.width() && i < maxDimSize ; i++)
-		result[i] = (double(_mArray(i,x,y,0,0))) ;
+	size_t width = _mArray.width();
+	if (result.size() != width)
+	{
+		result.resize(width <= maxDimSize ? width : maxDimSize);
+	}
+	for (size_t i = 0; i<(size_t)_mArray.width() && i<maxDimSize; i++) {
+		result[i] = (double(_mArray(i,x,y,0,0)));
+	}
 	return result ;
 
 }

@@ -47,11 +47,15 @@ void FileWriter<T>::execute() {
 	{	in().save(filename().c_str());	}
 	catch(const cimg_library::CImgException& err)
 	{
-		std::string error = getClassName() + " instance \"" + getName() + "\" Could not write file\n\t" + err.what() + " \n";
-		if(exitOnError())
-		{	throw std::runtime_error(error) ;	}
-		else
-		{	sout << error << std::endl ;	}
+		std::string error = this->getClassName() + " instance \""
+			+ this->getName() + "\" Could not write file\n\t"
+			+ err.what() + " \n";
+		if (exitOnError()) {
+			throw std::runtime_error(error);
+		}
+		else {
+			sout << error << std::endl;
+		}
 	}
 }
 

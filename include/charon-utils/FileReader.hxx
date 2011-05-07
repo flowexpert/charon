@@ -41,9 +41,15 @@ void FileReader<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 	try
-	{	out().load(filename().c_str());	}
+	{
+		out().load(filename().c_str());
+	}
 	catch(const cimg_library::CImgException& err)
-	{	throw std::runtime_error(getClassName() + " instance \"" + getName() + "\" Could not read file\n\t" + err.what()) ;	}
+	{
+		throw std::runtime_error(
+			this->getClassName() + " instance \"" +
+			this->getName() + "\" Could not read file\n\t" + err.what());
+	}
 
 }
 
