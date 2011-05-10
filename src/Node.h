@@ -87,7 +87,7 @@ public:
 	bool isSelectedNode();
 
 private:
-	/// cecks the node width in reference to the node name
+        /// checks the node width in reference to the node name
 	void _checkWidth(int nChars=0);
 
 	/// list of nodeproperties
