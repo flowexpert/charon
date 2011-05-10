@@ -1,5 +1,5 @@
 interpolator.type		interpolatorlinear
-interpolator.out		helper.interpolator;warper.interpolator
+interpolator.out		warper.interpolator
 diff2.type		diff2d
 bm.type		brightnessmodels_constant
 bm.this		dataterm.brightnessmodel
@@ -13,7 +13,6 @@ mm.dt		diff2.dt
 diff2.dt		mm.dt
 helper.type		iteratorhelper
 helper.in		read.out
-helper.interpolator		interpolator.out
 helper.self		iterator.helper
 helper.flow		pyramid.flowin
 helper.sequence		pyramid.seqin
@@ -100,3 +99,25 @@ median.in		solver.out
 median.out		tohsv.flow;quiv.flow;iter2.flow
 median.windowradius		4
 iterator.accumulate		0
+readgt.editorinfo		219.255 730.128
+spatialterm.editorinfo		1795.55 355.483
+helper.editorinfo		399.162 358.44
+interpolator.editorinfo		937.054 689.022
+tohsv.editorinfo		2694.75 177.404
+solver.editorinfo		1450.09 615.297
+quiv2.editorinfo		2880.21 33.3877
+read.editorinfo		128.894 506.496
+iter2.editorinfo		2630.69 448.37
+dataterm.editorinfo		1926.56 -92.8637
+warper.editorinfo		1242.8 580.151
+quiv.editorinfo		2896.84 222.165
+median.editorinfo		2427.8 293.609
+helper2.editorinfo		953.667 413.178
+pyramidgt.editorinfo		638.253 641.955
+bm.editorinfo		1563 126.636
+diff2.editorinfo		1434.54 -111.036
+iterator.editorinfo		2846.1 560.128
+hsv2.editorinfo		2652.85 -55.1455
+analyzer.editorinfo		3066.73 695.611
+mm.editorinfo		1644.42 -165.844
+pyramid.editorinfo		664.505 273.946

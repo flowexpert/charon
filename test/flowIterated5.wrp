@@ -1,5 +1,5 @@
 interpolator.type		interpolatorlinear
-interpolator.out		helper.interpolator;relaxinghelper.interpolator;warp.interpolator
+interpolator.out		warp.interpolator
 diff2.type		diff2d
 bm.type		brightnessmodels_constant
 bm.this		data_hs.brightnessmodel
@@ -13,7 +13,6 @@ mm.dt		diff2.dt
 diff2.dt		mm.dt;data_pb.it
 helper.type		iteratorhelper
 helper.in		relaxinghelper.sequence
-helper.interpolator		interpolator.out
 helper.self		iterator.helper
 helper.flow		spatial_pb.flowguess;spatialterm_hs.flowguess;warp.flowinput;data_pb.flowGuess
 helper.sequence		warp.seqInput
@@ -35,7 +34,6 @@ relaxator.type		relaxingiterator
 relaxator.flow		iterator.result
 relaxator.result		analyzer.result
 relaxinghelper.type		iteratorhelper
-relaxinghelper.interpolator		interpolator.out
 relaxinghelper.in		read.out
 relaxinghelper.sequence		helper.in
 relaxator.helper		relaxinghelper.self
@@ -98,3 +96,23 @@ data_pb.flowguess		helper.flow
 psi_spatial.epsilon		0.002
 psi_data.epsilon		5
 psi_data.lambda		2
+helper.editorinfo		-287.407 274.583
+psi_spatial.editorinfo		863.133 748.357
+size.editorinfo		1296.75 287.708
+interpolator.editorinfo		-207.814 191.288
+solver.editorinfo		1483.82 261.795
+spatial_pb.editorinfo		1046.25 714.551
+read.editorinfo		-694.06 232.915
+relaxinghelper.editorinfo		-487.494 223.655
+read_flow.editorinfo		1941.37 834.847
+bm.editorinfo		666.402 138.871
+psi_data.editorinfo		688.239 932.2
+relaxator.editorinfo		1883.23 586.43
+diff2.editorinfo		226.223 523.122
+iterator.editorinfo		1686.65 446.486
+data_hs.editorinfo		1035.1 337.273
+spatialterm_hs.editorinfo		1031.02 189.93
+warp.editorinfo		13.3411 452.025
+data_pb.editorinfo		1039.15 908.474
+analyzer.editorinfo		2111.24 750.025
+mm.editorinfo		651.548 292.086

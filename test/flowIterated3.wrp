@@ -1,5 +1,5 @@
 interpolator.type		interpolatorlinear
-interpolator.out		helper.interpolator;relaxinghelper.interpolator;warper.interpolator
+interpolator.out		warper.interpolator
 diff2.type		diff2d
 bm.type		brightnessmodels_constant
 bm.this		dataterm_hs.brightnessmodel
@@ -13,7 +13,6 @@ mm.dt		diff2.dt
 diff2.dt		mm.dt;dataterm_learned.it
 helper.type		iteratorhelper
 helper.in		relaxinghelper.sequence
-helper.interpolator		interpolator.out
 helper.self		iterator.helper
 helper.flow		spatialterm_hs.flowguess;warper.flowInput
 helper.sequence		warper.seqInput
@@ -49,7 +48,6 @@ relaxator.type		relaxingiterator
 relaxator.flow		iterator.result
 relaxator.result		analyzer.result
 relaxinghelper.type		iteratorhelper
-relaxinghelper.interpolator		interpolator.out
 relaxinghelper.in		seqcrop.out
 relaxinghelper.sequence		helper.in
 relaxator.helper		relaxinghelper.self

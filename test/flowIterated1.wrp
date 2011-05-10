@@ -1,7 +1,7 @@
 seqgen.type		sequencegenerator
 seqgen.sequence		helper.in
 interpolator.type		interpolatorlinear
-interpolator.out		helper.interpolator;warper.interpolator
+interpolator.out		warper.interpolator
 diff2.type		diff2d
 bm.type		brightnessmodels_constant
 bm.this		dataterm.brightnessmodel
@@ -22,7 +22,6 @@ seqgen.flow		analyzer.groundtruth
 seqgen.size		32;32;1;2
 helper.type		iteratorhelper
 helper.in		seqgen.sequence
-helper.interpolator		interpolator.out
 helper.self		iterator.helper
 helper.flow		spatialterm.flowguess;warper.flowInput
 helper.sequence		warper.seqInput
