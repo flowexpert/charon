@@ -74,7 +74,7 @@ void ConnectionLine::setLineColor(const QColor &newColor){
 }
 
 void ConnectionLine::paint(
-                QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
+		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
 
 
     painter->setBrush(Qt::black);
@@ -87,14 +87,14 @@ void ConnectionLine::paint(
      
     QPen p(_lColor,2);
 
-        if (_startProp == 0 || _endProp == 0) {
-                p.setBrush(Qt::gray);
-                p.setWidth(2);
-                p.setStyle(Qt::DashLine);
-        }
-        painter->setPen(p);
-        painter->setOpacity(1);
-        painter->drawPath(path);
+	if (_startProp == 0 || _endProp == 0) {
+			p.setBrush(Qt::gray);
+			p.setWidth(2);
+			p.setStyle(Qt::DashLine);
+	}
+	painter->setPen(p);
+	painter->setOpacity(1);
+	painter->drawPath(path);
 }
 
 NodeProperty *ConnectionLine::getEndProp() const{
@@ -120,4 +120,3 @@ void ConnectionLine::moveStartPoint(qreal dx,qreal dy) {
 void ConnectionLine::moveEndPoint(qreal dx,qreal dy) {
 	_endPoint += QPointF(dx,dy);
 }
-

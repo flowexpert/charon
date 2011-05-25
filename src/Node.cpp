@@ -96,10 +96,8 @@ void Node::changedColorConnectedLine(bool selected, QColor lineColor){
 			else{
 				connectedLine->setLineColor(lineColor);
 			}
-			
 		}
 	}
-
 }
 
 void Node::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {

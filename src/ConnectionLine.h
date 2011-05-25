@@ -69,8 +69,8 @@ public:
 
 	/// paints the line
 	void paint(
-                        QPainter *painter, const QStyleOptionGraphicsItem *option,
-                        QWidget *widget = 0);
+			QPainter *painter, const QStyleOptionGraphicsItem *option,
+			QWidget *widget = 0);
 
 	/// get property at end of line
 	/// @return   property at end of line
