@@ -162,6 +162,43 @@ void WindowsPluginLoader::load() throw (PluginException) {
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 #endif
 	}
+
+	getBuildType  = (ParameteredObject::build_type(*)())
+				GetProcAddress(hInstLibrary,"getBuildType");
+	if (!getBuildType) {
+#ifdef MSVC
+		std::string errorMsg;
+		if (GetLastError() == ERROR_PROC_NOT_FOUND) {
+			errorMsg += "This Plugin is missing the \"getBuildType\" function. No checks if it runtime libraries are compatible are perfomed";
+		}
+#endif
+	}
+	else
+	{
+		if(getBuildType() == ParameteredObject::DEBUG_BUILD)
+		{
+#ifndef _DEBUG
+		FreeLibrary(hInstLibrary);
+		hInstLibrary = NULL;
+		throw PluginException(
+			"The Plugin \"" + pluginName + "\" is build in DEBUG configuration while charon-core is in RELEASE Mode.\n"
+			"Plugin will not be used as runtime libraries are incompatible",
+			pluginName, PluginException::INCOMPATIBLE_BUILD_TYPE) ;
+#endif 
+		}
+		else if(getBuildType() == ParameteredObject::RELEASE_BUILD)
+		{
+#ifdef _DEBUG
+		FreeLibrary(hInstLibrary);
+		hInstLibrary = NULL;
+		throw PluginException(
+			"The Plugin \"" + pluginName + "\" is build in RELEASE configuration while charon-core is in DEBUG Mode.\n"
+			"Plugin will not be used as runtime libraries are incompatible",
+			pluginName, PluginException::INCOMPATIBLE_BUILD_TYPE) ;
+
+#endif
+		}
+	}
 }
 
 void WindowsPluginLoader::compileAndLoad(

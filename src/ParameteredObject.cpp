@@ -489,3 +489,10 @@ std::string ParameteredObject::templateTypeToString(template_type t) {
 		return ParameteredObject::TYPE_DOUBLE;
 	}
 }
+
+/*
+ParameteredObject::build_type ParameteredObject::getBuildType() const
+{
+	return ParameteredObject::UNDEFINED_BUILD ;
+}
+*/

@@ -54,6 +54,11 @@ protected:
 	void (*destroy)(ParameteredObject *);
 
 	/**
+	 * Function pointer to the getBuildType function of the plugin
+	  */
+	ParameteredObject::build_type (*getBuildType)() ;
+
+	/**
 	 * Tries to locate the Paths.config file at different locations. Returns
 	 * an empty string if the file could not be found.
 	 * @return Path to the Paths.config file
@@ -128,6 +133,11 @@ public:
 		 * Compiling a plugin failed.
 		 */
 		static const error_code COMPILE_ERROR = 7;
+
+		/**
+		 * Plugin was linked against incompatible runtime library
+		 */
+		static const error_code INCOMPATIBLE_BUILD_TYPE = 8 ;
 
 		/**
 		 * Other reason

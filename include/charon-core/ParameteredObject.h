@@ -85,6 +85,10 @@ class DLLEX ParameteredObject {
 	template<typename T>
 	friend class TemplatedParameteredObject;
 
+public:
+	/// defined build type, see static members for options
+	typedef unsigned short int build_type ;
+
 private:
 	/// Count number of parametered objects with different class names.
 	static std::map<std::string, unsigned int> _genericClassNameCount;
@@ -314,6 +318,20 @@ public:
 
 	/// The template type of the instance is integer
 	static const template_type TYPE_INT = 2;
+
+	/// The build type was not defined explicitly, make no assumptions about the release/debug configuration
+	static const build_type UNDEFINED_BUILD = 0 ;
+
+	/// the object was compiled in debug mode
+	static const build_type DEBUG_BUILD = 1 ;
+
+	/// the object was compiled in release mode
+	static const build_type RELEASE_BUILD = 2 ;
+
+	/// get the build type of this object
+	/** \returns            build_type defaults to UNDEFINED_BUILD
+	 */
+	//virtual build_type getBuildType() const ;
 
 	/// Converts template_type to std::string
 	/** \param t            template type to convert
