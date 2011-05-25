@@ -83,12 +83,19 @@ public:
 			const QStyleOptionGraphicsItem* option,
 			QWidget* widget = 0);
 
-        // return the list of connectionlines (my implementation)
-        QList<ConnectionLine*> getConnectionLine();
+	/// return the list of connectionlines (my implementation)
+	QList<ConnectionLine*> getConnectionLine();
+
+	/// change color all connected line of hovering property 
+	/// isHover set to true when the property was hovered
+	void changeColorHoverProperty(QColor lineColor, bool isHover=true);
 
 protected:
 	/// update tool tip
 	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
+
+	/// clear color of connected line when leave hoverevent
+	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
 	/// number of property
@@ -104,7 +111,7 @@ private:
 	bool _isInput;
 
 	/// pointer to parent node
-        Node* _node;
+	Node* _node;
 
 	/// link to parameter file
 	const ParameterFileModel* _pFile;

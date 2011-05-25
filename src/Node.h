@@ -21,7 +21,6 @@ class ConnectionLine;
 
 /// QGraphicsItem that contains nodeproperties and draws the node
 class Node : public QGraphicsItem {
-
 public:
 	/// default constructor
 	/** \param title    name of the node

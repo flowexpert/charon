@@ -33,6 +33,7 @@ class Node;
 
 /// Line that connects two slots of two different nodes
 class ConnectionLine : public QGraphicsItem {
+	/// create color property for read and write color
 	Q_PROPERTY(QColor lineColor READ lineColor WRITE setLineColor)
 
 public:
@@ -109,9 +110,6 @@ private:
 
 	/// point where line ends
 	QPointF _endPoint;
-
-    /// Point to parent node
-   //Node* _node;
 
 	/// property where line starts
 	NodeProperty *_startProp;

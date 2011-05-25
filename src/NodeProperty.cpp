@@ -116,10 +116,36 @@ void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent* ev) {
 	setToolTip(QString(
 			"<p style='white-space:pre'><b>Slot: <i>%1</i><br>"
 			"Type:</b><br>%2</p>").arg(_name).arg(getType()));
+	
+	changeColorHoverProperty(Qt::green);
 	QGraphicsItem::hoverEnterEvent(ev);
+}	
+
+void NodeProperty::hoverLeaveEvent(QGraphicsSceneHoverEvent* event){
+	changeColorHoverProperty(Qt::black, false);
+	QGraphicsItem::hoverLeaveEvent(event);
 }
 
-
+void NodeProperty::changeColorHoverProperty(QColor lineColor, bool isHover){
+	QListIterator<ConnectionLine *> cl(getConnectionLine());
+	while(cl.hasNext()){
+		ConnectionLine* connectedLine;
+		connectedLine = cl.next();
+		if(isHover){
+			connectedLine->setLineColor(lineColor);
+		}
+		else{
+			if(connectedLine->getStartProp()->_node->isSelectedNode() || 
+				connectedLine->getEndProp()->_node->isSelectedNode() ){
+				
+				connectedLine->setLineColor(Qt::blue);
+			}
+			else{
+				connectedLine->setLineColor(lineColor);
+			}
+		}
+	}
+}
 
 QColor NodeProperty::_getSocketColor(QString tName) {
 	if (tName.contains("cimg",Qt::CaseInsensitive)) {

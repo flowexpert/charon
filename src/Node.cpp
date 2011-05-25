@@ -89,12 +89,14 @@ void Node::changedColorConnectedLine(bool selected, QColor lineColor){
 		while(j.hasNext()){
 			ConnectionLine* connectedLine;
 			connectedLine = j.next();
+		
 			if(selected){
 				connectedLine->setLineColor(lineColor);
 			}
 			else{
 				connectedLine->setLineColor(lineColor);
 			}
+			
 		}
 	}
 
