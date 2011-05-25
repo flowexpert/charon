@@ -91,7 +91,7 @@ public:
     bool isSelectedNode();
 
     /// change color of connected line
-	void changedColorConnectedLine(bool selected);
+	void changedColorConnectedLine(bool selected, QColor lineColor);
 
 private:
         /// checks the node width in reference to the node name

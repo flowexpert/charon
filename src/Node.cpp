@@ -69,10 +69,10 @@ QRectF Node::boundingRect() const {
 void Node::setSelectedNode(bool s) {
 	_selectedNode = s;
 	if(_selectedNode){
-		changedColorConnectedLine(true);
+		changedColorConnectedLine(true, Qt::blue);
 	}
 	else{
-		changedColorConnectedLine(false);
+		changedColorConnectedLine(false, Qt::black);
 	}
 }
 
@@ -80,7 +80,7 @@ bool Node::isSelectedNode() {
 	return _selectedNode;
 }
 
-void Node::changedColorConnectedLine(bool selected){
+void Node::changedColorConnectedLine(bool selected, QColor lineColor){
 	QMapIterator<QString,NodeProperty*> i(_properties);
 	NodeProperty* getProperties;
 	while(i.hasNext()){
@@ -90,10 +90,10 @@ void Node::changedColorConnectedLine(bool selected){
 			ConnectionLine* connectedLine;
 			connectedLine = j.next();
 			if(selected){
-				connectedLine->setLineColor(Qt::blue);
+				connectedLine->setLineColor(lineColor);
 			}
 			else{
-				connectedLine->setLineColor(Qt::black);
+				connectedLine->setLineColor(lineColor);
 			}
 		}
 	}
