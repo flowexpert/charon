@@ -27,10 +27,14 @@
 #include <QGraphicsItem>
 #include <QPointF>
 
+
 class NodeProperty;
+class Node;
 
 /// Line that connects two slots of two different nodes
 class ConnectionLine : public QGraphicsItem {
+	Q_PROPERTY(QColor lineColor READ lineColor WRITE setLineColor)
+
 public:
 	/// Default constructor
 	/// @param scene parent scene to use
@@ -64,8 +68,8 @@ public:
 
 	/// paints the line
 	void paint(
-			QPainter *painter, const QStyleOptionGraphicsItem *option,
-			QWidget *widget = 0);
+                        QPainter *painter, const QStyleOptionGraphicsItem *option,
+                        QWidget *widget = 0);
 
 	/// get property at end of line
 	/// @return   property at end of line
@@ -92,6 +96,13 @@ public:
 	/// @param dx    x coordinate of movement vector
 	/// @param dy    y coordinate of movement vector
 	void moveEndPoint(qreal dx,qreal dy);
+
+    /// set color connected line
+	void setLineColor(const QColor &newColor);
+
+	/// return line color
+	QColor lineColor() const;
+
 private:
 	/// point where line starts
 	QPointF _startPoint;
@@ -99,11 +110,18 @@ private:
 	/// point where line ends
 	QPointF _endPoint;
 
+    /// Point to parent node
+   //Node* _node;
+
 	/// property where line starts
 	NodeProperty *_startProp;
 
 	/// property where line ends
 	NodeProperty *_endProp;
+
+	///store color
+	QColor _lColor;
+
 };
 
 #endif /* CONNECTIONLINE_H_ */

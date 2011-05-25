@@ -45,6 +45,7 @@ NodeHandler::NodeHandler(QObject* pp) :
 	connect(_model, SIGNAL(graphChanged()), this, SLOT(loadFromModel()));
 	connect(_model, SIGNAL(prefixChanged(QString)),
 			this, SLOT(selectNode(QString)));
+
 }
 
 NodeHandler::~NodeHandler()
@@ -75,33 +76,35 @@ void NodeHandler::selectNode(QString name) {
 	update();
 }
 
-void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
-	QGraphicsScene::mousePressEvent(ev);
 
-	QGraphicsItem* itm = itemAt(ev->scenePos());
-	if (!itm) {
-		return;
-	}
-	Node* np = dynamic_cast<Node*>(itm);
-	if (!np) {
-		np = dynamic_cast<Node*>(itm->parentItem());
-	}
-	if (np) {
-		_model->setPrefix(np->getInstanceName());
-	}
-	NodeProperty* prop = dynamic_cast<NodeProperty*>(itm);
-	if (prop != 0) {
-		_startProp = prop;
-		delete _cline ; _cline = 0 ;
-		_cline = new ConnectionLine(this);
-		QPointF sckPos(prop->pos()+prop->getSocketCenter());
-		QPointF curPos(ev->scenePos().x(),ev->scenePos().y());
-		const bool isIn = prop->isInput();
-		_cline->setStartPoint(isIn ? curPos : sckPos);
-		_cline->setEndPoint  (isIn ? sckPos : curPos);
-		_addLine = true;
-		update(_cline->boundingRect());
-	}
+void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
+        QGraphicsScene::mousePressEvent(ev);
+
+        QGraphicsItem* itm = itemAt(ev->scenePos());
+        if (!itm) {
+                return;
+        }
+        Node* np = dynamic_cast<Node*>(itm);
+        if (!np) {
+                np = dynamic_cast<Node*>(itm->parentItem());
+        }
+        if (np) {
+                _model->setPrefix(np->getInstanceName());
+        }
+        NodeProperty* prop = dynamic_cast<NodeProperty*>(itm);
+        if (prop != 0) {
+                _startProp = prop;
+                delete _cline ; _cline = 0 ;
+                _cline = new ConnectionLine(this);
+                QPointF sckPos(prop->pos()+prop->getSocketCenter());
+                QPointF curPos(ev->scenePos().x(),ev->scenePos().y());
+                const bool isIn = prop->isInput();
+                _cline->setStartPoint(isIn ? curPos : sckPos);
+                _cline->setEndPoint  (isIn ? sckPos : curPos);
+                _addLine = true;
+                update(_cline->boundingRect());
+
+        }
 }
 
 void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {

@@ -103,6 +103,7 @@ void NodeProperty::paint(
 	painter->drawEllipse(_getSocketRect());
 }
 
+
 QString NodeProperty::getFullName() const {
 	return _node->getInstanceName() + "." + _name;
 }
@@ -117,6 +118,8 @@ void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent* ev) {
 			"Type:</b><br>%2</p>").arg(_name).arg(getType()));
 	QGraphicsItem::hoverEnterEvent(ev);
 }
+
+
 
 QColor NodeProperty::_getSocketColor(QString tName) {
 	if (tName.contains("cimg",Qt::CaseInsensitive)) {
@@ -134,4 +137,8 @@ QColor NodeProperty::_getSocketColor(QString tName) {
 	// add more color presets here
 
 	return Qt::gray;
+}
+
+QList<ConnectionLine*> NodeProperty::getConnectionLine(){
+    return _connectionList;
 }

@@ -83,6 +83,9 @@ public:
 			const QStyleOptionGraphicsItem* option,
 			QWidget* widget = 0);
 
+        // return the list of connectionlines (my implementation)
+        QList<ConnectionLine*> getConnectionLine();
+
 protected:
 	/// update tool tip
 	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
@@ -101,7 +104,7 @@ private:
 	bool _isInput;
 
 	/// pointer to parent node
-	Node* _node;
+        Node* _node;
 
 	/// link to parameter file
 	const ParameterFileModel* _pFile;

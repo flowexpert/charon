@@ -26,6 +26,7 @@
 #include <QBrush>
 #include <QRect>
 #include "NodeProperty.h"
+#include "Node.h"
 
 ConnectionLine::ConnectionLine(QGraphicsScene* sc) :
 		QGraphicsItem(0,sc),
@@ -34,6 +35,7 @@ ConnectionLine::ConnectionLine(QGraphicsScene* sc) :
 {
 	setZValue(-1);
 	setZValue(-1);
+	_lColor = Qt::black;
 }
 
 QRectF ConnectionLine::boundingRect() const {
@@ -63,25 +65,36 @@ void ConnectionLine::setEndPoint(QPointF p) {
 	_endPoint = p;
 }
 
+QColor ConnectionLine::lineColor() const{
+	 return _lColor;
+}
+
+void ConnectionLine::setLineColor(const QColor &newColor){
+	 _lColor = newColor;
+}
+
 void ConnectionLine::paint(
-		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
-	painter->setBrush(Qt::black);
+                QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
+
+
+    painter->setBrush(Qt::black);
 	QPainterPath path;
-	path.moveTo(_startPoint);
+    path.moveTo(_startPoint);
 	QPointF c0((_startPoint.x()+50),_startPoint.y());
 	QPointF c1(_endPoint.x()-50,_endPoint.y());
 	path.cubicTo(c0,c1,_endPoint);
 	painter->setBrush(Qt::NoBrush);
+     
+    QPen p(_lColor,2);
 
-	QPen p(Qt::black,2);
-	if (_startProp == 0 || _endProp == 0) {
-		p.setBrush(Qt::gray);
-		p.setWidth(2);
-		p.setStyle(Qt::DashLine);
-	}
-	painter->setPen(p);
-	painter->setOpacity(1);
-	painter->drawPath(path);
+        if (_startProp == 0 || _endProp == 0) {
+                p.setBrush(Qt::gray);
+                p.setWidth(2);
+                p.setStyle(Qt::DashLine);
+        }
+        painter->setPen(p);
+        painter->setOpacity(1);
+        painter->drawPath(path);
 }
 
 NodeProperty *ConnectionLine::getEndProp() const{
@@ -107,3 +120,4 @@ void ConnectionLine::moveStartPoint(qreal dx,qreal dy) {
 void ConnectionLine::moveEndPoint(qreal dx,qreal dy) {
 	_endPoint += QPointF(dx,dy);
 }
+

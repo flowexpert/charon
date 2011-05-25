@@ -13,11 +13,15 @@
 #include <QGraphicsSceneWheelEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QVector>
+#include <QMouseEvent>
 #include "NodeProperty.h"
 
 
+class ConnectionLine;
+
 /// QGraphicsItem that contains nodeproperties and draws the node
 class Node : public QGraphicsItem {
+
 public:
 	/// default constructor
 	/** \param title    name of the node
@@ -33,7 +37,7 @@ public:
 	QRectF boundingRect() const;
 
 	/// handles mouse press events
-	void mousePressEvent(QGraphicsSceneMouseEvent* event);
+        //void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 	/// handles mouse move events
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -84,7 +88,10 @@ public:
 
 	/// state of node selections
 	/// @return state of node selection
-	bool isSelectedNode();
+    bool isSelectedNode();
+
+    /// change color of connected line
+	void changedColorConnectedLine(bool selected);
 
 private:
         /// checks the node width in reference to the node name
@@ -119,6 +126,9 @@ private:
 
 	/// link to parameter file
 	const ParameterFileModel* _pFile;
+
+
+
 };
 
 #endif /* NODE_H_ */
