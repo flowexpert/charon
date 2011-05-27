@@ -73,8 +73,6 @@ public slots:
 	/// select some node
 	void selectNode(QString name);
 
-
-
 protected:
 	/** \name drag/drop handling
 	 *  Accepts drag events with mime data as they are set by
@@ -89,7 +87,7 @@ protected:
 	// \}
 
 	/// handles mouse press events
-        virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+	virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 	/// handles key release events
 	/// del -  deletes the selected node
@@ -124,12 +122,9 @@ private:
 	/// map for node lookup
 	QMap<QString,Node*> _nodeMap;
 
-
 signals:
 	/// message to display on status bar
-	void statusMessage(QString msg, int timeout) ;
-
-
+	void statusMessage(QString msg, int timeout);
 };
 
 #endif /* NODEHANDLER_H_ */

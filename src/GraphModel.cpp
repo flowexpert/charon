@@ -532,9 +532,10 @@ QString GraphModel::addNode(QString className, bool draw) {
 				QLineEdit::Normal, newName, &ok);
 		if(!ok)
 			return "";
-		if(ok = nodeValid(newName))
+		if( (ok = nodeValid(newName)) ) {
 			info = tr("This name is already in use.\n"
 					  "Please use another name.\n");
+		}
 		if(newName.contains(QRegExp("[\\s\\.]")))
 		{	
 			ok = true ;

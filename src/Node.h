@@ -16,9 +16,6 @@
 #include <QMouseEvent>
 #include "NodeProperty.h"
 
-
-class ConnectionLine;
-
 /// QGraphicsItem that contains nodeproperties and draws the node
 class Node : public QGraphicsItem {
 public:
@@ -34,9 +31,6 @@ public:
 
 	/// area where node is clickable
 	QRectF boundingRect() const;
-
-	/// handles mouse press events
-        //void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 	/// handles mouse move events
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -87,13 +81,13 @@ public:
 
 	/// state of node selections
 	/// @return state of node selection
-    bool isSelectedNode();
+	bool isSelectedNode();
 
-    /// change color of connected line
-	void changedColorConnectedLine(bool selected, QColor lineColor);
+	/// change color of connected line
+	void changeConnectionLineColor(QColor lineColor);
 
 private:
-        /// checks the node width in reference to the node name
+		/// checks the node width in reference to the node name
 	void _checkWidth(int nChars=0);
 
 	/// list of nodeproperties

@@ -13,7 +13,6 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QBrush>
-#include "ConnectionLine.h"
 
 unsigned int Node::_idCount = 0;
 
@@ -50,29 +49,25 @@ QString Node::getInstanceName() {
 }
 
 void Node::addProperty(QString name, bool input) {
-        NodeProperty* prop = new NodeProperty(
-                        this,name,_nProps,input,_pFile);
-        _height += 25;
-        _properties.insert(name.toLower(),prop);
-        _nProps++;
-        _checkWidth(name.size());
+		NodeProperty* prop = new NodeProperty(
+						this,name,_nProps,input,_pFile);
+		_height += 25;
+		_properties.insert(name.toLower(),prop);
+		_nProps++;
+		_checkWidth(name.size());
 }
 
 QRectF Node::boundingRect() const {
 	return QRectF(0,0,_width,_height);
 }
-/*void Node::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
-	QGraphicsItem::mousePressEvent(ev);
-	update();
-}*/
 
 void Node::setSelectedNode(bool s) {
 	_selectedNode = s;
 	if(_selectedNode){
-		changedColorConnectedLine(true, Qt::blue);
+		changeConnectionLineColor(Qt::blue);
 	}
 	else{
-		changedColorConnectedLine(false, Qt::black);
+		changeConnectionLineColor(Qt::black);
 	}
 }
 
@@ -80,23 +75,12 @@ bool Node::isSelectedNode() {
 	return _selectedNode;
 }
 
-void Node::changedColorConnectedLine(bool selected, QColor lineColor){
+void Node::changeConnectionLineColor(QColor lineColor){
 	QMapIterator<QString,NodeProperty*> i(_properties);
-	NodeProperty* getProperties;
+	NodeProperty* curProp;
 	while(i.hasNext()){
-		getProperties = i.next().value();
-		QListIterator<ConnectionLine *> j(getProperties->getConnectionLine());
-		while(j.hasNext()){
-			ConnectionLine* connectedLine;
-			connectedLine = j.next();
-		
-			if(selected){
-				connectedLine->setLineColor(lineColor);
-			}
-			else{
-				connectedLine->setLineColor(lineColor);
-			}
-		}
+		curProp = i.next().value();
+		curProp->changeConnectionLineColor(lineColor,false);
 	}
 }
 
@@ -143,7 +127,7 @@ void Node::paint(
 	painter->drawRoundedRect(0,0,_width,22,10,10);
 	painter->drawRoundedRect(0,_height-22,_width,22,10,10);
 	painter->setPen(_selectedNode ? Qt::white : Qt::black);
-        painter->setPen(Qt::black);
+		painter->setPen(Qt::black);
 
 	QFont f = painter->font();
 	f.setPixelSize(15);

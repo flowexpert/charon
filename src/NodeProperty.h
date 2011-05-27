@@ -83,12 +83,9 @@ public:
 			const QStyleOptionGraphicsItem* option,
 			QWidget* widget = 0);
 
-	/// return the list of connectionlines (my implementation)
-	QList<ConnectionLine*> getConnectionLine();
-
 	/// change color all connected line of hovering property 
 	/// isHover set to true when the property was hovered
-	void changeColorHoverProperty(QColor lineColor, bool isHover=true);
+	void changeConnectionLineColor(QColor lineColor, bool isHover=true);
 
 protected:
 	/// update tool tip

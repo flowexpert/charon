@@ -77,15 +77,15 @@ void ConnectionLine::paint(
 		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
 
 
-    painter->setBrush(Qt::black);
+	painter->setBrush(Qt::black);
 	QPainterPath path;
-    path.moveTo(_startPoint);
+	path.moveTo(_startPoint);
 	QPointF c0((_startPoint.x()+50),_startPoint.y());
 	QPointF c1(_endPoint.x()-50,_endPoint.y());
 	path.cubicTo(c0,c1,_endPoint);
 	painter->setBrush(Qt::NoBrush);
-     
-    QPen p(_lColor,2);
+
+	QPen p(_lColor,2);
 
 	if (_startProp == 0 || _endProp == 0) {
 			p.setBrush(Qt::gray);

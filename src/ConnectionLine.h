@@ -98,7 +98,7 @@ public:
 	/// @param dy    y coordinate of movement vector
 	void moveEndPoint(qreal dx,qreal dy);
 
-    /// set color connected line
+	/// set color connected line
 	void setLineColor(const QColor &newColor);
 
 	/// return line color
