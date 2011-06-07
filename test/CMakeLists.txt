@@ -229,6 +229,7 @@ IF(BUILD_TESTING)
 		${CIMG_LINK_LIBRARIES})
 	ADD_TEST(
 		NAME FlowIterated3:_DataConstant
+		CONFIGURATIONS Release
 		COMMAND flowIterated3_DataConstant
 	)
 	LIST(APPEND tests FlowIterated3:_DataConstant)
@@ -243,6 +244,7 @@ IF(BUILD_TESTING)
 	)
 	ADD_TEST(
 		NAME FlowIterated4:_SpatialPW
+		CONFIGURATIONS Release
 		COMMAND flowIterated4_SpatialPW
 	)
 	LIST(APPEND tests FlowIterated4:_SpatialPW)
@@ -257,6 +259,7 @@ IF(BUILD_TESTING)
 	)
 	ADD_TEST(
 		NAME FlowIterated5:_Papenberg
+		CONFIGURATIONS Release
 		COMMAND flowIterated5_Papenberg
 	)
 	LIST(APPEND tests FlowIterated5:_Papenberg)
@@ -272,6 +275,7 @@ IF(BUILD_TESTING)
 	)
 	ADD_TEST(
 		NAME FlowIterated6:_Pyramid
+		CONFIGURATIONS Release
 		COMMAND flowIterated6_Pyramid
 	)
 	LIST(APPEND tests FlowIterated6:_Pyramid)
@@ -366,5 +370,5 @@ IF(BUILD_TESTING)
 
 	# add test labels for dashboard submission
 	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS charon)
-	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon Tests")
+	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon-flow Tests")
 ENDIF(BUILD_TESTING)
