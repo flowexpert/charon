@@ -199,20 +199,22 @@ void NodeHandler::loadFromModel() {
 			connectNodes(nodesout[ii],slotout[ii],nodesin[ii],slotin[ii]);
 		}
 		catch(const std::exception& e) {
-			QMessageBox::warning(
+			if (QMessageBox::question(
 					0, "connection error",
 					QString(
 							"Failed to connect <em>%1.%2</em> "
 							"to <em>%3.%4</em>.<br>"
-							"Removed this invalid connection from model.<br>"
-							"This usually happens after slot renaming<br>"
-							"and/or using old workflow files.<br><br>"
-							"Exception message:<br>%5")
+							"This may happen after slot renaming<br>"
+							"and/or using old module descriptions.<br><br>"
+							"Exception message:<br>%5<br><br>"
+							"Remove this invalid connection from workflow?")
 						.arg(nodesout[ii]).arg(slotout[ii])
 						.arg(nodesin[ii]).arg(slotin[ii])
-						.arg(e.what()));
-			_model->disconnectSlot(
+						.arg(e.what()), QMessageBox::Yes, QMessageBox::No)
+					== QMessageBox::Yes) {
+				_model->disconnectSlot(
 					nodesout[ii]+"."+slotout[ii],nodesin[ii]+"."+slotin[ii]);
+			}
 		}
 	}
 	update();
