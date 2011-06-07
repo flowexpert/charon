@@ -62,7 +62,7 @@ IF (DOXYGEN_FOUND)
 	ENDIF()
 
 	SET(DOXY_DOC_PATTERN        "*.cpp *.h *.hxx *_doc.txt")
-	SET(DOXY_DOC_PATHS          "app src doc")
+	SET(DOXY_DOC_PATHS          "src doc")
 	SET(DOXY_GENERATE_HTML      YES)
 	SET(DOXY_GENERATE_LATEX     NO )
 	SET(DOXY_TAGFILE_INPUT      )

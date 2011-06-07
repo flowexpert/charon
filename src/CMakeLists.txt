@@ -49,6 +49,7 @@ ADD_EXECUTABLE(templategenerator WIN32
 	${UI_OUT}
 )
 TARGET_LINK_LIBRARIES(templategenerator ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY})
+SET_TARGET_PROPERTIES(templategenerator PROPERTIES FOLDER charon-templates)
 
 SOURCE_GROUP("Moc Files" FILES ${MOC_OUT})
 SOURCE_GROUP("Ui Files" FILES ${UI_SRC} ${UI_OUT})
