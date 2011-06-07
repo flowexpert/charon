@@ -198,12 +198,19 @@ void NodeHandler::loadFromModel() {
 		try {
 			connectNodes(nodesout[ii],slotout[ii],nodesin[ii],slotin[ii]);
 		}
-		catch(...) {
+		catch(const std::exception& e) {
 			QMessageBox::warning(
 					0, "connection error",
-					"Failed to connect "+nodesout[ii]+"."+slotout[ii]+
-					" to "+nodesin[ii]+"."+slotin[ii]+". "+
-					 "Disconnected nodes in graphmodel.");
+					QString(
+							"Failed to connect <em>%1.%2</em> "
+							"to <em>%3.%4</em>.<br>"
+							"Removed this invalid connection from model.<br>"
+							"This usually happens after slot renaming<br>"
+							"and/or using old workflow files.<br><br>"
+							"Exception message:<br>%5")
+						.arg(nodesout[ii]).arg(slotout[ii])
+						.arg(nodesin[ii]).arg(slotin[ii])
+						.arg(e.what()));
 			_model->disconnectSlot(
 					nodesout[ii]+"."+slotout[ii],nodesin[ii]+"."+slotin[ii]);
 		}
@@ -218,6 +225,17 @@ void NodeHandler::connectNodes(
 	Q_ASSERT(out && in) ;
 	NodeProperty* outp = out->getProperty(prop0.toLower());
 	NodeProperty* inp = in->getProperty(prop1.toLower());
+
+	if(!out) {
+		throw std::runtime_error(QString(
+				"Property <em>%1.%2</em> does not exist.")
+					.arg(node0).arg(prop0).toStdString());
+	}
+	if (!inp) {
+		throw std::runtime_error(QString(
+				"Property <em>%1.%2</em> does not exist.")
+					.arg(node1).arg(prop1).toStdString());
+	}
 
 	Q_ASSERT(outp && inp) ;
 
