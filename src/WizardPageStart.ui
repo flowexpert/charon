@@ -6,12 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>285</width>
-    <height>130</height>
+    <width>425</width>
+    <height>275</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>WizardPage</string>
   </property>
   <property name="title">
    <string>Start</string>
@@ -20,6 +17,15 @@
    <string>This setup wizard belongs to charon and helps you to create simple plugins with common code parts.</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QWebView" name="textWelcome">
+     <property name="url">
+      <url>
+       <string>about:blank</string>
+      </url>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QGroupBox" name="boxStart">
      <property name="title">
@@ -77,6 +83,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKit/QWebView</header>
+  </customwidget>
   <customwidget>
    <class>QDirEdit</class>
    <extends>QLineEdit</extends>

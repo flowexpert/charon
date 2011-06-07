@@ -10,9 +10,6 @@
     <height>378</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>WizardPage</string>
-  </property>
   <property name="title">
    <string>Description</string>
   </property>
@@ -37,7 +34,11 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="editAuthor"/>
+       <widget class="QLineEdit" name="editAuthor">
+        <property name="whatsThis">
+         <string>author name used in doxygen author field and lgpl license information</string>
+        </property>
+       </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="labelEmail">
@@ -50,7 +51,14 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="editEmail"/>
+       <widget class="QLineEdit" name="editEmail">
+        <property name="toolTip">
+         <string>Has to be a valid &lt;em&gt;email&lt;/em&gt; address</string>
+        </property>
+        <property name="whatsThis">
+         <string>used as hyperlink in doxygen author field</string>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="labelModName">
@@ -63,7 +71,14 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QLineEdit" name="editModName"/>
+       <widget class="QLineEdit" name="editModName">
+        <property name="toolTip">
+         <string>Module name has to start with an &lt;em&gt;uppercase&lt;/em&gt; letter</string>
+        </property>
+        <property name="whatsThis">
+         <string>Class name of the new module. Coding conventions to start class names with uppercase letters are enforced here.</string>
+        </property>
+       </widget>
       </item>
       <item row="3" column="2">
        <widget class="QToolButton" name="buttonValid3">
@@ -169,7 +184,11 @@
        </widget>
       </item>
       <item row="4" column="0" colspan="2">
-       <widget class="QPlainTextEdit" name="editModDesc"/>
+       <widget class="QPlainTextEdit" name="editModDesc">
+        <property name="whatsThis">
+         <string>detailed documentation for doxygen and module documentation</string>
+        </property>
+       </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="labelBriefDesc">
@@ -182,7 +201,11 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLineEdit" name="editBriefDesc"/>
+       <widget class="QLineEdit" name="editBriefDesc">
+        <property name="whatsThis">
+         <string>brief docstring for doxygen and module documentation</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="1">
        <widget class="QToolButton" name="buttonValid4">
