@@ -1,0 +1,23 @@
+/**
+\mainpage Charon Template Generator
+
+\section overview Overview
+
+This application may be used to set up code template
+files to generate charon modules.
+These files contain all code required to compile
+the modules and to register their parameters and slots.
+The algorithm code that has to be executed by the module
+has to be inserted into the execute function
+located in the ModuleName.hxx (for templated modules)
+or the ModuleName.cpp (for untemplated modules) file,
+a comment string shows you where.
+
+\section validation Input Validation
+
+Some of the input fields do not allow free input of texts.
+Input is restricted by some validators.
+If you cannot type what you want, have a look at the
+tooltips displayed when hovering your mouse over the
+considered input widget.
+*/

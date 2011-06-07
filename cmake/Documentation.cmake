@@ -1,7 +1,6 @@
 # Use information from FindDoxygen and set up documentation creation
 
 IF (DOXYGEN_FOUND)
-	# Possibility to enable/disable documentation creation
 	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
 	SET(${PROJECT_NAME}_INSTALL_DOC doc/${PROJECT_NAME}
 		CACHE PATH "${PROJECT_NAME} documentation install prefix")
@@ -16,24 +15,17 @@ IF (DOXYGEN_FOUND)
 	SET(DOXY_STRIP_INC_PATH     "${PROJECT_SOURCE_DIR}/src")
 	SET(DOXY_IMAGE_PATH         "${PROJECT_SOURCE_DIR}/doc/img")
 	SET(DOXY_EXAMPLE_PATH       "${PROJECT_SOURCE_DIR}/doc/example")
-	SET(DOXY_HTML_STYLESHEET    "${PROJECT_SOURCE_DIR}/doc/style.css")
 	SET(DOXY_TEMPLATE           "${CMAKE_MODULE_PATH}/Doxyfile.in")
 	SET(DOXY_CONFIG             "${PROJECT_BINARY_DIR}/Doxyfile")
-	SET(DOXY_CONFIG_PDF         "${PROJECT_BINARY_DIR}/DoxyPdf")
 	SET(DOXY_PROJECTNAME        "${PROJECT_NAME}")
 	SET(DOXY_PROJECT_VERSION    "${${PROJECT_NAME}_VERSION}")
 	SET(DOXY_DOC_EXCLUDE        "")
 	SET(DOXY_DOC_RECURSIVE      NO)
-	SET(DOXY_LATEX_BATCHMODE    YES)
-	SET(DOXY_COMPACT_LATEX      YES)
 	IF(ENABLE_DOC_VERBOSE)
 		SET(DOXY_QUIET          NO)
 	ELSE(ENABLE_DOC_VERBOSE)
 		SET(DOXY_QUIET          YES)
 	ENDIF(ENABLE_DOC_VERBOSE)
-	IF(NOT USE_LATEX)
-		SET(DOXY_SKIP_PDFDOC    YES)
-	ENDIF(NOT USE_LATEX)
 
 	# LaTeX needed to generate formula
 	FIND_PACKAGE(LATEX QUIET)
@@ -47,7 +39,7 @@ IF (DOXYGEN_FOUND)
 
 	IF(NOT DOC_QUIET)
 		IF (NOT LATEX_COMPILER)
-			MESSAGE(STATUS "latex not found - disabling pdf output.")
+			MESSAGE(STATUS "latex not found")
 			MESSAGE(STATUS "You will probably get warnings generating formulae.")
 		ENDIF (NOT LATEX_COMPILER)
 
