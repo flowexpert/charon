@@ -2,7 +2,6 @@
 
 IF (DOXYGEN_FOUND)
 	# Possibility to enable/disable documentation creation
-	OPTION(USE_LATEX "activate pdfdoc generation" OFF)
 	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
 	SET(${PROJECT_NAME}_INSTALL_DOC doc/${PROJECT_NAME}
 		CACHE PATH "${PROJECT_NAME} documentation install prefix")
@@ -17,10 +16,10 @@ IF (DOXYGEN_FOUND)
 	SET(DOXY_STRIP_INC_PATH     "${PROJECT_SOURCE_DIR}/include")
 	SET(DOXY_IMAGE_PATH         "${PROJECT_SOURCE_DIR}/doc/img")
 	SET(DOXY_EXAMPLE_PATH       "${PROJECT_SOURCE_DIR}/doc/example")
-	SET(DOXY_HTML_STYLESHEET    "${PROJECT_SOURCE_DIR}/doc/style.css")
 	SET(DOXY_TEMPLATE           "${CMAKE_MODULE_PATH}/Doxyfile.in")
 	SET(DOXY_CONFIG             "${PROJECT_BINARY_DIR}/Doxyfile")
-	SET(DOXY_PROJECTNAME        ${PROJECT_NAME})
+	SET(DOXY_PROJECTNAME        "${PROJECT_NAME}")
+	SET(DOXY_PROJECT_VERSION    "${${PROJECT_NAME}_VERSION}")
 	SET(DOXY_DOC_EXCLUDE        "include/${PROJECT_NAME}/CImg.h")
 	SET(DOXY_DOC_RECURSIVE      NO)
 	IF(ENABLE_DOC_VERBOSE)
