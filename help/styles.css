@@ -1,13 +1,6 @@
 /* Stylesheet for help page display */
 /* Author:  Jens-Malte Gottfried */
 /* Date:    24.11.2008 */
-
-body{
-    font-size:          100.1%;
-    color:              black;
-    text-align:         left;
-}
-
 h1 {
     color:              blue;
     font-family:        sans-serif;
@@ -19,83 +12,15 @@ h1 {
 }
 
 h2 {
-    margin-top:         15px;
     font-size:          x-large;
     font-family:        sans-serif;
     font-weight:        bold;
     font-variant:       small-caps;
     text-align:         left;
 }
-
-h3 {
-    font-family:        sans-serif;
-    font-weight:        normal;
-    text-decoration:    underline;
-    text-align:         left;
-}
-
-caption {
-    font-family:        sans-serif;
-}
-
-table {
-    border-spacing:     0;
-}
-
-li {
-    padding-left:       30px;
-    font-size:          110%;
-    line-height:        130%;
-    font-family:        sans-serif;
-    letter-spacing:     0.05em;
-    word-spacing:       0.2em;
-    margin-bottom:      5px;
-}
-
-.parname {
-    font-weight:        bold;
-}
-
-td.leftcol {
-    padding-right:      60px;
-}
-td.dtype {
-    padding-right:      10px;
-}
-
-.firstrow {
-    border-top:         1px solid #ccc;
-}
-
-p {
-    padding-left:       60px;
-    padding-right:      60px;
-    text-align:         justify;
-}
-
-/* Links */
- a:link	 {
-     color:             #00A;
-     font-weight:       normal;
-     text-decoration:   none;
- }
- a:visited {
-     color:             #00A;
-     font-weight:       normal;
-     text-decoration:   none;
- }
- a:hover {
-     color:             #10c;
-     font-weight:       normal;
-     text-decoration:   none;
- }
- a:active {
-     color:             #00e;
-     font-weight:       normal;
-     text-decoration:   none;
- }
- a:focus {
-     color:             #0a0;
-     font-weight:       normal;
-     text-decoration:   none;
- }
+table {border-spacing:0}
+.parname{font-weight:bold}
+td.leftcol{padding-right:60px}
+td.dtype{padding-right:15px}
+td.firstrow{border-top:1px solid #ccc}
+p{text-align:justify}

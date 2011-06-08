@@ -27,7 +27,7 @@
 #include <QObject>
 #include <vector>
 
-class QWebView;
+class QTextBrowser;
 class QUrl;
 class MetaData ;
 
@@ -40,7 +40,7 @@ public:
 	/** \param viewer       pointer to help browser display
 	 *  \param parent       pointer to parent object
 	 */
-	DocGenerator(QWebView* viewer, QObject* parent = 0);
+	DocGenerator(QTextBrowser* viewer, QObject* parent = 0);
 
 	virtual ~DocGenerator();
 
@@ -86,7 +86,7 @@ protected:
 			QString slotType = "") const;
 
 	/// pointer to used viewer instance
-	QWebView* _viewer;
+	QTextBrowser* _viewer;
 
 	/// stylesheet for help doc
 	QString _stylesheet;

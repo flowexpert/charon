@@ -60,12 +60,12 @@ void NodeProperty::addConnection(ConnectionLine *nl) {
 }
 
 QString NodeProperty::getType() const {
-	QString type;
+	QString tt;
 	if (_pFile) {
-		type = _pFile->getType(_node->getInstanceName()+"."+_name);
-		type.replace("<","&lt;").replace(">","&gt;");
+		tt = _pFile->getType(_node->getInstanceName()+"."+_name);
+		tt.replace("<","&lt;").replace(">","&gt;");
 	}
-	return type;
+	return tt;
 }
 
 QRectF NodeProperty::boundingRect() const {

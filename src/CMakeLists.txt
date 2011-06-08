@@ -30,13 +30,9 @@ SET(EDITPARAM_SOURCES
 	FileManager.h
 	QDirEdit.cpp
 	QDirEdit.h
-)
-IF(QT_QTWEBKIT_FOUND)
-LIST(APPEND EDITPARAM_SOURCES
 	DocGenerator.cpp
 	DocGenerator.h
 )
-ENDIF(QT_QTWEBKIT_FOUND)
 
 SET(EDITGRAPH_SOURCES
 	GraphModel.cpp

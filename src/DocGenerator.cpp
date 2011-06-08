@@ -26,13 +26,13 @@
 #include <QDir>
 #include <QFile>
 #include <QtDebug>
-#include <QWebView>
+#include <QTextBrowser>
 
 #include "ParameterFileModel.h"
 #include "FileManager.h"
 #include "MetaData.h"
 
-DocGenerator::DocGenerator(QWebView* viewer, QObject* myParent) :
+DocGenerator::DocGenerator(QTextBrowser* viewer, QObject* myParent) :
 		QObject(myParent),
 		_viewer(viewer),
 		_meta(0) {
@@ -78,10 +78,12 @@ void DocGenerator::showDocPage(const QString& fileName) {
 	// _viewer->load()
 	QFile docPage(fileName);
 	if (docPage.open(QIODevice::ReadOnly | QIODevice::Text))
-		_viewer->setHtml(QString("<html><head><title>%1</title>"
-		"<style type=\"text/css\">\n<!--\n%2\n-->\n</style>"
-		"</head><body>%3\n%4</body></html>")
-		.arg(fileName).arg(_stylesheet)
+		_viewer->setHtml(QString(
+		"<html><head>"
+		"<meta name=\"qrichtext\" content=\"1\"/>"
+		"<style type=\"text/css\">%1</style>"
+		"</head><body>%2\n%3</body></html>")
+		.arg(_stylesheet)
 		.arg(QString(docPage.readAll())).arg(_footer));
 	else
 		qWarning() << tr("DocPage file %1 could not be loaded.")
@@ -95,10 +97,12 @@ void DocGenerator::showDocString(const QString& doc) {
 		return;
 
 	// encapsulation into html document (using the stylesheet)
-	QString html = QString("<html><head><title>short help</title>"
-		"<style type=\"text/css\">\n<!--\n%1\n-->\n</style>"
+	QString html = QString(
+		"<html><head>"
+		"<meta name=\"qrichtext\" content=\"1\"/>"
+		"<style type=\"text/css\">%1</style>"
 		"</head><body><div><p>%2</p></div>\n%3</body></html>")
-		.arg(_stylesheet).arg(_helpDoc = doc).arg(_footer);
+		.arg(_stylesheet).arg(_helpDoc=doc).arg(_footer);
 
 	// display
 	_viewer->setHtml(html);
@@ -163,11 +167,11 @@ QString DocGenerator::_docList(QStringList parList,
 			if(!flags.isEmpty())
 				ret += tr("<em>(%1)</em>").arg(flags);
 
-			ret += "</td>\n</tr>";
+			ret += "</td></tr>";
 
 			// show documentation
 			ret += "<tr><td class=\"leftcol\"></td><td></td>";
-			ret += QString("<td colspan=\"2\">%1</td></tr>\n")
+			ret += QString("<td colspan=\"2\">%1</td></tr><tr></tr>")
 				.arg(_meta->getDocString(*parIter, className));
 		}
 	}

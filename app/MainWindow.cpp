@@ -23,10 +23,8 @@
  */
 
 #include <QtGui>
-#ifdef QT_WEBKIT_LIB
-#include <QWebView>
+#include <QTextBrowser>
 #include "DocGenerator.h"
-#endif
 
 #include "MainWindow.h"
 #include "ObjectInspector.h"
@@ -67,32 +65,25 @@ MainWindow::MainWindow(QWidget* myParent) :
 	ObjectInspector* inspector = new ObjectInspector(inspectorWidget);
 	inspectorWidget->setWidget(inspector);
 
-#ifdef QT_WEBKIT_LIB
 	// help viewer
 	QDockWidget* helpWidget = new QDockWidget(tr("Help Browser"), this);
 	helpWidget->setObjectName("helpwidget");
-	QWebView* helpBrowser = new QWebView(helpWidget);
+	QTextBrowser* helpBrowser = new QTextBrowser(helpWidget);
 	helpWidget->setWidget(helpBrowser);
 	DocGenerator* docGen = new DocGenerator(helpBrowser, this);
 	docGen->showIntro();
-
-	connect(this, SIGNAL(metaDataUpdated()), docGen, SLOT(updateMetaData())) ;
-#endif
-
+	connect(this, SIGNAL(metaDataUpdated()), docGen, SLOT(updateMetaData()));
 
 	// select widget
 	QDockWidget* selectWidget = new QDockWidget(tr("Selector"), this);
 	selectWidget->setObjectName("selectwidget");
 	_selector = new NodeTreeView(selectWidget);
 	selectWidget->setWidget(_selector);
-
 	connect(this, SIGNAL(metaDataUpdated()), _selector, SLOT(reload())) ;
 
-#ifdef QT_WEBKIT_LIB
 	// help browser connections
 	connect(_selector, SIGNAL(showClassDoc(QString)), docGen, SLOT(
 			showClassDoc(QString)));
-#endif
 
 	// object inspector connections
 	connect(inspector, SIGNAL(statusMessage(const QString&, int)),
@@ -105,9 +96,7 @@ MainWindow::MainWindow(QWidget* myParent) :
 	// add widgets to dock area
 	addDockWidget(Qt::RightDockWidgetArea, inspectorWidget);
 	addDockWidget(Qt::BottomDockWidgetArea, selectWidget, Qt::Vertical);
-#ifdef QT_WEBKIT_LIB
 	addDockWidget(Qt::BottomDockWidgetArea, helpWidget, Qt::Vertical);
-#endif
 	_centralArea = new QMdiArea(this);
 	setCentralWidget(_centralArea);
 
@@ -170,7 +159,6 @@ MainWindow::MainWindow(QWidget* myParent) :
 		tr("reset\nselected"), inspector, SLOT(delParam()));
 	action->setToolTip(tr("reset selected parameter(s)\nto their defaults"));
 
-#ifdef QT_WEBKIT_LIB
 	toolbar->addSeparator();
 
 	action = toolbar->addAction(QIcon(":/icons/intro.png"), tr(
@@ -180,7 +168,6 @@ MainWindow::MainWindow(QWidget* myParent) :
 	action = toolbar->addAction(QIcon(":/icons/help.png"),
 			tr("tuchulcha\nhelp"), docGen, SLOT(showHelp()));
 	action->setToolTip(tr("show help page"));
-#endif
 
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
 			toolbar, SLOT(setModel(ParameterFileModel*)));
@@ -235,21 +222,17 @@ MainWindow::MainWindow(QWidget* myParent) :
 	// window menu
 	QMenu* windowMenu = menuBar()->addMenu(tr("&Window"));
 	windowMenu->addAction(inspectorWidget->toggleViewAction());
-#ifdef QT_WEBKIT_LIB
 	windowMenu->addAction(helpWidget->toggleViewAction());
-#endif
 	windowMenu->addAction(selectWidget->toggleViewAction());
 	windowMenu->addSeparator();
 	windowMenu->addAction(toolbar->toggleViewAction());
 
 	// help menu
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
-#ifdef QT_WEBKIT_LIB
 	helpMenu->addAction(QIcon(":/icons/help.png"), tr("&Help"), docGen, SLOT(
 			showHelp()), QKeySequence(tr("F1")));
 	helpMenu->addAction(QIcon(":/icons/intro.png"), tr("&Introduction"),
 			docGen, SLOT(showIntro()), QKeySequence(tr("Shift+F1")));
-#endif
 	helpMenu->addAction(appicon, tr("&About Tuchulcha"), this, SLOT(
 			_showAbout()));
 	helpMenu->addAction(QIcon(":/icons/qt.png"), tr("About &Qt"), this, SLOT(
