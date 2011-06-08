@@ -30,7 +30,6 @@ void WizardPageStart::initializePage() {
 		"TemplateGenerator");
 	_ui->editLoadMod->setText(
 			settings.value("recentInput", QDir::homePath()).toString());
-	_ui->textWelcome->load(QUrl("qrc:///text/welcome.html"));
 }
 
 bool WizardPageStart::isComplete() const {

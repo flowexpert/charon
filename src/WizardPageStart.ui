@@ -18,10 +18,10 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QWebView" name="textWelcome">
-     <property name="url">
+    <widget class="QTextBrowser" name="textWelcome">
+     <property name="source">
       <url>
-       <string>about:blank</string>
+       <string>qrc:/text/welcome.html</string>
       </url>
      </property>
     </widget>
@@ -83,11 +83,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QWebView</class>
-   <extends>QWidget</extends>
-   <header>QtWebKit/QWebView</header>
-  </customwidget>
   <customwidget>
    <class>QDirEdit</class>
    <extends>QLineEdit</extends>

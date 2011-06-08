@@ -22,6 +22,5 @@
     </qresource>
     <qresource prefix="/text">
         <file alias="welcome.html">res/welcome-en.html</file>
-        <file alias="style-help.css">res/style-help.css</file>
     </qresource>
 </RCC>
