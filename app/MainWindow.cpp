@@ -462,8 +462,6 @@ void MainWindow::_options() {
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
 			"Tuchulcha");
-	options.editCharonInstall->setText(
-			settings.value("charonInstallPath").toString());
 	options.editGlobalPath->setText(
 			settings.value("globalPluginPath").toString());
 	options.editPrivatePath->setText(
@@ -476,9 +474,6 @@ void MainWindow::_options() {
 
 	// set new values
 	if (dialog.exec() == QDialog::Accepted) {
-		settings.setValue(
-				"charonInstallPath",
-				options.editCharonInstall->text());
 		settings.setValue(
 				"globalPluginPath",
 				options.editGlobalPath->text());

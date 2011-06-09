@@ -44,11 +44,6 @@
  */
 #define TUCHULCHA_DIR ".tuchulcha"
 #endif
-#ifndef CHARON_INSTALL
-/// Charon core installation directory
-#define CHARON_INSTALL
-#error "CHARON_INSTALL not defined!"
-#endif
 
 FileManager* FileManager::_inst = 0;
 
@@ -195,38 +190,40 @@ void FileManager::updateMetadata() const {
 	cFile.close();
 }
 
-void FileManager::configure(QWidget* parentWidget, bool force) const {
+void FileManager::configure(bool force) const {
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
 			"Tuchulcha");
 
-	if (force || !settings.contains("globalPluginPath")) {
-		QString charonInstall = CHARON_INSTALL;
-		settings.setValue("charonInstallPath", charonInstall);
+	if (force) {
+		if (!settings.contains("globalPluginPath")) {
+			QString charonInstall;
 #ifdef UNIX
-		charonInstall.append("/lib/charon-plugins");
+			charonInstall = "/usr/lib/charon-plugins";
 #else
-		charonInstall.append("/bin");
+			charonInstall.append(QDir::current());
 #endif
-		settings.setValue("globalPluginPath", charonInstall);
-		settings.setValue("privatePluginPath", QString());
+			settings.setValue("globalPluginPath", charonInstall);
+		}
+
+		if (!settings.contains("privatePluginPath")) {
+			settings.setValue("privatePluginPath", QString());
+		}
 
 		QMessageBox::information(
-			parentWidget, tr("path information"), tr(
+			0, tr("path information"), tr(
 				"Your configuration paths are set to the "
 				"following values:<br><br>"
-				"<b>charon-install dir:</b> <tt>%1</tt><br>"
-				"<b>global plugin path:</b> <tt>%2</tt><br>"
-				"<b>private plugin path:</b> <tt>%3</tt><br><br>"
+				"<b>global plugin path:</b> <tt>%1</tt><br>"
+				"<b>private plugin path:</b> <tt>%2</tt><br><br>"
 				"This is just a <em>guess</em> based on information "
-				"during the build of tuchulcha. "
+				"about standart locations and the current working directory. "
 				"Since information about where you "
 				"install it were not available at this stage, "
 				"these paths may be wrong.<br><br>"
 				"These config values may be changed in the options "
 				"dialog.<br>"
 				"(Edit-&gt;Options)")
-				.arg(settings.value("charonInstallPath").toString())
 				.arg(settings.value("globalPluginPath").toString())
 				.arg(settings.value("privatePluginPath").toString())
 		);

@@ -35,6 +35,7 @@
 #include "MetaData.h"
 #include "FileManager.h"
 #include "QParameterFile.h"
+#include <stdexcept>
 
 NodeHandler::NodeHandler(QObject* pp) :
 		QGraphicsScene(pp),

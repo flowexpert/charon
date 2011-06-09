@@ -1,8 +1,6 @@
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
-ADD_DEFINITIONS(-DCHARON_INSTALL="${charon-core_ROOT_DIR}")
-
 # source files containing QObject derived classes
 QT4_WRAP_UI(UI_SRC LogDialog.ui OptionsDialog.ui)
 SET(EDITPARAM_SOURCES

@@ -25,7 +25,6 @@
 
 #include <QString>
 #include <QDir>
-#include <AbstractPluginLoader.h>
 #include <QObject>
 
 class QWidget;
@@ -62,10 +61,9 @@ public:
 	void updateMetadata() const;
 
 	/// Configures plugin paths
-	/** \param parent Parent Qwidget for dialog boxes
-	 *  \param force  Configure even if configuration exists
+	/** \param force  Configure even if configuration exists
 	 */
-	void configure(QWidget * parent = NULL, bool force = false) const;
+	void configure(bool force = false) const;
 
 private:
 	FileManager();

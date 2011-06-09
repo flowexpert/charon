@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>283</height>
+    <width>505</width>
+    <height>211</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,19 +25,6 @@
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="labelCore">
-        <property name="text">
-         <string>charon-install dir</string>
-        </property>
-        <property name="buddy">
-         <cstring>editCharonInstall</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QDirEdit" name="editCharonInstall"/>
-      </item>
-      <item row="1" column="0">
        <widget class="QLabel" name="labelUtils">
         <property name="text">
          <string>global plugin path</string>
@@ -47,10 +34,10 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="0" column="1">
        <widget class="QDirEdit" name="editGlobalPath"/>
       </item>
-      <item row="2" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="labelAdd">
         <property name="text">
          <string>private plugin path</string>
@@ -60,7 +47,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="1" column="1">
        <widget class="QDirEdit" name="editPrivatePath"/>
       </item>
      </layout>
@@ -114,7 +101,6 @@
  </customwidgets>
  <tabstops>
   <tabstop>buttonBox</tabstop>
-  <tabstop>editCharonInstall</tabstop>
   <tabstop>editGlobalPath</tabstop>
   <tabstop>editPrivatePath</tabstop>
   <tabstop>checkWait</tabstop>
