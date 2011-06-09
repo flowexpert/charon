@@ -195,37 +195,54 @@ void FileManager::configure(bool force) const {
 			"Heidelberg Collaboratory for Image Processing",
 			"Tuchulcha");
 
+	// check current values
+	if(!settings.contains("globalPluginPath") ||
+			settings.value("globalPluginPath").toString().isEmpty() ||
+			!QDir(settings.value("globalPluginPath").toString()).exists()) {
+		settings.remove("globalPluginPath");
+		force = true;
+	}
+	if(settings.contains("privatePluginPath") &&
+			(settings.value("privatePluginPath").toString().isEmpty() ||
+			!QDir(settings.value("privatePluginPath").toString()).exists())) {
+		settings.remove("privatePluginPath");
+		force = true;
+	}
+
 	if (force) {
 		if (!settings.contains("globalPluginPath")) {
-			QString charonInstall;
 #ifdef UNIX
-			charonInstall = "/usr/lib/charon-plugins";
+			// standard install path on linux systems
+			QString globalPath = "/usr/lib/charon-plugins";
 #else
-			charonInstall.append(QDir::current());
+			// Assume global plugin dir to be the same directory
+			// where the tuchulcha.exe is located
+			QString globalPath = QCoreApplication::applicationDirPath();
 #endif
-			settings.setValue("globalPluginPath", charonInstall);
+			settings.setValue("globalPluginPath", globalPath);
 		}
 
-		if (!settings.contains("privatePluginPath")) {
-			settings.setValue("privatePluginPath", QString());
+		QString globalPath = settings.value("globalPluginPath").toString();
+		if (globalPath.isEmpty()) {
+			globalPath = tr("(none)");
+		}
+		QString privatPath = settings.value("privatePluginPath").toString();
+		if (privatPath.isEmpty()) {
+			privatPath = tr("(none)");
 		}
 
 		QMessageBox::information(
 			0, tr("path information"), tr(
-				"Your configuration paths are set to the "
+				"Your plugin paths are set to the "
 				"following values:<br><br>"
-				"<b>global plugin path:</b> <tt>%1</tt><br>"
-				"<b>private plugin path:</b> <tt>%2</tt><br><br>"
+				"<b>global plugin path:</b><br><tt>%1</tt><br><br>"
+				"<b>private plugin path:</b><br><tt>%2</tt><br><br>"
 				"This is just a <em>guess</em> based on information "
-				"about standart locations and the current working directory. "
-				"Since information about where you "
-				"install it were not available at this stage, "
-				"these paths may be wrong.<br><br>"
-				"These config values may be changed in the options "
-				"dialog.<br>"
+				"about standard locations and the application directory. "
+				"These paths may be wrong under several conditions.<br><br>"
+				"They may be changed in the options dialog.<br>"
 				"(Edit-&gt;Options)")
-				.arg(settings.value("globalPluginPath").toString())
-				.arg(settings.value("privatePluginPath").toString())
+				.arg(globalPath).arg(privatPath)
 		);
 	}
 }

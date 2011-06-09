@@ -477,9 +477,15 @@ void MainWindow::_options() {
 		settings.setValue(
 				"globalPluginPath",
 				options.editGlobalPath->text());
+		if (options.editGlobalPath->text().isEmpty()) {
+			settings.remove("globalPluginPath");
+		}
 		settings.setValue(
 				"privatePluginPath",
 				options.editPrivatePath->text());
+		if (options.editPrivatePath->text().isEmpty()) {
+			settings.remove("privatePluginPath");
+		}
 		settings.setValue(
 				"waitAfterExecute",
 				(options.checkWait->checkState() != Qt::Unchecked));
