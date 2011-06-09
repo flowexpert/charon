@@ -31,10 +31,11 @@ template<typename T>
 FileWriter<T>::FileWriter(const std::string& name) :
 	TemplatedParameteredObject<T>("filewriter", name,
 			"write image file from image using cimg") {
-	this->_addParameter(filename, "filename", "filename to write image to",
-			"filewrite");
+	this->_addParameter(
+			filename, "filename", "filename to write image to", "filewrite");
 	this->_addParameter(exitOnError, "exitOnError",
-		"Should the plugin raise an exception and stop the workflow if an write error occurs?", true) ;
+		"Should the plugin raise an exception and stop the workflow "
+		"if an write error occurs?", true);
 	this->_addInputSlot(in, "in", "image input", "CImgList<T>");
 }
 
@@ -43,13 +44,12 @@ void FileWriter<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	try
-	{	in().save(filename().c_str());	}
-	catch(const cimg_library::CImgException& err)
-	{
-		std::string error = this->getClassName() + " instance \""
-			+ this->getName() + "\" Could not write file\n\t"
-			+ err.what() + " \n";
+	try {
+		in().save(filename().c_str());
+	}
+	catch (const cimg_library::CImgException& err) {
+		std::string error = "\tCould not write file \""
+			+ filename() + "\":\n\t" + err.what();
 		if (exitOnError()) {
 			throw std::runtime_error(error);
 		}
