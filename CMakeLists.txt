@@ -57,6 +57,7 @@ INCLUDE(CTest)
 
 # Setup CMake config files for package finding
 INCLUDE(GenConfig)
+INCLUDE(InstallDlls)
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(test)
