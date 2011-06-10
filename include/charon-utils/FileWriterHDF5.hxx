@@ -46,8 +46,41 @@ FileWriterHDF5<T>::FileWriterHDF5(const std::string& name) :
 			"string that is written into the comment attribute of the "
 			"dataset to be stored (no comment attribute is set if empty)",
 			"string");
+	ParameteredObject::_addParameter(
+			noSingletonDimensions, "noSingletonDimensions",
+			"Do not write singleton dimensions<br>"
+			"This will reduce the dimensions of the output array "
+			"skipping singleton dimensions "
+			"(i.e. such dimensions with size 1).<br>"
+			"<span style=\"color:red\">Warning:</span> "
+			"This will (currently) make the result array unreadable by "
+			"FileReaderHDF5 (which expects 5D), "
+			"but may be needed for postprocessing "
+			"e.g. with vigranumpy.",
+			false
+	);
+
 	ParameteredObject::_addInputSlot(
 			in, "in", "data input", "vigraArray5<T>");
+}
+
+template<typename T, int N>
+void writeHdf5NoSingletons(
+		const std::vector<vigra::MultiArrayIndex>& tShape,
+		vigra::HDF5File& file,
+		const std::string& pathInFile, T* data) {
+	assert(tShape.size() == N);
+	typename vigra::MultiArrayShape<N>::type shape;
+	for (int i=0; i<N; i++) {
+		shape[i] = tShape[i];
+	}
+	typename vigra::MultiArray<N,T> res(shape,data);
+	sout << "\tOutput data has shape ";
+	for(int i=0; i<N-1; i++) {
+		sout << tShape[i] << "x";
+	}
+	sout << tShape[N-1] << std::endl;
+	file.write(pathInFile.c_str(), res);
 }
 
 template<typename T>
@@ -56,13 +89,48 @@ void FileWriterHDF5<T>::execute() {
 	ParameteredObject::execute();
 
 	vigra::MultiArrayShape<5>::type shape = in().shape();
-	sout << "\tData set has shape " << shape[0] << "x" << shape[1] << "x"
+	sout << "\tInput data has shape " << shape[0] << "x" << shape[1] << "x"
 			<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;
 
 	vigra::HDF5File file(filename().c_str(),vigra::HDF5File::New);
-	file.write(pathInFile().c_str(), in());
-	if (!comment().empty())
+
+	if(noSingletonDimensions()) {
+		std::vector<vigra::MultiArrayIndex> tShape;
+		for(vigra::MultiArrayIndex ii=0; ii<5; ii++) {
+			if(shape[ii]>1) {
+				tShape.push_back(shape[ii]);
+			}
+		}
+		int curDim = tShape.size();
+		sout << "\tTruncating to " << curDim << " dimensions." << std::endl;
+		switch(curDim) {
+		case 5:
+			sout << "\tNo truncating needed!" << std::endl;
+			file.write(pathInFile().c_str(), in());
+			break;
+		case 4:
+			writeHdf5NoSingletons<T,4>(tShape,file,pathInFile(),in().data());
+			break;
+		case 3:
+			writeHdf5NoSingletons<T,3>(tShape,file,pathInFile(),in().data());
+			break;
+		case 2:
+			writeHdf5NoSingletons<T,2>(tShape,file,pathInFile(),in().data());
+			break;
+		case 1:
+			writeHdf5NoSingletons<T,1>(tShape,file,pathInFile(),in().data());
+			break;
+		default:
+			sout << "output with zero dims not possible." << std::endl;
+			break;
+		}
+	}
+	else {
+		file.write(pathInFile().c_str(), in());
+	}
+	if (!comment().empty()) {
 		file.setAttribute(pathInFile(),"comment",comment().c_str());
+	}
 }
 
 #endif /* _FILEWRITERHDF5_HXX_ */

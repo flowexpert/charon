@@ -56,6 +56,15 @@ public:
 	/// dataset to be stored (no comment attribute is set if empty)
 	Parameter<std::string> comment;
 
+	/// Do not write singleton dimensions
+	/** This will reduce the dimensions of the output array
+	 *  skipping singleton dimensions (i.e. such dimensions with size 1).
+	 *  \warning This will (currently) make the result array unreadable by
+	 *      FileReaderHDF5 (which expects 5D), but may be needed for
+	 *      postprocessing e.g. with vigranumpy.
+	 */
+	Parameter<bool> noSingletonDimensions;
+
 	/// The vigra::MultiArray object to be written to a hdf5 file.
 	InputSlot < vigra::MultiArrayView<5, T> > in;
 
