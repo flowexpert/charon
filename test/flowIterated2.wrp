@@ -11,11 +11,6 @@ mm.dy		diff2.dy
 diff2.dy		mm.dy
 mm.dt		diff2.dt
 diff2.dt		mm.dt
-blubb.type		roi
-blubb.templatetype		int
-blubb.out		solver.roi
-blubb.xend		32
-blubb.yend		32
 helper.type		iteratorhelper
 helper.in		seqcrop.out
 helper.self		iterator.helper
@@ -42,7 +37,7 @@ spatialterm.unknowns		a1;a2
 solver.type		petscsolver
 solver.stencil		dataterm.this;spatialterm.this
 solver.out		iterator.flow
-solver.roi		blubb.out
+solver.roi		size.out
 solver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ksp_max_it 1000
 seqreader.type		filereader
 seqcrop.type		crop
@@ -79,3 +74,25 @@ warper.out		diff2.img;bm.image
 bm.image		warper.out
 warper.seqinput		helper.sequence
 warper.flowinput		helper.flow
+bm.editorinfo		1246.69 -226.961
+iterator.editorinfo		2330.68 181.468
+interpolator.editorinfo		576.369 -77.9813
+dataterm.editorinfo		1787.45 -67.1728
+helper.editorinfo		584.987 117.079
+flowreader.editorinfo		182.649 307.555
+seqcrop.editorinfo		401.317 71.6276
+diff2.editorinfo		1246.99 -59.1948
+seqreader.editorinfo		179.847 71.3858
+flowcrop.editorinfo		399.298 270.476
+warper.editorinfo		874.704 -3.89401
+roi.editorinfo		186.653 200.749
+solver.editorinfo		2133.04 22.7853
+analyzer.editorinfo		2539.23 291.064
+spatialterm.editorinfo		1801.71 126.347
+mm.editorinfo		1452.6 -37.0743
+size.type		roi
+size.templatetype		int
+size.out		solver.roi
+size.xend		32
+size.yend		32
+size.editorinfo		2006.11 181.567

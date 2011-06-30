@@ -14,3 +14,5 @@ gsm.sigmas		1;10
 fitter.agressiveness		10
 fitter.showprogress		0
 fitter.showhistogram		0
+fitter.editorinfo		238.322 -58.311
+reader1.editorinfo		56.868 -100.347

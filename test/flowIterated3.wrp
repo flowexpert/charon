@@ -112,3 +112,24 @@ phibc.energy		dataterm_learned.psi
 diff2.img		warper.out
 warper.out		diff2.img;bm.image
 bm.image		warper.out
+helper.editorinfo		821.932 775.61
+phibc.editorinfo		1651.05 590.573
+interpolator.editorinfo		851.671 359.214
+solverroi.editorinfo		2508.51 166.583
+seqreader.editorinfo		178.225 647.522
+solver.editorinfo		2665.45 433.249
+roi.editorinfo		190.499 857.994
+flowreader.editorinfo		186.194 1013.54
+seqcrop.editorinfo		392.997 673.588
+warper.editorinfo		1161.74 319.969
+relaxinghelper.editorinfo		597.773 857.861
+dataterm_hs.editorinfo		2176.02 227.827
+bm.editorinfo		1826.19 184.415
+relaxator.editorinfo		3101.82 866.589
+diff2.editorinfo		1419.29 438.931
+dataterm_learned.editorinfo		2164.49 436.524
+iterator.editorinfo		2908.94 669.906
+flowcrop.editorinfo		415.006 1041.49
+spatialterm_hs.editorinfo		2170.94 652.943
+analyzer.editorinfo		3319 1067.06
+mm.editorinfo		1818.71 318.94

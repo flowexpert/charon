@@ -39,3 +39,13 @@ l2norm.type		l2norm
 l2norm.this		solver.stencil
 l2norm.unknowns		a1;a2
 l2norm.lambda		50
+mm.editorinfo		842.171 -198.217
+bm.editorinfo		836.584 -335.613
+sequence.editorinfo		156.47 -269.144
+l2norm.editorinfo		1203.96 -409.192
+roi.editorinfo		1212.83 -62.2507
+origwriter.editorinfo		390.088 -187.207
+diff.editorinfo		588.367 -252.798
+bcce.editorinfo		1195.15 -256.761
+writer.editorinfo		1670.38 -88.6673
+solver.editorinfo		1445.82 -123.822

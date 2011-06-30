@@ -56,3 +56,16 @@ warper.flowinput		helper.flow
 bm.image		warper.out
 warper.out		bm.image;diff2.img
 diff2.img		warper.out
+mm.editorinfo		1052.6 -225.417
+iterator.editorinfo		1805.73 77.9968
+interpolator.editorinfo		304.895 -240.587
+dataterm.editorinfo		1339.09 -272.148
+helper.editorinfo		316.257 -1.84699
+bm.editorinfo		831.297 -394.636
+diff2.editorinfo		847.059 -238.023
+warper.editorinfo		604.641 -305.428
+blubb.editorinfo		1375.9 76.602
+solver.editorinfo		1591.32 -107.011
+analyzer.editorinfo		2138.56 214.814
+seqgen.editorinfo		-29.0037 204.814
+spatialterm.editorinfo		1361.1 -72.6063

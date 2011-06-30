@@ -1,7 +1,5 @@
 seqgen.type		sequencegenerator
 seqgen.sequence		helper2.in
-interpolator.type		interpolatorlinear
-interpolator.out		helper.interpolator;helper2.interpolator
 iterator.type		simpleiterator
 iterator.helper		helper.self
 iterator.flow		helper.flow
@@ -9,7 +7,7 @@ iterator.maxruns		3
 iterator.accumulate		0
 helper.type		iteratorhelper
 helper.in		helper2.sequence
-helper.interpolator		interpolator.out
+helper.interpolator		
 helper.self		iterator.helper
 helper.flow		iterator.flow
 iterator2.type		simpleiterator
@@ -19,9 +17,14 @@ helper2.type		iteratorhelper
 helper2.sequence		helper.in
 helper.initflow		helper2.flow
 helper2.flow		helper.initFlow
-helper2.interpolator		interpolator.out
+helper2.interpolator		
 helper2.in		seqgen.sequence
 iterator2.helper		helper2.self
 helper2.self		iterator2.helper
 iterator2.maxruns		2
 iterator2.accumulate		0
+iterator.editorinfo		810.139 202.863
+iterator2.editorinfo		1022.36 283.937
+helper.editorinfo		567.969 148.639
+helper2.editorinfo		320.738 209.641
+seqgen.editorinfo		103.579 209.665

@@ -96,23 +96,23 @@ data_pb.flowguess		helper.flow
 psi_spatial.epsilon		0.002
 psi_data.epsilon		5
 psi_data.lambda		2
-helper.editorinfo		-287.407 274.583
-psi_spatial.editorinfo		863.133 748.357
-size.editorinfo		1296.75 287.708
-interpolator.editorinfo		-207.814 191.288
-solver.editorinfo		1483.82 261.795
-spatial_pb.editorinfo		1046.25 714.551
-read.editorinfo		-694.06 232.915
-relaxinghelper.editorinfo		-487.494 223.655
-read_flow.editorinfo		1941.37 834.847
-bm.editorinfo		666.402 138.871
-psi_data.editorinfo		688.239 932.2
-relaxator.editorinfo		1883.23 586.43
-diff2.editorinfo		226.223 523.122
-iterator.editorinfo		1686.65 446.486
-data_hs.editorinfo		1035.1 337.273
-spatialterm_hs.editorinfo		1031.02 189.93
-warp.editorinfo		13.3411 452.025
-data_pb.editorinfo		1039.15 908.474
-analyzer.editorinfo		2111.24 750.025
-mm.editorinfo		651.548 292.086
+helper.editorinfo		-234.446 936.148
+psi_spatial.editorinfo		872.707 952.591
+size.editorinfo		1246.45 646.088
+interpolator.editorinfo		-227.995 526.941
+solver.editorinfo		1534.12 597.121
+spatial_pb.editorinfo		1126.51 868.322
+read.editorinfo		-674.745 1020.96
+relaxinghelper.editorinfo		-482.182 1123.24
+read_flow.editorinfo		1664 1363.49
+bm.editorinfo		398.141 369.408
+psi_data.editorinfo		877.002 785.273
+relaxator.editorinfo		1914.62 1182.77
+diff2.editorinfo		254.946 519.399
+iterator.editorinfo		1777.17 949.626
+data_hs.editorinfo		1089.59 398.051
+spatialterm_hs.editorinfo		1085.51 233.942
+warp.editorinfo		57.6927 400.239
+data_pb.editorinfo		1109.87 626.609
+analyzer.editorinfo		2132.97 1334.3
+mm.editorinfo		817.115 457.653

@@ -10,3 +10,6 @@ helper.type		iteratorhelper
 helper.in		seqgen.sequence
 helper.self		iterator.helper
 helper.flow		iterator.flow
+iterator.editorinfo		624.988 299.072
+helper.editorinfo		346.88 223.291
+seqgen.editorinfo		37.8741 224.254

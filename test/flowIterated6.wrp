@@ -99,25 +99,25 @@ median.in		solver.out
 median.out		tohsv.flow;quiv.flow;iter2.flow
 median.windowradius		4
 iterator.accumulate		0
-readgt.editorinfo		219.255 730.128
-spatialterm.editorinfo		1795.55 355.483
-helper.editorinfo		399.162 358.44
-interpolator.editorinfo		937.054 689.022
-tohsv.editorinfo		2694.75 177.404
-solver.editorinfo		1450.09 615.297
-quiv2.editorinfo		2880.21 33.3877
-read.editorinfo		128.894 506.496
-iter2.editorinfo		2630.69 448.37
-dataterm.editorinfo		1926.56 -92.8637
-warper.editorinfo		1242.8 580.151
-quiv.editorinfo		2896.84 222.165
-median.editorinfo		2427.8 293.609
-helper2.editorinfo		953.667 413.178
-pyramidgt.editorinfo		638.253 641.955
-bm.editorinfo		1563 126.636
-diff2.editorinfo		1434.54 -111.036
-iterator.editorinfo		2846.1 560.128
-hsv2.editorinfo		2652.85 -55.1455
-analyzer.editorinfo		3066.73 695.611
-mm.editorinfo		1644.42 -165.844
-pyramid.editorinfo		664.505 273.946
+readgt.editorinfo		295.947 923.876
+spatialterm.editorinfo		1997.37 351.447
+helper.editorinfo		485.945 651.082
+interpolator.editorinfo		991.546 67.4111
+solver.editorinfo		2312.28 412.264
+read.editorinfo		292.37 821.338
+iter2.editorinfo		2658.94 617.9
+dataterm.editorinfo		1989.12 141.25
+warper.editorinfo		1293.26 -17.2413
+median.editorinfo		2485.52 515.613
+helper2.editorinfo		992.013 277.957
+pyramidgt.editorinfo		829.984 863.959
+bm.editorinfo		1669.97 -34.8214
+diff2.editorinfo		1485 92.8039
+iterator.editorinfo		2852.55 767.197
+analyzer.editorinfo		3077.63 907.12
+mm.editorinfo		1678.73 114.688
+pyramid.editorinfo		735.143 570.624
+tohsv.editorinfo		2717.45 426.752
+quiv2.editorinfo		1278.69 501.593
+hsv2.editorinfo		1028.39 503.347
+quiv.editorinfo		2943.07 507.985

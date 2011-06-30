@@ -88,3 +88,21 @@ bm.image		warp.out
 warp.seqinput		helper.sequence
 warp.flowinput		helper.flow
 warp.interpolator		interpolator.out
+mm.editorinfo		1438.13 14.9269
+spatialterm_learned.editorinfo		1795.76 437.504
+helper.editorinfo		788.55 246.613
+seqgen.editorinfo		244.618 702.671
+interpolator.editorinfo		9.69665 544.492
+solver.editorinfo		2047.2 83.1802
+pv.editorinfo		1366.21 649.096
+pu.editorinfo		1364.76 484.762
+relaxinghelper.editorinfo		542.806 468.574
+maskreader.editorinfo		31.7376 709.302
+dataterm_hs.editorinfo		1800.47 -29.7875
+bm.editorinfo		1293.47 -117.457
+relaxator.editorinfo		2499.19 540.412
+diff2.editorinfo		1256.39 25.1385
+iterator.editorinfo		2264 307.693
+spatialterm_hs.editorinfo		1810.09 264.062
+warp.editorinfo		1042.73 -33.3197
+analyzer.editorinfo		2711.62 742.053
