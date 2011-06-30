@@ -32,6 +32,12 @@ BrightnessModels::Constant<T>::Constant(const std::string& name) :
 {
 	_addFunction(BrightnessModels::Constant<T>::getUnknowns);
 	_addFunction(BrightnessModels::Constant<T>::compute);
+
+	// nasty quick fix, forces constructor to be compiled into
+	// shared object file, without: optimized away (perhaps too simple)
+	if (!this) {
+		sout << "dummy call, you should never see this" << std::endl;
+	}
 }
 
 template<class T>

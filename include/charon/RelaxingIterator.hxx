@@ -53,6 +53,7 @@ RelaxingIterator<T>::RelaxingIterator(const std::string& name) :
 		"mixture at first iteration", 0.);
 	ParameteredObject::_addParameter(finalWeight, "finalWeight",
 		"mixture at last iteration", 1.);
+	_addFunction(RelaxingIterator<T>::getCur);
 }
 
 template <typename T>
