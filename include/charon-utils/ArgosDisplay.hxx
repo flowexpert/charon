@@ -173,6 +173,24 @@ VigraPixelInspector<T>::VigraPixelInspector (
 }
 
 template <typename T>
+const std::vector<int>& VigraPixelInspector<T>::dim() const
+{
+	static size_t maxDims = 5 ;
+	static std::vector<int> result = std::vector<int>(maxDims,0) ;
+	if(_mArray.size() == 0)
+	{	result.assign(maxDims,0) ;	}
+	else
+	{
+		result[0] = _mArray.size(0) ;
+		result[1] = _mArray.size(1) ;
+		result[2] = _mArray.size(2) ;
+		result[3] = _mArray.size(3) ;
+		result[4] = _mArray.size(4) ;
+	}
+	return result ;
+}
+
+template <typename T>
 const std::vector<double>& VigraPixelInspector<T>::operator()(
 		int x, int y) const {
 	static size_t maxDimSize = 5 ; //don't return more values
@@ -268,6 +286,21 @@ const std::vector<double>& CImgPixelInspector<T>::operator()(
 	}
 	return result ;
 
+}
+
+template <typename T>
+const std::vector<int>& CImgPixelInspector<T>::dim() const
+{
+	static size_t maxDims = 5 ;
+	static std::vector<int> result = std::vector<int>(maxDims,0) ;
+	if(_mArray.size() == 0)
+	{	result.assign(maxDims, 0) ;	}
+	else
+	{	result[0] = _mArray(0).width() ; result[1] = _mArray(0).height() ;
+		result[2] = _mArray(0).depth() ; result[3] = _mArray(0).spectrum() ;
+		result[4] = _mArray.width() ;
+	}
+	return result ;
 }
 
 template <typename T>

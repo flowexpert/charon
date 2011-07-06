@@ -91,6 +91,9 @@ namespace ArgosDisplay
 		/// destructor
 		virtual ~AbstractPixelInspector() {}
 
+		/// access dimensions of image
+		virtual const std::vector<int>& dim() const = 0 ;
+		
 		/// access pixel values at xy-position
 		virtual const std::vector<double>& operator()(int x, int y) const = 0;
 
@@ -120,7 +123,8 @@ namespace ArgosDisplay
 				const vigra::MultiArrayView<5, T>& mArray,
 				const std::string& name) ;
 		virtual ~VigraPixelInspector() {}
-
+		
+		inline virtual const std::vector<int>& dim() const ;
 		inline virtual const std::vector<double>& operator()(int x, int y) const ;
 		virtual const vigra::QRGBImage getRGBImage() const;
 		virtual const vigra::FImage getFImage() const;
@@ -144,6 +148,7 @@ namespace ArgosDisplay
 				const std::string& name) ;
 		virtual ~CImgPixelInspector() {}
 
+		inline virtual const std::vector<int>& dim() const ;
 		inline virtual const std::vector<double>& operator()(int x, int y) const ;
 		virtual const vigra::QRGBImage getRGBImage() const;
 		virtual const vigra::FImage getFImage() const;

@@ -112,9 +112,14 @@ namespace ArgosDisplay {
 		/// move current view to center and reset zoom level
 		void _centerAndResetZoom() ;
 
+		void _currentChanged(int index) ;
+
 	signals:
 		/// export status messages as signal
 		void exportStatusMessage(QString message) ;
+
+		/// export dimensions of current image as string
+		void exportDimensionsMessage(QString message) ;
 	
 		/// issued when linkImages() should be called
 		void imageLinked() ;

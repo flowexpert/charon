@@ -34,9 +34,15 @@ MainWindow::MainWindow(const std::string& title) : _viewStack(0),
 	_viewStack = new ViewStack(this);
 	this->setCentralWidget(_viewStack);
 	this->setWindowTitle("ArgosDisplay : " + QString::fromStdString(title));
+	QLabel* dimBar = new QLabel(this) ;
+	dimBar->setText("0 x 0 x 0 x 0 x 0") ;
+	this->statusBar()->addPermanentWidget(dimBar, 0 ) ;
 	QObject::connect(
 			_viewStack, SIGNAL(exportStatusMessage(QString)),
 			this->statusBar(),SLOT(showMessage(QString)));
+	QObject::connect(
+			_viewStack, SIGNAL(exportDimensionsMessage(QString)),
+			dimBar, SLOT(setText(QString))) ;
 	QObject::connect(this, SIGNAL(widgetAdded()), this, SLOT(_addDockWidgets()), Qt::QueuedConnection) ;
 
 	_createMenus() ;
