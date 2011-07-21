@@ -24,7 +24,6 @@ INCLUDE(Documentation)
 INCLUDE(ReleaseSys)
 
 # Test suite
-CONFIGURE_FILE(CTestCustom.cmake.in ${BUILD_ROOT_PREFIX}CTestCustom.cmake @ONLY)
 INCLUDE(CTest)
 
 # Setup CMake config files for package finding

@@ -47,15 +47,17 @@
 #ifdef DLLEX
 #undef DLLEX
 #endif // DLLEX
-#ifdef WINDOWS
+#ifdef _MSC_VER
+#define DEPRECATED __declspec(deprecated)
 #ifdef CREATE_SHARED
 #define DLLEX __declspec(dllexport)
 #else  // CREATE_SHARED
 #define DLLEX __declspec(dllimport)
 #endif // CREATE_SHARED
-#else  // WINDOWS
+#else  // _MSC_VER
 #define DLLEX
-#endif // WINDOWS
+#define DEPRECATED __attribute__((deprecated))
+#endif // _MSC_VER
 /// \def DLLEX
 /// handle dll imports/exports
 
@@ -486,7 +488,7 @@ public:
 	static bool getCreateMetadata();
 
 	template <typename T>
-	void setParameter(std::string name, T value);
+	DEPRECATED void setParameter(std::string name, T value);
 	//  \}
 };
 

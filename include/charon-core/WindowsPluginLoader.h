@@ -44,7 +44,7 @@ private:
 	 */
 	HINSTANCE hInstLibrary;
 
-	virtual std::string _pathsConfig() const;
+	DEPRECATED virtual std::string _pathsConfig() const;
 #ifdef MSVC
 	/**
 	 * @return Last error message as string

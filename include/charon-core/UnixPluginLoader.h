@@ -44,7 +44,7 @@ private:
 	 */
 	void * libHandle;
 
-	virtual std::string _pathsConfig() const;
+	DEPRECATED virtual std::string _pathsConfig() const;
 public:
 	/**
 	 * Default constructor.

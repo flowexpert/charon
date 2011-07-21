@@ -28,6 +28,7 @@
 #include "UnixPluginLoader.h"
 #include <set>
 #define PLUGIN_LOADER UnixPluginLoader
+#define DEPRECATED __attribute__((deprecated))
 
 #ifdef APPLE
 #define PLUGIN_EXTENSION ".dylib"
@@ -39,6 +40,7 @@
 #include "WindowsPluginLoader.h"
 #define PLUGIN_LOADER WindowsPluginLoader
 #define PLUGIN_EXTENSION ".dll"
+#define DEPRECATED __declspec(deprecated)
 #endif
 
 #include <iostream>
@@ -191,8 +193,10 @@ public:
 	 * @param metadataPath Path to store the metadata information at
 	 * @throws AbstractPluginLoader::PluginException
 	 */
-	void compileAndLoadPlugin(const std::string & sourceFile, std::vector<
-			std::string> &references, const std::string & metadataPath = "")
+	DEPRECATED void compileAndLoadPlugin(
+			const std::string& sourceFile,
+			std::vector<std::string>& references,
+			const std::string& metadataPath = "")
 			throw (AbstractPluginLoader::PluginException);
 
 	/**
@@ -204,8 +208,9 @@ public:
 	 * @param metadataPath Path to store the metadata information at
 	 * @throws AbstractPluginLoader::PluginException
 	 */
-	void compileAndLoadPlugin(const std::string & sourceFile,
-			const std::string & metadataPath = "")
+	DEPRECATED void compileAndLoadPlugin(
+			const std::string& sourceFile,
+			const std::string& metadataPath = "")
 			throw (AbstractPluginLoader::PluginException);
 
 	/**

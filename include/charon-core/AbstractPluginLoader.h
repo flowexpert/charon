@@ -63,7 +63,7 @@ protected:
 	 * an empty string if the file could not be found.
 	 * @return Path to the Paths.config file
 	 */
-	virtual std::string _pathsConfig() const = 0;
+	DEPRECATED virtual std::string _pathsConfig() const = 0;
 
 public:
 	/**
