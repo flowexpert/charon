@@ -44,19 +44,19 @@ ColorMap::Color EnhancedGrayMap::operator()(ArgumentType v) const
     unsigned char base = (unsigned char)v;
     v -= base;
     ColorMap::Color result(base);
-    if(v > 0.59)
+    if(v > 0.59f)
     {
-        v -= 0.59;
+		v -= 0.59f;
         ++result[1];
     }
-    if(v > 0.3)
+    if(v > 0.3f)
     {
-        v -= 0.3;
+        v -= 0.3f;
         ++result[0];
     }
-    if(v > 0.11)
+    if(v > 0.11f)
     {
-        v -= 0.11;
+        v -= 0.11f;
         ++result[2];
     }
     return result;

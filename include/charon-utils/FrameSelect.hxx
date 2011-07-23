@@ -75,9 +75,9 @@ void FrameSelect<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	uint lz = z() ;
-	uint lt = t() ;
-	uint lv = v() ;
+	vigra::MultiArrayIndex lz = z() ;
+	vigra::MultiArrayIndex lt = t() ;
+	vigra::MultiArrayIndex lv = v() ;
 	bool cV = cropV() ;
 
 	// update roi boundaries

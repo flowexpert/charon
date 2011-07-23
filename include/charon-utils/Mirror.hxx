@@ -59,15 +59,15 @@ void Mirror<T>::execute()
 
 	// quick and dirty hack, perhaps there are more
 	// optimized and/or elegant variants
-	for(unsigned int vv=0u; vv < s[4u]; vv++) {
+	for(vigra::MultiArrayIndex vv=0u; vv < s[4u]; vv++) {
 		cv = (v() ? (s[4u]-vv-1) : vv);
-		for(unsigned int tt=0u; tt < s[3u]; tt++) {
+		for(vigra::MultiArrayIndex tt=0u; tt < s[3u]; tt++) {
 			ct = (t() ? (s[3u]-tt-1) : tt);
-			for(unsigned int zz=0u; zz < s[2u]; zz++) {
+			for(vigra::MultiArrayIndex zz=0u; zz < s[2u]; zz++) {
 				cz = (z() ? (s[2u]-zz-1) : zz);
-				for(unsigned int yy=0u; yy < s[1u]; yy++) {
+				for(vigra::MultiArrayIndex yy=0u; yy < s[1u]; yy++) {
 					cy = (y() ? (s[1u]-yy-1) : yy);
-					for(unsigned int xx=0u; xx < s[0u]; xx++) {
+					for(vigra::MultiArrayIndex xx=0u; xx < s[0u]; xx++) {
 						cx = (x() ? (s[0u]-xx-1) : xx);
 						o(xx,yy,zz,tt,vv) = i(cx,cy,cz,ct,cv);
 					}

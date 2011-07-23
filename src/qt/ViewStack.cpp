@@ -282,7 +282,7 @@ void ViewStack::_centerAndResetZoom()
 		viewer.setZoomLevel(0) ;
 		viewer.centerOn(QPoint(viewer.originalWidth() / 2,viewer.originalHeight() / 2)) ;
 	}
-	catch(std::exception& err)
+	catch(std::exception&)
 	{
 		return ;
 	}
