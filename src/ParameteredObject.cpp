@@ -90,9 +90,9 @@ void ParameteredObject::_addSomething(const std::string& extension,
 
 		if (found == someList.end()) {
 			someList.push_back(name);
-			_metadata.set<std::string> (_className + "." + extension, someList);
-			_metadata.set<std::string> (_className + "." + name + ".type", type);
-			_metadata.set<std::string> (_className + "." + name + ".doc", doc);
+			_metadata.set<std::string>(_className+"."+extension, someList);
+			_metadata.set<std::string>(_className+"."+name + ".type", type);
+			_metadata.set<std::string>(_className+"."+name + ".doc", doc);
 			if (defaultValue.length())
 				_metadata.set<std::string> (_className + "." + name,
 						defaultValue);
@@ -248,21 +248,24 @@ std::set<std::string> ParameteredObject::getNeighbours() const {
 	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++) {
 		if (slotIter->second->connected()) {
 			targets = slotIter->second->getTargets();
-			for (targetIter = targets.begin(); targetIter != targets.end(); targetIter++)
+			for (targetIter = targets.begin();
+					targetIter != targets.end(); targetIter++)
 				res.insert((*targetIter)->getParent()._instanceName);
 		}
 	}
 	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++) {
 		if (slotIter->second->connected()) {
 			targets = slotIter->second->getTargets();
-			for (targetIter = targets.begin(); targetIter != targets.end(); targetIter++)
+			for (targetIter = targets.begin();
+					targetIter != targets.end(); targetIter++)
 				res.insert((*targetIter)->getParent()._instanceName);
 		}
 	}
 	return res;
 }
 
-std::set<std::string> ParameteredObject::getNeighbours(const ParameterFile& pf) const {
+std::set<std::string> ParameteredObject::getNeighbours(
+		const ParameterFile& pf) const {
 	std::set<std::string> res;
 	std::map<std::string, Slot*>::const_iterator slotIter;
 	std::set<std::string> slotNames;
@@ -354,11 +357,6 @@ void ParameteredObject::_load(const ParameterFile& pf,
 
 	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++)
 		slotIter->second->load(pf, man);
-
-	/* Iterating throufgh output slots isn't required
-	 for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
-	 slotIter->second->load(pf, man);
-	 */
 }
 
 bool ParameteredObject::connected() const {
@@ -430,7 +428,9 @@ Slot* ParameteredObject::getSlot(const std::string& slotName) {
 		slot = _outputs.find(slotName);
 		if (slot == _outputs.end())
 			throw std::invalid_argument(
-					std::string("Slot \"") + slotName + "\" in instance \"" + getName() + "\" of plugin \"" + getClassName() + "\" not found!");
+				std::string("Slot \"") + slotName + "\" in instance \""
+					+ getName() + "\" of plugin \"" + getClassName()
+					+ "\" not found!");
 	}
 	return slot->second;
 }
@@ -442,17 +442,26 @@ const Slot* ParameteredObject::getSlot(const std::string& slotName) const {
 		slot = _outputs.find(slotName);
 		if (slot == _outputs.end())
 			throw std::invalid_argument(
-					std::string("Slot \"") + slotName + "\" in instance \"" + getName() + "\" of plugin \"" + getClassName() + "\" not found!");
+				std::string("Slot \"") + slotName + "\" in instance \""
+					+ getName() + "\" of plugin \"" + getClassName()
+					+ "\" not found!");
 	}
 	return slot->second;
 }
 
-const std::map<std::string, Slot*> & ParameteredObject::getInputSlots() const {
+const std::map<std::string, Slot*>&
+		ParameteredObject::getInputSlots() const {
 	return _inputs;
 }
 
-const std::map<std::string, Slot*> & ParameteredObject::getOutputSlots() const {
+const std::map<std::string, Slot*>&
+		ParameteredObject::getOutputSlots() const {
 	return _outputs;
+}
+
+const std::map<std::string, AbstractParameter*>&
+		ParameteredObject::getParameters() const {
+	return _parameters;
 }
 
 void ParameteredObject::setCreateMetadata(bool c) {
@@ -464,12 +473,15 @@ bool ParameteredObject::getCreateMetadata() {
 	return _createMetadata;
 }
 
-AbstractParameter & ParameteredObject::getParameter(const std::string & name) const {
+AbstractParameter & ParameteredObject::getParameter(
+		const std::string & name) const {
 	if (_parameters.find(name) != _parameters.end()) {
 		return *(_parameters.find(name)->second);
 	} else {
 		throw std::invalid_argument(
-			std::string("Parameter ") + name + " in instance \"" + getName() + "\" of plugin \"" + getClassName() + "\" does not exist!");
+			std::string("Parameter ") + name + " in instance \""
+					+ getName() + "\" of plugin \"" + getClassName()
+					+ "\" does not exist!");
 	}
 }
 

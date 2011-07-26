@@ -421,14 +421,21 @@ public:
 	/** Returns a map linking the names of the input slots to the Slots itself.
 	 *  \returns Map containing all input slots
 	 */
-	const std::map<std::string, Slot *> & getInputSlots() const;
+	const std::map<std::string, Slot*>& getInputSlots() const;
 
 
 	/// Get all output slots as map
 	/** Returns a map linking the names of the output slots to the Slots itself.
 	 *  \returns Map containing all output slots
 	 */
-	const std::map<std::string, Slot *> & getOutputSlots() const;
+	const std::map<std::string, Slot*>& getOutputSlots() const;
+
+	/// Get all Parameters as a map
+	/** Returns a map linking the names of the parameters to the parameters
+	 *  itself.
+	 *  \returns Map containing all output slots
+	 */
+	const std::map<std::string, AbstractParameter*>& getParameters() const;
 
 	/// Save parameters to parameter file
 	/** Saves parameters of the current parametered object
