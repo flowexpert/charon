@@ -35,7 +35,7 @@ FIND_PATH(PETSC_ROOT_DIR
 # environmental variable (or by -DPETSC_ARCH=<arch>)
 IF(NOT PETSC_ARCH)
 	IF(WIN32)
-		SET(PETSC_ARCH "win_x86_32_mpiuni")
+		SET(PETSC_ARCH "win32-msvc100-release")
 	ELSE()
 		SET(PETSC_ARCH "linux-gnu-cxx-debug")
 	ENDIF()
@@ -95,7 +95,7 @@ SET(PETSC_INCLUDE_DIRS
 OPTION(USE_MPI "does PETSc use an external MPI implementation?" ${UNIX})
 OPTION(USE_FORTRAN "was fortran used for PETSc-compilation?" ${UNIX})
 OPTION(PETSC_SINGLE_LIBRARY
-	"has PETSc been compiled with --with-single-library=1?" ${UNIX})
+	"has PETSc been compiled with --with-single-library=1?" ON)
 
 SET(PETSC_LIBRARY_SEARCH_HINT
 	${PETSC_ROOT_DIR}/lib/${PETSC_ARCH}
@@ -215,7 +215,7 @@ IF (USE_MPI)
 		${MPI_INCLUDE_PATH}
 	)
 ELSE (USE_MPI)
-	OPTION(PETSC_NEEDS_LIBMPIUNI "require mpiuni library" ON)
+	OPTION(PETSC_NEEDS_LIBMPIUNI "require mpiuni library" OFF)
 	IF(PETSC_NEEDS_LIBMPIUNI)
 		FIND_LIBRARY(PETSC_LIBMPIUNI
 			NAMES mpiuni libmpiuni
@@ -231,7 +231,6 @@ ELSE (USE_MPI)
 		${PETSC_INCLUDE_DIR}/mpiuni/
 	)
 ENDIF (USE_MPI)
-
 
 # check if everything went fine
 INCLUDE(FindPackageHandleStandardArgs)
@@ -271,5 +270,4 @@ MARK_AS_ADVANCED(
 	PETSC_SINGLE_LIBRARY
 	${PETSC_LIBVARS}
 )
-
 UNSET(PETSC_LIBVARS)
