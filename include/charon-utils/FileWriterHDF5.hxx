@@ -92,7 +92,7 @@ void FileWriterHDF5<T>::execute() {
 	sout << "\tInput data has shape " << shape[0] << "x" << shape[1] << "x"
 			<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;
 
-	vigra::HDF5File file(filename().c_str(),vigra::HDF5File::New);
+	vigra::HDF5File file(filename().c_str(),vigra::HDF5File::Open);
 
 	if(noSingletonDimensions()) {
 		std::vector<vigra::MultiArrayIndex> tShape;
