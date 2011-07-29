@@ -110,10 +110,16 @@ void ViewStack::setCurrentIndex(int index) {
 }
 
 void ViewStack::_currentChanged(int index) {
-	if(_inspectors[index] == 0)
-		return ;
-	const std::vector<int>& dims = _inspectors[index]->dim() ;
-	QString message = QString("%1 x %2 x %3 x %4 x %5").arg(dims[0]).arg(dims[1]).arg(dims[2]).arg(dims[3]).arg(dims[4]) ;
+	if(index < 0 || index >= (int)_inspectors.size()) {
+		// fix bug on selection change
+		return;
+	}
+	if(_inspectors[index] == 0) {
+		return;
+	}
+	const std::vector<int>& dims = _inspectors[index]->dim();
+	QString message = QString("%1 x %2 x %3 x %4 x %5")
+			.arg(dims[0]).arg(dims[1]).arg(dims[2]).arg(dims[3]).arg(dims[4]);
 	emit exportDimensionsMessage(message) ;
 }
 
