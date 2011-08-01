@@ -4,27 +4,33 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QStatusBar>
 #include "WizardPageStart.h"
 #include "WizardPageMetadata.h"
 #include "WizardPageSlots.h"
 #include "WizardPageParameters.h"
 #include "WizardPageSummary.h"
 #include "SideWidget.h"
+#include "StatusEventFilter.h"
 
 Wizard::Wizard(QWidget* p) :
 		QWizard(p) {
+	StatusEventFilter* filter = new StatusEventFilter(this);
+	installEventFilter(filter);
 	addPage(new WizardPageStart(this));
 	addPage(new WizardPageMetadata(this));
 	addPage(new WizardPageSlots(this));
 	addPage(new WizardPageParameters(this));
 	addPage(new WizardPageSummary(this));
 
-	QListWidget* sWidget = new SideWidget(this);
+	SideWidget* sWidget = new SideWidget(this);
 	setSideWidget(sWidget);
 	const QList<int>& pId = pageIds();
 	for(int ii=0; ii < pId.size(); ii++) {
 		sWidget->addItem(page(pId[ii])->title());
 	}
+	connect(filter, SIGNAL(statusMessage(QString)),
+			sWidget, SLOT(showMessage(QString)));
 
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",

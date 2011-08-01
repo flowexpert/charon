@@ -75,6 +75,9 @@
         <property name="toolTip">
          <string>Module name has to start with an &lt;em&gt;uppercase&lt;/em&gt; letter</string>
         </property>
+        <property name="statusTip">
+         <string>Start Uppercase!</string>
+        </property>
         <property name="whatsThis">
          <string>Class name of the new module. Coding conventions to start class names with uppercase letters are enforced here.</string>
         </property>

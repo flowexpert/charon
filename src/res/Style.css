@@ -2,6 +2,13 @@
  * and the parameter/slot tables
  */
 
+QStatusBar {
+	font-size: 10pt;
+	font-weight: bold;
+	color: red;
+	border: 1px solid rgb(0,0,0,20);
+}
+
 QListView#sideWidget {
 	font-size: 11pt;
 	min-width: 115px;
