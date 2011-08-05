@@ -58,13 +58,6 @@ protected:
 	  */
 	ParameteredObject::build_type (*getBuildType)() ;
 
-	/**
-	 * Tries to locate the Paths.config file at different locations. Returns
-	 * an empty string if the file could not be found.
-	 * @return Path to the Paths.config file
-	 */
-	DEPRECATED virtual std::string _pathsConfig() const = 0;
-
 public:
 	/**
 	 * Path where the plugins are stored
@@ -187,27 +180,6 @@ public:
 	 * @throws AbstractPluginLoader::PluginException
 	 */
 	virtual void load() throw (PluginException) = 0;
-
-	/**
-	 * Compiles and loads source code.
-	 * Compiles the source code of a plugin and then loads it. Can be helpful
-	 * because the the source code is platform independent but the binaries
-	 * aren't.
-	 * You can specify referenced libraries by passing a vector containing the
-	 * names of the shared libraries as std::string (without the prefix "lib"
-	 * and without extension). These libraries have to be stored inside the
-	 * Plugin directory or a system's library path.
-	 * Custom compiler flags can be specified inside the Paths.config file.
-	 *
-	 * @param sourceFile Path to the source file (.cpp)
-	 * @param references Vector containing the names of referenced libraries
-	 * @param metadataPath Path to store the created metadata information in.
-	 *        If left empty, no metadata information will be created.
-	 * @throws AbstractPluginLoader::PluginException
-	 */
-	virtual void compileAndLoad(const std::string & sourceFile, std::vector<
-			std::string> &references, const std::string & metadataPath = "")
-			throw (PluginException) = 0;
 
 	/**
 	 * Unloads the plugin.

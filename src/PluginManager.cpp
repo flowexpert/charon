@@ -115,49 +115,6 @@ void PluginManager::loadPlugin(const std::string & name)
 	}
 }
 
-void PluginManager::compileAndLoadPlugin(const std::string & sourceFile,
-		std::vector<std::string> &references, const std::string & metadataPath)
-		throw (AbstractPluginLoader::PluginException) {
-
-	std::string name = sourceFile;
-	if (name.find("/") != std::string::npos)
-		name = name.substr(name.find_last_of("/") + 1);
-	if (name.find("\\") != std::string::npos)
-		name = name.substr(name.find_last_of("\\") + 1);
-	name = name.substr(0, name.find_last_of("."));
-
-	if (loadedPlugins.find(name) == loadedPlugins.end()) {
-		transform(name.begin(), name.end(), name.begin(), (int(*)(int)) tolower);
-		PLUGIN_LOADER * newPlugin = new PLUGIN_LOADER(name);
-
-		try {
-			newPlugin->compileAndLoad(sourceFile, references, metadataPath);
-		} catch (AbstractPluginLoader::PluginException e) {
-			delete newPlugin;
-			throw e;
-		}
-
-		loadedPlugins[name] = newPlugin;
-		sout << "Plugin \"" << name << "\" loaded successfully."
-				<< std::endl;
-	} else {
-		throw(AbstractPluginLoader::PluginException(
-				"A Plugin with the same name is already loaded.", name,
-				AbstractPluginLoader::PluginException::ALREADY_LOADED));
-	}
-}
-
-void PluginManager::compileAndLoadPlugin(const std::string & sourceFile,
-		const std::string & metadataPath)
-		throw (AbstractPluginLoader::PluginException) {
-	try {
-		std::vector<std::string> v;
-		compileAndLoadPlugin(sourceFile, v, metadataPath);
-	} catch (AbstractPluginLoader::PluginException e) {
-		throw e;
-	}
-}
-
 void PluginManager::unloadPlugin(const std::string & name)
 		throw (AbstractPluginLoader::PluginException) {
 	if (loadedPlugins.find(name) != loadedPlugins.end()) {

@@ -169,7 +169,9 @@ void WindowsPluginLoader::load() throw (PluginException) {
 #ifdef MSVC
 		std::string errorMsg;
 		if (GetLastError() == ERROR_PROC_NOT_FOUND) {
-			errorMsg += "This Plugin is missing the \"getBuildType\" function. No checks if it runtime libraries are compatible are perfomed";
+			errorMsg += "This Plugin is missing the \"getBuildType\" "
+				"function. No checks if it runtime libraries are "
+				"compatible are perfomed";
 		}
 #endif
 	}
@@ -181,7 +183,8 @@ void WindowsPluginLoader::load() throw (PluginException) {
 		FreeLibrary(hInstLibrary);
 		hInstLibrary = NULL;
 		throw PluginException(
-			"The Plugin \"" + pluginName + "\" is build in DEBUG configuration while charon-core is in RELEASE Mode.\n"
+			"The Plugin \"" + pluginName + "\" is build in DEBUG "
+			"configuration while charon-core is in RELEASE Mode.\n"
 			"Plugin will not be used as runtime libraries are incompatible",
 			pluginName, PluginException::INCOMPATIBLE_BUILD_TYPE) ;
 #endif 
@@ -192,117 +195,14 @@ void WindowsPluginLoader::load() throw (PluginException) {
 		FreeLibrary(hInstLibrary);
 		hInstLibrary = NULL;
 		throw PluginException(
-			"The Plugin \"" + pluginName + "\" is build in RELEASE configuration while charon-core is in DEBUG Mode.\n"
+			"The Plugin \"" + pluginName + "\" is build in RELEASE "
+			"configuration while charon-core is in DEBUG Mode.\n"
 			"Plugin will not be used as runtime libraries are incompatible",
 			pluginName, PluginException::INCOMPATIBLE_BUILD_TYPE) ;
 
 #endif
 		}
 	}
-}
-
-void WindowsPluginLoader::compileAndLoad(
-		const std::string & sourceFile,
-		std::vector<std::string> &references,
-		const std::string & metadataPath) throw (PluginException) {
-
-	//Load paths from the path file
-	ParameterFile p;
-	try {
-		p.load(_pathsConfig());
-	} catch (std::string e) {
-		throw PluginException(e);
-	}
-	std::string charon_core = p.get<std::string> ("charon-core-install");
-	std::string sdk_root = p.get<std::string> ("SDK-root");
-	std::string vc_root = p.get<std::string> ("VC-root");
-	std::string compiler_call = p.get<std::string> ("compiler-call");
-
-	//Collect referenced plugins
-	std::string refs = "";
-	for (unsigned int i = 0; i < references.size(); i++) {
-#ifdef MSVC
-		refs += StringTool::toLowerCase(references[i]) + ".lib ";
-#else
-		refs += "-l" + StringTool::toLowerCase(references[i]) + " ";
-#endif
-	}
-
-	//Preserve the current working directory and changing it to the plugin path
-	std::string oldDir = FileTool::getCurrentDir();
-	FileTool::changeDir(pluginPath);
-
-	/*
-	 * Now compile and load the final version with optimizing but without the
-	 * CREATE_METADATA-flag
-	 */
-	sout << "Invoking C++ compiler to to compile the plugin and creating "
-		"metadata information.\nPlease be patient, this could take some "
-		"time." << std::endl;
-#ifdef MSVC
-	// syscall for compiling with VisualStudio
-	std::string syscall =	"cl /wd4290 /wd4251 /O2 /Oi /GL /I \""
-							+ charon_core + "/include/charon-core\" /I \"" + sdk_root + "\\Include\" /I \"" + vc_root
-							+ "\\include\" " + "/D \"WIN32\" /D \"NDEBUG\" /D \"_WINDOWS\" "
-							+ "/D \"WINDOWS\" /D \"HANDLE_DLL\" "
-							+ "/D \"" + pluginName + "_EXPORTS\" /D \"MSVC\" /FD "
-							+ "/EHsc /MD /Gy "
-							+ "/W3 /nologo /TP \"" + sourceFile
-							+ "\" /link /LIBPATH:\"" + vc_root + "\\lib\" /LIBPATH:\""
-							+ sdk_root + "\\Lib\" /LIBPATH:\"" + charon_core
-							+ "\\bin\" /LIBPATH:\"" + pluginPath + "\" /LIBPATH:\"" + additionalPluginPath + "\" /OUT:\"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\" + pluginName
-							+ ".dll\" /INCREMENTAL:NO /NOLOGO /DLL /MANIFEST /MANIFESTFILE:\""
-							+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\" + pluginName
-							+ ".dll.manifest\" /MANIFESTUAC:\"level='asInvoker' "
-							+ "uiAccess='false'\" /SUBSYSTEM:WINDOWS "
-							+ "/DYNAMICBASE /NXCOMPAT /IMPLIB:\""
-							+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\" + pluginName + ".lib\" "
-							+ refs + "kernel32.lib user32.lib gdi32.lib winspool.lib "
-							+ "comdlg32.lib advapi32.lib shell32.lib ole32.lib "
-							+ "oleaut32.lib uuid.lib odbc32.lib odbccp32.lib " + charon_core + "\\lib\\charon-core.lib > error.log ";
-	std::string manifestCall = "mt /nologo /outputresource:\"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\"
-							+ pluginName + ".dll;#2\" -manifest \"" + (additionalPluginPath.size() ? additionalPluginPath : pluginPath) + "\\"
-							+ pluginName + ".dll.manifest\" >> error.log";
-#else
-	// syscall for compiling with MinGW
-	std::string syscall =	compiler_call + " -I" + charon_core + "/src"
-							+ " -I" + charon_core + "/imgmanip"
-							+ " -L" + charon_core + "/bin"
-							+ " -L" + pluginPath + " -shared"
-							+ " -o " + pluginPath + "/lib" + pluginName + ".dll"
-							+ " -lgdi32 -lcharon-core -shared " + refs + " "
-							+ sourceFile;
-#endif
-
-#ifndef NDEBUG
-	sout << "Compiler call:\n" << syscall << std::endl;
-	sout << "Manifest tool call:\n" << manifestCall << std::endl;
-#endif // NDEBUG
-
-	std::string temp = FileTool::getCurrentDir();
-	if (system(syscall.c_str())) {
-		throw PluginException("Error in compiling plugin \"" + pluginName
-			+ "\". Compiler output:\n" + FileTool::readFile("error.log"), pluginName, PluginException::COMPILE_ERROR);
-	}
-	if (system(manifestCall.c_str()))
-		throw PluginException("Error in invoking the manifest tool for the plugin \"" + pluginName
-		+ "\". Console output:\n" + FileTool::readFile("error.log"), pluginName, PluginException::COMPILE_ERROR);
-	
-	try {
-		load();
-		if (metadataPath.size()) {
-			//create metadata
-			ParameteredObject::setCreateMetadata(true);
-			FileTool::changeDir(metadataPath);
-			destroyInstance(createInstance("temp", 0));
-			ParameteredObject::setCreateMetadata(false);
-		}
-	} catch (PluginException e) {
-		throw e;
-	}
-
-	//Restore the old working directory
-	FileTool::changeDir(oldDir);
 }
 
 void WindowsPluginLoader::unload() throw (PluginException) {
@@ -316,25 +216,6 @@ void WindowsPluginLoader::unload() throw (PluginException) {
 	} else {
 		throw PluginException("Plugin \"" + pluginName + "\" is not loaded.",
 				pluginName, PluginException::PLUGIN_NOT_LOADED);
-	}
-}
-
-std::string WindowsPluginLoader::_pathsConfig() const {
-#ifdef MSVC
-	char* buffer;
-	_dupenv_s(&buffer, 0, "ProgramFiles");
-	std::string programFiles = buffer;
-	assert(buffer);
-	free(buffer);
-#else
-	std::string programFiles = getenv("ProgramFiles");
-#endif
-	if (FileTool::exists("./Paths.config")) {
-		return "./Paths.config";
-	} else if (FileTool::exists(programFiles + "\\charon-core\\share\\charon-core\\Paths.config")) {
-		return (programFiles + "\\charon-core\\share\\charon-core\\Paths.config");
-	} else {
-		return "";
 	}
 }
 

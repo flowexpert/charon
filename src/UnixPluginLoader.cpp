@@ -92,77 +92,6 @@ void UnixPluginLoader::load() throw (PluginException) {
 	}
 }
 
-void UnixPluginLoader::compileAndLoad(const std::string & sourceFile,
-		std::vector<std::string> &references, const std::string & metadataPath)
-		throw (PluginException) {
-
-	ParameterFile p;
-	try {
-		p.load(_pathsConfig());
-	} catch (std::string e) {
-		throw PluginException(e);
-	}
-	std::string charon_core = p.get<std::string> ("charon-core-install");
-	std::string compiler_call = p.get<std::string> ("compiler-call");
-#ifdef APPLE
-	std::vector<std::string> x11_libs_vector = p.getList<std::string>("x11-libs");
-	std::string X11_libs(" ");
-	for (unsigned int i = 0; i < x11_libs_vector.size(); i++) {
-		X11_libs = X11_libs + " " + x11_libs_vector[i];
-	}
-#else
-	std::string X11_libs = "";
-#endif /* APPLE */
-
-	//Preserve the current working directory and changing it to the plugin path
-	std::string oldDir = FileTool::getCurrentDir();
-	FileTool::changeDir(additionalPluginPath);
-
-	//Collect referenced plugins
-	std::string refs = "";
-	for (unsigned int i = 0; i < references.size(); i++) {
-		refs = refs + "-l" + StringTool::toLowerCase(references[i]) + " ";
-	}
-
-	//Compile the plugin
-	std::cout << "Invoking C++ compiler to to compile the plugin \""
-			+ pluginName
-			+ "\" and creating metadata information.\nPlease be patient, this "
-			+ "could take some time." << std::endl;
-
-	std::string sysCall = compiler_call + " -fPIC -I \"" + charon_core
-			+ "/include\" -L \"" + charon_core + "/lib\" -L \""
-			+ pluginPath + "\" -L \"" + additionalPluginPath + "\" "
-			+ DL_COMPILER_FLAG + " -lcharon-core -lpthread " + refs
-			+ " -Wl,-rpath,\"" + pluginPath + "\" -Wl,-rpath,\""
-			+ additionalPluginPath + "\" -o \""
-			+ (additionalPluginPath.size() ? additionalPluginPath : pluginPath)
-			+ "/lib" + pluginName + LIBRARY_EXTENSION + "\" \"" + sourceFile
-			+ "\" " + X11_libs + " > error.log";
-#ifndef NDEBUG
-	std::cout << "Compiler call:\n" << sysCall << std::endl;
-#endif
-	if (system(sysCall.c_str())) {
-		throw PluginException("Error in compiling plugin \"" + pluginName
-				+ "\". Compiler output:\n" + FileTool::readFile("error.log"), pluginName, PluginException::COMPILE_ERROR);
-	}
-	try {
-		load();
-		if (metadataPath.size()) {
-			//create metadata
-			ParameteredObject::setCreateMetadata(true);
-			FileTool::changeDir(metadataPath);
-			destroyInstance(createInstance("temp", 0));
-			ParameteredObject::setCreateMetadata(false);
-		}
-	} catch (PluginException e) {
-		throw e;
-	}
-
-	//Restore the old working directory
-	FileTool::changeDir(oldDir);
-}
-
 void UnixPluginLoader::unload() throw (PluginException) {
 	if (libHandle) {
 		dlclose(libHandle);
@@ -180,24 +109,6 @@ void UnixPluginLoader::unload() throw (PluginException) {
 		throw PluginException("Plugin \"" + pluginName + "\" is not loaded.",
 				pluginName, PluginException::PLUGIN_NOT_LOADED);
 	}
-}
-
-std::string UnixPluginLoader::_pathsConfig() const {
-	if (FileTool::exists("Paths.config"))
-		return "Paths.config";
-	else if (FileTool::exists("share/charon-core/Paths.config"))
-		return "share/charon-core/Paths.config";
-	else if (FileTool::exists("/usr/local/share/charon-core/Paths.config"))
-		return "/usr/local/share/charon-core/Paths.config";
-	else if (FileTool::exists("/usr/share/charon-core/Paths.config"))
-		return "/usr/share/charon-core/Paths.config";
-	else
-		throw std::runtime_error(
-				"Could not find file Paths.config.\n"
-				"Tried directories:\n\t./\n\t./share/charon-core/\n\t"
-				"/usr/local/share/charon-core/\n\t"
-				"/usr/share/charon-core/\n"
-				"Working dir:\n\t" + FileTool::getCurrentDir());
 }
 
 UnixPluginLoader::~UnixPluginLoader() {

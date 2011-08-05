@@ -44,7 +44,6 @@ private:
 	 */
 	HINSTANCE hInstLibrary;
 
-	DEPRECATED virtual std::string _pathsConfig() const;
 #ifdef MSVC
 	/**
 	 * @return Last error message as string
@@ -61,10 +60,6 @@ public:
 	 */
 	WindowsPluginLoader(const std::string & name);
 	virtual void load() throw (PluginException);
-	DEPRECATED virtual void compileAndLoad(
-			const std::string& sourceFile,
-			std::vector<std::string>& references,
-			const std::string& metadataPath = "") throw (PluginException);
 	virtual void unload() throw (PluginException);
 
 	/**

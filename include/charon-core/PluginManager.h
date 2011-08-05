@@ -145,8 +145,7 @@ public:
 	 * Creates a new PluginManager instance and sets the path to the plugins to
 	 * the value of pluginPath. Left empty, the current working directory will
 	 * be used.
-	 * You can also specify an additional (private) plugin path. If specified,
-	 * plugins compiled by compileAndLoadPlugin() are stored in this directory.
+	 * You can also specify an additional (private) plugin path.
 	 *
 	 * @param pluginPath Path where the plugins are stored
 	 * @param additionalPluginPath Additional (private) plugin path
@@ -168,49 +167,6 @@ public:
 	 * @param name the file name of the plugin
 	 */
 	void loadPlugin(const std::string & name)
-			throw (AbstractPluginLoader::PluginException);
-
-	/**
-	 * Compiles and loads source code.
-	 * Compiles the source code of a plugin and then loads it. Can be helpful
-	 * because the the source code is platform independent but the binaries
-	 * aren't.
-	 * You can specify referenced libraries by passing a vector containing the
-	 * names of the shared libraries as std::string (without the prefix "lib"
-	 * and without extension). These libraries habe to be stored inside the
-	 * Plugin directory or a system's library path.
-	 * Custom compiler flags can be specified in the Paths.config file.
-	 * This method calls the compileAndLoad method of the AbstractPluginLoader
-	 * class.
-	 * If no metadata path is specified, no metadata information will be
-	 * created.
-	 *
-	 * @see AbstractPluginLoader::compileAndLoad()
-	 * @see UnixPluginLoader::compileAndLoad()
-	 * @see WindowsPluginLoader::compileAndLoad()
-	 * @param sourceFile Path to the source file (.cpp)
-	 * @param references Vector containing the names of referenced libraries
-	 * @param metadataPath Path to store the metadata information at
-	 * @throws AbstractPluginLoader::PluginException
-	 */
-	DEPRECATED void compileAndLoadPlugin(
-			const std::string& sourceFile,
-			std::vector<std::string>& references,
-			const std::string& metadataPath = "")
-			throw (AbstractPluginLoader::PluginException);
-
-	/**
-	 * Same method, but without taking information about referenced plugins.
-	 * Use this one if your plugin does not refer to other plugins.
-	 *
-	 * @see compileAndLoadPlugin(const std::string &, std::vector<std::string> &)
-	 * @param sourceFile Path to the source file (.cpp)
-	 * @param metadataPath Path to store the metadata information at
-	 * @throws AbstractPluginLoader::PluginException
-	 */
-	DEPRECATED void compileAndLoadPlugin(
-			const std::string& sourceFile,
-			const std::string& metadataPath = "")
 			throw (AbstractPluginLoader::PluginException);
 
 	/**

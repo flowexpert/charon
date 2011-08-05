@@ -44,7 +44,6 @@ private:
 	 */
 	void * libHandle;
 
-	DEPRECATED virtual std::string _pathsConfig() const;
 public:
 	/**
 	 * Default constructor.
@@ -52,9 +51,6 @@ public:
 	 */
 	UnixPluginLoader(const std::string & name);
 	virtual void load() throw (PluginException);
-	virtual void compileAndLoad(const std::string & sourceFile, std::vector<
-			std::string> &references, const std::string & metadataPath = "")
-			throw (PluginException);
 	virtual void unload() throw (PluginException);
 
 	/**
