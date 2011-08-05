@@ -106,7 +106,19 @@ void ParameteredObject::_addParameter(AbstractParameter& param,
 
 	// Check that param is not yet registered.
 	// Parameters can only be assigned once!
-	assert(_parameters.find(name) == _parameters.end());
+	
+	if(	_parameters.find(name) != _parameters.end() ||
+		_inputs.find(name) != _inputs.end() ||
+		_outputs.find(name) != _outputs.end())
+	{
+		sout << "***********************************************************\n"
+			 << "The parameter or slot \"" << name 
+			 << "\" has already been defined!\n" 
+			 << "Slots and Parameter names must be unique for each Plugin!\n"
+			 << "***********************************************************\n"
+			 << std::endl ;
+		return ;
+	}
 
 	// assign parameter to this object
 	param.init(this, name);
@@ -128,8 +140,18 @@ void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type) {
 
 	// check that slot is not yet registered
-	assert(_inputs.find(name) == _inputs.end());
-	assert(_outputs.find(name) == _outputs.end());
+	if(	_parameters.find(name) != _parameters.end() ||
+		_inputs.find(name) != _inputs.end() ||
+		_outputs.find(name) != _outputs.end())
+	{
+		sout << "***********************************************************\n"
+			 << "The parameter or slot \"" << name 
+			 << "\" has already been defined!\n" 
+			 << "Slots and Parameter names must be unique for each Plugin!\n"
+			 << "***********************************************************\n"
+			 << std::endl ;
+		return ;
+	}
 
 	// assign parameter to this object
 	slot.init(this, name, type);
@@ -159,8 +181,18 @@ void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type) {
 
 	// check that param is not yet registered
-	assert(_inputs.find(name) == _inputs.end());
-	assert(_outputs.find(name) == _outputs.end());
+	if(	_parameters.find(name) != _parameters.end() ||
+		_inputs.find(name) != _inputs.end() ||
+		_outputs.find(name) != _outputs.end())
+	{
+		sout << "***********************************************************\n"
+			 << "The parameter or slot \"" << name 
+			 << "\" has already been defined!\n" 
+			 << "Slots and Parameter names must be unique for each Plugin!\n"
+			 << "***********************************************************\n"
+			 << std::endl ;
+		return ;
+	}
 
 	// assign parameter to this object
 	slot.init(this, name, type);
