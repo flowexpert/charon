@@ -69,13 +69,27 @@ ParameteredObject::~ParameteredObject() {
 	}
 }
 
-void ParameteredObject::_addSomething(const std::string& extension,
+bool ParameteredObject::_addSomething(const std::string& extension,
 		const std::string& name, const std::string& doc,
 		const std::string& type, const std::string& defaultValue) {
 
+	// Check that param is not yet registered.
+	// Parameters can only be assigned once!
+	if( _parameters.find(name) != _parameters.end() ||
+		_inputs.find(name) != _inputs.end() ||
+		_outputs.find(name) != _outputs.end()) {
+		sout << "***********************************************************\n"
+			 << "The parameter or slot \"" << name
+			 << "\" has already been defined!\n"
+			 << "Slots and Parameter names must be unique for each Plugin!\n"
+			 << "***********************************************************\n"
+			 << std::endl;
+		return false;
+	}
+
 	if (_createMetadata) {
-		// Here, type has to be set explicitly. Use guessType, if no type
-		// has been given.
+		// Here, type has to be set explicitly.
+		// Use guessType, if no type has been given.
 		assert(type.length());
 
 		std::vector<std::string> someList;
@@ -98,33 +112,15 @@ void ParameteredObject::_addSomething(const std::string& extension,
 						defaultValue);
 		}
 	}
+
+	return true;
 }
 
 void ParameteredObject::_addParameter(AbstractParameter& param,
 		const std::string& name, const std::string& doc,
 		const std::string& type) {
-
-	// Check that param is not yet registered.
-	// Parameters can only be assigned once!
-	
-	if(	_parameters.find(name) != _parameters.end() ||
-		_inputs.find(name) != _inputs.end() ||
-		_outputs.find(name) != _outputs.end())
-	{
-		sout << "***********************************************************\n"
-			 << "The parameter or slot \"" << name 
-			 << "\" has already been defined!\n" 
-			 << "Slots and Parameter names must be unique for each Plugin!\n"
-			 << "***********************************************************\n"
-			 << std::endl ;
-		return ;
-	}
-
 	// assign parameter to this object
 	param.init(this, name);
-
-	// and add it to the parameters list
-	_parameters.insert(std::make_pair(name, &param));
 
 	// if type is given, we do not need guessing
 	std::string guessedType = type;
@@ -132,32 +128,17 @@ void ParameteredObject::_addParameter(AbstractParameter& param,
 		guessedType = param.guessType();
 
 	// add metadata
-	_addSomething("parameters", name, doc, guessedType,
-			param.getDefaultString());
+	if (_addSomething("parameters", name, doc, guessedType,
+			param.getDefaultString())) {
+		// and add it to the parameters list
+		_parameters.insert(std::make_pair(name, &param));
+	}
 }
 
 void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type) {
-
-	// check that slot is not yet registered
-	if(	_parameters.find(name) != _parameters.end() ||
-		_inputs.find(name) != _inputs.end() ||
-		_outputs.find(name) != _outputs.end())
-	{
-		sout << "***********************************************************\n"
-			 << "The parameter or slot \"" << name 
-			 << "\" has already been defined!\n" 
-			 << "Slots and Parameter names must be unique for each Plugin!\n"
-			 << "***********************************************************\n"
-			 << std::endl ;
-		return ;
-	}
-
 	// assign parameter to this object
 	slot.init(this, name, type);
-
-	// and add it to the inputs slot list
-	_inputs.insert(std::make_pair(name, &slot));
 
 	// if type is given, we do not need guessing
 	std::string guessedType = type;
@@ -165,40 +146,25 @@ void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 		guessedType = slot.guessType();
 
 	// add metadata
-	_addSomething("inputs", name, doc, guessedType);
+	if (_addSomething("inputs", name, doc, guessedType)) {
+		// and add it to the inputs slot list
+		_inputs.insert(std::make_pair(name, &slot));
 
-	if (_createMetadata) {
-		if (slot.getMulti())
-			_metadata.set<std::string> (_className + "." + name
-					+ ".multi", "true");
-		if (slot.getOptional())
-			_metadata.set<std::string> (_className + "." + name
-					+ ".optional", "true");
+		if (_createMetadata) {
+			if (slot.getMulti())
+				_metadata.set<std::string> (_className + "." + name
+						+ ".multi", "true");
+			if (slot.getOptional())
+				_metadata.set<std::string> (_className + "." + name
+						+ ".optional", "true");
+		}
 	}
 }
 
 void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type) {
-
-	// check that param is not yet registered
-	if(	_parameters.find(name) != _parameters.end() ||
-		_inputs.find(name) != _inputs.end() ||
-		_outputs.find(name) != _outputs.end())
-	{
-		sout << "***********************************************************\n"
-			 << "The parameter or slot \"" << name 
-			 << "\" has already been defined!\n" 
-			 << "Slots and Parameter names must be unique for each Plugin!\n"
-			 << "***********************************************************\n"
-			 << std::endl ;
-		return ;
-	}
-
 	// assign parameter to this object
 	slot.init(this, name, type);
-
-	// and add it to the output slot list
-	_outputs.insert(std::make_pair(name, &slot));
 
 	// if type is given, we do not need guessing
 	std::string guessedType = type;
@@ -206,15 +172,17 @@ void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,
 		guessedType = slot.guessType();
 
 	// add metadata
-	_addSomething("outputs", name, doc, guessedType);
-
-	if (_createMetadata) {
-		if (!slot.getMulti())
-			_metadata.set<std::string> (_className + "." + name
-					+ ".multi", "false");
-		if (!slot.getOptional())
-			_metadata.set<std::string> (_className + "." + name
-					+ ".optional", "false");
+	if (_addSomething("outputs", name, doc, guessedType)) {
+		// and add it to the output slot list
+		_outputs.insert(std::make_pair(name, &slot));
+		if (_createMetadata) {
+			if (!slot.getMulti())
+				_metadata.set<std::string> (_className + "." + name
+						+ ".multi", "false");
+			if (!slot.getOptional())
+				_metadata.set<std::string> (_className + "." + name
+						+ ".optional", "false");
+		}
 	}
 }
 

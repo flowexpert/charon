@@ -159,8 +159,9 @@ private:
 	 *  \param doc          parameter docstring (for metadata generation)
 	 *  \param type         Parameter type (string representation)
 	 *  \param defaultValue Default value, if any
+	 *  \retval true        Parameter/Slot name is unique
 	 */
-	void _addSomething(
+	bool _addSomething(
 			const std::string& extension, const std::string& name,
 			const std::string& doc, const std::string& type,
 			const std::string& defaultValue = "");
