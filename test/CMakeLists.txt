@@ -7,16 +7,10 @@ IF(BUILD_TESTING)
 	# common definitions and test file configuration
 	SET(PENGUINFILE "${CMAKE_CURRENT_SOURCE_DIR}/Penguin.pgm")
 	CONFIGURE_FILE(
-		${CMAKE_CURRENT_SOURCE_DIR}/sample.wrp.in
-		${CMAKE_CURRENT_BINARY_DIR}/sample.wrp
-		@ONLY
-	)
-	CONFIGURE_FILE(
 		${CMAKE_CURRENT_SOURCE_DIR}/Warptest.wrp.in
 		${CMAKE_CURRENT_BINARY_DIR}/Warptest.wrp
 		@ONLY
 	)
-	ADD_DEFINITIONS(-DTESTWRPFILE="${CMAKE_CURRENT_BINARY_DIR}/sample.wrp")
 	ADD_DEFINITIONS(-DWARPWRPFILE="${CMAKE_CURRENT_BINARY_DIR}/Warptest.wrp")
 	ADD_DEFINITIONS(-DWARPTESTWRPFILE="${CMAKE_CURRENT_BINARY_DIR}/sample.wrp")
 	ADD_DEFINITIONS(-DPENGUINFILE="${PENGUINFILE}")
@@ -34,12 +28,21 @@ IF(BUILD_TESTING)
 	SET(testTargets)
 
 	IF(USE_CIMG)
+		IF(USE_PNG)
+			ADD_EXECUTABLE(pngtest pngtest.cpp)
+			TARGET_LINK_LIBRARIES(pngtest ${CIMG_LINK_LIBRARIES})
+			ADD_TEST(NAME CImg:PNG COMMAND pngtest)
+			LIST(APPEND tests CImg:PNG)
+			LIST(APPEND testTargets pngtest)
+		ENDIF(USE_PNG)
+
 		INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
 
 		# tests for imgmanip classes
 		ADD_EXECUTABLE(imgManipTest imgmaniptest.cpp)
 		TARGET_LINK_LIBRARIES(imgManipTest
 			charon-plugins
+			filewriter
 			${CIMG_LINK_LIBRARIES}
 		)
 		ADD_TEST(
@@ -69,10 +72,10 @@ IF(BUILD_TESTING)
 		ADD_EXECUTABLE(cImgTest cimgtest.cpp)
 		TARGET_LINK_LIBRARIES(cImgTest ${CIMG_LINK_LIBRARIES})
 		ADD_TEST(
-			NAME CImgInfo
+			NAME CImg:Info
 			COMMAND cImgTest
 		)
-		LIST(APPEND tests CImgInfo)
+		LIST(APPEND tests CImg:Info)
 		LIST(APPEND testTargets cImgTest)
 
 		ADD_EXECUTABLE(warptest Warptest.cpp)
@@ -103,22 +106,6 @@ IF(BUILD_TESTING)
 		)
 		LIST(APPEND tests flowToHSV)
 		LIST(APPEND testTargets flowToHSV)
-
-		# tests for plugin creation in various ways
-		ADD_EXECUTABLE(pluginTest pluginTest.cpp)
-		TARGET_LINK_LIBRARIES(pluginTest
-			charon-core
-			charon-plugins
-			roi
-			filereader
-			${CIMG_LINK_LIBRARIES}
-		)
-		ADD_TEST(
-			NAME Plugins
-			COMMAND pluginTest
-		)
-		LIST(APPEND tests Plugins)
-		LIST(APPEND testTargets pluginTest)
 
 		IF(USE_VIGRA)
 			INCLUDE_DIRECTORIES(${Vigra_INCLUDE_DIRS})
