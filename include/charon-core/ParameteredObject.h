@@ -58,8 +58,12 @@
 #define DLLEX
 #define DEPRECATED __attribute__((deprecated))
 #endif // _MSC_VER
-/// \def DLLEX
-/// handle dll imports/exports
+/** \def DLLEX
+ *  handle dll imports/exports
+ */
+/** \def DEPRECATED
+ *  handle deprecated messages on GCC and MSVC
+ */
 
 /// Integer which represents a template type.
 typedef unsigned short int template_type;
