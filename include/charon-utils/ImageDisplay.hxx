@@ -58,6 +58,13 @@ void ImageDisplay<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
+	sout <<    "************************************************************\n"
+			<< "* ImageDisplay is deprecated. Please try to migrate to the *\n"
+			<< "* Qt based ArgosDisplay. Make sure not to unload modules   *\n"
+			<< "* on end of workflow execution (Tuchulcha: edit->options)  *\n"
+			<< "************************************************************"
+			<< std::endl;
+
 	std::ostringstream msg;
 	msg	<< __FILE__ << ":" << __LINE__;
 	msg << "\nImageDisplay:";
