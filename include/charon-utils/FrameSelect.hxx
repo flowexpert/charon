@@ -110,11 +110,11 @@ void FrameSelect<T>::execute() {
 		o.reshape(os);
 		const uint zz=lz;
 		const uint tt=lt;
-		uint vBegin = cV?lv:0u, vEnd = cV?lv+1:3u;
+		vigra::MultiArrayIndex vBegin = cV?lv:0u, vEnd = cV?lv+1:3u;
 
-		for(uint vv=vBegin;vv<vEnd;vv++)
-			for(uint yy=0u;yy<s[1];yy++)
-				for(uint xx=0u;xx<s[0];xx++)
+		for(vigra::MultiArrayIndex vv=vBegin;vv<vEnd;vv++)
+			for(vigra::MultiArrayIndex yy=0u;yy<s[1];yy++)
+				for(vigra::MultiArrayIndex xx=0u;xx<s[0];xx++)
 					o(xx,yy,0u,0u,cV?0u:vv) = i(xx,yy,zz,tt,vv);
 	}
 	else {
