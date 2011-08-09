@@ -542,7 +542,11 @@ void PluginManager::_createMetadata(const std::string & targetPath) {
 		// create metadata information
 		std::string pluginName = plugin->substr(start,
 			plugin->find_last_of('.') - start);
-		if(pluginName.size())
+		// strip debug extension, if any
+		if (pluginName.substr(pluginName.size()-2) == "_d") {
+			pluginName = pluginName.substr(0,pluginName.size()-2);
+		}
+		if (pluginName.size())
 			_createMetadataForPlugin(pluginName);
 		sout << std::endl;
 	}

@@ -58,24 +58,42 @@ LPCTSTR WindowsPluginLoader::lastError(LPTSTR func) const {
 #endif
 
 void WindowsPluginLoader::load() throw (PluginException) {
-	std::string pluginFullPath;
+	std::string pluginFullPath, pluginFullPathD;
 #ifdef MSVC
 	pluginFullPath = pluginPath + "\\" + pluginName + ".dll";
+	pluginFullPathD = pluginPath + "\\" + pluginName + "_d.dll";
 #else
 	pluginFullPath = pluginPath + "\\lib" + pluginName + ".dll";
+	pluginFullPathD = pluginPath + "\\lib" + pluginName + "_d.dll";
 #endif
+#ifdef _DEBUG
+	// prefer Debug version if available
+	if (FileTool::exists(pluginFullPathD)) {
+		pluginFullPath = pluginFullPathD;
+	}
+#endif
+	// load release library in release mode or as fallback
 	if (FileTool::exists(pluginFullPath)) {
 		hInstLibrary = LoadLibrary(pluginFullPath.c_str());
-	} else {
+	}
+	else {
 #ifdef MSVC
 		pluginFullPath = additionalPluginPath + "\\" + pluginName + ".dll";
+		pluginFullPathD = additionalPluginPath + "\\" + pluginName + "_d.dll";
 #else
 		pluginFullPath = additionalPluginPath + "\\lib" + pluginName + ".dll";
+		pluginFullPathD = additionalPluginPath + "\\lib" + pluginName + "_d.dll";
+#endif
+#ifdef _DEBUG
+		// prefer Debug version if available
+		if (FileTool::exists(pluginFullPathD)) {
+			pluginFullPath = pluginFullPathD;
+		}
 #endif
 		if (!FileTool::exists(pluginFullPath)) {
 			throw PluginException("Failed to load the plugin \"" + pluginName
 				+ "\". The file " + pluginName
-				+ ".dll could not be found.", pluginName,
+				+ "[_d].dll could not be found.", pluginName,
 				PluginException::FILE_NOT_FOUND);
 		}
 
@@ -199,7 +217,6 @@ void WindowsPluginLoader::load() throw (PluginException) {
 			"configuration while charon-core is in DEBUG Mode.\n"
 			"Plugin will not be used as runtime libraries are incompatible",
 			pluginName, PluginException::INCOMPATIBLE_BUILD_TYPE) ;
-
 #endif
 		}
 	}

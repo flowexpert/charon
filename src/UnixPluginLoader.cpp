@@ -22,10 +22,8 @@
 #ifdef UNIX
 #ifdef APPLE
 #define LIBRARY_EXTENSION ".dylib"
-#define DL_COMPILER_FLAG "-dynamiclib"
 #else
 #define LIBRARY_EXTENSION ".so"
-#define DL_COMPILER_FLAG "-shared"
 #endif /*APPLE*/
 
 #include <dlfcn.h>
@@ -34,15 +32,28 @@
 UnixPluginLoader::UnixPluginLoader(const std::string & n) :
 	AbstractPluginLoader(n) {
 	libHandle = NULL;
-
 }
 
 void UnixPluginLoader::load() throw (PluginException) {
 	std::string path = pluginPath + "/lib" + pluginName + LIBRARY_EXTENSION;
+	std::string pathD = pluginPath + "/lib" + pluginName + "_d" + LIBRARY_EXTENSION;
+#ifndef NDEBUG
+	if (FileTool::exists(pathD)) {
+		// prefer debug over release version
+		path = pathD;
+	}
+#endif
 	if (FileTool::exists(path)) {
 		libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-	} else {
+	} else if (additionalPluginPath.size() > 0) {
 		path = additionalPluginPath + "/lib" + pluginName + LIBRARY_EXTENSION;
+		pathD = additionalPluginPath + "/lib" + pluginName + "_d" + LIBRARY_EXTENSION;
+#ifndef NDEBUG
+		if (FileTool::exists(pathD)) {
+			// prefer debug over release version
+			path = pathD;
+		}
+#endif
 		std::string oldDir = FileTool::getCurrentDir();
 		FileTool::changeDir(additionalPluginPath);
 		libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
@@ -50,11 +61,10 @@ void UnixPluginLoader::load() throw (PluginException) {
 	}
 
 	if (!libHandle) {
-		if (!FileTool::exists(pluginPath + "/lib" + pluginName
-				+ LIBRARY_EXTENSION) && !FileTool::exists(additionalPluginPath
-				+ "/lib" + pluginName + LIBRARY_EXTENSION)) {
+		if (!FileTool::exists(pluginPath + "/lib" + pluginName +
+				+ LIBRARY_EXTENSION) && !FileTool::exists(path)) {
 			throw PluginException("Failed to load the plugin \"" + pluginName
-					+ "\". The file lib" + pluginName + LIBRARY_EXTENSION
+					+ "\". The file lib" + pluginName + "[_d]" + LIBRARY_EXTENSION +
 					+ " could not be found. \n Description of the error: \n"
 					+ dlerror(), pluginName, PluginException::FILE_NOT_FOUND);
 		} else {
