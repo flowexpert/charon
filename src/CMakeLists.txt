@@ -340,7 +340,7 @@ SET_TARGET_PROPERTIES(${Plugins}
 INSTALL(
 	TARGETS          ${Plugins}
 	EXPORT           ${EXPORT_NAME}
-	RUNTIME          DESTINATION bin
+	RUNTIME          DESTINATION bin${BIN_SUFFIX}
 	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
 	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
 	COMPONENT        libraries
