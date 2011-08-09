@@ -24,7 +24,6 @@
 #ifndef _SEQUENCEGENERATOR_HXX_
 #define _SEQUENCEGENERATOR_HXX_
 
-#define _USE_MATH_DEFINES
 #include "SequenceGenerator.h"
 #include <cmath>
 
