@@ -783,7 +783,7 @@ void ImgTool::grayToHsv(const cimg_library::CImg<T>& gray,
     assert(gray.spectrum() == 1);
     int add = drawColorBar ? 20 : 0;
     hsv.assign(gray.width()+add, gray.height(), gray.depth(), 3, 0);
-    cimg_library::CImg<T> tmp = gray.get_normalize(0.2,1);
+    cimg_library::CImg<T> tmp = gray.get_normalize(0.2f,1);
 
     cimg_forXYZ(tmp, x, y, z) {
         hsv(x, y, z, 0) = (T)((tmp(x, y, z) * 355));
