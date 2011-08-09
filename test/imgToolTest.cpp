@@ -34,6 +34,7 @@
 #endif
 
 int main() {
+	const float epsilon = 10.e-5f;
 	bool success = true;
 	cimg_library::CImg<float> img(PENGUINFILE);
 	cimg_library::CImg<float> moved = img.get_crop(3,-2,0,0,
@@ -51,7 +52,7 @@ int main() {
 		(moved-warped).get_crop(5,5,img.width()-6,img.height()-6);
 	std::cout << "warping...      " << std::flush;
 	std::cout << "diff.mean() : " << std::abs(diff.mean()) << std::endl;
-	if (std::abs(diff.mean()) > std::numeric_limits<float>::min()) {
+	if (std::abs(diff.mean()) > epsilon) {
 		std::cerr << "Warping failed!" << std::endl;
 		success = false;
 	}
@@ -62,7 +63,7 @@ int main() {
 	diff = (warped - img).get_crop(5,5,img.width()-6,img.height()-6);
 	std::cout << "warping back... " << std::flush;
 	std::cout << "diff.mean() : " << std::abs(diff.mean()) << std::endl;
-	if (diff.abs().mean() > std::numeric_limits<float>::min()) {
+	if (diff.abs().mean() > epsilon) {
 		std::cerr << "Warping back failed!" << std::endl;
 		success = false;
 	}
@@ -72,7 +73,7 @@ int main() {
 	ImgTool::integralImage2D(img, integral);
 	integral.save("PenguinIntegral.cimg");
 	check.load(TESTDIR "/PenguinIntegral.cimg");
-	if ((integral-check).abs().mean() > std::numeric_limits<float>::min()) {
+	if ((integral-check).abs().mean() > epsilon) {
 		std::cerr << "Integral image failed!" << std::endl;
 		success = false;
 	}
@@ -81,7 +82,8 @@ int main() {
 	ImgTool::grayToHsv(img, out);
 	out.save("IntegralHsv.cimg");
 	check.load(TESTDIR "/IntegralHsv.cimg");
-	if ((out-check).abs().mean() > std::numeric_limits<float>::min()) {
+	float err = (out-check).abs().mean();
+	if (err > epsilon) {
 		std::cerr << "Gray to HSV failed!" << std::endl;
 		success = false;
 	}
@@ -89,7 +91,7 @@ int main() {
 	ImgTool::chessBoard2D(20, 20, integral);
 	integral.save("chessboard.cimg");
 	check.load(TESTDIR "/chessboard.cimg");
-	if ((integral-check).abs().mean() > std::numeric_limits<float>::min()) {
+	if ((integral-check).abs().mean() > epsilon) {
 		std::cerr << "Chessboard failed!" << std::endl;
 		success = false;
 	}

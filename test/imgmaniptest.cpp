@@ -121,7 +121,8 @@ int test() {
 			std::cerr << "Result dimension mismatch!" << std::endl;
 			return EXIT_FAILURE;
 		}
-		if ((res[0]-curRes[0]).abs().max() > 0) {
+		int err = (res[0]-curRes[0]).abs().max();
+		if (err > 0) {
 			std::cerr << "Result content differs!" << std::endl;
 			return EXIT_FAILURE;
 		}
