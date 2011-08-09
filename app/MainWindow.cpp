@@ -277,7 +277,7 @@ void MainWindow::_showAbout() {
 
 	QString buildSystem =
 #if defined (_MSC_VER)
-	tr("MSVC %1 (%2bit)\n").arg(_MSC_VER).arg(sizeof(void*)*8);
+	tr("MSVC %1 (%2bit, %3)\n").arg(_MSC_VER).arg(sizeof(void*)*8).arg(CMAKE_INTDIR);
 #elif defined (__GNUC__)
 	tr("GCC %1.%2.%3 (%4bit)\n")
 			.arg(__GNUC__)

@@ -24,7 +24,10 @@ SET(INSPECTOR_SOURCES
 QT4_AUTOMOC(${INSPECTOR_SOURCES})
 ADD_EXECUTABLE(paraminspector WIN32 ${INSPECTOR_SOURCES} ${INSP_ICO})
 TARGET_LINK_LIBRARIES(paraminspector editparam ${QT_QTMAIN_LIBRARY})
-SET_TARGET_PROPERTIES(paraminspector PROPERTIES FOLDER "Tuchulcha")
+SET_TARGET_PROPERTIES(paraminspector PROPERTIES
+	FOLDER "Tuchulcha"
+	OUTPUT_NAME_DEBUG paraminspector_d
+)
 
 # main application
 SET(TUCHULCHA_SOURCES
@@ -45,21 +48,25 @@ ENDIF()
 ADD_DEFINITIONS(-DCHARON_CORE_VERSION="${charon-core_VERSION}")
 
 TARGET_LINK_LIBRARIES(tuchulcha editgraph ${QT_QTMAIN_LIBRARY} charon-plugins)
-SET_TARGET_PROPERTIES(tuchulcha PROPERTIES FOLDER "Tuchulcha")
+SET_TARGET_PROPERTIES(tuchulcha PROPERTIES
+	FOLDER "Tuchulcha"
+	OUTPUT_NAME_DEBUG tuchulcha_d
+)
 
 IF(WIN32)
 	# copy needed dll for tests and application run before installing
 	GET_TARGET_PROPERTY(CLOC charon-core LOCATION)
-	GET_TARGET_PROPERTY(PLOC tuchulcha LOCATION)
-	GET_FILENAME_COMPONENT(PLOC_DIR ${PLOC} PATH)
-
-	ADD_CUSTOM_COMMAND(TARGET tuchulcha POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CLOC} ${PLOC_DIR}
-	)
+	GET_TARGET_PROPERTY(CLOCD charon-core LOCATION_DEBUG)
 	IF(INSTALL_DLLS AND NOT DEFINED charon-meta_SOURCE_DIR)
 		INSTALL(FILES ${CLOC}
 			DESTINATION bin
 			COMPONENT dlls
+			CONFIGURATION Release
+		)
+		INSTALL(FILES ${CLOCD}
+			DESTINATION bin
+			COMPONENT dlls
+			CONFIGURATION Debug
 		)
 	ENDIF()
 ENDIF(WIN32)
@@ -67,7 +74,7 @@ ENDIF(WIN32)
 # install into bin subdirectory
 INSTALL(
 	TARGETS     paraminspector
-	RUNTIME     DESTINATION    bin
+	RUNTIME     DESTINATION    bin${BIN_SUFFIX}
 	COMPONENT   applications
 )
 
@@ -100,7 +107,7 @@ IF(APPLE)
 ELSE(APPLE)
 	INSTALL(
 		TARGETS     tuchulcha
-		RUNTIME     DESTINATION    bin
+		RUNTIME     DESTINATION    bin${BIN_SUFFIX}
 		COMPONENT   applications
 	)
 	IF(UNIX)
