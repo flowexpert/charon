@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <algorithm>
 #include <charon-core/PluginManager.h>
 #include <charon-core/ParameteredObject.hxx>
 
@@ -537,45 +538,50 @@ void PluginManager::_createMetadata(const std::string & targetPath) {
 	int start = 0;
 #endif
 
-	std::vector<std::string>::const_iterator plugin;
-	for (plugin=plugins.begin(); plugin != plugins.end(); plugin++) {
+	std::vector<std::string>::iterator pIterW;
+	for (pIterW=plugins.begin(); pIterW != plugins.end(); pIterW++) {
 		// create metadata information
-		std::string pluginName = plugin->substr(start,
-			plugin->find_last_of('.') - start);
+		std::string& pName = *pIterW;
+		pName = pName.substr(start, pName.find_last_of('.')-start);
 		// strip debug extension, if any
-		if (pluginName.substr(pluginName.size()-2) == "_d") {
-			pluginName = pluginName.substr(0,pluginName.size()-2);
+		if (pName.substr(pName.size()-2) == "_d") {
+			pName = pName.substr(0, pName.size()-2);
 		}
-		if (pluginName.size())
-			_createMetadataForPlugin(pluginName);
-		sout << std::endl;
+	}
+	// avoid double metadata generation (e.g. if lib and lib_d found)
+	std::set<std::string> pluginsU(plugins.begin(),plugins.end());
+	std::set<std::string>::const_iterator pIterU;
+	for (pIterU=pluginsU.begin(); pIterU != pluginsU.end(); pIterU++) {
+		_createMetadataForPlugin(*pIterU);
 	}
 }
 
 void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 	if (!pluginName.size()) {
 		sout << __FILE__ << ":" << __LINE__ << "\t"
-			<< "emtpy pluginName given!" << std::endl;
+			<< "emtpy pluginName given!\n" << std::endl;
 		return;
 	}
-	std::vector<std::string> excludeList;
+	static std::vector<std::string> excludeList;
+	if (excludeList.size() == 0) {
 #ifdef _MSC_VER
-	excludeList.push_back("charon-core");
-	excludeList.push_back("msvc");
-	excludeList.push_back("Qt");
-	excludeList.push_back("phonon");
-	excludeList.push_back("libpng");
-	excludeList.push_back("libtiff");
-	excludeList.push_back("zlib");
-	excludeList.push_back("vigraimpex");
-	excludeList.push_back("dll");
+		excludeList.push_back("charon-core");
+		excludeList.push_back("msvc");
+		excludeList.push_back("Qt");
+		excludeList.push_back("phonon");
+		excludeList.push_back("libpng");
+		excludeList.push_back("libtiff");
+		excludeList.push_back("zlib");
+		excludeList.push_back("vigraimpex");
+		excludeList.push_back("dll");
 #endif
+	}
 	std::vector<std::string>::const_iterator iter;
 	for(iter = excludeList.begin(); iter != excludeList.end(); iter++) {
 		if (pluginName.find(*iter)!=std::string::npos) {
 			sout << "Discarding non-plugin file \"" << pluginName
 				<< ".dll\" (matched pattern \"*" << *iter
-				<< "*\" of exclude list)" << std::endl;
+				<< "*\" of exclude list)\n" << std::endl;
 			return;
 		}
 	}
@@ -593,6 +599,7 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 	} catch (AbstractPluginLoader::PluginException e) {
 		sout << e.what() << std::endl;
 	}
+	sout << std::endl;
 }
 
 void PluginManager::createMetadata(const std::string & targetPath) {
