@@ -458,6 +458,8 @@ void MainWindow::_options() {
 	Ui::OptionsDialog options;
 	options.setupUi(&dialog);
 
+	static const QString& privPathTag = FileManager::privPathTag;
+
 	// set up dialog content
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
@@ -465,7 +467,7 @@ void MainWindow::_options() {
 	options.editGlobalPath->setText(
 			settings.value("globalPluginPath").toString());
 	options.editPrivatePath->setText(
-			settings.value("privatePluginPath").toString());
+			settings.value(privPathTag).toString());
 	options.checkWait->setChecked(
 			settings.value("waitAfterExecute", false).toBool());
 	options.checkThreaded->setChecked(
@@ -480,11 +482,9 @@ void MainWindow::_options() {
 		if (options.editGlobalPath->text().isEmpty()) {
 			settings.remove("globalPluginPath");
 		}
-		settings.setValue(
-				"privatePluginPath",
-				options.editPrivatePath->text());
+		settings.setValue(privPathTag, options.editPrivatePath->text());
 		if (options.editPrivatePath->text().isEmpty()) {
-			settings.remove("privatePluginPath");
+			settings.remove(privPathTag);
 		}
 		settings.setValue(
 				"waitAfterExecute",

@@ -150,7 +150,7 @@ void WorkflowExecutor::_execute() {
 			"Tuchulcha");
 	_manager = new PluginManager(
 			settings.value("globalPluginPath").toString().toStdString(),
-			settings.value("privatePluginPath").toString().toStdString());
+			settings.value(FileManager::privPathTag).toString().toStdString());
 	_updateIcon() ;
 	_log = new std::ofstream(_logFileName.c_str(), std::ios::trunc);
 	Q_ASSERT(_log);

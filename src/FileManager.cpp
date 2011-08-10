@@ -49,6 +49,12 @@ FileManager* FileManager::_inst = 0;
 
 QWidget* FileManager::dialogParent = 0;
 
+#ifdef QT_DEBUG
+const QString FileManager::privPathTag = "privatePluginPathD";
+#else // debug build
+const QString FileManager::privPathTag = "privatePluginPath";
+#endif
+
 FileManager::FileManager() {
 	if (!QDir::home().exists(TUCHULCHA_DIR))
 		QDir::home().mkdir(TUCHULCHA_DIR);
@@ -139,7 +145,7 @@ void FileManager::loadPluginInformation() const {
 			"Tuchulcha");
 	PluginManager man(
 			settings.value("globalPluginPath").toString().toStdString(),
-			settings.value("privatePluginPath").toString().toStdString());
+			settings.value(privPathTag).toString().toStdString());
 	man.createMetadata(metaPath.absolutePath().toStdString());
 
 	sout.assign();
@@ -202,10 +208,10 @@ void FileManager::configure(bool force) const {
 		settings.remove("globalPluginPath");
 		force = true;
 	}
-	if(settings.contains("privatePluginPath") &&
-			(settings.value("privatePluginPath").toString().isEmpty() ||
-			!QDir(settings.value("privatePluginPath").toString()).exists())) {
-		settings.remove("privatePluginPath");
+	if(settings.contains(privPathTag) &&
+			(settings.value(privPathTag).toString().isEmpty() ||
+			!QDir(settings.value(privPathTag).toString()).exists())) {
+		settings.remove(privPathTag);
 		force = true;
 	}
 
@@ -226,7 +232,7 @@ void FileManager::configure(bool force) const {
 		if (globalPath.isEmpty()) {
 			globalPath = tr("(none)");
 		}
-		QString privatPath = settings.value("privatePluginPath").toString();
+		QString privatPath = settings.value(privPathTag).toString();
 		if (privatPath.isEmpty()) {
 			privatPath = tr("(none)");
 		}
