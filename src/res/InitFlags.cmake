@@ -32,6 +32,9 @@ IF(NOT CMAKE_FLAGS_INIT)
 		FORCE
 	)
 
+	# set postfix to append to debug library names
+	SET(CMAKE_DEBUG_POSTFIX _d)
+	
 	# default to debug builds
 	IF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
 		SET(CMAKE_BUILD_TYPE "Debug"
