@@ -277,13 +277,19 @@ void MainWindow::_showAbout() {
 
 	QString buildSystem =
 #if defined (_MSC_VER)
-	tr("MSVC %1 (%2bit, %3)\n").arg(_MSC_VER).arg(sizeof(void*)*8).arg(CMAKE_INTDIR);
+	tr("MSVC %1 (%2bit, %3)\n").arg(_MSC_VER)
+			.arg(sizeof(void*)*8).arg(CMAKE_INTDIR);
 #elif defined (__GNUC__)
-	tr("GCC %1.%2.%3 (%4bit)\n")
+	tr("GCC %1.%2.%3 (%4bit, %5)\n")
 			.arg(__GNUC__)
 			.arg(__GNUC_MINOR__)
 			.arg(__GNUC_PATCHLEVEL__)
-			.arg(sizeof(void*)*8);
+			.arg(sizeof(void*)*8)
+	#ifdef QT_DEBUG
+			.arg("Debug");
+	#else
+			.arg("Release");
+	#endif
 #else
 	tr("unknown compiler (%1bit)\n").arg(sizeof(*void)*8);
 #endif
