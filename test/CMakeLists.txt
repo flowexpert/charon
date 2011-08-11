@@ -38,6 +38,18 @@ IF(BUILD_TESTING)
 
 		INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
 
+		# test loading and unloading some plugins
+		ADD_EXECUTABLE(pluginTest plugintest.cpp)
+		TARGET_LINK_LIBRARIES(pluginTest
+			charon-plugins
+		)
+		ADD_TEST(
+			NAME PluginTest
+			COMMAND pluginTest
+		)
+		LIST(APPEND tests PluginTest)
+		LIST(APPEND testTargets pluginTest)
+
 		# tests for imgmanip classes
 		ADD_EXECUTABLE(imgManipTest imgmaniptest.cpp)
 		TARGET_LINK_LIBRARIES(imgManipTest
