@@ -141,19 +141,41 @@ private:
 
 	// @}
 public:
+
+	/// default lib suffix
+#ifdef NDEBUG
+	#define DEFAULT_LIB_SUFFIX ""
+#else
+	#define DEFAULT_LIB_SUFFIX "_d"
+#endif
+
+	/// default constructor
 	/**
 	 * Creates a new PluginManager instance and sets the path to the plugins to
-	 * the value of pluginPath. Left empty, the current working directory will
-	 * be used.
-	 * You can also specify an additional (private) plugin path.
-	 *
-	 * @param pluginPath Path where the plugins are stored
-	 * @param additionalPluginPath Additional (private) plugin path
-	 * @todo In the final release, the plugin path is predefined. Can be hard
-	 *       coded.
+	 * the value of pluginPaths.
+	 * \param pluginPaths Paths where the plugins are stored.
+	 *                    Search order as given.
+	 * \param libSuffix   Look for libraries with this suffix, fallback
+	 *                    to looking for libs without suffix.
 	 */
-	PluginManager(const std::string & pluginPath = ".",
-			const std::string & additionalPluginPath = "");
+	PluginManager(
+			const std::vector<std::string>& pluginPaths,
+			const std::string& libSuffix = DEFAULT_LIB_SUFFIX);
+
+	/// default constructor
+	/**
+	 * Creates a new PluginManager instance and sets the path to the plugins to
+	 * the value of path1 and path2. This is a convenience function to
+	 * preserve compatibility to the old non-vector style call.
+	 * \param globalPath,localPath
+	 *                    Paths where the plugins are stored.
+	 *                    localPath is searched first.
+	 * \param libSuffix   Look for libraries with this suffix, fallback
+	 *                    to looking for libs without suffix.
+	 */
+	PluginManager(
+			const std::string& globalPath, const std::string& localPath = "",
+			const std::string& libSuffix = DEFAULT_LIB_SUFFIX);
 
 	/**
 	 * Loads a plugin stored in the previously declared folder.

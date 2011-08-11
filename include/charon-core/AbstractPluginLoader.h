@@ -60,14 +60,12 @@ protected:
 
 public:
 	/**
-	 * Path where the plugins are stored
+	 * Paths where the plugins are stored
 	 */
-	static std::string pluginPath;
+	static std::vector<std::string> pluginPaths;
 
-	/**
-	 * Additional path where personal plugins are stored
-	 */
-	static std::string additionalPluginPath;
+	/// Lib suffix e.g. <tt>_d</tt> for debug builds
+	static std::string libSuffix;
 
 	/**
 	 * Exception class
@@ -170,7 +168,7 @@ public:
 	 * @param name The name of the Plugin (without prefix "lib" and without
 	 *             extension)
 	 */
-	AbstractPluginLoader(const std::string & name);
+	AbstractPluginLoader(const std::string& name);
 
 	/**
 	 * Loads the plugin.
@@ -194,7 +192,7 @@ public:
 	 * Returns the name of the plugin.
 	 * @return Name of the plugin
 	 */
-	virtual const std::string & getName() const;
+	virtual const std::string& getName() const;
 
 	/**
 	 * Creates an instance of the loaded plugin and returns a pointer to it.

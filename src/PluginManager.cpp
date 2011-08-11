@@ -31,27 +31,57 @@
 #include <charon-core/PluginManager.h>
 #include <charon-core/ParameteredObject.hxx>
 
-std::string AbstractPluginLoader::pluginPath;
-std::string AbstractPluginLoader::additionalPluginPath;
+std::vector<std::string> AbstractPluginLoader::pluginPaths;
+std::string AbstractPluginLoader::libSuffix;
 
-PluginManager::PluginManager(const std::string & p, const std::string & add) :
+PluginManager::PluginManager(
+		const std::vector<std::string>& paths, const std::string& suffix) :
 	defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
+
+	if(paths.size() == 0) {
+		throw std::invalid_argument("PluginLoader: Empty paths list given!");
+	}
+/*
+	// this should be handled already by RPATH or similar stuff
+	std::string pathList;
+	for(std::vector<std::string>::const_iterator cur = paths.begin();
+			cur != paths.end(); cur++) {
+		pathList += *cur + ":";
+	}
+	pathList = pathList.substr(0,pathList.size()-1); // strip trailing :
 
 	//Setting environment variable
 #ifdef APPLE
 	char * env = getenv("DYLD_LIBRARY_PATH");
 	putenv(const_cast<char *> ((std::string("DYLD_LIBRARY_PATH=")
-			+ (env == 0 ? std::string("") : std::string(env) + ":") + p + ":"
-			+ add).c_str()));
+			+ (env == 0 ? std::string("") : std::string(env) + ":")
+			+ pathList).c_str()));
 #elif defined UNIX
 	char * env = getenv("LD_LIBRARY_PATH");
 	putenv(const_cast<char *> ((std::string("LD_LIBRARY_PATH=")
-			+ (env == 0 ? std::string("") : std::string(env) + ":") + p + ":"
-			+ add).c_str()));
+			+ (env == 0 ? std::string("") : std::string(env) + ":")
+			+ pathList).c_str()));
 #endif
+*/
+	AbstractPluginLoader::pluginPaths = paths;
+	AbstractPluginLoader::libSuffix = suffix;
+}
 
-	AbstractPluginLoader::pluginPath = p;
-	AbstractPluginLoader::additionalPluginPath = add;
+PluginManager::PluginManager(
+		const std::string& path1, const std::string& path2,
+		const std::string& suffix) :
+	defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
+
+	// put local path (if any) in front of global path
+	if (path2.size() > 0) {
+		AbstractPluginLoader::pluginPaths.push_back(path2);
+	}
+	if (path1.size() == 0) {
+		throw std::invalid_argument(
+				"PluginManger: at least one non-emtpy path has to be given!");
+	}
+	AbstractPluginLoader::pluginPaths.push_back(path1);
+	AbstractPluginLoader::libSuffix = suffix;
 }
 
 void PluginManager::_destroyAllInstances(PLUGIN_LOADER * loader) {
@@ -602,21 +632,18 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 	sout << std::endl;
 }
 
-void PluginManager::createMetadata(const std::string & targetPath) {
-	/*
-	 * Backup current configuration (Working directory and metadata creation
-	 * preference
-	 */
+void PluginManager::createMetadata(const std::string& targetPath) {
+	// Backup current configuration
+	// (Working directory and metadata creation preference)
 	bool wasEnabled = ParameteredObject::getCreateMetadata();
 	ParameteredObject::setCreateMetadata(true);
 	std::string pathBackup = FileTool::getCurrentDir();
 
-	//Create metadata for public plugins
-	FileTool::changeDir(AbstractPluginLoader::pluginPath);
-	_createMetadata(targetPath);
-
-	if (AbstractPluginLoader::additionalPluginPath.size()) {
-		FileTool::changeDir(AbstractPluginLoader::additionalPluginPath);
+	// Create metadata for all plugin paths
+	for (std::vector<std::string>::const_iterator cur =
+			AbstractPluginLoader::pluginPaths.begin();
+			cur!=AbstractPluginLoader::pluginPaths.end(); cur++) {
+		FileTool::changeDir(*cur);
 		_createMetadata(targetPath);
 	}
 

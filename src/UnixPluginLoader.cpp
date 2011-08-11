@@ -19,7 +19,7 @@
  *
  *  @date 24.08.2009
  */
-#ifdef UNIX
+/// os dependent shlib extension (.so or .dylib)
 #ifdef APPLE
 #define LIBRARY_EXTENSION ".dylib"
 #else
@@ -35,50 +35,41 @@ UnixPluginLoader::UnixPluginLoader(const std::string & n) :
 }
 
 void UnixPluginLoader::load() throw (PluginException) {
-	std::string path = pluginPath + "/lib" + pluginName + LIBRARY_EXTENSION;
-	std::string pathD = pluginPath + "/lib" + pluginName + "_d" + LIBRARY_EXTENSION;
-#ifndef NDEBUG
-	if (FileTool::exists(pathD)) {
-		// prefer debug over release version
-		path = pathD;
-	}
-#endif
-	if (FileTool::exists(path)) {
-		libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-	} else if (additionalPluginPath.size() > 0) {
-		path = additionalPluginPath + "/lib" + pluginName + LIBRARY_EXTENSION;
-		pathD = additionalPluginPath + "/lib" + pluginName + "_d" + LIBRARY_EXTENSION;
-#ifndef NDEBUG
-		if (FileTool::exists(pathD)) {
-			// prefer debug over release version
-			path = pathD;
+	std::string path, pathS;
+	for(std::vector<std::string>::const_iterator  cur = pluginPaths.begin();
+			cur != pluginPaths.end(); cur++) {
+		path = *cur + "/lib" + pluginName + LIBRARY_EXTENSION;
+		pathS = *cur + "/lib" + pluginName + libSuffix + LIBRARY_EXTENSION;
+	#ifndef NDEBUG
+		if (FileTool::exists(pathS)) {
+			// prefer suffixed over plain version
+			path = pathS;
 		}
-#endif
-		std::string oldDir = FileTool::getCurrentDir();
-		FileTool::changeDir(additionalPluginPath);
-		libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-		FileTool::changeDir(oldDir);
+	#endif
+		if (FileTool::exists(path)) {
+			libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+			break;
+		}
 	}
-
 	if (!libHandle) {
-		if (!FileTool::exists(pluginPath + "/lib" + pluginName +
-				+ LIBRARY_EXTENSION) && !FileTool::exists(path)) {
+		if (!FileTool::exists(path)) {
 			throw PluginException("Failed to load the plugin \"" + pluginName
-					+ "\". The file lib" + pluginName + "[_d]" + LIBRARY_EXTENSION +
-					+ " could not be found. \n Description of the error: \n"
+					+ "\". The file lib" + pluginName + LIBRARY_EXTENSION +
+					+ " could not be found. (Possible suffix: " + libSuffix
+					+ ")\nDescription of the error:\n"
 					+ dlerror(), pluginName, PluginException::FILE_NOT_FOUND);
 		} else {
 			throw PluginException("Failed to load the plugin \"" + pluginName
 					+ "\". Maybe the file is damaged."
-					+ "\n Description of the error: \n" + dlerror(),
+					+ "\n Description of the error:\n" + dlerror(),
 					pluginName, PluginException::FILE_DAMAGED);
 		}
 	}
 
 	sout << "Loading " << path << std::endl;
 
-	create = (ParameteredObject*(*)(const std::string &, template_type)) dlsym(
-			libHandle, "create");
+	create = (ParameteredObject*(*)(const std::string &, template_type))
+				dlsym(libHandle, "create");
 
 	destroy = (void(*)(ParameteredObject *)) dlsym(libHandle, "destroy");
 
@@ -86,8 +77,9 @@ void UnixPluginLoader::load() throw (PluginException) {
 		dlclose(libHandle);
 		libHandle = NULL;
 		throw PluginException(
-				"Failed to create the function pointer to the Constructor of the plugin \""
-						+ pluginName + "\". Invalid plugin format.",
+				"Failed to create the function pointer to the "
+				"Constructor of the plugin \""
+				+ pluginName + "\". Invalid plugin format.",
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 	}
 
@@ -96,8 +88,9 @@ void UnixPluginLoader::load() throw (PluginException) {
 		create = NULL;
 		libHandle = NULL;
 		throw PluginException(
-				"Failed to create the function pointer to the Destructor of the plugin \""
-						+ pluginName + "\". Invalid plugin format.",
+				"Failed to create the function pointer to the "
+				"Destructor of the plugin \""
+				+ pluginName + "\". Invalid plugin format.",
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 	}
 }
@@ -126,4 +119,3 @@ UnixPluginLoader::~UnixPluginLoader() {
 		unload();
 	}
 }
-#endif /*UNIX*/

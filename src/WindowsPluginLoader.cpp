@@ -19,7 +19,6 @@
  *
  *  @date 24.08.2009
  */
-#ifdef WINDOWS
 #include <string>
 #include <io.h>
 #include <cstdlib>
@@ -58,52 +57,36 @@ LPCTSTR WindowsPluginLoader::lastError(LPTSTR func) const {
 #endif
 
 void WindowsPluginLoader::load() throw (PluginException) {
-	std::string pluginFullPath, pluginFullPathD;
+	std::string path, pathS;
+	for (std::vector<std::string>::const_iterator cur = pluginPaths.begin();
+			cur != pluginPaths.end(); cur++) {
 #ifdef MSVC
-	pluginFullPath = pluginPath + "\\" + pluginName + ".dll";
-	pluginFullPathD = pluginPath + "\\" + pluginName + "_d.dll";
+		path = *cur + "\\" + pluginName + ".dll";
+		pathS = *cur + "\\" + pluginName + libSuffix + ".dll";
 #else
-	pluginFullPath = pluginPath + "\\lib" + pluginName + ".dll";
-	pluginFullPathD = pluginPath + "\\lib" + pluginName + "_d.dll";
+		path = *cur + "\\lib" + pluginName + ".dll";
+		pathS = *cur + "\\lib" + pluginName + libSuffix + ".dll";
 #endif
-#ifdef _DEBUG
-	// prefer Debug version if available
-	if (FileTool::exists(pluginFullPathD)) {
-		pluginFullPath = pluginFullPathD;
-	}
-#endif
-	// load release library in release mode or as fallback
-	if (FileTool::exists(pluginFullPath)) {
-		hInstLibrary = LoadLibrary(pluginFullPath.c_str());
-	}
-	else {
-#ifdef MSVC
-		pluginFullPath = additionalPluginPath + "\\" + pluginName + ".dll";
-		pluginFullPathD = additionalPluginPath + "\\" + pluginName + "_d.dll";
-#else
-		pluginFullPath = additionalPluginPath + "\\lib" + pluginName + ".dll";
-		pluginFullPathD = additionalPluginPath + "\\lib" + pluginName + "_d.dll";
-#endif
-#ifdef _DEBUG
-		// prefer Debug version if available
-		if (FileTool::exists(pluginFullPathD)) {
-			pluginFullPath = pluginFullPathD;
+		// prefer suffixed version if available
+		// load unsuffixed library as fallback
+		if (FileTool::exists(pathS)) {
+			path = pathS;
 		}
-#endif
-		if (!FileTool::exists(pluginFullPath)) {
-			throw PluginException("Failed to load the plugin \"" + pluginName
-				+ "\". The file " + pluginName
-				+ "[_d].dll could not be found.", pluginName,
-				PluginException::FILE_NOT_FOUND);
+		if (FileTool::exists(path)) {
+			std::string oldDir = FileTool::getCurrentDir();
+			FileTool::changeDir(*cur);
+			hInstLibrary = LoadLibrary(path.c_str());
+			FileTool::changeDir(oldDir);
+			break;
 		}
-
-		std::string oldDir = FileTool::getCurrentDir();
-		FileTool::changeDir(additionalPluginPath);
-		hInstLibrary = LoadLibrary(pluginFullPath.c_str());
-		FileTool::changeDir(oldDir);
 	}
-
-	sout << "File: " << pluginFullPath << std::endl;
+	if (!FileTool::exists(path)) {
+		throw PluginException("Failed to load the plugin \"" + pluginName
+			+ "\". The file " + pluginName
+			+ ".dll could not be found. (Possible suffix: "+ libSuffix + ")",
+			pluginName, PluginException::FILE_NOT_FOUND);
+	}
+	sout << "File: " << path << std::endl;
 
 	if (!hInstLibrary) {
 		// error loading dll file
@@ -241,4 +224,3 @@ WindowsPluginLoader::~WindowsPluginLoader() {
 		unload();
 	}
 }
-#endif
