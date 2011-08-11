@@ -144,9 +144,9 @@ public:
 
 	/// default lib suffix
 #ifdef NDEBUG
-	#define DEFAULT_LIB_SUFFIX ""
+	#define DEFAULT_DEBUG_SUFFIX false
 #else
-	#define DEFAULT_LIB_SUFFIX "_d"
+	#define DEFAULT_DEBUG_SUFFIX true
 #endif
 
 	/// default constructor
@@ -155,12 +155,12 @@ public:
 	 * the value of pluginPaths.
 	 * \param pluginPaths Paths where the plugins are stored.
 	 *                    Search order as given.
-	 * \param libSuffix   Look for libraries with this suffix, fallback
-	 *                    to looking for libs without suffix.
+	 * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
+	 *                    fallback to libs without suffix.
 	 */
 	PluginManager(
 			const std::vector<std::string>& pluginPaths,
-			const std::string& libSuffix = DEFAULT_LIB_SUFFIX);
+			bool debugSuffix = DEFAULT_DEBUG_SUFFIX);
 
 	/// default constructor
 	/**
@@ -170,12 +170,12 @@ public:
 	 * \param globalPath,localPath
 	 *                    Paths where the plugins are stored.
 	 *                    localPath is searched first.
-	 * \param libSuffix   Look for libraries with this suffix, fallback
-	 *                    to looking for libs without suffix.
+	 * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
+	 *                    fallback to libs without suffix.
 	 */
 	PluginManager(
 			const std::string& globalPath, const std::string& localPath = "",
-			const std::string& libSuffix = DEFAULT_LIB_SUFFIX);
+			bool debugSuffix = DEFAULT_DEBUG_SUFFIX);
 
 	/**
 	 * Loads a plugin stored in the previously declared folder.

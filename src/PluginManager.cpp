@@ -35,45 +35,21 @@ std::vector<std::string> AbstractPluginLoader::pluginPaths;
 std::string AbstractPluginLoader::libSuffix;
 
 PluginManager::PluginManager(
-		const std::vector<std::string>& paths, const std::string& suffix) :
+		const std::vector<std::string>& paths, bool dbg) :
 	defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
-
 	if(paths.size() == 0) {
 		throw std::invalid_argument("PluginLoader: Empty paths list given!");
 	}
-/*
-	// this should be handled already by RPATH or similar stuff
-	std::string pathList;
-	for(std::vector<std::string>::const_iterator cur = paths.begin();
-			cur != paths.end(); cur++) {
-		pathList += *cur + ":";
-	}
-	pathList = pathList.substr(0,pathList.size()-1); // strip trailing :
-
-	//Setting environment variable
-#ifdef APPLE
-	char * env = getenv("DYLD_LIBRARY_PATH");
-	putenv(const_cast<char *> ((std::string("DYLD_LIBRARY_PATH=")
-			+ (env == 0 ? std::string("") : std::string(env) + ":")
-			+ pathList).c_str()));
-#elif defined UNIX
-	char * env = getenv("LD_LIBRARY_PATH");
-	putenv(const_cast<char *> ((std::string("LD_LIBRARY_PATH=")
-			+ (env == 0 ? std::string("") : std::string(env) + ":")
-			+ pathList).c_str()));
-#endif
-*/
 	AbstractPluginLoader::pluginPaths = paths;
-	AbstractPluginLoader::libSuffix = suffix;
+	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
 }
 
 PluginManager::PluginManager(
 		const std::string& path1, const std::string& path2,
-		const std::string& suffix) :
+		bool dbg) :
 	defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
-
-	// put local path (if any) in front of global path
 	if (path2.size() > 0) {
+		// put local path (if any) in front of global path
 		AbstractPluginLoader::pluginPaths.push_back(path2);
 	}
 	if (path1.size() == 0) {
@@ -81,7 +57,7 @@ PluginManager::PluginManager(
 				"PluginManger: at least one non-emtpy path has to be given!");
 	}
 	AbstractPluginLoader::pluginPaths.push_back(path1);
-	AbstractPluginLoader::libSuffix = suffix;
+	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
 }
 
 void PluginManager::_destroyAllInstances(PLUGIN_LOADER * loader) {
