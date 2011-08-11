@@ -331,7 +331,6 @@ FOREACH(X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core)
 	SET_TARGET_PROPERTIES(${X} PROPERTIES
 		FOLDER "charon-utils Modules"
-		OUTPUT_NAME_DEBUG ${X}_d
 	)
 ENDFOREACH(X)
 
