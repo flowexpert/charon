@@ -59,7 +59,11 @@ int main(int argc, char** argv) {
 	std::cout << "closing libmpi.so.0" << std::endl;
 	dlclose(handle);
 
+#ifdef NDEBUG
 	std::string fName = "./libpetsc4_lib.so";
+#else
+	std::string fName = "./libpetsc4_lib_d.so";
+#endif
 	std::cout << "opening PetscTestDLL (" << fName << ")" << std::endl;
 	handle = dlopen(
 			fName.c_str(),
