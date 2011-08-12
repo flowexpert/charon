@@ -528,15 +528,12 @@ bool PluginManager::disconnect(const std::string& slot1,
 	return ret;
 }
 
-void PluginManager::_createMetadata(const std::string & targetPath) {
-	//Fetch list of existing plugins
-	std::vector<std::string> plugins = FileTool::getFilesWithSuffix(
-			PLUGIN_EXTENSION);
-
-	//Metadata shall be created in the plugin folder
-	if (!targetPath.empty()) {
-		FileTool::changeDir(targetPath);
-	}
+void PluginManager::createMetadata(const std::string& targetPath) {
+	// Backup current configuration
+	// (Working directory and metadata creation preference)
+	bool wasEnabled = ParameteredObject::getCreateMetadata();
+	ParameteredObject::setCreateMetadata(true);
+	std::string pathBackup = FileTool::getCurrentDir();
 
 #ifndef MSVC
 	int start = 3;
@@ -544,22 +541,47 @@ void PluginManager::_createMetadata(const std::string & targetPath) {
 	int start = 0;
 #endif
 
-	std::vector<std::string>::iterator pIterW;
-	for (pIterW=plugins.begin(); pIterW != plugins.end(); pIterW++) {
-		// create metadata information
-		std::string& pName = *pIterW;
-		pName = pName.substr(start, pName.find_last_of('.')-start);
-		// strip debug extension, if any
-		if (pName.substr(pName.size()-2) == "_d") {
-			pName = pName.substr(0, pName.size()-2);
-		}
-	}
 	// avoid double metadata generation (e.g. if lib and lib_d found)
-	std::set<std::string> pluginsU(plugins.begin(),plugins.end());
+	std::set<std::string> pluginsU;
+
+	// Create metadata for all plugin paths
+	for (std::vector<std::string>::const_iterator cur =
+			AbstractPluginLoader::pluginPaths.begin();
+			cur!=AbstractPluginLoader::pluginPaths.end(); cur++) {
+		FileTool::changeDir(*cur);
+
+		// Fetch list of existing plugins
+		std::vector<std::string> plugins = FileTool::getFilesWithSuffix(
+				PLUGIN_EXTENSION);
+		std::vector<std::string>::iterator pIterW;
+		for (pIterW=plugins.begin(); pIterW != plugins.end(); pIterW++) {
+			// extract plugin name
+			std::string& pName = *pIterW;
+			pName = pName.substr(start, pName.find_last_of('.')-start);
+			// strip debug extension, if any
+			if (pName.substr(pName.size()-2) == "_d") {
+				pName = pName.substr(0, pName.size()-2);
+			}
+		}
+		// insert plugin names to plugin name set
+		pluginsU.insert(plugins.begin(),plugins.end());
+	}
+
+	// Metadata shall be created in the plugin folder
+	if (!targetPath.empty()) {
+		FileTool::changeDir(targetPath);
+	}
+
+	// now generate metadata for all (unique) plugin names
+	// which file is now used is handled by the plugin loader
 	std::set<std::string>::const_iterator pIterU;
 	for (pIterU=pluginsU.begin(); pIterU != pluginsU.end(); pIterU++) {
 		_createMetadataForPlugin(*pIterU);
 	}
+
+	// restore former configuration
+	FileTool::changeDir(pathBackup);
+	ParameteredObject::setCreateMetadata(wasEnabled);
 }
 
 void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
@@ -606,26 +628,6 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 		sout << e.what() << std::endl;
 	}
 	sout << std::endl;
-}
-
-void PluginManager::createMetadata(const std::string& targetPath) {
-	// Backup current configuration
-	// (Working directory and metadata creation preference)
-	bool wasEnabled = ParameteredObject::getCreateMetadata();
-	ParameteredObject::setCreateMetadata(true);
-	std::string pathBackup = FileTool::getCurrentDir();
-
-	// Create metadata for all plugin paths
-	for (std::vector<std::string>::const_iterator cur =
-			AbstractPluginLoader::pluginPaths.begin();
-			cur!=AbstractPluginLoader::pluginPaths.end(); cur++) {
-		FileTool::changeDir(*cur);
-		_createMetadata(targetPath);
-	}
-
-	//restore former configuration
-	FileTool::changeDir(pathBackup);
-	ParameteredObject::setCreateMetadata(wasEnabled);
 }
 
 void PluginManager::reset() {

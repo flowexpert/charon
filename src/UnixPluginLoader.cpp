@@ -39,14 +39,15 @@ void UnixPluginLoader::load() throw (PluginException) {
 	for(std::vector<std::string>::const_iterator  cur = pluginPaths.begin();
 			cur != pluginPaths.end(); cur++) {
 		path = *cur + "/lib" + pluginName + LIBRARY_EXTENSION;
-		pathS = *cur + "/lib" + pluginName + libSuffix + LIBRARY_EXTENSION;
-	#ifndef NDEBUG
-		if (FileTool::exists(pathS)) {
-			// prefer suffixed over plain version
-			path = pathS;
+		if(libSuffix.size() > 0) {
+			pathS = *cur + "/lib" + pluginName + libSuffix + LIBRARY_EXTENSION;
+			if (FileTool::exists(pathS)) {
+				// prefer suffixed over plain version
+				path = pathS;
+			}
 		}
-	#endif
 		if (FileTool::exists(path)) {
+			sout << "Loading " << path << std::endl;
 			libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 			break;
 		}
@@ -65,8 +66,6 @@ void UnixPluginLoader::load() throw (PluginException) {
 					pluginName, PluginException::FILE_DAMAGED);
 		}
 	}
-
-	sout << "Loading " << path << std::endl;
 
 	create = (ParameteredObject*(*)(const std::string &, template_type))
 				dlsym(libHandle, "create");

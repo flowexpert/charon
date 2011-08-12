@@ -99,12 +99,6 @@ private:
 	void _unloadPlugin(PLUGIN_LOADER * p, bool erase = true);
 
 	/**
-	 * Creates metadata information for all existing plugins.
-	 * @param targetPath Path to store the metadata information at
-	 */
-	void _createMetadata(const std::string & targetPath);
-
-	/**
 	 * Creates metadata information for a specific plugin.
 	 * Loads the plugin (if not already loaded), creates an instance of the
 	 * plugin and destroys it immediately. If the plugin was not already loaded,
@@ -112,7 +106,7 @@ private:
 	 *
 	 * @param pluginName Name of the plugin (without prefix or extension)
 	 */
-	void _createMetadataForPlugin(const std::string & pluginName);
+	void _createMetadataForPlugin(const std::string& pluginName);
 
 	/**
 	 * Iterates through the currently existing instances and looks for target
