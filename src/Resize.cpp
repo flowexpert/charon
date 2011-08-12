@@ -25,7 +25,7 @@
 
 #include <charon-utils/Resize.hxx>
 
-///Creates an instance of the plugin
+/// Creates an instance of the plugin
 extern "C" resize_DECLDIR ParameteredObject* create(
 		const std::string & name, template_type t) {
 	switch(t) {
@@ -44,15 +44,16 @@ extern "C" resize_DECLDIR ParameteredObject* create(
 	}
 }
 
-///Deletes an instance of the plugin
+/// Deletes an instance of the plugin
 extern "C" resize_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
-///Report build configuration to prevent linking of incompatibel runtime libs
+
+/// Report build configuration to prevent linking of incompatibel runtime libs
 extern "C" resize_DECLDIR ParameteredObject::build_type getBuildType() {
-    #ifdef _DEBUG
-        return ParameteredObject::DEBUG_BUILD ;
-    #else _DEBUG
-        return ParameteredObject::RELEASE_BUILD ;
-    #endif
+#ifdef _DEBUG
+	return ParameteredObject::DEBUG_BUILD;
+#else
+	return ParameteredObject::RELEASE_BUILD;
+#endif
 }

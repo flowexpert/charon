@@ -20,12 +20,12 @@
 /// @author Daniel Kondermann
 /// @date 20.01.2010
 
-///Class name of the plugin
+/// Class name of the plugin
 #define TYPE SplineResize
 
 #include <charon-utils/SplineResize.hxx>
 
-///Creates an instance of the plugin
+/// Creates an instance of the plugin
 extern "C" splineresize_DECLDIR ParameteredObject*
 		create(const std::string & name, template_type t) {
 	switch(t) {
@@ -44,16 +44,16 @@ extern "C" splineresize_DECLDIR ParameteredObject*
 	}
 }
 
-///Deletes an instance of the plugin
+/// Deletes an instance of the plugin
 extern "C" splineresize_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
 
-///Report build configuration to prevent linking of incompatibel runtime libs
+/// Report build configuration to prevent linking of incompatibel runtime libs
 extern "C" splineresize_DECLDIR ParameteredObject::build_type getBuildType() {
-    #ifdef _DEBUG
-        return ParameteredObject::DEBUG_BUILD ;
-    #else _DEBUG
-        return ParameteredObject::RELEASE_BUILD ;
-    #endif
+#ifdef _DEBUG
+	return ParameteredObject::DEBUG_BUILD;
+#else
+	return ParameteredObject::RELEASE_BUILD;
+#endif
 }

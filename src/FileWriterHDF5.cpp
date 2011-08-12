@@ -47,15 +47,16 @@ extern "C" filewriterhdf5_DECLDIR ParameteredObject* create(
 	}
 }
 
-///Deletes an instance of the plugin
-extern "C" filewriterhdf5_DECLDIR void destroy(ParameteredObject * b) {
+/// Deletes an instance of the plugin
+extern "C" filewriterhdf5_DECLDIR void destroy(ParameteredObject* b) {
 	delete b;
 }
-///Report build configuration to prevent linking of incompatibel runtime libs
-extern "C" filewriterhdf5_DECLDIR ParameteredObject::build_type getBuildType() {
-    #ifdef _DEBUG
-        return ParameteredObject::DEBUG_BUILD ;
-    #else _DEBUG
-        return ParameteredObject::RELEASE_BUILD ;
-    #endif
+/// Report build configuration to prevent linking of incompatibel runtime libs
+extern "C" filewriterhdf5_DECLDIR
+ParameteredObject::build_type getBuildType() {
+#ifdef _DEBUG
+	return ParameteredObject::DEBUG_BUILD;
+#else
+	return ParameteredObject::RELEASE_BUILD;
+#endif
 }

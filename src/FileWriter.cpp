@@ -20,13 +20,14 @@
 /// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 24.08.2009
 
-///Class name of the plugin
+/// Class name of the plugin
 #define TYPE FileWriter
 
 #include <charon-utils/FileWriter.hxx>
 
-///Creates an instance of the plugin
-extern "C" filewriter_DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
+/// Creates an instance of the plugin
+extern "C" filewriter_DECLDIR ParameteredObject* create(
+		const std::string & name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -43,16 +44,16 @@ extern "C" filewriter_DECLDIR ParameteredObject* create(const std::string & name
 	}
 }
 
-///Deletes an instance of the plugin
+/// Deletes an instance of the plugin
 extern "C" filewriter_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
 
-///Report build configuration to prevent linking of incompatibel runtime libs
+/// Report build configuration to prevent linking of incompatibel runtime libs
 extern "C" filewriter_DECLDIR ParameteredObject::build_type getBuildType() {
-	#ifdef _DEBUG
-		return ParameteredObject::DEBUG_BUILD ;
-	#else _DEBUG
-		return ParameteredObject::RELEASE_BUILD ;
-	#endif
+#ifdef _DEBUG
+	return ParameteredObject::DEBUG_BUILD;
+#else
+	return ParameteredObject::RELEASE_BUILD;
+#endif
 }

@@ -25,15 +25,9 @@
 
 #include <charon-utils/Normalize.hxx>
 
-#if defined(MSVC) && defined (normalize_EXPORTS)
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define DECLDIR
-#endif
-
-///Creates an instance of the plugin
-extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
+/// Creates an instance of the plugin
+extern "C" normalize_DECLDIR ParameteredObject* create(
+		const std::string & name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -50,15 +44,16 @@ extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_
 	}
 }
 
-///Deletes an instance of the plugin
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
+/// Deletes an instance of the plugin
+extern "C" normalize_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
-///Report build configuration to prevent linking of incompatibel runtime libs
-extern "C" DECLDIR ParameteredObject::build_type getBuildType() {
-    #ifdef _DEBUG
-        return ParameteredObject::DEBUG_BUILD ;
-    #else _DEBUG
-        return ParameteredObject::RELEASE_BUILD ;
-    #endif
+
+/// Report build configuration to prevent linking of incompatibel runtime libs
+extern "C" normalize_DECLDIR ParameteredObject::build_type getBuildType() {
+#ifdef _DEBUG
+	return ParameteredObject::DEBUG_BUILD;
+#else
+	return ParameteredObject::RELEASE_BUILD;
+#endif
 }
