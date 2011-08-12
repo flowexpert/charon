@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>505</width>
-    <height>211</height>
+    <width>421</width>
+    <height>292</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,7 +35,13 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QDirEdit" name="editGlobalPath"/>
+       <widget class="QDirEdit" name="editGlobalPath">
+        <property name="whatsThis">
+         <string>&lt;h3&gt;Module installation directory:&lt;/h3&gt;
+Enter the paths, where your charon Modules are located.&lt;br&gt;&lt;br&gt;
+You may enter multiple paths here, separated by semicolon (;)</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="labelAdd">
@@ -48,7 +54,56 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QDirEdit" name="editPrivatePath"/>
+       <widget class="QDirEdit" name="editPrivatePath">
+        <property name="whatsThis">
+         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+#code {font-family:'monospace'; color:#0000ff; }
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;p&gt;
+&lt;h3&gt;Module development directory:&lt;/h3&gt;
+One path only is allowed here. It is stored seperately for &lt;span id='code'&gt;tuchulca&lt;/span&gt; and &lt;span id='code'&gt;tuchulcha_d&lt;/span&gt;.
+This path will be prepended to the paths given above. This causes these &lt;em&gt;private&lt;/em&gt; plugins to be found first, so having a higher priority than the global ones.&lt;br&gt;&lt;br&gt;
+Set this to the directory where the plugins you are currently working on are generated. Use the directory where the plugins compiled in Debug mode are generated if opened with &lt;span id='code'&gt;tuchulcha_d&lt;/span&gt; and the path of Release mode compilation in  &lt;span id='code'&gt;tuchulca&lt;/span&gt;.
+&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>private path is stored seperately for tuchulcha and tuchulcha_d</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupSuffix">
+     <property name="title">
+      <string>Plugin Settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QCheckBox" name="checkSuffix">
+        <property name="whatsThis">
+         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+#code {font-family:'monospace'; color:#0000ff; }
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;p&gt;
+&lt;h3&gt;Suffixed Modules:&lt;/h3&gt;
+File name &lt;span id='code'&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &lt;span id='code'&gt;&amp;lt;name&amp;gt;&lt;/span&gt;). If this option is enabled, suffixed modules are preferred if found, unsuffixed name is used as fallback. Unchecking this option causes suffixed modules to be ignored.&lt;br /&gt;&lt;br /&gt;This option is always on on Debug builds (&lt;span id='code'&gt;tuchulcha_d&lt;/span&gt;) and may not be changed in Windows (MSVC build).
+&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Load suffixed modules, unsuffixed as fallback (see what's this help)</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -103,7 +158,9 @@
   <tabstop>buttonBox</tabstop>
   <tabstop>editGlobalPath</tabstop>
   <tabstop>editPrivatePath</tabstop>
+  <tabstop>checkSuffix</tabstop>
   <tabstop>checkWait</tabstop>
+  <tabstop>checkThreaded</tabstop>
  </tabstops>
  <resources/>
  <connections>

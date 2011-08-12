@@ -60,10 +60,6 @@ WorkflowExecutor::WorkflowExecutor(ObjectInspector* inspector, QObject* p) :
 
 WorkflowExecutor::~WorkflowExecutor() {
 	_cleanup() ;
-	/*
-	if (_manager)
-		_execute();
-	*/
 	delete _logFile ;
 }
 
@@ -140,7 +136,7 @@ void WorkflowExecutor::run() {
 void WorkflowExecutor::_execute() {
 	if (!_inspector->isEnabled())
 		return;
-	if(_manager)
+	if (_manager)
 		return;
 	_executionMessage = QString("");
 
@@ -148,9 +144,24 @@ void WorkflowExecutor::_execute() {
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
 			"Tuchulcha");
-	_manager = new PluginManager(
-			settings.value("globalPluginPath").toString().toStdString(),
-			settings.value(FileManager::privPathTag).toString().toStdString());
+	QStringList paths;
+	paths << settings.value(FileManager::privPathTag).toString();
+	paths << settings.value("globalPluginPath").toString().split(";");
+	paths.removeDuplicates();
+	paths.removeAll("");
+	std::vector<std::string> pathsS;
+	QStringListIterator iter(paths);
+	while (iter.hasNext()) {
+		pathsS.push_back(iter.next().trimmed().toStdString());
+	}
+	_manager = new PluginManager(pathsS,
+#if not defined(_MSC_VER) and defined(NDEBUG)
+			// use selected option
+			settings.value("suffixedPlugins", false));
+#else
+			// determined by compile type
+			DEFAULT_DEBUG_SUFFIX);
+#endif
 	_updateIcon() ;
 	_log = new std::ofstream(_logFileName.c_str(), std::ios::trunc);
 	Q_ASSERT(_log);
@@ -310,12 +321,12 @@ void WorkflowExecutor::_updateLogDialog()
 
 void WorkflowExecutor::execute() {
 	
-	if(isRunning()) //workflow is executing, kill it?
+	if(isRunning()) // workflow is executing, kill it?
 	{
 		QMessageBox msgBox;
 		msgBox.setText("Terminate Workflow?");
 		msgBox.setInformativeText(tr("The workflow is still being executed.\n"
-					"Terminating it may lead to crashs and dataloss! Proceed?")) ;
+				"Terminating it may lead to crashs and dataloss! Proceed?"));
 		msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
 		msgBox.setDefaultButton(QMessageBox::No);
 		int ret = msgBox.exec();	
@@ -324,14 +335,11 @@ void WorkflowExecutor::execute() {
 	}
 	else
 	{
-		if(_manager) //workflow is finished but still loaded
-
-		{
+		if (_manager) { // workflow is finished but still loaded
 			_cleanup() ;
 			_updateIcon();
 		}
-		else //workflow ready to start
-		{
+		else { // workflow ready to start
 			_execute() ;
 		}
 	}

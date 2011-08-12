@@ -477,8 +477,17 @@ void MainWindow::_options() {
 	options.checkWait->setChecked(
 			settings.value("waitAfterExecute", false).toBool());
 	options.checkThreaded->setChecked(
-			settings.value("executeThreaded", false).toBool()) ;
+			settings.value("executeThreaded", false).toBool());
 
+#if not defined(_MSC_VER) and defined(NDEBUG)
+	// user may decide to load suffixed modules in unix release builds
+	options.checkSuffix->setChecked(
+			settings.value("suffixedPlugins", false).toBool());
+#else
+	// fixed in win (msvc), or if debug/release versins exist
+	options.checkSuffix->setEnabled(false);
+	options.checkSuffix->setChecked(DEFAULT_DEBUG_SUFFIX);
+#endif
 
 	// set new values
 	if (dialog.exec() == QDialog::Accepted) {
@@ -497,6 +506,14 @@ void MainWindow::_options() {
 				(options.checkWait->checkState() != Qt::Unchecked));
 		settings.setValue(
 				"executeThreaded",
-				(options.checkThreaded->checkState() != Qt::Unchecked)) ;
+				(options.checkThreaded->checkState() != Qt::Unchecked));
+#if not defined(_MSC_VER) and defined(NDEBUG)
+		if (options.checkSuffix->isChecked()) {
+			settings.setValue("suffixedPlugins", true);
+		}
+		else {
+			settings.remove("suffixedPlugins");
+		}
+#endif
 	}
 }

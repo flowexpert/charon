@@ -123,7 +123,7 @@ QString FileManager::tempFileName() const {
 
 void FileManager::loadPluginInformation() const {
 	QString logFileName = configDir().absoluteFilePath("updateLog.txt");
-	std::ofstream log(logFileName.toAscii().constData(), std::ios::trunc);
+	std::ofstream log(logFileName.toStdString().c_str(), std::ios::trunc);
 	Q_ASSERT(log.good());
 	sout.assign(log);
 
@@ -135,7 +135,7 @@ void FileManager::loadPluginInformation() const {
 	for (int i=0; i < wrpFiles.size(); i++) {
 		Q_ASSERT(QFileInfo(metaPath.absoluteFilePath(wrpFiles[i])).exists());
 		Q_ASSERT(QFileInfo(metaPath.absoluteFilePath(wrpFiles[i])).isFile());
-		Q_ASSERT(wrpFiles[i].indexOf("wrp") > 0);
+		Q_ASSERT(wrpFiles[i].indexOf(".wrp") > 0);
 		metaPath.remove(wrpFiles[i]);
 		Q_ASSERT(!QFileInfo(wrpFiles[i]).exists());
 	}
@@ -143,9 +143,24 @@ void FileManager::loadPluginInformation() const {
 	QSettings settings(
 			"Heidelberg Collaboratory for Image Processing",
 			"Tuchulcha");
-	PluginManager man(
-			settings.value("globalPluginPath").toString().toStdString(),
-			settings.value(privPathTag).toString().toStdString());
+	QStringList paths;
+	paths << settings.value(privPathTag).toString();
+	paths << settings.value("globalPluginPath").toString().split(";");
+	paths.removeDuplicates();
+	paths.removeAll("");
+	std::vector<std::string> pathsS;
+	QStringListIterator iter(paths);
+	while (iter.hasNext()) {
+		pathsS.push_back(iter.next().trimmed().toStdString());
+	}
+	PluginManager man(pathsS,
+#if not defined(_MSC_VER) and defined(NDEBUG)
+			// use selected option
+			settings.value("suffixedPlugins", false));
+#else
+			// determined by compile type
+			DEFAULT_DEBUG_SUFFIX);
+#endif
 	man.createMetadata(metaPath.absolutePath().toStdString());
 
 	sout.assign();
