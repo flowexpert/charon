@@ -21,7 +21,7 @@
  *  \date 23.04.2010
  */
 
-///Class name of the plugin
+/// Class name of the plugin
 #define TYPE EdgySequenceGenerator
 
 #ifndef _MSC_VER
@@ -29,7 +29,7 @@
 #endif
 #include <charon/EdgySequenceGenerator.hxx>
 
-///Creates an instance of the plugin
+/// Creates an instance of the plugin
 extern "C" edgysequencegenerator_DECLDIR ParameteredObject*
 		create(const std::string & name, template_type t) {
 	switch(t) {
@@ -48,18 +48,17 @@ extern "C" edgysequencegenerator_DECLDIR ParameteredObject*
 	}
 }
 
-///Deletes an instance of the plugin
+/// Deletes an instance of the plugin
 extern "C" edgysequencegenerator_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
 
-
-
-///Report build configuration to prevent linking of incompatibel runtime libs
-extern "C" edgysequencegenerator_DECLDIR ParameteredObject::build_type getBuildType() {
-    #ifdef _DEBUG
-        return ParameteredObject::DEBUG_BUILD ;
-    #else _DEBUG
-        return ParameteredObject::RELEASE_BUILD ;
-    #endif
+/// Report build configuration to prevent linking of incompatibel runtime libs
+extern "C" edgysequencegenerator_DECLDIR
+ParameteredObject::build_type getBuildType() {
+#ifdef _DEBUG
+	return ParameteredObject::DEBUG_BUILD ;
+#else
+	return ParameteredObject::RELEASE_BUILD ;
+#endif
 }

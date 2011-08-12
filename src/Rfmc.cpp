@@ -47,11 +47,12 @@ extern "C" rfmc_DECLDIR
 void destroy(ParameteredObject * b) {
 	delete b;
 }
-///Report build configuration to prevent linking of incompatibel runtime libs
+
+/// Report build configuration to prevent linking of incompatibel runtime libs
 extern "C" rfmc_DECLDIR ParameteredObject::build_type getBuildType() {
-    #ifdef _DEBUG
-        return ParameteredObject::DEBUG_BUILD ;
-    #else _DEBUG
-        return ParameteredObject::RELEASE_BUILD ;
-    #endif
+#ifdef _DEBUG
+	return ParameteredObject::DEBUG_BUILD ;
+#else
+	return ParameteredObject::RELEASE_BUILD ;
+#endif
 }

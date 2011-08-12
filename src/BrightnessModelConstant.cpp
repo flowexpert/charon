@@ -1,19 +1,19 @@
 /*  Copyright (C) 2009 Jens-Malte Gottfried
 
-    This file is part of Charon.
+	This file is part of Charon.
 
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /// @file Constant.cpp
 /// This file is needed for the Roi class to work as a plugin.
@@ -27,7 +27,7 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <charon/BrightnessModels/Constant.hxx>
 
-///Creates an instance of the plugin
+/// Creates an instance of the plugin
 extern "C" brightnessmodels_constant_DECLDIR
 ParameteredObject* create(const std::string & name, template_type t) {
 	switch(t) {
@@ -46,16 +46,18 @@ ParameteredObject* create(const std::string & name, template_type t) {
 	}
 }
 
-///Deletes an instance of the plugin
+/// Deletes an instance of the plugin
 extern "C" brightnessmodels_constant_DECLDIR
 void destroy(ParameteredObject * b) {
 	delete b;
 }
-///Report build configuration to prevent linking of incompatibel runtime libs
-extern "C" brightnessmodels_constant_DECLDIR ParameteredObject::build_type getBuildType() {
-    #ifdef _DEBUG
-        return ParameteredObject::DEBUG_BUILD ;
-    #else _DEBUG
-        return ParameteredObject::RELEASE_BUILD ;
-    #endif
+
+/// Report build configuration to prevent linking of incompatibel runtime libs
+extern "C" brightnessmodels_constant_DECLDIR
+ParameteredObject::build_type getBuildType() {
+#ifdef _DEBUG
+	return ParameteredObject::DEBUG_BUILD ;
+#else
+	return ParameteredObject::RELEASE_BUILD ;
+#endif
 }
