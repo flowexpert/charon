@@ -26,7 +26,6 @@ ADD_EXECUTABLE(paraminspector WIN32 ${INSPECTOR_SOURCES} ${INSP_ICO})
 TARGET_LINK_LIBRARIES(paraminspector editparam ${QT_QTMAIN_LIBRARY})
 SET_TARGET_PROPERTIES(paraminspector PROPERTIES
 	FOLDER "Tuchulcha"
-	OUTPUT_NAME_DEBUG paraminspector_d
 )
 
 # main application
