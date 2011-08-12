@@ -25,6 +25,16 @@ IF(BUILD_TESTING)
 	LIST(APPEND tests ParameterFile)
 	LIST(APPEND testTargets paramtest)
 
+	# tests for ParameterReferences
+	ADD_EXECUTABLE(paramreftest parameterRefTest.cpp)
+	TARGET_LINK_LIBRARIES(paramreftest charon-core)
+	ADD_TEST(
+		NAME ParameterRef
+		COMMAND paramreftest
+	)
+	LIST(APPEND tests ParameterRef)
+	LIST(APPEND testTargets paramreftest)
+
 	# tests for ParameteredObject etc.
 	ADD_EXECUTABLE(parametertest parametertest.cpp)
 	TARGET_LINK_LIBRARIES(parametertest charon-core charon-plugins)

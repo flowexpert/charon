@@ -62,6 +62,29 @@ Again, "filename" specifies the path to write the image file and "image" is the 
 the image data. Since output slots can always be connected to multiple input slots, we can connect
 "crop.outimage" to this input slot, too.   
 
+\section reference Using references in parameter files
+
+References are saved as Parameter values and instruct charon-core to load the values of the referenced 
+Parameter instead of containing any information themselves. A reference is indicated by a leading "@"
+and followed by the referenced Parameter's name, like "@someclass.someparameter". Following 
+ParameterFile snippet is an example of referencing Parameters. 
+
+\dontinclude referencesample.wrp
+
+\until @rect.color
+
+This is what charon-core actually loads from the file.
+
+\until circle.color
+
+Important to note is that references should always point to Parameters of the same data type - whether 
+its a ParameterList or a single value Parameter - referencing a string to a Parameter that would
+normally be processed as int does not lead to foreseeable results and should therefore be avoided at
+all times. References to references will also not work - all references should point to a value. As
+indicated at the start - charon-core does not save the references but gets all the values instead - 
+producing errors if it tries to overwrite a reference during the saving process, keeping the references
+in their previous state inside the file.
+
 \section useparamfile Using parameter files with the PluginManager class
 Our parameter file now contains all the information about our desired workflow.
 Now we can tell our PluginManager to open the file and read out the information.

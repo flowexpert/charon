@@ -1,0 +1,13 @@
+rect.height		77
+rect.width		@rect.height
+rect.color		blue
+
+circle.radius	@rect.height
+circle.color	@rect.color
+
+rect.height		77
+rect.width		77
+rect.color		blue
+
+circle.radius	77
+circle.color	blue

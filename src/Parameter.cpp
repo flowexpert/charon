@@ -26,3 +26,14 @@ std::ostream & operator<<(
 	parameter.intoStream(os);
 	return os;
 }
+
+std::string AbstractParameter::_followLink(const ParameterFile& pf, const std::string paramName) const {
+	if (pf.isSet(paramName)) {
+		std::string refName = pf.get<std::string>(paramName);
+		if(refName.size() > 0 && refName.substr(0,1) == "@") {
+			refName = refName.erase(0,1);
+			return refName;
+		}
+	}
+	return paramName;
+}

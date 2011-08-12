@@ -62,7 +62,7 @@ class ParameteredObject;
 /// Parameter object handling.
 /// Provides assignment and setters/getters.
 /// Load and save routines are purely virtual.
-class AbstractParameter {
+class charon_core_DECLDIR AbstractParameter {
 private:
 	/// Forbid copying.
 	AbstractParameter(const AbstractParameter&);
@@ -73,6 +73,18 @@ protected:
 
 	/// Parent ParameteredObject.
 	ParameteredObject* _parent;
+
+	/// Follow reference to targeted parameter.
+	/** Tries to get the name of the targeted parameter if a reference is
+	 *  present. Returns input if no reference exists.
+	 * @param pf				ParameterFile to be used
+	 * @param paramName         Name of the parameter that could contain a
+	 *                          reference and should therefore be resolved
+	 * @return                  Name of the targeted parameter if there is
+	 *                          a reference otherwise paramName unchanged
+	 */
+	std::string _followLink(
+		const ParameterFile& pf, const std::string paramName) const;
 
 public:
 	AbstractParameter();

@@ -125,15 +125,24 @@ T& Parameter<T>::operator()() {
 
 template <typename T>
 void Parameter<T>::save(ParameterFile& pf) const {
-	if (_value != _defaultValue) {
-		pf.set<T>(_parent->getName() + "." + _name, _value);
+	std::string paramName = _parent->getName() + "." + _name;
+	if(pf.isSet(paramName)) {
+		if(pf.get<std::string>(paramName).substr(0,1) == "@")
+			throw std::runtime_error(paramName + " : Attempt was made to overwrite Reference.");
+		else if(_value == _defaultValue)
+			pf.erase(paramName);
+		else
+			pf.set<T>(paramName, _value);
 	}
+	else if (_value != _defaultValue)
+		pf.set<T>(paramName, _value);
 }
 
 template <typename T>
 void Parameter<T>::load(const ParameterFile& pf) {
-	if (pf.isSet(_parent->getName() + "." + _name))
-		_value = pf.get<T>(_parent->getName() + "." + _name);
+	std::string paramName = _followLink(pf, _parent->getName() + "." + _name);
+	if (pf.isSet(paramName))
+		_value = pf.get<T>(paramName);
 	else
 		_value = _defaultValue;
 }
@@ -198,19 +207,26 @@ std::string ParameterList<T>::guessType() const {
 template <typename T>
 void ParameterList<T>::save(ParameterFile& pf) const {
 	std::stringstream stream;
+	std::string paramName = _parent->getName() + "." + _name;
 	this->intoStream(stream);
-	if (stream.str() == _defaultValue) {
-		if (pf.isSet(_parent->getName() + "." + _name))
-			pf.erase(_parent->getName() + "." + _name);
+
+	if(pf.isSet(paramName)) {
+		if(pf.get<std::string>(paramName).substr(0,1) == "@")
+			throw std::runtime_error(paramName + " : Attempt was made to overwrite Reference.");
+		else if(stream.str() == _defaultValue)
+			pf.erase(paramName);
+		else
+			pf.set<T>(paramName, _value);
 	}
-	else
-		pf.set<T>(_parent->getName() + "." + _name, _value);
+	else if (stream.str() != _defaultValue)
+		pf.set<T>(paramName, _value);
 }
 
 template <typename T>
 void ParameterList<T>::load(const ParameterFile& pf) {
-	if(pf.isSet(_parent->getName() + "." + _name))
-		_value = pf.getList<T>(_parent->getName() + "." + _name);
+	std::string paramName = _followLink(pf, _parent->getName() + "." + _name);
+	if(pf.isSet(paramName))
+		_value = pf.getList<T>(paramName);
 	else {
 		ParameterFile temp;
 		temp.set("temp", _defaultValue);
