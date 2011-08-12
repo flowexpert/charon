@@ -25,15 +25,8 @@
 
 #include <charon-utils/FileWriter.hxx>
 
-#if defined(MSVC) && defined (filewriter_EXPORTS)
-#define DECLDIR __declspec(dllexport)
-#else
-///Not needed with GCC
-#define DECLDIR
-#endif
-
 ///Creates an instance of the plugin
-extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
+extern "C" filewriter_DECLDIR ParameteredObject* create(const std::string & name, template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -51,6 +44,15 @@ extern "C" DECLDIR ParameteredObject* create(const std::string & name, template_
 }
 
 ///Deletes an instance of the plugin
-extern "C" DECLDIR void destroy(ParameteredObject * b) {
+extern "C" filewriter_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
+}
+
+///Report build configuration to prevent linking of incompatibel runtime libs
+extern "C" filewriter_DECLDIR ParameteredObject::build_type getBuildType() {
+	#ifdef _DEBUG
+		return ParameteredObject::DEBUG_BUILD ;
+	#else _DEBUG
+		return ParameteredObject::RELEASE_BUILD ;
+	#endif
 }
