@@ -157,7 +157,7 @@ void WorkflowExecutor::_execute() {
 	_manager = new PluginManager(pathsS,
 #if not defined(_MSC_VER) and defined(NDEBUG)
 			// use selected option
-			settings.value("suffixedPlugins", false));
+			settings.value("suffixedPlugins", false).toBool());
 #else
 			// determined by compile type
 			DEFAULT_DEBUG_SUFFIX);
