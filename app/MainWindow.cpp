@@ -479,12 +479,17 @@ void MainWindow::_options() {
 	options.checkThreaded->setChecked(
 			settings.value("executeThreaded", false).toBool());
 
+#ifdef QT_NO_DEBUG
+	// show this label in tuchulcha_d only
+	options.labelPPathDesc->setVisible(false);
+#endif
+
 #if not defined(_MSC_VER) and defined(NDEBUG)
 	// user may decide to load suffixed modules in unix release builds
 	options.checkSuffix->setChecked(
 			settings.value("suffixedPlugins", false).toBool());
 #else
-	// fixed in win (msvc), or if debug/release versins exist
+	// fixed in win (msvc), or if debug/release versions exist
 	options.checkSuffix->setEnabled(false);
 	options.checkSuffix->setChecked(DEFAULT_DEBUG_SUFFIX);
 #endif
