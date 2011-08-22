@@ -54,6 +54,7 @@
  * - create and destroy instances of plugins
  * - load parameter files and execute the discribed workflow
  * - write parameter files
+ *
  * Also, some methods which were previously members of the ParameteredObject
  * class are now members of this class.
  *
@@ -86,8 +87,26 @@
  * (see <a href="http://www.cmake.org/cmake/help/documentation.html">
  * CMake Documentation</a> for more information).
  *
+ * This line should be added to your main <tt>CMakeLists.txt</tt>
+ * (i.e. located in the top folder) to split up your debug/release libraries:
+ * \code
+ *   PROJECT(...)
+ *   [...]
+ *   SET(CMAKE_DEBUG_POSTFIX _d)
+ *   [...]
+ * \endcode
+ *
  * Which version of the libraries is preferred may be given to the
- * PluginManager constructor using the debugSuffix parameter.
+ * PluginManager constructor using the <b>debugSuffix</b> parameter:
+ *
+ * If this parameter is set to \c true (default on Debug builds), libraries
+ * with debug suffix are preferred (i.e. if both versions exist, the suffixed
+ * module will be loaded. If only one of them exists, there is no choice,
+ * the found one will be loaded).
+ *
+ * If debugSuffix is set to \c false (default on Release builds),
+ * suffixed modules are completely ignored
+ * (even if only a suffixed file is found, it will <em>not</em> be loaded).
  *
  * \warning If the plugins are built with MSVC, it is essential, that
  * libraries and executables built in Debug/Release mode are not mixed
