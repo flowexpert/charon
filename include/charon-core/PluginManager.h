@@ -56,6 +56,47 @@
  * - write parameter files
  * Also, some methods which were previously members of the ParameteredObject
  * class are now members of this class.
+ *
+ * \section pluginPaths Plugin Manager Paths
+ * There may be multiple paths where Plugins are located.
+ * These paths have to be given to the PluginManager constructor.
+ * For compatibility reasons, there are constructors taking two paths
+ * (global and local path) as arguments, but arbitrary numbers of paths
+ * may be given to the stringlist versions of the constructor.
+ *
+ * If using the two-paths version, note that the local path (if given)
+ * gets a higher priority than the global path. I.e. if the same Module
+ * exists twice (in global and local path) the local one is found first and
+ * will be used in workflows.
+ *
+ * If using the stringlist version of the constructor,
+ * the paths are searched in the order as given.
+ *
+ * \section debugSuffix Plugins with Debug suffix
+ * To be able to use plugins in their debug and release build configuration
+ * side by side, it is possible to name the debug library with the suffix
+ * <tt>_d</tt>. Regarding a plugin called <tt>example</tt>, the libraries
+ * could be named e.g. <tt>example.dll</tt> and <tt>example_d.dll</tt>
+ * (Win/MSVC) or e.g. <tt>libexample.so</tt> and <tt>libexample_d.so</tt>
+ * (Linux/GCC). Since the names are different, both versions may be placed
+ * side by side in the same folder.
+ *
+ * A mechanism to create the libraries easily this way is provided by the
+ * CMake variable CMAKE_DEBUG_SUFFIX
+ * (see <a href="http://www.cmake.org/cmake/help/documentation.html">
+ * CMake Documentation</a> for more information).
+ *
+ * Which version of the libraries is preferred may be given to the
+ * PluginManager constructor using the debugSuffix parameter.
+ *
+ * \warning If the plugins are built with MSVC, it is essential, that
+ * libraries and executables built in Debug/Release mode are not mixed
+ * with each other. Otherwise there may be application crashes at runtime
+ * because of different versions of the STL implementations (e.g. std::string).
+ * The debug suffix mechanism provides a way to avoid this mixture.
+ * The default value for the debugSuffix parameter is set to true on debug
+ * builds and to false on release builds. Specifying this parameter manually
+ * is useful only on unix builds where this mixture causes less or no problems.
  */
 class PluginManager: public PluginManagerInterface {
 private:

@@ -1,35 +1,30 @@
 /**
-\mainpage Charon utilities
+\mainpage Charon Core libraries
 
 \section intro Overview
-Charon-utils is a collection of routines and classes used in the charon
-project and tuchulcha. There are many basic image manipulation routines
-and a framework of serializable objects which can collaborate in a signal/slot
-style. A sample collection of serializable classes is able to perform basic
-image manipulation and display the result.
+Charon-core is a collection of routines and classes used in the charon
+project and tuchulcha. There a framework of serializable objects which can
+collaborate in a signal/slot style.
+A sample collection of serializable classes is able in the charon-utils project.
 
 \section libs Used libraries
-Charon-utils does only depend on the CImg image library which consist only
-on one single header file and runs on multiple platforms. On unix system,
-the libraries are linked against X11 et al, in Windows systems, no additional
-libraries are needed.
+Charon-core itself does only depend on any external libraries.
+Modules that are developed using charon-core may include dependencies
+to other libraries if needed.
 
 \section features Features
--   Image manipulation routines (including histogram generation, normalization
-    of sequences and many more, see namespace ImgTool)
--   %Convolution framework (see namespace Convolution)
--   Serializable object framework (classes ParameteredObject et al)
--   configurable output stream with possibility to log to (multiple)files
-    and to console (like tee)
--   platform independent file manipulation (rename, etc)
+- Serializable object framework (classes ParameteredObject et al)
+- configurable output stream with possibility to log to (multiple) files
+  and to console (like tee)
+- platform independent file manipulation (rename, etc)
 
 \section license License
-Copyright (C) 2009 Jens-Malte Gottfried, Daniel Kondermann
+Copyright (C) 2009-2011 Jens-Malte Gottfried, Daniel Kondermann
 
 This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU Lesser General Public License as published by the Free Software
-Foundation; either version 3 of the License, or (at your option) any later
-version.
+the terms of the GNU Lesser General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your option)
+any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
@@ -48,7 +43,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 -   \subpage parameterfiles
 
 \latexonly
-The API documentation is only avaiable in the HTML version of this documentation.
+The API documentation is only avaiable in the HTML version of this
+documentation.
 \pagebreak
 \endlatexonly
 */

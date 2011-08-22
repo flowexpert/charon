@@ -1,22 +1,24 @@
 /**
 \page plugins Working with Plug-ins
-This page describes how to develop and use Plug-ins based on the ParameteredObject
-base class. The PluginManager will be introduced to handle the Plug-ins.
-Please refer to the \ref usage page for more details on creating a class derived
-from ParameteredObject. 
+This page describes how to develop and use Plug-ins based on the
+ParameteredObject base class.
+The PluginManager will be introduced to handle the Plug-ins.
+Please refer to the \ref usage page for more details on creating a class
+derived from ParameteredObject.
 
-This example will do mainly the same as the example of the \ref usage page. But
-I will use plugins and the PluginManager class to realize is.
+This example will do mainly the same as the example of the \ref usage page.
+But I will use plugins and the PluginManager class to realize is.
 
 \section dev Developing non-templated plug-ins
 
-Of course, we need to develop the plugins first. But, fortunately, there is not
-much developing to do.
-In the example on the \ref usage page, there were two classes: Sample and
-Outputgen. Out of these two classes we will make two plugins. First, we will
-need to create two separate header files, because later on, we want to have
-two separare binaries for the plugins, each one containing only the code of
-the plugin itself.
+Of course, we need to develop the plugins first.
+But, fortunately, there is not much developing to do.
+In the example on the \ref usage page, there were two classes:
+Sample and Outputgen.
+Out of these two classes we will make two plugins.
+First, we will need to create two separate header files, because later on,
+we want to have two separare binaries for the plugins,
+each one containing only the code of the plugin itself.
 
 <b><tt>Sample.h</tt></b>
 \dontinclude Sample.h
@@ -28,15 +30,18 @@ Of course, we need to use include guards.
 \until #endif
 This code is needed to compile the plugin using the Visual C++ compiler. It
 handles the export and import of symbols in/from DLLs.
-If you either use the GNU compiler or don't specify the <tt>HANDLE_DLL</tt> compiler
-flag, no symbols will be exported/imported. You may want to include the file
-directly into your application, then you must not specify the HANDLE_DLL flag.
+If you either use the GNU compiler or don't specify the
+<tt>HANDLE_DLL</tt> compiler flag, no symbols will be exported/imported.
+You may want to include the file directly into your application,
+then you must not specify the HANDLE_DLL flag.
 Only if you want create a shared library (as we will do in this example) and
 use the Visual C++ compiler (ensure the MSVC compiler flag is set), you have to
-handle symbol exporting/importing. It then depends on the <tt>sample_EXPORTS</tt>
-flag whether symbols will be exported (<tt>__declspec(dllexport)</tt>)or imported
-(<tt>__declspec(dllimport)</tt>). Generally, the compiler flag is named
-"classname_EXPORTS", the class name in lowercase letters. We have to store the
+handle symbol exporting/importing.
+It then depends on the <tt>sample_EXPORTS</tt>
+flag whether symbols will be exported (<tt>__declspec(dllexport)</tt>) or
+imported (<tt>__declspec(dllimport)</tt>).
+Generally, the compiler flag is named "classname_EXPORTS",
+the class name in lowercase letters. We have to store the
 information in the <tt>sample_DECLDIR</tt> compiler directive.
 
 \until #endif
@@ -77,23 +82,27 @@ same.
 If you want to compile your plugin using the GNU Compiler Collection, you can
 do this manually.
 - Set the compiler flag UNIX (<tt>-DUNIX</tt>)
-- If you are using Mac OS X, you may also specify the APPLE flag (<tt>-DAPPLE</tt>)
+- If you are using Mac OS X, you may also specify the APPLE flag
+  (<tt>-DAPPLE</tt>)
 - Make the binaries position independent (<tt>-fPIC</tt>)
-- Specify charon-utils/src path as include path (<tt>-I "$charon-utils$/src"</tt>)
-- Specify the charon-utils installation path as library path (<tt>-L "$install$"</tt>)
-- On Linux systems, set the -shared compiler flag, on Mac OS X the <tt>-dynamiclib</tt>
-flag
-- Link the plugin to the charon-utils library (<tt>-lcharon-utils</tt>)
+- Specify charon-utils include dir path as include path
+  (<tt>-I "$charon-core$/include"</tt>)
+- Specify the charon-core installation path as library path
+  (<tt>-L "$install$"</tt>)
+- On Linux systems, set the -shared compiler flag,
+  on Mac OS X the <tt>-dynamiclib</tt> flag
+- Link the plugin to the charon-core library (<tt>-lcharon-core</tt>)
 
 That's all.
 
-If you want to compile your plugin with the VC++ compiler, I recommend to use
-Visual Studio. Please refer to 
-<a href="http://www.codeguru.com/cpp/cpp/cpp_mfc/tutorials/article.php/c9855">this</a>
-page for more details. You have to set the <tt>MSVC</tt>, the <tt>HANDLE_DLL</tt>
-and the <tt>$classname$_EXPORT</tt> flags manually. <tt>$classname$</tt> stands
-for the class name in lowercase letters.
-
+If you want to compile your plugin with the VC++ compiler,
+I recommend to use Visual Studio.
+Please refer to
+<a href="http://www.codeguru.com/cpp/cpp/cpp_mfc/tutorials/article.php/c9855">
+this page</a> for more details.
+You have to set the <tt>MSVC</tt>, the <tt>HANDLE_DLL</tt>
+and the <tt>$classname$_EXPORT</tt> flags manually.
+<tt>$classname$</tt> stands for the class name in lowercase letters.
 
 \section use Using the Plug-ins
 
@@ -194,9 +203,9 @@ Nothing changed here.
 If you are developing an own templated plugin, you can simply copy this
 code (<tt>TemplatedSample.cpp</tt>) and change the class name, the include
 directive and the <tt>$classname$_EXPORTS</tt> compiler directive.
-But beware: Always use the this-pointer when calling a method of ParameteredObject
-and when using the templated ParameteredObject::_addParameter() method, don't
-specify the template argument in the function call. This won't compile using the
-GCC.
-
+But beware: Always use the this-pointer or <tt>ParameteredObject::</tt> prefix
+(recommended) when calling a method of ParameteredObject and when using the
+templated ParameteredObject::_addParameter() method,
+don't specify the template argument in the function call.
+This won't compile using the GCC.
 */

@@ -1,7 +1,7 @@
 /**
-\page usage Using charon-utils
-Charon-utils is a library, so don't look for some kind of main executable.
-You can use charon-utils in your own projects, use the classes and frameworks
+\page usage Using charon-core
+Charon-core is a library, so don't look for some kind of main executable.
+You can use charon-core in your own projects, use the classes and frameworks
 that are offered here. A sample data-processing framework that uses the
 ParameteredObject class can be found in the \c imgmanip directory. The file
 <tt>test/parametertest.cpp</tt> and <tt>test/imgmaniptest.cpp</tt> show how to
