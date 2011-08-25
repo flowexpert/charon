@@ -34,6 +34,7 @@
  */
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
+	Q_INIT_RESOURCE(resources);
 	ParamInspectorWindow window;
 	FileManager::dialogParent = &window;
 	window.resize(320, 480);
