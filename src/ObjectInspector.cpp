@@ -76,6 +76,7 @@ void ObjectInspector::init() {
 	_view->horizontalHeader()->setStretchLastSection(true);
 	InspectorDelegate* delegate = new InspectorDelegate(this);
 	_view->setItemDelegateForColumn(1, delegate);
+	_view->setMouseTracking(true);
 	_mainLayout->addWidget(_view);
 }
 
