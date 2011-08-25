@@ -1,35 +1,35 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-	<qresource prefix="/help">
-		<file alias="help.txt">help/help.txt</file>
-		<file alias="start.txt">help/start.txt</file>
-		<file alias="styles.css">help/styles.css</file>
-		<file alias="footer.txt">help/footer.txt</file>
-	</qresource>
-	<qresource prefix="/icons">
-		<file alias="appicon.png">icons/tc.png</file>
-		<file alias="new.png">icons/oxygen/document_new.png</file>
-		<file alias="open.png">icons/oxygen/document_open.png</file>
-		<file alias="quickopen.png">icons/oxygen/quickopen-file.png</file>
-		<file alias="save.png">icons/oxygen/document_save.png</file>
-		<file alias="save_as.png">icons/oxygen/document_save_as.png</file>
-		<file alias="rename.png">icons/oxygen/edit_rename.png</file>
-		<file alias="delete.png">icons/oxygen/editdelete.png</file>
-		<file alias="disconnect.png">icons/oxygen/editclear.png</file>
-		<file alias="help.png">icons/oxygen/help_contents.png</file>
-		<file alias="intro.png">icons/oxygen/help_about.png</file>
-		<file alias="export.png">icons/oxygen/file_export.png</file>
-		<file alias="close.png">icons/oxygen/application_exit.png</file>
-		<file alias="revert.png">icons/oxygen/revert.png</file>
-		<file alias="revert_all.png">icons/oxygen/document_revert.png</file>
-		<file alias="qt.png">icons/qt/qt-logo.png</file>
-		<file alias="zoomIn.png">icons/oxygen/zoom-in.png</file>
-		<file alias="zoomOut.png">icons/oxygen/zoom-out.png</file>
-		<file alias="zoomFit.png">icons/oxygen/zoom-fit-best.png</file>
-		<file alias="refresh.png">icons/oxygen/view-refresh.png</file>
-		<file alias="runbuild.png">icons/oxygen/run-build.png</file>
-		<file alias="execute.png">icons/oxygen/media-playback-start.png</file>
-		<file alias="stop.png">icons/oxygen/media-playback-stop.png</file>
-		<file alias="configure.png">icons/oxygen/configure.png</file>
-	</qresource>
+<RCC>
+    <qresource prefix="/help">
+        <file alias="help.txt">help/help.txt</file>
+        <file alias="start.txt">help/start.txt</file>
+        <file alias="styles.css">help/styles.css</file>
+        <file alias="footer.txt">help/footer.txt</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="appicon.png">icons/tc.png</file>
+        <file alias="new.png">icons/oxygen/document_new.png</file>
+        <file alias="open.png">icons/oxygen/document_open.png</file>
+        <file alias="quickopen.png">icons/oxygen/quickopen-file.png</file>
+        <file alias="save.png">icons/oxygen/document_save.png</file>
+        <file alias="save_as.png">icons/oxygen/document_save_as.png</file>
+        <file alias="rename.png">icons/oxygen/edit_rename.png</file>
+        <file alias="delete.png">icons/oxygen/editdelete.png</file>
+        <file alias="disconnect.png">icons/oxygen/editclear.png</file>
+        <file alias="help.png">icons/oxygen/help_contents.png</file>
+        <file alias="intro.png">icons/oxygen/help_about.png</file>
+        <file alias="export.png">icons/oxygen/file_export.png</file>
+        <file alias="close.png">icons/oxygen/application_exit.png</file>
+        <file alias="revert.png">icons/oxygen/revert.png</file>
+        <file alias="revert_all.png">icons/oxygen/document_revert.png</file>
+        <file alias="qt.png">icons/qt/qt-logo.png</file>
+        <file alias="zoomIn.png">icons/oxygen/zoom-in.png</file>
+        <file alias="zoomOut.png">icons/oxygen/zoom-out.png</file>
+        <file alias="zoomFit.png">icons/oxygen/zoom-fit-best.png</file>
+        <file alias="refresh.png">icons/oxygen/view-refresh.png</file>
+        <file alias="runbuild.png">icons/oxygen/run-build.png</file>
+        <file alias="execute.png">icons/oxygen/media-playback-start.png</file>
+        <file alias="stop.png">icons/oxygen/media-playback-stop.png</file>
+        <file alias="configure.png">icons/oxygen/configure.png</file>
+        <file alias="symlink.png">icons/oxygen/emblem-symbolic-link.png</file>
+    </qresource>
 </RCC>
