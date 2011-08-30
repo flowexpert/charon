@@ -62,6 +62,7 @@ LIST(APPEND Plugins
 )
 
 # Solvers
+# PetSc Solver
 INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
 ADD_LIBRARY(petscsolver SHARED
 	PetscSolver.cpp
@@ -83,6 +84,16 @@ TARGET_LINK_LIBRARIES(petscsolver
 )
 LIST(APPEND Plugins
 	petscsolver
+)
+# Conjugate gradient method
+ADD_LIBRARY(cgsolver SHARED
+	CGSolver.cpp
+	${charon_INCLUDE_DIR}/Solvers/CGSolver.h
+	${charon_INCLUDE_DIR}/Solvers/CGMinimize.h
+	${charon_INCLUDE_DIR}/Solvers/CGSolver.hxx
+)
+LIST(APPEND Plugins
+	cgsolver
 )
 
 # Brightness models (currently only constant brightness available)
