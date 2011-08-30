@@ -61,6 +61,22 @@ LIST(APPEND Plugins
 	spatialpw
 )
 
+# Energy Stencils
+ADD_LIBRARY(energybcc SHARED
+	${charon_INCLUDE_DIR}/EnergyStencils/EnergyBCC.h
+	${charon_INCLUDE_DIR}/EnergyStencils/EnergyBCC.hxx
+	EnergyBCC.cpp
+)
+ADD_LIBRARY(energyclassic SHARED
+        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyClassic.h
+        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyClassic.hxx
+        EnergyClassic.cpp
+)
+LIST(APPEND Plugins
+	energybcc
+	energyclassic
+)
+
 # Solvers
 # PetSc Solver
 INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
