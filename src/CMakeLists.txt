@@ -197,7 +197,6 @@ LIST(APPEND Plugins
 	psifunction
 )
 
-
 # sampling and CD fitter
 ADD_LIBRARY(sampler SHARED
 	${charon_INCLUDE_DIR}/Sampler.h
@@ -248,7 +247,6 @@ ADD_LIBRARY(diff2d SHARED
 	${charon_INCLUDE_DIR}/Diff2D.h
 	${charon_INCLUDE_DIR}/Diff2D.hxx
 )
-TARGET_LINK_LIBRARIES(diff2d interpolatorlinear)
 ADD_LIBRARY(pyramidrescale SHARED
 	PyramidRescale.cpp
 	${charon_INCLUDE_DIR}/PyramidRescale.h
