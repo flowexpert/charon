@@ -45,4 +45,3 @@ EnergyStencil<T>::~EnergyStencil()
 }
 
 #endif
-

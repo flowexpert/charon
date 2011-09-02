@@ -26,6 +26,9 @@
  *  <a href="http://www.cs.toronto.edu/~rfm/code/minimize.py">minimize.py</a>, Copyright (C) Roland Memisevic.
  */
 
+#ifndef _CG_MINIMIZE_H_
+#define _CG_MINIMIZE_H_
+
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -38,6 +41,11 @@ using namespace cimg_library;
 #include <charon/EnergyStencil.h>
 
 #define CG_DIRECTION_PR
+
+#ifdef _MSC_VER
+#define isnan(x) _isnan(x)
+#define isinf(x) !_finite(x)
+#endif
 
 //////////////////////////////////////////////////////////////////////
 
@@ -140,12 +148,12 @@ void CGSolver<T>::minimize(
 
   T red = 1.0;
 
-  T REALMIN = 1e-16;
-  T INT = 0.01;
-  T EXT = 3.0;
+  T REALMIN = 1e-16f;
+  T INT = 0.01f;
+  T EXT = 3.0f;
   int const MAX = 20;
   int const RATIO = 10;
-  T SIG = 0.01;
+  T SIG = 0.01f;
   T RHO = SIG/2;
 
   //////////////////////////////////////////////////////////////////////
@@ -219,7 +227,7 @@ void CGSolver<T>::minimize(
           f3 = std::accumulate( vec_f3.begin(), vec_f3.end(), T(0.0) );
 
 	  if (isnan(f3) || isinf(f3)
-	      || _anyPredicate( df3, _isnanPlusIsinf ) ) {
+	      || _anyPredicate( df3, _isnanPlusIsinf<T> ) ) {
 	    throw;
 	  }
 	  success = 1;
@@ -255,7 +263,7 @@ void CGSolver<T>::minimize(
         - (T(2.0) * d1+d2) * (x2-x1);
 
       x3 = x1-d1*((x2-x1)*(x2-x1))
-	 / (B + sqrt(B*B - A*d1*(x2-x1)));
+	 / (B + sqrt((double)(B*B - A*d1*(x2-x1))));
 
       //      if (!isreal(x3) || _isnan(x3) || _isinf(x3) || (x3 < 0)) {
 
@@ -304,7 +312,7 @@ void CGSolver<T>::minimize(
 	// B = 3 * (f4-f2) - (2*d2+d4) * (x4 - x2);
 	B = T(3.0) * (f4-f2)
 	  - (T(2.0) * d2+d4) * (x4 - x2);
-	x3 = x2 + (sqrt(B*B - A*d2*(x4-x2)*(x4-x2)) - B) / A;
+	x3 = x2 + (sqrt((double)(B*B - A*d2*(x4-x2)*(x4-x2))) - B) / A;
       }
 
       if (isnan(x3) || isinf(x3)) {
@@ -408,3 +416,5 @@ void CGSolver<T>::minimize(
   sout << "(II) CGSolver " << i << " iterations performed" << std::endl;
 
 }
+
+#endif // _CG_MINIMIZE_H_

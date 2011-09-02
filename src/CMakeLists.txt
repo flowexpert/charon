@@ -247,6 +247,10 @@ ADD_LIBRARY(diff2d SHARED
 	${charon_INCLUDE_DIR}/Diff2D.h
 	${charon_INCLUDE_DIR}/Diff2D.hxx
 )
+IF(MSVC)
+	# avoid strange linker errors
+	TARGET_LINK_LIBRARIES(diff2d interpolatorlinear)
+ENDIF()
 ADD_LIBRARY(pyramidrescale SHARED
 	PyramidRescale.cpp
 	${charon_INCLUDE_DIR}/PyramidRescale.h
