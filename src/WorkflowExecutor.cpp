@@ -155,7 +155,7 @@ void WorkflowExecutor::_execute() {
 		pathsS.push_back(iter.next().trimmed().toStdString());
 	}
 	_manager = new PluginManager(pathsS,
-#if not defined(_MSC_VER) and defined(NDEBUG)
+#if !defined(_MSC_VER) && defined(NDEBUG)
 			// use selected option
 			settings.value("suffixedPlugins", false).toBool());
 #else

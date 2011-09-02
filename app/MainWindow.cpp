@@ -484,7 +484,7 @@ void MainWindow::_options() {
 	options.labelPPathDesc->setVisible(false);
 #endif
 
-#if not defined(_MSC_VER) and defined(NDEBUG)
+#if !defined(_MSC_VER) && defined(NDEBUG)
 	// user may decide to load suffixed modules in unix release builds
 	options.checkSuffix->setChecked(
 			settings.value("suffixedPlugins", false).toBool());
@@ -512,7 +512,7 @@ void MainWindow::_options() {
 		settings.setValue(
 				"executeThreaded",
 				(options.checkThreaded->checkState() != Qt::Unchecked));
-#if not defined(_MSC_VER) and defined(NDEBUG)
+#if !defined(_MSC_VER) && defined(NDEBUG)
 		if (options.checkSuffix->isChecked()) {
 			settings.setValue("suffixedPlugins", true);
 		}
