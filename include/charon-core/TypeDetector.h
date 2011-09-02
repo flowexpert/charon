@@ -22,34 +22,22 @@
 #ifndef TYPEDETECTOR_H_
 #define TYPEDETECTOR_H_
 
-#ifdef DLLEX
-#undef DLLEX
-#endif // DLLEX
-#ifdef WINDOWS
-#ifdef CREATE_SHARED
-#define DLLEX __declspec(dllexport)
-#else  // CREATE_SHARED
-#define DLLEX __declspec(dllimport)
-#endif // CREATE_SHARED
-#else  // WINDOWS
-#define DLLEX
-#endif // WINDOWS
-
 #include <typeinfo>
 #include <map>
 #include <string>
+#include "DllEx.h"
 
 /// String representation generation.
 /// This class gives a string representation for simple types as
 /// int, uint, double, float etc.
-class DLLEX TypeDetector
+class charon_core_DLL_PUBLIC TypeDetector
 {
 private:
 	/// Map that stores the type dictionary.
 	std::map<std::string, std::string> _typemap;
 
 	/// Forbid instanciation.
-	TypeDetector();
+	charon_core_DLL_LOCAL TypeDetector();
 
 	/// Instance pointer.
 	static TypeDetector* _instance;

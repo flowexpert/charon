@@ -39,31 +39,11 @@
 #ifndef _ParameteredObject_H
 #define _ParameteredObject_H
 
+#include <set>
 #include "ParameterFile.hxx"
 #include "Parameter.h"
 #include "Slots.h"
-#include <set>
-
-#ifdef DLLEX
-#undef DLLEX
-#endif // DLLEX
-#ifdef _MSC_VER
-#define DEPRECATED __declspec(deprecated)
-#ifdef CREATE_SHARED
-#define DLLEX __declspec(dllexport)
-#else  // CREATE_SHARED
-#define DLLEX __declspec(dllimport)
-#endif // CREATE_SHARED
-#else  // _MSC_VER
-#define DLLEX
-#define DEPRECATED __attribute__((deprecated))
-#endif // _MSC_VER
-/** \def DLLEX
- *  handle dll imports/exports
- */
-/** \def DEPRECATED
- *  handle deprecated messages on GCC and MSVC
- */
+#include "DllEx.h"
 
 /// Integer which represents a template type.
 typedef unsigned short int template_type;
@@ -86,7 +66,7 @@ class TemplatedParameteredObject;
  *      can be retrieved out of the ParameteredObject::_objectList.
  */
 
-class DLLEX ParameteredObject {
+class charon_core_DLL_PUBLIC ParameteredObject {
 	friend class PluginManager;
 	template<typename T>
 	friend class TemplatedParameteredObject;
@@ -114,7 +94,7 @@ private:
 	 *  The number is increased on every function call.
 	 *  \returns unique name
 	 */
-	std::string _genericName();
+	std::string charon_core_DLL_LOCAL _genericName();
 
 	/// Class name.
 	std::string _className;
@@ -141,10 +121,10 @@ private:
 	 *  ParameteredObject::ParameteredObject(class ParameteredObject const &)"
 	 *  (__imp_??0ParameteredObject\@\@AAE\@ABV0\@\@Z)"
 	 */
-	ParameteredObject(const ParameteredObject&) {}
+	charon_core_DLL_LOCAL ParameteredObject(const ParameteredObject&) {}
 
 	/// forbid instantiation without className etc.
-	ParameteredObject();
+	charon_core_DLL_LOCAL ParameteredObject();
 
 	/// Load own content from the given parameter file.
 	/** All registered parameters are loaded from the ParameterFile.
@@ -153,7 +133,8 @@ private:
 	 *  \param pf           ParameterFile to save to.
 	 *  \param man          Pointer to the currently active PluginManager
 	 */
-	void _load(const ParameterFile& pf, const PluginManagerInterface * man);
+	void _load(
+			const ParameterFile& pf, const PluginManagerInterface * man);
 
 	/// Common code for _addParameter, _addInputSlot, _addOutputSlot.
 	/** This function does nothing, if _createMetadata is set to false.
@@ -165,11 +146,10 @@ private:
 	 *  \param defaultValue Default value, if any
 	 *  \retval true        Parameter/Slot name is unique
 	 */
-	bool _addSomething(
+	bool charon_core_DLL_LOCAL _addSomething(
 			const std::string& extension, const std::string& name,
 			const std::string& doc, const std::string& type,
 			const std::string& defaultValue = "");
-
 
 	/// Connect slots.
 	/** String version for convenience.
@@ -326,7 +306,8 @@ public:
 	/// The template type of the instance is integer
 	static const template_type TYPE_INT = 2;
 
-	/// The build type was not defined explicitly, make no assumptions about the release/debug configuration
+	/// The build type was not defined explicitly,
+	/// make no assumptions about the release/debug configuration
 	static const build_type UNDEFINED_BUILD = 0 ;
 
 	/// the object was compiled in debug mode
@@ -335,8 +316,8 @@ public:
 	/// the object was compiled in release mode
 	static const build_type RELEASE_BUILD = 2 ;
 
-	/// get the build type of this object
-	/** \returns            build_type defaults to UNDEFINED_BUILD
+	// get the build type of this object
+	/* \returns            build_type defaults to UNDEFINED_BUILD
 	 */
 	//virtual build_type getBuildType() const ;
 
@@ -509,7 +490,8 @@ public:
  *  implemented in every plugin.
  */
 template <typename T>
-class TemplatedParameteredObject : public ParameteredObject {
+class charon_core_DLL_PUBLIC TemplatedParameteredObject :
+			public ParameteredObject {
 public:
 	/// Default constructor.
 	/** Init class name with given string.

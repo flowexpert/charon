@@ -38,12 +38,13 @@
 #include "AbstractData.hxx"
 #include "ParameterFile.h"
 #include <set>
+#include "DllEx.h"
 
 class ParameteredObject;
 class PluginManagerInterface;
 
 /// Commom properties of slot objects.
-class Slot {
+class charon_core_DLL_PUBLIC Slot {
 private:
 	/// forbid copying
 	Slot(const Slot&);
@@ -166,7 +167,7 @@ public:
 /// Encapsulation of slot connection handling (type specific)
 /// and common code for input and output slots
 template <typename T>
-class AbstractSlot : public Slot {
+class charon_core_DLL_PUBLIC AbstractSlot : public Slot {
 protected:
 	/// Pointer to data of connected output slot.
 	std::set<AbstractSlot<T>*> _targets;
@@ -193,7 +194,8 @@ public:
 	virtual std::string guessType() const;
 	virtual std::set<Slot*> getTargets() const;
 	virtual void save(ParameterFile& pf) const;
-	virtual void load(const ParameterFile& pf, const PluginManagerInterface * man);
+	virtual void load(
+			const ParameterFile& pf, const PluginManagerInterface* man);
 	virtual void execute();
 
 	virtual std::string getType() const;
@@ -211,9 +213,9 @@ public:
 /// This slot does not stores the data itself, but contains a pointer
 /// to the connected output slot. Data are read from this source, if needed.
 template <typename T>
-class InputSlot : public AbstractSlot<T>,
-				  public AbstractROData<T>,
-				  public AbstractMultiROData<T> {
+class charon_core_DLL_PUBLIC InputSlot :
+		public AbstractSlot<T>, public AbstractROData<T>,
+		public AbstractMultiROData<T> {
 public:
 	/// Create new input slot.
 	/// @param optional     make this slot optional
@@ -232,8 +234,8 @@ public:
 /// Output slot.
 /// This slot stores the output data and a list of connected slots.
 template <typename T>
-class OutputSlot : public AbstractSlot<T>,
-				   public AbstractData<T> {
+class charon_core_DLL_PUBLIC OutputSlot :
+		public AbstractSlot<T>, public AbstractData<T> {
 private:
 	T data; ///< Slot data.
 

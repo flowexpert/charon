@@ -24,48 +24,36 @@
 #ifndef _FileTool_H_
 #define _FileTool_H_
 
-#ifdef WINDOWS
-#ifdef DLLEX
-#undef DLLEX
-#endif // DLLEX
-#ifdef CREATE_SHARED
-#define DLLEX __declspec(dllexport)
-#else  // CREATE_SHARED
-#define DLLEX __declspec(dllimport)
-#endif // CREATE_SHARED
-#else  // WINDOWS
-#define DLLEX
-#endif // WINDOWS
-
 #include <string>
 #include <vector>
+#include "DllEx.h"
 
 /// Useful functions when working with files.
 /** This wraps the operating system specific functions.
  */
 namespace FileTool {
 	/// Slash of current operating system ("/" or "\")
-	extern const char DLLEX slash;
+	extern const char charon_core_DLL_PUBLIC slash;
 
 	/// This function creates all directories contained
 	/// in path provided they do not already exist.
 	/// \param path     path to create
 	/// \returns result of final mkdir
-	int DLLEX makePath(std::string& path);
+	int charon_core_DLL_PUBLIC makePath(std::string& path);
 
 	/// Create a new directory using MODE 711 (in unix)
 	/// @param dir      name of the directory to create
 	/// @return         result of mkdir
-	int DLLEX makeDir(const std::string& dir);
+	int charon_core_DLL_PUBLIC makeDir(const std::string& dir);
 
 	/// Change current working directory.
 	/// @param dir      new working directory
 	/// @return         result of chdir
-	int DLLEX changeDir(const std::string& dir);
+	int charon_core_DLL_PUBLIC changeDir(const std::string& dir);
 
 	/// Get current working directory.
 	/// @return         string containing current working directory
-	std::string DLLEX getCurrentDir();
+	std::string charon_core_DLL_PUBLIC getCurrentDir();
 
 	/// Search files with given suffix.
 	/** Iterates through the files of the current working directory
@@ -73,35 +61,37 @@ namespace FileTool {
 	 *  @param suffix   Suffix of the requested files
 	 *  @return         Vector containing the file names
 	 */
-	std::vector<std::string> DLLEX getFilesWithSuffix(std::string suffix);
+	std::vector<std::string> charon_core_DLL_PUBLIC getFilesWithSuffix(
+		std::string suffix);
 
 	/// Convert unix to windows paths and reversed.
 	/// The direction is determined by the current running operating system.
 	/// @param src      source string to convert (will be modified)
-	void DLLEX slashConvert(std::string& src);
+	void charon_core_DLL_PUBLIC slashConvert(std::string& src);
 
 	/// Check if file exists.
 	/// @param file     name of the file to look for
 	/// @return         true if file exists, otherwise false
-	bool DLLEX exists(const std::string& file);
+	bool charon_core_DLL_PUBLIC exists(const std::string& file);
 
 	/// Remove file.
 	/// @param file     name of the file to remove
 	/// @return         result of unlink
-	int DLLEX remove(const std::string& file);
+	int charon_core_DLL_PUBLIC remove(const std::string& file);
 
 	/// Rename file.
 	/// @param oldFile  name of the file to rename
 	/// @param newFile  new name
 	/// @return         result of rename
-	int DLLEX rename(const std::string& oldFile, const std::string& newFile);
+	int charon_core_DLL_PUBLIC rename(
+		const std::string& oldFile, const std::string& newFile);
 
 	/// read file content into std::string
 	/** Reads a file and writes it into a std::string.
 	 *  @param fName    File to read
 	 *  @return         Content of the file
 	 */
-	std::string DLLEX readFile(const std::string & fName);
+	std::string charon_core_DLL_PUBLIC readFile(const std::string & fName);
 }
 
 #endif // _FileTool_H_

@@ -2,34 +2,37 @@
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 SET(CHARON_CORE_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME})
 SET(CHARON_FILES
-	SplitStream
-	StringTool
-	FileTool
-	AbstractData
-	Parameter
-	Slots
-	ParameterFile
-	ParameteredObject
-	TypeDetector
+	${CHARON_CORE_INCLUDE_DIR}/AbstractData.hxx
+	${CHARON_CORE_INCLUDE_DIR}/DllEx.h
+	${CHARON_CORE_INCLUDE_DIR}/FileTool.h
+	${CHARON_CORE_INCLUDE_DIR}/Parameter.h
+	${CHARON_CORE_INCLUDE_DIR}/Parameter.hxx
+	${CHARON_CORE_INCLUDE_DIR}/ParameteredObject.h
+	${CHARON_CORE_INCLUDE_DIR}/ParameteredObject.hxx
+	${CHARON_CORE_INCLUDE_DIR}/ParameterFile.h
+	${CHARON_CORE_INCLUDE_DIR}/ParameterFile.hxx
+	${CHARON_CORE_INCLUDE_DIR}/Slots.h
+	${CHARON_CORE_INCLUDE_DIR}/Slots.hxx
+	${CHARON_CORE_INCLUDE_DIR}/SplitStream.h
+	${CHARON_CORE_INCLUDE_DIR}/StringTool.h
+	${CHARON_CORE_INCLUDE_DIR}/TypeDetector.h
+	FileTool.cpp
+	Parameter.cpp
+	ParameteredObject.cpp
+	ParameterFile.cpp
+	SplitStream.cpp
+	StringTool.cpp
+	TypeDetector.cpp
 )
-SET(CHARON_GROUP)
-FOREACH(CURFILE ${CHARON_FILES})
-	FILE(GLOB TEMP
-		${CMAKE_CURRENT_SOURCE_DIR}/${CURFILE}.cpp
-		${CHARON_CORE_INCLUDE_DIR}/${CURFILE}.h
-		${CHARON_CORE_INCLUDE_DIR}/${CURFILE}.hxx
-	)
-	LIST(APPEND CHARON_GROUP ${TEMP})
-ENDFOREACH(CURFILE ${CHARON_FILES})
 
 SET(PLUGIN_FILES
-	AbstractPluginLoader.cpp
 	${CHARON_CORE_INCLUDE_DIR}/AbstractPluginLoader.h
-	PluginManager.cpp
+	${CHARON_CORE_INCLUDE_DIR}/ExceptionHandler.h
 	${CHARON_CORE_INCLUDE_DIR}/PluginManager.h
 	${CHARON_CORE_INCLUDE_DIR}/PluginManagerInterface.h
+	AbstractPluginLoader.cpp
 	ExceptionHandler.cpp
-	${CHARON_CORE_INCLUDE_DIR}/ExceptionHandler.h
+	PluginManager.cpp
 )
 IF(WIN32)
 	LIST(APPEND PLUGIN_FILES
@@ -45,17 +48,9 @@ IF(UNIX)
 ENDIF(UNIX)
 
 # create libraries
-ADD_LIBRARY(charon-core SHARED ${CHARON_GROUP})
+ADD_LIBRARY(charon-core SHARED ${CHARON_FILES})
 
-SET_TARGET_PROPERTIES(charon-core PROPERTIES
-	COMPILE_DEFINITIONS CREATE_SHARED
-)
 ADD_LIBRARY(charon-plugins STATIC ${PLUGIN_FILES})
-IF(MSVC)
-	SET_PROPERTY(TARGET charon-plugins
-		PROPERTY COMPILE_DEFINITIONS DLL_EXPORT
-	)
-ENDIF(MSVC)
 TARGET_LINK_LIBRARIES(charon-plugins charon-core)
 IF(UNIX)
 	TARGET_LINK_LIBRARIES(charon-plugins dl)

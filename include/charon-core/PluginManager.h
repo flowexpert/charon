@@ -24,23 +24,20 @@
 #ifndef PLUGINMANAGER_H_
 #define PLUGINMANAGER_H_
 
-#ifdef UNIX
-#include "UnixPluginLoader.h"
-#include <set>
-#define PLUGIN_LOADER UnixPluginLoader
-#define DEPRECATED __attribute__((deprecated))
+#if defined(_WIN32) || defined(__WIN32__)
+	#include "WindowsPluginLoader.h"
+	#define PLUGIN_LOADER WindowsPluginLoader
+	#define PLUGIN_EXTENSION ".dll"
+#else // UNIX
+	#include "UnixPluginLoader.h"
+	#include <set>
+	#define PLUGIN_LOADER UnixPluginLoader
 
-#ifdef APPLE
-#define PLUGIN_EXTENSION ".dylib"
-#else /* APPLE */
-#define PLUGIN_EXTENSION ".so"
-#endif /* APPLE */
-
-#elif defined(WINDOWS)
-#include "WindowsPluginLoader.h"
-#define PLUGIN_LOADER WindowsPluginLoader
-#define PLUGIN_EXTENSION ".dll"
-#define DEPRECATED __declspec(deprecated)
+	#ifdef APPLE
+		#define PLUGIN_EXTENSION ".dylib"
+	#else /* APPLE */
+		#define PLUGIN_EXTENSION ".so"
+	#endif /* APPLE */
 #endif
 
 #include <iostream>

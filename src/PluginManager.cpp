@@ -19,12 +19,6 @@
  *
  *  @date 24.08.2009
  */
-#ifdef UNIX
-
-#elif defined(WINDOWS)
-#define PLUGIN_LOADER WindowsPluginLoader
-#endif
-
 #include <cassert>
 #include <cstdlib>
 #include <algorithm>

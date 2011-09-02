@@ -46,26 +46,17 @@
 
 #include "AbstractData.hxx"
 #include "ParameterFile.hxx"
-
-#ifdef MSVC
-#ifdef charon_core_EXPORTS
-#define charon_core_DECLDIR __declspec(dllexport)
-#else
-#define charon_core_DECLDIR __declspec(dllimport)
-#endif /*Export or import*/
-#else /* No DLL handling or GCC */
-#define charon_core_DECLDIR
-#endif
+#include "DllEx.h"
 
 class ParameteredObject;
 
 /// Parameter object handling.
 /// Provides assignment and setters/getters.
 /// Load and save routines are purely virtual.
-class charon_core_DECLDIR AbstractParameter {
+class charon_core_DLL_PUBLIC AbstractParameter {
 private:
 	/// Forbid copying.
-	AbstractParameter(const AbstractParameter&);
+	charon_core_DLL_LOCAL AbstractParameter(const AbstractParameter&);
 
 protected:
 	/// Parameter name.
@@ -152,13 +143,14 @@ public:
  *  \param param       parameter to be printed
  *  \returns modified os
  */
-std::ostream charon_core_DECLDIR & operator<< (
+std::ostream charon_core_DLL_PUBLIC & operator<< (
 		std::ostream& os, const AbstractParameter& param);
 
 /// Implementation of the AbstractParameter interface for one single
 /// parameter.
 template <typename T>
-class Parameter : public AbstractParameter, public AbstractData<T> {
+class charon_core_DLL_PUBLIC Parameter :
+			public AbstractParameter, public AbstractData<T> {
 private:
 	/// default value
 	T _defaultValue;
@@ -217,7 +209,8 @@ public:
 /// Implementation of the AbstractParameter interface for a list of
 /// parameters.
 template <typename T>
-class ParameterList : public AbstractParameter, public AbstractMultiData<T> {
+class charon_core_DLL_PUBLIC ParameterList :
+			public AbstractParameter, public AbstractMultiData<T> {
 private:
 	/// Internal value (list).
 	std::vector<T> _value;

@@ -23,32 +23,20 @@
 #ifndef _SPLIT_STREAM_H_
 #define _SPLIT_STREAM_H_
 
-#ifdef WINDOWS
-#ifdef DLLEX
-#undef DLLEX
-#endif // DLLEX
-#ifdef CREATE_SHARED
-#define DLLEX __declspec(dllexport)
-#else  // CREATE_SHARED
-#define DLLEX __declspec(dllimport)
-#endif // CREATE_SHARED
-#else  // WINDOWS
-#define DLLEX
-#endif // WINDOWS
-
 #include <iostream>
 #include <vector>
+#include "DllEx.h"
 
 /** Buffer to split output on several streams.
  */
-class DLLEX SplitStreamBuf : public std::streambuf {
+class charon_core_DLL_PUBLIC SplitStreamBuf : public std::streambuf {
 private:
 	/// pointer to stream buffers
 	std::vector<std::streambuf*> buffers_;
 	/// forbid copying
-	SplitStreamBuf(SplitStreamBuf const &);
+	charon_core_DLL_LOCAL SplitStreamBuf(SplitStreamBuf const &);
 	/// forbid assignment
-	void operator= (SplitStreamBuf const &);
+	void charon_core_DLL_LOCAL operator= (SplitStreamBuf const &);
 
 public:
 	/// Constructor initializing the buffers array
@@ -78,7 +66,7 @@ public:
  *  pipes output made to a splitstream instance to
  *  all of these output streams.
  */
-class DLLEX SplitStream : public std::ostream {
+class charon_core_DLL_PUBLIC SplitStream : public std::ostream {
 public:
 	/// Default constructor
 	/** Use no output stream.<br>
@@ -126,11 +114,11 @@ private:
 	/**	Set new buffers.
 	 *	@param buffers		new buffers to set
 	 */
-	void updateBuf(std::vector<std::streambuf*> buffers);
+	void charon_core_DLL_LOCAL updateBuf(std::vector<std::streambuf*> buffers);
 };
 
 /// Dummy instance for usage in other files (for interface too).
-extern DLLEX SplitStream sout;
+extern charon_core_DLL_PUBLIC SplitStream sout;
 
 #endif /* _SPLIT_STREAM_H_ */
 

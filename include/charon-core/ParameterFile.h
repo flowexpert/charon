@@ -41,23 +41,11 @@
 #ifndef _ParameterFile_H
 #define _ParameterFile_H
 
-#ifdef WINDOWS
-#ifdef DLLEX
-#undef DLLEX
-#endif // DLLEX
-#ifdef CREATE_SHARED
-#define DLLEX __declspec(dllexport)
-#else  // CREATE_SHARED
-#define DLLEX __declspec(dllimport)
-#endif // CREATE_SHARED
-#else  // WINDOWS
-#define DLLEX
-#endif // WINDOWS
-
 #include <vector>
 #include <map>
 #include <iostream>
 #include <stdexcept>
+#include "DllEx.h"
 
 /** This class serves to store parameters used within the Charon Project.
  *  Parameters of different types can be stored and loaded from a plain text
@@ -77,7 +65,7 @@
  *  @remark You can reassign SplitStream sout to redirect debugging
  *          messages into logfiles etc.
  */
-class DLLEX ParameterFile
+class charon_core_DLL_PUBLIC ParameterFile
 {
 private:
 	/** Store a string value to the parameter list.
@@ -126,7 +114,7 @@ private:
 
 public:
 	/// I/O error exception thrown by ParameterFile instances.
-	class DLLEX IoError : public std::runtime_error {
+	class charon_core_DLL_PUBLIC IoError : public std::runtime_error {
 	public:
 		/// constuctor using given error message
 		/// \param msg  error description
@@ -134,7 +122,7 @@ public:
 	};
 
 	/// Exception thrown when trying to access unset parameters.
-	class DLLEX Unset : public std::invalid_argument {
+	class charon_core_DLL_PUBLIC Unset : public std::invalid_argument {
 	public:
 		/// constuctor using given error message
 		/// \param msg  error description

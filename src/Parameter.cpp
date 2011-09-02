@@ -27,7 +27,8 @@ std::ostream & operator<<(
 	return os;
 }
 
-std::string AbstractParameter::_followLink(const ParameterFile& pf, const std::string paramName) const {
+std::string AbstractParameter::_followLink(
+		const ParameterFile& pf, const std::string paramName) const {
 	if (pf.isSet(paramName)) {
 		std::string refName = pf.get<std::string>(paramName);
 		if(refName.size() > 0 && refName.substr(0,1) == "@") {

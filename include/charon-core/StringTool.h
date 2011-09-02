@@ -23,21 +23,9 @@
 #ifndef _StringTool_H
 #define _StringTool_H
 
-#ifdef WINDOWS
-#ifdef DLLEX
-#undef DLLEX
-#endif // DLLEX
-#ifdef CREATE_SHARED
-#define DLLEX __declspec(dllexport)
-#else  // CREATE_SHARED
-#define DLLEX __declspec(dllimport)
-#endif // CREATE_SHARED
-#else  // WINDOWS
-#define DLLEX
-#endif // WINDOWS
-
 #include <string>
 #include <vector>
+#include "DllEx.h"
 
 /// Useful methods when working with strings.
 namespace StringTool {
@@ -46,7 +34,7 @@ namespace StringTool {
 	 *  @param t            characters to remove
 	 *  @return             modified string (copy)
 	 */
-	std::string DLLEX trimRight(const std::string& s,
+	std::string charon_core_DLL_PUBLIC trimRight(const std::string& s,
 			const std::string& t = " \t\r\n");
 
 	/** Remove (whitespace) characters from the head of a string.
@@ -54,7 +42,7 @@ namespace StringTool {
 	 *  @param t            characters to remove
 	 *  @return             modified string (copy)
 	 */
-	std::string DLLEX trimLeft(const std::string& s,
+	std::string charon_core_DLL_PUBLIC trimLeft(const std::string& s,
 			const std::string& t = " \t\r\n");
 
 	/** Remove (whitespace) characters from head and tail of a string.
@@ -62,7 +50,7 @@ namespace StringTool {
 	 *  @param t            characters to remove
 	 *  @return             modified string (copy)
 	 */
-	std::string DLLEX trim(const std::string& s,
+	std::string charon_core_DLL_PUBLIC trim(const std::string& s,
 			const std::string& t = " \t\r\n");
 
 	/** Use delimiter to split the string in a list of substrings.
@@ -70,14 +58,14 @@ namespace StringTool {
 	 *  @param delimiter    delimiting character
 	 *  @param result       list containing the found substrings
 	 */
-	void DLLEX explode(std::string str, char delimiter,
+	void charon_core_DLL_PUBLIC explode(std::string str, char delimiter,
 			std::vector<std::string>& result);
 
 	/** Convert a string to lowercase.
 	 *  @param s            input string
 	 *  @return             lowercase output string
 	 */
-	std::string DLLEX toLowerCase(std::string s);
+	std::string charon_core_DLL_PUBLIC toLowerCase(std::string s);
 }
 
 #endif /** _StringTool_H */

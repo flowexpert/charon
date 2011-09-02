@@ -128,7 +128,8 @@ void Parameter<T>::save(ParameterFile& pf) const {
 	std::string paramName = _parent->getName() + "." + _name;
 	if(pf.isSet(paramName)) {
 		if(pf.get<std::string>(paramName).substr(0,1) == "@")
-			throw std::runtime_error(paramName + " : Attempt was made to overwrite Reference.");
+			throw std::runtime_error(paramName
+				+ " : Attempt to overwrite Reference.");
 		else if(_value == _defaultValue)
 			pf.erase(paramName);
 		else
@@ -212,7 +213,8 @@ void ParameterList<T>::save(ParameterFile& pf) const {
 
 	if(pf.isSet(paramName)) {
 		if(pf.get<std::string>(paramName).substr(0,1) == "@")
-			throw std::runtime_error(paramName + " : Attempt was made to overwrite Reference.");
+			throw std::runtime_error(paramName
+					+ " : Attempt to overwrite Reference.");
 		else if(stream.str() == _defaultValue)
 			pf.erase(paramName);
 		else

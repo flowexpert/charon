@@ -49,8 +49,8 @@ public:
 	 * @param instanceName Name of the instance
 	 * @return Pointer to the requested instance
 	 */
-	virtual ParameteredObject
-			* getInstance(const std::string & instanceName) const = 0;
+	virtual ParameteredObject*
+			getInstance(const std::string & instanceName) const = 0;
 
 	/**
 	 * Returns a map containing linking the instance name to the existing
@@ -58,7 +58,8 @@ public:
 	 *
 	 * @return Map containing all existing instances
 	 */
-	virtual const std::map<std::string, ParameteredObject *> & getObjectList() const {
+	virtual const std::map<std::string, ParameteredObject *>&
+			getObjectList() const {
 		return objects;
 	}
 
@@ -75,14 +76,12 @@ public:
 	 *  \param pf           ParameterFile to read connections from.
 	 *  \returns            set of connected object names
 	 */
-	virtual std::set<std::string> getConnected(const std::string & root,
+	virtual std::set<std::string> getConnected(
+			const std::string & root,
 			const ParameterFile & pf) const = 0;
 
-	/**
-	 * Default destructor
-	 */
+	/// Default destructor
 	virtual ~PluginManagerInterface() {
-
 	}
 };
 
