@@ -94,7 +94,7 @@ private:
 	 *  The number is increased on every function call.
 	 *  \returns unique name
 	 */
-	std::string charon_core_DLL_LOCAL _genericName();
+	std::string charon_core_LOCAL _genericName();
 
 	/// Class name.
 	std::string _className;
@@ -116,15 +116,11 @@ private:
 
 	/// forbid copying
 	/** Implementation needed to compile with MSVC.
-	 *  Otherwise the following error occurs:
-	 *  Unresolved extern symbol ""__declspec(dllimport) private: __thiscall
-	 *  ParameteredObject::ParameteredObject(class ParameteredObject const &)"
-	 *  (__imp_??0ParameteredObject\@\@AAE\@ABV0\@\@Z)"
 	 */
-	charon_core_DLL_LOCAL ParameteredObject(const ParameteredObject&) {}
+	ParameteredObject(const ParameteredObject&) {}
 
 	/// forbid instantiation without className etc.
-	charon_core_DLL_LOCAL ParameteredObject();
+	ParameteredObject();
 
 	/// Load own content from the given parameter file.
 	/** All registered parameters are loaded from the ParameterFile.
@@ -490,7 +486,7 @@ public:
  *  implemented in every plugin.
  */
 template <typename T>
-class charon_core_DLL_LOCAL TemplatedParameteredObject :
+class charon_core_PUBLIC TemplatedParameteredObject :
 			public ParameteredObject {
 public:
 	/// Default constructor.

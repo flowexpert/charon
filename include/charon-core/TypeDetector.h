@@ -37,7 +37,7 @@ private:
 	std::map<std::string, std::string> _typemap;
 
 	/// Forbid instanciation.
-	charon_core_DLL_LOCAL TypeDetector();
+	charon_core_LOCAL TypeDetector();
 
 	/// Instance pointer.
 	static TypeDetector* _instance;

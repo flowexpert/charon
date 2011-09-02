@@ -25,7 +25,7 @@
 #include <charon-core/ParameteredObject.hxx>
 
 /// sample ParameteredObject class.
-class charon_core_DLL_LOCAL Sample : public ParameteredObject {
+class Sample : public ParameteredObject {
 
 public:
 	/// sample string parameter

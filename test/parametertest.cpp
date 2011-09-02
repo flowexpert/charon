@@ -29,7 +29,7 @@
 #include <cassert>
 
 /// sample ParameteredObject class.
-class charon_core_DLL_LOCAL Sample : public ParameteredObject {
+class Sample : public ParameteredObject {
 
 public:
 	/// sample integer parameter
@@ -75,7 +75,7 @@ public:
 };
 
 /// sample ParameteredObject class.
-class charon_core_DLL_LOCAL Outputgen : public ParameteredObject {
+class Outputgen : public ParameteredObject {
 
 public:
 	/// sample integer output slot

@@ -56,7 +56,7 @@ class ParameteredObject;
 class charon_core_DLL_PUBLIC AbstractParameter {
 private:
 	/// Forbid copying.
-	charon_core_DLL_LOCAL AbstractParameter(const AbstractParameter&);
+	charon_core_LOCAL AbstractParameter(const AbstractParameter&);
 
 protected:
 	/// Parameter name.
@@ -149,7 +149,7 @@ std::ostream charon_core_DLL_PUBLIC & operator<< (
 /// Implementation of the AbstractParameter interface for one single
 /// parameter.
 template <typename T>
-class charon_core_DLL_LOCAL Parameter :
+class charon_core_PUBLIC Parameter :
 			public AbstractParameter, public AbstractData<T> {
 private:
 	/// default value
@@ -209,7 +209,7 @@ public:
 /// Implementation of the AbstractParameter interface for a list of
 /// parameters.
 template <typename T>
-class charon_core_DLL_LOCAL ParameterList :
+class charon_core_PUBLIC ParameterList :
 			public AbstractParameter, public AbstractMultiData<T> {
 private:
 	/// Internal value (list).

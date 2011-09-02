@@ -19,11 +19,17 @@
  *  \date 02.09.2011
  */
 
+/** \def charon_core_PUBLIC
+ *  Preprocessor macro to define this class/function as public visible,
+ *  i.e. to be exported to the ELF dynamic section but not to the dll import
+ *  library. This should be used e.g. for templates to avoid the
+ *  "...dllimport cannot be defined" MSVC error.
+ */
 /** \def charon_core_DLL_PUBLIC
  *  Preprocessor macro to define this class/function as public visible,
- *  i.e. to be exported to the dll import library or to the ELF dynamic section
+ *  i.e. to be exported to the dll import library and to the ELF dynamic section
  */
-/** \def charon_core_DLL_LOCAL
+/** \def charon_core_LOCAL
  *  Preprocessor macro to define this class/function as hidden,
  *  i.e. not available from outside the charon-core library.
  */
@@ -35,20 +41,23 @@
 #define _CHARON_DLL_EX_H_
 
 #ifdef _MSC_VER // MSVC
+	#define charon_core_PUBLIC
 	#ifdef charon_core_EXPORTS
 		#define charon_core_DLL_PUBLIC __declspec(dllexport)
 	#else
 		#define charon_core_DLL_PUBLIC __declspec(dllimport)
 	#endif
-	#define charon_core_DLL_LOCAL
+	#define charon_core_LOCAL
 	#define DEPRECATED __declspec(deprecated)
 #else // UNIX
 	#if __GNUC__ >= 4
+		#define charon_core_PUBLIC __attribute__ ((visibility ("default")))
 		#define charon_core_DLL_PUBLIC __attribute__ ((visibility ("default")))
-		#define charon_core_DLL_LOCAL __attribute__ ((visibility ("hidden")))
+		#define charon_core_LOCAL __attribute__ ((visibility ("hidden")))
 	#else
+		#define charon_core_PUBLIC
 		#define charon_core_DLL_PUBLIC
-		#define charon_core_DLL_LOCAL
+		#define charon_core_LOCAL
 	#endif
 	#define DEPRECATED __attribute__((deprecated))
 #endif

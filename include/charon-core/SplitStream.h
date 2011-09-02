@@ -34,9 +34,9 @@ private:
 	/// pointer to stream buffers
 	std::vector<std::streambuf*> buffers_;
 	/// forbid copying
-	charon_core_DLL_LOCAL SplitStreamBuf(SplitStreamBuf const &);
+	charon_core_LOCAL SplitStreamBuf(SplitStreamBuf const &);
 	/// forbid assignment
-	void charon_core_DLL_LOCAL operator= (SplitStreamBuf const &);
+	void charon_core_LOCAL operator= (SplitStreamBuf const &);
 
 public:
 	/// Constructor initializing the buffers array
@@ -114,7 +114,7 @@ private:
 	/**	Set new buffers.
 	 *	@param buffers		new buffers to set
 	 */
-	void charon_core_DLL_LOCAL updateBuf(std::vector<std::streambuf*> buffers);
+	void charon_core_LOCAL updateBuf(std::vector<std::streambuf*> buffers);
 };
 
 /// Dummy instance for usage in other files (for interface too).
