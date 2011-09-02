@@ -24,6 +24,14 @@
 #ifndef PLUGINMANAGER_H_
 #define PLUGINMANAGER_H_
 
+/** \def PLUGIN_EXTENSION
+ *  system plugin file extension (dll,so,dylib)
+ */
+
+/** \def PLUGIN_LOADER
+ *  plugin loader classname (unix/win)
+ */
+
 #if defined(_WIN32) || defined(__WIN32__)
 	#include "WindowsPluginLoader.h"
 	#define PLUGIN_LOADER WindowsPluginLoader

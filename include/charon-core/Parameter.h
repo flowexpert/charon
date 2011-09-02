@@ -149,7 +149,7 @@ std::ostream charon_core_DLL_PUBLIC & operator<< (
 /// Implementation of the AbstractParameter interface for one single
 /// parameter.
 template <typename T>
-class charon_core_DLL_PUBLIC Parameter :
+class charon_core_DLL_LOCAL Parameter :
 			public AbstractParameter, public AbstractData<T> {
 private:
 	/// default value
@@ -209,7 +209,7 @@ public:
 /// Implementation of the AbstractParameter interface for a list of
 /// parameters.
 template <typename T>
-class charon_core_DLL_PUBLIC ParameterList :
+class charon_core_DLL_LOCAL ParameterList :
 			public AbstractParameter, public AbstractMultiData<T> {
 private:
 	/// Internal value (list).

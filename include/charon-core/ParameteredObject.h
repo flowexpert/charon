@@ -490,7 +490,7 @@ public:
  *  implemented in every plugin.
  */
 template <typename T>
-class charon_core_DLL_PUBLIC TemplatedParameteredObject :
+class charon_core_DLL_LOCAL TemplatedParameteredObject :
 			public ParameteredObject {
 public:
 	/// Default constructor.
