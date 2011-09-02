@@ -146,7 +146,7 @@ private:
 	 *  \param defaultValue Default value, if any
 	 *  \retval true        Parameter/Slot name is unique
 	 */
-	bool charon_core_DLL_LOCAL _addSomething(
+	bool _addSomething(
 			const std::string& extension, const std::string& name,
 			const std::string& doc, const std::string& type,
 			const std::string& defaultValue = "");

@@ -1,19 +1,19 @@
 /*  Copyright (C) 2009 Jens-Malte Gottfried
 
-    This file is part of Charon.
-    
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This file is part of Charon.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file   parameterfiletest.cpp
  *  @brief  Tests for references of parameters in charon-core.
@@ -25,7 +25,7 @@
 #include <charon-core/ParameteredObject.hxx>
 
 /// sample ParameteredObject class.
-class Sample : public ParameteredObject {
+class charon_core_DLL_LOCAL Sample : public ParameteredObject {
 
 public:
 	/// sample string parameter
@@ -44,22 +44,22 @@ public:
 	}
 };
 
-/// Test application for References in Parameters and ParameterFiles inside charon-core.
+/// Test application for References in Parameters and ParameterFiles
 int main(){
-    try {
-        ParameterFile paramtest;
+	try {
+		ParameterFile paramtest;
 		ParameterFile outfile;
 
 		Sample sample1("sample1");
 		Sample sample2("sample2");
 
 		paramtest.set("sample1.type", "sample");
-        paramtest.set("sample1.par1", "@sample2.par1");
-        paramtest.set("sample1.par2", "1;5;3;153");
+		paramtest.set("sample1.par1", "@sample2.par1");
+		paramtest.set("sample1.par2", "1;5;3;153");
 		paramtest.set("sample2.type", "sample");
 		paramtest.set("sample2.par1", "test string");
 		paramtest.set("sample2.par2", "@sample1.par2");
-		
+
 		sample1.loadParameters(paramtest);
 		sample2.loadParameters(paramtest);
 		/*
@@ -107,17 +107,17 @@ int main(){
 		std::cin.get();
 		//--- end of disposable test code ---
 		*/
-    }
-    catch(std::string message) {
-        std::cerr << "\n\nFailure:" << std::endl;
-        std::cerr << message << std::endl;
-        return EXIT_FAILURE;
-    }
-    catch(...) {
-        std::cerr << "Unhandled exception!" << std::endl;
-        return EXIT_FAILURE;
-    }
+	}
+	catch(const std::string& message) {
+		std::cerr << "\n\nFailure:" << std::endl;
+		std::cerr << message << std::endl;
+		return EXIT_FAILURE;
+	}
+	catch(...) {
+		std::cerr << "Unhandled exception!" << std::endl;
+		return EXIT_FAILURE;
+	}
 
-    // Tests passed
-    return EXIT_SUCCESS;
+	// Tests passed
+	return EXIT_SUCCESS;
 }
