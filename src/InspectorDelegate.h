@@ -40,7 +40,19 @@
 #include <QCompleter>
 class QToolButton;
 
-/// delegate to handle parameter types
+/// delegate to handle parameter types and offer specialized editors
+/** This delegate takes care of showing eanough digits of float/double
+ *  values and of file/path specialized editors as well as dropdown selections.
+ *  Editors for int/float/double/string/etc. are handled by the
+ *  default editors of the QStyledItemDelegate, only the digit number is fixed.
+ *
+ *  The following special types are recognized:
+ *  - \c fileopen, \c openfile: open file editor
+ *  - \c filewrite, \c writefile, \c filename: write file editor
+ *  - \c path: path selection editor
+ *  - <tt>{opt1,opt2,opt3}</tt>: selection editor (dropdown box, replace
+ *      \c optX by the string options you want)
+ */
 class InspectorDelegate : public QStyledItemDelegate {
 	Q_OBJECT
 public:

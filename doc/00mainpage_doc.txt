@@ -107,10 +107,6 @@ chart editing and configuration:
 -   automatically metadata generation out of existing class structures
     (possibly based on Doxygen generated XML files or auto generated during
     instantiation of parametered objects)
--   avoiding creation of temporary files on graph visualization
-    (which leads to some strange bugs using MinGW on Win XP)
--   interaction with the Argos project to edit and visualize the
-    filter configurations
 -   fix bugs end errors that may show up on daily use
 
 \section license License
