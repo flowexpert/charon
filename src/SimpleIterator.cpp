@@ -33,14 +33,14 @@
 // generated library.
 /// dummy class 1
 template<typename T>
-class Vktpmfxr : public SimpleIterator<T> {
+class charon_core_LOCAL Vktpmfxr : public SimpleIterator<T> {
 public:
 	Vktpmfxr() : SimpleIterator<T>("","","") {
 	}
 };
 
 /// dummy class 2
-class Mhvkcwgm {
+class charon_core_LOCAL Mhvkcwgm {
 public:
 	Mhvkcwgm();
 };
