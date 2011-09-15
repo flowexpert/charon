@@ -33,7 +33,7 @@
  *  Preprocessor macro to define this class/function as hidden,
  *  i.e. not available from outside the charon-core library.
  */
-/** \def DEPRECATED
+/** \def charon_DEPRECATED
  *  handle deprecated messages on GCC and MSVC
  */
 
@@ -48,7 +48,7 @@
 		#define charon_core_DLL_PUBLIC __declspec(dllimport)
 	#endif
 	#define charon_core_LOCAL
-	#define DEPRECATED __declspec(deprecated)
+	#define charon_DEPRECATED __declspec(deprecated)
 #else // UNIX
 	#if __GNUC__ >= 4
 		#define charon_core_PUBLIC __attribute__ ((visibility ("default")))
@@ -59,7 +59,7 @@
 		#define charon_core_DLL_PUBLIC
 		#define charon_core_LOCAL
 	#endif
-	#define DEPRECATED __attribute__((deprecated))
+	#define charon_DEPRECATED __attribute__((deprecated))
 #endif
 
 #endif // _CHARON_DLL_EX_H_

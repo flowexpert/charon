@@ -477,7 +477,7 @@ public:
 	static bool getCreateMetadata();
 
 	template <typename T>
-	DEPRECATED void setParameter(std::string name, T value);
+	charon_DEPRECATED void setParameter(std::string name, T value);
 	//  \}
 };
 

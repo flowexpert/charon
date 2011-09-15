@@ -50,6 +50,7 @@
 
 #include <iostream>
 #include <map>
+#include <list>
 #include "PluginManagerInterface.h"
 
 /**
@@ -127,23 +128,18 @@ private:
 	/**
 	 * Saves the currently loaded plugins
 	 */
-	std::map<std::string, PLUGIN_LOADER*> loadedPlugins;
+	std::map<std::string, PLUGIN_LOADER*> _loadedPlugins;
 
 	/**
 	 * Links the instances to their PluginLoader, so the PluginManager can
 	 * determine of which type the instance is
 	 */
-	std::map<ParameteredObject *, PLUGIN_LOADER *> instances;
-
-	/**
-	 * Saves the target points of the current workflow.
-	 */
-	std::vector<ParameteredObject *> targetPoints;
+	std::map<ParameteredObject *, PLUGIN_LOADER *> _instances;
 
 	/**
 	 * Saves the current default template type.
 	 */
-	template_type defaultTemplateType;
+	template_type _defaultTemplateType;
 
 	/**
 	 * Deletes all instances of a loaded plugin.
@@ -173,12 +169,13 @@ private:
 	 */
 	void _createMetadataForPlugin(const std::string& pluginName);
 
-	/**
-	 * Iterates through the currently existing instances and looks for target
-	 * points. Every instance which has no connected output slots is considered
-	 * to be a target point.
+	/// Look for execution target points
+	/** Iterates through the currently existing instances and looks for target
+	 *  points. Every instance which has no connected output slots is
+	 *  considered to be a target point.
+	 *  \returns list of target objects
 	 */
-	void _determineTargetPoints();
+	std::list<ParameteredObject*> _determineTargetPoints();
 
 	/// @name Formerly part of the ParameteredObject class
 	//  @{
@@ -247,7 +244,7 @@ public:
 	 * @see WindowsPluginLoader::load()
 	 * @param name the file name of the plugin
 	 */
-	void loadPlugin(const std::string & name)
+	void loadPlugin(std::string name)
 			throw (AbstractPluginLoader::PluginException);
 
 	/**
@@ -275,12 +272,12 @@ public:
 	/**
 	 * @return number of currently loaded plugins.
 	 */
-	int getLoadedPluginsCount() const;
+	size_t getLoadedPluginsCount() const;
 
 	/**
 	 * @return number of existing instances of loaded plugins.
 	 */
-	int getInstancesCount() const;
+	size_t getInstancesCount() const;
 
 	/**
 	 * Returns an existing instance of a loaded plugin.
@@ -288,7 +285,7 @@ public:
 	 * @param instanceName Name of the instance
 	 * @return Pointer to the requested instance
 	 */
-	ParameteredObject * getInstance(const std::string & instanceName) const
+	ParameteredObject* getInstance(const std::string & instanceName) const
 			throw (AbstractPluginLoader::PluginException);
 
 	/**
@@ -327,7 +324,7 @@ public:
 	 * @param instanceName Name of the instance
 	 * @return Pointer to a new instance
 	 */
-	ParameteredObject * createInstance(const std::string & pluginName,
+	ParameteredObject* createInstance(const std::string & pluginName,
 			const std::string & instanceName = "")
 			throw (AbstractPluginLoader::PluginException);
 
@@ -530,6 +527,18 @@ public:
 	bool disconnect(const std::string& slot1, const std::string& slot2);
 
 	// \}
+
+	/// Determine execution order
+	/** Get topological sorted list of module instance names,
+	 *  i.e. an order of instances where each instance depends
+	 *  on predecessors only.
+	 *  This means that input slots of the objects are connected to
+	 *  preceeding objects only.
+	 *  If an object is executed multiple times, the first execution
+	 *  counts.
+	 *  \returns list of executed objects
+	 */
+	std::list<ParameteredObject*> determineExecutionOrder();
 };
 
 #endif /* PLUGINMANAGER_H_ */

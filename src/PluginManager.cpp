@@ -21,6 +21,7 @@
  */
 #include <cassert>
 #include <cstdlib>
+#include <set>
 #include <algorithm>
 #include <charon-core/PluginManager.h>
 #include <charon-core/ParameteredObject.hxx>
@@ -30,7 +31,7 @@ std::string AbstractPluginLoader::libSuffix;
 
 PluginManager::PluginManager(
 		const std::vector<std::string>& paths, bool dbg) :
-	defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
+	_defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
 	if(paths.size() == 0) {
 		throw std::invalid_argument("PluginLoader: Empty paths list given!");
 	}
@@ -41,7 +42,7 @@ PluginManager::PluginManager(
 PluginManager::PluginManager(
 		const std::string& path1, const std::string& path2,
 		bool dbg) :
-	defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
+	_defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
 	if (path2.size() > 0) {
 		// put local path (if any) in front of global path
 		AbstractPluginLoader::pluginPaths.push_back(path2);
@@ -59,7 +60,7 @@ void PluginManager::_destroyAllInstances(PLUGIN_LOADER * loader) {
 
 	// Collect items to destroy
 	for (std::map<ParameteredObject *, PLUGIN_LOADER *>::iterator it =
-			instances.begin(); it != instances.end(); it++) {
+			_instances.begin(); it != _instances.end(); it++) {
 		if (it->second == loader) {
 			v.push_back(it->first);
 		}
@@ -69,18 +70,25 @@ void PluginManager::_destroyAllInstances(PLUGIN_LOADER * loader) {
 	for (unsigned int i = 0; i < v.size(); i++) {
 		objects.erase(v[i]->getName());
 		loader->destroyInstance(v[i]);
-		instances.erase(v[i]);
+		_instances.erase(v[i]);
 	}
 }
 
 void PluginManager::_unloadAllPlugins() {
+	// destroy instances in reverse execution order
+	std::list<ParameteredObject*> ordered = determineExecutionOrder();
+	while (!ordered.empty()) {
+		destroyInstance(ordered.back());
+		ordered.pop_back();
+	}
+	// unload plugins
 	for (std::map<std::string, PLUGIN_LOADER *>::iterator it =
-			loadedPlugins.begin(); it != loadedPlugins.end(); it++) {
+			_loadedPlugins.begin(); it != _loadedPlugins.end(); it++) {
 		_unloadPlugin(it->second, false);
 	}
 	objects.clear();
-	instances.clear();
-	loadedPlugins.clear();
+	_instances.clear();
+	_loadedPlugins.clear();
 }
 
 void PluginManager::_unloadPlugin(PLUGIN_LOADER * loader, bool erase) {
@@ -88,13 +96,14 @@ void PluginManager::_unloadPlugin(PLUGIN_LOADER * loader, bool erase) {
 
 	loader->unload();
 	if (erase) {
-		loadedPlugins.erase(loader->getName());
+		_loadedPlugins.erase(loader->getName());
 	}
 	delete loader;
 }
 
-void PluginManager::loadPlugin(const std::string & name)
+void PluginManager::loadPlugin(std::string name)
 		throw (AbstractPluginLoader::PluginException) {
+	name = StringTool::toLowerCase(name);
 	if (!isLoaded(name)) {
 		PLUGIN_LOADER * newPlugin = new PLUGIN_LOADER(name);
 
@@ -105,7 +114,7 @@ void PluginManager::loadPlugin(const std::string & name)
 			throw e;
 		}
 
-		loadedPlugins[name] = newPlugin;
+		_loadedPlugins[name] = newPlugin;
 		sout << "Plugin \"" << name << "\" loaded successfully."
 				<< std::endl;
 	} else {
@@ -118,8 +127,8 @@ void PluginManager::loadPlugin(const std::string & name)
 
 void PluginManager::unloadPlugin(const std::string & name)
 		throw (AbstractPluginLoader::PluginException) {
-	if (loadedPlugins.find(name) != loadedPlugins.end()) {
-		_unloadPlugin(loadedPlugins[name]);
+	if (_loadedPlugins.find(name) != _loadedPlugins.end()) {
+		_unloadPlugin(_loadedPlugins[name]);
 	} else {
 		throw(AbstractPluginLoader::PluginException(
 				"There is no Plugin loaded with the name \"" + name + "\".",
@@ -128,18 +137,19 @@ void PluginManager::unloadPlugin(const std::string & name)
 }
 
 bool PluginManager::isLoaded(const std::string & name) const {
-	return loadedPlugins.find(name) != loadedPlugins.end();
+	return _loadedPlugins.find(name) != _loadedPlugins.end();
 }
 
-int PluginManager::getLoadedPluginsCount() const {
-	return loadedPlugins.size();
+size_t PluginManager::getLoadedPluginsCount() const {
+	return _loadedPlugins.size();
 }
 
-int PluginManager::getInstancesCount() const {
-	return instances.size();
+size_t PluginManager::getInstancesCount() const {
+	return _instances.size();
 }
 
-ParameteredObject * PluginManager::getInstance(const std::string & instanceName) const
+ParameteredObject * PluginManager::getInstance(
+		const std::string & instanceName) const
 		throw (AbstractPluginLoader::PluginException) {
 	std::map<std::string, ParameteredObject *>::const_iterator objIt =
 			objects.find((instanceName));
@@ -158,17 +168,17 @@ ParameteredObject * PluginManager::createInstance(
 		throw (AbstractPluginLoader::PluginException) {
 	pluginName = StringTool::toLowerCase(pluginName);
 	if (instanceName == "" || objects.find(instanceName) == objects.end()) {
-		if (loadedPlugins.find(pluginName) == loadedPlugins.end()) {
+		if (_loadedPlugins.find(pluginName) == _loadedPlugins.end()) {
 			try {
 				loadPlugin(pluginName);
 			} catch (AbstractPluginLoader::PluginException e) {
 				throw e;
 			}
 		}
-		PLUGIN_LOADER * loader = loadedPlugins[pluginName];
+		PLUGIN_LOADER * loader = _loadedPlugins[pluginName];
 		ParameteredObject * newInstance = loader->createInstance(instanceName,
 				t);
-		instances[newInstance] = loader;
+		_instances[newInstance] = loader;
 		objects[newInstance->getName()] = newInstance;
 		sout << "Created Instance \"" << newInstance->getName()
 				<< "\" of the plugin \"" << pluginName << "\", type "
@@ -176,9 +186,9 @@ ParameteredObject * PluginManager::createInstance(
 		return newInstance;
 	} else {
 		throw(AbstractPluginLoader::PluginException(
-				"An instance with the name \"" + instanceName
-						+ "\" already exists.", pluginName,
-				AbstractPluginLoader::PluginException::DUPLICATE_INSTANCE_NAME));
+			"An instance with the name \"" + instanceName
+					+ "\" already exists.", pluginName,
+			AbstractPluginLoader::PluginException::DUPLICATE_INSTANCE_NAME));
 	}
 }
 
@@ -186,23 +196,27 @@ ParameteredObject * PluginManager::createInstance(
 		const std::string & pluginName, const std::string & instanceName)
 		throw (AbstractPluginLoader::PluginException) {
 	try {
-		return createInstance(pluginName, defaultTemplateType, instanceName);
+		return createInstance(pluginName, _defaultTemplateType, instanceName);
 	} catch (AbstractPluginLoader::PluginException e) {
 		throw e;
 	}
 }
 
-void PluginManager::destroyInstance(ParameteredObject * toDestroy)
+void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 		throw (AbstractPluginLoader::PluginException) {
-	if (instances.find(toDestroy) != instances.end()) {
+	std::string cur = toDestroy->getName(), curPlugin;
+	if (_instances.find(toDestroy) != _instances.end()) {
 		objects.erase(toDestroy->getName());
-		instances[toDestroy]->destroyInstance(toDestroy);
-		instances.erase(toDestroy);
+		curPlugin = _instances[toDestroy]->getName();
+		_instances[toDestroy]->destroyInstance(toDestroy);
+		_instances.erase(toDestroy);
 	} else {
 		throw(AbstractPluginLoader::PluginException(
 				"This instance does not exist.", "unknown",
 				AbstractPluginLoader::PluginException::NO_SUCH_INSTANCE));
 	}
+	sout << "Deleted Instance \"" << cur << "\" of the plugin \""
+		<< curPlugin << "\"" << std::endl;
 }
 
 void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
@@ -213,18 +227,18 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 		std::string templateType = paramFile.get<std::string> (
 				"global.templatetype");
 		if (templateType == "int") {
-			defaultTemplateType = ParameteredObject::TYPE_INT;
+			_defaultTemplateType = ParameteredObject::TYPE_INT;
 		} else if (templateType == "float") {
-			defaultTemplateType = ParameteredObject::TYPE_FLOAT;
+			_defaultTemplateType = ParameteredObject::TYPE_FLOAT;
 		} else {
-			defaultTemplateType = ParameteredObject::TYPE_DOUBLE;
+			_defaultTemplateType = ParameteredObject::TYPE_DOUBLE;
 		}
 	}
 
 	std::vector<std::string> keys = paramFile.getKeyList();
 
 	try {
-		//Load Plugins and create instances
+		//Load Plugins and create _instances
 		for (unsigned int i = 0; i < keys.size(); i++) {
 			if (keys[i].substr(keys[i].find_last_of(".") + 1,
 					keys[i].find_first_of(" ")) == "type") {
@@ -235,7 +249,7 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 				std::string instanceName = keys[i].substr(0,
 						keys[i].find_first_of("."));
 
-				template_type templateType = defaultTemplateType;
+				template_type templateType = _defaultTemplateType;
 				if (paramFile.isSet(instanceName + ".templatetype")) {
 					std::string type = paramFile.get<std::string> (instanceName
 							+ ".templatetype");
@@ -271,7 +285,7 @@ void PluginManager::loadParameterFile(const std::string & path) {
 
 void PluginManager::saveParameterFile(ParameterFile & pf) const {
 	pf.set<std::string> ("global.templatetype",
-			ParameteredObject::templateTypeToString(defaultTemplateType));
+			ParameteredObject::templateTypeToString(_defaultTemplateType));
 
 	// load list of all connected objects
 	if (objects.size() > 0) {
@@ -279,10 +293,10 @@ void PluginManager::saveParameterFile(ParameterFile & pf) const {
 
 		// save parameters and slots for all these objects
 		for (objIter = objects.begin(); objIter != objects.end(); objIter++) {
-			//Save template type parameter if unqeual to defaultTemplateType
+			//Save template type parameter if unqeual to _defaultTemplateType
 			if (objIter->second->getTemplateType()
 					!= ParameteredObject::templateTypeToString(
-							defaultTemplateType)) {
+							_defaultTemplateType)) {
 				pf.set<std::string> (objIter->second->getName()
 						+ ".templatetype", objIter->second->getTemplateType());
 			}
@@ -299,28 +313,30 @@ void PluginManager::saveParameterFile(const std::string & path) const {
 }
 
 template_type PluginManager::getDefaultTemplateType() const {
-	return defaultTemplateType;
+	return _defaultTemplateType;
 }
 
 void PluginManager::setDefaultTemplateType(const template_type t) {
 	if (t < 3) {
-		defaultTemplateType = t;
+		_defaultTemplateType = t;
 	}
 }
 
 void PluginManager::executeWorkflow() {
-	_determineTargetPoints();
-	if (targetPoints.size()) {
-		for (unsigned int i = 0; i < targetPoints.size(); i++) {
-			targetPoints[i]->execute();
-		}
-	} else {
+	std::list<ParameteredObject*> tPoints = _determineTargetPoints();
+	std::list<ParameteredObject*>::const_iterator iter;
+
+	if (tPoints.empty()) {
 		throw AbstractPluginLoader::PluginException(
 			"Could not execute workflow:\n\t"
 			"No valid target point found.\n\tPlease check if "
 			"all required plugins could be loaded,\n\tthen check if this is "
 			"a valid parameter file.", "unknown",
 			AbstractPluginLoader::PluginException::OTHER);
+	}
+
+	for (iter = tPoints.begin(); iter != tPoints.end(); iter++) {
+		(*iter)->execute();
 	}
 }
 
@@ -626,11 +642,11 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 
 void PluginManager::reset() {
 	_unloadAllPlugins();
-	defaultTemplateType = ParameteredObject::TYPE_DOUBLE;
+	_defaultTemplateType = ParameteredObject::TYPE_DOUBLE;
 }
 
-void PluginManager::_determineTargetPoints() {
-	targetPoints.clear();
+std::list<ParameteredObject*> PluginManager::_determineTargetPoints() {
+	std::list<ParameteredObject*> targetPoints;
 	std::map<std::string, ParameteredObject *>::const_iterator it;
 	for (it = objects.begin(); it != objects.end(); it++) {
 		bool connected = false;
@@ -647,8 +663,49 @@ void PluginManager::_determineTargetPoints() {
 			targetPoints.push_back(it->second);
 		}
 	}
+	return targetPoints;
+}
+
+std::list<ParameteredObject*> PluginManager::determineExecutionOrder() {
+	std::list<ParameteredObject*> waiting = _determineTargetPoints();
+	std::reverse(waiting.begin(), waiting.end());
+	std::list<ParameteredObject*> finished;
+	ParameteredObject* cur;
+
+	// start with target points as sinks
+	while(!waiting.empty()) {
+		// mark object as finished and replace
+		// by preceeding objects in waiting stack
+		finished.push_front(cur = waiting.front());
+		waiting.pop_front();
+		const std::map<std::string, Slot*>& inputs = cur->getInputSlots();
+		std::map<std::string, Slot*>::const_iterator sIter;
+		std::set<Slot*>::const_iterator tIter;
+		for (sIter = inputs.begin(); sIter != inputs.end(); sIter++) {
+			const std::set<Slot*>& targets = sIter->second->getTargets();
+			for (tIter = targets.begin(); tIter != targets.end(); tIter++) {
+				waiting.push_front(&((*tIter)->getParent()));
+			}
+		}
+	}
+
+	// now remove duplicate entries, keeping the first one
+	std::list<ParameteredObject*>::iterator iBegin = finished.begin();
+	std::list<ParameteredObject*>::iterator iEnd = finished.end();
+	std::list<ParameteredObject*>::iterator iter = iBegin;
+	while (iter != iEnd) {
+		const ParameteredObject* cur = *iter;
+		iEnd = std::remove(++iter, iEnd, cur);
+	}
+
+	// remove tail that may contain bogus elements
+	if (iEnd != finished.end())
+		finished.erase(iEnd, finished.end());
+
+	// return resulting list
+	return finished;
 }
 
 PluginManager::~PluginManager() {
-	_unloadAllPlugins();
+	reset();
 }
