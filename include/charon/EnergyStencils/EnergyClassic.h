@@ -53,14 +53,17 @@ public EnergyStencil<T> {
   /// \param name          Instance name
   EnergyClassic(const std::string& name = "");
 
+  /// stencil's main function
   void execute();
 
+  /// function yielding stencil's energy for given parameter vector
   std::vector<T> getEnergy(
                       std::vector<T> parameterVector,
                       int pSize,
                       int pWidth, int pHeight, int pDepth,
                       int pSpectrum );
 
+  /// function yielding stencil's energy gradient for given parameter vector
   std::vector<T> getEnergyGradient(
                       std::vector<T> parameterVector,
                       int pSize,
@@ -68,9 +71,11 @@ public EnergyStencil<T> {
                       int pSpectrum );
 
 private:
+  /// linear index conversion
   int _linearIndex( int n, int x, int y, int z, int c,
                     int pSize, int pWidth, int pHeight, int pDepth, int pSpectrum );
 
+  /// destructor
   ~EnergyClassic();
 };
 

@@ -56,11 +56,13 @@ public:
 	              const std::string& name /**[in] instance name*/,
 	              const std::string& doc /**[in] stencil documentation*/);
 
+	/// function yielding stencil's energy wrt the parameter vector
 	virtual std::vector<T> getEnergy(std::vector<T> parameterVector,
 	                                 int pSize,
 	                                 int pWidth, int pHeight, int pDepth,
 	                                 int pSpectrum ) = 0;
 
+	/// function yielding stencil's energy gradient wrt the parameter vector
 	virtual std::vector<T> getEnergyGradient(
 	                                 std::vector<T> parameterVector,
 	                                 int pSize,

@@ -17,7 +17,7 @@
  *  Declaration of the parameter class CGSolver.
  *  @author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
  *      Michael Baron</a>
- *  @date 30.08.2011
+ *  @date 12.10.2011
  */
 
 #ifndef _CGSOLVER_H_
@@ -40,18 +40,25 @@
 #include <CImg.h>
 #include <vector>
 
-//  Conjugate Gradient method for minimization of differentiable multivariate functions.
+///  Unconstrained gradient based optimization using nonlinear conjugate gradients.
 /**
+ *   This optimizer is based upon
+ *   <a href="http://www.gaussianprocess.org/gpml/code/matlab/util/minimize.m">minimize.m</a>, Copyright (C) 1999 - 2006 Carl Edward Rasmussen.
  */
 template <typename T>
 class cgsolver_DECLDIR CGSolver : public TemplatedParameteredObject<T>
 {
 public:
+        /// Input slot for EnergyStencils
 	InputSlot< EnergyStencil<T>* > energyStencils;
+
+        /// Input slot for the quantity to be optimized.
 	InputSlot< cimg_library::CImgList<T> > initialParameters;
+
+        /// Output slot yielding the optimized quantity. 
 	OutputSlot< cimg_library::CImgList<T> > optimizedParameters;
 
-	//  length parameter, see "minimize.m" for details
+	///  length parameter, see "minimize.m" for details
 	Parameter< int > length;
 
 	/// default constructor
@@ -60,6 +67,7 @@ public:
 	/// main function
 	void execute();
 
+        /// minimize function
 	void minimize(
               std::vector<T> &X,
               std::vector<T> &startingPoint_X,
@@ -71,9 +79,31 @@ public:
 	/// default destructor
 	~CGSolver();
 private:
+  /// size parameter of the quantities.
   int _pSize;
-  int _pWidth, _pHeight, _pDepth;
+  /// width parameter of the quantities.
+  int _pWidth;
+  /// height parameter of the quantities.
+  int _pHeight;
+  /// depth parameter of the quantities.
+  int  _pDepth;
+  /// spectrum parameter of the quantities.
   int _pSpectrum;
+
+  /// vector scaling
+  std::vector<T> _scaleVector( const T &skalar, const std::vector<T> &vektor );
+  /// vector addition
+  std::vector<T> _addVectors( const std::vector<T> &v1, const std::vector<T> &v2 );
+  /// vector dot product
+  T _dotProduct( const std::vector<T> &v1, const std::vector<T> &v2 );
+  /// this yields "1", if any of the vector's elements satisfies the given predicateFunction, and "0" otherwise
+  int _anyPredicate( const std::vector<T> &v, int (*predicateFunction)( T arg ) );
+  /// addition of scalars
+  T _addScalars( const T &x, const T &y );
+  /// multiplication of scalars
+  T _scaleScalar( const T lambda, const T x );
+  /// sum of a vector's elements
+  T _sumVector( const std::vector<T> &v );
 };
 
 #endif // _CGSOLVER_H_

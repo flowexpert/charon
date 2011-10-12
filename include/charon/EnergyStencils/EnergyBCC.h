@@ -53,22 +53,28 @@ template <typename T>
 class energybcc_DECLDIR EnergyBCC :
 public EnergyStencil<T> {
  public:
+  /// Input slot for image derivative wrt x
   InputSlot< cimg_library::CImgList<T> > img_dx;  //  I_x
+  /// Input slot for image derivative wrt y
   InputSlot< cimg_library::CImgList<T> > img_dy;  //  I_y
+  /// Input slot for image derivative wrt t
   InputSlot< cimg_library::CImgList<T> > img_dt;  //  I_t
 
   /// default constructor
   /// \param name          Instance name
   EnergyBCC(const std::string& name = "");
 
+  /// stencil's main function
   void execute();
 
+  /// stencil's energy function
   std::vector<T> getEnergy(
                       std::vector<T> parameterVector,
                       int pSize,
                       int pWidth, int pHeight, int pDepth,
                       int pSpectrum );
 
+  /// stencil's energy gradient function
   std::vector<T> getEnergyGradient(
                       std::vector<T> parameterVector,
                       int pSize,
@@ -76,9 +82,11 @@ public EnergyStencil<T> {
                       int pSpectrum );
 
 private:
+  /// linear index conversion
   int _linearIndex( int n, int x, int y, int z, int c,
                     int pSize, int pWidth, int pHeight, int pDepth, int pSpectrum );
 
+  /// destructor
   ~EnergyBCC();
 };
 

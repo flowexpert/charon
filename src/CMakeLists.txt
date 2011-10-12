@@ -105,7 +105,6 @@ LIST(APPEND Plugins
 ADD_LIBRARY(cgsolver SHARED
 	CGSolver.cpp
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.h
-	${charon_INCLUDE_DIR}/Solvers/CGMinimize.h
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.hxx
 )
 LIST(APPEND Plugins
