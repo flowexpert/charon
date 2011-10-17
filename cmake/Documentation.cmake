@@ -1,7 +1,6 @@
 # Use information from FindDoxygen and set up documentation creation
 
 IF (DOXYGEN_FOUND)
-	# Possibility to enable/disable documentation creation
 	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
 	SET(${PROJECT_NAME}_INSTALL_DOC doc/${PROJECT_NAME}
 		CACHE PATH "${PROJECT_NAME} documentation install prefix")
@@ -22,7 +21,6 @@ IF (DOXYGEN_FOUND)
 	SET(DOXY_PROJECT_VERSION    "${${PROJECT_NAME}_VERSION}")
 	SET(DOXY_DOC_EXCLUDE        "include/${PROJECT_NAME}/CImg.h")
 	SET(DOXY_DOC_RECURSIVE      NO)
-	SET(DOXY_STL_SUPPORT        YES)
 	SET(DOXY_GENERATE_XML       NO)
 	IF(ENABLE_DOC_VERBOSE)
 		SET(DOXY_QUIET          NO)
@@ -74,7 +72,6 @@ IF (DOXYGEN_FOUND)
 
 	SET(DOXY_GENERATE_HTML      NO )
 	SET(DOXY_GENERATE_LATEX     NO )
-	SET(DOXY_STL_SUPPORT        NO )
 	SET(DOXY_GENERATE_XML       YES)
 	SET(DOXY_CONFIG             "${PROJECT_BINARY_DIR}/DoxyfileXML")
 	CONFIGURE_FILE(${DOXY_TEMPLATE} ${DOXY_CONFIG}     @ONLY)
@@ -84,7 +81,7 @@ IF (DOXYGEN_FOUND)
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 		COMMENT "Generating ${PROJECT_NAME} xml documentation"
 	)
-	ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_xml)
+	#ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_xml)
 	SET_TARGET_PROPERTIES(${PROJECT_NAME}_doc_xml PROPERTIES FOLDER "DocGen")
 
 	# install html documentation

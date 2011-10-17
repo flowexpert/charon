@@ -24,9 +24,6 @@ SOURCE_GROUP("ui headers" FILES ${charonwidgets_UIS})
 ###### Set up VigraQt ##################
 
 FIND_PACKAGE(OpenGL)
-SET(QT_USE_QTOPENGL 1)
-INCLUDE(${QT_USE_FILE})
-
 SET(vigraqt_HEADERS
 	vigraqt/vigraqt_export.hxx
 	vigraqt/colormap.hxx
