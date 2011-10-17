@@ -87,15 +87,14 @@ TARGET_LINK_LIBRARIES(charonwidgets
 
 SET_TARGET_PROPERTIES(charonwidgets PROPERTIES
 	FOLDER "charon-utils Modules"
-	VERSION ${charon-utils_VERSION}
 )
 
 INSTALL(
 	TARGETS          charonwidgets
 	EXPORT           ${EXPORT_NAME}
 	RUNTIME          DESTINATION bin${BIN_SUFFIX}
-	LIBRARY          DESTINATION lib${LIB_SUFFIX}
-	ARCHIVE          DESTINATION lib${LIB_SUFFIX}
+	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
 	COMPONENT        libraries
 )
 
