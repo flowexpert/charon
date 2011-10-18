@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+	"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+<refentry>
+	<refentryinfo>
+		<title>ParameterFile editor GUI</title>
+		<productname>tuchulcha</productname>
+		<releaseinfo role="version">0.9.2</releaseinfo>
+		<authorgroup>
+			<author>
+				<firstname>Jens-Malte</firstname>
+				<surname>Gottfried</surname>
+				<contrib>
+					initial and main contributor, including project
+					coordination, bug fixes, code cleanup
+				</contrib>
+				<contrib>wrote this manpage</contrib>
+				<address><email>jmgottfried@web.de</email></address>
+			</author>
+		</authorgroup>
+		<copyright>
+			<year>2009</year>
+			<year>2010</year>
+			<year>2011</year>
+			<holder>Heidelberg Collaboratory for Image Processing</holder>
+		</copyright>
+		<legalnotice>
+			<para>This application is part of Charon.</para>
+			<para>
+				Charon is free software: you can redistribute it and/or modify
+				it under the terms of the GNU Lesser General Public License as
+				published by the Free Software Foundation, either version 3 of
+				the License, or (at your option) any later version.
+			</para>
+			<para>
+				Charon is distributed in the hope that it will be useful,
+				but WITHOUT ANY WARRANTY; without even the implied warranty of
+				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+				GNU Lesser General Public License for more details.
+			</para>
+			<para>
+				You should have received a copy of the GNU Lesser General
+				Public License along with Charon.
+				If not, see
+				<ulink url="http://www.gnu.org/licenses/">
+					http://www.gnu.org/licenses/</ulink>.
+			</para>
+		</legalnotice>
+	</refentryinfo>
+	<refmeta>
+		<refentrytitle>paraminspector</refentrytitle>
+		<manvolnum>1</manvolnum>
+	</refmeta>
+	<refnamediv>
+		<refname>paraminspector</refname>
+		<refpurpose>a graphical ParameterFile editor</refpurpose>
+	</refnamediv>
+	<refsynopsisdiv>
+		<cmdsynopsis>
+			<command>paraminspector</command>
+			<arg choice="opt"><replaceable>parameterFile</replaceable></arg>
+		</cmdsynopsis>
+	</refsynopsisdiv>
+	<refsect1 id="description">
+		<title>Description</title>
+		<para>
+			<command>paraminspector</command> opens the given parameter file
+			or starts with an empty file. It is displayed as a table where you
+			can add or remove lines and change the content.
+		</para>
+		<para>
+			This is a standalone version of the object inspector used in
+			<application>tuchulcha</application>. Using its metadata file
+			<filename>classes.wrp</filename> it is possible to display the
+			parameter file content as it would look like in
+			<application>tuchulcha</application> including default values
+			and documentation tooltips.
+		</para>
+	</refsect1>
+	<refsect1 id="files">
+		<title>Files</title>
+		<variablelist>
+			<varlistentry>
+				<term><replaceable>parameterFile</replaceable></term>
+				<listitem><para>
+					ParameterFile to be edited.
+				</para></listitem>
+			</varlistentry>
+		</variablelist>
+	</refsect1>
+</refentry>
+
