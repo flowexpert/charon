@@ -90,8 +90,7 @@ void printInfo() {
 void printVersion() {
 	std::cout << "This is charon workflow executor "
 		<< "from charon-core version " << CHARON_CORE_VERSION << "\n\n"
-		<< "Copyright (C) 2009-2010 "
-		<< "Heidelberg Collaboratory for Image Processing\n"
+		<< "Copyright (C) 2009-2011\n"
 		<< "This is free software; see the source for copying conditions. "
 		<< "There is NO\nwarranty; not even for MERCHANTABILITY or "
 		<< "FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
@@ -166,7 +165,7 @@ void init(int& argc, char**& argv) {
 	}
 
 	// check for global plugin directory
-	if (Config::globalPath.empty() /*|| !FileTool::exists(Config::globalPath)*/ ) {
+	if (Config::globalPath.empty()) {
 		printInfo();
 		std::cerr << "ERROR: "
 				<< "You have to specify a valid global plugin directory!\n";
@@ -199,18 +198,21 @@ int run() {
 		log.open(Config::logfile.c_str(), std::ios::trunc | std::ios::out);
 		sout.assign(log);
 	}
-	else
-	{	sout.assign(std::cout) ;	}
+	else {
+		sout.assign(std::cout);
+	}
 
-	if (Config::verbose)
+	if (Config::verbose) {
 		std::cout << "\nInitializing plugin manager." << std::endl;
+	}
 
 	Config::man = 0;
 	Config::man = new PluginManager(Config::globalPath, Config::localPath);
 
-	if (Config::verbose)
+	if (Config::verbose) {
 		std::cout << "Loading workflow from \"" << Config::paramFile
 				<< "\"." << std::endl;
+	}
 	Config::man->loadParameterFile(Config::paramFile);
 
 	Config::oldDir = FileTool::getCurrentDir();
@@ -221,16 +223,15 @@ int run() {
 		FileTool::changeDir(Config::workingDir);
 	}
 
-	if (Config::verbose)
+	if (Config::verbose) {
 		std::cout << "Starting workflow execution." << std::endl;
+	}
 	Config::man->executeWorkflow();
 
-	if (Config::verbose)
+	if (Config::verbose) {
 		std::cout << "Finished workflow execution." << std::endl;
+	}
 
-	//sout is still used after this point, but log may go out of scope
-	sout.assign(std::cout) ;
-	
 	return EXIT_SUCCESS;
 }
 
@@ -246,11 +247,12 @@ void cleanup() {
 		delete Config::man;
 		Config::man = 0;
 	}
-	if(Config::log.is_open()) {
-		sout.assign(std::cout);
+	sout.assign(std::cout);
+	if (Config::log.is_open()) {
 		Config::log.close();
 	}
 	TypeDetector::destroy();
-	if (Config::verbose)
+	if (Config::verbose) {
 		std::cout << "Cleanup finished. Bye" << std::endl;
+	}
 }

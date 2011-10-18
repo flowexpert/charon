@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+	"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+
+<refentry>
+	<refentryinfo>
+		<title>Charon workflow executor</title>
+		<productname>charon</productname>
+		<releaseinfo role="version">0.1.6</releaseinfo>
+		<authorgroup>
+			<author>
+				<firstname>Jens-Malte</firstname>
+				<surname>Gottfried</surname>
+				<contrib>wrote this application and this manpage</contrib>
+				<address><email>jmgottfried@web.de</email></address>
+			</author>
+		</authorgroup>
+		<copyright>
+			<year>2010</year>
+			<year>2011</year>
+			<holder>Jens-Malte Gottfried</holder>
+		</copyright>
+		<legalnotice>
+			<para>This application is part of Charon.</para>
+			<para>
+				Charon is free software: you can redistribute it and/or modify
+				it under the terms of the GNU Lesser General Public License as
+				published by the Free Software Foundation, either version 3 of
+				the License, or (at your option) any later version.
+			</para>
+			<para>
+				Charon is distributed in the hope that it will be useful,
+				but WITHOUT ANY WARRANTY; without even the implied warranty of
+				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+				GNU Lesser General Public License for more details.
+			</para>
+			<para>
+				You should have received a copy of the GNU Lesser General
+				Public License along with Charon.
+				If not, see
+				<ulink url="http://www.gnu.org/licenses/">
+					http://www.gnu.org/licenses/</ulink>.
+			</para>
+		</legalnotice>
+	</refentryinfo>
+	<refmeta>
+		<refentrytitle>charon</refentrytitle>
+		<manvolnum>1</manvolnum>
+	</refmeta>
+	<refnamediv>
+		<refname>charon</refname>
+		<refpurpose>Command line workflow executor</refpurpose>
+	</refnamediv>
+	<refsynopsisdiv>
+		<cmdsynopsis>
+			<command>charon</command>
+			<arg choice="opt"><replaceable>OPTIONS</replaceable></arg>
+			<arg choice="plain"><replaceable>parameterFile</replaceable></arg>
+		</cmdsynopsis>
+	</refsynopsisdiv>
+	<refsect1 id="description">
+		<title>Description</title>
+		<para>
+			<command>charon</command> executes a given charon workflow.
+		</para>
+		<para>
+			To get the execution working, you have at least to specify
+			a global module path (using the option
+			<option>--global
+				<replaceable class="parameter">path</replaceable></option>).
+			It is recommended to redirect the output to a logfile (e.g. using
+			<option>--logfile
+				<replaceable class="parameter">file</replaceable></option>).
+		</para>
+		<para>
+			Note that there is no Qt Gui event loop, so make sure that you
+			do not use any Qt widget modules in the workflow e.g.
+			for visualization.
+		</para>
+	</refsect1>
+	<refsect1 id="options">
+		<title>Options</title>
+		<refsect2 id="general">
+			<title>Generic Options</title>
+			<variablelist>
+				<varlistentry>
+					<term><option>-V</option></term>
+					<term><option>--version</option></term>
+					<listitem><para>
+						display version information and exit
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term><option>-v</option></term>
+					<term><option>--verbose</option></term>
+					<listitem><para>
+						more verbose output
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term><option>-h</option></term>
+					<term><option>--help</option></term>
+					<term><option>-?</option></term>
+					<listitem><para>
+						show usage help message (short option summary)
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term><option>-o
+						<replaceable class="parameter">file</replaceable>
+					</option></term>
+					<term><option>--logfile
+						<replaceable class="parameter">file</replaceable>
+					</option></term>
+					<listitem><para>
+						write log to given text file too
+					</para></listitem>
+				</varlistentry>
+			</variablelist>
+		</refsect2>
+		<refsect2>
+			<title>Path Settings</title>
+			<variablelist>
+				<varlistentry>
+					<term><option>-g
+						<replaceable class="parameter">path</replaceable>
+					</option></term>
+					<term><option>--global
+						<replaceable class="parameter">path</replaceable>
+					</option></term>
+					<listitem>
+						<para>
+							Path of global plugin dir.
+							This option is required to execute a workflow.
+						</para>
+						<para>
+							Future versions may use a semicolon separated list
+							here, but this is currently not implemented.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term><option>-l
+						<replaceable class="parameter">path</replaceable>
+					</option></term>
+					<term><option>--local
+						<replaceable class="parameter">path</replaceable>
+					</option></term>
+					<listitem><para>
+						Path of local plugin dir.
+						This path is searched in addition to the global path.
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term><option>-w
+						<replaceable class="parameter">path</replaceable>
+					</option></term>
+					<term><option>--workingdir
+						<replaceable class="parameter">path</replaceable>
+					</option></term>
+					<listitem><para>
+						execute the workflow relative to this working directory
+					</para></listitem>
+				</varlistentry>
+			</variablelist>
+		</refsect2>
+	</refsect1>
+	<refsect1 id="files">
+		<title>Files</title>
+		<variablelist>
+			<varlistentry>
+				<term><replaceable>parameterFile</replaceable></term>
+				<listitem><para>
+					Parameter file describing the workflow to execute.
+					This file may be set up e.g. by
+					<application>tuchulcha</application>.
+				</para></listitem>
+			</varlistentry>
+		</variablelist>
+	</refsect1>
+</refentry>
+
