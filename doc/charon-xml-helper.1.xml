@@ -1,6 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<?xml-stylesheet type="text/xsl"
-	href="http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl"?>
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
 	"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 
@@ -42,7 +40,8 @@
 				You should have received a copy of the GNU Lesser General
 				Public License along with Charon.
 				If not, see
-				<ulink url="http://www.gnu.org/licenses/">GNU Webpage</ulink>.
+				<ulink url="http://www.gnu.org/licenses/">
+					http://www.gnu.org/licenses/</ulink>.
 			</para>
 		</legalnotice>
 	</refentryinfo>
@@ -57,11 +56,11 @@
 	<refsynopsisdiv>
 		<cmdsynopsis>
 			<command>charon-xml-helper</command>
+			<arg choice="opt"><replaceable>DocXmlDir</replaceable></arg>
 			<group choice="opt">
 				<arg choice="plain"><option>--ids</option></arg>
 				<arg choice="plain"><option>--mod-index</option></arg>
 			</group>
-			<arg choice="opt"><replaceable>DocXmlDir</replaceable></arg>
 		</cmdsynopsis>
 	</refsynopsisdiv>
 	<refsect1 id="description">
@@ -76,6 +75,16 @@
 	<refsect1 id="options">
 		<title>OPTIONS</title>
 		<variablelist>
+			<varlistentry>
+				<term><replaceable>DocXmlDir</replaceable></term>
+				<listitem><para>
+					Directory where the doxygen xml documentation is located.
+					In this directory, there is a file named
+					<filename>index.xml</filename>.
+					If there is no such file, the program terminates.
+					If no directory is specified, an option summary is printed.
+				</para></listitem>
+			</varlistentry>
 			<varlistentry>
 				<term><option>--ids</option></term>
 				<listitem><para>
@@ -92,16 +101,7 @@
 					charon module classes.
 					Simply drops all entries from index.xml wich do not meet
 					this condition.
-				</para></listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><replaceable>DocXmlDir</replaceable></term>
-				<listitem><para>
-					Directory where the doxygen xml documentation is located.
-					In this directory, there is a file named
-					<filename>index.xml</filename>.
-					If there is no such file, the program terminates.
-					Defaults to the current working directory if not specified.
+					The resulting xml file is printed on stdout.
 				</para></listitem>
 			</varlistentry>
 		</variablelist>
