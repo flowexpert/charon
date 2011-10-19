@@ -40,6 +40,11 @@
 #include <vigra/multi_array.hxx>
 
 /// morphology operation to dilate or erode
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ */
 template <typename T>
 class dilationerosion_DECLDIR DilationErosion :
 		public TemplatedParameteredObject<T>

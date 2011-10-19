@@ -44,8 +44,12 @@
 #include <charon-utils/CImg.h>
 #include "Roi.h"
 
-/// Simple class to crop images.
-/// This class shrinks the image to given region.
+/// Simple class to blur images.
+/** This class blurs the given image region.
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ */
 template <typename T>
 class imageblur_DECLDIR ImageBlur : public TemplatedParameteredObject<T>
 {

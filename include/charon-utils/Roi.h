@@ -46,8 +46,13 @@
 #include <iostream>
 
 /// ROI - Region of Interest.
-/// This class can be used to select the parts of images/image sequences
-/// where you are interested in.
+/** This class can be used to select the parts of images/image sequences
+ *  where you are interested in.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup charon-helpers
+ */
 template<typename T>
 class roi_DECLDIR Roi: public TemplatedParameteredObject<T> {
 private:

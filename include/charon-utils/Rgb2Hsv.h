@@ -40,15 +40,19 @@
 #include <charon-utils/CImg.h>
 
 /// simple class to convert rgb images to hsv format
-///
-/// This class uses the cimg RGBtoHSV command to convert color images
-/// in RGB format to the HSV representation. Images have to be in the
-/// standart CImg color representation, i.e. dimensions are ordered
-/// x,y,z,c (with c=3 color channels).
-///
-/// If multiple image list items are present, the conversion is
-/// performed on each item seperately.
-/// \see cimg_library::CImg::RGBtoHSV()
+/** This class uses the cimg RGBtoHSV command to convert color images
+ *  in RGB format to the HSV representation. Images have to be in the
+ *  standart CImg color representation, i.e. dimensions are ordered
+ *  x,y,z,c (with c=3 color channels).
+ *
+ *  If multiple image list items are present, the conversion is
+ *  performed on each item seperately.
+ *  \see cimg_library::CImg::RGBtoHSV()
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ */
 template <typename T>
 class rgb2hsv_DECLDIR Rgb2Hsv : public TemplatedParameteredObject<T>
 {

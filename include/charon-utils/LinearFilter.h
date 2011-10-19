@@ -38,13 +38,15 @@
 #define linearfilter_DECLDIR
 #endif
 
-/**
- * Linear filtering plugin.
+/// Linear filtering plugin.
+/** This filter plugin convolves a given image (input slot) with
+ *  fiven filter masks (mask input) and provides the result on its
+ *  output slot. If more than one mask is given, they are applied
+ *  sequently.
  *
- * This filter plugin convolves a given image (input slot) with
- * fiven filter masks (mask input) and provides the result on its
- * output slot. If more than one mask is given, they are applied
- * sequently.
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
  */
 template <typename T>
 class linearfilter_DECLDIR LinearFilter : public TemplatedParameteredObject<T> {

@@ -41,6 +41,11 @@
 #include <charon-utils/Roi.h>
 
 /// vigra implementation of crop
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ */
 template <typename T>
 class subarray_DECLDIR Subarray :
 		public TemplatedParameteredObject<T>

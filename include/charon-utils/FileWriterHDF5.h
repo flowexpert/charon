@@ -42,6 +42,11 @@
 #include <vigra/multi_array.hxx>
 
 /// Write 5D vigra::MultiArray into a HDF5 file
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup data-io
+ */
 template <typename T>
 class filewriterhdf5_DECLDIR FileWriterHDF5 :
 		public TemplatedParameteredObject<T> {

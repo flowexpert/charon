@@ -40,11 +40,15 @@
 #include <vigra/multi_array.hxx>
 
 /// simple class to threshold images
-///
-/// This class uses the vigra threshold command to threshold
-/// images at the given boundaries. If image values are
-/// between boundaries (i.e. within the closed interval [lower, heigher])
-/// result is set to yesresult, otherwise to noresult.
+/** This class uses the vigra threshold command to threshold
+ *  images at the given boundaries. If image values are
+ *  between boundaries (i.e. within the closed interval [lower, heigher])
+ *  result is set to yesresult, otherwise to noresult.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ */
 template <typename T>
 class threshold_DECLDIR Threshold : public TemplatedParameteredObject<T>
 {

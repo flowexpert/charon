@@ -44,6 +44,11 @@
 #include <charon-utils/CImg.h>
 
 /// Can write a CImg image to a file.
+/** See \ref cimg_files_io "Files IO in CImg" for supported formats.
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup data-io
+ */
 template <typename T>
 class filewriter_DECLDIR FileWriter : public TemplatedParameteredObject<T> {
 public:

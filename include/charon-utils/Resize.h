@@ -50,6 +50,10 @@
  *  Only their differences (i.e. width, height, etc) matter.
  *
  *  Channels (i.e. list element index) are not resized.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
  */
 template <typename T>
 class resize_DECLDIR Resize : public TemplatedParameteredObject<T>

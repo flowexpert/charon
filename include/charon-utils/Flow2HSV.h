@@ -40,6 +40,11 @@
 #include <charon-utils/CImg.h>
 
 /// Convert Flow into HSV Color Representation
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ */
 template<typename T>
 class flow2hsv_DECLDIR Flow2HSV : public TemplatedParameteredObject<T>
 {

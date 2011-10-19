@@ -40,6 +40,13 @@
 #include <charon-utils/CImg.h>
 
 /// Generates an image sequence out of multiple images
+/** The images are sorted by the name of the connected module in
+ *  ascending order.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup converters
+ */
 template <typename T>
 class images2sequence_DECLDIR Images2Sequence :
 		public TemplatedParameteredObject<T> {

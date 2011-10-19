@@ -53,6 +53,7 @@
  *  the need for if or switch-statements.
  *  To use an interpolator use subclasses of Interpolator
  *  e.g. InterpolatorLinear or InterpolatorCubic.
+ *  \ingroup charon-interpolators
  */
 template <typename T>
 class interpolator_DECLDIR Interpolator :

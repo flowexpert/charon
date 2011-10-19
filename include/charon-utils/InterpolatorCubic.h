@@ -45,6 +45,11 @@
 #include "Interpolator.h"
 
 /// Cubic interpolation scheme.
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup charon-interpolators
+ */
 template <typename T>
 class interpolatorcubic_DECLDIR InterpolatorCubic : public Interpolator<T>
 {

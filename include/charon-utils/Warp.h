@@ -63,6 +63,10 @@
  *  The flow is multiplied with the weight parameter before the warping is
  *  actually performed, this way warping into the opposite direction
  *  (weight = -1) or warping half-way (weight = 0.5) is possible.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
  */
 template <typename T>
 class warp_DECLDIR Warp :

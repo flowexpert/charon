@@ -55,6 +55,10 @@
  *  least 2x2. The scaling factors are then calculated accordingly.
  *  If the source image is larger than the destination, it is smoothed
  *  (band limited) using a recursive exponential filter.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
  */
 template <typename T>
 class splineresize_DECLDIR SplineResize : public TemplatedParameteredObject<T> {

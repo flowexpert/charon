@@ -42,6 +42,9 @@
 /** Permutes image dimensions.
  *  Select permutation using the parameter <i>scheme</i>
  *  Per default converts v dimension to t and vice versa.
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup converters
  */
 template <class T>
 class channelconverter_DECLDIR ChannelConverter :

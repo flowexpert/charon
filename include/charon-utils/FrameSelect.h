@@ -45,6 +45,9 @@
 /** This class is able to crop images along dimensions 2-4.
  *  It is possible to leave the last dimension untouched on RGB images.
  *  The first two dimensions (x,y) are not cropped.
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup visualization
  */
 template <typename T>
 class frameselect_DECLDIR FrameSelect : public TemplatedParameteredObject<T>

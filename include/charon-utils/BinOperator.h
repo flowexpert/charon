@@ -43,6 +43,9 @@
 /** Apply simple binary operators pointwise to the given input data.
  *  Result is given as output. Shapes of the input has to be the same.
  *  Which operator is applied may be selected using the operation parameter.
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
  */
 template <typename T>
 class binoperator_DECLDIR BinOperator : public TemplatedParameteredObject<T>

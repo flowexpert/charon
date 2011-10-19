@@ -38,13 +38,13 @@
 #define structuretensor_DECLDIR
 #endif
 
-/**
- * Linear filtering plugin.
+/// Structure Tensor Calculation
+/** This module calculates the structur tensor, its eigenvectors and
+ *  eigenvalues using CImg functions.
  *
- * This filter plugin convolves a given image (input slot) with
- * fiven filter masks (mask input) and provides the result on its
- * output slot. If more than one mask is given, they are applied
- * sequently.
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
  */
 template <typename T>
 class structuretensor_DECLDIR StructureTensor :

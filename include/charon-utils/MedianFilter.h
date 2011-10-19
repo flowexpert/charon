@@ -26,13 +26,13 @@
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef medianfilter_EXPORTS
-///Visual C++ specific code
+/// Visual C++ specific code
 #define medianfilter_DECLDIR __declspec(dllexport)
 #else
 #define medianfilter_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
-///Not needed with GCC
+/// Not needed with GCC
 #define medianfilter_DECLDIR
 #endif
 
@@ -43,6 +43,10 @@
 /** Use image windows of given size, calculate median within this window
  *  and use the result as new value for the window center pixel.
  *  This eliminates outliers and makes e.g. flow estimation more robust.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
  */
 template <typename T> class medianfilter_DECLDIR MedianFilter :
 		public TemplatedParameteredObject<T>

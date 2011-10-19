@@ -45,8 +45,13 @@
 #include <charon-utils/CImg.h>
 
 /// Simple class to read image files.
-/// This class is able to read an image from some image file
-/// and provide it as output slot.
+/** This class is able to read an image from some image file
+ *  and provide it as output slot.
+ *  See \ref cimg_files_io "Files IO in CImg" for supported formats.
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup data-io
+ */
 template <typename T>
 class filereader_DECLDIR FileReader : public TemplatedParameteredObject<T> {
 public:

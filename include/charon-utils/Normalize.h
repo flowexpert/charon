@@ -44,8 +44,13 @@
 #include <charon-utils/CImg.h>
 
 /// Simple class to normalize images.
-/// This class uses the cimg normalize command to normalize
-/// images linearly between two given values.
+/** This class uses the cimg normalize command to normalize
+ *  images linearly between two given values.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ */
 template <typename T>
 class normalize_DECLDIR Normalize : public TemplatedParameteredObject<T>
 {

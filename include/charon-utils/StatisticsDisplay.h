@@ -55,6 +55,11 @@ namespace StatisticsDisplay {
 	} ;
 
 	/// Charon Plugin Frontend for statistics calculation and display widget
+	/**
+	 *  \ingroup charon-modules
+	 *  \ingroup charon-utils
+	 *  \ingroup visualization
+	 */
 	template <typename T>
 	class statisticsdisplay_DECLDIR StatisticsDisplayPlugin :
 			public TemplatedParameteredObject<T> {

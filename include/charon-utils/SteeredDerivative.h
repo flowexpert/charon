@@ -44,6 +44,10 @@
  *  aligned and orthogonal to the local image structure.
  *  The steered derivatives are linear combinations of the standart
  *  derivatives.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
  */
 template <typename T>
 class steeredderivative_DECLDIR SteeredDerivative : 

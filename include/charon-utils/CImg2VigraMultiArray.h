@@ -42,6 +42,9 @@
 
 /// Convert a CImgList-Object to a vigra::MultiArray<5, T>
 /** The data is copied.
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup converters
  */
 template <typename T>
 class cimg2vigramultiarray_DECLDIR CImg2VigraMultiArray :

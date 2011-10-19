@@ -45,6 +45,11 @@
 #include "Interpolator.h"
 
 /// Linear interpolation scheme.
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup charon-interpolators
+ */
 template <typename T>
 class interpolatorlinear_DECLDIR InterpolatorLinear : public Interpolator<T>
 {

@@ -47,7 +47,11 @@ using namespace cimg_library;
 /** The data is copied for compatibility reasons. Please note that this
  *  conversion is not always possible if the MultiArray is strided or has too
  *  many dimensions! Dimensions are mapped the following way:
- * 0->X, 1->Y, 2->Z, 3->V, 4->ListIndex.
+ *  0->X, 1->Y, 2->Z, 3->V, 4->ListIndex.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup converters
  */
 template <typename T>
 class vigramultiarray2cimg_DECLDIR VigraMultiArray2CImg :

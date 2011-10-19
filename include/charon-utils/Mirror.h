@@ -40,6 +40,11 @@
 #include <vigra/multi_array.hxx>
 
 /// mirror selected dimension(s)
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup converters
+ */
 template <typename T>
 class mirror_DECLDIR Mirror :
 		public TemplatedParameteredObject<T>

@@ -42,6 +42,11 @@
 #include <charon-utils/Roi.h>
 
 /// Read 5D vigra::MultiArray from a HDF5 file
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup data-io
+ */
 template <typename T>
 class filereaderhdf5_DECLDIR FileReaderHDF5 :
 		public TemplatedParameteredObject<T> {

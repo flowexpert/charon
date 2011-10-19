@@ -39,6 +39,11 @@
 #endif
 
 /// generate simple 1D filter mask
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup charon-helpers
+ */
 template <typename T>
 class mask1d_DECLDIR Mask1D : public TemplatedParameteredObject<T> {
 public:

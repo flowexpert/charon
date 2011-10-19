@@ -49,6 +49,13 @@ namespace ArgosDisplay
 	class MainWindow ;
 
 	/// Charon Plugin Frontend for advanced Argos Display
+	/** Displays CImg and Vigra Images.
+	 *  May be extended by arbitrary widgets, e.g. for
+	 *  frame selection or statistics display.
+	 *  \ingroup charon-modules
+	 *  \ingroup charon-utils
+	 *  \ingroup visualization
+	 */
 	template <typename T>
 	class argosdisplay_DECLDIR ArgosDisplayPlugin :
 			public TemplatedParameteredObject<T> {

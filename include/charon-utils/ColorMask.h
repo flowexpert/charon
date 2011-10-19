@@ -40,7 +40,11 @@
 #include <charon-utils/CImg.h>
 
 /// Convert gray values into false colors.
-/** Assigns red to negative values and blue to positive values */
+/** Assigns red to negative values and blue to positive values
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ */
 template<typename T>
 class colormask_DECLDIR ColorMask : public TemplatedParameteredObject<T>
 {

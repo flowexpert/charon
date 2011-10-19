@@ -40,6 +40,11 @@
 #include <charon-utils/CImg.h>
 
 /// Draw overlay with arrows representing the optical flow.
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ */
 template<typename T>
 class flowquiver_DECLDIR FlowQuiver : public TemplatedParameteredObject<T>
 {

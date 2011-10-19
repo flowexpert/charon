@@ -54,6 +54,9 @@
  *  To display color images, it could be necessary to reorder dimensions
  *  (e.g. using the ChannelConverter plugin), if the color channels are
  *  arranged in the 5th dimension.
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup visualization
  */
 template <typename T>
 class imagedisplay_DECLDIR ImageDisplay : public TemplatedParameteredObject<T> {

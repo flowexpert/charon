@@ -49,6 +49,9 @@
  *  This class shrinks the image to given region.
  *  If you want to crop only in certain dimensions, leave
  *  the values of the unneeded ranges at [0:0].
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
  */
 template <typename T>
 class crop_DECLDIR Crop : public TemplatedParameteredObject<T>
