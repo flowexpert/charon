@@ -106,6 +106,13 @@
 		</a>
 	</xsl:template>
 
+	<xsl:template match="formula">
+		<img class="formulaInl">
+			<xsl:attribute name="alt"><xsl:value-of select="."/></xsl:attribute>
+			<xsl:attribute name="src">../html/form_<xsl:value-of select="@id"/>.png</xsl:attribute>
+		</img>
+	</xsl:template>
+
 	<xsl:template name="resolveLink">
 		<xsl:param name="external" select="@external" />
 		<xsl:param name="refid" select="@refid" />
