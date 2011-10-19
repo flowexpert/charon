@@ -100,7 +100,9 @@ public:
 	InputSlot < cimg_library::CImgList<T> > flowInit;
 	/// iterator helper input
 	InputSlot < IteratorHelper<T>* > helper;
-	/// final flow result after all iterations 
+	/// external stop criterion
+	InputSlot < bool > stop;
+	/// final flow result after all iterations
 	OutputSlot < cimg_library::CImgList<T> > result;
 
 	/// create a new SimpleIterator object

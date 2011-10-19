@@ -37,19 +37,21 @@ SimpleIterator<T>::SimpleIterator(const std::string& name) :
 			"You have to activate at least one stop criterion by "
 			"setting maxRuns or epsilon to a value greater than "
 			"zero."),
-		flowInit(true,false) // optional
+		flowInit(true,false), // optional
+		stop(true,false) // optional
 {
 	_init();
 }
 
 template <typename T>
 SimpleIterator<T>::SimpleIterator(
-		const std::string& className,
-		const std::string& instanceName,
-		const std::string& doc) :
-	TemplatedParameteredObject<T>(className, instanceName,
-			doc + "<br><br>This class inherits SimpleIterator."),
-	flowInit(true,false) // optional
+			const std::string& className,
+			const std::string& instanceName,
+			const std::string& doc) :
+		TemplatedParameteredObject<T>(className, instanceName,
+				doc + "<br><br>This class inherits SimpleIterator."),
+		flowInit(true,false), // optional
+		stop(true,false) // optional
 {
 	_init();
 }
@@ -76,6 +78,8 @@ void SimpleIterator<T>::_init() {
 		"iteration helper input", "IteratorHelper<T>*");
 	ParameteredObject::_addOutputSlot(result, "result",
 		"final flow result after all iterations", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+		stop, "stop", "external stop criterion");
 
 	// avoid undefined references
 	_addConstructor(SimpleIterator<T>(
@@ -139,6 +143,9 @@ void SimpleIterator<T>::iterate() {
 	bool cont;
 	do {
 		cont = singleStep();
+		if (stop.connected()) {
+			cont = cont && !stop();
+		}
 	} while (cont);
 }
 
@@ -259,8 +266,9 @@ bool SimpleIterator<T>::finishStep() {
 		sout << "\t\tupdate rate: " << updateRate() << "\n";
 		helpFlow.assign(temp);
 	}
-	else
+	else {
 		helpFlow.assign(newFlow);
+	}
 
 	sout << "\t\tnew flow size: "
 			<< helpFlow[0].width() << "x"
