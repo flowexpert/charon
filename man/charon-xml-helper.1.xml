@@ -59,6 +59,7 @@
 			<group choice="opt">
 				<arg choice="plain"><option>--ids</option></arg>
 				<arg choice="plain"><option>--mod-index</option></arg>
+				<arg choice="plain"><option>--xcheck</option></arg>
 			</group>
 		</cmdsynopsis>
 	</refsynopsisdiv>
@@ -102,6 +103,30 @@
 					this condition.
 					The resulting xml file is printed on stdout.
 				</para></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>--xcheck</option></term>
+				<listitem>
+					<para>
+						Cross check group of charon modules and objects
+						that inherit ParameteredObject.
+						Prints out differences between list of potential module
+						classes and charon-modules group content.
+					</para>
+					<para>
+						All items within the charon-modules group should
+						be real modules, i.e. if items of that group are found
+						that do not inherit ParameteredObject, something
+						is wrong.
+						Remove these items from the charon-modules group.
+					</para>
+					<para>
+						The other way round is ok, e.g. abstract base classes
+						may inherit ParameteredObject and so are detected
+						as module candidates but since they cannot be
+						instanciated, they are no real modules.
+					</para>
+				</listitem>
 			</varlistentry>
 		</variablelist>
 	</refsect1>

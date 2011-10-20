@@ -97,11 +97,36 @@ bool checkModule(QString refid) {
 	return false;
 }
 
+QMap<QString,QString> groupContent(QString groupId) {
+	QDomDocument doc(groupId);
+	QString fName = QString("%1/%2.xml").arg(docDir).arg(groupId);
+	QFile file(fName);
+	if (!file.open(QIODevice::ReadOnly))
+		throw std::runtime_error("failed to open file "+fName.toStdString());
+	if (!doc.setContent(&file)) {
+		file.close();
+		throw std::runtime_error("xml parse error: "+fName.toStdString());
+	}
+	file.close();
+
+	const QDomElement& def = doc.documentElement()
+			.firstChildElement("compounddef");
+	Q_ASSERT(def.attribute("id") == groupId);
+
+	QMap<QString,QString> result;
+	for (QDomElement cur = def.firstChildElement("innerclass");
+			!cur.isNull(); cur = cur.nextSiblingElement("innerclass")) {
+		result.insert(cur.attribute("refid"),cur.text());
+	}
+
+	return result;
+}
+
 int main(int argc, char** argv) {
 	QTextStream qout(stdout), qerr(stderr);
 	if (argc < 2) {
 		qout << "Usage: " << argv[0] << " <DocXmlDir> [options]\n";
-		qout << "\twith options: --ids, --mod-index\n";
+		qout << "\twith options: --ids, --mod-index, --xcheck\n";
 		return -2;
 	}
 	docDir = QDir(argv[1]).absolutePath();
@@ -119,52 +144,112 @@ int main(int argc, char** argv) {
 	}
 	file.close();
 
-	QStringList modules, modIds, others;
+	QStringList others;
+	QMap<QString,QString> modules, modGrp;
 
 	QDomNodeList nl = doc.elementsByTagName("compound");
+
+	// find charon-modules group
+	QString grpId;
+	for (uint i=0; i < nl.length(); i++) {
+		const QDomNode& n = nl.item(i);
+		if (n.isElement() && n.toElement().attribute("kind") == "group") {
+			QString refId = n.toElement().attribute("refid");
+			QString name = n.firstChildElement("name").text();
+			if (name == "charon-modules") {
+				grpId = refId;
+			}
+		}
+	}
+	if (grpId.isEmpty()) {
+		qerr << "charon-modules group not found!\n";
+	}
+	else {
+		modGrp = groupContent(grpId);
+	}
+
+	// analyze classes
 	for (uint i=0; i < nl.length(); i++) {
 		const QDomNode& n = nl.item(i);
 		if (n.isElement() && n.toElement().attribute("kind") == "class") {
-			if (checkModule(n.toElement().attribute("refid"))) {
-				modules << n.firstChildElement("name").text();
-				modIds << n.toElement().attribute("refid");
+			QString refId = n.toElement().attribute("refid");
+			QString name = n.firstChildElement("name").text();
+			if (checkModule(refId)) {
+				modules.insert(refId, name);
 			}
 			else {
-				others << n.firstChildElement("name").text();
+				others << name;
 			}
 		}
 	}
 
 	if(argc <= 2) {
-		qout << "Charon-Modules:\n";
-		for (int i=0; i < modules.size(); i++) {
-			qout << "\t" << modules.at(i) << "\n";
-		}
-		qout << "Non-Module Classes:\n";
-		for (int i=0; i < others.size(); i++) {
-			qout << "\t" << others.at(i) << "\n";
-		}
-	}
-	else if (std::string(argv[2]) == "--ids") {
-		for (int i=0; i < modIds.size(); i++) {
-			qout << modIds.at(i) << "\n";
-		}
-	}
-	else if (std::string(argv[2]) == "--mod-index") {
-		QDomElement base = doc.documentElement();
-		QDomElement cur = base.firstChildElement("compound");
-		while(!cur.isNull()) {
-			if (cur.attribute("kind") != "class" ||
-						modIds.indexOf(cur.attribute("refid")) < 0) {
-				QDomElement old = cur;
-				cur=cur.nextSiblingElement("compound");
-				base.removeChild(old);
-			}
-			else {
-				cur=cur.nextSiblingElement("compound");
+		if(modules.size() > 0) {
+			QMapIterator<QString, QString> modIter(modules);
+			qout << "Charon-Modules:\n";
+			while (modIter.hasNext()) {
+				qout << "\t" << modIter.next().value() << "\n";
 			}
 		}
-		doc.save(qout,2);
+		if (others.size() > 0) {
+			qout << "Non-Module Classes:\n";
+			for (int i=0; i < others.size(); i++) {
+				qout << "\t" << others.at(i) << "\n";
+			}
+		}
+	}
+	else {
+		QString opt2 = argv[2];
+		if (opt2 == "--xcheck") {
+			QStringList notInModules;
+			QMapIterator<QString, QString> grpIter(modGrp);
+			while (grpIter.hasNext()) {
+				QString curId = grpIter.next().key();
+				if(modules.contains(curId)) {
+					modules.remove(curId);
+				}
+				else {
+					notInModules << grpIter.value();
+				}
+			}
+			if (notInModules.size() > 0) {
+				qout << "In charon-modules group but no ParameteredObject:\n";
+				QStringListIterator mIter(notInModules);
+				while (mIter.hasNext()) {
+					qout << "\t" << mIter.next() << "\n";
+				}
+			}
+			if (modules.size() > 0) {
+				qout << "ParameteredObjects but not in charon modules group:\n";
+				QMapIterator<QString, QString> modIter(modules);
+				while (modIter.hasNext()) {
+					qout << "\t" << modIter.next().value() << "\n";
+				}
+			}
+		}
+		else if (opt2 == "--ids") {
+			QMapIterator<QString, QString> modIter(modules);
+			while (modIter.hasNext()) {
+				modIter.next();
+				qout << "\t" << modIter.key() << "\n";
+			}
+		}
+		else if (opt2 == "--mod-index") {
+			QDomElement base = doc.documentElement();
+			QDomElement cur = base.firstChildElement("compound");
+			while(!cur.isNull()) {
+				if (cur.attribute("kind") != "class" ||
+							!modules.contains(cur.attribute("refid"))) {
+					QDomElement old = cur;
+					cur=cur.nextSiblingElement("compound");
+					base.removeChild(old);
+				}
+				else {
+					cur=cur.nextSiblingElement("compound");
+				}
+			}
+			doc.save(qout,2);
+		}
 	}
 
 	return 0;

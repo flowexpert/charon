@@ -162,11 +162,17 @@ IF(BUILD_TESTING)
 			NAME XmlHelper
 			COMMAND charon-xml-helper "${CMAKE_CURRENT_SOURCE_DIR}"
 		)
-		SET_TESTS_PROPERTIES(XmlHelper
-			PROPERTIES PASS_REGULAR_EXPRESSION
+		SET_TESTS_PROPERTIES(XmlHelper PROPERTIES PASS_REGULAR_EXPRESSION
 			"Modules.*Inter.*Inter.*Non.*std.*std"
 		)
-		LIST(APPEND tests XmlHelper)
+		ADD_TEST(
+			NAME XmlHelperXCheck
+			COMMAND charon-xml-helper "${CMAKE_CURRENT_SOURCE_DIR}" --xcheck
+		)
+		SET_TESTS_PROPERTIES(XmlHelperXCheck PROPERTIES PASS_REGULAR_EXPRESSION
+			"^I.*ct:[\n\t\r]*InvalidModule[\n\t\r]*P.*p:[\n\t\r ]*Interpolator[\n\t\r ]*$"
+		)
+		LIST(APPEND tests XmlHelper XmlHelperXCheck)
 	ENDIF(USE_QT)
 
 	# add test labels for dashboard submission

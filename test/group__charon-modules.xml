@@ -3,42 +3,8 @@
   <compounddef id="group__charon-modules" kind="group">
     <compoundname>charon-modules</compoundname>
     <title>Charon Modules</title>
-    <innerclass refid="classArgosDisplay_1_1ArgosDisplayPlugin" prot="public">ArgosDisplay::ArgosDisplayPlugin</innerclass>
-    <innerclass refid="classBinOperator" prot="public">BinOperator</innerclass>
-    <innerclass refid="classChannelConverter" prot="public">ChannelConverter</innerclass>
-    <innerclass refid="classCImg2VigraMultiArray" prot="public">CImg2VigraMultiArray</innerclass>
-    <innerclass refid="classColorMask" prot="public">ColorMask</innerclass>
-    <innerclass refid="classCrop" prot="public">Crop</innerclass>
-    <innerclass refid="classDilationErosion" prot="public">DilationErosion</innerclass>
-    <innerclass refid="classFileReader" prot="public">FileReader</innerclass>
-    <innerclass refid="classFileReaderHDF5" prot="public">FileReaderHDF5</innerclass>
-    <innerclass refid="classFileWriter" prot="public">FileWriter</innerclass>
-    <innerclass refid="classFileWriterHDF5" prot="public">FileWriterHDF5</innerclass>
-    <innerclass refid="classFlow2HSV" prot="public">Flow2HSV</innerclass>
-    <innerclass refid="classFlowQuiver" prot="public">FlowQuiver</innerclass>
-    <innerclass refid="classFrameSelect" prot="public">FrameSelect</innerclass>
-    <innerclass refid="classImageBlur" prot="public">ImageBlur</innerclass>
-    <innerclass refid="classImageDisplay" prot="public">ImageDisplay</innerclass>
-    <innerclass refid="classImages2Sequence" prot="public">Images2Sequence</innerclass>
-    <innerclass refid="classInterpolatorCubic" prot="public">InterpolatorCubic</innerclass>
+    <innerclass refid="classInvalidModule" prot="public">InvalidModule</innerclass>
     <innerclass refid="classInterpolatorLinear" prot="public">InterpolatorLinear</innerclass>
-    <innerclass refid="classLinearFilter" prot="public">LinearFilter</innerclass>
-    <innerclass refid="classMask1D" prot="public">Mask1D</innerclass>
-    <innerclass refid="classMedianFilter" prot="public">MedianFilter</innerclass>
-    <innerclass refid="classMirror" prot="public">Mirror</innerclass>
-    <innerclass refid="classNormalize" prot="public">Normalize</innerclass>
-    <innerclass refid="classResize" prot="public">Resize</innerclass>
-    <innerclass refid="classRgb2Hsv" prot="public">Rgb2Hsv</innerclass>
-    <innerclass refid="classRoi" prot="public">Roi</innerclass>
-    <innerclass refid="classSplineResize" prot="public">SplineResize</innerclass>
-    <innerclass refid="classStatisticsDisplay_1_1StatisticsDisplayPlugin" prot="public">StatisticsDisplay::StatisticsDisplayPlugin</innerclass>
-    <innerclass refid="classSteeredDerivative" prot="public">SteeredDerivative</innerclass>
-    <innerclass refid="classStructureTensor" prot="public">StructureTensor</innerclass>
-    <innerclass refid="classSubarray" prot="public">Subarray</innerclass>
-    <innerclass refid="classThreshold" prot="public">Threshold</innerclass>
-    <innerclass refid="classVigraMultiArray2CImg" prot="public">VigraMultiArray2CImg</innerclass>
-    <innerclass refid="classWarp" prot="public">Warp</innerclass>
-    <innerclass refid="classWarpSymmetric" prot="public">WarpSymmetric</innerclass>
     <briefdescription>
 <para>Collection of all module classes. </para>    </briefdescription>
     <detaileddescription>
