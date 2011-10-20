@@ -1,0 +1,31 @@
+/** \defgroup charon-modules Charon Modules
+	Collection of all module classes.
+ */
+
+/** \defgroup charon-utils Utility Modules
+	General tag for all modules contained in charon-utils.
+ */
+
+/** \defgroup image-manipulators Image Manipulation
+	Image Manipulation Modules.
+ */
+
+/** \defgroup converters Converter
+	Image data or channel converters.
+ */
+
+/** \defgroup visualization Visualization Modules
+	Modules for data visualzation.
+ */
+
+/** \defgroup data-io Data Input/Output
+	Read or write data from disk.
+ */
+
+/** \defgroup charon-interpolators Interpolators
+	Interpolation Modules.
+ */
+
+/** \defgroup charon-helpers
+	Helper Modules, ranging from ROI selection to simple masks.
+ */
