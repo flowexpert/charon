@@ -1,3 +1,5 @@
+// Charon Utils Group Definitions
+
 /** \defgroup charon-modules Charon Modules
 	Collection of all module classes.
  */
@@ -26,6 +28,6 @@
 	Interpolation Modules.
  */
 
-/** \defgroup charon-helpers
+/** \defgroup charon-helpers Helper Modules
 	Helper Modules, ranging from ROI selection to simple masks.
  */
