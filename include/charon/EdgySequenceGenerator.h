@@ -46,6 +46,10 @@ template <typename T> class Interpolator;
 /** using a random pattern and some given mask representing a foreground
  *  and a background image.
  *  Velocities for foreground and background may be specified.
+ *
+ *  \ingroup charon-flow-testing
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template <typename T>
 class edgysequencegenerator_DECLDIR EdgySequenceGenerator :

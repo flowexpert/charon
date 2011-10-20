@@ -45,6 +45,10 @@
  *  decreasing weight).
  *  This helps to use convex optimization to generate a good initial guess and
  *  then switch to some non-convex optimization problem.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ *  \ingroup charon-iterators
  */
 template <typename T>
 class relaxingiterator_DECLDIR RelaxingIterator :

@@ -44,6 +44,8 @@
  *  This is the abstract base class of a solver form which all solver
  *  implementations should be derived. It contains the nested class MetaStencil,
  *  which is used to group multiple SubStencils.
+ *
+ *  \ingroup charon-flow-solvers
  */
 template <typename T>
 class solver_DECLDIR Solver : public TemplatedParameteredObject<T>

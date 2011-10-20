@@ -25,13 +25,13 @@
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef rfmc_EXPORTS
-///Visual C++ specific code
+/// Visual C++ specific code
 #define rfmc_DECLDIR __declspec(dllexport)
 #else
 #define rfmc_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
-///Not needed with GCC
+/// Not needed with GCC
 #define rfmc_DECLDIR
 #endif
 
@@ -47,6 +47,10 @@
  *  (RFMC): \f[z_x u + z_y v + w + z_t = 0\f]
  *  \f$u,v,w\f$ are the components of the range flow vector consisting of
  *  the 2D optical flow \f$(u,v)\f$ and the motion \f$w\f$ in z direction.
+ *
+ *  \ingroup charon-stencils
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template <class T>
 class rfmc_DECLDIR Rfmc : public Stencil<T>

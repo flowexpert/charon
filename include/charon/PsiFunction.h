@@ -41,6 +41,10 @@
 /// function implementing psi energy term
 /** which looks as follows:
  *  \f[\Psi(x)=\sqrt{x^2+\varepsilon^2}\f]
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ *  \ingroup charon-stencil-helpers
  */
 class psifunction_DECLDIR PsiFunction :
 		public ParameteredObject,

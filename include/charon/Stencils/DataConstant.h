@@ -92,6 +92,11 @@ class Function;
  *  As one may see above, using \f$I_x,I_y\f$ of the first frame is an
  *  approximation, so optionally, setting useImg2 to true, \f$I_x,I_y\f$
  *  of the second image are used for calculations.
+ *
+ *  \ingroup charon-stencils
+ *  \ingroup charon-learning
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template <class T>
 class dataconstant_DECLDIR DataConstant : public Stencil<T> {

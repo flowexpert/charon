@@ -42,6 +42,7 @@
 #include "Point4D.h"
 
 /// abstract base class for the different BrightnessModels
+/** \ingroup charon-stencil-helpers */
 template<class T>
 class brightnessmodel_DECLDIR BrightnessModel :
 		public TemplatedParameteredObject<T>

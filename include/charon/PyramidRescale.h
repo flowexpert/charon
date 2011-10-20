@@ -41,6 +41,11 @@
 #include <charon-utils/Roi.h>
 
 /// Rescaling for pyramid-based flow-estimation algorithms.
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ *  \ingroup charon-image-manipulators
+ */
 template <typename T>
 class pyramidrescale_DECLDIR PyramidRescale :
 		public TemplatedParameteredObject<T> {

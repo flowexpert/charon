@@ -40,6 +40,7 @@
 #include <charon/Functions/Function.h>
 
 /// Abstract function to be fitted to a probability density
+/** \ingroup charon-learning */
 class cdfitfunction_DECLDIR CDFitFunction : public ParameteredObject {
 public:
 	/// parameters to fit

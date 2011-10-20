@@ -40,10 +40,14 @@
 #include <charon-utils/CImg.h>
 
 /// Generate simple test sequences with ground truth
-///
-/// Currently, only sine sequences may be generated, but if needed,
-/// you can implement more.
-/// Dimension and frequencies may be provided.
+/** Currently, only sine sequences may be generated, but if needed,
+ *  you can implement more.
+ *  Dimension and frequencies may be provided.
+ *
+ *  \ingroup charon-flow-testing
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ */
 template <typename T>
 class sequencegenerator_DECLDIR SequenceGenerator :
 		public TemplatedParameteredObject<T> {

@@ -42,7 +42,10 @@
 #include <CImg.h>
 
 /// EnergyStencil for so called classic regularization
-/** EnergyStencil for so called classic regularization.
+/**
+ *  \ingroup charon-stencils
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template <typename T>
 class energyclassic_DECLDIR EnergyClassic :

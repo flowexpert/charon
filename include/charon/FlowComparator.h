@@ -40,8 +40,13 @@
 #include <charon-utils/CImg.h>
 
 /// Compare results of some flow calculation with the underlaying ground truth.
-/// Calculation results are passed through, e.g. to be saved later.
-/// This may avoid multiple calculations.
+/** Calculation results are passed through, e.g. to be saved later.
+ *  This may avoid multiple calculations.
+ *
+ *  \ingroup charon-flow-testing
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ */
 template <typename T>
 class flowcomparator_DECLDIR FlowComparator :
 		public TemplatedParameteredObject<T> {

@@ -48,6 +48,10 @@
  *  and its gradients wrt u/v
  *    2 * I_x * ( I_x * u + I_y * v + I_t )
  *    2 * I_y * ( I_x * u + I_y * v + I_t )
+ *
+ *  \ingroup charon-stencils
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template <typename T>
 class energybcc_DECLDIR EnergyBCC :

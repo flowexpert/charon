@@ -30,6 +30,11 @@
  *
  *  The weights \f$\{w_i\}\f$ are the parameters to fit, the widths
  *  \f$\{\sigma_i\}\f$ are fixed.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ *  \ingroup charon-learning
+ *  \ingroup charon-stencil-helpers
  */
 class mixtureofgaussians_DECLDIR MixtureOfGaussians : public CDFitFunction {
 private:

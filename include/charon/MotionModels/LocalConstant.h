@@ -43,13 +43,17 @@
 namespace MotionModels
 {
 
-/** @brief motion model with local constant flow
- *  @details Computes the bcce-term for the parameters
- *  @f$ a_i @f$ for an optical flow of the form
- *  @f[
+/// motion model with local constant flow
+/** Computes the bcce-term for the parameters
+ *  \f$ a_i \f$ for an optical flow of the form
+ *  \f[
 		\vec f \left( \begin{array}{c} x \\ y \\ z \end{array} \right) =
 			\left( \begin{array}{c} a_1 \\ a_2 \\ a_3 \end{array} \right)
-	@f]
+	\f]
+ *
+ *  \ingroup charon-stencil-helpers
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template<class T>
 class motionmodels_localconstant_DECLDIR LocalConstant :

@@ -47,6 +47,10 @@
  *
  *  You have to activate at least one stop criterion by
  *  setting maxRuns or epsilon to a value greater than zero.
+ *
+ *  \ingroup charon-iterators
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template <typename T>
 class simpleiterator_DECLDIR SimpleIterator :

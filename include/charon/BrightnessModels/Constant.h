@@ -46,6 +46,10 @@ namespace BrightnessModels
 {
 
 /// a brightness model for no brightness change
+/** \ingroup charon-stencil-helpers
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ */
 template<class T>
 class brightnessmodels_constant_DECLDIR Constant :
 		public BrightnessModel<T> {

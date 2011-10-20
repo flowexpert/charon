@@ -27,19 +27,24 @@
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef l2norm_EXPORTS
-///Visual C++ specific code
+/// Visual C++ specific code
 #define l2norm_DECLDIR __declspec(dllexport)
 #else
 #define l2norm_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
-///Not needed with GCC
+/// Not needed with GCC
 #define l2norm_DECLDIR
 #endif
 
 #include "../Stencil.h"
 
 /// Laplacian stencil used for regularization in global methods.
+/**
+ *  \ingroup charon-stencils
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ */
 template <class T>
 class l2norm_DECLDIR L2Norm : public Stencil<T>
 {

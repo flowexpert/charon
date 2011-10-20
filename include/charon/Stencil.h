@@ -71,6 +71,8 @@
  *  - MetaStencil:  Set of SubStencils grouped by unknown
  *  - SubStencil:   Mask for one unknown or the general mask
  *                  if no unknowns are used
+ *
+ *  \ingroup charon-stencils
  */
 template <class T>
 class stencil_DECLDIR Stencil : public TemplatedParameteredObject<T> {

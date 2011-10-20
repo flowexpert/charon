@@ -40,9 +40,13 @@
 #include "../MotionModel.h"
 
 /// General Brightness Change Constraint Equation
-/*
- *	This is the General Brightness Change Constraint Equation stencil which is
- *	derived from class Stencil.
+/**
+ *  This is the General Brightness Change Constraint Equation stencil which
+ *  is derived from class Stencil.
+ *
+ *  \ingroup charon-stencils
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template <class T>
 class gbcce_DECLDIR Gbcce : public Stencil<T>

@@ -44,6 +44,8 @@
 /// abstract base class for the different motion models
 /** If you need some input slots implementing your own MotionModel,
  *  you have to add them in your derived classs.
+ *
+ *  \ingroup charon-stencil-helpers
  */
 template<class T>
 class MotionModel: public TemplatedParameteredObject<T>

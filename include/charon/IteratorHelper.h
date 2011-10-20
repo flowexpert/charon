@@ -40,7 +40,12 @@
 #include <CImg.h>
 
 /// Helper for iterative image processing algorithms.
-/// This provides current values/initial values for further processing.
+/** This provides current values/initial values for further processing.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ *  \ingroup charon-iterators
+ */
 template <typename T>
 class iteratorhelper_DECLDIR IteratorHelper :
 		public TemplatedParameteredObject<T> {

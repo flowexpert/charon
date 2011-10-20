@@ -46,7 +46,10 @@ class PetscInit;
  *  <a href="http://www.mcs.anl.gov/petsc/petsc-as/">PETSc library</a>.
  *  It has been designed to run on multiple instances (machines, cpus)
  *  simultaneously.
- *  \see class Solver
+ *
+ *  \ingroup charon-flow-solvers
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template <typename T>
 class petscsolver_DECLDIR PetscSolver : public Solver<T>

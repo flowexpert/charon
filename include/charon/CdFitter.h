@@ -29,6 +29,10 @@ class CDFitFunction;
  *  as needed. Activate addMirrored to make sure that
  *  the training data are symmetric (this adds the trainig
  *  data inverted).
+ *
+ *  \ingroup charon-flow
+ *  \ingroup charon-modules
+ *  \ingroup charon-learning
  */
 template <typename T>
 class cdfitter_DECLDIR CdFitter : public TemplatedParameteredObject<T> {

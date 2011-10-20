@@ -44,6 +44,10 @@
  *  Although derivatives may be calculated using class LinearFilter,
  *  this plugin makes derivative calculations more compact.
  *  Only the derivatives of connected output slots are calculated.
+ *
+ *  \ingroup charon-image-manipulators
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template <typename T>
 class diff2d_DECLDIR Diff2D :

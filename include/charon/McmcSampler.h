@@ -36,10 +36,14 @@
 #endif
 
 /// Markov chain monte carlo sampler
-///
-/// This sampler implements the metropolis algorithm
-/// and changes the current value using
-/// gaussian noise with given sigma.
+/** This sampler implements the metropolis algorithm
+ *  and changes the current value using
+ *  gaussian noise with given sigma.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ *  \ingroup charon-learning
+ */
 class mcmcsampler_DECLDIR McmcSampler : public Sampler {
 public:
 	/// mcmc noise sigma

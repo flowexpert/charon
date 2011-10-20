@@ -37,6 +37,9 @@
 class Function;
 
 /// Abstract sampling class
+/**
+ *  \ingroup charon-learning
+ */
 class sampler_DECLDIR Sampler : public ParameteredObject {
 public:
 	/// sampling probability distribution

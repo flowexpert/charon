@@ -22,8 +22,14 @@
 #endif
 
 /// apply given sampler to generate test images
+/**
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
+ *  \ingroup charon-learning
+ */
 template <typename T>
-class samplegenerator_DECLDIR SampleGenerator : public TemplatedParameteredObject<T> {
+class samplegenerator_DECLDIR SampleGenerator :
+		public TemplatedParameteredObject<T> {
 public:
 	/// create instance
 	/// \param name		instance name

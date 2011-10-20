@@ -24,13 +24,13 @@
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef spatialpw_EXPORTS
-///Visual C++ specific code
+/// Visual C++ specific code
 #define spatialpw_DECLDIR __declspec(dllexport)
 #else
 #define spatialpw_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
-///Not needed with GCC
+/// Not needed with GCC
 #define spatialpw_DECLDIR
 #endif
 
@@ -44,6 +44,10 @@ class Function;
 /// This is the SpatialPW stencil
 /** This stencil implements the spacial pairwise term of the
  *  lerning optical flow paper by Sun et. al.
+ *
+ *  \ingroup charon-stencils
+ *  \ingroup charon-modules
+ *  \ingroup charon-flow
  */
 template <typename T>
 class spatialpw_DECLDIR SpatialPW : public Stencil<T> {
