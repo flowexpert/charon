@@ -51,13 +51,22 @@ bool checkModule(QString refid) {
 	QString nodeid;
 	for(QDomElement cur = inh.firstChildElement("node");
 			!cur.isNull(); cur = cur.nextSiblingElement("node")) {
-		QString linkId = cur.firstChildElement("link").attribute("refid");
+		const QDomElement& linkElem = cur.firstChildElement("link");
+		if (linkElem.isNull()) {
+			// no link attribute
+			break;
+		}
+		QString linkId = linkElem.attribute("refid");
 		if (linkId == refid) {
 			nodeid = cur.attribute("id");
 			break;
 		}
 	}
-	Q_ASSERT(!nodeid.isEmpty());
+	if (nodeid.isEmpty()) {
+		// node not found, possibly no link attributes present
+		// like in STL classes or classes without included tag file
+		return false;
+	}
 
 	// roll back inheritance to find ParameteredObject
 	// using a stack to allow multiple inheritance
