@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.7.4">
+  <compound refid="classInterpolator" kind="class"><name>Interpolator</name>
+    <member refid="classInterpolator_1a1f24a5dd2b78222b5aac76967ebf9467" kind="variable"><name>out</name></member>
+    <member refid="classInterpolator_1a22f0f3a40760b8518a0213cbaf2fff43" kind="function"><name>Interpolator</name></member>
+    <member refid="classInterpolator_1ac7d0f8245b324eeac2b331360848faf9" kind="function"><name>~Interpolator</name></member>
+    <member refid="classInterpolator_1adaed77e2ebd3eff88a57b7097be2d415" kind="function"><name>interpolate</name></member>
+  </compound>
+  <compound refid="classInterpolatorLinear" kind="class"><name>InterpolatorLinear</name>
+    <member refid="classInterpolatorLinear_1ade82d0d4a7d2f6a00046dbf4e7bd9685" kind="function"><name>InterpolatorLinear</name></member>
+    <member refid="classInterpolatorLinear_1a7c388394ca9722ca4bdebe0157313787" kind="function"><name>interpolate</name></member>
+  </compound>
+  <compound refid="classstd_1_1bad__alloc" kind="class"><name>std::bad_alloc</name>
+  </compound>
+  <compound refid="classstd_1_1exception" kind="class"><name>std::exception</name>
+  </compound>
+  <compound refid="group__charon-modules" kind="group"><name>charon-modules</name>
+  </compound>
+</doxygenindex>

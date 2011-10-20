@@ -1,0 +1,395 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="classInterpolator" kind="class" prot="public">
+    <compoundname>Interpolator</compoundname>
+    <basecompoundref refid="classTemplatedParameteredObject" prot="public" virt="non-virtual">TemplatedParameteredObject&lt; T &gt;</basecompoundref>
+    <derivedcompoundref refid="classInterpolatorCubic" prot="public" virt="non-virtual">InterpolatorCubic&lt; T &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classInterpolatorLinear" prot="public" virt="non-virtual">InterpolatorLinear&lt; T &gt;</derivedcompoundref>
+    <includes refid="Interpolator_8h" local="no">charon-utils/Interpolator.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>T</declname>
+        <defname>T</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classInterpolator_1a1f24a5dd2b78222b5aac76967ebf9467" prot="public" static="no" mutable="no">
+        <type><ref refid="classOutputSlot" kindref="compound" external="charon-core.tag">OutputSlot</ref>&lt; <ref refid="classInterpolator" kindref="compound">Interpolator</ref>&lt; T &gt; * &gt;</type>
+        <definition>OutputSlot&lt;Interpolator&lt;T&gt;*&gt; Interpolator&lt; T &gt;::out</definition>
+        <argsstring></argsstring>
+        <name>out</name>
+        <briefdescription>
+<para>This pointer as outupt slot. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/export/home/jgottfri/Dokumente/Sources/charon-suite/charon-utils/include/charon-utils/Interpolator.h" line="75" bodyfile="/export/home/jgottfri/Dokumente/Sources/charon-suite/charon-utils/include/charon-utils/Interpolator.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classInterpolator_1a22f0f3a40760b8518a0213cbaf2fff43" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Interpolator&lt; T &gt;::Interpolator</definition>
+        <argsstring>(const std::string &amp;className, const std::string &amp;name, const std::string &amp;doc)</argsstring>
+        <name>Interpolator</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>className</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>doc</declname>
+        </param>
+        <briefdescription>
+<para>Init interpolator. </para>        </briefdescription>
+        <detaileddescription>
+<para>Parameters are passed to the <ref refid="classParameteredObject" kindref="compound" external="charon-core.tag">ParameteredObject</ref> constructor. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>className</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>class name </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>instance name </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>doc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>class documentation </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/export/home/jgottfri/Dokumente/Sources/charon-suite/charon-utils/include/charon-utils/Interpolator.h" line="71"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classInterpolator_1ac7d0f8245b324eeac2b331360848faf9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Interpolator&lt; T &gt;::~Interpolator</definition>
+        <argsstring>()</argsstring>
+        <name>~Interpolator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/export/home/jgottfri/Dokumente/Sources/charon-suite/charon-utils/include/charon-utils/Interpolator.h" line="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classInterpolator_1adaed77e2ebd3eff88a57b7097be2d415" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>T</type>
+        <definition>virtual T Interpolator&lt; T &gt;::interpolate</definition>
+        <argsstring>(const cimg_library::CImg&lt; T &gt; &amp;src, float fx, float fy=0.f, float fz=0.f, int v=0) const =0</argsstring>
+        <name>interpolate</name>
+        <reimplementedby refid="classInterpolatorLinear_1a7c388394ca9722ca4bdebe0157313787">interpolate</reimplementedby>
+        <reimplementedby refid="classInterpolatorCubic_1aea31750f4bf0f25b9f976ef0ef1b798e">interpolate</reimplementedby>
+        <param>
+          <type>const <ref refid="structcimg__library_1_1CImg" kindref="compound" external="CImg.tag">cimg_library::CImg</ref>&lt; T &gt; &amp;</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>fx</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>fy</declname>
+          <defval>0.f</defval>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>fz</declname>
+          <defval>0.f</defval>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Calculate interpolation (up to 3D). </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>src</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>interpolation source </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>x position </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>y position </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fz</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>z position </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>4th dimension </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>interpolated value </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/export/home/jgottfri/Dokumente/Sources/charon-suite/charon-utils/include/charon-utils/Interpolator.h" line="88"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Abstract interpolation scheme. </para>    </briefdescription>
+    <detaileddescription>
+<para>This class is used to choose an interpolation scheme during runtime without the the need for if or switch-statements. To use an interpolator use subclasses of <ref refid="classInterpolator" kindref="compound">Interpolator</ref> e.g. <ref refid="classInterpolatorLinear" kindref="compound">InterpolatorLinear</ref> or <ref refid="classInterpolatorCubic" kindref="compound">InterpolatorCubic</ref>. </para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="564">
+        <label>TemplatedParameteredObject&lt; T &gt;</label>
+        <link refid="classTemplatedParameteredObject" external="charon-core.tag"/>
+        <childnode refid="565" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="566">
+        <label>InterpolatorCubic&lt; T &gt;</label>
+        <link refid="classInterpolatorCubic"/>
+        <childnode refid="563" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="565">
+        <label>ParameteredObject</label>
+        <link refid="classParameteredObject" external="charon-core.tag"/>
+      </node>
+      <node id="563">
+        <label>Interpolator&lt; T &gt;</label>
+        <link refid="classInterpolator"/>
+        <childnode refid="564" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="567">
+        <label>InterpolatorLinear&lt; T &gt;</label>
+        <link refid="classInterpolatorLinear"/>
+        <childnode refid="563" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="569">
+        <label>TemplatedParameteredObject&lt; T &gt;</label>
+        <link refid="classTemplatedParameteredObject" external="charon-core.tag"/>
+        <childnode refid="570" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="579">
+        <label>std::map&lt; std::string, AbstractParameter * &gt;</label>
+        <childnode refid="580" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+        <childnode refid="573" relation="usage">
+          <edgelabel>keys</edgelabel>
+        </childnode>
+      </node>
+      <node id="576">
+        <label>std::map&lt; std::string, unsigned int &gt;</label>
+        <childnode refid="573" relation="usage">
+          <edgelabel>keys</edgelabel>
+        </childnode>
+      </node>
+      <node id="578">
+        <label>Slot</label>
+        <link refid="classSlot" external="charon-core.tag"/>
+        <childnode refid="570" relation="usage">
+          <edgelabel>_parent</edgelabel>
+        </childnode>
+        <childnode refid="573" relation="usage">
+          <edgelabel>_type</edgelabel>
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="583">
+        <label>std::set&lt; AbstractSlot&lt; T &gt; * &gt;</label>
+      </node>
+      <node id="577">
+        <label>std::map&lt; std::string, Slot * &gt;</label>
+        <childnode refid="573" relation="usage">
+          <edgelabel>keys</edgelabel>
+        </childnode>
+        <childnode refid="578" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="570">
+        <label>ParameteredObject</label>
+        <link refid="classParameteredObject" external="charon-core.tag"/>
+        <childnode refid="571" relation="usage">
+          <edgelabel>_metadata</edgelabel>
+        </childnode>
+        <childnode refid="576" relation="usage">
+          <edgelabel>_genericClassNameCount</edgelabel>
+        </childnode>
+        <childnode refid="577" relation="usage">
+          <edgelabel>_inputs</edgelabel>
+          <edgelabel>_outputs</edgelabel>
+        </childnode>
+        <childnode refid="573" relation="usage">
+          <edgelabel>_className</edgelabel>
+          <edgelabel>_instanceName</edgelabel>
+        </childnode>
+        <childnode refid="579" relation="usage">
+          <edgelabel>_parameters</edgelabel>
+        </childnode>
+      </node>
+      <node id="581">
+        <label>OutputSlot&lt; Interpolator&lt; T &gt; * &gt;</label>
+        <link refid="classOutputSlot" external="charon-core.tag"/>
+        <childnode refid="582" relation="public-inheritance">
+        </childnode>
+        <childnode refid="584" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="574">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="572">
+        <label>std::map&lt; std::string, std::string &gt;</label>
+        <childnode refid="573" relation="usage">
+          <edgelabel>keys</edgelabel>
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="568">
+        <label>Interpolator&lt; T &gt;</label>
+        <link refid="classInterpolator"/>
+        <childnode refid="569" relation="public-inheritance">
+        </childnode>
+        <childnode refid="581" relation="usage">
+          <edgelabel>out</edgelabel>
+        </childnode>
+      </node>
+      <node id="575">
+        <label>std::vector&lt; std::string &gt;</label>
+        <childnode refid="573" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="582">
+        <label>AbstractSlot&lt; T &gt;</label>
+        <link refid="classAbstractSlot" external="charon-core.tag"/>
+        <childnode refid="578" relation="public-inheritance">
+        </childnode>
+        <childnode refid="583" relation="usage">
+          <edgelabel>_targets</edgelabel>
+        </childnode>
+      </node>
+      <node id="585">
+        <label>AbstractROData&lt; class &gt;</label>
+        <link refid="classAbstractROData" external="charon-core.tag"/>
+      </node>
+      <node id="571">
+        <label>ParameterFile</label>
+        <link refid="classParameterFile" external="charon-core.tag"/>
+        <childnode refid="572" relation="usage">
+          <edgelabel>_params</edgelabel>
+          <edgelabel>_setParams</edgelabel>
+        </childnode>
+        <childnode refid="575" relation="usage">
+          <edgelabel>_parameterLines</edgelabel>
+        </childnode>
+      </node>
+      <node id="584">
+        <label>AbstractData&lt; class &gt;</label>
+        <link refid="classAbstractData" external="charon-core.tag"/>
+        <childnode refid="585" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="580">
+        <label>AbstractParameter</label>
+        <link refid="classAbstractParameter" external="charon-core.tag"/>
+        <childnode refid="570" relation="usage">
+          <edgelabel>_parent</edgelabel>
+        </childnode>
+        <childnode refid="573" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="573">
+        <label>std::string</label>
+        <childnode refid="574" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/export/home/jgottfri/Dokumente/Sources/charon-suite/charon-utils/include/charon-utils/Interpolator.h" line="60" bodyfile="/export/home/jgottfri/Dokumente/Sources/charon-suite/charon-utils/include/charon-utils/Interpolator.h" bodystart="59" bodyend="89"/>
+    <listofallmembers>
+      <member refid="classParameteredObject_1ad23c49087608772b73fbcadc51552043" prot="protected" virt="non-virtual"><scope>Interpolator</scope><name>_addInputSlot</name></member>
+      <member refid="classParameteredObject_1aa815253422a12b2867e125c915081b12" prot="protected" virt="non-virtual"><scope>Interpolator</scope><name>_addOutputSlot</name></member>
+      <member refid="classParameteredObject_1a166126821840a53c8652d4e7bdffca20" prot="protected" virt="non-virtual"><scope>Interpolator</scope><name>_addParameter</name></member>
+      <member refid="classParameteredObject_1a7357c7c64156196ee8369a65bd45cd18" prot="protected" virt="non-virtual"><scope>Interpolator</scope><name>_addParameter</name></member>
+      <member refid="classParameteredObject_1a0a91c8e4154f535a6aea9077c755a4cb" prot="protected" virt="non-virtual"><scope>Interpolator</scope><name>_getTargetNodes</name></member>
+      <member refid="classParameteredObject_1a7e211f8dd957fa7bb01a6d11ccea8196" prot="protected" virt="non-virtual"><scope>Interpolator</scope><name>_setExecuted</name></member>
+      <member refid="classParameteredObject_1af022ffbf9fdfd29f25c40fdfb1fe7668" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>build_type</name></member>
+      <member refid="classParameteredObject_1a402ca923c887c0330ac3fa6069accbea" prot="public" virt="virtual"><scope>Interpolator</scope><name>connected</name></member>
+      <member refid="classParameteredObject_1a8e000259b073fdd719823f042b8f4348" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>DEBUG_BUILD</name></member>
+      <member refid="classParameteredObject_1a77c2e7ce734a1efd371848d61562e0e9" prot="public" virt="virtual"><scope>Interpolator</scope><name>execute</name></member>
+      <member refid="classParameteredObject_1a9edbbf08e5dfd0329ab4609266822f00" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>executed</name></member>
+      <member refid="classParameteredObject_1a7f19cb9dfbc47b72cb4476f1d0433b6d" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getClassName</name></member>
+      <member refid="classParameteredObject_1ad5284a7c413d5a3c7b2b028e59e71141" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getCreateMetadata</name></member>
+      <member refid="classParameteredObject_1a52cfd6fee9e77ae5a4b89fdc1b911419" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getInputSlots</name></member>
+      <member refid="classParameteredObject_1ac58e063a1ca0e8512f31330b8411edf8" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getName</name></member>
+      <member refid="classParameteredObject_1a1e9caf1fe466d01fc06d6ec5797ea091" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getNeighbours</name></member>
+      <member refid="classParameteredObject_1a163541f94129522df515d247c2e08932" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getNeighbours</name></member>
+      <member refid="classParameteredObject_1a90d1a860ab4d4d2b42efec19bed75732" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getOutputSlots</name></member>
+      <member refid="classParameteredObject_1aef3139cf3a10ac0e93c2591da44a95d3" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getParameter</name></member>
+      <member refid="classParameteredObject_1a68cd9c0f112d00b1450a024130fd1ba1" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getParameters</name></member>
+      <member refid="classParameteredObject_1a04def5f71a030a4c274548a13f0e88b8" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getSlot</name></member>
+      <member refid="classParameteredObject_1ad3172f8baf7dbc80fdbbe15af89ecde1" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>getSlot</name></member>
+      <member refid="classTemplatedParameteredObject_1a6f820de3ec28b2c47e61513c4ed54d0e" prot="public" virt="virtual"><scope>Interpolator</scope><name>getTemplateType</name></member>
+      <member refid="classInterpolator_1adaed77e2ebd3eff88a57b7097be2d415" prot="public" virt="pure-virtual"><scope>Interpolator</scope><name>interpolate</name></member>
+      <member refid="classInterpolator_1a22f0f3a40760b8518a0213cbaf2fff43" prot="protected" virt="non-virtual"><scope>Interpolator</scope><name>Interpolator</name></member>
+      <member refid="classParameteredObject_1adf37df8a7922e4d77f8da1a49801877b" prot="public" virt="virtual"><scope>Interpolator</scope><name>loadParameters</name></member>
+      <member refid="classInterpolator_1a1f24a5dd2b78222b5aac76967ebf9467" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>out</name></member>
+      <member refid="classParameteredObject_1ab5717a2d028de6be5f1d5b5ea71dae5d" prot="protected" virt="non-virtual"><scope>Interpolator</scope><name>ParameteredObject</name></member>
+      <member refid="classParameteredObject_1ab6a9627c12213e040149e1d7fe8f3a0a" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>RELEASE_BUILD</name></member>
+      <member refid="classParameteredObject_1a69ef919aa208e0fb7034062bb1b2838e" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>resetExecuted</name></member>
+      <member refid="classParameteredObject_1a3667cf26fefe91428a2bf7c6478e5a98" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>save</name></member>
+      <member refid="classParameteredObject_1ab7406351562dd8fa2d12ded7da5913cc" prot="public" virt="virtual"><scope>Interpolator</scope><name>saveParameters</name></member>
+      <member refid="classParameteredObject_1a5df8f6f393084d19bca035acc8d134da" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>setCreateMetadata</name></member>
+      <member refid="classParameteredObject_1a235ae4c4373ce7205cbe9c8db5b71fe8" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>setParameter</name></member>
+      <member refid="classTemplatedParameteredObject_1a207ac1f93ffcf20d5a3f81f321be0dd9" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>TemplatedParameteredObject</name></member>
+      <member refid="classParameteredObject_1adcfd805ba6a80c8e797287f2331d8581" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>templateTypeToString</name></member>
+      <member refid="classParameteredObject_1aa27a41db85974fda37c4d4e8d917a2a2" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>TYPE_DOUBLE</name></member>
+      <member refid="classParameteredObject_1a35dd23d91153f50fc9b645bde62dbbf5" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>TYPE_FLOAT</name></member>
+      <member refid="classParameteredObject_1a74d96cc9873c946d6104dde5b925a183" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>TYPE_INT</name></member>
+      <member refid="classParameteredObject_1ac2220884aff496cef9c6d11abb294bc1" prot="public" virt="non-virtual"><scope>Interpolator</scope><name>UNDEFINED_BUILD</name></member>
+      <member refid="classInterpolator_1ac7d0f8245b324eeac2b331360848faf9" prot="public" virt="virtual"><scope>Interpolator</scope><name>~Interpolator</name></member>
+      <member refid="classParameteredObject_1afa02938d394891514daddde61ccdd919" prot="public" virt="virtual"><scope>Interpolator</scope><name>~ParameteredObject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

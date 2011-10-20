@@ -156,6 +156,19 @@ IF(BUILD_TESTING)
 		ENDIF(WIN32)
 	ENDIF(USE_CIMG)
 
+	# charon-xml-helper test
+	IF(USE_QT)
+		ADD_TEST(
+			NAME XmlHelper
+			COMMAND charon-xml-helper "${CMAKE_CURRENT_SOURCE_DIR}"
+		)
+		SET_TESTS_PROPERTIES(XmlHelper
+			PROPERTIES PASS_REGULAR_EXPRESSION
+			"Modules.*Inter.*Inter.*Non.*std.*std"
+		)
+		LIST(APPEND tests XmlHelper)
+	ENDIF(USE_QT)
+
 	# add test labels for dashboard submission
 	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS charon-utils)
 	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon-utils Tests")
