@@ -7,7 +7,7 @@
 	<!-- Parameters that may be passed to this stylesheet -->
 	<xsl:param name="basedir" select="'.'"/>
 	<xsl:param name="stylesheet" select="'styles.css'"/>
-	<xsl:param name="index" select="'0'"/>
+	<xsl:param name="index" select="0"/>
 
 	<xsl:template match="/">
 		<html>
