@@ -102,6 +102,22 @@ public:
 	}
 };
 
+class  ExceptSample : public ParameteredObject {
+
+public:
+	ExceptSample(const std::string& name = "") :
+		ParameteredObject("exceptsample", name,
+			"sample class which throws")
+		{ ;	}
+
+	virtual void execute() {
+		PARAMETEREDOBJECT_AVOID_REEXECUTION;
+		ParameteredObject::execute();
+		raise(std::string("error")) ;
+	}
+} ;
+
+
 /// Main test application.
 int test() {
 	// output to standart out
@@ -201,6 +217,19 @@ int test() {
 	sample->save(testfile);
 	testfile.save("parametertest2.wrp");
 
+	ExceptSample* exceptSample = new ExceptSample(std::string("instance")) ;
+	bool hasThrown = false ;
+	try
+	{
+		exceptSample->execute() ;
+	}
+	catch(std::runtime_error &err)
+	{	hasThrown = true ;	}
+	catch(std::exception &err)
+	{	;	}
+	assert(hasThrown) ;
+
+	delete exceptSample ;
 	delete sample;
 	delete outgen;
 	delete outgen2;

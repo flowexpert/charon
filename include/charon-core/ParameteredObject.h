@@ -471,6 +471,17 @@ public:
 	 */
 	virtual bool connected() const;
 
+	
+	/// throw an exception with information about the ParameteredObject
+	/** Throws an excption of class std::runtime_error with 
+	 *  additional information about the class type, template type 
+	 *  and the ParameteredObject.
+	 * \param message	Error message which will appended to the 
+	 *		what c-string of the std::exception
+	 */
+	void raise(const std::string& message) const ;
+
+
 	AbstractParameter & getParameter(const std::string & name) const;
 
 	static void setCreateMetadata(bool c);
@@ -501,5 +512,6 @@ public:
 
 	virtual const std::string getTemplateType() const;
 };
+
 
 #endif // _ParameteredObject_H

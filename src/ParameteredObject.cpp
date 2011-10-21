@@ -29,6 +29,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <stdexcept>
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-core/PluginManagerInterface.h>
 
@@ -472,6 +473,18 @@ bool ParameteredObject::getCreateMetadata() {
 
 	return _createMetadata;
 }
+
+void ParameteredObject::raise(const std::string& message) const
+{
+	std::string msg = this->getClassName() ;
+	const std::string& templateType = this->getTemplateType() ;
+	if(templateType.length() > 0)
+		msg += "<" + templateType + ">" ;
+	msg += " \"" + this->getName() + "\" : " + message ;
+
+	throw std::runtime_error(msg) ;
+}
+
 
 AbstractParameter & ParameteredObject::getParameter(
 		const std::string & name) const {
