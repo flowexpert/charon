@@ -54,7 +54,7 @@ To generate an index page of all classes, use the command
 
 <code>
 xsltproc --stringparam basedir "{build dir}/doc/xml" \ \n
-    "{source dir}/doc/modIndex.xsl" "{build dir}/doc/xml/index.xml > classIndex.html
+    "{source dir}/doc/modIndex.xsl" "{build dir}/doc/xml/index.xml" > classIndex.html
 </code>
 
 \section stylesheets Available XSL stylesheets
