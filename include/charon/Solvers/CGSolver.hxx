@@ -32,6 +32,11 @@
 
 #define CG_DIRECTION_PR
 
+#ifdef _MSC_VER
+	#define isnan(x) _isnan(x)
+	#define isinf(x) !_finite(x)
+#endif
+
 template <typename T>
 CGSolver<T>::CGSolver(const std::string& name) : 
 		TemplatedParameteredObject<T>("CGSolver", name),
@@ -347,7 +352,7 @@ void CGSolver<T>::minimize(
         - (T(2.0) * d1+d2) * (x2-x1);
 
       x3 = x1-d1*((x2-x1)*(x2-x1))
-	 / (B + sqrt((T)(B*B - A*d1*(x2-x1))));
+	 / (B + sqrt(double(B*B - A*d1*(x2-x1))));
 
       //      if (!isreal(x3) || _isnan(x3) || _isinf(x3) || (x3 < 0)) {
 
@@ -396,7 +401,7 @@ void CGSolver<T>::minimize(
 	// B = 3 * (f4-f2) - (2*d2+d4) * (x4 - x2);
 	B = T(3.0) * (f4-f2)
 	  - (T(2.0) * d2+d4) * (x4 - x2);
-	x3 = x2 + (sqrt((T)(B*B - A*d2*(x4-x2)*(x4-x2))) - B) / A;
+	x3 = x2 + (sqrt(double(B*B - A*d2*(x4-x2)*(x4-x2))) - B) / A;
       }
 
       if (isnan(x3) || isinf(x3)) {
