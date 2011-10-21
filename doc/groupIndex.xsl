@@ -39,6 +39,10 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<h1>Module Index</h1>
+				<p>
+					For a grouped view of all modules and related classes,
+					see <a href="groups.html">Group Index</a>.
+				</p>
 			</xsl:otherwise>
 		</xsl:choose>
 		<table class="index">
