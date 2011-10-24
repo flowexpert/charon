@@ -2,7 +2,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 
-<refentry id="tuchulcha-ref">
+<refentry id="man-tuchulcha">
 	<refentryinfo>
 		<title>Workflow Configurator GUI</title>
 		<productname>tuchulcha</productname>
@@ -98,4 +98,3 @@
 		</variablelist>
 	</refsection>
 </refentry>
-
