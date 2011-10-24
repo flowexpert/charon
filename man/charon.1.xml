@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-	"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 
-<refentry>
+<refentry id="charon-ref">
 	<refentryinfo>
 		<title>Charon workflow executor</title>
 		<productname>charon</productname>
@@ -57,7 +57,7 @@
 			<arg choice="plain"><replaceable>parameterFile</replaceable></arg>
 		</cmdsynopsis>
 	</refsynopsisdiv>
-	<refsect1 id="description">
+	<refsection id="charon-desc">
 		<title>Description</title>
 		<para>
 			<command>charon</command> executes a given charon workflow.
@@ -76,10 +76,10 @@
 			do not use any Qt widget modules in the workflow e.g.
 			for visualization.
 		</para>
-	</refsect1>
-	<refsect1 id="options">
+	</refsection>
+	<refsection id="charon-opts">
 		<title>Options</title>
-		<refsect2 id="general">
+		<refsection>
 			<title>Generic Options</title>
 			<variablelist>
 				<varlistentry>
@@ -116,8 +116,8 @@
 					</para></listitem>
 				</varlistentry>
 			</variablelist>
-		</refsect2>
-		<refsect2>
+		</refsection>
+		<refsection>
 			<title>Path Settings</title>
 			<variablelist>
 				<varlistentry>
@@ -162,9 +162,9 @@
 					</para></listitem>
 				</varlistentry>
 			</variablelist>
-		</refsect2>
-	</refsect1>
-	<refsect1 id="files">
+		</refsection>
+	</refsection>
+	<refsection id="charon-files">
 		<title>Files</title>
 		<variablelist>
 			<varlistentry>
@@ -176,6 +176,6 @@
 				</para></listitem>
 			</varlistentry>
 		</variablelist>
-	</refsect1>
+	</refsection>
 </refentry>
 
