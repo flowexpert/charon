@@ -54,6 +54,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/FileReader.h
 		${CHARON_UTILS_INCLUDE_DIR}/FileReader.hxx
 	)
+	ADD_LIBRARY(floreader SHARED
+		FloReader.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/FloReader.h
+		${CHARON_UTILS_INCLUDE_DIR}/FloReader.hxx
+	)
 	ADD_LIBRARY(filewriter SHARED FileWriter.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/FileWriter.h
 		${CHARON_UTILS_INCLUDE_DIR}/FileWriter.hxx
