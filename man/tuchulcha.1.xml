@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-	"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 
-<refentry>
+<refentry id="tuchulcha-ref">
 	<refentryinfo>
 		<title>Workflow Configurator GUI</title>
 		<productname>tuchulcha</productname>
@@ -76,14 +76,14 @@
 			<arg choice="opt"><replaceable>workflowFile</replaceable></arg>
 		</cmdsynopsis>
 	</refsynopsisdiv>
-	<refsect1 id="description">
+	<refsection id="tuchulcha-desc">
 		<title>Description</title>
 		<para>
 			<command>tuchulcha</command> opens the given workflow or starts
 			with an empty workspace.
 		</para>
-	</refsect1>
-	<refsect1 id="files">
+	</refsection>
+	<refsection id="tuchulcha-files">
 		<title>Files</title>
 		<variablelist>
 			<varlistentry>
@@ -96,6 +96,6 @@
 				</para></listitem>
 			</varlistentry>
 		</variablelist>
-	</refsect1>
+	</refsection>
 </refentry>
 
