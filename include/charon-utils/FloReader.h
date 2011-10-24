@@ -1,24 +1,24 @@
 /*
-    This file is part of Charon.
+	This file is part of Charon.
 
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file FloReader.h
+/** \file FloReader.h
  * Declaration of the parameter class FloReader.
- * @author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
+ * \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
  *     Michael Baron</a>
- * @date 24.10.2011
+ * \date 24.10.2011
  */
 
 #ifndef _FLOREADER_H_
@@ -49,19 +49,19 @@
 template <typename T>
 class floreader_DECLDIR FloReader : public TemplatedParameteredObject<T> {
 public:
-    /// filename to read ground-truth from
-    Parameter<std::string> filename;
+	/// filename to read ground-truth from
+	Parameter<std::string> filename;
 
-    /// motion data as output slot
-    OutputSlot<cimg_library::CImgList<T> > out;
+	/// motion data as output slot
+	OutputSlot<cimg_library::CImgList<T> > out;
 
-    /// create a new sample object
-    /// @param name             Object name
+	/// create a new sample object
+	/// \param name             Object name
 	FloReader(const std::string& name = "");
 
-    /// Update object.
-    /// Reload image and put new data into the output slot.
-    virtual void execute();
+	/// Update object.
+	/// Reload image and put new data into the output slot.
+	virtual void execute();
 };
 
 #endif // _FLOREADER_H_

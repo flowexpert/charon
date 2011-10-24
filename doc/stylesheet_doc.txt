@@ -39,7 +39,7 @@ Addidionally it checks, which classes are grouped in the
 
 An option summary and description how to call \c charon-xml-helper
 is printed, if called without arguments. See
-<a href="http://charon-suite.sourceforge.net/doc/man/charon-xml-helper.html">
+<a href="http://charon-suite.sourceforge.net/doc/man/man-charon-xml-helper.html">
 charon-xml-helper manpage</a> for detailed description of the
 command line options.
 
