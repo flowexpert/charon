@@ -40,9 +40,9 @@ This file conatins the titlepage and additional information.
 
 	</referenceinfo>
 	<title>Charon Suite Manpages</title>
-	<subtitle>application reference</subtitle>
+	<subtitle>Application Reference</subtitle>
 	<partintro>
-		<title>About the manpages</title>
+		<title>About the Manpages</title>
 		<para>
 			The manpages show how to call the applications shipped with
 			<ulink url="http://charon-suite.sourceforge.net">charon-suite</ulink>
