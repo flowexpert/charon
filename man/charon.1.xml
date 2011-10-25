@@ -71,11 +71,11 @@
 			<option>--logfile
 				<replaceable class="parameter">file</replaceable></option>).
 		</para>
-		<note>
+		<note><simpara>
 			There is no Qt Gui event loop in this application,
 			so make sure that you do not use any Qt widget modules
 			in the workflow e.g. for visualization.
-		</note>
+		</simpara></note>
 	</refsection>
 	<refsection id="charon-opts">
 		<title>Options</title>
