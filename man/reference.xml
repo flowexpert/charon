@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>		
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+        "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY refentries SYSTEM "refentries.xml">
+]>
+<!--
+Copy all refentry pages into a file called "refentries.xml",
+e.g. using xsltproc.
+That file will be included into this manpage reference and
+provides the refentries shown in the reference.
+This file conatins the titlepage and additional information.
+-->
+<reference id="manpages">
+	<referenceinfo>
+		<copyright>
+			<year>2011</year>
+			<holder>Heidelberg Collaboratory for Image Processing</holder>
+		</copyright>
+		<legalnotice id="charon-license">
+			<para>This documentation is part of Charon.</para>
+			<para>
+				Charon is free software: you can redistribute it and/or modify
+				it under the terms of the GNU Lesser General Public License as
+				published by the Free Software Foundation, either version 3 of
+				the License, or (at your option) any later version.
+			</para>
+			<para>
+				Charon is distributed in the hope that it will be useful,
+				but WITHOUT ANY WARRANTY; without even the implied warranty of
+				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+				GNU Lesser General Public License for more details.
+			</para>
+			<para>
+				You should have received a copy of the GNU Lesser General
+				Public License along with Charon.
+				If not, see
+				<ulink url="http://www.gnu.org/licenses/"/>.
+			</para>
+		</legalnotice>
+
+	</referenceinfo>
+	<title>Charon Suite Manpages</title>
+	<subtitle>application reference</subtitle>
+	<partintro>
+		<title>About the manpages</title>
+		<para>
+			The manpages show how to call the applications shipped with
+			<ulink url="http://charon-suite.sourceforge.net">charon-suite</ulink>
+			from the command line and give a reference of their command line
+			options and parameters.
+		</para>
+		<para>
+			The manpages are generated from the
+			<ulink url="http://www.docbook.org">docbook</ulink> xml files located
+			in the <filename class="directory">man</filename> directory of the
+			projects.
+			If you are using linux binary packages (e.g. deb packages),
+			it is likely that these manpages already have been installed to your
+			system.
+			E.g. typing
+			<code><command>man</command> <replaceable>charon</replaceable></code>
+			at the command prompt should show the page
+			<xref linkend="man-charon"/>.
+		</para>
+		<para>
+			The html pages you are currently reading are another possibility to
+			read the man page content online.
+			The pages are synchronized with the current <command>bzr</command>
+			upstream located at
+			<ulink url="http://code.launchpad.net/~charon-developers">
+				launchpad</ulink>.
+		</para>
+	</partintro>
+	&refentries;
+</reference>
+
