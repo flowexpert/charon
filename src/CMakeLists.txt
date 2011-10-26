@@ -146,6 +146,7 @@ IF(USE_CIMG)
 		resize
 		filereader
 		filewriter
+		floreader
 		imageblur
 		imagedisplay
 		interpolatorcubic
