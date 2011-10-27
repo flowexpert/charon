@@ -36,6 +36,8 @@
 #endif
 
 #include <charon-core/ParameteredObject.h>
+#include <charon/IteratorHelper.h>
+
 #include <charon/EnergyStencil.h>
 #include <CImg.h>
 #include <vector>
@@ -61,14 +63,17 @@ public:
 	/// Input slot for EnergyStencils
 	InputSlot< EnergyStencil<T>* > energyStencils;
 
-	/// Input slot for the quantity to be optimized.
-	InputSlot< cimg_library::CImgList<T> > initialParameters;
+        /// Input slot for the quantity to be optimized.
+	InputSlot< IteratorHelper<T>* > itHelper;
 
-	/// Output slot yielding the optimized quantity.
-	OutputSlot< cimg_library::CImgList<T> > optimizedParameters;
+        /// Output slot for feedback
+	OutputSlot< cimg_library::CImgList<T> > result;
 
 	///  length parameter, see "minimize.m" for details
 	Parameter< int > length;
+
+        ///  flow dimensions
+	Parameter< int > flowDimensions;
 
 	/// default constructor
 	CGSolver(const std::string& name = "" /**[in] instance name*/);
@@ -78,6 +83,7 @@ public:
 
 	/// minimize function
 	void minimize(
+                cimg_library::CImgList<T> &_itflow,
 		std::vector<T> &X,
 		std::vector<T> &startingPoint_X,
 		typename std::set<AbstractSlot<EnergyStencil<T>*>*>::const_iterator&
@@ -102,25 +108,30 @@ private:
 	/// spectrum parameter of the quantities.
 	int _pSpectrum;
 
-	/// vector scaling
-	std::vector<T> _scaleVector(
-		const T& skalar, const std::vector<T>& vektor);
-	/// vector addition
-	std::vector<T> _addVectors(
-		const std::vector<T>& v1, const std::vector<T>& v2);
-	/// vector dot product
-	T _dotProduct( const std::vector<T> &v1, const std::vector<T> &v2 );
-	/// this yields "1", if any of the vector's elements satisfies the given
-	/// predicateFunction, and "0" otherwise
-	int _anyPredicate(
-		const std::vector<T> &v, int (*predicateFunction)(T arg));
-	/// addition of scalars
-	T _addScalars( const T &x, const T &y );
-	/// multiplication of scalars
-	T _scaleScalar( const T lambda, const T x );
-	/// sum of a vector's elements
-	T _sumVector( const std::vector<T> &v );
+  /// linear indexing
+  int _linearIndex( int n, int x, int y, int z, int c,
+                    int pSize, int pWidth, int pHeight, int pDepth, int pSpectrum );
+
+  /// function to convert a std::vector to a CImgList
+  cimg_library::CImgList<T> _reshapeFeedback( std::vector<T> v );
+
+  IteratorHelper<T> *_help;
 };
+
+/// vector scaling
+template <typename T> std::vector<T> _scaleVector( const T &skalar, const std::vector<T> &vektor );
+/// vector addition
+template <typename T> std::vector<T> _addVectors( const std::vector<T> &v1, const std::vector<T> &v2 );
+/// vector dot product
+template <typename T> T _dotProduct( const std::vector<T> &v1, const std::vector<T> &v2 );
+/// this yields "1", if any of the vector's elements satisfies the given predicateFunction, and "0" otherwise
+template <typename T> int _anyPredicate( const std::vector<T> &v, int (*predicateFunction)( T arg ) );
+/// addition of scalars
+template <typename T> T _addScalars( const T &x, const T &y );
+/// multiplication of scalars
+template <typename T> T _scaleScalar( const T lambda, const T x );
+/// sum of a vector's elements
+template <typename T> T _sumVector( const std::vector<T> &v );
 
 #endif // _CGSOLVER_H_
 

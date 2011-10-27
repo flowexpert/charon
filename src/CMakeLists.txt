@@ -107,6 +107,9 @@ ADD_LIBRARY(cgsolver SHARED
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.h
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.hxx
 )
+TARGET_LINK_LIBRARIES(cgsolver
+	iteratorhelper
+)
 LIST(APPEND Plugins
 	cgsolver
 )

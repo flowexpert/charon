@@ -1,6 +1,4 @@
-/*  Copyright (C) 2011 Michael Baron
-
-    This file is part of Charon.
+/*  This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +17,7 @@
  *  Implementation of the parameter class EnergyBCC.
  *  \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
  *      Michael Baron</a>
- *  \date 30.08.2011
+ *  \date 13.10.2011
  */
 
 #ifndef _ENERGYBCC_HXX_
@@ -29,13 +27,7 @@
 
 #include <charon/EnergyStencil.hxx>
 
-/**
- *  This energy stencil implements the brightness constancy constraint.
- *  Its energy equals (I_x * u + I_y * v + I_t)^2.
- *  Its partial derivatives wrt u/v (constituing its gradient) are
- *    2 * I_x * (I_x * u + I_y * v + I_t)
- *    2 * I_y * (I_x * u + I_y * v + I_t)
- */
+#include <cstdlib>
 
 template <class T>
 EnergyBCC<T>::EnergyBCC(const std::string& name) :
@@ -56,6 +48,10 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 	                    "img_dt",
 	                    "derivatives wrt t of input images",
 	                    "CImgList<T>");
+	this->_addInputSlot(motionUV,
+	                    "motionUV",
+                            "current motion components",
+	                    "CImgList<T>");
 }
 
 template <class T>
@@ -63,100 +59,63 @@ void EnergyBCC<T>::execute() {
   PARAMETEREDOBJECT_AVOID_REEXECUTION;
   ParameteredObject::execute();
 
+  cimg_library::CImgList<T> tmp = motionUV();
+  tmp.save( "/home/mbaron/tmp/motionUV.cimg" );
 }
 
 template <class T>
-int EnergyBCC<T>::_linearIndex( int n, int x, int y, int z, int c,
-                                 int pSize, int pWidth, int pHeight, int pDepth, int pSpectrum )
+T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
 {
-	int ret;
+//	std::cout << "(II) EnergyBCC :: called" << std::endl;
+	T energy;
+        T Ix, Iy, It;
+        T u, v;
 
-	if (n < 0) n = 0; if (n > pSize-1) n = pSize-1;
-	if (x < 0) x = 0; if (x > pWidth-1) x = pWidth-1;
-	if (y < 0) y = 0; if (y > pHeight-1) y = pHeight-1;
-	if (z < 0) z = 0; if (z > pDepth-1) z = pDepth-1;
-	if (c < 0) c = 0; if (c > pSpectrum-1) c = pSpectrum-1;
+        Ix = img_dx().atNXYZC( 0, xI, yI, zI, 0 );
+        Iy = img_dy().atNXYZC( 0, xI, yI, zI, 0 );
+        It = img_dt().atNXYZC( 0, xI, yI, zI, 0 );
 
-	ret = c
-	    + z * pSpectrum
-	    + y * pSpectrum * pDepth
-	    + x * pSpectrum * pDepth * pHeight
-	    + n * pSpectrum * pDepth * pHeight * pWidth ;
+        u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
+        v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-	return ret;
+//	if (u || v) {
+//		std::cout << "(II) EnergyBCC :: u = " << u << std::endl;
+//		std::cout << "(II) EnergyBCC :: v = " << v << std::endl;
+//	}
+
+        energy = It + Ix*u + Iy*v;
+
+	return T(this->lambda() * energy * energy);
 }
 
 template <class T>
-std::vector<T> EnergyBCC<T>::getEnergy(
-                    std::vector<T> motionUV,
-                    int pSize,
-                    int pWidth, int pHeight, int pDepth,
-                    int pSpectrum )
+std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int )
 {
-        int energySize = pWidth * pHeight * pDepth * pSpectrum;
-        std::vector<T> ret( energySize, T(0) );
-
-	T pixelEnergy;
-
-        int xI, yI, zI;
-        for (xI = 0; xI < pWidth; ++xI)
-        for (yI = 0; yI < pHeight; ++yI)
-        for (zI = 0; zI < pDepth; ++zI)
-	{
-		pixelEnergy =  0.0;
-                pixelEnergy += img_dt().atNXYZC( 0, xI, yI, zI, 0 );  //  I_t
-                pixelEnergy += img_dx().atNXYZC( 0, xI, yI, zI, 0 )
-                            *  motionUV[_linearIndex(0, xI, yI, zI, 0,
-                               pSize, pWidth, pHeight, pDepth, pSpectrum)];  //  u * I_x
-                pixelEnergy += img_dy().atNXYZC( 0, xI, yI, zI, 0 )
-                            *  motionUV[_linearIndex(1, xI, yI, zI, 0,
-                               pSize, pWidth, pHeight, pDepth, pSpectrum)];  //  v * I_y
-                ret[_linearIndex(0, xI, yI, zI, 0, pSize, pWidth, pHeight, pDepth, pSpectrum)] = T(pixelEnergy * pixelEnergy);
-	}
-
-        return ret;
-}
-
-template <class T>
-std::vector<T> EnergyBCC<T>::getEnergyGradient(
-                    std::vector<T> motionUV,
-                    int pSize,
-                    int pWidth, int pHeight, int pDepth,
-                    int pSpectrum )
-{
-        int energyGradientSize = pSize * pWidth * pHeight * pDepth * pSpectrum;
-        std::vector<T> ret( energyGradientSize, T(0) );
-
+	std::vector<T> ret( 2, T(0.0) );
 	T tmp, pixelGradientU, pixelGradientV;
+        T Ix, Iy, It;
+        T u, v;
 
-        int xI, yI, zI;
-        for (xI = 0; xI < pWidth; ++xI)
-        for (yI = 0; yI < pHeight; ++yI)
-        for (zI = 0; zI < pDepth; ++zI)
-	{
-		pixelGradientU = 0.0;
-		pixelGradientV = 0.0;
-                tmp =  0.0;
-                tmp += img_dt().atNXYZC( 0, xI, yI, zI, 0 );  //  I_t
-                tmp += img_dx().atNXYZC( 0, xI, yI, zI, 0 )
-                    *  motionUV[_linearIndex(0, xI, yI, zI, 0,
-                       pSize, pWidth, pHeight, pDepth, pSpectrum)];  //  + u * I_x
-                tmp += img_dy().atNXYZC( 0, xI, yI, zI, 0 )
-                    *  motionUV[_linearIndex(1, xI, yI, zI, 0,
-                       pSize, pWidth, pHeight, pDepth, pSpectrum)];  //  + v * I_y ) ...
-                pixelGradientU += tmp * img_dx().atNXYZC( 0, xI, yI, zI, 0 ) * 2.0;  //  ... * I_x * 2.0
-                pixelGradientV += tmp * img_dy().atNXYZC( 0, xI, yI, zI, 0 ) * 2.0;  //  ... * I_y * 2.0
+        Ix = img_dx().atNXYZC( 0, xI, yI, zI, 0 );
+        Iy = img_dy().atNXYZC( 0, xI, yI, zI, 0 );
+        It = img_dt().atNXYZC( 0, xI, yI, zI, 0 );
 
-                ret[_linearIndex(0, xI, yI, zI, 0,
-                    pSize, pWidth, pHeight, pDepth, pSpectrum)] =
-                T( this->lambda()*pixelGradientU );
-                ret[_linearIndex(1, xI, yI, zI, 0,
-			    pSize, pWidth, pHeight, pDepth, pSpectrum)] =
-                T( this->lambda()*pixelGradientV );
-	}
+        u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
+        v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
+
+        tmp = It + Ix*u + Iy*v;
+
+	pixelGradientU = 2.0 * Ix * tmp;
+	pixelGradientV = 2.0 * Iy * tmp;
+
+	ret[0] = T(this->lambda() * pixelGradientU);
+	ret[1] = T(this->lambda() * pixelGradientV);
 
         return ret;
 }
+
+template <class T>
+int EnergyBCC<T>::getGradientComponentsCnt() { return 2; }
 
 template <class T>
 EnergyBCC<T>::~EnergyBCC()

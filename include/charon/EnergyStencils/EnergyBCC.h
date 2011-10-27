@@ -1,6 +1,4 @@
-/*  Copyright (C) 2011 Michael Baron
-
-    This file is part of Charon.
+/*  This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +17,7 @@
  *  Declaration of the parameter class EnergyBCC.
  *  \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
  *      Michael Baron</a>
- *  \date 30.08.2011
+ *  \date 13.10.2011
  */
 
 #ifndef _ENERGYBCC_H_
@@ -40,6 +38,7 @@
 #include <charon/EnergyStencil.h>
 
 #include <CImg.h>
+#include <vector>
 
 /// EnergyStencil for Brightness Constancy Constraint
 /** EnergyStencil for Brightness Constancy Constraint.
@@ -64,6 +63,9 @@ public EnergyStencil<T> {
   /// Input slot for image derivative wrt t
   InputSlot< cimg_library::CImgList<T> > img_dt;  //  I_t
 
+  /// Input slot for current motion components
+  InputSlot< cimg_library::CImgList<T> > motionUV;
+
   /// default constructor
   /// \param name          Instance name
   EnergyBCC(const std::string& name = "");
@@ -72,24 +74,15 @@ public EnergyStencil<T> {
   void execute();
 
   /// stencil's energy function
-  std::vector<T> getEnergy(
-                      std::vector<T> parameterVector,
-                      int pSize,
-                      int pWidth, int pHeight, int pDepth,
-                      int pSpectrum );
+  T getEnergy( int nI, int xI, int yI, int zI, int cI );
 
   /// stencil's energy gradient function
-  std::vector<T> getEnergyGradient(
-                      std::vector<T> parameterVector,
-                      int pSize,
-                      int pWidth, int pHeight, int pDepth,
-                      int pSpectrum );
+  std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
+
+  /// stencil's count of gradient components
+  int getGradientComponentsCnt();
 
 private:
-  /// linear index conversion
-  int _linearIndex( int n, int x, int y, int z, int c,
-                    int pSize, int pWidth, int pHeight, int pDepth, int pSpectrum );
-
   /// destructor
   ~EnergyBCC();
 };

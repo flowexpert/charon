@@ -1,6 +1,4 @@
-/*  Copyright (C) 2011 Michael Baron
-
-    This file is part of Charon.
+/*  This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +17,7 @@
  *  Declaration of the parameter class EnergyClassic.
  *  \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
  *      Michael Baron</a>
- *  \date 30.08.2011
+ *  \date 13.10.2011
  */
 
 #ifndef _ENERGYCLASSIC_H_
@@ -39,10 +37,16 @@
 
 #include <charon/EnergyStencil.h>
 
+#include <vector>
 #include <CImg.h>
 
 /// EnergyStencil for so called classic regularization
 /**
+ *  This energy stencil implements so-called classic regularization,
+ *  proposed by Horn and Schunck in their 1981 paper
+ *  "Determining Optical Flow".
+ *
+ *  Its energy equals \f$ \Delta u + \Delta v \f$.
  *  \ingroup charon-stencils
  *  \ingroup charon-modules
  *  \ingroup charon-flow
@@ -51,6 +55,8 @@ template <typename T>
 class energyclassic_DECLDIR EnergyClassic :
 public EnergyStencil<T> {
  public:
+  /// Input slot for current motion components
+  InputSlot< cimg_library::CImgList<T> > motionUV;
 
   /// default constructor
   /// \param name          Instance name
@@ -60,24 +66,15 @@ public EnergyStencil<T> {
   void execute();
 
   /// function yielding stencil's energy for given parameter vector
-  std::vector<T> getEnergy(
-                      std::vector<T> parameterVector,
-                      int pSize,
-                      int pWidth, int pHeight, int pDepth,
-                      int pSpectrum );
+  T getEnergy( int n, int x, int y, int z, int c );
 
   /// function yielding stencil's energy gradient for given parameter vector
-  std::vector<T> getEnergyGradient(
-                      std::vector<T> parameterVector,
-                      int pSize,
-                      int pWidth, int pHeight, int pDepth,
-                      int pSpectrum );
+  std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
+
+  /// stencil's count of gradient components
+  int getGradientComponentsCnt();
 
 private:
-  /// linear index conversion
-  int _linearIndex( int n, int x, int y, int z, int c,
-                    int pSize, int pWidth, int pHeight, int pDepth, int pSpectrum );
-
   /// destructor
   ~EnergyClassic();
 };

@@ -18,7 +18,7 @@
  *  @author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
  *      Michael Baron</a>
  *
- *  @date 30.08.2011
+ *  @date 13.10.2011
  */
 
 #ifndef _ENERGYSTENCIL_H_
@@ -57,17 +57,13 @@ public:
 	              const std::string& doc /**[in] stencil documentation*/);
 
 	/// function yielding stencil's energy wrt the parameter vector
-	virtual std::vector<T> getEnergy(std::vector<T> parameterVector,
-	                                 int pSize,
-	                                 int pWidth, int pHeight, int pDepth,
-	                                 int pSpectrum ) = 0;
+	virtual T getEnergy( int n, int x, int y, int z, int c ) = 0;
 
 	/// function yielding stencil's energy gradient wrt the parameter vector
-	virtual std::vector<T> getEnergyGradient(
-	                                 std::vector<T> parameterVector,
-	                                 int pSize,
-	                                 int pWidth, int pHeight, int pDepth,
-	                                 int pSpectrum ) = 0;
+	virtual std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c ) = 0;
+
+	/// function yielding count of gradient's components
+	virtual int getGradientComponentsCnt() = 0;
 
 	// default destructor
 	virtual ~EnergyStencil();
