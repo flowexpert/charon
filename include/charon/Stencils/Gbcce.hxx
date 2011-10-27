@@ -31,7 +31,7 @@ Gbcce<T>::Gbcce(const std::string& name) :  Stencil<T>("GBCCE", name,
 			"Stencil modeling general brightness change constraint.<br>"
 			"General means that it can be customized using different "
 			"brightness and motion models."),
-		mask(true, false)
+		mask(true, false), _bmIn(0), _mmIn(0)
 {
 	ParameteredObject::_addInputSlot(
 			brightnessIn, "brightnessmodel",
@@ -86,6 +86,10 @@ void Gbcce<T>::execute() {
 		entry.pattern(0,0) = 1;
 		this->_subStencils[*uIt] = entry;
 	}
+
+	// refresh model cache
+	_bmIn = this->brightnessIn();
+	_mmIn = this->motionIn();
 }
 
 template <class T>
@@ -104,10 +108,8 @@ void Gbcce<T>::updateStencil(
 		term[*unkIt] = T(0);
 
 	// compute term
-	static BrightnessModel<T>& bmIn = *(this->brightnessIn());
-	static MotionModel<T>& mmIn = *(this->motionIn());
-	bmIn.compute(p,v,term,this->_rhs,unknown);
-	mmIn.compute(p,v,term,this->_rhs,unknown);
+	_bmIn->compute(p,v,term,this->_rhs,unknown);
+	_mmIn->compute(p,v,term,this->_rhs,unknown);
 
 	T weight = T(1.);
 	if (mask.connected())

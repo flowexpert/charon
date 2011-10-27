@@ -74,6 +74,9 @@ public:
 	virtual cimg_library::CImg<T> apply(
 			const cimg_library::CImgList<T>& seq,
 			const unsigned int frame) const;
+private:
+	BrightnessModel<T>* _bmIn; ///< brightness model cache
+	MotionModel<T>* _mmIn;     ///< motion model cache
 };
 
 #endif //_GBCCE_H_
