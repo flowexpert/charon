@@ -231,6 +231,9 @@ int run() {
 	if (Config::verbose) {
 		std::cout << "Finished workflow execution." << std::endl;
 	}
+	
+	//reassign std::cout to sout as ofstream log will go out of scope
+	sout.assign(std::cout);
 
 	return EXIT_SUCCESS;
 }
