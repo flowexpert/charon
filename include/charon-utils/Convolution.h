@@ -31,7 +31,6 @@
 
 #include <charon-utils/CImg.h>
 #include "Interpolator.h"
-#include "PdeBoundaryHandler.h"
 
 /// %Convolution routines.
 namespace Convolution {
@@ -94,20 +93,6 @@ namespace Convolution {
     template <typename T>
     T convolvePoint(        const cimg_library::CImg<T>& mask,
                             const cimg_library::CImg<T>& src,
-                            int x, int y, int z, int v,
-                            int centerX, int centerY, int centerZ);
-
-    /// Get single point of convolution result with boundary handling.
-    /// Mask center is shifted to the given coordinates.
-    /// @param  mask            convolution mask (<=3D)
-    /// @param  src             image input as boundary handler
-    /// @param  x,y,z,v         image coordinates
-    /// @param  centerX,centerY,centerZ
-    ///                         mask shift coordinates
-    /// @returns                convolution value at (x,y,z,v)
-    template <typename T>
-    T convolvePoint(        const cimg_library::CImg<T>& mask,
-                            const PdeBoundaryHandler<T>* src,
                             int x, int y, int z, int v,
                             int centerX, int centerY, int centerZ);
 

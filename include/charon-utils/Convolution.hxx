@@ -29,9 +29,8 @@
 #define _Convolution_HXX
 
 #include "Convolution.h"
-#include <cassert>
 #include "Interpolator.h"
-#include "PdeBoundaryHandler.hxx"
+#include <cassert>
 
 #ifndef PI
     /// Circle number \f$\pi\f$.
@@ -126,20 +125,6 @@ void Convolution::convolveSeperable(const cimg_library::CImg<T>& maskH,
                                           cimg_library::CImg<T>& dst) {
     dst = src.get_convolve(maskH);
     dst = dst.get_convolve(maskV);
-}
-
-template<typename T>
-T Convolution::convolvePoint(const cimg_library::CImg<T>& mask,
-                             const PdeBoundaryHandler<T>* src,
-                             int x, int y, int z, int v,
-                             int centerX, int centerY, int centerZ) {
-    T res = 0;
-    for(int zm=-centerZ; zm<=centerZ; zm++)
-        for(int ym=-centerY; ym<=centerY; ym++)
-            for(int xm=-centerX; xm<=centerX; xm++)
-                res += (T)(src->getU(x-xm, y-ym, z-zm)[v] *
-                           mask(centerX+xm, centerY+ym, centerZ+zm));
-    return res;
 }
 
 template<typename T>
