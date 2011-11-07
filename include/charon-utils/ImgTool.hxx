@@ -38,9 +38,6 @@
 #include "Roi.h"
 #include "InterpolatorLinear.h"
 
-// needed by createAllScaleRandomPattern
-#include "Pyramid2DGauss.h"
-
 /// circle number \f$\pi\f$
 #define PI 3.14159265358979323846
 
@@ -659,38 +656,24 @@ void ImgTool::copy(const cimg_library::CImg<T>& from,
 }
 
 template <typename T>
-void ImgTool::createAllScaleRandomPattern(cimg_library::CImg<T>& dst,
-                                          int width, int height,
-                                          float eta, int maxLevels) {
-    assert(eta > 0 && eta < 1.0f);
-    int sx = width;
-    int sy = height;
-    dst.assign(sx, sy, 1, 1, 0);
-    Pyramid2DGauss<T> p(dst, 5, 1.4f, 2.0f, eta);
+void ImgTool::createAllScaleRandomPattern(
+		cimg_library::CImg<T>& dst,
+		int width, int height, float eta, int levels) {
+	assert(eta > 0 && eta < 1.0f);
+	int sx = width;
+	int sy = height;
+	dst.assign(sx,sy,1,1,0);
 
-    maxLevels = p.getLevels() < maxLevels ? p.getLevels() : maxLevels;
-
-    for(int i = p.getLevels()-1; i >= p.getLevels()-maxLevels; --i)
-    {
-        cimg_library::CImg<T>* img = p.getLevel(i);
-        cimg_forXY(*img, x, y) {
-            unsigned int val = rand();
-            img->atXY(x, y)  = (T)((double)val/(double)UINT_MAX);
-        }
-
-        cimg_library::CImg<T> tmp = img->get_resize(sx, sy, 2, 1, 5);
-
-        cimg_forXY(tmp, x, y)
-            dst(x, y) += tmp(x, y);
-    }
-
-    cimg_library::CImg<T> tmp = dst;
-    InterpolatorLinear<T> ip;
-
-    cimg_forXY(dst, x, y)
-        dst(x, y) = ip.interpolate(tmp, x-0.5f, y-0.5f);
-
-    dst.normalize(0, 255);
+	for (int ii=0; ii<levels; ii++) {
+		float factor = std::pow(2.f, (float)ii*eta);
+		int nx = (int)ceilf(sx/factor);
+		int ny = (int)ceilf(sy/factor);
+		cimg_library::CImg<T> img(nx,ny,1,1,0);
+		img.rand(0.f,1.f);
+		cimg_library::CImg<T> tmp = img->get_resize(sx,sy,1,1,5);
+		dst += tmp;
+	}
+	dst.blur(1.f).normalize(0, 255);
 }
 
 #ifdef CHARON_GDI
