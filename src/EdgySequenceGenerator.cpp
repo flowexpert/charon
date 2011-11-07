@@ -24,9 +24,6 @@
 /// Class name of the plugin
 #define TYPE EdgySequenceGenerator
 
-#ifndef _MSC_VER
-#include <charon-utils/Interpolator.hxx>
-#endif
 #include <charon/EdgySequenceGenerator.hxx>
 
 /// Creates an instance of the plugin
