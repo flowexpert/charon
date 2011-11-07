@@ -26,7 +26,7 @@
 #include "CGSolver.h"
 
 #include <charon-core/ParameteredObject.hxx>
-#include <charon/IteratorHelper.hxx>
+#include <charon/IteratorHelper.h>
 
 #include <cmath>
 #include <vector>
