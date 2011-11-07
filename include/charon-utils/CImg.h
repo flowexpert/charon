@@ -1093,7 +1093,7 @@ static struct _cimg_macosx_setcwd {
   cimg_for3((img)._height,y) for (int x = 0, \
    _p1##x = 0, \
    _n1##x = (int)( \
-   (I[0] = I[1] = (T)(img)(0,_p1##y,z,c)), \
+   (I[0] = I[1] = (T)(img)(_p1##x,_p1##y,z,c)), \
    (I[3] = I[4] = (T)(img)(0,y,z,c)), \
    (I[6] = I[7] = (T)(img)(0,_n1##y,z,c)),      \
    1>=(img)._width?(img).width()-1:1); \
@@ -1133,7 +1133,7 @@ static struct _cimg_macosx_setcwd {
    _p1##x = 0, \
    _n1##x = 1>=(img)._width?(img).width()-1:1, \
    _n2##x = (int)( \
-   (I[0] = I[1] = (T)(img)(0,_p1##y,z,c)), \
+   (I[0] = I[1] = (T)(img)(_p1##x,_p1##y,z,c)), \
    (I[4] = I[5] = (T)(img)(0,y,z,c)), \
    (I[8] = I[9] = (T)(img)(0,_n1##y,z,c)), \
    (I[12] = I[13] = (T)(img)(0,_n2##y,z,c)), \
@@ -1189,7 +1189,7 @@ static struct _cimg_macosx_setcwd {
    _p2##x = 0, _p1##x = 0, \
    _n1##x = 1>=(img)._width?(img).width()-1:1, \
    _n2##x = (int)( \
-   (I[0] = I[1] = I[2] = (T)(img)(0,_p2##y,z,c)), \
+   (I[0] = I[1] = I[2] = (T)(img)(_p2##x,_p2##y,z,c)), \
    (I[5] = I[6] = I[7] = (T)(img)(0,_p1##y,z,c)), \
    (I[10] = I[11] = I[12] = (T)(img)(0,y,z,c)), \
    (I[15] = I[16] = I[17] = (T)(img)(0,_n1##y,z,c)), \
@@ -1261,7 +1261,7 @@ static struct _cimg_macosx_setcwd {
    _n1##x = 1>=(img)._width?(img).width()-1:1, \
    _n2##x = 2>=(img)._width?(img).width()-1:2, \
    _n3##x = (int)( \
-   (I[0] = I[1] = I[2] = (T)(img)(0,_p2##y,z,c)), \
+   (I[0] = I[1] = I[2] = (T)(img)(_p2##x,_p2##y,z,c)), \
    (I[6] = I[7] = I[8] = (T)(img)(0,_p1##y,z,c)), \
    (I[12] = I[13] = I[14] = (T)(img)(0,y,z,c)), \
    (I[18] = I[19] = I[20] = (T)(img)(0,_n1##y,z,c)), \
@@ -1356,7 +1356,7 @@ static struct _cimg_macosx_setcwd {
    _n1##x = 1>=(img)._width?(img).width()-1:1, \
    _n2##x = 2>=(img)._width?(img).width()-1:2, \
    _n3##x = (int)( \
-   (I[0] = I[1] = I[2] = I[3] = (T)(img)(0,_p3##y,z,c)), \
+   (I[0] = I[1] = I[2] = I[3] = (T)(img)(_p3##x,_p3##y,z,c)), \
    (I[7] = I[8] = I[9] = I[10] = (T)(img)(0,_p2##y,z,c)), \
    (I[14] = I[15] = I[16] = I[17] = (T)(img)(0,_p1##y,z,c)), \
    (I[21] = I[22] = I[23] = I[24] = (T)(img)(0,y,z,c)), \
@@ -1472,7 +1472,7 @@ static struct _cimg_macosx_setcwd {
    _n2##x = 2>=((img)._width)?(img).width()-1:2, \
    _n3##x = 3>=((img)._width)?(img).width()-1:3, \
    _n4##x = (int)( \
-   (I[0] = I[1] = I[2] = I[3] = (T)(img)(0,_p3##y,z,c)), \
+   (I[0] = I[1] = I[2] = I[3] = (T)(img)(_p3##x,_p3##y,z,c)), \
    (I[8] = I[9] = I[10] = I[11] = (T)(img)(0,_p2##y,z,c)), \
    (I[16] = I[17] = I[18] = I[19] = (T)(img)(0,_p1##y,z,c)), \
    (I[24] = I[25] = I[26] = I[27] = (T)(img)(0,y,z,c)), \
@@ -1618,7 +1618,7 @@ static struct _cimg_macosx_setcwd {
    _n2##x = 2>=((img)._width)?(img).width()-1:2, \
    _n3##x = 3>=((img)._width)?(img).width()-1:3, \
    _n4##x = (int)( \
-   (I[0] = I[1] = I[2] = I[3] = I[4] = (T)(img)(0,_p4##y,z,c)), \
+   (I[0] = I[1] = I[2] = I[3] = I[4] = (T)(img)(_p4##x,_p4##y,z,c)), \
    (I[9] = I[10] = I[11] = I[12] = I[13] = (T)(img)(0,_p3##y,z,c)), \
    (I[18] = I[19] = I[20] = I[21] = I[22] = (T)(img)(0,_p2##y,z,c)), \
    (I[27] = I[28] = I[29] = I[30] = I[31] = (T)(img)(0,_p1##y,z,c)), \
@@ -1820,7 +1820,7 @@ static struct _cimg_macosx_setcwd {
  cimg_for3((img)._depth,z) cimg_for3((img)._height,y) for (int x = 0, \
    _p1##x = 0, \
    _n1##x = (int)( \
-   (I[0] = I[1] = (T)(img)(0,_p1##y,_p1##z,c)), \
+   (I[0] = I[1] = (T)(img)(_p1##x,_p1##y,_p1##z,c)), \
    (I[3] = I[4] = (T)(img)(0,y,_p1##z,c)),  \
    (I[6] = I[7] = (T)(img)(0,_n1##y,_p1##z,c)), \
    (I[9] = I[10] = (T)(img)(0,_p1##y,z,c)), \
@@ -6793,8 +6793,7 @@ namespace cimg_library {
       }
     }
 
-    static void* _events_thread(void *arg) {
-      arg = 0;
+	static void* _events_thread(void* /*arg*/) {
       XEvent event;
       pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED,0);
       pthread_setcancelstate(PTHREAD_CANCEL_ENABLE,0);
@@ -6898,8 +6897,7 @@ namespace cimg_library {
     }
 
     template<typename T>
-    void _resize(T foo, const unsigned int ndimx, const unsigned int ndimy, const bool redraw) {
-      foo = 0;
+	void _resize(T /*foo*/, const unsigned int ndimx, const unsigned int ndimy, const bool redraw) {
 #ifdef cimg_use_xshm
       if (_shminfo) {
         XShmSegmentInfo *nshminfo = new XShmSegmentInfo;
@@ -7039,8 +7037,7 @@ namespace cimg_library {
       }
     }
 
-    static int _assign_xshm(Display *dpy, XErrorEvent *error) {
-      dpy = 0; error = 0;
+	static int _assign_xshm(Display* /*dpy*/, XErrorEvent* /*error*/) {
       cimg::X11_attr().shm_enabled = false;
       return 0;
     }
@@ -34360,7 +34357,7 @@ namespace cimg_library {
     }
 
     //! Save the image using built-in ImageMagick++ library.
-    const CImg<T>& save_magick(const char *const filename, const unsigned int bytes_per_pixel=0) const {
+	const CImg<T>& save_magick(const char *const filename, const unsigned int /*bytes_per_pixel*/=0) const {
       if (!filename)
         throw CImgArgumentException(_cimg_instance
                                     "save_magick() : Specified filename is (null).",
@@ -34371,7 +34368,6 @@ namespace cimg_library {
                                     cimg_instance,
                                     filename);
 
-      unsigned int foo = bytes_per_pixel; foo = 0;
 #ifdef cimg_use_magick
       double stmin, stmax = (double)max_min(stmin);
       if (_depth>1)
@@ -34435,8 +34431,12 @@ namespace cimg_library {
 
     // Save an image to a PNG file (internal).
     // Most of this function has been written by Eric Fausett
-    const CImg<T>& _save_png(std::FILE *const file, const char *const filename, const unsigned int bytes_per_pixel=0) const {
-      if (!filename)
+#ifdef cimg_use_png
+	const CImg<T>& _save_png(std::FILE *const file, const char *const filename, const unsigned int bytes_per_pixel=0) const {
+#else
+	const CImg<T>& _save_png(std::FILE *const file, const char *const filename, const unsigned int=0) const {
+#endif
+		if (!filename)
         throw CImgArgumentException(_cimg_instance
                                     "save_png() : Specified filename is (null).",
                                     cimg_instance);
@@ -34446,7 +34446,6 @@ namespace cimg_library {
                                     cimg_instance,
                                     filename?filename:"(FILE*)");
 
-      unsigned int foo = bytes_per_pixel; foo = 0;
 #ifndef cimg_use_png
       if (!file) return save_other(filename);
       else throw CImgIOException(_cimg_instance
