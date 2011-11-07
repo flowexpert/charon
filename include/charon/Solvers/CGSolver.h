@@ -63,16 +63,16 @@ public:
 	/// Input slot for EnergyStencils
 	InputSlot< EnergyStencil<T>* > energyStencils;
 
-        /// Input slot for the quantity to be optimized.
+	/// Input slot for the quantity to be optimized.
 	InputSlot< IteratorHelper<T>* > itHelper;
 
-        /// Output slot for feedback
+	/// Output slot for feedback
 	OutputSlot< cimg_library::CImgList<T> > result;
 
-	///  length parameter, see "minimize.m" for details
+	/// length parameter, see "minimize.m" for details
 	Parameter< int > length;
 
-        ///  flow dimensions
+	///  flow dimensions
 	Parameter< int > flowDimensions;
 
 	/// default constructor
@@ -83,7 +83,7 @@ public:
 
 	/// minimize function
 	void minimize(
-                cimg_library::CImgList<T> &_itflow,
+		cimg_library::CImgList<T> &_itflow,
 		std::vector<T> &X,
 		std::vector<T> &startingPoint_X,
 		typename std::set<AbstractSlot<EnergyStencil<T>*>*>::const_iterator&
@@ -108,26 +108,32 @@ private:
 	/// spectrum parameter of the quantities.
 	int _pSpectrum;
 
-  /// linear indexing
-  int _linearIndex( int n, int x, int y, int z, int c,
-                    int pSize, int pWidth, int pHeight, int pDepth, int pSpectrum );
+	/// linear indexing
+	int _linearIndex( int n, int x, int y, int z, int c,
+		int pSize, int pWidth, int pHeight, int pDepth, int pSpectrum );
 
-  /// function to convert a std::vector to a CImgList
-  cimg_library::CImgList<T> _reshapeFeedback( std::vector<T> v );
+	/// function to convert a std::vector to a CImgList
+	cimg_library::CImgList<T> _reshapeFeedback( std::vector<T> v );
 
-  IteratorHelper<T> *_help;
+	/// pointer to iteration helper
+	IteratorHelper<T> *_help;
 };
 
 /// vector scaling
-template <typename T> std::vector<T> _scaleVector( const T &skalar, const std::vector<T> &vektor );
+template <typename T> std::vector<T> _scaleVector(
+	const T &skalar, const std::vector<T> &vektor);
 /// vector addition
-template <typename T> std::vector<T> _addVectors( const std::vector<T> &v1, const std::vector<T> &v2 );
+template <typename T> std::vector<T> _addVectors(
+	const std::vector<T> &v1, const std::vector<T> &v2);
 /// vector dot product
-template <typename T> T _dotProduct( const std::vector<T> &v1, const std::vector<T> &v2 );
-/// this yields "1", if any of the vector's elements satisfies the given predicateFunction, and "0" otherwise
-template <typename T> int _anyPredicate( const std::vector<T> &v, int (*predicateFunction)( T arg ) );
+template <typename T> T _dotProduct(
+	const std::vector<T> &v1, const std::vector<T> &v2);
+/// this yields "1", if any of the vector's elements satisfies
+/// the given predicateFunction, and "0" otherwise
+template <typename T> int _anyPredicate(
+	const std::vector<T> &v, int (*predicateFunction)( T arg ));
 /// addition of scalars
-template <typename T> T _addScalars( const T &x, const T &y );
+template <typename T> T _addScalars( const T& x, const T& y );
 /// multiplication of scalars
 template <typename T> T _scaleScalar( const T lambda, const T x );
 /// sum of a vector's elements
