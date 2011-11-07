@@ -96,5 +96,12 @@ int main() {
 		success = false;
 	}
 
+	cimg_library::CImg<float> randPat;
+	ImgTool::createAllScaleRandomPattern(randPat, 100, 100, 1.f, 5);
+	randPat.save("randomPattern.cimg");
+#ifdef cimg_use_png
+	randPat.save_png("randomPattern.png");
+#endif
+
 	return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }

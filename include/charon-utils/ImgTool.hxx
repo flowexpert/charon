@@ -659,7 +659,7 @@ template <typename T>
 void ImgTool::createAllScaleRandomPattern(
 		cimg_library::CImg<T>& dst,
 		int width, int height, float eta, int levels) {
-	assert(eta > 0 && eta < 1.0f);
+	assert(eta > 0 && eta <= 1.0f);
 	int sx = width;
 	int sy = height;
 	dst.assign(sx,sy,1,1,0);
@@ -670,10 +670,10 @@ void ImgTool::createAllScaleRandomPattern(
 		int ny = (int)ceilf(sy/factor);
 		cimg_library::CImg<T> img(nx,ny,1,1,0);
 		img.rand(0.f,1.f);
-		cimg_library::CImg<T> tmp = img->get_resize(sx,sy,1,1,5);
+		cimg_library::CImg<T> tmp = img.get_resize(sx,sy,1,1,5);
 		dst += tmp;
 	}
-	dst.blur(1.f).normalize(0, 255);
+	dst.blur(0.7f).normalize(0, 255);
 }
 
 #ifdef CHARON_GDI
