@@ -59,9 +59,9 @@ public:
 	ParameterList < double > foregroundVelocity;
 	/// Velocity of the foreground pattern
 	ParameterList < double > backgroundVelocity;
-	/// Noise amplitude of the test pattern
-	Parameter <float> noiseAmplitude;
-	/// Numer of noise scales
+	/// scale parameter for pyramid levels (factor=\f$2^{i\cdot s}\f$)
+	Parameter <float> noiseScale;
+	/// number of pyramid levels
 	Parameter <int> noiseLevels;
 
 	/// mask input

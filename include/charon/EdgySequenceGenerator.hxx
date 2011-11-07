@@ -58,11 +58,11 @@ EdgySequenceGenerator<T>::EdgySequenceGenerator(const std::string& name) :
 			backgroundVelocity, "backgroundVelocity",
 			"Velocity of the foreground pattern");
 	ParameteredObject::_addParameter(
-			noiseAmplitude, "noiseAmplitude",
-			"Noise amplitude of the test pattern", 0.5f);
+			noiseScale, "noiseScale",
+			"scale parameter for pyramid levels (factor=2^{i*s})", 0.5f);
 	ParameteredObject::_addParameter(
 			noiseLevels, "noiseLevels",
-			"Numer of noise scales", 5);
+			"number of pyramid levels", 5);
 	size() = new Roi<int>();
 }
 
@@ -114,9 +114,9 @@ void EdgySequenceGenerator<T>::execute() {
 
 	srand((unsigned int)time(0));
 	ImgTool::createAllScaleRandomPattern(
-			foreground, widthB, heightB, noiseAmplitude(), noiseLevels());
+			foreground, widthB, heightB, noiseScale(), noiseLevels());
 	ImgTool::createAllScaleRandomPattern(
-			background, widthB, heightB, noiseAmplitude(), noiseLevels());
+			background, widthB, heightB, noiseScale(), noiseLevels());
 	//(foreground, background).display("randomPatterns");
 
 	// generate flow fields
