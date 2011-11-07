@@ -240,10 +240,7 @@ ADD_LIBRARY(edgysequencegenerator SHARED
 	${charon_INCLUDE_DIR}/EdgySequenceGenerator.hxx
 	EdgySequenceGenerator.cpp
 )
-TARGET_LINK_LIBRARIES(edgysequencegenerator
-	interpolatorlinear
-	roi
-)
+TARGET_LINK_LIBRARIES(edgysequencegenerator roi)
 ADD_LIBRARY(diff2d SHARED
 	Diff2D.cpp
 	${charon_INCLUDE_DIR}/Diff2D.h
