@@ -26,8 +26,6 @@
 
 #include "EdgySequenceGenerator.h"
 #include <charon-utils/ImgTool.hxx>
-#include <charon-utils/Pyramid2DGauss.hxx>
-#include <charon-utils/Interpolator.h>
 
 template <typename T>
 EdgySequenceGenerator<T>::EdgySequenceGenerator(const std::string& name) :
