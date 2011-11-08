@@ -406,6 +406,9 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 			0, tr("rename node"),
 			tr("Enter new name for node \"%1\":").arg(nodename),
 			QLineEdit::Normal, nodename, &ok);
+	//parameter file does only support lowercase and handling is inconsistent
+	//convert to lowercase to prevent problems later
+	newName = newName.toLower() ;
 	if (ok) {
 		if(nodeValid(newName)) {
 			QMessageBox::warning(
@@ -533,6 +536,9 @@ QString GraphModel::addNode(QString className, bool draw) {
 				QLineEdit::Normal, newName, &ok);
 		if(!ok)
 			return "";
+		//parameter file does only support lowercase and handling is inconsistent
+		//convert to lowercase to prevent problems later
+		newName = newName.toLower() ;
 		if( (ok = nodeValid(newName)) ) {
 			info = tr("This name is already in use.\n"
 					  "Please use another name.\n");
