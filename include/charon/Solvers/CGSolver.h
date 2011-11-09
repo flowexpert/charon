@@ -75,6 +75,9 @@ public:
 	///  flow dimensions
 	Parameter< int > flowDimensions;
 
+	///  write intermediate results
+	Parameter< bool > writeIntermediateResults;
+
 	/// default constructor
 	CGSolver(const std::string& name = "" /**[in] instance name*/);
 

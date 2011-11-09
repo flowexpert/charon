@@ -62,6 +62,9 @@ CGSolver<T>::CGSolver(const std::string& name) :
         this->_addParameter(length,
 	                    "length",
 	                    "see minimize.m for details", 10);
+	this->_addParameter(writeIntermediateResults,
+	                    "writeIntermediateResults",
+	                    "write intermediate results", false);
 }
 
 template <typename T>
@@ -630,6 +633,12 @@ std::cout << "(II) CGSolver :: d0  @ PART3 = " << d0 << std::endl;
 
     sout << "(II) CGSolver iteration, energy = ";
     sout << i << ", " << f3 << std::endl;
+
+    if (writeIntermediateResults()) {
+      cimg_library::CImgList<T> tmp = _reshapeFeedback( X );
+      tmp.at(0).save("motionU.cimg", i);
+      tmp.at(1).save("motionV.cimg", i);
+    }
 
   }  //  while (i < abs(length))
 
