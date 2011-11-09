@@ -45,8 +45,13 @@ Flow2HSV<T>::Flow2HSV(const std::string& name) :
 	ParameteredObject::_addParameter(
 			normalizationFactor, "normalizationFactor",
 			"normalization factor (0=auto)", "T");
+	ParameteredObject::_addParameter(
+			alpha, "alpha",
+			"alpha for blending background (alpha=1), flow (alpha=0) or both (0 < alpha < 1)", "T");
 	ParameteredObject::_addInputSlot(
 			flow, "flow", "flow input", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+			background, "background", "background", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 			out, "out", "hsv representation output [t](x,y,z,c)",
 			"CImgList<T>");
@@ -121,6 +126,16 @@ void Flow2HSV<T>::execute() {
 	}
 	cimglist_for(o,kk) {
 		o.at(kk).HSVtoRGB();
+	}
+
+	if (background.connected())
+	cimg_forXYZC(i[0],x,y,z,t) {
+		o(t,x,y,z,0) *= (1-alpha());
+		o(t,x,y,z,1) *= (1-alpha());
+		o(t,x,y,z,2) *= (1-alpha());
+		o(t,x,y,z,0) += (background()(0,x,y,z,0)*alpha());
+		o(t,x,y,z,1) += (background()(0,x,y,z,0)*alpha());
+		o(t,x,y,z,2) += (background()(0,x,y,z,0)*alpha());
 	}
 }
 
