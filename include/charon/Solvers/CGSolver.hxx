@@ -48,6 +48,7 @@ CGSolver<T>::CGSolver(const std::string& name) :
 	                    "energyStencils",
 	                    "energy stencils",
 	                    "EnergyStencil<T>*");
+        this->_addInputSlot(roi, "roi", "RoI", "Roi<int>");
 	this->_addInputSlot(itHelper,
 	                    "itHelper",
 	                    "iterator helper",

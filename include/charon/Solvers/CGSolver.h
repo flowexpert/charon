@@ -42,6 +42,8 @@
 #include <CImg.h>
 #include <vector>
 
+#include <charon-utils/Roi.h>
+
 /// Unconstrained gradient based optimization using nonlinear
 /// conjugate gradients
 /**
@@ -65,6 +67,9 @@ public:
 
 	/// Input slot for the quantity to be optimized.
 	InputSlot< IteratorHelper<T>* > itHelper;
+
+	/// Input slot for region of interest
+	InputSlot< Roi<int> > roi;
 
 	/// Output slot for feedback
 	OutputSlot< cimg_library::CImgList<T> > result;
