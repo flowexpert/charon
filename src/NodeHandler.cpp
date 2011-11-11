@@ -28,6 +28,7 @@
 #include <QGraphicsView>
 #include <QStandardItemModel>
 #include <QKeyEvent>
+#include <QPrinter>
 
 #include "ConnectionLine.h"
 #include "NodeHandler.h"
@@ -252,18 +253,32 @@ void NodeHandler::connectNodes(
 
 void NodeHandler::saveFlowchart() {
 	QString fname = QFileDialog::getOpenFileName();
-	if (!fname.isEmpty()) {
-		QPixmap pixmap(width()+10,height()+10);
+	if (fname.contains(QRegExp("\\.(pdf|ps)\\s*$",Qt::CaseInsensitive))) {
+		QPrinter printer(QPrinter::HighResolution);
+		printer.setPaperSize(sceneRect().size(),QPrinter::Point);
+		printer.setOutputFileName(fname);
+		printer.setFullPage(true);
+		QPainter painter(&printer);
+		render(&painter);
+	}
+	else if (!fname.isEmpty()) {
+		QPixmap pixmap(sceneRect().size().toSize());
+		pixmap.fill(Qt::white);
 		QPainter painter(&pixmap);
 		painter.setRenderHint(QPainter::Antialiasing);
-		painter.fillRect(0, 0, width()+10,height()+10, Qt::white);
 		render(&painter);
-
-		if (fname.endsWith(".png")) {
-			pixmap.save(fname,"PNG");
-		} else if(fname.endsWith(".jpg")) {
-			pixmap.save(fname,"JPG",90);
+		if(!pixmap.save(fname)) {
+			QMessageBox::warning(
+				0,tr("error writing file"),
+				tr("failed to save the workflow visualization to<br>"
+					"<tt>%1</tt>"
+					"Perhaps the image file format is not supported.")
+					.arg(fname));
 		}
+	}
+	else {
+		QMessageBox::warning(
+			0,tr("error writing file"),tr("Empty filename given."));
 	}
 }
 

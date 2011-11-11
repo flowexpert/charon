@@ -98,11 +98,13 @@ void NodeProperty::paint(
 	painter->drawRoundRect(inner, 10, 100);
 	painter->setBrush(Qt::black);
 	inner.adjust(10,0,-10,0);
+	QFont f = painter->font();
+	f.setPixelSize(14);
+	painter->setFont(f);
 	painter->drawText(inner, _name);
 	painter->setBrush(_getSocketColor(getType()));
 	painter->drawEllipse(_getSocketRect());
 }
-
 
 QString NodeProperty::getFullName() const {
 	return _node->getInstanceName() + "." + _name;

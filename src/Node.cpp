@@ -126,8 +126,7 @@ void Node::paint(
 	painter->setBrush(_selectedNode ? QColor("#AAF") : QColor("#BBC"));
 	painter->drawRoundedRect(0,0,_width,22,10,10);
 	painter->drawRoundedRect(0,_height-22,_width,22,10,10);
-	painter->setPen(_selectedNode ? Qt::white : Qt::black);
-		painter->setPen(Qt::black);
+	painter->setPen(Qt::black);
 
 	QFont f = painter->font();
 	f.setPixelSize(15);
