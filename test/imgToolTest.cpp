@@ -20,7 +20,6 @@
 /// @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
 /// @date 16.06.2009
 
-#include <charon-utils/Pyramid2DGauss.hxx>
 #include <charon-utils/ImgTool.hxx>
 #include <charon-utils/InterpolatorLinear.hxx>
 
