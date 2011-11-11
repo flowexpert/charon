@@ -223,9 +223,9 @@ int test() {
 	{
 		exceptSample->execute() ;
 	}
-	catch(std::runtime_error &err)
+	catch(std::runtime_error &)
 	{	hasThrown = true ;	}
-	catch(std::exception &err)
+	catch(std::exception &)
 	{	;	}
 	assert(hasThrown) ;
 
