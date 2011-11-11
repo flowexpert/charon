@@ -107,12 +107,8 @@ ADD_LIBRARY(cgsolver SHARED
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.h
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.hxx
 )
-TARGET_LINK_LIBRARIES(cgsolver
-	iteratorhelper
-)
-LIST(APPEND Plugins
-	cgsolver
-)
+TARGET_LINK_LIBRARIES(cgsolver iteratorhelper roi)
+LIST(APPEND Plugins cgsolver)
 
 # Brightness models (currently only constant brightness available)
 # to-be-ported and yet untested (ask for work of René):
