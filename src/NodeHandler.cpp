@@ -252,14 +252,19 @@ void NodeHandler::connectNodes(
 }
 
 void NodeHandler::saveFlowchart() {
-	QString fname = QFileDialog::getOpenFileName();
+	QString fname = QFileDialog::getSaveFileName(
+		0, tr("Select File to Write"),
+		"",tr("Images (*.png *.jpg *.bmp *.gif);;"
+			"PDF/Postscript (*.pdf *.ps)"));
 	if (fname.contains(QRegExp("\\.(pdf|ps)\\s*$",Qt::CaseInsensitive))) {
 		QPrinter printer(QPrinter::HighResolution);
 		printer.setPaperSize(sceneRect().size(),QPrinter::Point);
 		printer.setOutputFileName(fname);
 		printer.setFullPage(true);
-		QPainter painter(&printer);
+		QPainter painter;
+		painter.begin(&printer);
 		render(&painter);
+		painter.end();
 	}
 	else if (!fname.isEmpty()) {
 		QPixmap pixmap(sceneRect().size().toSize());
@@ -275,10 +280,6 @@ void NodeHandler::saveFlowchart() {
 					"Perhaps the image file format is not supported.")
 					.arg(fname));
 		}
-	}
-	else {
-		QMessageBox::warning(
-			0,tr("error writing file"),tr("Empty filename given."));
 	}
 }
 

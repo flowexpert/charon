@@ -58,7 +58,9 @@ void Node::addProperty(QString name, bool input) {
 }
 
 QRectF Node::boundingRect() const {
-	return QRectF(0,0,_width,_height);
+	QRectF bb(0,0,_width,_height);
+	bb.adjust(-1,-1,+1,+1);
+	return bb;
 }
 
 void Node::setSelectedNode(bool s) {
@@ -119,7 +121,7 @@ void Node::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 
 void Node::paint(
 		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
-	painter->setPen(Qt::black);
+	painter->setPen(QPen(Qt::black,1.f));
 	painter->setOpacity(1);
 	painter->setBrush(_selectedNode ? Qt::blue : Qt::gray);
 	painter->drawRoundedRect(0,0,_width,_height,10,10);

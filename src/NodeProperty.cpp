@@ -70,17 +70,17 @@ QString NodeProperty::getType() const {
 
 QRectF NodeProperty::boundingRect() const {
 	int yy = 28 + _propNr * 25;
-	return QRectF(-6, yy, _node->getWidth()+12, 20);
+	return QRectF(-7, yy-1, _node->getWidth()+13, 21);
 }
 
 QRectF NodeProperty::_getSocketRect() const {
 	QRectF ret = boundingRect();
-	ret.adjust(0,4,0,-4);
+	ret.adjust(1,5,-1,-5);
 	if (isInput()) {
-		ret.setRight(ret.left()+12);
+		ret.setRight(ret.left()+11);
 	}
 	else {
-		ret.setLeft(ret.right()-12);
+		ret.setLeft(ret.right()-11);
 	}
 	return ret;
 }
@@ -93,6 +93,7 @@ void NodeProperty::paint(
 		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
 	QRectF inner = boundingRect();
 	inner.adjust(12,0,-12,0);
+	painter->setPen(QPen(Qt::black,0.5f));
 	painter->setOpacity(1);
 	painter->setBrush(isUnderMouse() ? Qt::green : Qt::lightGray);
 	painter->drawRoundRect(inner, 10, 100);

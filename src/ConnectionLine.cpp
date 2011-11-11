@@ -75,9 +75,6 @@ void ConnectionLine::setLineColor(const QColor &newColor){
 
 void ConnectionLine::paint(
 		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
-
-
-	painter->setBrush(Qt::black);
 	QPainterPath path;
 	path.moveTo(_startPoint);
 	QPointF c0((_startPoint.x()+50),_startPoint.y());
@@ -85,11 +82,9 @@ void ConnectionLine::paint(
 	path.cubicTo(c0,c1,_endPoint);
 	painter->setBrush(Qt::NoBrush);
 
-	QPen p(_lColor,2);
-
+	QPen p(_lColor,2.f);
 	if (_startProp == 0 || _endProp == 0) {
 			p.setBrush(Qt::gray);
-			p.setWidth(2);
 			p.setStyle(Qt::DashLine);
 	}
 	painter->setPen(p);
