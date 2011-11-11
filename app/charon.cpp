@@ -64,7 +64,6 @@ void cleanup();
 int main(int argc, char* argv[]) {
 	init(argc, argv);
 	int ret = ExceptionHandler::run(run);
-	cleanup();
 	return ret;
 }
 
@@ -231,9 +230,9 @@ int run() {
 	if (Config::verbose) {
 		std::cout << "Finished workflow execution." << std::endl;
 	}
-	
-	//reassign std::cout to sout as ofstream log will go out of scope
-	sout.assign(std::cout);
+
+	// reset man, reassign sout before log gets out of scope
+	cleanup();
 
 	return EXIT_SUCCESS;
 }
