@@ -294,12 +294,12 @@ void CGSolver<T>::minimize(
   _itflow.assign( _reshapeFeedback( X ) );
 
   T red = 1;
-  T REALMIN = 1e-16;
-  T INT = 0.01;
+  T REALMIN = 1e-16f;
+  T INT = 0.01f;
   T EXT = 3.0;
   int const MAX = 20;
   int const RATIO = 10;
-  T SIG = 0.01;
+  T SIG = 0.01f;
   T RHO = SIG/2;
  
   //////////////////////////////////////////////////////////////////////
