@@ -37,7 +37,8 @@
 template<typename T>
 Flow2HSV<T>::Flow2HSV(const std::string& name) :
 		TemplatedParameteredObject<T>("Flow2HSV", name,
-				"Convert Flow into HSV Color Representation")
+				"Convert Flow into HSV Color Representation"),
+				background(true, false)
 {
 	ParameteredObject::_addParameter(
 			scaleChannel, "scaleChannel",
