@@ -1,11 +1,12 @@
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
+SET(ICON_DIR ${PROJECT_SOURCE_DIR}/icons)
 
 QT4_ADD_RESOURCES(QRC_RES ${PROJECT_SOURCE_DIR}/resources.qrc)
 
 # create icon files (if possible)
 IF(WIN32)
-	EMBED_ICON(TC_ICO ${PROJECT_SOURCE_DIR}/icons/tc.ico tcicon)
-	EMBED_ICON(INSP_ICO ${PROJECT_SOURCE_DIR}/icons/tc2.ico inspicon)
+	EMBED_ICON(TC_ICO ${ICON_DIR}/tc.ico tcicon)
+	EMBED_ICON(INSP_ICO ${ICON_DIR}/tc2.ico inspicon)
 ENDIF(WIN32)
 
 # standalone inspector application
@@ -82,9 +83,9 @@ ELSE(APPLE)
 	IF(UNIX)
 		# application icons
 		INSTALL(FILES
-			${PROJECT_SOURCE_DIR}/icons/tc.png
+			${ICON_DIR}/tc.png
 			DESTINATION share/icons/hicolor/48x48/apps
-			RENAME tuchulcha.png
+			RENAME      tuchulcha.png
 			COMPONENT   applications
 		)
 		INSTALL(FILES
@@ -93,9 +94,9 @@ ELSE(APPLE)
 			COMPONENT   applications
 		)
 		INSTALL(FILES
-			${PROJECT_SOURCE_DIR}/icons/tc2.png
+			${ICON_DIR}/tc2.png
 			DESTINATION share/icons/hicolor/48x48/apps
-			RENAME paraminspector.png
+			RENAME      paraminspector.png
 			COMPONENT   applications
 		)
 		INSTALL(FILES
