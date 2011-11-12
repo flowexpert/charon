@@ -1,8 +1,23 @@
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
+# info definitions
+IF(tuchulcha_VCS_INFO)
+	ADD_DEFINITIONS(-DVCSINFO="${tuchulcha_VCS_INFO}")
+ENDIF()
+ADD_DEFINITIONS(-DTUCHULCHA_VERSION="${tuchulcha_VERSION}")
+IF(tuchulcha_BUILD_INFO)
+	ADD_DEFINITIONS(-DBUILD_INFO="${tuchulcha_BUILD_INFO}")
+ENDIF()
+ADD_DEFINITIONS(-DCHARON_CORE_VERSION="${charon-core_VERSION}")
+
 # source files containing QObject derived classes
-QT4_WRAP_UI(UI_SRC LogDialog.ui OptionsDialog.ui)
+QT4_WRAP_UI(UI_SRC
+	LogDialog.ui
+	OptionsDialog.ui
+)
+
 SET(EDITPARAM_SOURCES
 	ParameterFileModel.cpp
 	ParameterFileModel.h
@@ -28,8 +43,6 @@ SET(EDITPARAM_SOURCES
 	FileManager.h
 	QDirEdit.cpp
 	QDirEdit.h
-	DocGenerator.cpp
-	DocGenerator.h
 )
 
 SET(EDITGRAPH_SOURCES
@@ -51,17 +64,39 @@ SET(EDITGRAPH_SOURCES
 	WorkflowExecutor.cpp
 )
 
+SET(INSPECTOR_SOURCES
+	AdvancedInspector.cpp
+	AdvancedInspector.h
+	ParamInspectorWindow.cpp
+	ParamInspectorWindow.h
+)
+
+SET(TUCHULCHA_SOURCES
+	TuchulchaWindow.cpp
+	TuchulchaWindow.h
+	DocGenerator.cpp
+	DocGenerator.h
+)
+
 # =============  generate moc files ====================
 
 # create moc files
 QT4_AUTOMOC(${EDITPARAM_SOURCES})
 QT4_AUTOMOC(${EDITGRAPH_SOURCES})
+QT4_AUTOMOC(${INSPECTOR_SOURCES})
+QT4_AUTOMOC(${TUCHULCHA_SOURCES})
 
 # create libraries
-ADD_LIBRARY(editparam ${EDITPARAM_SOURCES} ${UI_SRC})
+ADD_LIBRARY(editparam ${EDITPARAM_SOURCES})
 ADD_LIBRARY(editgraph ${EDITGRAPH_SOURCES})
+ADD_LIBRARY(paraminspector-widgets ${INSPECTOR_SOURCES})
+ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC})
 
 # add dependencies
 TARGET_LINK_LIBRARIES(editparam charon-plugins charon-core ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(editgraph editparam)
-SET_TARGET_PROPERTIES(editparam editgraph PROPERTIES FOLDER "Tuchulcha")
+TARGET_LINK_LIBRARIES(paraminspector-widgets editparam)
+TARGET_LINK_LIBRARIES(tuchulcha-widgets editgraph)
+SET_TARGET_PROPERTIES(
+	editparam editgraph paraminspector-widgets tuchulcha-widgets
+	PROPERTIES FOLDER "Tuchulcha")

@@ -27,7 +27,7 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QWheelEvent>
-#include "../app/TuchulchaWindow.h"
+#include "TuchulchaWindow.h"
 #include "GraphModel.h"
 #include "NodeHandler.h"
 

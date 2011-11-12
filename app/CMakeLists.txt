@@ -1,8 +1,4 @@
-INCLUDE_DIRECTORIES(${CHARON_UTILS_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
-INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR}/src)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 QT4_ADD_RESOURCES(QRC_RES ${PROJECT_SOURCE_DIR}/resources.qrc)
 
@@ -13,40 +9,14 @@ IF(WIN32)
 ENDIF(WIN32)
 
 # standalone inspector application
-SET(INSPECTOR_SOURCES
-	AdvancedInspector.cpp
-	AdvancedInspector.h
-	ParamInspectorWindow.cpp
-	ParamInspectorWindow.h
-	paraminspector.cpp
-)
+ADD_EXECUTABLE(paraminspector WIN32 paraminspector ${QRC_RES} ${INSP_ICO})
+TARGET_LINK_LIBRARIES(paraminspector
+	paraminspector-widgets ${QT_QTMAIN_LIBRARY})
+SET_TARGET_PROPERTIES(paraminspector PROPERTIES FOLDER "Tuchulcha")
 
-QT4_AUTOMOC(${INSPECTOR_SOURCES})
-ADD_EXECUTABLE(paraminspector WIN32 ${INSPECTOR_SOURCES} ${QRC_RES} ${INSP_ICO})
-TARGET_LINK_LIBRARIES(paraminspector editparam ${QT_QTMAIN_LIBRARY})
-SET_TARGET_PROPERTIES(paraminspector PROPERTIES
-	FOLDER "Tuchulcha"
-)
-
-# main application
-SET(TUCHULCHA_SOURCES
-	TuchulchaWindow.cpp
-	TuchulchaWindow.h
-	tuchulcha.cpp
-)
-
-QT4_AUTOMOC(${TUCHULCHA_SOURCES})
-ADD_EXECUTABLE(tuchulcha WIN32 ${TUCHULCHA_SOURCES} ${QRC_RES} ${TC_ICO})
-IF(tuchulcha_VCS_INFO)
-	ADD_DEFINITIONS(-DVCSINFO="${tuchulcha_VCS_INFO}")
-ENDIF()
-ADD_DEFINITIONS(-DTUCHULCHA_VERSION="${tuchulcha_VERSION}")
-IF(tuchulcha_BUILD_INFO)
-	ADD_DEFINITIONS(-DBUILD_INFO="${tuchulcha_BUILD_INFO}")
-ENDIF()
-ADD_DEFINITIONS(-DCHARON_CORE_VERSION="${charon-core_VERSION}")
-
-TARGET_LINK_LIBRARIES(tuchulcha editgraph ${QT_QTMAIN_LIBRARY} charon-plugins)
+ADD_EXECUTABLE(tuchulcha WIN32 tuchulcha ${QRC_RES} ${TC_ICO})
+TARGET_LINK_LIBRARIES(tuchulcha
+	tuchulcha-widgets ${QT_QTMAIN_LIBRARY} charon-plugins)
 SET_TARGET_PROPERTIES(tuchulcha PROPERTIES
 	FOLDER "Tuchulcha"
 	OUTPUT_NAME_DEBUG tuchulcha_d
