@@ -81,9 +81,6 @@ FileManager::~FileManager() {
 const FileManager& FileManager::instance() {
 	if (!_inst) {
 		_inst = new FileManager();
-
-		// initialize random seed for tempfile name generation
-		srand(time(NULL));
 	}
 	return *_inst;
 }
@@ -110,15 +107,6 @@ QString FileManager::classesFile() const {
 		newFile.close();
 	}
 	return path;
-}
-
-QString FileManager::tempFileName() const {
-	QDir path = QDir::temp();
-	QString filename;
-	do {
-		filename = QString("paramedit-%1.tmp").arg(rand());
-	} while (path.exists(filename));
-	return path.filePath(filename);
 }
 
 void FileManager::loadPluginInformation() const {

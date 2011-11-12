@@ -48,9 +48,6 @@ public:
 	/// get the path of the classes file
 	QString classesFile() const;
 
-	/// get a filename for a temporary file
-	QString tempFileName() const;
-
 	/// get config directory
 	QDir configDir() const;
 
