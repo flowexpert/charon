@@ -241,16 +241,21 @@ void FileManager::configure(bool force) const {
 		}
 
 		QMessageBox::information(
-			0, tr("path information"), tr(
-				"Your plugin paths are set to the "
-				"following values:<br><br>"
+			0, tr("Welcome"), tr(
+				"Welcome to Tuchulcha!<br><br>"
+				"Tuchulcha loads its information about existing modules "
+				"directly from the module files.<br>"
+				"Please check, if the paths to the modules' directories "
+				"are set correctly:<br><br>"
 				"<b>global plugin path:</b><br><tt>%1</tt><br><br>"
 				"<b>private plugin path:</b><br><tt>%2</tt><br><br>"
 				"This is just a <em>guess</em> based on information "
-				"about standard locations and the application directory. "
-				"These paths may be wrong under several conditions.<br><br>"
-				"They may be changed in the options dialog.<br>"
-				"(Edit-&gt;Options)")
+				"about standard locations and the application directory.<br>"
+				"These paths may be changed in the options dialog.<br>"
+				"(Edit-&gt;Options)<br><br>"
+				"Please press (<b>File-&gt;update plugins</b>) "
+				"after leaving this dialogue and after changing "
+				"the mentioned settings.")
 				.arg(globalPath).arg(privatPath)
 		);
 	}

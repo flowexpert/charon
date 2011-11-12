@@ -76,7 +76,7 @@ QAction* WorkflowExecutor::runAction() {
 void WorkflowExecutor::_updateIcon() {
 	if (_manager) {
 		_runAction->setIcon(QIcon(":/icons/stop.png"));
-		_runAction->setText(tr("Finish &workflow execution"));
+		_runAction->setText(tr("Finish &Workflow Execution"));
 		_runAction->setStatusTip(tr("Execution cleanup, unload plugins"));
 	}
 	else {

@@ -193,9 +193,9 @@ MainWindow::MainWindow(QWidget* myParent) :
 	_updateRecentFileActions();
 	fileMenu->addSeparator();
 	fileMenu->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
-			this, SLOT(updateMetadata()));
+			this, SLOT(updateMetadata()), QKeySequence("Ctrl+U"));
 	fileMenu->addAction(executor->runAction());
-	fileMenu->addAction(QIcon(":/icons/export.png"), tr("Export flowchart"),
+	fileMenu->addAction(QIcon(":/icons/export.png"), tr("Export &flowchart"),
 			this, SLOT(saveFlowChart()), QKeySequence(tr("Ctrl+F")));
 	fileMenu->addAction(QIcon(":/icons/close.png"), tr("&Exit"), this,
 		SLOT(close()), QKeySequence(tr("Ctrl+Q")));
@@ -203,10 +203,8 @@ MainWindow::MainWindow(QWidget* myParent) :
 	// edit menu
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
 	editMenu->addAction(QIcon(":/icons/revert.png"), tr(
-			"reset selected parameters"), inspector, SLOT(delParam()),
+			"&reset selected parameters"), inspector, SLOT(delParam()),
 			QKeySequence(tr("Ctrl+R")));
-	editMenu->addAction(QIcon(":/icons/revert_all.png"), tr("clear flowchart"),
-			inspector, SLOT(clear()), QKeySequence(tr("Ctrl+Shift+R")));
 	editMenu->addAction(QIcon(":/icons/configure.png"),tr("Options"),
 			this, SLOT(_options()));
 
