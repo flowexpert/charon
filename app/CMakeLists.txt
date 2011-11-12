@@ -18,7 +18,7 @@ SET(INSPECTOR_SOURCES
 	AdvancedInspector.h
 	ParamInspectorWindow.cpp
 	ParamInspectorWindow.h
-	paramInspectorApp.cpp
+	paraminspector.cpp
 )
 
 QT4_AUTOMOC(${INSPECTOR_SOURCES})
@@ -30,9 +30,9 @@ SET_TARGET_PROPERTIES(paraminspector PROPERTIES
 
 # main application
 SET(TUCHULCHA_SOURCES
-	MainWindow.cpp
-	MainWindow.h
-	main.cpp
+	TuchulchaWindow.cpp
+	TuchulchaWindow.h
+	tuchulcha.cpp
 )
 
 QT4_AUTOMOC(${TUCHULCHA_SOURCES})

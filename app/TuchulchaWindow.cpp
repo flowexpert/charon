@@ -15,7 +15,7 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file MainWindow.cpp
+/** \file TuchulchaWindow.cpp
  *  \brief Implementation of class MainWindow
  *
  *  \date 27.08.2008
@@ -26,7 +26,7 @@
 #include <QTextBrowser>
 #include "DocGenerator.h"
 
-#include "MainWindow.h"
+#include "TuchulchaWindow.h"
 #include "ObjectInspector.h"
 #include "FlowWidget.h"
 #include "NodeTreeView.h"
@@ -39,9 +39,9 @@
 
 #include "ui_OptionsDialog.h"
 
-#include "MainWindow.moc"
+#include "TuchulchaWindow.moc"
 
-MainWindow::MainWindow(QWidget* myParent) :
+TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QMainWindow(myParent), _flow(0) {
 
 	FileManager::instance().configure();
@@ -252,10 +252,10 @@ MainWindow::MainWindow(QWidget* myParent) :
 
 }
 
-MainWindow::~MainWindow() {
+TuchulchaWindow::~TuchulchaWindow() {
 }
 
-void MainWindow::closeEvent(QCloseEvent *cEvent) {
+void TuchulchaWindow::closeEvent(QCloseEvent *cEvent) {
 	// save window state config
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 					   "Tuchulcha");
@@ -267,7 +267,7 @@ void MainWindow::closeEvent(QCloseEvent *cEvent) {
 	QMainWindow::closeEvent(cEvent);
 }
 
-void MainWindow::_showAbout() {
+void TuchulchaWindow::_showAbout() {
 	QMessageBox aboutBox(this);
 	aboutBox.setWindowTitle(tr("About Tuchulcha"));
 	aboutBox.setTextFormat(Qt::RichText);
@@ -335,11 +335,11 @@ void MainWindow::_showAbout() {
 	aboutBox.exec();
 }
 
-void MainWindow::_showAboutQt() {
+void TuchulchaWindow::_showAboutQt() {
 	QMessageBox::aboutQt(this, tr("About Qt"));
 }
 
-void MainWindow::open(const QString& fileName) {
+void TuchulchaWindow::open(const QString& fileName) {
 	FlowWidget* flowWidget = new FlowWidget(_centralArea);
 	_centralArea->addSubWindow(flowWidget);
 	connect(flowWidget, SIGNAL(statusMessage(const QString&, int)),
@@ -348,7 +348,7 @@ void MainWindow::open(const QString& fileName) {
 	flowWidget->load(fileName);
 }
 
-void MainWindow::openNew() {
+void TuchulchaWindow::openNew() {
 	FlowWidget* flowWidget = new FlowWidget(_centralArea);
 	_centralArea->addSubWindow(flowWidget);
 	connect(flowWidget, SIGNAL(statusMessage(const QString&, int)),
@@ -356,14 +356,14 @@ void MainWindow::openNew() {
 	flowWidget->showMaximized();
 }
 
-void MainWindow::saveFlowChart() const {
+void TuchulchaWindow::saveFlowChart() const {
 	FlowWidget* active = qobject_cast<FlowWidget*> (
 			_centralArea->activeSubWindow());
 	if (active)
 		active->saveFlowChart();
 }
 
-void MainWindow::_windowActivated(QMdiSubWindow* /*window*/) {
+void TuchulchaWindow::_windowActivated(QMdiSubWindow* /*window*/) {
 	FlowWidget* flow = qobject_cast<FlowWidget*> (
 			_centralArea->currentSubWindow());
 
@@ -382,25 +382,25 @@ void MainWindow::_windowActivated(QMdiSubWindow* /*window*/) {
 	}
 }
 
-void MainWindow::zoomIn() {
+void TuchulchaWindow::zoomIn() {
 	FlowWidget* flow = qobject_cast<FlowWidget*> (_flow);
 	if (flow)
 		flow->zoomIn();
 }
 
-void MainWindow::zoomOut() {
+void TuchulchaWindow::zoomOut() {
 	FlowWidget* flow = qobject_cast<FlowWidget*> (_flow);
 	if (flow)
 		flow->zoomOut();
 }
 
-void MainWindow::zoomFit() {
+void TuchulchaWindow::zoomFit() {
 	FlowWidget* flow = qobject_cast<FlowWidget*> (_flow);
 	if (flow)
 		flow->zoomFit();
 }
 
-void MainWindow::updateMetadata() {
+void TuchulchaWindow::updateMetadata() {
 	FileManager::instance().loadPluginInformation();
 	FileManager::instance().updateMetadata();
 	
@@ -408,13 +408,13 @@ void MainWindow::updateMetadata() {
 	emit metaDataUpdated() ;
 }
 
-void MainWindow::_openRecentFile() {
+void TuchulchaWindow::_openRecentFile() {
 QAction *action = qobject_cast<QAction *>(sender());
 	if (action)
 		open(action->data().toString());
 }
 
-void MainWindow::_updateRecentFileActions() {
+void TuchulchaWindow::_updateRecentFileActions() {
 	QSettings settings("Heidelberg Collaboratory for Image Processing",
 					   "Tuchulcha");
 	QStringList files = settings.value("recentFileList").toStringList();
@@ -435,11 +435,11 @@ void MainWindow::_updateRecentFileActions() {
 	_separatorAct->setVisible(numRecentFiles > 0);
 }
 
-QString MainWindow::_strippedName(const QString& fullFileName) const {
+QString TuchulchaWindow::_strippedName(const QString& fullFileName) const {
 	return QFileInfo(fullFileName).fileName();
 }
 
-void MainWindow::setCurrentFile(const QString& fileName) {
+void TuchulchaWindow::setCurrentFile(const QString& fileName) {
 	if (fileName.isEmpty())
 		return;
 
@@ -457,7 +457,7 @@ void MainWindow::setCurrentFile(const QString& fileName) {
 	_updateRecentFileActions();
 }
 
-void MainWindow::_options() {
+void TuchulchaWindow::_options() {
 	QDialog dialog(this);
 	Ui::OptionsDialog options;
 	options.setupUi(&dialog);

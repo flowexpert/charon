@@ -15,21 +15,19 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file main.cpp
- *  \brief Main application
- *
- *  \date 27.08.2008
+/** \file paraminspector.cpp
+ *  GUI Application for ParameterFile manipulation.
+ *  \date 08.08.2008
  *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
-#include <cstdlib>
 #include <QApplication>
 #include <QErrorMessage>
 
-#include "MainWindow.h"
+#include "ParamInspectorWindow.h"
 #include "FileManager.h"
 
-/** Start of main application.
+/** Start of test application.
  * \param argc  Counter of command line arguments.
  * \param argv  Content of command line arguments.
  * \return      0 in case of sucessful execution.
@@ -37,8 +35,10 @@
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
 	Q_INIT_RESOURCE(resources);
-	MainWindow window;
+	ParamInspectorWindow window;
 	FileManager::dialogParent = &window;
+	window.resize(320, 480);
+	window.show();
 #ifndef UNIX
 	QErrorMessage* handler = QErrorMessage::qtHandler();
 	handler->setModal(true);
@@ -47,6 +47,6 @@ int main(int argc, char *argv[]) {
 	QFileInfo lastArgInfo(args.last());
 	if (lastArgInfo.exists() && (lastArgInfo.absoluteFilePath()
 			!= QFileInfo(app.applicationFilePath()).absoluteFilePath()))
-		window.open(lastArgInfo.absoluteFilePath());
+		window.openFile(lastArgInfo.absoluteFilePath());
 	return app.exec();
 }

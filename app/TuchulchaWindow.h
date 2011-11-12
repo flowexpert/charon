@@ -15,7 +15,7 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file   MainWindow.h
+/** \file   TuchulchaWindow.h
  *  \brief  Declaration of class MainWindow
  *
  *  \date   27.08.2008
@@ -35,15 +35,15 @@ class NodeTreeView;
 class QAction;
 
 ///	Management of the application's main window.
-class MainWindow : public QMainWindow {
+class TuchulchaWindow : public QMainWindow {
 	Q_OBJECT
 
 public:
 	/**	Default constructor.
 	 *	\param parent	pointer to parent widget
 	 */
-	MainWindow(QWidget* parent = 0);
-	virtual ~MainWindow();
+	TuchulchaWindow(QWidget* parent = 0);
+	virtual ~TuchulchaWindow();
 
 public slots:
 	/// open parameterfile and display flowchart content

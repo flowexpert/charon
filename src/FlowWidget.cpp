@@ -27,7 +27,7 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QWheelEvent>
-#include "../app/MainWindow.h"
+#include "../app/TuchulchaWindow.h"
 #include "GraphModel.h"
 #include "NodeHandler.h"
 
@@ -47,7 +47,7 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 	setAttribute(Qt::WA_DeleteOnClose, true);
 	connect(model(), SIGNAL(fileNameChanged (QString)),
 		this, SLOT(updateFileName(QString)));
-	MainWindow* main = qobject_cast<MainWindow*>(parent()->parent());
+	TuchulchaWindow* main = qobject_cast<TuchulchaWindow*>(parent()->parent());
 	Q_ASSERT(main);
 	connect(model(), SIGNAL(fileNameChanged (QString)),
 		main, SLOT(setCurrentFile(QString)));
