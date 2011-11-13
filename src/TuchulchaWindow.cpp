@@ -240,8 +240,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	emit enableEditors(false);
 
 	// load window state config
-	QSettings settings("Heidelberg Collaboratory for Image Processing",
-	                   "Tuchulcha");
+	QSettings settings;
 	if (settings.value("windowState").isValid()) {
 		QByteArray state = settings.value("windowState").toByteArray();
 		restoreState(state);
@@ -257,8 +256,7 @@ TuchulchaWindow::~TuchulchaWindow() {
 
 void TuchulchaWindow::closeEvent(QCloseEvent *cEvent) {
 	// save window state config
-	QSettings settings("Heidelberg Collaboratory for Image Processing",
-					   "Tuchulcha");
+	QSettings settings;
 	settings.setValue("windowState", saveState());
 
 	_centralArea->closeAllSubWindows();
@@ -415,8 +413,7 @@ QAction *action = qobject_cast<QAction *>(sender());
 }
 
 void TuchulchaWindow::_updateRecentFileActions() {
-	QSettings settings("Heidelberg Collaboratory for Image Processing",
-					   "Tuchulcha");
+	QSettings settings;
 	QStringList files = settings.value("recentFileList").toStringList();
 
 	int numRecentFiles = qMin(files.size(), (int)_maxRecentFiles);
@@ -443,8 +440,7 @@ void TuchulchaWindow::setCurrentFile(const QString& fileName) {
 	if (fileName.isEmpty())
 		return;
 
-	QSettings settings("Heidelberg Collaboratory for Image Processing",
-					   "Tuchulcha");
+	QSettings settings;
 	QStringList files = settings.value("recentFileList").toStringList();
 	QString fname = QFileInfo(fileName).absoluteFilePath();
 	files.removeAll(fname);
@@ -465,9 +461,7 @@ void TuchulchaWindow::_options() {
 	static const QString& privPathTag = FileManager::privPathTag;
 
 	// set up dialog content
-	QSettings settings(
-			"Heidelberg Collaboratory for Image Processing",
-			"Tuchulcha");
+	QSettings settings;
 	options.editGlobalPath->setText(
 			settings.value("globalPluginPath").toString());
 	options.editPrivatePath->setText(

@@ -141,9 +141,7 @@ void WorkflowExecutor::_execute() {
 	_executionMessage = QString("");
 
 	// setup and start workflow execution
-	QSettings settings(
-			"Heidelberg Collaboratory for Image Processing",
-			"Tuchulcha");
+	QSettings settings;
 	QStringList paths;
 	paths << settings.value(FileManager::privPathTag).toString();
 	paths << settings.value("globalPluginPath").toString().split(";");
@@ -282,9 +280,7 @@ void WorkflowExecutor::_executionFinished()
 		_updateLogDialog();
 	}
 
-	QSettings settings(
-			"Heidelberg Collaboratory for Image Processing",
-			"Tuchulcha");
+	QSettings settings;
 	if (settings.value("waitAfterExecute", false).toBool()) {
 		sout << "\n---------------------------------------------------\n\n"
 				<< "Workflow execution finished.\n"

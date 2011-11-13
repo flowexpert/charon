@@ -36,6 +36,8 @@
  */
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
+	app.setOrganizationName("Heidelberg Collaboratory for Image Processing");
+	app.setApplicationName("Tuchulcha");
 	Q_INIT_RESOURCE(resources);
 	TuchulchaWindow window;
 	FileManager::dialogParent = &window;

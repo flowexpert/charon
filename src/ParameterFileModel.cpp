@@ -369,9 +369,7 @@ bool ParameterFileModel::load(const QString& fName) {
 	if (fromDialog.isEmpty()) {
 		QString guess = _fileName;
 		if (guess.isEmpty()) {
-			QSettings settings(
-					"Heidelberg Collaboratory for Image Processing",
-					"Tuchulcha");
+			QSettings settings;
 			QStringList files =
 					settings.value("recentFileList").toStringList();
 			if (files.size() > 0)

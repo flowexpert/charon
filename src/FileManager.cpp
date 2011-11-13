@@ -128,9 +128,7 @@ void FileManager::loadPluginInformation() const {
 		Q_ASSERT(!QFileInfo(wrpFiles[i]).exists());
 	}
 
-	QSettings settings(
-			"Heidelberg Collaboratory for Image Processing",
-			"Tuchulcha");
+	QSettings settings;
 	QStringList paths;
 	paths << settings.value(privPathTag).toString();
 	paths << settings.value("globalPluginPath").toString().split(";");
@@ -200,9 +198,7 @@ void FileManager::updateMetadata() const {
 }
 
 void FileManager::configure(bool force) const {
-	QSettings settings(
-			"Heidelberg Collaboratory for Image Processing",
-			"Tuchulcha");
+	QSettings settings;
 
 	// check current values
 	if(!settings.contains("globalPluginPath") ||
