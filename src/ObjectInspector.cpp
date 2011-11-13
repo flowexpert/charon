@@ -145,7 +145,7 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 
 	// update validator
 	PrefixValidator* newValidator =
-			new PrefixValidator(_model->parameterFile());
+			new PrefixValidator(_model->parameterFile(),_prefix);
 	_prefix->setValidator(newValidator);
 
 	if (_validator)

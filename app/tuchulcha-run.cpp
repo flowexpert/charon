@@ -25,6 +25,7 @@
 #include <QApplication>
 #include <QTimer>
 #include "CommunicationHandler.h"
+#include "CharonRun.h"
 
 /** Start of main application.
  * \param argc  Counter of command line arguments.
@@ -35,8 +36,18 @@ int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
 	app.setOrganizationName("Heidelberg Collaboratory for Image Processing");
 	app.setApplicationName("Tuchulcha");
-	CommunicationHandler test(app.arguments());
-	QTimer::singleShot(0,&test,SLOT(start()));
-	QObject::connect(&test,SIGNAL(finished()),&app,SLOT(quit()));
-	return app.exec();
+
+	CommunicationHandler* test =
+		new CommunicationHandler(app.arguments(), &app);
+	CharonRun* run = new CharonRun(&app);
+
+	QObject::connect(test,SIGNAL(updatePlugins()),run,SLOT(updatePlugins()));
+	if(test->interactive) {
+		QObject::connect(test,SIGNAL(finished()),&app,SLOT(quit()));
+	}
+
+	test->start();
+	int ret = app.exec();
+	test->wait();
+	return ret;
 }

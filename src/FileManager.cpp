@@ -191,8 +191,8 @@ void FileManager::updateMetadata() const {
 		cur.open(QIODevice::ReadOnly | QIODevice::Text);
 		QString content = cur.readAll();
 		cur.close();
-		cStream << "# from file \"" << wrpFiles[i] << "\":" << endl;
-		cStream << content << "\n" << endl;
+		cStream << tr("\n# from file \"%1\":\n").arg(wrpFiles[i]);
+		cStream << content << endl;
 	}
 	cFile.close();
 }

@@ -26,8 +26,9 @@
 
 #include <QTextStream>
 
-CommunicationHandler::CommunicationHandler(const QStringList& args, QObject* pp) :
-		QThread(pp), _quiet(false)
+CommunicationHandler::CommunicationHandler(
+	const QStringList& args, QObject* pp) :
+		QThread(pp), interactive(true), _quiet(false)
 {
 	// commandline argument parsing
 	QStringListIterator argIter(args);
@@ -37,6 +38,9 @@ CommunicationHandler::CommunicationHandler(const QStringList& args, QObject* pp)
 		if (s == "--quiet") {
 			_quiet = true;
 		}
+		if (s == "update") {
+			interactive = false;
+		}
 		else {
 			QTextStream qerr(stderr,QIODevice::WriteOnly);
 			qerr << tr("Argument \"%1\" not recognized.").arg(s) << endl;
@@ -45,14 +49,15 @@ CommunicationHandler::CommunicationHandler(const QStringList& args, QObject* pp)
 }
 
 CommunicationHandler::~CommunicationHandler() {
-	if(!_quiet) {
-		QTextStream qout(stdout,QIODevice::WriteOnly);
-		qout << tr("bye") << endl;
-	}
 }
 
 void CommunicationHandler::run() {
-	if(!_quiet) {
+	if (!interactive) {
+		emit updatePlugins();
+		return;
+	}
+
+	if (!_quiet) {
 		QTextStream qout(stdout,QIODevice::WriteOnly);
 		qout << tr("Tuchulcha Workflow Executor version %1")
 				.arg(TUCHULCHA_VERSION) << "\n"

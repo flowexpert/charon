@@ -27,7 +27,7 @@
 
 NodeTreeView::NodeTreeView(QWidget* pp) :
 			QTreeView(pp),
-			_model(new QStandardItemModel(1,3))
+			_model(new QStandardItemModel(1,3,this))
 {
 	setAnimated(true);
 	setModel(_model);

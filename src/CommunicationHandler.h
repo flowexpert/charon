@@ -40,6 +40,12 @@ public:
 	explicit CommunicationHandler(
 		const QStringList& args, QObject* parent = 0);
 	virtual ~CommunicationHandler();
+	/// enter interactive loop
+	bool interactive;
+
+signals:
+	/// update module metadata
+	void updatePlugins();
 
 protected:
 	/// thread execution code
