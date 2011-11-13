@@ -29,7 +29,7 @@
 
 CommunicationHandler::CommunicationHandler(
 	const QStringList& args, QObject* pp) :
-		QThread(pp), _interactive(false), _quiet(false), _args(args) {
+		QThread(pp), _interactive(true), _quiet(false), _args(args) {
 }
 
 void CommunicationHandler::run() {
@@ -38,8 +38,8 @@ void CommunicationHandler::run() {
 	argIter.next(); // skip first item (command name)
 	while (argIter.hasNext()) {
 		QString s = argIter.next();
-		if (s == "--interactive") {
-			_interactive = true;
+		if (s == "--non-interactive") {
+			_interactive = false;
 		}
 		else if (s == "--quiet") {
 			_quiet = true;
@@ -74,7 +74,7 @@ void CommunicationHandler::run() {
 	QString line;
 	QRegExp runRgx("^run\\s+(.+)$");
 	do {
-		line = qin.readLine().trimmed().toLower();
+		line = qin.readLine().trimmed();
 		if(line == "quit") {
 			break;
 		}

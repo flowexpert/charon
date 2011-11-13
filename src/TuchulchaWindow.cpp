@@ -400,7 +400,7 @@ void TuchulchaWindow::zoomFit() {
 
 void TuchulchaWindow::updateMetadata() {
 	QStringList args;
-	args << "update";
+	args << "--non-interactive" << "update";
 	LogDialog dialog(
 				tr("Plugin Information Update"),
 				tr("Output of update process:"));
