@@ -108,5 +108,5 @@ void CharonRun::updatePlugins() const {
 		cStream << content << endl;
 	}
 	cFile.close();
-	QApplication::exit(0);
+	QApplication::exit();
 }

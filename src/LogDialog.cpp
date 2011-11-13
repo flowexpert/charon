@@ -41,6 +41,7 @@ LogDialog::~LogDialog() {
 
 void LogDialog::updateContent() {
 	if (_proc) {
+		_ui->logText->moveCursor(QTextCursor::End);
 		_ui->logText->insertPlainText(_proc->readAll());
 		_ui->logText->moveCursor(QTextCursor::End);
 	}
@@ -51,5 +52,5 @@ void LogDialog::startProcess(QStringList args) {
 	_ui->progressBar->show();
 	connect(_proc, SIGNAL(finished(int)),_ui->progressBar, SLOT(hide()));
 	connect(_proc,SIGNAL(readyRead()),SLOT(updateContent()));
-	_proc->start("./tuchulcha-run", args, QIODevice::ReadOnly|QIODevice::Text);
+	_proc->start("./tuchulcha-run",args,QIODevice::ReadWrite|QIODevice::Text);
 }

@@ -29,10 +29,12 @@
 
 CommunicationHandler::CommunicationHandler(
 	const QStringList& args, QObject* pp) :
-		QThread(pp), interactive(true), _quiet(false)
-{
+		QThread(pp), _interactive(true), _quiet(false), _args(args) {
+}
+
+void CommunicationHandler::run() {
 	// commandline argument parsing
-	QStringListIterator argIter(args);
+	QStringListIterator argIter(_args);
 	argIter.next(); // skip first item (command name)
 	while (argIter.hasNext()) {
 		QString s = argIter.next();
@@ -40,21 +42,18 @@ CommunicationHandler::CommunicationHandler(
 			_quiet = true;
 		}
 		if (s == "update") {
-			interactive = false;
+			emit updatePlugins();
+			_interactive = false;
 		}
 		else {
 			QTextStream qerr(stderr,QIODevice::WriteOnly);
 			qerr << tr("Argument \"%1\" not recognized.").arg(s) << endl;
+			QApplication::exit(-1);
 		}
 	}
-}
 
-CommunicationHandler::~CommunicationHandler() {
-}
-
-void CommunicationHandler::run() {
-	if (!interactive) {
-		emit updatePlugins();
+	// check interactive loop
+	if (!_interactive) {
 		return;
 	}
 
@@ -65,6 +64,7 @@ void CommunicationHandler::run() {
 			 << tr("type \"quit\" to exit this application.") << endl;
 	}
 
+	// interactive command handling
 	QTextStream qin(stdin,QIODevice::ReadOnly);
 	QString line;
 	do {
@@ -72,10 +72,15 @@ void CommunicationHandler::run() {
 		if(line == "quit") {
 			break;
 		}
+		else if (line == "update") {
+			emit updatePlugins();
+		}
 		else if (!line.isEmpty()) {
 			QTextStream qerr(stderr,QIODevice::WriteOnly);
 			qerr << tr("Command \"%1\" not recognized.").arg(line) << endl;
 		}
 	} while (!line.isNull());
+
+	// exit on quit
 	QApplication::exit();
 }

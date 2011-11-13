@@ -39,9 +39,6 @@ public:
 	 */
 	explicit CommunicationHandler(
 		const QStringList& args, QObject* parent = 0);
-	virtual ~CommunicationHandler();
-	/// enter interactive loop
-	bool interactive;
 
 signals:
 	/// update module metadata
@@ -52,8 +49,12 @@ protected:
 	virtual void run();
 
 private:
+	/// enter interactive loop
+	bool _interactive;
 	/// avoid info output
 	bool _quiet;
+	/// cmd line argument cache
+	QStringList _args;
 };
 
 #endif // COMM_HANDLER_H

@@ -23,7 +23,6 @@
  */
 
 #include <QApplication>
-#include <QTimer>
 #include "CommunicationHandler.h"
 #include "CharonRun.h"
 
@@ -39,10 +38,11 @@ int main(int argc, char *argv[]) {
 
 	CommunicationHandler comm(app.arguments());
 	CharonRun run;
-
 	run.connect(&comm,SIGNAL(updatePlugins()),SLOT(updatePlugins()));
+
 	comm.start();
 	int ret = app.exec();
 	comm.wait();
+
 	return ret;
 }
