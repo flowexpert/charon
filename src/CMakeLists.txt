@@ -71,6 +71,11 @@ SET(INSPECTOR_SOURCES
 	ParamInspectorWindow.h
 )
 
+SET(WF_RUNNER_SOURCES
+	CommunicationHandler.h
+	CommunicationHandler.cpp
+)
+
 SET(TUCHULCHA_SOURCES
 	TuchulchaWindow.cpp
 	TuchulchaWindow.h
@@ -84,18 +89,21 @@ SET(TUCHULCHA_SOURCES
 QT4_AUTOMOC(${EDITPARAM_SOURCES})
 QT4_AUTOMOC(${EDITGRAPH_SOURCES})
 QT4_AUTOMOC(${INSPECTOR_SOURCES})
+QT4_AUTOMOC(${WF_RUNNER_SOURCES})
 QT4_AUTOMOC(${TUCHULCHA_SOURCES})
 
 # create libraries
 ADD_LIBRARY(editparam ${EDITPARAM_SOURCES})
 ADD_LIBRARY(editgraph ${EDITGRAPH_SOURCES})
 ADD_LIBRARY(paraminspector-widgets ${INSPECTOR_SOURCES})
+ADD_LIBRARY(tc-run ${WF_RUNNER_SOURCES})
 ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC})
 
 # add dependencies
 TARGET_LINK_LIBRARIES(editparam charon-plugins charon-core ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(editgraph editparam)
 TARGET_LINK_LIBRARIES(paraminspector-widgets editparam)
+TARGET_LINK_LIBRARIES(tc-run charon-plugins ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(tuchulcha-widgets editgraph)
 SET_TARGET_PROPERTIES(
 	editparam editgraph paraminspector-widgets tuchulcha-widgets

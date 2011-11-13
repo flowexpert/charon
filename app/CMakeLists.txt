@@ -13,15 +13,19 @@ ENDIF(WIN32)
 ADD_EXECUTABLE(paraminspector WIN32 paraminspector ${QRC_RES} ${INSP_ICO})
 TARGET_LINK_LIBRARIES(paraminspector
 	paraminspector-widgets ${QT_QTMAIN_LIBRARY})
-SET_TARGET_PROPERTIES(paraminspector PROPERTIES FOLDER "Tuchulcha")
+
+ADD_EXECUTABLE(tuchulcha-run tuchulcha-run)
+TARGET_LINK_LIBRARIES(tuchulcha-run tc-run)
 
 ADD_EXECUTABLE(tuchulcha WIN32 tuchulcha ${QRC_RES} ${TC_ICO})
 TARGET_LINK_LIBRARIES(tuchulcha
 	tuchulcha-widgets ${QT_QTMAIN_LIBRARY} charon-plugins)
 SET_TARGET_PROPERTIES(tuchulcha PROPERTIES
-	FOLDER "Tuchulcha"
 	OUTPUT_NAME_DEBUG tuchulcha_d
 )
+
+SET_TARGET_PROPERTIES(paraminspector tuchulcha-run tuchulcha
+	PROPERTIES FOLDER "Tuchulcha")
 
 IF(WIN32)
 	# copy needed dll for tests and application run before installing
