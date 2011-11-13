@@ -29,7 +29,7 @@
 
 CommunicationHandler::CommunicationHandler(
 	const QStringList& args, QObject* pp) :
-		QThread(pp), _interactive(true), _quiet(false), _args(args) {
+		QThread(pp), _interactive(false), _quiet(false), _args(args) {
 }
 
 void CommunicationHandler::run() {
@@ -38,16 +38,17 @@ void CommunicationHandler::run() {
 	argIter.next(); // skip first item (command name)
 	while (argIter.hasNext()) {
 		QString s = argIter.next();
-		if (s == "--quiet") {
+		if (s == "--interactive") {
+			_interactive = true;
+		}
+		else if (s == "--quiet") {
 			_quiet = true;
 		}
 		else if (s == "update") {
 			emit updatePlugins();
-			_interactive = false;
 		}
 		else if (s == "run" && argIter.hasNext()) {
 			emit runWorkflow(argIter.next());
-			_interactive = false;
 		}
 		else {
 			QTextStream qerr(stderr,QIODevice::WriteOnly);

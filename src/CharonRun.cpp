@@ -33,31 +33,38 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QApplication>
+#include <QDateTime>
 
-CharonRun::CharonRun(QObject* pp) : QObject(pp), _lockCount(0)
+#ifdef __GNUG__
+#include <cxxabi.h>
+#endif // __GNUG__
+
+CharonRun::CharonRun(QObject* pp) :
+	QObject(pp), _lockCount(0), _man(0), _log(0)
 {
 }
 
-void CharonRun::updatePlugins() {
-	lock();
+CharonRun::~CharonRun() {
+	if (_man || _log) {
+		_freeMan();
+	}
+}
+
+void CharonRun::_setupMan(QString logFileName) {
+	if (_man || _log) {
+		_freeMan();
+	}
+
 	const FileManager& fm = FileManager::instance();
-	QDir configDir = fm.configDir();
-	QString logFileName = configDir.absoluteFilePath("updateLog.txt");
-	std::ofstream log(logFileName.toStdString().c_str(), std::ios::trunc);
-	Q_ASSERT(log.good());
-	sout.assign(std::cout, log);
-
-	QDir metaPath(configDir.absoluteFilePath("metadata"));
-
-	// delete old wrp files
-	QStringList wrpFiles = metaPath.entryList(
-			QStringList("*.wrp"), QDir::Files);
-	for (int i=0; i < wrpFiles.size(); i++) {
-		Q_ASSERT(QFileInfo(metaPath.absoluteFilePath(wrpFiles[i])).exists());
-		Q_ASSERT(QFileInfo(metaPath.absoluteFilePath(wrpFiles[i])).isFile());
-		Q_ASSERT(wrpFiles[i].indexOf(".wrp") > 0);
-		metaPath.remove(wrpFiles[i]);
-		Q_ASSERT(!QFileInfo(wrpFiles[i]).exists());
+	if (!logFileName.isEmpty()) {
+		QDir configDir = fm.configDir();
+		logFileName = configDir.absoluteFilePath(logFileName);
+		_log = new std::ofstream(
+					logFileName.toStdString().c_str(), std::ios::trunc);
+		Q_ASSERT(_log);
+		Q_ASSERT(!_log->fail());
+		Q_ASSERT(_log->good());
+		sout.assign(std::cout, *_log);
 	}
 
 	QSettings settings;
@@ -71,7 +78,7 @@ void CharonRun::updatePlugins() {
 	while (iter.hasNext()) {
 		pathsS.push_back(iter.next().trimmed().toStdString());
 	}
-	PluginManager man(pathsS,
+	_man = new PluginManager(pathsS,
 #if !defined(_MSC_VER) && defined(NDEBUG)
 			// use selected option
 			settings.value("suffixedPlugins", false).toBool());
@@ -79,10 +86,40 @@ void CharonRun::updatePlugins() {
 			// determined by compile type
 			DEFAULT_DEBUG_SUFFIX);
 #endif
-	man.createMetadata(metaPath.absolutePath().toStdString());
+}
 
-	sout.assign();
-	log.close();
+void CharonRun::_freeMan() {
+	if (_man) {
+		delete _man;
+		_man = 0;
+	}
+	sout.assign(std::cout);
+	if (_log) {
+		_log->close();
+		delete _log;
+		_log = 0;
+	}
+}
+
+void CharonRun::updatePlugins() {
+	lock();
+
+	// delete old wrp files
+	const FileManager& fm = FileManager::instance();
+	QDir metaPath = fm.configDir().absoluteFilePath("metadata");
+	QStringList wrpFiles = metaPath.entryList(
+			QStringList("*.wrp"), QDir::Files);
+	for (int i=0; i < wrpFiles.size(); i++) {
+		Q_ASSERT(QFileInfo(metaPath.absoluteFilePath(wrpFiles[i])).exists());
+		Q_ASSERT(QFileInfo(metaPath.absoluteFilePath(wrpFiles[i])).isFile());
+		Q_ASSERT(wrpFiles[i].indexOf(".wrp") > 0);
+		metaPath.remove(wrpFiles[i]);
+		Q_ASSERT(!QFileInfo(wrpFiles[i]).exists());
+	}
+
+	_setupMan("updateLog.txt");
+	_man->createMetadata(metaPath.absolutePath().toStdString());
+	_freeMan();
 
 	// update metadata file
 	QFile cFile(fm.classesFile());
@@ -115,7 +152,61 @@ void CharonRun::updatePlugins() {
 void CharonRun::runWorkflow(QString fName) {
 	lock();
 	QTextStream qout(stdout);
-	qout << tr("running workflow \"%1\"").arg(fName) << endl;
+	_setupMan("executeLog.txt");
+
+	QString pathBak = QDir::currentPath();
+	fName = QFileInfo(fName).absoluteFilePath();
+	QDir::setCurrent(QFileInfo(fName).path());
+	// error occurs in _manager->executeWorkflow.
+	// perhaps try/catch-block unneccessary.
+	QString errorMsg;
+	try {
+		qout << tr("Loading parameter file \"%1\"").arg(fName) << endl;
+		_man->loadParameterFile(fName.toStdString());
+		qout << endl;
+		qout << tr("== Executing Workflow ==") << endl;
+		const QDateTime& startTime = QDateTime::currentDateTime();
+		qout << tr("start time: %1").arg(startTime.toString(Qt::ISODate))
+			 << endl;
+		_man->executeWorkflow();
+		const QDateTime& endTime = QDateTime::currentDateTime();
+		QTime runTime = QTime().addSecs(startTime.secsTo(endTime));
+
+		qout << tr("Execution finished.") << "\n";
+		qout << tr("end time : %1").arg(endTime.toString(Qt::ISODate)) << endl;
+		qout << tr("runtime  : %1").arg(
+					runTime.toString("hh:mm:ss.zzz")) << endl;
+	}
+	catch (const std::string& msg) {
+		errorMsg =
+				tr("Caught exception of type \"std::string\".\n\nMessage:\n%1")
+				.arg(msg.c_str());
+	}
+	catch (const std::exception& excpt) {
+		const char* name = typeid(excpt).name();
+#ifdef __GNUG__
+		name = abi::__cxa_demangle(name, 0, 0, 0);
+#endif // __GNUG__
+		errorMsg =
+			tr("Caught exception of type \"%1\".\n\nMessage:\n%2")
+			.arg(name).arg(excpt.what());
+	}
+	catch (const char* &msg) {
+		errorMsg =
+			tr("Caught exception of type \"char*\".\n\nMessage:\n%1").arg(msg);
+	}
+	catch (...) {
+		errorMsg = tr("Caught exception of unknown type");
+	}
+	if (!errorMsg.isEmpty()) {
+		qout << "\n****************************************************\n\n"
+				<< tr("Error during execution:") << "\n\n"
+				<< errorMsg << "\n\n"
+				<< "****************************************************"
+				<< endl;
+	}
+	QDir::setCurrent(pathBak);
+
 	unlock();
 }
 

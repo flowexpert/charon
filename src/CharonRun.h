@@ -26,6 +26,7 @@
 #define CHARONRUN_H
 
 #include <QObject>
+class PluginManager;
 
 /// workflow execution and plugin update management
 class CharonRun : public QObject
@@ -35,6 +36,7 @@ public:
 	/// constructor
 	/** \param parent parent object */
 	explicit CharonRun(QObject* parent = 0);
+	~CharonRun();
 
 public slots:
 	/// update plugin information
@@ -51,6 +53,14 @@ public slots:
 private:
 	/// lock counter (mutex-like)
 	uint _lockCount;
+	/// plugin manager
+	PluginManager* _man;
+	/// logger
+	std::ofstream* _log;
+	/// setup plugin manager
+	void _setupMan(QString logFileName);
+	/// release plugin manager
+	void _freeMan();
 };
 
 #endif // CHARONRUN_H
