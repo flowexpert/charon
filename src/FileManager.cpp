@@ -21,20 +21,10 @@
  *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
-#include <QFile>
-#include <cstdlib>
-#include <ctime>
-#include <fstream>
 #include "FileManager.h"
-#include <FileTool.h>
-#include <QFileDialog>
-#include <QInputDialog>
 #include <QMessageBox>
-#include <QStringList>
 #include <QSettings>
 #include <QTextStream>
-#include "PluginManager.h"
-#include "ui_LogDialog.h"
 
 #ifndef TUCHULCHA_DIR
 /// Tuchulcha config path
@@ -100,101 +90,16 @@ QString FileManager::classesFile() const {
 	if (!QFile(QDir::homePath() + "/" + TUCHULCHA_DIR + "/metadata").exists()) {
 		QDir::home().mkpath(TUCHULCHA_DIR "/metadata");
 	}
-	if (!QFile(path).exists()) {
+	QFile newFile(path);
+	if (!newFile.exists()) {
 		// write empty classes file
-		std::ofstream newFile(path.toAscii().constData(), std::ios::trunc);
-		newFile << "# empty classes file" << std::endl;
+		if (newFile.open(QFile::WriteOnly | QFile::Truncate)) {
+			QTextStream qout(&newFile);
+			qout << tr("# empty classes file.") << endl;
+		}
 		newFile.close();
 	}
 	return path;
-}
-
-void FileManager::loadPluginInformation() const {
-	QString logFileName = configDir().absoluteFilePath("updateLog.txt");
-	std::ofstream log(logFileName.toStdString().c_str(), std::ios::trunc);
-	Q_ASSERT(log.good());
-	sout.assign(log);
-
-	QDir metaPath(configDir().absoluteFilePath("metadata"));
-
-	// delete old wrp files
-	QStringList wrpFiles = metaPath.entryList(
-			QStringList("*.wrp"), QDir::Files);
-	for (int i=0; i < wrpFiles.size(); i++) {
-		Q_ASSERT(QFileInfo(metaPath.absoluteFilePath(wrpFiles[i])).exists());
-		Q_ASSERT(QFileInfo(metaPath.absoluteFilePath(wrpFiles[i])).isFile());
-		Q_ASSERT(wrpFiles[i].indexOf(".wrp") > 0);
-		metaPath.remove(wrpFiles[i]);
-		Q_ASSERT(!QFileInfo(wrpFiles[i]).exists());
-	}
-
-	QSettings settings;
-	QStringList paths;
-	paths << settings.value(privPathTag).toString();
-	paths << settings.value("globalPluginPath").toString().split(";");
-	paths.removeDuplicates();
-	paths.removeAll("");
-	std::vector<std::string> pathsS;
-	QStringListIterator iter(paths);
-	while (iter.hasNext()) {
-		pathsS.push_back(iter.next().trimmed().toStdString());
-	}
-	PluginManager man(pathsS,
-#if !defined(_MSC_VER) && defined(NDEBUG)
-			// use selected option
-			settings.value("suffixedPlugins", false).toBool());
-#else
-			// determined by compile type
-			DEFAULT_DEBUG_SUFFIX);
-#endif
-	man.createMetadata(metaPath.absolutePath().toStdString());
-
-	sout.assign();
-	log.close();
-
-	Ui::LogDialog logDialog;
-	QDialog* dialog = new QDialog(dialogParent);
-	logDialog.setupUi(dialog);
-	logDialog.infoLabel->setText(tr("Plugin information updated."));
-	logDialog.logLabel->setText(
-			tr("Content of logfile <tt>%1</tt>:").arg(logFileName));
-	QFile logFile(logFileName);
-	logFile.open(QIODevice::ReadOnly | QIODevice::Text);
-	
-	logDialog.logText->insertPlainText(logFile.readAll());
-	logFile.close();
-	logDialog.progressBar->hide() ;
-	dialog->exec();
-}
-
-void FileManager::updateMetadata() const {
-	QFile cFile(classesFile());
-	if (!cFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		QMessageBox::warning(
-			dialogParent, tr("error updating meta data"),
-			tr("could not open classes file for writing"));
-		return;
-	}
-	QTextStream cStream(&cFile);
-	Q_ASSERT(cStream.status() == QTextStream::Ok);
-	cStream << "# Tuchulcha class information file\n";
-	cStream << "# Content is copied from files in metadata directory\n";
-	cStream << "# This is generated during update plugins,\n";
-	cStream << "# do not edit by hand!" << endl;
-
-	QDir metaPath(configDir().absoluteFilePath("metadata"));
-	QStringList wrpFiles = metaPath.entryList(
-			QStringList("*.wrp"), QDir::Files);
-
-	for(int i=0; i<wrpFiles.size(); i++) {
-		QFile cur(metaPath.absoluteFilePath(wrpFiles[i]));
-		cur.open(QIODevice::ReadOnly | QIODevice::Text);
-		QString content = cur.readAll();
-		cur.close();
-		cStream << tr("\n# from file \"%1\":\n").arg(wrpFiles[i]);
-		cStream << content << endl;
-	}
-	cFile.close();
 }
 
 void FileManager::configure(bool force) const {

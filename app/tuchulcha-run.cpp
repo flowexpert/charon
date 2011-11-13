@@ -37,17 +37,12 @@ int main(int argc, char *argv[]) {
 	app.setOrganizationName("Heidelberg Collaboratory for Image Processing");
 	app.setApplicationName("Tuchulcha");
 
-	CommunicationHandler* test =
-		new CommunicationHandler(app.arguments(), &app);
-	CharonRun* run = new CharonRun(&app);
+	CommunicationHandler comm(app.arguments());
+	CharonRun run;
 
-	QObject::connect(test,SIGNAL(updatePlugins()),run,SLOT(updatePlugins()));
-	if(test->interactive) {
-		QObject::connect(test,SIGNAL(finished()),&app,SLOT(quit()));
-	}
-
-	test->start();
+	run.connect(&comm,SIGNAL(updatePlugins()),SLOT(updatePlugins()));
+	comm.start();
 	int ret = app.exec();
-	test->wait();
+	comm.wait();
 	return ret;
 }

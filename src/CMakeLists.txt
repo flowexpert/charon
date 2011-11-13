@@ -63,8 +63,6 @@ SET(EDITGRAPH_SOURCES
 	NodeHandler.h
 	NodeTreeView.cpp
 	NodeTreeView.h
-	WorkflowExecutor.h
-	WorkflowExecutor.cpp
 )
 
 SET(INSPECTOR_SOURCES
@@ -86,6 +84,10 @@ SET(TUCHULCHA_SOURCES
 	TuchulchaWindow.h
 	DocGenerator.cpp
 	DocGenerator.h
+	LogDialog.cpp
+	LogDialog.h
+	WorkflowExecutor.h
+	WorkflowExecutor.cpp
 )
 
 # =============  generate moc files ====================

@@ -28,7 +28,7 @@
 #include <QTimer>
 #include <exception>
 #include <QMutex>
-#include <ui_LogDialog.h>
+#include "ui_LogDialog.h"
 #include <charon-core/PluginManager.h>
 #include "FileManager.h"
 #include "ObjectInspector.h"
@@ -173,7 +173,7 @@ void WorkflowExecutor::_execute() {
 	QDialog* dialog = new QDialog(FileManager::dialogParent);
 	_logDialog->setupUi(dialog);
 	_logDialog->progressBar->show() ;
-	_logDialog->logLabel->setText(
+	_logDialog->infoLabel->setText(
 			tr("Content of logfile <tt>%1</tt>:").arg(_logFileName.c_str()));
 	_logFile = new QFile(_logFileName.c_str());
 	_logFile->open(QIODevice::ReadOnly | QIODevice::Text);

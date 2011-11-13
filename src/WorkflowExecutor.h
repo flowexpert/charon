@@ -28,12 +28,11 @@
 #include <QAction>
 #include <QThread>
 #include <QMutex>
-#include <ui_LogDialog.h>
 class PluginManager;
 class ObjectInspector;
 class QFile;
 class QTimer;
-//class Ui::LogDialog;
+namespace Ui{class LogDialog;}
 
 /// Management of workflow execution
 /** This class provides the run workflow action to add to toolbars and menus.

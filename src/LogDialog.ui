@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,13 +26,6 @@
        </property>
        <property name="text">
         <string>Workflow execution results.</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="logLabel">
-       <property name="text">
-        <string>Log file content:</string>
        </property>
       </widget>
      </item>

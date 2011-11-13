@@ -25,6 +25,7 @@
 #include "CommunicationHandler.moc"
 
 #include <QTextStream>
+#include <QApplication>
 
 CommunicationHandler::CommunicationHandler(
 	const QStringList& args, QObject* pp) :
@@ -76,4 +77,5 @@ void CommunicationHandler::run() {
 			qerr << tr("Command \"%1\" not recognized.").arg(line) << endl;
 		}
 	} while (!line.isNull());
+	QApplication::exit();
 }

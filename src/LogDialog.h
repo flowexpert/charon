@@ -15,32 +15,45 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file CharonRun.h
- *  \brief Declaration of class CharonRun
+/** \file LogDialog.h
+ *  \brief Declaration of class LogDialog
  *
  *  \date 13.11.2011
  *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
-#ifndef CHARONRUN_H
-#define CHARONRUN_H
+#ifndef LOGDIALOG_H
+#define LOGDIALOG_H
 
-#include <QObject>
+#include <QDialog>
 
-/// workflow execution and plugin update management
-class CharonRun : public QObject
+namespace Ui {class LogDialog;}
+class QProcess;
+
+/// class for logging display and communication with external processes
+class LogDialog : public QDialog
 {
 	Q_OBJECT
+
 public:
 	/// constructor
-	/** \param parent parent object */
-	explicit CharonRun(QObject* parent = 0);
-
-signals:
+	/** \param title   window title
+	 *  \param desc    info label content
+	 *  \param parent  parent widget
+	 */
+	explicit LogDialog(QString title, QString desc, QWidget* parent = 0);
+	virtual ~LogDialog();
+	/// start tuchulcha-run process with given arguments
+	/** \param args    command line arguments */
+	void startProcess(QStringList args);
 
 public slots:
-	/// update plugin information
-	void updatePlugins() const;
+	/// update content by querying process
+	void updateContent();
+
+private:
+	Ui::LogDialog* _ui; ///< designer ui
+	QProcess* _proc;    ///< tuchulcha-run process
 };
 
-#endif // CHARONRUN_H
+#endif // LOGDIALOG_H

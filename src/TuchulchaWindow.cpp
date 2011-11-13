@@ -34,10 +34,10 @@
 #include "ModelToolBar.h"
 #include "FileManager.h"
 #include <PluginManager.h>
-#include "AbstractPluginLoader.h"
 #include "WorkflowExecutor.h"
 
 #include "ui_OptionsDialog.h"
+#include "LogDialog.h"
 
 #include "TuchulchaWindow.moc"
 
@@ -45,7 +45,6 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QMainWindow(myParent), _flow(0) {
 
 	FileManager::instance().configure();
-	FileManager::instance().updateMetadata();
 
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
@@ -249,6 +248,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	if (!myParent)
 		showMaximized();
 
+	updateMetadata();
 }
 
 TuchulchaWindow::~TuchulchaWindow() {
@@ -399,9 +399,14 @@ void TuchulchaWindow::zoomFit() {
 }
 
 void TuchulchaWindow::updateMetadata() {
-	FileManager::instance().loadPluginInformation();
-	FileManager::instance().updateMetadata();
-	
+	QStringList args;
+	args << "update";
+	LogDialog dialog(
+				tr("Plugin Information Update"),
+				tr("Output of update process:"));
+	dialog.startProcess(args);
+	dialog.exec();
+
 	_centralArea->closeAllSubWindows();
 	emit metaDataUpdated() ;
 }

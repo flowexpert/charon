@@ -51,12 +51,6 @@ public:
 	/// get config directory
 	QDir configDir() const;
 
-	/// Reloads all plugins and creates metadata information
-	void loadPluginInformation() const;
-
-	/// Puts existing metadata information together
-	void updateMetadata() const;
-
 	/// Configures plugin paths
 	/** \param force  Configure even if configuration exists
 	 */
