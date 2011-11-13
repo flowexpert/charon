@@ -43,6 +43,9 @@ public:
 signals:
 	/// update module metadata
 	void updatePlugins();
+	/// run given workflow file
+	/** \param fName   workflow filename */
+	void runWorkflow(QString fName);
 
 protected:
 	/// thread execution code

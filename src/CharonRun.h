@@ -36,11 +36,21 @@ public:
 	/** \param parent parent object */
 	explicit CharonRun(QObject* parent = 0);
 
-signals:
-
 public slots:
 	/// update plugin information
-	void updatePlugins() const;
+	void updatePlugins();
+	/// run given workflow file
+	/** \param fName  workflow filename */
+	void runWorkflow(QString fName);
+
+	/// lock exiting, register task
+	void lock();
+	/// unlock exiting, quit application if all tasks are completed
+	void unlock();
+
+private:
+	/// lock counter (mutex-like)
+	uint _lockCount;
 };
 
 #endif // CHARONRUN_H

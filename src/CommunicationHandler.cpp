@@ -41,8 +41,12 @@ void CommunicationHandler::run() {
 		if (s == "--quiet") {
 			_quiet = true;
 		}
-		if (s == "update") {
+		else if (s == "update") {
 			emit updatePlugins();
+			_interactive = false;
+		}
+		else if (s == "run" && argIter.hasNext()) {
+			emit runWorkflow(argIter.next());
 			_interactive = false;
 		}
 		else {
@@ -67,6 +71,7 @@ void CommunicationHandler::run() {
 	// interactive command handling
 	QTextStream qin(stdin,QIODevice::ReadOnly);
 	QString line;
+	QRegExp runRgx("^run\\s+(.+)$");
 	do {
 		line = qin.readLine().trimmed().toLower();
 		if(line == "quit") {
@@ -75,12 +80,12 @@ void CommunicationHandler::run() {
 		else if (line == "update") {
 			emit updatePlugins();
 		}
+		else if (line.contains(runRgx)) {
+			emit runWorkflow(runRgx.cap(1));
+		}
 		else if (!line.isEmpty()) {
 			QTextStream qerr(stderr,QIODevice::WriteOnly);
 			qerr << tr("Command \"%1\" not recognized.").arg(line) << endl;
 		}
 	} while (!line.isNull());
-
-	// exit on quit
-	QApplication::exit();
 }

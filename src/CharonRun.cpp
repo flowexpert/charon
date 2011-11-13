@@ -34,11 +34,12 @@
 #include <QTextStream>
 #include <QApplication>
 
-CharonRun::CharonRun(QObject* pp) : QObject(pp)
+CharonRun::CharonRun(QObject* pp) : QObject(pp), _lockCount(0)
 {
 }
 
-void CharonRun::updatePlugins() const {
+void CharonRun::updatePlugins() {
+	lock();
 	const FileManager& fm = FileManager::instance();
 	QDir configDir = fm.configDir();
 	QString logFileName = configDir.absoluteFilePath("updateLog.txt");
@@ -108,5 +109,23 @@ void CharonRun::updatePlugins() const {
 		cStream << content << endl;
 	}
 	cFile.close();
-	QApplication::exit();
+	unlock();
+}
+
+void CharonRun::runWorkflow(QString fName) {
+	lock();
+	QTextStream qout(stdout);
+	qout << tr("running workflow \"%1\"").arg(fName) << endl;
+	unlock();
+}
+
+void CharonRun::lock() {
+	_lockCount++;
+}
+
+void CharonRun::unlock() {
+	_lockCount--;
+	if (_lockCount == 0) {
+		QApplication::exit();
+	}
 }
