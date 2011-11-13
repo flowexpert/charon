@@ -52,5 +52,6 @@ void LogDialog::startProcess(QStringList args) {
 	_ui->progressBar->show();
 	connect(_proc, SIGNAL(finished(int)),_ui->progressBar, SLOT(hide()));
 	connect(_proc,SIGNAL(readyRead()),SLOT(updateContent()));
-	_proc->start("./tuchulcha-run",args,QIODevice::ReadWrite|QIODevice::Text);
+	QString tcRun = QApplication::applicationDirPath() + "/tuchulcha-run";
+	_proc->start(tcRun,args,QIODevice::ReadWrite|QIODevice::Text);
 }
