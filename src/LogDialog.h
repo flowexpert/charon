@@ -56,6 +56,11 @@ public slots:
 	void setFinished();
 	/// handle errors running the process
 	void error();
+	/// handle process termination
+	/** \param r       return value */
+	virtual void done(int r);
+	/// terminate process
+	void terminate();
 
 private:
 	Ui::LogDialog* _ui; ///< designer ui

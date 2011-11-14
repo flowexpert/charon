@@ -27,6 +27,8 @@
 #include "LogDialog.moc"
 #include <QProcess>
 #include <QScrollBar>
+#include <QTimer>
+#include <QMessageBox>
 
 LogDialog::LogDialog(QString title, QString desc, QWidget* pp) :
 		QDialog(pp), _proc(0) {
@@ -41,13 +43,38 @@ LogDialog::LogDialog(QString title, QString desc, QWidget* pp) :
 }
 
 LogDialog::~LogDialog() {
-	if (_proc && (_proc->state() != QProcess::NotRunning)) {
-		_proc->write("quit\n");
-		if(!_proc->waitForFinished(5000)) {
-			_proc->terminate();
-		}
-	}
 	delete _ui;
+}
+
+void LogDialog::done(int r) {
+	// terminate process if still running
+
+	if (_proc && (_proc->state() != QProcess::NotRunning)) {
+		_ui->logText->moveCursor(QTextCursor::End);
+		_ui->logText->insertHtml(
+			tr("<br><span style=\"color:orange;font-weight:bold\">"
+				"Waiting for process to terminate</span><br>"));
+		QScrollBar* bar = _ui->logText->verticalScrollBar();
+		bar->setValue(bar->maximum());
+		_proc->write("quit\n");
+		connect(_proc,SIGNAL(finished(int)),SLOT(close()));
+		QTimer::singleShot(1000,this,SLOT(terminate()));
+	}
+	else {
+		// quit event loop and return
+		QDialog::done(r);
+	}
+}
+
+void LogDialog::terminate() {
+	if (_proc && (_proc->state() != QProcess::NotRunning)
+			&& (QMessageBox::question(
+				this,tr("confirm terminate"),
+				tr("Process still running.<br>Terminate running process?"),
+				QMessageBox::No,QMessageBox::Yes
+					)==QMessageBox::Yes)) {
+		_proc->terminate();
+	}
 }
 
 void LogDialog::updateContent() {
@@ -58,7 +85,7 @@ void LogDialog::updateContent() {
 			_ui->logText->insertHtml(
 				tr("<br><span style=\"color:green;font-weight:bold\">"
 					"Workflow execution finished.</span><br>"
-					"Plugins stay loaded until you close this dialog."));
+					"Plugins stay loaded until you close this dialog.<br>"));
 			_ui->logText->moveCursor(QTextCursor::PreviousBlock);
 			_ui->logText->moveCursor(QTextCursor::EndOfBlock);
 			setFinished();
