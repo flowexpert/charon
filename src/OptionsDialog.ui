@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
-    <height>292</height>
+    <width>600</width>
+    <height>230</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -109,29 +109,6 @@ File name &lt;span id='code'&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="otherBox">
-     <property name="title">
-      <string>Further settings</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QCheckBox" name="checkWait">
-        <property name="text">
-         <string>wait after workflow execution</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkThreaded">
-        <property name="text">
-         <string>execute workflow in separate thread</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -159,8 +136,6 @@ File name &lt;span id='code'&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &
   <tabstop>editGlobalPath</tabstop>
   <tabstop>editPrivatePath</tabstop>
   <tabstop>checkSuffix</tabstop>
-  <tabstop>checkWait</tabstop>
-  <tabstop>checkThreaded</tabstop>
  </tabstops>
  <resources/>
  <connections>

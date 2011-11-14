@@ -69,6 +69,9 @@ public slots:
 	/// update plugin information
 	void updateMetadata();
 
+	/// runn current workflow
+	void runWorkflow();
+
 	/// insert file as current file to recent file list
 	void setCurrentFile(const QString& fileName);
 

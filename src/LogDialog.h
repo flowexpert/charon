@@ -41,7 +41,7 @@ public:
 	 *  \param desc    info label content
 	 *  \param parent  parent widget
 	 */
-	explicit LogDialog(QString title, QString desc, QWidget* parent = 0);
+	explicit LogDialog(QString title="", QString desc="", QWidget* parent = 0);
 	virtual ~LogDialog();
 	/// start tuchulcha-run process with given arguments
 	/** \param args    command line arguments */
@@ -50,6 +50,12 @@ public:
 public slots:
 	/// update content by querying process
 	void updateContent();
+	/// setup abort button and show progress bar
+	void setRunning();
+	/// setup close button and hide progress bar
+	void setFinished();
+	/// handle errors running the process
+	void error();
 
 private:
 	Ui::LogDialog* _ui; ///< designer ui

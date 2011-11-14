@@ -33,13 +33,18 @@
 #include "GraphModel.h"
 #include "ModelToolBar.h"
 #include "FileManager.h"
-#include <PluginManager.h>
-#include "WorkflowExecutor.h"
 
 #include "ui_OptionsDialog.h"
 #include "LogDialog.h"
 
 #include "TuchulchaWindow.moc"
+
+	/// DEFAULT_DEBUG_SUFFIX default lib suffix
+#ifdef NDEBUG
+	#define DEFAULT_DEBUG_SUFFIX false
+#else
+	#define DEFAULT_DEBUG_SUFFIX true
+#endif
 
 TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QMainWindow(myParent), _flow(0) {
@@ -102,8 +107,6 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	connect(_centralArea, SIGNAL(subWindowActivated (QMdiSubWindow*)),
 			this, SLOT(_windowActivated(QMdiSubWindow*)));
 
-	WorkflowExecutor* executor = new WorkflowExecutor(inspector, this);
-
 	// toolbar
 	ModelToolBar* toolbar = new ModelToolBar(tr("toolbar"));
 	toolbar->setObjectName("toolbar");
@@ -133,11 +136,17 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	action->setToolTip(tr("export flowchart to an image file"));
 
 	toolbar->addSeparator();
-	action = toolbar->addAction(QIcon(":/icons/refresh.png"),
+	action = toolbar->addAction(
+			QIcon(":/icons/refresh.png"),
 		tr("&Update Plugins"), this, SLOT(updateMetadata()));
 	action->setToolTip(
 			tr("update classes informations reading all plugins"));
-	toolbar->addAction(executor->runAction());
+
+	action = toolbar->addAction(
+			QIcon(":/icons/execute.png"),
+			tr("Execute &Workflow"), this, SLOT(runWorkflow()));
+	action->setToolTip("execute workflow that is shown in the current window");
+
 	toolbar->addSeparator();
 	toolbar->addModelActions();
 	toolbar->addSeparator();
@@ -193,7 +202,9 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	fileMenu->addSeparator();
 	fileMenu->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
 			this, SLOT(updateMetadata()), QKeySequence("Ctrl+U"));
-	fileMenu->addAction(executor->runAction());
+	fileMenu->addAction(
+			QIcon(":/icons/execute.png"),tr("Execute &Workflow"),
+			this, SLOT(runWorkflow()),QKeySequence(tr("Ctrl+E")));
 	fileMenu->addAction(QIcon(":/icons/export.png"), tr("Export &flowchart"),
 			this, SLOT(saveFlowChart()), QKeySequence(tr("Ctrl+F")));
 	fileMenu->addAction(QIcon(":/icons/close.png"), tr("&Exit"), this,
@@ -411,6 +422,16 @@ void TuchulchaWindow::updateMetadata() {
 	emit metaDataUpdated() ;
 }
 
+void TuchulchaWindow::runWorkflow() {
+	if (!_flow)
+		return;
+	QStringList args;
+	args << "--quiet" << "run" << _flow->model()->fileName();
+	LogDialog dialog;
+	dialog.startProcess(args);
+	dialog.exec();
+}
+
 void TuchulchaWindow::_openRecentFile() {
 QAction *action = qobject_cast<QAction *>(sender());
 	if (action)
@@ -471,10 +492,6 @@ void TuchulchaWindow::_options() {
 			settings.value("globalPluginPath").toString());
 	options.editPrivatePath->setText(
 			settings.value(privPathTag).toString());
-	options.checkWait->setChecked(
-			settings.value("waitAfterExecute", false).toBool());
-	options.checkThreaded->setChecked(
-			settings.value("executeThreaded", false).toBool());
 
 #ifdef QT_NO_DEBUG
 	// show this label in tuchulcha_d only
@@ -503,12 +520,6 @@ void TuchulchaWindow::_options() {
 		if (options.editPrivatePath->text().isEmpty()) {
 			settings.remove(privPathTag);
 		}
-		settings.setValue(
-				"waitAfterExecute",
-				(options.checkWait->checkState() != Qt::Unchecked));
-		settings.setValue(
-				"executeThreaded",
-				(options.checkThreaded->checkState() != Qt::Unchecked));
 #if !defined(_MSC_VER) && defined(NDEBUG)
 		if (options.checkSuffix->isChecked()) {
 			settings.setValue("suffixedPlugins", true);

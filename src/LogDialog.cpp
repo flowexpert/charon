@@ -26,32 +26,76 @@
 #include "ui_LogDialog.h"
 #include "LogDialog.moc"
 #include <QProcess>
+#include <QScrollBar>
 
 LogDialog::LogDialog(QString title, QString desc, QWidget* pp) :
 		QDialog(pp), _proc(0) {
 	_ui = new Ui::LogDialog;
 	_ui->setupUi(this);
-	setWindowTitle(title);
-	_ui->infoLabel->setText(desc);
+	if (!title.isEmpty()) {
+		setWindowTitle(title);
+	}
+	if (!desc.isEmpty()) {
+		_ui->infoLabel->setText(desc);
+	}
 }
 
 LogDialog::~LogDialog() {
+	if (_proc && (_proc->state() != QProcess::NotRunning)) {
+		_proc->write("quit\n");
+		if(!_proc->waitForFinished(5000)) {
+			_proc->terminate();
+		}
+	}
 	delete _ui;
 }
 
 void LogDialog::updateContent() {
 	if (_proc) {
-		_ui->logText->moveCursor(QTextCursor::End);
-		_ui->logText->insertPlainText(_proc->readAll());
-		_ui->logText->moveCursor(QTextCursor::End);
+		QString cur = _proc->readAll();
+		_ui->logText->insertPlainText(cur);
+		if (cur.contains("execution finished",Qt::CaseInsensitive)) {
+			_ui->logText->insertHtml(
+				tr("<br><span style=\"color:green;font-weight:bold\">"
+					"Workflow execution finished.</span><br>"
+					"Plugins stay loaded until you close this dialog."));
+			_ui->logText->moveCursor(QTextCursor::PreviousBlock);
+			_ui->logText->moveCursor(QTextCursor::EndOfBlock);
+			setFinished();
+		}
+		QScrollBar* bar = _ui->logText->verticalScrollBar();
+		bar->setValue(bar->maximum());
 	}
 }
 
 void LogDialog::startProcess(QStringList args) {
+	if (_proc) {
+		return;
+	}
+	setRunning();
 	_proc = new QProcess(this);
-	_ui->progressBar->show();
-	connect(_proc, SIGNAL(finished(int)),_ui->progressBar, SLOT(hide()));
+	connect(_proc,SIGNAL(finished(int)),SLOT(setFinished()));
 	connect(_proc,SIGNAL(readyRead()),SLOT(updateContent()));
+	connect(_proc,SIGNAL(error(QProcess::ProcessError)),SLOT(error()));
 	QString tcRun = QApplication::applicationDirPath() + "/tuchulcha-run";
 	_proc->start(tcRun,args,QIODevice::ReadWrite|QIODevice::Text);
+}
+
+void LogDialog::setRunning() {
+	_ui->progressBar->show();
+	_ui->buttonBox->setStandardButtons(QDialogButtonBox::Abort);
+}
+
+void LogDialog::setFinished() {
+	_ui->progressBar->hide();
+	_ui->buttonBox->setStandardButtons(QDialogButtonBox::Close);
+}
+
+void LogDialog::error() {
+	_ui->logText->moveCursor(QTextCursor::End);
+	_ui->logText->insertHtml(
+				tr("<br><span style=\"color:red;font-weight:bold\">"
+					"Error during process execution.</span><br>"
+					"Error Code: %1"
+					"<br><br>").arg(_proc->error()));
 }

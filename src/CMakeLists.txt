@@ -86,8 +86,6 @@ SET(TUCHULCHA_SOURCES
 	DocGenerator.h
 	LogDialog.cpp
 	LogDialog.h
-	WorkflowExecutor.h
-	WorkflowExecutor.cpp
 )
 
 # =============  generate moc files ====================
