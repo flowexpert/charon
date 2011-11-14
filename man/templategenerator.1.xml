@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+<refentry id="man-template-generator">
+	<refentryinfo>
+		<title>Charon Code Template Wizard</title>
+		<productname>charon-templates</productname>
+		<releaseinfo role="version">0.1.3</releaseinfo>
+		<authorgroup>
+			<author>
+				<firstname>Jens-Malte</firstname>
+				<surname>Gottfried</surname>
+				<contrib>complete rewrite using Qt wizard classes</contrib>
+				<contrib>wrote this manpage</contrib>
+				<address><email>jmgottfried@web.de</email></address>
+			</author>
+			<author>
+				<firstname>Robert</firstname>
+				<surname>Weidel</surname>
+				<contrib>first version of this generator</contrib>
+				<address>
+					<email>r.weidel@web.de</email>
+				</address>
+			</author>
+		</authorgroup>
+		<copyright>
+			<year>2010</year>
+			<year>2011</year>
+			<holder>Heidelberg Collaboratory for Image Processing</holder>
+		</copyright>
+		<legalnotice>
+			<para>This application is part of Charon.</para>
+			<para>
+				Charon is free software: you can redistribute it and/or modify
+				it under the terms of the GNU Lesser General Public License as
+				published by the Free Software Foundation, either version 3 of
+				the License, or (at your option) any later version.
+			</para>
+			<para>
+				Charon is distributed in the hope that it will be useful,
+				but WITHOUT ANY WARRANTY; without even the implied warranty of
+				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+				GNU Lesser General Public License for more details.
+			</para>
+			<para>
+				You should have received a copy of the GNU Lesser General
+				Public License along with Charon.
+				If not, see <ulink url="http://www.gnu.org/licenses/"/>.
+			</para>
+		</legalnotice>
+	</refentryinfo>
+	<refmeta>
+		<refentrytitle>templategenerator</refentrytitle>
+		<manvolnum>1</manvolnum>
+	</refmeta>
+	<refnamediv>
+		<refname>templategenerator</refname>
+		<refpurpose>A Qt Wizard for charon module code template generation</refpurpose>
+	</refnamediv>
+	<refsynopsisdiv>
+		<cmdsynopsis>
+			<command>templategenerator</command>
+		</cmdsynopsis>
+	</refsynopsisdiv>
+	<refsection id="templategenerator-desc">
+		<title>Description</title>
+		<para>
+			<command>templategenerator</command> opens a self-explaining
+			wizard application for charon module code template generation.
+			The generated module templates will be saved to the location
+			shown in the summary  wizard page.
+		</para>
+	</refsection>
+</refentry>
