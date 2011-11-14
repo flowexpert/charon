@@ -66,13 +66,12 @@ void LogDialog::done(int r) {
 	}
 }
 
-void LogDialog::terminate() {
+void LogDialog::terminate(bool force) {
 	if (_proc && (_proc->state() != QProcess::NotRunning)
-			&& (QMessageBox::question(
+			&& (force || QMessageBox::question(
 				this,tr("confirm terminate"),
 				tr("Process still running.<br>Terminate running process?"),
-				QMessageBox::No,QMessageBox::Yes
-					)==QMessageBox::Yes)) {
+				QMessageBox::No,QMessageBox::Yes)==QMessageBox::Yes)) {
 		_proc->terminate();
 	}
 }

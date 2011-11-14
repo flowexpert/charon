@@ -60,7 +60,8 @@ public slots:
 	/** \param r       return value */
 	virtual void done(int r);
 	/// terminate process
-	void terminate();
+	/** \param force   do not ask before terminating */
+	void terminate(bool force=false);
 
 private:
 	Ui::LogDialog* _ui; ///< designer ui
