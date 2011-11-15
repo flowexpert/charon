@@ -29,6 +29,7 @@
 
 namespace Ui {class LogDialog;}
 class QProcess;
+class QTextCursor;
 
 /// class for logging display and communication with external processes
 class LogDialog : public QDialog
@@ -66,6 +67,8 @@ public slots:
 private:
 	Ui::LogDialog* _ui; ///< designer ui
 	QProcess* _proc;    ///< tuchulcha-run process
+	QTextCursor* _curRet; ///< proc output cursor
+	QTextCursor* _curEnd; ///< other stuff cursor
 };
 
 #endif // LOGDIALOG_H

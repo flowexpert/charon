@@ -27,6 +27,7 @@
 #include "LogDialog.moc"
 
 #include <QProcess>
+#include <QTextStream>
 #include <QScrollBar>
 #include <QTimer>
 #include <QMessageBox>
@@ -43,9 +44,22 @@ LogDialog::LogDialog(QString title, QString desc, QWidget* pp) :
 	if (!desc.isEmpty()) {
 		_ui->lInfo->setText(desc);
 	}
+	_ui->logText->document()->setDefaultStyleSheet(
+		".error {color:red;font-weight:bold;}"
+		".success {color:green;font-weight:bold;}"
+		".warning {color:orange;font-weight:bold;}"
+		".info {color:gray;}"
+	);
+	QTextFrameFormat f;
+	_curRet=new QTextCursor(_ui->logText->textCursor().insertFrame(f));
+	_ui->logText->moveCursor(QTextCursor::End);
+	f.setLeftMargin(10);
+	_curEnd=new QTextCursor(_ui->logText->textCursor().insertFrame(f));
 }
 
 LogDialog::~LogDialog() {
+	delete _curEnd;
+	delete _curRet;
 	delete _ui;
 }
 
@@ -53,9 +67,8 @@ void LogDialog::done(int r) {
 	// terminate process if still running
 
 	if (_proc && (_proc->state() != QProcess::NotRunning)) {
-		_ui->logText->moveCursor(QTextCursor::End);
-		_ui->logText->insertHtml(
-			tr("<br><span style=\"color:orange;font-weight:bold\">"
+		_curEnd->insertHtml(
+			tr("<br><span class=\"warning\">"
 				"Waiting for process to terminate</span><br>"));
 		QScrollBar* bar = _ui->logText->verticalScrollBar();
 		bar->setValue(bar->maximum());
@@ -81,17 +94,42 @@ void LogDialog::terminate(bool force) {
 
 void LogDialog::updateContent() {
 	if (_proc) {
-		QString cur = _proc->readAll();
-		_ui->logText->insertPlainText(cur);
-		if (cur.contains("execution finished",Qt::CaseInsensitive)) {
-			_ui->logText->insertHtml(
-				tr("<br><span style=\"color:green;font-weight:bold\">"
-					"Workflow execution finished.</span><br>"
-					"Plugins stay loaded until you close this dialog.<br>"));
-			_ui->logText->moveCursor(QTextCursor::PreviousBlock);
-			_ui->logText->moveCursor(QTextCursor::EndOfBlock);
-			setFinished();
-		}
+		QString origS = _proc->readAll();
+		QString formS, cur;
+		QTextStream orig(&origS,QIODevice::ReadOnly);
+		QTextStream form(&formS,QIODevice::WriteOnly);
+
+		do {
+			cur = orig.readLine();
+
+			// simple markup for higlighting
+			if (cur.contains(
+					QRegExp("^\\(II\\)\\s+",Qt::CaseInsensitive))) {
+				cur = QString("<span class=\"info\">%1</span>").arg(cur);
+			}
+			else if (cur.contains(
+					QRegExp("^\\(WW\\)\\s+",Qt::CaseInsensitive))) {
+				cur = QString("<span class=\"warning\">%1</span>").arg(cur);
+			}
+			else if (cur.contains(
+					QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
+				cur = QString("<span class=\"error\">%1</span>").arg(cur);
+			}
+
+			// add status message if workflow execution finished
+			if (cur.contains("execution finished",Qt::CaseInsensitive)) {
+				_curEnd->insertHtml(
+					QString("<br><span class=\"success\">%1</span><br>%2<br>")
+						.arg(tr("Workflow execution finished."))
+						.arg(tr("Plugins stay loaded until you close "
+							"this dialog.")));
+				setFinished();
+			}
+			form << cur << "<br>" << endl;
+		} while (!cur.isNull());
+		_curRet->insertHtml(formS);
+
+		// scroll down
 		QScrollBar* bar = _ui->logText->verticalScrollBar();
 		bar->setValue(bar->maximum());
 	}
@@ -122,21 +160,22 @@ void LogDialog::startProcess(QStringList args) {
 
 	if (procName.isNull()) {
 		// warn if no valid executable found
-		_ui->logText->insertHtml(
-					tr("<br><span style=\"color:red;font-weight:bold\">"
-						"no working <tt>tuchulcha-run</tt> "
-						"process executable found<br>"));
+		_curEnd->insertHtml(
+					QString("<br><span class=\"error\">%1</span></br>")
+						.arg("no working <tt>tuchulcha-run</tt> "
+						"process executable found"));
 		_ui->lProcName->setText(
-			tr("Executable: "
-				"<span style=\"font-weight:bold;color:red\">(none)</span>"));
+			tr("Executable:")+
+			QString(" <span style=\"font-weight:bold;color:red\">(%1)</span>")
+				.arg(tr("none")));
 		setFinished();
 		return;
 	}
 
 	_ui->lProcName->setText(
-		tr("Executable: "
-			"<span style=\"color:blue\"><tt>%1</tt></span>")
-		.arg(QFileInfo(procName).baseName()));
+		tr("Executable: ")
+			+QString(" <span style=\"color:blue\"><tt>%1</tt></span>")
+				.arg(QFileInfo(procName).baseName()));
 
 	// start process
 	setRunning();
@@ -160,7 +199,6 @@ void LogDialog::setFinished() {
 void LogDialog::error() {
 	setFinished();
 
-	_ui->logText->moveCursor(QTextCursor::End);
 	QString errorType;
 	switch(_proc->error()) {
 	case QProcess::FailedToStart:
@@ -183,8 +221,8 @@ void LogDialog::error() {
 		break;
 	}
 
-	_ui->logText->insertHtml(
-				tr("<br><span style=\"color:red;font-weight:bold\">"
-					"Error during process execution:</span> %1<br>")
-				.arg(errorType));
+	_curEnd->insertHtml(
+		QString("<br><span class=\"error\">%1</span> %2<br>")
+			.arg(tr("Error during process execution:"))
+			.arg(errorType));
 }
