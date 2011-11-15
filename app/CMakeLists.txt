@@ -16,13 +16,13 @@ TARGET_LINK_LIBRARIES(paraminspector
 
 ADD_EXECUTABLE(tuchulcha-run tuchulcha-run)
 TARGET_LINK_LIBRARIES(tuchulcha-run tc-run)
+SET_TARGET_PROPERTIES(tuchulcha-run PROPERTIES
+	OUTPUT_NAME_DEBUG tuchulcha-run_d
+)
 
 ADD_EXECUTABLE(tuchulcha WIN32 tuchulcha ${QRC_RES} ${TC_ICO})
 TARGET_LINK_LIBRARIES(tuchulcha
 	tuchulcha-widgets ${QT_QTMAIN_LIBRARY} charon-plugins)
-SET_TARGET_PROPERTIES(tuchulcha PROPERTIES
-	OUTPUT_NAME_DEBUG tuchulcha_d
-)
 
 SET_TARGET_PROPERTIES(paraminspector tuchulcha-run tuchulcha
 	PROPERTIES FOLDER "Tuchulcha")

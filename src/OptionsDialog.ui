@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>230</height>
+    <width>700</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,18 +24,18 @@
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="labelGPath">
         <property name="text">
          <string>global plugin path</string>
         </property>
         <property name="buddy">
-         <cstring>editGlobalPath</cstring>
+         <cstring>eGlobPath</cstring>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QDirEdit" name="editGlobalPath">
+      <item row="1" column="1">
+       <widget class="QDirEdit" name="eGlobPath">
         <property name="whatsThis">
          <string>&lt;h3&gt;Module installation directory:&lt;/h3&gt;
 Enter the paths, where your charon Modules are located.&lt;br&gt;&lt;br&gt;
@@ -43,18 +43,8 @@ You may enter multiple paths here, separated by semicolon (;)</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="labelPPath">
-        <property name="text">
-         <string>private plugin path</string>
-        </property>
-        <property name="buddy">
-         <cstring>editPrivatePath</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDirEdit" name="editPrivatePath">
+      <item row="3" column="1">
+       <widget class="QDirEdit" name="ePrivPath">
         <property name="whatsThis">
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -69,13 +59,49 @@ Set this to the directory where the plugins you are currently working on are gen
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QLabel" name="labelPPathDesc">
+      <item row="4" column="1">
+       <widget class="QDirEdit" name="ePrivPathD"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="lPPathD">
         <property name="text">
-         <string>private path is stored seperately for tuchulcha and tuchulcha_d</string>
+         <string>debug plugin path</string>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+        <property name="buddy">
+         <cstring>ePrivPath</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="lPPath">
+        <property name="text">
+         <string>release plugin path</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>General:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Addidional:</string>
         </property>
        </widget>
       </item>
@@ -101,7 +127,7 @@ File name &lt;span id='code'&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &
 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>Load suffixed modules, unsuffixed as fallback (see what's this help)</string>
+         <string>Load suffixed modules (debug), unsuffixed as fallback (see what's this help)</string>
         </property>
        </widget>
       </item>
@@ -109,12 +135,9 @@ File name &lt;span id='code'&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
+    <widget class="QDialogButtonBox" name="bBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
      </property>
     </widget>
    </item>
@@ -132,15 +155,15 @@ File name &lt;span id='code'&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>buttonBox</tabstop>
-  <tabstop>editGlobalPath</tabstop>
-  <tabstop>editPrivatePath</tabstop>
+  <tabstop>bBox</tabstop>
+  <tabstop>eGlobPath</tabstop>
+  <tabstop>ePrivPath</tabstop>
   <tabstop>checkSuffix</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>bBox</sender>
    <signal>accepted()</signal>
    <receiver>OptionsDialog</receiver>
    <slot>accept()</slot>
@@ -156,7 +179,7 @@ File name &lt;span id='code'&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>bBox</sender>
    <signal>rejected()</signal>
    <receiver>OptionsDialog</receiver>
    <slot>reject()</slot>

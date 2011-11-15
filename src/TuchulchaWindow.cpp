@@ -33,9 +33,8 @@
 #include "GraphModel.h"
 #include "ModelToolBar.h"
 #include "FileManager.h"
-
-#include "ui_OptionsDialog.h"
 #include "LogDialog.h"
+#include "OptionsDialog.h"
 
 #include "TuchulchaWindow.moc"
 
@@ -49,7 +48,9 @@
 TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QMainWindow(myParent), _flow(0) {
 
-	FileManager::instance().configure();
+	if (OptionsDialog::check()) {
+		options();
+	}
 
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
@@ -216,7 +217,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 			"&reset selected parameters"), inspector, SLOT(delParam()),
 			QKeySequence(tr("Ctrl+R")));
 	editMenu->addAction(QIcon(":/icons/configure.png"),tr("Options"),
-			this, SLOT(_options()));
+			this, SLOT(options()));
 
 	// view menu
 	QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
@@ -479,54 +480,7 @@ void TuchulchaWindow::setCurrentFile(const QString& fileName) {
 	_updateRecentFileActions();
 }
 
-void TuchulchaWindow::_options() {
-	QDialog dialog(this);
-	Ui::OptionsDialog options;
-	options.setupUi(&dialog);
-
-	static const QString& privPathTag = FileManager::privPathTag;
-
-	// set up dialog content
-	QSettings settings;
-	options.editGlobalPath->setText(
-			settings.value("globalPluginPath").toString());
-	options.editPrivatePath->setText(
-			settings.value(privPathTag).toString());
-
-#ifdef QT_NO_DEBUG
-	// show this label in tuchulcha_d only
-	options.labelPPathDesc->setVisible(false);
-#endif
-
-#if !defined(_MSC_VER) && defined(NDEBUG)
-	// user may decide to load suffixed modules in unix release builds
-	options.checkSuffix->setChecked(
-			settings.value("suffixedPlugins", false).toBool());
-#else
-	// fixed in win (msvc), or if debug/release versions exist
-	options.checkSuffix->setEnabled(false);
-	options.checkSuffix->setChecked(DEFAULT_DEBUG_SUFFIX);
-#endif
-
-	// set new values
-	if (dialog.exec() == QDialog::Accepted) {
-		settings.setValue(
-				"globalPluginPath",
-				options.editGlobalPath->text());
-		if (options.editGlobalPath->text().isEmpty()) {
-			settings.remove("globalPluginPath");
-		}
-		settings.setValue(privPathTag, options.editPrivatePath->text());
-		if (options.editPrivatePath->text().isEmpty()) {
-			settings.remove(privPathTag);
-		}
-#if !defined(_MSC_VER) && defined(NDEBUG)
-		if (options.checkSuffix->isChecked()) {
-			settings.setValue("suffixedPlugins", true);
-		}
-		else {
-			settings.remove("suffixedPlugins");
-		}
-#endif
-	}
+void TuchulchaWindow::options() {
+	OptionsDialog dialog(isVisible()?this:0);
+	dialog.exec();
 }

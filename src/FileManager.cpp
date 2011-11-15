@@ -22,10 +22,7 @@
  */
 
 #include "FileManager.h"
-#include <QMessageBox>
-#include <QSettings>
 #include <QTextStream>
-#include <QCoreApplication>
 
 #ifndef TUCHULCHA_DIR
 /// Tuchulcha config path
@@ -39,12 +36,6 @@
 FileManager* FileManager::_inst = 0;
 
 QWidget* FileManager::dialogParent = 0;
-
-#ifdef QT_DEBUG
-const QString FileManager::privPathTag = "privatePluginPathD";
-#else // debug build
-const QString FileManager::privPathTag = "privatePluginPath";
-#endif
 
 FileManager::FileManager() {
 	if (!QDir::home().exists(TUCHULCHA_DIR))
@@ -88,7 +79,7 @@ QDir FileManager::configDir() const {
 
 QString FileManager::classesFile() const {
 	QString path = QDir::homePath() + "/" + TUCHULCHA_DIR + "/classes.wrp";
-	if (!QFile(QDir::homePath() + "/" + TUCHULCHA_DIR + "/metadata").exists()) {
+	if (!QFile(QDir::homePath()+"/"+TUCHULCHA_DIR+"/metadata").exists()) {
 		QDir::home().mkpath(TUCHULCHA_DIR "/metadata");
 	}
 	QFile newFile(path);
@@ -101,66 +92,6 @@ QString FileManager::classesFile() const {
 		newFile.close();
 	}
 	return path;
-}
-
-void FileManager::configure(bool force) const {
-	QSettings settings;
-
-	// check current values
-	if(!settings.contains("globalPluginPath") ||
-			settings.value("globalPluginPath").toString().isEmpty() ||
-			!QDir(settings.value("globalPluginPath").toString()).exists()) {
-		settings.remove("globalPluginPath");
-		force = true;
-	}
-	if(settings.contains(privPathTag) &&
-			(settings.value(privPathTag).toString().isEmpty() ||
-			!QDir(settings.value(privPathTag).toString()).exists())) {
-		settings.remove(privPathTag);
-		force = true;
-	}
-
-	if (force) {
-		if (!settings.contains("globalPluginPath")) {
-#ifdef UNIX
-			// standard install path on linux systems
-			QString globalPath = "/usr/lib/charon-plugins";
-#else
-			// Assume global plugin dir to be the same directory
-			// where the tuchulcha.exe is located
-			QString globalPath = QCoreApplication::applicationDirPath();
-#endif
-			settings.setValue("globalPluginPath", globalPath);
-		}
-
-		QString globalPath = settings.value("globalPluginPath").toString();
-		if (globalPath.isEmpty()) {
-			globalPath = tr("(none)");
-		}
-		QString privatPath = settings.value(privPathTag).toString();
-		if (privatPath.isEmpty()) {
-			privatPath = tr("(none)");
-		}
-
-		QMessageBox::information(
-			0, tr("Welcome"), tr(
-				"Welcome to Tuchulcha!<br><br>"
-				"Tuchulcha loads its information about existing modules "
-				"directly from the module files.<br>"
-				"Please check, if the paths to the modules' directories "
-				"are set correctly:<br><br>"
-				"<b>global plugin path:</b><br><tt>%1</tt><br><br>"
-				"<b>private plugin path:</b><br><tt>%2</tt><br><br>"
-				"This is just a <em>guess</em> based on information "
-				"about standard locations and the application directory.<br>"
-				"These paths may be changed in the options dialog.<br>"
-				"(Edit-&gt;Options)<br><br>"
-				"Please press (<b>File-&gt;update plugins</b>) "
-				"after leaving this dialogue and after changing "
-				"the mentioned settings.")
-				.arg(globalPath).arg(privatPath)
-		);
-	}
 }
 
 #include "FileManager.moc"

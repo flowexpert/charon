@@ -75,6 +75,9 @@ public slots:
 	/// insert file as current file to recent file list
 	void setCurrentFile(const QString& fileName);
 
+	/// edit options
+	void options();
+
 signals:
 	/// inform about changed graph to edit
 	/// \param model	new model to edit, 0 if no model exists
@@ -99,9 +102,6 @@ private slots:
 
 	/// show about Qt dialog
 	void _showAboutQt();
-
-	/// edit options
-	void _options();
 
 	/// update windows when new flowchart has been selected
 	/// \param window	activated window

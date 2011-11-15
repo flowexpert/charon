@@ -68,24 +68,44 @@ void CharonRun::_setupMan(QString logFileName) {
 	}
 
 	QSettings settings;
+#ifdef _MSC_VER
+	// use compile type in MSVC builds
+#ifdef QT_DEBUG
+	const bool debug = true;
+	const QString privPathTag = "privatePluginPathD";
+#else // QT_DEBUG
+	const bool debug = false;
+	const QString privPathTag = "privatePluginPath";
+#endif // QT_DEBUG
+#else // MSVC
+	// use settings option in unix builds
+	const bool debug = settings.value("suffixedPlugins", false).toBool();
+	const QString privPathTag = debug?"privatePluginPathD":"privatePluginPath";
+#endif // MSVC
+
+	QTextStream qout(stdout,QIODevice::WriteOnly);
+	qout << "(II) " << (debug?tr("prefering"):tr("ignoring"))
+	<< " " << tr("plugins with debug suffix") << endl;
+
 	QStringList paths;
-	paths << settings.value(fm.privPathTag).toString();
-	paths << settings.value("globalPluginPath").toString().split(";");
+	paths << settings.value(privPathTag).toStringList();
+	paths << settings.value("globalPluginPath").toStringList();
 	paths.removeDuplicates();
 	paths.removeAll("");
+
+	qout << "(II) Paths: " << endl;
+
 	std::vector<std::string> pathsS;
 	QStringListIterator iter(paths);
 	while (iter.hasNext()) {
-		pathsS.push_back(iter.next().trimmed().toStdString());
+		QString cur = iter.next().trimmed();
+		qout << "(II)     " << cur << endl;
+		pathsS.push_back(cur.toStdString());
 	}
-	_man = new PluginManager(pathsS,
-#if !defined(_MSC_VER) && defined(NDEBUG)
-			// use selected option
-			settings.value("suffixedPlugins", false).toBool());
-#else
-			// determined by compile type
-			DEFAULT_DEBUG_SUFFIX);
-#endif
+	qout << endl;
+
+	// initialize plugin manager with determined settings
+	_man = new PluginManager(pathsS, debug);
 }
 
 void CharonRun::_freeMan() {

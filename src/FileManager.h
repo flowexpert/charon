@@ -51,18 +51,6 @@ public:
 	/// get config directory
 	QDir configDir() const;
 
-	/// Configures plugin paths
-	/** \param force  Configure even if configuration exists
-	 */
-	void configure(bool force = false) const;
-
-	/// Settings tag for private plugin path
-	/** depends on debug/release build,
-	 *  uses <tt>privatePluginPath</tt> on release builds and
-	 *  <tt>privatePluginPathD</tt> on debug builds.
-	 */
-	static const QString privPathTag;
-
 private:
 	FileManager();
 	/// forbid copying

@@ -25,10 +25,13 @@
 #include "LogDialog.h"
 #include "ui_LogDialog.h"
 #include "LogDialog.moc"
+
 #include <QProcess>
 #include <QScrollBar>
 #include <QTimer>
 #include <QMessageBox>
+#include <QSettings>
+#include <QFileInfo>
 
 LogDialog::LogDialog(QString title, QString desc, QWidget* pp) :
 		QDialog(pp), _proc(0) {
@@ -38,7 +41,7 @@ LogDialog::LogDialog(QString title, QString desc, QWidget* pp) :
 		setWindowTitle(title);
 	}
 	if (!desc.isEmpty()) {
-		_ui->infoLabel->setText(desc);
+		_ui->lInfo->setText(desc);
 	}
 }
 
@@ -98,13 +101,50 @@ void LogDialog::startProcess(QStringList args) {
 	if (_proc) {
 		return;
 	}
+
+	// determine available run process executables
+	QStringList testArgs;
+	testArgs << "--quiet" << "--non-interactive";
+	QString tcRun = QApplication::applicationDirPath() + "/tuchulcha-run";
+	if (QProcess::execute(tcRun,testArgs)) {
+		tcRun = QString::null;
+	}
+	QString tcRunD = QApplication::applicationDirPath() + "/tuchulcha-run_d";
+	if (QProcess::execute(tcRunD,testArgs)) {
+		tcRunD = QString::null;
+	}
+
+	// select process executable
+	QSettings settings;
+	QString procName =
+		(settings.value("suffixedPlugins", false).toBool() || tcRun.isNull())?
+		tcRunD : tcRun;
+
+	if (procName.isNull()) {
+		// warn if no valid executable found
+		_ui->logText->insertHtml(
+					tr("<br><span style=\"color:red;font-weight:bold\">"
+						"no working <tt>tuchulcha-run</tt> "
+						"process executable found<br>"));
+		_ui->lProcName->setText(
+			tr("Executable: "
+				"<span style=\"font-weight:bold;color:red\">(none)</span>"));
+		setFinished();
+		return;
+	}
+
+	_ui->lProcName->setText(
+		tr("Executable: "
+			"<span style=\"color:blue\"><tt>%1</tt></span>")
+		.arg(QFileInfo(procName).baseName()));
+
+	// start process
 	setRunning();
 	_proc = new QProcess(this);
 	connect(_proc,SIGNAL(finished(int)),SLOT(setFinished()));
 	connect(_proc,SIGNAL(readyRead()),SLOT(updateContent()));
 	connect(_proc,SIGNAL(error(QProcess::ProcessError)),SLOT(error()));
-	QString tcRun = QApplication::applicationDirPath() + "/tuchulcha-run";
-	_proc->start(tcRun,args,QIODevice::ReadWrite|QIODevice::Text);
+	_proc->start(procName,args,QIODevice::ReadWrite|QIODevice::Text);
 }
 
 void LogDialog::setRunning() {
@@ -118,10 +158,33 @@ void LogDialog::setFinished() {
 }
 
 void LogDialog::error() {
+	setFinished();
+
 	_ui->logText->moveCursor(QTextCursor::End);
+	QString errorType;
+	switch(_proc->error()) {
+	case QProcess::FailedToStart:
+		errorType = tr("process failed to start");
+		break;
+	case QProcess::Crashed:
+		errorType = tr("process crashed after start");
+		break;
+	case QProcess::Timedout:
+		errorType = tr("process timeout");
+		break;
+	case QProcess::WriteError:
+		errorType = tr("write error");
+		break;
+	case QProcess::ReadError:
+		errorType = tr("read error");
+		break;
+	default:
+		errorType = tr("unknown error");
+		break;
+	}
+
 	_ui->logText->insertHtml(
 				tr("<br><span style=\"color:red;font-weight:bold\">"
-					"Error during process execution.</span><br>"
-					"Error Code: %1"
-					"<br><br>").arg(_proc->error()));
+					"Error during process execution:</span> %1<br>")
+				.arg(errorType));
 }
