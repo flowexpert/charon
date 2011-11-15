@@ -45,13 +45,6 @@ IF(WIN32)
 	ENDIF()
 ENDIF(WIN32)
 
-# install into bin subdirectory
-INSTALL(
-	TARGETS     paraminspector
-	RUNTIME     DESTINATION    bin${BIN_SUFFIX}
-	COMPONENT   applications
-)
-
 IF(APPLE)
 	# Create apple application package
 	CONFIGURE_FILE(
@@ -63,24 +56,24 @@ IF(APPLE)
 		FILES       ${PROJECT_SOURCE_DIR}/icons/MacOSIcon.icns
 		DESTINATION /Applications/Tuchulcha.app/Contents/Resources
 		COMPONENT   applications
-		PERMISSIONS WORLD_WRITE
+		PERMISSIONS WORLD_READ
 	)
 	INSTALL(
 		FILES       ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MacOSInfo.plist
 		DESTINATION /Applications/Tuchulcha.app/Contents
 		COMPONENT   applications
 		RENAME      Info.plist
-		PERMISSIONS WORLD_WRITE
+		PERMISSIONS WORLD_READ
 	)
 	INSTALL(
-		TARGETS     tuchulcha
+		TARGETS     tuchulcha tuchulcha-run paraminspector
 		RUNTIME     DESTINATION    /Applications/Tuchulcha.app/Contents/MacOS
 		COMPONENT   applications
-		PERMISSIONS WORLD_WRITE
+		PERMISSIONS WORLD_READ
 	)
 ELSE(APPLE)
 	INSTALL(
-		TARGETS     tuchulcha
+		TARGETS     tuchulcha tuchulcha-run paraminspector
 		RUNTIME     DESTINATION    bin${BIN_SUFFIX}
 		COMPONENT   applications
 	)
