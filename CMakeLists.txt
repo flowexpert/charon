@@ -1,6 +1,6 @@
 PROJECT(templategenerator)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-SET(templategenerator_VERSION 0.1.3)
+SET(templategenerator_VERSION 0.1.4)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
