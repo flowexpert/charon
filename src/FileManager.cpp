@@ -25,6 +25,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QTextStream>
+#include <QCoreApplication>
 
 #ifndef TUCHULCHA_DIR
 /// Tuchulcha config path
