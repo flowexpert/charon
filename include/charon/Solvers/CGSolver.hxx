@@ -32,7 +32,6 @@
 #include <vector>
 #include <numeric>
 
-#include <charon-utils/Roi.hxx>
 
 #define CG_DIRECTION_PR
 
