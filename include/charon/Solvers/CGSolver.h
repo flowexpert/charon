@@ -69,7 +69,7 @@ public:
 	InputSlot< IteratorHelper<T>* > itHelper;
 
 	/// Input slot for region of interest
-	InputSlot< Roi<int> > roi;
+	InputSlot< Roi<int>* > roi;
 
 	/// Output slot for feedback
 	OutputSlot< cimg_library::CImgList<T> > result;

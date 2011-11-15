@@ -32,6 +32,8 @@
 #include <vector>
 #include <numeric>
 
+#include <charon-utils/Roi.hxx>
+
 #define CG_DIRECTION_PR
 
 #ifdef _MSC_VER
@@ -48,7 +50,7 @@ CGSolver<T>::CGSolver(const std::string& name) :
 	                    "energyStencils",
 	                    "energy stencils",
 	                    "EnergyStencil<T>*");
-        this->_addInputSlot(roi, "roi", "RoI", "Roi<int>");
+        this->_addInputSlot(roi, "roi", "RoI", "Roi<int>*");
 	this->_addInputSlot(itHelper,
 	                    "itHelper",
 	                    "iterator helper",
@@ -77,15 +79,75 @@ void CGSolver<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
+	std::cout << "(II) roi.xEnd = " << roi()->xEnd << std::endl;
+
 	_help = itHelper();
 	_help->reset();  //  (!!)
+	_help->execute();
 	cimg_library::CImgList<T> & _itflow = _help->flow();
+	const cimg_library::CImgList<T> & _itin = _help->in();
+	const cimg_library::CImgList<T> & _itinitflow = _help->initFlow();
+	cimg_library::CImgList<T> & _itsequence = _help->sequence();
+
+        _pSize     = _itsequence.size();
+        _pWidth    = _itsequence[0].width();
+        _pHeight   = _itsequence[0].height();
+        _pDepth    = _itsequence[0].depth();
+        _pSpectrum = _itsequence[0].spectrum();
+
+  std::cout << "itHelper sequence _pSize     = " << _pSize << std::endl;
+  std::cout << "itHelper sequence _pWidth    = " << _pWidth << std::endl;
+  std::cout << "itHelper sequence _pHeight   = " << _pHeight << std::endl;
+  std::cout << "itHelper sequence _pDepth    = " << _pDepth << std::endl;
+  std::cout << "itHelper sequence _pSpectrum = " << _pSpectrum << std::endl;
+  std::cout << "itHelper sequence flowDimensions = " << flowDimensions() << std::endl;
+
+        _pSize     = _itin.size();
+        _pWidth    = _itin[0].width();
+        _pHeight   = _itin[0].height();
+        _pDepth    = _itin[0].depth();
+        _pSpectrum = _itin[0].spectrum();
+
+  std::cout << "itHelper in _pSize     = " << _pSize << std::endl;
+  std::cout << "itHelper in _pWidth    = " << _pWidth << std::endl;
+  std::cout << "itHelper in _pHeight   = " << _pHeight << std::endl;
+  std::cout << "itHelper in _pDepth    = " << _pDepth << std::endl;
+  std::cout << "itHelper in _pSpectrum = " << _pSpectrum << std::endl;
+  std::cout << "itHelper in flowDimensions = " << flowDimensions() << std::endl;
+
+        _pSize     = _itinitflow.size();
+        _pWidth    = _itinitflow[0].width();
+        _pHeight   = _itinitflow[0].height();
+        _pDepth    = _itinitflow[0].depth();
+        _pSpectrum = _itinitflow[0].spectrum();
+
+  std::cout << "itHelper initflow _pSize     = " << _pSize << std::endl;
+  std::cout << "itHelper initflow _pWidth    = " << _pWidth << std::endl;
+  std::cout << "itHelper initflow _pHeight   = " << _pHeight << std::endl;
+  std::cout << "itHelper initflow _pDepth    = " << _pDepth << std::endl;
+  std::cout << "itHelper initflow _pSpectrum = " << _pSpectrum << std::endl;
+  std::cout << "itHelper initflow flowDimensions = " << flowDimensions() << std::endl;
 
 	_pSize     = _itflow.size();
 	_pWidth    = _itflow[0].width();
 	_pHeight   = _itflow[0].height();
 	_pDepth    = _itflow[0].depth();
 	_pSpectrum = _itflow[0].spectrum();
+
+  std::cout << "itHelper flow _pSize     = " << _pSize << std::endl;
+  std::cout << "itHelper flow _pWidth    = " << _pWidth << std::endl;
+  std::cout << "itHelper flow _pHeight   = " << _pHeight << std::endl;
+  std::cout << "itHelper flow _pDepth    = " << _pDepth << std::endl;
+  std::cout << "itHelper flow _pSpectrum = " << _pSpectrum << std::endl;
+  std::cout << "itHelper flow flowDimensions = " << flowDimensions() << std::endl;
+
+  _itinitflow[0].save("_itinitflow0.cimg");
+  _itinitflow[1].save("_itinitflow1.cimg");
+  _itflow[0].save("_itflow0.cimg");
+  _itflow[1].save("_itflow1.cimg");
+
+  _itin[0].save("_itin.cimg");
+  _itsequence[0].save("_itsequence.cimg");
 
 /*
 	int vectorSize = _pSize * _pWidth * _pHeight * _pDepth * _pSpectrum;
@@ -397,15 +459,15 @@ void CGSolver<T>::minimize(
 	  f3 = T(0.0);
 	  df3 = std::vector<T>( energyGradientSize, T(0.0) );
 
-  std::cout << "_itflow.atNXYZC( 0, 100, 100, 0, 0 ) = ";
-  std::cout << _itflow.atNXYZC( 0, 100, 100, 0, 0 ) << std::endl;
-  std::cout << "_itflow.atNXYZC( 0, 50, 50, 0, 0 ) = ";
-  std::cout << _itflow.atNXYZC( 0, 50, 50, 0, 0 ) << std::endl;
+//  std::cout << "_itflow.atNXYZC( 0, 100, 100, 0, 0 ) = ";
+//  std::cout << _itflow.atNXYZC( 0, 100, 100, 0, 0 ) << std::endl;
+//  std::cout << "_itflow.atNXYZC( 0, 50, 50, 0, 0 ) = ";
+//  std::cout << _itflow.atNXYZC( 0, 50, 50, 0, 0 ) << std::endl;
           _itflow.assign( _reshapeFeedback( _addVectors( X, _scaleVector( x3, s ) ) ) );
-  std::cout << "_itflow.atNXYZC( 0, 100, 100, 0, 0 ) = ";
-  std::cout << _itflow.atNXYZC( 0, 100, 100, 0, 0 ) << std::endl;
-  std::cout << "_itflow.atNXYZC( 0, 50, 50, 0, 0 ) = ";
-  std::cout << _itflow.atNXYZC( 0, 50, 50, 0, 0 ) << std::endl;
+//  std::cout << "_itflow.atNXYZC( 0, 100, 100, 0, 0 ) = ";
+//  std::cout << _itflow.atNXYZC( 0, 100, 100, 0, 0 ) << std::endl;
+//  std::cout << "_itflow.atNXYZC( 0, 50, 50, 0, 0 ) = ";
+//  std::cout << _itflow.atNXYZC( 0, 50, 50, 0, 0 ) << std::endl;
 
           for (sIt = stencilsBegin; sIt != stencilsEnd; ++sIt) {
             is = (*((InputSlot<EnergyStencil<T>*>*)*sIt))();
@@ -486,9 +548,9 @@ void CGSolver<T>::minimize(
 //////////     PART 2
 
 
-std::cout << "(II) CGSolver :: d3  @ PART2 = " << d3 << std::endl;
-std::cout << "(II) CGSolver :: SIG @ PART2 = " << SIG << std::endl;
-std::cout << "(II) CGSolver :: d0  @ PART2 = " << d0 << std::endl;
+// std::cout << "(II) CGSolver :: d3  @ PART2 = " << d3 << std::endl;
+// std::cout << "(II) CGSolver :: SIG @ PART2 = " << SIG << std::endl;
+// std::cout << "(II) CGSolver :: d0  @ PART2 = " << d0 << std::endl;
 
     while (
           (
@@ -560,9 +622,9 @@ std::cout << "(II) CGSolver :: d0  @ PART2 = " << d0 << std::endl;
 
 //////////     PART 3
 
-std::cout << "(II) CGSolver :: d3  @ PART3 = " << d3 << std::endl;
-std::cout << "(II) CGSolver :: SIG @ PART3 = " << SIG << std::endl;
-std::cout << "(II) CGSolver :: d0  @ PART3 = " << d0 << std::endl;
+// std::cout << "(II) CGSolver :: d3  @ PART3 = " << d3 << std::endl;
+// std::cout << "(II) CGSolver :: SIG @ PART3 = " << SIG << std::endl;
+// std::cout << "(II) CGSolver :: d0  @ PART3 = " << d0 << std::endl;
 
     if (
 	   std::abs(d3) < -SIG*d0

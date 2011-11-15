@@ -44,7 +44,7 @@ PyramidRescale<T>::PyramidRescale(const std::string& name) :
 	ParameteredObject::_addOutputSlot(
 			flowOut, "flowOut", "flow output", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
-			size, "size", "current size", "Roi<int>");
+			size, "size", "current size", "Roi<int>*");
 	ParameteredObject::_addParameter (
 			scaleFactor, "scaleFactor", "scale factor", 0.5);
 	ParameteredObject::_addParameter (

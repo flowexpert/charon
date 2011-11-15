@@ -62,7 +62,7 @@ public:
 	/// flow output
 	OutputSlot < cimg_library::CImgList<T> > flowOut;
 	/// current size
-	OutputSlot < const Roi<int>* > size;
+	OutputSlot < Roi<int>* > size;
 
 	/// scale factor
 	Parameter < double > scaleFactor;
