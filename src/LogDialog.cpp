@@ -26,7 +26,6 @@
 #include "ui_LogDialog.h"
 #include "LogDialog.moc"
 
-#include <QProcess>
 #include <QTextStream>
 #include <QScrollBar>
 #include <QTimer>
@@ -34,10 +33,15 @@
 #include <QSettings>
 #include <QFileInfo>
 
-LogDialog::LogDialog(QString title, QString desc, QWidget* pp) :
-		QDialog(pp), _proc(0) {
+LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
+		QDialog(pp,wf), _decorator(dec), _proc(0) {
+	_proc = new QProcess(this);
+	_proc->setObjectName("proc");
 	_ui = new Ui::LogDialog;
 	_ui->setupUi(this);
+
+	QString title=_decorator->title();
+	QString desc=_decorator->desc();
 	if (!title.isEmpty()) {
 		setWindowTitle(title);
 	}
@@ -55,12 +59,54 @@ LogDialog::LogDialog(QString title, QString desc, QWidget* pp) :
 	_ui->logText->moveCursor(QTextCursor::End);
 	f.setLeftMargin(10);
 	_curEnd=new QTextCursor(_ui->logText->textCursor().insertFrame(f));
+
+	// determine available run process executables
+	QStringList testArgs;
+	testArgs << "--quiet" << "--non-interactive";
+	QString tcRun = QApplication::applicationDirPath() + "/tuchulcha-run";
+	if (QProcess::execute(tcRun,testArgs)) {
+		tcRun = QString::null;
+	}
+	QString tcRunD = QApplication::applicationDirPath() + "/tuchulcha-run_d";
+	if (QProcess::execute(tcRunD,testArgs)) {
+		tcRunD = QString::null;
+	}
+
+	// select process executable
+	QSettings settings;
+	QString procName =
+		(settings.value("suffixedPlugins", false).toBool() || tcRun.isNull())?
+		tcRunD : tcRun;
+
+	if (procName.isNull()) {
+		// warn if no valid executable found
+		_curEnd->insertHtml(
+					QString("<br><span class=\"error\">%1</span></br>")
+						.arg("no working <tt>tuchulcha-run</tt> "
+						"process executable found"));
+		_ui->lProcName->setText(
+			tr("Executable:")+
+			QString(" <span style=\"font-weight:bold;color:red\">(%1)</span>")
+				.arg(tr("none")));
+		return;
+	}
+
+	_ui->lProcName->setText(
+		tr("Executable: ")
+			+QString(" <span style=\"color:blue\"><tt>%1</tt></span>")
+				.arg(QFileInfo(procName).baseName()));
+
+	// start process
+	_proc->start(
+		procName, _decorator->arguments(),
+		QIODevice::ReadWrite|QIODevice::Text);
 }
 
 LogDialog::~LogDialog() {
 	delete _curEnd;
 	delete _curRet;
 	delete _ui;
+	delete _decorator;
 }
 
 void LogDialog::done(int r) {
@@ -92,7 +138,7 @@ void LogDialog::terminate(bool force) {
 	}
 }
 
-void LogDialog::updateContent() {
+void LogDialog::on_proc_readyRead() {
 	if (_proc) {
 		QString origS = _proc->readAll();
 		QString formS, cur;
@@ -101,29 +147,10 @@ void LogDialog::updateContent() {
 
 		do {
 			cur = orig.readLine();
-
-			// simple markup for higlighting
-			if (cur.contains(
-					QRegExp("^\\(II\\)\\s+",Qt::CaseInsensitive))) {
-				cur = QString("<span class=\"info\">%1</span>").arg(cur);
-			}
-			else if (cur.contains(
-					QRegExp("^\\(WW\\)\\s+",Qt::CaseInsensitive))) {
-				cur = QString("<span class=\"warning\">%1</span>").arg(cur);
-			}
-			else if (cur.contains(
-					QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
-				cur = QString("<span class=\"error\">%1</span>").arg(cur);
-			}
-
-			// add status message if workflow execution finished
-			if (cur.contains("execution finished",Qt::CaseInsensitive)) {
-				_curEnd->insertHtml(
-					QString("<br><span class=\"success\">%1</span><br>%2<br>")
-						.arg(tr("Workflow execution finished."))
-						.arg(tr("Plugins stay loaded until you close "
-							"this dialog.")));
-				setFinished();
+			cur = _decorator->highlightLine(cur);
+			if(_decorator->finishSignal(cur)) {
+				_curEnd->insertHtml(_decorator->finishMessage());
+				on_proc_finished(0);
 			}
 			form << cur << "<br>" << endl;
 		} while (!cur.isNull());
@@ -135,69 +162,18 @@ void LogDialog::updateContent() {
 	}
 }
 
-void LogDialog::startProcess(QStringList args) {
-	if (_proc) {
-		return;
-	}
-
-	// determine available run process executables
-	QStringList testArgs;
-	testArgs << "--quiet" << "--non-interactive";
-	QString tcRun = QApplication::applicationDirPath() + "/tuchulcha-run";
-	if (QProcess::execute(tcRun,testArgs)) {
-		tcRun = QString::null;
-	}
-	QString tcRunD = QApplication::applicationDirPath() + "/tuchulcha-run_d";
-	if (QProcess::execute(tcRunD,testArgs)) {
-		tcRunD = QString::null;
-	}
-
-	// select process executable
-	QSettings settings;
-	QString procName =
-		(settings.value("suffixedPlugins", false).toBool() || tcRun.isNull())?
-		tcRunD : tcRun;
-
-	if (procName.isNull()) {
-		// warn if no valid executable found
-		_curEnd->insertHtml(
-					QString("<br><span class=\"error\">%1</span></br>")
-						.arg("no working <tt>tuchulcha-run</tt> "
-						"process executable found"));
-		_ui->lProcName->setText(
-			tr("Executable:")+
-			QString(" <span style=\"font-weight:bold;color:red\">(%1)</span>")
-				.arg(tr("none")));
-		setFinished();
-		return;
-	}
-
-	_ui->lProcName->setText(
-		tr("Executable: ")
-			+QString(" <span style=\"color:blue\"><tt>%1</tt></span>")
-				.arg(QFileInfo(procName).baseName()));
-
-	// start process
-	setRunning();
-	_proc = new QProcess(this);
-	connect(_proc,SIGNAL(finished(int)),SLOT(setFinished()));
-	connect(_proc,SIGNAL(readyRead()),SLOT(updateContent()));
-	connect(_proc,SIGNAL(error(QProcess::ProcessError)),SLOT(error()));
-	_proc->start(procName,args,QIODevice::ReadWrite|QIODevice::Text);
-}
-
-void LogDialog::setRunning() {
+void LogDialog::on_proc_started() {
 	_ui->progressBar->show();
 	_ui->buttonBox->setStandardButtons(QDialogButtonBox::Abort);
 }
 
-void LogDialog::setFinished() {
+void LogDialog::on_proc_finished(int) {
 	_ui->progressBar->hide();
 	_ui->buttonBox->setStandardButtons(QDialogButtonBox::Close);
 }
 
-void LogDialog::error() {
-	setFinished();
+void LogDialog::on_proc_error(QProcess::ProcessError) {
+	on_proc_finished(-1);
 
 	QString errorType;
 	switch(_proc->error()) {
@@ -225,4 +201,80 @@ void LogDialog::error() {
 		QString("<br><span class=\"error\">%1</span> %2<br>")
 			.arg(tr("Error during process execution:"))
 			.arg(errorType));
+}
+
+// ============================ Decorators ===============================
+LogDialog::Decorator::~Decorator() {
+}
+
+bool LogDialog::Decorator::finishSignal(QString) {
+	return false;
+}
+
+QString LogDialog::Decorator::finishMessage() {
+	return QString::null;
+}
+
+QString LogDialog::Decorator::title() {
+	return QString::null;
+}
+
+QString LogDialog::Decorator::desc() {
+	return QString::null;
+}
+
+QString LogDialog::Decorator::highlightLine(QString line) {
+	// simple markup for higlighting
+	if (line.contains(
+			QRegExp("^\\(II\\)\\s+",Qt::CaseInsensitive))) {
+		line = QString("<span class=\"info\">%1</span>").arg(line);
+	}
+	else if (line.contains(
+			QRegExp("^\\(WW\\)\\s+",Qt::CaseInsensitive))) {
+		line = QString("<span class=\"warning\">%1</span>").arg(line);
+	}
+	else if (line.contains(
+			QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
+		line = QString("<span class=\"error\">%1</span>").arg(line);
+	}
+	return line;
+}
+
+QString LogDecorators::Update::title() {
+	return QCoreApplication::translate(
+		"UpdateDecorator","Plugin Information Update");
+}
+
+QString LogDecorators::Update::desc() {
+	return QCoreApplication::translate(
+		"UpdateDecorator","Output of update process:");
+}
+
+QStringList LogDecorators::Update::arguments() {
+	QStringList args;
+	args << "--non-interactive" << "update";
+	return args;
+}
+
+LogDecorators::RunWorkflow::RunWorkflow(QString fileName) :
+	_fileName(fileName) {
+}
+
+QStringList LogDecorators::RunWorkflow::arguments() {
+	QStringList args;
+	args << "--quiet" << "run" << _fileName;
+	return args;
+}
+
+bool LogDecorators::RunWorkflow::finishSignal(QString line) {
+	// add status message if workflow execution finished
+	return (line.contains("execution finished",Qt::CaseInsensitive));
+}
+
+QString LogDecorators::RunWorkflow::finishMessage() {
+	return QString("<br><span class=\"success\">%1</span><br>%2<br>")
+		.arg(QCoreApplication::translate("RunDecorator",
+			"Workflow execution finished."))
+		.arg(QCoreApplication::translate("RunDecorator",
+			"Plugins stay loaded until you close this dialog."));
 }

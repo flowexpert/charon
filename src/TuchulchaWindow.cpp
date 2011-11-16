@@ -411,12 +411,7 @@ void TuchulchaWindow::zoomFit() {
 }
 
 void TuchulchaWindow::updateMetadata() {
-	QStringList args;
-	args << "--non-interactive" << "update";
-	LogDialog dialog(
-				tr("Plugin Information Update"),
-				tr("Output of update process:"));
-	dialog.startProcess(args);
+	LogDialog dialog(new LogDecorators::Update);
 	dialog.exec();
 
 	_centralArea->closeAllSubWindows();
@@ -426,10 +421,8 @@ void TuchulchaWindow::updateMetadata() {
 void TuchulchaWindow::runWorkflow() {
 	if (!_flow)
 		return;
-	QStringList args;
-	args << "--quiet" << "run" << _flow->model()->fileName();
-	LogDialog dialog;
-	dialog.startProcess(args);
+	LogDialog dialog(new LogDecorators::RunWorkflow(
+		_flow->model()->fileName()));
 	dialog.exec();
 }
 

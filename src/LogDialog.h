@@ -26,37 +26,57 @@
 #define LOGDIALOG_H
 
 #include <QDialog>
+#include <QProcess>
 
 namespace Ui {class LogDialog;}
-class QProcess;
 class QTextCursor;
 
 /// class for logging display and communication with external processes
+/** This widget implements the decorator pattern to handle different
+ *  kinds of log dialogs like the one used during plugin update
+ *  and running of workflows.
+ *
+ *  The decorator implementation has to be given to the instance constructor.
+ */
 class LogDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
+	/// decorator class to handle different kinds of log dialogs
+	class Decorator {
+	public:
+		virtual ~Decorator();
+		/// title string
+		virtual QString title();
+		/// description string
+		virtual QString desc();
+		/// determine command line arguments
+		virtual QStringList arguments() = 0;
+		/// add highlighting of current output line
+		/** \param line  current line
+		 *  \returns     current line with highlighting */
+		virtual QString highlightLine(QString line);
+		/// check if current line shows that running finished
+		/** \param line  current line
+		 *  \retval true line shows that execution finished */
+		virtual bool finishSignal(QString line);
+		/// message shown if finished
+		virtual QString finishMessage();
+	};
+
+public:
 	/// constructor
-	/** \param title   window title
-	 *  \param desc    info label content
-	 *  \param parent  parent widget
+	/** \param decorator dialog decorator providing further details,
+	 *                   it will be deleted in the destructor
+	 *  \param parent    parent widget
+	 *  \param f         window flags
 	 */
-	explicit LogDialog(QString title="", QString desc="", QWidget* parent = 0);
+	explicit LogDialog(
+		Decorator* decorator, QWidget* parent=0, Qt::WindowFlags f=0);
 	virtual ~LogDialog();
-	/// start tuchulcha-run process with given arguments
-	/** \param args    command line arguments */
-	void startProcess(QStringList args);
 
 public slots:
-	/// update content by querying process
-	void updateContent();
-	/// setup abort button and show progress bar
-	void setRunning();
-	/// setup close button and hide progress bar
-	void setFinished();
-	/// handle errors running the process
-	void error();
 	/// handle process termination
 	/** \param r       return value */
 	virtual void done(int r);
@@ -64,11 +84,46 @@ public slots:
 	/** \param force   do not ask before terminating */
 	void terminate(bool force=false);
 
+private slots:
+	/// update content by querying process
+	void on_proc_readyRead();
+	/// setup abort button and show progress bar
+	void on_proc_started();
+	/// setup close button and hide progress bar
+	void on_proc_finished(int);
+	/// handle errors running the process
+	void on_proc_error(QProcess::ProcessError);
+
 private:
-	Ui::LogDialog* _ui; ///< designer ui
-	QProcess* _proc;    ///< tuchulcha-run process
-	QTextCursor* _curRet; ///< proc output cursor
-	QTextCursor* _curEnd; ///< other stuff cursor
+	Decorator* _decorator; ///< decorator implementation
+	Ui::LogDialog* _ui;    ///< designer ui
+	QProcess* _proc;       ///< tuchulcha-run process
+	QTextCursor* _curRet;  ///< proc output cursor
+	QTextCursor* _curEnd;  ///< other stuff cursor
 };
+
+/// LogDialog decorator implementations
+namespace LogDecorators {
+	/// decorator for update dialog
+	class Update : public LogDialog::Decorator {
+	public:
+		virtual QStringList arguments();
+		virtual QString title();
+		virtual QString desc();
+	};
+
+	/// decorator for run workspace dialog
+	class RunWorkflow : public LogDialog::Decorator {
+	public:
+		/// constructor
+		/** \param fileName worflow file to run */
+		RunWorkflow(QString fileName);
+		virtual QStringList arguments();
+		virtual bool finishSignal(QString line);
+		virtual QString finishMessage();
+	private:
+		QString _fileName; ///< filename cache
+	};
+}
 
 #endif // LOGDIALOG_H
