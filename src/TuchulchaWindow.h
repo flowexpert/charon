@@ -30,6 +30,7 @@
 class QMdiArea;
 class QMdiSubWindow;
 class FlowWidget;
+class ObjectInspector;
 class ParameterFileModel;
 class NodeTreeView;
 class QAction;
@@ -118,6 +119,8 @@ private:
 	QMdiArea* _centralArea;
 	/// current flow widget
 	FlowWidget* _flow;
+	/// object inspector
+	ObjectInspector* _inspector;
 	/// selector widget
 	NodeTreeView* _selector;
 

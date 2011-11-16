@@ -97,10 +97,16 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 			+QString(" <span style=\"color:blue\"><tt>%1</tt></span>")
 				.arg(QFileInfo(procName).baseName()));
 
-	// start process
-	_proc->start(
-		procName, _decorator->arguments(),
-		QIODevice::ReadWrite|QIODevice::Text);
+	if(_decorator->ready(this)) {
+		// start process
+		_proc->start(
+			procName, _decorator->arguments(),
+			QIODevice::ReadWrite|QIODevice::Text);
+	}
+	else {
+		// close dialog
+		QTimer::singleShot(0,this,SLOT(reject()));
+	}
 }
 
 LogDialog::~LogDialog() {
@@ -253,6 +259,10 @@ QString LogDialog::Decorator::highlightLine(QString line) {
 	return line;
 }
 
+bool LogDialog::Decorator::ready(QWidget*) {
+	return true;
+}
+
 QStringList LogDialog::Decorator::postStartCommands(QWidget*) {
 	return QStringList();
 }
@@ -274,7 +284,23 @@ QStringList LogDecorators::Update::arguments() {
 }
 
 LogDecorators::RunWorkflow::RunWorkflow(QString fileName) :
-	_fileName(fileName) {
+		_fileName(fileName) {
+}
+
+bool LogDecorators::RunWorkflow::ready(QWidget* pp) {
+	if(_fileName.isEmpty()) {
+		QMessageBox::warning(pp,
+			QCoreApplication::translate("RunDecorator",
+				"missing workflow file"),
+			QCoreApplication::translate("RunDecorator",
+				"The workflow cannot be started because it has not "
+				"been saved to disk (empty filename given). "
+				"Please save it and retry execution. "
+			)
+		);
+		return false;
+	}
+	return true;
 }
 
 QStringList LogDecorators::RunWorkflow::arguments() {

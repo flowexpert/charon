@@ -51,6 +51,10 @@ public:
 		virtual QString title();
 		/// description string
 		virtual QString desc();
+		/// check if process may be started
+		/** \param parent  parent widget (for dialog/message boxes)
+		 *  \retval false  process may not be started */
+		virtual bool ready(QWidget* parent);
 		/// determine command line arguments
 		virtual QStringList arguments() = 0;
 		/// commands sent to the proccess after start
@@ -122,6 +126,7 @@ namespace LogDecorators {
 		/// constructor
 		/** \param fileName worflow file to run */
 		RunWorkflow(QString fileName);
+		virtual bool ready(QWidget* parent);
 		virtual QStringList arguments();
 		virtual bool finishSignal(QString line);
 		virtual QString finishMessage();

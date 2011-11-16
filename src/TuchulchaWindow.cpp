@@ -67,8 +67,8 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QDockWidget* inspectorWidget = new QDockWidget(
 			tr("ObjectInspector"), this);
 	inspectorWidget->setObjectName("inspectorwidget");
-	ObjectInspector* inspector = new ObjectInspector(inspectorWidget);
-	inspectorWidget->setWidget(inspector);
+	_inspector = new ObjectInspector(inspectorWidget);
+	inspectorWidget->setWidget(_inspector);
 
 	// help viewer
 	QDockWidget* helpWidget = new QDockWidget(tr("Help Browser"), this);
@@ -91,12 +91,12 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 			showClassDoc(QString)));
 
 	// object inspector connections
-	connect(inspector, SIGNAL(statusMessage(const QString&, int)),
+	connect(_inspector, SIGNAL(statusMessage(const QString&, int)),
 			statusBar(), SLOT(showMessage(const QString&, int)));
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
-			inspector, SLOT(setModel(ParameterFileModel*)));
+			_inspector, SLOT(setModel(ParameterFileModel*)));
 	connect(this, SIGNAL(enableEditors(bool)),
-			inspector, SLOT(setEnabled(bool)));
+			_inspector, SLOT(setEnabled(bool)));
 
 	// add widgets to dock area
 	addDockWidget(Qt::RightDockWidgetArea, inspectorWidget);
@@ -125,11 +125,11 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	action->setToolTip(tr("open an existing file"));
 
 	action = toolbar->addAction(QIcon(":/icons/save.png"), tr("save\nfile"),
-			inspector, SLOT(saveFile()));
+			_inspector, SLOT(saveFile()));
 	action->setToolTip(tr("save current document"));
 
 	action = toolbar->addAction(QIcon(":/icons/save_as.png"),
-		tr("save\nfile as"), inspector, SLOT(saveFileAs()));
+		tr("save\nfile as"), _inspector, SLOT(saveFileAs()));
 	action->setToolTip(tr("save current document\nto a new location"));
 
 	action = toolbar->addAction(QIcon(":/icons/export.png"),
@@ -165,7 +165,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 
 	toolbar->addSeparator();
 	action = toolbar->addAction(QIcon(":/icons/revert.png"),
-		tr("reset\nselected"), inspector, SLOT(delParam()));
+		tr("reset\nselected"), _inspector, SLOT(delParam()));
 	action->setToolTip(tr("reset selected parameter(s)\nto their defaults"));
 
 	toolbar->addSeparator();
@@ -187,10 +187,10 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 		SLOT(openNew()), QKeySequence(tr("Ctrl+N")));
 	fileMenu->addAction(QIcon(":/icons/open.png"), tr("&Open"), this,
 		SLOT(open()), QKeySequence(tr("Ctrl+O")));
-	fileMenu->addAction(QIcon(":/icons/save.png"), tr("&Save"), inspector,
+	fileMenu->addAction(QIcon(":/icons/save.png"), tr("&Save"), _inspector,
 		SLOT(saveFile()), QKeySequence(tr("Ctrl+S")));
 	fileMenu->addAction(QIcon(":/icons/save_as.png"), tr("Save as..."),
-		inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
+		_inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
 	_separatorAct = fileMenu->addSeparator();
 	for (int i = 0; i < _maxRecentFiles; ++i) {
 		_recentFileActs[i] = new QAction(this);
@@ -214,7 +214,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	// edit menu
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
 	editMenu->addAction(QIcon(":/icons/revert.png"), tr(
-			"&reset selected parameters"), inspector, SLOT(delParam()),
+			"&reset selected parameters"), _inspector, SLOT(delParam()),
 			QKeySequence(tr("Ctrl+R")));
 	editMenu->addAction(QIcon(":/icons/configure.png"),tr("Options"),
 			this, SLOT(options()));
@@ -411,16 +411,28 @@ void TuchulchaWindow::zoomFit() {
 }
 
 void TuchulchaWindow::updateMetadata() {
+	QString fName = QString::null;
+	if(_flow) {
+		fName = _flow->model()->fileName();
+	}
+
+	// close first, window will ask for saving if needed
+	_centralArea->closeAllSubWindows();
 	LogDialog dialog(new LogDecorators::Update);
 	dialog.exec();
+	emit metaDataUpdated();
 
-	_centralArea->closeAllSubWindows();
-	emit metaDataUpdated() ;
+	// restore recent workflow, if any
+	if (!fName.isEmpty()) {
+		QCoreApplication::processEvents();
+		open(fName);
+	}
 }
 
 void TuchulchaWindow::runWorkflow() {
 	if (!_flow)
 		return;
+	_inspector->saveFile();
 	LogDialog dialog(new LogDecorators::RunWorkflow(
 		_flow->model()->fileName()));
 	dialog.exec();

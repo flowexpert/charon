@@ -402,10 +402,16 @@ bool ParameterFileModel::load(const QString& fName) {
 
 void ParameterFileModel::save(const QString& fName) {
 	QString name;
-	if ((!_fileName.isEmpty()) && (_fileName != QDir::homePath()))
+	if ((!_fileName.isEmpty())
+			&& QFileInfo(_fileName).exists()
+			&& QFileInfo(_fileName).isFile()) {
 		name = _fileName;
-	if (!fName.isEmpty())
+	}
+	if (!fName.isEmpty()
+			&& QFileInfo(_fileName).exists()
+			&& QFileInfo(_fileName).isFile()) {
 		name = fName;
+	}
 	if (!name.isEmpty()) {
 		setFileName(name);
 		_parameterFile->save(name);
