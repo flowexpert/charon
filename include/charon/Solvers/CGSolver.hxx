@@ -78,16 +78,16 @@ void CGSolver<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	std::cout << "(II) roi.xEnd = " << roi()->xEnd << std::endl;
-
 	_help = itHelper();
-	_help->reset();  //  (!!)
 	_help->execute();
-	cimg_library::CImgList<T> & _itflow = _help->flow();
-	const cimg_library::CImgList<T> & _itin = _help->in();
-	const cimg_library::CImgList<T> & _itinitflow = _help->initFlow();
-	cimg_library::CImgList<T> & _itsequence = _help->sequence();
+	_help->reset();
 
+	cimg_library::CImgList<T> & _itflow = _help->flow();
+//	const cimg_library::CImgList<T> & _itin = _help->in();
+//	const cimg_library::CImgList<T> & _itinitflow = _help->initFlow();
+//	cimg_library::CImgList<T> & _itsequence = _help->sequence();
+
+/*
         _pSize     = _itsequence.size();
         _pWidth    = _itsequence[0].width();
         _pHeight   = _itsequence[0].height();
@@ -126,13 +126,13 @@ void CGSolver<T>::execute() {
   std::cout << "itHelper initflow _pDepth    = " << _pDepth << std::endl;
   std::cout << "itHelper initflow _pSpectrum = " << _pSpectrum << std::endl;
   std::cout << "itHelper initflow flowDimensions = " << flowDimensions() << std::endl;
-
+*/
 	_pSize     = _itflow.size();
 	_pWidth    = _itflow[0].width();
 	_pHeight   = _itflow[0].height();
 	_pDepth    = _itflow[0].depth();
 	_pSpectrum = _itflow[0].spectrum();
-
+/*
   std::cout << "itHelper flow _pSize     = " << _pSize << std::endl;
   std::cout << "itHelper flow _pWidth    = " << _pWidth << std::endl;
   std::cout << "itHelper flow _pHeight   = " << _pHeight << std::endl;
@@ -147,7 +147,7 @@ void CGSolver<T>::execute() {
 
   _itin[0].save("_itin.cimg");
   _itsequence[0].save("_itsequence.cimg");
-
+*/
 /*
 	int vectorSize = _pSize * _pWidth * _pHeight * _pDepth * _pSpectrum;
 
@@ -190,7 +190,6 @@ void CGSolver<T>::execute() {
         );
 
 	_itflow.assign( _reshapeFeedback( _optimizedParameterVector ) );
-
 	result() = _itflow;
 }
 
