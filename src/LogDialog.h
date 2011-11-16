@@ -53,13 +53,17 @@ public:
 		virtual QString desc();
 		/// determine command line arguments
 		virtual QStringList arguments() = 0;
+		/// commands sent to the proccess after start
+		/** \param parent  parent widget (for dialog/message boxes)
+		 *  \returns       list of (interactive) commands */
+		virtual QStringList postStartCommands(QWidget* parent);
 		/// add highlighting of current output line
-		/** \param line  current line
-		 *  \returns     current line with highlighting */
+		/** \param line    current line
+		 *  \returns       current line with highlighting */
 		virtual QString highlightLine(QString line);
 		/// check if current line shows that running finished
-		/** \param line  current line
-		 *  \retval true line shows that execution finished */
+		/** \param line    current line
+		 *  \retval true   line shows that execution finished */
 		virtual bool finishSignal(QString line);
 		/// message shown if finished
 		virtual QString finishMessage();
@@ -121,6 +125,7 @@ namespace LogDecorators {
 		virtual QStringList arguments();
 		virtual bool finishSignal(QString line);
 		virtual QString finishMessage();
+		virtual QStringList postStartCommands(QWidget* parent);
 	private:
 		QString _fileName; ///< filename cache
 	};

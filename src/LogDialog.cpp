@@ -49,10 +49,10 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 		_ui->lInfo->setText(desc);
 	}
 	_ui->logText->document()->setDefaultStyleSheet(
-		"*{white-space:pre;font-family:monospace;}"
+		"*{white-space:pre;font-family:monospace;font-weight:normal}"
 		".error {color:red;font-weight:bold;}"
 		".success {color:green;font-weight:bold;font-family:sans-serif;}"
-		".warning {color:orange;font-weight:bold;}"
+		".warning {color:orange;font-weight:normal;}"
 		".info {color:gray;}"
 	);
 	QTextFrameFormat f;
@@ -169,6 +169,12 @@ void LogDialog::on_proc_readyRead() {
 void LogDialog::on_proc_started() {
 	_ui->progressBar->show();
 	_ui->buttonBox->setStandardButtons(QDialogButtonBox::Abort);
+
+	QStringList postStart = _decorator->postStartCommands(this);
+	QTextStream pout(_proc);
+	foreach(const QString& cmd, postStart) {
+		pout << cmd << endl;
+	}
 }
 
 void LogDialog::on_proc_finished(int) {
@@ -247,6 +253,10 @@ QString LogDialog::Decorator::highlightLine(QString line) {
 	return line;
 }
 
+QStringList LogDialog::Decorator::postStartCommands(QWidget*) {
+	return QStringList();
+}
+
 QString LogDecorators::Update::title() {
 	return QCoreApplication::translate(
 		"UpdateDecorator","Plugin Information Update");
@@ -268,9 +278,31 @@ LogDecorators::RunWorkflow::RunWorkflow(QString fileName) :
 }
 
 QStringList LogDecorators::RunWorkflow::arguments() {
+	QSettings settings;
 	QStringList args;
-	args << "--quiet" << "run" << _fileName;
+	args << "--quiet";
+	if (!settings.value("delayExecution",false).toBool()) {
+		args << "run" << _fileName;
+	}
 	return args;
+}
+
+QStringList LogDecorators::RunWorkflow::postStartCommands(QWidget* pp) {
+	QSettings settings;
+	QStringList cmds;
+	if (settings.value("delayExecution",false).toBool()) {
+		QMessageBox::information(pp,
+			QCoreApplication::translate("RunDecorator",
+				"wait before workflow execution"),
+			QCoreApplication::translate("RunDecorator",
+				"Waiting because <em>delayExecution</em> option set. "
+				"You can now attach your debugger to the run process. "
+				"Workflow will be started, when you close this message box."
+			)
+		);
+		cmds << QString("run %1").arg(_fileName);
+	}
+	return cmds;
 }
 
 bool LogDecorators::RunWorkflow::finishSignal(QString line) {
