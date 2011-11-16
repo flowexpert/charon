@@ -99,7 +99,7 @@ void CharonRun::_setupMan(QString logFileName) {
 	QStringListIterator iter(paths);
 	while (iter.hasNext()) {
 		QString cur = iter.next().trimmed();
-		qout << "(II)     " << cur << endl;
+		qout << "(II) \t" << cur << endl;
 		pathsS.push_back(cur.toStdString());
 	}
 	qout << endl;

@@ -49,8 +49,9 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 		_ui->lInfo->setText(desc);
 	}
 	_ui->logText->document()->setDefaultStyleSheet(
+		"*{white-space:pre;font-family:monospace;}"
 		".error {color:red;font-weight:bold;}"
-		".success {color:green;font-weight:bold;}"
+		".success {color:green;font-weight:bold;font-family:sans-serif;}"
 		".warning {color:orange;font-weight:bold;}"
 		".info {color:gray;}"
 	);
@@ -145,15 +146,18 @@ void LogDialog::on_proc_readyRead() {
 		QTextStream orig(&origS,QIODevice::ReadOnly);
 		QTextStream form(&formS,QIODevice::WriteOnly);
 
-		do {
+		forever {
 			cur = orig.readLine();
+			if (cur.isNull()) {
+				break;
+			}
 			cur = _decorator->highlightLine(cur);
 			if(_decorator->finishSignal(cur)) {
 				_curEnd->insertHtml(_decorator->finishMessage());
 				on_proc_finished(0);
 			}
 			form << cur << "<br>" << endl;
-		} while (!cur.isNull());
+		}
 		_curRet->insertHtml(formS);
 
 		// scroll down
@@ -236,6 +240,9 @@ QString LogDialog::Decorator::highlightLine(QString line) {
 	else if (line.contains(
 			QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
 		line = QString("<span class=\"error\">%1</span>").arg(line);
+	}
+	else {
+		line = QString("<span class=\"normal\">%1</span>").arg(line);
 	}
 	return line;
 }
