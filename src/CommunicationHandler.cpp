@@ -74,7 +74,7 @@ void CommunicationHandler::run() {
 	QString line;
 	QRegExp runRgx("^run\\s+(.+)$");
 	do {
-		line = qin.readLine().trimmed();
+		line = qin.readLine() ;
 		if(line == "quit") {
 			break;
 		}
