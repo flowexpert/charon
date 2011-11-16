@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>284</height>
+    <height>297</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -128,6 +128,13 @@ File name &lt;span id='code'&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &
         </property>
         <property name="text">
          <string>Load suffixed modules (debug), unsuffixed as fallback (see what's this help)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkDelay">
+        <property name="text">
+         <string>delay execution of Workflow (usefull for attaching a debugger)</string>
         </property>
        </widget>
       </item>

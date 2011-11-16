@@ -54,6 +54,8 @@ void OptionsDialog::refresh() {
 		settings.value("privatePluginPathD").toStringList().join("; "));
 	_ui->checkSuffix->setChecked(
 		settings.value("suffixedPlugins", false).toBool());
+	_ui->checkDelay->setChecked(
+		settings.value("delayExecution",false).toBool());
 }
 
 void OptionsDialog::apply() {
@@ -65,6 +67,7 @@ void OptionsDialog::apply() {
 	settings.setValue("privatePluginPathD",_ui->ePrivPathD->text()
 		.split(QRegExp("\\s*;\\s*"),QString::SkipEmptyParts));
 	settings.setValue("suffixedPlugins",_ui->checkSuffix->isChecked());
+	settings.setValue("delayExecution", _ui->checkDelay->isChecked());
 	if (check()) {
 		refresh();
 	}
@@ -83,6 +86,7 @@ void OptionsDialog::restore() {
 	_ui->ePrivPath->setText(QString());
 	_ui->ePrivPathD->setText(QString());
 	_ui->checkSuffix->setChecked(false);
+	_ui->checkDelay->setChecked(false);
 }
 
 void OptionsDialog::on_bBox_clicked(QAbstractButton* button) {
