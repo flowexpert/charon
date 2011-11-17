@@ -93,7 +93,7 @@ void CharonRun::_setupMan(QString logFileName) {
 	paths.removeDuplicates();
 	paths.removeAll("");
 
-	qout << "(II) Paths: " << endl;
+	qout << "(II) " << tr("Paths:") << endl;
 
 	std::vector<std::string> pathsS;
 	QStringListIterator iter(paths);
@@ -177,8 +177,6 @@ void CharonRun::runWorkflow(QString fName) {
 	QString pathBak = QDir::currentPath();
 	fName = QFileInfo(fName).absoluteFilePath();
 	QDir::setCurrent(QFileInfo(fName).path());
-	// error occurs in _manager->executeWorkflow.
-	// perhaps try/catch-block unneccessary.
 	QString errorMsg;
 	try {
 		qout << tr("Loading parameter file \"%1\"").arg(fName) << endl;

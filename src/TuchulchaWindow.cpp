@@ -116,24 +116,24 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	toolbar->setIconSize(QSize(32, 32));
 	QAction* action;
 
-	action = toolbar->addAction(QIcon(":/icons/new.png"), tr("new\nfile"),
+	action = toolbar->addAction(QIcon(":/icons/new.png"), tr("new file"),
 			this, SLOT(openNew()));
 	action->setToolTip(tr("create a new file"));
 
-	action = toolbar->addAction(QIcon(":/icons/open.png"), tr("open\nfile"),
+	action = toolbar->addAction(QIcon(":/icons/open.png"), tr("open file"),
 			this, SLOT(open()));
 	action->setToolTip(tr("open an existing file"));
 
-	action = toolbar->addAction(QIcon(":/icons/save.png"), tr("save\nfile"),
+	action = toolbar->addAction(QIcon(":/icons/save.png"), tr("save file"),
 			_inspector, SLOT(saveFile()));
 	action->setToolTip(tr("save current document"));
 
 	action = toolbar->addAction(QIcon(":/icons/save_as.png"),
-		tr("save\nfile as"), _inspector, SLOT(saveFileAs()));
-	action->setToolTip(tr("save current document\nto a new location"));
+		tr("save file as"), _inspector, SLOT(saveFileAs()));
+	action->setToolTip(tr("save current document to a new location"));
 
 	action = toolbar->addAction(QIcon(":/icons/export.png"),
-		tr("export\nflowchart"), this, SLOT(saveFlowChart()));
+		tr("export flowchart"), this, SLOT(saveFlowChart()));
 	action->setToolTip(tr("export flowchart to an image file"));
 
 	toolbar->addSeparator();
@@ -146,7 +146,8 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	action = toolbar->addAction(
 			QIcon(":/icons/execute.png"),
 			tr("Execute &Workflow"), this, SLOT(runWorkflow()));
-	action->setToolTip("execute workflow that is shown in the current window");
+	action->setToolTip(
+			tr("execute workflow that is shown in the current window"));
 
 	toolbar->addSeparator();
 	toolbar->addModelActions();
@@ -170,12 +171,12 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 
 	toolbar->addSeparator();
 
-	action = toolbar->addAction(QIcon(":/icons/intro.png"), tr(
-			"introduction to tuchulcha"), docGen, SLOT(showIntro()));
+	action = toolbar->addAction(QIcon(":/icons/intro.png"),
+		tr("introduction to tuchulcha"), docGen, SLOT(showIntro()));
 	action->setToolTip(tr("show introductin page"));
 
 	action = toolbar->addAction(QIcon(":/icons/help.png"),
-			tr("tuchulcha help"), docGen, SLOT(showHelp()));
+		tr("tuchulcha help"), docGen, SLOT(showHelp()));
 	action->setToolTip(tr("show help page"));
 
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),

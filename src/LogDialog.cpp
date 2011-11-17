@@ -147,7 +147,7 @@ void LogDialog::terminate(bool force) {
 
 void LogDialog::on_proc_readyRead() {
 	if (_proc) {
-		QString origS = _proc->readAll();
+		QString origS = QString::fromLocal8Bit(_proc->readAll());
 		QString formS, cur;
 		QTextStream orig(&origS,QIODevice::ReadOnly);
 		QTextStream form(&formS,QIODevice::WriteOnly);
@@ -333,7 +333,8 @@ QStringList LogDecorators::RunWorkflow::postStartCommands(QWidget* pp) {
 
 bool LogDecorators::RunWorkflow::finishSignal(QString line) {
 	// add status message if workflow execution finished
-	return (line.contains("execution finished",Qt::CaseInsensitive));
+	return (line.contains(
+		QCoreApplication::translate("CharonRun","Execution finished.")));
 }
 
 QString LogDecorators::RunWorkflow::finishMessage() {

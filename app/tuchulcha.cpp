@@ -52,7 +52,9 @@ int main(int argc, char *argv[]) {
 
 	// translation of tr(...) commands
 	QTranslator translator;
-	translator.load("tuchulcha_" + QLocale::system().name());
+	translator.load(
+		"tuchulcha_" + QLocale::system().name(),
+		QCoreApplication::applicationDirPath());
 	app.installTranslator(&translator);
 
 	TuchulchaWindow window;

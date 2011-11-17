@@ -40,9 +40,9 @@ void NodeTreeView::reload() {
 	// reset content
 	_model->clear();
 	QList<QStandardItem*> root;
-	root << new QStandardItem("Modules");
-	root << new QStandardItem("");
-	root << new QStandardItem("");
+	root << new QStandardItem(tr("Modules"));
+	root << new QStandardItem;
+	root << new QStandardItem;
 	for(int ii=0; ii<root.size(); ii++) {
 		root[ii]->setDragEnabled(false);
 		root[ii]->setEditable(false);
@@ -50,7 +50,7 @@ void NodeTreeView::reload() {
 		_model->setItem(0,ii,root[ii]);
 	}
 	QStringList labels;
-	labels << "Name" << "Parameter/Slot" << "Type";
+	labels << tr("Name") << tr("Parameter/Slot") << tr("Type");
 	_model->setHorizontalHeaderLabels(labels);
 	_model->horizontalHeaderItem(0)->setSizeHint(QSize(300,0));
 	_model->horizontalHeaderItem(1)->setSizeHint(QSize(200,0));
@@ -74,17 +74,17 @@ void NodeTreeView::reload() {
 
 		for (int jj=0; jj<ins.size(); jj++) {
 			names << new QStandardItem(ins[jj]);
-			sTypes << new QStandardItem("InputSlot");
+			sTypes << new QStandardItem(tr("InputSlot"));
 			cTypes << new QStandardItem(md.getType(ins[jj],classes[ii]));
 		}
 		for (int jj=0; jj<outs.size(); jj++) {
 			names << new QStandardItem(outs[jj]);
-			sTypes << new QStandardItem("OutputSlot");
+			sTypes << new QStandardItem(tr("OutputSlot"));
 			cTypes << new QStandardItem(md.getType(outs[jj],classes[ii]));
 		}
 		for (int jj=0; jj<params.size(); jj++) {
 			names << new QStandardItem(params[jj]);
-			sTypes << new QStandardItem("Parameter");
+			sTypes << new QStandardItem(tr("Parameter"));
 			cTypes << new QStandardItem(md.getType(params[jj],classes[ii]));
 		}
 		all << names << sTypes << cTypes;
