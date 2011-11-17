@@ -58,6 +58,7 @@
 #include <sstream>
 #include <fstream>
 #include <cassert>
+#include <stdexcept>
 
 #include <iostream>
 
@@ -93,11 +94,10 @@ int FileTool::changeDir(const std::string& dir) {
 
 std::string FileTool::getCurrentDir() {
 	char cwd[2048];
-	char* res;
-	res = getcwd(cwd, 2048);
-	// res should now be the same as cwd.
-	// On error, res is NULL, cwd undefined
-	assert(res);
+	char* res = getcwd(cwd, 2048);
+	if (!res || (res != cwd)) {
+		throw std::runtime_error("eror during getcwd");
+	}
 	return std::string(cwd);
 }
 
