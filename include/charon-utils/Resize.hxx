@@ -32,7 +32,7 @@ Resize<T>::Resize(const std::string& name) :
 {
 	this->_addInputSlot (
 			roi, "roi",
-			"new size (only width, height etc are considered)", "Roi<int>");
+			"new size (only width, height etc are considered)", "Roi<int>*");
 	this->_addInputSlot (in,    "in",    "image input",     "CImgList<T>");
 	this->_addOutputSlot(out,   "out",   "image output",    "CImgList<T>");
 
@@ -44,8 +44,12 @@ Resize<T>::Resize(const std::string& name) :
 	this->_addParameter(
 			method, "method",
 			"resize method <br><br>"
-			"-1 = no interpolation : raw memory resizing. when expanding, image will be filled with uninitialized values!<br>"
-			"0 = no interpolation : additional space is filled according to border_condition. default is dirichlet -> filled with zeros<br>"
+			"-1 = no interpolation : raw memory resizing. "
+				"when expanding, image will be filled with "
+				"uninitialized values!<br>"
+			"0 = no interpolation : additional space is filled "
+				"according to border_condition. "
+				"default is dirichlet -> filled with zeros<br>"
 			"1 = nearest-neighbor interpolation.<br>"
 			"2 = moving average interpolation.<br>"
 			"3 = linear interpolation<br>."

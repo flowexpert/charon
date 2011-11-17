@@ -60,7 +60,7 @@ void Roi<T>::_init() {
 		"upper channel bound", T(1), "T");
 
 	ParameteredObject::_addOutputSlot(out, "out",
-		"pointer to this roi", "Roi<T>");
+		"pointer to this roi", "Roi<T>*");
 
 	out = this;
 

@@ -43,7 +43,7 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 			"QWidget to be displayed in ArgosDisplay", "QWidget*");
 	widget = 0 ;
 	ParameteredObject::_addOutputSlot(roi, "roi",
-			"Crop border output", "Roi<int>");
+			"Crop border output", "Roi<int>*");
 	ParameteredObject::_addParameter(z, "z", "select z slice",uint(0),"");
 	ParameteredObject::_addParameter(t, "t", "select t slice", uint(0),"");
 	ParameteredObject::_addParameter(v, "v", "select v slice", uint(0),"");

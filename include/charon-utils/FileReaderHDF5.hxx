@@ -43,7 +43,7 @@ FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
 			"/data", "string");
 	ParameteredObject::_addInputSlot(
 			roi, "roi", "roi input to select region to read",
-			"Roi<int>");
+			"Roi<int>*");
 	ParameteredObject::_addOutputSlot(
 			out, "out", "data output", "vigraArray5<T>");
 }

@@ -36,7 +36,7 @@ Subarray<T>::Subarray(const std::string& name) :
 	ParameteredObject::_addOutputSlot(
 			out,"out","data output","vigraArray5<T>");
 
-	ParameteredObject::_addInputSlot(roi,"roi","crop region","Roi<int>");
+	ParameteredObject::_addInputSlot(roi,"roi","crop region","Roi<int>*");
 
 	ParameteredObject::_addParameter(x, "x", "crop in x direction", true);
 	ParameteredObject::_addParameter(y, "y", "crop in y direction", true);
