@@ -115,7 +115,7 @@ void PluginManager::loadPlugin(std::string name)
 		}
 
 		_loadedPlugins[name] = newPlugin;
-		sout << "Plugin \"" << name << "\" loaded successfully."
+		sout << "(II) Plugin \"" << name << "\" loaded successfully."
 				<< std::endl;
 	} else {
 		throw(AbstractPluginLoader::PluginException(
@@ -180,7 +180,7 @@ ParameteredObject * PluginManager::createInstance(
 				t);
 		_instances[newInstance] = loader;
 		objects[newInstance->getName()] = newInstance;
-		sout << "Created Instance \"" << newInstance->getName()
+		sout << "(II) Created Instance \"" << newInstance->getName()
 				<< "\" of the plugin \"" << pluginName << "\", type "
 				<< newInstance->getTemplateType() << std::endl;
 		return newInstance;
@@ -215,14 +215,14 @@ void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 				"This instance does not exist.", "unknown",
 				AbstractPluginLoader::PluginException::NO_SUCH_INSTANCE));
 	}
-	sout << "Deleted Instance \"" << cur << "\" of the plugin \""
+	sout << "(II) Deleted Instance \"" << cur << "\" of the plugin \""
 		<< curPlugin << "\"" << std::endl;
 }
 
 void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 	reset();
 
-	//Determine default template type
+	// Determine default template type
 	if (paramFile.isSet("global.templatetype")) {
 		std::string templateType = paramFile.get<std::string> (
 				"global.templatetype");
@@ -238,7 +238,7 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 	std::vector<std::string> keys = paramFile.getKeyList();
 
 	try {
-		//Load Plugins and create _instances
+		// Load Plugins and create _instances
 		for (unsigned int i = 0; i < keys.size(); i++) {
 			if (keys[i].substr(keys[i].find_last_of(".") + 1,
 					keys[i].find_first_of(" ")) == "type") {
@@ -251,8 +251,8 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 
 				template_type templateType = _defaultTemplateType;
 				if (paramFile.isSet(instanceName + ".templatetype")) {
-					std::string type = paramFile.get<std::string> (instanceName
-							+ ".templatetype");
+					std::string type = paramFile.get<std::string> (
+						instanceName + ".templatetype");
 					if (type == "int") {
 						templateType = ParameteredObject::TYPE_INT;
 					} else if (type == "float") {
@@ -265,11 +265,11 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 			}
 		}
 	} catch (AbstractPluginLoader::PluginException e) {
-		sout << e.what() << std::endl;
+		sout << "(EE) Error during load: " << e.what() << std::endl;
 	} catch (std::string s) {
-		sout << s << std::endl;
+		sout << "(EE) Error during load: " << s << std::endl;
 	} catch (...) {
-		std::cerr << "other" << std::endl;
+		sout << "(EE) caught unknown exception during load" << std::endl;
 	}
 
 	// load parameters and connect slots for all objects
@@ -465,15 +465,6 @@ bool PluginManager::connect(const std::string& slot1, const std::string& slot2) 
 	assert(objIter != objects.end());
 	ParameteredObject* obj2 = objIter->second;
 
-	/*#ifdef CREATE_METADATA
-	 // check slot types
-	 std::string type1 = _metadata.get<std::string>(obj1->_className +
-	 "." + obj1sl + ".type");
-	 std::string type2 = _metadata.get<std::string>(obj2->_className +
-	 "." + obj2sl + ".type");
-	 assert(type1 == type2);
-	 #endif*/
-
 	// connect those objects
 	bool ret = obj1->_connect(obj2, obj1sl, obj2sl);
 	ret = obj2->_connect(obj1, obj2sl, obj1sl) && ret;
@@ -485,15 +476,6 @@ bool PluginManager::disconnect(Slot& slot1, Slot& slot2) {
 	ParameteredObject* obj2 = &slot2.getParent();
 	std::string obj1sl = slot1.getName();
 	std::string obj2sl = slot2.getName();
-
-	/*#ifdef CREATE_METADATA
-	 // check slot types
-	 std::string type1 = _metadata.get<std::string>(obj1->_className +
-	 "." + obj1sl + ".type");
-	 std::string type2 = _metadata.get<std::string>(obj2->_className +
-	 "." + obj2sl + ".type");
-	 assert(type1 == type2);
-	 #endif*/
 
 	// disconnect those objects
 	bool ret = obj1->_disconnect(obj2, obj1sl, obj2sl);
@@ -522,15 +504,6 @@ bool PluginManager::disconnect(const std::string& slot1,
 	objIter = objects.find(obj2st);
 	assert(objIter != objects.end());
 	ParameteredObject* obj2 = objIter->second;
-
-	/*#ifdef CREATE_METADATA
-	 // check slot types
-	 std::string type1 = _metadata.get<std::string>(obj1->_className +
-	 "." + obj1sl + ".type");
-	 std::string type2 = _metadata.get<std::string>(obj2->_className +
-	 "." + obj2sl + ".type");
-	 assert(type1 == type2);
-	 #endif*/
 
 	// connect those objects
 	bool ret = obj1->_disconnect(obj2, obj1sl, obj2sl);
@@ -596,8 +569,8 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 
 void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 	if (!pluginName.size()) {
-		sout << __FILE__ << ":" << __LINE__ << "\t"
-			<< "emtpy pluginName given!\n" << std::endl;
+		sout << "(EE) " << __FILE__ << ":" << __LINE__ << "\t"
+			<< "emtpy pluginName given (metadata generation)!\n" << std::endl;
 		return;
 	}
 	static std::vector<std::string> excludeList;
@@ -617,7 +590,7 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 	std::vector<std::string>::const_iterator iter;
 	for(iter = excludeList.begin(); iter != excludeList.end(); iter++) {
 		if (pluginName.find(*iter)!=std::string::npos) {
-			sout << "Discarding non-plugin file \"" << pluginName
+			sout << "(II) Discarding non-plugin file \"" << pluginName
 				<< ".dll\" (matched pattern \"*" << *iter
 				<< "*\" of exclude list)\n" << std::endl;
 			return;
@@ -635,7 +608,8 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 			unloadPlugin(pluginName);
 		}
 	} catch (AbstractPluginLoader::PluginException e) {
-		sout << e.what() << std::endl;
+		sout << "(EE) Exception during metadata generation: "
+			<< e.what() << std::endl;
 	}
 	sout << std::endl;
 }
@@ -658,7 +632,7 @@ std::list<ParameteredObject*> PluginManager::_determineTargetPoints() {
 			connected = slotIter->second->connected();
 		}
 		if (!connected) {
-			sout << "Found target point \"" << it->second->getName()
+			sout << "(II) Found target point \"" << it->second->getName()
 					<< "\"" << std::endl;
 			targetPoints.push_back(it->second);
 		}

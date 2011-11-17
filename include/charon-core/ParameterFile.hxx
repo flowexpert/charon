@@ -83,7 +83,7 @@ inline T ParameterFile::get(std::string parameter, T defaultValue) {
 		return get<T> (parameter);
 	else {
 		if (_noFoundWarnings)
-			sout << "setting unkown parameter '" << parameter << "' to '"
+			sout << "(WW) setting unkown parameter '" << parameter << "' to '"
 					<< defaultValue << "'" << std::endl;
 		set<T> (parameter, defaultValue);
 		return defaultValue;
@@ -122,7 +122,8 @@ inline std::vector<T> ParameterFile::getList(std::string parameter,
 		return getList<T> (parameter);
 	else {
 		if (_noFoundWarnings)
-			sout << "setting unkown parameter '" << parameter << "' to '"
+			sout << "(WW) setting unkown parameter '"
+					<< parameter << "' to '"
 					<< defaultValue << "'" << std::endl;
 		set(parameter, defaultValue);
 		return getList<T> (parameter);

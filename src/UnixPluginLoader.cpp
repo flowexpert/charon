@@ -47,7 +47,7 @@ void UnixPluginLoader::load() throw (PluginException) {
 			}
 		}
 		if (FileTool::exists(path)) {
-			sout << "Loading " << path << std::endl;
+			sout << "(II) Loading " << path << std::endl;
 			libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 			break;
 		}
@@ -105,7 +105,7 @@ void UnixPluginLoader::unload() throw (PluginException) {
 		libHandle = NULL;
 		create = NULL;
 		destroy = NULL;
-		sout << "Successfully unloaded plugin \"" << pluginName << "\"."
+		sout << "(II) Successfully unloaded plugin \"" << pluginName << "\"."
 				<< std::endl;
 	} else {
 		throw PluginException("Plugin \"" + pluginName + "\" is not loaded.",

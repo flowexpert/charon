@@ -79,11 +79,12 @@ bool ParameteredObject::_addSomething(const std::string& extension,
 	if( _parameters.find(name) != _parameters.end() ||
 		_inputs.find(name) != _inputs.end() ||
 		_outputs.find(name) != _outputs.end()) {
-		sout << "***********************************************************\n"
-			 << "The parameter or slot \"" << name
+		sout << "(EE) ******************************************************\n"
+			 << "(EE) The parameter or slot \"" << name
 			 << "\" has already been defined!\n"
-			 << "Slots and Parameter names must be unique for each Plugin!\n"
-			 << "***********************************************************\n"
+			 << "(EE) Slots and Parameter names must be unique "
+			 << "for each Plugin!\n"
+			 << "(EE) ******************************************************\n"
 			 << std::endl;
 		return false;
 	}
@@ -199,7 +200,7 @@ void ParameteredObject::execute() {
 			!= _inputs.end(); it++) {
 		it->second->execute();
 	}
-	sout << "Executing " << getClassName() << " \"";
+	sout << "(II) Executing " << getClassName() << " \"";
 	sout << getName() << "\"" << std::endl;
 	_executed = true;
 }
