@@ -63,12 +63,8 @@ void IteratorHelper<T>::execute() {
 
 	// first initialization
 	// later updated by iterator
-	if(sequence().is_empty()) {
+	if(sequence().is_empty())
 		reset();
-	} else {
-		sequence().assign(in());
-		if (initFlow.connected()) flow().assign(initFlow());
-	}
 }
 
 template <typename T>
