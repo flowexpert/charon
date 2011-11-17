@@ -199,8 +199,8 @@ void CharonRun::runWorkflow(QString fName) {
 	}
 	catch (const std::string& msg) {
 		errorMsg =
-				tr("Caught exception of type \"std::string\".\n\nMessage:\n%1")
-				.arg(msg.c_str());
+			tr("Caught exception of type \"std::string\".")
+				+"\n\n"+tr("Message:")+"\n"+msg.c_str();
 	}
 	catch (const std::exception& excpt) {
 		const char* name = typeid(excpt).name();
@@ -208,15 +208,16 @@ void CharonRun::runWorkflow(QString fName) {
 		name = abi::__cxa_demangle(name, 0, 0, 0);
 #endif // __GNUG__
 		errorMsg =
-			tr("Caught exception of type \"%1\".\n\nMessage:\n%2")
-			.arg(name).arg(excpt.what());
+			tr("Caught exception of type \"%1\".").arg(name)
+			+"\n\n"+tr("Message:")+"\n"+excpt.what();
 	}
 	catch (const char* &msg) {
 		errorMsg =
-			tr("Caught exception of type \"char*\".\n\nMessage:\n%1").arg(msg);
+			tr("Caught exception of type \"char*\".")
+			+ "\n\n"+tr("Message:")+"\n" + msg;
 	}
 	catch (...) {
-		errorMsg = tr("Caught exception of unknown type");
+		errorMsg = tr("Caught exception of unknown type.");
 	}
 	if (!errorMsg.isEmpty()) {
 		qout << "\n****************************************************\n\n"

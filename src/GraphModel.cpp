@@ -581,14 +581,14 @@ QString GraphModel::addNode(QString className, bool draw) {
 		//convert to lowercase to prevent problems later
 		newName = newName.toLower() ;
 		if( (ok = nodeValid(newName)) ) {
-			info = tr("This name is already in use.\n"
-					  "Please use another name.\n");
+			info = tr("This name is already in use.") + "\n"
+					+ tr("Please use another name.") + "\n";
 		}
 		if(newName.contains(QRegExp("[\\s\\.]")))
 		{	
 			ok = true ;
-			info = tr("Whitespace and dots in names are not allowed.\n"
-					  "Please use a valid name.\n");
+			info = tr("Whitespace and dots in names are not allowed.") + "\n"
+					+ tr("Please use a valid name.") + "\n";
 		}
 	} while (newName.isEmpty() || ok) ;
 

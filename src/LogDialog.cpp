@@ -121,8 +121,8 @@ void LogDialog::done(int r) {
 
 	if (_proc && (_proc->state() != QProcess::NotRunning)) {
 		_curEnd->insertHtml(
-			tr("<br><span class=\"warning\">"
-				"Waiting for process to terminate</span><br>"));
+			QString("<br><span class=\"warning\">%1</span><br>")
+				.arg(tr("Waiting for process to terminate")));
 		QScrollBar* bar = _ui->logText->verticalScrollBar();
 		bar->setValue(bar->maximum());
 		_proc->write("quit\n");
@@ -295,7 +295,7 @@ bool LogDecorators::RunWorkflow::ready(QWidget* pp) {
 			QCoreApplication::translate("RunDecorator",
 				"The workflow cannot be started because it has not "
 				"been saved to disk (empty filename given). "
-				"Please save it and retry execution. "
+				"Please save it and retry execution."
 			)
 		);
 		return false;

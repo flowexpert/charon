@@ -23,6 +23,10 @@
  */
 
 #include <QApplication>
+#include <QTranslator>
+#include <QLibraryInfo>
+#include <QLocale>
+
 #include "CommunicationHandler.h"
 #include "CharonRun.h"
 
@@ -35,6 +39,18 @@ int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
 	app.setOrganizationName("Heidelberg Collaboratory for Image Processing");
 	app.setApplicationName("Tuchulcha");
+
+	// translation of qt dialog buttons (apply, close etc.)
+	QTranslator qtTranslator;
+	qtTranslator.load(
+		"qt_" + QLocale::system().name(),
+		QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+	app.installTranslator(&qtTranslator);
+
+	// translation of tr(...) commands
+	QTranslator translator;
+	translator.load("tuchulcha_" + QLocale::system().name());
+	app.installTranslator(&translator);
 
 	CommunicationHandler comm(app.arguments());
 	CharonRun run;

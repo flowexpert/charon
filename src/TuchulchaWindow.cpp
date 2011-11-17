@@ -151,31 +151,31 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	toolbar->addSeparator();
 	toolbar->addModelActions();
 	toolbar->addSeparator();
-	action = toolbar->addAction(QIcon(":/icons/zoomIn.png"), tr("zoom\nin"),
+	action = toolbar->addAction(QIcon(":/icons/zoomIn.png"), tr("zoom in"),
 			this, SLOT(zoomIn()));
 	action->setToolTip(tr("enlarge flowchart items"));
 
-	action = toolbar->addAction(QIcon(":/icons/zoomOut.png"), tr("zoom\nout"),
+	action = toolbar->addAction(QIcon(":/icons/zoomOut.png"), tr("zoom out"),
 			this, SLOT(zoomOut()));
 	action->setToolTip(tr("shrink flowchart items"));
 
-	action = toolbar->addAction(QIcon(":/icons/zoomFit.png"), tr("zoom\nfit"),
+	action = toolbar->addAction(QIcon(":/icons/zoomFit.png"), tr("zoom fit"),
 			this, SLOT(zoomFit()));
 	action->setToolTip(tr("fit flowchart in view"));
 
 	toolbar->addSeparator();
 	action = toolbar->addAction(QIcon(":/icons/revert.png"),
-		tr("reset\nselected"), _inspector, SLOT(delParam()));
-	action->setToolTip(tr("reset selected parameter(s)\nto their defaults"));
+		tr("reset selected"), _inspector, SLOT(delParam()));
+	action->setToolTip(tr("reset selected parameter(s) to their defaults"));
 
 	toolbar->addSeparator();
 
 	action = toolbar->addAction(QIcon(":/icons/intro.png"), tr(
-			"introduction\nto tuchulcha"), docGen, SLOT(showIntro()));
+			"introduction to tuchulcha"), docGen, SLOT(showIntro()));
 	action->setToolTip(tr("show introductin page"));
 
 	action = toolbar->addAction(QIcon(":/icons/help.png"),
-			tr("tuchulcha\nhelp"), docGen, SLOT(showHelp()));
+			tr("tuchulcha help"), docGen, SLOT(showHelp()));
 	action->setToolTip(tr("show help page"));
 
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
@@ -285,13 +285,14 @@ void TuchulchaWindow::_showAbout() {
 
 	QString buildSystem =
 #if defined (_MSC_VER)
-	tr("MSVC %1 (%2bit, %3)\n").arg(_MSC_VER)
-			.arg(sizeof(void*)*8).arg(CMAKE_INTDIR);
+	tr("MSVC") + " " +tr("%1 (%2bit, %3)").arg(_MSC_VER)
+		.arg(sizeof(void*)*8).arg(CMAKE_INTDIR)+"\n";
 #elif defined (__GNUC__)
-	tr("GCC %1.%2.%3 (%4bit, %5)\n")
-			.arg(__GNUC__)
-			.arg(__GNUC_MINOR__)
-			.arg(__GNUC_PATCHLEVEL__)
+	tr("GCC") + " " +tr("%1 (%2bit, %3)")
+			.arg(QString("%1.%2.%3")
+				.arg(__GNUC__)
+				.arg(__GNUC_MINOR__)
+				.arg(__GNUC_PATCHLEVEL__))
 			.arg(sizeof(void*)*8)
 	#ifdef QT_DEBUG
 			.arg("Debug");
@@ -299,7 +300,7 @@ void TuchulchaWindow::_showAbout() {
 			.arg("Release");
 	#endif
 #else
-	tr("unknown compiler (%1bit)\n").arg(sizeof(*void)*8);
+	+"\n"+tr("unknown compiler (%1bit)").arg(sizeof(*void)*8)+"\n";
 #endif
 
 	aboutBox.setText(
@@ -451,7 +452,8 @@ void TuchulchaWindow::_updateRecentFileActions() {
 	int numRecentFiles = qMin(files.size(), (int)_maxRecentFiles);
 
 	for (int i = 0; i < numRecentFiles; ++i) {
-		QString text = tr("&%1 %2").arg(i + 1).arg(_strippedName(files[i]));
+		QString text = QString("&%1 %2")
+			.arg(i + 1).arg(_strippedName(files[i]));
 		_recentFileActs[i]->setText(text);
 		_recentFileActs[i]->setData(files[i]);
 		_recentFileActs[i]->setStatusTip(

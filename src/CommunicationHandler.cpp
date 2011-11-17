@@ -66,7 +66,7 @@ void CommunicationHandler::run() {
 		QTextStream qout(stdout,QIODevice::WriteOnly);
 		qout << tr("Tuchulcha Workflow Executor version %1")
 				.arg(TUCHULCHA_VERSION) << "\n"
-			 << tr("type \"quit\" to exit this application.") << endl;
+			 << tr("Type \"quit\" to exit this application.") << endl;
 	}
 
 	// interactive command handling

@@ -52,7 +52,7 @@ FileManager::FileManager() {
 		qFatal("%s",
 				(tr("Tuchulcha configuration directory \"%1\" "
 					"exists, but is not a directory. Please delete "
-					"\"%1\"")
+					"\"%1\".")
 				.arg(configPath))
 				.toAscii().constData());
 }
@@ -71,7 +71,7 @@ QDir FileManager::configDir() const {
 	QDir ret = QDir::home();
 	bool ok = ret.cd(TUCHULCHA_DIR);
 	if (!ok)
-		qFatal("%s", (tr("failed to change to directory \"%1\"")
+		qFatal("%s", (tr("Failed to change to directory \"%1\".")
 				.arg(QDir::homePath() + "/" + TUCHULCHA_DIR))
 				.toAscii().constData());
 	return ret;
@@ -87,7 +87,7 @@ QString FileManager::classesFile() const {
 		// write empty classes file
 		if (newFile.open(QFile::WriteOnly | QFile::Truncate)) {
 			QTextStream qout(&newFile);
-			qout << tr("# empty classes file.") << endl;
+			qout << "# " << tr("empty classes file") << endl;
 		}
 		newFile.close();
 	}

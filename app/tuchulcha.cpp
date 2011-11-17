@@ -25,6 +25,9 @@
 #include <cstdlib>
 #include <QApplication>
 #include <QErrorMessage>
+#include <QTranslator>
+#include <QLibraryInfo>
+#include <QLocale>
 
 #include "TuchulchaWindow.h"
 #include "FileManager.h"
@@ -39,6 +42,19 @@ int main(int argc, char *argv[]) {
 	app.setOrganizationName("Heidelberg Collaboratory for Image Processing");
 	app.setApplicationName("Tuchulcha");
 	Q_INIT_RESOURCE(resources);
+
+	// translation of qt dialog buttons (apply, close etc.)
+	QTranslator qtTranslator;
+	qtTranslator.load(
+		"qt_" + QLocale::system().name(),
+		QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+	app.installTranslator(&qtTranslator);
+
+	// translation of tr(...) commands
+	QTranslator translator;
+	translator.load("tuchulcha_" + QLocale::system().name());
+	app.installTranslator(&translator);
+
 	TuchulchaWindow window;
 	FileManager::dialogParent = &window;
 #ifndef UNIX

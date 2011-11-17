@@ -141,7 +141,7 @@ QString DocGenerator::_docList(QStringList parList,
 			ret += "<td class=\"firstrow\">";
 
 			if(!def.isEmpty())
-				ret += tr("<em>(default: \"%1\")</em>").arg(def);
+				ret += "<em>("+tr("default: \"%1\"").arg(def)+")</em>";
 
 			// show slot flags (if necessary)
 			QString flags;
@@ -165,7 +165,7 @@ QString DocGenerator::_docList(QStringList parList,
 				}
 			}
 			if(!flags.isEmpty())
-				ret += tr("<em>(%1)</em>").arg(flags);
+				ret += QString("<em>(%1)</em>").arg(flags);
 
 			ret += "</td></tr>";
 
@@ -183,9 +183,9 @@ QString DocGenerator::_docList(QStringList parList,
 
 void DocGenerator::showClassDoc(const QString& className) {
 	QString page =
-		tr("<h1>ClassDocumentation: %1</h1>\n").arg(className)
-		+ tr("<h2>Description</h2>\n")
-		+ QString("<p>%1</p>\n")
+		"<h1>"+tr("ClassDocumentation: %1").arg(className)+"</h1>\n<h2>"
+		+ tr("Description")
+		+ QString("</h2>\n<p>%1</p>\n")
 		.arg(_meta->getDocString("", className));
 
 	QString docFileName = _meta->getDocFile("", className);

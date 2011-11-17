@@ -55,7 +55,7 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 		this, SLOT(modify(bool)));
 	connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
 		this, SLOT(modify()));
-	setWindowTitle(tr("New file [*]"));
+	setWindowTitle(tr("New file")+" [*]");
 }
 
 FlowWidget::~FlowWidget() {

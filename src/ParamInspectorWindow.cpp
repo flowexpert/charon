@@ -65,7 +65,7 @@ void ParamInspectorWindow::openFile(QString fName) {
 	}
 	if(_inspector->model()
 			&& _inspector->model()->fileName() != QDir::homePath())
-		setWindowTitle(tr("Object Inspector [%1]")
+		setWindowTitle(tr("Object Inspector")+QString(" [%1]")
 			.arg(_inspector->model()->fileName()));
 	else
 		setWindowTitle(tr("Object Inspector"));
