@@ -158,7 +158,7 @@ ADD_LIBRARY(relaxingiterator SHARED
 	${charon_INCLUDE_DIR}/RelaxingIterator.hxx
 	RelaxingIterator.cpp
 )
-TARGET_LINK_LIBRARIES(relaxingiterator iteratorhelper)
+TARGET_LINK_LIBRARIES(relaxingiterator iteratorhelper gbcce)
 LIST(APPEND Plugins
 	iteratorhelper
 	simpleiterator
