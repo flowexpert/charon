@@ -15,7 +15,7 @@ SampleGenerator<T>::SampleGenerator(const std::string& name) :
 	ParameteredObject::_addInputSlot(sampler, "sampler",
 			"sampler to use", "Sampler*");
 	ParameteredObject::_addInputSlot(size, "size",
-			"size of output image", "Roi<int>");
+			"size of output image", "Roi<int>*");
 	ParameteredObject::_addOutputSlot(out, "out",
 			"image output", "CImgList<T>");
 }

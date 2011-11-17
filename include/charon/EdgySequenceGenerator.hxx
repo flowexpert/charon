@@ -50,7 +50,7 @@ EdgySequenceGenerator<T>::EdgySequenceGenerator(const std::string& name) :
 			"flow of generated test sequence", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 			size, "size",
-			"Sequence size", "Roi<int>");
+			"Sequence size", "Roi<int>*");
 	ParameteredObject::_addParameter (
 			foregroundVelocity, "foregroundVelocity",
 			"Velocity of the foreground pattern");
