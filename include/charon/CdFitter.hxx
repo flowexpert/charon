@@ -347,7 +347,9 @@ void CdFitter<T>::_updateProgress(unsigned int run,
 #else
 		int res;
 		res = system((gnuplotCall() + " \"" + histPltFile + "\"").c_str());
-		assert(res == 0);
+		if (res != 0) {
+			ParameteredObject::raise("error calling gnuplot");
+		}
 #endif
 		cimg_library::CImg<unsigned short> img;
 		img.load(histImgFile.c_str());
@@ -429,7 +431,9 @@ void CdFitter<T>::_updateProgress(unsigned int run,
 #else
 		int res;
 		res = system((gnuplotCall() + " \"" + progPltFile + "\"").c_str());
-		assert(res == 0);
+		if (res != 0) {
+			ParameteredObject::raise("error calling gnuplot");
+		}
 #endif
 		cimg_library::CImg<unsigned short> img;
 		img.load(progImgFile.c_str());

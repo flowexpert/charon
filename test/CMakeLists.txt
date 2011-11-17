@@ -267,6 +267,7 @@ IF(BUILD_TESTING)
 
 	ADD_EXECUTABLE(flowIterated6_Pyramid flowIterated6_Pyramid.cpp)
 	TARGET_LINK_LIBRARIES(flowIterated6_Pyramid
+		simpleiterator
 		relaxingiterator
 		flowcomparator
 		pyramidrescale

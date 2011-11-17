@@ -26,32 +26,6 @@
 
 #include <charon/SimpleIterator.hxx>
 
-#ifndef NO_BASE_CTOR_HACK
-// These two classes are pure dummy classes.
-// They cause the base constructor of
-// SimpleIterator compiled and added into the
-// generated library.
-/// dummy class 1
-template<typename T>
-class charon_core_LOCAL Vktpmfxr : public SimpleIterator<T> {
-public:
-	Vktpmfxr() : SimpleIterator<T>("","","") {
-	}
-};
-
-/// dummy class 2
-class charon_core_LOCAL Mhvkcwgm {
-public:
-	Mhvkcwgm();
-};
-
-Mhvkcwgm::Mhvkcwgm() {
-	_addConstructor(Vktpmfxr<double>());
-	_addConstructor(Vktpmfxr<float>());
-	_addConstructor(Vktpmfxr<int>());
-}
-#endif
-
 /// Creates an instance of the plugin
 extern "C" simpleiterator_DECLDIR ParameteredObject*
 		create(const std::string & name, template_type t) {

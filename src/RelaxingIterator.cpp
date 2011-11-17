@@ -24,6 +24,8 @@
 /// Class name of the plugin
 #define TYPE RelaxingIterator
 
+#define simpleiterator_EXPORTS
+#include <charon/SimpleIterator.hxx>
 #include <charon/RelaxingIterator.hxx>
 
 /// Creates an instance of the plugin
