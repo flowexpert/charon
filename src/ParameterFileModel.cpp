@@ -327,11 +327,12 @@ void ParameterFileModel::clear() {
 	}
 }
 
-void ParameterFileModel::_load() {
+bool ParameterFileModel::_load() {
 	clear();
 	_parameterFile->load(_fileName);
 	_update();
 	emit statusMessage(QString("File %1 loaded.").arg(_fileName));
+	return true;
 }
 
 void ParameterFileModel::_update() {
@@ -396,8 +397,7 @@ bool ParameterFileModel::load(const QString& fName) {
 
 	// fromDialog is a readable file now
 	setFileName(fromDialog);
-	_load();
-	return true;
+	return _load();
 }
 
 void ParameterFileModel::save(const QString& fName) {

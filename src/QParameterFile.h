@@ -47,7 +47,7 @@ public:
 	bool isSet(QString parameter) const;
 
 	/** \name setters and getters
-	 *  If parameter is unset, the getters return an empty string.
+	 *  If parameter is unset, the getters return a null string.
 	 */
 	// \{
 	QString get(QString parameter) const;

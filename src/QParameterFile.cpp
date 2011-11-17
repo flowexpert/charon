@@ -53,7 +53,7 @@ QString QParameterFile::get(QString parameter) const {
 	return isSet(parameter) ?
 			QString::fromStdString(
 					_pFile->get<std::string>(parameter.toStdString())) :
-			QString();
+			QString::null;
 }
 
 void QParameterFile::erase(QString parameter) {

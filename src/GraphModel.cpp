@@ -73,12 +73,53 @@ void GraphModel::reDraw() {
 	emit graphChanged();
 }
 
-void GraphModel::_load() {
-	ParameterFileModel::_load();
-	QStringList n = nodes();
+bool GraphModel::_load() {
+	if (!ParameterFileModel::_load()) {
+		return false;
+	}
+
+	Q_ASSERT(useMetaInfo());
+
+	// check which classes are used in the workflow
+	setPrefix("");
+	setOnlyParams(false);
+	QSet<QString> wClasses;
+	for (int i=0; i < rowCount(); i++) {
+		QString cur = getClass(data(createIndex(i,0)).toString());
+		if (!cur.isEmpty()) {
+			wClasses << cur;
+		}
+	}
+	setOnlyParams(true);
+
+	// collect unknown classes
+	QStringList uClasses;
+	const QStringList& knownClasses = metaInfo()->getClasses();
+	foreach(const QString& s, wClasses) {
+		if (!knownClasses.contains(s,Qt::CaseInsensitive)) {
+			uClasses << s;
+		}
+	}
+
+	if (!uClasses.isEmpty()) {
+		QMessageBox::warning(
+			0,tr("missing modules"),
+			tr("The following classes are used in the workflow "
+				"but are unknown to Tuchulcha:")
+			+QString("<ul><li>%1</li></ul>").arg(uClasses.join("</li><li>"))
+			+tr("Please check your plugin path settings, "
+				"then update plugin informations "
+				"and look if these plugins are found at all "
+				"or error messages related with tese plugins occur."
+			));
+		return false;
+	}
+
 	emit graphChanged();
+	QStringList n = nodes();
 	if(n.size())
 		setPrefix(n[0]);
+	return true;
 }
 
 bool GraphModel::nodeValid(const QString& name) const {

@@ -233,7 +233,8 @@ public slots:
 
 protected slots:
 	/// Load data without showing OpenFile Dialog.
-	virtual void _load();
+	/** \retval false           error during load */
+	virtual bool _load();
 
 	/// Update content (e.g. when prefix has changed)
 	virtual void _update();

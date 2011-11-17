@@ -148,7 +148,7 @@ protected:
 
 protected slots:
 	/// Load data without showing OpenFile Dialog.
-	virtual void _load();
+	virtual bool _load();
 
 signals:
 	/// Initiate graph rebuild and Display refresh
