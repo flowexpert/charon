@@ -52,10 +52,10 @@
 	<refsynopsisdiv>
 		<cmdsynopsis>
 			<command>tuchulcha-run</command>
-			<arg choice="opt">--non-interactive</arg>
-			<arg choice="opt">--quiet</arg>
-			<arg choice="opt">update</arg>
-			<arg choice="opt">run <replaceable>parameterFile</replaceable></arg>
+			<arg choice="opt"><option>--non-interactive</option></arg>
+			<arg choice="opt"><option>--quiet</option></arg>
+			<arg choice="opt"><option>update</option></arg>
+			<arg choice="opt"><option>run <replaceable>parameterFile</replaceable></option></arg>
 		</cmdsynopsis>
 	</refsynopsisdiv>
 	<refsection id="tuchulcha-run-desc">
@@ -137,7 +137,7 @@
 		</simpara>
 		<variablelist>
 			<varlistentry>
-				<term><command>quit</command></term>
+				<term><option>quit</option></term>
 				<listitem><simpara>
 					Quit interactive session.
 					No further commands are handled.
@@ -146,15 +146,15 @@
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>
-				<term><command>update</command></term>
+				<term><option>update</option></term>
 				<listitem><simpara>
 					update modules information used by <application>tuchulcha</application>
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>
-				<term><command>run 
+				<term><option>run 
 					<replaceable class="parameter">parameterFile</replaceable>
-				</command></term>
+				</option></term>
 				<listitem><simpara>
 					execute the given workflow
 				</simpara></listitem>
