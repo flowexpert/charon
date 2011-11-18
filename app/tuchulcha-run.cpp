@@ -51,7 +51,11 @@ int main(int argc, char *argv[]) {
 	QTranslator translator;
 	translator.load(
 		"tuchulcha_" + QLocale::system().name(),
+#ifdef TUCHULCHA_QM_DIR
+		TUCHULCHA_QM_DIR);
+#else
 		QCoreApplication::applicationDirPath());
+#endif
 	app.installTranslator(&translator);
 
 	CommunicationHandler comm(app.arguments());

@@ -9,6 +9,11 @@ IF(WIN32)
 	EMBED_ICON(INSP_ICO ${ICON_DIR}/tc2.ico inspicon)
 ENDIF(WIN32)
 
+IF(${PROJECT_NAME}_TRANSLATIONS_DIR)
+	ADD_DEFINITIONS(
+		-DTUCHULCHA_QM_DIR="${${PROJECT_NAME}_TRANSLATIONS_DIR}")
+ENDIF()
+
 # standalone inspector application
 ADD_EXECUTABLE(paraminspector WIN32 paraminspector ${QRC_RES} ${INSP_ICO})
 TARGET_LINK_LIBRARIES(paraminspector
