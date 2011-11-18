@@ -125,7 +125,9 @@ void LogDialog::done(int r) {
 	if (_proc && (_proc->state() != QProcess::NotRunning)) {
 		_curEnd->insertHtml(
 			QString("<br><span class=\"warning\">%1</span><br>")
-				.arg(tr("Waiting for process to terminate")));
+				.arg(tr("waiting for process to quit..."))+
+			QString("<span class=\"warning\">%1</span><br>")
+				.arg(tr("asking for termination in 1 second")));
 		QScrollBar* bar = _ui->logText->verticalScrollBar();
 		bar->setValue(bar->maximum());
 		_proc->write("quit\n");
@@ -144,7 +146,20 @@ void LogDialog::terminate(bool force) {
 				this,tr("confirm terminate"),
 				tr("Process still running.<br>Terminate running process?"),
 				QMessageBox::No,QMessageBox::Yes)==QMessageBox::Yes)) {
-		_proc->terminate();
+		_curEnd->insertHtml(QString("<span class=\"warning\">%1</span><br>")
+			.arg(tr("asking for kill in 3 seconds")));
+		QTimer::singleShot(0,_proc,SLOT(terminate()));
+		QTimer::singleShot(3000,this,SLOT(kill()));
+	}
+}
+
+void LogDialog::kill(bool force) {
+	if (_proc && (_proc->state() != QProcess::NotRunning)
+			&& (force || QMessageBox::question(
+				this,tr("confirm kill"),
+				tr("Process did not respond.<br>Kill running process?"),
+				QMessageBox::No,QMessageBox::Yes)==QMessageBox::Yes)) {
+		_proc->kill();
 	}
 }
 

@@ -91,6 +91,9 @@ public slots:
 	/// terminate process
 	/** \param force   do not ask before terminating */
 	void terminate(bool force=false);
+	/// kill process
+	/** \param force   do not ask before terminating */
+	void kill(bool force=false);
 
 private slots:
 	/// update content by querying process
