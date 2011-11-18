@@ -31,6 +31,7 @@
 #include <QSet>
 #include <QSettings>
 #include <QMessageBox>
+#include <QIcon>
 
 #include "ParameterFileModel.moc"
 
@@ -73,7 +74,9 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 	// mapper to convert parameter.type into QVariant::Type
 	const VarTypeMap& mapper = VarTypeMap::instance();
 
-	if ((role == Qt::DisplayRole) || (role == Qt::EditRole)) {
+	switch(role) {
+	case Qt::EditRole:
+	case Qt::DisplayRole:{
 		int row = ind.row();
 
 		if ((row >= 0) && (row < _keys.size())) {
@@ -99,6 +102,28 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 				else if (_onlyParams)
 					res = metaInfo()->getDefault(_keys[row], className);
 
+				if(res.toString().startsWith('@')) {
+					QString ref = res.toString().mid(1);
+					if(role == Qt::DisplayRole) {
+						if(_parameterFile->isSet(ref)) {
+						res = _parameterFile->get(ref);
+						// show ref in status bar (and/or as tooltip)
+						}
+						else {
+							res = tr("[invalid reference to %1]").arg(ref);
+							return res;
+						}
+					}
+					else if(role == Qt::EditRole) {
+						if(_parameterFile->isSet(ref)) {
+							ref = _parameterFile->get(ref);
+							if(ref.startsWith('@'))
+								res = ref;
+						}
+						return res;
+					}	
+				}
+
 				if (_useMetaInfo && metaInfo()->isParameter(_keys[row],
 						className)) {
 					QString typestring = getType(_keys[row]);
@@ -106,42 +131,78 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 					Q_ASSERT(res.canConvert(type));
 					res.convert(type);
 				}
-				// simply return the string value
 				return res;
 			}
 		}
+		break;
 	}
-	if ((role == Qt::ToolTipRole) && _useMetaInfo) {
-		QString ret = metaInfo()->getDocString(_keys[ind.row()], getClass(
-				_keys[ind.row()]));
-		if (!ret.isEmpty())
-			return ret;
-	}
-	if (role == Qt::ForegroundRole && _onlyParams) {
-		if (!_parameterFile->isSet(_keys[ind.row()]))
-			return Qt::lightGray;
-	}
-	if (ind.column() == 1 && role == Qt::CheckStateRole && _useMetaInfo
-			&& metaInfo()->isParameter(_keys[ind.row()],
-					getClass(_keys[ind.row()]))) {
-		QString typestring = getType(_keys[ind.row()]);
-		if (typestring == "bool") {
-			if(_parameterFile->isSet(_keys[ind.row()])) {
-				if (QVariant(_parameterFile->get(
-						_keys[ind.row()])).toBool())
-					return Qt::Checked;
-				else
-					return Qt::Unchecked;
+	case Qt::StatusTipRole: {
+		if(ind.column() == 1) {
+			int row = ind.row();
+			if (_parameterFile->isSet(_keys[row])) {
+				QString ret = _parameterFile->get(_keys[row]);
+				if(ret.startsWith('@')) {
+					return tr("link to: %1").arg(ret.mid(1));
+				}
 			}
-			else {
-				QVariant defVal = metaInfo()->getDefault(
-						_keys[ind.row()], getClass(_keys[ind.row()]));
-				if (defVal.toBool())
-					return Qt::Checked;
-				else
-					return Qt::Unchecked;
+		}	
+		break;
+	}
+	case Qt::DecorationRole: {
+		if(ind.column() == 1) {
+			int row = ind.row();
+			if (_parameterFile->isSet(_keys[row])) {
+				QString ret = _parameterFile->get(_keys[row]);
+				if(ret.startsWith('@')) {
+					return QIcon(":/icons/symlink.png");
+				}
+			}
+			
+		}
+			
+		break;
+	}
+	case Qt::ToolTipRole: {
+		if(_useMetaInfo) {
+			QString ret = metaInfo()->getDocString(_keys[ind.row()], getClass(
+					_keys[ind.row()]));
+			if (!ret.isEmpty())
+				return ret;
+		}
+		break;
+	}
+	case Qt::ForegroundRole: {
+		if(_onlyParams) {
+			if (!_parameterFile->isSet(_keys[ind.row()]))
+				return Qt::lightGray;
+		}
+		break;
+	}
+	case Qt::CheckStateRole: {
+		if (ind.column() == 1 && _useMetaInfo
+			&& metaInfo()->isParameter(_keys[ind.row()],
+				getClass(_keys[ind.row()]))) {
+			QString typestring = getType(_keys[ind.row()]);
+			if (typestring == "bool") {
+				if(_parameterFile->isSet(_keys[ind.row()])) {
+					if (QVariant(_parameterFile->get(
+							_keys[ind.row()])).toBool())
+						return Qt::Checked;
+					else
+						return Qt::Unchecked;
+				}
+				else {
+					QVariant defVal = metaInfo()->getDefault(
+							_keys[ind.row()], getClass(_keys[ind.row()]));
+					if (defVal.toBool())
+						return Qt::Checked;
+					else
+						return Qt::Unchecked;
+				}
 			}
 		}
+		break;
+	}
 	}
 	return QVariant();
 }

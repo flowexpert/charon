@@ -36,6 +36,10 @@ SET(EDITPARAM_SOURCES
 	ObjectInspector.h
 	InspectorDelegate.cpp
 	InspectorDelegate.h
+	LinkWrapperDelegate.cpp
+	LinkWrapperDelegate.h
+	CombinedLinkEditor.cpp
+	CombinedLinkEditor.h
 	ModelToolBar.cpp
 	ModelToolBar.h
 	QParameterFile.h

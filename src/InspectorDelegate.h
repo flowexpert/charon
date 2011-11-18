@@ -36,9 +36,6 @@
 #define INSPECTORDELEGATE_H
 
 #include <QStyledItemDelegate>
-#include <QLineEdit>
-#include <QCompleter>
-class QToolButton;
 
 /// delegate to handle parameter types and offer specialized editors
 /** This delegate takes care of showing eanough digits of float/double

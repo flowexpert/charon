@@ -31,7 +31,7 @@
 #include "SplitStream.h"
 #include "PrefixValidator.h"
 #include "FileManager.h"
-#include "InspectorDelegate.h"
+#include "LinkWrapperDelegate.h"
 
 #include "ObjectInspector.moc"
 
@@ -74,8 +74,8 @@ void ObjectInspector::init() {
 	_view->setColumnWidth(0, 120);
 	_view->setColumnWidth(1, 120);
 	_view->horizontalHeader()->setStretchLastSection(true);
-	InspectorDelegate* delegate = new InspectorDelegate(this);
-	_view->setItemDelegateForColumn(1, delegate);
+	LinkWrapperDelegate* inspDel = new LinkWrapperDelegate(this);
+	_view->setItemDelegateForColumn(1, inspDel);
 	_view->setMouseTracking(true);
 	_mainLayout->addWidget(_view);
 }
