@@ -32,11 +32,11 @@
 class charon_core_DLL_PUBLIC SplitStreamBuf : public std::streambuf {
 private:
 	/// pointer to stream buffers
-	std::vector<std::streambuf*> buffers_;
+	std::vector<std::streambuf*> _buffers;
 	/// forbid copying
-	charon_core_LOCAL SplitStreamBuf(SplitStreamBuf const &);
+	charon_core_LOCAL SplitStreamBuf(const SplitStreamBuf&);
 	/// forbid assignment
-	void charon_core_LOCAL operator= (SplitStreamBuf const &);
+	void charon_core_LOCAL operator= (const SplitStreamBuf&);
 
 public:
 	/// Constructor initializing the buffers array
@@ -54,7 +54,7 @@ public:
 	 *  @param size     number of characters
 	 *  @return         number of written characters
 	 */
-	std::streamsize xsputn(char const * str, std::streamsize size);
+	std::streamsize xsputn(char const* str, std::streamsize size);
 
 	/** Sync stream buffers.
 	 *  @return         EOF on failure
@@ -93,26 +93,19 @@ public:
 	/// Default destructor
 	virtual ~SplitStream();
 
-	///@name Stream assignment (see constructors for details)
-	//@{
+	/// \name Stream assignment (see constructors for details)
+	// \{
 	void assign(std::ostream& stream = std::cout);
 	void assign(std::ostream& stream1, std::ostream &stream2);
 	void assign(std::vector<std::ostream*>& streamsList);
-	//@}
-
-	/** Dummy function to fulfill interface
-	 *  \deprecated         This function is not used in current plugins,
-	 *                      check if it's still needed.
-	 *  \return             always true
-	 */
-	bool isZeroRank();
+	// \}
 
 private:
-	std::vector<std::streambuf*> buffers_;	///< buffer array
-	SplitStreamBuf* buffer_;			///< pointer to output stream buffer
+	std::vector<std::streambuf*> _buffers; ///< buffer array
+	SplitStreamBuf* _buffer;   ///< pointer to output stream buffer
 
-	/**	Set new buffers.
-	 *	@param buffers		new buffers to set
+	/** Set new buffers.
+	 *  \param buffers      new buffers to set
 	 */
 	void charon_core_LOCAL updateBuf(std::vector<std::streambuf*> buffers);
 };

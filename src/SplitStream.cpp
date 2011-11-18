@@ -34,7 +34,7 @@ SplitStreamBuf::SplitStreamBuf(const std::vector<std::streambuf*>& buffers) {
 		msg << "Buffer must be initialized with at least one streambuf!";
 		throw std::invalid_argument(msg.str().c_str());
 	}
-	buffers_ = buffers;
+	_buffers = buffers;
 }
 
 SplitStreamBuf::~SplitStreamBuf() {
@@ -44,8 +44,8 @@ int SplitStreamBuf::overflow(int c) {
 	if (c != EOF){
 		bool over = false;
 		char const cchar = traits_type::to_char_type(c);
-		for (unsigned int i=0; i < buffers_.size(); i++)
-			over = over || (buffers_[i]->sputc(cchar) == EOF);
+		for (unsigned int i=0; i < _buffers.size(); i++)
+			over = over || (_buffers[i]->sputc(cchar) == EOF);
 		if (over)
 			return EOF;
 	}
@@ -54,8 +54,8 @@ int SplitStreamBuf::overflow(int c) {
 
 std::streamsize SplitStreamBuf::xsputn(char const* str, std::streamsize size) {
 		std::streamsize min = std::numeric_limits<std::streamsize>::max();
-	for(unsigned int i=0; i < buffers_.size(); i++) {
-		std::streamsize temp = buffers_[i]->sputn(str, size);
+	for(unsigned int i=0; i < _buffers.size(); i++) {
+		std::streamsize temp = _buffers[i]->sputn(str, size);
 		if (temp < min)
 			min = temp;
 	}
@@ -64,8 +64,8 @@ std::streamsize SplitStreamBuf::xsputn(char const* str, std::streamsize size) {
 
 int SplitStreamBuf::sync() {
 	bool fail = false;
-	for (unsigned int i=0; i<buffers_.size(); i++) {
-		bool temp = ( buffers_[i]->pubsync() == -1 );
+	for (unsigned int i=0; i<_buffers.size(); i++) {
+		bool temp = ( _buffers[i]->pubsync() == -1 );
 		fail = fail || temp;
 	}
 
@@ -76,87 +76,88 @@ int SplitStreamBuf::sync() {
 
 SplitStream::SplitStream() :
 #ifdef UNIX
-		std::ostream(std::cout.rdbuf())
+		std::ostream(std::cout.rdbuf()),
 #else
-		std::ostream(std::_Uninitialized())
+		std::ostream(std::_Uninitialized()),
 #endif
+	_buffers(0)
 {
 }
 
 SplitStream::SplitStream(std::ostream& stream) :
 		std::ostream(stream.rdbuf()) {
-	buffers_.push_back(stream.rdbuf());
-	assert(buffers_.size() == 1);
-	buffer_ = new SplitStreamBuf(buffers_);
-	rdbuf(buffer_);
-	assert(rdbuf() == buffer_);
+	_buffers.push_back(stream.rdbuf());
+	assert(_buffers.size() == 1);
+	_buffer = new SplitStreamBuf(_buffers);
+	rdbuf(_buffer);
+	assert(rdbuf() == _buffer);
 }
 
 SplitStream::SplitStream(std::ostream& stream1, std::ostream& stream2) :
 		std::ostream(std::cout.rdbuf()) {
-	buffers_.push_back(stream1.rdbuf());
-	buffers_.push_back(stream2.rdbuf());
-	assert(buffers_.size() == 2);
-	buffer_ = new SplitStreamBuf(buffers_);
-	rdbuf(buffer_);
-	assert(rdbuf() == buffer_);
+	_buffers.push_back(stream1.rdbuf());
+	_buffers.push_back(stream2.rdbuf());
+	assert(_buffers.size() == 2);
+	_buffer = new SplitStreamBuf(_buffers);
+	rdbuf(_buffer);
+	assert(rdbuf() == _buffer);
 }
 
 SplitStream::SplitStream(std::vector<std::ostream*>& streamList) :
 		std::ostream(std::cout.rdbuf()) {
 	for(unsigned int i=0; i<streamList.size();i++)
-		buffers_.push_back(streamList[i]->rdbuf());
-	assert(buffers_.size() == streamList.size());
-	buffer_ = new SplitStreamBuf(buffers_);
-	rdbuf(buffer_);
-	assert(rdbuf() == buffer_);
+		_buffers.push_back(streamList[i]->rdbuf());
+	assert(_buffers.size() == streamList.size());
+	_buffer = new SplitStreamBuf(_buffers);
+	rdbuf(_buffer);
+	assert(rdbuf() == _buffer);
 }
 
-SplitStream::~SplitStream(){
-	delete buffer_;
+SplitStream::~SplitStream() {
+	if (_buffer) {
+		delete _buffer;
+	}
 }
 
 void SplitStream::updateBuf(std::vector<std::streambuf*> buffers){
 	SplitStreamBuf* temp = new SplitStreamBuf(buffers);
 	rdbuf(temp);
-	delete buffer_;
-	buffer_ = temp;
-	assert(rdbuf() == buffer_);
+	if (_buffer) {
+		delete _buffer;
+	}
+	_buffer = temp;
+	assert(rdbuf() == _buffer);
 }
 
 void SplitStream::assign(std::ostream& stream){
-	buffers_.clear();
-	this->init(stream.rdbuf());
-	buffers_.push_back(stream.rdbuf());
-	assert(buffers_.size() == 1);
+	_buffers.clear();
+	init(stream.rdbuf());
+	_buffers.push_back(stream.rdbuf());
+	assert(_buffers.size() == 1);
 }
 
 void SplitStream::assign(std::ostream& stream1, std::ostream &stream2){
-	buffers_.clear();
-	this->init(stream1.rdbuf());
-	buffers_.push_back(stream1.rdbuf());
-	buffers_.push_back(stream2.rdbuf());
-	assert(buffers_.size() == 2);
-	updateBuf(buffers_);
+	_buffers.clear();
+	init(stream1.rdbuf());
+	_buffers.push_back(stream1.rdbuf());
+	_buffers.push_back(stream2.rdbuf());
+	assert(_buffers.size() == 2);
+	updateBuf(_buffers);
 }
 
 void SplitStream::assign(std::vector<std::ostream*>& streamList){
-	buffers_.clear();
+	_buffers.clear();
 	if (streamList.size() < 1) {
 		std::ostringstream msg;
 		msg << __FILE__ << ":" << __LINE__ << "\n\t";
 		msg << "You have to assign at least one output stream!";
 		throw std::invalid_argument(msg.str().c_str());
 	}
-	this->init(streamList[0]->rdbuf());
+	init(streamList[0]->rdbuf());
 	for(unsigned int i=0; i<streamList.size();i++)
-		buffers_.push_back(streamList[i]->rdbuf());
-	assert(buffers_.size() == streamList.size());
-	updateBuf(buffers_);
-}
-
-bool SplitStream::isZeroRank(){
-	return true;
+		_buffers.push_back(streamList[i]->rdbuf());
+	assert(_buffers.size() == streamList.size());
+	updateBuf(_buffers);
 }
 
 SplitStream sout;

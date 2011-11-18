@@ -125,11 +125,6 @@ int main() {
 	sout.assign(std::cout);
 	sout << "This goes only to std::cout." << std::endl;
 
-	if(!sout.isZeroRank()){
-		std::cout << "isZeroRank() returned false!" << std::endl;
-		return EXIT_FAILURE;
-	}
-
 	// tests passed sucessfully
 	return EXIT_SUCCESS;
 }
