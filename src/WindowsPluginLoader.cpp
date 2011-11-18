@@ -119,20 +119,18 @@ void WindowsPluginLoader::load() throw (PluginException) {
 #ifdef MSVC
 		std::string errorMsg;
 		if (GetLastError() == ERROR_PROC_NOT_FOUND) {
-			errorMsg += "This is no Plugin, function \"create\" is missing.";
+			errorMsg += "function \"create\" missing in dll file";
 		}
 		else {
 			errorMsg += "Invalid plugin format.\nDescription of the error:\n";
 			errorMsg += lastError("load()");
 		}
 		throw PluginException(
-				"Failed to get plugin constructor of \""
-				+ pluginName + "\".\n" + errorMsg, pluginName,
+				errorMsg, pluginName,
 				PluginException::INVALID_PLUGIN_FORMAT);
 #else
 		throw PluginException(
-				"Failed to get plugin constructor of \""
-						+ pluginName + "\". Invalid plugin format.",
+				"function \"create\" missing in dll file",
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 #endif
 	}
@@ -146,20 +144,18 @@ void WindowsPluginLoader::load() throw (PluginException) {
 #ifdef MSVC
 		std::string errorMsg;
 		if (GetLastError() == ERROR_PROC_NOT_FOUND) {
-			errorMsg += "This is no Plugin, function \"destroy\" is missing.";
+			errorMsg += "function \"destroy\" missing in dll file";
 		}
 		else {
 			errorMsg += "Invalid plugin format.\nDescription of the error:\n";
 			errorMsg += lastError("load()");
 		}
 		throw PluginException(
-				"Failed to get plugin destructor of \""
-				+ pluginName + "\".\n" + errorMsg, pluginName,
+				errorMsg, pluginName,
 				PluginException::INVALID_PLUGIN_FORMAT);
 #else
 		throw PluginException(
-				"Failed to get plugin destructor of \""
-						+ pluginName + "\". Invalid plugin format.",
+				"function \"destroy\" missing in dll file",
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 #endif
 	}
@@ -167,14 +163,10 @@ void WindowsPluginLoader::load() throw (PluginException) {
 	getBuildType  = (ParameteredObject::build_type(*)())
 				GetProcAddress(hInstLibrary,"getBuildType");
 	if (!getBuildType) {
-#ifdef MSVC
-		std::string errorMsg;
-		if (GetLastError() == ERROR_PROC_NOT_FOUND) {
-			errorMsg += "This Plugin is missing the \"getBuildType\" "
-				"function. No checks if it runtime libraries are "
-				"compatible are perfomed";
-		}
-#endif
+		sout << "(WW) No Typecheck in Plugin " << pluginName << ":\n"
+			<< "(WW) \tfunction \"getBuildType\" missing in dll file\n"
+			<< "(WW) \tno checks for runtime compatibilty are perfomed"
+			<< std::endl;
 	}
 	else
 	{
@@ -184,7 +176,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 		FreeLibrary(hInstLibrary);
 		hInstLibrary = NULL;
 		throw PluginException(
-			"The Plugin \"" + pluginName + "\" is build in DEBUG "
+			"This Plugin is build in DEBUG "
 			"configuration while charon-core is in RELEASE Mode.\n"
 			"Plugin will not be used as runtime libraries are incompatible",
 			pluginName, PluginException::INCOMPATIBLE_BUILD_TYPE) ;
@@ -196,7 +188,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 		FreeLibrary(hInstLibrary);
 		hInstLibrary = NULL;
 		throw PluginException(
-			"The Plugin \"" + pluginName + "\" is build in RELEASE "
+			"This Plugin is build in RELEASE "
 			"configuration while charon-core is in DEBUG Mode.\n"
 			"Plugin will not be used as runtime libraries are incompatible",
 			pluginName, PluginException::INCOMPATIBLE_BUILD_TYPE) ;

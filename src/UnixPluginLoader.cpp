@@ -76,7 +76,7 @@ void UnixPluginLoader::load() throw (PluginException) {
 		dlclose(libHandle);
 		libHandle = NULL;
 		throw PluginException(
-				"Function \"create\" missing in shared object file",
+				"function \"create\" missing in shared object file",
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 	}
 
@@ -85,7 +85,7 @@ void UnixPluginLoader::load() throw (PluginException) {
 		create = NULL;
 		libHandle = NULL;
 		throw PluginException(
-				"Function \"destroy\" missing in shared object file",
+				"function \"destroy\" missing in shared object file",
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 	}
 }
