@@ -75,9 +75,12 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 
 	// select process executable
 	QSettings settings;
-	QString procName =
-		(settings.value("suffixedPlugins", false).toBool() || tcRun.isNull())?
-		tcRunD : tcRun;
+	QString procName = tcRun;
+	if ((!tcRunD.isNull()
+				&& settings.value("suffixedPlugins", false).toBool())
+			|| tcRun.isNull()) {
+		procName = tcRunD;
+	}
 
 	if (procName.isNull()) {
 		// warn if no valid executable found
