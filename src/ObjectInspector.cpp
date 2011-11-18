@@ -174,10 +174,13 @@ void ObjectInspector::setEdit(bool on) {
 	_prefix->setEnabled(on);
 }
 
-void ObjectInspector::openMetaData() {
-	QString fileName = QFileDialog::getOpenFileName(0, tr("Open File"),
-			FileManager::instance().classesFile(), tr("ParameterFile (*.*)"));
-	_model->loadMetaInfo(fileName);
+void ObjectInspector::openMetaData(QString fname) {
+	if (!QFileInfo(fname).exists()) {
+		fname = QFileDialog::getOpenFileName(0, tr("Open File"),
+				FileManager::instance().classesFile(),
+				tr("ParameterFile (*.*)"));
+	}
+	_model->loadMetaInfo(fname);
 }
 
 void ObjectInspector::addParam() {

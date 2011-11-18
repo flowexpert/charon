@@ -27,6 +27,7 @@
 #include "ParamInspectorWindow.h"
 #include "AdvancedInspector.h"
 #include "ParameterFileModel.h"
+#include "FileManager.h"
 
 #include "ParamInspectorWindow.moc"
 
@@ -47,6 +48,8 @@ ParamInspectorWindow::ParamInspectorWindow() :
 			SLOT(close()), QKeySequence(tr("Ctrl+Q")));
 
 	setCentralWidget(_inspector);
+
+	_inspector->openMetaData(FileManager::instance().classesFile());
 	
 	connect(_inspector, SIGNAL(statusMessage(const QString&, int)),
 		statusBar(), SLOT(showMessage(const QString&, int)));

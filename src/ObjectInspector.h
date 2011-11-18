@@ -70,10 +70,12 @@ public slots:
 	/// Open given file.
 	/** \param fName            file to open (empty: open file dialog)
 	 */
-	virtual void openFile(QString fName = "");
+	virtual void openFile(QString fName = QString::null);
 
 	/// Open file containing metadata
-	virtual void openMetaData();
+	/** \param fName            file to open (empty: open file dialog)
+	 */
+	virtual void openMetaData(QString fName = QString::null);
 
 	/// Save File to it's old location.
 	virtual void saveFile() const;

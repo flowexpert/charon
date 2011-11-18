@@ -457,6 +457,7 @@ bool ParameterFileModel::prefixValid() const {
 
 void ParameterFileModel::loadMetaInfo(const QString& fName) {
 	if (_metaInfos) {
+		setUseMetaInfo(false);
 		delete _metaInfos;
 		_metaInfos = 0;
 	}
