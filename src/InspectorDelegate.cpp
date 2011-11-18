@@ -39,7 +39,7 @@
 #include "QDirEdit.h"
 
 InspectorDelegate::InspectorDelegate(QObject* p) :
-		QStyledItemDelegate(p) {
+	QStyledItemDelegate(p), _fileDialogFlag(false) {
 }
 
 QWidget* InspectorDelegate::createEditor(QWidget* p,
