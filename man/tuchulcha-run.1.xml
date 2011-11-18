@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+
+<refentry id="man-tuchulcha-run">
+	<refentryinfo>
+		<title>Tuchulcha workflow executor</title>
+		<productname>tuchulcha</productname>
+		<releaseinfo role="version">0.9.4</releaseinfo>
+		<authorgroup>
+			<author>
+				<firstname>Jens-Malte</firstname>
+				<surname>Gottfried</surname>
+				<contrib>wrote this application and this manpage</contrib>
+				<address><email>jmgottfried@web.de</email></address>
+			</author>
+		</authorgroup>
+		<copyright>
+			<year>2011</year>
+			<holder>Jens-Malte Gottfried</holder>
+		</copyright>
+		<legalnotice>
+			<simpara>This application is part of Charon.</simpara>
+			<simpara>
+				Charon is free software: you can redistribute it and/or modify
+				it under the terms of the GNU Lesser General Public License as
+				published by the Free Software Foundation, either version 3 of
+				the License, or (at your option) any later version.
+			</simpara>
+			<simpara>
+				Charon is distributed in the hope that it will be useful,
+				but WITHOUT ANY WARRANTY; without even the implied warranty of
+				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+				GNU Lesser General Public License for more details.
+			</simpara>
+			<simpara>
+				You should have received a copy of the GNU Lesser General
+				Public License along with Charon.
+				If not, see
+				<ulink url="http://www.gnu.org/licenses/"/>.
+			</simpara>
+		</legalnotice>
+	</refentryinfo>
+	<refmeta>
+		<refentrytitle>tuchulcha-run</refentrytitle>
+		<manvolnum>1</manvolnum>
+	</refmeta>
+	<refnamediv>
+		<refname>tuchulcha-run</refname>
+		<refpurpose>Command line workflow executor</refpurpose>
+	</refnamediv>
+	<refsynopsisdiv>
+		<cmdsynopsis>
+			<command>tuchulcha-run</command>
+			<arg choice="opt">--non-interactive</arg>
+			<arg choice="opt">--quiet</arg>
+			<arg choice="opt">update</arg>
+			<arg choice="opt">run <replaceable>parameterFile</replaceable></arg>
+		</cmdsynopsis>
+	</refsynopsisdiv>
+	<refsection id="tuchulcha-run-desc">
+		<title>Description</title>
+		<simpara>
+			<command>tuchulcha-run</command> is able to update the plugin
+			information used in <application>tuchulcha</application>
+			and may execute given workflow files.
+		</simpara>
+		<simpara>
+			This command line application is used by
+			<application>tuchulcha</application> in the background when
+			updating its plugin information and running workflows.
+			But in can be used as standalone command line application as
+			well.
+			It provides similar functionality as the charon workflow executor
+			but needs less command line options since it has access to the
+			settings of <application>tuchulcha</application>.
+		</simpara>
+		<simpara>
+			<command>tuchulcha-run</command> does provide a Qt Gui event loop,
+			so it is possible to use any Qt widget modules in the workflow
+			e.g. for visualization.
+			To avoid immediate termination after finishing the workflow
+			execution, use the interactive session as described below.
+		</simpara>
+	</refsection>
+	<refsection id="tuchulcha-run-opts">
+		<title>Options</title>
+		<variablelist>
+			<varlistentry>
+				<term><option>--non-interactive</option></term>
+				<listitem><simpara>
+					Do not enter interactive loop after execution of update/run commands.
+					This is useful for script usage.
+					If this option is not specified, an interactive session is started
+					after handling the command line arguments.
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>--quiet</option></term>
+				<listitem><simpara>
+					supress greeter and version information
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>update</option></term>
+				<listitem><simpara>
+					update modules information used by <application>tuchulcha</application>
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>run 
+					<replaceable class="parameter">parameterFile</replaceable>
+				</option></term>
+				<listitem><simpara>
+					execute the given workflow
+				</simpara></listitem>
+			</varlistentry>
+		</variablelist>
+	</refsection>
+	<refsection id="tuchulcha-run-interactive">
+		<title>Interactive Session</title>
+		<simpara>
+			The interactive session starts after handling the command line
+			arguments if the <option>--non-interactive</option> option has
+			not been specified. This session allows to interact with this
+			application and e.g. wait before quit after running some workflows.
+			This is useful if there are interactive modules in the workflow
+			e.g. for visualization.
+		</simpara>
+		<simpara>
+			Any modules used in workflows stay loaded until you leave
+			this application using the <command>quit</command> command.
+			If started in the non-interactive mode, all modules are unloaded
+			immediately after finishing the workflow execution.
+			To stop any running workflow execution, you have to terminate
+			this application e.g sending SIGTERM.
+		</simpara>
+		<variablelist>
+			<varlistentry>
+				<term><command>quit</command></term>
+				<listitem><simpara>
+					Quit interactive session.
+					No further commands are handled.
+					If some update/run command is still running,
+					the application terminates when it finished.
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><command>update</command></term>
+				<listitem><simpara>
+					update modules information used by <application>tuchulcha</application>
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><command>run 
+					<replaceable class="parameter">parameterFile</replaceable>
+				</command></term>
+				<listitem><simpara>
+					execute the given workflow
+				</simpara></listitem>
+			</varlistentry>
+		</variablelist>
+	</refsection>
+	<refsection id="tuchulcha-run-files">
+		<title>Files</title>
+		<variablelist>
+			<varlistentry>
+				<term><replaceable>parameterFile</replaceable></term>
+				<listitem>
+					<simpara>
+						Parameter file describing the workflow to execute.
+						This file may be set up e.g. by
+						<application>tuchulcha</application>.
+					</simpara>
+					<simpara>
+						Paths specified in the parameter file
+						(e.g. as filename of the fileReader module)
+						may be given as relative paths to the parameter file
+						location.
+						<command>tuchulcha-run</command>
+						changes its working directory to this location
+						before starting the execution.
+					</simpara>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</refsection>
+</refentry>
+
