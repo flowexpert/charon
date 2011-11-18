@@ -76,9 +76,7 @@ void UnixPluginLoader::load() throw (PluginException) {
 		dlclose(libHandle);
 		libHandle = NULL;
 		throw PluginException(
-				"Failed to create the function pointer to the "
-				"Constructor of the plugin \""
-				+ pluginName + "\". Invalid plugin format.",
+				"Function \"create\" missing in shared object file",
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 	}
 
@@ -87,9 +85,7 @@ void UnixPluginLoader::load() throw (PluginException) {
 		create = NULL;
 		libHandle = NULL;
 		throw PluginException(
-				"Failed to create the function pointer to the "
-				"Destructor of the plugin \""
-				+ pluginName + "\". Invalid plugin format.",
+				"Function \"destroy\" missing in shared object file",
 				pluginName, PluginException::INVALID_PLUGIN_FORMAT);
 	}
 }

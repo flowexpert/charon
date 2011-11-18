@@ -394,7 +394,8 @@ void PluginManager::_getConnected(std::set<std::string>& visited,
 	_getConnected(visited, newCur, pf);
 }
 
-std::set<std::string> PluginManager::getNeighbours(const std::string& rootStr) const {
+std::set<std::string> PluginManager::getNeighbours(
+		const std::string& rootStr) const {
 	std::map<std::string, ParameteredObject*>::const_iterator rootIter;
 	rootIter = objects.find(rootStr);
 	assert(rootIter != objects.end());
@@ -402,7 +403,8 @@ std::set<std::string> PluginManager::getNeighbours(const std::string& rootStr) c
 	return root->getNeighbours();
 }
 
-std::set<std::string> PluginManager::getNeighbours(const std::string& rootStr,
+std::set<std::string> PluginManager::getNeighbours(
+		const std::string& rootStr,
 		const ParameterFile& pf) const {
 	std::map<std::string, ParameteredObject*>::const_iterator rootIter;
 	rootIter = objects.find(rootStr);
@@ -411,7 +413,8 @@ std::set<std::string> PluginManager::getNeighbours(const std::string& rootStr,
 	return root->getNeighbours(pf);
 }
 
-std::set<std::string> PluginManager::getConnected(const std::string& root,
+std::set<std::string> PluginManager::getConnected(
+		const std::string& root,
 		const ParameterFile& pf) const {
 	std::set<std::string> visited;
 	visited.insert(root);
@@ -420,7 +423,8 @@ std::set<std::string> PluginManager::getConnected(const std::string& root,
 	return visited;
 }
 
-std::set<std::string> PluginManager::getConnected(const std::string& root) const {
+std::set<std::string> PluginManager::getConnected(
+		const std::string& root) const {
 	std::set<std::string> visited;
 	visited.insert(root);
 	std::set<std::string> cur = getNeighbours(root);
@@ -444,7 +448,8 @@ bool PluginManager::connect(Slot * slot1, Slot * slot2) {
 	return connect(*slot1, *slot2);
 }
 
-bool PluginManager::connect(const std::string& slot1, const std::string& slot2) {
+bool PluginManager::connect(
+		const std::string& slot1, const std::string& slot2) {
 	// extract objects and slots
 	std::string::size_type pos = slot1.find(".");
 	assert(pos != std::string::npos);
@@ -607,9 +612,20 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 		if (!alreadyLoaded) {
 			unloadPlugin(pluginName);
 		}
-	} catch (AbstractPluginLoader::PluginException e) {
-		sout << "(EE) Exception during metadata generation: "
-			<< e.what() << std::endl;
+	} catch (const AbstractPluginLoader::PluginException& e) {
+		switch(e.getErrorCode()) {
+		case AbstractPluginLoader::PluginException::INVALID_PLUGIN_FORMAT:
+			sout << "(WW) \"" << e.getPluginName()
+				<< "\" is no charon plugin:\n(WW) \t"
+				<< e.what() << std::endl;
+			break;
+		default:
+			sout << "(EE) Exception during metadata generation of \""
+				<< e.getPluginName()
+				<< "\":\n(EE) \t"
+				<< e.what() << std::endl;
+			break;
+		}
 	}
 	sout << std::endl;
 }
