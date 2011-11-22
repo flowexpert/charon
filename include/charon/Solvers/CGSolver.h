@@ -36,7 +36,7 @@
 #endif
 
 #include <charon-core/ParameteredObject.h>
-#include <charon/IteratorHelper.h>
+#include <charon/CGSolverHelper.h>
 
 #include <charon/EnergyStencil.h>
 #include <CImg.h>
@@ -66,7 +66,7 @@ public:
 	InputSlot< EnergyStencil<T>* > energyStencils;
 
 	/// Input slot for the quantity to be optimized.
-	InputSlot< IteratorHelper<T>* > itHelper;
+	InputSlot< CGSolverHelper<T>* > itHelper;
 
 	/// Input slot for region of interest
 	InputSlot< Roi<int>* > roi;
@@ -124,7 +124,7 @@ private:
 	cimg_library::CImgList<T> _reshapeFeedback( std::vector<T> v );
 
 	/// pointer to iteration helper
-	IteratorHelper<T> *_help;
+	CGSolverHelper<T> *_help;
 };
 
 /// vector scaling

@@ -102,12 +102,18 @@ LIST(APPEND Plugins
 	petscsolver
 )
 # Conjugate gradient method
+ADD_LIBRARY(cgsolverhelper SHARED
+        ${charon_INCLUDE_DIR}/CGSolverHelper.h
+        ${charon_INCLUDE_DIR}/CGSolverHelper.hxx
+        CGSolverHelper.cpp
+)
 ADD_LIBRARY(cgsolver SHARED
 	CGSolver.cpp
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.h
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.hxx
 )
 TARGET_LINK_LIBRARIES(cgsolver iteratorhelper roi)
+LIST(APPEND Plugins cgsolverhelper)
 LIST(APPEND Plugins cgsolver)
 
 # Brightness models (currently only constant brightness available)

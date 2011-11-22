@@ -26,7 +26,7 @@
 #include "CGSolver.h"
 
 #include <charon-core/ParameteredObject.hxx>
-#include <charon/IteratorHelper.h>
+#include <charon/CGSolverHelper.hxx>
 
 #include <cmath>
 #include <vector>
@@ -53,7 +53,7 @@ CGSolver<T>::CGSolver(const std::string& name) :
 	this->_addInputSlot(itHelper,
 	                    "itHelper",
 	                    "iterator helper",
-	                    "IteratorHelper<T>*");
+	                    "CGSolverHelper<T>*");
         this->_addOutputSlot(result,
                              "result",
                              "result",
@@ -78,11 +78,6 @@ void CGSolver<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	_help = itHelper();
-	_help->execute();
-	_help->reset();
-
-	cimg_library::CImgList<T> & _itflow = _help->flow();
 //	const cimg_library::CImgList<T> & _itin = _help->in();
 //	const cimg_library::CImgList<T> & _itinitflow = _help->initFlow();
 //	cimg_library::CImgList<T> & _itsequence = _help->sequence();
@@ -127,11 +122,11 @@ void CGSolver<T>::execute() {
   std::cout << "itHelper initflow _pSpectrum = " << _pSpectrum << std::endl;
   std::cout << "itHelper initflow flowDimensions = " << flowDimensions() << std::endl;
 */
-	_pSize     = _itflow.size();
-	_pWidth    = _itflow[0].width();
-	_pHeight   = _itflow[0].height();
-	_pDepth    = _itflow[0].depth();
-	_pSpectrum = _itflow[0].spectrum();
+	_pSize     = itHelper()->flow().size();
+	_pWidth    = itHelper()->flow()[0].width();
+	_pHeight   = itHelper()->flow()[0].height();
+	_pDepth    = itHelper()->flow()[0].depth();
+	_pSpectrum = itHelper()->flow()[0].spectrum();
 /*
   std::cout << "itHelper flow _pSize     = " << _pSize << std::endl;
   std::cout << "itHelper flow _pWidth    = " << _pWidth << std::endl;
@@ -171,7 +166,7 @@ void CGSolver<T>::execute() {
 	for (z=0; z<_pDepth; ++z)
 	for (c=0; c<_pSpectrum; ++c) {
 		_initialParameterVector[idx] = T(
-		    _itflow.atNXYZC( n, x, y, z, c ) );
+		    itHelper()->flow().atNXYZC( n, x, y, z, c ) );
 		++idx;
 	}
 
@@ -180,8 +175,10 @@ void CGSolver<T>::execute() {
 	_energyStencilsBegin = this->energyStencils.begin();
 	_energyStencilsEnd   = this->energyStencils.end();
 
+	static cimg_library::CImgList<T>& itFlow = itHelper()->flow();
+
 	minimize(
-	    _itflow,
+	    itFlow,
 	    _optimizedParameterVector,
 	    _initialParameterVector,
 	    _energyStencilsBegin,
@@ -189,8 +186,8 @@ void CGSolver<T>::execute() {
             this->length()
         );
 
-	_itflow.assign( _reshapeFeedback( _optimizedParameterVector ) );
-	result() = _itflow;
+	itHelper()->flow().assign( _reshapeFeedback( _optimizedParameterVector ) );
+	result() = itHelper()->flow();
 }
 
 template <typename T>
