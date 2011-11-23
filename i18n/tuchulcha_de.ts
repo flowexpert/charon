@@ -550,7 +550,7 @@ node</oldsource>
     <message>
         <location filename="../src/NodeHandler.cpp" line="278"/>
         <source>failed to save the workflow visualization to&lt;br&gt;&lt;tt&gt;%1&lt;/tt&gt;Perhaps the image file format is not supported.</source>
-        <translation>Die Visualisierung konnte nicht in der Datei &lt;tt&gt;%1&lt;/tt&gt; gespeichert werden.&lt;br&gt;Eventuell wird das Format nicht unterstützt.</translation>
+        <translation>Die Darstellung konnte nicht in der Datei &lt;tt&gt;%1&lt;/tt&gt; gespeichert werden.&lt;br&gt;Eventuell wird das Format nicht unterstützt.</translation>
     </message>
 </context>
 <context>
@@ -609,37 +609,37 @@ node</oldsource>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="178"/>
+        <location filename="../src/ObjectInspector.cpp" line="179"/>
         <source>Open File</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="179"/>
+        <location filename="../src/ObjectInspector.cpp" line="181"/>
         <source>ParameterFile (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="198"/>
+        <location filename="../src/ObjectInspector.cpp" line="201"/>
         <source>delete failed</source>
         <translation>Löschen fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="198"/>
+        <location filename="../src/ObjectInspector.cpp" line="201"/>
         <source>Please select an item to delete first.</source>
         <translation>Bitte wählen Sie zuerst ein Element zum Löschen aus.</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="211"/>
+        <location filename="../src/ObjectInspector.cpp" line="214"/>
         <source>confirm delete</source>
         <translation>Löschen bestätigen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="211"/>
+        <location filename="../src/ObjectInspector.cpp" line="214"/>
         <source>Do you really want to delete the model content?</source>
         <translation>Möchten Sie wirklich alle Einträge löschen?</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="220"/>
+        <location filename="../src/ObjectInspector.cpp" line="223"/>
         <source>cleared model content</source>
         <translation>Model-Einträge gelöscht</translation>
     </message>
@@ -745,69 +745,69 @@ File name &lt;span id=&apos;code&apos;&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; in
 <context>
     <name>ParamInspectorWindow</name>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="35"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="36"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="38"/>
-        <source>&amp;Open...</source>
-        <translation>&amp;Öffnen...</translation>
-    </message>
-    <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="39"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="40"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="40"/>
-        <source>Open &amp;Metadata...</source>
-        <translation>&amp;Metadaten laden...</translation>
-    </message>
-    <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="41"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="42"/>
         <source>Ctrl+M</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="42"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="43"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="43"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="44"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="44"/>
-        <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <location filename="../src/ParamInspectorWindow.cpp" line="39"/>
+        <source>&amp;Open</source>
+        <translation>Ö&amp;ffnen</translation>
+    </message>
+    <message>
+        <location filename="../src/ParamInspectorWindow.cpp" line="41"/>
+        <source>Open &amp;Metadata</source>
+        <translation>&amp;Metadaten öffnen</translation>
     </message>
     <message>
         <location filename="../src/ParamInspectorWindow.cpp" line="45"/>
+        <source>Save &amp;as...</source>
+        <translation>Speichern &amp;unter …</translation>
+    </message>
+    <message>
+        <location filename="../src/ParamInspectorWindow.cpp" line="46"/>
         <source>Ctrl+Alt+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="46"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="47"/>
         <source>E&amp;xit</source>
-        <translation>Be&amp;enden</translation>
+        <translation>&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="47"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="48"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="54"/>
-        <location filename="../src/ParamInspectorWindow.cpp" line="68"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="57"/>
         <location filename="../src/ParamInspectorWindow.cpp" line="71"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="74"/>
         <source>Object Inspector</source>
         <translation>ObjektInspektor</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="64"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="67"/>
         <source>Error opening file</source>
         <translation>Fehler beim Laden der Datei</translation>
     </message>
@@ -962,18 +962,18 @@ File name &lt;span id=&apos;code&apos;&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; in
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="136"/>
         <source>export flowchart</source>
-        <translation>Visualisierung exportieren</translation>
+        <translation>Darstellung exportieren</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="137"/>
         <source>export flowchart to an image file</source>
-        <translation>speichert die aktuelle Visualisierung als Bild oder PDF</translation>
+        <translation>speichert die aktuelle Darstellung als Bild oder PDF</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="142"/>
         <location filename="../src/TuchulchaWindow.cpp" line="205"/>
         <source>&amp;Update Plugins</source>
-        <translation>Plugins akt&amp;ualisieren</translation>
+        <translation>Plugins a&amp;ktualisieren</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="144"/>
@@ -984,7 +984,7 @@ File name &lt;span id=&apos;code&apos;&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; in
         <location filename="../src/TuchulchaWindow.cpp" line="148"/>
         <location filename="../src/TuchulchaWindow.cpp" line="208"/>
         <source>Execute &amp;Workflow</source>
-        <translation>Ausführ&amp;en</translation>
+        <translation>&amp;Ausführen</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="150"/>
@@ -993,7 +993,6 @@ File name &lt;span id=&apos;code&apos;&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; in
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="155"/>
-        <location filename="../src/TuchulchaWindow.cpp" line="225"/>
         <source>zoom in</source>
         <oldsource>zoom
 in</oldsource>
@@ -1002,11 +1001,10 @@ in</oldsource>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="157"/>
         <source>enlarge flowchart items</source>
-        <translation>vergrößert die aktuelle Visualisierung</translation>
+        <translation>vergrößert die aktuelle Darstellung</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="159"/>
-        <location filename="../src/TuchulchaWindow.cpp" line="227"/>
         <source>zoom out</source>
         <oldsource>zoom
 out</oldsource>
@@ -1015,20 +1013,19 @@ out</oldsource>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="161"/>
         <source>shrink flowchart items</source>
-        <translation>verkleinert die aktuelle Visualisierung</translation>
+        <translation>verkleinert die aktuelle Darstellung</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="163"/>
-        <location filename="../src/TuchulchaWindow.cpp" line="229"/>
         <source>zoom fit</source>
         <oldsource>zoom
 fit</oldsource>
-        <translation>in Fenster einpassen</translation>
+        <translation>alles zeigen</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="165"/>
         <source>fit flowchart in view</source>
-        <translation>ändert die Vergrößerung der Visualisierung, sodass sie ins Fenster passt</translation>
+        <translation>ändert die Vergrößerung der Darstellung, sodass sie ins Fenster passt</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="169"/>
@@ -1086,7 +1083,7 @@ help</oldsource>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="189"/>
         <source>&amp;Open</source>
-        <translation>&amp;Öffnen</translation>
+        <translation>Ö&amp;ffnen</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="190"/>
@@ -1105,8 +1102,13 @@ help</oldsource>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="193"/>
-        <source>Save as...</source>
-        <translation>Speichern unter...</translation>
+        <source>Save &amp;as...</source>
+        <translation>Speichern &amp;unter …</translation>
+    </message>
+    <message>
+        <location filename="../src/TuchulchaWindow.cpp" line="220"/>
+        <source>&amp;Options</source>
+        <translation>&amp;Einstellungen</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="194"/>
@@ -1121,7 +1123,7 @@ help</oldsource>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="210"/>
         <source>Export &amp;flowchart</source>
-        <translation>Visualisierung e&amp;xportieren</translation>
+        <translation>Darstellung e&amp;xportieren</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="211"/>
@@ -1131,7 +1133,7 @@ help</oldsource>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="212"/>
         <source>&amp;Exit</source>
-        <translation>Be&amp;enden</translation>
+        <translation>&amp;Beenden</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="213"/>
@@ -1154,14 +1156,14 @@ help</oldsource>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="220"/>
-        <source>Options</source>
-        <translation>Einstellungen</translation>
-    </message>
-    <message>
         <location filename="../src/TuchulchaWindow.cpp" line="224"/>
         <source>&amp;View</source>
         <translation>&amp;Ansicht</translation>
+    </message>
+    <message>
+        <location filename="../src/TuchulchaWindow.cpp" line="225"/>
+        <source>zoom &amp;in</source>
+        <translation>Ver&amp;größern</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="226"/>
@@ -1169,9 +1171,19 @@ help</oldsource>
         <translation></translation>
     </message>
     <message>
+        <location filename="../src/TuchulchaWindow.cpp" line="227"/>
+        <source>zoom &amp;out</source>
+        <translation>Ver&amp;kleinern</translation>
+    </message>
+    <message>
         <location filename="../src/TuchulchaWindow.cpp" line="228"/>
         <source>Ctrl+-</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/TuchulchaWindow.cpp" line="229"/>
+        <source>zoom &amp;fit</source>
+        <translation>&amp;Alles zeigen</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="230"/>

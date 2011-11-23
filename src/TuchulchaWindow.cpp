@@ -190,7 +190,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 		SLOT(open()), QKeySequence(tr("Ctrl+O")));
 	fileMenu->addAction(QIcon(":/icons/save.png"), tr("&Save"), _inspector,
 		SLOT(saveFile()), QKeySequence(tr("Ctrl+S")));
-	fileMenu->addAction(QIcon(":/icons/save_as.png"), tr("Save as..."),
+	fileMenu->addAction(QIcon(":/icons/save_as.png"), tr("Save &as..."),
 		_inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
 	_separatorAct = fileMenu->addSeparator();
 	for (int i = 0; i < _maxRecentFiles; ++i) {
@@ -217,16 +217,16 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	editMenu->addAction(QIcon(":/icons/revert.png"), tr(
 			"&reset selected parameters"), _inspector, SLOT(delParam()),
 			QKeySequence(tr("Ctrl+R")));
-	editMenu->addAction(QIcon(":/icons/configure.png"),tr("Options"),
+	editMenu->addAction(QIcon(":/icons/configure.png"),tr("&Options"),
 			this, SLOT(options()));
 
 	// view menu
 	QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
-	viewMenu->addAction(QIcon(":/icons/zoomIn.png"), tr("zoom in"), this,
+	viewMenu->addAction(QIcon(":/icons/zoomIn.png"), tr("zoom &in"), this,
 		SLOT(zoomIn()), QKeySequence(tr("Ctrl++")));
-	viewMenu->addAction(QIcon(":/icons/zoomOut.png"), tr("zoom out"), this,
+	viewMenu->addAction(QIcon(":/icons/zoomOut.png"), tr("zoom &out"), this,
 		SLOT(zoomOut()), QKeySequence(tr("Ctrl+-")));
-	viewMenu->addAction(QIcon(":/icons/zoomFit.png"), tr("zoom fit"), this,
+	viewMenu->addAction(QIcon(":/icons/zoomFit.png"), tr("zoom &fit"), this,
 		SLOT(zoomFit()), QKeySequence(tr("Ctrl+HOME")));
 
 	// window menu

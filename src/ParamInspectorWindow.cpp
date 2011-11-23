@@ -36,13 +36,13 @@ ParamInspectorWindow::ParamInspectorWindow() :
 	fileMenu = menuBar()->addMenu(tr("&File"));
 	_inspector = new AdvancedInspector(this);
 
-	fileMenu->addAction(tr("&Open..."), this,
+	fileMenu->addAction(tr("&Open"), this,
 			SLOT(openFile()), QKeySequence(tr("Ctrl+O")));
-	fileMenu->addAction(tr("Open &Metadata..."), _inspector,
+	fileMenu->addAction(tr("Open &Metadata"), _inspector,
 			SLOT(openMetaData()), QKeySequence(tr("Ctrl+M")));
 	fileMenu->addAction(tr("&Save"), _inspector,
 			SLOT(saveFile()), QKeySequence(tr("Ctrl+S")));
-	fileMenu->addAction(tr("Save as..."), _inspector,
+	fileMenu->addAction(tr("Save &as..."), _inspector,
 			SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Alt+S")));
 	fileMenu->addAction(tr("E&xit"), this,
 			SLOT(close()), QKeySequence(tr("Ctrl+Q")));
