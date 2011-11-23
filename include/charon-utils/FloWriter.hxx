@@ -14,64 +14,58 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// @file FloReader.hxx
-/// Implementation of the parameter class FloReader.
+/// @file FloWriter.hxx
+/// Implementation of the parameter class FloWriter.
 /// @author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">Michael Baron</a>
-/// @date 24.10.2011
+/// @date 23.11.2011
 
-#ifndef _FLOREADER_HXX_
-#define _FLOREADER_HXX_
+#ifndef _FLOWRITER_HXX_
+#define _FLOWRITER_HXX_
 
-#include "FloReader.h"
+#include "FloWriter.h"
+
+#define TAG_STRING "PIEH"
 
 template <typename T>
-FloReader<T>::FloReader(const std::string& name) :
-		TemplatedParameteredObject<T>("floreader", name,
-			"read motion from motion file using cimg") {
+FloWriter<T>::FloWriter(const std::string& name) :
+		TemplatedParameteredObject<T>("flowriter", name,
+			"write motion to motion file using cimg") {
 	this->_addParameter (filename, "filename",
-		"filename to read image from", "fileopen");
-	this->_addOutputSlot(out, "out",
-		"image output", "CImgList<T>");
+		"filename to write image to", "fileopen");
+	this->_addInputSlot(in, "in",
+		"image input", "CImgList<T>");
 }
 
 template <typename T>
-void FloReader<T>::execute() {
+void FloWriter<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 	try {
 		const char *fn = filename().c_str();
-		FILE *stream = fopen(fn, "rb");
-		int width, height;
-		float tag;
-		size_t read;
+		FILE *stream = fopen(fn, "wb");
+		int width, height, nBands;
 
-		cimg_library::CImgList<T>& o = out();
+		const cimg_library::CImgList<T>& i = in();
 
-		read = fread(&tag,    sizeof(float), 1, stream);
-		if (read != 1) {
-			throw std::runtime_error("error reading flo tag");
-		}
-		read = fread(&width,  sizeof(int),   1, stream);
-		if (read != 1) {
-			throw std::runtime_error("error reading flo width");
-		}
-		read = fread(&height, sizeof(int),   1, stream);
-		if (read != 1) {
-			throw std::runtime_error("error reading flo height");
-		}
+		width = in()[0].width();
+		height = in()[0].height();
+		nBands = 2;
 
-		int nBands = 2;
-		o.assign(nBands, width, height, 1, 1);
+		// write the header
+		fprintf( stream, TAG_STRING );
+		if (  (int)fwrite(&width,  sizeof(int),   1, stream) != 1
+		   || (int)fwrite(&height, sizeof(int),   1, stream) != 1)
+			throw std::runtime_error("(EE) FloWriter :: problem writing header");
+
+		// write the rows
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < nBands*width; x++) {
-				float fv;
-				read = fread(&fv, sizeof(float), 1, stream);
-				if (read != 1) {
-					throw std::runtime_error("error reading flo values");
-				}
-				o.atNXYZC(x%nBands, x/nBands, y, 0, 0) = T(fv);
+				float fv = (float)(i.atNXYZC(x%nBands, x/nBands, y, 0, 0));
+				if ((int)fwrite(&fv, sizeof(float), 1, stream) != 1)
+					throw std::runtime_error("(EE) FloWriter :: problem writing data"); 
 			}
 		}
+
 		fclose(stream);
 	}
 	catch (const cimg_library::CImgException& err) {
@@ -82,5 +76,5 @@ void FloReader<T>::execute() {
 
 }
 
-#endif /* _FLOREADER_HXX_ */
+#endif /* _FLOWRITER_HXX_ */
 

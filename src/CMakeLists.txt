@@ -59,6 +59,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/FloReader.h
 		${CHARON_UTILS_INCLUDE_DIR}/FloReader.hxx
 	)
+	ADD_LIBRARY(flowriter SHARED
+		FloWriter.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/FloWriter.h
+		${CHARON_UTILS_INCLUDE_DIR}/FloWriter.hxx
+	)
 	ADD_LIBRARY(filewriter SHARED FileWriter.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/FileWriter.h
 		${CHARON_UTILS_INCLUDE_DIR}/FileWriter.hxx
@@ -147,6 +152,7 @@ IF(USE_CIMG)
 		filereader
 		filewriter
 		floreader
+		flowriter
 		imageblur
 		imagedisplay
 		interpolatorcubic
