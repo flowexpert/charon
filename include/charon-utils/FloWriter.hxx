@@ -53,27 +53,26 @@ void FloWriter<T>::execute() {
 
 		// write the header
 		fprintf( stream, TAG_STRING );
-		if (  (int)fwrite(&width,  sizeof(int),   1, stream) != 1
-		   || (int)fwrite(&height, sizeof(int),   1, stream) != 1)
-			throw std::runtime_error("(EE) FloWriter :: problem writing header");
+		if (   (int)fwrite(&width,  sizeof(int),   1, stream) != 1
+			|| (int)fwrite(&height, sizeof(int),   1, stream) != 1)
+				ParameteredObject::raise("problem writing header");
 
 		// write the rows
+		float fv = 0;
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < nBands*width; x++) {
-				float fv = (float)(i.atNXYZC(x%nBands, x/nBands, y, 0, 0));
+				fv = (float)(i.atNXYZC(x%nBands, x/nBands, y, 0, 0));
 				if ((int)fwrite(&fv, sizeof(float), 1, stream) != 1)
-					throw std::runtime_error("(EE) FloWriter :: problem writing data"); 
+					ParameteredObject::raise("problem writing data");
 			}
 		}
 
 		fclose(stream);
 	}
 	catch (const cimg_library::CImgException& err) {
-		throw std::runtime_error(
-			this->getClassName() + " instance \"" +
-			this->getName() + "\" Could not read file\n\t" + err.what());
+		ParameteredObject::raise(
+			std::string("Could not read file: ") + err.what());
 	}
-
 }
 
 #endif /* _FLOWRITER_HXX_ */
