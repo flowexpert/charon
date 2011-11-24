@@ -73,11 +73,12 @@ public:
 	/// Update object.
 	virtual void execute();
 
-	/// reset helper, copy input data to output slots, reset counter count
+	/// reset helper, copy input data to output slots, reset counters
 	void reset();
 
-	/// perform warping
-	virtual void update(bool count = true /**[in] increase counters */);
+	/// update counters
+	/** \param[in] count increase counters */
+	virtual void update (bool count = true);
 };
 
 #endif // _ITERATOR_HELPER_H_

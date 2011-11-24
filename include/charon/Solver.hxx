@@ -190,12 +190,18 @@ void Solver<T>::MetaStencil::expand(Roi<int>& inRoi) const {
 
 template <typename T>
 Solver<T>::Solver(const std::string& classname, const std::string& name) :
-		TemplatedParameteredObject<T>(classname,name,"solves the linear system"),
-		stencils(false,true)	//make stencil input slot mandatory and multi
+		TemplatedParameteredObject<T>(
+			classname, name,
+			"assembles and solves the linear equation system of "
+			"global optical flow methods"),
+		stencils(false,true) // required multi-slot
 {
-	this->_addInputSlot(stencils,"stencil","Multi Input slot for stencils","Stencil<T>*");
-	this->_addInputSlot(roi,"roi","region of interest to work on","Roi<int>*");
-	this->_addOutputSlot(out,"out","CImgList containing the solution","CImgList<T>");
+	this->_addInputSlot(
+		stencils,"stencil","Multi Input slot for stencils","Stencil<T>*");
+	this->_addInputSlot(
+		roi,"roi","region of interest to work on","Roi<int>*");
+	this->_addOutputSlot(
+		out,"out","CImgList containing the solution","CImgList<T>");
 }
 
 template <typename T>

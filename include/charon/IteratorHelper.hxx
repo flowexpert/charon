@@ -68,51 +68,50 @@ void IteratorHelper<T>::execute() {
 }
 
 template <typename T>
-void IteratorHelper<T>::update(bool c) {
-	sout << "Updating " << this->getClassName();
-	sout << " \"" << this->getName() << "\"" << std::endl;
-	if (c) {
-		count()++;
-		countAll()++;
-	}
-}
-
-template <typename T>
 void IteratorHelper<T>::reset() {
 	count() = 0;
 	const cimg_library::CImgList<T>& seqIn = in();
-	if(seqIn.size() <= 0) {
-		std::stringstream s ;
-		s << this->getClassName() << " \"" << this->getName() << "\" input sequence is empty!" << std::endl ;
-		throw std::runtime_error(s.str()) ;
+
+	if (seqIn.size() <= 0) {
+		ParameteredObject::raise("input sequence is empty!");
 	}
+
 	// copy input sequence
 	sequence().assign(seqIn);
 
 	// copy input flow if present, otherwise create dummy flow with zeros
 	const unsigned int df = flowDimensions();
 	if(initFlow.connected()) {
-		if(initFlow().size() != df)
-			sout << "\t*** Warning: Dimensions of initial flow ("
+		if(initFlow().size() != df) {
+			sout << "(WW) Dimensions of initial flow ("
 					<< initFlow().size()
 					<< ") do not match given flow dimensions ("
-					<< flowDimensions() << ")!" << std::endl;
-		
-		if(initFlow().size() <= 0 ||
-			!initFlow()[0].is_sameXYZ(seqIn[0]) ||
-			(initFlow()[0].spectrum() != seqIn[0].spectrum() - 1)
-		) {
-			std::stringstream s ;
-			s << this->getClassName() << " \"" << this->getName() << "\" Error:initila flow is empty or does not match the dimensions of the input image" << std::endl ;
-			throw std::runtime_error(s.str()) ;
+					<< flowDimensions() << ")" << std::endl;
 		}
-			
+		if (initFlow().size() <= 0 ||
+				!initFlow()[0].is_sameXYZ(seqIn[0]) ||
+				(initFlow()[0].spectrum() != seqIn[0].spectrum() - 1) ) {
+			ParameteredObject::raise(
+				"initial flow is empty or does not match the "
+				"dimensions of the input image");
+		}
 		flow().assign(initFlow());
 	}
 	else {
 		flow().assign(df,
 			seqIn[0].width(),seqIn[0].height(),seqIn[0].depth(),
 			seqIn[0].spectrum()-1,T(0));
+	}
+}
+
+template <typename T>
+void IteratorHelper<T>::update(bool c) {
+	sout << "(II) Updating " << this->getClassName()
+		<< " \"" << this->getName() << "\"" << std::endl;
+
+	if (c) {
+		count()++;
+		countAll()++;
 	}
 }
 
