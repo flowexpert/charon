@@ -72,9 +72,15 @@ ADD_LIBRARY(energyclassic SHARED
         ${charon_INCLUDE_DIR}/EnergyStencils/EnergyClassic.hxx
         EnergyClassic.cpp
 )
+ADD_LIBRARY(energycoupling SHARED
+        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyCoupling.h
+        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyCoupling.hxx
+        EnergyCoupling.cpp
+)
 LIST(APPEND Plugins
 	energybcc
 	energyclassic
+	energycoupling
 )
 
 # Solvers
