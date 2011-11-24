@@ -135,6 +135,16 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Images2Sequence.h
 		${CHARON_UTILS_INCLUDE_DIR}/Images2Sequence.hxx
 	)
+        ADD_LIBRARY(mux2 SHARED
+                Mux2.cpp
+                ${CHARON_UTILS_INCLUDE_DIR}/Mux2.h
+                ${CHARON_UTILS_INCLUDE_DIR}/Mux2.hxx
+        )
+        ADD_LIBRARY(demux2 SHARED
+                Demux2.cpp
+                ${CHARON_UTILS_INCLUDE_DIR}/Demux2.h
+                ${CHARON_UTILS_INCLUDE_DIR}/Demux2.hxx
+        )
 	ADD_LIBRARY(warp SHARED
 		Warp.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Warp.h
@@ -168,6 +178,8 @@ IF(USE_CIMG)
 		structuretensor
 		steeredderivative
 		images2sequence
+		mux2
+		demux2
 		warp
 		warpsymmetric
 	)
