@@ -129,7 +129,12 @@ void FileWriterHDF5<T>::execute() {
 		file.write(pathInFile().c_str(), in());
 	}
 	if (!comment().empty()) {
+#if (VIGRA_VERSION_MAJOR == 1) && (VIGRA_VERSION_MINOR < 8)
+		// set attribute method renamed from vigra 1.7.1 -> 1.8.0
 		file.setAttribute(pathInFile(),"comment",comment().c_str());
+#else
+		file.writeAttribute(pathInFile(),"comment",comment().c_str());
+#endif // vigra < 1.8.0
 	}
 }
 
