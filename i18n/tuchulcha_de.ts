@@ -92,7 +92,7 @@
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="193"/>
-        <location filename="../src/LogDialog.cpp" line="355"/>
+        <location filename="../src/LogDialog.cpp" line="359"/>
         <source>Execution finished.</source>
         <translation>Ausführung beendet.</translation>
     </message>
@@ -386,6 +386,52 @@ Please use a valid name.
         <location filename="../src/GraphModel.cpp" line="606"/>
         <source>add node %1 of class %2</source>
         <translation>Knoten %1 vom Typ %2 hinzugefügt</translation>
+    </message>
+</context>
+<context>
+    <name>LogDecorators::RunWorkflow</name>
+    <message>
+        <location filename="../src/LogDialog.cpp" line="311"/>
+        <source>missing workflow file</source>
+        <translation>keine Datei angegeben</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.cpp" line="312"/>
+        <source>The workflow cannot be started because it has not been saved to disk (empty filename given). Please save it and retry execution.</source>
+        <translation>Die Ausführung konnte nicht gestartet werden, da das Dokument nicht gespeichert wurde. Bitte speichern und erneut ausführen.</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.cpp" line="337"/>
+        <source>wait before workflow execution</source>
+        <translation>vor der Ausführung warten</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.cpp" line="338"/>
+        <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the run process. Workflow will be started, when you close this message box.</source>
+        <translation>Warte mit dem Start der Ausführung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Ausführungsprozess hängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.cpp" line="364"/>
+        <source>Workflow execution finished.</source>
+        <translation>Ausführung wurde beendet.</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.cpp" line="365"/>
+        <source>Plugins stay loaded until you close this dialog.</source>
+        <translation>Die Plugins bleiben geladen, bis dieser Dialog geschlossen wird.</translation>
+    </message>
+</context>
+<context>
+    <name>LogDecorators::Update</name>
+    <message>
+        <location filename="../src/LogDialog.cpp" line="289"/>
+        <source>Plugin Information Update</source>
+        <translation>Plugin Informationen aktualisieren</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.cpp" line="294"/>
+        <source>Output of update process:</source>
+        <translation>Ausgabe der Aktualisierung:</translation>
     </message>
 </context>
 <context>
@@ -865,39 +911,6 @@ File name &lt;span id=&apos;code&apos;&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; in
     </message>
 </context>
 <context>
-    <name>RunDecorator</name>
-    <message>
-        <location filename="../src/LogDialog.cpp" line="311"/>
-        <source>missing workflow file</source>
-        <translation>keine Datei angegeben</translation>
-    </message>
-    <message>
-        <location filename="../src/LogDialog.cpp" line="313"/>
-        <source>The workflow cannot be started because it has not been saved to disk (empty filename given). Please save it and retry execution.</source>
-        <translation>Die Ausführung konnte nicht gestartet werden, da das Dokument nicht gespeichert wurde. Bitte speichern und erneut ausführen.</translation>
-    </message>
-    <message>
-        <location filename="../src/LogDialog.cpp" line="339"/>
-        <source>wait before workflow execution</source>
-        <translation>vor der Ausführung warten</translation>
-    </message>
-    <message>
-        <location filename="../src/LogDialog.cpp" line="341"/>
-        <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the run process. Workflow will be started, when you close this message box.</source>
-        <translation>Warte mit dem Start der Ausführung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Ausführungsprozess hängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
-    </message>
-    <message>
-        <location filename="../src/LogDialog.cpp" line="360"/>
-        <source>Workflow execution finished.</source>
-        <translation>Ausführung wurde beendet.</translation>
-    </message>
-    <message>
-        <location filename="../src/LogDialog.cpp" line="362"/>
-        <source>Plugins stay loaded until you close this dialog.</source>
-        <translation>Die Plugins bleiben geladen, bis dieser Dialog geschlossen wird.</translation>
-    </message>
-</context>
-<context>
     <name>TuchulchaWindow</name>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="68"/>
@@ -1311,22 +1324,9 @@ help</oldsource>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="461"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="468"/>
         <source>Open recent file &quot;%1&quot;</source>
         <translation>Öffne zuletzt benutze Datei &quot;%1&quot;</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateDecorator</name>
-    <message>
-        <location filename="../src/LogDialog.cpp" line="289"/>
-        <source>Plugin Information Update</source>
-        <translation>Plugin Informationen aktualisieren</translation>
-    </message>
-    <message>
-        <location filename="../src/LogDialog.cpp" line="294"/>
-        <source>Output of update process:</source>
-        <translation>Ausgabe der Aktualisierung:</translation>
     </message>
 </context>
 </TS>

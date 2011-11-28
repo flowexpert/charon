@@ -435,9 +435,16 @@ void TuchulchaWindow::runWorkflow() {
 	if (!_flow)
 		return;
 	_inspector->saveFile();
-	LogDialog dialog(new LogDecorators::RunWorkflow(
-		_flow->model()->fileName()));
+	LogDecorators::RunWorkflow* dec =
+		new LogDecorators::RunWorkflow(_flow->model()->fileName());
+	ParameterFileModel* model = _inspector->model();
+	QString oldPref = model->prefix();
+	connect(
+		dec,SIGNAL(highlightObject(QString)),
+		model,SLOT(setPrefix(QString)));
+	LogDialog dialog(dec);
 	dialog.exec();
+	model->setPrefix(oldPref);
 }
 
 void TuchulchaWindow::_openRecentFile() {

@@ -287,12 +287,12 @@ QStringList LogDialog::Decorator::postStartCommands(QWidget*) {
 
 QString LogDecorators::Update::title() {
 	return QCoreApplication::translate(
-		"UpdateDecorator","Plugin Information Update");
+		"LogDecorators::Update", "Plugin Information Update");
 }
 
 QString LogDecorators::Update::desc() {
 	return QCoreApplication::translate(
-		"UpdateDecorator","Output of update process:");
+		"LogDecorators::Update", "Output of update process:");
 }
 
 QStringList LogDecorators::Update::arguments() {
@@ -308,10 +308,8 @@ LogDecorators::RunWorkflow::RunWorkflow(QString fileName) :
 bool LogDecorators::RunWorkflow::ready(QWidget* pp) {
 	if(_fileName.isEmpty()) {
 		QMessageBox::warning(pp,
-			QCoreApplication::translate("RunDecorator",
-				"missing workflow file"),
-			QCoreApplication::translate("RunDecorator",
-				"The workflow cannot be started because it has not "
+			tr("missing workflow file"),
+			tr("The workflow cannot be started because it has not "
 				"been saved to disk (empty filename given). "
 				"Please save it and retry execution."
 			)
@@ -336,10 +334,8 @@ QStringList LogDecorators::RunWorkflow::postStartCommands(QWidget* pp) {
 	QStringList cmds;
 	if (settings.value("delayExecution",false).toBool()) {
 		QMessageBox::information(pp,
-			QCoreApplication::translate("RunDecorator",
-				"wait before workflow execution"),
-			QCoreApplication::translate("RunDecorator",
-				"Waiting because <em>delayExecution</em> option set. "
+			tr("wait before workflow execution"),
+			tr("Waiting because <em>delayExecution</em> option set. "
 				"You can now attach your debugger to the run process. "
 				"Workflow will be started, when you close this message box."
 			)
@@ -347,6 +343,14 @@ QStringList LogDecorators::RunWorkflow::postStartCommands(QWidget* pp) {
 		cmds << QString("run %1").arg(_fileName);
 	}
 	return cmds;
+}
+
+QString LogDecorators::RunWorkflow::highlightLine(QString line) {
+	QRegExp curObj("^\\(II\\) Executing\\s*\\w*\\s*\"(\\w*)\"\\s*$");
+	if (line.contains(curObj)) {
+		emit highlightObject(curObj.cap(1));
+	}
+	return LogDialog::Decorator::highlightLine(line);
 }
 
 bool LogDecorators::RunWorkflow::finishSignal(QString line) {
@@ -357,8 +361,6 @@ bool LogDecorators::RunWorkflow::finishSignal(QString line) {
 
 QString LogDecorators::RunWorkflow::finishMessage() {
 	return QString("<br><span class=\"success\">%1</span><br>%2<br>")
-		.arg(QCoreApplication::translate("RunDecorator",
-			"Workflow execution finished."))
-		.arg(QCoreApplication::translate("RunDecorator",
-			"Plugins stay loaded until you close this dialog."));
+		.arg(tr("Workflow execution finished."))
+		.arg(tr("Plugins stay loaded until you close this dialog."));
 }

@@ -124,7 +124,9 @@ namespace LogDecorators {
 	};
 
 	/// decorator for run workspace dialog
-	class RunWorkflow : public LogDialog::Decorator {
+	class RunWorkflow : public QObject, public LogDialog::Decorator {
+		Q_OBJECT
+
 	public:
 		/// constructor
 		/** \param fileName worflow file to run */
@@ -134,6 +136,11 @@ namespace LogDecorators {
 		virtual bool finishSignal(QString line);
 		virtual QString finishMessage();
 		virtual QStringList postStartCommands(QWidget* parent);
+		virtual QString highlightLine(QString line);
+	signals:
+		/// highlight the currently active object
+		/** \param objName  object name */
+		void highlightObject(QString objName);
 	private:
 		QString _fileName; ///< filename cache
 	};
