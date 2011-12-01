@@ -52,11 +52,12 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 		QString param = model->data(ind.sibling(ind.row(),0)).toString();
 		if (!model->prefix().isEmpty())
 			param = model->prefix() + "." + param;
-		QString type = model->metaInfo()->getType(
-				param, model->getClass(param));
-		type = type.toLower();
+		// do not cast to lowercase since
+		// e.g. combo box entries would get messed up
+		QString type = model->getType(param);
 
-		if (type=="openfile" || type=="fileopen") {
+		if (type.compare("OpenFile",Qt::CaseInsensitive)==0 ||
+				type.compare("FileOpen",Qt::CaseInsensitive)==0) {
 			QDirEdit* editor = new QDirEdit(param, p);
 			editor->acceptFiles(true, false);
 			connect(
@@ -64,7 +65,9 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 					this, SLOT(_setFileDialogFlag(bool)));
 			return editor;
 		}
-		if (type=="writefile" || type=="filewrite" || type=="filename") {
+		if (type.compare("WriteFile",Qt::CaseInsensitive)==0 ||
+				type.compare("FileWrite",Qt::CaseInsensitive)==0 ||
+				type.compare("FileName",Qt::CaseInsensitive)==0) {
 			QDirEdit* editor = new QDirEdit(param, p);
 			editor->acceptFiles(true, true);
 			connect(
@@ -72,14 +75,14 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 					this, SLOT(_setFileDialogFlag(bool)));
 			return editor;
 		}
-		if (type == "path") {
+		if (type.compare("Path",Qt::CaseInsensitive)==0) {
 			QDirEdit* editor = new QDirEdit(param, p);
 			connect(
 					editor, SIGNAL(dialogOpen(bool)),
 					this, SLOT(_setFileDialogFlag(bool)));
 			return editor;
 		}
-		if (type.contains(QRegExp("^\\s*\\{\\s*\\w.*\\}\\s*$"))) {
+		if (type.contains(QRegExp("^\\{\\s*\\w.*\\}\\s*$"))) {
 			QComboBox* editor = new QComboBox(p);
 			editor->setObjectName("selectBox");
 			QStringList options = type.trimmed().mid(
