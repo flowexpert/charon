@@ -77,10 +77,16 @@ ADD_LIBRARY(energycoupling SHARED
         ${charon_INCLUDE_DIR}/EnergyStencils/EnergyCoupling.hxx
         EnergyCoupling.cpp
 )
+ADD_LIBRARY(energynonlocal SHARED
+        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyNonLocal.h
+        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyNonLocal.hxx
+        EnergyNonLocal.cpp
+)
 LIST(APPEND Plugins
 	energybcc
 	energyclassic
 	energycoupling
+	energynonlocal
 )
 
 # Solvers
