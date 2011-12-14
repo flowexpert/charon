@@ -42,6 +42,10 @@ EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
 	     "<h2>Example for an EnergyStencil."
 	     )
 {
+  ParameteredObject::_addParameter< int >(norm,
+                      "norm",
+                      "0=mode, 1=median, 2=mean",
+                      1, "int");
   ParameteredObject::_addParameter< int >(radius,
 		      "radius",
 		      "radius of the neighborhood",
@@ -78,6 +82,7 @@ void EnergyNonLocal<T>::execute() {
   PARAMETEREDOBJECT_AVOID_REEXECUTION;
   ParameteredObject::execute();
 
+  _norm = norm();
   _radius = radius();
   _sigma_spatial = sigma_spatial();
   _sigma_color = sigma_color();
@@ -129,7 +134,15 @@ T EnergyNonLocal<T>::getEnergy( int, int xI, int yI, int zI, int )
 
     weight = spatial_weight * color_weight * occlusion_weight;
     weight_sum += weight;
-    pixelEnergy += weight * (du*du + dv*dv);
+
+    switch (_norm) {
+    case 0:
+      pixelEnergy += weight * (1 + 1); break;
+    case 1:
+      pixelEnergy += weight * (du + dv); break;
+    case 2:
+      pixelEnergy += weight * (du*du + dv*dv); break;
+    }
   }
   if (weight_sum) {
     pixelEnergy /= weight_sum;
@@ -191,8 +204,20 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
 
     weight = spatial_weight * color_weight * occlusion_weight;
     weight_sum += weight;
-    pixelGradientU += weight * 2 * du;
-    pixelGradientV += weight * 2 * dv;
+    switch (_norm) {
+    case 0:
+      pixelGradientU += 0;
+      pixelGradientV += 0;
+      break;
+    case 1:
+      pixelGradientU += weight;
+      pixelGradientV += weight;
+      break;
+    case 2:
+      pixelGradientU += weight * 2 * du;
+      pixelGradientV += weight * 2 * dv;
+      break;
+    }
   }
   if (weight_sum) {
     pixelGradientU /= weight_sum;

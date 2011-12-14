@@ -52,6 +52,7 @@ template <typename T>
 class energynonlocal_DECLDIR EnergyNonLocal :
 public EnergyStencil<T> {
  public:
+  Parameter< int > norm;
   Parameter< int > radius;              //  radius of the neighborhood
   Parameter< T > sigma_spatial;         //  spatial difference weight
   Parameter< T > sigma_color;           //  color difference weight
@@ -80,7 +81,7 @@ public EnergyStencil<T> {
 
   ~EnergyNonLocal();
 
-  int _radius;
+  int _norm, _radius;
   T _sigma_spatial, _sigma_color, _sigma_occ_divergence, _sigma_occ_color;
 
   inline T _gauss( T x, T mu, T sigma );

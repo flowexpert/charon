@@ -55,6 +55,9 @@ template <typename T>
 class energyclassic_DECLDIR EnergyClassic :
 public EnergyStencil<T> {
  public:
+
+  Parameter< int > norm;
+
   /// Input slot for current motion components
   InputSlot< cimg_library::CImgList<T> > motionUV;
 
@@ -77,6 +80,8 @@ public EnergyStencil<T> {
 private:
   /// destructor
   ~EnergyClassic();
+
+  int _norm;
 };
 
 #endif // _ENERGYCLASSIC_H_

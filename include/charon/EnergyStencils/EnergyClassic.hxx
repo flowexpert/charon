@@ -42,6 +42,10 @@ EnergyClassic<T>::EnergyClassic(const std::string& name) :
 	     "<h2>Energy stencil for classic regularization."
 	     )
 {
+  ParameteredObject::_addParameter< int >(norm,
+                      "norm",
+                      "0=mode, 1=median, 2=mean",
+                      2, "int");
 	this->_addInputSlot(motionUV,
 	                    "motionUV",
 	                    "current motion components",
@@ -52,34 +56,62 @@ template <class T>
 void EnergyClassic<T>::execute() {
   PARAMETEREDOBJECT_AVOID_REEXECUTION;
   ParameteredObject::execute();
+
+  _norm = norm();
 }
 
 template <class T>
 T EnergyClassic<T>::getEnergy( int, int x, int y, int z, int )
 {
-        T dx, dy;
+        T du, dv;
 	T pixelEnergy;    //  energy per pixel
 
 	T ret;
 
         pixelEnergy = 0.0;
-	dx = motionUV().atNXYZC( 0, x+1, y, z, 0 )  // u(x+1,y)
+	du = motionUV().atNXYZC( 0, x+1, y, z, 0 )  // u(x+1,y)
 	   - motionUV().atNXYZC( 0, x-1, y, z, 0 ); // u(x-1,y)
-	dx *= 0.5;
-	dy = motionUV().atNXYZC( 0, x, y+1, z, 0 )  // u(x,y+1)
+	du *= 0.5;
+	dv = motionUV().atNXYZC( 0, x, y+1, z, 0 )  // u(x,y+1)
 	   - motionUV().atNXYZC( 0, x, y-1, z, 0 ); // u(x,y-1)
-	dy *= 0.5;
-	pixelEnergy += (dx*dx);
-	pixelEnergy += (dy*dy);
+	dv *= 0.5;
 
-	dx = motionUV().atNXYZC( 1, x+1, y, z, 0 )  // v(x+1,y)
+        switch (_norm) {
+        case 0:
+                pixelEnergy += 0;
+                pixelEnergy += 0;
+                break;
+        case 1:
+                pixelEnergy += du;
+                pixelEnergy += dv;
+                break;
+        case 2:
+                pixelEnergy += (du*du);
+                pixelEnergy += (dv*dv);
+                break;
+        }
+
+	du = motionUV().atNXYZC( 1, x+1, y, z, 0 )  // v(x+1,y)
 	   - motionUV().atNXYZC( 1, x-1, y, z, 0 ); // v(x-1,y)
-	dx *= 0.5;
-	dy = motionUV().atNXYZC( 1, x, y+1, z, 0 )  // v(x,y+1)
+	du *= 0.5;
+	dv = motionUV().atNXYZC( 1, x, y+1, z, 0 )  // v(x,y+1)
 	   - motionUV().atNXYZC( 1, x, y-1, z, 0 ); // v(x,y-1)
-	dy *= 0.5;
-	pixelEnergy += (dx*dx);
-	pixelEnergy += (dy*dy);
+	dv *= 0.5;
+
+	switch (_norm) {
+	case 0:
+		pixelEnergy += 0;
+		pixelEnergy += 0;
+		break;
+	case 1:
+		pixelEnergy += du;
+		pixelEnergy += dv;
+		break;
+	case 2:
+		pixelEnergy += (du*du);
+		pixelEnergy += (dv*dv);
+		break;
+	}
 
 	ret = T(this->lambda()*pixelEnergy);
 
@@ -95,6 +127,7 @@ std::vector<T> EnergyClassic<T>::getEnergyGradient(
 	T pixelGradientU, pixelGradientV;  //  energy gradients wrt the "current" pixel x_k
                                            //  for example dE(u(x_k)) / du(x_k)
 
+if (_norm == 2) {
 	pixelGradientU =  0.0;
 	pixelGradientU += 4.0
 	 * motionUV().atNXYZC( 0, x, y, z, 0 );  //  4 * u(x,y)
@@ -118,9 +151,25 @@ std::vector<T> EnergyClassic<T>::getEnergyGradient(
 	 motionUV().atNXYZC( 1, x, y-1, z, 0 );  //  - v(x  ,y-1)
 	pixelGradientV -=
 	 motionUV().atNXYZC( 1, x, y+1, z, 0 );  //  - v(x  ,y+1)
+} else {
+	pixelGradientU = 0;
+	pixelGradientV = 0;
+}
 
-	ret[0] = T( this->lambda()*pixelGradientU );
-	ret[1] = T( this->lambda()*pixelGradientV );
+	switch (_norm) {
+	case 0:
+		ret[0] = T( 0 );
+		ret[1] = T( 0 );
+		break;
+	case 1:
+		ret[0] = T( 1 );
+		ret[1] = T( 1 );
+		break;
+	case 2:
+		ret[0] = T( this->lambda()*pixelGradientU );
+		ret[1] = T( this->lambda()*pixelGradientV );
+		break;
+	}
 
         return ret;
 }
