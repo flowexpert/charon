@@ -82,8 +82,8 @@ T EnergyClassic<T>::getEnergy( int, int x, int y, int z, int )
                 pixelEnergy += 0;
                 break;
         case 1:
-                pixelEnergy += du;
-                pixelEnergy += dv;
+                pixelEnergy += abs(du);
+                pixelEnergy += abs(dv);
                 break;
         case 2:
                 pixelEnergy += (du*du);
@@ -104,8 +104,8 @@ T EnergyClassic<T>::getEnergy( int, int x, int y, int z, int )
 		pixelEnergy += 0;
 		break;
 	case 1:
-		pixelEnergy += du;
-		pixelEnergy += dv;
+		pixelEnergy += abs(du);
+		pixelEnergy += abs(dv);
 		break;
 	case 2:
 		pixelEnergy += (du*du);

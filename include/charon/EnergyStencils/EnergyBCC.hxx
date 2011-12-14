@@ -81,7 +81,7 @@ T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
         u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
         v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-        energy = It + Ix*u + Iy*v;
+        energy = abs(It + Ix*u + Iy*v);
 
 	switch (_norm) {
 	case 0:

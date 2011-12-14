@@ -44,8 +44,7 @@ EnergyCoupling<T>::EnergyCoupling(const std::string& name) :
                             "CImgList<T>");
         this->_addInputSlot(tempLevel,
                             "tempLevel",
-                            "temperature level",
-                            "uint");
+                            "temperature level");
 }
 
 template <class T>

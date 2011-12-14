@@ -139,7 +139,7 @@ T EnergyNonLocal<T>::getEnergy( int, int xI, int yI, int zI, int )
     case 0:
       pixelEnergy += weight * (1 + 1); break;
     case 1:
-      pixelEnergy += weight * (du + dv); break;
+      pixelEnergy += weight * (abs(du) + abs(dv)); break;
     case 2:
       pixelEnergy += weight * (du*du + dv*dv); break;
     }
