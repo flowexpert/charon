@@ -65,6 +65,7 @@ namespace StatisticsDisplay {
 			public TemplatedParameteredObject<T> {
 	public:
 	
+
 		///Name-Statistics Map
 		typedef std::map<std::string, double> StatMap ;
 
@@ -90,11 +91,18 @@ namespace StatisticsDisplay {
 		/// A mask to decide where to compute the statistics
 		InputSlot < cimg_library::CImgList<T> > _cimgMask;
 
+		/// image of histogram
+		OutputSlot < cimg_library::CImgList<T> > _histograms ;
+
 		/// exported QWidget to display the results
 		OutputSlot < QWidget*> _display ;
 	
 		/// also write the results to sout stream
 		Parameter <bool> _writeToSout ;
+
+		/// number of bins for histogram
+		Parameter <size_t> _numBins ;
+
 	
 	private:
 
@@ -103,6 +111,7 @@ namespace StatisticsDisplay {
 	
 		/// statistics data for all input slots
 		std::vector<Statistics> _statistics ;
+
 
 
 	}; //class StatisticsDisplayPlugin
