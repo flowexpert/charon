@@ -28,6 +28,7 @@
 #include <charon/EnergyStencil.hxx>
 
 #include <cstdlib>
+#include <cmath>
 
 template <class T>
 EnergyBCC<T>::EnergyBCC(const std::string& name) :
@@ -36,10 +37,10 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 	     "<h2>Implementation of the brightness constancy constraint."
 	     )
 {
-  ParameteredObject::_addParameter< int >(norm,
+  ParameteredObject::_addParameter< T >(norm,
                       "norm",
-                      "0=mode, 1=median, 2=mean",
-                      2, "int");
+                      "p",
+                      2.0, "T");
 
         this->_addInputSlot(img_dx,
                             "img_dx",
@@ -64,6 +65,7 @@ void EnergyBCC<T>::execute() {
   PARAMETEREDOBJECT_AVOID_REEXECUTION;
   ParameteredObject::execute();
 
+  _lamb = this->lambda();
   _norm = norm();
 }
 
@@ -81,18 +83,16 @@ T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
         u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
         v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-        energy = abs(It + Ix*u + Iy*v);
+//        energy = pow( abs(It + Ix*u + Iy*v), _norm );  //  (!!)
+        energy = pow( It + Ix*u + Iy*v, 2 );
 
-	switch (_norm) {
-	case 0:
-		energy = 1; break;
-	case 1:
-		energy = energy; break;
-	case 2:
-		energy *= energy; break;
-	}
+	return T(this->_lamb * energy);
+}
 
-	return T(this->lambda() * energy);
+template <class T>
+T signum( T arg )
+{
+	return (arg < 0) ? T(-1) : T(1) ;
 }
 
 template <class T>
@@ -111,27 +111,16 @@ std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int
         u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
         v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-        tmp = It + Ix*u + Iy*v;
+//        tmp = _norm * pow( abs(It + Ix*u + Iy*v), _norm-1 )  //  (!!)
+//	    * signum( It + Ix*u + Iy*v );                      //  (!!)
 
-	pixelGradientU = 0;
-	pixelGradientV = 0;
-	switch (_norm) {
-	case 0:
-		pixelGradientU = 0;
-		pixelGradientV = 0;
-		break;
-	case 1:
-		pixelGradientU = Ix;
-		pixelGradientV = Iy;
-		break;
-	case 2:
-		pixelGradientU = 2.0 * Ix * tmp;
-		pixelGradientV = 2.0 * Iy * tmp;
-		break;
-	}
+        tmp = 2 * (It + Ix*u + Iy*v);
 
-	ret[0] = T(this->lambda() * pixelGradientU);
-	ret[1] = T(this->lambda() * pixelGradientV);
+	pixelGradientU = Ix * tmp;
+	pixelGradientV = Iy * tmp;
+
+	ret[0] = T(this->_lamb * pixelGradientU);
+	ret[1] = T(this->_lamb * pixelGradientV);
 
         return ret;
 }

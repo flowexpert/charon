@@ -42,15 +42,18 @@ EnergyCoupling<T>::EnergyCoupling(const std::string& name) :
                             "secondMotionUV",
                             "second flow field",
                             "CImgList<T>");
-        this->_addInputSlot(tempLevel,
-                            "tempLevel",
-                            "temperature level");
+  ParameteredObject::_addParameter< T >(temp,
+                      "temp",
+                      "temperature",
+                      1, "double");
 }
 
 template <class T>
 void EnergyCoupling<T>::execute() {
   PARAMETEREDOBJECT_AVOID_REEXECUTION;
   ParameteredObject::execute();
+
+  _lamb = this->lambda();
 }
 
 template <class T>
@@ -66,22 +69,9 @@ T EnergyCoupling<T>::getEnergy( int, int xI, int yI, int zI, int )
 
         energy = (u1 - v1) * (u1 - v1) + (u2 - v2) * (u2 - v2);
 
-	switch (tempLevel()) {
-	case 0:
-		temperature = 200; break;
-	case 1:
-		temperature = 100; break;
-	case 2:
-		temperature =  50; break;
-	case 3:
-		temperature =  20; break;
-	case 4:
-		temperature =  10; break;
-	default:
-		temperature =   1;
-	}
+	temperature = temp();
 
-	return T(this->lambda() * (energy/(2*temperature)));
+	return T(_lamb * (energy/(2*temperature)));
 }
 
 template <class T>
@@ -99,23 +89,10 @@ std::vector<T> EnergyCoupling<T>::getEnergyGradient( int, int xI, int yI, int zI
 	pixelGradientU = u1 - v1;
 	pixelGradientV = u2 - v2;
 
-        switch (tempLevel()) {
-        case 0:
-                temperature = 200; break;
-        case 1:
-                temperature = 100; break;
-        case 2:
-                temperature =  50; break;
-        case 3:
-                temperature =  20; break;
-        case 4:
-                temperature =  10; break;
-	default:
-		temperature =   1;
-        }
+	temperature = temp();
 
-	ret[0] = T(this->lambda() * (pixelGradientU/temperature));
-	ret[1] = T(this->lambda() * (pixelGradientV/temperature));
+	ret[0] = T(_lamb * (pixelGradientU/temperature));
+	ret[1] = T(_lamb * (pixelGradientV/temperature));
 
         return ret;
 }

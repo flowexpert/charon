@@ -66,7 +66,8 @@ public EnergyStencil<T> {
   InputSlot< cimg_library::CImgList<T> > secondMotionUV;
 
   /// Input slot for current iteration number.
-  InputSlot< unsigned int > tempLevel;
+//  InputSlot< unsigned int > tempLevel;
+  Parameter< T > temp;
 
   /// default constructor
   /// \param name          Instance name
@@ -87,6 +88,8 @@ public EnergyStencil<T> {
 private:
   /// destructor
   ~EnergyCoupling();
+
+  T _lamb;
 };
 
 #endif // _ENERGYCOUPLING_H_

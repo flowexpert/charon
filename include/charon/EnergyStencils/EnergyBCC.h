@@ -56,7 +56,7 @@ template <typename T>
 class energybcc_DECLDIR EnergyBCC :
 public EnergyStencil<T> {
  public:
-  Parameter< int > norm;
+  Parameter< T > norm;
   /// Input slot for image derivative wrt x
   InputSlot< cimg_library::CImgList<T> > img_dx;  //  I_x
   /// Input slot for image derivative wrt y
@@ -87,7 +87,8 @@ private:
   /// destructor
   ~EnergyBCC();
 
-  int _norm;
+  T _lamb;
+  T _norm;
 };
 
 #endif // _ENERGYBCC_H_
