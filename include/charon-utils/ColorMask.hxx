@@ -137,7 +137,10 @@ void ColorMask<T>::_rainbowMask(
 	// this has been taken from OpenKinect OpenGL example
 	// see http://openkinect.org/wiki/C%2B%2B_GL_Example
 	// only the lower 10 bits are considered
-	unsigned short pval = _gamma[val & 0x7ff];
+	if (val >= 0x7ff) {
+		val = 0x7ff;
+	}
+	unsigned short pval = _gamma[val];
 	unsigned char lb = pval & 0xff;
 	switch (pval>>8) {
 	case 0:
