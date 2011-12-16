@@ -104,6 +104,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/ColorMask.h
 		${CHARON_UTILS_INCLUDE_DIR}/ColorMask.hxx
 	)
+	ADD_LIBRARY(overlay SHARED
+		Overlay.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Overlay.h
+		${CHARON_UTILS_INCLUDE_DIR}/Overlay.hxx
+	)
 	ADD_LIBRARY(flowquiver SHARED
 		FlowQuiver.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/FlowQuiver.h
@@ -172,6 +177,7 @@ IF(USE_CIMG)
 		rgb2hsv
 		flow2hsv
 		colormask
+		overlay
 		flowquiver
 		linearfilter
 		mask1d
