@@ -35,8 +35,9 @@ ColorMask<T>::ColorMask(const std::string& name) :
 				"<br><br>"
 				"Assigns red to negative values and blue to positive values")
 {
-	//ParameteredObject::_addParameter(
-	//		colorMask, "colorMask", "color mask selection");
+	ParameteredObject::_addParameter<std::string>(
+				colorMask, "colorMask", "color mask selection",
+				"BR","{BR;Rainbow}");
 	ParameteredObject::_addParameter(
 			fullVal, "fullVal", "values with abs larger than fullVal are "
 			"assigned to red/blue (0=auto)", "T");
@@ -46,6 +47,18 @@ ColorMask<T>::ColorMask(const std::string& name) :
 	ParameteredObject::_addOutputSlot(
 			out, "out", "RGB data output [t](x,y,z,c)",
 			"CImgList<T>");
+
+	_gamma = new unsigned short[2048];
+	for(unsigned int i = 0; i < 2048; i++) {
+		float v = (float)i/2048.f;
+		v = v*v*v*6;
+		_gamma[i] = v*6*256;
+	}
+}
+
+template<typename T>
+ColorMask<T>::~ColorMask() {
+	delete _gamma;
 }
 
 template<typename T>
@@ -67,22 +80,41 @@ void ColorMask<T>::execute() {
 	cimg_library::CImgList<T>& o = out();
 	o.assign(i.size(),i[0].width(), i[0].height(), i[0].depth(), 3u);
 
-	cimg_library::CImg<double> col(1u,1u,1u,3u,0);
-	cimglist_for(i,t) {
-		cimg_forXYZ(i[t],x,y,z) {
-			_applyMask(i(t,x,y,z), col);
-			o(t,x,y,z,0u) = col(0u,0u,0u,0u);
-			o(t,x,y,z,1u) = col(0u,0u,0u,1u);
-			o(t,x,y,z,2u) = col(0u,0u,0u,2u);
+	if (colorMask() == "RB") {
+		// red/blue color mask
+		cimg_library::CImg<double> col(1u,1u,1u,3u,0);
+		cimglist_for(i,t) {
+			cimg_forXYZ(i[t],x,y,z) {
+				_applyMask(i(t,x,y,z), col);
+				o(t,x,y,z,0u) = col(0u,0u,0u,0u);
+				o(t,x,y,z,1u) = col(0u,0u,0u,1u);
+				o(t,x,y,z,2u) = col(0u,0u,0u,2u);
+			}
 		}
+	}
+	else if (colorMask() == "Rainbow") {
+		// rainbow color mask
+		if (typeid(T) != typeid(int)) {
+			sout << "(WW) rainbow color mask optimized for "
+					"10 bit int values!" << std::endl;
+		}
+		cimg_library::CImg<unsigned char> col(1u,1u,1u,3u,0);
+		cimglist_for(i,t) {
+			cimg_forXYZ(i[t],x,y,z) {
+				_rainbowMask(i(t,x,y,z), col);
+				o(t,x,y,z,0u) = col(0u,0u,0u,0u);
+				o(t,x,y,z,1u) = col(0u,0u,0u,1u);
+				o(t,x,y,z,2u) = col(0u,0u,0u,2u);
+			}
+		}
+	}
+	else {
+		ParameteredObject::raise("invalid color mask given: " + colorMask());
 	}
 }
 
 template<typename T>
 void ColorMask<T>::_applyMask(T val, cimg_library::CImg<double>& res) const {
-	// currently only one color mask is available,
-	// future development could use a parameter colorMask to select
-	// between multiple variants
 	assert(res.is_sameXYZC(1u,1u,1u,3u));
 
 	double v = 1. - std::abs((double)val/(double)_max);
@@ -94,6 +126,56 @@ void ColorMask<T>::_applyMask(T val, cimg_library::CImg<double>& res) const {
 	res(0u,0u,0u,1u) =         v;
 	res(0u,0u,0u,2u) = val<0 ? v : 1;
 	res *= 255.;
+}
+
+template<typename T>
+void ColorMask<T>::_rainbowMask(
+		unsigned short val, cimg_library::CImg<unsigned char> &res) const {
+	assert(res.is_sameXYZC(1u,1u,1u,3u));
+
+	// pseudo color coding
+	// this has been taken from OpenKinect OpenGL example
+	// see http://openkinect.org/wiki/C%2B%2B_GL_Example
+	// only the lower 10 bits are considered
+	unsigned short pval = _gamma[val & 0x7ff];
+	unsigned char lb = pval & 0xff;
+	switch (pval>>8) {
+	case 0:
+		res(0u,0u,0u,0u) = 255;
+		res(0u,0u,0u,1u) = 255-lb;
+		res(0u,0u,0u,2u) = 255-lb;
+		break;
+	case 1:
+		res(0u,0u,0u,0u) = 255;
+		res(0u,0u,0u,1u) = lb;
+		res(0u,0u,0u,2u) = 0;
+		break;
+	case 2:
+		res(0u,0u,0u,0u) = 255-lb;
+		res(0u,0u,0u,1u) = 255;
+		res(0u,0u,0u,2u) = 0;
+		break;
+	case 3:
+		res(0u,0u,0u,0u) = 0;
+		res(0u,0u,0u,1u) = 255;
+		res(0u,0u,0u,2u) = lb;
+		break;
+	case 4:
+		res(0u,0u,0u,0u) = 0;
+		res(0u,0u,0u,1u) = 255-lb;
+		res(0u,0u,0u,2u) = 255;
+		break;
+	case 5:
+		res(0u,0u,0u,0u) = 0;
+		res(0u,0u,0u,1u) = 0;
+		res(0u,0u,0u,2u) = 255-lb;
+		break;
+	default:
+		res(0u,0u,0u,0u) = 0;
+		res(0u,0u,0u,1u) = 0;
+		res(0u,0u,0u,2u) = 0;
+		break;
+	}
 }
 
 #endif // COLORMASK_HXX_

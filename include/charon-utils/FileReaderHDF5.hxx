@@ -61,7 +61,7 @@ void FileReaderHDF5<T>::execute() {
 			file.getDatasetDimensions(dSet) == 5, "Dataset has to be 5D.");
 	const vigra::ArrayVector<hsize_t>& shape = file.getDatasetShape(dSet);
 	vigra_postcondition(shape.size() == 5, "infoShape has != 5 elements");
-	sout << "\tData set has shape " << shape[0] << "x" << shape[1] << "x"
+	sout << "(II) \tData set has shape " << shape[0] << "x" << shape[1] << "x"
 			<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;
 
 	if(roi.connected()) {

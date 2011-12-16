@@ -51,13 +51,18 @@ class colormask_DECLDIR ColorMask : public TemplatedParameteredObject<T>
 public:
 	/// standard constructor
 	ColorMask(const std::string& name = "" /** [in] instance name*/);
+	virtual ~ColorMask();
 
 	/// \copybrief ParameteredObject::execute()
 	/** \copydetails ParameteredObject::execute() */
 	virtual void execute();
 
-	// / color mask selection
-	//Parameter<unsigned int> colorMask;
+	///  color mask selection
+	/**  select coloring pattern:
+	 *   - "BR": blue/red colormap, zero is white, red is neg, blue is pos
+	 *   - "Rainbow": rainbow colors for 10 bit int data
+	 */
+	Parameter<std::string> colorMask;
 
 	/// values with abs larger than fullVal are assigned to red/blue
 	/// (0=auto)
@@ -78,6 +83,16 @@ private:
 	 *  \param res    result (1x1x1x3)
 	 */
 	void _applyMask(T val, cimg_library::CImg<double>& res) const;
+
+	/// calculate rainbow color mask
+	/** \param val    gray value to convert (expected: 11 bit uint)
+	 *  \param res    result (1x1x1x3)
+	 */
+	void _rainbowMask(
+		unsigned short val, cimg_library::CImg<unsigned char>& res) const;
+
+	/// gamma correction for rainbow pattern
+	unsigned short* _gamma;
 };
 
 #endif // COLORMASK_H_
