@@ -56,7 +56,7 @@ class energyclassic_DECLDIR EnergyClassic :
 public EnergyStencil<T> {
  public:
 
-  Parameter< int > norm;
+  Parameter< T > norm;
 
   /// Input slot for current motion components
   InputSlot< cimg_library::CImgList<T> > motionUV;
@@ -81,7 +81,10 @@ private:
   /// destructor
   ~EnergyClassic();
 
-  int _norm;
+  T _energyFunction( T x, T xo );
+  T _energyFunctionDeriv( T x, T xo );
+
+  T _norm, _lamb; 
 };
 
 #endif // _ENERGYCLASSIC_H_
