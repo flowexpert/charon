@@ -42,10 +42,14 @@ EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
 	     "<h2>Example for an EnergyStencil."
 	     )
 {
-  ParameteredObject::_addParameter< int >(norm,
+  ParameteredObject::_addParameter< int >(useWeight,
+                      "useWeight",
+                      "use weighted median (1) or not (0)",
+                      0, "int");
+  ParameteredObject::_addParameter< T >(norm,
                       "norm",
-                      "0=mode, 1=median, 2=mean",
-                      1, "int");
+                      "p",
+                      1.0, "T");
   ParameteredObject::_addParameter< int >(radius,
 		      "radius",
 		      "radius of the neighborhood",
@@ -82,7 +86,9 @@ void EnergyNonLocal<T>::execute() {
   PARAMETEREDOBJECT_AVOID_REEXECUTION;
   ParameteredObject::execute();
 
+  _lamb = this->lambda();
   _norm = norm();
+  _useWeight = useWeight();
   _radius = radius();
   _sigma_spatial = sigma_spatial();
   _sigma_color = sigma_color();
@@ -112,36 +118,35 @@ T EnergyNonLocal<T>::getEnergy( int, int xI, int yI, int zI, int )
        - motionUV().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
     dv = motionUV().atNXYZC( 1, xI,     yI,     zI,     0 )
        - motionUV().atNXYZC( 1, xI+dxI, yI+dyI, zI+dzI, 0 );
-    dxU = (motionUV().atNXYZC( 0, xI+dxI+1, yI+dyI,   zI+dzI, 0 )
-          -motionUV().atNXYZC( 0, xI+dxI-1, yI+dyI,   zI+dzI, 0 ))/2;
-    dyV = (motionUV().atNXYZC( 1, xI+dxI,   yI+dyI+1, zI+dzI, 0 )
-          -motionUV().atNXYZC( 1, xI+dxI,   yI+dyI-1, zI+dzI, 0 ))/2;
-    divergence = dxU + dyV;
-    if (divergence > 0) divergence = 0;
 
-    spatial_weight = _gauss( sqrt(dxI*dxI + dyI*dyI), 0, _sigma_spatial );
-    color_diff = img().atNXYZC( 0, xI,     yI,     zI,     0 )
-               - img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
-    color_weight = _gauss( color_diff, 0, _sigma_color );
+    if (_useWeight) {
+      dxU = (motionUV().atNXYZC( 0, xI+dxI+1, yI+dyI,   zI+dzI, 0 )
+            -motionUV().atNXYZC( 0, xI+dxI-1, yI+dyI,   zI+dzI, 0 ))/2;
+      dyV = (motionUV().atNXYZC( 1, xI+dxI,   yI+dyI+1, zI+dzI, 0 )
+            -motionUV().atNXYZC( 1, xI+dxI,   yI+dyI-1, zI+dzI, 0 ))/2;
+      divergence = dxU + dyV;
+      if (divergence > 0) divergence = 0;
 
-    motX = motionUV().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
-    motY = motionUV().atNXYZC( 1, xI+dxI, yI+dyI, zI+dzI, 0 );
-    mot_comp_diff = img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 )
-                  - img().atNXYZC( 0, xI+dxI+motX, yI+dyI+motY, zI+dzI, 1 );
+      spatial_weight = _gauss( sqrt(dxI*dxI + dyI*dyI), 0, _sigma_spatial );
+      color_diff = img().atNXYZC( 0, xI,     yI,     zI,     0 )
+                 - img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
+      color_weight = _gauss( color_diff, 0, _sigma_color );
 
-    occlusion_weight =  _gauss( divergence, 0, _sigma_occ_divergence );
-    occlusion_weight *= _gauss( mot_comp_diff, 0, _sigma_occ_color );
+      motX = motionUV().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
+      motY = motionUV().atNXYZC( 1, xI+dxI, yI+dyI, zI+dzI, 0 );
+      mot_comp_diff = img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 )
+                    - img().atNXYZC( 0, xI+dxI+motX, yI+dyI+motY, zI+dzI, 1 );
 
-    weight = spatial_weight * color_weight * occlusion_weight;
-    weight_sum += weight;
+      occlusion_weight =  _gauss( divergence, 0, _sigma_occ_divergence );
+      occlusion_weight *= _gauss( mot_comp_diff, 0, _sigma_occ_color );
 
-    switch (_norm) {
-    case 0:
-      pixelEnergy += weight * (1 + 1); break;
-    case 1:
-      pixelEnergy += weight * (abs(du) + abs(dv)); break;
-    case 2:
-      pixelEnergy += weight * (du*du + dv*dv); break;
+      weight = spatial_weight * color_weight * occlusion_weight;
+      weight_sum += weight;
+
+      pixelEnergy += weight * (pow( fabs(du), _norm ) + pow( fabs(dv), _norm ));
+    } else {
+      pixelEnergy += pow( fabs(du), _norm ) + pow( fabs(dv), _norm );
+      weight_sum += 1.0;
     }
   }
   if (weight_sum) {
@@ -150,7 +155,13 @@ T EnergyNonLocal<T>::getEnergy( int, int xI, int yI, int zI, int )
     pixelEnergy = 0.0;
   }
 
-  return T(this->lambda()*pixelEnergy);
+  return T(_lamb * pixelEnergy);
+}
+
+template <class T>
+T signum( T arg )
+{
+        return (arg < 0) ? T(-1) : T(1) ;
 }
 
 template <class T>
@@ -182,41 +193,37 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
        - motionUV().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
     dv = motionUV().atNXYZC( 1, xI,     yI,     zI,     0 )
        - motionUV().atNXYZC( 1, xI+dxI, yI+dyI, zI+dzI, 0 );
-    dxU = (motionUV().atNXYZC( 0, xI+dxI+1, yI+dyI,   zI+dzI, 0 )
-          -motionUV().atNXYZC( 0, xI+dxI-1, yI+dyI,   zI+dzI, 0 ))/2;
-    dyV = (motionUV().atNXYZC( 1, xI+dxI,   yI+dyI+1, zI+dzI, 0 )
-          -motionUV().atNXYZC( 1, xI+dxI,   yI+dyI-1, zI+dzI, 0 ))/2;
-    divergence = dxU + dyV;
-    if (divergence > 0) divergence = 0;
 
-    spatial_weight = _gauss( sqrt(dxI*dxI + dyI*dyI), 0, _sigma_spatial );
-    color_diff = img().atNXYZC( 0, xI,     yI,     zI,     0 )
-               - img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
-    color_weight = _gauss( color_diff, 0, _sigma_color );
+    if (_useWeight) {
+      dxU = (motionUV().atNXYZC( 0, xI+dxI+1, yI+dyI,   zI+dzI, 0 )
+            -motionUV().atNXYZC( 0, xI+dxI-1, yI+dyI,   zI+dzI, 0 ))/2;
+      dyV = (motionUV().atNXYZC( 1, xI+dxI,   yI+dyI+1, zI+dzI, 0 )
+            -motionUV().atNXYZC( 1, xI+dxI,   yI+dyI-1, zI+dzI, 0 ))/2;
+      divergence = dxU + dyV;
+      if (divergence > 0) divergence = 0;
 
-    motX = motionUV().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
-    motY = motionUV().atNXYZC( 1, xI+dxI, yI+dyI, zI+dzI, 0 );
-    mot_comp_diff = img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 )
-                  - img().atNXYZC( 0, xI+dxI+motX, yI+dyI+motY, zI+dzI, 1 );
+      spatial_weight = _gauss( sqrt(dxI*dxI + dyI*dyI), 0, _sigma_spatial );
+      color_diff = img().atNXYZC( 0, xI,     yI,     zI,     0 )
+                 - img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
+      color_weight = _gauss( color_diff, 0, _sigma_color );
 
-    occlusion_weight =  _gauss( divergence, 0, _sigma_occ_divergence );
-    occlusion_weight *= _gauss( mot_comp_diff, 0, _sigma_occ_color );
+      motX = motionUV().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
+      motY = motionUV().atNXYZC( 1, xI+dxI, yI+dyI, zI+dzI, 0 );
+      mot_comp_diff = img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 )
+                    - img().atNXYZC( 0, xI+dxI+motX, yI+dyI+motY, zI+dzI, 1 );
 
-    weight = spatial_weight * color_weight * occlusion_weight;
-    weight_sum += weight;
-    switch (_norm) {
-    case 0:
-      pixelGradientU += 0;
-      pixelGradientV += 0;
-      break;
-    case 1:
-      pixelGradientU += weight;
-      pixelGradientV += weight;
-      break;
-    case 2:
-      pixelGradientU += weight * 2 * du;
-      pixelGradientV += weight * 2 * dv;
-      break;
+      occlusion_weight =  _gauss( divergence, 0, _sigma_occ_divergence );
+      occlusion_weight *= _gauss( mot_comp_diff, 0, _sigma_occ_color );
+
+      weight = spatial_weight * color_weight * occlusion_weight;
+      weight_sum += weight;
+
+      pixelGradientU += weight * _norm * pow( fabs(du), _norm-1 ) * signum(du);
+      pixelGradientV += weight * _norm * pow( fabs(dv), _norm-1 ) * signum(dv);
+    } else {
+      pixelGradientU += _norm * pow( fabs(du), _norm-1 ) * signum(du);
+      pixelGradientV += _norm * pow( fabs(dv), _norm-1 ) * signum(dv);
+      weight_sum += 1.0;
     }
   }
   if (weight_sum) {
@@ -227,8 +234,8 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
       pixelGradientV = 0.0;
   }
 
-  ret[0] = T(this->lambda()*pixelGradientU);
-  ret[1] = T(this->lambda()*pixelGradientV);
+  ret[0] = T(_lamb * pixelGradientU);
+  ret[1] = T(_lamb * pixelGradientV);
 
   return ret;
 }
