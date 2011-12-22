@@ -45,6 +45,8 @@ public:
 	/// create a new sample object
 	/// \param name             Object name
 	explicit DummyModule(const std::string& name = "");
+protected:
+	virtual void execute() {}
 };
 
 DummyModule::DummyModule(const std::string& name) :

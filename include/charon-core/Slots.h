@@ -159,9 +159,6 @@ public:
 	virtual void load(
 			const ParameterFile& pf,
 			const PluginManagerInterface* man) = 0;
-
-	/// Calls execute() on all targets.
-	virtual void execute() = 0;
 };
 
 /// Encapsulation of slot connection handling (type specific)
@@ -196,8 +193,6 @@ public:
 	virtual void save(ParameterFile& pf) const;
 	virtual void load(
 			const ParameterFile& pf, const PluginManagerInterface* man);
-	virtual void execute();
-
 	virtual std::string getType() const;
 
 	/// @name Iterators for stl-like usage

@@ -413,7 +413,7 @@ public:
 	 *
 	 * @see addTargetPoint(ParameteredObject *)
 	 */
-	void executeWorkflow();
+	void runWorkflow();
 
 	/**
 	 * Iterates through the plugins available inside the plugin path and

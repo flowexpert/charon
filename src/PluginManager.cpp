@@ -322,7 +322,7 @@ void PluginManager::setDefaultTemplateType(const template_type t) {
 	}
 }
 
-void PluginManager::executeWorkflow() {
+void PluginManager::runWorkflow() {
 	std::list<ParameteredObject*> tPoints = _determineTargetPoints();
 	std::list<ParameteredObject*>::const_iterator iter;
 
@@ -336,7 +336,7 @@ void PluginManager::executeWorkflow() {
 	}
 
 	for (iter = tPoints.begin(); iter != tPoints.end(); iter++) {
-		(*iter)->execute();
+		(*iter)->run();
 	}
 }
 

@@ -67,11 +67,8 @@ public:
 		_addOutputSlot(out1, "out1", "sample integer output slot");
 		_addOutputSlot(out2, "out2", "sample float output slot");
 	}
-
-	virtual void execute() {
-		PARAMETEREDOBJECT_AVOID_REEXECUTION;
-		ParameteredObject::execute();
-	}
+protected:
+	virtual void execute() {}
 };
 
 /// sample ParameteredObject class.
@@ -100,6 +97,8 @@ public:
 	std::set<ParameteredObject*> getTargets() {
 		return _getTargetNodes();
 	}
+protected:
+	virtual void execute() {}
 };
 
 class  ExceptSample : public ParameteredObject {
@@ -107,13 +106,11 @@ class  ExceptSample : public ParameteredObject {
 public:
 	ExceptSample(const std::string& name = "") :
 		ParameteredObject("exceptsample", name,
-			"sample class which throws")
-		{ ;	}
+			"sample class which throws") {
+	}
 
 	virtual void execute() {
-		PARAMETEREDOBJECT_AVOID_REEXECUTION;
-		ParameteredObject::execute();
-		raise(std::string("error")) ;
+		raise(std::string("error"));
 	}
 } ;
 
@@ -162,7 +159,7 @@ int test() {
 	assert(!outgen->executed());
 	assert(!outgen2->executed());
 	assert(!sample->executed());
-	sample->execute();
+	sample->run();
 	assert(outgen->executed());
 	assert(outgen2->executed());
 	assert(sample->executed());
@@ -174,14 +171,14 @@ int test() {
 	assert(!sample->executed());
 
 	// check resetting of execution property (without propagation)
-	sample->execute();
+	sample->run();
 	outgen->resetExecuted(false);
 	assert(!outgen->executed());
 	assert(outgen2->executed());
 	assert(sample->executed());
 
 	// check new skip reexecution macro
-	sample->execute();
+	sample->run();
 	assert(!outgen->executed());
 
 	// check usage of getTargets

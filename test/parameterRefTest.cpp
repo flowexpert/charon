@@ -42,6 +42,8 @@ public:
 		_addParameter (par1, "par1", "sample integer parameter");
 		_addParameter (par2, "par2", "sample float parameter");
 	}
+protected:
+	virtual void execute() {}
 };
 
 /// Test application for References in Parameters and ParameterFiles

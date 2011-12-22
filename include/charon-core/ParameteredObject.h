@@ -292,6 +292,13 @@ protected:
 	 */
 	std::set<ParameteredObject*> _getTargetNodes();
 
+	/// execute plugin code
+	/** The default implementation does nothing at all.
+	 *  Override this function implementing new modules.
+	 *  This function may be pure virtual in future releases.
+	 */
+	virtual void execute();
+
 public:
 	/// The template type of the instance is double
 	static const template_type TYPE_DOUBLE = 0;
@@ -338,26 +345,22 @@ public:
 
 	/// Update object.
 	/**
-	 *  The default implementation only calls execute() on all InputSlots.
-	 *  Reimplement this function to react on changed input data.
+	 *  This function calls run on all InputSlots,
+	 *  then the execute function is run.
+	 *  After execution, the executed flag is set.
+	 *  This function returns immediately, if the executed
+	 *  flag is set already to avoid duplicate execution.
 	 */
-	virtual void execute();
+	virtual void run();
 
 	/// get execution status
 	bool executed() const {
 		return _executed;
 	}
 
-	/// Macro to avoid reexecution of Modules
-	/** Use this before the call of ParameteredObject::execute()
-	 *  in overrided execute methods.
-	 */
+	/// deprecated macro
 #define PARAMETEREDOBJECT_AVOID_REEXECUTION \
-	if (this->executed()) {\
-		sout << "(II) Skipping reexecution of " << this->getClassName()\
-			<< " \"" << this->getName() << "\"" << std::endl;\
-		return;\
-	}
+		sout << "(WW) using deprecated AVOID_REEXECUTION macro" << std::endl;
 
 	/// reset execution status
 	/** This sets the propety _executed to false.

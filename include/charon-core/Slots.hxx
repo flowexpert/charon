@@ -246,14 +246,6 @@ void AbstractSlot<T>::load(const ParameterFile& pf,
 }
 
 template<typename T>
-void AbstractSlot<T>::execute() {
-	for (typename std::set<AbstractSlot<T>*>::iterator it = _targets.begin(); it
-			!= _targets.end(); it++) {
-		(*it)->getParent().execute();
-	}
-}
-
-template<typename T>
 inline std::string AbstractSlot<T>::getType() const {
 	std::string::size_type pos = _type.find("<t>");
 	if (pos != std::string::npos) {
