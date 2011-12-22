@@ -67,10 +67,17 @@ void UnixPluginLoader::load() throw (PluginException) {
 		}
 	}
 
-	create = (ParameteredObject*(*)(const std::string &, template_type))
-				dlsym(libHandle, "create");
-
-	destroy = (void(*)(ParameteredObject *)) dlsym(libHandle, "destroy");
+	// get function pointers from shared library
+	*reinterpret_cast<void**>(&create)  = dlsym(libHandle, "create");
+	*reinterpret_cast<void**>(&destroy) = dlsym(libHandle, "destroy");
+	// This way, there is no cast between a
+	// pointer-to-function and pointer-to-object
+	// (-> not allowed by ISO C++!)
+	//
+	// The *adress* of the target function (which is an object)
+	// is casted to void**, then dereferenced immediatly, so the
+	// left hand side is an object pointer with same content as
+	// the function pointers create/destroy.
 
 	if (!create) {
 		dlclose(libHandle);
