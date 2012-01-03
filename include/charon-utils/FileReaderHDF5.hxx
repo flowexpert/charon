@@ -28,10 +28,17 @@
 #include "FileReaderHDF5.h"
 #include <vigra/hdf5impex.hxx>
 
+
 template<typename T>
 FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
 			TemplatedParameteredObject<T>("FileReaderHDF5", name,
-					"Read 5D vigra::MultiArray from a HDF5 file"),
+					"Read data from a HDF5 file into a 5D vigra multiarray"
+					"<br>Data with more than 5 dimensions is not supported."
+					"<br>Loading a Region-of-interest(ROI) is only supported "
+					" for Datasets which are 5D"
+					"<br> ROIs for Datasets with lower dimensionality will be "
+					"ignored and loading will be slower."
+					),
 			roi(true,false) // optional
 {
 	ParameteredObject::_addParameter(
@@ -57,14 +64,12 @@ void FileReaderHDF5<T>::execute() {
 
 	vigra::HDF5File file(filename().c_str(), vigra::HDF5File::Open);
 	std::string dSet = pathInFile().c_str();
-	vigra_precondition(
-			file.getDatasetDimensions(dSet) == 5, "Dataset has to be 5D.");
 	const vigra::ArrayVector<hsize_t>& shape = file.getDatasetShape(dSet);
-	vigra_postcondition(shape.size() == 5, "infoShape has != 5 elements");
-	sout << "(II) \tData set has shape " << shape[0] << "x" << shape[1] << "x"
-			<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;
+	
+	if(roi.connected() && shape.size() == 5) {
+		sout << "\tData set has shape " << shape[0] << "x" << shape[1] << "x"
+				<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;
 
-	if(roi.connected()) {
 		// partial read of dataset
 		const Roi<int>& r = *roi();
 		vigra_precondition(
@@ -82,12 +87,84 @@ void FileReaderHDF5<T>::execute() {
 		file.readBlock(dSet,blockOffset,blockShape,o);
 	}
 	else {
-		// read whole dataset
 		vigra::MultiArrayShape<5>::type tShape;
-		for(unsigned int ii=0; ii<5; ii++)
-			tShape[ii]=shape[ii];
-		o.reshape(tShape);
-		file.read(dSet,o);
+		for(unsigned int ii = 0 ;ii<5; ii++)
+			tShape[ii]= 1;
+		sout << "\tData set has shape " ;
+		for(unsigned int ii = 0 ; ii < shape.size() ; ii++)
+		{	
+			sout << shape[ii] << " x " ;
+			tShape[ii] = shape[ii] ;
+		}
+		sout << std::endl ;
+		o.reshape(tShape) ;
+		//create temporary MultiArray for each dimensionality and
+		//copy the data to the 5D target array
+		// *I know this is dump, but there is no obvious other way*
+		if(shape.size() == 1)
+		{
+			vigra::MultiArray<1,T> tmp ;
+			vigra::MultiArrayShape<1>::type rShape;
+			for(unsigned int ii= 0 ; ii < 1 ; ii++)
+				rShape[ii] = shape[ii] ;
+			tmp.reshape(rShape) ;
+			file.read(dSet,tmp) ;
+
+			#pragma omp parallel for
+			for(int xx = 0 ; xx < rShape[0] ; xx++)
+				o(xx,0,0,0,0) = tmp(xx) ;
+			
+		}
+		else if(shape.size() == 2)
+		{
+			vigra::MultiArray<2,T> tmp ;
+			vigra::MultiArrayShape<2>::type rShape;
+			for(unsigned int ii= 0 ; ii < 2 ; ii++)
+				rShape[ii] = shape[ii] ;
+			tmp.reshape(rShape) ;
+			file.read(dSet,tmp) ;
+
+			#pragma omp parallel for 
+			for(int xx = 0 ; xx < rShape[0] ; xx++)
+				for(int yy = 0 ; yy < rShape[1] ; yy++)
+						o(xx,yy,0,0,0) = tmp(xx,yy) ;
+		}
+		else if(shape.size() == 3)
+		{
+			vigra::MultiArray<3,T> tmp ;
+			vigra::MultiArrayShape<3>::type rShape;
+			for(unsigned int ii= 0 ; ii < 3 ; ii++)
+				rShape[ii] = shape[ii] ;
+			tmp.reshape(rShape) ;
+			file.read(dSet,tmp) ;
+
+			#pragma omp parallel for 
+			for(int xx = 0 ; xx < rShape[0] ; xx++)
+				for(int yy = 0 ; yy < rShape[1] ; yy++)
+					for(int zz = 0 ; zz < rShape[2] ; zz++)
+						o(xx,yy,zz,0,0) = tmp(xx,yy,zz) ;
+		}
+		else if(shape.size() == 4)
+		{
+			vigra::MultiArray<4,T> tmp ;
+			vigra::MultiArrayShape<4>::type rShape;
+			for(unsigned int ii= 0 ; ii < 4 ; ii++)
+				rShape[ii] = shape[ii] ;
+			tmp.reshape(rShape) ;
+			file.read(dSet,tmp) ;
+
+			#pragma omp parallel for 
+			for(int xx = 0 ; xx < rShape[0] ; xx++)
+				for(int yy = 0 ; yy < rShape[1] ; yy++)
+					for(int zz = 0 ; zz < rShape[2] ; zz++)
+						for(int vv = 0 ; vv < rShape[2] ; vv++)
+							o(xx,yy,zz,vv,0) = tmp(xx,yy,zz,vv) ;
+		}
+		else if(shape.size() == 5)
+		{
+			file.read(dSet,o) ;
+		}
+
 	}
 }
 
