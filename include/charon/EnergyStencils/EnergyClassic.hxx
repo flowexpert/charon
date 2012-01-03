@@ -71,7 +71,7 @@ template <class T>
 T EnergyClassic<T>::_energyFunction( T x, T xo )
 {
 	T energy;
-	energy = pow( fabs( x - xo ), _norm );
+	energy = pow( fabs( double(x - xo) ), double(_norm) );
 	return energy;
 }
 
@@ -80,7 +80,7 @@ T EnergyClassic<T>::_energyFunctionDeriv( T x, T xo )
 {
 	T tmp;
 	T f = x - xo;
-	tmp = _norm * pow( fabs( f ), _norm-1 ) * signum( f );
+	tmp = _norm * pow( fabs( double(f) ), double(_norm-1) ) * signum( f );
 	return tmp;  //  ATTENTION : this is only the internal derivative !
 }
 

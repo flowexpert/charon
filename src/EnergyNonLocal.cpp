@@ -25,7 +25,11 @@
 /// Class name of the plugin
 #define TYPE EnergyNonLocal
 
+///export symbols of parent classes/plugins must be defined
+#define energystencil_EXPORTS
+
 #include <charon/EnergyStencils/EnergyNonLocal.hxx>
+//#include <charon/EnergyStencil.h>
 
 /// Creates an instance of the plugin
 extern "C" energynonlocal_DECLDIR ParameteredObject*

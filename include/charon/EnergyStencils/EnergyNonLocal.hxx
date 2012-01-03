@@ -127,7 +127,7 @@ T EnergyNonLocal<T>::getEnergy( int, int xI, int yI, int zI, int )
       divergence = dxU + dyV;
       if (divergence > 0) divergence = 0;
 
-      spatial_weight = _gauss( sqrt(dxI*dxI + dyI*dyI), 0, _sigma_spatial );
+      spatial_weight = _gauss( sqrt(double(dxI*dxI + dyI*dyI)), 0, _sigma_spatial );
       color_diff = img().atNXYZC( 0, xI,     yI,     zI,     0 )
                  - img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
       color_weight = _gauss( color_diff, 0, _sigma_color );
@@ -143,9 +143,9 @@ T EnergyNonLocal<T>::getEnergy( int, int xI, int yI, int zI, int )
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      pixelEnergy += weight * (pow( fabs(du), _norm ) + pow( fabs(dv), _norm ));
+      pixelEnergy += weight * (pow( fabs(double(du)), double(_norm) ) + pow( fabs(double(dv)), double(_norm) ));
     } else {
-      pixelEnergy += pow( fabs(du), _norm ) + pow( fabs(dv), _norm );
+      pixelEnergy += pow( fabs(double(du)), double(_norm) ) + pow( fabs(double(dv)), double(_norm) );
       weight_sum += 1.0;
     }
   }
@@ -202,7 +202,7 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
       divergence = dxU + dyV;
       if (divergence > 0) divergence = 0;
 
-      spatial_weight = _gauss( sqrt(dxI*dxI + dyI*dyI), 0, _sigma_spatial );
+      spatial_weight = _gauss( sqrt(double(dxI*dxI + dyI*dyI)), 0, _sigma_spatial );
       color_diff = img().atNXYZC( 0, xI,     yI,     zI,     0 )
                  - img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
       color_weight = _gauss( color_diff, 0, _sigma_color );
@@ -218,11 +218,11 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      pixelGradientU += weight * _norm * pow( fabs(du), _norm-1 ) * signum(du);
-      pixelGradientV += weight * _norm * pow( fabs(dv), _norm-1 ) * signum(dv);
+      pixelGradientU += weight * _norm * pow( fabs(double(du)), double(_norm-1) ) * signum(du);
+      pixelGradientV += weight * _norm * pow( fabs(double(dv)), double(_norm-1) ) * signum(dv);
     } else {
-      pixelGradientU += _norm * pow( fabs(du), _norm-1 ) * signum(du);
-      pixelGradientV += _norm * pow( fabs(dv), _norm-1 ) * signum(dv);
+      pixelGradientU += _norm * pow( fabs(double(du)), double(_norm-1) ) * signum(du);
+      pixelGradientV += _norm * pow( fabs(double(dv)), double(_norm-1) ) * signum(dv);
       weight_sum += 1.0;
     }
   }
@@ -252,7 +252,7 @@ template <typename T>
 inline T EnergyNonLocal<T>::_gauss( T x, T mu, T sigma )
 {
   return 1/(sqrt(2*M_PI*sigma*sigma))
-    * exp(-(x - mu)*(x - mu)/(2*sigma*sigma)) ;
+    * exp(double(-(x - mu)*(x - mu)/(2*sigma*sigma))) ;
 }
 
 template <typename T>

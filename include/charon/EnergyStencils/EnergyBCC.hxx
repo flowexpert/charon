@@ -83,7 +83,7 @@ T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
         u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
         v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-        energy = pow( fabs(It + Ix*u + Iy*v), _norm );
+        energy = pow( fabs(double(It + Ix*u + Iy*v)), double(_norm) );
 
 	return T(this->_lamb * energy);
 }
@@ -110,7 +110,7 @@ std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int
         u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
         v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-        tmp = _norm * pow( fabs(It + Ix*u + Iy*v), _norm-1 )
+        tmp = _norm * pow( fabs(double(It + Ix*u + Iy*v)), double(_norm-1) )
 	    * signum( It + Ix*u + Iy*v );
 
 	pixelGradientU = Ix * tmp;

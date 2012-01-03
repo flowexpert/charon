@@ -37,7 +37,7 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
 /// Helper for connecting a CGSolver.
 /** This provides current flow/initial flow for further processing.
