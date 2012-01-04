@@ -28,6 +28,33 @@
 #include "FileReaderHDF5.h"
 #include <vigra/hdf5impex.hxx>
 
+template<typename T, int N>
+vigra::MultiArray<5,T> readNDimHDF5(
+	vigra::HDF5File& file,
+	const vigra::ArrayVector<hsize_t>& shape,
+	const std::string& pathInFile) {
+
+	vigra::MultiArray<N,T> tmp ;
+	//temporary shape
+	typename vigra::MultiArrayShape<N>::type tShape;
+	//result shape
+	typename vigra::MultiArrayShape<5>::type rShape;
+	
+	sout << "\tData set has shape " ;
+	for(unsigned int ii= 0 ; ii < N ; ii++)
+	{	
+		sout << shape[ii] << " x " ;
+		rShape[ii] = tShape[ii] = shape[ii] ;
+	}
+	sout << std::endl ;
+	for(unsigned int ii= N  ; ii < 5 ; ii++)
+	{	rShape[ii] = 1 ;	}
+	tmp.reshape(tShape) ;
+	file.read(pathInFile,tmp) ;
+	return vigra::MultiArray<5,T>(rShape,tmp.data()) ;
+	
+}
+
 
 template<typename T>
 FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
@@ -87,84 +114,26 @@ void FileReaderHDF5<T>::execute() {
 		file.readBlock(dSet,blockOffset,blockShape,o);
 	}
 	else {
-		vigra::MultiArrayShape<5>::type tShape;
-		for(unsigned int ii = 0 ;ii<5; ii++)
-			tShape[ii]= 1;
-		sout << "\tData set has shape " ;
-		for(unsigned int ii = 0 ; ii < shape.size() ; ii++)
-		{	
-			sout << shape[ii] << " x " ;
-			tShape[ii] = shape[ii] ;
-		}
-		sout << std::endl ;
-		o.reshape(tShape) ;
-		//create temporary MultiArray for each dimensionality and
-		//copy the data to the 5D target array
-		// *I know this is dump, but there is no obvious other way*
-		if(shape.size() == 1)
-		{
-			vigra::MultiArray<1,T> tmp ;
-			vigra::MultiArrayShape<1>::type rShape;
-			for(unsigned int ii= 0 ; ii < 1 ; ii++)
-				rShape[ii] = shape[ii] ;
-			tmp.reshape(rShape) ;
-			file.read(dSet,tmp) ;
-
-			#pragma omp parallel for
-			for(int xx = 0 ; xx < rShape[0] ; xx++)
-				o(xx,0,0,0,0) = tmp(xx) ;
-			
-		}
+		if(shape.size() == 0 || shape.size() > 5)
+			sout << "Dataset is empty or shapesize is not supported!" ;
+		else if(shape.size() == 1)
+			o = readNDimHDF5<T,1>(file,shape,dSet) ;
 		else if(shape.size() == 2)
-		{
-			vigra::MultiArray<2,T> tmp ;
-			vigra::MultiArrayShape<2>::type rShape;
-			for(unsigned int ii= 0 ; ii < 2 ; ii++)
-				rShape[ii] = shape[ii] ;
-			tmp.reshape(rShape) ;
-			file.read(dSet,tmp) ;
-
-			#pragma omp parallel for 
-			for(int xx = 0 ; xx < rShape[0] ; xx++)
-				for(int yy = 0 ; yy < rShape[1] ; yy++)
-						o(xx,yy,0,0,0) = tmp(xx,yy) ;
-		}
+			o = readNDimHDF5<T,2>(file,shape,dSet) ;
 		else if(shape.size() == 3)
-		{
-			vigra::MultiArray<3,T> tmp ;
-			vigra::MultiArrayShape<3>::type rShape;
-			for(unsigned int ii= 0 ; ii < 3 ; ii++)
-				rShape[ii] = shape[ii] ;
-			tmp.reshape(rShape) ;
-			file.read(dSet,tmp) ;
-
-			#pragma omp parallel for 
-			for(int xx = 0 ; xx < rShape[0] ; xx++)
-				for(int yy = 0 ; yy < rShape[1] ; yy++)
-					for(int zz = 0 ; zz < rShape[2] ; zz++)
-						o(xx,yy,zz,0,0) = tmp(xx,yy,zz) ;
-		}
+			o = readNDimHDF5<T,3>(file,shape,dSet) ;
 		else if(shape.size() == 4)
-		{
-			vigra::MultiArray<4,T> tmp ;
-			vigra::MultiArrayShape<4>::type rShape;
-			for(unsigned int ii= 0 ; ii < 4 ; ii++)
-				rShape[ii] = shape[ii] ;
-			tmp.reshape(rShape) ;
-			file.read(dSet,tmp) ;
-
-			#pragma omp parallel for 
-			for(int xx = 0 ; xx < rShape[0] ; xx++)
-				for(int yy = 0 ; yy < rShape[1] ; yy++)
-					for(int zz = 0 ; zz < rShape[2] ; zz++)
-						for(int vv = 0 ; vv < rShape[2] ; vv++)
-							o(xx,yy,zz,vv,0) = tmp(xx,yy,zz,vv) ;
-		}
+			o = readNDimHDF5<T,4>(file,shape,dSet) ;
 		else if(shape.size() == 5)
 		{
+			typename vigra::MultiArrayShape<5>::type rShape;
+			for(unsigned int ii= 0 ; ii < 5 ; ii++)
+			{	
+				rShape[ii] = shape[ii] ;
+			}
+			o.reshape(rShape) ;
 			file.read(dSet,o) ;
 		}
-
 	}
 }
 
