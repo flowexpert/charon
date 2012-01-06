@@ -124,9 +124,16 @@ ADD_LIBRARY(cgsolver SHARED
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.h
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.hxx
 )
-TARGET_LINK_LIBRARIES(cgsolver iteratorhelper roi)
+TARGET_LINK_LIBRARIES(cgsolver cgsolverhelper roi)
+# Iteratively reweighted least squares
+ADD_LIBRARY(irls SHARED
+	${charon_INCLUDE_DIR}/Irls.h
+	${charon_INCLUDE_DIR}/Irls.hxx
+	Irls.cpp
+)
 LIST(APPEND Plugins cgsolverhelper)
 LIST(APPEND Plugins cgsolver)
+LIST(APPEND Plugins irls)
 
 # Brightness models (currently only constant brightness available)
 # to-be-ported and yet untested (ask for work of René):
