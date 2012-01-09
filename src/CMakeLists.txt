@@ -131,9 +131,16 @@ ADD_LIBRARY(irls SHARED
 	${charon_INCLUDE_DIR}/Irls.hxx
 	Irls.cpp
 )
+# residual calculation
+ADD_LIBRARY(residual SHARED
+	${charon_INCLUDE_DIR}/Residual.h
+	${charon_INCLUDE_DIR}/Residual.hxx
+	Residual.cpp
+)
 LIST(APPEND Plugins cgsolverhelper)
 LIST(APPEND Plugins cgsolver)
 LIST(APPEND Plugins irls)
+LIST(APPEND Plugins residual)
 
 # Brightness models (currently only constant brightness available)
 # to-be-ported and yet untested (ask for work of René):
