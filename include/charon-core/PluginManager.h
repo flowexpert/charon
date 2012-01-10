@@ -134,7 +134,7 @@ private:
 	 * Links the instances to their PluginLoader, so the PluginManager can
 	 * determine of which type the instance is
 	 */
-	std::map<ParameteredObject *, PLUGIN_LOADER *> _instances;
+	std::map<ParameteredObject*, PLUGIN_LOADER*> _instances;
 
 	/**
 	 * Saves the current default template type.
@@ -409,11 +409,16 @@ public:
 	template_type getDefaultTemplateType() const;
 
 	/**
-	 * Calls execute() on every target point.
+	 * Calls run() on every target point.
 	 *
 	 * @see addTargetPoint(ParameteredObject *)
 	 */
 	void runWorkflow();
+
+	/// for compatibility, use runWorkflow instead
+	charon_DEPRECATED void executeWorkflow() {
+		runWorkflow();
+	}
 
 	/**
 	 * Iterates through the plugins available inside the plugin path and

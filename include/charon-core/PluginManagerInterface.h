@@ -40,7 +40,6 @@ public:
 	 * Default Constructor
 	 */
 	PluginManagerInterface() {
-
 	}
 
 	/**
