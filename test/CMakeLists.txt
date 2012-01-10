@@ -35,6 +35,16 @@ IF(BUILD_TESTING)
 	LIST(APPEND tests ParameterTest)
 	LIST(APPEND testTargets parametertest)
 
+	# tests for input/output slot data passing
+	ADD_EXECUTABLE(datapasstest dataPassing.cpp)
+	TARGET_LINK_LIBRARIES(datapasstest charon-core charon-plugins)
+	ADD_TEST(
+		NAME SlotDataPassing
+		COMMAND datapasstest
+	)
+	LIST(APPEND tests SlotDataPassing)
+	LIST(APPEND testTargets datapasstest)
+
 	# tests for ParameterReferences
 	ADD_EXECUTABLE(paramreftest parameterRefTest.cpp)
 	TARGET_LINK_LIBRARIES(paramreftest charon-core)

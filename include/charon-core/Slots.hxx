@@ -118,6 +118,16 @@ inline void Slot::save(ParameterFile& /*pf*/) const {
 	//Does nothing, erasing the parameter file is not required
 }
 
+inline void Slot::printInfo(const std::string& msg) const {
+	sout << "(II) Slot \"" << getParent().getName() << "." << getName()
+		<< "\": " << msg << std::endl;
+}
+
+inline void Slot::printWarning(const std::string& msg) const {
+	sout << "(WW) Slot \"" << getParent().getName() << "." << getName()
+		<< "\": " << msg << std::endl;
+}
+
 inline void Slot::printError(const std::string& msg) const {
 	sout << "(EE) Slot \"" << getParent().getName() << "." << getName()
 		<< "\" (type " << getType() << "): " << msg << std::endl;
@@ -285,8 +295,8 @@ InputSlot<T>::operator T() const {
 			!= this->getType()) {
 		Slot::raise("input connection type mismatch within cast operator");
 	}
-	OutputSlot<T>* source =
-			(OutputSlot<T>*) (*(AbstractSlot<T>::_targets.begin()));
+	const OutputSlot<T>* source =
+			(const OutputSlot<T>*) (*(AbstractSlot<T>::_targets.begin()));
 	return source->operator()();
 }
 
@@ -299,8 +309,8 @@ const T& InputSlot<T>::operator()() const {
 			!= this->getType()) {
 		Slot::raise("input connection type mismatch on access of operator()");
 	}
-	OutputSlot<T>* source =
-			(OutputSlot<T>*) (*(AbstractSlot<T>::_targets.begin()));
+	const OutputSlot<T>* source =
+			(const OutputSlot<T>*) (*(AbstractSlot<T>::_targets.begin()));
 	return source->operator()();
 }
 
@@ -321,7 +331,7 @@ const T& InputSlot<T>::operator[](std::size_t pos) const {
 	if (((Slot*)(*item))->getType() != this->getType()) {
 		Slot::raise("input connection type mismatch on access of operator[]");
 	}
-	OutputSlot<T>* source = (OutputSlot<T>*) (*item);
+	const OutputSlot<T>* source = (const OutputSlot<T>*) (*item);
 	return source->operator()();
 }
 
@@ -330,49 +340,112 @@ std::size_t InputSlot<T>::size() const {
 	return AbstractSlot<T>::_targets.size();
 }
 
-// ============================   class OutputSlot   ========================
-
-template<class T>
-OutputSlot<T>::OutputSlot() :
-	data(0) {
-	AbstractSlot<T>::_optional = true;
-	AbstractSlot<T>::_multiSlot = true;
-	data = new T;
+template<typename T>
+void InputSlot<T>::finalize() {
 }
 
-template<class T>
-OutputSlot<T>::OutputSlot(const T& initval) {
+// ============================   class OutputSlot   ========================
+
+template<typename T>
+OutputSlot<T>::OutputSlot(const T& initval) :
+		data(0), _cacheType(Slot::CACHE_MEM) {
 	AbstractSlot<T>::_optional = true;
 	AbstractSlot<T>::_multiSlot = true;
+	init(initval);
+}
+
+template<typename T>
+void OutputSlot<T>::init(const T& initval) {
+	if (data) {
+		Slot::printWarning("reinitializing data pointer");
+		delete data;
+	}
 	data = new T(initval);
 }
 
-template<class T>
+template<typename T>
 OutputSlot<T>::~OutputSlot() {
 	if (data) {
 		delete data;
 	}
 }
 
+template<typename T>
+void OutputSlot<T>::setCacheType(Slot::CacheType type) {
+	switch (type) {
+	case Slot::CACHE_MEM:
+		Slot::printInfo("selected memory cache type");
+		break;
+	case Slot::CACHE_DISK:
+		Slot::printInfo("selected disk cache type");
+		break;
+	case Slot::CACHE_INVALID:
+		Slot::printWarning("selected invalid cache type");
+		break;
+	default:
+		Slot::raise("setCacheType: invalid cache type given");
+		break;
+	}
+	_cacheType = type;
+}
+
+template<typename T>
+void OutputSlot<T>::_check() const {
+	if (!data) {
+		Slot::raise("reading from uninitialized output slot");
+	}
+}
+
+template<typename T>
+void OutputSlot<T>::_prepare() {
+	if (!data) {
+		Slot::printWarning(
+					"accessing uninitialized output slot, "
+					"creating empty data element");
+		init();
+	}
+}
+
 template<class T>
 OutputSlot<T>::operator T() const {
+	_check();
 	return *data;
 }
 
 template<class T>
 const T& OutputSlot<T>::operator()() const {
+	_check();
 	return *data;
 }
 
 template<class T>
 T& OutputSlot<T>::operator()() {
+	_prepare();
 	return *data;
 }
 
 template<class T>
 T& OutputSlot<T>::operator=(const T& B) {
+	_prepare();
 	*data = B;
 	return *data;
+}
+
+template<typename T>
+void OutputSlot<T>::finalize() {
+	switch (_cacheType) {
+	case Slot::CACHE_DISK:
+		// write data to disk
+
+		// now data can be deleted
+		// so continue as invalid
+	case Slot::CACHE_INVALID:
+		delete data;
+		data = 0;
+		break;
+	default:
+		break;
+	}
 }
 
 #endif /* _SLOTS_HXX_ */

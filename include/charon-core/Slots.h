@@ -91,6 +91,10 @@ public:
 	/// @throws std::string     Error message if invalid parent set.
 	void init(ParameteredObject* parent, std::string name, std::string type);
 
+	/// finalize slot
+	/** this may be used on input/output slots to save/free data memory */
+	virtual void finalize() = 0;
+
 	virtual ~Slot();
 
 	/// get parent object
@@ -102,7 +106,13 @@ public:
 	/// Get slot name.
 	std::string getName() const;
 
-	/// throw runtime error with slot name and type info
+	/// print info message with slot name to sout
+	void printInfo(const std::string& msg) const;
+
+	/// print warning message with slot name to sout
+	void printWarning(const std::string& msg) const;
+
+	/// print error with slot name and type info to sout
 	void printError(const std::string& msg) const;
 
 	/// throw runtime error with slot name and type info
@@ -165,6 +175,14 @@ public:
 	virtual void load(
 			const ParameterFile& pf,
 			const PluginManagerInterface* man) = 0;
+
+	/// slot data cache type
+	/** this enum selects how output data is stored after execution */
+	enum CacheType {
+		CACHE_INVALID, ///< dumped after execution, not recommended
+		CACHE_MEM,     ///< stay in memory after execution
+		CACHE_DISK     ///< cached on disk after execution, save memory
+	};
 };
 
 /// Encapsulation of slot connection handling (type specific)
@@ -230,6 +248,7 @@ public:
 	virtual const T& operator()() const;
 	virtual const T& operator[](std::size_t pos) const;
 	virtual std::size_t size() const;
+	virtual void finalize();
 };
 
 /// Output slot.
@@ -240,20 +259,31 @@ class charon_core_PUBLIC OutputSlot :
 
 private:
 	T* data; ///< Slot data.
+	/// check for valid data pointer
+	void _check() const;
+	/// create data element, if needed
+	void _prepare();
+	/// output slot data cache type
+	Slot::CacheType _cacheType;
 
 public:
 	/// Create new output slot.
-	OutputSlot();
-	/// Create new output slot.
-	/// @param initval      initialize data with this value
-	OutputSlot(const T& initval);
+	/** \param initval      initialize data with this value */
+	OutputSlot(const T& initval = T());
+	/// initialize data element
+	/** \param initval      initialize data with this value */
+	void init(const T& initval = T());
 	virtual ~OutputSlot();
+
+	/// change data cache type
+	void setCacheType(Slot::CacheType type);
 
 	// overload Slot functions
 	virtual operator T() const;
 	virtual const T& operator()() const;
 	virtual T& operator()();
 	virtual T& operator= (const T& B);
+	virtual void finalize();
 };
 
 #endif /* _SLOTS_H */

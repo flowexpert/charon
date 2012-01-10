@@ -139,13 +139,13 @@ void ParameteredObject::_addParameter(AbstractParameter& param,
 
 void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type) {
-	// assign parameter to this object
-	slot.init(this, name, type);
-
 	// if type is given, we do not need guessing
 	std::string guessedType = type;
 	if (!guessedType.size())
 		guessedType = slot.guessType();
+
+	// assign parameter to this object
+	slot.init(this, name, guessedType);
 
 	// add metadata
 	if (_addSomething("inputs", name, doc, guessedType)) {
@@ -165,13 +165,13 @@ void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 
 void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type) {
-	// assign parameter to this object
-	slot.init(this, name, type);
-
 	// if type is given, we do not need guessing
 	std::string guessedType = type;
 	if (!guessedType.size())
 		guessedType = slot.guessType();
+
+	// assign parameter to this object
+	slot.init(this, name, guessedType);
 
 	// add metadata
 	if (_addSomething("outputs", name, doc, guessedType)) {
@@ -227,6 +227,7 @@ void ParameteredObject::run() {
 	sout << "(II) Executing " << getClassName() << " \"";
 	sout << getName() << "\"" << std::endl;
 	execute();
+	_commitSlots();
 
 	// post execution code
 	_executed = true;
@@ -237,6 +238,16 @@ void ParameteredObject::execute() {
 	sout << "(WW) this plugin has not overridden execute() or does call "
 		 << "ParameteredObject::execute() directly which is deprecated."
 		 << std::endl;
+}
+
+void ParameteredObject::_commitSlots() {
+	std::map<std::string, Slot*>::const_iterator cur;
+	for (cur = _inputs.begin(); cur != _inputs.end(); cur++) {
+		cur->second->finalize();
+	}
+	for (cur = _outputs.begin(); cur != _outputs.end(); cur++) {
+		cur->second->finalize();
+	}
 }
 
 void ParameteredObject::resetExecuted(bool propagate) {

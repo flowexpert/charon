@@ -173,6 +173,9 @@ private:
 			const std::string& ownSlot,
 			const std::string& targetSlot);
 
+	/// commit slot data
+	void _commitSlots();
+
 protected:
 	/// Add parameters.
 	/** If _createMetadata is true, the parameter is also recorded to the
