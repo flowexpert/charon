@@ -15,32 +15,33 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file Irls.h
- *  Declaration of the parameter class Irls.
+/** \file IrlsNonLocal.h
+ *  Declaration of the parameter class IrlsNonLocal.
  *  \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">Michael Baron</a>
- *  \date 06.01.2012
+ *  \date 10.01.2012
  */
 
-#ifndef IRLS_H
-#define IRLS_H
+#ifndef IRLSNONLOCAL_H
+#define IRLSNONLOCAL_H
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef irls_EXPORTS
+#ifdef irlsnonlocal_EXPORTS
 /// Visual C++ specific code
-#define irls_DECLDIR __declspec(dllexport)
+#define irlsnonlocal_DECLDIR __declspec(dllexport)
 #else
-#define irls_DECLDIR __declspec(dllimport)
+#define irlsnonlocal_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 /// Not needed with GCC
-#define irls_DECLDIR
+#define irlsnonlocal_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
 
-/// calculate median of image windows
-/** Use image windows of given size, calculate median within this window
+/// calculate non-local median of image windows
+/** Use image windows of given size, calculate non-local
+ *  median within this window
  *  and use the result as new value for the window center pixel.
  *  This eliminates outliers and makes e.g. flow estimation more robust.
  *  Median calculation is being performed using the
@@ -48,19 +49,21 @@
  *  (e.g. "Numerical Methods in Scientific Computing Vol. II"
  *   by Germund Dahlquist and Åke Björck, SIAM, section 8.7.5 )
  *
+ *  The non-local approach was introduced by D. Sun within his
+ *  2010 CVPR paper "Secrets of optical flow".
+ *
  *  \ingroup charon-modules
  *  \ingroup charon-flow
- *  \ingroup image-manipulators
  */
-template <typename T> class irls_DECLDIR Irls :
+template <typename T> class irlsnonlocal_DECLDIR IrlsNonLocal :
 		public TemplatedParameteredObject<T>
 {
 public:
 	/// image data input slot
-	InputSlot<cimg_library::CImgList<T> > in;
+	InputSlot<cimg_library::CImgList<T> > img;
 
 	/// weight input slot
-	InputSlot<cimg_library::CImgList<T> > inWeight;
+	InputSlot<cimg_library::CImgList<T> > motionUV;
 
 	/// image data output slot
 	OutputSlot<cimg_library::CImgList<T> > out;
@@ -71,14 +74,28 @@ public:
 	/// iteration count
 	Parameter<unsigned int> iterations;
 
-	/// create a new Irls object
+	/// spatial difference weight
+	Parameter< T > sigma_spatial;
+
+	/// color difference weight
+	Parameter< T > sigma_color;
+
+	/// occlusion divergence weight
+	Parameter< T > sigma_occ_divergence;
+
+	/// occlusion color diff weight
+	Parameter< T > sigma_occ_color;
+
+	/// create a new IrlsNonLocal object
 	/** \param name             Object name */
-	Irls(const std::string& name = "");
+	IrlsNonLocal(const std::string& name = "");
 
 	/// apply threshold to all given images
 	/// \implements ParameteredObject::execute
 	virtual void execute();
+
+	inline T _gauss( T x, T mu, T sigma );
 };
 
-#endif // IRLS_H
+#endif // IRLSNONLOCAL_H
 

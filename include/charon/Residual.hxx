@@ -26,6 +26,8 @@
 
 #include "Residual.h"
 
+#define EPS_INVERSE 1e9
+
 template<typename T>
 Residual<T>::Residual(const std::string& name) :
 	TemplatedParameteredObject<T>(
@@ -40,12 +42,17 @@ Residual<T>::Residual(const std::string& name) :
 	this->_addInputSlot(motU, "motU", "horizontal motion", "CImgList<T>");
 	this->_addInputSlot(motV, "motV", "vertical motion", "CImgList<T>");
 	this->_addOutputSlot(out,  "out",   "residual output", "CImgList<T>");
+
+	this->_addParameter(inverseResidual, "inverseResidual",
+	                    "invert residual output", false);
 }
 
 template<typename T>
 void Residual<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
+
+	bool inv = inverseResidual();
 
 	const cimg_library::CImgList<T>& _img1 = img1();
 	const cimg_library::CImgList<T>& _img2 = img2();
@@ -60,10 +67,20 @@ void Residual<T>::execute() {
 	for (int j=0; j<_img1[0].width(); ++j)
 	for (int i=0; i<_img1[0].height(); ++i)
 	{
-		mU = _motU(0, j, i, 0, 0);
-		mV = _motV(0, j, i, 0, 0);
-		tmp = _img2(0, j+mU, i+mV, 0, 0) - _img1(0, j, i, 0, 0);
-		_out(0, j, i, 0, 0) = tmp*tmp;
+		mU = _motU.atNXYZC(0, j, i, 0, 0);
+		mV = _motV.atNXYZC(0, j, i, 0, 0);
+		tmp = _img2.atNXYZC(0, j+mU, i+mV, 0, 0)
+		    - _img1.atNXYZC(0, j, i, 0, 0);
+		if (inv) {
+//			if (tmp) {
+//				_out.atNXYZC(0, j, i, 0, 0) = 1/(tmp*tmp);
+//			} else {
+//				_out.atNXYZC(0, j, i, 0, 0) = EPS_INVERSE;
+//			}
+			_out.atNXYZC(0, j, i, 0, 0) = exp( -(tmp*tmp) );
+		} else {
+			_out.atNXYZC(0, j, i, 0, 0) = tmp*tmp;
+		}
 	}
 
 	out() = _out;

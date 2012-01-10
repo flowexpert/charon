@@ -40,6 +40,7 @@ Irls<T>::Irls(const std::string& name) :
 			"This uses the IRLS approach.")
 {
 	this->_addInputSlot(in,    "in",    "image input",  "CImgList<T>");
+	this->_addInputSlot(inWeight, "inWeight", "weight input", "CImgList<T>");
 	this->_addOutputSlot(out,  "out",   "image output", "CImgList<T>");
 	this->_addParameter(
 			windowRadius, "windowRadius",
@@ -55,6 +56,8 @@ void Irls<T>::execute() {
 	ParameteredObject::execute();
 
 	const cimg_library::CImgList<T>& i = in();
+	const cimg_library::CImgList<T>& inweight = inWeight();
+
 	cimg_library::CImgList<T>& o = out();
 	const unsigned int& r = windowRadius();
 	o = i;
@@ -76,12 +79,15 @@ void Irls<T>::execute() {
 		// calculate mean as an initial guess
 		for (int d=0; d<dim; ++d) {
 			med[d] = T(0);
+			weight_sum = T(0);
 			for (unsigned int i=0; i<2*r+1; ++i)
 			for (unsigned int j=0; j<2*r+1; ++j)
 			{
-				med[d] += window[d]( i, j, zz, tt );
+				weight_sum += inweight[0](i,j,zz,tt);
+				med[d] += (inweight[0](i,j,zz,tt) *
+				           window[d]( i, j, zz, tt ));
 			}
-			med[d] /= (2*r+1)*(2*r+1);
+			med[d] /= weight_sum;
 		}
 
 		// perform iteratively weighted least squares
@@ -106,6 +112,8 @@ void Irls<T>::execute() {
 				} else {
 					weight = EPS_INVERSE;
 				}
+
+				weight *= inweight[0]( i, j, zz, tt );
 
 				weight_sum += weight;
 				for (int d=0; d<dim; ++d) {

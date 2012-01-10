@@ -137,10 +137,17 @@ ADD_LIBRARY(residual SHARED
 	${charon_INCLUDE_DIR}/Residual.hxx
 	Residual.cpp
 )
+# non local median filtering
+ADD_LIBRARY(irlsnonlocal SHARED
+	${charon_INCLUDE_DIR}/IrlsNonLocal.h
+	${charon_INCLUDE_DIR}/IrlsNonLocal.hxx
+	IrlsNonLocal.cpp
+)
 LIST(APPEND Plugins cgsolverhelper)
 LIST(APPEND Plugins cgsolver)
 LIST(APPEND Plugins irls)
 LIST(APPEND Plugins residual)
+LIST(APPEND Plugins irlsnonlocal)
 
 # Brightness models (currently only constant brightness available)
 # to-be-ported and yet untested (ask for work of René):

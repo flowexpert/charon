@@ -63,6 +63,9 @@ public:
 	/// residual (output)
 	OutputSlot<cimg_library::CImgList<T> > out;
 
+	/// invert residual output
+	Parameter< bool > inverseResidual;
+
 	/// create a new Residual object
 	/** \param name             Object name */
 	Residual(const std::string& name = "");
