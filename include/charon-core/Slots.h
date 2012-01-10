@@ -87,7 +87,7 @@ public:
 	/// initialize parent and name
 	/// @param parent           parent object
 	/// @param name             slot name
-	/// @param type				slot type
+	/// @param type             slot type
 	/// @throws std::string     Error message if invalid parent set.
 	void init(ParameteredObject* parent, std::string name, std::string type);
 
@@ -101,6 +101,12 @@ public:
 
 	/// Get slot name.
 	std::string getName() const;
+
+	/// throw runtime error with slot name and type info
+	void printError(const std::string& msg) const;
+
+	/// throw runtime error with slot name and type info
+	void raise(const std::string& msg) const;
 
 	/**
 	 * Get slot type.
@@ -231,14 +237,16 @@ public:
 template <typename T>
 class charon_core_PUBLIC OutputSlot :
 		public AbstractSlot<T>, public AbstractData<T> {
+
 private:
-	T data; ///< Slot data.
+	T* data; ///< Slot data.
 
 public:
 	/// Create new output slot.
+	OutputSlot();
+	/// Create new output slot.
 	/// @param initval      initialize data with this value
-	OutputSlot(const T& initval = T());
-
+	OutputSlot(const T& initval);
 	virtual ~OutputSlot();
 
 	// overload Slot functions

@@ -84,7 +84,9 @@ inline bool Slot::connected(Slot& target) {
 }
 
 inline bool Slot::connect(Slot& target) {
-	assert(&target);
+	if (!&target) {
+		raise("Slot::connect(): invalid target slot given (null)");
+	}
 	bool ret = true;
 	ret &= _addTarget(&target);
 	ret &= target._addTarget(this);
@@ -116,6 +118,18 @@ inline void Slot::save(ParameterFile& /*pf*/) const {
 	//Does nothing, erasing the parameter file is not required
 }
 
+inline void Slot::printError(const std::string& msg) const {
+	sout << "(EE) Slot \"" << getParent().getName() << "." << getName()
+		<< "\" (type " << getType() << "): " << msg << std::endl;
+}
+
+inline void Slot::raise(const std::string& msg) const {
+	throw std::runtime_error(
+				"Error in Slot \"" + getParent().getName() + "." + getName()
+				+ "\" (type " + getType() + "): "
+				+ msg);
+}
+
 // ========================   class AbstractSlot   ==========================
 
 template<class T>
@@ -130,22 +144,16 @@ AbstractSlot<T>::~AbstractSlot() {
 
 template<class T>
 bool AbstractSlot<T>::_addTarget(Slot* target) {
+	if(!target) {
+		Slot::raise("AbstractSlot::_addTarget: null pointer given");
+	}
 
-	assert(target);
-
-	/*
-	 * Check slot types
-	 * Here, the _type strings of the two slots are compared. Comparing
-	 * type-IDs or using dynamic_cast is not possible because plugins could
-	 * be compiled using different compilers which create different IDs.
-	 */
+	// Check slot types by comparint their _type strings.
+	// dynamic_cast isn't possible on dynamically loaded plugins.
 	if (target->getType() != this->getType()) {
-		throw(std::runtime_error("Error: Cannot connect slots of different "
-			"types. Tried to connect \n"
-			"Slot \"" + getParent().getName() + "." + getName() + "\" (type "
-				+ getType() + ") to\n"
-			"Slot \"" + target->getParent().getName() + "." + target->getName()
-				+ "\" (type " + target->getType() + ")."));
+		this->printError("Source slot of failed connection");
+		target->printError("Target slot of failed connection");
+		Slot::raise("Cannot connect slots of different types.");
 	}
 
 	_targets.insert((AbstractSlot<T>*) target);
@@ -154,16 +162,11 @@ bool AbstractSlot<T>::_addTarget(Slot* target) {
 
 template<class T>
 bool AbstractSlot<T>::_removeTarget(Slot* target) {
-	assert(target);
-	/*
-	 * dynamic_cast isn't possible on dynamically loaded plugins.
-	 * AbstractSlot<T>* t = dynamic_cast<AbstractSlot<T>*>(target);
-	 */
-
-	// if this assertion fails, please check the slot types!
-	// Auto-typecheck will be performed, when built with
-	// metadata creation enabled.
-	assert(target->getType() == getType());
+	if(!target) {
+		Slot::raise("AbstractSlot::_removeTarget: null pointer given");
+	}
+	// dynamic_cast isn't possible on dynamically loaded plugins.
+	// AbstractSlot<T>* t = dynamic_cast<AbstractSlot<T>*>(target);
 	return (_targets.erase((AbstractSlot<T>*) target) > 0);
 }
 
@@ -208,7 +211,9 @@ void AbstractSlot<T>::load(const ParameterFile& pf,
 			_parent->getName() + "." + _name);
 
 	// only multislots can be connected to more than one source!
-	assert(_multiSlot || (targetList.size() < 2));
+	if (!(_multiSlot || (targetList.size() < 2))) {
+		raise("multiple targets but not a multi-slot");
+	}
 
 	if (!targetList.size())
 		// nothing to do
@@ -221,24 +226,15 @@ void AbstractSlot<T>::load(const ParameterFile& pf,
 		ParameteredObject* targObj = man->getInstance(tStrIter->substr(0,
 				tStrIter->find(".")));
 
-		Slot * targetSlot = targObj->getSlot(tStrIter->substr(tStrIter->find(
-				".") + 1));
+		Slot * targetSlot = targObj->getSlot(
+					tStrIter->substr(tStrIter->find(".") + 1));
 
-		/*
-		 * Check slot types
-		 * Here, the _type strings of the two slots are compared. Comparing
-		 * type-IDs or using dynamic_cast is not possible because plugins could
-		 * be compiled using different compilers which create different IDs.
-		 */
+		// Check slot types by comparint their _type strings.
+		// dynamic_cast isn't possible on dynamically loaded plugins.
 		if (targetSlot->getType() != this->getType()) {
-			throw(std::runtime_error(
-					"Error: Cannot connect slots of different "
-						"types. Tried to connect \n"
-						"Slot \"" + getParent().getName() + "." + getName()
-							+ "\" (type " + getType() + ") to\n"
-						"Slot \"" + targetSlot->getParent().getName() + "."
-							+ targetSlot->getName() + "\" (type "
-							+ targetSlot->getType() + ")."));
+			this->printError("Source slot of failed connection");
+			targetSlot->printError("Target slot of failed connection");
+			Slot::raise("Cannot connect slots of different types.");
 		}
 		AbstractSlot<T>* tmp = (AbstractSlot<T>*) (targetSlot);
 		connect(*tmp);
@@ -282,8 +278,13 @@ InputSlot<T>::~InputSlot() {
 
 template<class T>
 InputSlot<T>::operator T() const {
-	assert(AbstractSlot<T>::_targets.size());
-	assert(((Slot*)(*(AbstractSlot<T>::_targets.begin())))->getType() == this->getType());
+	if (!AbstractSlot<T>::_targets.size()) {
+		Slot::raise("access to unconnected input slot (cast operator)");
+	}
+	if (((Slot*)(*(AbstractSlot<T>::_targets.begin())))->getType()
+			!= this->getType()) {
+		Slot::raise("input connection type mismatch within cast operator");
+	}
 	OutputSlot<T>* source =
 			(OutputSlot<T>*) (*(AbstractSlot<T>::_targets.begin()));
 	return source->operator()();
@@ -291,8 +292,13 @@ InputSlot<T>::operator T() const {
 
 template<class T>
 const T& InputSlot<T>::operator()() const {
-	assert(AbstractSlot<T>::_targets.size());
-	assert(((Slot*)(*(AbstractSlot<T>::_targets.begin())))->getType() == this->getType());
+	if (!AbstractSlot<T>::_targets.size()) {
+		Slot::raise("access to unconnected input slot (operator())");
+	}
+	if (((Slot*)(*(AbstractSlot<T>::_targets.begin())))->getType()
+			!= this->getType()) {
+		Slot::raise("input connection type mismatch on access of operator()");
+	}
 	OutputSlot<T>* source =
 			(OutputSlot<T>*) (*(AbstractSlot<T>::_targets.begin()));
 	return source->operator()();
@@ -304,7 +310,7 @@ const T& InputSlot<T>::operator[](std::size_t pos) const {
 		std::ostringstream err;
 		err << "pos out of range: pos = " << pos;
 		err << "; size = " << AbstractSlot<T>::_targets.size();
-		throw err.str();
+		throw std::out_of_range(err.str());
 	}
 
 	typename std::set<AbstractSlot<T>*>::const_iterator item;
@@ -312,7 +318,9 @@ const T& InputSlot<T>::operator[](std::size_t pos) const {
 	for (unsigned int i = 0; i < pos; i++)
 		item++;
 
-	assert(((Slot*)(*item))->getType() == this->getType());
+	if (((Slot*)(*item))->getType() != this->getType()) {
+		Slot::raise("input connection type mismatch on access of operator[]");
+	}
 	OutputSlot<T>* source = (OutputSlot<T>*) (*item);
 	return source->operator()();
 }
@@ -325,43 +333,46 @@ std::size_t InputSlot<T>::size() const {
 // ============================   class OutputSlot   ========================
 
 template<class T>
-OutputSlot<T>::OutputSlot(const T& initval) :
-	data(initval) {
+OutputSlot<T>::OutputSlot() :
+	data(0) {
 	AbstractSlot<T>::_optional = true;
 	AbstractSlot<T>::_multiSlot = true;
+	data = new T;
+}
+
+template<class T>
+OutputSlot<T>::OutputSlot(const T& initval) {
+	AbstractSlot<T>::_optional = true;
+	AbstractSlot<T>::_multiSlot = true;
+	data = new T(initval);
 }
 
 template<class T>
 OutputSlot<T>::~OutputSlot() {
+	if (data) {
+		delete data;
+	}
 }
-
-/*template<class T>
- void OutputSlot<T>::updateChildren() const {
- typename std::set<AbstractSlot<T>*>::const_iterator cur;
- for (cur = AbstractSlot<T>::_targets.begin(); cur
- != AbstractSlot<T>::_targets.end(); cur++)
- (*cur)->getParent().update((*cur)->getName());
- }*/
 
 template<class T>
 OutputSlot<T>::operator T() const {
-	return data;
+	return *data;
 }
 
 template<class T>
 const T& OutputSlot<T>::operator()() const {
-	return data;
+	return *data;
 }
 
 template<class T>
 T& OutputSlot<T>::operator()() {
-	return data;
+	return *data;
 }
 
 template<class T>
 T& OutputSlot<T>::operator=(const T& B) {
-	data = B;
-	return data;
+	*data = B;
+	return *data;
 }
 
 #endif /* _SLOTS_HXX_ */
