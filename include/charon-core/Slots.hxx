@@ -187,13 +187,7 @@ InputSlot<T>::operator T() const {
 	if (!AbstractSlot<T>::_targets.size()) {
 		Slot::raise("access to unconnected input slot (cast operator)");
 	}
-	if (((Slot*)(*(AbstractSlot<T>::_targets.begin())))->getType()
-			!= this->getType()) {
-		Slot::raise("input connection type mismatch within cast operator");
-	}
-	const OutputSlot<T>* source =
-			(const OutputSlot<T>*) (*(AbstractSlot<T>::_targets.begin()));
-	return source->operator()();
+	return _getDataFromOutputSlot(*(AbstractSlot<T>::_targets.begin()));
 }
 
 template<class T>
@@ -201,13 +195,7 @@ const T& InputSlot<T>::operator()() const {
 	if (!AbstractSlot<T>::_targets.size()) {
 		Slot::raise("access to unconnected input slot (operator())");
 	}
-	if (((Slot*)(*(AbstractSlot<T>::_targets.begin())))->getType()
-			!= this->getType()) {
-		Slot::raise("input connection type mismatch on access of operator()");
-	}
-	const OutputSlot<T>* source =
-			(const OutputSlot<T>*) (*(AbstractSlot<T>::_targets.begin()));
-	return source->operator()();
+	return _getDataFromOutputSlot(*(AbstractSlot<T>::_targets.begin()));
 }
 
 template<class T>
@@ -223,17 +211,43 @@ const T& InputSlot<T>::operator[](std::size_t pos) const {
 	item = AbstractSlot<T>::_targets.begin();
 	for (unsigned int i = 0; i < pos; i++)
 		item++;
-
-	if (((Slot*)(*item))->getType() != this->getType()) {
-		Slot::raise("input connection type mismatch on access of operator[]");
-	}
-	const OutputSlot<T>* source = (const OutputSlot<T>*) (*item);
-	return source->operator()();
+	return _getDataFromOutputSlot(*item);
 }
 
 template<typename T>
 std::size_t InputSlot<T>::size() const {
 	return AbstractSlot<T>::_targets.size();
+}
+
+template <typename T>
+const T& InputSlot<T>::_getDataFromOutputSlot(
+			const AbstractSlot<T>* slot) const {
+	if (slot->getType() != this->getType()) {
+		Slot::raise("input connection type mismatch");
+	}
+	const OutputSlot<T>* source = (const OutputSlot<T>*) slot;
+	switch (source->getCacheType()) {
+	case Slot::CACHE_MEM:
+		return source->operator()();
+	case Slot::CACHE_MANAGED: {
+			Slot::DataManager<T>* manager =
+				Slot::DataManagerFactory<T>::getManager(
+					*source, source->getConfig());
+			if (!manager) {
+				Slot::raise("no data manager for this slot type available");
+			}
+			const T& data = manager->getData();
+			delete manager;
+			return data;
+		}
+	default:
+		Slot::raise("no implementation for given output slot cache type");
+		throw 0; // will not be reached
+	}
+}
+
+template<typename T>
+void InputSlot<T>::prepare() {
 }
 
 template<typename T>
@@ -244,19 +258,16 @@ void InputSlot<T>::finalize() {
 
 template<typename T>
 OutputSlot<T>::OutputSlot(const T& initval) :
-		data(0), _cacheType(Slot::CACHE_MEM) {
+		_initVal(initval), data(0), _cacheType(Slot::CACHE_MEM) {
 	AbstractSlot<T>::_optional = true;
 	AbstractSlot<T>::_multiSlot = true;
-	init(initval);
 }
 
 template<typename T>
-void OutputSlot<T>::init(const T& initval) {
-	if (data) {
-		Slot::printWarning("reinitializing data pointer");
-		delete data;
+void OutputSlot<T>::prepare() {
+	if (!data) {
+		data = new T(_initVal);
 	}
-	data = new T(initval);
 }
 
 template<typename T>
@@ -272,7 +283,7 @@ void OutputSlot<T>::setCacheType(Slot::CacheType type) {
 	case Slot::CACHE_MEM:
 		Slot::printInfo("selected memory cache type");
 		break;
-	case Slot::CACHE_DISK:
+	case Slot::CACHE_MANAGED:
 		Slot::printInfo("selected disk cache type");
 		break;
 	case Slot::CACHE_INVALID:
@@ -297,8 +308,8 @@ void OutputSlot<T>::_prepare() {
 	if (!data) {
 		Slot::printWarning(
 					"accessing uninitialized output slot, "
-					"creating empty data element");
-		init();
+					"creating default data element");
+		prepare();
 	}
 }
 
@@ -330,9 +341,14 @@ T& OutputSlot<T>::operator=(const T& B) {
 template<typename T>
 void OutputSlot<T>::finalize() {
 	switch (_cacheType) {
-	case Slot::CACHE_DISK:
-		// write data to disk
-
+	case Slot::CACHE_MANAGED: {
+			// write data to manager
+			Slot::DataManager<T>* manager =
+					Slot::DataManagerFactory<T>::getManager(*this);
+			manager->setData(*data);
+			_managerConfig = manager->getConfig();
+			delete manager;
+		}
 		// now data can be deleted
 		// so continue as invalid
 	case Slot::CACHE_INVALID:
@@ -342,6 +358,14 @@ void OutputSlot<T>::finalize() {
 	default:
 		break;
 	}
+}
+
+// ==============================   data managers   ==========================
+
+template <typename T>
+Slot::DataManager<T>* Slot::DataManagerFactory<T>::getManager(
+		const Slot&, const std::string&) {
+	return 0;
 }
 
 #endif /* _SLOTS_HXX_ */

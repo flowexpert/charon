@@ -173,6 +173,9 @@ private:
 			const std::string& ownSlot,
 			const std::string& targetSlot);
 
+	/// prepare slot data
+	void _prepareSlots();
+
 	/// commit slot data
 	void _commitSlots();
 

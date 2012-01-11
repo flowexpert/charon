@@ -91,6 +91,10 @@ public:
 	/// @throws std::string     Error message if invalid parent set.
 	void init(ParameteredObject* parent, std::string name, std::string type);
 
+	/// prepare slot
+	/** this may be used on input/output slots to allocate memory */
+	virtual void prepare() = 0;
+
 	/// finalize slot
 	/** this may be used on input/output slots to save/free data memory */
 	virtual void finalize() = 0;
@@ -181,7 +185,44 @@ public:
 	enum CacheType {
 		CACHE_INVALID, ///< dumped after execution, not recommended
 		CACHE_MEM,     ///< stay in memory after execution
-		CACHE_DISK     ///< cached on disk after execution, save memory
+		CACHE_MANAGED  ///< cached on disk after execution, save memory
+	};
+
+	/// interface of data management classes
+	/** This part of the interface provides the data I/O functions
+	 */
+	template<typename T>
+	class DataManager {
+	public:
+		virtual ~DataManager() {}
+		/// write data
+		virtual void setData(const T& data /** [in] data to write */) = 0;
+		/// read data
+		virtual T getData() = 0;
+		/// get configuration string
+		virtual std::string getConfig() const = 0;
+	};
+
+	/// interface of data management factories
+	/** These data managers are able e.g. to save some data
+	 *  to disk and read them in.
+	 *  This is used in the slot data exchange mechanism.
+	 */
+	template <typename T>
+	class DataManagerFactory {
+	public:
+		/// get data manager from configuration string
+		/** Given the parameter string, the factory should set up
+		 *  a data manager that is able to re-read the data.
+		 *  \param slot    slot to generate manager for
+		 *  \param config  configuration string
+		 *                 if this string is empty, a default manager
+		 *                 e.g. for writing is generated.
+		 *  \returns       data manager suitable for given data type
+		 *                 or a null pointer if none is available
+		 */
+		static DataManager<T>* getManager(
+			const Slot& slot, const std::string& config = "");
 	};
 };
 
@@ -248,7 +289,16 @@ public:
 	virtual const T& operator()() const;
 	virtual const T& operator[](std::size_t pos) const;
 	virtual std::size_t size() const;
+	virtual void prepare();
 	virtual void finalize();
+private:
+	/// handle data extraction from output slot
+	/** \warning make sure that the given slot is really an output slot,
+	 *           this will be c-casted to OutputSlot<T>
+	 *  \param slot         output slot to extract data from
+	 *  \returns            extracted data
+	 */
+	const T& _getDataFromOutputSlot(const AbstractSlot<T>* slot) const;
 };
 
 /// Output slot.
@@ -258,6 +308,8 @@ class charon_core_PUBLIC OutputSlot :
 		public AbstractSlot<T>, public AbstractData<T> {
 
 private:
+	/// initial value cache
+	const T _initVal;
 	T* data; ///< Slot data.
 	/// check for valid data pointer
 	void _check() const;
@@ -265,24 +317,33 @@ private:
 	void _prepare();
 	/// output slot data cache type
 	Slot::CacheType _cacheType;
+	/// config string
+	std::string _managerConfig;
 
 public:
 	/// Create new output slot.
 	/** \param initval      initialize data with this value */
 	OutputSlot(const T& initval = T());
 	/// initialize data element
-	/** \param initval      initialize data with this value */
-	void init(const T& initval = T());
 	virtual ~OutputSlot();
 
 	/// change data cache type
 	void setCacheType(Slot::CacheType type);
+	/// query data cache type
+	Slot::CacheType getCacheType() const {
+		return _cacheType;
+	}
+	/// get manager configuration string
+	const std::string& getConfig() const {
+		return _managerConfig;
+	}
 
 	// overload Slot functions
 	virtual operator T() const;
 	virtual const T& operator()() const;
 	virtual T& operator()();
 	virtual T& operator= (const T& B);
+	virtual void prepare();
 	virtual void finalize();
 };
 

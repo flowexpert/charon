@@ -23,6 +23,7 @@
 
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-core/ExceptionHandler.h>
+#include <charon-core/DataManagerParameterFile.hxx>
 
 // make sure that assert() works (nothing is tested otherwise)
 #undef NDEBUG
@@ -79,16 +80,43 @@ protected:
 	}
 };
 
+int testDataManager() {
+	bool success = true;
+	Outputgen outGen;
+	Slot::DataManager<int>* manInt =
+			Slot::DataManagerFactory<int>::getManager(outGen.out1);
+	if (!manInt) {
+		sout << "(EE) Factory cannot handle int data" << std::endl;
+		return EXIT_FAILURE;
+	}
+	const std::string& conf = manInt->getConfig();
+	sout << "(II) manInt config: " << conf << std::endl;
+	const int testData = 0x1234abcd;
+	manInt->setData(testData);
+	if (manInt->getData() != testData) {
+		sout << "(EE) test data could not be read correctly" << std::endl;
+		success = false;
+	}
+	delete manInt;
+	manInt = Slot::DataManagerFactory<int>::getManager(outGen.out1, conf);
+	if (manInt->getData() != testData) {
+		sout << "(EE) test data could not be re-read correctly" << std::endl;
+		success = false;
+	}
+	delete manInt;
+	return success ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
 /// Main test application.
 int test() {
 	bool success = true;
 	bool excpt = false;
 
-	Outputgen outGen;
+	sout << "\ndry run (memory, as usual):" << std::endl;
+	ohOutputgen outGen;
 	Reader reader;
 	reader.in1.connect(outGen.out1);
 	reader.in2.connect(outGen.out2);
-	sout << "dry run (memory, as usual):" << std::endl;
 	reader.run();
 
 	sout << "\ncheck type-check on setCache" << std::endl;
@@ -110,7 +138,6 @@ int test() {
 	outGen.resetExecuted();
 	outGen.out1.setCacheType(Slot::CACHE_INVALID);
 
-	// check if read in input slot uses const reference (should fail)
 	excpt = false;
 	try {
 		reader.run();
@@ -125,11 +152,19 @@ int test() {
 		success = false;
 	}
 
+	sout << "\nwith managed cache:" << std::endl;
+	outGen.resetExecuted();
+	outGen.out1.setCacheType(Slot::CACHE_MANAGED);
+	reader.run();
+
 	return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 int main() {
 	sout.assign(std::cout);
-	return ExceptionHandler::run(test);
+	int ret = EXIT_SUCCESS;
+	ret |= ExceptionHandler::run(testDataManager);
+	ret |= ExceptionHandler::run(test);
+	return ret;
 }
 

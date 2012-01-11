@@ -32,6 +32,7 @@
 #include <stdexcept>
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-core/PluginManagerInterface.h>
+#include <charon-core/DataManagerParameterFile.hxx>
 
 // Instantiate static variables.
 std::map<std::string, unsigned int> ParameteredObject::_genericClassNameCount;
@@ -226,6 +227,7 @@ void ParameteredObject::run() {
 	// by calling the template function
 	sout << "(II) Executing " << getClassName() << " \"";
 	sout << getName() << "\"" << std::endl;
+	_prepareSlots();
 	execute();
 	_commitSlots();
 
@@ -238,6 +240,16 @@ void ParameteredObject::execute() {
 	sout << "(WW) this plugin has not overridden execute() or does call "
 		 << "ParameteredObject::execute() directly which is deprecated."
 		 << std::endl;
+}
+
+void ParameteredObject::_prepareSlots() {
+	std::map<std::string, Slot*>::const_iterator cur;
+	for (cur = _inputs.begin(); cur != _inputs.end(); cur++) {
+		cur->second->prepare();
+	}
+	for (cur = _outputs.begin(); cur != _outputs.end(); cur++) {
+		cur->second->prepare();
+	}
 }
 
 void ParameteredObject::_commitSlots() {
