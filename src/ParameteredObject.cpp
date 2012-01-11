@@ -1,30 +1,30 @@
 /*  This file is part of Charon.
 
- Charon is free software: you can redistribute it and/or modify
- it under the terms of the GNU Lesser General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
- Charon is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Lesser General Public License for more details.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
- You should have received a copy of the GNU Lesser General Public License
- along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** @file ParameteredObject.cpp
+/** \file ParameteredObject.cpp
  *  Implementation of class ParameteredObject.
- *  @author <a href="mailto:daniel.kondermann@iwr.uni-heidelberg.de">
+ *  \author <a href="mailto:daniel.kondermann@iwr.uni-heidelberg.de">
  *      Daniel Kondermann</a>
- *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
- *  @author <a href="mailto:stephan-meister@arcor.de">Stephan Meister</a>
- *  @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
+ *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+ *  \author <a href="mailto:stephan-meister@arcor.de">Stephan Meister</a>
+ *  \author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
  *
  *  Based on a file written by Daniel Kondermann, modified by Jens-Malte
  *  Gottfried and Stephan Meister.
  *
- *  @date 11.12.2008
+ *  \date 11.12.2008
  */
 
 #include <algorithm>

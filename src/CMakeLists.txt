@@ -23,6 +23,7 @@ SET(CHARON_FILES
 	SplitStream.cpp
 	StringTool.cpp
 	TypeDetector.cpp
+	Slots.cpp
 )
 
 SET(PLUGIN_FILES
