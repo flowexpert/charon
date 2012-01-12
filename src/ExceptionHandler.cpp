@@ -27,6 +27,7 @@
 #endif // __GNUG__
 #include <charon-core/ExceptionHandler.h>
 #include <charon-core/TypeDetector.h>
+#include <charon-core/SplitStream.h>
 
 int ExceptionHandler::run(int (&method)()) {
 	int ret = EXIT_FAILURE;
@@ -38,20 +39,89 @@ int ExceptionHandler::run(int (&method)()) {
 #ifdef __GNUG__
 		name = abi::__cxa_demangle(name, 0, 0, 0);
 #endif // __GNUG__
-		std::cerr << "\n\nCaught exception of type " << name << ".\n";
-		std::cerr << "Message:\n" << e.what() << std::endl;
+		std::cerr << "\n(EE) Caught exception of type " << name << ".\n";
+		std::cerr << "(EE) Message:\n(EE) \t" << e.what() << std::endl;
 	}
 	catch (const std::string& e) {
-		std::cerr << "\n\nCaught exception of type std::string.\n";
-		std::cerr << "Message:\n" << e << std::endl;
+		std::cerr << "\n(EE) Caught exception of type std::string.\n";
+		std::cerr << "(EE) Message:\n(EE) \t" << e << std::endl;
 	}
 	catch (const char*& e) {
-		std::cerr << "\n\nCaught exception of type const char*.\n";
-		std::cerr << "Message:\n" << e << std::endl;
+		std::cerr << "\n(EE) Caught exception of type const char*.\n";
+		std::cerr << "(EE) Message:\n(EE) \t" << e << std::endl;
 	}
 	catch (...) {
-		std::cerr << "\n\nCaught unknown exception." << std::endl;
+		std::cerr << "\n(EE) Caught unknown exception." << std::endl;
 	}
 	TypeDetector::destroy();
 	return ret;
 }
+
+int ExceptionHandler::run(void (&method)()) {
+	bool excpt = false;
+	try {
+		method();
+	}
+	catch (const std::exception& e) {
+		const char* name = typeid(e).name();
+#ifdef __GNUG__
+		name = abi::__cxa_demangle(name, 0, 0, 0);
+#endif // __GNUG__
+		std::cerr << "\n(EE) Caught exception of type " << name << ".\n";
+		std::cerr << "(EE) Message:\n(EE) \t" << e.what() << std::endl;
+		excpt = true;
+	}
+	catch (const std::string& e) {
+		std::cerr << "\n(EE) Caught exception of type std::string.\n";
+		std::cerr << "(EE) Message:\n(EE) \t" << e << std::endl;
+		excpt = true;
+	}
+	catch (const char*& e) {
+		std::cerr << "\n(EE) Caught exception of type const char*.\n";
+		std::cerr << "(EE) Message:\n(EE) \t" << e << std::endl;
+		excpt = true;
+	}
+	catch (...) {
+		std::cerr << "\n(EE) Caught unknown exception." << std::endl;
+		excpt = true;
+	}
+	TypeDetector::destroy();
+	return excpt ? EXIT_FAILURE : EXIT_SUCCESS;
+}
+
+int ExceptionHandler::checkRaise(void (&method)()) {
+	bool excpt = false;
+	try {
+		method();
+	}
+	catch (const std::exception& e) {
+		const char* name = typeid(e).name();
+#ifdef __GNUG__
+		name = abi::__cxa_demangle(name, 0, 0, 0);
+#endif // __GNUG__
+		sout << "(II) Caught exception of type " << name << ".\n";
+		sout << "(II) Message:\n(II) \t" << e.what() << std::endl;
+		excpt = true;
+	}
+	catch (const std::string& e) {
+		sout << "(II) Caught exception of type std::string.\n";
+		sout << "(II) Message:\n(II) \t" << e << std::endl;
+		excpt = true;
+	}
+	catch (const char*& e) {
+		sout << "(II) Caught exception of type const char*.\n";
+		sout << "(II) Message:\n(II) \t" << e << std::endl;
+		excpt = true;
+	}
+	catch (...) {
+		sout << "(II) Caught unknown exception." << std::endl;
+		excpt = true;
+	}
+	TypeDetector::destroy();
+	if (excpt) {
+		return EXIT_SUCCESS;
+	}
+	sout << "\n(EE) Expected runtime error exception!" << std::endl;
+	return EXIT_FAILURE;
+}
+

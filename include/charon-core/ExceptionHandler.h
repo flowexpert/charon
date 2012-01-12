@@ -29,9 +29,27 @@ namespace ExceptionHandler {
 	 *  Exception type is given in error message, on gcc, typename
 	 *  demangling is performed.
 	 *  You may use this as return value of the main() routine.
+	 *  \param[in] method   execution routine
 	 *  \returns return value of the given function
 	 */
-	int run(int (&method)() /**[in] execution routine*/);
+	int run(int (&method)());
+
+	/// Execute given function and catch exceptions.
+	/** Exceptions are caught, error messages are printed to std::cerr.
+	 *  Exception type is given in error message, on gcc, typename
+	 *  demangling is performed.
+	 *  You may use this as return value of the main() routine.
+	 *  \param[in] method   execution routine
+	 *  \return success if no exceptions, fail otherwise
+	 */
+	int run(void (&method)());
+
+	/// execute given function and return EXIT_SUCCESS on exception catch
+	/** Exceptions are caught, error message is printed to sout.
+	 *  \param[in] method   execution routine
+	 *  \return success on exception catch, fail otherwise
+	 */
+	int checkRaise(void (&method)());
 }
 
 #endif // EXCEPTIONHANDLER_H

@@ -80,91 +80,71 @@ protected:
 	}
 };
 
-int testDataManager() {
-	bool success = true;
+void testDataManager() {
 	Outputgen outGen;
 	Slot::DataManager<int>* manInt =
 			Slot::DataManagerFactory<int>::getManager(outGen.out1);
 	if (!manInt) {
-		sout << "(EE) Factory cannot handle int data" << std::endl;
-		return EXIT_FAILURE;
+		throw "Factory cannot handle int data";
 	}
 	const std::string& conf = manInt->getConfig();
 	sout << "(II) manInt config: " << conf << std::endl;
 	const int testData = 0x1234abcd;
 	manInt->setData(testData);
 	if (manInt->getData() != testData) {
-		sout << "(EE) test data could not be read correctly" << std::endl;
-		success = false;
+		throw "test data could not be read correctly";
 	}
 	delete manInt;
 	manInt = Slot::DataManagerFactory<int>::getManager(outGen.out1, conf);
 	if (manInt->getData() != testData) {
-		sout << "(EE) test data could not be re-read correctly" << std::endl;
-		success = false;
+		throw "test data could not be re-read correctly";
 	}
 	delete manInt;
-	return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-/// Main test application.
-int test() {
-	bool success = true;
-	bool excpt = false;
-
+void testMem() {
 	sout << "\ndry run (memory, as usual):" << std::endl;
-	ohOutputgen outGen;
+	Outputgen outGen;
 	Reader reader;
 	reader.in1.connect(outGen.out1);
 	reader.in2.connect(outGen.out2);
 	reader.run();
+}
 
+void testSetCacheType() {
 	sout << "\ncheck type-check on setCache" << std::endl;
-	excpt = false;
-	try {
-		outGen.out1.setCacheType((Slot::CacheType)127);
-	}
-	catch (const std::runtime_error& err) {
-		sout << "(II) Caught expected exception. Message:\n(II) \t"
-			<< err.what() << std::endl;
-		excpt = true;
-	}
-	if (!excpt) {
-		sout << "(EE) Expected runtime error exception!" << std::endl;
-		success = false;
-	}
+	Outputgen outGen;
+	outGen.out1.setCacheType((Slot::CacheType)127);
+}
 
+void testCacheTypeInvalid() {
 	sout << "\nwith invalid cache (should fail):" << std::endl;
-	outGen.resetExecuted();
+	Outputgen outGen;
+	Reader reader;
+	reader.in1.connect(outGen.out1);
+	reader.in2.connect(outGen.out2);
 	outGen.out1.setCacheType(Slot::CACHE_INVALID);
+	reader.run();
+}
 
-	excpt = false;
-	try {
-		reader.run();
-	}
-	catch (const std::runtime_error& err) {
-		sout << "(II) Caught expected exception. Message:\n(II) \t"
-			<< err.what() << std::endl;
-		excpt = true;
-	}
-	if (!excpt) {
-		sout << "(EE) Expected runtime error exception!" << std::endl;
-		success = false;
-	}
-
+void testCacheTypeManaged() {
 	sout << "\nwith managed cache:" << std::endl;
-	outGen.resetExecuted();
+	Outputgen outGen;
+	Reader reader;
+	reader.in1.connect(outGen.out1);
+	reader.in2.connect(outGen.out2);
 	outGen.out1.setCacheType(Slot::CACHE_MANAGED);
 	reader.run();
-
-	return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 int main() {
 	sout.assign(std::cout);
 	int ret = EXIT_SUCCESS;
 	ret |= ExceptionHandler::run(testDataManager);
-	ret |= ExceptionHandler::run(test);
+	ret |= ExceptionHandler::run(testMem);
+	ret |= ExceptionHandler::checkRaise(testSetCacheType);
+	ret |= ExceptionHandler::checkRaise(testCacheTypeInvalid);
+	ret |= ExceptionHandler::run(testCacheTypeManaged);
 	return ret;
 }
 
