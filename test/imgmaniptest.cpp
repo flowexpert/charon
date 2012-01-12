@@ -54,7 +54,7 @@ int test() {
 			return EXIT_FAILURE;
 		}
 		writer->filename() = curDir + "/blurTestOut.pgm";
-		man.executeWorkflow();
+		man.runWorkflow();
 		if (!FileTool::exists(writer->filename())) {
 			std::cerr << "Output File not written!" << std::endl;
 			return EXIT_FAILURE;

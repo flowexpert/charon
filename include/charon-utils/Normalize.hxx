@@ -39,9 +39,6 @@ Normalize<T>::Normalize(const std::string& name) :
 
 template<typename T>
 void Normalize<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	out = in();
 	cimglist_for(out(), i)
 		out()[i] = in()[i].get_normalize(lower, upper);

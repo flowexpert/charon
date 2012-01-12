@@ -120,7 +120,7 @@ void FrameSelectWidget::setDim4(int val) {
 void FrameSelectWidget::_updatePlugin() {
 	if(_active && _display && _display->executed()) {
 		_parent->resetExecuted();
-		_display->execute();
+		_display->run();
 	}
 }
 

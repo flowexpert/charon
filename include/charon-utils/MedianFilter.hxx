@@ -45,9 +45,6 @@ MedianFilter<T>::MedianFilter(const std::string& name) :
 
 template<typename T>
 void MedianFilter<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const cimg_library::CImgList<T>& i = in();
 	cimg_library::CImgList<T>& o = out();
 	const unsigned int& r = windowRadius();

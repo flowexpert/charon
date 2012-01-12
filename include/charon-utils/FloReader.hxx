@@ -36,8 +36,6 @@ FloReader<T>::FloReader(const std::string& name) :
 
 template <typename T>
 void FloReader<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
 	try {
 		const char *fn = filename().c_str();
 		FILE *stream = fopen(fn, "rb");
@@ -75,9 +73,8 @@ void FloReader<T>::execute() {
 		fclose(stream);
 	}
 	catch (const cimg_library::CImgException& err) {
-		throw std::runtime_error(
-			this->getClassName() + " instance \"" +
-			this->getName() + "\" Could not read file\n\t" + err.what());
+		ParameteredObject::raise(
+					std::string("Could not read file\n\t") + err.what());
 	}
 
 }

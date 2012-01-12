@@ -49,8 +49,6 @@ StructureTensor<T>::StructureTensor(const std::string& name) :
 
 template <typename T>
 void StructureTensor<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
 	// this can only handle sequences with one channel
 	assert(in().size() == 1u);
 	// we have to change the dimensions because CImg stores the

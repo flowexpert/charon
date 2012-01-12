@@ -40,9 +40,6 @@ ImageBlur<T>::ImageBlur(const std::string& name) :
 
 template<typename T>
 void ImageBlur<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const cimg_library::CImgList<T>& i = in();
 	cimg_library::CImgList<T>& o = out();
 	const float& s = strength();

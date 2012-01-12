@@ -64,9 +64,6 @@ Resize<T>::Resize(const std::string& name) :
 
 template <typename T>
 void Resize<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	assert(in().size() > 0);
 
 	int

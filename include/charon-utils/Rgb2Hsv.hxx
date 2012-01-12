@@ -35,11 +35,7 @@ Rgb2Hsv<T>::Rgb2Hsv(const std::string& name) :
 }
 
 template <typename T>
-void Rgb2Hsv<T>::execute()
-{
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
+void Rgb2Hsv<T>::execute() {
 	out = in;
 	cimglist_for(out(), i)
 		out()[i] = in()[i].get_RGBtoHSV();

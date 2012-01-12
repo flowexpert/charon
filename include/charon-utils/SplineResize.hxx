@@ -99,9 +99,6 @@ SplineResize<T>::SplineResize(const std::string& name) :
 
 template <typename T>
 void SplineResize<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	typedef typename vigra::MultiArray<5, T>::difference_type Shape;
 	unsigned int dimx, dimy, dimz, dimv, dimt;
 	//READ THIS! *harhar* :)

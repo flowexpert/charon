@@ -53,9 +53,6 @@ FlowQuiver<T>::FlowQuiver(const std::string& name) :
 
 template<typename T>
 void FlowQuiver<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	if(color.size() != 3u)
 		throw std::invalid_argument(
 				"FlowQuiver: need 3 color components");

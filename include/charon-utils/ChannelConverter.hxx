@@ -95,9 +95,6 @@ inline unsigned int ChannelConverter<T>::_select(
 
 template <class T>
 void ChannelConverter<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	// check permutation scheme
 	const std::string& scheme_ = scheme() ;
 	

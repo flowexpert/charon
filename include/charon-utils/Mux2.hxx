@@ -43,9 +43,6 @@ Mux2<T>::Mux2(const std::string& name) :
 
 template<typename T>
 void Mux2<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const cimg_library::CImgList<T> &_list1 = list1();
 	const cimg_library::CImgList<T> &_list2 = list2();
 

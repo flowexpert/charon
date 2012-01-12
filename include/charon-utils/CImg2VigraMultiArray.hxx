@@ -42,9 +42,6 @@ CImg2VigraMultiArray<T>::CImg2VigraMultiArray(const std::string& name) :
 
 template <typename T>
 void CImg2VigraMultiArray<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	// store reference to input list to avoid function calls (-> slow)
 	const cimg_library::CImgList<T>& i = in();
 	vigra::MultiArray<5, T>& o = out();

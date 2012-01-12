@@ -87,7 +87,7 @@ cimg_library::CImg<unsigned char> histogramPlot(const histogram_type& histogram,
 	res = sprintf(maxValS, "%.1f", maxBin) ;
 	res = sprintf(minCountS, "0") ;
 	res = sprintf(maxCountS, "%.1f", maxdensity) ;
-
+	cimg::unused(res);
 
 	//combine parts
 	target.draw_rectangle(leftBorder, topBorder, leftBorder+ graphWidth + 2,
@@ -209,17 +209,12 @@ StatisticsDisplayPlugin<T>::~StatisticsDisplayPlugin()
 
 template <typename T>
 void StatisticsDisplayPlugin<T>::execute() {
-	
 	using namespace boost::accumulators;
 	using namespace cimg_library ;
 
 	typedef vigra::MultiArrayView<5, T> Array ;
 
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	_statistics.clear() ;
-
 	_histograms().assign(3) ;
 
 	//get pointer to each object in Multislot and the name of the corresponding parent object

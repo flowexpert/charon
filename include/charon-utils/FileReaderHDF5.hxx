@@ -84,9 +84,6 @@ FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
 
 template<typename T>
 void FileReaderHDF5<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	vigra::MultiArray<5,T>& o = out();
 
 	vigra::HDF5File file(filename().c_str(), vigra::HDF5File::Open);

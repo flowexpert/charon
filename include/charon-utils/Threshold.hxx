@@ -53,11 +53,7 @@ Threshold<T>::Threshold(const std::string& name) :
 }
 
 template <typename T>
-void Threshold<T>::execute()
-{
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
+void Threshold<T>::execute() {
 	out().reshape(in().shape());
 
 	vigra::transformMultiArray(

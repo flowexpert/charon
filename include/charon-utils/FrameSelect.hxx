@@ -72,9 +72,6 @@ FrameSelect<T>::~FrameSelect()
 
 template <typename T>
 void FrameSelect<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	vigra::MultiArrayIndex lz = z() ;
 	vigra::MultiArrayIndex lt = t() ;
 	vigra::MultiArrayIndex lv = v() ;

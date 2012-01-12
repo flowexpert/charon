@@ -44,9 +44,6 @@ DilationErosion<T>::DilationErosion(const std::string& name) :
 template <typename T>
 void DilationErosion<T>::execute()
 {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	out().reshape(in().shape());
 
 	int r = radius();

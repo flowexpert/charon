@@ -45,9 +45,6 @@ Mask1D<T>::Mask1D(const std::string& name) :
 
 template <typename T>
 void Mask1D<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	switch (dir()) {
 	case 0:
 		out().assign(1u, values().size(), 1u, 1u, 1u, T(0));

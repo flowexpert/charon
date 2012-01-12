@@ -45,8 +45,6 @@ LinearFilter<T>::LinearFilter(const std::string& name) :
 
 template <typename T>
 void LinearFilter<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
 	assert(masks[0].size() == 1);
 	assert(in().size() >= 1);
 	out().assign(

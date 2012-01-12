@@ -38,8 +38,6 @@ FloWriter<T>::FloWriter(const std::string& name) :
 
 template <typename T>
 void FloWriter<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
 	try {
 		const char *fn = filename().c_str();
 		FILE *stream = fopen(fn, "wb");

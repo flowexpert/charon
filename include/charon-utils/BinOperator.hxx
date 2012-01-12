@@ -51,11 +51,7 @@ BinOperator<T>::BinOperator(const std::string& name) :
 }
 
 template <typename T>
-void BinOperator<T>::execute()
-{
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
+void BinOperator<T>::execute() {
 	const std::string& op = operation();
 	const vigra::MultiArrayView<5,T>& i1 = in1();
 	const vigra::MultiArrayView<5,T>& i2 = in2();

@@ -87,10 +87,6 @@ ArgosDisplayPlugin<T>::~ArgosDisplayPlugin()
 
 template <typename T>
 void ArgosDisplayPlugin<T>::execute() {
-
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-	
 	// exit if QApplication is not running
 	// (when opened with command line charon)
 	if(!qApp)

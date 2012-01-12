@@ -61,9 +61,6 @@ Overlay<T>::Overlay(const std::string& name) :
 
 template <typename T>
 void Overlay<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const cimg_library::CImgList<T>& fg = foreground();
 	const cimg_library::CImgList<T>& bg = background();
 	cimg_library::CImgList<T>& o = out();

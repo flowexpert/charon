@@ -45,11 +45,7 @@ Mirror<T>::Mirror(const std::string& name) :
 }
 
 template <typename T>
-void Mirror<T>::execute()
-{
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
+void Mirror<T>::execute() {
 	const vigra::MultiArrayView<5,T>& i = in();
 	vigra::MultiArray<5,T>& o = out();
 	vigra::MultiArrayShape<5>::type s = i.shape();
