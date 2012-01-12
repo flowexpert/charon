@@ -25,10 +25,6 @@
 #include <charon-core/ExceptionHandler.h>
 #include <charon-core/DataManagerParameterFile.hxx>
 
-// make sure that assert() works (nothing is tested otherwise)
-#undef NDEBUG
-#include <cassert>
-
 /// sample ParameteredObject class.
 class Reader : public ParameteredObject {
 public:
