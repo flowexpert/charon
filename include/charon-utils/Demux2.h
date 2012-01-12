@@ -63,6 +63,7 @@ public:
 	/// \param name          Instance name
 	Demux2(const std::string& name = "");
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

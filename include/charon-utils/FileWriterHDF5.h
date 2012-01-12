@@ -28,13 +28,13 @@
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef filewriterhdf5_EXPORTS
-///Visual C++ specific code
+/// Visual C++ specific code
 #define filewriterhdf5_DECLDIR __declspec(dllexport)
 #else
 #define filewriterhdf5_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
-///Not needed with GCC
+/// Not needed with GCC
 #define filewriterhdf5_DECLDIR
 #endif
 
@@ -71,11 +71,12 @@ public:
 	Parameter<bool> noSingletonDimensions;
 
 	/// The vigra::MultiArray object to be written to a hdf5 file.
-	InputSlot < vigra::MultiArrayView<5, T> > in;
+	InputSlot < vigra::MultiArray<5, T> > in;
 
 	/// default constructor
 	FileWriterHDF5(const std::string& name = "" /** [in] Instance name */);
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

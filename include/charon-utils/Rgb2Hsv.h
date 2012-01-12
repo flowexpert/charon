@@ -65,6 +65,7 @@ public:
 	/// default constructor
 	Rgb2Hsv(const std::string& name = "" /** [in] instance name*/);
 
+protected:
 	/// \implements ParameteredObject::execute
     virtual void execute ();
 };

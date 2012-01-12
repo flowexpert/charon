@@ -52,10 +52,6 @@ public:
 	/// standard constructor
 	FlowQuiver(const std::string& name = "" /** [in] instance name*/);
 
-	/// \copybrief ParameteredObject::execute()
-	/** \copydetails ParameteredObject::execute() */
-	virtual void execute();
-
 	/// quiver lenght
 	Parameter<float> length;
 
@@ -73,6 +69,11 @@ public:
 
 	/// RGB data output [t](x,y,z,c)
 	OutputSlot<cimg_library::CImgList<T> > out;
+
+protected:
+	/// \copybrief ParameteredObject::execute()
+	/** \copydetails ParameteredObject::execute() */
+	virtual void execute();
 };
 
 #endif // FLOW_QUIVER_H_

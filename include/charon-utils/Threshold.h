@@ -54,7 +54,7 @@ class threshold_DECLDIR Threshold : public TemplatedParameteredObject<T>
 {
 public:
 	/// image data input slot
-	InputSlot< vigra::MultiArrayView<5,T> >  in;
+	InputSlot< vigra::MultiArray<5, T> >  in;
 	/// image data output slot
 	OutputSlot< vigra::MultiArray<5,T> > out;
 
@@ -71,6 +71,7 @@ public:
 	/// @param name             Object name
 	Threshold(const std::string& name = "");
 
+protected:
 	/// \implements ParameteredObject::execute
 	virtual void execute ();
 };

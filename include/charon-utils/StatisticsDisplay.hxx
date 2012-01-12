@@ -212,7 +212,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 	using namespace boost::accumulators;
 	using namespace cimg_library ;
 
-	typedef vigra::MultiArrayView<5, T> Array ;
+	typedef vigra::MultiArray<5, T> Array ;
 
 	_statistics.clear() ;
 	_histograms().assign(3) ;

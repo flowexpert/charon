@@ -72,6 +72,7 @@ public:
     /// @param name             Object name
 	ImageBlur(const std::string& name = "");
 
+protected:
 	/// \implements ParameteredObject::execute
     virtual void execute();
 };

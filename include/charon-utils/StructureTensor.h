@@ -68,13 +68,12 @@ public:
 	/// central scheme
 	Parameter<bool> centralScheme;
 
-	/**	Calculate structure tensor and perform eigenvector analysis.
-	 *
-	 *	The structure tensor is calculated in the xyz dimensions.
-	 *	The results are stored in the output List items, make sure that the
-	 *	input list contains only one item.
-	 *	This uses the built-in CImg routines.
-	 *
+protected:
+	/// Calculate structure tensor and perform eigenvector analysis.
+	/** The structure tensor is calculated in the xyz dimensions.
+	 *  The results are stored in the output List items, make sure that the
+	 *  input list contains only one item.
+	 *  This uses the built-in CImg routines.
 	 *  \copydetails ParameteredObject::execute()
 	 */
 	virtual void execute();

@@ -50,7 +50,7 @@ int test() {
 	Warp<double> warp;
 	InterpolatorLinear<double> interp;
 	imgObj.filename = PENGUINFILE;
-	imgObj.execute();
+	imgObj.run();
 	imgObj.out.connect(warp.seqInput);
 	flowObj.out.connect(warp.flowInput);
 	interp.out.connect(warp.interpolator);
@@ -58,7 +58,7 @@ int test() {
 	// initialize flow
 	std::cout << "-- Load test data" << std::endl;
 	flowObj.filename = PENGUINFILE;
-	flowObj.execute();
+	flowObj.run();
 	cimg_library::CImgList<double>& seq = imgObj.out();
 	assert(seq.size() == 1);
 	cimg_library::CImgList<double>& flow = flowObj.out();
@@ -75,7 +75,7 @@ int test() {
 
 	// check simple warping
 	std::cout << "-- Simple warping" << std::endl;
-	warp.execute();
+	warp.run();
 	const cimg_library::CImgList<double>& res = warp.out();
 	assert(res.size() == 1u);
 	cimg_library::CImg<double> orig = seq[0], store = res[0];
@@ -90,7 +90,7 @@ int test() {
 	std::cout << "-- Warping with weight 2" << std::endl;
 	warp.weight = 2.f;
 	warp.resetExecuted();
-	warp.execute();
+	warp.run();
 	tmp = res[0];
 	tmp.shift(2, -4);
 	tmp -= seq[0];
@@ -101,7 +101,7 @@ int test() {
 	std::cout << "-- Warping with weight -2" << std::endl;
 	warp.weight = -2.f;
 	warp.resetExecuted();
-	warp.execute();
+	warp.run();
 	tmp = res[0];
 	tmp.shift(-2, 4);
 	tmp -= seq[0];
@@ -114,7 +114,7 @@ int test() {
 	warp.weight = 1.f;
 	seq[0].append(seq[0], 'c');
 	warp.resetExecuted();
-	warp.execute();
+	warp.run();
 	assert(res[0].spectrum() == 2u);
 	// first one should stay untouched, second one is warped as above
 	assert((res[0].get_channel(0u) - orig).abs().sum() <=
@@ -124,7 +124,7 @@ int test() {
 
 	seq[0]=orig.get_append(orig.get_shift(1,-2),'c');
 	warp.resetExecuted();
-	warp.execute();
+	warp.run();
 	tmp = res[0].get_crop(5,5,dx-6,dx-6);
 	assert((tmp.get_channel(0)-tmp.get_channel(1)).abs().sum() <=
 			std::numeric_limits<double>::min());
@@ -138,7 +138,7 @@ int test() {
 	const cimg_library::CImgList<double>& resSymm = warpSymm.out();
 
 	seq[0]=orig.get_append(orig.get_shift(1,-2),'c');
-	warpSymm.execute();
+	warpSymm.run();
 
 	// temp(.,.,.,0) and temp(.,.,.,1) should now be different
 	// from orig and store because both are warped half-way.

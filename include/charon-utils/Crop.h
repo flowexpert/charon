@@ -74,6 +74,7 @@ public:
 	/// @param name             Object name
 	Crop(const std::string& name = "");
 
+protected:
 	/// \implements ParameteredObject::execute
 	virtual void execute();
 };

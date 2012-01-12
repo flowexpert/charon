@@ -69,6 +69,7 @@ public:
     /// @param name             Object name
 	Normalize(const std::string& name = "");
 
+protected:
 	/// apply threshold to all given images
 	/// \implements ParameteredObject::execute
     virtual void execute();

@@ -23,7 +23,7 @@ int main() {
 
 	reader.out.connect(conv1.in);
 	conv1.out.connect(conv2.in);
-	conv2.execute();
+	conv2.run();
 	assert(conv2.out().size() == 1u);
 
 	// read penguin file directly
@@ -55,7 +55,7 @@ int main() {
 		testData[k].rand(-1.,1.);
 	}
 	conv1.resetExecuted();
-	conv2.execute();
+	conv2.run();
 
 	// check if original data untouched
 	assert(testData.size() == unsigned(dv));

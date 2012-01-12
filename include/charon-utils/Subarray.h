@@ -52,7 +52,7 @@ class subarray_DECLDIR Subarray :
 {
 public:
 	/// data input
-	InputSlot< vigra::MultiArrayView<5,T> >  in;
+	InputSlot< vigra::MultiArray<5, T> >  in;
 	/// crop region
 	InputSlot< Roi<int>* > roi;
 	/// data output
@@ -66,6 +66,7 @@ public:
 	/// @param name             Object name
 	Subarray(const std::string& name = "");
 
+protected:
 	/// \implements ParameteredObject::execute
 	virtual void execute ();
 };

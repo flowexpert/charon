@@ -72,7 +72,8 @@ public:
 	 *  time axis in the z-dimension (monochrome or color channels in v-dim).
 	 */
 	Parameter<std::string> scheme;
-	
+
+protected:
 	/// Perform conversion.
 	/** The input CImgList has all the frames in different CImg objects in
 	 *  the list what we want is a CImgList that splits the sequence by

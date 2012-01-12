@@ -59,6 +59,7 @@ public:
 	/// \param name             Object name
 	FloWriter(const std::string& name = "");
 
+protected:
 	/// Update object.
 	/// Reload image and put new data into the output slot.
 	virtual void execute();

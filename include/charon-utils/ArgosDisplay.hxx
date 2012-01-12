@@ -95,9 +95,9 @@ void ArgosDisplayPlugin<T>::execute() {
 	//std::map<const Array* const, std::string> parentNames ;
 	// get pointers to all OutputSlots of the _in Multislot to get the names
 	// of the corresponding Plugin Instances
-	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>
+	typename std::set<AbstractSlot<vigra::MultiArray<5, T> >*>
 			::const_iterator it = _vigraIn.begin() ;
-	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>
+	typename std::set<AbstractSlot<vigra::MultiArray<5, T> >*>
 			::const_iterator end = _vigraIn.end() ;
 
 	ViewStack& viewStack = _mainWindow->viewStack() ;

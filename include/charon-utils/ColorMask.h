@@ -53,10 +53,6 @@ public:
 	ColorMask(const std::string& name = "" /** [in] instance name*/);
 	virtual ~ColorMask();
 
-	/// \copybrief ParameteredObject::execute()
-	/** \copydetails ParameteredObject::execute() */
-	virtual void execute();
-
 	///  color mask selection
 	/**  select coloring pattern:
 	 *   - "BR": blue/red colormap, zero is white, red is neg, blue is pos
@@ -73,6 +69,11 @@ public:
 
 	/// RGB data output [t](x,y,z,c)
 	OutputSlot<cimg_library::CImgList<T> > out;
+
+protected:
+	/// \copybrief ParameteredObject::execute()
+	/** \copydetails ParameteredObject::execute() */
+	virtual void execute();
 
 private:
 	/// calculated value for full red/blue values

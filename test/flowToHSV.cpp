@@ -47,7 +47,7 @@ int test() {
 	reader.filename = "testFlow.cimg";
 	Flow2HSV<float> viz;
 	reader.out.connect(viz.flow);
-	viz.execute();
+	viz.run();
 	assert(viz.out().size() == 1u);
 	const cimg_library::CImg<float>& o = viz.out()[0];
 	o.save_cimg("flow2hsvColorwheel.cimg",true);

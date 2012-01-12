@@ -67,17 +67,18 @@ namespace ArgosDisplay
 		/// Destruct Object
 		~ArgosDisplayPlugin() ;
 
-		/// Update object.
-		virtual void execute();
-
 		/// The vigra::MultiArray input
-		InputSlot < vigra::MultiArrayView<5, T> > _vigraIn;
+		InputSlot < vigra::MultiArray<5, T> > _vigraIn;
 
 		/// The CimgList input
 		InputSlot < cimg_library::CImgList<T> > _cimgIn ;
 
 		/// Pointers to widgets which will be displayed as QDockWidgets
-		InputSlot <QWidget*> _widgets ;
+		InputSlot <QWidget*> _widgets;
+
+	protected:
+		/// Update object.
+		virtual void execute();
 
 	private:
 		/// main plugin window

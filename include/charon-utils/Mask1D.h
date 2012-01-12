@@ -60,6 +60,7 @@ public:
 	/// mask output
 	OutputSlot<cimg_library::CImgList<T> > out;
 
+protected:
 	/// copy values into mask
 	/// \copydetails ParameteredObject::execute()
 	virtual void execute();

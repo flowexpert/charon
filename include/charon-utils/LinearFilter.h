@@ -62,6 +62,7 @@ public:
 	/// result output
 	OutputSlot<cimg_library::CImgList<T> > out;
 
+protected:
 	/** Convolve with given filter masks.
 	 *  \copydetails ParameteredObject::execute()
 	 *

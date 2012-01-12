@@ -52,9 +52,9 @@ class binoperator_DECLDIR BinOperator : public TemplatedParameteredObject<T>
 {
 public:
 	/// first data input
-	InputSlot< vigra::MultiArrayView<5,T> >  in1;
+	InputSlot< vigra::MultiArray<5, T> >  in1;
 	/// second data input
-	InputSlot< vigra::MultiArrayView<5,T> >  in2;
+	InputSlot< vigra::MultiArray<5, T> >  in2;
 	/// data output
 	OutputSlot< vigra::MultiArray<5,T> > out;
 
@@ -74,6 +74,7 @@ public:
 	/// @param name             Object name
 	BinOperator(const std::string& name = "");
 
+protected:
 	/// \implements ParameteredObject::execute
 	virtual void execute ();
 };
