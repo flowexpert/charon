@@ -81,7 +81,10 @@ IF(BUILD_TESTING)
 		LIST(APPEND tests ImgTool)
 		LIST(APPEND testTargets imgToolTest)
 
-		ADD_EXECUTABLE(cImgTest cimgtest.cpp)
+		ADD_EXECUTABLE(cImgTest
+			cimgtest.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/CImg.h
+		)
 		TARGET_LINK_LIBRARIES(cImgTest ${CIMG_LINK_LIBRARIES})
 		ADD_TEST(
 			NAME CImg:Info
@@ -135,6 +138,29 @@ IF(BUILD_TESTING)
 			)
 			LIST(APPEND tests VigraConversion)
 			LIST(APPEND testTargets vigraconversion)
+
+			# tests for input/output slot data passing including vigra
+			# and cimg arrays
+			ADD_EXECUTABLE(datapasstest
+				dataPassing.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/DataManagerCImgList.hxx
+				${CHARON_UTILS_INCLUDE_DIR}/DataManagerVigraArray.hxx
+			)
+			TARGET_LINK_LIBRARIES(datapasstest
+				charon-core charon-plugins
+				${CIMG_LINK_LIBRARIES}
+				${VIGRA_LIBRARIES}
+				${HDF5_LIBRARIES}
+			)
+			IF(USE_MPI)
+				TARGET_LINK_LIBRARIES(datapasstest ${MPI_LIBRARIES})
+			ENDIF()
+			ADD_TEST(
+					NAME SlotDataPassing
+					COMMAND datapasstest
+			)
+			LIST(APPEND tests SlotDataPassing)
+			LIST(APPEND testTargets datapasstest)
 		ENDIF(USE_VIGRA)
 
 		IF(WIN32)
