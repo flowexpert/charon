@@ -22,17 +22,12 @@
  *  \date 07.01.2011
  */
 
-#ifdef NDEBUG
-#undef NDEBUG
-#endif
-#include <cassert>
-
 #include <charon-core/ExceptionHandler.h>
 #include <charon-utils/FileReader.h>
 #include <charon-utils/Flow2HSV.h>
 #include<limits>
 
-int test() {
+void test() {
 	sout.assign(std::cout);
 
 	std::cout << "-- Create test flow image" << std::endl;
@@ -48,7 +43,9 @@ int test() {
 	Flow2HSV<float> viz;
 	reader.out.connect(viz.flow);
 	viz.run();
-	assert(viz.out().size() == 1u);
+	if (viz.out().size() != 1u) {
+		throw "read image dimension mismatch";
+	}
 	const cimg_library::CImg<float>& o = viz.out()[0];
 	o.save_cimg("flow2hsvColorwheel.cimg",true);
 #ifdef cimg_use_png
@@ -79,12 +76,9 @@ int test() {
 	std::cout << "right: " << s3 << std::endl;
 	std::cout << "bottom: " << s4 << std::endl;
 
-	assert(s1 < 10.f);
-	assert(s2 < 10.f);
-	assert(s3 < 10.f);
-	assert(s4 < 10.f);
-
-	return EXIT_SUCCESS;
+	if ((s1 >= 10.f) || (s2 >= 10.f) || (s3 >= 10.f) || (s4 >= 10.f)) {
+		throw "step at quadrant border";
+	}
 }
 
 int main() {

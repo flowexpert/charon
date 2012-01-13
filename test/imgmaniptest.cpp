@@ -32,11 +32,10 @@
 #endif
 
 /// unit tests
-int test() {
+void test() {
 	// load plugins
 	sout.assign(std::cout);
 
-	try{
 #ifdef CMAKE_INTDIR
 	PluginManager man(LOCAL_PLUGIN_DIR "/" CMAKE_INTDIR);
 #else
@@ -44,48 +43,34 @@ int test() {
 #endif
 	std::string curDir = FileTool::getCurrentDir();
 	FileTool::changeDir(TESTDIR);
-	if (FileTool::exists("blur.wrp")) {
-		man.loadParameterFile("blur.wrp");
-		FileWriter<float>* writer = dynamic_cast<FileWriter<float>*>(
-				man.getInstance("writer"));
-		if (!writer) {
-			std::cerr << "Failed to get pointer to writer instance!"
-					<< std::endl;
-			return EXIT_FAILURE;
-		}
-		writer->filename() = curDir + "/blurTestOut.pgm";
-		man.runWorkflow();
-		if (!FileTool::exists(writer->filename())) {
-			std::cerr << "Output File not written!" << std::endl;
-			return EXIT_FAILURE;
-		}
+	if (!FileTool::exists("blur.wrp")) {
+		throw "test parameter file missing";
+	}
+	man.loadParameterFile("blur.wrp");
+	FileWriter<float>* writer = dynamic_cast<FileWriter<float>*>(
+			man.getInstance("writer"));
+	if (!writer) {
+		throw "Failed to get pointer to writer instance!";
+	}
+	writer->filename() = curDir + "/blurTestOut.pgm";
+	man.runWorkflow();
+	if (!FileTool::exists(writer->filename())) {
+		throw "Output File not written!";
+	}
 
-		// check result
-		const cimg_library::CImgList<float>& curRes = writer->in();
-		cimg_library::CImgList<float> res("PenguinBlurred.cimg");
-		if (!res.is_sameNXYZC(1,60,60,1,1)) {
-			std::cerr << "Result load error! (dim mismatch)" << std::endl;
-			return EXIT_FAILURE;
-		}
-		if (!res.is_sameNXYZC(curRes)) {
-			std::cerr << "Result dimension mismatch!" << std::endl;
-			return EXIT_FAILURE;
-		}
-		int err = (res[0]-curRes[0]).abs().max();
-		if (err > 0) {
-			std::cerr << "Result content differs!" << std::endl;
-			return EXIT_FAILURE;
-		}
+	// check result
+	const cimg_library::CImgList<float>& curRes = writer->in();
+	cimg_library::CImgList<float> res("PenguinBlurred.cimg");
+	if (!res.is_sameNXYZC(1,60,60,1,1)) {
+		throw "Result load error! (dim mismatch)";
 	}
-	else {
-		std::cerr << "test parameter file missing" << std::endl;
-		return EXIT_FAILURE;
+	if (!res.is_sameNXYZC(curRes)) {
+		throw "Result dimension mismatch!";
 	}
-	} catch (AbstractPluginLoader::PluginException e) {
-		std::cout << e.what() << std::endl;
-		return -1;
+	int err = (res[0]-curRes[0]).abs().max();
+	if (err > 0) {
+		throw "Result content differs!";
 	}
-	return 0;
 }
 
 /// main application

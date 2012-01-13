@@ -39,9 +39,9 @@
 #include <charon-utils/InterpolatorLinear.hxx>
 #include <charon-utils/Warp.h>
 #include <charon-utils/WarpSymmetric.h>
-#include<limits>
+#include <limits>
 
-int test() {
+void test() {
 	sout.assign(std::cout);
 
 	// create objects, establish connections
@@ -155,8 +155,6 @@ int test() {
 	tmp.crop(5,5,dx-6,dx-6);
 	assert((tmp.get_shared_channel(0)-tmp.get_shared_channel(1)).abs().sum()
 			<= std::numeric_limits<double>::min());
-
-	return EXIT_SUCCESS;
 }
 
 int main() {
