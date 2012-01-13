@@ -225,33 +225,66 @@ const T& InputSlot<T>::_getDataFromOutputSlot(
 	if (slot->getType() != this->getType()) {
 		Slot::raise("input connection type mismatch");
 	}
-	const OutputSlot<T>* source = (const OutputSlot<T>*) slot;
-	switch (source->getCacheType()) {
+	// c-style cast can produce weird errors, so use dynamic cast to make sure
+	// const OutputSlot<T>* source = (const OutputSlot<T>*) slot;
+	const OutputSlot<T>* source = dynamic_cast<const OutputSlot<T>*>(slot);
+	if (!source) {
+		Slot::raise("input connection data type mismatch (dynamic cast)");
+	}
+	const Slot::CacheType& scType = source->getCacheType();
+	switch (scType) {
 	case Slot::CACHE_MEM:
 		return source->operator()();
 	case Slot::CACHE_MANAGED: {
-			Slot::DataManager<T>* manager =
-				Slot::DataManagerFactory<T>::getManager(
-					*source, source->getConfig());
-			if (!manager) {
-				Slot::raise("no data manager for this slot type available");
+			const std::string& config = source->getConfig();
+			typename std::map<std::string,T>::const_iterator found;
+			found = _dataCache.find(config);
+			if (found == _dataCache.end()) {
+				Slot::raise("data could not be retrieved (not cached)");
 			}
-			const T& data = manager->getData();
-			delete manager;
-			return data;
+			return found->second;
 		}
+	case Slot::CACHE_INVALID:
+		Slot::raise("cannot read from output with cache type \"invalid\"");
 	default:
 		Slot::raise("no implementation for given output slot cache type");
-		throw 0; // will not be reached
 	}
+	// this should never be reached
+	throw std::runtime_error(
+			"unexpected error in InputSlot::_getDataFromOutputSlot");
 }
 
 template<typename T>
 void InputSlot<T>::prepare() {
+	typename std::set<AbstractSlot<T>*>::const_iterator item;
+	item = AbstractSlot<T>::_targets.begin();
+	for (;item != AbstractSlot<T>::_targets.end(); item++) {
+		const AbstractSlot<T>* slot = *item;
+		if (slot->getType() != this->getType()) {
+			Slot::raise("input connection type mismatch");
+		}
+		const OutputSlot<T>* source = dynamic_cast<const OutputSlot<T>*>(slot);
+		if (!source) {
+			Slot::raise("input connection data type mismatch (dynamic cast)");
+		}
+		const Slot::CacheType& scType = source->getCacheType();
+		if (scType == Slot::CACHE_MANAGED) {
+			const std::string& config = source->getConfig();
+			Slot::DataManager<T>* manager =
+				Slot::DataManagerFactory<T>::getManager(*source, config);
+			if (!manager) {
+				Slot::raise("no data manager for this slot type available");
+			}
+			_dataCache.insert(std::pair<std::string,T>(
+					config,manager->getData()));
+			delete manager;
+		}
+	}
 }
 
 template<typename T>
 void InputSlot<T>::finalize() {
+	_dataCache.clear();
 }
 
 // ============================   class OutputSlot   ========================
@@ -279,15 +312,23 @@ OutputSlot<T>::~OutputSlot() {
 
 template<typename T>
 void OutputSlot<T>::setCacheType(Slot::CacheType type) {
+	const std::string prefix = "selected cache type: ";
 	switch (type) {
 	case Slot::CACHE_MEM:
-		Slot::printInfo("selected memory cache type");
+		Slot::printInfo(prefix + "memory");
 		break;
-	case Slot::CACHE_MANAGED:
-		Slot::printInfo("selected disk cache type");
+	case Slot::CACHE_MANAGED: {
+			Slot::printInfo(prefix + "managed");
+			Slot::DataManager<T>* manager =
+					Slot::DataManagerFactory<T>::getManager(*this);
+			if (!manager) {
+				Slot::raise("no data manager for this slot type available");
+			}
+			delete manager;
+		}
 		break;
 	case Slot::CACHE_INVALID:
-		Slot::printWarning("selected invalid cache type");
+		Slot::printWarning(prefix + "invalid");
 		break;
 	default:
 		Slot::raise("setCacheType: invalid cache type given");
@@ -345,6 +386,9 @@ void OutputSlot<T>::finalize() {
 			// write data to manager
 			Slot::DataManager<T>* manager =
 					Slot::DataManagerFactory<T>::getManager(*this);
+			if (!manager) {
+				Slot::raise("no data manager for this slot type available");
+			}
 			manager->setData(*data);
 			_managerConfig = manager->getConfig();
 			delete manager;

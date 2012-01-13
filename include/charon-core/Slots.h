@@ -289,6 +289,17 @@ public:
 	virtual const T& operator()() const;
 	virtual const T& operator[](std::size_t pos) const;
 	virtual std::size_t size() const;
+	/// prepare slot
+	/** Here, all connected output slots are scanned for managed data cache.
+	 *  For managed output slots, the data is queried using the
+	 *  needed data manager and stored in the _dataCache map.
+	 *  This is neccessary because the access operators are defined
+	 *  as const operators and so are not able to allocate persistent
+	 *  memory causing the references to become invalid.
+	 *
+	 *  The _dataCache map is cleared in finalize(), this way,
+	 *  the memory is freed.
+	 */
 	virtual void prepare();
 	virtual void finalize();
 private:
@@ -299,6 +310,9 @@ private:
 	 *  \returns            extracted data
 	 */
 	const T& _getDataFromOutputSlot(const AbstractSlot<T>* slot) const;
+
+	/// data cache for managed output slots
+	std::map<std::string, T> _dataCache;
 };
 
 /// Output slot.

@@ -22,13 +22,14 @@
 #ifndef DATAMANAGERPARAMETERFILE_HXX
 #define DATAMANAGERPARAMETERFILE_HXX
 
-#include "Slots.h"
-#include "FileTool.h"
+#include <charon-core/Slots.hxx>
+#include <charon-core/FileTool.h>
 
 namespace DataManagers {
 	/// parameter file based implementation of a data manager
 	template <typename T>
-	class DataManagerParameterFile : public Slot::DataManager<T> {
+	class charon_core_LOCAL DataManagerParameterFile :
+			public Slot::DataManager<T> {
 	private:
 		/// parameter file to store parameter
 		ParameterFile pf;
