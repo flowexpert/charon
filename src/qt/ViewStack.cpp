@@ -71,6 +71,11 @@ void ViewStack::_createActions()
 	connect(_centerAndResetZoomAct, SIGNAL(triggered()), this, SLOT(_centerAndResetZoom())) ;
 	this->addAction(_centerAndResetZoomAct) ;
 
+	_switchLogModeAct = new QAction(QString("switch log mode"), this) ;
+	_switchLogModeAct->setStatusTip(QString("switch floating-point display to logarithmic scaling")) ;
+	connect(_switchLogModeAct, SIGNAL(triggered()), this, SLOT(_switchLogMode())) ;
+	this->addAction(_switchLogModeAct) ;
+
 }
 
 void ViewStack::clear() {
@@ -188,6 +193,17 @@ void ViewStack::_switchColorMode()
 	}
 	_tabWidget->setCurrentIndex(index) ;
 }
+
+void ViewStack::_switchLogMode() {
+	int index = _tabWidget->currentIndex() ;
+	if(index < 0 || _inspectors[index] ==0)
+	{	return ;	}
+	FImageViewer* viewer = qobject_cast<FImageViewer*>(_tabWidget->currentWidget()) ;
+	if(!viewer)
+		return ;
+	viewer->setLogarithmicMode(!viewer->logarithmicMode()) ;
+}
+
 
 void ViewStack::_processMouseMovement(int x, int y) {
 	QString message = QString("x : %1 y : %2  ").arg(x).arg(y) ;

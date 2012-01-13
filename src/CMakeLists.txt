@@ -160,6 +160,17 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/WarpSymmetric.h
 		${CHARON_UTILS_INCLUDE_DIR}/WarpSymmetric.hxx
 	)
+	ADD_LIBRARY(emptycimg SHARED
+		EmptyCImg.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/EmptyCImg.h
+		${CHARON_UTILS_INCLUDE_DIR}/EmptyCImg.hxx
+	)
+	ADD_LIBRARY(drawcimg SHARED
+		DrawCImg.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/DrawCImg.h
+		${CHARON_UTILS_INCLUDE_DIR}/DrawCImg.hxx
+	)
+	
 	SET(Plugins_CImg
 		channelconverter
 		crop
@@ -188,6 +199,8 @@ IF(USE_CIMG)
 		demux2
 		warp
 		warpsymmetric
+		emptycimg
+		drawcimg
 	)
 
 	LIST(APPEND Plugins

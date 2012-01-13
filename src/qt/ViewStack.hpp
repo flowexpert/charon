@@ -87,6 +87,8 @@ namespace ArgosDisplay {
 		/// move current view to center and reset zoom level
 		QAction* _centerAndResetZoomAct ;
 
+		QAction* _switchLogModeAct ;
+
 		/// objects to access pixel data
 		std::vector<AbstractPixelInspector*> _inspectors ;
 
@@ -105,6 +107,9 @@ namespace ArgosDisplay {
 
 		///switch the display of the current view between RGB and grayscale float
 		void _switchColorMode() ;
+
+		/// 
+		void _switchLogMode() ;
 
 		/// save current view as image file
 		void _saveCurrentView() ;
