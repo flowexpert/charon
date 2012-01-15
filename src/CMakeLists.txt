@@ -180,7 +180,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/AmplitudeThreshold.h
 		${CHARON_UTILS_INCLUDE_DIR}/AmplitudeThreshold.hxx
 	)
-		
+	ADD_LIBRARY(binoperatorcimg SHARED
+		BinOperatorCImg.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/BinOperatorCImg.h
+		${CHARON_UTILS_INCLUDE_DIR}/BinOperatorCImg.hxx
+	)
 	
 	SET(Plugins_CImg
 		channelconverter
@@ -214,6 +218,7 @@ IF(USE_CIMG)
 		drawcimg
 		gammacorrection
 		amplitudethreshold
+		binoperatorcimg
 	)
 
 	LIST(APPEND Plugins
