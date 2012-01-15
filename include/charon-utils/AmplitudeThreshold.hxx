@@ -25,7 +25,6 @@
 #define _AMPLITUDETHRESHOLD_HXX_
 
 #include "AmplitudeThreshold.h"
-#include <float.h>
 
 template <typename T>
 AmplitudeThreshold<T>::AmplitudeThreshold(const std::string& name) :
@@ -80,7 +79,7 @@ void AmplitudeThreshold<T>::execute() {
 	//check if input is valid
 	if(threshold < 0.0)
 	{
-		raise("Amplitude can not be smaller than 0; "
+		ParameteredObject::raise("Amplitude can not be smaller than 0; "
 		"Negative thresholds make no sense");
 	}
 	
@@ -92,7 +91,7 @@ void AmplitudeThreshold<T>::execute() {
 			||	(input[l].depth()  != input[l-1].depth())
 			||	(input[l].spectrum() != input[l-1].spectrum()))
 		{
-			raise("Input Images have inconsistent dimensions!<br>"
+			ParameteredObject::raise("Input Images have inconsistent dimensions!<br>"
 				"sizes must be the same along all dimensions of the "
 				"input CImgList");
 		}
