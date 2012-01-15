@@ -170,6 +170,17 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/DrawCImg.h
 		${CHARON_UTILS_INCLUDE_DIR}/DrawCImg.hxx
 	)
+	ADD_LIBRARY(gammacorrection SHARED
+		GammaCorrection.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/GammaCorrection.h
+		${CHARON_UTILS_INCLUDE_DIR}/GammaCorrection.hxx
+	)
+	ADD_LIBRARY(amplitudethreshold SHARED
+		AmplitudeThreshold.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/AmplitudeThreshold.h
+		${CHARON_UTILS_INCLUDE_DIR}/AmplitudeThreshold.hxx
+	)
+		
 	
 	SET(Plugins_CImg
 		channelconverter
@@ -201,6 +212,8 @@ IF(USE_CIMG)
 		warpsymmetric
 		emptycimg
 		drawcimg
+		gammacorrection
+		amplitudethreshold
 	)
 
 	LIST(APPEND Plugins
