@@ -6,7 +6,8 @@ SET(charon-utils_VERSION 0.1.6)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
+OPTION(USE_PROJECT_FOLDERS "Organize build targets in Folders (Only supported in MSVC Professional)" OFF)
+SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ${USE_PROJECT_FOLDERS})
 SET(CMAKE_DEBUG_POSTFIX _d)
 
 # executables and dll files are moved to the same directory
