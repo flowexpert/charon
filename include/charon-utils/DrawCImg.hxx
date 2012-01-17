@@ -29,9 +29,8 @@ using namespace cimg_library ;
 
 template <typename T>
 DrawCImg<T>::DrawCImg(const std::string& name) :
-        TemplatedParameteredObject<T>("drawcimg", name,
-			"draws one cimg into another")
-{
+		TemplatedParameteredObject<T>("drawcimg", name,
+			"draws one cimg into another") {
 	ParameteredObject::_addParameter (_posX, "posx", 
 		"the x coordinate where the source should be placed on target", 0) ;
 	
@@ -56,23 +55,19 @@ DrawCImg<T>::DrawCImg(const std::string& name) :
 
 template <typename T>
 void DrawCImg<T>::execute() {
-
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const CImgList<T>& inputTarget = _inputTarget() ; 
 	const CImgList<T>& inputSource = _inputSource() ;
 	CImgList<T>& output = _output() ; //similiar for output slots
 	
-	output.assign(inputTarget.size(),
-		inputTarget[0].width(), inputTarget[0].height(), inputTarget[0].depth(),inputTarget[0].spectrum());
+	output.assign(
+				inputTarget.size(),
+				inputTarget[0].width(), inputTarget[0].height(),
+				inputTarget[0].depth(), inputTarget[0].spectrum());
 	//check if input is valid
-	cimglist_for(inputSource,l)
-	{
+	cimglist_for(inputSource,l) {
 		output(l).assign(inputTarget(l));
 		output(l).draw_image(_posX(),_posY(),0,0,inputSource(l),_opacity());
 	}
-
 }
 
 #endif /* _DrawCImg_HXX_ */

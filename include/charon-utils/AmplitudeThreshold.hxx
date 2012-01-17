@@ -61,16 +61,7 @@ AmplitudeThreshold<T>::AmplitudeThreshold(const std::string& name) :
 
 template <typename T>
 void AmplitudeThreshold<T>::execute() {
-	
-	//disable warnings regarding float->double assignments which occur due to the templates	
-	#pragma warning(push)
-	#pragma warning(disable : 4244) 
-
 	using namespace cimg_library ;
-
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const CImgList<T>& input = _input() ;
 	CImgList<T>& output = _output() ;
 	bool& killOutlier = _killOutlier();
@@ -141,8 +132,6 @@ void AmplitudeThreshold<T>::execute() {
 			}
 		}
 	}
-
-	#pragma warning(pop)
 }
 
 #endif /* _AmplitudeThreshold_HXX_ */

@@ -53,6 +53,8 @@ public:
 	
 	/// Parameters
 	Parameter < double > _gamma;
+	/// the color value range of the input
+	/** When set to zero, this will be set to the maximum of the input image */
 	Parameter < double > _maxColorValue;
 	
 

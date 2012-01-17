@@ -31,7 +31,7 @@ using namespace cimg_library ;
 
 template <typename T>
 EmptyCImg<T>::EmptyCImg(const std::string& name) :
-        TemplatedParameteredObject<T>("emptycimg", name,
+		TemplatedParameteredObject<T>("emptycimg", name,
 			"create an empty CImgList with given dimensions.<br>"
 			"CImgList will have dimensions c X x X y X z X t<br>"
 			"Individual CImg's will have dimension x X y X z X t.")
@@ -57,16 +57,8 @@ EmptyCImg<T>::EmptyCImg(const std::string& name) :
 
 template <typename T>
 void EmptyCImg<T>::execute() {
-//	#pragma warning(push)
-//	#pragma warning(disable : 4244)
-
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	CImgList<T>& output = _output() ;
-	
 	output.assign(_sizeC(),_sizeX(),_sizeY(),_sizeZ(),_sizeT(), T(0));
-//	#pragma warning(pop)
 }
 
 #endif /* _EmptyCImg_HXX_ */
