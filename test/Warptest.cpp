@@ -135,13 +135,13 @@ void test() {
 	imgObj.out.connect(warpSymm.seqInput);
 	flowObj.out.connect(warpSymm.flowInput);
 	interp.out.connect(warpSymm.interpolator);
-	const cimg_library::CImgList<double>& resSymm = warpSymm.out();
 
 	seq[0]=orig.get_append(orig.get_shift(1,-2),'c');
 	warpSymm.run();
 
 	// temp(.,.,.,0) and temp(.,.,.,1) should now be different
 	// from orig and store because both are warped half-way.
+	const cimg_library::CImgList<double>& resSymm = warpSymm.out();
 	tmp = resSymm[0];
 	assert((tmp.get_shared_channel(0)-orig).abs().sum()
 			> std::numeric_limits<double>::min());

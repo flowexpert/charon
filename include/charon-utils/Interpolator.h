@@ -70,6 +70,9 @@ protected:
 			const std::string& name,
 			const std::string& doc);
 
+	/// \implements ParameteredObject::execute
+	virtual void execute();
+
 public:
 	/// This pointer as outupt slot.
 	OutputSlot<Interpolator<T>*> out;

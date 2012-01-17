@@ -44,11 +44,13 @@ StructureTensor<T>::StructureTensor(const std::string& name) :
 		"eigenvectors", "CImgList<T>");
 	ParameteredObject::_addParameter(centralScheme, "centralScheme",
 		"scheme for structure tensor calculation", false);
-	out = this;
 }
 
 template <typename T>
 void StructureTensor<T>::execute() {
+	// initialize self-pointer
+	out() = this;
+
 	// this can only handle sequences with one channel
 	assert(in().size() == 1u);
 	// we have to change the dimensions because CImg stores the

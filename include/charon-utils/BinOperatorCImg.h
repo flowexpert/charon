@@ -45,7 +45,6 @@ template <typename T>
 class binoperatorcimg_DECLDIR BinOperatorCImg :
 		public TemplatedParameteredObject<T> {
 public:
-	
 	///operation type
 	Parameter < std::string > _opType ;
 
@@ -61,18 +60,16 @@ public:
 	/// input image 1
 	InputSlot < cimg_library::CImgList<T> > _in2;
 
-
 	/// output image
 	OutputSlot < cimg_library::CImgList<T> > _out;
-	
 
 	/// create a new BinOperatorCImg object
 	/// \param name          Instance name
 	BinOperatorCImg(const std::string& name);
 
+protected:
 	/// Update object.
 	virtual void execute();
-
 };
 
 #endif // _DISP2DEPTH_H_

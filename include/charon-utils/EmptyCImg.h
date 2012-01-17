@@ -45,10 +45,9 @@ template <typename T>
 class emptycimg_DECLDIR EmptyCImg :
 		public TemplatedParameteredObject<T> {
 public:
-
 	/// output image
 	OutputSlot < cimg_library::CImgList<T> > _output;
-	
+
 	/// Parameters
 	Parameter < int > _sizeX;
 
@@ -61,18 +60,16 @@ public:
 	/// Parameters
 	Parameter < int > _sizeC;
 
-		/// Parameters
+	/// Parameters
 	Parameter < int > _sizeT;
 
-
-	
-    /// create a new EmptyCImg object
+	/// create a new EmptyCImg object
 	/// \param name          Instance name
-    EmptyCImg(const std::string& name);
+	EmptyCImg(const std::string& name);
 
+protected:
 	/// Update object.
 	virtual void execute();
-
 };
 
 #endif // _EMPTYCIMG_H_

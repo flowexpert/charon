@@ -44,30 +44,28 @@ template <typename T>
 class amplitudethreshold_DECLDIR AmplitudeThreshold :
 		public TemplatedParameteredObject<T> {
 public:
-
 	/// input image
 	InputSlot < cimg_library::CImgList<T> > _input;
 
 	/// output image
 	OutputSlot < cimg_library::CImgList<T> > _output;
-	
+
 	/// Parameters
 	Parameter < double > _threshold;
-	
+
 	/// Parameters
 	Parameter < bool > _lowpass ;
 
 	/// Parameters
 	Parameter < bool > _killOutlier;
-	
 
 	/// create a new AmplitudeThreshold object
 	/// \param name          Instance name
 	AmplitudeThreshold(const std::string& name);
 
+protected:
 	/// Update object.
 	virtual void execute();
-
 };
 
 #endif // _AMPLITUDETHRESHOLD_H_

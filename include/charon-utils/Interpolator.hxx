@@ -40,11 +40,15 @@ Interpolator<T>::Interpolator(const std::string& className,
         TemplatedParameteredObject<T>(className, name, doc),
         out(0) {
     _addOutputSlot(out, "out", "interpolator pointer", "Interpolator<T>*");
-    out = this;
 }
 
 template <typename T>
 Interpolator<T>::~Interpolator() {
+}
+
+template <typename T>
+void Interpolator<T>::execute() {
+	out() = this;
 }
 
 #endif // _Interpolator_HXX_
