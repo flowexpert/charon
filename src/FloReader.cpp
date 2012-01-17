@@ -22,6 +22,7 @@
 /// Class name of the plugin
 #define TYPE FloReader
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/FloReader.hxx>
 
 /// Creates an instance of the plugin

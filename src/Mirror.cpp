@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE Mirror
 
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/Mirror.hxx>
 
 /// Creates an instance of the plugin

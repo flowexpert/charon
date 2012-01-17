@@ -18,6 +18,7 @@
 
 #define TYPE LinearFilter
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/LinearFilter.hxx>
 
 extern "C" linearfilter_DECLDIR ParameteredObject* create(

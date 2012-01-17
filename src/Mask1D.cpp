@@ -18,6 +18,7 @@
 
 #define TYPE Mask1D
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Mask1D.hxx>
 
 extern "C" mask1d_DECLDIR ParameteredObject* create(

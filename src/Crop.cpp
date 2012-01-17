@@ -23,6 +23,7 @@
 /// Class name of the plugin
 #define TYPE Crop
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Crop.hxx>
 
 /// Creates an instance of the plugin

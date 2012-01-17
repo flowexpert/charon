@@ -24,6 +24,7 @@
  */
 #define TYPE ChannelConverter
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/ChannelConverter.hxx>
 
 extern "C" channelconverter_DECLDIR ParameteredObject* create(

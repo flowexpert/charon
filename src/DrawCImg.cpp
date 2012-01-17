@@ -25,6 +25,7 @@
 ///Class name of the plugin
 #define TYPE DrawCImg
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/DrawCImg.hxx>
 
 ///Creates an instance of the plugin

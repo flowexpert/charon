@@ -39,24 +39,17 @@ Overlay<T>::Overlay(const std::string& name) :
 		)
 {
 	ParameteredObject::_addInputSlot(
-		foreground, "foreground",
-		"foreground image",
-		"CImgList<T>");
+		foreground, "foreground", "foreground image", "CImgList<T>");
 	ParameteredObject::_addInputSlot(
-		background, "background",
-		"background image",
-		"CImgList<T>");
+		background, "background", "background image", "CImgList<T>");
 
 	ParameteredObject::_addOutputSlot(
-		out, "out",
-		"overlay output",
-		"CImgList<T>");
+		out, "out",               "overlay output",   "CImgList<T>");
 
 	ParameteredObject::_addParameter< float >(
 		alpha, "alpha",
 		"foreground/background ratio, 0=back,1=front",
 		0.5, "float");
-
 }
 
 template <typename T>

@@ -25,6 +25,7 @@
 /// Class name of the plugin
 #define TYPE Overlay
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Overlay.hxx>
 
 /// Creates an instance of the plugin

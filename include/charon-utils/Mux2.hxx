@@ -34,8 +34,8 @@ Mux2<T>::Mux2(const std::string& name) :
 {
 	ParameteredObject::_addInputSlot(list1, "list1",
 			"first CImgList<T>", "CImgList<T>");
-        ParameteredObject::_addInputSlot(list2, "list2",
-                        "second CImgList<T>", "CImgList<T>");
+	ParameteredObject::_addInputSlot(list2, "list2",
+			"second CImgList<T>", "CImgList<T>");
 
 	ParameteredObject::_addOutputSlot(out, "out",
 			"multiplexed CImgList<T>", "CImgList<T>");

@@ -33,14 +33,11 @@
 
 namespace StatisticsDisplay {
 
-typedef boost::iterator_range<
-	std::vector<std::pair<double, double> >::iterator
-> histogram_type;
+typedef boost::iterator_range
+	<std::vector<std::pair<double, double> >::iterator> histogram_type;
 
-cimg_library::CImg<unsigned char> histogramPlot(const histogram_type& histogram,
-	double mean
-	)
-{
+cimg_library::CImg<unsigned char> histogramPlot(
+		const histogram_type& histogram,double mean) {
 	using namespace cimg_library ;
 
 	int leftBorder = 50 ;

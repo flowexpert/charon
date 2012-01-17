@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE Images2Sequence
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Images2Sequence.hxx>
 
 /// Creates an instance of the plugin

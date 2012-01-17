@@ -25,6 +25,7 @@
 ///Class name of the plugin
 #define TYPE EmptyCImg
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/EmptyCImg.hxx>
 
 ///Creates an instance of the plugin

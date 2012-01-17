@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE FrameSelect
 
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/FrameSelect.hxx>
 
 /// Creates an instance of the plugin

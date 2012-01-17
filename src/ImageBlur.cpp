@@ -20,9 +20,10 @@
 /// @author <a href="bc002@ix.urz.uni-heidelberg.de">Cornelius Ratsch</a>
 /// @date 24.08.2009
 
-///Class name of the plugin
+/// Class name of the plugin
 #define TYPE ImageBlur
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/ImageBlur.hxx>
 
 /// Creates an instance of the plugin

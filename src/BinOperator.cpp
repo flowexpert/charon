@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE BinOperator
 
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/BinOperator.hxx>
 
 /// Creates an instance of the plugin

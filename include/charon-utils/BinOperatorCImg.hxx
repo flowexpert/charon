@@ -56,12 +56,15 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 		"\tUse the channelconverter plugin to change the representation",
 	"{Passthrough;Addition;Difference;Multiplication;Division;Power of;Bitwise And;Bitwise Or;Bitwise Xor;Bitwise Not;Left Shift;Right Shift;Mask;Log;Exp;to Gray;to RGB}") ;
 
-	ParameteredObject::_addParameter(_withValue, "withValue", 
-		"Set second operand to a single value<br>"
-		"(assumed true if no second input image is provided)", false) ;
-	ParameteredObject::_addParameter(_value, "value", "Second operand if withValue is true", T(0) ) ;
+	ParameteredObject::_addParameter(
+			_withValue, "withValue",
+			"Set second operand to a single value<br>"
+			"(assumed true if no second input image is provided)", false) ;
+	ParameteredObject::_addParameter(_value, "value",
+				"Second operand if withValue is true", T(0) ) ;
 
-	ParameteredObject::_addOutputSlot(_out, "out", "output image", "CImgList<T>"); 
+	ParameteredObject::_addOutputSlot(_out, "out",
+				"output image", "CImgList<T>");
 }
 
 template <typename T>

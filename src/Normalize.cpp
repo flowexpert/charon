@@ -23,6 +23,7 @@
 ///Class name of the plugin
 #define TYPE Normalize
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Normalize.hxx>
 
 /// Creates an instance of the plugin

@@ -23,6 +23,7 @@
 ///Class name of the plugin
 #define TYPE ImageDisplay
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/ImageDisplay.hxx>
 
 /// Creates an instance of the plugin

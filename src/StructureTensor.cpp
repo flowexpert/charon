@@ -18,6 +18,7 @@
 
 #define TYPE StructureTensor
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/StructureTensor.hxx>
 
 extern "C" structuretensor_DECLDIR ParameteredObject* create(

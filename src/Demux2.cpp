@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE Demux2
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Demux2.hxx>
 
 /// Creates an instance of the plugin

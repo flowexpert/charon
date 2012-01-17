@@ -18,6 +18,7 @@
 
 #define TYPE SteeredDerivative
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/SteeredDerivative.hxx>
 
 extern "C" steeredderivative_DECLDIR ParameteredObject* create(

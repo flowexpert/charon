@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE Threshold
 
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/Threshold.hxx>
 
 /// Creates an instance of the plugin

@@ -25,6 +25,7 @@
 /// Class name of the plugin
 #define TYPE FileWriterHDF5
 
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/FileWriterHDF5.hxx>
 

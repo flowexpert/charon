@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE DilationErosion
 
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/DilationErosion.hxx>
 
 /// Creates an instance of the plugin

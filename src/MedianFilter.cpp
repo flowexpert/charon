@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE MedianFilter
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/MedianFilter.hxx>
 
 /// Creates an instance of the plugin

@@ -23,6 +23,7 @@
 /// Class name of the plugin
 #define TYPE Rgb2Hsv
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Rgb2Hsv.hxx>
 
 /// Creates an instance of the plugin

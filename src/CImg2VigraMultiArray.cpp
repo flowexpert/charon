@@ -23,6 +23,8 @@
 /// Class name of the plugin
 #define TYPE CImg2VigraMultiArray
 
+#include <charon-utils/DataManagerCImgList.hxx>
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg2VigraMultiArray.hxx>
 

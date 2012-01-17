@@ -21,14 +21,13 @@
  *  \date 30.07.2010
  */
 
-//mind the upper/lower cases for GammaCorrection and GammaCorrection !
- 
-///Class name of the plugin
+/// Class name of the plugin
 #define TYPE GammaCorrection
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/GammaCorrection.hxx>
 
-///Creates an instance of the plugin
+/// Creates an instance of the plugin
 extern "C" gammacorrection_DECLDIR ParameteredObject*
 		create(const std::string & name, template_type t) {
 	switch(t) {
@@ -47,7 +46,7 @@ extern "C" gammacorrection_DECLDIR ParameteredObject*
 	}
 }
 
-///Deletes an instance of the plugin
+/// Deletes an instance of the plugin
 extern "C" gammacorrection_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }

@@ -25,6 +25,8 @@
 #define TYPE ArgosDisplayPlugin
 
 #include <charon-utils/ArgosDisplay.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
+#include <charon-utils/DataManagerVigraArray.hxx>
 
 /// Creates an instance of the plugin
 extern "C" argosdisplay_DECLDIR ParameteredObject*
