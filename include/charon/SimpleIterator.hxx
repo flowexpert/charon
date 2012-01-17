@@ -104,8 +104,14 @@ void SimpleIterator<T>::_afterIterationHook() {
 }
 
 template <typename T>
-void SimpleIterator<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
+void SimpleIterator<T>::run() {
+	// avoid duplicate execution
+	if (ParameteredObject::executed()) {
+		sout << "(II) Skipping reexecution of " << this->getClassName()
+			<< " \"" << this->getName() << "\"" << std::endl;
+		return;
+	}
+
 	initialize();
 	iterate();
 	finalize();
@@ -114,8 +120,15 @@ void SimpleIterator<T>::execute() {
 
 template <typename T>
 void SimpleIterator<T>::initialize() {
+	// check requirements
+	if (!ParameteredObject::connected()) {
+		ParameteredObject::raise("not (completely) connected!");
+	}
+
 	// initialize helper object
-	helper()->execute();
+	typename std::set<Slot*>::const_iterator _hlpI=helper.getTargets().begin();
+	ParameteredObject& _hlp = (*_hlpI)->getParent();
+	_hlp.run();
 	helper()->reset();
 
 	if (updateRate() < 0.) {
@@ -167,15 +180,13 @@ void SimpleIterator<T>::prepareStep() {
 	helper()->resetExecuted(true);
 }
 
-
 template <typename T>
 void SimpleIterator<T>::performStep() {
 	// iteration by calling execute() on all parent objects,
 	// since the iteration helper object is only executed once,
 	// only the "inner objects" are iterated.
-	ParameteredObject::execute();
+	ParameteredObject::runPreceeding();
 }
-
 
 template <typename T>
 bool SimpleIterator<T>::finishStep() {
@@ -257,7 +268,7 @@ bool SimpleIterator<T>::finishStep() {
 		sout << curChange << std::endl;
 		cont = epsilon() <=0 || curChange >= epsilon();
 	}
-	if(updateRate() != 1.) {
+	if (updateRate() != 1.) {
 		// implement possibility to change step size
 		cimg_library::CImgList<T> temp(oldFlow);
 		cimglist_for(temp, kk) {
@@ -288,6 +299,9 @@ void SimpleIterator<T>::finalize() {
 	// To insert code after the last iteration,
 	// use this hook in derived classes.
 	_afterIterationHook();
+
+	// post execution code
+	ParameteredObject::_setExecuted(true);
 }
 
 #endif /* _SIMPLEITERATOR_HXX_ */

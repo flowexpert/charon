@@ -113,10 +113,6 @@ public:
 	/** \param name          Instance name */
 	SimpleIterator(const std::string& name = "");
 
-	/// Update object
-	/** \copydetails ParameteredObject::execute() */
-	virtual void execute();
-
 	/// initialize iterator
 	/** initialize helper object and run pre iteration hook */
 	void initialize();
@@ -155,6 +151,11 @@ public:
 	/** Commit result to output slot, run post iteration hook
 	 */
 	void finalize();
+
+protected:
+	/// Update object
+	/** \copydetails ParameteredObject::execute() */
+	virtual void run();
 };
 
 #endif // _SimpleIterator_H_

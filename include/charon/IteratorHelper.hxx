@@ -49,17 +49,16 @@ IteratorHelper<T>::IteratorHelper(const std::string& name) :
 	ParameteredObject::_addOutputSlot(flow, "flow",
 		"current flow solution", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(count, "count",
-		"iteration counter");
+		"iteration counter (resetted on iteration start, e.g. inner loop)");
+	ParameteredObject::_addOutputSlot(countAll, "countAll",
+		"iteration counter (not resetted, increasing only)");
 	ParameteredObject::_addOutputSlot(self, "self",
 		"self-pointer", "IteratorHelper<T>*");
-
-	self() = this;
 }
 
 template <typename T>
 void IteratorHelper<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
+	self() = this;
 
 	// first initialization
 	// later updated by iterator
