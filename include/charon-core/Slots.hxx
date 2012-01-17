@@ -54,8 +54,7 @@ bool AbstractSlot<T>::_addTarget(Slot* target) {
 		Slot::raise("AbstractSlot::_addTarget: null pointer given");
 	}
 
-	// Check slot types by comparint their _type strings.
-	// dynamic_cast isn't possible on dynamically loaded plugins.
+	// Check slot types by comparing their _type strings.
 	if (target->getType() != this->getType()) {
 		this->printError("Source slot of failed connection");
 		target->printError("Target slot of failed connection");
@@ -63,6 +62,11 @@ bool AbstractSlot<T>::_addTarget(Slot* target) {
 	}
 
 	_targets.insert((AbstractSlot<T>*) target);
+	if (!_multiSlot && _targets.size() > 1) {
+		this->printError("Source slot of failed connection");
+		target->printError("Target slot of failed connection");
+		Slot::raise("Tried to add multiple targets to non-multi slot.");
+	}
 	return true;
 }
 
@@ -135,13 +139,7 @@ void AbstractSlot<T>::load(const ParameterFile& pf,
 		Slot * targetSlot = targObj->getSlot(
 					tStrIter->substr(tStrIter->find(".") + 1));
 
-		// Check slot types by comparint their _type strings.
-		// dynamic_cast isn't possible on dynamically loaded plugins.
-		if (targetSlot->getType() != this->getType()) {
-			this->printError("Source slot of failed connection");
-			targetSlot->printError("Target slot of failed connection");
-			Slot::raise("Cannot connect slots of different types.");
-		}
+		// typecheck is performed in _addTarget that is called in connect
 		AbstractSlot<T>* tmp = (AbstractSlot<T>*) (targetSlot);
 		connect(*tmp);
 	}
