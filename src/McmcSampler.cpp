@@ -2,6 +2,7 @@
 #include <charon-utils/CImg.h>
 #include <charon/McmcSampler.h>
 #include <charon/Functions/Function.h>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 McmcSampler::McmcSampler(const std::string& name) :
 		Sampler("mcmcsampler", name,

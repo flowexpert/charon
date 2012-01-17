@@ -25,6 +25,7 @@
 #define TYPE SequenceGenerator
 
 #include <charon/SequenceGenerator.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" sequencegenerator_DECLDIR ParameteredObject*

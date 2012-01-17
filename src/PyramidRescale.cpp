@@ -26,6 +26,7 @@
 
 #include <charon-utils/Convolution.hxx>
 #include <charon/PyramidRescale.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" pyramidrescale_DECLDIR ParameteredObject*

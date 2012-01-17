@@ -24,6 +24,7 @@
 #define TYPE CdFitter
 
 #include <charon/CdFitter.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 extern "C" cdfitter_DECLDIR ParameteredObject* create(
 		const std::string& name, template_type t) {

@@ -26,6 +26,7 @@
 
 #include <charon-utils/ImgTool.hxx>
 #include <charon/IteratorHelper.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" iteratorhelper_DECLDIR ParameteredObject*

@@ -25,6 +25,7 @@
 #define TYPE FlowComparator
 
 #include <charon/FlowComparator.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" flowcomparator_DECLDIR ParameteredObject*

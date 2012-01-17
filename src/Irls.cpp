@@ -25,6 +25,7 @@
 #define TYPE Irls
 
 #include <charon/Irls.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" irls_DECLDIR ParameteredObject* create(

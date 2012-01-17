@@ -28,6 +28,7 @@
 #define solver_EXPORTS
 #endif
 #include <charon/Solvers/PetscSolver.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 extern "C" petscsolver_DECLDIR ParameteredObject * create(
 		const std::string &name, template_type t) {

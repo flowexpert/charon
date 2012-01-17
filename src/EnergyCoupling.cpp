@@ -26,6 +26,7 @@
 #define TYPE EnergyCoupling
 #define energystencil_EXPORTS
 #include <charon/EnergyStencils/EnergyCoupling.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" energycoupling_DECLDIR ParameteredObject*

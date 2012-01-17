@@ -24,6 +24,7 @@
 
 #define stencil_EXPORTS
 #include <charon/Stencils/Rfmc.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 extern "C" rfmc_DECLDIR
 ParameteredObject* create(const std::string &name, template_type t) {

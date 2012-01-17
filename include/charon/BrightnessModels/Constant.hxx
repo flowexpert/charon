@@ -41,11 +41,6 @@ BrightnessModels::Constant<T>::Constant(const std::string& name) :
 }
 
 template<class T>
-void BrightnessModels::Constant<T>::execute() {
-	ParameteredObject::execute();
-}
-
-template<class T>
 std::set<std::string>& BrightnessModels::Constant<T>::getUnknowns()
 {
 	return this->unknowns;

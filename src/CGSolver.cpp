@@ -26,6 +26,7 @@
 #define solver_EXPORTS
 #endif
 #include <charon/Solvers/CGSolver.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 extern "C" cgsolver_DECLDIR ParameteredObject * create(
 		const std::string &name, template_type t) {

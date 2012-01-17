@@ -26,6 +26,7 @@
 
 #include <charon-utils/Convolution.hxx>
 #include <charon/Diff2D.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" diff2d_DECLDIR ParameteredObject*

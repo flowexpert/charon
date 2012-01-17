@@ -26,6 +26,7 @@
 #define TYPE EnergyClassic
 #define energystencil_EXPORTS
 #include <charon/EnergyStencils/EnergyClassic.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" energyclassic_DECLDIR ParameteredObject*

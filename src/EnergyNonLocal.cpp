@@ -30,6 +30,7 @@
 
 #include <charon/EnergyStencils/EnergyNonLocal.hxx>
 //#include <charon/EnergyStencil.h>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" energynonlocal_DECLDIR ParameteredObject*

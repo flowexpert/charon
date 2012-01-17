@@ -25,6 +25,7 @@
 
 #include <charon-core/ParameteredObject.hxx>
 #include <charon/MotionModels/LocalConstant.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" motionmodels_localconstant_DECLDIR

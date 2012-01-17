@@ -25,6 +25,7 @@
 #define TYPE SimpleIterator
 
 #include <charon/SimpleIterator.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" simpleiterator_DECLDIR ParameteredObject*

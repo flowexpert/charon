@@ -21,6 +21,7 @@
  */
 #include <charon-core/ParameteredObject.hxx>
 #include <charon/Sampler.h>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 Sampler::Sampler(const std::string& cn, const std::string& n,
 	const std::string& doc) : ParameteredObject(cn, n, doc)

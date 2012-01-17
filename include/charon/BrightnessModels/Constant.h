@@ -63,10 +63,6 @@ public:
 			const std::string& unknown = "");
 
 	virtual std::set<std::string>& getUnknowns();
-
-protected:
-	/// \copydoc ParameteredObject::execute()
-	virtual void execute();
 };
 
 } // namespace

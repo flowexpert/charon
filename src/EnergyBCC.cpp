@@ -26,6 +26,7 @@
 #define TYPE EnergyBCC
 #define energystencil_EXPORTS
 #include <charon/EnergyStencils/EnergyBCC.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" energybcc_DECLDIR ParameteredObject*

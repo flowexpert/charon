@@ -25,6 +25,7 @@
 #define TYPE EdgySequenceGenerator
 
 #include <charon/EdgySequenceGenerator.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" edgysequencegenerator_DECLDIR ParameteredObject*

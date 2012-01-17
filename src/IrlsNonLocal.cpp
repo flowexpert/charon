@@ -25,6 +25,7 @@
 #define TYPE IrlsNonLocal
 
 #include <charon/IrlsNonLocal.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" irlsnonlocal_DECLDIR ParameteredObject* create(

@@ -27,6 +27,7 @@
 #define simpleiterator_EXPORTS
 #include <charon/SimpleIterator.hxx>
 #include <charon/RelaxingIterator.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" relaxingiterator_DECLDIR ParameteredObject*

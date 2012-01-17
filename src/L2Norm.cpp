@@ -35,6 +35,7 @@
 #endif
 
 #include <charon/Stencils/L2Norm.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 extern "C" DECLDIR ParameteredObject * create(const std::string &name, template_type t) {
 	switch(t) {

@@ -26,6 +26,7 @@
 #define brightnessmodel_EXPORTS
 #include <charon-core/ParameteredObject.hxx>
 #include <charon/BrightnessModels/Constant.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" brightnessmodels_constant_DECLDIR

@@ -25,6 +25,7 @@
 #define TYPE CGSolverHelper
 
 #include <charon/CGSolverHelper.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" cgsolverhelper_DECLDIR ParameteredObject*

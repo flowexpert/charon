@@ -1,5 +1,27 @@
+/*  This file is part of Charon.
+
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/** \file SampleGenerator.cpp
+ *  Implementation of parameter class SampleGenerator.
+ *  \author <a href="mailto:Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried</a>
+ *  \date 17.11.2010
+ */
 #include <charon-core/ParameteredObject.hxx>
 #include <charon/SampleGenerator.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 #define TYPE SampleGenerator
 
