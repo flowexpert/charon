@@ -88,6 +88,10 @@ public:
 	virtual double diffLog(
 			std::vector<double> x,
 			std::vector<double>::size_type i) const = 0;
+
+protected:
+	/// \implements ParameteredObject::execute()
+	virtual void execute();
 };
 
 #endif // FIT_FUNCTION_H_

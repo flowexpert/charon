@@ -52,6 +52,9 @@ public:
 	virtual ~Sampler();
 
 protected:
+	/// \implements ParameteredObject::execute()
+	virtual void execute();
+
 	/// standard constructor
 	/// \param className	className
 	/// \param name			instance name

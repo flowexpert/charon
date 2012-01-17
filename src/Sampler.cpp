@@ -29,8 +29,11 @@ Sampler::Sampler(const std::string& cn, const std::string& n,
 			pdf, "pdf", "sampling probability distribution", "Function*");
 	_addOutputSlot(
 			out, "out", "self-pointer", "Sampler*");
-	out = this;
 }
 
 Sampler::~Sampler() {
+}
+
+void Sampler::execute() {
+	out() = this;
 }

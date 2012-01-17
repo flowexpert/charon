@@ -17,13 +17,10 @@ PsiFunction::PsiFunction(const std::string& name) :
 			lambda, "lambda", "rescaling", 1.);
 	ParameteredObject::_addOutputSlot(
 			self, "self", "self pointer", "Function*");
-	self() = this;
 }
 
 void PsiFunction::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
+	self() = this;
 	_ep2    = std::pow(epsilon(), 2);
 	_lambda = lambda();
 }

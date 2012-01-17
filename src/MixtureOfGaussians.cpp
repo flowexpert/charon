@@ -103,8 +103,6 @@ MixtureOfGaussians::MixtureOfGaussians(const std::string& name) :
 			"Gaussian function weights");
 	ParameteredObject::_addParameter(sigmas, "sigmas",
 			"Gaussian function widths");
-	probability = &_probability;
-	energy = &_energy;
 }
 
 MixtureOfGaussians::~MixtureOfGaussians() {
@@ -136,6 +134,10 @@ double MixtureOfGaussians::rangeHint(std::vector<double>::size_type) const {
 }
 
 void MixtureOfGaussians::execute() {
+	CDFitFunction::execute();
+	probability() = &_probability;
+	energy() = &_energy;
+
 	std::vector<double>::size_type ii, siz = sigmas.size();
 	if(siz != weights.size()) {
 		throw std::runtime_error(

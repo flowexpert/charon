@@ -64,17 +64,17 @@ CdFitter<T>::CdFitter(const std::string& name) :
 
 template<typename T>
 void CdFitter<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
-	CDFitFunction& fun = *(toFit());
+	CDFitFunction* fun = toFit();
+	if (!fun) {
+		ParameteredObject::raise("Got null pointer as fit function");
+	}
 
 	// initialize _sampler
 	static McmcSampler sampler;
 	sampler.sigma = mcmcSigma();
 	sampler.steps = mcmcSweeps();
 	sampler.pdf.disconnect();
-	sampler.pdf.connect(fun.probability);
+	sampler.pdf.connect(fun->probability);
 
 #ifndef NDEBUG
 	// check image dimensions
@@ -88,7 +88,7 @@ void CdFitter<T>::execute() {
 #endif
 
 	// collect training input
-	std::vector<double>::size_type dims = fun.probability()->dims();
+	std::vector<double>::size_type dims = fun->probability()->dims();
 	assert(dims > 0);
 	cimg_library::CImgList<T> trainCollection(training());
 	if(trainCollection.size() != dims) {
@@ -118,7 +118,7 @@ void CdFitter<T>::execute() {
 	// we need a copy of the input data (preallocate memory)
 	cimg_library::CImgList<T> modified(trainCollection);
 
-	std::vector<double>::size_type NN = fun.fitParameters.size();
+	std::vector<double>::size_type NN = fun->fitParameters.size();
 	assert(NN > 0);
 	double* diff  = new double[NN];
 	// for oscillation detection
@@ -140,7 +140,7 @@ void CdFitter<T>::execute() {
 	resOut << "# Initial fitparameters are \"iteration 0\"" << std::endl << "0";
 	for(std::size_t ii=0; ii<NN;ii++)
 		resOut << "\t" << std::setprecision(8) << std::setw(12) << std::fixed
-			<< fun.fitParameters[ii];
+			<< fun->fitParameters[ii];
 	resOut << "\t" << agressiveness() << std::endl;
 	resOut.close();
 
@@ -172,8 +172,8 @@ void CdFitter<T>::execute() {
 					tval[kk]=trainCollection(kk,x,y,z,t);
 					mval[kk]=modified(kk,x,y,z,t);
 				}
-				diff[ii] += (fun.diffLog(tval, ii)
-					- fun.diffLog(mval, ii)) / s;
+				diff[ii] += (fun->diffLog(tval, ii)
+					- fun->diffLog(mval, ii)) / s;
 			}
 			if(run > 3)
 				// perform oscillation detection
@@ -181,10 +181,10 @@ void CdFitter<T>::execute() {
 					oscillations++;
 		}
 		for(std::size_t ii=0; ii < NN; ii++)
-			fun.fitParameters[ii] += agressiveness() * diff[ii];
+			fun->fitParameters[ii] += agressiveness() * diff[ii];
 
 		// normalize weights
-		fun.normalize();
+		fun->normalize();
 
 		// write results
 		resOut.open(results().c_str(), std::ios::app);
@@ -192,7 +192,7 @@ void CdFitter<T>::execute() {
 		for(std::size_t ii=0; ii<NN;ii++)
 			resOut << "\t" << std::setprecision(8)
 				<< std::setw(12) << std::fixed
-				<< fun.fitParameters[ii];
+				<< fun->fitParameters[ii];
 		resOut << "\t" << agressiveness() << std::endl;
 		resOut.close();
 
@@ -227,12 +227,12 @@ void CdFitter<T>::execute() {
 	resOut.open(results().c_str(), std::ios::app);
 	resOut << "# final parameters:" << std::endl;
 	resOut << "#     fitParameters\t";
-	for(std::vector<double>::size_type kk=0;kk<fun.fitParameters.size();kk++)
-		resOut << fun.fitParameters[kk] << ";";
+	for(std::vector<double>::size_type kk=0;kk<fun->fitParameters.size();kk++)
+		resOut << fun->fitParameters[kk] << ";";
 	resOut << "\n#     agressiveness\t" << agressiveness << std::endl;
 	resOut.close();
 
-	fun.printParameters();
+	fun->printParameters();
 	sout << "\t\tagressiveness\t" << agressiveness << std::endl;
 
 	delete[] diff;

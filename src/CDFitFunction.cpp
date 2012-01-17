@@ -30,16 +30,18 @@ CDFitFunction::CDFitFunction(
 		const std::string& doc) :
 			ParameteredObject(cName, iName, doc)
 {
-	self() = this;
-	probability() = 0;
-	energy() = 0;
-
 	_addOutputSlot(self, "self",
 			"self-pointer", "CDFitFunction*");
 	_addOutputSlot(probability, "probability",
 			"probability function", "Function*");
 	_addOutputSlot(energy, "energy",
 			"energy function", "Function*");
+}
+
+void CDFitFunction::execute() {
+	self() = this;
+	probability() = 0;
+	energy() = 0;
 }
 
 CDFitFunction::~CDFitFunction() {
