@@ -62,6 +62,12 @@ TemplatedParameteredObject<T>::TemplatedParameteredObject(
 }
 
 template<typename T>
+TemplatedParameteredObject<T>::~TemplatedParameteredObject()
+{
+
+}
+
+template<typename T>
 const std::string TemplatedParameteredObject<T>::getTemplateType() const {
 	return TypeDetector::instance().type(typeid(T).name());
 }

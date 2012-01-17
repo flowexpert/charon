@@ -24,9 +24,9 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <charon-core/ParameteredObject.hxx>
-#include <charon-core/ExceptionHandler.h>
-#include <charon-core/PluginManager.h>
+#include "../include/charon-core/ParameteredObject.hxx"
+#include "../include/charon-core/ExceptionHandler.h"
+#include "../include/charon-core/PluginManager.h"
 
 // make sure that assert() works (nothing is tested otherwise)
 #undef NDEBUG
@@ -115,7 +115,7 @@ int test() {
 		<< part2 << ")" << std::endl;
 	assert(part1 == "0123" || part1 == "0213");
 	assert(part2 == "45" || part2 == "54");
-	man.reset();
+        man.finalize();
 	return EXIT_SUCCESS;
 }
 

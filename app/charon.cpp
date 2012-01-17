@@ -27,11 +27,11 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <charon-core/FileTool.h>
-#include <charon-core/SplitStream.h>
-#include <charon-core/ExceptionHandler.h>
-#include <charon-core/PluginManager.h>
-#include <charon-core/TypeDetector.h>
+#include "../include/charon-core/FileTool.h"
+#include "../include/charon-core/SplitStream.h"
+#include "../include/charon-core/ExceptionHandler.h"
+#include "../include/charon-core/PluginManager.h"
+#include "../include/charon-core/TypeDetector.h"
 
 /// global configuration options
 namespace Config {
@@ -212,7 +212,9 @@ int run() {
 		std::cout << "Loading workflow from \"" << Config::paramFile
 				<< "\"." << std::endl;
 	}
-	Config::man->loadParameterFile(Config::paramFile);
+        Config::man->mWorkflowfile=Config::paramFile;
+        Config::man->initialize();
+        //Config::man->loadParameterFile(Config::paramFile);
 
 	Config::oldDir = FileTool::getCurrentDir();
 	if(!Config::workingDir.empty()) {
@@ -225,7 +227,7 @@ int run() {
 	if (Config::verbose) {
 		std::cout << "Starting workflow execution." << std::endl;
 	}
-	Config::man->runWorkflow();
+        Config::man->execute();
 
 	if (Config::verbose) {
 		std::cout << "Finished workflow execution." << std::endl;
@@ -245,7 +247,7 @@ void cleanup() {
 		FileTool::changeDir(Config::oldDir);
 	}
 	if (Config::man) {
-		Config::man->reset();
+                Config::man->finalize();
 		delete Config::man;
 		Config::man = 0;
 	}

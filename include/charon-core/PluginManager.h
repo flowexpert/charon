@@ -52,6 +52,7 @@
 #include <map>
 #include <list>
 #include "PluginManagerInterface.h"
+#include "ParameteredObject.h"
 
 /**
  * Manages ParameteredObject based plugins and their instances.
@@ -123,8 +124,10 @@
  * builds and to false on release builds. Specifying this parameter manually
  * is useful only on unix builds where this mixture causes less or no problems.
  */
-class PluginManager: public PluginManagerInterface {
+class PluginManager: public PluginManagerInterface, public ParameteredObject {
 private:
+
+
 	/**
 	 * Saves the currently loaded plugins
 	 */
@@ -197,6 +200,7 @@ private:
 
 	// @}
 public:
+        Parameter <std::string> mWorkflowfile;
 
 	/// default lib suffix
 #ifdef NDEBUG
@@ -215,8 +219,9 @@ public:
 	 *                    fallback to libs without suffix.
 	 */
 	PluginManager(
-			const std::vector<std::string>& pluginPaths,
-			bool debugSuffix = DEFAULT_DEBUG_SUFFIX);
+                        const std::vector<std::string>& pluginPaths,bool debugSuffix = DEFAULT_DEBUG_SUFFIX,const std::string& className="MainGroup",
+            const std::string& name = "", const std::string& doc = ""
+                        );
 
 	/// default constructor
 	/**
@@ -230,8 +235,25 @@ public:
 	 *                    fallback to libs without suffix.
 	 */
 	PluginManager(
-			const std::string& globalPath, const std::string& localPath = "",
-			bool debugSuffix = DEFAULT_DEBUG_SUFFIX);
+                        const std::string& globalPath,
+            const std::string& localPath = "",
+                        bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
+            const std::string& className="MainGroup",
+                        const std::string& name = "", const std::string& doc = ""
+                        );
+//        /// default constructor
+//        /**
+//         * Creates a new PluginManager instance and sets the path to the plugins to
+//         * the value in the parent.
+//         * \param parent parent Group.
+//         * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
+//         *                    fallback to libs without suffix.
+//         */
+//        PluginManager(
+//                        PluginManager* parent,
+//                        bool debugSuffix = DEFAULT_DEBUG_SUFFIX);
+//#error ParameteredObject needs name type doc
+
 
 	/**
 	 * Loads a plugin stored in the previously declared folder.
@@ -268,6 +290,13 @@ public:
 	 * @return true if the plugin is loaded
 	 */
 	bool isLoaded(const std::string & name) const;
+
+
+
+        /**
+         * Gets the plugin paths
+         */
+        std::vector<std::string> getPluginPaths();
 
 	/**
 	 * @return number of currently loaded plugins.
@@ -413,7 +442,26 @@ public:
 	 *
 	 * @see addTargetPoint(ParameteredObject *)
 	 */
-	void runWorkflow();
+        virtual void executeGroup();
+
+        /**
+         * Calls executeGroup() .
+         *
+         *
+         */
+        virtual void execute();
+
+        /**
+          * Calls loadWorkflow with mWorkflow as paramter, then initialize on the loaded instances
+          */
+        virtual void initialize();
+
+        /**
+         * Resets this PluginManager instance to its initial state.
+         * Unloads all plugins, resets defaultTemplateType parameter and deletes
+         * target points.
+         */
+        virtual void finalize();
 
 	/// for compatibility, use runWorkflow instead
 	charon_DEPRECATED void executeWorkflow() {
@@ -429,12 +477,8 @@ public:
 	 */
 	void createMetadata(const std::string & targetPath = "");
 
-	/**
-	 * Resets this PluginManager instance to its initial state.
-	 * Unloads all plugins, resets defaultTemplateType parameter and deletes
-	 * target points.
-	 */
-	void reset();
+
+
 
 	/**
 	 * Deletes all existing instances of any loaded plugin and then unloads all

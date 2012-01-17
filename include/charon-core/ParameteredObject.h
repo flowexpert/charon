@@ -76,6 +76,10 @@ public:
 	typedef unsigned short int build_type ;
 
 private:
+
+        /// status of initialization
+        bool _initialized;
+
 	/// Count number of parametered objects with different class names.
 	static std::map<std::string, unsigned int> _genericClassNameCount;
 
@@ -131,6 +135,8 @@ private:
 	 */
 	void _load(
 			const ParameterFile& pf, const PluginManagerInterface * man);
+
+
 
 	/// Common code for _addParameter, _addInputSlot, _addOutputSlot.
 	/** This function does nothing, if _createMetadata is set to false.
@@ -298,6 +304,13 @@ protected:
 	 */
 	std::set<ParameteredObject*> _getTargetNodes();
 
+        /// initialize plugin
+        /** The default implementation does nothing at all.
+         *  Override this function implementing new modules.
+         *  This function may be pure virtual in future releases.
+         */
+        virtual void initialize();
+
 	/// execute plugin code
 	/** The default implementation does nothing at all.
 	 *  Override this function implementing new modules.
@@ -305,9 +318,19 @@ protected:
 	 */
 	virtual void execute();
 
+<<<<<<< TREE
+        /// finalize plugin
+        /** The default implementation does nothing at all.
+         *  Override this function implementing new modules.
+         *  This function may be pure virtual in future releases.
+         */
+        virtual void finalize();
+
+=======
 	/// run all preceeding objects
 	void runPreceeding();
 
+>>>>>>> MERGE-SOURCE
 public:
 	/// The template type of the instance is double
 	static const template_type TYPE_DOUBLE = 0;
@@ -523,6 +546,8 @@ public:
 		const std::string& name = "", const std::string& doc = "");
 
 	virtual const std::string getTemplateType() const;
+
+        virtual ~TemplatedParameteredObject();
 };
 
 

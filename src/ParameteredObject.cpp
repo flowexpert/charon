@@ -30,9 +30,14 @@
 #include <algorithm>
 #include <cassert>
 #include <stdexcept>
+<<<<<<< TREE
+#include "../include/charon-core/ParameteredObject.hxx"
+#include "../include/charon-core/PluginManagerInterface.h"
+=======
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-core/PluginManagerInterface.h>
 #include <charon-core/DataManagerParameterFile.hxx>
+>>>>>>> MERGE-SOURCE
 
 // Instantiate static variables.
 std::map<std::string, unsigned int> ParameteredObject::_genericClassNameCount;
@@ -59,6 +64,7 @@ ParameteredObject::ParameteredObject(const std::string& className,
 		_metadata.set<std::string> (_className + ".inputs");
 		_metadata.set<std::string> (_className + ".outputs");
 	}
+        _initialized=false;
 }
 
 ParameteredObject::~ParameteredObject() {
@@ -69,6 +75,8 @@ ParameteredObject::~ParameteredObject() {
 #endif
 						_className + ".wrp");
 	}
+        if(_initialized)
+            finalize();
 }
 
 bool ParameteredObject::_addSomething(const std::string& extension,
@@ -236,6 +244,8 @@ void ParameteredObject::runPreceeding() {
 }
 
 void ParameteredObject::execute() {
+    if(!_initialized)
+        raise("This plugin must be initialized before execution!");
 	// empty default implementation
 	sout << "(WW) this plugin has not overridden execute() or does call "
 		 << "ParameteredObject::execute() directly which is deprecated."
@@ -415,8 +425,13 @@ void ParameteredObject::_load(const ParameterFile& pf,
 	std::map<std::string, Slot*>::const_iterator slotIter;
 	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++)
 		slotIter->second->load(pf, man);
+<<<<<<< TREE
+        // initialize object
+        initialize();
+=======
 	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
 		slotIter->second->load(pf, man);
+>>>>>>> MERGE-SOURCE
 }
 
 bool ParameteredObject::connected() const {
@@ -573,6 +588,24 @@ std::string ParameteredObject::templateTypeToString(template_type t) {
 		return ParameteredObject::TYPE_DOUBLE;
 	}
 }
+
+
+
+void ParameteredObject::initialize()
+{
+    if(this->_initialized)
+        raise("Plugin is already initialized!");
+    _initialized=true;
+}
+
+void ParameteredObject::finalize()
+{
+    if(!_initialized)
+        raise("Plugin was not initialied!");
+    _initialized=false;
+}
+
+
 
 /*
 ParameteredObject::build_type ParameteredObject::getBuildType() const

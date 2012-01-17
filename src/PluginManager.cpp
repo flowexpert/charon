@@ -23,26 +23,26 @@
 #include <cstdlib>
 #include <set>
 #include <algorithm>
-#include <charon-core/PluginManager.h>
-#include <charon-core/ParameteredObject.hxx>
+#include "../include/charon-core/PluginManager.h"
+#include "../include/charon-core/ParameteredObject.hxx"
+
 
 std::vector<std::string> AbstractPluginLoader::pluginPaths;
 std::string AbstractPluginLoader::libSuffix;
 
-PluginManager::PluginManager(
-		const std::vector<std::string>& paths, bool dbg) :
-	_defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
+PluginManager::PluginManager(const std::vector<std::string> &paths, bool dbg, const std::string &className, const std::string &name, const std::string &doc):
+        _defaultTemplateType(ParameteredObject::TYPE_DOUBLE),ParameteredObject(className,name,doc) {
 	if(paths.size() == 0) {
 		throw std::invalid_argument("PluginLoader: Empty paths list given!");
 	}
 	AbstractPluginLoader::pluginPaths = paths;
 	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
+
+        ParameteredObject::_addParameter(mWorkflowfile,"WorkflowFile","The Workflow to be loaded","string");
 }
 
-PluginManager::PluginManager(
-		const std::string& path1, const std::string& path2,
-		bool dbg) :
-	_defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
+PluginManager::PluginManager(const std::string &path1, const std::string &path2, bool dbg, const std::string &className, const std::string &name, const std::string &doc) :
+        _defaultTemplateType(ParameteredObject::TYPE_DOUBLE),ParameteredObject(className,name,doc) {
 	if (path2.size() > 0) {
 		// put local path (if any) in front of global path
 		AbstractPluginLoader::pluginPaths.push_back(path2);
@@ -53,7 +53,18 @@ PluginManager::PluginManager(
 	}
 	AbstractPluginLoader::pluginPaths.push_back(path1);
 	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
+
+        ParameteredObject::_addParameter(mWorkflowfile,"WorkflowFile","The Workflow to be loaded","string");
 }
+
+//PluginManager::PluginManager(bool dbg)
+//{
+//    AbstractPluginLoader::pluginPaths = parent->getPluginPaths();
+//    AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
+
+//    ParameteredObject::_addParameter(mWorkflowfile,"WorkflowFile","The Workflow to be loaded","string");
+
+//}
 
 void PluginManager::_destroyAllInstances(PLUGIN_LOADER * loader) {
 	std::vector<ParameteredObject *> v;
@@ -168,7 +179,7 @@ ParameteredObject * PluginManager::createInstance(
 		throw (AbstractPluginLoader::PluginException) {
 	pluginName = StringTool::toLowerCase(pluginName);
 	if (instanceName == "" || objects.find(instanceName) == objects.end()) {
-		if (_loadedPlugins.find(pluginName) == _loadedPlugins.end()) {
+                if (_loadedPlugins.find(pluginName) == _loadedPlugins.end()) {
 			try {
 				loadPlugin(pluginName);
 			} catch (AbstractPluginLoader::PluginException e) {
@@ -220,7 +231,7 @@ void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 }
 
 void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
-	reset();
+        finalize();
 
 	// Determine default template type
 	if (paramFile.isSet("global.templatetype")) {
@@ -243,25 +254,25 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 			if (keys[i].substr(keys[i].find_last_of(".") + 1,
 					keys[i].find_first_of(" ")) == "type") {
 				std::string pluginName = paramFile.get<std::string> (keys[i]);
-				if (!isLoaded(pluginName)) {
-					loadPlugin(pluginName);
-				}
-				std::string instanceName = keys[i].substr(0,
-						keys[i].find_first_of("."));
+                                if (!isLoaded(pluginName)) {
+                                        loadPlugin(pluginName);
+                                }
+                                std::string instanceName = keys[i].substr(0,
+                                                keys[i].find_first_of("."));
 
-				template_type templateType = _defaultTemplateType;
-				if (paramFile.isSet(instanceName + ".templatetype")) {
-					std::string type = paramFile.get<std::string> (
-						instanceName + ".templatetype");
-					if (type == "int") {
-						templateType = ParameteredObject::TYPE_INT;
-					} else if (type == "float") {
-						templateType = ParameteredObject::TYPE_FLOAT;
-					} else {
-						templateType = ParameteredObject::TYPE_DOUBLE;
-					}
-				}
-				createInstance(pluginName, templateType, instanceName);
+                                template_type templateType = _defaultTemplateType;
+                                if (paramFile.isSet(instanceName + ".templatetype")) {
+                                        std::string type = paramFile.get<std::string> (
+                                                instanceName + ".templatetype");
+                                        if (type == "int") {
+                                                templateType = ParameteredObject::TYPE_INT;
+                                        } else if (type == "float") {
+                                                templateType = ParameteredObject::TYPE_FLOAT;
+                                        } else {
+                                                templateType = ParameteredObject::TYPE_DOUBLE;
+                                        }
+                                }
+                                createInstance(pluginName, templateType, instanceName);
 			}
 		}
 	} catch (AbstractPluginLoader::PluginException e) {
@@ -322,7 +333,7 @@ void PluginManager::setDefaultTemplateType(const template_type t) {
 	}
 }
 
-void PluginManager::runWorkflow() {
+void PluginManager::executeGroup() {
 	std::list<ParameteredObject*> tPoints = _determineTargetPoints();
 	std::list<ParameteredObject*>::const_iterator iter;
 
@@ -336,6 +347,11 @@ void PluginManager::runWorkflow() {
 	}
 
 	for (iter = tPoints.begin(); iter != tPoints.end(); iter++) {
+//            if(isGroup((*iter)))
+//            {
+//                AbstractBaseGroupIntf* grpIntf=dynamic_cast<AbstractBaseGroupIntf*>((*iter));
+//                grpIntf->loadWorkflow(AbstractPluginLoader::pluginPaths);
+//            }
 		(*iter)->run();
 	}
 }
@@ -630,9 +646,10 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 	sout << std::endl;
 }
 
-void PluginManager::reset() {
+void PluginManager::finalize() {
 	_unloadAllPlugins();
 	_defaultTemplateType = ParameteredObject::TYPE_DOUBLE;
+        ParameteredObject::finalize();
 }
 
 std::list<ParameteredObject*> PluginManager::_determineTargetPoints() {
@@ -697,5 +714,29 @@ std::list<ParameteredObject*> PluginManager::determineExecutionOrder() {
 }
 
 PluginManager::~PluginManager() {
-	reset();
+    finalize();
 }
+
+
+
+void PluginManager::execute()
+{
+    PARAMETEREDOBJECT_AVOID_REEXECUTION;
+    ParameteredObject::execute();
+    this->executeGroup();
+}
+
+std::vector<std::string> PluginManager::getPluginPaths()
+{
+    return AbstractPluginLoader::pluginPaths;
+}
+
+void PluginManager::initialize()
+{
+    ParameteredObject::initialize();
+    loadParameterFile(mWorkflowfile());
+}
+
+
+
+
