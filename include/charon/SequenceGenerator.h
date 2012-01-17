@@ -71,6 +71,7 @@ public:
 	/// \param name          Instance name
 	SequenceGenerator(const std::string& name);
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

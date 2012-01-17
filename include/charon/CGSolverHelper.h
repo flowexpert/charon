@@ -66,6 +66,7 @@ public:
 	/// default constructor
 	CGSolverHelper(const std::string& name = "" /** [in] Instance name*/);
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

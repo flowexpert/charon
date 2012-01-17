@@ -81,11 +81,9 @@ public:
 
 	virtual ~EdgySequenceGenerator();
 
+protected:
 	/// Update object.
 	virtual void execute();
 };
 
 #endif // _EDGYSEQUENCEGENERATOR_H_
-
-
-

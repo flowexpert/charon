@@ -79,6 +79,7 @@ public:
 	/// \param name          Instance name
 	Diff2D(const std::string& name = "");
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

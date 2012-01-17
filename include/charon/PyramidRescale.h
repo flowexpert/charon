@@ -77,6 +77,7 @@ public:
 	/// \param name          Instance name
 	PyramidRescale(const std::string& name = "");
 
+protected:
 	/// Update object.
 	virtual void execute();
 

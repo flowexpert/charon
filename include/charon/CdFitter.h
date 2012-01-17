@@ -71,6 +71,7 @@ public:
 	/// gnuplot call
 	Parameter<std::string> gnuplotCall;
 
+protected:
 	/// perform DC algorithm
 	/// \copydetails ParameteredObject::execute
 	virtual void execute();

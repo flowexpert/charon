@@ -42,6 +42,7 @@ public:
 	/// image outupt
 	OutputSlot<cimg_library::CImgList<T> > out;
 
+protected:
 	/// perform sampling
 	/// \implements ParameteredObject::execute()
 	virtual void execute();

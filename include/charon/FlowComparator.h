@@ -62,13 +62,14 @@ public:
 	/// \param name          Instance name
 	FlowComparator(const std::string& name);
 
-	/// Update object.
-	virtual void execute();
-
 	/// \name getters of calculated information
 	//  \{
 	double getMeanEndpointError() const;
 	//  \}
+
+protected:
+	/// Update object.
+	virtual void execute();
 };
 
 #endif // _FLOWCOMPARATOR_H_

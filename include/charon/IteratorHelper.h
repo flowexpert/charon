@@ -70,15 +70,16 @@ public:
 	/// default constructor
 	IteratorHelper(const std::string& name = "" /** [in] Instance name*/);
 
-	/// Update object.
-	virtual void execute();
-
 	/// reset helper, copy input data to output slots, reset counters
 	void reset();
 
 	/// update counters
 	/** \param[in] count increase counters */
 	virtual void update (bool count = true);
+
+protected:
+	/// Update object.
+	virtual void execute();
 };
 
 #endif // _ITERATOR_HELPER_H_

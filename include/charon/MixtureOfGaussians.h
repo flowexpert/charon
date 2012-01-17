@@ -206,14 +206,6 @@ public:
 	/// Gaussian function widths
 	ParameterList<double> sigmas;
 
-	/// \copybrief ParameteredObject::execute()
-	/** Copy content of the parameter lists weights and sigmas to the
-	 *  corresponding double vectors used for fitting.
-	 *
-	 *  \copydetails ParameteredObject::execute()
-	 */
-	virtual void execute();
-
 	/// \copybrief CDFitFunction::diffLog()
 	/** \copydetails CDFitFunction::diffLog()
 	 *
@@ -225,6 +217,15 @@ public:
 	virtual double diffLog(
 			std::vector<double> x,
 			std::vector<double>::size_type i) const;
+
+protected:
+	/// \copybrief ParameteredObject::execute()
+	/** Copy content of the parameter lists weights and sigmas to the
+	 *  corresponding double vectors used for fitting.
+	 *
+	 *  \copydetails ParameteredObject::execute()
+	 */
+	virtual void execute();
 };
 
 #endif // MIXTURE_OF_GAUSSIANS_H_
