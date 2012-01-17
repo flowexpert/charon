@@ -305,6 +305,9 @@ protected:
 	 */
 	virtual void execute();
 
+	/// run all preceeding objects
+	void runPreceeding();
+
 public:
 	/// The template type of the instance is double
 	static const template_type TYPE_DOUBLE = 0;

@@ -382,6 +382,9 @@ T& OutputSlot<T>::operator=(const T& B) {
 template<typename T>
 void OutputSlot<T>::finalize() {
 	switch (_cacheType) {
+	case Slot::CACHE_MEM:
+		// do not delete data after execution if memory caching is selected
+		break;
 	case Slot::CACHE_MANAGED: {
 			// write data to manager
 			Slot::DataManager<T>* manager =

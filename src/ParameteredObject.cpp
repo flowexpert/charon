@@ -199,13 +199,24 @@ void ParameteredObject::run() {
 
 	// check requirements
 	if (!connected()) {
-		std::ostringstream msg;
-		msg << __FILE__ << ":" << __LINE__ << "\n\t";
-		msg << "ParameteredObject \"" << getName();
-		msg << "\" not (completely) connected!";
-		throw std::runtime_error(msg.str().c_str());
+		ParameteredObject::raise("not (completely) connected!");
 	}
 
+	runPreceeding();
+
+	// now all inputs are ready, execute the current object
+	// by calling the template function
+	sout << "(II) Executing " << getClassName() << " \"";
+	sout << getName() << "\"" << std::endl;
+	_prepareSlots();
+	execute();
+	_commitSlots();
+
+	// post execution code
+	_executed = true;
+}
+
+void ParameteredObject::runPreceeding() {
 	// collect preceeding objects
 	std::set<ParameteredObject*> targetObjects;
 	for (std::map<std::string, Slot*>::iterator it = _inputs.begin(); it
@@ -222,17 +233,6 @@ void ParameteredObject::run() {
 	for (; curObj != targetObjects.end(); curObj++) {
 		(*curObj)->run();
 	}
-
-	// now all inputs are ready, execute the current object
-	// by calling the template function
-	sout << "(II) Executing " << getClassName() << " \"";
-	sout << getName() << "\"" << std::endl;
-	_prepareSlots();
-	execute();
-	_commitSlots();
-
-	// post execution code
-	_executed = true;
 }
 
 void ParameteredObject::execute() {
