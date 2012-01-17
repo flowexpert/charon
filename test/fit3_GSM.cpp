@@ -67,7 +67,7 @@ int test() {
 	assert(gsm);
 
 	// print results to stdout
-	gsm->execute();
+	gsm->run();
 	gsm->printParameters();
 
 	std::ofstream vals;

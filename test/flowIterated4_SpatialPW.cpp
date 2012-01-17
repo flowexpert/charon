@@ -123,7 +123,7 @@ int test() {
 	// make sure that ground truth is available
 	ParameteredObject* gen = man.getInstance("seqgen");
 	assert(gen);
-	gen->execute();
+	gen->run();
 
 	// connect analyzer input to current flow
 	analyzer->result.disconnect();
@@ -197,7 +197,7 @@ void printInfos(
 	if(count == int(helper1->countAll()))
 		return;
 
-	stencil->execute();
+	stencil->run();
 
 	// print out information
 	strm << std::setw(5) << (count = helper1->countAll())

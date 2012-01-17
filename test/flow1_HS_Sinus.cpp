@@ -56,7 +56,7 @@ int test() {
 	PluginManager man(GLOBAL_PLUGIN_DIR, LOCAL_PLUGIN_DIR);
 	man.loadParameterFile(TESTDIR "/flow1.wrp");
 
-	man.executeWorkflow();
+	man.runWorkflow();
 	assert(FileTool::exists("flow1_HS_Sinus.cimg"));
 	assert(FileTool::exists("flow1_HS_Sinus_calc.cimg"));
 

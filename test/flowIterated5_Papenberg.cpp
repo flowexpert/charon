@@ -129,7 +129,7 @@ int test() {
 	// make sure that ground truth is available
 	ParameteredObject* gen = man.getInstance("read_flow");
 	assert(gen);
-	gen->execute();
+	gen->run();
 
 	// connect analyzer input to current flow
 	analyzer->result.disconnect();
@@ -209,7 +209,7 @@ void printInfos(
 	if(count == int(helper1->countAll()))
 		return;
 
-	spatial->execute();
+	spatial->run();
 
 	// print out information
 	strm << std::setw(5) << (count = helper1->countAll())
@@ -255,7 +255,7 @@ void printInfos(
 
 		// arguments of apply are ignored and may be set arbitrarily
 		helper1->resetExecuted();
-		data->execute();
+		data->run();
 		weightMap.push_back(data->apply(dummy,0u));
 		weightMap.save_cimg(weightsFName.c_str(),true);
 	}

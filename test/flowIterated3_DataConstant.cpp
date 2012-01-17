@@ -124,7 +124,7 @@ int test() {
 	FileTool::changeDir(TESTDIR);
 
 	// make sure that ground truth is available
-	crop->execute();
+	crop->run();
 
 	// connect analyzer input to current flow
 	analyzer->result.disconnect();
@@ -199,7 +199,7 @@ void printInfos(
 		return;
 
 	// update dataBC input data to get correct energy
-	dataBC->execute();
+	dataBC->run();
 
 	// print out information
 	strm << std::setw(5) << (count = helper1->countAll())
@@ -232,7 +232,7 @@ void printInfos(
 
 	// arguments of apply are ignored and may be set arbitrarily
 	helper1->resetExecuted();
-	dataBC->execute();
+	dataBC->run();
 	weightMap.push_back(dataBC->apply(dummy,0u));
 	weightMap.save_cimg(weightsFName.c_str(),true);
 }

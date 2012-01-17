@@ -112,7 +112,7 @@ int testPyramid() {
 			cimg_library::CImg<double>(128,64,1,1,fx),
 			cimg_library::CImg<double>(128,64,1,1,fy));
 
-	// emulate iter.execute()
+	// emulate iter.run()
 	iter.initialize();
 	bool cont;
 	do {
@@ -212,7 +212,7 @@ int testWorkflow() {
 	iterator->initialize();
 	bool cont;
 	do {
-		pyramidGT->execute();
+		pyramidGT->run();
 		cont = iterator->singleStep();
 		epeLog << std::setw(4) << helper->count() << " "
 				<< std::setw(13) << std::scientific << std::setprecision(6)
@@ -230,11 +230,11 @@ int testWorkflow() {
 						fName2.str().c_str());
 		std::ostringstream fName3;
 		fName3<<wDir<<"/flowIterated6_flow"<<helper->count()<<".png";
-		quiver->execute();
+		quiver->run();
 		quiver->out().save(fName3.str().c_str());
 		std::ostringstream fName4;
 		fName4<<wDir<<"/flowIterated6_initFlow"<<helper->count()<<".png";
-		quiver2->execute();
+		quiver2->run();
 		quiver2->out().save(fName4.str().c_str());
 #endif
 	} while (cont);
@@ -248,10 +248,10 @@ int testWorkflow() {
 	hsv2->resetExecuted();
 	hsv2->flow.connect(readgt->out);
 	quiver2->flow.connect(readgt->out);
-	quiver2->execute();
+	quiver2->run();
 	std::ostringstream fName;
 	fName<<wDir<<"/flowIterated6_result.png";
-	quiver->execute();
+	quiver->run();
 	quiver->out()[0].get_append(quiver2->out()[0]).save(fName.str().c_str());
 #endif
 

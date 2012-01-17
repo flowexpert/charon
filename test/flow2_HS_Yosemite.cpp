@@ -64,7 +64,7 @@ int test() {
 	FileTool::changeDir(TESTDIR);
 	man.loadParameterFile(TESTDIR "/flow2.wrp");
 	std::cout << "Executing workflow..." << std::endl;
-	man.executeWorkflow();
+	man.runWorkflow();
 	std::cout << "Workflow execution finished.\n" << std::endl;
 
 

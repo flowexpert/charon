@@ -99,7 +99,7 @@ int test() {
 	solver.out.connect(analysis.result);
 	flowcrop.out.connect(analysis.groundtruth);
 
-	analysis.execute();
+	analysis.run();
 	double err = analysis.getMeanEndpointError();
 	std::cout << "mean endpoint error: " << err << std::endl;
 	assert(err <= 0.12);

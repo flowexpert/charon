@@ -65,7 +65,7 @@ int test() {
 	man.loadParameterFile(testfile);
 	std::cout << "Executing workflow..." << std::endl;
 	FileTool::changeDir(TESTDIR);
-	man.executeWorkflow();
+	man.runWorkflow();
 	std::cout << "Workflow execution finished.\n" << std::endl;
 
 	// get test instances

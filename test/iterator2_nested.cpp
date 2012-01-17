@@ -67,7 +67,7 @@ int test() {
 	man.loadParameterFile(testfile);
 	std::cout << "Executing workflow..." << std::endl;
 	sout << std::endl;
-	man.executeWorkflow();
+	man.runWorkflow();
 	std::cout << "Workflow execution finished.\n" << std::endl;
 
 	// get test instances

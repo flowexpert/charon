@@ -71,12 +71,12 @@ int test() {
 
 	// print results to stdout
 	std::cout << "Parameters on start:" << std::endl;
-	gsm->execute();
+	gsm->run();
 	sout.assign(std::cout);
 	gsm->printParameters();
 	sout.assign(log);
 
-	man.executeWorkflow();
+	man.runWorkflow();
 
 	std::cout << "Parameters after fitting:" << std::endl;
 	sout.assign(std::cout);

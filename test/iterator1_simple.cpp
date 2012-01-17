@@ -81,11 +81,11 @@ int test() {
 	std::cout << "\thelper:   " << (void*) helper << std::endl;
 
 	// check if data from sequence generator really reach the iteration
-	// helper output slots after helper->execute()
+	// helper output slots after helper->run()
 	// this detects a bug fixed in IteratorHelper (for regression testing)
 	const cimg_library::CImgList<double>& helperSeq =
 			helper->sequence();
-	helper->execute();
+	helper->run();
 	assert(helperSeq.size() > 0);
 	std::cout << "Sequence output: " << helperSeq.size() << " element(s) "
 			<< "-- max=" << helperSeq.max() << ", min=" << helperSeq.min()
@@ -100,7 +100,7 @@ int test() {
 	// execute whole workflow
 	std::cout << "Executing workflow..." << std::endl;
 	sout << std::endl;
-	man.executeWorkflow();
+	man.runWorkflow();
 	std::cout << "Workflow execution finished.\n" << std::endl;
 
 	// check if helper has been updated 3 times
@@ -117,7 +117,7 @@ int test() {
 	iterator->resetExecuted();
 
 	sout << std::endl;
-	man.executeWorkflow();
+	man.runWorkflow();
 	sout << std::endl;
 
 	// check if there was only 1 iteration (+3 iterations from above)

@@ -64,7 +64,7 @@ int test() {
 	std::cout << "\"" << std::endl;
 	man.loadParameterFile(testfile);
 
-	man.executeWorkflow();
+	man.runWorkflow();
 
 	// get test instances
 	FileWriter<double>* writer = dynamic_cast<FileWriter<double>*>(
