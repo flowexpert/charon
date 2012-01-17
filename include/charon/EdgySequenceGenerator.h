@@ -79,11 +79,13 @@ public:
 	/// \param name          Instance name
 	EdgySequenceGenerator(const std::string& name);
 
-	virtual ~EdgySequenceGenerator();
-
 protected:
 	/// Update object.
 	virtual void execute();
+
+private:
+	/// size cache
+	Roi<int> _size;
 };
 
 #endif // _EDGYSEQUENCEGENERATOR_H_

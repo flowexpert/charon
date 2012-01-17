@@ -36,6 +36,7 @@ EdgySequenceGenerator<T>::EdgySequenceGenerator(const std::string& name) :
 			 "Velocities for foreground and background may be specified.")
 		,foregroundVelocity(" 0.5; 0.9")
 		,backgroundVelocity("-0.3;-0.7")
+		,size(0)
 {
 	ParameteredObject::_addInputSlot(
 			mask, "mask", "mask input", "CImgList<T>");
@@ -63,19 +64,11 @@ EdgySequenceGenerator<T>::EdgySequenceGenerator(const std::string& name) :
 	ParameteredObject::_addParameter(
 			noiseLevels, "noiseLevels",
 			"number of pyramid levels", 5);
-	size() = new Roi<int>();
-}
-
-template <typename T>
-EdgySequenceGenerator<T>::~EdgySequenceGenerator() {
-	delete size();
 }
 
 template <typename T>
 void EdgySequenceGenerator<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
+	size() = &_size;
 	assert(foregroundVelocity.size() == 2);
 	assert(backgroundVelocity.size() == 2);
 

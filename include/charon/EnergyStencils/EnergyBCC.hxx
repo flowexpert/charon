@@ -62,9 +62,6 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 
 template <class T>
 void EnergyBCC<T>::execute() {
-  PARAMETEREDOBJECT_AVOID_REEXECUTION;
-  ParameteredObject::execute();
-
   _lamb = this->lambda();
   _norm = norm();
 }

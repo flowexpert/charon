@@ -45,15 +45,11 @@ CGSolverHelper<T>::CGSolverHelper(const std::string& name) :
 		"current flow solution", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(self, "self",
 		"self-pointer", "CGSolverHelper<T>*");
-
-	self() = this;
 }
 
 template <typename T>
 void CGSolverHelper<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
+	self() = this;
 	flow().assign(initFlow());
 	sequence().assign(in());
 }

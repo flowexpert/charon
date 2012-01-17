@@ -83,17 +83,14 @@ EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
 
 template <class T>
 void EnergyNonLocal<T>::execute() {
-  PARAMETEREDOBJECT_AVOID_REEXECUTION;
-  ParameteredObject::execute();
-
-  _lamb = this->lambda();
-  _norm = norm();
-  _useWeight = useWeight();
-  _radius = radius();
-  _sigma_spatial = sigma_spatial();
-  _sigma_color = sigma_color();
-  _sigma_occ_divergence = sigma_occ_divergence();
-  _sigma_occ_color = sigma_occ_color();
+	_lamb = this->lambda();
+	_norm = norm();
+	_useWeight = useWeight();
+	_radius = radius();
+	_sigma_spatial = sigma_spatial();
+	_sigma_color = sigma_color();
+	_sigma_occ_divergence = sigma_occ_divergence();
+	_sigma_occ_color = sigma_occ_color();
 }
 
 template <class T>

@@ -43,30 +43,23 @@
 template <typename T>
 CGSolver<T>::CGSolver(const std::string& name) : 
 		TemplatedParameteredObject<T>("CGSolver", name),
-                energyStencils(false,true)
+				energyStencils(false,true)
 {
-	this->_addInputSlot(energyStencils,
-	                    "energyStencils",
-	                    "energy stencils",
-	                    "EnergyStencil<T>*");
-        this->_addInputSlot(roi, "roi", "RoI", "Roi<int>*");
-	this->_addInputSlot(itHelper,
-	                    "itHelper",
-	                    "iterator helper",
-	                    "CGSolverHelper<T>*");
-        this->_addOutputSlot(result,
-                             "result",
-                             "result",
-                             "CImgList<T>");
-        this->_addParameter(flowDimensions,
-                            "flowDimensions",
-                            "flow dimensions", 2);
-        this->_addParameter(length,
-	                    "length",
-	                    "see minimize.m for details", 10);
-	this->_addParameter(writeIntermediateResults,
-	                    "writeIntermediateResults",
-	                    "write intermediate results", false);
+	this->_addInputSlot(
+				energyStencils,"energyStencils",
+				"energy stencils", "EnergyStencil<T>*");
+	this->_addInputSlot(roi, "roi", "RoI", "Roi<int>*");
+	this->_addInputSlot(
+				itHelper, "itHelper",
+				"iterator helper", "CGSolverHelper<T>*");
+	this->_addOutputSlot(result, "result", "result", "CImgList<T>");
+	this->_addParameter(flowDimensions, "flowDimensions",
+				"flow dimensions", 2);
+	this->_addParameter(length, "length",
+				"see minimize.m for details", 10);
+	this->_addParameter(
+				writeIntermediateResults, "writeIntermediateResults",
+				"write intermediate results", false);
 }
 
 template <typename T>
@@ -75,9 +68,6 @@ CGSolver<T>::~CGSolver() {
 
 template <typename T>
 void CGSolver<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 //	const cimg_library::CImgList<T> & _itin = _help->in();
 //	const cimg_library::CImgList<T> & _itinitflow = _help->initFlow();
 //	cimg_library::CImgList<T> & _itsequence = _help->sequence();

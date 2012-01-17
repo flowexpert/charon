@@ -64,9 +64,6 @@ IrlsNonLocal<T>::IrlsNonLocal(const std::string& name) :
 
 template<typename T>
 void IrlsNonLocal<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	T _sigma_spatial = sigma_spatial();
 	T _sigma_color = sigma_color();
 	T _sigma_occ_divergence = sigma_occ_divergence();

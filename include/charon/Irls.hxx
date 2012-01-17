@@ -52,9 +52,6 @@ Irls<T>::Irls(const std::string& name) :
 
 template<typename T>
 void Irls<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const cimg_library::CImgList<T>& i = in();
 	const cimg_library::CImgList<T>& inweight = inWeight();
 

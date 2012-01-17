@@ -54,14 +54,11 @@ PyramidRescale<T>::PyramidRescale(const std::string& name) :
 	ParameteredObject::_addParameter (
 			interpolation, "interpolation",
 			"interpolation type (see CImg::resize() documentation)", 3);
-
-	size() = &_size;
 }
 
 template <typename T>
 void PyramidRescale<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
+	size() = &_size;
 
 	const cimg_library::CImgList<T>& si = seqIn();
 	cimg_library::CImgList<T>& so = seqOut();

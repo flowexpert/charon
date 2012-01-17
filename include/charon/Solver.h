@@ -139,9 +139,6 @@ public:
 		const std::string& classname,	///< [in] class name
 		const std::string& name = ""	///< [in] instance name
 	);
-
-	/// default destructor
-	virtual ~Solver();
 };
 
 #endif // _SOLVER_H_

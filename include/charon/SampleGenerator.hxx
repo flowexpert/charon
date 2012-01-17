@@ -22,9 +22,6 @@ SampleGenerator<T>::SampleGenerator(const std::string& name) :
 
 template<typename T>
 void SampleGenerator<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	cimg_library::CImgList<T>& res = out();
 	try {
 		res.clear();

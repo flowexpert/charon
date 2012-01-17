@@ -49,9 +49,6 @@ Residual<T>::Residual(const std::string& name) :
 
 template<typename T>
 void Residual<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	bool inv = inverseResidual();
 
 	const cimg_library::CImgList<T>& _img1 = img1();

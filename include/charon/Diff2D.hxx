@@ -68,9 +68,6 @@ Diff2D<T>::Diff2D(const std::string& name) :
 
 template <typename T>
 void Diff2D<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	sout << "\tcalculating derivatives:" << std::endl;
 
 	// set up convolution masks

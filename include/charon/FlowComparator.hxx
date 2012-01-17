@@ -42,12 +42,7 @@ FlowComparator<T>::FlowComparator(const std::string& name) :
 
 template <typename T>
 void FlowComparator<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
-	// shared assignment, no copying
-	passthrough().assign(result(), true);
-
+	passthrough().assign(result(), true); // shared assignment, no copying
 	sout << "\tmean endpoint error: " << getMeanEndpointError() << std::endl;
 }
 

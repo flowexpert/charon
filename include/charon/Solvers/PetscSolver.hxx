@@ -839,8 +839,6 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 
 template <typename T>
 void PetscSolver<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
 	int errorCode;
 	errorCode = petscExecute();
 	if (errorCode) {

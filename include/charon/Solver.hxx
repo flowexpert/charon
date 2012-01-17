@@ -203,8 +203,4 @@ Solver<T>::Solver(const std::string& classname, const std::string& name) :
 	this->_addOutputSlot(
 		out,"out","CImgList containing the solution","CImgList<T>");
 }
-
-template <typename T>
-Solver<T>::~Solver() {}
-
 #endif // _SOLVER_HXX_

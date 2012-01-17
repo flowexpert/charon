@@ -29,31 +29,20 @@
 
 template <class T>
 EnergyCoupling<T>::EnergyCoupling(const std::string& name) :
-  EnergyStencil<T>(
-	     "EnergyCoupling", name,
-	     "<h2>Coupling of two motion fields</h2>."
-	     )
+	EnergyStencil<T>("EnergyCoupling", name,
+			"<h2>Coupling of two motion fields</h2>.")
 {
-        this->_addInputSlot(firstMotionUV,
-                            "firstMotionUV",
-                            "first flow field",
-                            "CImgList<T>");
-        this->_addInputSlot(secondMotionUV,
-                            "secondMotionUV",
-                            "second flow field",
-                            "CImgList<T>");
-  ParameteredObject::_addParameter< T >(temp,
-                      "temp",
-                      "temperature",
-                      1, "double");
+	this->_addInputSlot(firstMotionUV, "firstMotionUV",
+			"first flow field", "CImgList<T>");
+	this->_addInputSlot(secondMotionUV, "secondMotionUV",
+			"second flow field", "CImgList<T>");
+  ParameteredObject::_addParameter< T >(temp, "temp",
+			"temperature", 1, "double");
 }
 
 template <class T>
 void EnergyCoupling<T>::execute() {
-  PARAMETEREDOBJECT_AVOID_REEXECUTION;
-  ParameteredObject::execute();
-
-  _lamb = this->lambda();
+	_lamb = this->lambda();
 }
 
 template <class T>
@@ -62,12 +51,12 @@ T EnergyCoupling<T>::getEnergy( int, int xI, int yI, int zI, int )
 	T energy, u1, u2, v1, v2;
 	T temperature;
 
-        u1 = firstMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
-        u2 = firstMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
-        v1 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
-        v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
+	u1 = firstMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	u2 = firstMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
+	v1 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-        energy = (u1 - v1) * (u1 - v1) + (u2 - v2) * (u2 - v2);
+	energy = (u1 - v1) * (u1 - v1) + (u2 - v2) * (u2 - v2);
 
 	temperature = temp();
 
@@ -81,10 +70,10 @@ std::vector<T> EnergyCoupling<T>::getEnergyGradient( int, int xI, int yI, int zI
 	T pixelGradientU, pixelGradientV, u1, u2, v1, v2;
 	T temperature;
 
-        u1 = firstMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
-        u2 = firstMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
-        v1 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
-        v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
+	u1 = firstMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	u2 = firstMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
+	v1 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
 	pixelGradientU = u1 - v1;
 	pixelGradientV = u2 - v2;
@@ -94,15 +83,16 @@ std::vector<T> EnergyCoupling<T>::getEnergyGradient( int, int xI, int yI, int zI
 	ret[0] = T(_lamb * (pixelGradientU/temperature));
 	ret[1] = T(_lamb * (pixelGradientV/temperature));
 
-        return ret;
+	return ret;
 }
 
 template <class T>
-int EnergyCoupling<T>::getGradientComponentsCnt() { return 2; }
+int EnergyCoupling<T>::getGradientComponentsCnt() {
+	return 2;
+}
 
 template <class T>
-EnergyCoupling<T>::~EnergyCoupling()
-{
+EnergyCoupling<T>::~EnergyCoupling() {
 }
 
 #endif /* _ENERGYCOUPLING_HXX_ */
