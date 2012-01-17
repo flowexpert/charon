@@ -91,11 +91,6 @@ public:
 	/// use linearization of second derivative
 	Parameter<bool> useDiff2Lin;
 
-	/// Initialize Stencil
-	/** \copydoc ParameteredObject::execute
-	 */
-	virtual void execute();
-
 	/// Update stencil values
 	/** \copydoc Stencil::updateStencil
 	 *  \param[in] unknown    query substencils for this unknown,
@@ -123,6 +118,12 @@ public:
 
 	/// calculate energy \f$E_S\f$ of the current flow guess
 	virtual double getEnergy() const;
+
+protected:
+	/// Initialize Stencil
+	/** \copydoc ParameteredObject::execute
+	 */
+	virtual void execute();
 };
 
 #endif // _SPATIAL_PW_H_

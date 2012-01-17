@@ -64,9 +64,6 @@ public:
 	/// default constructor
 	Gbcce(const std::string& name = "" /**[in] instance name*/);
 
-	/// main function
-	virtual void execute();
-
 	virtual void updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p=Point4D<int>(), const int& v=0);
@@ -74,6 +71,11 @@ public:
 	virtual cimg_library::CImg<T> apply(
 			const cimg_library::CImgList<T>& seq,
 			const unsigned int frame) const;
+
+protected:
+	/// main function
+	virtual void execute();
+
 private:
 	BrightnessModel<T>* _bmIn; ///< brightness model cache
 	MotionModel<T>* _mmIn;     ///< motion model cache

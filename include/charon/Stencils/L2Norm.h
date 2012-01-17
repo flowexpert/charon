@@ -75,9 +75,6 @@ public:
 	/// \param name instance name
 	L2Norm(const std::string& name = "");
 
-	/// \copydoc ParameteredObject::execute()
-	virtual void execute();
-
 	virtual void updateStencil(
 			const std::string& unknown,
 			const Point4D<int>& p=Point4D<int>(), const int& v=0);
@@ -87,6 +84,10 @@ public:
 			const unsigned int frame) const;
 
 	virtual ~L2Norm();
+
+protected:
+	/// \copydoc ParameteredObject::execute()
+	virtual void execute();
 };
 
 #endif // _L2NORM_H_

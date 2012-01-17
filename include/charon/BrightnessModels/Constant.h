@@ -57,15 +57,16 @@ public:
 	/// default constructor
 	Constant(const std::string& name = "");
 
-	/// \copydoc ParameteredObject::execute()
-	virtual void execute();
-
 	virtual void compute(
 			const Point4D<int>& p, const int& v,
 			std::map<std::string, T>& term, T& rhs,
 			const std::string& unknown = "");
 
 	virtual std::set<std::string>& getUnknowns();
+
+protected:
+	/// \copydoc ParameteredObject::execute()
+	virtual void execute();
 };
 
 } // namespace

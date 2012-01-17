@@ -124,9 +124,6 @@ public:
 	/// use linearization of second derivative
 	Parameter<bool> useDiff2Lin;
 
-	/// main function
-	virtual void execute();
-
 	/// \copybrief Stencil::updateStencil
 	/** \copydetails Stencil::updateStencil */
 	virtual void updateStencil(
@@ -147,6 +144,10 @@ public:
 
 	/// calculate energy \f$E_D\f$ of the whole image (pair)
 	virtual double getEnergy() const;
+
+protected:
+	/// main function
+	virtual void execute();
 };
 
 #endif //_DATA_CONSTANT_H_

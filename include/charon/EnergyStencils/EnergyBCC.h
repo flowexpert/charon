@@ -55,37 +55,38 @@
 template <typename T>
 class energybcc_DECLDIR EnergyBCC :
 public EnergyStencil<T> {
- public:
+public:
   Parameter< T > norm;
-  /// Input slot for image derivative wrt x
-  InputSlot< cimg_library::CImgList<T> > img_dx;  //  I_x
-  /// Input slot for image derivative wrt y
-  InputSlot< cimg_library::CImgList<T> > img_dy;  //  I_y
-  /// Input slot for image derivative wrt t
-  InputSlot< cimg_library::CImgList<T> > img_dt;  //  I_t
+	/// Input slot for image derivative wrt x
+	InputSlot< cimg_library::CImgList<T> > img_dx;  //  I_x
+	/// Input slot for image derivative wrt y
+	InputSlot< cimg_library::CImgList<T> > img_dy;  //  I_y
+	/// Input slot for image derivative wrt t
+	InputSlot< cimg_library::CImgList<T> > img_dt;  //  I_t
 
-  /// Input slot for current motion components
-  InputSlot< cimg_library::CImgList<T> > motionUV;
+	/// Input slot for current motion components
+	InputSlot< cimg_library::CImgList<T> > motionUV;
 
-  /// default constructor
-  /// \param name          Instance name
-  EnergyBCC(const std::string& name = "");
+	/// default constructor
+	/// \param name          Instance name
+	EnergyBCC(const std::string& name = "");
 
-  /// stencil's main function
-  void execute();
+	/// stencil's energy function
+	T getEnergy( int nI, int xI, int yI, int zI, int cI );
 
-  /// stencil's energy function
-  T getEnergy( int nI, int xI, int yI, int zI, int cI );
+	/// stencil's energy gradient function
+	std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
 
-  /// stencil's energy gradient function
-  std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
+	/// stencil's count of gradient components
+	int getGradientComponentsCnt();
 
-  /// stencil's count of gradient components
-  int getGradientComponentsCnt();
+protected:
+	/// stencil's main function
+	void execute();
 
 private:
-  /// destructor
-  ~EnergyBCC();
+	/// destructor
+	~EnergyBCC();
 
   T _lamb;
   T _norm;

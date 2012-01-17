@@ -195,11 +195,12 @@ public:
 	/// encapsulated execute function for PETSc calls
 	int petscExecute();
 
-	/// main function
-	virtual void execute();
-
 	/// default destructor
 	virtual ~PetscSolver();
+
+protected:
+	/// main function
+	virtual void execute();
 
 private:
 	/// command line argument counter

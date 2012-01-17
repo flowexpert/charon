@@ -54,32 +54,33 @@
 template <typename T>
 class energyclassic_DECLDIR EnergyClassic :
 public EnergyStencil<T> {
- public:
+public:
 
   Parameter< T > norm;
 
-  /// Input slot for current motion components
-  InputSlot< cimg_library::CImgList<T> > motionUV;
+	/// Input slot for current motion components
+	InputSlot< cimg_library::CImgList<T> > motionUV;
 
-  /// default constructor
-  /// \param name          Instance name
-  EnergyClassic(const std::string& name = "");
+	/// default constructor
+	/// \param name          Instance name
+	EnergyClassic(const std::string& name = "");
 
-  /// stencil's main function
-  void execute();
+	/// function yielding stencil's energy for given parameter vector
+	T getEnergy( int n, int x, int y, int z, int c );
 
-  /// function yielding stencil's energy for given parameter vector
-  T getEnergy( int n, int x, int y, int z, int c );
+	/// function yielding stencil's energy gradient for given parameter vector
+	std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
 
-  /// function yielding stencil's energy gradient for given parameter vector
-  std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
+	/// stencil's count of gradient components
+	int getGradientComponentsCnt();
 
-  /// stencil's count of gradient components
-  int getGradientComponentsCnt();
+protected:
+	/// stencil's main function
+	void execute();
 
 private:
-  /// destructor
-  ~EnergyClassic();
+	/// destructor
+	~EnergyClassic();
 
   T _energyFunction( T x, T xo );
   T _energyFunctionDeriv( T x, T xo );

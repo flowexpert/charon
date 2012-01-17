@@ -74,9 +74,6 @@ public:
 	/// default constructor
 	Rfmc(const std::string& name = "" /**[in] instance name*/);
 
-	/// main function
-	virtual void execute();
-
 	virtual void updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p=Point4D<int>(), const int& v=0);
@@ -86,6 +83,10 @@ public:
 			const unsigned int frame) const;
 
 	virtual ~Rfmc();
+
+protected:
+	/// main function
+	virtual void execute();
 };
 
 #endif //_RFMC_H_

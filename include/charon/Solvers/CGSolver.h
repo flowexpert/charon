@@ -86,9 +86,6 @@ public:
 	/// default constructor
 	CGSolver(const std::string& name = "" /**[in] instance name*/);
 
-	/// main function
-	void execute();
-
 	/// minimize function
 	void minimize(
 		cimg_library::CImgList<T> &_itflow,
@@ -103,6 +100,10 @@ public:
 
 	/// default destructor
 	~CGSolver();
+
+protected:
+	/// main function
+	void execute();
 
 private:
 	/// size parameter of the quantities.
