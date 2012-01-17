@@ -104,23 +104,23 @@ void Slot::save(ParameterFile& /*pf*/) const {
 }
 
 void Slot::printInfo(const std::string& msg) const {
-	sout << "(II) Slot \"" << getParent().getName() << "." << getName()
+	sout << "(II) Slot \"" << _parent->getName() << "." << _name
 		<< "\": " << msg << std::endl;
 }
 
 void Slot::printWarning(const std::string& msg) const {
-	sout << "(WW) Slot \"" << getParent().getName() << "." << getName()
+	sout << "(WW) Slot \"" << _parent->getName() << "." << _name
 		<< "\": " << msg << std::endl;
 }
 
 void Slot::printError(const std::string& msg) const {
-	sout << "(EE) Slot \"" << getParent().getName() << "." << getName()
+	sout << "(EE) Slot \"" << _parent->getName() << "." << _name
 		<< "\" (type " << getType() << "): " << msg << std::endl;
 }
 
 void Slot::raise(const std::string& msg) const {
 	throw std::runtime_error(
-				"Error in Slot \"" + getParent().getName() + "." + getName()
+				"Error in Slot \"" + _parent->getName() + "." + _name
 				+ "\" (type " + getType() + "): "
 				+ msg);
 }

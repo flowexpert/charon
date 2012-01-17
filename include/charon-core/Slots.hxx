@@ -106,45 +106,6 @@ void AbstractSlot<T>::save(ParameterFile& pf) const {
 		pf.erase(_parent->getName() + "." + _name);
 }
 
-template<class T>
-void AbstractSlot<T>::load(const ParameterFile& pf,
-		const PluginManagerInterface * man) {
-	// disconnect from other slots
-	disconnect();
-
-	if (!pf.isSet(_parent->getName() + "." + _name))
-		// nothing to do
-		return;
-
-	// get all targets from parameter file
-	std::vector<std::string> targetList = pf.getList<std::string> (
-			_parent->getName() + "." + _name);
-
-	// only multislots can be connected to more than one source!
-	if (!(_multiSlot || (targetList.size() < 2))) {
-		raise("multiple targets but not a multi-slot");
-	}
-
-	if (!targetList.size())
-		// nothing to do
-		return;
-
-	typename std::vector<std::string>::const_iterator tStrIter;
-
-	// and add corresponding slots to _targets
-	for (tStrIter = targetList.begin(); tStrIter != targetList.end(); tStrIter++) {
-		ParameteredObject* targObj = man->getInstance(tStrIter->substr(0,
-				tStrIter->find(".")));
-
-		Slot * targetSlot = targObj->getSlot(
-					tStrIter->substr(tStrIter->find(".") + 1));
-
-		// typecheck is performed in _addTarget that is called in connect
-		AbstractSlot<T>* tmp = (AbstractSlot<T>*) (targetSlot);
-		connect(*tmp);
-	}
-}
-
 template<typename T>
 inline std::string AbstractSlot<T>::getType() const {
 	std::string::size_type pos = _type.find("<t>");
@@ -178,6 +139,45 @@ InputSlot<T>::InputSlot(bool optional, bool multi) {
 
 template<class T>
 InputSlot<T>::~InputSlot() {
+}
+
+template<class T>
+void InputSlot<T>::load(const ParameterFile& pf,
+		const PluginManagerInterface * man) {
+	// disconnect from other slots
+	Slot::disconnect();
+
+	if (!pf.isSet(Slot::_parent->getName() + "." + Slot::_name))
+		// nothing to do
+		return;
+
+	// get all targets from parameter file
+	std::vector<std::string> targetList = pf.getList<std::string> (
+			Slot::_parent->getName() + "." + Slot::_name);
+
+	// only multislots can be connected to more than one source!
+	if (!(Slot::_multiSlot || (targetList.size() < 2))) {
+		Slot::raise("multiple targets but not a multi-slot");
+	}
+
+	if (!targetList.size())
+		// nothing to do
+		return;
+
+	typename std::vector<std::string>::const_iterator tStrIter;
+
+	// and add corresponding slots to _targets
+	for (tStrIter = targetList.begin(); tStrIter != targetList.end(); tStrIter++) {
+		ParameteredObject* targObj = man->getInstance(tStrIter->substr(0,
+				tStrIter->find(".")));
+
+		Slot * targetSlot = targObj->getSlot(
+					tStrIter->substr(tStrIter->find(".") + 1));
+
+		// typecheck is performed in _addTarget that is called in connect
+		AbstractSlot<T>* tmp = (AbstractSlot<T>*) (targetSlot);
+		connect(*tmp);
+	}
 }
 
 template<class T>
@@ -305,6 +305,28 @@ template<typename T>
 OutputSlot<T>::~OutputSlot() {
 	if (data) {
 		delete data;
+	}
+}
+
+template<class T>
+void OutputSlot<T>::load(
+	const ParameterFile& pf, const PluginManagerInterface*) {
+	const std::string parName =
+			Slot::_parent->getName()+"."+Slot::_name+".caching";
+	if (pf.isSet(parName)) {
+		const std::string cType = pf.get<std::string>(parName);
+		if (cType == "managed") {
+			setCacheType(Slot::CACHE_MANAGED);
+		}
+		else if (cType == "memory") {
+			setCacheType(Slot::CACHE_MEM);
+		}
+		else if (cType == "invalid") {
+			setCacheType(Slot::CACHE_INVALID);
+		}
+		else {
+			Slot::raise("Invalid cache type specified in parameter file.");
+		}
 	}
 }
 

@@ -174,8 +174,13 @@ public:
 	virtual void save(ParameterFile& pf) const;
 
 	/// Load slot connections
-	/// @param pf           ParameterFile to load from
-	/// @param man          PluginManager to get the instances from
+	/** Input slots set up the connection between slots calling
+	 *  _addTargets() on the partners to be connected via connect().
+	 *  Output slots load their slot configuration, i.e. set up e.g. their
+	 *  cache type if specified in the parameter file.
+	 *  @param pf           ParameterFile to load from
+	 *  @param man          PluginManager to get the instances from
+	 */
 	virtual void load(
 			const ParameterFile& pf,
 			const PluginManagerInterface* man) = 0;
@@ -256,8 +261,6 @@ public:
 	virtual std::string guessType() const;
 	virtual std::set<Slot*> getTargets() const;
 	virtual void save(ParameterFile& pf) const;
-	virtual void load(
-			const ParameterFile& pf, const PluginManagerInterface* man);
 	virtual std::string getType() const;
 
 	/// @name Iterators for stl-like usage
@@ -285,6 +288,8 @@ public:
 	virtual ~InputSlot();
 
 	// overload Slot functions
+	virtual void load(
+			const ParameterFile& pf, const PluginManagerInterface* man);
 	virtual operator T() const;
 	virtual const T& operator()() const;
 	virtual const T& operator[](std::size_t pos) const;
@@ -340,6 +345,9 @@ public:
 	OutputSlot(const T& initval = T());
 	/// initialize data element
 	virtual ~OutputSlot();
+
+	virtual void load(
+			const ParameterFile& pf, const PluginManagerInterface* man);
 
 	/// change data cache type
 	void setCacheType(Slot::CacheType type);

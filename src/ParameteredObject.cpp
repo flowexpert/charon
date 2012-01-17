@@ -413,8 +413,9 @@ void ParameteredObject::_load(const ParameterFile& pf,
 
 	// load slot connections
 	std::map<std::string, Slot*>::const_iterator slotIter;
-
 	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++)
+		slotIter->second->load(pf, man);
+	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
 		slotIter->second->load(pf, man);
 }
 
