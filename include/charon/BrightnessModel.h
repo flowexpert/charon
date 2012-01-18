@@ -51,6 +51,11 @@ protected:
 	/// Set of unknowns
 	std::set<std::string> unknowns;
 
+	/// \implements ParameteredObject::execute()
+	virtual void execute() {
+		out() = this;
+	}
+
 public:
 	/// default constructor
 	BrightnessModel(
@@ -61,7 +66,6 @@ public:
 	{
 		_addOutputSlot(out, "this", "Pointer to itself", "BrightnessModel<T>");
 		_addInputSlot(img, "image", "Image to work with", "CImgList<T>");
-		out = this;
 	}
 
 	/// OutputSlot containing pointer to this BrightnessModel
