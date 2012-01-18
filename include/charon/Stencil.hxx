@@ -39,14 +39,19 @@ Stencil<T>::Stencil(
 				"or defines derivatives filters for images"),
 		_rhs(0)
 {
-	this->_addOutputSlot(out,"this","Pointer to itself","Stencil<T>*");
-	this->_addParameter(lambda,"lambda","weight of the pde term",T(1),"T");
+	ParameteredObject::_addOutputSlot(
+				out,"this","Pointer to itself","Stencil<T>*");
+	ParameteredObject::_addParameter(
+				lambda,"lambda","weight of the pde term",T(1),"T");
 	_addFunction(Stencil<T>::get);
 	_addFunction(Stencil<T>::getRhs);
 	_addFunction(Stencil<T>::getUnknowns);
-	out = this;
 }
 
+template <typename T>
+void Stencil<T>::execute() {
+	out() = this;
+}
 
 template <typename T>
 const std::map<std::string, SubStencil<T> >& Stencil<T>::get() const {

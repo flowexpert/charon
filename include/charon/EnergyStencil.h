@@ -60,13 +60,15 @@ public:
 	virtual T getEnergy( int n, int x, int y, int z, int c ) = 0;
 
 	/// function yielding stencil's energy gradient wrt the parameter vector
-	virtual std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c ) = 0;
+	virtual std::vector<T> getEnergyGradient(
+		int n, int x, int y, int z, int c ) = 0;
 
 	/// function yielding count of gradient's components
 	virtual int getGradientComponentsCnt() = 0;
 
-	// default destructor
-	virtual ~EnergyStencil();
+protected:
+	/// \implements ParameteredObject::execute()
+	virtual void execute();
 };
 
 #endif

@@ -59,7 +59,8 @@ SpatialPW<T>::SpatialPW(const std::string& name) :
 
 template <typename T>
 void SpatialPW<T>::execute() {
-	ParameteredObject::execute();
+	Stencil<T>::execute();
+
 	if(flowGuess().size() != 2) {
 		std::ostringstream msg;
 		msg << __FILE__ << ":" << __LINE__ << "\n";

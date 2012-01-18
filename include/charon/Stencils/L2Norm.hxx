@@ -53,7 +53,7 @@ L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
 
 template <class T>
 void L2Norm<T>::execute() {
-	ParameteredObject::execute();
+	Stencil<T>::execute();
 
 	// Copy the unknowns from the Parameter list into the set, which was
 	// inherited from the Stencil class

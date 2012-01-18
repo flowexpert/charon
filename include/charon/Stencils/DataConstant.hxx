@@ -65,7 +65,7 @@ DataConstant<T>::DataConstant(const std::string& name) :
 
 template <class T>
 void DataConstant<T>::execute() {
-	ParameteredObject::execute();
+	Stencil<T>::execute();
 
 	// add unknowns
 	this->_unknowns.clear();

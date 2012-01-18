@@ -83,6 +83,7 @@ EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
 
 template <class T>
 void EnergyNonLocal<T>::execute() {
+	EnergyStencil<T>::execute();
 	_lamb = this->lambda();
 	_norm = norm();
 	_useWeight = useWeight();

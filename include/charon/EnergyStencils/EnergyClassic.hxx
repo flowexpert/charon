@@ -50,6 +50,7 @@ EnergyClassic<T>::EnergyClassic(const std::string& name) :
 
 template <class T>
 void EnergyClassic<T>::execute() {
+	EnergyStencil<T>::execute();
 	_norm = norm();
 	_lamb = this->lambda();
 }

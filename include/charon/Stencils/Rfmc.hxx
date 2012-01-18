@@ -53,6 +53,8 @@ Rfmc<T>::Rfmc(const std::string& name) :
 
 template <class T>
 void Rfmc<T>::execute() {
+	Stencil<T>::execute();
+
 	// set up unknowns: 3 components of the range flow vector
 	this->_unknowns.clear();
 	this->_unknowns.insert("a1");

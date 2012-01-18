@@ -33,15 +33,14 @@ EnergyStencil<T>::EnergyStencil(
 	const std::string& doc) :
 	TemplatedParameteredObject<T>(classname,name,doc + "")
 {
-	this->_addOutputSlot(out,"this","Pointer to itself",
-	                     "EnergyStencil<T>*");
+	this->_addOutputSlot(
+				out,"this","Pointer to itself", "EnergyStencil<T>*");
 	this->_addParameter(lambda,"lambda","Weight of itself",T(1),"T");
-	out = this;
 }
 
 template <typename T>
-EnergyStencil<T>::~EnergyStencil()
-{
+void EnergyStencil<T>::execute() {
+	out() = this;
 }
 
 #endif

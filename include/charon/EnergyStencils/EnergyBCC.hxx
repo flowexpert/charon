@@ -62,8 +62,9 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 
 template <class T>
 void EnergyBCC<T>::execute() {
-  _lamb = this->lambda();
-  _norm = norm();
+	EnergyStencil<T>::execute();
+	_lamb = this->lambda();
+	_norm = norm();
 }
 
 template <class T>

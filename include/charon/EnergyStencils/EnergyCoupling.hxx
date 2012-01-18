@@ -42,6 +42,7 @@ EnergyCoupling<T>::EnergyCoupling(const std::string& name) :
 
 template <class T>
 void EnergyCoupling<T>::execute() {
+	EnergyStencil<T>::execute();
 	_lamb = this->lambda();
 }
 

@@ -90,6 +90,9 @@ protected:
 	/// during Stencil::updateStencil)
 	T _rhs;
 
+	/// \implements ParameteredObject::execute()
+	virtual void execute();
+
 public:
 	/// Lambda coefficient of the stencil.
 	Parameter<T> lambda;

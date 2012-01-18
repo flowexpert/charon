@@ -46,6 +46,8 @@ Gbcce<T>::Gbcce(const std::string& name) :  Stencil<T>("GBCCE", name,
 
 template <class T>
 void Gbcce<T>::execute() {
+	Stencil<T>::execute();
+
 	// erase the old set of unknowns
 	this->_unknowns.clear();
 	std::set<std::string> bmUnknowns = this->brightnessIn()->getUnknowns();
