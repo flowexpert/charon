@@ -28,12 +28,7 @@ SET(CHARON_FILES
 	SplitStream.cpp
 	StringTool.cpp
 	TypeDetector.cpp
-<<<<<<< TREE
-
-
-=======
 	Slots.cpp
->>>>>>> MERGE-SOURCE
 )
 
 SET(PLUGIN_FILES

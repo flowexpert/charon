@@ -318,19 +318,16 @@ protected:
 	 */
 	virtual void execute();
 
-<<<<<<< TREE
-        /// finalize plugin
-        /** The default implementation does nothing at all.
-         *  Override this function implementing new modules.
-         *  This function may be pure virtual in future releases.
-         */
-        virtual void finalize();
+	/// finalize plugin
+	/** The default implementation does nothing at all.
+	 *  Override this function implementing new modules.
+	 *  This function may be pure virtual in future releases.
+	 */
+	virtual void finalize();
 
-=======
 	/// run all preceeding objects
 	void runPreceeding();
 
->>>>>>> MERGE-SOURCE
 public:
 	/// The template type of the instance is double
 	static const template_type TYPE_DOUBLE = 0;

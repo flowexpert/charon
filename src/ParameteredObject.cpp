@@ -30,14 +30,8 @@
 #include <algorithm>
 #include <cassert>
 #include <stdexcept>
-<<<<<<< TREE
-#include "../include/charon-core/ParameteredObject.hxx"
-#include "../include/charon-core/PluginManagerInterface.h"
-=======
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-core/PluginManagerInterface.h>
-#include <charon-core/DataManagerParameterFile.hxx>
->>>>>>> MERGE-SOURCE
 
 // Instantiate static variables.
 std::map<std::string, unsigned int> ParameteredObject::_genericClassNameCount;
@@ -425,13 +419,11 @@ void ParameteredObject::_load(const ParameterFile& pf,
 	std::map<std::string, Slot*>::const_iterator slotIter;
 	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++)
 		slotIter->second->load(pf, man);
-<<<<<<< TREE
-        // initialize object
-        initialize();
-=======
 	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
 		slotIter->second->load(pf, man);
->>>>>>> MERGE-SOURCE
+
+	// initialize object
+	initialize();
 }
 
 bool ParameteredObject::connected() const {
