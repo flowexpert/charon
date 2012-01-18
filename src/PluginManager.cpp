@@ -30,19 +30,31 @@
 std::vector<std::string> AbstractPluginLoader::pluginPaths;
 std::string AbstractPluginLoader::libSuffix;
 
-PluginManager::PluginManager(const std::vector<std::string> &paths, bool dbg, const std::string &className, const std::string &name, const std::string &doc):
-        _defaultTemplateType(ParameteredObject::TYPE_DOUBLE),ParameteredObject(className,name,doc) {
+PluginManager::PluginManager(
+			const std::vector<std::string>& paths, bool dbg,
+			const std::string& className, const std::string& name,
+			const std::string& doc):
+		ParameteredObject(className,name,doc),
+		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
+{
 	if(paths.size() == 0) {
 		throw std::invalid_argument("PluginLoader: Empty paths list given!");
 	}
 	AbstractPluginLoader::pluginPaths = paths;
 	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
 
-        ParameteredObject::_addParameter(mWorkflowfile,"WorkflowFile","The Workflow to be loaded","string");
+	ParameteredObject::_addParameter(
+				mWorkflowfile,"WorkflowFile",
+				"The Workflow to be loaded","FileOpen");
 }
 
-PluginManager::PluginManager(const std::string &path1, const std::string &path2, bool dbg, const std::string &className, const std::string &name, const std::string &doc) :
-        _defaultTemplateType(ParameteredObject::TYPE_DOUBLE),ParameteredObject(className,name,doc) {
+PluginManager::PluginManager(
+			const std::string& path1, const std::string& path2, bool dbg,
+			const std::string& className, const std::string& name,
+			const std::string& doc) :
+		ParameteredObject(className,name,doc),
+		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
+{
 	if (path2.size() > 0) {
 		// put local path (if any) in front of global path
 		AbstractPluginLoader::pluginPaths.push_back(path2);
@@ -54,17 +66,10 @@ PluginManager::PluginManager(const std::string &path1, const std::string &path2,
 	AbstractPluginLoader::pluginPaths.push_back(path1);
 	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
 
-        ParameteredObject::_addParameter(mWorkflowfile,"WorkflowFile","The Workflow to be loaded","string");
+	ParameteredObject::_addParameter(
+				mWorkflowfile,"WorkflowFile",
+				"The Workflow to be loaded","FileOpen");
 }
-
-//PluginManager::PluginManager(bool dbg)
-//{
-//    AbstractPluginLoader::pluginPaths = parent->getPluginPaths();
-//    AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
-
-//    ParameteredObject::_addParameter(mWorkflowfile,"WorkflowFile","The Workflow to be loaded","string");
-
-//}
 
 void PluginManager::_destroyAllInstances(PLUGIN_LOADER * loader) {
 	std::vector<ParameteredObject *> v;
@@ -649,22 +654,24 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 void PluginManager::finalize() {
 	_unloadAllPlugins();
 	_defaultTemplateType = ParameteredObject::TYPE_DOUBLE;
-        ParameteredObject::finalize();
+	if (_initialized) {
+		ParameteredObject::finalize();
+	}
 }
 
 std::list<ParameteredObject*> PluginManager::_determineTargetPoints() {
 	std::list<ParameteredObject*> targetPoints;
 	std::map<std::string, ParameteredObject *>::const_iterator it;
 	for (it = objects.begin(); it != objects.end(); it++) {
-		bool connected = false;
+		bool hasChildren = false;
 		std::map<std::string, Slot *> outputslots =
 				it->second->getOutputSlots();
 		std::map<std::string, Slot *>::const_iterator slotIter;
-		for (slotIter = outputslots.begin(); !connected && slotIter
+		for (slotIter = outputslots.begin(); !hasChildren && slotIter
 				!= outputslots.end(); slotIter++) {
-			connected = slotIter->second->connected();
+			hasChildren = slotIter->second->connected();
 		}
-		if (!connected) {
+		if (!hasChildren) {
 			sout << "(II) Found target point \"" << it->second->getName()
 					<< "\"" << std::endl;
 			targetPoints.push_back(it->second);
@@ -714,27 +721,21 @@ std::list<ParameteredObject*> PluginManager::determineExecutionOrder() {
 }
 
 PluginManager::~PluginManager() {
-    finalize();
+	finalize();
 }
 
-
-
-void PluginManager::execute()
-{
-    PARAMETEREDOBJECT_AVOID_REEXECUTION;
-    ParameteredObject::execute();
-    this->executeGroup();
+void PluginManager::execute() {
+	this->executeGroup();
 }
 
-std::vector<std::string> PluginManager::getPluginPaths()
-{
-    return AbstractPluginLoader::pluginPaths;
+const std::vector<std::string>& PluginManager::getPluginPaths() const {
+	return AbstractPluginLoader::pluginPaths;
 }
 
 void PluginManager::initialize()
 {
-    ParameteredObject::initialize();
-    loadParameterFile(mWorkflowfile());
+	ParameteredObject::initialize();
+	loadParameterFile(mWorkflowfile());
 }
 
 

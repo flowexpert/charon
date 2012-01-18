@@ -33,28 +33,24 @@ IfGroup::IfGroup(const std::string& name) :
 			"Execute a group of objects if a given statement is true"
 		)
 {
-
 	ParameteredObject::_addInputSlot(
-		statement, "statement",
-		"determines if group is executed",
-		"bool");
-
+				statement, "statement",
+				"determines if group is executed", "bool");
 }
 
 void IfGroup::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	// your code goes here :-)
 }
 
 // the following functions are needed
 // for class IfGroup to work as a charon plugin.
+/// create new IfGroup
 extern "C" ifgroup_DECLDIR ParameteredObject*
 		create(const std::string& name, template_type) {
 	return new IfGroup(name);
 }
 
+/// delete IfGroup
 extern "C" ifgroup_DECLDIR void destroy(ParameteredObject* b) {
 	delete b;
 }

@@ -411,7 +411,7 @@ void ParameteredObject::loadParameters(const ParameterFile& pf) {
 }
 
 void ParameteredObject::_load(const ParameterFile& pf,
-		const PluginManagerInterface * man) {
+		const PluginManagerInterface* man) {
 	// load parameters
 	loadParameters(pf);
 
@@ -581,27 +581,14 @@ std::string ParameteredObject::templateTypeToString(template_type t) {
 	}
 }
 
-
-
-void ParameteredObject::initialize()
-{
-    if(this->_initialized)
-        raise("Plugin is already initialized!");
-    _initialized=true;
+void ParameteredObject::initialize() {
+	if(this->_initialized)
+		raise("Plugin is already initialized!");
+	_initialized=true;
 }
 
-void ParameteredObject::finalize()
-{
-    if(!_initialized)
-        raise("Plugin was not initialied!");
-    _initialized=false;
+void ParameteredObject::finalize() {
+	if(!_initialized)
+		raise("Plugin was not initialied!");
+	_initialized=false;
 }
-
-
-
-/*
-ParameteredObject::build_type ParameteredObject::getBuildType() const
-{
-	return ParameteredObject::UNDEFINED_BUILD ;
-}
-*/

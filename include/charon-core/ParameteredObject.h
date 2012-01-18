@@ -77,8 +77,8 @@ public:
 
 private:
 
-        /// status of initialization
-        bool _initialized;
+	/// status of initialization
+	bool _initialized;
 
 	/// Count number of parametered objects with different class names.
 	static std::map<std::string, unsigned int> _genericClassNameCount;
@@ -304,12 +304,12 @@ protected:
 	 */
 	std::set<ParameteredObject*> _getTargetNodes();
 
-        /// initialize plugin
-        /** The default implementation does nothing at all.
-         *  Override this function implementing new modules.
-         *  This function may be pure virtual in future releases.
-         */
-        virtual void initialize();
+	/// initialize plugin
+	/** The default implementation does nothing at all.
+	 *  Override this function implementing new modules.
+	 *  This function may be pure virtual in future releases.
+	 */
+	virtual void initialize();
 
 	/// execute plugin code
 	/** The default implementation does nothing at all.

@@ -102,7 +102,7 @@ int test() {
 	man.connect("2.out", "3.in");
 	man.connect("3.out", "4.in");
 	man.connect("3.out", "5.in");
-	sout << "Layout: 0-1-3-4\n         \\ / \\\n          2   5" <<std::endl;
+	sout << "Layout: 0-1-3-4\n         \\ / \\\n          2   5" << std::endl;
 	tst = man.determineExecutionOrder();
 	assert(tst.size() == num2);
 	tstrm.str("");
@@ -115,7 +115,7 @@ int test() {
 		<< part2 << ")" << std::endl;
 	assert(part1 == "0123" || part1 == "0213");
 	assert(part2 == "45" || part2 == "54");
-        man.finalize();
+	man.finalize();
 	return EXIT_SUCCESS;
 }
 
