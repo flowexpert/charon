@@ -20,7 +20,7 @@
  *  @remark Based on StringTool.hxx by Daniel Kondermann
  */
 
-#include <charon-core/StringTool.h>
+#include "../include/charon-core/StringTool.h"
 #include <sstream>
 #include <algorithm>
 
@@ -56,4 +56,16 @@ std::string StringTool::toLowerCase(std::string s) {
 	transform(s.begin(), s.end(), s.begin(),
 				(int(*)(int)) tolower);
 	return s;
+}
+
+std::string StringTool::combine(std::vector<std::string> strings, char delim)
+{
+    std::string res="";
+    for(int i=0;i<strings.size();i++)
+    {
+        res+=strings[i];
+        if(i<strings.size()-1)
+            res+=delim;
+    }
+    return res;
 }

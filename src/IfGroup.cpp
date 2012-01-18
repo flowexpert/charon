@@ -26,12 +26,12 @@
 #include "../include/charon-core/IfGroup.h"
 
 IfGroup::IfGroup(const std::string& name) :
-		ParameteredObject(
-			"IfGroup", name,
-			"<h2>Execute a group of objects if a given statement is "
-			"true</h2><br>"
-			"Execute a group of objects if a given statement is true"
-		)
+    PluginManager(
+                    "IfGroup", name,
+                    "<h2>Execute a group of objects if a given statement is "
+                    "true</h2><br>"
+                    "Execute a group of objects if a given statement is true"
+                    )
 {
 	ParameteredObject::_addInputSlot(
 				statement, "statement",

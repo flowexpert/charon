@@ -59,10 +59,15 @@ protected:
 	ParameteredObject::build_type (*getBuildType)() ;
 
 public:
-	/**
-	 * Paths where the plugins are stored
-	 */
-	static std::vector<std::string> pluginPaths;
+//	/**
+//	 * Paths where the plugins are stored
+//	 */
+//	static std::vector<std::string> pluginPaths;
+
+        /**
+        * Paths where the plugins are stored. Format pluginPaths=path1;path2;...
+        */
+        static Parameter<std::string> pluginPaths;
 
 	/// Lib suffix e.g. <tt>_d</tt> for debug builds
 	static std::string libSuffix;

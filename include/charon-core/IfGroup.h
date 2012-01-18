@@ -36,7 +36,7 @@
 #define ifgroup_DECLDIR
 #endif
 
-#include "../include/charon-core/PluginManager.h"
+#include "PluginManager.h"
 
 /// Execute a group of objects if a given statement is true
 /** Execute a group of objects if a given statement is true

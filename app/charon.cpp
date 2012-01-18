@@ -206,7 +206,7 @@ int run() {
 	}
 
 	Config::man = 0;
-	Config::man = new PluginManager(Config::globalPath, Config::localPath);
+        Config::man = new PluginManager(Config::globalPath, Config::localPath,true,"MainGroup");
 
 	if (Config::verbose) {
 		std::cout << "Loading workflow from \"" << Config::paramFile

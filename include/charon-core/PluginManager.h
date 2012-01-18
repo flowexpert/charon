@@ -201,6 +201,8 @@ public:
 	/// workflow file name
 	Parameter <std::string> mWorkflowfile;
 
+
+
 	/// default lib suffix
 #ifdef NDEBUG
 	#define DEFAULT_DEBUG_SUFFIX false
@@ -249,6 +251,24 @@ public:
 			const std::string& name = "", const std::string& doc = ""
 	);
 
+        /// default constructor
+        /**
+         * Creates a new PluginManager instance and sets the path to the plugins to
+         * the value of path1 and path2. This is a convenience function to
+         * preserve compatibility to the old non-vector style call.
+         * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
+         *                    fallback to libs without suffix.
+         * \param className   class name (change on derived classes)
+         * \param name        instance name
+         * \param doc         class documentation
+         */
+        PluginManager(
+
+                        const std::string& className="MainGroup",
+                        const std::string& name = "", const std::string& doc = "",
+                        bool debugSuffix = DEFAULT_DEBUG_SUFFIX
+        );
+
 	/**
 	 * Loads a plugin stored in the previously declared folder.
 	 * @warning Do NOT call delete on an instance of a loaded plugin, use the
@@ -283,7 +303,7 @@ public:
 	bool isLoaded(const std::string & name) const;
 
 	/// Gets the plugin paths
-	const std::vector<std::string>& getPluginPaths() const;
+        const std::vector<std::string> getPluginPaths() const;
 
 	/**
 	 * @return number of currently loaded plugins.

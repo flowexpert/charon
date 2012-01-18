@@ -25,9 +25,9 @@
 #include <algorithm>
 #include "../include/charon-core/PluginManager.h"
 #include "../include/charon-core/ParameteredObject.hxx"
+#include <strstream>
 
-
-std::vector<std::string> AbstractPluginLoader::pluginPaths;
+Parameter<std::string> AbstractPluginLoader::pluginPaths;
 std::string AbstractPluginLoader::libSuffix;
 
 PluginManager::PluginManager(
@@ -40,12 +40,34 @@ PluginManager::PluginManager(
 	if(paths.size() == 0) {
 		throw std::invalid_argument("PluginLoader: Empty paths list given!");
 	}
-	AbstractPluginLoader::pluginPaths = paths;
+
+
+        AbstractPluginLoader::pluginPaths = StringTool::combine(paths,';');
 	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
 
 	ParameteredObject::_addParameter(
 				mWorkflowfile,"WorkflowFile",
 				"The Workflow to be loaded","FileOpen");
+        ParameteredObject::_addParameter(AbstractPluginLoader::pluginPaths,"PluginPaths","The paths where the plugins are kept, seperated by ';'.","string");
+
+}
+
+PluginManager::PluginManager(
+                        const std::string& className, const std::string& name,
+                        const std::string& doc, bool dbg):
+                ParameteredObject(className,name,doc),
+                _defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
+{
+//        if(paths.size() == 0) {
+//                throw std::invalid_argument("PluginLoader: Empty paths list given!");
+//        }
+
+        AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
+
+        ParameteredObject::_addParameter(
+                                mWorkflowfile,"WorkflowFile",
+                                "The Workflow to be loaded","FileOpen");
+        ParameteredObject::_addParameter(AbstractPluginLoader::pluginPaths,"PluginPaths","The paths where the plugins are kept, seperated by ';'.","string");
 }
 
 PluginManager::PluginManager(
@@ -55,20 +77,23 @@ PluginManager::PluginManager(
 		ParameteredObject(className,name,doc),
 		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
 {
+    std::vector<std::string> paths;
 	if (path2.size() > 0) {
 		// put local path (if any) in front of global path
-		AbstractPluginLoader::pluginPaths.push_back(path2);
+                paths.push_back(path2);
 	}
 	if (path1.size() == 0) {
 		throw std::invalid_argument(
 				"PluginManger: at least one non-emtpy path has to be given!");
 	}
-	AbstractPluginLoader::pluginPaths.push_back(path1);
+        paths.push_back(path1);
+        AbstractPluginLoader::pluginPaths=StringTool::combine(paths,';');
 	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
 
 	ParameteredObject::_addParameter(
 				mWorkflowfile,"WorkflowFile",
 				"The Workflow to be loaded","FileOpen");
+        ParameteredObject::_addParameter(AbstractPluginLoader::pluginPaths,"PluginPaths","The paths where the plugins are kept, seperated by ';'.","string");
 }
 
 void PluginManager::_destroyAllInstances(PLUGIN_LOADER * loader) {
@@ -554,9 +579,11 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 	std::set<std::string> pluginsU;
 
 	// Create metadata for all plugin paths
+        std::vector<std::string> paths;
+        StringTool::explode(AbstractPluginLoader::pluginPaths,';',paths);
 	for (std::vector<std::string>::const_iterator cur =
-			AbstractPluginLoader::pluginPaths.begin();
-			cur!=AbstractPluginLoader::pluginPaths.end(); cur++) {
+                        paths.begin();
+                        cur!=paths.end(); cur++) {
 		FileTool::changeDir(*cur);
 
 		// Fetch list of existing plugins
@@ -728,8 +755,10 @@ void PluginManager::execute() {
 	this->executeGroup();
 }
 
-const std::vector<std::string>& PluginManager::getPluginPaths() const {
-	return AbstractPluginLoader::pluginPaths;
+const std::vector<std::string> PluginManager::getPluginPaths() const {
+    std::vector<std::string> paths;
+    StringTool::explode(AbstractPluginLoader::pluginPaths,';',paths);
+    return paths;
 }
 
 void PluginManager::initialize()

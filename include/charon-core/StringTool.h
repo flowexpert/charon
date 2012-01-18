@@ -66,6 +66,13 @@ namespace StringTool {
 	 *  @return             lowercase output string
 	 */
 	std::string charon_core_DLL_PUBLIC toLowerCase(std::string s);
+
+        /** Combine a vector of strings to one string
+          * @param strings vector of string to combine
+          * @param delim delimiter
+          * @return Combined string
+          */
+        std::string charon_core_DLL_PUBLIC combine(std::vector<std::string> strings,char delim=';');
 }
 
 #endif /** _StringTool_H */

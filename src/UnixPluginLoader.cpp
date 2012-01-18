@@ -36,8 +36,10 @@ UnixPluginLoader::UnixPluginLoader(const std::string & n) :
 
 void UnixPluginLoader::load() throw (PluginException) {
 	std::string path, pathS;
-	for(std::vector<std::string>::const_iterator  cur = pluginPaths.begin();
-			cur != pluginPaths.end(); cur++) {
+        std::vector<std::string> paths;
+        StringTool::explode(pluginPaths(),';',paths);
+        for(std::vector<std::string>::const_iterator  cur = paths.begin();
+                        cur != paths.end(); cur++) {
 		path = *cur + "/lib" + pluginName + LIBRARY_EXTENSION;
 		if(libSuffix.size() > 0) {
 			pathS = *cur + "/lib" + pluginName + libSuffix + LIBRARY_EXTENSION;
