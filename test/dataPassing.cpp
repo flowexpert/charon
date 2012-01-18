@@ -21,9 +21,9 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <vigra/multi_array.hxx>
 #include <limits>
 #include <charon-utils/CImg.h>
-#include <vigra/multi_array.hxx>
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-core/ExceptionHandler.h>
 #include <charon-utils/DataManagerCImgList.hxx>
