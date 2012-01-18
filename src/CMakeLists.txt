@@ -131,6 +131,11 @@ ADD_LIBRARY(irls SHARED
 	${charon_INCLUDE_DIR}/Irls.hxx
 	Irls.cpp
 )
+ADD_LIBRARY(weightedmedian SHARED
+	${charon_INCLUDE_DIR}/WeightedMedian.h
+	${charon_INCLUDE_DIR}/WeightedMedian.hxx
+	WeightedMedian.cpp
+)
 # residual calculation
 ADD_LIBRARY(residual SHARED
 	${charon_INCLUDE_DIR}/Residual.h
@@ -146,6 +151,7 @@ ADD_LIBRARY(irlsnonlocal SHARED
 LIST(APPEND Plugins cgsolverhelper)
 LIST(APPEND Plugins cgsolver)
 LIST(APPEND Plugins irls)
+LIST(APPEND Plugins weightedmedian)
 LIST(APPEND Plugins residual)
 LIST(APPEND Plugins irlsnonlocal)
 
