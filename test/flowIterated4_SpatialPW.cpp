@@ -133,7 +133,7 @@ int test() {
 	analyzer->groundtruth().get_append('c').save_cimg(
 			(curDir+"/" PREFIX "_gt.cimg").c_str(),true);
 
-	relaxator->initialize();
+	relaxator->prepareIterations();
 	printHeader(csv);
 
 	std::cout << "Iteration: " << std::flush;
@@ -142,16 +142,16 @@ int test() {
 		relaxator->prepareStep();
 		double cur = relaxator->getCur();
 		printInfos(csv,curDir,cur,helper,relaxinghelper,spatialPW,analyzer);
-		iterator->initialize();
+		iterator->prepareIterations();
 		do {
 			contIn = iterator->singleStep();
 			printInfos(csv,curDir,cur,helper,relaxinghelper,spatialPW,analyzer);
 			std::cout << helper->countAll() << " " << std::flush;
 		} while (contIn);
-		iterator->finalize();
+		iterator->finishIterations();
 		contOut = relaxator->finishStep();
 	} while (contOut);
-	relaxator->finalize();
+	relaxator->finishIterations();
 
 	std::cout << "done" << std::endl;
 

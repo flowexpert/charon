@@ -115,7 +115,7 @@ public:
 
 	/// initialize iterator
 	/** initialize helper object and run pre iteration hook */
-	void initialize();
+	void prepareIterations();
 
 	/// perform one Iteration
 	/** run begin iteration hook and perform one iteration cycle
@@ -150,7 +150,7 @@ public:
 	/// finalize iterator
 	/** Commit result to output slot, run post iteration hook
 	 */
-	void finalize();
+	void finishIterations();
 
 protected:
 	/// Update object

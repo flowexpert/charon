@@ -131,7 +131,6 @@ IF(BUILD_TESTING)
 	# testing Horn&Schunk without plugin usage to simplify profiling
 	ADD_EXECUTABLE(flow3_hsYosemiteNP
 		flow3_HS_Yosemite_NP.cpp
-		../src/Diff2D.cpp
 	)
 	IF(MSVC)
 		SET_TARGET_PROPERTIES(flow3_hsYosemiteNP

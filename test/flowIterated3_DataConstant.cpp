@@ -134,7 +134,7 @@ int test() {
 	analyzer->groundtruth().get_append('c').save_cimg(
 			(curDir + "/" PREFIX "_gt.cimg").c_str(),true);
 
-	relaxator->initialize();
+	relaxator->prepareIterations();
 	printHeader(energy);
 	std::cout << "Starting iterations: " << std::flush;
 
@@ -143,17 +143,17 @@ int test() {
 		relaxator->prepareStep();
 		double cur = relaxator->getCur();
 		printInfos(energy,curDir,cur,helper,relaxinghelper,dataBC,analyzer);
-		iterator->initialize();
+		iterator->prepareIterations();
 		do {
 			contIn = iterator->singleStep();
 			printInfos(energy,curDir,cur,helper,relaxinghelper,
 					dataBC,analyzer);
 			std::cout << helper->countAll() << " " << std::flush;
 		} while (contIn);
-		iterator->finalize();
+		iterator->finishIterations();
 		contOut = relaxator->finishStep();
 	} while (contOut);
-	relaxator->finalize();
+	relaxator->finishIterations();
 	std::cout << "done" << std::endl;
 
 	double meanEndpointError = analyzer->getMeanEndpointError();

@@ -86,7 +86,7 @@ int test() {
 	comparator->result.connect(helper->flow);
 
 	std::cout << "Executing workflow..." << std::endl;
-	iterator->initialize();
+	iterator->prepareIterations();
 	bool cont;
 	do {
 		cont = iterator->singleStep();
@@ -94,7 +94,7 @@ int test() {
 				<< std::setw(13) << std::scientific << std::setprecision(6)
 				<< comparator->getMeanEndpointError() << std::endl;
 	} while (cont);
-	iterator->finalize();
+	iterator->finishIterations();
 
 	std::cout << "Workflow execution finished.\n" << std::endl;
 

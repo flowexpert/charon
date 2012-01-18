@@ -87,6 +87,11 @@ void RelaxingIterator<T>::_preIterationHook() {
 			throw std::invalid_argument(msg.str().c_str());
 		}
 	}
+
+	// prepare stencils
+	ParameteredObject::runPreceeding(initial);
+	ParameteredObject::runPreceeding(final);
+
 	_initialLambdas.clear();
 	for (unsigned int i=0; i<initial.size(); i++)
 		_initialLambdas.push_back(initial[i]->lambda());

@@ -100,9 +100,9 @@ void Irls<T>::execute() {
 			{
 				dist = T(0);
 				for (int d=0; d<dim; ++d) {
-					dist += pow( window[d]( i, j, zz, tt ) - med[d], 2 );
+					dist += pow( (double)(window[d]( i, j, zz, tt ) - med[d]), 2 );
 				}
-				dist = pow( dist, 0.5 );
+				dist = pow( (double)dist, 0.5 );
 
 				if (dist != 0) {
 					weight = 1.0 / dist;

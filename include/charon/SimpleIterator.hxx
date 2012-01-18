@@ -112,23 +112,21 @@ void SimpleIterator<T>::run() {
 		return;
 	}
 
-	initialize();
+	prepareIterations();
 	iterate();
-	finalize();
+	finishIterations();
 	assert(ParameteredObject::executed());
 }
 
 template <typename T>
-void SimpleIterator<T>::initialize() {
+void SimpleIterator<T>::prepareIterations() {
 	// check requirements
 	if (!ParameteredObject::connected()) {
 		ParameteredObject::raise("not (completely) connected!");
 	}
 
 	// initialize helper object
-	typename std::set<Slot*>::const_iterator _hlpI=helper.getTargets().begin();
-	ParameteredObject& _hlp = (*_hlpI)->getParent();
-	_hlp.run();
+	ParameteredObject::runPreceeding(helper);
 	helper()->reset();
 
 	if (updateRate() < 0.) {
@@ -293,7 +291,7 @@ bool SimpleIterator<T>::finishStep() {
 }
 
 template <typename T>
-void SimpleIterator<T>::finalize() {
+void SimpleIterator<T>::finishIterations() {
 	result() = helper()->flow();
 
 	// To insert code after the last iteration,

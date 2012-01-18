@@ -113,7 +113,7 @@ int testPyramid() {
 			cimg_library::CImg<double>(128,64,1,1,fy));
 
 	// emulate iter.run()
-	iter.initialize();
+	iter.prepareIterations();
 	bool cont;
 	do {
 		// test in single step mode
@@ -127,7 +127,7 @@ int testPyramid() {
 		assert(pyFlow[0].variance() < tolerance);
 		assert(pyFlow[1].variance() < tolerance);
 	} while (cont);
-	iter.finalize();
+	iter.finishIterations();
 
 	assert(std::abs(pyFlow[0].mean()-fx) < tolerance);
 	assert(std::abs(pyFlow[1].mean()-fy) < tolerance);
@@ -209,7 +209,7 @@ int testWorkflow() {
 	comparator->result.connect(helper->flow);
 
 	std::cout << "Executing workflow..." << std::endl;
-	iterator->initialize();
+	iterator->prepareIterations();
 	bool cont;
 	do {
 		pyramidGT->run();
@@ -238,7 +238,7 @@ int testWorkflow() {
 		quiver2->out().save(fName4.str().c_str());
 #endif
 	} while (cont);
-	iterator->finalize();
+	iterator->finishIterations();
 
 #ifdef SAVE_IMAGES
 	// save flow result

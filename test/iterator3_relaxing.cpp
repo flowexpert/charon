@@ -105,7 +105,7 @@ int test() {
 	FileTool::changeDir(TESTDIR);
 
 	std::cout << "Starting iterations" << std::endl;
-	iterator->initialize();
+	iterator->prepareIterations();
 	bool error = false;
 	double count, l, c, l1, l2, e1, e2;
 	bool cont;
@@ -134,7 +134,7 @@ int test() {
 		}
 		std::cout << std::endl;
 	} while (cont);
-	iterator->finalize();
+	iterator->finishIterations();
 
 	man.reset();
 	sout.assign();
