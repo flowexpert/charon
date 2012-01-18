@@ -131,10 +131,17 @@ ADD_LIBRARY(irls SHARED
 	${charon_INCLUDE_DIR}/Irls.hxx
 	Irls.cpp
 )
+# weighted median filtering, as proposed by Li and Osher (2010, eq. 3.13)
 ADD_LIBRARY(weightedmedian SHARED
 	${charon_INCLUDE_DIR}/WeightedMedian.h
 	${charon_INCLUDE_DIR}/WeightedMedian.hxx
 	WeightedMedian.cpp
+)
+# non-local weight calculation function
+ADD_LIBRARY(weightsnonlocal SHARED
+	${charon_INCLUDE_DIR}/WeightsNonLocal.h
+	${charon_INCLUDE_DIR}/WeightsNonLocal.hxx
+	WeightsNonLocal.cpp
 )
 # residual calculation
 ADD_LIBRARY(residual SHARED
@@ -152,6 +159,7 @@ LIST(APPEND Plugins cgsolverhelper)
 LIST(APPEND Plugins cgsolver)
 LIST(APPEND Plugins irls)
 LIST(APPEND Plugins weightedmedian)
+LIST(APPEND Plugins weightsnonlocal)
 LIST(APPEND Plugins residual)
 LIST(APPEND Plugins irlsnonlocal)
 
