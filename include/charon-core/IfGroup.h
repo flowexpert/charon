@@ -36,12 +36,12 @@
 #define ifgroup_DECLDIR
 #endif
 
-#include "../include/charon-core/ParameteredObject.h"
+#include "../include/charon-core/PluginManager.h"
 
 /// Execute a group of objects if a given statement is true
 /** Execute a group of objects if a given statement is true
  */
-class ifgroup_DECLDIR IfGroup : public ParameteredObject {
+class ifgroup_DECLDIR IfGroup : public PluginManager {
 public:
 	/// default constructor
 	/// \param name             instance name
@@ -51,7 +51,7 @@ public:
 	InputSlot< bool > statement;
 
 	/// Update object.
-	virtual void execute();
+        virtual void executeGroup();
 };
 
 #endif /* _IFGROUP_H_ */

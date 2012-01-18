@@ -38,8 +38,17 @@ IfGroup::IfGroup(const std::string& name) :
 				"determines if group is executed", "bool");
 }
 
+<<<<<<< TREE
+void IfGroup::executeGroup() {
+	PARAMETEREDOBJECT_AVOID_REEXECUTION;
+	ParameteredObject::execute();
+
+        if(this->statement)
+            PluginManager::executeWorkflow();
+=======
 void IfGroup::execute() {
 	// your code goes here :-)
+>>>>>>> MERGE-SOURCE
 }
 
 // the following functions are needed
