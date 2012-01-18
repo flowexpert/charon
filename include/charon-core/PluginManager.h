@@ -440,12 +440,16 @@ public:
 	 */
 	virtual void initialize();
 
-	/**
-	 * Resets this PluginManager instance to its initial state.
-	 * Unloads all plugins, resets defaultTemplateType parameter and deletes
-	 * target points.
+	/// Resets this PluginManager instance to its initial state.
+	/** Unloads all plugins, resets defaultTemplateType parameter
+	 *  and deletes target points.
 	 */
 	virtual void finalize();
+
+	/// for compatibility, use finalize instead
+	charon_DEPRECATED void reset() {
+		finalize();
+	}
 
 	/// for compatibility, use execute instead
 	charon_DEPRECATED void executeWorkflow() {
