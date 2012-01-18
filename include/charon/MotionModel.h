@@ -54,14 +54,18 @@ protected:
 	/// unknowns handled by this motion model
 	std::set<std::string> unknowns;
 
+	/// \implements ParameteredObject::execute()
+	virtual void execute() {
+		out() = this;
+	}
+
 public:
 	/// default constructor
 	MotionModel(const std::string& classname, const std::string& name = "") :
 		TemplatedParameteredObject<T>(classname, name, "computes the vectors")
 	{
-		this->_addOutputSlot(out, "this",
-				"Pointer to itself", "MotionModel<T>");
-		out = this;
+		ParameteredObject::_addOutputSlot(
+				out, "this", "Pointer to itself", "MotionModel<T>");
 	}
 
 	/// output slot containing pointer to this class
