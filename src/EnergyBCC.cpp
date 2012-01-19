@@ -30,24 +30,34 @@
 
 /// Creates an instance of the plugin
 extern "C" energybcc_DECLDIR ParameteredObject*
-                create(const std::string & name, template_type t) {
-        switch(t) {
-        case ParameteredObject::TYPE_DOUBLE:
-                return new TYPE<double>(name);
-                break;
-        case ParameteredObject::TYPE_FLOAT:
-                return new TYPE<float>(name);
-                break;
-        case ParameteredObject::TYPE_INT:
-                return new TYPE<int>(name);
-                break;
-        default:
-                return new TYPE<int>(name);
-                break;
-        }
+		create(const std::string & name, template_type t) {
+	switch(t) {
+	case ParameteredObject::TYPE_DOUBLE:
+		return new TYPE<double>(name);
+		break;
+	case ParameteredObject::TYPE_FLOAT:
+		return new TYPE<float>(name);
+		break;
+	case ParameteredObject::TYPE_INT:
+		return new TYPE<int>(name);
+		break;
+	default:
+		return new TYPE<int>(name);
+		break;
+	}
 }
 
 /// Deletes an instance of the plugin
 extern "C" energybcc_DECLDIR void destroy(ParameteredObject * b) {
-        delete b;
+	delete b;
 }
+
+/// Report build configuration to prevent linking of incompatibel runtime libs
+extern "C" energybcc_DECLDIR ParameteredObject::build_type getBuildType() {
+#ifdef _DEBUG
+	return ParameteredObject::DEBUG_BUILD ;
+#else
+	return ParameteredObject::RELEASE_BUILD ;
+#endif
+}
+
