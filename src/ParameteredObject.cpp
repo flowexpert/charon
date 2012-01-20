@@ -605,6 +605,6 @@ void ParameteredObject::initialize() {
 
 void ParameteredObject::finalize() {
 	if(!_initialized)
-		raise("Plugin was not initialied!");
+		raise("Plugin was not initialied, or has been already finalized");
 	_initialized=false;
 }

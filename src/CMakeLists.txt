@@ -18,9 +18,10 @@ SET(CHARON_FILES
 	${CHARON_CORE_INCLUDE_DIR}/SplitStream.h
 	${CHARON_CORE_INCLUDE_DIR}/StringTool.h
 	${CHARON_CORE_INCLUDE_DIR}/TypeDetector.h
+        ${CHARON_CORE_INCLUDE_DIR}/ParameteredGroupObject.h
 
 
-
+        ParameteredGroupObject.cpp
 	FileTool.cpp
 	Parameter.cpp
 	ParameteredObject.cpp

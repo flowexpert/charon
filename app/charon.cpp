@@ -206,15 +206,14 @@ int run() {
 	}
 
 	Config::man = 0;
-        Config::man = new PluginManager(Config::globalPath, Config::localPath,true,"MainGroup");
+	Config::man = new PluginManager(Config::globalPath, Config::localPath);
 
 	if (Config::verbose) {
 		std::cout << "Loading workflow from \"" << Config::paramFile
 				<< "\"." << std::endl;
 	}
-        Config::man->mWorkflowfile=Config::paramFile;
-        Config::man->initialize();
-        //Config::man->loadParameterFile(Config::paramFile);
+
+	Config::man->loadParameterFile(Config::paramFile);
 
 	Config::oldDir = FileTool::getCurrentDir();
 	if(!Config::workingDir.empty()) {
@@ -247,7 +246,7 @@ void cleanup() {
 		FileTool::changeDir(Config::oldDir);
 	}
 	if (Config::man) {
-                Config::man->finalize();
+                Config::man->reset();
 		delete Config::man;
 		Config::man = 0;
 	}

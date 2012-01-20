@@ -38,7 +38,7 @@ int test() {
 	sout.assign(std::cout);
 
 	// load dummy module
-        PluginManager man(MODULE_DIR,"",true,"MainGroup");
+	PluginManager man(MODULE_DIR);
 	man.loadPlugin("DummyModule");
 	assert(man.getLoadedPluginsCount() == 1);
 	assert(man.getInstancesCount() == 0);
@@ -115,7 +115,7 @@ int test() {
 		<< part2 << ")" << std::endl;
 	assert(part1 == "0123" || part1 == "0213");
 	assert(part2 == "45" || part2 == "54");
-	man.finalize();
+	man.reset();
 	return EXIT_SUCCESS;
 }
 

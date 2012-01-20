@@ -15,43 +15,46 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file IfGroup.h
+/** \file StatementGenerator.h
  *  \author <a href="mailto:gerald.mwangi@gmx.de">
  *      Gerald Mwangi</a>
- *  \date 17.01.2012
- *  Declaraion of parameter class IfGroup.
+ *  \date 20.01.2012
+ *  Declaraion of parameter class StatementGenerator.
  */
-#ifndef _IFGROUP_H_
-#define _IFGROUP_H_
+#ifndef _STATEMENTGENERATOR_H_
+#define _STATEMENTGENERATOR_H_
 
 #ifdef _MSC_VER
-#ifdef ifgroup_EXPORTS
+#ifdef statementgenerator_EXPORTS
 /// Visual C++ specific code
-#define ifgroup_DECLDIR __declspec(dllexport)
+#define statementgenerator_DECLDIR __declspec(dllexport)
 #else
-#define ifgroup_DECLDIR __declspec(dllimport)
+#define statementgenerator_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else
 /// Not needed without MSVC
-#define ifgroup_DECLDIR
+#define statementgenerator_DECLDIR
 #endif
 
-#include "ParameteredGroupObject.h"
+#include <charon-core/ParameteredObject.h>
 
-/// Execute a group of objects if a given statement is true
-/** Execute a group of objects if a given statement is true
+/// Takes a bool as parameter and outputs it to a slot
+/** Takes a bool as parameter and outputs it to a slot
  */
-class ifgroup_DECLDIR IfGroup : public ParameteredGroupObject {
+class statementgenerator_DECLDIR StatementGenerator : public ParameteredObject {
 public:
 	/// default constructor
 	/// \param name             instance name
-	IfGroup(const std::string& name = "");
+	StatementGenerator(const std::string& name = "");
 
-	/// determines if group is executed
-	InputSlot< bool > statement;
+	/// statement
+	OutputSlot< bool > statement;
+
+	/// statement
+	Parameter< bool > statementpar;
 
 	/// Update object.
-        virtual void executeWorkflow();
+	virtual void execute();
 };
 
-#endif /* _IFGROUP_H_ */
+#endif /* _STATEMENTGENERATOR_H_ */

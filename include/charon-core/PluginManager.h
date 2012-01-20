@@ -124,7 +124,7 @@
  * builds and to false on release builds. Specifying this parameter manually
  * is useful only on unix builds where this mixture causes less or no problems.
  */
-class PluginManager: public PluginManagerInterface, public ParameteredObject {
+class PluginManager: public PluginManagerInterface {
 private:
 	/**
 	 * Saves the currently loaded plugins
@@ -198,8 +198,7 @@ private:
 
 	// @}
 public:
-	/// workflow file name
-	Parameter <std::string> mWorkflowfile;
+
 
 
 
@@ -218,16 +217,11 @@ public:
 	 *                    Search order as given.
 	 * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
 	 *                    fallback to libs without suffix.
-	 * \param className   class name (change on derived classes)
-	 * \param name        instance name
-	 * \param doc         class documentation
 	 */
 	PluginManager(
 			const std::vector<std::string>& pluginPaths,
-			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
-			const std::string& className="MainGroup",
-			const std::string& name = "", const std::string& doc = ""
-	);
+			bool debugSuffix = DEFAULT_DEBUG_SUFFIX
+	    );
 
 	/// default constructor
 	/**
@@ -239,35 +233,14 @@ public:
 	 *                    localPath is searched first.
 	 * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
 	 *                    fallback to libs without suffix.
-	 * \param className   class name (change on derived classes)
-	 * \param name        instance name
-	 * \param doc         class documentation
 	 */
 	PluginManager(
 			const std::string& globalPath,
 			const std::string& localPath = "",
-			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
-			const std::string& className="MainGroup",
-			const std::string& name = "", const std::string& doc = ""
-	);
+			bool debugSuffix = DEFAULT_DEBUG_SUFFIX
+	    );
 
-        /// default constructor
-        /**
-         * Creates a new PluginManager instance and sets the path to the plugins to
-         * the value of path1 and path2. This is a convenience function to
-         * preserve compatibility to the old non-vector style call.
-         * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
-         *                    fallback to libs without suffix.
-         * \param className   class name (change on derived classes)
-         * \param name        instance name
-         * \param doc         class documentation
-         */
-        PluginManager(
 
-                        const std::string& className="MainGroup",
-                        const std::string& name = "", const std::string& doc = "",
-                        bool debugSuffix = DEFAULT_DEBUG_SUFFIX
-        );
 
 	/**
 	 * Loads a plugin stored in the previously declared folder.
@@ -303,7 +276,7 @@ public:
 	bool isLoaded(const std::string & name) const;
 
 	/// Gets the plugin paths
-        const std::vector<std::string> getPluginPaths() const;
+	const std::vector<std::string>& getPluginPaths() const;
 
 	/**
 	 * @return number of currently loaded plugins.
@@ -449,36 +422,25 @@ public:
 	 *
 	 * @see addTargetPoint(ParameteredObject *)
 	 */
-	virtual void executeGroup();
+	void executeWorkflow();
 
 	/// Calls executeGroup() .
 	virtual void execute();
 
-	/**
-	 * Calls loadWorkflow with mWorkflow as paramter,
-	 * then initialize on the loaded instances
-	 */
-	virtual void initialize();
+
 
 	/// Resets this PluginManager instance to its initial state.
 	/** Unloads all plugins, resets defaultTemplateType parameter
 	 *  and deletes target points.
 	 */
-	virtual void finalize();
+	virtual void reset();
 
-	/// for compatibility, use finalize instead
-	charon_DEPRECATED void reset() {
-		finalize();
-	}
 
-	/// for compatibility, use execute instead
-	charon_DEPRECATED void executeWorkflow() {
-		execute();
-	}
+
 
 	/// for compatibility, use execute instead
 	charon_DEPRECATED void runWorkflow() {
-		execute();
+		executeWorkflow();
 	}
 
 	/**

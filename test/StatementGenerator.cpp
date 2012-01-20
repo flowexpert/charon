@@ -15,54 +15,56 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file IfGroup.cpp
- *  Implementation of parameter class IfGroup.
+/** \file StatementGenerator.cpp
+ *  Implementation of parameter class StatementGenerator.
  *  \author <a href="mailto:gerald.mwangi@gmx.de">
  *      Gerald Mwangi</a>
- *  \date 17.01.2012
+ *  \date 20.01.2012
  */
 
-#include "../include/charon-core/ParameteredObject.hxx"
-#include "../include/charon-core/IfGroup.h"
+#include <charon-core/ParameteredObject.hxx>
+#include "StatementGenerator.h"
 
-
-IfGroup::IfGroup(const std::string& name) :
-    ParameteredGroupObject(
-                    "IfGroup", name,
-                    "<h2>Execute a group of objects if a given statement is "
-                    "true</h2><br>"
-                    "Execute a group of objects if a given statement is true"
-                    )
+StatementGenerator::StatementGenerator(const std::string& name) :
+		ParameteredObject(
+			"StatementGenerator", name,
+			"<h2>Takes a bool as parameter and outputs it to a slot</h2><br>"
+			"Takes a bool as parameter and outputs it to a slot"
+		)
 {
-	ParameteredObject::_addInputSlot(
-				statement, "statement",
-				"determines if group is executed", "bool");
+
+	ParameteredObject::_addOutputSlot(
+		statement, "statement",
+		"statement",
+		"bool");
+
+	ParameteredObject::_addParameter< bool >(
+		statementpar, "statementpar",
+		"statement",
+		0, "bool");
+
 }
 
-
-void IfGroup::executeWorkflow() {
+void StatementGenerator::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-        if(this->statement)
-	    _pluginMan->executeWorkflow();
+	// your code goes here :-)
 }
 
 // the following functions are needed
-// for class IfGroup to work as a charon plugin.
-/// create new IfGroup
-extern "C" ifgroup_DECLDIR ParameteredObject*
+// for class StatementGenerator to work as a charon plugin.
+extern "C" statementgenerator_DECLDIR ParameteredObject*
 		create(const std::string& name, template_type) {
-	return new IfGroup(name);
+	return new StatementGenerator(name);
 }
 
-/// delete IfGroup
-extern "C" ifgroup_DECLDIR void destroy(ParameteredObject* b) {
+extern "C" statementgenerator_DECLDIR void destroy(ParameteredObject* b) {
 	delete b;
 }
 
 /// Report build configuration to prevent linking of incompatibel runtime libs
-extern "C" ifgroup_DECLDIR ParameteredObject::build_type getBuildType() {
+extern "C" statementgenerator_DECLDIR ParameteredObject::build_type getBuildType() {
 #ifdef _DEBUG
 	return ParameteredObject::DEBUG_BUILD;
 #else
