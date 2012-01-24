@@ -99,6 +99,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Flow2HSV.h
 		${CHARON_UTILS_INCLUDE_DIR}/Flow2HSV.hxx
 	)
+	ADD_LIBRARY(endpointerror SHARED
+		EndpointError.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/EndpointError.h
+		${CHARON_UTILS_INCLUDE_DIR}/EndpointError.hxx
+	)
 	ADD_LIBRARY(colormask SHARED
 		ColorMask.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/ColorMask.h
@@ -202,6 +207,7 @@ IF(USE_CIMG)
 		medianfilter
 		rgb2hsv
 		flow2hsv
+		endpointerror
 		colormask
 		overlay
 		flowquiver
