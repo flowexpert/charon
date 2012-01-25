@@ -45,7 +45,7 @@ EnergyCoupling<T>::EnergyCoupling(const std::string& name) :
   ParameteredObject::_addParameter< T >(temp,
                       "temp",
                       "temperature",
-                      1, "double");
+                      1, "T");
 }
 
 template <class T>

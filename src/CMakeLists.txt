@@ -95,9 +95,20 @@ ADD_LIBRARY(penaltyquadratic SHARED
 	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyQuadratic.hxx
 	PenaltyQuadratic.cpp
 )
-
+ADD_LIBRARY(penaltycharbonnier SHARED
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyCharbonnier.h
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyCharbonnier.hxx
+	PenaltyCharbonnier.cpp
+)
+ADD_LIBRARY(penaltylorentzian SHARED
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyLorentzian.h
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyLorentzian.hxx
+	PenaltyLorentzian.cpp
+)
 LIST(APPEND Plugins
 	penaltyquadratic
+	penaltycharbonnier
+	penaltylorentzian
 )
 
 # Solvers
