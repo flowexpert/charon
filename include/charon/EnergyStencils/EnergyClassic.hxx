@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -42,10 +44,11 @@ EnergyClassic<T>::EnergyClassic(const std::string& name) :
 	     "<h2>Energy stencil for classic regularization."
 	     )
 {
-  ParameteredObject::_addParameter< T >(norm,
-                      "norm",
-                      "0=mode, 1=median, 2=mean",
-                      2.0, "T");
+	this->_addInputSlot(penaltyFunction,
+	                    "penaltyFunction",
+	                    "penalty function",
+	                    "PenaltyFunction<T>*");
+
 	this->_addInputSlot(motionUV,
 	                    "motionUV",
 	                    "current motion components",
@@ -57,101 +60,64 @@ void EnergyClassic<T>::execute() {
   PARAMETEREDOBJECT_AVOID_REEXECUTION;
   ParameteredObject::execute();
 
-  _norm = norm();
   _lamb = this->lambda();
-}
-
-template <class T>
-T signum( T arg )
-{
-	return (arg < 0) ? T(-1) : T(1) ;
+  _penaltyFunction = penaltyFunction();
 }
 
 template <class T>
 T EnergyClassic<T>::_energyFunction( T x, T xo )
 {
-	T energy;
-	energy = pow( fabs( double(x - xo) ), double(_norm) );
+	T energy = _penaltyFunction->getPenalty( x - xo );
 	return energy;
 }
 
 template <class T>
 T EnergyClassic<T>::_energyFunctionDeriv( T x, T xo )
 {
-	T tmp;
-	T f = x - xo;
-	tmp = _norm * pow( fabs( double(f) ), double(_norm-1) ) * signum( f );
-	return tmp;  //  ATTENTION : this is only the internal derivative !
+	T energyGradient = _penaltyFunction->getPenaltyGradient( x - xo );
+	return energyGradient;
 }
 
 template <class T>
 T EnergyClassic<T>::getEnergy( int, int x, int y, int z, int )
 {
-	T pixelEnergy = 0.0;    //  energy per pixel
+	T motionUC = motionUV().atNXYZC( 0, x,   y,   z, 0 );
+	T motionUN = motionUV().atNXYZC( 0, x,   y-1, z, 0 );
+	T motionUE = motionUV().atNXYZC( 0, x+1, y,   z, 0 );
+	T motionUS = motionUV().atNXYZC( 0, x,   y+1, z, 0 );
+	T motionUW = motionUV().atNXYZC( 0, x-1, y,   z, 0 );
+        T motionVC = motionUV().atNXYZC( 1, x,   y,   z, 0 );
+        T motionVN = motionUV().atNXYZC( 1, x,   y-1, z, 0 );
+        T motionVE = motionUV().atNXYZC( 1, x+1, y,   z, 0 );
+        T motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
+        T motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
 
-	T motionUC = 0.0;
-	T motionUN = 0.0;
-	T motionUE = 0.0;
-	T motionUS = 0.0;
-	T motionUW = 0.0;
-        T motionVC = 0.0;
-        T motionVN = 0.0;
-        T motionVE = 0.0;
-        T motionVS = 0.0;
-        T motionVW = 0.0;
+	T pixelEnergy =  _energyFunction( motionUC, motionUN )
+	              +  _energyFunction( motionUC, motionUE )
+	              +  _energyFunction( motionUC, motionUS )
+	              +  _energyFunction( motionUC, motionUW );
+        pixelEnergy   += _energyFunction( motionVC, motionVN )
+                      +  _energyFunction( motionVC, motionVE )
+                      +  _energyFunction( motionVC, motionVS )
+                      +  _energyFunction( motionVC, motionVW );
 
-	motionUC = motionUV().atNXYZC( 0, x,   y,   z, 0 );
-	motionUN = motionUV().atNXYZC( 0, x,   y-1, z, 0 );
-	motionUE = motionUV().atNXYZC( 0, x+1, y,   z, 0 );
-	motionUS = motionUV().atNXYZC( 0, x,   y+1, z, 0 );
-	motionUW = motionUV().atNXYZC( 0, x-1, y,   z, 0 );
-        motionVC = motionUV().atNXYZC( 1, x,   y,   z, 0 );
-        motionVN = motionUV().atNXYZC( 1, x,   y-1, z, 0 );
-        motionVE = motionUV().atNXYZC( 1, x+1, y,   z, 0 );
-        motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
-        motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
-
-	pixelEnergy =  _energyFunction( motionUC, motionUN )
-	            +  _energyFunction( motionUC, motionUE )
-	            +  _energyFunction( motionUC, motionUS )
-	            +  _energyFunction( motionUC, motionUW );
-        pixelEnergy += _energyFunction( motionVC, motionVN )
-                    +  _energyFunction( motionVC, motionVE )
-                    +  _energyFunction( motionVC, motionVS )
-                    +  _energyFunction( motionVC, motionVW );
-
-	T ret = T(this->_lamb * pixelEnergy);
-
-        return ret;
+	return T(this->_lamb * pixelEnergy);
 }
 
 template <class T>
 std::vector<T> EnergyClassic<T>::getEnergyGradient(
   int, int x, int y, int z, int )
 {
-	std::vector<T> ret( 2 );
-
-        T motionUC = 0.0;
-        T motionUN = 0.0;
-        T motionUE = 0.0;
-        T motionUS = 0.0;
-        T motionUW = 0.0;
-        T motionVC = 0.0;
-        T motionVN = 0.0;
-        T motionVE = 0.0;
-        T motionVS = 0.0;
-        T motionVW = 0.0;
-
-        motionUC = motionUV().atNXYZC( 0, x,   y,   z, 0 );
-        motionUN = motionUV().atNXYZC( 0, x,   y-1, z, 0 );
-        motionUE = motionUV().atNXYZC( 0, x+1, y,   z, 0 );
-        motionUS = motionUV().atNXYZC( 0, x,   y+1, z, 0 );
-        motionUW = motionUV().atNXYZC( 0, x-1, y,   z, 0 );
-        motionVC = motionUV().atNXYZC( 1, x,   y,   z, 0 );
-        motionVN = motionUV().atNXYZC( 1, x,   y-1, z, 0 );
-        motionVE = motionUV().atNXYZC( 1, x+1, y,   z, 0 );
-        motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
-        motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
+        T motionUC = motionUV().atNXYZC( 0, x,   y,   z, 0 );
+        T motionUN = motionUV().atNXYZC( 0, x,   y-1, z, 0 );
+        T motionUE = motionUV().atNXYZC( 0, x+1, y,   z, 0 );
+        T motionUS = motionUV().atNXYZC( 0, x,   y+1, z, 0 );
+        T motionUW = motionUV().atNXYZC( 0, x-1, y,   z, 0 );
+        T motionVC = motionUV().atNXYZC( 1, x,   y,   z, 0 );
+        T motionVN = motionUV().atNXYZC( 1, x,   y-1, z, 0 );
+        T motionVE = motionUV().atNXYZC( 1, x+1, y,   z, 0 );
+        T motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
+        T motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
 
         T pixelGradientU = _energyFunctionDeriv( motionUC, motionUN )
                          + _energyFunctionDeriv( motionUC, motionUE )
@@ -162,6 +128,7 @@ std::vector<T> EnergyClassic<T>::getEnergyGradient(
                          + _energyFunctionDeriv( motionVC, motionVS )
                          + _energyFunctionDeriv( motionVC, motionVW );
 
+	std::vector<T> ret( 2 );
 	ret[0] = T(this->_lamb * pixelGradientU);
 	ret[1] = T(this->_lamb * pixelGradientV);
 

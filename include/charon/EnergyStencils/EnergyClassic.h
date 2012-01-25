@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -37,8 +39,9 @@
 
 #include <charon/EnergyStencil.h>
 
-#include <vector>
+#include <charon/PenaltyFunction.h>
 #include <CImg.h>
+#include <vector>
 
 /// EnergyStencil for so called classic regularization
 /**
@@ -47,6 +50,7 @@
  *  "Determining Optical Flow".
  *
  *  Its energy equals \f$ \Delta u + \Delta v \f$.
+ *
  *  \ingroup charon-stencils
  *  \ingroup charon-modules
  *  \ingroup charon-flow
@@ -55,8 +59,8 @@ template <typename T>
 class energyclassic_DECLDIR EnergyClassic :
 public EnergyStencil<T> {
  public:
-
-  Parameter< T > norm;
+  /// Input slot for penalty function
+  InputSlot< PenaltyFunction<T>* > penaltyFunction;
 
   /// Input slot for current motion components
   InputSlot< cimg_library::CImgList<T> > motionUV;
@@ -84,7 +88,8 @@ private:
   T _energyFunction( T x, T xo );
   T _energyFunctionDeriv( T x, T xo );
 
-  T _norm, _lamb; 
+  T _lamb;
+  PenaltyFunction<T> *_penaltyFunction;
 };
 
 #endif // _ENERGYCLASSIC_H_

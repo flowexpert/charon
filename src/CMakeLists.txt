@@ -89,6 +89,13 @@ LIST(APPEND Plugins
 	energynonlocal
 )
 
+# Penalty Functions
+ADD_LIBRARY(penaltyquadratic SHARED
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyQuadratic.h
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyQuadratic.hxx
+	PenaltyQuadratic.cpp
+)
+
 # Solvers
 # PetSc Solver
 INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
