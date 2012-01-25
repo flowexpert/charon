@@ -39,6 +39,7 @@
 
 #include <charon/EnergyStencil.h>
 
+#define penaltyfunction_EXPORTS
 #include <charon/PenaltyFunction.h>
 #include <CImg.h>
 #include <vector>

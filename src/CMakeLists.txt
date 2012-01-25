@@ -96,6 +96,10 @@ ADD_LIBRARY(penaltyquadratic SHARED
 	PenaltyQuadratic.cpp
 )
 
+LIST(APPEND Plugins
+	penaltyquadratic
+)
+
 # Solvers
 # PetSc Solver
 INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
