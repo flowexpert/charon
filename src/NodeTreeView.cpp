@@ -24,16 +24,24 @@
 #include "NodeTreeView.h"
 #include "FileManager.h"
 #include "MetaData.h"
+#include "ui_NodeTreeView.h"
+#include <QTreeView>
+#include <QStandardItemModel>
+#include <QVBoxLayout>
 
-NodeTreeView::NodeTreeView(QWidget* pp) :
-			QTreeView(pp),
-			_model(new QStandardItemModel(1,3,this))
-{
-	setAnimated(true);
-	setModel(_model);
-	setDragEnabled(true);
-	setSelectionMode(QAbstractItemView::SingleSelection);
+NodeTreeView::NodeTreeView(QWidget* pp) : QWidget(pp) {
+	_ui = new Ui::NodeTreeView;
+	_ui->setupUi(this);
+	_model = new QStandardItemModel(1,3,_ui->treeView);
+	_ui->treeView->setAnimated(true);
+	_ui->treeView->setModel(_model);
+	_ui->treeView->setDragEnabled(true);
+	_ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
 	reload();
+}
+
+NodeTreeView::~NodeTreeView() {
+	delete _ui;
 }
 
 void NodeTreeView::reload() {
@@ -54,8 +62,8 @@ void NodeTreeView::reload() {
 	_model->setHorizontalHeaderLabels(labels);
 	_model->horizontalHeaderItem(0)->setSizeHint(QSize(300,0));
 	_model->horizontalHeaderItem(1)->setSizeHint(QSize(200,0));
-	resizeColumnToContents(0);
-	resizeColumnToContents(1);
+	_ui->treeView->resizeColumnToContents(0);
+	_ui->treeView->resizeColumnToContents(1);
 
 	// load modules
 	MetaData md(FileManager::instance().classesFile());
@@ -102,13 +110,10 @@ void NodeTreeView::reload() {
 	for(int ii=0; ii < root[0]->rowCount(); ii++) {
 		root[0]->child(ii)->sortChildren(1);
 	}
-	setExpanded(root[0]->index(), true) ;
+	_ui->treeView->setExpanded(root[0]->index(), true);
 }
 
-void NodeTreeView::currentChanged(
-		const QModelIndex& current, const QModelIndex& previous) {
-	QTreeView::currentChanged(current, previous);
-
+void NodeTreeView::on_treeView_clicked(const QModelIndex& current) {
 	// check if a module is selected, if below, go up to module name
 	// show doc for selected module
 	if (current.parent().isValid()) {
@@ -117,6 +122,23 @@ void NodeTreeView::currentChanged(
 			idx = idx.parent();
 		}
 		emit showClassDoc(_model->data(idx).toString());
+	}
+}
+
+void NodeTreeView::on_editFilter_textChanged(const QString& text) {
+	QRegExp rgx(text, Qt::CaseInsensitive, QRegExp::WildcardUnix);
+	for(int ii=0; ii < _model->rowCount(); ii++) {
+		QModelIndex root = _model->index(ii,0);
+		for(int sub=0; root.child(sub,0).isValid(); sub++) {
+			QModelIndex cur = root.child(sub,0);
+			if(text.isEmpty()) {
+				_ui->treeView->setRowHidden(sub,root,false);
+			}
+			else {
+				QString cont = cur.data().toString();
+				_ui->treeView->setRowHidden(sub,root,!cont.contains(rgx));
+			}
+		}
 	}
 }
 
