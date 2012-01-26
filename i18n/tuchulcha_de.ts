@@ -452,6 +452,11 @@ Please use a valid name.
         <translation>Prozess</translation>
     </message>
     <message>
+        <location filename="../src/LogDialog.cpp" line="89"/>
+        <source>no working %1 process executable found</source>
+        <translation>ausführbare Datei nicht gefunden: %1</translation>
+    </message>
+    <message>
         <location filename="../src/LogDialog.cpp" line="92"/>
         <source>Executable:</source>
         <translation>Prozess:</translation>
@@ -602,39 +607,44 @@ node</oldsource>
 <context>
     <name>NodeTreeView</name>
     <message>
-        <location filename="../src/NodeTreeView.cpp" line="43"/>
+        <location filename="../src/NodeTreeView.cpp" line="51"/>
         <source>Modules</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/NodeTreeView.cpp" line="53"/>
+        <location filename="../src/NodeTreeView.cpp" line="61"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/NodeTreeView.cpp" line="53"/>
+        <location filename="../src/NodeTreeView.cpp" line="61"/>
         <source>Parameter/Slot</source>
         <translation>Parameter/Slot</translation>
     </message>
     <message>
-        <location filename="../src/NodeTreeView.cpp" line="53"/>
+        <location filename="../src/NodeTreeView.cpp" line="61"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../src/NodeTreeView.cpp" line="77"/>
+        <location filename="../src/NodeTreeView.cpp" line="85"/>
         <source>InputSlot</source>
         <translation>Eingang</translation>
     </message>
     <message>
-        <location filename="../src/NodeTreeView.cpp" line="82"/>
+        <location filename="../src/NodeTreeView.cpp" line="90"/>
         <source>OutputSlot</source>
         <translation>Ausgang</translation>
     </message>
     <message>
-        <location filename="../src/NodeTreeView.cpp" line="87"/>
+        <location filename="../src/NodeTreeView.cpp" line="95"/>
         <source>Parameter</source>
         <translation>Parameter</translation>
+    </message>
+    <message>
+        <location filename="../src/NodeTreeView.ui" line="17"/>
+        <source>Filter</source>
+        <translation>Filter</translation>
     </message>
 </context>
 <context>
@@ -861,28 +871,28 @@ File name &lt;span id=&apos;code&apos;&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; in
 <context>
     <name>ParameterFileModel</name>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="381"/>
+        <location filename="../src/ParameterFileModel.cpp" line="385"/>
         <source>Open File</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="382"/>
+        <location filename="../src/ParameterFileModel.cpp" line="386"/>
         <source>ParameterFile (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="387"/>
-        <location filename="../src/ParameterFileModel.cpp" line="393"/>
+        <location filename="../src/ParameterFileModel.cpp" line="391"/>
+        <location filename="../src/ParameterFileModel.cpp" line="397"/>
         <source>Error loading file</source>
         <translation>Fehler beim Laden der Datei</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="388"/>
+        <location filename="../src/ParameterFileModel.cpp" line="392"/>
         <source>File &lt;em&gt;%1&lt;/em&gt; does not exist or is no file!</source>
         <translation>Datei &lt;em&gt;%1&lt;/em&gt; existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="394"/>
+        <location filename="../src/ParameterFileModel.cpp" line="398"/>
         <source>File &lt;em&gt;%1&lt;/em&gt; is not readable!</source>
         <translation>Datei &lt;em&gt;%1&lt;/em&gt; ist nicht lesbar!</translation>
     </message>
@@ -921,11 +931,6 @@ File name &lt;span id=&apos;code&apos;&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; in
         <location filename="../src/TuchulchaWindow.cpp" line="74"/>
         <source>Help Browser</source>
         <translation>Hilfe</translation>
-    </message>
-    <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="83"/>
-        <source>Selector</source>
-        <translation>Modul-Auswahl</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="112"/>
@@ -1127,6 +1132,11 @@ help</oldsource>
         <location filename="../src/TuchulchaWindow.cpp" line="194"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
+    </message>
+    <message>
+        <location filename="../src/TuchulchaWindow.cpp" line="83"/>
+        <source>Module Collection</source>
+        <translation>Modul-Sammlung</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="209"/>
