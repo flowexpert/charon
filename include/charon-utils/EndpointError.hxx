@@ -66,10 +66,10 @@ void EndpointError<T>::execute() {
 	cimg_forXYZC(tmp,x,y,z,t) {
 		sum = T(0);
 		for (unsigned int n=0; n<i1.size(); ++n) {
-			delta = fabs( i1(n,x,y,z,t) - i2(n,x,y,z,t) );
-			sum += pow( delta, 2 );
+			delta = fabs( double(i1(n,x,y,z,t) - i2(n,x,y,z,t)) );
+			sum += pow( double(delta), 2 );
 		}
-		tmp(x,y,z,t) = pow( sum, 1.0/2 );
+		tmp(x,y,z,t) = pow( double(sum), double(1.0/2) );
 		sumsum += tmp(x,y,z,t);
 		++pixelCnt;
 	}

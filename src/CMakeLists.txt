@@ -190,6 +190,21 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/BinOperatorCImg.h
 		${CHARON_UTILS_INCLUDE_DIR}/BinOperatorCImg.hxx
 	)
+	ADD_LIBRARY(maskedblur SHARED
+		MaskedBlur.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/MaskedBlur.h
+		${CHARON_UTILS_INCLUDE_DIR}/MaskedBlur.hxx
+	)
+	ADD_LIBRARY(erodedilate SHARED
+		ErodeDilate.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/ErodeDilate.h
+		${CHARON_UTILS_INCLUDE_DIR}/ErodeDilate.hxx
+	)
+	ADD_LIBRARY(strictresizexy SHARED
+		StrictResizeXY.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/StrictResizeXY.h
+		${CHARON_UTILS_INCLUDE_DIR}/StrictResizeXY.hxx
+	)
 	
 	SET(Plugins_CImg
 		channelconverter
@@ -225,6 +240,9 @@ IF(USE_CIMG)
 		gammacorrection
 		amplitudethreshold
 		binoperatorcimg
+		maskedblur
+		erodedilate
+		strictresizexy
 	)
 
 	LIST(APPEND Plugins
