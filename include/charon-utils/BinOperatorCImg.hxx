@@ -66,9 +66,6 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 
 template <typename T>
 void BinOperatorCImg<T>::execute() {
-	#pragma warning(push)
-	#pragma warning(disable : 4244)
-
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
@@ -143,8 +140,6 @@ void BinOperatorCImg<T>::execute() {
 			out(l) = first ;
 		} ;
 	}
-
-	#pragma warning(pop)
 }
 
 #endif /* _BINOPERATORCIMG_HXX_ */

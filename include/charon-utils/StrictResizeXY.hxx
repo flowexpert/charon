@@ -64,16 +64,15 @@ void StrictResizeXY<T>::execute() {
 
 	out().assign(in.size());
 	
-	if(factor() < 1)
-		raise("resize factor must be > 0") ;
+	if(factor() < 1) {
+		ParameteredObject::raise("resize factor must be > 0") ;
+	}
 	
-	cimglist_for(in(), i)
-	{
+	cimglist_for(in(), i) {
 		const cimg_library::CImg<T>& _in = in()[i] ;
 		out()[i].assign(_in.width()/factor(), _in.height()/factor(), _in.depth(), _in.spectrum()); //discard final row/col if uneven XY-dimensions
 		cimg_library::CImg<T>& _out = out()[i] ;
-		cimg_forXYZC(_out, x, y, z, c)
-		{
+		cimg_forXYZC(_out, x, y, z, c) {
 			T val = 0 ;
 			for(int xx = 0 ; xx < factor() ; xx++)
 				for(int yy = 0 ; yy < factor() ; yy++)

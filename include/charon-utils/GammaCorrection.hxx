@@ -48,13 +48,9 @@ GammaCorrection<T>::GammaCorrection(const std::string& name) :
 
 template <typename T>
 void GammaCorrection<T>::execute() {
-
 	using namespace cimg_library ;
 
-	#pragma warning(push)
-	#pragma warning(disable : 4244) //disable warnings regarding float->double assignments which occur due to the templates
-
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
+    PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	const CImgList<T>& input = _input() ; 
@@ -81,8 +77,6 @@ void GammaCorrection<T>::execute() {
 		output[l].pow(gamma);
 		output[l] *= pow(maxColorVal, 1.0-gamma); //scale the image brighter
 	}
-
-	#pragma warning(pop)
 }
 
 #endif /* _GammaCorrection_HXX_ */
