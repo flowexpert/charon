@@ -16,6 +16,7 @@ ADD_DEFINITIONS(-DCHARON_CORE_VERSION="${charon-core_VERSION}")
 QT4_WRAP_UI(UI_SRC
 	LogDialog.ui
 	OptionsDialog.ui
+	NodeTreeView.ui
 )
 
 SET(TUCHULCHA_COMMON_SOURCES
@@ -61,8 +62,6 @@ SET(EDITGRAPH_SOURCES
 	NodeProperty.h
 	NodeHandler.cpp
 	NodeHandler.h
-	NodeTreeView.cpp
-	NodeTreeView.h
 )
 
 SET(INSPECTOR_SOURCES
@@ -88,6 +87,8 @@ SET(TUCHULCHA_SOURCES
 	LogDialog.h
 	OptionsDialog.cpp
 	OptionsDialog.h
+	NodeTreeView.cpp
+	NodeTreeView.h
 )
 
 # =============  generate moc files ====================

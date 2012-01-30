@@ -22,40 +22,52 @@
  */
 
 #ifndef NODETREEVIEW_H
-#define	NODETREEVIEW_H
+#define NODETREEVIEW_H
 
-#include <QTreeView>
-#include <QStandardItemModel>
-#include <QStandardItem>
+#include <QWidget>
 
 class ParameterFileModel;
 class Node;
 class TreeViewItem;
+class QTreeView;
+class QStandardItemModel;
+class QModelIndex;
 
+namespace Ui {
+	class NodeTreeView;
+}
 
 /// QTreeView for module selection
-class NodeTreeView : public QTreeView {
+class NodeTreeView : public QWidget {
 	Q_OBJECT
 
 public:
 	/// default constructor
 	NodeTreeView(QWidget* parent = 0);
+	~NodeTreeView();
 
 public slots:
 	/// loads nodes/modules from the classesFile
 	void reload();
+	/// handle documentation display on selection change
+	void on_treeView_clicked(const QModelIndex& index);
+	/// handle filter changes
+	/** the second level of items is filtered by the given text that
+	 *  is interpreted as unix wildcard regexp.
+	 *  Items matching this regex are shown, others are hidden.
+	 *  Given an empty string, all items are shown.
+	 *  \param text         filter regexp
+	 */
+	void on_editFilter_textChanged(const QString& text);
 
 signals:
 	/// show documentation page
 	/// @param className    class to show doc for
 	void showClassDoc(const QString& className);
 
-protected:
-	/// handle documentation display on selection change
-	virtual void currentChanged(
-			const QModelIndex& current, const QModelIndex& previous);
-
 private:
+	/// designer gui
+	Ui::NodeTreeView* _ui;
 	/// the model of the view
 	QStandardItemModel* _model;
 };

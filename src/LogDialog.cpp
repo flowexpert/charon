@@ -85,9 +85,9 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 	if (procName.isNull()) {
 		// warn if no valid executable found
 		_curEnd->insertHtml(
-					QString("<br><span class=\"error\">%1</span></br>")
-						.arg("no working <tt>tuchulcha-run</tt> "
-						"process executable found"));
+			QString("<br><span class=\"error\">%1</span></br>")
+				.arg(tr("no working %1 process executable found")
+					 .arg("<tt>tuchulcha-run</tt>")));
 		_ui->lProcName->setText(
 			tr("Executable:")+
 			QString(" <span style=\"font-weight:bold;color:red\">(%1)</span>")
@@ -105,6 +105,7 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 		_proc->start(
 			procName, _decorator->arguments(),
 			QIODevice::ReadWrite|QIODevice::Text);
+		this->_ui->lProcName->setText(_ui->lProcName->text()+" PID: "+QString::number(_proc->pid()));
 	}
 	else {
 		// close dialog

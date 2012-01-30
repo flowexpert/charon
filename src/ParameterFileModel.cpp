@@ -198,7 +198,11 @@ bool ParameterFileModel::setData(
 				&& metaInfo()->isParameter(_keys[ind.row()],
 						getClass(_keys[ind.row()]))) {
 		Q_ASSERT(getType(_keys[ind.row()]) == "bool");
-		_parameterFile->set(_keys[ind.row()],value.toString());
+		Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt()) ;
+		if(state == Qt::Checked || state == Qt::PartiallyChecked)
+			_parameterFile->set(_keys[ind.row()],"1");
+		if(state == Qt::Unchecked)
+			_parameterFile->set(_keys[ind.row()],"0");
 		emit dataChanged(createIndex(ind.row(),0),ind);
 	}
 	return false;

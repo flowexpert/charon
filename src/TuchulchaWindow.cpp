@@ -80,11 +80,11 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	connect(this, SIGNAL(metaDataUpdated()), docGen, SLOT(updateMetaData()));
 
 	// select widget
-	QDockWidget* selectWidget = new QDockWidget(tr("Selector"), this);
+	QDockWidget* selectWidget = new QDockWidget(tr("Module Collection"), this);
 	selectWidget->setObjectName("selectwidget");
 	_selector = new NodeTreeView(selectWidget);
 	selectWidget->setWidget(_selector);
-	connect(this, SIGNAL(metaDataUpdated()), _selector, SLOT(reload())) ;
+	connect(this, SIGNAL(metaDataUpdated()), _selector, SLOT(reload()));
 
 	// help browser connections
 	connect(_selector, SIGNAL(showClassDoc(QString)), docGen, SLOT(
