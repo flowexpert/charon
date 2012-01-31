@@ -50,7 +50,9 @@ class Function;
  *  \ingroup charon-flow
  */
 template <typename T>
-class spatialpw_DECLDIR SpatialPW : public Stencil<T> {
+class spatialpw_DECLDIR SpatialPW :
+		public Stencil::Mask<T>
+{
 private:
 	cimg_library::CImg<T> _patternMask; ///< common pattern mask
 	Point4D<int> _center;               ///< common center
@@ -97,7 +99,7 @@ public:
 	virtual void execute();
 
 	/// Update stencil values
-	/** \copydoc Stencil::updateStencil
+	/** \copydoc Stencil::Mask::updateStencil
 	 *  \param[in] unknown    query substencils for this unknown,
 	 *  \param[in] p,v        coordinates
 	 */

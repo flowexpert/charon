@@ -25,7 +25,7 @@
 #ifndef _ENERGYCLASSIC_HXX_
 #define _ENERGYCLASSIC_HXX_
 
-#include <charon/AbstractStencil.hxx>
+#include <charon/Stencil.hxx>
 
 #include "EnergyClassic.h"
 
@@ -39,10 +39,8 @@
 
 template <class T>
 EnergyClassic<T>::EnergyClassic(const std::string& name) :
-  AbstractStencil::Base<T>(
-	     "EnergyClassic", name,
-	     "<h2>Energy stencil for classic regularization."
-	     )
+	Stencil::Base<T>("EnergyClassic", name,
+			"<h2>Energy stencil for classic regularization.")
 {
 	this->_addInputSlot(penaltyFunction,
 	                    "penaltyFunction",
@@ -137,11 +135,6 @@ std::vector<T> EnergyClassic<T>::getEnergyGradient(
 
 template <class T>
 int EnergyClassic<T>::getEnergyGradientDimensions() { return 2; }
-
-template <class T>
-EnergyClassic<T>::~EnergyClassic()
-{
-}
 
 #endif /* _ENERGYCLASSIC_HXX_ */
 

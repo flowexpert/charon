@@ -37,7 +37,7 @@
 #define energycoupling_DECLDIR
 #endif
 
-#include <charon/AbstractStencil.h>
+#include <charon/Stencil.h>
 
 #include <CImg.h>
 #include <vector>
@@ -60,41 +60,36 @@
  */
 template <typename T>
 class energycoupling_DECLDIR EnergyCoupling :
-	public virtual AbstractStencil::Base<T>,
-	public AbstractStencil::Energy<T>,
-	public AbstractStencil::EnergyGradient<T>
+	public Stencil::EnergyGradient<T>
 {
- public:
-  /// Input slot for first flow field
-  InputSlot< cimg_library::CImgList<T> > firstMotionUV;
-  /// Input slot for second flow field
-  InputSlot< cimg_library::CImgList<T> > secondMotionUV;
+public:
+	/// Input slot for first flow field
+	InputSlot< cimg_library::CImgList<T> > firstMotionUV;
+	/// Input slot for second flow field
+	InputSlot< cimg_library::CImgList<T> > secondMotionUV;
 
-  /// Input slot for current iteration number.
-//  InputSlot< unsigned int > tempLevel;
-  Parameter< T > temp;
+	/// Input slot for current iteration number.
+	//  InputSlot< unsigned int > tempLevel;
+	Parameter< T > temp;
 
-  /// default constructor
-  /// \param name          Instance name
-  EnergyCoupling(const std::string& name = "");
+	/// default constructor
+	/// \param name          Instance name
+	EnergyCoupling(const std::string& name = "");
 
-  /// stencil's main function
-  void execute();
+	/// stencil's main function
+	void execute();
 
-  /// stencil's energy function
-  T getEnergy( int nI, int xI, int yI, int zI, int cI );
+	/// stencil's energy function
+	T getEnergy( int nI, int xI, int yI, int zI, int cI );
 
-  /// stencil's energy gradient function
-  std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
+	/// stencil's energy gradient function
+	std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
 
-  /// stencil's count of gradient components
-  int getEnergyGradientDimensions();
+	/// stencil's count of gradient components
+	int getEnergyGradientDimensions();
 
 private:
-  /// destructor
-  ~EnergyCoupling();
-
-  T _lamb;
+	T _lamb;
 };
 
 #endif // _ENERGYCOUPLING_H_

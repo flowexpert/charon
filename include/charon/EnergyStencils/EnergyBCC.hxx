@@ -27,7 +27,7 @@
 
 #include "EnergyBCC.h"
 
-#include <charon/AbstractStencil.hxx>
+#include <charon/Stencil.hxx>
 
 #include <charon/PenaltyFunction.hxx>
 #include <cstdlib>
@@ -35,7 +35,7 @@
 
 template <class T>
 EnergyBCC<T>::EnergyBCC(const std::string& name) :
-  AbstractStencil::Base<T>(
+	Stencil::Base<T>(
 	     "EnergyBCC", name,
 	     "<h2>Implementation of the brightness constancy constraint."
 	     )

@@ -172,8 +172,8 @@ void CGSolver<T>::execute() {
 		++idx;
 	}
 
-	typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator _energyStencilsBegin;
-	typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator _energyStencilsEnd;
+	typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator _energyStencilsBegin;
+	typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator _energyStencilsEnd;
 	_energyStencilsBegin = this->stencils.begin();
 	_energyStencilsEnd   = this->stencils.end();
 
@@ -327,14 +327,14 @@ void CGSolver<T>::minimize(
               cimg_library::CImgList<T> &_itflow,
 	      std::vector<T> &X,
 	      std::vector<T> &startingPoint_X,
-              typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator &stencilsBegin,
-              typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator &stencilsEnd,
+			  typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator &stencilsBegin,
+			  typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator &stencilsEnd,
               int length
 	      )
 {
   int xI, yI, zI;
-  typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator sIt;
-  AbstractStencil::Base<T> *is;
+  typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator sIt;
+  Stencil::Base<T> *is;
 
   int energySize = _pSize * _pWidth*_pHeight*_pDepth*_pSpectrum;
   int energyGradientSize = energySize;
@@ -388,15 +388,15 @@ void CGSolver<T>::minimize(
 //  std::cout << _itflow.atNXYZC( 0, 100, 100, 0, 0 ) << std::endl;
 
   for (sIt = stencilsBegin; sIt != stencilsEnd; ++sIt) {
-    is = (*((InputSlot<AbstractStencil::Base<T>*>*)*sIt))();
+	is = (*((InputSlot<Stencil::Base<T>*>*)*sIt))();
 
     energy = T(0.0);
     for (xI = 0; xI < _pWidth; ++xI)
     for (yI = 0; yI < _pHeight; ++yI)
     for (zI = 0; zI < _pDepth; ++zI)
     {
-      energy += dynamic_cast<AbstractStencil::Energy<T>*>(is)->getEnergy( 0, xI, yI, zI, 0 );
-      localGradient = dynamic_cast<AbstractStencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, xI, yI, zI, 0 );
+	  energy += dynamic_cast<Stencil::Energy<T>*>(is)->getEnergy( 0, xI, yI, zI, 0 );
+	  localGradient = dynamic_cast<Stencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, xI, yI, zI, 0 );
 
       for (gc = 0; gc < flowDimensions(); ++gc)
         energyGradient.at(_linearIndex( gc, xI, yI, zI, 0, _pSize, _pWidth, _pHeight, _pDepth, _pSpectrum)) = localGradient.at(gc);
@@ -467,15 +467,15 @@ void CGSolver<T>::minimize(
 //  std::cout << _itflow.atNXYZC( 0, 50, 50, 0, 0 ) << std::endl;
 
           for (sIt = stencilsBegin; sIt != stencilsEnd; ++sIt) {
-            is = (*((InputSlot<AbstractStencil::Base<T>*>*)*sIt))();
+			is = (*((InputSlot<Stencil::Base<T>*>*)*sIt))();
 
             energy = T(0.0);
             for (xI = 0; xI < _pWidth; ++xI)
             for (yI = 0; yI < _pHeight; ++yI)
             for (zI = 0; zI < _pDepth; ++zI)
             {
-              energy += dynamic_cast<AbstractStencil::Energy<T>*>(is)->getEnergy( 0, xI, yI, zI, 0 );
-              localGradient = dynamic_cast<AbstractStencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, xI, yI, zI, 0 );
+			  energy += dynamic_cast<Stencil::Energy<T>*>(is)->getEnergy( 0, xI, yI, zI, 0 );
+			  localGradient = dynamic_cast<Stencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, xI, yI, zI, 0 );
               for (gc = 0; gc < flowDimensions(); ++gc)
                 energyGradient.at(_linearIndex( gc, xI, yI, zI, 0, _pSize, _pWidth, _pHeight, _pDepth, _pSpectrum)) = localGradient.at(gc);
             }
@@ -588,15 +588,15 @@ void CGSolver<T>::minimize(
       df3 = std::vector<T>( energyGradientSize );
       _itflow.assign( _reshapeFeedback( _addVectors( X, _scaleVector( x3, s ) ) ) );
       for (sIt = stencilsBegin; sIt != stencilsEnd; ++sIt) {
-        is = (*((InputSlot<AbstractStencil::Base<T>*>*)*sIt))();
+		is = (*((InputSlot<Stencil::Base<T>*>*)*sIt))();
 
         energy = T(0.0);
         for (xI = 0; xI < _pWidth; ++xI)
         for (yI = 0; yI < _pHeight; ++yI)
         for (zI = 0; zI < _pDepth; ++zI)
         {
-          energy += dynamic_cast<AbstractStencil::Energy<T>*>(is)->getEnergy( 0, xI, yI, zI, 0 );
-          localGradient = dynamic_cast<AbstractStencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, xI, yI, zI, 0 );
+		  energy += dynamic_cast<Stencil::Energy<T>*>(is)->getEnergy( 0, xI, yI, zI, 0 );
+		  localGradient = dynamic_cast<Stencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, xI, yI, zI, 0 );
           for (gc = 0; gc < flowDimensions(); ++gc)
             energyGradient.at(_linearIndex( gc, xI, yI, zI, 0, _pSize, _pWidth, _pHeight, _pDepth, _pSpectrum)) = localGradient.at(gc);
         }

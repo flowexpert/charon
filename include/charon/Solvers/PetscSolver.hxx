@@ -31,7 +31,7 @@
 template <typename T>
 PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(
 	const std::string& unknown,
-	const std::vector<Stencil<T>*>& stencils) :
+	const std::vector<Stencil::Mask<T>*>& stencils) :
 		Solver<T>::MetaStencil(unknown,stencils)
 {
 }
@@ -357,9 +357,9 @@ int PetscSolver<T>::petscExecute() {
 	 */
 
 	// map mentionend above
-	std::map<std::string, std::vector<Stencil<T>*> > substencils;
+	std::map<std::string, std::vector<Stencil::Mask<T>*> > substencils;
 	// stencil iterator
-	typename std::set<AbstractSlot<Stencil<T>*>*>::const_iterator sIt;
+	typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator sIt;
 	// unknowns iterator
 	std::set<std::string>::const_iterator uIt;
 	// just need read-only access to global roi
@@ -385,29 +385,30 @@ int PetscSolver<T>::petscExecute() {
 		// (reference, not a pointer).
 		// And we call that 'is' (short for InputStencil).
 		// The operator() returns the Stencil<T>* within.
-		Stencil<T>* is = (*((InputSlot<Stencil<T>*>*)*sIt))();
+		Stencil::Base<T>* isB = (*((InputSlot<Stencil::Base<T>*>*)*sIt))();
+		Stencil::Mask<T>* isM = dynamic_cast<Stencil::Mask<T>*>(isB);
 
 		//iterate through its unknowns
-		sout << "\tgot Stencil: " << is->getName() << " (lambda=";
-		sout << is->lambda() << ")" << std::endl;
-		if(is->getUnknowns().begin() == is->getUnknowns().end())
+		sout << "\tgot Stencil: " << isM->getName() << " (lambda=";
+		sout << isM->lambda() << ")" << std::endl;
+		if(isM->getUnknowns().begin() == isM->getUnknowns().end())
 			sout << "\t\twarning: no unknowns found!" << std::endl;
-		for(uIt=is->getUnknowns().begin();
-				uIt!=is->getUnknowns().end();
+		for(uIt=isM->getUnknowns().begin();
+				uIt!=isM->getUnknowns().end();
 					uIt++)
 		{
-			substencils[*uIt].push_back(is);
+			substencils[*uIt].push_back(isM);
 #ifndef NDEBUG
 			// print debug information
 			sout << "\t\tfound unknown \"" << *uIt
 				<< "\" with the following content:" << std::endl;
-			is->updateStencil(*uIt,Point4D<int>(cx,cy,cz,ct));
+			isM->updateStencil(*uIt,Point4D<int>(cx,cy,cz,ct));
 			const cimg_library::CImg<T>& dat =
-				is->get().find(*uIt)->second.data;
+				isM->get().find(*uIt)->second.data;
 			ImgTool::printInfo(sout, dat, "\t\t\t");
 			sout << "\t\tand the following pattern:" << std::endl;
 			const cimg_library::CImg<char>& pat =
-				is->get().find(*uIt)->second.pattern;
+				isM->get().find(*uIt)->second.pattern;
 			ImgTool::printInfo(sout, pat, "\t\t\t");
 #endif
 		}
@@ -421,7 +422,7 @@ int PetscSolver<T>::petscExecute() {
 	 */
 	std::map<std::string,PetscMetaStencil> MetaStencils;
 	// SubStencil Iterator
-	typename std::map<std::string, std::vector<Stencil<T>*> >::iterator ssIt;
+	typename std::map<std::string, std::vector<Stencil::Mask<T>*> >::iterator ssIt;
 	for (ssIt=substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
 		typename PetscSolver<T>::PetscMetaStencil pms(ssIt->first,ssIt->second);
 		MetaStencils[ssIt->first] = pms;
@@ -795,11 +796,12 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 		PetscInt*& columns,
 		PetscScalar*& values) const
 {
-	typename std::set<AbstractSlot<Stencil<T>*>*>::const_iterator sIt;
+	typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator sIt;
 	size_t i = 0;
 
 	for(sIt=this->stencils.begin();sIt!=this->stencils.end();sIt++) {
-		Stencil<T>* s = (*((InputSlot<Stencil<T>*>*)*sIt))();
+		Stencil::Base<T>* sb = (*((InputSlot<Stencil::Base<T>*>*)*sIt))();
+		Stencil::Mask<T>* s = dynamic_cast<Stencil::Mask<T>*>(sb);
 		// stencil has already been updated ealier (avoid duplicate call)
 		//s->updateStencil(unknown,p);
 		const std::set<std::string>& allUnk = s->getUnknowns();

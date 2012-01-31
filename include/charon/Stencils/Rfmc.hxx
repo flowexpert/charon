@@ -28,7 +28,7 @@
 
 template <class T>
 Rfmc<T>::Rfmc(const std::string& name) :
-	Stencil<T>(
+	Stencil::Base<T>(
 		"Rfmc", name,
 		"Stencil modeling the range flow motion constraint equation<br>"
 	),

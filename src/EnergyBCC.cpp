@@ -25,6 +25,7 @@
 /// Class name of the plugin
 #define TYPE EnergyBCC
 #define energystencil_EXPORTS
+#define penaltyfunction_EXPORTS
 #include <charon/EnergyStencils/EnergyBCC.hxx>
 
 /// Creates an instance of the plugin

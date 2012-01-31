@@ -37,9 +37,8 @@
 #define energynonlocal_DECLDIR
 #endif
 
-#include <charon/AbstractStencil.h>
-
-#include <CImg.h>
+#include <charon/Stencil.h>
+#include <charon-utils/CImg.h>
 
 /// EnergyStencil for Regularization
 /** EnergyStencil for Regularization.
@@ -51,48 +50,44 @@
  */
 template <typename T>
 class energynonlocal_DECLDIR EnergyNonLocal :
-	public AbstractStencil::Base<T>,
-	public AbstractStencil::Energy<T>,
-	public AbstractStencil::EnergyGradient<T>
+	public Stencil::EnergyGradient<T>
 {
- public:
-  Parameter< T > norm;
-  Parameter< int > useWeight;
-  Parameter< int > radius;              //  radius of the neighborhood
-  Parameter< T > sigma_spatial;         //  spatial difference weight
-  Parameter< T > sigma_color;           //  color difference weight
-  Parameter< T > sigma_occ_divergence;  //  occlusion divergence weight
-  Parameter< T > sigma_occ_color;       //  occlusion color weight
+public:
+	Parameter< T > norm;
+	Parameter< int > useWeight;
+	Parameter< int > radius;              ///<  radius of the neighborhood
+	Parameter< T > sigma_spatial;         ///<  spatial difference weight
+	Parameter< T > sigma_color;           ///<  color difference weight
+	Parameter< T > sigma_occ_divergence;  ///<  occlusion divergence weight
+	Parameter< T > sigma_occ_color;       ///<  occlusion color weight
 
-  InputSlot< cimg_library::CImgList<T> > img;
+	InputSlot< cimg_library::CImgList<T> > img;
 
-  InputSlot< cimg_library::CImgList<T> > motionUV;
+	InputSlot< cimg_library::CImgList<T> > motionUV;
 
-  /// default constructor
-  /// \param name          Instance name
-  EnergyNonLocal(const std::string& name = "");
+	/// default constructor
+	/// \param name          Instance name
+	EnergyNonLocal(const std::string& name = "");
 
-  /// Update object.
-  void execute();
+	/// Update object.
+	void execute();
 
-  /// stencil's energy function
-  T getEnergy( int n, int x, int y, int z, int c );
+	/// stencil's energy function
+	T getEnergy( int n, int x, int y, int z, int c );
 
-  /// stencil's energy gradient function
-  std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
+	/// stencil's energy gradient function
+	std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
 
-  /// stencil's gradient's components count
-  int getEnergyGradientDimensions();
+	/// stencil's gradient's components count
+	int getEnergyGradientDimensions();
 
-  ~EnergyNonLocal();
+	T _lamb, _norm;
+	int _radius;
+	int _useWeight;
+	T _sigma_spatial, _sigma_color, _sigma_occ_divergence, _sigma_occ_color;
 
-  T _lamb, _norm;
-  int _radius;
-  int _useWeight;
-  T _sigma_spatial, _sigma_color, _sigma_occ_divergence, _sigma_occ_color;
-
-  inline T _gauss( T x, T mu, T sigma );
-  inline T _dgauss( T x, T mu, T sigma );
+	inline T _gauss( T x, T mu, T sigma );
+	inline T _dgauss( T x, T mu, T sigma );
 };
 
 #endif // _ENERGYNONLOCAL_H_

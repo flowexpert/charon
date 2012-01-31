@@ -27,11 +27,12 @@
 #include "Gbcce.h"
 
 template <class T>
-Gbcce<T>::Gbcce(const std::string& name) :  Stencil<T>("GBCCE", name,
+Gbcce<T>::Gbcce(const std::string& name) :
+	Stencil::Base<T>("GBCCE", name,
 			"Stencil modeling general brightness change constraint.<br>"
 			"General means that it can be customized using different "
 			"brightness and motion models."),
-		mask(true, false), _bmIn(0), _mmIn(0)
+	mask(true, false), _bmIn(0), _mmIn(0)
 {
 	ParameteredObject::_addInputSlot(
 			brightnessIn, "brightnessmodel",

@@ -40,8 +40,8 @@
 #include <charon-core/ParameteredObject.h>
 #include <charon/CGSolverHelper.h>
 
-#include <charon/AbstractStencil.h>
-#include <CImg.h>
+#include <charon/Stencil.h>
+#include <charon-utils/CImg.h>
 #include <vector>
 
 #include <charon-utils/Roi.h>
@@ -65,7 +65,7 @@ class cgsolver_DECLDIR CGSolver : public TemplatedParameteredObject<T>
 {
 public:
 	/// Input slot for Stencils
-	InputSlot< AbstractStencil::Base<T>* > stencils;
+	InputSlot< Stencil::Base<T>* > stencils;
 
 	/// Input slot for the quantity to be optimized.
 	InputSlot< CGSolverHelper<T>* > itHelper;
@@ -96,9 +96,9 @@ public:
 		cimg_library::CImgList<T> &_itflow,
 		std::vector<T> &X,
 		std::vector<T> &startingPoint_X,
-		typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator&
+		typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator&
 			stencilsBegin,
-		typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator&
+		typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator&
 			stencilsEnd,
 		int length
 	);

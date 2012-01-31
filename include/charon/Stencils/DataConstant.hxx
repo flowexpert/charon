@@ -33,7 +33,7 @@
 
 template <class T>
 DataConstant<T>::DataConstant(const std::string& name) :
-		Stencil<T>("DataConstant", name,
+		Stencil::Base<T>("DataConstant", name,
 			"Stencil modeling weighted brightness constancy. "
 			"Weights are calculated using a given Psi function. "
 			"See doxygen documentation for detailed derivation. ")

@@ -53,7 +53,7 @@
  *  \ingroup charon-flow
  */
 template <class T>
-class rfmc_DECLDIR Rfmc : public Stencil<T>
+class rfmc_DECLDIR Rfmc : public Stencil::Mask<T>
 {
 public:
 	/// select which channel represents depth data

@@ -25,7 +25,7 @@
 #ifndef _ENERGYNONLOCAL_HXX_
 #define _ENERGYNONLOCAL_HXX_
 
-#include <charon/AbstractStencil.hxx>
+#include <charon/Stencil.hxx>
 
 #include "EnergyNonLocal.h"
 
@@ -38,10 +38,9 @@
 
 template <class T>
 EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
-  AbstractStencil::Base<T>(
-	     "EnergyNonLocal", name,
-	     "<h2>Example for an EnergyStencil."
-	     )
+	Stencil::Base<T>(
+		"EnergyNonLocal", name,
+		"<h2>Example for an EnergyStencil.")
 {
   ParameteredObject::_addParameter< int >(useWeight,
                       "useWeight",
@@ -243,11 +242,6 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
 
 template <class T>
 int EnergyNonLocal<T>::getEnergyGradientDimensions() { return 2; }
-
-template <class T>
-EnergyNonLocal<T>::~EnergyNonLocal()
-{
-}
 
 template <typename T>
 inline T EnergyNonLocal<T>::_gauss( T x, T mu, T sigma )

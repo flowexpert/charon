@@ -62,7 +62,7 @@ protected:
 		/// default constructor
 		PetscMetaStencil(
 				const std::string& unknown  /**[in] unknown name*/,
-				const std::vector<Stencil<T>*>& stencils
+				const std::vector<Stencil::Mask<T>*>& stencils
 					/**[in] stencils for this unknown*/);
 
 		/// copy constructor

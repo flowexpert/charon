@@ -49,7 +49,7 @@
  *  \ingroup charon-flow
  */
 template <class T>
-class gbcce_DECLDIR Gbcce : public Stencil<T>
+class gbcce_DECLDIR Gbcce : public Stencil::Mask<T>
 {
 public:
 	/// InputSlot for the brightness model to use.

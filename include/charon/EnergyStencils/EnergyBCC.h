@@ -37,11 +37,9 @@
 #define energybcc_DECLDIR
 #endif
 
-#include <charon/AbstractStencil.h>
-
-#define penaltyfunction_EXPORTS
+#include <charon/Stencil.h>
 #include <charon/PenaltyFunction.h>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 #include <vector>
 
 /// EnergyStencil for Brightness Constancy Constraint
@@ -58,9 +56,7 @@
  */
 template <typename T>
 class energybcc_DECLDIR EnergyBCC :
-	public virtual AbstractStencil::Base<T>,
-	public AbstractStencil::Energy<T>,
-	public AbstractStencil::EnergyGradient<T> 
+		public Stencil::EnergyGradient<T>
 {
  public:
   /// Input slot for penalty function

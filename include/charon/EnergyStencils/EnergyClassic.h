@@ -37,7 +37,7 @@
 #define energyclassic_DECLDIR
 #endif
 
-#include <charon/AbstractStencil.h>
+#include <charon/Stencil.h>
 
 #include <charon/PenaltyFunction.h>
 #include <CImg.h>
@@ -57,42 +57,37 @@
  */
 template <typename T>
 class energyclassic_DECLDIR EnergyClassic :
-	public virtual AbstractStencil::Base<T>,
-	public AbstractStencil::Energy<T>,
-	public AbstractStencil::EnergyGradient<T>
+	public Stencil::EnergyGradient<T>
 {
- public:
-  /// Input slot for penalty function
-  InputSlot< PenaltyFunction<T>* > penaltyFunction;
+public:
+	/// Input slot for penalty function
+	InputSlot< PenaltyFunction<T>* > penaltyFunction;
 
-  /// Input slot for current motion components
-  InputSlot< cimg_library::CImgList<T> > motionUV;
+	/// Input slot for current motion components
+	InputSlot< cimg_library::CImgList<T> > motionUV;
 
-  /// default constructor
-  /// \param name          Instance name
-  EnergyClassic(const std::string& name = "");
+	/// default constructor
+	/// \param name          Instance name
+	EnergyClassic(const std::string& name = "");
 
-  /// stencil's main function
-  void execute();
+	/// stencil's main function
+	void execute();
 
-  /// function yielding stencil's energy for given parameter vector
-  T getEnergy( int n, int x, int y, int z, int c );
+	/// function yielding stencil's energy for given parameter vector
+	T getEnergy( int n, int x, int y, int z, int c );
 
-  /// function yielding stencil's energy gradient for given parameter vector
-  std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
+	/// function yielding stencil's energy gradient for given parameter vector
+	std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
 
-  /// stencil's count of gradient components
-  int getEnergyGradientDimensions();
+	/// stencil's count of gradient components
+	int getEnergyGradientDimensions();
 
 private:
-  /// destructor
-  ~EnergyClassic();
+	T _energyFunction( T x, T xo );
+	T _energyFunctionDeriv( T x, T xo );
 
-  T _energyFunction( T x, T xo );
-  T _energyFunctionDeriv( T x, T xo );
-
-  T _lamb;
-  PenaltyFunction<T> *_penaltyFunction;
+	T _lamb;
+	PenaltyFunction<T> *_penaltyFunction;
 };
 
 #endif // _ENERGYCLASSIC_H_
