@@ -74,11 +74,11 @@ inline bool Slot::getOptional() const {
 	return _optional;
 }
 
-inline bool Slot::connected() {
+inline bool Slot::connected() const {
 	return (getTargets().size() > 0);
 }
 
-inline bool Slot::connected(Slot& target) {
+inline bool Slot::connected(Slot& target) const {
 	std::set<Slot *> targets = getTargets();
 	return (targets.find(&target) != targets.end());
 }

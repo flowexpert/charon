@@ -684,8 +684,8 @@ std::list<ParameteredObject*> PluginManager::determineExecutionOrder() {
 	std::list<ParameteredObject*>::iterator iEnd = finished.end();
 	std::list<ParameteredObject*>::iterator iter = iBegin;
 	while (iter != iEnd) {
-		const ParameteredObject* cur = *iter;
-		iEnd = std::remove(++iter, iEnd, cur);
+		const ParameteredObject* curObj = *iter;
+		iEnd = std::remove(++iter, iEnd, curObj);
 	}
 
 	// remove tail that may contain bogus elements
