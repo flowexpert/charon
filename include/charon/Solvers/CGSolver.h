@@ -70,9 +70,6 @@ public:
 	/// Input slot for the quantity to be optimized.
 	InputSlot< CGSolverHelper<T>* > itHelper;
 
-	/// Input slot for region of interest
-	InputSlot< Roi<int>* > roi;
-
 	/// Output slot for feedback
 	OutputSlot< cimg_library::CImgList<T> > result;
 
