@@ -37,7 +37,7 @@
 #define energybcc_DECLDIR
 #endif
 
-#include <charon/EnergyStencil.h>
+#include <charon/AbstractStencil.h>
 
 #define penaltyfunction_EXPORTS
 #include <charon/PenaltyFunction.h>
@@ -58,7 +58,10 @@
  */
 template <typename T>
 class energybcc_DECLDIR EnergyBCC :
-public EnergyStencil<T> {
+	public virtual AbstractStencil::Base<T>,
+	public AbstractStencil::Energy<T>,
+	public AbstractStencil::EnergyGradient<T> 
+{
  public:
   /// Input slot for penalty function
   InputSlot< PenaltyFunction<T>* > penaltyFunction;
@@ -87,7 +90,7 @@ public EnergyStencil<T> {
   std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
 
   /// stencil's count of gradient components
-  int getGradientComponentsCnt();
+  int getEnergyGradientDimensions();
 
 private:
   /// destructor

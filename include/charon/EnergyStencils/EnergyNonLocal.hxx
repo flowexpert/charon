@@ -1,4 +1,5 @@
-/*
+/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+
     This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
@@ -24,7 +25,7 @@
 #ifndef _ENERGYNONLOCAL_HXX_
 #define _ENERGYNONLOCAL_HXX_
 
-#include <charon/EnergyStencil.hxx>
+#include <charon/AbstractStencil.hxx>
 
 #include "EnergyNonLocal.h"
 
@@ -37,7 +38,7 @@
 
 template <class T>
 EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
-  EnergyStencil<T>(
+  AbstractStencil::Base<T>(
 	     "EnergyNonLocal", name,
 	     "<h2>Example for an EnergyStencil."
 	     )
@@ -241,7 +242,7 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
 }
 
 template <class T>
-int EnergyNonLocal<T>::getGradientComponentsCnt() { return 2; }
+int EnergyNonLocal<T>::getEnergyGradientDimensions() { return 2; }
 
 template <class T>
 EnergyNonLocal<T>::~EnergyNonLocal()

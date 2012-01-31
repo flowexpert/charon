@@ -43,12 +43,12 @@
 template <typename T>
 CGSolver<T>::CGSolver(const std::string& name) : 
 		TemplatedParameteredObject<T>("CGSolver", name),
-                energyStencils(false,true)
+                stencils(false,true)
 {
-	this->_addInputSlot(energyStencils,
-	                    "energyStencils",
-	                    "energy stencils",
-	                    "EnergyStencil<T>*");
+	this->_addInputSlot(stencils,
+	                    "stencils",
+	                    "stencils",
+	                    "Stencil<T>*");
         this->_addInputSlot(roi, "roi", "RoI", "Roi<int>*");
 	this->_addInputSlot(itHelper,
 	                    "itHelper",
@@ -67,6 +67,9 @@ CGSolver<T>::CGSolver(const std::string& name) :
 	this->_addParameter(writeIntermediateResults,
 	                    "writeIntermediateResults",
 	                    "write intermediate results", false);
+	this->_addParameter(doNotFailLineSearch,
+	                    "doNotFailLineSearch",
+	                    "do not fail line search (necessary for some penalty functions)", false);
 }
 
 template <typename T>
@@ -170,10 +173,10 @@ void CGSolver<T>::execute() {
 		++idx;
 	}
 
-	typename std::set<AbstractSlot<EnergyStencil<T>*>*>::const_iterator _energyStencilsBegin;
-	typename std::set<AbstractSlot<EnergyStencil<T>*>*>::const_iterator _energyStencilsEnd;
-	_energyStencilsBegin = this->energyStencils.begin();
-	_energyStencilsEnd   = this->energyStencils.end();
+	typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator _energyStencilsBegin;
+	typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator _energyStencilsEnd;
+	_energyStencilsBegin = this->stencils.begin();
+	_energyStencilsEnd   = this->stencils.end();
 
 	static cimg_library::CImgList<T>& itFlow = itHelper()->flow();
 
@@ -325,14 +328,14 @@ void CGSolver<T>::minimize(
               cimg_library::CImgList<T> &_itflow,
 	      std::vector<T> &X,
 	      std::vector<T> &startingPoint_X,
-              typename std::set<AbstractSlot<EnergyStencil<T>*>*>::const_iterator &stencilsBegin,
-              typename std::set<AbstractSlot<EnergyStencil<T>*>*>::const_iterator &stencilsEnd,
+              typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator &stencilsBegin,
+              typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator &stencilsEnd,
               int length
 	      )
 {
   int xI, yI, zI;
-  typename std::set<AbstractSlot<EnergyStencil<T>*>*>::const_iterator sIt;
-  EnergyStencil<T> *is;
+  typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator sIt;
+  AbstractStencil::Base<T> *is;
 
   int energySize = _pSize * _pWidth*_pHeight*_pDepth*_pSpectrum;
   int energyGradientSize = energySize;
@@ -386,15 +389,15 @@ void CGSolver<T>::minimize(
 //  std::cout << _itflow.atNXYZC( 0, 100, 100, 0, 0 ) << std::endl;
 
   for (sIt = stencilsBegin; sIt != stencilsEnd; ++sIt) {
-    is = (*((InputSlot<EnergyStencil<T>*>*)*sIt))();
+    is = (*((InputSlot<AbstractStencil::Base<T>*>*)*sIt))();
 
     energy = T(0.0);
     for (xI = 0; xI < _pWidth; ++xI)
     for (yI = 0; yI < _pHeight; ++yI)
     for (zI = 0; zI < _pDepth; ++zI)
     {
-      energy += is->getEnergy( 0, xI, yI, zI, 0 );
-      localGradient = is->getEnergyGradient( 0, xI, yI, zI, 0 );
+      energy += dynamic_cast<AbstractStencil::Energy<T>*>(is)->getEnergy( 0, xI, yI, zI, 0 );
+      localGradient = dynamic_cast<AbstractStencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, xI, yI, zI, 0 );
 
       for (gc = 0; gc < flowDimensions(); ++gc)
         energyGradient.at(_linearIndex( gc, xI, yI, zI, 0, _pSize, _pWidth, _pHeight, _pDepth, _pSpectrum)) = localGradient.at(gc);
@@ -465,15 +468,15 @@ void CGSolver<T>::minimize(
 //  std::cout << _itflow.atNXYZC( 0, 50, 50, 0, 0 ) << std::endl;
 
           for (sIt = stencilsBegin; sIt != stencilsEnd; ++sIt) {
-            is = (*((InputSlot<EnergyStencil<T>*>*)*sIt))();
+            is = (*((InputSlot<AbstractStencil::Base<T>*>*)*sIt))();
 
             energy = T(0.0);
             for (xI = 0; xI < _pWidth; ++xI)
             for (yI = 0; yI < _pHeight; ++yI)
             for (zI = 0; zI < _pDepth; ++zI)
             {
-              energy += is->getEnergy( 0, xI, yI, zI, 0 );
-              localGradient = is->getEnergyGradient( 0, xI, yI, zI, 0 );
+              energy += dynamic_cast<AbstractStencil::Energy<T>*>(is)->getEnergy( 0, xI, yI, zI, 0 );
+              localGradient = dynamic_cast<AbstractStencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, xI, yI, zI, 0 );
               for (gc = 0; gc < flowDimensions(); ++gc)
                 energyGradient.at(_linearIndex( gc, xI, yI, zI, 0, _pSize, _pWidth, _pHeight, _pDepth, _pSpectrum)) = localGradient.at(gc);
             }
@@ -586,15 +589,15 @@ void CGSolver<T>::minimize(
       df3 = std::vector<T>( energyGradientSize );
       _itflow.assign( _reshapeFeedback( _addVectors( X, _scaleVector( x3, s ) ) ) );
       for (sIt = stencilsBegin; sIt != stencilsEnd; ++sIt) {
-        is = (*((InputSlot<EnergyStencil<T>*>*)*sIt))();
+        is = (*((InputSlot<AbstractStencil::Base<T>*>*)*sIt))();
 
         energy = T(0.0);
         for (xI = 0; xI < _pWidth; ++xI)
         for (yI = 0; yI < _pHeight; ++yI)
         for (zI = 0; zI < _pDepth; ++zI)
         {
-          energy += is->getEnergy( 0, xI, yI, zI, 0 );
-          localGradient = is->getEnergyGradient( 0, xI, yI, zI, 0 );
+          energy += dynamic_cast<AbstractStencil::Energy<T>*>(is)->getEnergy( 0, xI, yI, zI, 0 );
+          localGradient = dynamic_cast<AbstractStencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, xI, yI, zI, 0 );
           for (gc = 0; gc < flowDimensions(); ++gc)
             energyGradient.at(_linearIndex( gc, xI, yI, zI, 0, _pSize, _pWidth, _pHeight, _pDepth, _pSpectrum)) = localGradient.at(gc);
         }
@@ -621,11 +624,17 @@ void CGSolver<T>::minimize(
 // std::cout << "(II) CGSolver :: SIG @ PART3 = " << SIG << std::endl;
 // std::cout << "(II) CGSolver :: d0  @ PART3 = " << d0 << std::endl;
 
+
+if (doNotFailLineSearch()) {         // (!!) WORKAROUND
+	goto do_not_fail_linesearch; // (!!)
+}                                    // (!!)
     if (
 	   std::abs(d3) < -SIG*d0
        &&
            f3 < f0+x3*RHO*d0
        ) {
+do_not_fail_linesearch:              // (!!)
+
       X = _addVectors( X, _scaleVector( x3, s ) );
       _itflow.assign( _reshapeFeedback( X ) );
 	

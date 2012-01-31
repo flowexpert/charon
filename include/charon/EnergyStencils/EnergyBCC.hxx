@@ -27,7 +27,7 @@
 
 #include "EnergyBCC.h"
 
-#include <charon/EnergyStencil.hxx>
+#include <charon/AbstractStencil.hxx>
 
 #include <charon/PenaltyFunction.hxx>
 #include <cstdlib>
@@ -35,7 +35,7 @@
 
 template <class T>
 EnergyBCC<T>::EnergyBCC(const std::string& name) :
-  EnergyStencil<T>(
+  AbstractStencil::Base<T>(
 	     "EnergyBCC", name,
 	     "<h2>Implementation of the brightness constancy constraint."
 	     )
@@ -109,7 +109,7 @@ std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int
 }
 
 template <class T>
-int EnergyBCC<T>::getGradientComponentsCnt() { return 2; }
+int EnergyBCC<T>::getEnergyGradientDimensions() { return 2; }
 
 template <class T>
 EnergyBCC<T>::~EnergyBCC()

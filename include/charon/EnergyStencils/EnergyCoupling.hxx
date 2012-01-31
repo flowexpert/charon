@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -25,11 +27,11 @@
 
 #include "EnergyCoupling.h"
 
-#include <charon/EnergyStencil.hxx>
+#include <charon/AbstractStencil.hxx>
 
 template <class T>
 EnergyCoupling<T>::EnergyCoupling(const std::string& name) :
-  EnergyStencil<T>(
+  AbstractStencil::Base<T>(
 	     "EnergyCoupling", name,
 	     "<h2>Coupling of two motion fields</h2>."
 	     )
@@ -98,7 +100,7 @@ std::vector<T> EnergyCoupling<T>::getEnergyGradient( int, int xI, int yI, int zI
 }
 
 template <class T>
-int EnergyCoupling<T>::getGradientComponentsCnt() { return 2; }
+int EnergyCoupling<T>::getEnergyGradientDimensions() { return 2; }
 
 template <class T>
 EnergyCoupling<T>::~EnergyCoupling()

@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -35,7 +37,7 @@
 #define energycoupling_DECLDIR
 #endif
 
-#include <charon/EnergyStencil.h>
+#include <charon/AbstractStencil.h>
 
 #include <CImg.h>
 #include <vector>
@@ -58,7 +60,10 @@
  */
 template <typename T>
 class energycoupling_DECLDIR EnergyCoupling :
-public EnergyStencil<T> {
+	public virtual AbstractStencil::Base<T>,
+	public AbstractStencil::Energy<T>,
+	public AbstractStencil::EnergyGradient<T>
+{
  public:
   /// Input slot for first flow field
   InputSlot< cimg_library::CImgList<T> > firstMotionUV;
@@ -83,7 +88,7 @@ public EnergyStencil<T> {
   std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
 
   /// stencil's count of gradient components
-  int getGradientComponentsCnt();
+  int getEnergyGradientDimensions();
 
 private:
   /// destructor

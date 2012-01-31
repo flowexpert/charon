@@ -37,7 +37,7 @@
 #define energyclassic_DECLDIR
 #endif
 
-#include <charon/EnergyStencil.h>
+#include <charon/AbstractStencil.h>
 
 #include <charon/PenaltyFunction.h>
 #include <CImg.h>
@@ -57,7 +57,10 @@
  */
 template <typename T>
 class energyclassic_DECLDIR EnergyClassic :
-public EnergyStencil<T> {
+	public virtual AbstractStencil::Base<T>,
+	public AbstractStencil::Energy<T>,
+	public AbstractStencil::EnergyGradient<T>
+{
  public:
   /// Input slot for penalty function
   InputSlot< PenaltyFunction<T>* > penaltyFunction;
@@ -79,7 +82,7 @@ public EnergyStencil<T> {
   std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
 
   /// stencil's count of gradient components
-  int getGradientComponentsCnt();
+  int getEnergyGradientDimensions();
 
 private:
   /// destructor

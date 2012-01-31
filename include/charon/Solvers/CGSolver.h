@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -38,7 +40,7 @@
 #include <charon-core/ParameteredObject.h>
 #include <charon/CGSolverHelper.h>
 
-#include <charon/EnergyStencil.h>
+#include <charon/AbstractStencil.h>
 #include <CImg.h>
 #include <vector>
 
@@ -62,8 +64,8 @@ template <typename T>
 class cgsolver_DECLDIR CGSolver : public TemplatedParameteredObject<T>
 {
 public:
-	/// Input slot for EnergyStencils
-	InputSlot< EnergyStencil<T>* > energyStencils;
+	/// Input slot for Stencils
+	InputSlot< AbstractStencil::Base<T>* > stencils;
 
 	/// Input slot for the quantity to be optimized.
 	InputSlot< CGSolverHelper<T>* > itHelper;
@@ -83,6 +85,9 @@ public:
 	///  write intermediate results
 	Parameter< bool > writeIntermediateResults;
 
+	///  do not fail line search
+	Parameter< bool > doNotFailLineSearch;
+
 	/// default constructor
 	CGSolver(const std::string& name = "" /**[in] instance name*/);
 
@@ -94,9 +99,9 @@ public:
 		cimg_library::CImgList<T> &_itflow,
 		std::vector<T> &X,
 		std::vector<T> &startingPoint_X,
-		typename std::set<AbstractSlot<EnergyStencil<T>*>*>::const_iterator&
+		typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator&
 			stencilsBegin,
-		typename std::set<AbstractSlot<EnergyStencil<T>*>*>::const_iterator&
+		typename std::set<AbstractSlot<AbstractStencil::Base<T>*>*>::const_iterator&
 			stencilsEnd,
 		int length
 	);

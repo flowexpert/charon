@@ -1,4 +1,5 @@
-/*
+/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+
     This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
@@ -36,7 +37,7 @@
 #define energynonlocal_DECLDIR
 #endif
 
-#include <charon/EnergyStencil.h>
+#include <charon/AbstractStencil.h>
 
 #include <CImg.h>
 
@@ -50,7 +51,10 @@
  */
 template <typename T>
 class energynonlocal_DECLDIR EnergyNonLocal :
-public EnergyStencil<T> {
+	public AbstractStencil::Base<T>,
+	public AbstractStencil::Energy<T>,
+	public AbstractStencil::EnergyGradient<T>
+{
  public:
   Parameter< T > norm;
   Parameter< int > useWeight;
@@ -78,7 +82,7 @@ public EnergyStencil<T> {
   std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
 
   /// stencil's gradient's components count
-  int getGradientComponentsCnt();
+  int getEnergyGradientDimensions();
 
   ~EnergyNonLocal();
 
