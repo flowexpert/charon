@@ -1,0 +1,56 @@
+solver.type		cgsolver
+solver.editorinfo		-833.384 336.485
+ebcc.type		energybcc
+ebcc.editorinfo		-1041.7 -162.207
+ebcc.this		solver.stencils
+diff.type		diff2d
+diff.editorinfo		-1289.35 -269.232
+ebcc.img_dx		diff.dx
+diff.dx		ebcc.img_dx
+ebcc.img_dy		diff.dy
+diff.dy		ebcc.img_dy
+ebcc.img_dt		diff.dt
+diff.dt		ebcc.img_dt
+cconv.type		channelconverter
+cconv.editorinfo		-1956.23 25.8706
+cconv.input		img1.out
+diff.img		cghelper.sequence
+cconv.output		cghelper.initFlow
+solver.initialparameters		
+solver.optimizedparameters		disp.cimgIn
+solver.length		5
+img1.type		filereader
+img1.editorinfo		-2240.98 -223.019
+img1.out		cconv.input;cghelper.in
+img1.filename		yosemiteNoClouds.cimg
+ebcc.motionuv		cghelper.flow
+solver.ithelper		cghelper.self
+solver.result		analysis.result
+solver.roi		
+cghelper.type		cgsolverhelper
+cghelper.editorinfo		-1683.32 -27.7939
+cghelper.sequence		diff.img
+cghelper.flow		eclassic.motionuv;ebcc.motionUV
+cghelper.self		solver.itHelper
+cghelper.initflow		cconv.output
+cghelper.in		img1.out
+eclassic.type		energyclassic
+eclassic.editorinfo		-1059.52 52.9622
+eclassic.motionuv		cghelper.flow
+eclassic.this		solver.stencils
+eclassic.lambda		50
+ebcc.penaltyfunction		quadratic.this
+eclassic.penaltyfunction		quadratic.this
+quadratic.type		penaltyquadratic
+quadratic.editorinfo		-1330.59 -371.805
+quadratic.this		ebcc.penaltyfunction;eclassic.penaltyFunction
+solver.stencils		eclassic.this;ebcc.this
+solver.donotfaillinesearch		1
+analysis.type		flowcomparator
+analysis.editorinfo		-665.137 445.007
+analysis.result		solver.result
+readref.type		filereader
+readref.editorinfo		-2185.45 316.732
+readref.filename		cgflow_HS_ref.cimg
+analysis.groundtruth		readref.out
+readref.out		analysis.groundtruth
