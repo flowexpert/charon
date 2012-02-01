@@ -89,6 +89,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/MedianFilter.h
 		${CHARON_UTILS_INCLUDE_DIR}/MedianFilter.hxx
 	)
+	ADD_LIBRARY(layeredmedianfilter SHARED
+		LayeredMedianFilter.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/LayeredMedianFilter.h
+		${CHARON_UTILS_INCLUDE_DIR}/LayeredMedianFilter.hxx
+	)
 	ADD_LIBRARY(rgb2hsv SHARED
 		Rgb2Hsv.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Rgb2Hsv.h
@@ -220,6 +225,7 @@ IF(USE_CIMG)
 		interpolatorlinear
 		normalize
 		medianfilter
+		layeredmedianfilter
 		rgb2hsv
 		flow2hsv
 		endpointerror
