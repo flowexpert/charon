@@ -28,6 +28,7 @@
 #include "PenaltyQuadratic.h"
 
 #include <charon/PenaltyFunction.hxx>
+#include <cmath>
 
 template <class T>
 PenaltyQuadratic<T>::PenaltyQuadratic(const std::string& name) :
@@ -36,6 +37,8 @@ PenaltyQuadratic<T>::PenaltyQuadratic(const std::string& name) :
 	     "<h2>Implementation of the quadratic penalty function."
 	     )
 {
+  this->_addParameter( maxDiff, "maxDiff",
+                       "parabola will be truncated, if abs(diff) > maxDiff", T(127.0) );
 }
 
 template <class T>
@@ -44,19 +47,28 @@ void PenaltyQuadratic<T>::execute() {
   ParameteredObject::execute();
 
   _lamb = this->lambda();
+  _maxDiff = maxDiff();
 }
 
 template <class T>
 T PenaltyQuadratic<T>::getPenalty( T diff )
 {
-	T penalty = diff * diff ;
+	T penalty;
+	if (fabs(diff) < _maxDiff)
+		penalty = diff * diff ;
+	else
+		penalty = _maxDiff * _maxDiff ;
 	return T(this->_lamb * penalty);
 }
 
 template <class T>
 T PenaltyQuadratic<T>::getPenaltyGradient( T diff )
 {
-	T penaltyGradient = 2 * diff ;
+	T penaltyGradient;
+	if (fabs(diff) < _maxDiff)
+		penaltyGradient = 2 * diff ;
+	else
+		penaltyGradient = T(0);
 	return T(this->_lamb * penaltyGradient);
 }
 

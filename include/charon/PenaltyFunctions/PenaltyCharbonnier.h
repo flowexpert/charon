@@ -56,6 +56,9 @@ public PenaltyFunction<T> {
   /// \param name          Instance name
   PenaltyCharbonnier(const std::string& name = "");
 
+  /// truncation difference
+  Parameter< T > maxDiff;
+
   /// main function
   void execute();
 
@@ -77,6 +80,7 @@ private:
 
   T _lamb;
   T _a, _eps;
+  T _maxDiff;
 };
 
 #endif // _PENALTYCHARBONNIER_H_

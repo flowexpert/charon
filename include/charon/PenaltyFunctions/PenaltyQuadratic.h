@@ -56,6 +56,9 @@ public PenaltyFunction<T> {
   /// \param name          Instance name
   PenaltyQuadratic(const std::string& name = "");
 
+  /// truncation difference
+  Parameter< T > maxDiff;
+
   /// main function
   void execute();
 
@@ -70,6 +73,7 @@ private:
   ~PenaltyQuadratic();
 
   T _lamb;
+  T _maxDiff;
 };
 
 #endif // _PENALTYQUADRATIC_H_

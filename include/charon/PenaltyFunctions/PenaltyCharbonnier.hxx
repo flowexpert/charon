@@ -37,6 +37,7 @@ PenaltyCharbonnier<T>::PenaltyCharbonnier(const std::string& name) :
 	     "<h2>Implementation of the Charbonnier penalty function."
 	     )
 {
+	this->_addParameter(maxDiff, "maxDiff", "truncation, if abs(diff) > maxDiff", T(127.0));
 	this->_addParameter(a, "a", "parameter a", T(0.45));
 	this->_addParameter(eps, "eps", "parameter eps", T(0.001));
 }
@@ -47,6 +48,7 @@ void PenaltyCharbonnier<T>::execute() {
   ParameteredObject::execute();
 
   _lamb = this->lambda();
+  _maxDiff = maxDiff();
   _a = a();
   _eps = eps();
 }
@@ -54,14 +56,22 @@ void PenaltyCharbonnier<T>::execute() {
 template <class T>
 T PenaltyCharbonnier<T>::getPenalty( T diff )
 {
-	T penalty = pow( diff*diff + _eps*_eps, _a) ;
+	T penalty;
+	if (fabs(diff) < _maxDiff)
+		penalty = pow( diff*diff + _eps*_eps, _a) ;
+	else
+		penalty = pow( _maxDiff*_maxDiff + _eps*_eps, _a) ;
 	return T(this->_lamb * penalty);
 }
 
 template <class T>
 T PenaltyCharbonnier<T>::getPenaltyGradient( T diff )
 {
-	T penaltyGradient = 2 * diff * _a * pow( diff*diff + _eps*_eps, _a-1 );
+	T penaltyGradient;
+	if (fabs(diff) < _maxDiff)
+		penaltyGradient = 2 * diff * _a * pow( diff*diff + _eps*_eps, _a-1 ) ;
+	else
+		penaltyGradient = T(0) ;
 	return T(this->_lamb * penaltyGradient);
 }
 
