@@ -35,12 +35,15 @@ EnergyCoupling<T>::EnergyCoupling(const std::string& name) :
 		"EnergyCoupling", name, "<h2>Coupling of two motion fields</h2>."
 	)
 {
+	this->_addInputSlot(penaltyFunction,
+	                    "penaltyFunction",
+	                    "penalty function",
+	                    "PenaltyFunction<T>*");
+
 	this->_addInputSlot(firstMotionUV,"firstMotionUV",
 			"first flow field", "CImgList<T>");
 	this->_addInputSlot(secondMotionUV, "secondMotionUV",
 			"second flow field", "CImgList<T>");
-  ParameteredObject::_addParameter< T >(temp, "temp",
-			"temperature", 1, "T");
 }
 
 template <class T>
@@ -49,54 +52,67 @@ void EnergyCoupling<T>::execute() {
 	ParameteredObject::execute();
 
 	_lamb = this->lambda();
+	_penaltyFunction = penaltyFunction();
 }
 
 template <class T>
 T EnergyCoupling<T>::getEnergy( int, int xI, int yI, int zI, int )
 {
-	T energy, u1, u2, v1, v2;
-	T temperature;
+	T u1 = firstMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	T v1 = firstMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
+	T u2 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	T v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-	u1 = firstMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
-	u2 = firstMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
-	v1 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
-	v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
+	T energy = _penaltyFunction->getPenalty( u1 - u2 )
+	         + _penaltyFunction->getPenalty( v1 - v2 );
 
-	energy = (u1 - v1) * (u1 - v1) + (u2 - v2) * (u2 - v2);
-
-	temperature = temp();
-
-	return T(_lamb * (energy/(2*temperature)));
+	return T(_lamb * energy);
 }
 
 template <class T>
 std::vector<T> EnergyCoupling<T>::getEnergyGradient(
 		int, int xI, int yI, int zI, int)
 {
+	T u1 = firstMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	T v1 = firstMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
+	T u2 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	T v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
+
+	// IMPORTANT! Gradients wrt u1 resp. v1 !
+	T energyGradientU1 = _penaltyFunction->getPenaltyGradient( u1 - u2 );
+	T energyGradientV1 = _penaltyFunction->getPenaltyGradient( v1 - v2 );
+
 	std::vector<T> ret( 2, T(0.0) );
-	T pixelGradientU, pixelGradientV, u1, u2, v1, v2;
-	T temperature;
-
-	u1 = firstMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
-	u2 = firstMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
-	v1 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
-	v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
-
-	pixelGradientU = u1 - v1;
-	pixelGradientV = u2 - v2;
-
-	temperature = temp();
-
-	ret[0] = T(_lamb * (pixelGradientU/temperature));
-	ret[1] = T(_lamb * (pixelGradientV/temperature));
+	ret[0] = T(_lamb * energyGradientU1);
+	ret[1] = T(_lamb * energyGradientV1);
 
 	return ret;
 }
 
 template <class T>
-int EnergyCoupling<T>::getEnergyGradientDimensions() {
-	return 2;
+std::vector<T> EnergyCoupling<T>::getEnergyHessian(
+		int, int xI, int yI, int zI, int)
+{
+	T u1 = firstMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	T v1 = firstMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
+	T u2 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	T v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
+
+	T energyHessianU1U1 = _penaltyFunction->getPenaltyHessian( u1 - u2 );
+	T energyHessianU1V1 = T(0.0);
+	T energyHessianV1V1 = _penaltyFunction->getPenaltyHessian( v1 - v2 );
+
+	std::vector<T> ret( 4, T(0.0) );
+	ret[0] = T(_lamb * energyHessianU1U1);
+	ret[1] = T(_lamb * energyHessianU1V1);
+	ret[2] = T(_lamb * energyHessianU1V1);
+	ret[3] = T(_lamb * energyHessianV1V1);
+
+	return ret;
 }
+
+template <class T>
+int EnergyCoupling<T>::getEnergyGradientDimensions() { return 2; }
 
 #endif /* _ENERGYCOUPLING_HXX_ */
 

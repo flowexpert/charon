@@ -56,7 +56,7 @@
  */
 template <typename T>
 class energybcc_DECLDIR EnergyBCC :
-		public Stencil::EnergyGradient<T>
+		public Stencil::EnergyHessian<T>
 {
  public:
   /// Input slot for penalty function
@@ -84,6 +84,9 @@ class energybcc_DECLDIR EnergyBCC :
 
   /// stencil's energy gradient function
   std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
+
+  /// stencil's energy Hessian function
+  std::vector<T> getEnergyHessian( int nI, int xI, int yI, int zI, int cI );
 
   /// stencil's count of gradient components
   int getEnergyGradientDimensions();

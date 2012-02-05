@@ -109,6 +109,30 @@ std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int
 }
 
 template <class T>
+std::vector<T> EnergyBCC<T>::getEnergyHessian( int, int xI, int yI, int zI, int )
+{
+	T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 0 );
+	T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 0 );
+	T It = img_dt().atNXYZC( 0, xI, yI, zI, 0 );
+
+	T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
+
+	T tmp = _penaltyFunction->getPenaltyHessian( It + Ix*u + Iy*v );
+	T energyHessianUU = Ix * Ix * tmp;
+	T energyHessianUV = Ix * Iy * tmp;
+	T energyHessianVV = Iy * Iy * tmp;
+
+	std::vector<T> ret( 4, T(0.0) );
+	ret[0] = T(this->_lamb * energyHessianUU);
+	ret[1] = T(this->_lamb * energyHessianUV);
+	ret[2] = T(this->_lamb * energyHessianUV);
+	ret[3] = T(this->_lamb * energyHessianVV);
+
+	return ret;
+}
+
+template <class T>
 int EnergyBCC<T>::getEnergyGradientDimensions() { return 2; }
 
 template <class T>

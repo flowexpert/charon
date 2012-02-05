@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2009 Heidelberg Collaboratory for Image Processing
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -57,6 +59,12 @@ Stencil::EnergyGradient<T>::EnergyGradient() :
 	Stencil::Base<T>("EnergyGradient","","This should not be visible.") {
 	_addFunction(Stencil::EnergyGradient<T>::getEnergyGradient);
 	_addFunction(Stencil::EnergyGradient<T>::getEnergyGradientDimensions);
+}
+
+template <typename T>
+Stencil::EnergyHessian<T>::EnergyHessian() :
+	Stencil::Base<T>("EnergyHessian","","This should not be visible.") {
+	_addFunction(Stencil::EnergyHessian<T>::getEnergyHessian);
 }
 
 template <typename T>

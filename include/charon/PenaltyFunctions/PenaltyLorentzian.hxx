@@ -64,9 +64,14 @@ T PenaltyLorentzian<T>::getPenaltyGradient( T diff )
 }
 
 template <class T>
-PenaltyLorentzian<T>::~PenaltyLorentzian()
+T PenaltyLorentzian<T>::getPenaltyHessian( T diff )
 {
+	T penaltyHessian = (_sigma*_sigma)/(diff*diff) - T(0.5) ;
+	return T(this->_lamb * penaltyHessian);
 }
+
+template <class T>
+PenaltyLorentzian<T>::~PenaltyLorentzian() {}
 
 #endif /* _PENALTYLORENTZIAN_HXX_ */
 

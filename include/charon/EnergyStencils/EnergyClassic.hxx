@@ -63,17 +63,21 @@ void EnergyClassic<T>::execute() {
 }
 
 template <class T>
-T EnergyClassic<T>::_energyFunction( T x, T xo )
+T EnergyClassic<T>::_energy( T x, T xo )
 {
-	T energy = _penaltyFunction->getPenalty( x - xo );
-	return energy;
+	return _penaltyFunction->getPenalty( x - xo );
 }
 
 template <class T>
-T EnergyClassic<T>::_energyFunctionDeriv( T x, T xo )
+T EnergyClassic<T>::_energyGradient( T x, T xo )
 {
-	T energyGradient = _penaltyFunction->getPenaltyGradient( x - xo );
-	return energyGradient;
+	return _penaltyFunction->getPenaltyGradient( x - xo );
+}
+
+template <class T>
+T EnergyClassic<T>::_energyHessian( T x, T xo )
+{
+	return _penaltyFunction->getPenaltyHessian( x - xo );
 }
 
 template <class T>
@@ -90,16 +94,16 @@ T EnergyClassic<T>::getEnergy( int, int x, int y, int z, int )
         T motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
         T motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
 
-	T pixelEnergy =  _energyFunction( motionUC, motionUN )
-	              +  _energyFunction( motionUC, motionUE )
-	              +  _energyFunction( motionUC, motionUS )
-	              +  _energyFunction( motionUC, motionUW );
-        pixelEnergy   += _energyFunction( motionVC, motionVN )
-                      +  _energyFunction( motionVC, motionVE )
-                      +  _energyFunction( motionVC, motionVS )
-                      +  _energyFunction( motionVC, motionVW );
+	T energy =  _energy( motionUC, motionUN )
+	         +  _energy( motionUC, motionUE )
+	         +  _energy( motionUC, motionUS )
+	         +  _energy( motionUC, motionUW );
+        energy   += _energy( motionVC, motionVN )
+                 +  _energy( motionVC, motionVE )
+                 +  _energy( motionVC, motionVS )
+                 +  _energy( motionVC, motionVW );
 
-	return T(this->_lamb * pixelEnergy);
+	return T(this->_lamb * energy);
 }
 
 template <class T>
@@ -117,20 +121,54 @@ std::vector<T> EnergyClassic<T>::getEnergyGradient(
         T motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
         T motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
 
-        T pixelGradientU = _energyFunctionDeriv( motionUC, motionUN )
-                         + _energyFunctionDeriv( motionUC, motionUE )
-                         + _energyFunctionDeriv( motionUC, motionUS )
-                         + _energyFunctionDeriv( motionUC, motionUW );
-        T pixelGradientV = _energyFunctionDeriv( motionVC, motionVN )
-                         + _energyFunctionDeriv( motionVC, motionVE )
-                         + _energyFunctionDeriv( motionVC, motionVS )
-                         + _energyFunctionDeriv( motionVC, motionVW );
+        T energyGradientU = _energyGradient( motionUC, motionUN )
+                          + _energyGradient( motionUC, motionUE )
+                          + _energyGradient( motionUC, motionUS )
+                          + _energyGradient( motionUC, motionUW );
+        T energyGradientV = _energyGradient( motionVC, motionVN )
+                          + _energyGradient( motionVC, motionVE )
+                          + _energyGradient( motionVC, motionVS )
+                          + _energyGradient( motionVC, motionVW );
 
-	std::vector<T> ret( 2 );
-	ret[0] = T(this->_lamb * pixelGradientU);
-	ret[1] = T(this->_lamb * pixelGradientV);
+	std::vector<T> ret( 2, T(0.0) );
+	ret[0] = T(this->_lamb * energyGradientU);
+	ret[1] = T(this->_lamb * energyGradientV);
 
         return ret;
+}
+
+template <class T>
+std::vector<T> EnergyClassic<T>::getEnergyHessian(
+  int, int x, int y, int z, int )
+{
+	T motionUC = motionUV().atNXYZC( 0, x,   y,   z, 0 );
+	T motionUN = motionUV().atNXYZC( 0, x,   y-1, z, 0 );
+	T motionUE = motionUV().atNXYZC( 0, x+1, y,   z, 0 );
+	T motionUS = motionUV().atNXYZC( 0, x,   y+1, z, 0 );
+	T motionUW = motionUV().atNXYZC( 0, x-1, y,   z, 0 );
+	T motionVC = motionUV().atNXYZC( 1, x,   y,   z, 0 );
+	T motionVN = motionUV().atNXYZC( 1, x,   y-1, z, 0 );
+	T motionVE = motionUV().atNXYZC( 1, x+1, y,   z, 0 );
+	T motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
+	T motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
+
+	T energyHessianUU = _energyHessian( motionUC, motionUN )
+	                  + _energyHessian( motionUC, motionUE )
+	                  + _energyHessian( motionUC, motionUS )
+	                  + _energyHessian( motionUC, motionUW );
+	T energyHessianUV = T(0.0);
+	T energyHessianVV = _energyHessian( motionVC, motionVN )
+	                  + _energyHessian( motionVC, motionVE )
+	                  + _energyHessian( motionVC, motionVS )
+	                  + _energyHessian( motionVC, motionVW );
+
+	std::vector<T> ret( 4, T(0.0) );
+	ret[0] = T(this->_lamb * energyHessianUU);
+	ret[1] = T(this->_lamb * energyHessianUV);
+	ret[2] = T(this->_lamb * energyHessianUV);
+	ret[3] = T(this->_lamb * energyHessianVV);
+
+	return ret;
 }
 
 template <class T>

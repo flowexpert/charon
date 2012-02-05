@@ -59,11 +59,14 @@ public PenaltyFunction<T> {
   /// main function
   void execute();
 
-  /// penalty function
+  /// penalty
   T getPenalty( T );
 
-  /// penalty derivative (gradient ;-)) wrt its argument
+  /// penalty's 1st order derivative (gradient ;-)) wrt its argument
   T getPenaltyGradient( T );
+
+  /// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
+  T getPenaltyHessian( T );
 
   /// parameter sigma
   Parameter< T > sigma;

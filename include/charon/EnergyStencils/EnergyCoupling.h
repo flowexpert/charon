@@ -39,6 +39,7 @@
 
 #include <charon/Stencil.h>
 
+#include <charon/PenaltyFunction.h>
 #include <CImg.h>
 #include <vector>
 
@@ -60,17 +61,16 @@
  */
 template <typename T>
 class energycoupling_DECLDIR EnergyCoupling :
-	public Stencil::EnergyGradient<T>
+	public Stencil::EnergyHessian<T>
 {
 public:
+	/// Input slot for penalty function
+	InputSlot< PenaltyFunction<T>* > penaltyFunction;
+
 	/// Input slot for first flow field
 	InputSlot< cimg_library::CImgList<T> > firstMotionUV;
 	/// Input slot for second flow field
 	InputSlot< cimg_library::CImgList<T> > secondMotionUV;
-
-	/// Input slot for current iteration number.
-	//  InputSlot< unsigned int > tempLevel;
-	Parameter< T > temp;
 
 	/// default constructor
 	/// \param name          Instance name
@@ -85,11 +85,15 @@ public:
 	/// stencil's energy gradient function
 	std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
 
+	/// stencil's energy Hessian function
+	std::vector<T> getEnergyHessian( int nI, int xI, int yI, int zI, int cI );
+
 	/// stencil's count of gradient components
 	int getEnergyGradientDimensions();
 
 private:
 	T _lamb;
+	PenaltyFunction<T> *_penaltyFunction;
 };
 
 #endif // _ENERGYCOUPLING_H_

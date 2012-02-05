@@ -57,7 +57,7 @@
  */
 template <typename T>
 class energyclassic_DECLDIR EnergyClassic :
-	public Stencil::EnergyGradient<T>
+	public Stencil::EnergyHessian<T>
 {
 public:
 	/// Input slot for penalty function
@@ -73,18 +73,22 @@ public:
 	/// stencil's main function
 	void execute();
 
-	/// function yielding stencil's energy for given parameter vector
+	/// function yielding stencil's energy
 	T getEnergy( int n, int x, int y, int z, int c );
 
-	/// function yielding stencil's energy gradient for given parameter vector
+	/// function yielding stencil's energy gradient
 	std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
+
+	/// function yielding stencil's energy Hessian
+	std::vector<T> getEnergyHessian( int n, int x, int y, int z, int c );
 
 	/// stencil's count of gradient components
 	int getEnergyGradientDimensions();
 
 private:
-	T _energyFunction( T x, T xo );
-	T _energyFunctionDeriv( T x, T xo );
+	T _energy( T x, T xo );
+	T _energyGradient( T x, T xo );
+	T _energyHessian( T x, T xo );
 
 	T _lamb;
 	PenaltyFunction<T> *_penaltyFunction;

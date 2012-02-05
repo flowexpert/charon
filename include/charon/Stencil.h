@@ -76,11 +76,11 @@ namespace Stencil {
 	public:
 		Energy();
 
-		/// function yielding stencil's energy wrt the parameter vector
+		/// function yielding stencil's energy
 		virtual T getEnergy( int n, int x, int y, int z, int c ) = 0;
 	};
 
-	/// Class for stencils yielding the energy gradient.
+	/// Interface for stencils yielding the energy gradient.
 	/** This class provides an interface to the energy gradient of a stencil.
 	 */
 	template <class T>
@@ -90,12 +90,26 @@ namespace Stencil {
 		EnergyGradient();
 
 		/// function yielding stencil's energy gradient
-		/// wrt the parameter vector
-		virtual std::vector<T> getEnergyGradient (
+		virtual std::vector<T> getEnergyGradient(
 			int n, int x, int y, int z, int c ) = 0;
 
 		/// function yielding count of gradient's components
 		virtual int getEnergyGradientDimensions() = 0;
+	};
+
+	/// Interface for stencils yielding the energy Hessian.
+	/** This class provides the interface to the Hessian matrix
+	 *  (matrix of second order partial derivatives) of a stencil.
+	 */
+	template <class T>
+	class stencil_DECLDIR EnergyHessian : public virtual EnergyGradient<T>
+	{
+	public:
+		EnergyHessian();
+
+		/// function yielding stencil's energy Hessian
+		virtual std::vector<T> getEnergyHessian(
+			int n, int x, int y, int z, int c ) = 0;
 	};
 
 	/// Base class for convolution mask Stencils

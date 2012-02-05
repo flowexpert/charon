@@ -57,11 +57,14 @@ public:
 	              const std::string& name /**[in] instance name*/,
 	              const std::string& doc /**[in] stencil documentation*/);
 
-	/// function yielding penalty value
+	/// function yielding penalty
 	virtual T getPenalty( T difference ) = 0;
 
-	/// function yielding penalty derivative wrt its argument
+	/// function yielding penalty gradient wrt its argument
 	virtual T getPenaltyGradient( T difference ) = 0;
+
+	/// function yielding penalty Hessian wrt its argument
+	virtual T getPenaltyHessian( T difference ) = 0;
 
 	// default destructor
 	virtual ~PenaltyFunction();
