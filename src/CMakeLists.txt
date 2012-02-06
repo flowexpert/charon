@@ -211,6 +211,12 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/StrictResizeXY.hxx
 	)
 	
+	ADD_LIBRARY(size SHARED
+		Size.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Size.h
+		${CHARON_UTILS_INCLUDE_DIR}/Size.hxx
+	)
+	
 	SET(Plugins_CImg
 		channelconverter
 		crop
@@ -249,6 +255,7 @@ IF(USE_CIMG)
 		maskedblur
 		erodedilate
 		strictresizexy
+		size
 	)
 
 	LIST(APPEND Plugins
