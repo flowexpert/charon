@@ -51,6 +51,9 @@ EmptyCImg<T>::EmptyCImg(const std::string& name) :
 	ParameteredObject::_addParameter (_sizeC, "sizec", 
 		"size in c direction(width of the List, 3 for RGB images)",1);
 
+	ParameteredObject::_addParameter (_value, "value",
+		"value of all pixels in output image", T(0)) ;
+	
 	ParameteredObject::_addOutputSlot(_output, "output", 
 		"output image", "CImgList<T>"); 
 }
@@ -65,7 +68,7 @@ void EmptyCImg<T>::execute() {
 
 	CImgList<T>& output = _output() ;
 	
-	output.assign(_sizeC(),_sizeX(),_sizeY(),_sizeZ(),_sizeT(), T(0));
+	output.assign(_sizeC(),_sizeX(),_sizeY(),_sizeZ(),_sizeT(), _value());
 //	#pragma warning(pop)
 }
 

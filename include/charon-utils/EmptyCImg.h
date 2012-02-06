@@ -64,6 +64,8 @@ public:
 		/// Parameters
 	Parameter < int > _sizeT;
 
+	Parameter < T > _value ;
+
 
 	
     /// create a new EmptyCImg object
