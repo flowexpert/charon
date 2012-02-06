@@ -147,6 +147,14 @@ ADD_LIBRARY(cgsolver SHARED
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.hxx
 )
 TARGET_LINK_LIBRARIES(cgsolver cgsolverhelper roi)
+# second order Newton method
+ADD_LIBRARY(newton2 SHARED
+	${charon_INCLUDE_DIR}/Solvers/Newton2.h
+	${charon_INCLUDE_DIR}/Solvers/Newton2.hxx
+	Newton2.cpp
+)
+TARGET_LINK_LIBRARIES(newton2 roi)
+
 # Iteratively reweighted least squares
 ADD_LIBRARY(irls SHARED
 	${charon_INCLUDE_DIR}/Irls.h
@@ -179,6 +187,7 @@ ADD_LIBRARY(irlsnonlocal SHARED
 )
 LIST(APPEND Plugins cgsolverhelper)
 LIST(APPEND Plugins cgsolver)
+LIST(APPEND Plugins newton2)
 LIST(APPEND Plugins irls)
 LIST(APPEND Plugins weightedmedian)
 LIST(APPEND Plugins weightsnonlocal)
