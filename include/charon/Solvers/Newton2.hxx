@@ -30,21 +30,16 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <vector>
 
-#ifdef _MSC_VER
-	#define isnan(x) _isnan(x)
-	#define isinf(x) !_finite(x)
-#endif
-
 template <typename T>
 Newton2<T>::Newton2(const std::string& name) : 
 		TemplatedParameteredObject<T>("Newton2", name),
                 stencils(false,true)
 {
-	this->_addInputSlot(roi, "roi", "region of interest", "Roi<int>*");
 	this->_addInputSlot(stencils,
 	                    "stencils",
 	                    "stencils",
 	                    "Stencil<T>*");
+	this->_addInputSlot(roi, "roi", "region of interest", "Roi<int>*");
         this->_addOutputSlot(result,
                              "result",
                              "result",
@@ -52,24 +47,20 @@ Newton2<T>::Newton2(const std::string& name) :
 }
 
 template <typename T>
-Newton2<T>::~Newton2() {}
-
-template <typename T>
 void Newton2<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	// assign region of interest
 	const Roi<int>& _roi = *(this->roi());
 
-	_pSize     = _roi.vEnd;
-	_pWidth    = _roi.xEnd;
-	_pHeight   = _roi.yEnd;
-	_pDepth    = _roi.zEnd;
-	_pSpectrum = _roi.tEnd;
+	cimg_library::CImgList<T> _result(2,
+	                                  _roi.xEnd - _roi.xBegin,
+	                                  _roi.yEnd - _roi.yBegin,
+	                                  _roi.zEnd - _roi.zBegin,
+	                                  1, T(0.0));
 
-	cimg_library::CImgList<T> _result(2, _pWidth, _pHeight, _pDepth, 1, T(0.0));
-
+	std::vector<T> tmp2( 2, T(0.0) );
+	std::vector<T> tmp4( 4, T(0.0) );
 	std::vector<T> localGradient( 2, T(0.0) );
 	std::vector<T> localHessian( 4, T(0.0) );
 	cimg_library::CImg<T> matHessian( 2, 2, 1, 1, T(0.0) );
@@ -79,9 +70,9 @@ void Newton2<T>::execute() {
 	int x, y, z;
 	Stencil::Base<T> *is;
 	typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator sIt;
-	for (x=0; x<_pWidth; ++x)
-	for (y=0; y<_pHeight; ++y)
-	for (z=0; z<_pDepth; ++z)
+	for (x=_roi.xBegin; x<_roi.xEnd; ++x)
+	for (y=_roi.yBegin; y<_roi.yEnd; ++y)
+	for (z=_roi.zBegin; z<_roi.zEnd; ++z)
 	{
 		localGradient[0] = T(0.0);
 		localGradient[1] = T(0.0);
@@ -94,12 +85,14 @@ void Newton2<T>::execute() {
 		     sIt ++)
 		{
 			is = (*((InputSlot<Stencil::Base<T>*>*)*sIt))();
-			localGradient[0] += dynamic_cast<Stencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, x, y, z, 0 )[0];
-			localGradient[1] += dynamic_cast<Stencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, x, y, z, 0 )[1];
-			localHessian[0]  += dynamic_cast<Stencil::EnergyHessian<T>*>(is)->getEnergyHessian( 0, x, y, z, 0 )[0];
-			localHessian[1]  += dynamic_cast<Stencil::EnergyHessian<T>*>(is)->getEnergyHessian( 0, x, y, z, 0 )[1];
-			localHessian[2]  += dynamic_cast<Stencil::EnergyHessian<T>*>(is)->getEnergyHessian( 0, x, y, z, 0 )[2];
-			localHessian[3]  += dynamic_cast<Stencil::EnergyHessian<T>*>(is)->getEnergyHessian( 0, x, y, z, 0 )[3];
+			tmp2 = dynamic_cast<Stencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, x, y, z, 0 );
+			localGradient[0] += tmp2[0];
+			localGradient[1] += tmp2[1];
+			tmp4 = dynamic_cast<Stencil::EnergyHessian<T>*>(is)->getEnergyHessian( 0, x, y, z, 0 );
+			localHessian[0]  += tmp4[0];
+			localHessian[1]  += tmp4[1];
+			localHessian[2]  += tmp4[2];
+			localHessian[3]  += tmp4[3];
 		}
 		vecGradient(0,0,0,0) = localGradient[0];
 		vecGradient(0,1,0,0) = localGradient[1];

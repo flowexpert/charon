@@ -56,11 +56,11 @@ template <typename T>
 class newton2_DECLDIR Newton2 : public TemplatedParameteredObject<T>
 {
 public:
-	/// Input slot for region of interest
-	InputSlot< Roi<int>* > roi;
-
 	/// Input slot for Stencils
 	InputSlot< Stencil::Base<T>* > stencils;
+
+	/// Input slot for region of interest
+	InputSlot< Roi<int>* > roi;
 
 	/// Output slot for feedback
 	OutputSlot< cimg_library::CImgList<T> > result;
@@ -70,24 +70,6 @@ public:
 
 	/// main function
 	void execute();
-
-	/// default destructor
-	~Newton2();
-
-private:
-	/// step width
-	T _gamma;
-
-	/// size parameter of the quantities.
-	int _pSize;
-	/// width parameter of the quantities.
-	int _pWidth;
-	/// height parameter of the quantities.
-	int _pHeight;
-	/// depth parameter of the quantities.
-	int  _pDepth;
-	/// spectrum parameter of the quantities.
-	int _pSpectrum;
 };
 
 #endif // _NEWTON2_H_
