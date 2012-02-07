@@ -25,6 +25,7 @@
 #include <algorithm>
 #include "../include/charon-core/PluginManager.h"
 #include "../include/charon-core/ParameteredObject.hxx"
+#include "../include/charon-core/ParameteredGroupObject.h"
 #include <strstream>
 
 std::vector<std::string> AbstractPluginLoader::pluginPaths;
@@ -217,6 +218,11 @@ ParameteredObject * PluginManager::createInstance(
 
 void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 		throw (AbstractPluginLoader::PluginException) {
+    if(isInternal(toDestroy))
+    {
+	sout<<"(II) Object "<<toDestroy->getName()<<" is an internal object"<<std::endl;
+	return;
+    }
 	std::string cur = toDestroy->getName(), curPlugin;
 	if (_instances.find(toDestroy) != _instances.end()) {
 		objects.erase(toDestroy->getName());
@@ -727,6 +733,20 @@ void PluginManager::execute() {
 const std::vector<std::string>& PluginManager::getPluginPaths() const {
 
     return AbstractPluginLoader::pluginPaths;
+}
+
+void PluginManager::insertInstance(ParameteredObject *instance)
+{
+    assert(instance);
+    objects[instance->getName()]=instance;
+}
+
+bool PluginManager::isInternal(ParameteredObject *obj)
+{
+    if(dynamic_cast<SlotBundle*>(obj))
+	return true;
+    return false;
+
 }
 
 

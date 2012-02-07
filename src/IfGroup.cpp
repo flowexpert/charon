@@ -40,12 +40,12 @@ IfGroup::IfGroup(const std::string& name) :
 }
 
 
-void IfGroup::executeWorkflow() {
+void IfGroup::executeGroup() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
         if(this->statement)
-	    _pluginMan->executeWorkflow();
+	    ParameteredGroupObject::executeGroup();
 }
 
 // the following functions are needed

@@ -51,7 +51,7 @@ public:
 	InputSlot< bool > statement;
 
 	/// Update object.
-        virtual void executeWorkflow();
+	virtual void executeGroup();
 };
 
 #endif /* _IFGROUP_H_ */

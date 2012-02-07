@@ -86,12 +86,25 @@ SET_TARGET_PROPERTIES(charon-core charon-plugins PROPERTIES
 	FOLDER "charon-core"
 )
 INSTALL(
-	TARGETS      charon-core charon-plugins
+	TARGETS      charon-core charon-plugins 
 	EXPORT       ${EXPORT_NAME}
 	RUNTIME      DESTINATION bin${BIN_SUFFIX}
 	LIBRARY      DESTINATION lib${LIB_SUFFIX}
 	ARCHIVE      DESTINATION lib${LIB_SUFFIX}
 	COMPONENT    libraries
+)
+
+# install sys plugin-library
+SET_TARGET_PROPERTIES(ifgroup PROPERTIES
+	INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
+)
+INSTALL(
+	TARGETS          ifgroup
+	EXPORT           ${EXPORT_NAME}
+	RUNTIME          DESTINATION bin${BIN_SUFFIX}
+	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	COMPONENT        libraries
 )
 
 IF(NOT SKIP_EXPORT_INSTALL)

@@ -55,7 +55,7 @@ bool AbstractSlot<T>::_addTarget(Slot* target) {
 	}
 
 	// Check slot types by comparing their _type strings.
-	if (target->getType() != this->getType()) {
+	if ((target->getType() != this->getType())&&!((target->getType()=="Virtual")||(this->getType()=="Virtual"))) {
 		this->printError("Source slot of failed connection");
 		target->printError("Target slot of failed connection");
 		Slot::raise("Cannot connect slots of different types.");
@@ -219,16 +219,55 @@ std::size_t InputSlot<T>::size() const {
 
 template <typename T>
 const T& InputSlot<T>::_getDataFromOutputSlot(
-			const AbstractSlot<T>* slot) const {
-	if (slot->getType() != this->getType()) {
-		Slot::raise("input connection type mismatch");
-	}
+			const AbstractSlot<T>* slot) const
+{
+    // c-style cast can produce weird errors, so use dynamic cast to make sure
+    // const OutputSlot<T>* source = (const OutputSlot<T>*) slot;
+    const OutputSlot<T>* source = dynamic_cast<const OutputSlot<T>*>(slot);
+    if (!source) {
+	    Slot::raise("input connection data type mismatch (dynamic cast)");
+    }
+    if (source->getType() != this->getType()) {
+	    Slot::raise("input connection type mismatch");
+    }
+
+    const Slot::CacheType& scType = source->getCacheType();
+    switch (scType) {
+    case Slot::CACHE_MEM:
+	    return source->operator()();
+    case Slot::CACHE_MANAGED: {
+		    const std::string& config = source->getConfig();
+		    typename std::map<std::string,T>::const_iterator found;
+		    found = _dataCache.find(config);
+		    if (found == _dataCache.end()) {
+			    Slot::raise("data could not be retrieved (not cached)");
+		    }
+		    return found->second;
+	    }
+    case Slot::CACHE_INVALID:
+	    Slot::raise("cannot read from output with cache type \"invalid\"");
+    default:
+	    Slot::raise("no implementation for given output slot cache type");
+    }
+    // this should never be reached
+    throw std::runtime_error(
+		    "unexpected error in InputSlot::_getDataFromOutputSlot");
+}
+
+template <typename T>
+const T& InputSlot<T>::_getDataFromOutputSlot(
+			const OutputSlotIntf* slot) const {
+
 	// c-style cast can produce weird errors, so use dynamic cast to make sure
 	// const OutputSlot<T>* source = (const OutputSlot<T>*) slot;
-	const OutputSlot<T>* source = dynamic_cast<const OutputSlot<T>*>(slot);
+	const OutputSlot<T>* source = dynamic_cast<const OutputSlot<T>*>(slot->getThisPointer());
 	if (!source) {
 		Slot::raise("input connection data type mismatch (dynamic cast)");
 	}
+	if (source->getType() != this->getType()) {
+		Slot::raise("input connection type mismatch");
+	}
+
 	const Slot::CacheType& scType = source->getCacheType();
 	switch (scType) {
 	case Slot::CACHE_MEM:
@@ -425,6 +464,18 @@ void OutputSlot<T>::finalize() {
 	default:
 		break;
 	}
+}
+
+template<typename T>
+std::string OutputSlot<T>::getName() const
+{
+    return this->_name;
+}
+
+template<typename T>
+std::string OutputSlot<T>::getType() const
+{
+    return this->_type;
 }
 
 // ==============================   data managers   ==========================

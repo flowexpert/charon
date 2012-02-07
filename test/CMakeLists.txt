@@ -72,11 +72,21 @@ IF(BUILD_TESTING)
 	LIST(APPEND tests ExecutionOrder_TopoSort)
 	LIST(APPEND testTargets toposorttest)
 
+
+	# tests for virtual slot data passing
+	ADD_EXECUTABLE(groupVirtualSlot groupVirtualSlot.cpp)
+	TARGET_LINK_LIBRARIES(groupVirtualSlot charon-core charon-plugins)
+	ADD_TEST(
+		NAME groupVirtualSlot
+		COMMAND groupVirtualSlot
+	)
+	LIST(APPEND tests SlotDataPassing)
+	LIST(APPEND testTargets datapasstest)
+
 	# add test labels for dashboard submission
 	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS charon-core)
 	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon-core Tests")
 
-	ADD_LIBRARY(StatementGenerator SHARED StatementGenerator.cpp)
-	TARGET_LINK_LIBRARIES(StatementGenerator charon-core)
+
 
 ENDIF(BUILD_TESTING)

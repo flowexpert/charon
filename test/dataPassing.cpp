@@ -21,9 +21,9 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <charon-core/ParameteredObject.hxx>
-#include <charon-core/ExceptionHandler.h>
-#include <charon-core/DataManagerParameterFile.hxx>
+#include "../include/charon-core/ParameteredObject.hxx"
+#include "../include/charon-core/ExceptionHandler.h"
+#include "../include/charon-core/DataManagerParameterFile.hxx"
 
 /// sample ParameteredObject class.
 class Reader : public ParameteredObject {

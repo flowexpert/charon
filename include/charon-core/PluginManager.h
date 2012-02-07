@@ -154,6 +154,11 @@ private:
 	void _unloadAllPlugins();
 
 	/**
+	  * Check if parametered object is an internal object
+	  */
+	bool isInternal(ParameteredObject* obj);
+
+	/**
 	 * Unloads a plugin and destroys instances
 	 * @param p Plugin zo unload
 	 * @param erase If true, erases the plugin from map
@@ -321,6 +326,12 @@ public:
 	ParameteredObject* createInstance(std::string pluginName,
 			const template_type t, const std::string& instanceName = "")
 			throw (AbstractPluginLoader::PluginException);
+
+	/**
+	  * Insert an existing parametered object instance.
+	  * @warning instance will be managed by pluginmanager.
+	  */
+	void insertInstance(ParameteredObject* instance);
 
 	/**
 	 * Same Method, but allowing to leave the template type out. Current
