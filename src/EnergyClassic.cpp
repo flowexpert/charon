@@ -24,7 +24,10 @@
 
 /// Class name of the plugin
 #define TYPE EnergyClassic
-#define energystencil_EXPORTS
+
+#define stencil_EXPORTS
+#define penaltyfunction_EXPORTS
+#define energyclassic_EXPORTS
 #include <charon/EnergyStencils/EnergyClassic.hxx>
 
 /// Creates an instance of the plugin
