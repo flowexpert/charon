@@ -94,6 +94,7 @@ public:
 	/// \implements ParameteredObject::execute
 	virtual void execute();
 
+	///gaussian distribution function
 	inline T _gauss( T x, T mu, T sigma );
 };
 

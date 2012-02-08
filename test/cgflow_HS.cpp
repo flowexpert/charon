@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file cgflowHS.cpp
+/** \file cgflow_HS.cpp
  *  Iterated Horn&Schunck algo
  *  \author Michael Baron <michael.baron@iwr.uni-heidelberg.de>
  *  \date 01.02.2012

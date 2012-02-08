@@ -75,6 +75,7 @@ private:
   /// destructor
   ~PenaltyQuadratic();
 
+  ///?
   T _lamb;
   T _maxDiff;
 };
