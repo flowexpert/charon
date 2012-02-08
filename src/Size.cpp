@@ -25,8 +25,9 @@
 /// Class name of the plugin
 #define TYPE Size
 
-#include <charon-utils/Size.hxx>
+#define roi_EXPORTS
 #include <charon-utils/Roi.hxx>
+#include <charon-utils/Size.hxx>
 
 /// Creates an instance of the plugin
 extern "C" size_DECLDIR ParameteredObject*

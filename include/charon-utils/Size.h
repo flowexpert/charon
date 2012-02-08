@@ -38,7 +38,7 @@
 #endif
 
 #include <charon-core/ParameteredObject.h>
-#define roi_EXPORTS
+
 #include <charon-utils/Roi.h>
 #include <charon-utils/CImg.h>
 
@@ -70,6 +70,7 @@ public:
 
 private:
 
+	///ROI instance to export via roi OutputSlot
 	Roi<int> _roi ;
 };
 

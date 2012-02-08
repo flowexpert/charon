@@ -61,9 +61,10 @@ public:
 	/// Parameters
 	Parameter < int > _sizeC;
 
-		/// Parameters
+	/// Parameters
 	Parameter < int > _sizeT;
 
+	/// fill in value
 	Parameter < T > _value ;
 
 
