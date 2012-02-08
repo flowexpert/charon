@@ -52,7 +52,7 @@ void PenaltyLorentzian<T>::execute() {
 template <class T>
 T PenaltyLorentzian<T>::getPenalty( T diff )
 {
-	T penalty = log( 1 + (diff*diff)/(2*_sigma*_sigma) ) ;
+	T penalty = log( double(1 + (diff*diff)/(2*_sigma*_sigma)) ) ;
 	return T(this->_lamb * penalty);
 }
 
