@@ -216,6 +216,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Size.h
 		${CHARON_UTILS_INCLUDE_DIR}/Size.hxx
 	)
+	ADD_LIBRARY(fitsizes SHARED
+		FitSizes.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.h
+		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.hxx
+	)
 	
 	SET(Plugins_CImg
 		channelconverter
@@ -256,6 +261,7 @@ IF(USE_CIMG)
 		erodedilate
 		strictresizexy
 		size
+		fitsizes
 	)
 
 	LIST(APPEND Plugins
