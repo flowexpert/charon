@@ -50,7 +50,7 @@
  */
 template <typename T>
 class energynonlocal_DECLDIR EnergyNonLocal :
-	public Stencil::EnergyGradient<T>
+	public Stencil::EnergyHessian<T>
 {
 public:
 	Parameter< T > norm;
@@ -79,6 +79,9 @@ public:
 
 	/// stencil's energy gradient function
 	std::vector<T> getEnergyGradient( int n, int x, int y, int z, int c );
+
+	/// stencil's energy Hessian function
+	std::vector<T> getEnergyHessian( int n, int x, int y, int z, int c );
 
 	/// stencil's gradient's components count
 	int getEnergyGradientDimensions();

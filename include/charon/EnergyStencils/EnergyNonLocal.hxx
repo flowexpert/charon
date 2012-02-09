@@ -241,6 +241,85 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
 }
 
 template <class T>
+std::vector<T> EnergyNonLocal<T>::getEnergyHessian(
+    int, int xI, int yI, int zI, int )
+{
+  std::vector<T> ret( 4, T(0) );
+
+  //  energy gradients wrt the motion at "current" pixel x_k
+  //  for example dE(u(x_k)) / du(x_k)
+  T energyHessianUU, energyHessianUV, energyHessianVV;
+
+  T weight_sum;
+  T weight, spatial_weight, color_weight, occlusion_weight;
+  T color_diff;
+
+  T du, dv, dxU, dyV, divergence, mot_comp_diff, motX, motY;
+  int dxI, dyI, dzI;
+
+  energyHessianUU = T(0.0);
+  energyHessianUV = T(0.0);
+  energyHessianVV = T(0.0);
+
+  weight_sum    = 0.0;
+  for (dxI = -_radius; dxI < _radius+1; ++dxI)
+  for (dyI = -_radius; dyI < _radius+1; ++dyI)
+  for (dzI = -0; dzI < 0+1; ++dzI)
+  {
+    du = motionUV().atNXYZC( 0, xI,     yI,     zI,     0 )
+       - motionUV().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
+    dv = motionUV().atNXYZC( 1, xI,     yI,     zI,     0 )
+       - motionUV().atNXYZC( 1, xI+dxI, yI+dyI, zI+dzI, 0 );
+
+    if (_useWeight) {
+      dxU = (motionUV().atNXYZC( 0, xI+dxI+1, yI+dyI,   zI+dzI, 0 )
+            -motionUV().atNXYZC( 0, xI+dxI-1, yI+dyI,   zI+dzI, 0 ))/2;
+      dyV = (motionUV().atNXYZC( 1, xI+dxI,   yI+dyI+1, zI+dzI, 0 )
+            -motionUV().atNXYZC( 1, xI+dxI,   yI+dyI-1, zI+dzI, 0 ))/2;
+      divergence = dxU + dyV;
+      if (divergence > 0) divergence = 0;
+
+      spatial_weight = _gauss( sqrt(double(dxI*dxI + dyI*dyI)), 0, _sigma_spatial );
+      color_diff = img().atNXYZC( 0, xI,     yI,     zI,     0 )
+                 - img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
+      color_weight = _gauss( color_diff, 0, _sigma_color );
+
+      motX = motionUV().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 );
+      motY = motionUV().atNXYZC( 1, xI+dxI, yI+dyI, zI+dzI, 0 );
+      mot_comp_diff = img().atNXYZC( 0, xI+dxI, yI+dyI, zI+dzI, 0 )
+                    - img().atNXYZC( 0, xI+dxI+motX, yI+dyI+motY, zI+dzI, 1 );
+
+      occlusion_weight =  _gauss( divergence, 0, _sigma_occ_divergence );
+      occlusion_weight *= _gauss( mot_comp_diff, 0, _sigma_occ_color );
+
+      weight = spatial_weight * color_weight * occlusion_weight;
+      weight_sum += weight;
+
+      energyHessianUU += weight * _norm * (_norm-1) * pow( fabs(double(du)), double(_norm-2) );
+      energyHessianVV += weight * _norm * (_norm-1) * pow( fabs(double(dv)), double(_norm-2) );
+    } else {
+      energyHessianUU += _norm * (_norm-1) * pow( fabs(double(du)), double(_norm-2) );
+      energyHessianVV += _norm * (_norm-1) * pow( fabs(double(dv)), double(_norm-2) );
+      weight_sum += 1.0;
+    }
+  }
+  if (weight_sum) {
+    energyHessianUU /= weight_sum;
+    energyHessianVV /= weight_sum;
+  } else {
+    energyHessianUU = T(0.0);
+    energyHessianVV = T(0.0);
+  }
+
+  ret[0] = T(_lamb * energyHessianUU);
+  ret[1] = T(_lamb * energyHessianUV);
+  ret[2] = T(_lamb * energyHessianUV);
+  ret[3] = T(_lamb * energyHessianVV);
+
+  return ret;
+}
+
+template <class T>
 int EnergyNonLocal<T>::getEnergyGradientDimensions() { return 2; }
 
 template <typename T>
