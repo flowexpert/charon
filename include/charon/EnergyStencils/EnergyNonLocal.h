@@ -39,6 +39,7 @@
 
 #include <charon/Stencil.h>
 #include <charon-utils/CImg.h>
+#include <charon/PenaltyFunction.h>
 
 /// EnergyStencil for Regularization
 /** EnergyStencil for Regularization.
@@ -53,7 +54,9 @@ class energynonlocal_DECLDIR EnergyNonLocal :
 	public Stencil::EnergyHessian<T>
 {
 public:
-	Parameter< T > norm;
+	/// Input slot for penalty function
+	InputSlot< PenaltyFunction<T>* > penaltyFunction;
+
 	Parameter< int > useWeight;
 	Parameter< int > radius;              ///<  radius of the neighborhood
 	Parameter< T > sigma_spatial;         ///<  spatial difference weight
@@ -87,14 +90,17 @@ public:
 	int getEnergyGradientDimensions();
 
 	///@{
-	T _lamb, _norm;
+	T _lamb;
 	int _radius;
 	int _useWeight;
 	T _sigma_spatial, _sigma_color, _sigma_occ_divergence, _sigma_occ_color;
 	///@}
-  
+
+private:
   inline T _gauss( T x, T mu, T sigma );
   inline T _dgauss( T x, T mu, T sigma );
+
+  PenaltyFunction<T> *_penaltyFunction;
 };
 
 #endif // _ENERGYNONLOCAL_H_

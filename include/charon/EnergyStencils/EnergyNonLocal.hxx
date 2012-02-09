@@ -29,6 +29,8 @@
 
 #include "EnergyNonLocal.h"
 
+#include <charon/PenaltyFunction.hxx>
+
 #include <cmath>
 #define M_PI 3.14159265358979323846
 
@@ -46,10 +48,6 @@ EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
                       "useWeight",
                       "use weighted median (1) or not (0)",
                       0, "int");
-  ParameteredObject::_addParameter< T >(norm,
-                      "norm",
-                      "p",
-                      1.0, "T");
   ParameteredObject::_addParameter< int >(radius,
 		      "radius",
 		      "radius of the neighborhood",
@@ -71,6 +69,10 @@ EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
                       "occlusion color difference weight",
                       20, "T");
 
+  this->_addInputSlot(penaltyFunction,
+                      "penaltyFunction",
+                      "penalty function",
+                      "PenaltyFunction<T>*");
   this->_addInputSlot(img,
                       "img",
                       "list of input images",
@@ -87,7 +89,7 @@ void EnergyNonLocal<T>::execute() {
   ParameteredObject::execute();
 
   _lamb = this->lambda();
-  _norm = norm();
+  _penaltyFunction = this->penaltyFunction();
   _useWeight = useWeight();
   _radius = radius();
   _sigma_spatial = sigma_spatial();
@@ -143,9 +145,11 @@ T EnergyNonLocal<T>::getEnergy( int, int xI, int yI, int zI, int )
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      pixelEnergy += weight * (pow( fabs(double(du)), double(_norm) ) + pow( fabs(double(dv)), double(_norm) ));
+      pixelEnergy += weight * _penaltyFunction->getPenalty( fabs(du) );
+      pixelEnergy += weight * _penaltyFunction->getPenalty( fabs(dv) );
     } else {
-      pixelEnergy += pow( fabs(double(du)), double(_norm) ) + pow( fabs(double(dv)), double(_norm) );
+      pixelEnergy += _penaltyFunction->getPenalty( fabs(du) );
+      pixelEnergy += _penaltyFunction->getPenalty( fabs(dv) );
       weight_sum += 1.0;
     }
   }
@@ -218,11 +222,11 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      pixelGradientU += weight * _norm * pow( fabs(double(du)), double(_norm-1) ) * signum(du);
-      pixelGradientV += weight * _norm * pow( fabs(double(dv)), double(_norm-1) ) * signum(dv);
+      pixelGradientU += weight * _penaltyFunction->getPenaltyGradient( fabs(du) ) * signum(du);
+      pixelGradientV += weight * _penaltyFunction->getPenaltyGradient( fabs(dv) ) * signum(dv);
     } else {
-      pixelGradientU += _norm * pow( fabs(double(du)), double(_norm-1) ) * signum(du);
-      pixelGradientV += _norm * pow( fabs(double(dv)), double(_norm-1) ) * signum(dv);
+      pixelGradientU += _penaltyFunction->getPenaltyGradient( fabs(du) ) * signum(du);
+      pixelGradientV += _penaltyFunction->getPenaltyGradient( fabs(dv) ) * signum(dv);
       weight_sum += 1.0;
     }
   }
@@ -295,11 +299,11 @@ std::vector<T> EnergyNonLocal<T>::getEnergyHessian(
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      energyHessianUU += weight * _norm * (_norm-1) * pow( fabs(double(du)), double(_norm-2) );
-      energyHessianVV += weight * _norm * (_norm-1) * pow( fabs(double(dv)), double(_norm-2) );
+      energyHessianUU += weight * _penaltyFunction->getPenaltyHessian(du);
+      energyHessianVV += weight * _penaltyFunction->getPenaltyHessian(dv);
     } else {
-      energyHessianUU += _norm * (_norm-1) * pow( fabs(double(du)), double(_norm-2) );
-      energyHessianVV += _norm * (_norm-1) * pow( fabs(double(dv)), double(_norm-2) );
+      energyHessianUU += _penaltyFunction->getPenaltyHessian(du);
+      energyHessianVV += _penaltyFunction->getPenaltyHessian(dv);
       weight_sum += 1.0;
     }
   }
