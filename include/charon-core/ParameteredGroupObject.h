@@ -2,9 +2,10 @@
 #define PARAMETEREDGROUPOBJECT_H
 
 #include "ParameteredObject.h"
+#include "PluginManager.h"
 
 
-class PluginManager;
+
 /**
   * @interface SlotBundleIntf
   * @brief Interface for SlotBundle
@@ -12,8 +13,7 @@ class PluginManager;
 class SlotBundleIntf
 {
 public:
-    /// GetSlotVector
-    virtual Slot* operator[](int i)=0;
+
 
     /// Size of bundle
     virtual int size()=0;
@@ -45,7 +45,7 @@ public:
 
 
     /// Set the number of slots
-    void setNumberOfSlots(int i);
+    void setNumberOfVirtualSlots(int num);
 
     /// Initialize
     void initialize();
@@ -84,21 +84,25 @@ public:
     /// GetCacheOption
     CacheOption getCacheOption() const;
 
-    /// GetSlotVector
-    virtual Slot* operator[](int i);
+
+
+
 
     /// Size of bundle
     virtual int size();
 protected:
 
-    virtual void _addSlot(Slot* sl)=0;
+    virtual void _addAllSlots()=0;
     virtual void _removeAllSlots()=0;
-    std::vector<VirtualSlot*> _virtualOutputSlots;
+    std::vector<VirtualOutputSlot*> _virtualOutputSlots;
     std::vector<VirtualInputSlot*> _virtualInputSlots;
     BundleContext _context;
 
 private:
     CacheOption _overrideCaches;
+
+    void _deleteAllSlots();
+
 
     /// Configuration.
     /**
@@ -127,8 +131,14 @@ class InputSlotBundle:public SlotBundle
 public:
     InputSlotBundle(const std::string& className,
 		    const std::string& name = "", const std::string& doc = "");
+    std::vector<VirtualInputSlot*>& getSlotVector();
 
-    void addSlot(VirtualSlot *sl);
+    std::vector<VirtualOutputSlot*>& getInternalSlotVector();
+
+protected:
+
+    void _addAllSlots();
+    void _removeAllSlots();
 
 
 
@@ -144,8 +154,13 @@ class OutputSlotBundle: public SlotBundle
 public:
     OutputSlotBundle(const std::string& className,
 		    const std::string& name = "", const std::string& doc = "");
+    std::vector<VirtualOutputSlot*>&  getSlotVector();
 
-    void addSlot(VirtualSlot *sl);
+    std::vector<VirtualInputSlot*>& getInternalSlotVector();
+protected:
+
+    void _addAllSlots();
+    void _removeAllSlots();
 
 
 };
@@ -203,6 +218,15 @@ public:
     /** Does nothing. Can be used in derived classes.
       */
     virtual void finalizeGroup();
+
+    void setNumberOfInputSlots(int i);
+    void setNumberOfOuputSlots(int i);
+
+    const int getNumberOfInputSlots() const;
+    const int getNumberOfOutputSlots() const;
+
+    const std::pair<InputSlotIntf*,OutputSlotIntf*> getInputSlot(int slotnr) const;
+    const std::pair<OutputSlotIntf*,InputSlotIntf*> getOutputSlot(int slotnr) const;
 
 protected:
     PluginManager* _pluginMan;

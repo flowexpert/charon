@@ -322,15 +322,18 @@ public:
 	 */
 	virtual void prepare();
 	virtual void finalize();
+
 	virtual std::string getName() const
 	{
-	    return Slot::_name;
+	    return AbstractSlot<T>::getName();
 	}
 
 	virtual std::string getType() const
 	{
-	    return Slot::_type;
+	    return AbstractSlot<T>::getType();
 	}
+
+
 
 private:
 	/// handle data extraction from output slot
@@ -419,16 +422,22 @@ public:
 	virtual void prepare();
 	virtual void finalize();
 
-	/// Get slot name.
-	std::string getName() const;
 
-	/// Get slot type
-	std::string getType() const;
 
 	/// Return a pointer to a real slot
 	OutputSlotIntf* getThisPointer()
 	{
 	    return this;
+	}
+
+	virtual std::string getName() const
+	{
+	    return AbstractSlot<T>::getName();
+	}
+
+	virtual std::string getType() const
+	{
+	    return AbstractSlot<T>::getType();
 	}
 
 };
@@ -439,7 +448,7 @@ public:
 ///  a config string from a given parameterfile
 
 class VirtualSlot
-	:public Slot,public OutputSlotIntf
+	:public Slot
 {
 public:
     VirtualSlot(std::string virtType,int num=0);
@@ -463,6 +472,8 @@ public:
 
     std::string guessType() const;
 
+    std::string getType() const;
+
     /// Get pointers to the connected targets.
     virtual std::set<Slot*> getTargets() const;
 
@@ -470,28 +481,29 @@ public:
     void setVirtualPartnerSlot(VirtualSlot* insl);
 protected:
     virtual bool isValidPartner(VirtualSlot* insl)=0;
+    virtual bool isValidTarget(Slot* target)=0;
 
 	void setNameAndType(std::string name,std::string type);
 
-	virtual void onAddTarget(Slot* target);
-	virtual void onRemoveTarget(Slot* target);
+	virtual void onLoad(const ParameterFile& pf, const PluginManagerInterface* man);
 
-
-
-private:
+	virtual void onSave(ParameterFile& pf) const;
+	virtual bool onAddTarget(Slot* target);
+	virtual bool onRemoveTarget(Slot* target);
 
     VirtualSlot* _partner;
-
-
     std::set<Slot*> _target;
-    //InputSlotIntf* _inslot;
     std::string _virtualNum;
+
+
+
 };
 
 class VirtualOutputSlot
 	:public VirtualSlot,public OutputSlotIntf
 {
 public:
+    friend class VirtualInputSlot;
     VirtualOutputSlot(int num=0);
     /// set the cache type of _slot
     void setCacheType(Slot::CacheType type);
@@ -512,6 +524,11 @@ public:
     OutputSlotIntf* getThisPointer();
 protected:
     virtual bool isValidPartner(VirtualSlot *insl);
+    virtual bool isValidTarget(Slot *target);
+    void onLoad(const ParameterFile &pf, const PluginManagerInterface *man);
+    void onSave(ParameterFile &pf) const;
+private:
+    std::string _managerconfig;
 
 
 };
@@ -519,8 +536,10 @@ protected:
 
 
 class VirtualInputSlot
-	:public Slot,public InputSlotIntf
+	:public VirtualSlot,public InputSlotIntf
 {
+public:
+    friend class VirtualOutputSlot;
     VirtualInputSlot(int num=0);
 
 
@@ -535,10 +554,11 @@ class VirtualInputSlot
 
 protected:
     virtual bool isValidPartner(VirtualSlot *insl);
-    virtual void onAddTarget(Slot *target);
-    virtual void onRemoveTarget(Slot *target);
-private:
-    std::string _managerconfig;
+    virtual bool onAddTarget(Slot *target);
+    virtual bool onRemoveTarget(Slot *target);
+    virtual bool isValidTarget(Slot *target);
+
+
 
 
 

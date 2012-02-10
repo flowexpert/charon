@@ -466,17 +466,7 @@ void OutputSlot<T>::finalize() {
 	}
 }
 
-template<typename T>
-std::string OutputSlot<T>::getName() const
-{
-    return this->_name;
-}
 
-template<typename T>
-std::string OutputSlot<T>::getType() const
-{
-    return this->_type;
-}
 
 // ==============================   data managers   ==========================
 

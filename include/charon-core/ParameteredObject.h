@@ -153,6 +153,16 @@ private:
 			const std::string& doc, const std::string& type,
 			const std::string& defaultValue = "");
 
+	/// Common code for removing meta data of Slots an Parameters
+	/** This function does nothing, if _createMetadata is set to false.
+	 *  \param extension    section of metadata file where to add
+	 *                      (e.g. parameters, inputs, outputs)
+	 *  \param name         parameter name to pass to AbstractParameter::init()
+	 *  \retval true        Parameter/Slot name was found
+	 */
+	bool _removeSomething(
+	    const std::string& extension, const std::string& name);
+
 	/// Connect slots.
 	/** String version for convenience.
 	 *  See _connect(ParameteredObject*, Slot&, Slot&).
@@ -252,6 +262,16 @@ protected:
 	 */
 	void _addOutputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type = "");
+
+	/// Remove input slot
+	/** \param slot		Slot to be removed
+	  */
+	void _removeInputSlot(std::string name);
+
+	/// Remove output slot
+	/** \param slot		Slot to be removed
+	  */
+	void _removeOutputSlot(std::string name);
 
 	/// register member function
 	/**

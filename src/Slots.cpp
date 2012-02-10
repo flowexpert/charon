@@ -146,16 +146,18 @@ bool VirtualSlot::_addTarget(Slot *target)
 {
     assert(target);
 
-    if(sl)
+    if(target)
     {
+	if(!isValidTarget(target))
+	    return false;
 	if(_target.size()>0)
 	    return false;
 
-	_name=sl->getName();
-	_type=sl->getType();
+	_name=target->getName();
+	_type=target->getType();
 
 
-	_partner->setNameAndType(sl->getName(),sl->getType());
+	_partner->setNameAndType(target->getName(),target->getType());
 	_target.insert(target);
 	onAddTarget(target);
     }
@@ -167,18 +169,11 @@ bool VirtualSlot::_addTarget(Slot *target)
 
 }
 
-std::string VirtualSlot::getType() const
-{
-    return _type;
-}
 
-std::string VirtualSlot::getName() const
-{
-    return _name;
-}
 
 const std::string& VirtualOutputSlot::getConfig() const
 {
+
     return _managerconfig;
 }
 
@@ -187,6 +182,7 @@ bool VirtualSlot::_removeTarget(Slot *target)
 
     if(target==*(_target.begin()))
     {
+
 
 	this->_type="Virtual";
 	this->_name=_virtualNum;
@@ -210,9 +206,10 @@ void VirtualSlot::save(ParameterFile &pf) const
     if(_target.size()>0)
     {
 
-	std::string target=*(_target.begin())->getParent().getName() + "."+ *(_target.begin())->getName();
+	Slot* sl=*(_target.begin());
+	std::string target=sl->getParent().getName() + "."+ sl->getName();
 	pf.set<std::string> (_parent->getName() + "." + _virtualNum+".outslot", target);
-	pf.set<std::string> (_parent->getName() + "." + _virtualNum+".config", _managerconfig);
+
     }
     else
     {
@@ -229,6 +226,7 @@ void VirtualSlot::save(ParameterFile &pf) const
 
     pf.set<std::string> (_parent->getName() + "." + _virtualNum+".name", _name);
     pf.set<std::string> (_parent->getName() + "." + _virtualNum+".type", _type);
+    onSave(pf);
 
 
 }
@@ -242,7 +240,8 @@ OutputSlotIntf * VirtualOutputSlot::getThisPointer()
 	    OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(*(_partner->getTargets().begin()));
 	    return sl;
 	}
-	Slot::raise(_partner->getName()+" not connected!!");
+	//Slot::raise(_partner->getName()+" not connected!!");
+	return this;
     }
     else
     {
@@ -261,7 +260,7 @@ void VirtualSlot::load(const ParameterFile &pf, const PluginManagerInterface *ma
 
     _name=pf.get<std::string>(_parent->getName() + "." + _virtualNum+".name");
     _type=pf.get<std::string>(_parent->getName() + "." + _virtualNum+".type");
-    _managerconfig=pf.get<std::string>(_parent->getName() + "." + _virtualNum+".config");
+    onLoad(pf,man);
 }
 
 void VirtualSlot::setVirtualPartnerSlot(VirtualSlot *insl)
@@ -282,13 +281,13 @@ void VirtualSlot::setVirtualPartnerSlot(VirtualSlot *insl)
 void VirtualOutputSlot::setCacheType(Slot::CacheType type)
 {
     assert(_target.size());
-    *(_target.begin())->setCacheType(type);
+    //*(_target.begin())->setCacheType(type);
 }
 
 Slot::CacheType VirtualOutputSlot::getCacheType() const
 {
     assert(_target.size());
-    return *(_target.begin())->getCacheType();
+    //return *(_target.begin())->getCacheType();
 }
 
 void VirtualSlot::prepare()
@@ -313,49 +312,28 @@ std::set<Slot *> VirtualSlot::getTargets() const
 
 
 VirtualInputSlot::VirtualInputSlot(int num)
-    :VirtualSlot("InputSlot",0)
+    :VirtualSlot("Slot",0)
 {
 
 }
 
-bool VirtualInputSlot::_addTarget(Slot *target)
-{
-    assert(target);
-    InputSlotIntf* sl=dynamic_cast<InputSlotIntf*>(target);
-    if(sl)
-    {
-	if(_slot.size()>0)
-	    return false;
 
-	_name=sl->getName();
-	_type=sl->getType();
-
-
-	_slot.insert(target);
-    }
-    else
-	return false;
-
-    return true;
-
-
-}
 
 std::string VirtualInputSlot::getType() const
 {
-    return _type;
+    return VirtualSlot::getType();
 }
 
 std::string VirtualInputSlot::getName() const
 {
-    return _name;
+    return VirtualSlot::getName();
 }
 
 
 
 
 VirtualOutputSlot::VirtualOutputSlot(int num)
-    :VirtualSlot("OutputSlot",0)
+    :VirtualSlot("Slot",0)
 {
 }
 
@@ -375,30 +353,84 @@ void VirtualSlot::setNameAndType(std::string name, std::string type)
     _type=type;
 }
 
-void VirtualSlot::onAddTarget(Slot *target)
+bool VirtualSlot::onAddTarget(Slot *target)
 {
+    return true;
 }
 
-void VirtualSlot::onRemoveTarget(Slot *target)
+bool VirtualSlot::onRemoveTarget(Slot *target)
 {
+    return true;
 }
 
-void VirtualInputSlot::onAddTarget(Slot *target)
+bool VirtualInputSlot::onAddTarget(Slot *target)
 {
     OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(target);
+    VirtualOutputSlot* partner=dynamic_cast<VirtualOutputSlot*>(_partner);
     if(sl)
     {
-	_managerconfig=sl->getConfig();
+	partner->_managerconfig=sl->getConfig();
+	return true;
     }
+    return false;
 }
 
-void VirtualInputSlot::onRemoveTarget(Slot *target)
+bool VirtualInputSlot::onRemoveTarget(Slot *target)
 {
     OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(target);
+    VirtualOutputSlot* partner=dynamic_cast<VirtualOutputSlot*>(_partner);
     if(sl)
     {
-	_managerconfig="";
+	partner->_managerconfig="";
+	return true;
     }
+    return false;
+}
+
+bool VirtualOutputSlot::isValidTarget(Slot *target)
+{
+    InputSlotIntf *sl=dynamic_cast<InputSlotIntf*>(target);
+    return sl;
+}
+
+bool VirtualInputSlot::isValidTarget(Slot *target)
+{
+    OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(target);
+    return sl;
+}
+
+std::string VirtualOutputSlot::getType() const
+{
+    return VirtualSlot::getType();
+}
+
+std::string VirtualOutputSlot::getName() const
+{
+    return VirtualSlot::getName();
+}
+
+std::string VirtualSlot::getType() const
+{
+    return _type;
+}
+
+void VirtualSlot::onLoad(const ParameterFile &pf, const PluginManagerInterface *man)
+{
+}
+
+void VirtualSlot::onSave(ParameterFile &pf) const
+{
+
+}
+
+void VirtualOutputSlot::onLoad(const ParameterFile &pf, const PluginManagerInterface *man)
+{
+    _managerconfig=pf.get<std::string>(_parent->getName() + "." + _virtualNum+".config");
+}
+
+void VirtualOutputSlot::onSave(ParameterFile &pf) const
+{
+    pf.set<std::string> (_parent->getName() + "." + _virtualNum+".config", _managerconfig);
 }
 
 

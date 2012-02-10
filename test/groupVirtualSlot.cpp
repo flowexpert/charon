@@ -24,14 +24,104 @@
 #include "../include/charon-core/IfGroup.h"
 #include "../include/charon-core/ParameteredGroupObject.h"
 
+
+/// sample ParameteredObject class.
+class Reader : public ParameteredObject {
+public:
+	/// sample integer input slot
+	InputSlot<int>   in1;
+	/// sample float input slot
+	InputSlot<float> in2;
+
+	/// create a new sample object
+	/// @param name             Object name
+	Reader(const std::string& name = "") :
+			ParameteredObject("Reader", name, "read slot data")
+	{
+		_addInputSlot (in1,  "in1",  "integer input slot");
+		_addInputSlot (in2,  "in2",  "float input slot");
+	}
+
+protected:
+	virtual void execute() {
+		sout << "(II) \tRead slot data: "
+			 << in1() << ", " << in2() << std::endl;
+	}
+};
+
+/// sample ParameteredObject class.
+class Outputgen : public ParameteredObject {
+
+public:
+	/// sample integer output slot
+	OutputSlot<int>    out1;
+	/// sample float output slot
+	OutputSlot<float>  out2;
+
+	/// create a new sample object
+	/// @param name             Object name
+	Outputgen(const std::string& name = "") :
+			ParameteredObject("outputgen", name,
+				"class to generate int and float output"),
+			out1(10),   // set initial values
+			out2(5.5f)  // ------- " --------
+	{
+		// slots
+		_addOutputSlot(out1, "out1", "integer output slot");
+		_addOutputSlot(out2, "out2", "float output slot");
+	}
+
+protected:
+	virtual void execute() {
+	}
+};
+
+
+/// sample ParameteredGroupObject class
+class TestGroup: public ParameteredGroupObject
+{
+public:
+    TestGroup()
+	: ParameteredGroupObject("TestGroup","TestGroupName","TestGroupDoc")
+    {
+	workFlowFile="TestGroup.wrp";
+    }
+    void initializeGroup()
+    {
+
+
+	setNumberOfInputSlots(1);
+	Reader* rd=new Reader("Reader");
+	Slot* out1=dynamic_cast<Slot*>(getInputSlot(0).second);
+	//Slot* out2=dynamic_cast<Slot*>(getInputSlot(1).second);
+	_pluginMan->insertInstance(rd);
+	//_pluginMan->connect(out1->getParent().getName()+"."+out1->getName(),rd->getName()+"."+rd->in1.getName());
+	_pluginMan->connect(out1,&(rd->in1));
+
+
+    }
+
+
+
+};
+
 int main()
 {
-    ParameteredGroupObject maingr("MainGroup","MainGroup");
+    ParameterFile file;
+    file.save("TestGroup.wrp");
+
+    Outputgen generator("Outgen");
     std::vector<std::string> paths;
     paths.push_back("/home/gmwangi/Programming/workspace-qtcreator/Charon/sources/supernodes/install/lib/charon-plugins");
-    maingr.pluginPaths=paths;
-    maingr.workFlowFile="/home/gmwangi/Programming/workspace-qtcreator/Charon/sources/supernodes/testworkflows/ifgroup/global.par";
-    maingr.initialize();
-    maingr.execute();
-    maingr.finalize();
+    TestGroup group;
+    group.pluginPaths=paths;
+    //generator.initialize();
+    group.initialize();
+
+    PluginManager* man=new PluginManager(paths);
+    man->insertInstance(&group);
+    man->insertInstance(&generator);
+    Slot* in=dynamic_cast<Slot*>(group.getInputSlot(0).first);
+    man->connect(&(generator.out1),in);
+    sout<<"Number of input in Testgroup "<<group.getNumberOfInputSlots()<<std::endl;
 }
