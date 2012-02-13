@@ -70,6 +70,9 @@ protected:
 	/// Slot name.
 	std::string _name;
 
+	/// Slot display name
+	std::string _displayName;
+
 	/// Slot type
 	std::string _type;
 
@@ -108,7 +111,10 @@ public:
 	const ParameteredObject& getParent() const;
 
 	/// Get slot name.
-	std::string getName() const;
+	virtual std::string getName() const;
+
+	/// Get slot display name.
+	virtual std::string getDisplayName() const;
 
 	/// print info message with slot name to sout
 	void printInfo(const std::string& msg) const;
@@ -239,6 +245,7 @@ protected:
 	/// Pointer to data of connected output slot.
 	std::set<AbstractSlot<T>*> _targets;
 
+
 	/// Add slot target.
 	/// This does not touch the target slot itself.
 	/// @param target       Target slot to add.
@@ -343,7 +350,7 @@ private:
 	 *  \returns            extracted data
 	 */
 	const T& _getDataFromOutputSlot(const OutputSlotIntf* slot) const;
-	const T& _getDataFromOutputSlot(const AbstractSlot<T>* slot) const;
+	const T& _getDataFromOutputSlot(const Slot* slot) const;
 
 	/// data cache for managed output slots
 	std::map<std::string, T> _dataCache;
@@ -353,6 +360,8 @@ private:
 class OutputSlotIntf
 {
 public:
+    /// set manager configuration string
+    virtual void setConfig(std::string conf)=0;
     /// get manager configuration string
     virtual const std::string& getConfig() const=0;
 
@@ -370,7 +379,7 @@ public:
 
 
     /// Return a pointer to a real slot
-    virtual OutputSlotIntf* getThisPointer()=0;
+    virtual const OutputSlotIntf* getThisPointer() const=0;
 
 };
 
@@ -425,7 +434,7 @@ public:
 
 
 	/// Return a pointer to a real slot
-	OutputSlotIntf* getThisPointer()
+	const OutputSlotIntf* getThisPointer() const
 	{
 	    return this;
 	}
@@ -439,6 +448,12 @@ public:
 	{
 	    return AbstractSlot<T>::getType();
 	}
+	/// set manager configuration string
+	virtual void setConfig(std::string conf)
+	{
+	    _managerConfig=conf;
+	}
+
 
 };
 
@@ -472,6 +487,8 @@ public:
 
     std::string guessType() const;
 
+    std::string getName() const;
+
     std::string getType() const;
 
     /// Get pointers to the connected targets.
@@ -483,7 +500,7 @@ protected:
     virtual bool isValidPartner(VirtualSlot* insl)=0;
     virtual bool isValidTarget(Slot* target)=0;
 
-	void setNameAndType(std::string name,std::string type);
+	void setDisplayNameAndType(std::string name,std::string type);
 
 	virtual void onLoad(const ParameterFile& pf, const PluginManagerInterface* man);
 
@@ -493,7 +510,8 @@ protected:
 
     VirtualSlot* _partner;
     std::set<Slot*> _target;
-    std::string _virtualNum;
+
+
 
 
 
@@ -521,7 +539,10 @@ public:
     const std::string& getConfig() const;
 
     /// Return a pointer to a real slot
-    OutputSlotIntf* getThisPointer();
+    const OutputSlotIntf* getThisPointer() const;
+
+    /// set manager configuration string
+    virtual void setConfig(std::string conf);
 protected:
     virtual bool isValidPartner(VirtualSlot *insl);
     virtual bool isValidTarget(Slot *target);
@@ -529,6 +550,7 @@ protected:
     void onSave(ParameterFile &pf) const;
 private:
     std::string _managerconfig;
+    Slot::CacheType _cacheType;
 
 
 };

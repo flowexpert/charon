@@ -23,6 +23,7 @@
 
 #include "../include/charon-core/IfGroup.h"
 #include "../include/charon-core/ParameteredGroupObject.h"
+#include "../include/charon-core/DataManagerParameterFile.hxx"
 
 
 /// sample ParameteredObject class.
@@ -90,13 +91,14 @@ public:
     {
 
 
-	setNumberOfInputSlots(1);
+	setNumberOfInputSlots(2);
 	Reader* rd=new Reader("Reader");
 	Slot* out1=dynamic_cast<Slot*>(getInputSlot(0).second);
-	//Slot* out2=dynamic_cast<Slot*>(getInputSlot(1).second);
+	Slot* out2=dynamic_cast<Slot*>(getInputSlot(1).second);
 	_pluginMan->insertInstance(rd);
 	//_pluginMan->connect(out1->getParent().getName()+"."+out1->getName(),rd->getName()+"."+rd->in1.getName());
 	_pluginMan->connect(out1,&(rd->in1));
+	_pluginMan->connect(out2,&(rd->in2));
 
 
     }
@@ -111,6 +113,7 @@ int main()
     file.save("TestGroup.wrp");
 
     Outputgen generator("Outgen");
+    generator.out1.setCacheType(Slot::CACHE_MANAGED);
     std::vector<std::string> paths;
     paths.push_back("/home/gmwangi/Programming/workspace-qtcreator/Charon/sources/supernodes/install/lib/charon-plugins");
     TestGroup group;
@@ -122,6 +125,11 @@ int main()
     man->insertInstance(&group);
     man->insertInstance(&generator);
     Slot* in=dynamic_cast<Slot*>(group.getInputSlot(0).first);
+    Slot* in2=dynamic_cast<Slot*>(group.getInputSlot(1).first);
     man->connect(&(generator.out1),in);
+    man->connect(&(generator.out2),in2);
     sout<<"Number of input in Testgroup "<<group.getNumberOfInputSlots()<<std::endl;
+
+    man->runWorkflow();
+
 }

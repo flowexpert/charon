@@ -22,8 +22,8 @@
 #ifndef DATAMANAGERPARAMETERFILE_HXX
 #define DATAMANAGERPARAMETERFILE_HXX
 
-#include <charon-core/Slots.hxx>
-#include <charon-core/FileTool.h>
+#include "Slots.hxx"
+#include "FileTool.h"
 
 namespace DataManagers {
 	/// parameter file based implementation of a data manager

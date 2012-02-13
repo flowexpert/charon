@@ -32,8 +32,14 @@ void Slot::init(ParameteredObject* parent, std::string name,
 
 	assert(parent); // parent valid
 	_parent = parent;
-	_name = name;
+
 	_type = StringTool::toLowerCase(type);
+	if(_type!="virtual")
+	{
+	    _name = name;
+
+	}
+	_displayName=name;
 }
 
 Slot::~Slot() {
@@ -132,8 +138,8 @@ VirtualSlot::VirtualSlot(std::string virtType,int num)
 
     std::stringstream vname;
     vname<<"Virtual"<<virtType<<num;
-    _virtualNum=vname.str();
-    this->_name=_virtualNum;
+    this->_name=vname.str();
+    _displayName=_name;
     _partner=0;
 
 
@@ -153,11 +159,11 @@ bool VirtualSlot::_addTarget(Slot *target)
 	if(_target.size()>0)
 	    return false;
 
-	_name=target->getName();
+	_displayName=target->getDisplayName();
 	_type=target->getType();
 
 
-	_partner->setNameAndType(target->getName(),target->getType());
+	_partner->setDisplayNameAndType(target->getName(),target->getType());
 	_target.insert(target);
 	onAddTarget(target);
     }
@@ -185,7 +191,7 @@ bool VirtualSlot::_removeTarget(Slot *target)
 
 
 	this->_type="Virtual";
-	this->_name=_virtualNum;
+	this->_displayName=_name;
 
 	_target.clear();
 	onRemoveTarget(target);
@@ -208,30 +214,30 @@ void VirtualSlot::save(ParameterFile &pf) const
 
 	Slot* sl=*(_target.begin());
 	std::string target=sl->getParent().getName() + "."+ sl->getName();
-	pf.set<std::string> (_parent->getName() + "." + _virtualNum+".outslot", target);
+	pf.set<std::string> (_parent->getName() + "." + _name+".outslot", target);
 
     }
     else
     {
-	if (pf.isSet(_parent->getName() + "." + _virtualNum+".outslot"))
-	    pf.erase(_parent->getName() + "." + _virtualNum+".outslot");
+	if (pf.isSet(_parent->getName() + "." + _name+".outslot"))
+	    pf.erase(_parent->getName() + "." + _name+".outslot");
 
-	if (pf.isSet(_parent->getName() + "." + _virtualNum+".name"))
-	    pf.erase(_parent->getName() + "." + _virtualNum+".name");
-	if (pf.isSet(_parent->getName() + "." + _virtualNum+".type"))
-	    pf.erase(_parent->getName() + "." + _virtualNum+".type");
+	if (pf.isSet(_parent->getName() + "." + _name+".displayName"))
+	    pf.erase(_parent->getName() + "." + _name+".displayName");
+	if (pf.isSet(_parent->getName() + "." + _name+".type"))
+	    pf.erase(_parent->getName() + "." + _name+".type");
 
     }
 
 
-    pf.set<std::string> (_parent->getName() + "." + _virtualNum+".name", _name);
-    pf.set<std::string> (_parent->getName() + "." + _virtualNum+".type", _type);
+    pf.set<std::string> (_parent->getName() + "." + _name+".displayName", _displayName);
+    pf.set<std::string> (_parent->getName() + "." + _name+".type", _type);
     onSave(pf);
 
 
 }
 
-OutputSlotIntf * VirtualOutputSlot::getThisPointer()
+const OutputSlotIntf* VirtualOutputSlot::getThisPointer() const
 {
     if(_partner)
     {
@@ -251,15 +257,15 @@ OutputSlotIntf * VirtualOutputSlot::getThisPointer()
 
 void VirtualSlot::load(const ParameterFile &pf, const PluginManagerInterface *man)
 {
-    std::string outsl=pf.get<std::string>(_parent->getName() + "." + _virtualNum+".outslot");
+    std::string outsl=pf.get<std::string>(_parent->getName() + "." + _name+".outslot");
     //std::string insl=pf.get<std::string>(_parent->getName() + "." + _virtualNum+".inslot");
 
     OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(man->getInstance(outsl));
     assert(sl);
     _target.insert(dynamic_cast<Slot*>(sl));
 
-    _name=pf.get<std::string>(_parent->getName() + "." + _virtualNum+".name");
-    _type=pf.get<std::string>(_parent->getName() + "." + _virtualNum+".type");
+    _displayName=pf.get<std::string>(_parent->getName() + "." + _name+".displayName");
+    _type=pf.get<std::string>(_parent->getName() + "." + _name+".type");
     onLoad(pf,man);
 }
 
@@ -280,14 +286,12 @@ void VirtualSlot::setVirtualPartnerSlot(VirtualSlot *insl)
 
 void VirtualOutputSlot::setCacheType(Slot::CacheType type)
 {
-    assert(_target.size());
-    //*(_target.begin())->setCacheType(type);
+    _cacheType=type;
 }
 
 Slot::CacheType VirtualOutputSlot::getCacheType() const
 {
-    assert(_target.size());
-    //return *(_target.begin())->getCacheType();
+    return _cacheType;
 }
 
 void VirtualSlot::prepare()
@@ -312,7 +316,7 @@ std::set<Slot *> VirtualSlot::getTargets() const
 
 
 VirtualInputSlot::VirtualInputSlot(int num)
-    :VirtualSlot("Slot",0)
+    :VirtualSlot("Slot",num)
 {
 
 }
@@ -333,7 +337,7 @@ std::string VirtualInputSlot::getName() const
 
 
 VirtualOutputSlot::VirtualOutputSlot(int num)
-    :VirtualSlot("Slot",0)
+    :VirtualSlot("Slot",num)
 {
 }
 
@@ -347,9 +351,9 @@ bool VirtualInputSlot::isValidPartner(VirtualSlot *insl)
     return dynamic_cast<VirtualOutputSlot*>(insl);
 }
 
-void VirtualSlot::setNameAndType(std::string name, std::string type)
+void VirtualSlot::setDisplayNameAndType(std::string name, std::string type)
 {
-    _name=name;
+    _displayName=name;
     _type=type;
 }
 
@@ -369,7 +373,11 @@ bool VirtualInputSlot::onAddTarget(Slot *target)
     VirtualOutputSlot* partner=dynamic_cast<VirtualOutputSlot*>(_partner);
     if(sl)
     {
+
+#warning This is ugly, OutputSlot should not have to deal with DataManager. Maybe put DataManager into VirtualSlot??
+	sl->setConfig(_parent->getName()+"."+_name);
 	partner->_managerconfig=sl->getConfig();
+	partner->_cacheType=sl->getCacheType();
 	return true;
     }
     return false;
@@ -381,7 +389,9 @@ bool VirtualInputSlot::onRemoveTarget(Slot *target)
     VirtualOutputSlot* partner=dynamic_cast<VirtualOutputSlot*>(_partner);
     if(sl)
     {
+	sl->setConfig("");
 	partner->_managerconfig="";
+	partner->_cacheType=CACHE_INVALID;
 	return true;
     }
     return false;
@@ -425,12 +435,65 @@ void VirtualSlot::onSave(ParameterFile &pf) const
 
 void VirtualOutputSlot::onLoad(const ParameterFile &pf, const PluginManagerInterface *man)
 {
-    _managerconfig=pf.get<std::string>(_parent->getName() + "." + _virtualNum+".config");
+    _managerconfig=pf.get<std::string>(_parent->getName() + "." + _name+".config");
+    std::string cType=pf.get<std::string>(_parent->getName()+"."+_name+".cache_type");
+    if(cType=="Cache_mem")
+	_cacheType=CACHE_MEM;
+    else if(cType=="Cache_managed")
+	_cacheType=CACHE_MANAGED;
+    else if(cType=="Cache_invalid")
+	_cacheType=CACHE_INVALID;
+
+
 }
 
 void VirtualOutputSlot::onSave(ParameterFile &pf) const
 {
-    pf.set<std::string> (_parent->getName() + "." + _virtualNum+".config", _managerconfig);
+    pf.set<std::string> (_parent->getName() + "." + _name+".config", _managerconfig);
+    std::string cType;
+    switch (_cacheType)
+    {
+    case CACHE_MEM:
+	cType="Cache_mem";
+	break;
+    case CACHE_MANAGED:
+	cType="Cache_managed";
+	break;
+    case CACHE_INVALID:
+	cType="Cache_invalid";
+	break;
+    default:
+	cType="Cache_mem";
+
+
+    }
+
+    pf.set<std::string>(_parent->getName()+"."+_name+".cache_type",cType);
+}
+
+std::string VirtualSlot::getName() const
+{
+    return _name;
+}
+
+std::string Slot::getDisplayName() const
+{
+    return _displayName;
+}
+
+void VirtualOutputSlot::setConfig(std::string conf)
+{
+    if(_partner)
+    {
+	if(_partner->getTargets().size())
+	{
+	    OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(*(_partner->getTargets().begin()));
+	    sl->setConfig(conf);
+	}
+	//Slot::raise(_partner->getName()+" not connected!!");
+
+    }
+    _managerconfig=conf;
 }
 
 
