@@ -12,8 +12,15 @@ ADD_LIBRARY(roi SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.h
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.hxx
 )
+
+ADD_LIBRARY(statementgenerator SHARED
+	StatementGenerator.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/StatementGenerator.h
+
+)
 SET(Plugins
 	roi
+	statementgenerator
 )
 
 IF(USE_CIMG)

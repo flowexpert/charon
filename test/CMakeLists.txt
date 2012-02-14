@@ -6,6 +6,7 @@ SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 IF(BUILD_TESTING)
 	# common definitions and test file configuration
 	SET(PENGUINFILE "${CMAKE_CURRENT_SOURCE_DIR}/Penguin.pgm")
+	SET(PENGUINJPGFILE "${CMAKE_CURRENT_SOURCE_DIR}/Penguin.jpg")
 	CONFIGURE_FILE(
 		${CMAKE_CURRENT_SOURCE_DIR}/Warptest.wrp.in
 		${CMAKE_CURRENT_BINARY_DIR}/Warptest.wrp
@@ -14,6 +15,7 @@ IF(BUILD_TESTING)
 	ADD_DEFINITIONS(-DWARPWRPFILE="${CMAKE_CURRENT_BINARY_DIR}/Warptest.wrp")
 	ADD_DEFINITIONS(-DWARPTESTWRPFILE="${CMAKE_CURRENT_BINARY_DIR}/sample.wrp")
 	ADD_DEFINITIONS(-DPENGUINFILE="${PENGUINFILE}")
+	ADD_DEFINITIONS(-DPENGUINJPGFILE="${PENGUINJPGFILE}")
 	
 	ADD_DEFINITIONS(-DTESTDIR="${CMAKE_CURRENT_SOURCE_DIR}")
 	IF(WIN32)
@@ -184,6 +186,24 @@ IF(BUILD_TESTING)
 				)
 			ENDFOREACH(X)
 		ENDIF(WIN32)
+
+				ADD_EXECUTABLE(groupVirtualSlot2
+					groupVirtualSlot.cpp
+					${CHARON_UTILS_INCLUDE_DIR}/DataManagerCImgList.hxx
+
+				)
+				TARGET_LINK_LIBRARIES(groupVirtualSlot2
+					charon-core charon-plugins
+					${CIMG_LINK_LIBRARIES}
+
+				)
+
+				ADD_TEST(
+						NAME groupVirtualSlot_CimgVigra
+						COMMAND datapasstest2
+				)
+				LIST(APPEND tests groupVirtualSlot_CimgVigra)
+				LIST(APPEND testTargets groupVirtualSlot2)
 	ENDIF(USE_CIMG)
 
 	# charon-xml-helper test

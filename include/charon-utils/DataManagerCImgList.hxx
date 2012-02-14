@@ -22,9 +22,9 @@
 #ifndef DATAMANAGER_CIMGLIST_HXX
 #define DATAMANAGER_CIMGLIST_HXX
 
-#include <charon-core/Slots.hxx>
-#include <charon-core/FileTool.h>
-#include <charon-utils/CImg.h>
+#include "charon-core/Slots.hxx"
+#include "charon-core/FileTool.h"
+#include "CImg.h"
 
 namespace DataManagers {
 	/// parameter file based implementation of a data manager
@@ -51,7 +51,9 @@ template<typename T>
 DataManagers::DataManagerCImgList<T>::DataManagerCImgList(
 	const Slot& slot, const std::string& config) {
 	if (config.size()) {
-		_filename = config;
+
+
+		_filename = config;//+".cimg";
 	}
 	else {
 		_filename = slot.getParent().getName()+"-"+slot.getName()+".cimg";
