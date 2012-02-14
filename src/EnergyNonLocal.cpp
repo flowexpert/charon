@@ -28,6 +28,7 @@
 ///export symbols of parent classes/plugins must be defined
 #define energynonlocal_EXPORTS
 #define stencil_EXPORTS
+#define penaltyfunction_EXPORTS
 
 #include <charon/EnergyStencils/EnergyNonLocal.hxx>
 //#include <charon/EnergyStencil.h>
