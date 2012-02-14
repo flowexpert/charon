@@ -500,6 +500,19 @@ public:
 	 */
 	virtual void loadParameters(const ParameterFile& pf);
 
+	/// Custom Load operation
+	/** Is called by _load. Can be used for additional initialization upon a load operation
+	  * \param pf parameter file to be loaded
+	  * \param man The plugin manager, from which loadWorkflow() is called.
+	  */
+	virtual void onLoad(const ParameterFile& pf,const PluginManagerInterface* man);
+
+	/// Custom Save operation
+	/** Is called by _save. Can be used for additional initialization upon a save operation
+	  * \param pf parameter file to be saved
+	  */
+	virtual void onSave(ParameterFile& pf) const;
+
 	/// \name slot management
 	//  \{
 

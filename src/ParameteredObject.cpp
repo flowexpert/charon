@@ -402,6 +402,7 @@ void ParameteredObject::save(ParameterFile& pf) const {
 
 	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
 		slotIter->second->save(pf);
+	onSave(pf);
 }
 
 void ParameteredObject::loadParameters(const ParameterFile& pf) {
@@ -438,8 +439,7 @@ void ParameteredObject::_load(const ParameterFile& pf,
 	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
 		slotIter->second->load(pf, man);
 
-	// initialize object
-	initialize();
+	onLoad(pf,man);
 }
 
 bool ParameteredObject::connected() const {
@@ -698,4 +698,14 @@ void ParameteredObject::_removeOutputSlot(std::string name)
 
 
     }
+}
+
+void ParameteredObject::onLoad(const ParameterFile &pf,const PluginManagerInterface* man)
+{
+    initialize();
+}
+
+void ParameteredObject::onSave(ParameterFile &pf) const
+{
+
 }

@@ -92,7 +92,10 @@ void PluginManager::_unloadAllPlugins() {
 	// destroy instances in reverse execution order
 	std::list<ParameteredObject*> ordered = determineExecutionOrder();
 	while (!ordered.empty()) {
-		destroyInstance(ordered.back());
+		//if(!isInternal(ordered.back()))
+		    destroyInstance(ordered.back());
+		//else
+		  //  delete ordered.back();
 		ordered.pop_back();
 	}
 	// unload plugins
@@ -221,6 +224,7 @@ void PluginManager::destroyInstance(ParameteredObject* toDestroy)
     if(isInternal(toDestroy))
     {
 	sout<<"(II) Object "<<toDestroy->getName()<<" is an internal object"<<std::endl;
+	delete toDestroy;
 	return;
     }
 	std::string cur = toDestroy->getName(), curPlugin;
@@ -229,13 +233,23 @@ void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 		curPlugin = _instances[toDestroy]->getName();
 		_instances[toDestroy]->destroyInstance(toDestroy);
 		_instances.erase(toDestroy);
+		sout << "(II) Deleted Instance \"" << cur << "\" of the plugin \""
+			<< curPlugin << "\"" << std::endl;
 	} else {
+	    if(objects.find(toDestroy->getName())!=objects.end())
+	    {
+		objects.erase(toDestroy->getName());
+		delete toDestroy;
+		sout << "(II) Deleted Instance \"" << cur<<std::endl;
+	    }
+	    else
+	    {
 		throw(AbstractPluginLoader::PluginException(
 				"This instance does not exist.", "unknown",
 				AbstractPluginLoader::PluginException::NO_SUCH_INSTANCE));
+	    }
 	}
-	sout << "(II) Deleted Instance \"" << cur << "\" of the plugin \""
-		<< curPlugin << "\"" << std::endl;
+
 }
 
 void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
@@ -744,6 +758,8 @@ void PluginManager::insertInstance(ParameteredObject *instance)
 bool PluginManager::isInternal(ParameteredObject *obj)
 {
     if(dynamic_cast<SlotBundle*>(obj))
+	return true;
+    else if(dynamic_cast<ParameteredGroupObject*>(obj))
 	return true;
     return false;
 

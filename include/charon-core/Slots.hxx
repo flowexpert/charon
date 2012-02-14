@@ -55,7 +55,7 @@ bool AbstractSlot<T>::_addTarget(Slot* target) {
 	}
 
 	// Check slot types by comparing their _type strings.
-	if ((target->getType() != this->getType())&&!((target->getType()=="Virtual")||(this->getType()=="Virtual"))) {
+	if ((target->getType() != this->getType())&&!((target->getType()=="virtual")||(this->getType()=="virtual"))) {
 		this->printError("Source slot of failed connection");
 		target->printError("Target slot of failed connection");
 		Slot::raise("Cannot connect slots of different types.");

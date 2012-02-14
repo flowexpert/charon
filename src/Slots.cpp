@@ -134,7 +134,7 @@ void Slot::raise(const std::string& msg) const {
 VirtualSlot::VirtualSlot(std::string virtType,int num)
 
 {
-    this->_type="Virtual";
+    this->_type="virtual";
 
     std::stringstream vname;
     vname<<"Virtual"<<virtType<<num;
@@ -160,7 +160,7 @@ bool VirtualSlot::_addTarget(Slot *target)
 	    return false;
 
 	_displayName=target->getDisplayName();
-	_type=target->getType();
+	_type=StringTool::toLowerCase(target->getType());
 
 
 	_partner->setDisplayNameAndType(target->getName(),target->getType());
@@ -190,7 +190,7 @@ bool VirtualSlot::_removeTarget(Slot *target)
     {
 
 
-	this->_type="Virtual";
+	this->_type="virtual";
 	this->_displayName=_name;
 
 	_target.clear();
@@ -354,7 +354,7 @@ bool VirtualInputSlot::isValidPartner(VirtualSlot *insl)
 void VirtualSlot::setDisplayNameAndType(std::string name, std::string type)
 {
     _displayName=name;
-    _type=type;
+    _type=StringTool::toLowerCase(type);
 }
 
 bool VirtualSlot::onAddTarget(Slot *target)

@@ -30,7 +30,7 @@ void ParameteredGroupObject::initialize()
     _pluginMan=new PluginManager(pluginPaths(),true);
     _pluginMan->loadParameterFile(workFlowFile());
     _inputs=new InputSlotBundle("InputSlotBundle",getName()+"-inputs");
-    _outputs=new OutputSlotBundle("OutSlotBundle",getName()+"-outputs");
+    _outputs=new OutputSlotBundle("OutputSlotBundle",getName()+"-outputs");
 
 
     //_inputs->setNumberOfVirtualSlots(4);
@@ -284,6 +284,14 @@ std::vector<VirtualInputSlot *> & OutputSlotBundle::getInternalSlotVector()
 {
     return _virtualInputSlots;
 }
+
+void ParameteredGroupObject::onSave(ParameterFile &pf) const
+{
+
+    _pluginMan->saveParameterFile(workFlowFile());
+}
+
+
 
 
 

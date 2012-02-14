@@ -24,6 +24,7 @@
 #include "../include/charon-core/IfGroup.h"
 #include "../include/charon-core/ParameteredGroupObject.h"
 #include "../include/charon-core/DataManagerParameterFile.hxx"
+#include "../include/charon-core/ExceptionHandler.h"
 
 
 /// sample ParameteredObject class.
@@ -79,13 +80,13 @@ protected:
 
 
 /// sample ParameteredGroupObject class
-class TestGroup: public ParameteredGroupObject
+class TestGroupReader: public ParameteredGroupObject
 {
 public:
-    TestGroup()
-	: ParameteredGroupObject("TestGroup","TestGroupName","TestGroupDoc")
+    TestGroupReader()
+	: ParameteredGroupObject("TestGroupReader","TestGroupReaderName","TestGroupReaderDoc")
     {
-	workFlowFile="TestGroup.wrp";
+	workFlowFile="TestGroupReader.wrp";
     }
     void initializeGroup()
     {
@@ -106,30 +107,104 @@ public:
 
 
 };
+class TestGroupWriter: public ParameteredGroupObject
+{
+public:
+    TestGroupWriter()
+	: ParameteredGroupObject("TestGroupWriter","TestGroupWriterName","TestGroupWriterDoc")
+    {
+	workFlowFile="TestGroupWriter.wrp";
+    }
+    void initializeGroup()
+    {
+
+
+	setNumberOfOuputSlots(2);
+	Outputgen* outgen=new Outputgen("OutputgenWriter");
+	outgen->out2.setCacheType(Slot::CACHE_MANAGED);
+	Slot* in1=dynamic_cast<Slot*>(getOutputSlot(0).second);
+	Slot* in2=dynamic_cast<Slot*>(getOutputSlot(1).second);
+	_pluginMan->insertInstance(outgen);
+	_pluginMan->connect(&(outgen->out1),in1);
+	_pluginMan->connect(&(outgen->out2),in2);
+
+
+
+    }
+
+
+
+};
+
+void testDataToGroup()
+{
+    ParameterFile file;
+    file.save("TestGroupReader.wrp");
+
+    Outputgen* generator=new Outputgen("OutgenReader");
+    generator->out1.setCacheType(Slot::CACHE_MANAGED);
+    std::vector<std::string> paths;
+    paths.push_back(CHARON_PLUGINS);
+    TestGroupReader* group=new TestGroupReader;
+    group->pluginPaths=paths;
+    //generator.initialize();
+    group->initialize();
+
+
+    PluginManager* man=new PluginManager(paths);
+    man->insertInstance(group);
+    man->insertInstance(generator);
+    Slot* in=dynamic_cast<Slot*>(group->getInputSlot(0).first);
+    Slot* in2=dynamic_cast<Slot*>(group->getInputSlot(1).first);
+    man->connect(&(generator->out1),in);
+    man->connect(&(generator->out2),in2);
+    sout<<"Number of input in Testgroupreader "<<group->getNumberOfInputSlots()<<std::endl;
+    sout<<"Number of output in Testgroupreader "<<group->getNumberOfOutputSlots()<<std::endl;
+
+    man->runWorkflow();
+    man->saveParameterFile("testDataToGroup.wrp");
+    delete man;
+
+}
+
+void testDataFromGroup()
+{
+    ParameterFile file;
+    file.save("TestGroupWriter.wrp");
+
+    Reader* readerob=new Reader("Reader");
+
+    std::vector<std::string> paths;
+    paths.push_back(CHARON_PLUGINS);
+    TestGroupWriter* group=new TestGroupWriter;
+    group->pluginPaths=paths;
+    //generator.initialize();
+    group->initialize();
+
+
+    PluginManager* man=new PluginManager(paths);
+    man->insertInstance(group);
+    man->insertInstance(readerob);
+    Slot* out1=dynamic_cast<Slot*>(group->getOutputSlot(0).first);
+    Slot* out2=dynamic_cast<Slot*>(group->getOutputSlot(1).first);
+    man->connect(out1,&(readerob->in1));
+    man->connect(out2,&(readerob->in2));
+    sout<<"Number of input in Testgroupwriter "<<group->getNumberOfInputSlots()<<std::endl;
+    sout<<"Number of output in Testgroupwriter "<<group->getNumberOfOutputSlots()<<std::endl;
+    man->runWorkflow();
+    man->saveParameterFile("testDataFromGroup.wrp");
+
+    delete man;
+}
 
 int main()
 {
-    ParameterFile file;
-    file.save("TestGroup.wrp");
+    sout.assign(std::cout);
+    int ret = EXIT_SUCCESS;
+    ret |= ExceptionHandler::run(testDataToGroup);
+    ret |= ExceptionHandler::run(testDataFromGroup);
 
-    Outputgen generator("Outgen");
-    generator.out1.setCacheType(Slot::CACHE_MANAGED);
-    std::vector<std::string> paths;
-    paths.push_back("/home/gmwangi/Programming/workspace-qtcreator/Charon/sources/supernodes/install/lib/charon-plugins");
-    TestGroup group;
-    group.pluginPaths=paths;
-    //generator.initialize();
-    group.initialize();
+    return ret;
 
-    PluginManager* man=new PluginManager(paths);
-    man->insertInstance(&group);
-    man->insertInstance(&generator);
-    Slot* in=dynamic_cast<Slot*>(group.getInputSlot(0).first);
-    Slot* in2=dynamic_cast<Slot*>(group.getInputSlot(1).first);
-    man->connect(&(generator.out1),in);
-    man->connect(&(generator.out2),in2);
-    sout<<"Number of input in Testgroup "<<group.getNumberOfInputSlots()<<std::endl;
-
-    man->runWorkflow();
 
 }

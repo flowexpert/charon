@@ -90,6 +90,7 @@ public:
 
     /// Size of bundle
     virtual int size();
+
 protected:
 
     virtual void _addAllSlots()=0;
@@ -227,6 +228,13 @@ public:
 
     const std::pair<InputSlotIntf*,OutputSlotIntf*> getInputSlot(int slotnr) const;
     const std::pair<OutputSlotIntf*,InputSlotIntf*> getOutputSlot(int slotnr) const;
+
+    /// Custom save
+    /**
+      * saves the internal workflow
+      */
+    virtual void onSave(ParameterFile &pf) const;
+
 
 protected:
     PluginManager* _pluginMan;
