@@ -140,8 +140,7 @@ public:
 
 void testDataToGroup()
 {
-    ParameterFile file;
-    file.save("TestGroupReader.wrp");
+
 
     Outputgen* generator=new Outputgen("OutgenReader");
     generator->out1.setCacheType(Slot::CACHE_MANAGED);
@@ -150,6 +149,11 @@ void testDataToGroup()
     TestGroupReader* group=new TestGroupReader;
     group->pluginPaths=paths;
     //generator.initialize();
+    ParameterFile file;
+    //file.set<std::string>(group->getName()+"-inputs.type","InputSlotBundle");
+   // file.set<std::string>(group->getName()+"-outputs.type","OutputSlotBundle");
+    file.save("TestGroupReader.wrp");
+
     group->initialize();
 
 
@@ -171,8 +175,7 @@ void testDataToGroup()
 
 void testDataFromGroup()
 {
-    ParameterFile file;
-    file.save("TestGroupWriter.wrp");
+
 
     Reader* readerob=new Reader("Reader");
 
@@ -181,6 +184,10 @@ void testDataFromGroup()
     TestGroupWriter* group=new TestGroupWriter;
     group->pluginPaths=paths;
     //generator.initialize();
+    ParameterFile file;
+   // file.set<std::string>(group->getName()+"-inputs.type","InputSlotBundle");
+   // file.set<std::string>(group->getName()+"-outputs.type","OutputSlotBundle");
+    file.save("TestGroupWriter.wrp");
     group->initialize();
 
 

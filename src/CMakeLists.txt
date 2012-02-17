@@ -18,9 +18,16 @@ ADD_LIBRARY(statementgenerator SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/StatementGenerator.h
 
 )
+ADD_LIBRARY(greatersmallerthenpar SHARED
+	GreaterSmallerThenPar.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.h
+	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.hxx
+
+)
 SET(Plugins
 	roi
 	statementgenerator
+	greatersmallerthenpar
 )
 
 IF(USE_CIMG)
