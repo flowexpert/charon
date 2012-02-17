@@ -33,6 +33,7 @@ void ParameteredGroupObject::initialize()
     _outputs=new OutputSlotBundle("OutputSlotBundle",getName()+"-outputs");
 
 
+    _pluginMan->loadParameterFile(workFlowFile());
     //_inputs->setNumberOfVirtualSlots(4);
     //_outputs->setNumberOfVirtualSlots(4);
     _pluginMan->insertInstance(_inputs);
@@ -40,9 +41,9 @@ void ParameteredGroupObject::initialize()
 
 
 
-    initializeGroup();
-    _pluginMan->loadParameterFile(workFlowFile());
 
+
+    initializeGroup();
 
 
 
@@ -218,10 +219,11 @@ const int ParameteredGroupObject::getNumberOfOutputSlots() const
 
 const std::pair<InputSlotIntf*,OutputSlotIntf*> ParameteredGroupObject::getInputSlot(int slotnr) const
 {
-    VirtualOutputSlot* int_out=_inputs->getInternalSlotVector()[slotnr];
-    VirtualInputSlot* in=_inputs->getSlotVector()[slotnr];
     if(slotnr<0||slotnr>_inputs->size())
 	ParameteredObject::raise("(EE) Index out of range!!");
+    VirtualOutputSlot* int_out=_inputs->getInternalSlotVector()[slotnr];
+    VirtualInputSlot* in=_inputs->getSlotVector()[slotnr];
+
     return std::pair<InputSlotIntf*,OutputSlotIntf*>(dynamic_cast<InputSlotIntf*>(in),dynamic_cast<OutputSlotIntf*>(int_out));
 }
 
