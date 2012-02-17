@@ -126,15 +126,7 @@ private:
 	/// forbid instantiation without className etc.
 	ParameteredObject();
 
-	/// Load own content from the given parameter file.
-	/** All registered parameters are loaded from the ParameterFile.
-	 *  This function does NOT touch any slot.
-	 *  InstanceName is used as prefix.
-	 *  \param pf           ParameterFile to save to.
-	 *  \param man          Pointer to the currently active PluginManager
-	 */
-	void _load(
-			const ParameterFile& pf, const PluginManagerInterface * man);
+
 
 
 
@@ -228,6 +220,16 @@ protected:
 			Parameter<T>& param, const std::string& name,
 			const std::string& doc, const T& defVal,
 			const std::string& type = "");
+
+	/// Load own content from the given parameter file.
+	/** All registered parameters are loaded from the ParameterFile.
+	 *  This function does NOT touch any slot.
+	 *  InstanceName is used as prefix.
+	 *  \param pf           ParameterFile to save to.
+	 *  \param man          Pointer to the currently active PluginManager
+	 */
+	void _load(
+			const ParameterFile& pf, const PluginManagerInterface * man);
 
 	/// \name Register input/output slots.
 	/** These functions needs to be called by the derived class in order

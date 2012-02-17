@@ -71,6 +71,9 @@ public:
 
     };
 
+    /// Load connections
+    void loadConnection(ParameterFile pf,PluginManagerInterface* man);
+
     /// BundleContext
     enum BundleContext
     {

@@ -43,7 +43,14 @@ void ParameteredGroupObject::initialize()
 
 
 
+
+
+
     initializeGroup();
+
+#warning need to load slotbundle connections
+//    _inputs->loadConnection(ParameterFile(workFlowFile),_pluginMan);
+  //  _outputs->loadConnection(ParameterFile(workFlowFile),_pluginMan);
 
 
 
@@ -292,6 +299,11 @@ void ParameteredGroupObject::onSave(ParameterFile &pf) const
 {
 
     _pluginMan->saveParameterFile(workFlowFile());
+}
+
+void SlotBundle::loadConnection(ParameterFile pf, PluginManagerInterface *man)
+{
+    _load(pf,man);
 }
 
 
