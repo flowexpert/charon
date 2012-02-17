@@ -765,6 +765,30 @@ bool PluginManager::isInternal(ParameteredObject *obj)
 
 }
 
+void PluginManager::resetExecuted()
+{
+    std::list<ParameteredObject*> tPoints = _determineTargetPoints();
+    std::list<ParameteredObject*>::const_iterator iter;
+
+    if (tPoints.empty()) {
+            throw AbstractPluginLoader::PluginException(
+                    "Could not reset executed flags in workflow:\n\t"
+                    "No valid target point found.\n\tPlease check if "
+                    "all required plugins could be loaded,\n\tthen check if this is "
+                    "a valid parameter file.", "unknown",
+                    AbstractPluginLoader::PluginException::OTHER);
+    }
+
+    for (iter = tPoints.begin(); iter != tPoints.end(); iter++) {
+//            if(isGroup((*iter)))
+//            {
+//                AbstractBaseGroupIntf* grpIntf=dynamic_cast<AbstractBaseGroupIntf*>((*iter));
+//                grpIntf->loadWorkflow(AbstractPluginLoader::pluginPaths);
+//            }
+        (*iter)->setExecuted(false);
+    }
+}
+
 
 
 

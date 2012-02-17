@@ -79,6 +79,15 @@ TARGET_LINK_LIBRARIES(ifgroup
 	charon-core
 )
 
+ADD_LIBRARY(whilegroup SHARED
+        WhileGroup.cpp
+        ${CHARON_CORE_INCLUDE_DIR}/WhileGroup.h
+)
+
+TARGET_LINK_LIBRARIES(whilegroup
+        charon-core
+)
+
 
 # install library
 SET_TARGET_PROPERTIES(charon-core charon-plugins PROPERTIES
@@ -99,6 +108,9 @@ SET(CHARON_PLUGINS ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins)
 SET_TARGET_PROPERTIES(ifgroup PROPERTIES
 	INSTALL_RPATH CHARON_PLUGINS
 )
+SET_TARGET_PROPERTIES(whilegroup PROPERTIES
+        INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
+)
 INSTALL(
 	TARGETS          ifgroup
 	EXPORT           ${EXPORT_NAME}
@@ -106,6 +118,14 @@ INSTALL(
 	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
 	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
 	COMPONENT        libraries
+)
+INSTALL(
+        TARGETS          whilegroup
+        EXPORT           ${EXPORT_NAME}
+        RUNTIME          DESTINATION bin${BIN_SUFFIX}
+        LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+        ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+        COMPONENT        libraries
 )
 
 IF(NOT SKIP_EXPORT_INSTALL)

@@ -310,12 +310,7 @@ protected:
 	ParameteredObject(const std::string& className,
 		const std::string& name = "", const std::string& doc = "");
 
-	/// set property _executed
-	/** \param value        New value of _executed
-	 */
-	void _setExecuted(bool value) {
-		_executed = value;
-	}
+
 
 	/// get target nodes
 	/** Determine target leaves of the execution workflow (i.e. Parametered
@@ -407,6 +402,13 @@ public:
 	 *  flag is set already to avoid duplicate execution.
 	 */
 	virtual void run();
+
+        /// set property _executed
+        /** \param value        New value of _executed
+         */
+        void setExecuted(bool value) {
+                _executed = value;
+        }
 
 	/// get execution status
 	bool executed() const {

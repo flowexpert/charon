@@ -446,6 +446,11 @@ public:
 	 */
 	virtual void reset();
 
+        /// Set the executed flags of the objects to false.
+        /** This function leaves the objects otherwise untouched
+          */
+        void resetExecuted();
+
 
 
 

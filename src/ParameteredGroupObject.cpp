@@ -28,7 +28,7 @@ void ParameteredGroupObject::initialize()
 
     }
     _pluginMan=new PluginManager(pluginPaths(),true);
-    _pluginMan->loadParameterFile(workFlowFile());
+
     _inputs=new InputSlotBundle("InputSlotBundle",getName()+"-inputs");
     _outputs=new OutputSlotBundle("OutputSlotBundle",getName()+"-outputs");
 
@@ -41,6 +41,7 @@ void ParameteredGroupObject::initialize()
 
 
     initializeGroup();
+    _pluginMan->loadParameterFile(workFlowFile());
 
 
 
