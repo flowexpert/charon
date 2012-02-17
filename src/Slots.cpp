@@ -156,15 +156,15 @@ bool VirtualSlot::_addTarget(Slot *target)
     {
 	if(!isValidTarget(target))
 	    return false;
-	if(_target.size()>0)
-	    return false;
+//	if(_target.size()>0)
+//	    return false;
 
-	_displayName=target->getDisplayName();
-	_type=StringTool::toLowerCase(target->getType());
+//	_displayName=target->getDisplayName();
+//	_type=StringTool::toLowerCase(target->getType());
 
 
-	_partner->setDisplayNameAndType(target->getName(),target->getType());
-	_target.insert(target);
+//	_partner->setDisplayNameAndType(target->getName(),target->getType());
+//	_target.insert(target);
 	onAddTarget(target);
     }
     else
@@ -186,19 +186,7 @@ const std::string& VirtualOutputSlot::getConfig() const
 bool VirtualSlot::_removeTarget(Slot *target)
 {
 
-    if(target==*(_target.begin()))
-    {
-
-
-	this->_type="virtual";
-	this->_displayName=_name;
-
-	_target.clear();
-	onRemoveTarget(target);
-
-    }
-
-    return true;
+    return onRemoveTarget(target);
 
 }
 
@@ -239,7 +227,17 @@ void VirtualSlot::save(ParameterFile &pf) const
 
 const OutputSlotIntf* VirtualOutputSlot::getThisPointer() const
 {
-    if(_partner)
+    if(_loop)
+    {
+	if(_loopPartner)
+	{
+	    OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(*(_loopPartner->getTargets().begin()));
+	    return sl;
+	}
+	else
+	    raise("_loopset to true but no _loopPartner!!");
+    }
+    else if(_partner)
     {
 	if(_partner->getTargets().size())
 	{
@@ -330,7 +328,7 @@ std::string VirtualInputSlot::getType() const
 
 std::string VirtualInputSlot::getName() const
 {
-    return VirtualSlot::getName();
+    return VirtualSlot::getName()+"-in";
 }
 
 
@@ -339,6 +337,8 @@ std::string VirtualInputSlot::getName() const
 VirtualOutputSlot::VirtualOutputSlot(int num)
     :VirtualSlot("Slot",num)
 {
+    _loopPartner=0;
+    _loop=0;
 }
 
 bool VirtualOutputSlot::isValidPartner(VirtualSlot *insl)
@@ -369,6 +369,18 @@ bool VirtualSlot::onRemoveTarget(Slot *target)
 
 bool VirtualInputSlot::onAddTarget(Slot *target)
 {
+    if(_target.size()>0)
+	return false;
+    if(StringTool::toLowerCase(_type)=="virtual")
+    {
+	_type=target->getType();
+
+
+    }
+    _target.insert(target);
+    _displayName=target->getName();
+    _partner->setDisplayNameAndType(_displayName,_type);
+    //target->_addTarget(dynamic_cast<Slot*>(this));
     OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(target);
     VirtualOutputSlot* partner=dynamic_cast<VirtualOutputSlot*>(_partner);
     if(sl)
@@ -385,13 +397,20 @@ bool VirtualInputSlot::onAddTarget(Slot *target)
 
 bool VirtualInputSlot::onRemoveTarget(Slot *target)
 {
+    if(_target.find(target)==_target.end())
+	return false;
     OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(target);
     VirtualOutputSlot* partner=dynamic_cast<VirtualOutputSlot*>(_partner);
     if(sl)
     {
+
 	sl->setConfig("");
 	partner->_managerconfig="";
 	partner->_cacheType=CACHE_INVALID;
+	if(_partner->_target.size()==0)
+	    _partner->_type="virtual";
+	_partner->_displayName=_partner->_name;
+	_target.erase(target);
 	return true;
     }
     return false;
@@ -416,7 +435,7 @@ std::string VirtualOutputSlot::getType() const
 
 std::string VirtualOutputSlot::getName() const
 {
-    return VirtualSlot::getName();
+    return VirtualSlot::getName()+"-out";
 }
 
 std::string VirtualSlot::getType() const
@@ -494,6 +513,54 @@ void VirtualOutputSlot::setConfig(std::string conf)
 
     }
     _managerconfig=conf;
+}
+
+void VirtualOutputSlot::setLoop(bool loop)
+{
+    _loop=loop;
+}
+
+void VirtualOutputSlot::setLoopPartner(VirtualInputSlot *loopPartner)
+{
+    if(_loopPartner)
+    {
+	if(loopPartner)
+	    raise("loopPartner already set");
+	else
+	    _loopPartner=0;
+    }
+    else
+	_loopPartner=loopPartner;
+}
+
+bool VirtualOutputSlot::onAddTarget(Slot *target)
+{
+    if(StringTool::toLowerCase(_type)=="virtual")
+    {
+	_type=target->getType();
+	_partner->_type=_type;
+    }
+    _target.insert(target);
+
+    return true;
+}
+
+bool VirtualOutputSlot::onRemoveTarget(Slot *target)
+{
+    if(_target.find(target)!=_target.end())
+    {
+	_target.erase(target);
+
+	if(_target.size()==0)
+	    if(_partner->_target.size()==0)
+	    {
+		_type="virtual";
+		_displayName=_name;
+		_partner->_type=_type;
+	    }
+	return true;
+    }
+    return false;
 }
 
 

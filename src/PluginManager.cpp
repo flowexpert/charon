@@ -759,18 +759,19 @@ bool PluginManager::isInternal(ParameteredObject *obj)
 {
     if(dynamic_cast<SlotBundle*>(obj))
 	return true;
-    else if(dynamic_cast<ParameteredGroupObject*>(obj))
-	return true;
+ //   else if(dynamic_cast<ParameteredGroupObject*>(obj))
+//	return true;
     return false;
 
 }
 
 void PluginManager::resetExecuted()
 {
-    std::list<ParameteredObject*> tPoints = _determineTargetPoints();
-    std::list<ParameteredObject*>::const_iterator iter;
 
-    if (tPoints.empty()) {
+    std::map<std::string, ParameteredObject *>::const_iterator iter;
+
+
+    if (objects.empty()) {
             throw AbstractPluginLoader::PluginException(
                     "Could not reset executed flags in workflow:\n\t"
                     "No valid target point found.\n\tPlease check if "
@@ -779,13 +780,13 @@ void PluginManager::resetExecuted()
                     AbstractPluginLoader::PluginException::OTHER);
     }
 
-    for (iter = tPoints.begin(); iter != tPoints.end(); iter++) {
+    for (iter = objects.begin(); iter != objects.end(); iter++) {
 //            if(isGroup((*iter)))
 //            {
 //                AbstractBaseGroupIntf* grpIntf=dynamic_cast<AbstractBaseGroupIntf*>((*iter));
 //                grpIntf->loadWorkflow(AbstractPluginLoader::pluginPaths);
 //            }
-        (*iter)->setExecuted(false);
+	(*iter).second->setExecuted(false);
     }
 }
 

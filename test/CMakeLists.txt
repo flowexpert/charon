@@ -82,6 +82,16 @@ IF(BUILD_TESTING)
 		NAME groupVirtualSlot
 		COMMAND groupVirtualSlot
 	)
+
+
+
+
+	ADD_EXECUTABLE(whilegrouptest testWhileGroup.cpp)
+	TARGET_LINK_LIBRARIES(whilegrouptest charon-core charon-plugins whilegroup)
+	ADD_TEST(
+		NAME whilegrouptest
+		COMMAND whilegrouptest
+	)
 	LIST(APPEND tests SlotDataPassing)
 	LIST(APPEND testTargets datapasstest)
 

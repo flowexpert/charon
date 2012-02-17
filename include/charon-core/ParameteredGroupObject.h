@@ -1,3 +1,18 @@
+/*  This file is part of Charon.
+
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef PARAMETEREDGROUPOBJECT_H
 #define PARAMETEREDGROUPOBJECT_H
 
@@ -60,6 +75,8 @@ public:
 
     /// Finalize
     void finalize();
+
+
 
     /// CacheOption
     /** Bundle cache setting. Determines whether to override the individual cache settings of the slots.
@@ -232,6 +249,24 @@ public:
     const std::pair<InputSlotIntf*,OutputSlotIntf*> getInputSlot(int slotnr) const;
     const std::pair<OutputSlotIntf*,InputSlotIntf*> getOutputSlot(int slotnr) const;
 
+    /// LoopOutToInput
+    /** Loop the given output to an input. The loop connection is only valid after one iteration of the group
+     */
+    void loopOutputToInput(int output,int input);
+
+    /// breakLoop
+    /** Break a loop connection.
+      */
+    void breakLoop(int output);
+
+    /// enableLoopConnections
+    /** enable all looped connections
+      */
+    void enableLoopConnections();
+
+    /// disableLoopConnections
+    void disableLoopConnections();
+
     /// Custom save
     /**
       * saves the internal workflow
@@ -244,6 +279,7 @@ protected:
 
     InputSlotBundle* _inputs;
     OutputSlotBundle* _outputs;
+    std::map<int,VirtualOutputSlot*> _loopedSlots;
 
 
 

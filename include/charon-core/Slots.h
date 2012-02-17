@@ -466,6 +466,8 @@ class VirtualSlot
 	:public Slot
 {
 public:
+    friend class VirtualInputSlot;
+    friend class VirtualOutputSlot;
     VirtualSlot(std::string virtType,int num=0);
     /// overload Slot functions. Load and save the config string
     virtual void load(
@@ -516,7 +518,7 @@ protected:
 
 
 };
-
+class VirtualInputSlot;
 class VirtualOutputSlot
 	:public VirtualSlot,public OutputSlotIntf
 {
@@ -543,14 +545,22 @@ public:
 
     /// set manager configuration string
     virtual void setConfig(std::string conf);
+
+    void setLoopPartner(VirtualInputSlot* loopPartner);
+    void setLoop(bool loop);
 protected:
     virtual bool isValidPartner(VirtualSlot *insl);
     virtual bool isValidTarget(Slot *target);
     void onLoad(const ParameterFile &pf, const PluginManagerInterface *man);
     void onSave(ParameterFile &pf) const;
+    virtual bool onAddTarget(Slot *target);
+    virtual bool onRemoveTarget(Slot *target);
+
 private:
     std::string _managerconfig;
     Slot::CacheType _cacheType;
+    VirtualInputSlot* _loopPartner;
+    bool _loop;
 
 
 };

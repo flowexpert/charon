@@ -50,22 +50,26 @@ public:
 
         void initializeGroup();
 
+	virtual void initializeWhileGroup();
+
         InputSlot<bool> statement;
 
 	/// Update object.
-	virtual void execute();
+	 void executeGroup();
+private:
+	bool _innerWhilestatement;
 
 };
 
 class WhileGroupStatement: public ParameteredObject
 {
 public:
-    WhileGroupStatement(InputSlot<bool>*);
+    WhileGroupStatement(bool*);
     InputSlot<bool> statement;
     /// Update object.
     virtual void execute();
 public:
-    InputSlot<bool>* _whilestatement;
+    bool* _whilestatement;
 };
 
 #endif /* _WHILEGROUP_H_ */

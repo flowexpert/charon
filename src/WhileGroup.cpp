@@ -31,20 +31,28 @@ WhileGroup::WhileGroup(const std::string& name) :
 			"<h2>Executes the group as long as a given statement is "
 			"true</h2><br>"
 			"Executes the group as long as a given statement is true"
-		)
+		),statement(true,false)
+
 {
     _addInputSlot(statement,"Statement","Statement for this whilegroup","bool");
+   // statement=true;
 }
 
-void WhileGroup::execute() {
+void WhileGroup::executeGroup() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-        while(statement)
+
+	_innerWhilestatement=true;
+	if(statement.connected())
+	    _innerWhilestatement=_innerWhilestatement&&statement();
+	while(_innerWhilestatement)
         {
             _pluginMan->executeWorkflow();
+	    enableLoopConnections();
             _pluginMan->resetExecuted();
         }
+	disableLoopConnections();
 }
 
 // the following functions are needed
@@ -67,7 +75,7 @@ extern "C" whilegroup_DECLDIR ParameteredObject::build_type getBuildType() {
 #endif
 }
 
-WhileGroupStatement::WhileGroupStatement(InputSlot<bool> * pstatement)
+WhileGroupStatement::WhileGroupStatement(bool * pstatement)
     :ParameteredObject("WhileGroupStatement","WhileGroupStatement","Statement used in a Whilegroup")
 {
     _whilestatement=pstatement;
@@ -83,5 +91,12 @@ void WhileGroupStatement::execute()
 
 void WhileGroup::initializeGroup()
 {
-    _pluginMan->insertInstance(new WhileGroupStatement(&statement));
+    WhileGroupStatement* st=new WhileGroupStatement(&_innerWhilestatement);
+    st->initialize();
+    _pluginMan->insertInstance(st);
+    initializeWhileGroup();
+}
+
+void WhileGroup::initializeWhileGroup()
+{
 }

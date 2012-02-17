@@ -1,3 +1,18 @@
+/*  This file is part of Charon.
+
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "../include/charon-core/ParameteredGroupObject.h"
 #include "../include/charon-core/PluginManager.h"
 
@@ -243,7 +258,7 @@ const std::pair<OutputSlotIntf*,InputSlotIntf*> ParameteredGroupObject::getOutpu
     return std::pair<OutputSlotIntf*,InputSlotIntf*>(dynamic_cast<OutputSlotIntf*>(out),dynamic_cast<InputSlotIntf*>(int_in));
 }
 
-void ParameteredGroupObject::setNumberOfInputSlots(int i)
+void ParameteredGroupObject::setNumberOfInputSlots(int num)
 {
     std::vector<VirtualInputSlot*>& ins=_inputs->getSlotVector();
 
@@ -254,7 +269,7 @@ void ParameteredGroupObject::setNumberOfInputSlots(int i)
 
     }
 
-    _inputs->setNumberOfVirtualSlots(i);
+    _inputs->setNumberOfVirtualSlots(num);
 
 
     for(int i=0;i<ins.size();i++)
@@ -266,7 +281,7 @@ void ParameteredGroupObject::setNumberOfInputSlots(int i)
 
 }
 
-void ParameteredGroupObject::setNumberOfOuputSlots(int i)
+void ParameteredGroupObject::setNumberOfOuputSlots(int num)
 {
     std::vector<VirtualOutputSlot*>& outs=_outputs->getSlotVector();
     for(int i=0;i<outs.size();i++)
@@ -275,7 +290,7 @@ void ParameteredGroupObject::setNumberOfOuputSlots(int i)
 	_removeOutputSlot(outs[i]->getName());
     }
 
-    _outputs->setNumberOfVirtualSlots(i);
+    _outputs->setNumberOfVirtualSlots(num);
 
 
     for(int i=0;i<outs.size();i++)
@@ -304,6 +319,49 @@ void ParameteredGroupObject::onSave(ParameterFile &pf) const
 void SlotBundle::loadConnection(ParameterFile pf, PluginManagerInterface *man)
 {
     _load(pf,man);
+}
+
+void ParameteredGroupObject::loopOutputToInput(int output, int input)
+{
+    VirtualOutputSlot* out=_inputs->getInternalSlotVector()[output];
+    VirtualInputSlot* in=_outputs->getInternalSlotVector()[input];
+    out->setLoopPartner(in);
+    out->setLoop(false);
+    _loopedSlots.insert(std::pair<int,VirtualOutputSlot*>(output,out));
+}
+
+void ParameteredGroupObject::breakLoop(int output)
+{
+    std::map<int,VirtualOutputSlot*>::iterator it;
+    it=_loopedSlots.find(output);
+    if(it==_loopedSlots.end())
+	raise("Output is not looped!");
+
+
+    VirtualOutputSlot* out=(*it).second;
+    out->setLoopPartner(0);
+    out->setLoop(false);
+    _loopedSlots.erase(it);
+}
+
+void ParameteredGroupObject::enableLoopConnections()
+{
+    std::map<int,VirtualOutputSlot*>::iterator it=_loopedSlots.begin();
+    for(;it!=_loopedSlots.end();it++)
+    {
+	VirtualOutputSlot* out=(*it).second;
+	out->setLoop(true);
+    }
+}
+
+void ParameteredGroupObject::disableLoopConnections()
+{
+    std::map<int,VirtualOutputSlot*>::iterator it=_loopedSlots.begin();
+    for(;it!=_loopedSlots.end();it++)
+    {
+	VirtualOutputSlot* out=(*it).second;
+	out->setLoop(false);
+    }
 }
 
 

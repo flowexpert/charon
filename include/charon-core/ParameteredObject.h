@@ -321,12 +321,7 @@ protected:
 	 */
 	std::set<ParameteredObject*> _getTargetNodes();
 
-	/// initialize plugin
-	/** The default implementation does nothing at all.
-	 *  Override this function implementing new modules.
-	 *  This function may be pure virtual in future releases.
-	 */
-	virtual void initialize();
+
 
 	/// execute plugin code
 	/** The default implementation does nothing at all.
@@ -404,6 +399,13 @@ public:
 	 *  flag is set already to avoid duplicate execution.
 	 */
 	virtual void run();
+
+	/// initialize plugin
+	/** The default implementation does nothing at all.
+	 *  Override this function implementing new modules.
+	 *  This function may be pure virtual in future releases.
+	 */
+	virtual void initialize();
 
         /// set property _executed
         /** \param value        New value of _executed
