@@ -201,6 +201,8 @@ private:
 	void _getConnected(std::set<std::string>& visited, const std::set<
 			std::string>& cur, const ParameterFile& pf) const;
 
+
+
 	// @}
 public:
 
@@ -225,7 +227,8 @@ public:
 	 */
 	PluginManager(
 			const std::vector<std::string>& pluginPaths,
-			bool debugSuffix = DEFAULT_DEBUG_SUFFIX
+			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
+			bool initializeOnLoad=true
 	    );
 
 	/// default constructor
@@ -242,7 +245,8 @@ public:
 	PluginManager(
 			const std::string& globalPath,
 			const std::string& localPath = "",
-			bool debugSuffix = DEFAULT_DEBUG_SUFFIX
+			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
+			bool initializeOnLoad=true
 	    );
 
 

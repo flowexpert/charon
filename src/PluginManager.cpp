@@ -32,7 +32,7 @@ std::vector<std::string> AbstractPluginLoader::pluginPaths;
 std::string AbstractPluginLoader::libSuffix;
 
 PluginManager::PluginManager(
-			const std::vector<std::string>& paths, bool dbg):
+			const std::vector<std::string>& paths, bool dbg,bool initializeOnLoad):
 		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
 {
 	if(paths.size() == 0) {
@@ -42,6 +42,7 @@ PluginManager::PluginManager(
 
 	AbstractPluginLoader::pluginPaths = paths;
 	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
+	_initializePluginOnLoad=initializeOnLoad;
 
 
 
@@ -50,7 +51,7 @@ PluginManager::PluginManager(
 
 
 PluginManager::PluginManager(
-			const std::string& path1, const std::string& path2, bool dbg) :
+			const std::string& path1, const std::string& path2, bool dbg,bool initializeOnLoad) :
 		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
 {
     std::vector<std::string> paths;
@@ -65,6 +66,7 @@ PluginManager::PluginManager(
         paths.push_back(path1);
 	AbstractPluginLoader::pluginPaths=paths;
 	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
+	_initializePluginOnLoad=initializeOnLoad;
 
 
 }
