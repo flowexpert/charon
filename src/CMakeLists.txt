@@ -18,6 +18,12 @@ ADD_LIBRARY(statementgenerator SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/StatementGenerator.h
 
 )
+ADD_LIBRARY(parametertoslot SHARED
+	ParameterToSlot.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/ParameterToSlot.h
+
+)
+
 ADD_LIBRARY(greatersmallerthenpar SHARED
 	GreaterSmallerThenPar.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.h
@@ -28,6 +34,7 @@ SET(Plugins
 	roi
 	statementgenerator
 	greatersmallerthenpar
+	parametertoslot
 )
 
 IF(USE_CIMG)
