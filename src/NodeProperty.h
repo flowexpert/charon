@@ -87,6 +87,9 @@ public:
 	/// isHover set to true when the property was hovered
 	void changeConnectionLineColor(QColor lineColor, bool isHover=true);
 
+	/// Set the color of the socket
+	void setColor(QColor socketColor);
+
 protected:
 	/// update tool tip
 	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
@@ -118,6 +121,9 @@ private:
 
 	/// get color from type
 	static QColor _getSocketColor(QString typeName);
+
+	/// Socket color
+	QColor _color;
 };
 
 #endif /* NODEPROPERTY_H_ */
