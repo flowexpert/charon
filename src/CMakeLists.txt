@@ -30,11 +30,18 @@ ADD_LIBRARY(greatersmallerthenpar SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.hxx
 
 )
+ADD_LIBRARY(printvalue SHARED
+        PrintValue.cpp
+        ${CHARON_UTILS_INCLUDE_DIR}/PrintValue.h
+
+
+)
 SET(Plugins
 	roi
 	statementgenerator
 	greatersmallerthenpar
 	parametertoslot
+        printvalue
 )
 
 IF(USE_CIMG)
