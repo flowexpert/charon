@@ -18,66 +18,72 @@ IF(BUILD_TESTING)
 	SET(testTargets)
 
 	# test petsc initialization
-	ADD_EXECUTABLE(petsc1_init petsc1_Init.cpp)
-	IF(MSVC)
-		SET_TARGET_PROPERTIES(petsc1_init
-			PROPERTIES LINK_FLAGS
-				/NODEFAULTLIB:"LIBCMT"
+	IF(USE_PETSC)
+		ADD_EXECUTABLE(petsc1_init petsc1_Init.cpp)
+		IF(MSVC)
+			SET_TARGET_PROPERTIES(petsc1_init
+				PROPERTIES LINK_FLAGS
+					/NODEFAULTLIB:"LIBCMT"
+			)
+		ENDIF(MSVC)
+		TARGET_LINK_LIBRARIES(petsc1_init ${PETSC_LIBRARIES})
+		ADD_TEST(
+			NAME PETSc1:_PetscInitialization
+			COMMAND petsc1_init
 		)
-	ENDIF(MSVC)
-	TARGET_LINK_LIBRARIES(petsc1_init ${PETSC_LIBRARIES})
-	ADD_TEST(
-		NAME PETSc1:_PetscInitialization
-		COMMAND petsc1_init
-	)
-	LIST(APPEND tests PETSc1:_PetscInitialization)
-	LIST(APPEND testTargets petsc1_init)
+		LIST(APPEND tests PETSc1:_PetscInitialization)
+		LIST(APPEND testTargets petsc1_init)
+	ENDIF(USE_PETSC)
 
 	# checking creation of petsc plugins
-	ADD_EXECUTABLE(petsc2_plugins petsc2_Plugins.cpp)
-	IF(MSVC)
-		SET_TARGET_PROPERTIES(petsc2_plugins
-			PROPERTIES LINK_FLAGS
-				/NODEFAULTLIB:"LIBCMT"
+	IF(USE_PETSC)
+		ADD_EXECUTABLE(petsc2_plugins petsc2_Plugins.cpp)
+		IF(MSVC)
+			SET_TARGET_PROPERTIES(petsc2_plugins
+				PROPERTIES LINK_FLAGS
+					/NODEFAULTLIB:"LIBCMT"
+			)
+		ENDIF(MSVC)
+		TARGET_LINK_LIBRARIES(petsc2_plugins
+			charon-core
+			${CIMG_LINK_LIBRARIES}
+			roi
+			gbcce
+			l2norm
+			brightnessmodels_constant
+			motionmodels_localconstant
+			channelconverter
+			filereader
+			filewriter
+			mask1d
+			linearfilter
+			petscsolver
 		)
-	ENDIF(MSVC)
-	TARGET_LINK_LIBRARIES(petsc2_plugins
-		charon-core
-		${CIMG_LINK_LIBRARIES}
-		roi
-		gbcce
-		l2norm
-		brightnessmodels_constant
-		motionmodels_localconstant
-		channelconverter
-		filereader
-		filewriter
-		mask1d
-		linearfilter
-		petscsolver
-	)
-	ADD_TEST(
-		NAME PETSc2:_ModuleCreation
-		COMMAND petsc2_plugins
-	)
-	LIST(APPEND tests PETSc2:_ModuleCreation)
-	LIST(APPEND testTargets petsc2_plugins)
+		ADD_TEST(
+			NAME PETSc2:_ModuleCreation
+			COMMAND petsc2_plugins
+		)
+		LIST(APPEND tests PETSc2:_ModuleCreation)
+		LIST(APPEND testTargets petsc2_plugins)
+	ENDIF(USE_PETSC)
 
 	# check loading and unloading petsc plugin
-	ADD_EXECUTABLE(petsc3_pluginLoad petsc3_PluginLoad.cpp)
-	TARGET_LINK_LIBRARIES(petsc3_pluginLoad
-		charon-core
-		charon-plugins
-		${CIMG_LINK_LIBRARIES}
-	)
-	ADD_TEST(
-		NAME PETSc3:_Load_PetscSolver_SharedLib
-		COMMAND petsc3_pluginLoad
-	)
-	LIST(APPEND tests PETSc3:_Load_PetscSolver_SharedLib)
-	LIST(APPEND testTargets petsc3_pluginLoad)
+	IF(USE_PETSC)
+		ADD_EXECUTABLE(petsc3_pluginLoad petsc3_PluginLoad.cpp)
+		TARGET_LINK_LIBRARIES(petsc3_pluginLoad
+			charon-core
+			charon-plugins
+			${CIMG_LINK_LIBRARIES}
+		)
+		ADD_TEST(
+			NAME PETSc3:_Load_PetscSolver_SharedLib
+			COMMAND petsc3_pluginLoad
+		)
+		LIST(APPEND tests PETSc3:_Load_PetscSolver_SharedLib)
+		LIST(APPEND testTargets petsc3_pluginLoad)
+	ENDIF(USE_PETSC)
 
-	IF(UNIX)
+	IF(UNIX AND USE_PETSC)
 		# check loading and unloading petsc shared library
 		# this is known to fail e.g. using the ubuntu package
 		# petsc 3.0.0.dfsg-6ubuntu1
@@ -98,7 +104,7 @@ IF(BUILD_TESTING)
 		)
 		LIST(APPEND tests PETSc4:_Load_PETSc_SharedLib)
 		LIST(APPEND testTargets petsc4_libLoad)
-	ENDIF(UNIX)
+	ENDIF(UNIX AND USE_PETSC)
 
 	# executing test workflow
 	ADD_EXECUTABLE(flow1_hsSinus flow1_HS_Sinus.cpp)
@@ -129,27 +135,29 @@ IF(BUILD_TESTING)
 	LIST(APPEND testTargets flow2_hsYosemite)
 
 	# testing Horn&Schunk without plugin usage to simplify profiling
-	ADD_EXECUTABLE(flow3_hsYosemiteNP
-		flow3_HS_Yosemite_NP.cpp
-		../src/Diff2D.cpp
-	)
-	IF(MSVC)
-		SET_TARGET_PROPERTIES(flow3_hsYosemiteNP
-			PROPERTIES LINK_FLAGS
-				/NODEFAULTLIB:"LIBCMT"
+	IF(USE_PETSC)
+		ADD_EXECUTABLE(flow3_hsYosemiteNP
+			flow3_HS_Yosemite_NP.cpp
+			../src/Diff2D.cpp
 		)
-	ENDIF(MSVC)
-	TARGET_LINK_LIBRARIES(flow3_hsYosemiteNP
-		charon-core
-		${PETSC_LIBRARIES}
-		${CIMG_LINK_LIBRARIES}
-	)
-	ADD_TEST(
-		NAME Flow3:_HornSchunck_Yosemite_NoPlugins
-		COMMAND flow3_hsYosemiteNP
-	)
-	LIST(APPEND tests Flow3:_HornSchunck_Yosemite_NoPlugins)
-	LIST(APPEND testTargets flow3_hsYosemiteNP)
+		IF(MSVC)
+			SET_TARGET_PROPERTIES(flow3_hsYosemiteNP
+				PROPERTIES LINK_FLAGS
+					/NODEFAULTLIB:"LIBCMT"
+			)
+		ENDIF(MSVC)
+		TARGET_LINK_LIBRARIES(flow3_hsYosemiteNP
+			charon-core
+			${PETSC_LIBRARIES}
+			${CIMG_LINK_LIBRARIES}
+		)
+		ADD_TEST(
+			NAME Flow3:_HornSchunck_Yosemite_NoPlugins
+			COMMAND flow3_hsYosemiteNP
+		)
+		LIST(APPEND tests Flow3:_HornSchunck_Yosemite_NoPlugins)
+		LIST(APPEND testTargets flow3_hsYosemiteNP)
+	ENDIF(USE_PETSC)
 
 	# tests for iteration plugins
 	ADD_EXECUTABLE(iterator1_simple iterator1_simple.cpp)

@@ -113,28 +113,31 @@ LIST(APPEND Plugins
 
 # Solvers
 # PetSc Solver
-INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
-ADD_LIBRARY(petscsolver SHARED
-	PetscSolver.cpp
-	${charon_INCLUDE_DIR}/Solvers/PetscSolver.h
-	${charon_INCLUDE_DIR}/Solvers/PetscSolver.hxx
-	${charon_INCLUDE_DIR}/Solver.h
-	${charon_INCLUDE_DIR}/Solver.hxx
-)
-IF (MSVC)
-	SET_TARGET_PROPERTIES(petscsolver
-		PROPERTIES LINK_FLAGS
-			/NODEFAULTLIB:"LIBCMT"
+IF(USE_PETSC)
+	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
+	ADD_LIBRARY(petscsolver SHARED
+		PetscSolver.cpp
+		${charon_INCLUDE_DIR}/Solvers/PetscSolver.h
+		${charon_INCLUDE_DIR}/Solvers/PetscSolver.hxx
+		${charon_INCLUDE_DIR}/Solver.h
+		${charon_INCLUDE_DIR}/Solver.hxx
 	)
-ENDIF()
-TARGET_LINK_LIBRARIES(petscsolver
-	${PETSC_LIBRARIES}
-	roi
-	gbcce
-)
-LIST(APPEND Plugins
-	petscsolver
-)
+	IF (MSVC)
+		SET_TARGET_PROPERTIES(petscsolver
+			PROPERTIES LINK_FLAGS
+				/NODEFAULTLIB:"LIBCMT"
+		)
+	ENDIF()
+	TARGET_LINK_LIBRARIES(petscsolver
+		${PETSC_LIBRARIES}
+		roi
+		gbcce
+	)
+	LIST(APPEND Plugins
+		petscsolver
+	)
+ENDIF(USE_PETSC)
+
 # Conjugate gradient method
 ADD_LIBRARY(cgsolverhelper SHARED
         ${charon_INCLUDE_DIR}/CGSolverHelper.h
