@@ -233,17 +233,17 @@ ENDIF (USE_MPI)
 
 # check if everything went fine
 INCLUDE(FindPackageHandleStandardArgs)
-IF(NOT PETSC_ROOT_DIR)
-	MESSAGE(SEND_ERROR
-		"PETSc has not been found. "
-		"Please set PETSC_ROOT_DIR to the directory, "
-		"where you have installed PETSc. "
-		"Set PETSC_ARCH to the name of the library folder "
-		"inside the lib directory. "
-	)
-ENDIF(NOT PETSC_ROOT_DIR)
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(petsc DEFAULT_MSG
+STRING(REPLACE ";" " " ERROR_MSG
+	"To find PETSc, set PETSC_ROOT_DIR to the directory, "
+	"where you have installed PETSc.\n"
+	"Set PETSC_ARCH to the name of the library folder "
+	"inside the lib directory.\n"
+	"Could NOT find petsc"
+)
+
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(petsc
+	${ERROR_MSG}
 	PETSC_LIBPETSC
 	PETSC_ROOT_DIR
 	PETSC_INCLUDE_DIR
@@ -270,3 +270,4 @@ MARK_AS_ADVANCED(
 	${PETSC_LIBVARS}
 )
 UNSET(PETSC_LIBVARS)
+UNSET(ERROR_MSG)

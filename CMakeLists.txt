@@ -31,13 +31,8 @@ INCLUDE(ReleaseSys)
 # Find and use PETSc
 # This is a workaround, because the Findpetsc.cmake script throws an
 # error when it doesn't find PETSc, instead of failing quietly.
-OPTION(USE_PETSC "enable plugins using PETSc" OFF)
-IF(USE_PETSC)
-	FIND_PACKAGE(petsc)
-ENDIF(USE_PETSC)
-# This is how it should look
-#FIND_PACKAGE(petsc)
-#OPTION(USE_PETSC "enable plugins using PETSc" ${petsc_FOUND})
+FIND_PACKAGE(petsc)
+OPTION(USE_PETSC "enable plugins using PETSc" ${petsc_FOUND})
 
 # Test suite
 INCLUDE(CTest)
