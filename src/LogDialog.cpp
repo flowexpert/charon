@@ -105,7 +105,11 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 		_proc->start(
 			procName, _decorator->arguments(),
 			QIODevice::ReadWrite|QIODevice::Text);
+	#ifdef Q_OS_WIN32
+		this->_ui->lProcName->setText(_ui->lProcName->text());
+	#elif Q_OS_UNIX
 		this->_ui->lProcName->setText(_ui->lProcName->text()+" PID: "+QString::number(_proc->pid()));
+	#endif
 	}
 	else {
 		// close dialog
