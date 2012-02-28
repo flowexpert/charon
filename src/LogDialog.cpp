@@ -107,7 +107,7 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 			QIODevice::ReadWrite|QIODevice::Text);
 	#ifdef Q_OS_WIN32
 		this->_ui->lProcName->setText(_ui->lProcName->text());
-	#elif Q_OS_UNIX
+	#else
 		this->_ui->lProcName->setText(_ui->lProcName->text()+" PID: "+QString::number(_proc->pid()));
 	#endif
 	}
