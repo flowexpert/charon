@@ -27,6 +27,7 @@
 #include <boost/accumulators/statistics/sum.hpp>
 #include <boost/accumulators/statistics/count.hpp>
 #include <boost/accumulators/statistics/density.hpp>
+#include <limits>
 
 #include <StatisticsDisplayWidget.hpp>
 #include "StatisticsDisplay.h"
@@ -130,7 +131,9 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("StatisticsDisplay", name,
 			"Calculates various statistical properties of input object "
 			"and exports a QWidget for display<br>"
-			"Remark: The median value is only an estimate!"),
+			"Remark: The median value is only an estimate!<br>"
+			"The values NaN and +-Infinity will be ignored for "
+			"the calculation of mean, variance, sum and median"),
 			_vigraIn(true, true),
 			_cimgIn(true, true),
 			_vigraMask(true, false),
@@ -235,16 +238,38 @@ void StatisticsDisplayPlugin<T>::execute() {
 		const Array& img = _vigraIn[ii] ;
 		
 		//create accumulators for each image, add tags as needed
+		//accumulator which can track infinities and NaN
+
+		size_t pixCount  = 0 ;
+		pixCount = img.size() ;
 		accumulator_set<double, stats<
-			tag::min, tag::max, tag::count, 
+			tag::min, tag::max, tag::count, tag::density
+		> > acc(tag::density::num_bins = _numBins(),tag::density::cache_size = pixCount) ;
+		
+		//accumulator for calculations where inf and NaN lead to errors
+		accumulator_set<double, stats<
 			tag::sum, tag::mean, tag::variance, 
-			tag::median, tag::density
-		> > acc(tag::density::num_bins = _numBins(),tag::density::cache_size = img.size());
+			tag::median
+		> > stable_acc;
 
 		//accumulate all pixel values
 		if(!_vigraMask.connected())
 		{
-				vigra::inspectMultiArray(srcMultiArrayRange(img), acc);
+				//vigra::inspectMultiArray(srcMultiArrayRange(img), acc);
+			for(int xx = 0 ; xx < img.size(0) ; xx++)
+					for(int yy = 0 ; yy < img.size(1) ; yy++)
+							for(int zz = 0 ; zz < img.size(2) ; zz++)
+									for(int tt = 0 ; tt < img.size(3) ; tt++)
+											for(int vv = 0 ; vv < img.size(4) ; vv++)
+											{
+												T val = img(xx,yy,zz,tt,vv) ;
+												acc(val) ;
+												if(val == val && 
+													val != std::numeric_limits<T>::infinity() &&
+													-val != std::numeric_limits<T>::infinity()
+												)
+													stable_acc(val) ;
+											}
 		}
 		else
 		{		//size checks
@@ -264,7 +289,16 @@ void StatisticsDisplayPlugin<T>::execute() {
 										for(int tt = 0 ; tt < mask.size(3) ; tt++)
 												for(int vv = 0 ; vv < mask.size(4) ; vv++)
 														if(mask(xx,yy,zz,tt,vv) != 0)
-																acc(img(xx,yy,zz,tt,vv)) ;
+														{
+															T val = img(xx,yy,zz,tt,vv) ;
+															acc(val) ;
+															if(val == val && 
+																val != std::numeric_limits<T>::infinity() &&
+																-val != std::numeric_limits<T>::infinity()
+															)
+																stable_acc(val) ;
+														}
+
 		}
 
 		Statistics s ;
@@ -276,13 +310,13 @@ void StatisticsDisplayPlugin<T>::execute() {
 		s.stats.insert(StatPair("dim3 : slices",img.size(3))) ;
 		s.stats.insert(StatPair("dim4 : spectrum",img.size(4))) ;
 		s.stats.insert(StatPair("number of pixels",count(acc))) ;
-		s.stats.insert(StatPair("sum",sum(acc))) ;
+		s.stats.insert(StatPair("sum",sum(stable_acc))) ;
 		s.stats.insert(StatPair("min",min(acc))) ;
 		s.stats.insert(StatPair("max",max(acc))) ;
-		s.stats.insert(StatPair("mean",mean(acc))) ;
-		s.stats.insert(StatPair("variance",variance(acc))) ;
-		s.stats.insert(StatPair("stddev",sqrt(variance(acc)))) ;
-		s.stats.insert(StatPair("median",median(acc))) ;
+		s.stats.insert(StatPair("mean",mean(stable_acc))) ;
+		s.stats.insert(StatPair("variance",variance(stable_acc))) ;
+		s.stats.insert(StatPair("stddev",sqrt(variance(stable_acc)))) ;
+		s.stats.insert(StatPair("median",median(stable_acc))) ;
 		s.origin = name ;
 
 		_statistics.push_back(s) ;
@@ -298,7 +332,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 		
 		if(_histograms.connected())
 		{
-			CImg<unsigned char> histplot = histogramPlot(density(acc), mean(acc)) ;
+			CImg<unsigned char> histplot = histogramPlot(density(acc), mean(stable_acc)) ;
 			_histograms()[0].append(histplot.get_shared_channel(0),'c') ;
 			_histograms()[1].append(histplot.get_shared_channel(1),'c') ;
 			_histograms()[2].append(histplot.get_shared_channel(2),'c') ;
@@ -326,11 +360,16 @@ void StatisticsDisplayPlugin<T>::execute() {
 		{
 			pixCount += cimg(l).size() ;
 		}
+		//accumulator which can track infinities and NaN
 		accumulator_set<double, stats<
-			tag::min, tag::max, tag::count, 
+			tag::min, tag::max, tag::count, tag::density
+		> > acc(tag::density::num_bins = _numBins(),tag::density::cache_size = pixCount) ;
+		
+		//accumulator for calculations where inf and NaN lead to errors
+		accumulator_set<double, stats<
 			tag::sum, tag::mean, tag::variance, 
-			tag::median, tag::density
-		> > acc(tag::density::num_bins = _numBins(),tag::density::cache_size = pixCount);
+			tag::median
+		> > stable_acc;
 
 		if(!_cimgMask.connected())
 		{
@@ -339,7 +378,13 @@ void StatisticsDisplayPlugin<T>::execute() {
 				const cimg_library::CImg<T>& img = cimg(l) ;
 				cimg_forXYZC(img, x,y,z,c)
 				{
-					acc(img(x,y,z,c)) ;
+					T val = img(x,y,z,c) ;
+					acc(val) ;
+					if(val == val && 
+						val != std::numeric_limits<T>::infinity() &&
+						-val != std::numeric_limits<T>::infinity()
+					)
+						stable_acc(val) ;
 				}
 			}
 		}
@@ -360,7 +405,15 @@ void StatisticsDisplayPlugin<T>::execute() {
 				cimg_forXYZC(img, x,y,z,c)
 				{
 					if(mask(l,x,y,z,c))
-						acc(img(x,y,z,c)) ;
+					{	
+						T val = img(x,y,z,c) ;
+						acc(val) ;
+						if(val == val && 
+							val != std::numeric_limits<T>::infinity() &&
+							-val != std::numeric_limits<T>::infinity()
+						)
+							stable_acc(val) ;
+					}
 				}
 			}
 		}
@@ -374,13 +427,13 @@ void StatisticsDisplayPlugin<T>::execute() {
 		s.stats.insert(StatPair("dim3 : slices",cimg(0).spectrum())) ; // <- this is no mixup, we designate dimension 5 as spectrum
 		s.stats.insert(StatPair("dim4 : spectrum",cimg.width())) ;
 		s.stats.insert(StatPair("number of pixels",count(acc))) ;
-		s.stats.insert(StatPair("sum",sum(acc))) ;
+		s.stats.insert(StatPair("sum",sum(stable_acc))) ;
 		s.stats.insert(StatPair("min",min(acc))) ;
 		s.stats.insert(StatPair("max",max(acc))) ;
-		s.stats.insert(StatPair("mean",mean(acc))) ;
-		s.stats.insert(StatPair("variance",variance(acc))) ;
-		s.stats.insert(StatPair("stddev",sqrt(variance(acc)))) ;
-		s.stats.insert(StatPair("median",median(acc))) ;
+		s.stats.insert(StatPair("mean",mean(stable_acc))) ;
+		s.stats.insert(StatPair("variance",variance(stable_acc))) ;
+		s.stats.insert(StatPair("stddev",sqrt(variance(stable_acc)))) ;
+		s.stats.insert(StatPair("median",median(stable_acc))) ;
 		s.origin = name ;
 
 		_statistics.push_back(s) ;
@@ -396,7 +449,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 	
 		if(_histograms.connected())
 		{
-			CImg<unsigned char> histplot = histogramPlot(density(acc), mean(acc)) ;
+			CImg<unsigned char> histplot = histogramPlot(density(acc), mean(stable_acc)) ;
 			_histograms()[0].append(histplot.get_shared_channel(0),'c') ;
 			_histograms()[1].append(histplot.get_shared_channel(1),'c') ;
 			_histograms()[2].append(histplot.get_shared_channel(2),'c') ;
