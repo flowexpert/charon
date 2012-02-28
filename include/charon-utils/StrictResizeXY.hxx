@@ -78,6 +78,7 @@ void StrictResizeXY<T>::execute() {
 				for(int yy = 0 ; yy < factor() ; yy++)
 					val += _in(x * factor() + xx, y * factor() + yy, z, c) ;
 			val /= (factor() * factor()) ;
+			_out(x,y,z,c) = val ;
 		}
 	}
 }
