@@ -117,22 +117,17 @@ void WeightedMedian<T>::execute() {
 		}
 
 		offset = 0;
-		if (weight_sum > 0) {
-			++offset;
-		} else {
-			--offset;
-		}
 
 		for (  itNbh =  neighborhood.begin();
 		       itNbh != neighborhood.end();
 		     ++itNbh)
 		{
-			weight_sum -= (2 * itNbh->weight) ;
 			if (weight_sum > 0) {
 				++offset;
 			} else {
 				--offset;
 			}
+			weight_sum -= (2 * itNbh->weight) ;
 		}
 
 		medianIdx = 2*r*r + 2*r + (offset/2);

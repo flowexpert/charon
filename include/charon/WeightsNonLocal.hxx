@@ -69,7 +69,8 @@ void WeightsNonLocal<T>::execute() {
 
 	cimg_library::CImgList<T>& o = out();
 	const unsigned int& r = windowRadius();
-	o = _motionUV;
+	cimg_library::CImg<T> tmp( _img[0].width(), _img[0].height(), _img[0].depth(), _img[0].spectrum() );
+	o = cimg_library::CImgList<T>( tmp );
 
 	T weight;
 	T dx, dy, dz, dxU, dyV;
