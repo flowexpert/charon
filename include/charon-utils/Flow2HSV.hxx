@@ -49,6 +49,9 @@ Flow2HSV<T>::Flow2HSV(const std::string& name) :
 	ParameteredObject::_addParameter(
 			alpha, "alpha",
 			"alpha for blending background (alpha=1), flow (alpha=0) or both (0 < alpha < 1)", "T");
+	ParameteredObject::_addParameter(
+			maxMotion, "maxMotion",
+			"if length of motion exceeds maxMotion, it will be truncated", "T");
 	ParameteredObject::_addInputSlot(
 			flow, "flow", "flow input", "CImgList<T>");
 	ParameteredObject::_addInputSlot(
@@ -62,6 +65,8 @@ template<typename T>
 void Flow2HSV<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
+
+	_maxMotion = maxMotion();
 
 	// copy input image for manipulations
 	const cimg_library::CImgList<T>& i = flow();
@@ -87,6 +92,7 @@ void Flow2HSV<T>::execute() {
 		const double u = i(0,x,y,z,t);
 		const double v = i(1,x,y,z,t);
 		double len = std::sqrt(std::pow(u,2)+std::pow(v,2));
+		len = (len < _maxMotion) ? len : _maxMotion ;
 		double phi = std::atan2(v, u);
 		interm(0,x,y,z,t) = len;
 		interm(1,x,y,z,t) = phi;
@@ -141,3 +147,4 @@ void Flow2HSV<T>::execute() {
 }
 
 #endif // FlOW_TO_HSV_HXX_
+

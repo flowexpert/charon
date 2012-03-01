@@ -65,6 +65,9 @@ public:
 	/// normalization factor (0=auto)
 	Parameter<T> normalizationFactor;
 
+	/// if motion exceeds maximum, it will be truncated
+	Parameter< T > maxMotion;
+
 	/// flow input
 	InputSlot<cimg_library::CImgList<T> > flow;
 
@@ -75,6 +78,10 @@ public:
 	/** The CImg list uses the convention [t](x,y,z,c) to be able to be
 	 *  displayed properly. */
 	OutputSlot<cimg_library::CImgList<T> > out;
+
+private:
+	T _maxMotion;
 };
 
 #endif // FlOW_TO_HSV_H_
+
