@@ -26,7 +26,6 @@
 #define TYPE EnergyNonLocal
 
 ///export symbols of parent classes/plugins must be defined
-#define energynonlocal_EXPORTS
 #define stencil_EXPORTS
 #define penaltyfunction_EXPORTS
 
