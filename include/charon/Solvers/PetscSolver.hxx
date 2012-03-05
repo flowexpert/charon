@@ -723,6 +723,7 @@ int PetscSolver<T>::petscExecute() {
 		// Prepare vector and context first
 		Vec             result;  // Vector to store the result in
 		VecScatter      scatter; // context for scattering the result
+		IS              is;      // indexing object
 
 		// Lookup iterator
 		std::map<std::string, unsigned int>::iterator lIt;
@@ -733,7 +734,8 @@ int PetscSolver<T>::petscExecute() {
 		ierr = VecCreate(PETSC_COMM_WORLD,&result);CHKERRQ(ierr);
 		ierr = VecSetSizes(result,n,n);CHKERRQ(ierr); //local vector
 		ierr = VecSetFromOptions(result);CHKERRQ(ierr);
-		ierr = VecScatterCreate(x,PETSC_NULL,result,PETSC_NULL,&scatter);
+		ierr = ISCreateStride(PETSC_COMM_SELF,n,0,1,&is); CHKERRQ(ierr);
+		ierr = VecScatterCreate(x,PETSC_NULL,result,is,&scatter);
 			CHKERRQ(ierr);
 		ierr = VecScatterBegin(scatter,x,result,INSERT_VALUES,SCATTER_FORWARD);
 			CHKERRQ(ierr);
