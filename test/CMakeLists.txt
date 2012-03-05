@@ -227,6 +227,7 @@ IF(BUILD_TESTING)
 	ADD_TEST(
 		NAME CgFlow:_HornSchunck
 		COMMAND cgflow_HS
+		CONFIGURATIONS Release
 	)
 	LIST(APPEND tests CgFlow:_HornSchunck)
 	LIST(APPEND testTargets cgflow_HS)
