@@ -90,6 +90,11 @@ LIST(APPEND Plugins
 )
 
 # Penalty Functions
+ADD_LIBRARY(penaltycombined SHARED
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyCombined.h
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyCombined.hxx
+	PenaltyCombined.cpp
+)
 ADD_LIBRARY(penaltyquadratic SHARED
 	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyQuadratic.h
 	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyQuadratic.hxx
@@ -106,6 +111,7 @@ ADD_LIBRARY(penaltylorentzian SHARED
 	PenaltyLorentzian.cpp
 )
 LIST(APPEND Plugins
+	penaltycombined
 	penaltyquadratic
 	penaltycharbonnier
 	penaltylorentzian
