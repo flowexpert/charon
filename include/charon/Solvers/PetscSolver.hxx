@@ -28,6 +28,14 @@
 #include <charon-utils/ImgTool.hxx>
 #include <sstream>
 
+#ifndef PTSC_FIX_REF
+#if (PETSC_VERSION_MAJOR==3 && PETSC_VERSION_MINOR>1)
+#define PTSC_FIX_REF(x) (&(x))
+#else
+#define PTSC_FIX_REF(x) (x)
+#endif
+#endif
+
 template <typename T>
 PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(
 	const std::string& unknown,
@@ -286,21 +294,19 @@ PetscSolver<T>::~PetscSolver() {
 		// finalize petsc
 		sout << "\tfinalizing Petsc" << std::endl;
 		PetscErrorCode ierr = PetscFinalize();
-		if (ierr)
+		if (ierr) {
 			sout << "Got petsc error code during destructor:\n"
-				<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,
-					ierr,0," ")
-				<< std::endl;
+					<< "Error Code: " << ierr << std::endl;
+		}
 
 		int initialized = 0;
 		MPI_Initialized(&initialized);
 		if (initialized) {
 			ierr = MPI_Finalize();
-			if (ierr)
+			if (ierr) {
 				sout << "Got petsc error code during destructor:\n"
-					<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,
-						0," ")
-					<< std::endl;
+					<< "Error Code: " << ierr << std::endl;
+			}
 		}
 		_initialized = false;
 	}
@@ -686,7 +692,7 @@ int PetscSolver<T>::petscExecute() {
 			PETSC_COMM_SELF, viewFileName.c_str(), &viewer); CHKERRQ(ierr);
 //	PetscViewerASCIIGetStdout(PETSC_COMM_SELF, &viewer);
 	ierr = KSPView(ksp, viewer); CHKERRQ(ierr);
-	ierr = PetscViewerDestroy(viewer); CHKERRQ(ierr);
+	ierr = PetscViewerDestroy(PTSC_FIX_REF(viewer)); CHKERRQ(ierr);
 	{
 		std::ifstream viewreader(viewFileName.c_str());
 		std::string viewline;
@@ -775,10 +781,10 @@ int PetscSolver<T>::petscExecute() {
 		delete usIt->second;
 	}
 
-	ierr = VecDestroy(x); CHKERRQ(ierr);
-	ierr = VecDestroy(b); CHKERRQ(ierr);
-	ierr = MatDestroy(A); CHKERRQ(ierr);
-	ierr = KSPDestroy(ksp); CHKERRQ(ierr);
+	ierr = VecDestroy(PTSC_FIX_REF(x)); CHKERRQ(ierr);
+	ierr = VecDestroy(PTSC_FIX_REF(b)); CHKERRQ(ierr);
+	ierr = MatDestroy(PTSC_FIX_REF(A)); CHKERRQ(ierr);
+	ierr = KSPDestroy(PTSC_FIX_REF(ksp)); CHKERRQ(ierr);
 
 	if (columns)
 		delete[] columns;
@@ -847,10 +853,10 @@ void PetscSolver<T>::execute() {
 	errorCode = petscExecute();
 	if (errorCode) {
 		std::ostringstream msg;
-		msg << __FILE__ << ":" << __LINE__ << std::endl;
-		msg << "\tPETSc error occured" << std::endl;
-		msg << "\tError code:\n\t\t" << errorCode;
-		throw std::runtime_error(msg.str().c_str());
+		msg << "\n\t" << __FILE__ << ":" << __LINE__ << std::endl;
+		msg << "\tPETSc error occured. Error code: " << errorCode << std::endl;
+		msg << "\tSee stderr for more information.";
+		ParameteredObject::raise(msg.str());
 	}
 }
 
