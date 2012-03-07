@@ -59,28 +59,19 @@ public:
 	/// select how image is scaled: 0 saturation, 1 value, 2 none
 	Parameter<unsigned int> scaleChannel;
 
-	/// alpha for blending background
-	Parameter<T> alpha;
-
 	/// normalization factor (0=auto)
 	Parameter<T> normalizationFactor;
 
-	/// if motion exceeds maximum, it will be truncated
+	/// if motion exceeds maximum, it will be truncated, zero to disable
 	Parameter< T > maxMotion;
 
 	/// flow input
 	InputSlot<cimg_library::CImgList<T> > flow;
 
-	/// background image
-	InputSlot<cimg_library::CImgList<T> > background;
-
 	/// HSV output (converted to RGB).
 	/** The CImg list uses the convention [t](x,y,z,c) to be able to be
 	 *  displayed properly. */
 	OutputSlot<cimg_library::CImgList<T> > out;
-
-private:
-	T _maxMotion;
 };
 
 #endif // FlOW_TO_HSV_H_
