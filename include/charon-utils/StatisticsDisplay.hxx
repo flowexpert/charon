@@ -88,7 +88,7 @@ cimg_library::CImg<unsigned char> histogramPlot(const histogram_type& histogram,
 	res = sprintf(maxValS, "%.1f", maxBin) ;
 	res = sprintf(minCountS, "0") ;
 	res = sprintf(maxCountS, "%.1f", maxdensity) ;
-
+	cimg::unused(res);
 
 	//combine parts
 	target.draw_rectangle(leftBorder, topBorder, leftBorder+ graphWidth + 2,

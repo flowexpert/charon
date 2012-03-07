@@ -90,7 +90,7 @@ void FileReaderHDF5<T>::execute() {
 	vigra::MultiArray<5,T>& o = out();
 
 	vigra::HDF5File file(filename().c_str(), vigra::HDF5File::Open);
-	std::string dSet = pathInFile().c_str();
+	std::string dSet = pathInFile();
 	const vigra::ArrayVector<hsize_t>& shape = file.getDatasetShape(dSet);
 	
 	if(roi.connected() && shape.size() == 5) {
