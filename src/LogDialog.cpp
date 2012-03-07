@@ -95,20 +95,21 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 		return;
 	}
 
-	_ui->lProcName->setText(
+	QString procText =
 		tr("Executable: ")
 			+QString(" <span style=\"color:blue\"><tt>%1</tt></span>")
-				.arg(QFileInfo(procName).baseName()));
+				.arg(QFileInfo(procName).baseName());
+	_ui->lProcName->setText(procText);
 
 	if(_decorator->ready(this)) {
 		// start process
 		_proc->start(
 			procName, _decorator->arguments(),
 			QIODevice::ReadWrite|QIODevice::Text);
-	#ifdef Q_OS_WIN32
-		this->_ui->lProcName->setText(_ui->lProcName->text());
-	#else
-		this->_ui->lProcName->setText(_ui->lProcName->text()+" PID: "+QString::number(_proc->pid()));
+	#ifdef Q_OS_LINUX
+		_ui->lProcName->setText(
+			QString("%1 PID: <span style=\"color:blue\"><tt>%2</tt></span>")
+				.arg(procText).arg(_proc->pid()));
 	#endif
 	}
 	else {
@@ -168,9 +169,9 @@ void LogDialog::kill(bool force) {
 	}
 }
 
-void LogDialog::on_proc_readyRead() {
+void LogDialog::on_proc_readyReadStandardOutput() {
 	if (_proc) {
-		QString origS = QString::fromLocal8Bit(_proc->readAll());
+		QString origS = QString::fromLocal8Bit(_proc->readAllStandardOutput());
 		QString formS, cur;
 		QTextStream orig(&origS,QIODevice::ReadOnly);
 		QTextStream form(&formS,QIODevice::WriteOnly);
@@ -185,6 +186,29 @@ void LogDialog::on_proc_readyRead() {
 				_curEnd->insertHtml(_decorator->finishMessage());
 				on_proc_finished(0);
 			}
+			form << cur << "<br>" << endl;
+		}
+		_curRet->insertHtml(formS);
+
+		// scroll down
+		QScrollBar* bar = _ui->logText->verticalScrollBar();
+		bar->setValue(bar->maximum());
+	}
+}
+
+void LogDialog::on_proc_readyReadStandardError() {
+	if (_proc) {
+		QString origS = QString::fromLocal8Bit(_proc->readAllStandardError());
+		QString formS, cur;
+		QTextStream orig(&origS,QIODevice::ReadOnly);
+		QTextStream form(&formS,QIODevice::WriteOnly);
+
+		forever {
+			cur = orig.readLine();
+			if (cur.isNull()) {
+				break;
+			}
+			cur = QString("<span class=\"error\">%1</span>").arg(cur);
 			form << cur << "<br>" << endl;
 		}
 		_curRet->insertHtml(formS);
