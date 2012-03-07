@@ -34,6 +34,11 @@ INCLUDE(ReleaseSys)
 FIND_PACKAGE(petsc)
 OPTION(USE_PETSC "enable plugins using PETSc" ${petsc_FOUND})
 
+# some modules in charon-flow like Qt4 support
+# like SimpleIteratorRemoteControl
+FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtCore QtGui)
+INCLUDE(${QT_USE_FILE})
+
 # Test suite
 INCLUDE(CTest)
 

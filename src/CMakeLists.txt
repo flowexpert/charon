@@ -12,6 +12,8 @@ ENDIF()
 # list of all plugins to be built
 SET(Plugins)
 
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIRS})
+
 # Stencils
 ADD_LIBRARY(gbcce SHARED
 	Gbcce.cpp
@@ -240,18 +242,44 @@ ADD_LIBRARY(iteratorhelper SHARED
 	${charon_INCLUDE_DIR}/IteratorHelper.hxx
 	IteratorHelper.cpp
 )
-ADD_LIBRARY(simpleiterator SHARED
-	${charon_INCLUDE_DIR}/SimpleIterator.h
-	${charon_INCLUDE_DIR}/SimpleIterator.hxx
-	SimpleIterator.cpp
-)
-TARGET_LINK_LIBRARIES(simpleiterator iteratorhelper)
-ADD_LIBRARY(relaxingiterator SHARED
-	${charon_INCLUDE_DIR}/RelaxingIterator.h
-	${charon_INCLUDE_DIR}/RelaxingIterator.hxx
-	RelaxingIterator.cpp
-)
-TARGET_LINK_LIBRARIES(relaxingiterator iteratorhelper gbcce)
+IF(QT4_FOUND)
+	SET(simpleiteratorremotecontrol_HEADERS_TOMOC ${charon_INCLUDE_DIR}/SimpleIteratorRemoteControl.h)
+	QT4_WRAP_CPP(simpleiteratorremotecontrol_HEADERS_MOCKED ${simpleiteratorremotecontrol_HEADERS_TOMOC})
+	ADD_LIBRARY(simpleiterator SHARED
+		${charon_INCLUDE_DIR}/SimpleIterator.h
+		${charon_INCLUDE_DIR}/SimpleIterator.hxx
+		${simpleiteratorremotecontrol_HEADERS_MOCKED}
+		SimpleIteratorRemoteControl.cpp
+		SimpleIterator.cpp
+	)
+	TARGET_LINK_LIBRARIES(simpleiterator iteratorhelper ${QT_LIBRARIES})
+ELSE(QT4_FOUND)
+	ADD_LIBRARY(simpleiterator SHARED
+		${charon_INCLUDE_DIR}/SimpleIterator.h
+		${charon_INCLUDE_DIR}/SimpleIterator.hxx
+		SimpleIterator.cpp
+	)
+	TARGET_LINK_LIBRARIES(simpleiterator iteratorhelper)
+ENDIF(QT4_FOUND)
+IF(QT4_FOUND)
+        SET(simpleiteratorremotecontrol_HEADERS_TOMOC ${charon_INCLUDE_DIR}/SimpleIteratorRemoteControl.h)
+        QT4_WRAP_CPP(simpleiteratorremotecontrol_HEADERS_MOCKED ${simpleiteratorremotecontrol_HEADERS_TOMOC})
+        ADD_LIBRARY(relaxingiterator SHARED
+                ${charon_INCLUDE_DIR}/RelaxingIterator.h
+                ${charon_INCLUDE_DIR}/RelaxingIterator.hxx
+                ${simpleiteratorremotecontrol_HEADERS_MOCKED}
+                SimpleIteratorRemoteControl.cpp
+                RelaxingIterator.cpp
+        )
+        TARGET_LINK_LIBRARIES(relaxingiterator gbcce iteratorhelper ${QT_LIBRARIES})
+ELSE(QT4_FOUND)
+        ADD_LIBRARY(relaxingiterator SHARED
+                ${charon_INCLUDE_DIR}/RelaxingIterator.h
+                ${charon_INCLUDE_DIR}/RelaxingIterator.hxx
+                RelaxingIterator.cpp
+        )
+        TARGET_LINK_LIBRARIES(relaxingiterator gbcce iteratorhelper)
+ENDIF(QT4_FOUND)
 LIST(APPEND Plugins
 	iteratorhelper
 	simpleiterator
