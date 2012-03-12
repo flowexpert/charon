@@ -22,12 +22,12 @@
 #include <iostream>
 
 #include <vigra/multi_array.hxx>
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <limits>
 #include <charon-utils/CImg.h>
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-core/ExceptionHandler.h>
 #include <charon-utils/DataManagerCImgList.hxx>
-#include <charon-utils/DataManagerVigraArray.hxx>
 
 /// sample ParameteredObject class with CImg and vigra outputs
 class Outputgen : public ParameteredObject {

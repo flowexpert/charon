@@ -24,9 +24,9 @@
 /// Class name of the plugin
 #define TYPE StatisticsDisplayPlugin
 
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/StatisticsDisplay.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>
-#include <charon-utils/DataManagerVigraArray.hxx>
 
 using namespace StatisticsDisplay;
 

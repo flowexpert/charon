@@ -21,9 +21,9 @@
 /// @date 19.01.2010
 
 #include <charon-core/ParameteredObject.hxx>
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/VigraMultiArray2CImg.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>
-#include <charon-utils/DataManagerVigraArray.hxx>
 
 /// Class name of the plugin
 #define TYPE VigraMultiArray2CImg
