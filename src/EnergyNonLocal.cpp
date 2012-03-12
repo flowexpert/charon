@@ -26,7 +26,8 @@
 #define TYPE EnergyNonLocal
 
 ///export symbols of parent classes/plugins must be defined
-#define energystencil_EXPORTS
+#define stencil_EXPORTS
+#define penaltyfunction_EXPORTS
 
 #include <charon/EnergyStencils/EnergyNonLocal.hxx>
 //#include <charon/EnergyStencil.h>

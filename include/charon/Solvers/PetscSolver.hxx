@@ -28,10 +28,18 @@
 #include <charon-utils/ImgTool.hxx>
 #include <sstream>
 
+#ifndef PTSC_FIX_REF
+#if (PETSC_VERSION_MAJOR==3 && PETSC_VERSION_MINOR>1)
+#define PTSC_FIX_REF(x) (&(x))
+#else
+#define PTSC_FIX_REF(x) (x)
+#endif
+#endif
+
 template <typename T>
 PetscSolver<T>::PetscMetaStencil::PetscMetaStencil(
 	const std::string& unknown,
-	const std::vector<Stencil<T>*>& stencils) :
+	const std::vector<Stencil::Mask<T>*>& stencils) :
 		Solver<T>::MetaStencil(unknown,stencils)
 {
 }
@@ -286,21 +294,19 @@ PetscSolver<T>::~PetscSolver() {
 		// finalize petsc
 		sout << "\tfinalizing Petsc" << std::endl;
 		PetscErrorCode ierr = PetscFinalize();
-		if (ierr)
+		if (ierr) {
 			sout << "Got petsc error code during destructor:\n"
-				<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,
-					ierr,0," ")
-				<< std::endl;
+					<< "Error Code: " << ierr << std::endl;
+		}
 
 		int initialized = 0;
 		MPI_Initialized(&initialized);
 		if (initialized) {
 			ierr = MPI_Finalize();
-			if (ierr)
+			if (ierr) {
 				sout << "Got petsc error code during destructor:\n"
-					<< PetscError(__LINE__,__FUNCT__,__FILE__,__SDIR__,ierr,
-						0," ")
-					<< std::endl;
+					<< "Error Code: " << ierr << std::endl;
+			}
 		}
 		_initialized = false;
 	}
@@ -357,9 +363,9 @@ int PetscSolver<T>::petscExecute() {
 	 */
 
 	// map mentionend above
-	std::map<std::string, std::vector<Stencil<T>*> > substencils;
+	std::map<std::string, std::vector<Stencil::Mask<T>*> > substencils;
 	// stencil iterator
-	typename std::set<AbstractSlot<Stencil<T>*>*>::const_iterator sIt;
+	typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator sIt;
 	// unknowns iterator
 	std::set<std::string>::const_iterator uIt;
 	// just need read-only access to global roi
@@ -377,37 +383,40 @@ int PetscSolver<T>::petscExecute() {
 #endif
 
 	// iterate through stencils
-	for(sIt=this->stencils.begin() ; sIt!=this->stencils.end() ; sIt++) {
+	for(sIt=Solver<T>::stencils.begin(); sIt!=Solver<T>::stencils.end(); sIt++) {
 		// *sIt (dereferencing of sIt) gives us an AbstractSlot<Stencil<T>*>*
 		// (a pointer).
-		// Then we cast it to an InputSlot<Stencil<T>*>* (still a pointer)
+		// Then we cast it to an OutputSlot<Stencil<T>*>* (still a pointer)
 		// Then we dereference that and get the InputSlot<Stencil<T>*>
 		// (reference, not a pointer).
 		// And we call that 'is' (short for InputStencil).
-		// The operator() returns the Stencil<T>* within.
-		Stencil<T>* is = (*((InputSlot<Stencil<T>*>*)*sIt))();
+		// The operator() returns the Stencil::Mask<T>* within.
+		OutputSlot<Stencil::Base<T>*>* curT =
+				dynamic_cast<OutputSlot<Stencil::Base<T>*>*>(*sIt);
+		Stencil::Base<T>* isB = curT->operator ()();
+		Stencil::Mask<T>* isM = dynamic_cast<Stencil::Mask<T>*>(isB);
 
 		//iterate through its unknowns
-		sout << "\tgot Stencil: " << is->getName() << " (lambda=";
-		sout << is->lambda() << ")" << std::endl;
-		if(is->getUnknowns().begin() == is->getUnknowns().end())
+		sout << "\tgot Stencil: " << isM->getName() << " (lambda=";
+		sout << isM->lambda() << ")" << std::endl;
+		if(isM->getUnknowns().begin() == isM->getUnknowns().end())
 			sout << "\t\twarning: no unknowns found!" << std::endl;
-		for(uIt=is->getUnknowns().begin();
-				uIt!=is->getUnknowns().end();
+		for(uIt=isM->getUnknowns().begin();
+				uIt!=isM->getUnknowns().end();
 					uIt++)
 		{
-			substencils[*uIt].push_back(is);
+			substencils[*uIt].push_back(isM);
 #ifndef NDEBUG
 			// print debug information
 			sout << "\t\tfound unknown \"" << *uIt
 				<< "\" with the following content:" << std::endl;
-			is->updateStencil(*uIt,Point4D<int>(cx,cy,cz,ct));
+			isM->updateStencil(*uIt,Point4D<int>(cx,cy,cz,ct));
 			const cimg_library::CImg<T>& dat =
-				is->get().find(*uIt)->second.data;
+				isM->get().find(*uIt)->second.data;
 			ImgTool::printInfo(sout, dat, "\t\t\t");
 			sout << "\t\tand the following pattern:" << std::endl;
 			const cimg_library::CImg<char>& pat =
-				is->get().find(*uIt)->second.pattern;
+				isM->get().find(*uIt)->second.pattern;
 			ImgTool::printInfo(sout, pat, "\t\t\t");
 #endif
 		}
@@ -421,7 +430,7 @@ int PetscSolver<T>::petscExecute() {
 	 */
 	std::map<std::string,PetscMetaStencil> MetaStencils;
 	// SubStencil Iterator
-	typename std::map<std::string, std::vector<Stencil<T>*> >::iterator ssIt;
+	typename std::map<std::string, std::vector<Stencil::Mask<T>*> >::iterator ssIt;
 	for (ssIt=substencils.begin() ; ssIt != substencils.end() ; ssIt++) {
 		typename PetscSolver<T>::PetscMetaStencil pms(ssIt->first,ssIt->second);
 		MetaStencils[ssIt->first] = pms;
@@ -685,7 +694,7 @@ int PetscSolver<T>::petscExecute() {
 			PETSC_COMM_SELF, viewFileName.c_str(), &viewer); CHKERRQ(ierr);
 //	PetscViewerASCIIGetStdout(PETSC_COMM_SELF, &viewer);
 	ierr = KSPView(ksp, viewer); CHKERRQ(ierr);
-	ierr = PetscViewerDestroy(viewer); CHKERRQ(ierr);
+	ierr = PetscViewerDestroy(PTSC_FIX_REF(viewer)); CHKERRQ(ierr);
 	{
 		std::ifstream viewreader(viewFileName.c_str());
 		std::string viewline;
@@ -716,6 +725,7 @@ int PetscSolver<T>::petscExecute() {
 		// Prepare vector and context first
 		Vec             result;  // Vector to store the result in
 		VecScatter      scatter; // context for scattering the result
+		IS              is;      // indexing object
 
 		// Lookup iterator
 		std::map<std::string, unsigned int>::iterator lIt;
@@ -726,7 +736,8 @@ int PetscSolver<T>::petscExecute() {
 		ierr = VecCreate(PETSC_COMM_WORLD,&result);CHKERRQ(ierr);
 		ierr = VecSetSizes(result,n,n);CHKERRQ(ierr); //local vector
 		ierr = VecSetFromOptions(result);CHKERRQ(ierr);
-		ierr = VecScatterCreate(x,PETSC_NULL,result,PETSC_NULL,&scatter);
+		ierr = ISCreateStride(PETSC_COMM_SELF,n,0,1,&is); CHKERRQ(ierr);
+		ierr = VecScatterCreate(x,PETSC_NULL,result,is,&scatter);
 			CHKERRQ(ierr);
 		ierr = VecScatterBegin(scatter,x,result,INSERT_VALUES,SCATTER_FORWARD);
 			CHKERRQ(ierr);
@@ -774,10 +785,10 @@ int PetscSolver<T>::petscExecute() {
 		delete usIt->second;
 	}
 
-	ierr = VecDestroy(x); CHKERRQ(ierr);
-	ierr = VecDestroy(b); CHKERRQ(ierr);
-	ierr = MatDestroy(A); CHKERRQ(ierr);
-	ierr = KSPDestroy(ksp); CHKERRQ(ierr);
+	ierr = VecDestroy(PTSC_FIX_REF(x)); CHKERRQ(ierr);
+	ierr = VecDestroy(PTSC_FIX_REF(b)); CHKERRQ(ierr);
+	ierr = MatDestroy(PTSC_FIX_REF(A)); CHKERRQ(ierr);
+	ierr = KSPDestroy(PTSC_FIX_REF(ksp)); CHKERRQ(ierr);
 
 	if (columns)
 		delete[] columns;
@@ -795,11 +806,14 @@ unsigned int PetscSolver<T>::_addCrossTerms(
 		PetscInt*& columns,
 		PetscScalar*& values) const
 {
-	typename std::set<AbstractSlot<Stencil<T>*>*>::const_iterator sIt;
+	typename std::set<AbstractSlot<Stencil::Base<T>*>*>::const_iterator sIt;
 	size_t i = 0;
 
-	for(sIt=this->stencils.begin();sIt!=this->stencils.end();sIt++) {
-		Stencil<T>* s = (*((InputSlot<Stencil<T>*>*)*sIt))();
+	for(sIt=Solver<T>::stencils.begin();sIt!=Solver<T>::stencils.end();sIt++) {
+		OutputSlot<Stencil::Base<T>*>* curS =
+				dynamic_cast<OutputSlot<Stencil::Base<T>*>*>(*sIt);
+		Stencil::Base<T>* sb = curS->operator ()();
+		Stencil::Mask<T>* s = dynamic_cast<Stencil::Mask<T>*>(sb);
 		// stencil has already been updated ealier (avoid duplicate call)
 		//s->updateStencil(unknown,p);
 		const std::set<std::string>& allUnk = s->getUnknowns();
@@ -843,10 +857,10 @@ void PetscSolver<T>::execute() {
 	errorCode = petscExecute();
 	if (errorCode) {
 		std::ostringstream msg;
-		msg << __FILE__ << ":" << __LINE__ << std::endl;
-		msg << "\tPETSc error occured" << std::endl;
-		msg << "\tError code:\n\t\t" << errorCode;
-		throw std::runtime_error(msg.str().c_str());
+		msg << "\n\t" << __FILE__ << ":" << __LINE__ << std::endl;
+		msg << "\tPETSc error occured. Error code: " << errorCode << std::endl;
+		msg << "\tSee stderr for more information.";
+		ParameteredObject::raise(msg.str());
 	}
 }
 

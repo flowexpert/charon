@@ -23,6 +23,7 @@
 
 /// Class name of the plugin
 #define TYPE EnergyCoupling
+#define stencil_EXPORTS
 #define energystencil_EXPORTS
 #include <charon/EnergyStencils/EnergyCoupling.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>

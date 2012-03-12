@@ -24,7 +24,10 @@
 
 /// Class name of the plugin
 #define TYPE EnergyBCC
-#define energystencil_EXPORTS
+
+#define stencil_EXPORTS
+#define penaltyfunction_EXPORTS
+#define energybbc_EXPORTS
 #include <charon/EnergyStencils/EnergyBCC.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>
 

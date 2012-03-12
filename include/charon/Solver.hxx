@@ -27,8 +27,9 @@
 #include "Stencil.h"
 
 template <typename T>
-Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
-									const std::vector<Stencil<T>*>& stencils) :
+Solver<T>::MetaStencil::MetaStencil(
+			const std::string& unknown,
+			const std::vector<Stencil::Mask<T>*>& stencils) :
 		left(0),		right(0),
 		up(0),			down(0),
 		backward(0),	forward(0),
@@ -39,7 +40,7 @@ Solver<T>::MetaStencil::MetaStencil(const std::string& unknown,
 	// and reposition the center of the meta stencil accordingly
 
 	// stencil iterator
-	typename std::vector<Stencil<T>*>::const_iterator sIt;
+	typename std::vector<Stencil::Mask<T>*>::const_iterator sIt;
 	for (sIt=stencils.begin() ; sIt != stencils.end() ; sIt++) {
 		// update stencil for given unknown (pattern/center may depend)
 		(*sIt)->updateStencil(unknown);

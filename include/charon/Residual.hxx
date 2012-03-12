@@ -74,7 +74,7 @@ void Residual<T>::execute() {
 //			} else {
 //				_out.atNXYZC(0, j, i, 0, 0) = EPS_INVERSE;
 //			}
-			_out.atNXYZC(0, j, i, 0, 0) = exp( -double(tmp*tmp) );
+			_out.atNXYZC(0, j, i, 0, 0) = exp( double(-(tmp*tmp)) );
 		} else {
 			_out.atNXYZC(0, j, i, 0, 0) = tmp*tmp;
 		}

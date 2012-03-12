@@ -12,6 +12,8 @@ ENDIF()
 # list of all plugins to be built
 SET(Plugins)
 
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIRS})
+
 # Stencils
 ADD_LIBRARY(gbcce SHARED
 	Gbcce.cpp
@@ -89,30 +91,61 @@ LIST(APPEND Plugins
 	energynonlocal
 )
 
-# Solvers
-# PetSc Solver
-INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
-ADD_LIBRARY(petscsolver SHARED
-	PetscSolver.cpp
-	${charon_INCLUDE_DIR}/Solvers/PetscSolver.h
-	${charon_INCLUDE_DIR}/Solvers/PetscSolver.hxx
-	${charon_INCLUDE_DIR}/Solver.h
-	${charon_INCLUDE_DIR}/Solver.hxx
+# Penalty Functions
+ADD_LIBRARY(penaltycombined SHARED
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyCombined.h
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyCombined.hxx
+	PenaltyCombined.cpp
 )
-IF (MSVC)
-	SET_TARGET_PROPERTIES(petscsolver
-		PROPERTIES LINK_FLAGS
-			/NODEFAULTLIB:"LIBCMT"
-	)
-ENDIF()
-TARGET_LINK_LIBRARIES(petscsolver
-	${PETSC_LIBRARIES}
-	roi
-	gbcce
+ADD_LIBRARY(penaltyquadratic SHARED
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyQuadratic.h
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyQuadratic.hxx
+	PenaltyQuadratic.cpp
+)
+ADD_LIBRARY(penaltycharbonnier SHARED
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyCharbonnier.h
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyCharbonnier.hxx
+	PenaltyCharbonnier.cpp
+)
+ADD_LIBRARY(penaltylorentzian SHARED
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyLorentzian.h
+	${charon_INCLUDE_DIR}/PenaltyFunctions/PenaltyLorentzian.hxx
+	PenaltyLorentzian.cpp
 )
 LIST(APPEND Plugins
-	petscsolver
+	penaltycombined
+	penaltyquadratic
+	penaltycharbonnier
+	penaltylorentzian
 )
+
+# Solvers
+# PetSc Solver
+IF(USE_PETSC)
+	INCLUDE_DIRECTORIES(BEFORE ${PETSC_INCLUDE_DIRS})
+	ADD_LIBRARY(petscsolver SHARED
+		PetscSolver.cpp
+		${charon_INCLUDE_DIR}/Solvers/PetscSolver.h
+		${charon_INCLUDE_DIR}/Solvers/PetscSolver.hxx
+		${charon_INCLUDE_DIR}/Solver.h
+		${charon_INCLUDE_DIR}/Solver.hxx
+	)
+	IF (MSVC)
+		SET_TARGET_PROPERTIES(petscsolver
+			PROPERTIES LINK_FLAGS
+				/NODEFAULTLIB:"LIBCMT"
+		)
+	ENDIF()
+	TARGET_LINK_LIBRARIES(petscsolver
+		${PETSC_LIBRARIES}
+		roi
+		gbcce
+	)
+	LIST(APPEND Plugins
+		petscsolver
+	)
+ENDIF(USE_PETSC)
+
 # Conjugate gradient method
 ADD_LIBRARY(cgsolverhelper SHARED
         ${charon_INCLUDE_DIR}/CGSolverHelper.h
@@ -125,11 +158,31 @@ ADD_LIBRARY(cgsolver SHARED
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.hxx
 )
 TARGET_LINK_LIBRARIES(cgsolver cgsolverhelper roi)
+# second order Newton method
+ADD_LIBRARY(newton2 SHARED
+	${charon_INCLUDE_DIR}/Solvers/Newton2.h
+	${charon_INCLUDE_DIR}/Solvers/Newton2.hxx
+	Newton2.cpp
+)
+TARGET_LINK_LIBRARIES(newton2 roi)
+
 # Iteratively reweighted least squares
 ADD_LIBRARY(irls SHARED
 	${charon_INCLUDE_DIR}/Irls.h
 	${charon_INCLUDE_DIR}/Irls.hxx
 	Irls.cpp
+)
+# weighted median filtering, as proposed by Li and Osher (2010, eq. 3.13)
+ADD_LIBRARY(weightedmedian SHARED
+	${charon_INCLUDE_DIR}/WeightedMedian.h
+	${charon_INCLUDE_DIR}/WeightedMedian.hxx
+	WeightedMedian.cpp
+)
+# non-local weight calculation function
+ADD_LIBRARY(weightsnonlocal SHARED
+	${charon_INCLUDE_DIR}/WeightsNonLocal.h
+	${charon_INCLUDE_DIR}/WeightsNonLocal.hxx
+	WeightsNonLocal.cpp
 )
 # residual calculation
 ADD_LIBRARY(residual SHARED
@@ -145,7 +198,10 @@ ADD_LIBRARY(irlsnonlocal SHARED
 )
 LIST(APPEND Plugins cgsolverhelper)
 LIST(APPEND Plugins cgsolver)
+LIST(APPEND Plugins newton2)
 LIST(APPEND Plugins irls)
+LIST(APPEND Plugins weightedmedian)
+LIST(APPEND Plugins weightsnonlocal)
 LIST(APPEND Plugins residual)
 LIST(APPEND Plugins irlsnonlocal)
 
@@ -186,18 +242,44 @@ ADD_LIBRARY(iteratorhelper SHARED
 	${charon_INCLUDE_DIR}/IteratorHelper.hxx
 	IteratorHelper.cpp
 )
-ADD_LIBRARY(simpleiterator SHARED
-	${charon_INCLUDE_DIR}/SimpleIterator.h
-	${charon_INCLUDE_DIR}/SimpleIterator.hxx
-	SimpleIterator.cpp
-)
-TARGET_LINK_LIBRARIES(simpleiterator iteratorhelper)
-ADD_LIBRARY(relaxingiterator SHARED
-	${charon_INCLUDE_DIR}/RelaxingIterator.h
-	${charon_INCLUDE_DIR}/RelaxingIterator.hxx
-	RelaxingIterator.cpp
-)
-TARGET_LINK_LIBRARIES(relaxingiterator iteratorhelper gbcce)
+IF(QT4_FOUND)
+	SET(simpleiteratorremotecontrol_HEADERS_TOMOC ${charon_INCLUDE_DIR}/SimpleIteratorRemoteControl.h)
+	QT4_WRAP_CPP(simpleiteratorremotecontrol_HEADERS_MOCKED ${simpleiteratorremotecontrol_HEADERS_TOMOC})
+	ADD_LIBRARY(simpleiterator SHARED
+		${charon_INCLUDE_DIR}/SimpleIterator.h
+		${charon_INCLUDE_DIR}/SimpleIterator.hxx
+		${simpleiteratorremotecontrol_HEADERS_MOCKED}
+		SimpleIteratorRemoteControl.cpp
+		SimpleIterator.cpp
+	)
+	TARGET_LINK_LIBRARIES(simpleiterator iteratorhelper ${QT_LIBRARIES})
+ELSE(QT4_FOUND)
+	ADD_LIBRARY(simpleiterator SHARED
+		${charon_INCLUDE_DIR}/SimpleIterator.h
+		${charon_INCLUDE_DIR}/SimpleIterator.hxx
+		SimpleIterator.cpp
+	)
+	TARGET_LINK_LIBRARIES(simpleiterator iteratorhelper)
+ENDIF(QT4_FOUND)
+IF(QT4_FOUND)
+        SET(simpleiteratorremotecontrol_HEADERS_TOMOC ${charon_INCLUDE_DIR}/SimpleIteratorRemoteControl.h)
+        QT4_WRAP_CPP(simpleiteratorremotecontrol_HEADERS_MOCKED ${simpleiteratorremotecontrol_HEADERS_TOMOC})
+        ADD_LIBRARY(relaxingiterator SHARED
+                ${charon_INCLUDE_DIR}/RelaxingIterator.h
+                ${charon_INCLUDE_DIR}/RelaxingIterator.hxx
+                ${simpleiteratorremotecontrol_HEADERS_MOCKED}
+                SimpleIteratorRemoteControl.cpp
+                RelaxingIterator.cpp
+        )
+        TARGET_LINK_LIBRARIES(relaxingiterator gbcce iteratorhelper ${QT_LIBRARIES})
+ELSE(QT4_FOUND)
+        ADD_LIBRARY(relaxingiterator SHARED
+                ${charon_INCLUDE_DIR}/RelaxingIterator.h
+                ${charon_INCLUDE_DIR}/RelaxingIterator.hxx
+                RelaxingIterator.cpp
+        )
+        TARGET_LINK_LIBRARIES(relaxingiterator gbcce iteratorhelper)
+ENDIF(QT4_FOUND)
 LIST(APPEND Plugins
 	iteratorhelper
 	simpleiterator

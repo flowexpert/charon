@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -35,18 +37,18 @@
 #define energybcc_DECLDIR
 #endif
 
-#include <charon/EnergyStencil.h>
-
-#include <CImg.h>
+#include <charon/Stencil.h>
+#include <charon/PenaltyFunction.h>
+#include <charon-utils/CImg.h>
 #include <vector>
 
 /// EnergyStencil for Brightness Constancy Constraint
 /** EnergyStencil for Brightness Constancy Constraint.
  *
- *  It implements the energy ( I_x * u + I_y * v + I_t )^2
+ *  It implements the energy Penalty( I_x * u + I_y * v + I_t )
  *  and its gradients wrt u/v
- *    2 * I_x * ( I_x * u + I_y * v + I_t )
- *    2 * I_y * ( I_x * u + I_y * v + I_t )
+ *    I_x * Penalty'( I_x * u + I_y * v + I_t )
+ *    I_y * Penalty'( I_x * u + I_y * v + I_t )
  *
  *  \ingroup charon-stencils
  *  \ingroup charon-modules
@@ -54,9 +56,12 @@
  */
 template <typename T>
 class energybcc_DECLDIR EnergyBCC :
-public EnergyStencil<T> {
+		public Stencil::EnergyHessian<T>
+{
 public:
-  Parameter< T > norm;
+  /// Input slot for penalty function
+  InputSlot< PenaltyFunction<T>* > penaltyFunction;
+
 	/// Input slot for image derivative wrt x
 	InputSlot< cimg_library::CImgList<T> > img_dx;  //  I_x
 	/// Input slot for image derivative wrt y
@@ -77,8 +82,11 @@ public:
 	/// stencil's energy gradient function
 	std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
 
+  /// stencil's energy Hessian function
+  std::vector<T> getEnergyHessian( int nI, int xI, int yI, int zI, int cI );
+
 	/// stencil's count of gradient components
-	int getGradientComponentsCnt();
+  int getEnergyGradientDimensions();
 
 protected:
 	/// stencil's main function
@@ -89,7 +97,7 @@ private:
 	~EnergyBCC();
 
   T _lamb;
-  T _norm;
+  PenaltyFunction<T> *_penaltyFunction;
 };
 
 #endif // _ENERGYBCC_H_

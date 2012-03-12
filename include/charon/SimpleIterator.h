@@ -40,6 +40,10 @@
 #include <charon-utils/CImg.h>
 #include <charon/IteratorHelper.h>
 
+#ifdef QT_GUI_LIB
+#include <charon/SimpleIteratorRemoteControl.h>
+#endif
+
 /// Iterate parts of the processing pipeline.
 /** This iterator executes the processing toolchain until the flow
  *  changes become small eanough or some given iteration count
@@ -56,6 +60,11 @@ template <typename T>
 class simpleiterator_DECLDIR SimpleIterator :
 		public TemplatedParameteredObject<T> {
 private:
+#ifdef QT_GUI_LIB
+	/// remote control for this iterator
+	SimpleIteratorRemoteControl *_remoteControl;
+#endif
+
 	/// Common initilization code
 	void _init();
 
@@ -86,6 +95,10 @@ protected:
 	//  \}
 
 public:
+#ifdef QT_GUI_LIB
+	/// set breakpoint on iterator
+	Parameter < bool > breakPoint;
+#endif
 	/// maximum number of iterations (0 to disable) 
 	Parameter < unsigned int > maxRuns;
 	/// flow change threshold 

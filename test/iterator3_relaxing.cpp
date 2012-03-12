@@ -88,14 +88,14 @@ int test() {
 	assert(helper);
 	std::cout << "\thelper:         " << (void*) helper << std::endl;
 
-	Stencil<double>* stencil1 = dynamic_cast<Stencil<double>*>(
+	Stencil::Base<double>* stencil1 = dynamic_cast<Stencil::Base<double>*>(
 			man.getInstance("stencil1"));
 	assert(stencil1);
 	const double li1 = stencil1->lambda();
 	std::cout << "\tstencil1:       " << (void*) stencil1
 			<< " (lambda = " << li1 << ")" << std::endl;
 
-	Stencil<double>* stencil2 = dynamic_cast<Stencil<double>*>(
+	Stencil::Base<double>* stencil2 = dynamic_cast<Stencil::Base<double>*>(
 			man.getInstance("stencil2"));
 	assert(stencil2);
 	const double li2 = stencil2->lambda();

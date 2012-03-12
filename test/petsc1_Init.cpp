@@ -22,6 +22,14 @@
 
 #include <petscksp.h>
 
+#ifndef PTSC_FIX_REF
+#if (PETSC_VERSION_MAJOR==3 && PETSC_VERSION_MINOR>1)
+#define PTSC_FIX_REF(x) (&(x))
+#else
+#define PTSC_FIX_REF(x) (x)
+#endif
+#endif
+
 /// test application
 /** This will call some petsc routines, including initialization
  *  and finalization. If there are no problems with linking and your
@@ -43,7 +51,7 @@ int main(int argc, char** argv) {
 	ierr = KSPSetFromOptions(ksp); CHKERRQ(ierr);
 
 	// cleanup
-	ierr = KSPDestroy(ksp); CHKERRQ(ierr);
+	ierr = KSPDestroy(PTSC_FIX_REF(ksp)); CHKERRQ(ierr);
 	ierr = PetscFinalize(); CHKERRQ(ierr);
 	int initialized = 0;
 	MPI_Initialized(&initialized);

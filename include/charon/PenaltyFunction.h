@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -13,62 +15,59 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file EnergyStencil.h
- *  Declaration of the parameter class EnergyStencil.
+/** @file PenaltyFunction.h
+ *  Declaration of the parameter class PenaltyFunction.
  *  @author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
  *      Michael Baron</a>
  *
- *  @date 13.10.2011
+ *  @date 25.01.2012
  */
 
-#ifndef _ENERGYSTENCIL_H_
-#define _ENERGYSTENCIL_H_
+#ifndef _PENALTYFUNCTION_H_
+#define _PENALTYFUNCTION_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef energystencil_EXPORTS
+#ifdef penaltyfunction_EXPORTS
 ///Visual C++ specific code
-#define energystencil_DECLDIR __declspec(dllexport)
+#define penaltyfunction_DECLDIR __declspec(dllexport)
 #else
-#define energystencil_DECLDIR __declspec(dllimport)
+#define penaltyfunction_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 ///Not needed with GCC
-#define energystencil_DECLDIR
+#define penaltyfunction_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.h>
 
-/// Base class for EnergyStencils
-/** An energy stencil yields the energy and its gradient according to the
-    current parameter vector within a multidimensional energy space.
+/// Base class for PenaltyFunctions
+/** A penalty function maps a difference to its residual value.
  */
 template <class T>
-class energystencil_DECLDIR EnergyStencil : public TemplatedParameteredObject<T> {
+class penaltyfunction_DECLDIR PenaltyFunction : public TemplatedParameteredObject<T> {
 public:
-	/// Lambda coefficient of the stencil.
+	/// Lambda coefficient of the penalty function.
 	Parameter<T> lambda;
 
 	/// Output slot containing the this-pointer of the object
-	OutputSlot<EnergyStencil<T>*> out;
+	OutputSlot<PenaltyFunction<T>*> out;
 
 	/// default constructor
-	EnergyStencil(const std::string& classname /**[in] class name*/,
+	PenaltyFunction(const std::string& classname /**[in] class name*/,
 	              const std::string& name /**[in] instance name*/,
 	              const std::string& doc /**[in] stencil documentation*/);
 
-	/// function yielding stencil's energy wrt the parameter vector
-	virtual T getEnergy( int n, int x, int y, int z, int c ) = 0;
+	/// function yielding penalty
+	virtual T getPenalty( T difference ) = 0;
 
-	/// function yielding stencil's energy gradient wrt the parameter vector
-	virtual std::vector<T> getEnergyGradient(
-		int n, int x, int y, int z, int c ) = 0;
+	/// function yielding penalty gradient wrt its argument
+	virtual T getPenaltyGradient( T difference ) = 0;
 
-	/// function yielding count of gradient's components
-	virtual int getGradientComponentsCnt() = 0;
+	/// function yielding penalty Hessian wrt its argument
+	virtual T getPenaltyHessian( T difference ) = 0;
 
-protected:
-	/// \implements ParameteredObject::execute()
-	virtual void execute();
+	// default destructor
+	virtual ~PenaltyFunction();
 };
 
 #endif

@@ -1,6 +1,6 @@
 PROJECT(charon C CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-SET(charon_VERSION 0.1.4)
+SET(charon_VERSION 0.1.5)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -28,16 +28,25 @@ INCLUDE(Documentation)
 # CPack descriptions for package generation
 INCLUDE(ReleaseSys)
 
-# Petsc actually required
-FIND_PACKAGE(petsc REQUIRED)
+# Find and use PETSc
+# This is a workaround, because the Findpetsc.cmake script throws an
+# error when it doesn't find PETSc, instead of failing quietly.
+FIND_PACKAGE(PETSC)
+OPTION(USE_PETSC "enable plugins using PETSc" ${PETSC_FOUND})
+
+# some modules in charon-flow like Qt4 support
+# like SimpleIteratorRemoteControl
+FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtCore QtGui)
+INCLUDE(${QT_USE_FILE})
 
 # Test suite
 INCLUDE(CTest)
 
 # Print infos about found packages
 INCLUDE(Features)
-MESSAGE(STATUS "CImg configuration:")
+MESSAGE(STATUS "Lib configuration:")
 CImgLibInfo()
+MESSAGE(STATUS "    PETSc        : ${USE_PETSC}")
 
 # Setup CMake config files for package finding
 INCLUDE(GenConfig)

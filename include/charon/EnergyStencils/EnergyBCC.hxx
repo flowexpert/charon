@@ -1,4 +1,6 @@
-/*  This file is part of Charon.
+/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+
+    This file is part of Charon.
 
     Charon is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -25,22 +27,23 @@
 
 #include "EnergyBCC.h"
 
-#include <charon/EnergyStencil.hxx>
+#include <charon/Stencil.hxx>
 
+#include <charon/PenaltyFunction.hxx>
 #include <cstdlib>
 #include <cmath>
 
 template <class T>
 EnergyBCC<T>::EnergyBCC(const std::string& name) :
-  EnergyStencil<T>(
+	Stencil::Base<T>(
 	     "EnergyBCC", name,
 	     "<h2>Implementation of the brightness constancy constraint."
 	     )
 {
-  ParameteredObject::_addParameter< T >(norm,
-                      "norm",
-                      "p",
-                      2.0, "T");
+	this->_addInputSlot(penaltyFunction,
+	                    "penaltyFunction",
+	                    "penalty function",
+	                    "PenaltyFunction<T>*");
 
         this->_addInputSlot(img_dx,
                             "img_dx",
@@ -62,66 +65,73 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 
 template <class T>
 void EnergyBCC<T>::execute() {
-	EnergyStencil<T>::execute();
+	Stencil::Base<T>::execute();
 	_lamb = this->lambda();
-	_norm = norm();
+	_penaltyFunction = penaltyFunction();
 }
 
 template <class T>
 T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
 {
-	T energy;
-        T Ix, Iy, It;
-        T u, v;
+	T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 0 );
+	T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 0 );
+	T It = img_dt().atNXYZC( 0, xI, yI, zI, 0 );
 
-        Ix = img_dx().atNXYZC( 0, xI, yI, zI, 0 );
-        Iy = img_dy().atNXYZC( 0, xI, yI, zI, 0 );
-        It = img_dt().atNXYZC( 0, xI, yI, zI, 0 );
+	T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-        u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
-        v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
-
-        energy = pow( fabs(double(It + Ix*u + Iy*v)), double(_norm) );
+	T energy = _penaltyFunction->getPenalty( It + Ix*u + Iy*v );
 
 	return T(this->_lamb * energy);
 }
 
 template <class T>
-T signum( T arg )
-{
-	return (arg < 0) ? T(-1) : T(1) ;
-}
-
-template <class T>
 std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int )
 {
+        T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 0 );
+        T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 0 );
+        T It = img_dt().atNXYZC( 0, xI, yI, zI, 0 );
+
+        T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
+        T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
+
+        T tmp = _penaltyFunction->getPenaltyGradient( It + Ix*u + Iy*v );
+	T energyGradientU = Ix * tmp;
+	T energyGradientV = Iy * tmp;
+
 	std::vector<T> ret( 2, T(0.0) );
-
-	T tmp, pixelGradientU, pixelGradientV;
-        T Ix, Iy, It;
-        T u, v;
-
-        Ix = img_dx().atNXYZC( 0, xI, yI, zI, 0 );
-        Iy = img_dy().atNXYZC( 0, xI, yI, zI, 0 );
-        It = img_dt().atNXYZC( 0, xI, yI, zI, 0 );
-
-        u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
-        v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
-
-        tmp = _norm * pow( fabs(double(It + Ix*u + Iy*v)), double(_norm-1) )
-	    * signum( It + Ix*u + Iy*v );
-
-	pixelGradientU = Ix * tmp;
-	pixelGradientV = Iy * tmp;
-
-	ret[0] = T(this->_lamb * pixelGradientU);
-	ret[1] = T(this->_lamb * pixelGradientV);
+	ret[0] = T(this->_lamb * energyGradientU);
+	ret[1] = T(this->_lamb * energyGradientV);
 
         return ret;
 }
 
 template <class T>
-int EnergyBCC<T>::getGradientComponentsCnt() { return 2; }
+std::vector<T> EnergyBCC<T>::getEnergyHessian( int, int xI, int yI, int zI, int )
+{
+	T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 0 );
+	T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 0 );
+	T It = img_dt().atNXYZC( 0, xI, yI, zI, 0 );
+
+	T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
+	T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
+
+	T tmp = _penaltyFunction->getPenaltyHessian( It + Ix*u + Iy*v );
+	T energyHessianUU = Ix * Ix * tmp;
+	T energyHessianUV = Ix * Iy * tmp;
+	T energyHessianVV = Iy * Iy * tmp;
+
+	std::vector<T> ret( 4, T(0.0) );
+	ret[0] = T(this->_lamb * energyHessianUU);
+	ret[1] = T(this->_lamb * energyHessianUV);
+	ret[2] = T(this->_lamb * energyHessianUV);
+	ret[3] = T(this->_lamb * energyHessianVV);
+
+	return ret;
+}
+
+template <class T>
+int EnergyBCC<T>::getEnergyGradientDimensions() { return 2; }
 
 template <class T>
 EnergyBCC<T>::~EnergyBCC()

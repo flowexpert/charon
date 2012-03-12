@@ -64,9 +64,9 @@ protected:
 
 public:
 	/// Stencils which weight will be decreased, starting with full weight.
-	InputSlot < Stencil<T>* > initial;
+	InputSlot < Stencil::Base<T>* > initial;
 	/// Stencils which weight will be increased, starting with zero weight.
-	InputSlot < Stencil<T>* > final;
+	InputSlot < Stencil::Base<T>* > final;
 
 	/// mixture at first iteration
 	Parameter<double> initialWeight;

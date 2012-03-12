@@ -37,6 +37,7 @@ SimpleIterator<T>::SimpleIterator(const std::string& name) :
 			"You have to activate at least one stop criterion by "
 			"setting maxRuns or epsilon to a value greater than "
 			"zero."),
+		_remoteControl(0),
 		flowInit(true,false), // optional
 		stop(true,false) // optional
 {
@@ -58,6 +59,10 @@ SimpleIterator<T>::SimpleIterator(
 
 template <typename T>
 void SimpleIterator<T>::_init() {
+#ifdef QT_GUI_LIB
+	ParameteredObject::_addParameter (breakPoint, "breakPoint",
+		"break on iterator", false);
+#endif
 	ParameteredObject::_addParameter (maxRuns, "maxRuns",
 		"maximum number of iterations (0 to disable)", 0u);
 	ParameteredObject::_addParameter (epsilon, "epsilon",
@@ -113,10 +118,24 @@ void SimpleIterator<T>::run() {
 		return;
 	}
 
+#ifdef QT_GUI_LIB
+	// add remote control to iterator
+	if (breakPoint()) {
+		_remoteControl = new SimpleIteratorRemoteControl(this->getName());
+	}
+#endif
+
 	prepareIterations();
 	iterate();
 	finishIterations();
 	assert(ParameteredObject::executed());
+
+#ifdef QT_GUI_LIB
+	if(_remoteControl) {
+		delete _remoteControl;
+		_remoteControl=0;
+	}
+#endif
 }
 
 template <typename T>
@@ -152,8 +171,32 @@ void SimpleIterator<T>::prepareIterations() {
 
 template <typename T>
 void SimpleIterator<T>::iterate() {
+#ifdef QT_GUI_LIB
+	int ret;
+#endif
 	bool cont;
 	do {
+#ifdef QT_GUI_LIB
+			if (breakPoint()) {
+				assert(_remoteControl);
+				_remoteControl->setModal(true);
+				ret = _remoteControl->exec();
+			sout << "ret = " << ret << std::endl;
+			switch (ret) {
+			case 1:    //    STEP
+				break;
+			case 2:    //    BREAK
+				return;
+				break;
+			case 3:    //    CONTINUE
+				breakPoint() = false;
+				break;
+			default:
+				breakPoint() = false;
+				break;
+			}
+		}
+#endif
 		cont = singleStep();
 		if (stop.connected()) {
 			cont = cont && !stop();
@@ -304,3 +347,4 @@ void SimpleIterator<T>::finishIterations() {
 }
 
 #endif /* _SIMPLEITERATOR_HXX_ */
+

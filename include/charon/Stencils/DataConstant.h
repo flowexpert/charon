@@ -99,7 +99,8 @@ class Function;
  *  \ingroup charon-flow
  */
 template <class T>
-class dataconstant_DECLDIR DataConstant : public Stencil<T> {
+class dataconstant_DECLDIR DataConstant :
+		public Stencil::Mask<T> {
 public:
 	/// default constructor
 	DataConstant(const std::string& name = "" /**[in] instance name*/);
@@ -124,8 +125,8 @@ public:
 	/// use linearization of second derivative
 	Parameter<bool> useDiff2Lin;
 
-	/// \copybrief Stencil::updateStencil
-	/** \copydetails Stencil::updateStencil */
+	/// \copybrief Stencil::Mask::updateStencil
+	/** \copydetails Stencil::Mask::updateStencil */
 	virtual void updateStencil(
 			const std::string& unknown,
 			const Point4D<int>& p=Point4D<int>(), const int& v=0);

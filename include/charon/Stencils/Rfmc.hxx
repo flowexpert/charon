@@ -28,7 +28,7 @@
 
 template <class T>
 Rfmc<T>::Rfmc(const std::string& name) :
-	Stencil<T>(
+	Stencil::Base<T>(
 		"Rfmc", name,
 		"Stencil modeling the range flow motion constraint equation<br>"
 	),
@@ -53,7 +53,7 @@ Rfmc<T>::Rfmc(const std::string& name) :
 
 template <class T>
 void Rfmc<T>::execute() {
-	Stencil<T>::execute();
+	Stencil::Base<T>::execute();
 
 	// set up unknowns: 3 components of the range flow vector
 	this->_unknowns.clear();

@@ -92,7 +92,7 @@ protected:
 		 */
 		MetaStencil(
 				const std::string& unknown,
-				const std::vector<Stencil<T>*>& stencils);
+				const std::vector<Stencil::Mask<T>*>& stencils);
 
 		/// copy constructor
 		MetaStencil(const MetaStencil& rhs /**< [in] copy source*/);
@@ -126,7 +126,7 @@ protected:
 
 public:
 	/// pointers, that the solver will use
-	InputSlot< Stencil<T>* > stencils;
+	InputSlot< Stencil::Base<T>* > stencils;
 
 	/// region of interes for the solver to work on
 	InputSlot< Roi<int>* > roi;

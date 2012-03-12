@@ -29,7 +29,7 @@
 #include "L2Norm.h"
 
 template <class T>
-L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
+L2Norm<T>::L2Norm(const std::string& name) : Stencil::Base<T>("L2Norm", name,
 			"Stencil modeling spatial smoothness using laplacian operator."),
 		flowGuess(true, false), // optional
 		mask(true, false)
@@ -53,7 +53,7 @@ L2Norm<T>::L2Norm(const std::string& name) : Stencil<T>("L2Norm", name,
 
 template <class T>
 void L2Norm<T>::execute() {
-	Stencil<T>::execute();
+	Stencil::Base<T>::execute();
 
 	// Copy the unknowns from the Parameter list into the set, which was
 	// inherited from the Stencil class

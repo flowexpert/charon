@@ -46,7 +46,7 @@
  *  \ingroup charon-flow
  */
 template <class T>
-class l2norm_DECLDIR L2Norm : public Stencil<T>
+class l2norm_DECLDIR L2Norm : public Stencil::Mask<T>
 {
 private:
 	/// \name precalculate substencil data

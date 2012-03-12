@@ -42,7 +42,7 @@ namespace std {
 
 template <typename T>
 SpatialPW<T>::SpatialPW(const std::string& name) :
-		Stencil<T>("SpatialPW", name,
+		Stencil::Base<T>("SpatialPW", name,
 			"Stencil modeling spatial smoothness using learned probabilities "
 			"for flow changes.") {
 	ParameteredObject::_addInputSlot(flowGuess, "flowGuess",
@@ -59,7 +59,7 @@ SpatialPW<T>::SpatialPW(const std::string& name) :
 
 template <typename T>
 void SpatialPW<T>::execute() {
-	Stencil<T>::execute();
+	Stencil::Base<T>::execute();
 
 	if(flowGuess().size() != 2) {
 		std::ostringstream msg;

@@ -24,7 +24,9 @@
 
 /// Class name of the plugin
 #define TYPE EnergyClassic
-#define energystencil_EXPORTS
+
+#define stencil_EXPORTS
+#define penaltyfunction_EXPORTS
 #include <charon/EnergyStencils/EnergyClassic.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>
 

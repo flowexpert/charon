@@ -1,12 +1,13 @@
 # - Find petsc
 #
 # Usage:
-#  FIND_PACKAGE(petsc[ REQUIRED][ QUIET])
+#  FIND_PACKAGE(PETSC [ REQUIRED][ QUIET])
 #  INCLUDE_DIRECTORIES(${PETSC_INCLUDE_DIRS})
 #  ADD_EXECUTABLE(bla main.cpp)
 #  TARGET_LINK_LIBRARIES(bla ${PETSC_LIBRARIES})
 #
 # This sets the variables:
+#  PETSC_FOUND               petsc has been found
 #  PETSC_ROOT_DIR            petsc installation directory
 #  PETSC_INCLUDE_DIRS        petsc include directories
 #  PETSC_LIBRARIES           petsc libraries
@@ -233,17 +234,17 @@ ENDIF (USE_MPI)
 
 # check if everything went fine
 INCLUDE(FindPackageHandleStandardArgs)
-IF(NOT PETSC_ROOT_DIR)
-	MESSAGE(SEND_ERROR
-		"PETSc has not been found. "
-		"Please set PETSC_ROOT_DIR to the directory, "
-		"where you have installed PETSc. "
-		"Set PETSC_ARCH to the name of the library folder "
-		"inside the lib directory. "
-	)
-ENDIF(NOT PETSC_ROOT_DIR)
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(petsc DEFAULT_MSG
+STRING(REPLACE ";" " " ERROR_MSG
+	"To find PETSc, set PETSC_ROOT_DIR to the directory, "
+	"where you have installed PETSc.\n"
+	"Set PETSC_ARCH to the name of the library folder "
+	"inside the lib directory.\n"
+	"Could NOT find petsc"
+)
+
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(PETSC
+	${ERROR_MSG}
 	PETSC_LIBPETSC
 	PETSC_ROOT_DIR
 	PETSC_INCLUDE_DIR
@@ -270,3 +271,4 @@ MARK_AS_ADVANCED(
 	${PETSC_LIBVARS}
 )
 UNSET(PETSC_LIBVARS)
+UNSET(ERROR_MSG)
