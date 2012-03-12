@@ -61,7 +61,7 @@ std::string StringTool::toLowerCase(std::string s) {
 std::string StringTool::combine(std::vector<std::string> strings, char delim)
 {
     std::string res="";
-    for(int i=0;i<strings.size();i++)
+	for(size_t i=0;i<strings.size();i++)
     {
         res+=strings[i];
         if(i<strings.size()-1)

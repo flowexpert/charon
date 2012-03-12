@@ -84,7 +84,7 @@ public:
 	/// Default destructor
 	virtual ~PluginManagerInterface() {
 	}
-	const bool initializePluginOnLoad() const
+	bool initializePluginOnLoad() const
 	{
 	    return _initializePluginOnLoad;
 	}

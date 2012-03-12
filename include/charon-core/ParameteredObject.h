@@ -407,12 +407,12 @@ public:
 	 */
 	virtual void initialize();
 
-        /// set property _executed
-        /** \param value        New value of _executed
-         */
-        void setExecuted(bool value) {
-                _executed = value;
-        }
+	/// set property _executed
+	/** \param value        New value of _executed
+	 */
+	void setExecuted(bool value) {
+		_executed = value;
+	}
 
 	/// get execution status
 	bool executed() const {

@@ -226,14 +226,12 @@ std::size_t InputSlot<T>::size() const {
 }
 
 template <typename T>
-const T& InputSlot<T>::_getDataFromOutputSlot(
-			const Slot* slot) const
-{
-    const OutputSlotIntf* outsl=dynamic_cast<const OutputSlotIntf*>(slot);
-    if(!outsl)
-	Slot::raise("Invalid slot for data retrieval!!");
-    _getDataFromOutputSlot(outsl);
-
+const T& InputSlot<T>::_getDataFromOutputSlot(const Slot* slot) const {
+	const OutputSlotIntf* outsl=dynamic_cast<const OutputSlotIntf*>(slot);
+	if(!outsl) {
+		Slot::raise("Invalid slot for data retrieval!!");
+	}
+	return _getDataFromOutputSlot(outsl);
 }
 
 template <typename T>
@@ -252,10 +250,10 @@ const T& InputSlot<T>::_getDataFromOutputSlot(
 	switch (scType) {
 	case Slot::CACHE_MEM:
 	{
-	    const OutputSlot<T>* outsl=dynamic_cast<const OutputSlot<T>*>(source);
-	    if (!outsl) {
-		    Slot::raise("input connection data type mismatch (dynamic cast)");
-	    }
+		const OutputSlot<T>* outsl=dynamic_cast<const OutputSlot<T>*>(source);
+		if (!outsl) {
+			Slot::raise("input connection data type mismatch (dynamic cast)");
+		}
 		return outsl->operator()();
 	}
 	case Slot::CACHE_MANAGED: {
@@ -294,7 +292,7 @@ void InputSlot<T>::prepare() {
 
 		const Slot::CacheType scType = source->getCacheType();
 		if (scType == Slot::CACHE_MANAGED) {
-		    const Slot* sl=dynamic_cast<const Slot*>(slot);
+			const Slot* sl=dynamic_cast<const Slot*>(slot);
 			const std::string& config = source->getConfig();
 			Slot::DataManager<T>* manager =
 				Slot::DataManagerFactory<T>::getManager(*sl, config);
@@ -456,10 +454,7 @@ void OutputSlot<T>::finalize() {
 	}
 }
 
-
-
 // ==============================   data managers   ==========================
-
 template <typename T>
 Slot::DataManager<T>* Slot::DataManagerFactory<T>::getManager(
 		const Slot&, const std::string&) {

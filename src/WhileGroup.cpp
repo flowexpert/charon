@@ -26,13 +26,12 @@
 #include "../include/charon-core/WhileGroup.h"
 
 WhileGroup::WhileGroup(const std::string& name) :
-                ParameteredGroupObject(
+		ParameteredGroupObject(
 			"WhileGroup", name,
 			"<h2>Executes the group as long as a given statement is "
 			"true</h2><br>"
 			"Executes the group as long as a given statement is true"
 		),statement(true,false)
-
 {
     _addInputSlot(statement,"Statement","Statement for this whilegroup","bool");
    // statement=true;
@@ -42,16 +41,15 @@ void WhileGroup::executeGroup() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-
 	_innerWhilestatement=true;
-	if(statement.connected())
-	    _innerWhilestatement=_innerWhilestatement&&statement();
-	while(_innerWhilestatement)
-        {
-            _pluginMan->executeWorkflow();
-	    enableLoopConnections();
-            _pluginMan->resetExecuted();
-        }
+	if(statement.connected()) {
+		_innerWhilestatement=_innerWhilestatement&&statement();
+	}
+	while(_innerWhilestatement) {
+		_pluginMan->runWorkflow();
+		enableLoopConnections();
+		_pluginMan->resetExecuted();
+	}
 	disableLoopConnections();
 }
 
@@ -76,27 +74,24 @@ extern "C" whilegroup_DECLDIR ParameteredObject::build_type getBuildType() {
 }
 
 WhileGroupStatement::WhileGroupStatement(bool * pstatement)
-    :ParameteredObject("WhileGroupStatement","WhileGroupStatement","Statement used in a Whilegroup")
+	:ParameteredObject(
+			"WhileGroupStatement","WhileGroupStatement",
+			"Statement used in a Whilegroup")
 {
-    _whilestatement=pstatement;
-    _addInputSlot(statement,"Statement","Statement for this whilegroup","bool");
+	_whilestatement=pstatement;
+	_addInputSlot(statement,"Statement","Statement for this whilegroup","bool");
 }
 
-void WhileGroupStatement::execute()
-{
-    PARAMETEREDOBJECT_AVOID_REEXECUTION;
-    ParameteredObject::execute();
-    (*_whilestatement)=statement();
+void WhileGroupStatement::execute() {
+	(*_whilestatement)=statement();
 }
 
-void WhileGroup::initializeGroup()
-{
-    WhileGroupStatement* st=new WhileGroupStatement(&_innerWhilestatement);
-    st->initialize();
-    _pluginMan->insertInstance(st);
-    initializeWhileGroup();
+void WhileGroup::initializeGroup() {
+	WhileGroupStatement* st=new WhileGroupStatement(&_innerWhilestatement);
+	st->initialize();
+	_pluginMan->insertInstance(st);
+	initializeWhileGroup();
 }
 
-void WhileGroup::initializeWhileGroup()
-{
+void WhileGroup::initializeWhileGroup() {
 }

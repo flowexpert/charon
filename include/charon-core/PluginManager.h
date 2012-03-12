@@ -200,15 +200,9 @@ private:
 	/// @param pf           ParameterFile to read connections from.
 	void _getConnected(std::set<std::string>& visited, const std::set<
 			std::string>& cur, const ParameterFile& pf) const;
-
-
-
 	// @}
+
 public:
-
-
-
-
 	/// default lib suffix
 #ifdef NDEBUG
 	#define DEFAULT_DEBUG_SUFFIX false
@@ -229,7 +223,7 @@ public:
 			const std::vector<std::string>& pluginPaths,
 			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
 			bool initializeOnLoad=true
-	    );
+	);
 
 	/// default constructor
 	/**
@@ -247,9 +241,7 @@ public:
 			const std::string& localPath = "",
 			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
 			bool initializeOnLoad=true
-	    );
-
-
+	);
 
 	/**
 	 * Loads a plugin stored in the previously declared folder.
@@ -380,7 +372,7 @@ public:
 	 * @param pf ParameterFile to load from
 	 * @return Map linking the instance names to the created instances
 	 */
-	void loadParameterFile(const ParameterFile & pf);
+	void loadParameterFile(const ParameterFile& pf);
 
 	/**
 	 * Same method, but loads a ParameterFile from the given path.
@@ -388,7 +380,7 @@ public:
 	 * @param path Path to the parameter file
 	 * @return Map linking the instance names to the created instances
 	 */
-	void loadParameterFile(const std::string & path);
+	void loadParameterFile(const std::string& path);
 
 	/**
 	 * Save content of all currently loaded instances to the given
@@ -412,7 +404,6 @@ public:
 	 * are created using this template type. Initially, the value is set to
 	 * ParameteredObject::TYPE_DOUBLE.
 	 *
-	 *
 	 * @param t New default template type
 	 *          - ParameteredObject::TYPE_DOUBLE for a double type
 	 *          - ParameteredObject::TYPE_FLOAT for a float type
@@ -432,17 +423,21 @@ public:
 	 */
 	template_type getDefaultTemplateType() const;
 
-	/**
-	 * Calls run() on every target point.
-	 *
-	 * @see addTargetPoint(ParameteredObject *)
+	/// run whole workflow
+	/** Calls run() on every target point.
+	 *  @see addTargetPoint(ParameteredObject *)
 	 */
-	void executeWorkflow();
+	void runWorkflow();
 
-	/// Calls executeGroup() .
-	virtual void execute();
+	/// Calls executeGroup()
+	virtual void execute() {
+		runWorkflow();
+	}
 
-
+	/// deprectated, use runWorkflow instead
+	charon_DEPRECATED void executeWorkflow() {
+		runWorkflow();
+	}
 
 	/// Resets this PluginManager instance to its initial state.
 	/** Unloads all plugins, resets defaultTemplateType parameter
@@ -450,18 +445,9 @@ public:
 	 */
 	virtual void reset();
 
-        /// Set the executed flags of the objects to false.
-        /** This function leaves the objects otherwise untouched
-          */
-        void resetExecuted();
-
-
-
-
-	/// for compatibility, use execute instead
-	charon_DEPRECATED void runWorkflow() {
-		executeWorkflow();
-	}
+	/// Set the executed flags of the objects to false.
+	/** This function leaves the objects otherwise untouched */
+	void resetExecuted();
 
 	/**
 	 * Iterates through the plugins available inside the plugin path and
@@ -471,9 +457,6 @@ public:
 	 *                   plugin path if empty.
 	 */
 	void createMetadata(const std::string & targetPath = "");
-
-
-
 
 	/**
 	 * Deletes all existing instances of any loaded plugin and then unloads all
@@ -569,7 +552,6 @@ public:
 	 *  \retval true        operation successful
 	 */
 	bool disconnect(const std::string& slot1, const std::string& slot2);
-
 	// \}
 
 	/// Determine execution order

@@ -26,7 +26,7 @@
 #include "../include/charon-core/PluginManager.h"
 #include "../include/charon-core/ParameteredObject.hxx"
 #include "../include/charon-core/ParameteredGroupObject.h"
-#include <strstream>
+#include <sstream>
 
 std::vector<std::string> AbstractPluginLoader::pluginPaths;
 std::string AbstractPluginLoader::libSuffix;
@@ -357,7 +357,7 @@ void PluginManager::setDefaultTemplateType(const template_type t) {
 	}
 }
 
-void PluginManager::executeWorkflow() {
+void PluginManager::runWorkflow() {
 	std::list<ParameteredObject*> tPoints = _determineTargetPoints();
 	std::list<ParameteredObject*>::const_iterator iter;
 
@@ -740,10 +740,6 @@ std::list<ParameteredObject*> PluginManager::determineExecutionOrder() {
 
 PluginManager::~PluginManager() {
 	reset();
-}
-
-void PluginManager::execute() {
-	this->executeWorkflow();
 }
 
 const std::vector<std::string>& PluginManager::getPluginPaths() const {
