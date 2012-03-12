@@ -86,6 +86,7 @@ void SimpleIterator<T>::_init() {
 			std::string(),std::string(),std::string()));
 	_addFunction(SimpleIterator<T>::singleStep);
 	_addFunction(SimpleIterator<T>::finalize);
+	_addFunction(SimpleIterator<T>::finishIterations);
 }
 
 template <typename T>
