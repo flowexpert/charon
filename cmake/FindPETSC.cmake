@@ -1,12 +1,13 @@
 # - Find petsc
 #
 # Usage:
-#  FIND_PACKAGE(petsc[ REQUIRED][ QUIET])
+#  FIND_PACKAGE(PETSC [ REQUIRED][ QUIET])
 #  INCLUDE_DIRECTORIES(${PETSC_INCLUDE_DIRS})
 #  ADD_EXECUTABLE(bla main.cpp)
 #  TARGET_LINK_LIBRARIES(bla ${PETSC_LIBRARIES})
 #
 # This sets the variables:
+#  PETSC_FOUND               petsc has been found
 #  PETSC_ROOT_DIR            petsc installation directory
 #  PETSC_INCLUDE_DIRS        petsc include directories
 #  PETSC_LIBRARIES           petsc libraries
@@ -242,7 +243,7 @@ STRING(REPLACE ";" " " ERROR_MSG
 	"Could NOT find petsc"
 )
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(petsc
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(PETSC
 	${ERROR_MSG}
 	PETSC_LIBPETSC
 	PETSC_ROOT_DIR

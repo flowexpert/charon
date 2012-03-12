@@ -31,8 +31,8 @@ INCLUDE(ReleaseSys)
 # Find and use PETSc
 # This is a workaround, because the Findpetsc.cmake script throws an
 # error when it doesn't find PETSc, instead of failing quietly.
-FIND_PACKAGE(petsc)
-OPTION(USE_PETSC "enable plugins using PETSc" ${petsc_FOUND})
+FIND_PACKAGE(PETSC)
+OPTION(USE_PETSC "enable plugins using PETSc" ${PETSC_FOUND})
 
 # some modules in charon-flow like Qt4 support
 # like SimpleIteratorRemoteControl
@@ -44,8 +44,9 @@ INCLUDE(CTest)
 
 # Print infos about found packages
 INCLUDE(Features)
-MESSAGE(STATUS "CImg configuration:")
+MESSAGE(STATUS "Lib configuration:")
 CImgLibInfo()
+MESSAGE(STATUS "    PETSc        : ${USE_PETSC}")
 
 # Setup CMake config files for package finding
 INCLUDE(GenConfig)
