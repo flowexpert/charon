@@ -96,8 +96,10 @@ public slots:
 	void kill(bool force=false);
 
 private slots:
-	/// update content by querying process
-	void on_proc_readyRead();
+	/// update content by querying process (stdout)
+	void on_proc_readyReadStandardOutput();
+	/// update content by querying process (stderr)
+	void on_proc_readyReadStandardError();
 	/// setup abort button and show progress bar
 	void on_proc_started();
 	/// setup close button and hide progress bar
