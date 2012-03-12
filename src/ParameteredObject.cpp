@@ -216,16 +216,32 @@ void ParameteredObject::run() {
 	_executed = true;
 }
 
-void ParameteredObject::runPreceeding() {
+void ParameteredObject::runPreceeding() const {
 	// collect preceeding objects
 	std::set<ParameteredObject*> targetObjects;
-	for (std::map<std::string, Slot*>::iterator it = _inputs.begin(); it
-			!= _inputs.end(); it++) {
+	std::map<std::string, Slot*>::const_iterator it;
+	for (it = _inputs.begin(); it != _inputs.end(); it++) {
 		const std::set<Slot*>& ts = it->second->getTargets();
 		std::set<Slot*>::const_iterator ti = ts.begin();
 		for (; ti!=ts.end();ti++) {
 			targetObjects.insert(&(*ti)->getParent());
 		}
+	}
+
+	// run all preceeding objects
+	std::set<ParameteredObject*>::iterator curObj = targetObjects.begin();
+	for (; curObj != targetObjects.end(); curObj++) {
+		(*curObj)->run();
+	}
+}
+
+void ParameteredObject::runPreceeding(const Slot& slot) const {
+	// collect preceeding objects
+	std::set<ParameteredObject*> targetObjects;
+	const std::set<Slot*>& ts = slot.getTargets();
+	std::set<Slot*>::const_iterator ti = ts.begin();
+	for (; ti!=ts.end();ti++) {
+		targetObjects.insert(&(*ti)->getParent());
 	}
 
 	// run all preceeding objects

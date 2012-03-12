@@ -306,7 +306,13 @@ protected:
 	virtual void execute();
 
 	/// run all preceeding objects
-	void runPreceeding();
+	void runPreceeding() const;
+
+	/// run all preceeding objects connected to
+	/// a particular slot
+	/** \param slot   select slot where preceeding
+	 *                objects should be run */
+	void runPreceeding(const Slot& slot) const;
 
 public:
 	/// The template type of the instance is double
