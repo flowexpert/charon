@@ -60,6 +60,8 @@ Resize<T>::Resize(const std::string& name) :
 	this->_addParameter(
 			preBlurFactor, "preBlurFactor",
 			"control blur strength on image size reduction", 0.4f);
+	this->_addParameter(
+			scaling, "scaling", "controls scaling", 1.0f);
 }
 
 template <typename T>
@@ -109,11 +111,18 @@ void Resize<T>::execute() {
 
 	out() = in();
 	const int m = method();
+	const float _scaling = scaling();
 	cimglist_for(out(),k) {
 		if (blur_x) out()[k].deriche(sig_x, 0, 'x');
 		if (blur_y) out()[k].deriche(sig_y, 0, 'y');
 		if (blur_z) out()[k].deriche(sig_z, 0, 'z');
 		out()[k].resize(size_x, size_y, size_z, size_t, m);
+
+		// rescale
+		cimg_forXYZC( out()[k], x, y, z, t )
+		{
+			out()[k]( x, y, z, t ) = _scaling * out()[k]( x, y, z, t );
+		}
 	}
 }
 #endif // _RESIZE_HXX_

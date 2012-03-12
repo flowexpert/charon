@@ -37,8 +37,7 @@
 template<typename T>
 Flow2HSV<T>::Flow2HSV(const std::string& name) :
 		TemplatedParameteredObject<T>("Flow2HSV", name,
-				"Convert Flow into HSV Color Representation"),
-				background(true, false)
+				"Convert Flow into HSV Color Representation")
 {
 	ParameteredObject::_addParameter(
 			scaleChannel, "scaleChannel",
@@ -47,12 +46,11 @@ Flow2HSV<T>::Flow2HSV(const std::string& name) :
 			normalizationFactor, "normalizationFactor",
 			"normalization factor (0=auto)", "T");
 	ParameteredObject::_addParameter(
-			alpha, "alpha",
-			"alpha for blending background (alpha=1), flow (alpha=0) or both (0 < alpha < 1)", "T");
+			maxMotion, "maxMotion",
+			"If length of motion exceeds maxMotion, "
+			"it will be truncated. Use zero to disable this.", "T");
 	ParameteredObject::_addInputSlot(
 			flow, "flow", "flow input", "CImgList<T>");
-	ParameteredObject::_addInputSlot(
-			background, "background", "background", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 			out, "out", "hsv representation output [t](x,y,z,c)",
 			"CImgList<T>");
@@ -60,6 +58,8 @@ Flow2HSV<T>::Flow2HSV(const std::string& name) :
 
 template<typename T>
 void Flow2HSV<T>::execute() {
+	const T& maxMot = maxMotion();
+
 	// copy input image for manipulations
 	const cimg_library::CImgList<T>& i = flow();
 	cimg_library::CImgList<T>& o = out();
@@ -84,6 +84,10 @@ void Flow2HSV<T>::execute() {
 		const double u = i(0,x,y,z,t);
 		const double v = i(1,x,y,z,t);
 		double len = std::sqrt(std::pow(u,2)+std::pow(v,2));
+		// truncate lenght if maxMotion set
+		if (maxMot > 0) {
+			len = (len < maxMot) ? len : maxMot;
+		}
 		double phi = std::atan2(v, u);
 		interm(0,x,y,z,t) = len;
 		interm(1,x,y,z,t) = phi;
@@ -95,10 +99,6 @@ void Flow2HSV<T>::execute() {
 	if(normalizationFactor() > 0)
 		maxLen = normalizationFactor();
 	interm[0] /= maxLen;
-	// This was included in argos code
-	// (perhaps to avoid lenght of exaclty zero)
-	//interm[0] += 0.05;
-	//interm[0] /= 1.05;
 
 	// phi is now in (-pi;pi], should be [0;360]
 	interm[1] += M_PI;
@@ -125,16 +125,7 @@ void Flow2HSV<T>::execute() {
 	cimglist_for(o,kk) {
 		o.at(kk).HSVtoRGB();
 	}
-
-	if (background.connected())
-	cimg_forXYZC(i[0],x,y,z,t) {
-		o(t,x,y,z,0) *= (1-alpha());
-		o(t,x,y,z,1) *= (1-alpha());
-		o(t,x,y,z,2) *= (1-alpha());
-		o(t,x,y,z,0) += (background()(0,x,y,z,0)*alpha());
-		o(t,x,y,z,1) += (background()(0,x,y,z,0)*alpha());
-		o(t,x,y,z,2) += (background()(0,x,y,z,0)*alpha());
-	}
 }
 
 #endif // FlOW_TO_HSV_HXX_
+

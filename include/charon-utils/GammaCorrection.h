@@ -51,7 +51,7 @@ public:
 	/// output image
 	OutputSlot < cimg_library::CImgList<T> > _output;
 
-	/// Parameters
+	/// gamma (set to 1 for passthrough)
 	Parameter < double > _gamma;
 	/// the color value range of the input
 	/** When set to zero, this will be set to the maximum of the input image */

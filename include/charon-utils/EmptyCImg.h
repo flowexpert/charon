@@ -63,6 +63,9 @@ public:
 	/// Parameters
 	Parameter < int > _sizeT;
 
+	/// fill in value
+	Parameter < T > _value ;
+
 	/// create a new EmptyCImg object
 	/// \param name          Instance name
 	EmptyCImg(const std::string& name);

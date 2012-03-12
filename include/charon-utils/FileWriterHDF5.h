@@ -79,6 +79,24 @@ public:
 protected:
 	/// Update object.
 	virtual void execute();
+
+	/// write routine called in execute()
+	/** This is provided separatly to be used e.g. from outside.
+	 *  The new dataset is appended or replaced (if existing).
+	 *  Note that replacing an existing dataset does not free the allocated
+	 *  memory. Use h5repack to save disk space (also supports compression).
+	 *  \param data                   data to write
+	 *  \param filename               name of hdf5 file
+	 *  \param dsetName               name of dataset in the file
+	 *  \param noSingletonDimensions  skip empty dimension
+	 *  \param comment                dataset comment attribute string
+	 */
+	static void writeToFile(
+		const vigra::MultiArrayView<5,T>& data,
+		const std::string& filename,
+		const std::string& dsetName,
+		const bool& noSingletonDimensions = false,
+		const std::string& comment = "");
 };
 
 #endif /* _FILEWRITER_HDF5_H_ */

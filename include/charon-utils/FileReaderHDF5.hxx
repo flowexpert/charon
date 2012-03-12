@@ -29,44 +29,40 @@
 #include <vigra/hdf5impex.hxx>
 
 template<typename T, int N>
-vigra::MultiArray<5,T> readNDimHDF5(
+vigra::MultiArray<5,T> charon_core_LOCAL readNDimHDF5(
 	vigra::HDF5File& file,
 	const vigra::ArrayVector<hsize_t>& shape,
-	const std::string& pathInFile) {
-
-	vigra::MultiArray<N,T> tmp ;
+	const std::string& pathInFile)
+{
+	vigra::MultiArray<N,T> tmp;
 	//temporary shape
 	typename vigra::MultiArrayShape<N>::type tShape;
 	//result shape
 	typename vigra::MultiArrayShape<5>::type rShape;
 	
-	sout << "\tData set has shape " ;
-	for(unsigned int ii= 0 ; ii < N ; ii++)
-	{	
-		sout << shape[ii] << " x " ;
-		rShape[ii] = tShape[ii] = shape[ii] ;
+	sout << "\tData set has shape ";
+	for(unsigned int ii= 0 ; ii < N ; ii++) {
+		sout << shape[ii] << " x ";
+		rShape[ii] = tShape[ii] = shape[ii];
 	}
-	sout << std::endl ;
-	for(unsigned int ii= N  ; ii < 5 ; ii++)
-	{	rShape[ii] = 1 ;	}
+	sout << std::endl;
+	for(unsigned int ii= N  ; ii < 5 ; ii++) {
+		rShape[ii] = 1;
+	}
 	tmp.reshape(tShape) ;
 	file.read(pathInFile,tmp) ;
-	return vigra::MultiArray<5,T>(rShape,tmp.data()) ;
-	
+	return vigra::MultiArray<5,T>(rShape,tmp.data());
 }
-
 
 template<typename T>
 FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
-			TemplatedParameteredObject<T>("FileReaderHDF5", name,
-					"Read data from a HDF5 file into a 5D vigra multiarray"
-					"<br>Data with more than 5 dimensions is not supported."
-					"<br>Loading a Region-of-interest(ROI) is only supported "
-					" for Datasets which are 5D"
-					"<br> ROIs for Datasets with lower dimensionality will be "
-					"ignored and loading will be slower."
-					),
-			roi(true,false) // optional
+		TemplatedParameteredObject<T>("FileReaderHDF5", name,
+				"Read data from a HDF5 file into a 5D vigra multiarray"
+				"<br>Data with more than 5 dimensions is not supported."
+				"<br>Loading a Region-of-interest(ROI) is only supported "
+				"for Datasets which are 5D"
+				),
+		roi(true,false) // optional
 {
 	ParameteredObject::_addParameter(
 			filename, "filename",
@@ -83,19 +79,27 @@ FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
 }
 
 template<typename T>
-void FileReaderHDF5<T>::execute() {
-	vigra::MultiArray<5,T>& o = out();
-
-	vigra::HDF5File file(filename().c_str(), vigra::HDF5File::Open);
-	std::string dSet = pathInFile().c_str();
+void FileReaderHDF5<T>::readHdf5(
+		vigra::MultiArray<5,T> dst,
+		const std::string& filename,
+		const std::string& dSet,
+		const Roi<int>* roi)
+{
+	vigra::HDF5File file(filename, vigra::HDF5File::Open);
 	const vigra::ArrayVector<hsize_t>& shape = file.getDatasetShape(dSet);
-	
-	if(roi.connected() && shape.size() == 5) {
-		sout << "\tData set has shape " << shape[0] << "x" << shape[1] << "x"
-				<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;
+	vigra_precondition(shape.size() > 0, "data set empty!");
+	sout << "\tData set has shape " << shape[0];
+	for (size_t ii=1; ii < shape.size(); ii++) {
+		sout << "x" << shape[ii];
+	}
+	sout << " (" << shape.size() << " dimensions)" << std::endl;
+
+	if(roi) {
+		vigra_precondition(shape.size() == 5,
+				"Block read for data sets with dim!=5 not supported!");
 
 		// partial read of dataset
-		const Roi<int>& r = *roi();
+		const Roi<int>& r = *roi;
 		vigra_precondition(
 				r.xBegin >= 0 && r.yBegin >= 0 && r.zBegin >= 0 &&
 				r.tBegin >= 0 && r.vBegin >= 0, "offset has to be positive!");
@@ -107,31 +111,43 @@ void FileReaderHDF5<T>::execute() {
 				r.zEnd>r.zBegin?r.getDepth():shape[2u]-r.zBegin,
 				r.tEnd>r.tBegin?r.getDuration():shape[3u]-r.tBegin,
 				r.vEnd>r.vBegin?r.getChannels():shape[4u]-r.vBegin);
-		o.reshape(blockShape);
-		file.readBlock(dSet,blockOffset,blockShape,o);
+		dst.reshape(blockShape);
+		file.readBlock(dSet,blockOffset,blockShape,dst);
 	}
 	else {
-		if(shape.size() == 0 || shape.size() > 5)
-			sout << "Dataset is empty or shapesize is not supported!" ;
-		else if(shape.size() == 1)
-			o = readNDimHDF5<T,1>(file,shape,dSet) ;
-		else if(shape.size() == 2)
-			o = readNDimHDF5<T,2>(file,shape,dSet) ;
-		else if(shape.size() == 3)
-			o = readNDimHDF5<T,3>(file,shape,dSet) ;
-		else if(shape.size() == 4)
-			o = readNDimHDF5<T,4>(file,shape,dSet) ;
-		else if(shape.size() == 5)
-		{
-			typename vigra::MultiArrayShape<5>::type rShape;
-			for(unsigned int ii= 0 ; ii < 5 ; ii++)
-			{	
-				rShape[ii] = shape[ii] ;
+		vigra_precondition(shape.size() <= 5,
+				"Dataset is not supported (dim > 5)!");
+		switch(shape.size()) {
+		case 1:
+			dst = readNDimHDF5<T,1>(file,shape,dSet);
+			break;
+		case 2:
+			dst = readNDimHDF5<T,2>(file,shape,dSet);
+			break;
+		case 3:
+			dst = readNDimHDF5<T,3>(file,shape,dSet);
+			break;
+		case 4:
+			dst = readNDimHDF5<T,4>(file,shape,dSet);
+			break;
+		default: // 5
+			{
+				typename vigra::MultiArrayShape<5>::type rShape;
+				for(unsigned int ii= 0 ; ii < 5 ; ii++)
+				{
+					rShape[ii] = shape[ii];
+				}
+				dst.reshape(rShape);
+				file.read(dSet,dst);
+				break;
 			}
-			o.reshape(rShape) ;
-			file.read(dSet,o) ;
 		}
 	}
+}
+
+template<typename T>
+void FileReaderHDF5<T>::execute() {
+	readHdf5(out(),filename(),pathInFile(),(roi.connected()?roi():0));
 }
 
 #endif /* _FILEWRITERHDF5_HXX_ */

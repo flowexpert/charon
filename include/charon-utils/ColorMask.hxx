@@ -37,7 +37,7 @@ ColorMask<T>::ColorMask(const std::string& name) :
 {
 	ParameteredObject::_addParameter<std::string>(
 				colorMask, "colorMask", "color mask selection",
-				"BR","{BR;Rainbow}");
+				"RB","{RB;Rainbow}");
 	ParameteredObject::_addParameter(
 			fullVal, "fullVal", "values with abs larger than fullVal are "
 			"assigned to red/blue (0=auto)", "T");

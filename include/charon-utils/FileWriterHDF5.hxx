@@ -65,7 +65,7 @@ FileWriterHDF5<T>::FileWriterHDF5(const std::string& name) :
 }
 
 template<typename T, int N>
-void writeHdf5NoSingletons(
+void charon_core_LOCAL writeHdf5NoSingletons(
 		const std::vector<vigra::MultiArrayIndex>& tShape,
 		vigra::HDF5File& file,
 		const std::string& pathInFile, T* data) {
@@ -84,14 +84,17 @@ void writeHdf5NoSingletons(
 }
 
 template<typename T>
-void FileWriterHDF5<T>::execute() {
-	vigra::MultiArrayShape<5>::type shape = in().shape();
-	sout << "\tInput data has shape " << shape[0] << "x" << shape[1] << "x"
-			<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;
+void FileWriterHDF5<T>::writeToFile (
+			const vigra::MultiArrayView<5,T>& data,
+			const std::string& filename,
+			const std::string& dsetName,
+			const bool& noSingletonDimensions,
+			const std::string& comment)
+{
+	vigra::HDF5File file(filename, vigra::HDF5File::Open);
+	vigra::MultiArrayShape<5>::type shape = data.shape();
 
-	vigra::HDF5File file(filename().c_str(),vigra::HDF5File::Open);
-
-	if(noSingletonDimensions()) {
+	if(noSingletonDimensions) {
 		std::vector<vigra::MultiArrayIndex> tShape;
 		for(vigra::MultiArrayIndex ii=0; ii<5; ii++) {
 			if(shape[ii]>1) {
@@ -103,19 +106,19 @@ void FileWriterHDF5<T>::execute() {
 		switch(curDim) {
 		case 5:
 			sout << "\tNo truncating needed!" << std::endl;
-			file.write(pathInFile().c_str(), in());
+			file.write(dsetName, data);
 			break;
 		case 4:
-			writeHdf5NoSingletons<T,4>(tShape,file,pathInFile(),in().data());
+			writeHdf5NoSingletons<T,4>(tShape,file,dsetName,data.data());
 			break;
 		case 3:
-			writeHdf5NoSingletons<T,3>(tShape,file,pathInFile(),in().data());
+			writeHdf5NoSingletons<T,3>(tShape,file,dsetName,data.data());
 			break;
 		case 2:
-			writeHdf5NoSingletons<T,2>(tShape,file,pathInFile(),in().data());
+			writeHdf5NoSingletons<T,2>(tShape,file,dsetName,data.data());
 			break;
 		case 1:
-			writeHdf5NoSingletons<T,1>(tShape,file,pathInFile(),in().data());
+			writeHdf5NoSingletons<T,1>(tShape,file,dsetName,data.data());
 			break;
 		default:
 			sout << "output with zero dims not possible." << std::endl;
@@ -123,16 +126,25 @@ void FileWriterHDF5<T>::execute() {
 		}
 	}
 	else {
-		file.write(pathInFile().c_str(), in());
+		file.write(dsetName, data);
 	}
-	if (!comment().empty()) {
+	if (!comment.empty()) {
 #if (VIGRA_VERSION_MAJOR == 1) && (VIGRA_VERSION_MINOR < 8)
 		// set attribute method renamed from vigra 1.7.1 -> 1.8.0
-		file.setAttribute(pathInFile(),"comment",comment().c_str());
+		file.setAttribute(dsetName,"comment",comment);
 #else
-		file.writeAttribute(pathInFile(),"comment",comment().c_str());
+		file.writeAttribute(dsetName,"comment",comment);
 #endif // vigra < 1.8.0
 	}
+}
+
+template<typename T>
+void FileWriterHDF5<T>::execute() {
+	vigra::MultiArrayShape<5>::type shape = in().shape();
+	sout << "\tInput data has shape " << shape[0] << "x" << shape[1] << "x"
+			<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;
+
+	writeToFile(in(),filename(),pathInFile(),noSingletonDimensions(),comment());
 }
 
 #endif /* _FILEWRITERHDF5_HXX_ */

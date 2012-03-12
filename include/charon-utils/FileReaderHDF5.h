@@ -42,7 +42,10 @@
 #include <charon-utils/Roi.h>
 
 /// Read 5D vigra::MultiArray from a HDF5 file
-/**
+/** Read data from a HDF5 file into a 5D vigra multiarray.
+ *  Data with more than 5 dimensions is not supported.
+ *  Loading a Region-of-interest(ROI) is only supported
+ *  for Datasets which are 5D.
  *  \ingroup charon-modules
  *  \ingroup charon-utils
  *  \ingroup data-io
@@ -69,6 +72,22 @@ public:
 protected:
 	/// Update object.
 	virtual void execute();
+
+	/// read routine called in execute()
+	/** This is provided separatly to be used e.g. from outside.
+	 *  Data with more than 5 dimensions is not supported.
+	 *  Loading a Region-of-interest(ROI) is only supported
+	 *  for Datasets which are 5D.
+	 *  \param dst           destination multiarray
+	 *  \param filename      name of hdf5 file
+	 *  \param dsetName      name of dataset in the file
+	 *  \param roi           region-of-interest for block-read (5D only!)
+	 */
+	static void readHdf5(
+			vigra::MultiArray<5,T> dst,
+			const std::string& filename,
+			const std::string& dsetName,
+			const Roi<int>* roi = 0);
 };
 
 #endif /* _FILEWRITER_HDF5_H_ */

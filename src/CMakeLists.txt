@@ -117,6 +117,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/MedianFilter.h
 		${CHARON_UTILS_INCLUDE_DIR}/MedianFilter.hxx
 	)
+	ADD_LIBRARY(layeredmedianfilter SHARED
+		LayeredMedianFilter.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/LayeredMedianFilter.h
+		${CHARON_UTILS_INCLUDE_DIR}/LayeredMedianFilter.hxx
+	)
 	ADD_LIBRARY(rgb2hsv SHARED
 		Rgb2Hsv.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Rgb2Hsv.h
@@ -126,6 +131,11 @@ IF(USE_CIMG)
 		Flow2HSV.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Flow2HSV.h
 		${CHARON_UTILS_INCLUDE_DIR}/Flow2HSV.hxx
+	)
+	ADD_LIBRARY(endpointerror SHARED
+		EndpointError.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/EndpointError.h
+		${CHARON_UTILS_INCLUDE_DIR}/EndpointError.hxx
 	)
 	ADD_LIBRARY(colormask SHARED
 		ColorMask.cpp
@@ -213,6 +223,32 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/BinOperatorCImg.h
 		${CHARON_UTILS_INCLUDE_DIR}/BinOperatorCImg.hxx
 	)
+	ADD_LIBRARY(maskedblur SHARED
+		MaskedBlur.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/MaskedBlur.h
+		${CHARON_UTILS_INCLUDE_DIR}/MaskedBlur.hxx
+	)
+	ADD_LIBRARY(erodedilate SHARED
+		ErodeDilate.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/ErodeDilate.h
+		${CHARON_UTILS_INCLUDE_DIR}/ErodeDilate.hxx
+	)
+	ADD_LIBRARY(strictresizexy SHARED
+		StrictResizeXY.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/StrictResizeXY.h
+		${CHARON_UTILS_INCLUDE_DIR}/StrictResizeXY.hxx
+	)
+	
+	ADD_LIBRARY(size SHARED
+		Size.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Size.h
+		${CHARON_UTILS_INCLUDE_DIR}/Size.hxx
+	)
+	ADD_LIBRARY(fitsizes SHARED
+		FitSizes.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.h
+		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.hxx
+	)
 	
 	SET(Plugins_CImg
 		channelconverter
@@ -228,8 +264,10 @@ IF(USE_CIMG)
 		interpolatorlinear
 		normalize
 		medianfilter
+		layeredmedianfilter
 		rgb2hsv
 		flow2hsv
+		endpointerror
 		colormask
 		overlay
 		flowquiver
@@ -247,6 +285,11 @@ IF(USE_CIMG)
 		gammacorrection
 		amplitudethreshold
 		binoperatorcimg
+		maskedblur
+		erodedilate
+		strictresizexy
+		size
+		fitsizes
 	)
 
 	LIST(APPEND Plugins
