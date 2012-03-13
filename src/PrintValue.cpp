@@ -31,27 +31,22 @@ PrintValue::PrintValue(const std::string& name) :
 			"<h2>Prints a value to stdout</h2><br>Prints a value to stdout"
 		)
 {
-
 	ParameteredObject::_addInputSlot(
 		value, "value",
 		"value",
 		"double");
-
 }
 
 void PrintValue::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
-        sout<<"######################################################"<<std::endl;
-        sout<<getClassName()<<" "<<getName()<<": "<<value<<std::endl;
-        sout<<"######################################################"<<std::endl;
+	sout<<"######################################################"<<std::endl;
+	sout<<getClassName()<<" "<<getName()<<": "<<value<<std::endl;
+	sout<<"######################################################"<<std::endl;
 }
 
 // the following functions are needed
 // for class PrintValue to work as a charon plugin.
-extern "C" printvalue_DECLDIR ParameteredObject*
-		create(const std::string& name, template_type) {
+extern "C" printvalue_DECLDIR ParameteredObject* create(
+		const std::string& name, ParameteredObject::template_type) {
 	return new PrintValue(name);
 }
 
