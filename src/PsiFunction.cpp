@@ -57,7 +57,7 @@ double PsiFunction::diff2Linearized(
 }
 
 extern "C" psifunction_DECLDIR ParameteredObject* create(
-		const std::string& name, template_type /*t*/) {
+		const std::string& name, ParameteredObject::template_type /*t*/) {
 	return new PsiFunction(name);
 }
 
