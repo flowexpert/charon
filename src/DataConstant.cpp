@@ -27,8 +27,8 @@
 #include <charon/Stencils/DataConstant.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>
 
-extern "C" dataconstant_DECLDIR ParameteredObject*
-		create(const std::string &name, template_type t) {
+extern "C" dataconstant_DECLDIR ParameteredObject* create(
+		const std::string &name, ParameteredObject::template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);

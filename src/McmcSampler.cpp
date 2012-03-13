@@ -54,7 +54,7 @@ const std::vector<double>& McmcSampler::sample() {
 }
 
 extern "C" mcmcsampler_DECLDIR ParameteredObject* create(
-		const std::string& name, template_type /*t*/) {
+		const std::string& name, ParameteredObject::template_type /*t*/) {
 	return new McmcSampler(name);
 }
 
