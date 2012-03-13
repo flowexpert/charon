@@ -279,6 +279,10 @@ void ParameteredObject::_commitSlots() {
 }
 
 void ParameteredObject::resetExecuted(bool propagate) {
+	if (_executed) {
+		sout << "(II) resetting execution state of " << getClassName()
+			 << " \"" << getName() << "\"" << std::endl;
+	}
 	_executed = false;
 	if (propagate) {
 		for (std::map<std::string, Slot*>::iterator it = _outputs.begin();
