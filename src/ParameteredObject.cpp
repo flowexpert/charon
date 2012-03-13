@@ -442,12 +442,22 @@ void ParameteredObject::_load(const ParameterFile& pf,
 bool ParameteredObject::connected() const {
 	std::map<std::string, Slot*>::const_iterator slotIter;
 	bool res = true;
-	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++)
-		res = res && (slotIter->second->getOptional()
-				|| slotIter->second->connected());
-	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
-		res = res && (slotIter->second->getOptional()
-				|| slotIter->second->connected());
+	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++) {
+		const Slot* cur = slotIter->second;
+		if (!cur->getOptional() && !cur->connected()) {
+			sout << "(WW) unconnected: " << cur->getParent().getName()
+					<< "." << cur->getName() << std::endl;
+			res = false;
+		}
+	}
+	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++) {
+		const Slot* cur = slotIter->second;
+		if (!cur->getOptional() && !cur->connected()) {
+			sout << "(WW) unconnected: " << cur->getParent().getName()
+					<< "." << cur->getName() << std::endl;
+			res = false;
+		}
+	}
 	return res;
 }
 

@@ -144,12 +144,12 @@ public:
 	virtual std::set<Slot*> getTargets() const = 0;
 
 	/// Check if slot is connected.
-	bool connected();
+	bool connected() const;
 
 	/// Check if slot is connected to given slot.
 	/// \param target           Target slot to check.
 	/// \retval true            Given slots are connected.
-	bool connected(Slot& target);
+	bool connected(Slot& target) const;
 
 	/// Connect with given slot.
 	/** \param target           Target slot to connect to.

@@ -59,11 +59,11 @@ bool Slot::getOptional() const {
 	return _optional;
 }
 
-bool Slot::connected() {
+bool Slot::connected() const {
 	return (getTargets().size() > 0);
 }
 
-bool Slot::connected(Slot& target) {
+bool Slot::connected(Slot& target) const {
 	std::set<Slot *> targets = getTargets();
 	return (targets.find(&target) != targets.end());
 }
