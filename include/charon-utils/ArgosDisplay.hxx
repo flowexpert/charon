@@ -250,6 +250,12 @@ bool VigraPixelInspector<T>::isRGB() const {
 }
 
 template <typename T>
+bool VigraPixelInspector<T>::isEmpty() const {
+	return _mArray.size() <= 0 ;
+}
+
+
+template <typename T>
 CImgPixelInspector<T>::CImgPixelInspector (
 		const cimg_library::CImgList<T>& mArray,
 		const std::string& name) :
@@ -344,5 +350,12 @@ bool CImgPixelInspector<T>::isRGB() const
 {
 	return _mArray.width() >= 3 ;
 }
+
+template <typename T>
+bool CImgPixelInspector<T>::isEmpty() const
+{
+	return _mArray.size() <= 0 || _mArray[0].size() <= 0 ;
+}
+
 
 #endif /* _ARGOSDISPLAY_HXX_ */

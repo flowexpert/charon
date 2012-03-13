@@ -114,6 +114,9 @@ namespace ArgosDisplay
 		/// is last dimension at least of size 3
 		virtual bool isRGB() const = 0;
 		
+		/// is any image dimension zero
+		virtual bool isEmpty() const = 0 ;
+
 		/// name of parent plugin instance
 		const std::string name ;
 	} ;
@@ -137,6 +140,7 @@ namespace ArgosDisplay
 		virtual const vigra::QRGBImage getRGBImage() const;
 		virtual const vigra::FImage getFImage() const;
 		virtual bool isRGB() const ;
+		virtual bool isEmpty() const  ;
 
 	private:
 		/// data store
@@ -161,6 +165,7 @@ namespace ArgosDisplay
 		virtual const vigra::QRGBImage getRGBImage() const;
 		virtual const vigra::FImage getFImage() const;
 		virtual bool isRGB() const ;
+		virtual bool isEmpty() const ;
 
 	private:
 		/// data store

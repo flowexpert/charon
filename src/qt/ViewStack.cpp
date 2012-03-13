@@ -139,7 +139,13 @@ void ViewStack::_linkImages()
 		{
 			QImageViewer* viewer = new QImageViewer(0) ;
 			_tabWidget->addTab(viewer, QString::fromStdString(_inspectors[ii]->name)) ;
-			viewer->setImage(_inspectors[ii]->getRGBImage().qImage()) ;
+			if(!_inspectors[ii]->isEmpty())
+			{	try{
+					viewer->setImage(_inspectors[ii]->getRGBImage().qImage()) ;
+				}
+				catch(std::exception&)
+				{	;/*occurs if image has size zero*/	}
+			}
 			connect(
 					viewer, SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int))) ;
@@ -148,7 +154,13 @@ void ViewStack::_linkImages()
 		{
 			FImageViewer* viewer = new FImageViewer(0) ;
 			_tabWidget->addTab(viewer, QString::fromStdString(_inspectors[ii]->name)) ;
-			viewer->setImage(_inspectors[ii]->getFImage()) ;
+			if(!_inspectors[ii]->isEmpty())
+			{	try{
+					viewer->setImage(_inspectors[ii]->getFImage()) ;
+				}
+				catch(std::exception&)
+				{	;/*occurs if image has size zero*/	}
+			}
 			connect(
 					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int)));
