@@ -486,14 +486,13 @@ public:
 	 */
 	void raise(const std::string& message) const ;
 
-	charon_DEPRECATED
 	AbstractParameter & getParameter(const std::string & name) const;
 
 	static void setCreateMetadata(bool c);
 	static bool getCreateMetadata();
 
 	template <typename T>
-	charon_DEPRECATED void setParameter(std::string name, T value);
+	void setParameter(std::string name, T value);
 	//  \}
 };
 
