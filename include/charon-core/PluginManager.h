@@ -125,21 +125,16 @@
  */
 class PluginManager: public PluginManagerInterface {
 private:
-	/**
-	 * Saves the currently loaded plugins
-	 */
+	/// currently loaded plugins
 	std::map<std::string, PLUGIN_LOADER*> _loadedPlugins;
 
-	/**
-	 * Links the instances to their PluginLoader, so the PluginManager can
-	 * determine of which type the instance is
+	/// Link the instances to their PluginLoader
+	/** so the PluginManager can determine of which type the instance is
 	 */
 	std::map<ParameteredObject*, PLUGIN_LOADER*> _instances;
 
-	/**
-	 * Saves the current default template type.
-	 */
-	template_type _defaultTemplateType;
+	/// current default template type.
+	ParameteredObject::template_type _defaultTemplateType;
 
 	/**
 	 * Deletes all instances of a loaded plugin.
@@ -309,8 +304,10 @@ public:
 	 * @param instanceName Name of the instance
 	 * @return Pointer to a new instance
 	 */
-	ParameteredObject* createInstance(std::string pluginName,
-			const template_type t, const std::string& instanceName = "")
+	ParameteredObject* createInstance(
+		std::string pluginName,
+		ParameteredObject::template_type t,
+		const std::string& instanceName = "")
 			throw (AbstractPluginLoader::PluginException);
 
 	/**
@@ -394,7 +391,7 @@ public:
 	 *          - ParameteredObject::TYPE_FLOAT for a float type
 	 *          - ParameteredObject::TYPE_INT for an integer type
 	 */
-	void setDefaultTemplateType(const template_type t);
+	void setDefaultTemplateType(ParameteredObject::template_type t);
 
 	/**
 	 * Returns the current default template type property. Initially, it is set
@@ -406,7 +403,7 @@ public:
 	 *          - ParameteredObject::TYPE_FLOAT for a float type
 	 *          - ParameteredObject::TYPE_INT for an integer type
 	 */
-	template_type getDefaultTemplateType() const;
+	ParameteredObject::template_type getDefaultTemplateType() const;
 
 	/**
 	 * Calls run() on every target point.

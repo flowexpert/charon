@@ -162,8 +162,8 @@ ParameteredObject * PluginManager::getInstance(
 	}
 }
 
-ParameteredObject * PluginManager::createInstance(
-		std::string pluginName, const template_type t,
+ParameteredObject* PluginManager::createInstance(
+		std::string pluginName, ParameteredObject::template_type t,
 		const std::string& instanceName)
 		throw (AbstractPluginLoader::PluginException) {
 	pluginName = StringTool::toLowerCase(pluginName);
@@ -176,8 +176,8 @@ ParameteredObject * PluginManager::createInstance(
 			}
 		}
 		PLUGIN_LOADER * loader = _loadedPlugins[pluginName];
-		ParameteredObject * newInstance = loader->createInstance(instanceName,
-				t);
+		ParameteredObject * newInstance =
+				loader->createInstance(instanceName, t);
 		_instances[newInstance] = loader;
 		objects[newInstance->getName()] = newInstance;
 		sout << "(II) Created Instance \"" << newInstance->getName()
@@ -249,7 +249,8 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 				std::string instanceName = keys[i].substr(0,
 						keys[i].find_first_of("."));
 
-				template_type templateType = _defaultTemplateType;
+				ParameteredObject::template_type templateType =
+						_defaultTemplateType;
 				if (paramFile.isSet(instanceName + ".templatetype")) {
 					std::string type = paramFile.get<std::string> (
 						instanceName + ".templatetype");
@@ -312,11 +313,11 @@ void PluginManager::saveParameterFile(const std::string & path) const {
 	pf.save(path);
 }
 
-template_type PluginManager::getDefaultTemplateType() const {
+ParameteredObject::template_type PluginManager::getDefaultTemplateType() const {
 	return _defaultTemplateType;
 }
 
-void PluginManager::setDefaultTemplateType(const template_type t) {
+void PluginManager::setDefaultTemplateType(ParameteredObject::template_type t) {
 	if (t < 3) {
 		_defaultTemplateType = t;
 	}

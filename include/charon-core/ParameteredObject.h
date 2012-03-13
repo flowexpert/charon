@@ -45,13 +45,9 @@
 #include "Slots.h"
 #include "DllEx.h"
 
-/// Integer which represents a template type.
-typedef unsigned short int template_type;
-
 class PluginManagerInterface;
 template<typename T>
 class TemplatedParameteredObject;
-
 
 /// Base class for serializable objects
 /** This is the base class for objects that should be able to save and
@@ -70,10 +66,6 @@ class charon_core_DLL_PUBLIC ParameteredObject {
 	friend class PluginManager;
 	template<typename T>
 	friend class TemplatedParameteredObject;
-
-public:
-	/// defined build type, see static members for options
-	typedef unsigned short int build_type ;
 
 private:
 	/// Count number of parametered objects with different class names.
@@ -315,29 +307,21 @@ protected:
 	void runPreceeding(const Slot& slot) const;
 
 public:
-	/// The template type of the instance is double
-	static const template_type TYPE_DOUBLE = 0;
+	/// Integer which represents a template type.
+	enum template_type {
+		TYPE_DOUBLE = 0, ///< The template type of the instance is double
+		TYPE_FLOAT = 1,  ///< The template type of the instance is float
+		TYPE_INT = 2     ///< The template type of the instance is integer
+	};
 
-	/// The template type of the instance is float
-	static const template_type TYPE_FLOAT = 1;
-
-	/// The template type of the instance is integer
-	static const template_type TYPE_INT = 2;
-
-	/// The build type was not defined explicitly,
-	/// make no assumptions about the release/debug configuration
-	static const build_type UNDEFINED_BUILD = 0 ;
-
-	/// the object was compiled in debug mode
-	static const build_type DEBUG_BUILD = 1 ;
-
-	/// the object was compiled in release mode
-	static const build_type RELEASE_BUILD = 2 ;
-
-	// get the build type of this object
-	/* \returns            build_type defaults to UNDEFINED_BUILD
-	 */
-	//virtual build_type getBuildType() const ;
+	/// defined build type, see static members for options
+	enum build_type {
+		/// The build type was not defined explicitly,
+		/// make no assumptions about the release/debug configuration
+		UNDEFINED_BUILD = 0,
+		DEBUG_BUILD = 1,     ///< the object was compiled in debug mode
+		RELEASE_BUILD = 2    ///< the object was compiled in release mode
+	};
 
 	/// Converts template_type to std::string
 	/** \param t            template type to convert
@@ -382,9 +366,13 @@ public:
 	 *  Per default, all depending objects are resetted too, but setting
 	 *  the propagate parameter to false, only the object itself will
 	 *  be resetted.
+	 *
+	 *  This function is virtual to be able to react to the reset signal.
+	 *  Make sure you call this base function on overriding resetExecuted.
+	 *
 	 *  \param propagate    reset dependent objects too
 	 */
-	void resetExecuted(bool propagate = true);
+	virtual void resetExecuted(bool propagate = true);
 
 	/// Class name getter.
 	inline const std::string& getClassName() const {
@@ -489,7 +477,6 @@ public:
 	 */
 	virtual bool connected() const;
 
-	
 	/// throw an exception with information about the ParameteredObject
 	/** Throws an excption of class std::runtime_error with 
 	 *  additional information about the class type, template type 
@@ -499,7 +486,7 @@ public:
 	 */
 	void raise(const std::string& message) const ;
 
-
+	charon_DEPRECATED
 	AbstractParameter & getParameter(const std::string & name) const;
 
 	static void setCreateMetadata(bool c);
@@ -509,6 +496,9 @@ public:
 	charon_DEPRECATED void setParameter(std::string name, T value);
 	//  \}
 };
+
+/// for transition to ParameteredObject::template_type
+charon_DEPRECATED typedef ParameteredObject::template_type template_type;
 
 /// Base class for templated classes derived from ParameteredObject.
 /** Implements the method getTemplateType, so it does not have to be

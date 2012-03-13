@@ -46,7 +46,8 @@ protected:
 	/**
 	 * Function pointer to the constructor of the plugin
 	 */
-	ParameteredObject* (*create)(const std::string &, template_type);
+	ParameteredObject* (*create)(
+		const std::string&, ParameteredObject::template_type);
 
 	/**
 	 * Function pointer to the destructor of the plugin
@@ -209,8 +210,8 @@ public:
 	 * @throws AbstractPluginLoader::PluginException
 	 */
 	virtual ParameteredObject * createInstance(const std::string & name,
-			template_type t = ParameteredObject::TYPE_DOUBLE)
-			throw (PluginException);
+		ParameteredObject::template_type t = ParameteredObject::TYPE_DOUBLE)
+		throw (PluginException);
 
 	/**
 	 * Deletes an instance of the loaded plugin.
@@ -219,7 +220,8 @@ public:
 	 * @param p Pointer to the instance that will be deleted
 	 * @throws AbstractPluginLoader::PluginException
 	 */
-	virtual void destroyInstance(ParameteredObject * p) throw (PluginException);
+	virtual void destroyInstance(ParameteredObject * p)
+		throw (PluginException);
 
 	/**
 	 * Default Destructor.

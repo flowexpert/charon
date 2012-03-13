@@ -586,13 +586,6 @@ std::string ParameteredObject::templateTypeToString(template_type t) {
 	case ParameteredObject::TYPE_INT:
 		return "int";
 	default:
-		return ParameteredObject::TYPE_DOUBLE;
+		return "double";
 	}
 }
-
-/*
-ParameteredObject::build_type ParameteredObject::getBuildType() const
-{
-	return ParameteredObject::UNDEFINED_BUILD ;
-}
-*/
