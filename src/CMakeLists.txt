@@ -416,11 +416,24 @@ IF(USE_VIGRA)
 		ADD_SUBDIRECTORY(qt)
 		SET(Plugins_QT)
 
-		ADD_LIBRARY(argosdisplay SHARED
-			ArgosDisplay.cpp
-			${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.h
-			${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.hxx
-		)
+		IF(QT4_FOUND)
+			SET(argosdisplayreloader_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplayReloader.h)
+			QT4_WRAP_CPP(argosdisplayreloader_HEADERS_MOCKED ${argosdisplayreloader_HEADERS_TOMOC})
+			ADD_LIBRARY(argosdisplay SHARED
+				ArgosDisplay.cpp
+				ArgosDisplayReloader.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.h
+				${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.hxx
+				${argosdisplayreloader_HEADERS_MOCKED}
+			)
+			TARGET_LINK_LIBRARIES(argosdisplay ${QT_LIBRARIES})
+		ELSE(QT4_FOUND)
+			ADD_LIBRARY(argosdisplay SHARED
+				ArgosDisplay.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.h
+				${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplay.hxx
+			)
+		ENDIF(QT4_FOUND)
 		ADD_LIBRARY(frameselect SHARED
 			FrameSelect.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.h

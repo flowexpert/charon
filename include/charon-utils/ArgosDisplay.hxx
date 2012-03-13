@@ -68,6 +68,11 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"QWidgets to display in Dock areas.",
 			"QWidget*") ;
 
+#ifdef QT_CORE_LIB
+	this->_addParameter( timeout, "timeout",
+	                    "timeout for display reloading (0 disables)", 0);
+#endif
+
 	if (!qobject_cast<QApplication*>(qApp)) {
 		sout << "(WW) ArgosDisplayPlugin::No QApplication found!\n"
 			<< "(WW) ArgosDisplay can only be used in a Qt GUI Application!\n"
@@ -76,6 +81,11 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 	}
 
 	_mainWindow = new MainWindow(this->getName());
+
+#ifdef QT_CORE_LIB
+	displayReloader = new ArgosDisplayReloader( this );
+	timeoutStarted = 0;
+#endif
 }
 
 template <typename T>
@@ -86,6 +96,14 @@ ArgosDisplayPlugin<T>::~ArgosDisplayPlugin()
 
 template <typename T>
 void ArgosDisplayPlugin<T>::execute() {
+#ifdef QT_CORE_LIB
+	// setup timer for display reloading
+	displayReloader->setTimeout( timeout() );
+	if (!timeoutStarted) {
+		displayReloader->start();
+	}
+#endif
+
 	// exit if QApplication is not running
 	// (when opened with command line charon)
 	if(!qApp)
