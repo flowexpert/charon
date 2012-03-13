@@ -243,10 +243,14 @@ int testWorkflow() {
 #ifdef SAVE_IMAGES
 	// save flow result
 	hsv->resetExecuted();
+	hsv->flow.disconnect() ;
 	hsv->flow.connect(iterator->result);
+	quiver->flow.disconnect() ;
 	quiver->flow.connect(iterator->result);
 	hsv2->resetExecuted();
+	hsv2->flow.disconnect() ;
 	hsv2->flow.connect(readgt->out);
+	quiver2->flow.disconnect() ;
 	quiver2->flow.connect(readgt->out);
 	quiver2->run();
 	std::ostringstream fName;
