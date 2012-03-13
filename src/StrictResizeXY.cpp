@@ -28,8 +28,8 @@
 #include <charon-utils/StrictResizeXY.hxx>
 
 /// Creates an instance of the plugin
-extern "C" strictresizexy_DECLDIR ParameteredObject*
-		create(const std::string & name, template_type t) {
+extern "C" strictresizexy_DECLDIR ParameteredObject* create(
+		const std::string & name, ParameteredObject::template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);

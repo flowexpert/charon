@@ -32,32 +32,21 @@ StatementGenerator::StatementGenerator(const std::string& name) :
 			"Takes a bool as parameter and outputs it to a slot"
 		)
 {
-
 	ParameteredObject::_addOutputSlot(
-		statement, "statement",
-		"statement",
-		"bool");
+		statement, "statement", "statement");
 
 	ParameteredObject::_addParameter< bool >(
-		statementpar, "statementpar",
-		"statement",
-		0, "bool");
-
+		statementpar, "statementpar", "statement", false);
 }
 
 void StatementGenerator::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	statement=statementpar;
-
-	// your code goes here :-)
 }
 
 // the following functions are needed
 // for class StatementGenerator to work as a charon plugin.
-extern "C" statementgenerator_DECLDIR ParameteredObject*
-		create(const std::string& name, template_type) {
+extern "C" statementgenerator_DECLDIR ParameteredObject* create(
+		const std::string& name, ParameteredObject::template_type) {
 	return new StatementGenerator(name);
 }
 

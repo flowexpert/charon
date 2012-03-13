@@ -54,8 +54,8 @@ void ParameterToSlot::execute() {
 
 // the following functions are needed
 // for class ParameterToSlot to work as a charon plugin.
-extern "C" parametertoslot_DECLDIR ParameteredObject*
-		create(const std::string& name, template_type) {
+extern "C" parametertoslot_DECLDIR ParameteredObject* create(
+		const std::string& name, ParameteredObject::template_type) {
 	return new ParameterToSlot(name);
 }
 
