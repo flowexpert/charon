@@ -33,6 +33,7 @@ template <typename T>
 FrameSelect<T>::FrameSelect(const std::string& name) :
 		TemplatedParameteredObject<T>("frameselect", name, "select frames"),
 		in(true,false), // optional
+		widget(0), roi(0),
 		_gui(0)
 {
 	ParameteredObject::_addInputSlot(in, "in",
@@ -41,7 +42,6 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 			"image output", "vigraArray5<T>");
 	ParameteredObject::_addOutputSlot(widget, "widget",
 			"QWidget to be displayed in ArgosDisplay", "QWidget*");
-	widget = 0 ;
 	ParameteredObject::_addOutputSlot(roi, "roi",
 			"Crop border output", "Roi<int>*");
 	ParameteredObject::_addParameter(z, "z", "select z slice",uint(0),"");
@@ -50,8 +50,6 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 	ParameteredObject::_addParameter(cropV, "cropV",
 			"enable cropping last (RGB) dimension", true);
 
-
-	roi() = &_roi;
 	if(!qApp)
 	{
 		sout << "FrameSelect::No QApplication found! " 
@@ -61,7 +59,6 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 	}
 
 	_gui = new FrameSelectWidget(this,cropV,z,t,v);
-	widget = _gui;
 }
 
 template <typename T>
@@ -72,6 +69,8 @@ FrameSelect<T>::~FrameSelect()
 
 template <typename T>
 void FrameSelect<T>::execute() {
+	widget() = _gui;
+	roi() = &_roi;
 	vigra::MultiArrayIndex lz = z() ;
 	vigra::MultiArrayIndex lt = t() ;
 	vigra::MultiArrayIndex lv = v() ;

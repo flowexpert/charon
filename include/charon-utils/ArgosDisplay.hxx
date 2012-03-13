@@ -68,11 +68,10 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"QWidgets to display in Dock areas.",
 			"QWidget*") ;
 
-	if(!qApp)
-	{
-		sout << "ArgosDisplayPlugin::No QApplication found! " 
-			<< "ArgosDisplay can only be used in a Qt GUI Application! "
-			"(e.g. Tuchulcha)" << std::endl ;
+	if (!qobject_cast<QApplication*>(qApp)) {
+		sout << "(WW) ArgosDisplayPlugin::No QApplication found!\n"
+			<< "(WW) ArgosDisplay can only be used in a Qt GUI Application!\n"
+			"(WW) (e.g. using tuchulcha-run)" << std::endl ;
 		return ;
 	}
 

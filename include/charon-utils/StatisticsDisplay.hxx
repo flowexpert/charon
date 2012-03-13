@@ -135,6 +135,7 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 			_cimgIn(true, true),
 			_vigraMask(true, false),
 			_cimgMask(true, false),
+			_display(0),
 			_writeToSout(true),
 			_exportWidget(0)
 {
@@ -179,8 +180,6 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 			"A QWidget displaying all results, "
 			"can for example be connected to a ArgosDisplay instance",
 			"QWidget*") ;
-			
-	_display = 0 ;
 
 	ParameteredObject::_addParameter<bool>(_writeToSout, "writeToSout",
 		"write results to stdout and status console", true, "bool");
@@ -188,17 +187,14 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 	ParameteredObject::_addParameter<size_t>(_numBins, "numberOfBins",
 		"number of bins for histogram", 256) ;
 	
-	if(!qApp)
+	if(!qobject_cast<QApplication*>(qApp))
 	{
-		sout << "StatisticsDisplay::No QApplication found! " 
-				"StatisticsDisplay can only be used in a Qt GUI Application!"
-			 << std::endl ;
+		sout << "(WW) StatisticsDisplay::No QApplication found!\n"
+			<< "(WW) StatisticsDisplay can only be used in a Qt GUI Application!"
+			<< std::endl ;
 		return ;
 	}
-	
-
 	_exportWidget = new StatisticsDisplayWidget() ;
-	_display = _exportWidget ;
 }
 
 template <typename T>
@@ -211,14 +207,14 @@ template <typename T>
 void StatisticsDisplayPlugin<T>::execute() {
 	using namespace boost::accumulators;
 	using namespace cimg_library ;
-
 	typedef vigra::MultiArray<5, T> Array ;
 
+	_display() = _exportWidget ;
 	_statistics.clear() ;
 	_histograms().assign(3) ;
 
 	//get pointer to each object in Multislot and the name of the corresponding parent object
-	std::map<const Array* const, std::string> parentNames ;
+	//std::map<const Array* const, std::string> parentNames ;
 	typename std::set<AbstractSlot<Array>*>::const_iterator it = _vigraIn.begin() ;
 	typename std::set<AbstractSlot<Array>*>::const_iterator end = _vigraIn.end() ;
 
