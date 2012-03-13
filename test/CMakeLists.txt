@@ -150,6 +150,7 @@ IF(BUILD_TESTING)
 		ENDIF(MSVC)
 		TARGET_LINK_LIBRARIES(flow3_hsYosemiteNP
 			charon-core
+			filereader # needs FileReaderWatcher
 			${PETSC_LIBRARIES}
 			${CIMG_LINK_LIBRARIES}
 		)
