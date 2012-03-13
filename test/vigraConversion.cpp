@@ -2,9 +2,9 @@
 #undef NDEBUG
 #endif
 
+#include <charon-utils/FileReader.hxx>
 #include <charon-utils/VigraMultiArray2CImg.hxx>
 #include <charon-utils/CImg2VigraMultiArray.hxx>
-#include <charon-utils/FileReader.hxx>
 
 #ifndef PENGUINFILE
 #define PENGUINFILE
