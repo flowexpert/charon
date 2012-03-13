@@ -67,9 +67,6 @@ Warp<T>::Warp(const std::string& name) :
 
 template<typename T>
 void Warp<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	// check sizes
 	const cimg_library::CImgList<T>& seq = seqInput();
 	const cimg_library::CImgList<T>& flow = flowInput();

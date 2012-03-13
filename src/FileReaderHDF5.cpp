@@ -25,6 +25,7 @@
 /// Class name of the plugin
 #define TYPE FileReaderHDF5
 
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/FileReaderHDF5.hxx>
 

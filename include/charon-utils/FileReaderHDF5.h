@@ -69,6 +69,7 @@ public:
 	/// default constructor
 	FileReaderHDF5(const std::string& name = "" /** [in] Instance name */);
 
+protected:
 	/// Update object.
 	virtual void execute();
 

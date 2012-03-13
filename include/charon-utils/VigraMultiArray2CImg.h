@@ -43,7 +43,7 @@
 #include <charon-utils/CImg.h>
 using namespace cimg_library;
 
-/// Convert a vigra::MultiArrayView<5, T> to a CImgList-Object
+/// Convert a vigra::MultiArray<5, T> to a CImgList-Object
 /** The data is copied for compatibility reasons. Please note that this
  *  conversion is not always possible if the MultiArray is strided or has too
  *  many dimensions! Dimensions are mapped the following way:
@@ -59,7 +59,7 @@ class vigramultiarray2cimg_DECLDIR VigraMultiArray2CImg :
 public:
 
 	/// The vigra::MultiArray object to be converted. 
-	InputSlot < vigra::MultiArrayView<5, T> > in;
+	InputSlot < vigra::MultiArray<5, T> > in;
 	/// The same image but with a CImgList<T> data structure around it. 
 	OutputSlot < CImgList<T> > out;
 
@@ -67,6 +67,7 @@ public:
 	/// @param name             Object name
 	VigraMultiArray2CImg(const std::string& name = "");
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

@@ -91,14 +91,15 @@ public:
 
 
 	/// The source image. 
-	InputSlot < vigra::MultiArrayView<5, T> > in;
+	InputSlot < vigra::MultiArray<5, T> > in;
 	/// The resized image. 
-	OutputSlot < vigra::MultiArrayView<5, T> > out;
+	OutputSlot < vigra::MultiArray<5, T> > out;
 
 	/// create a new SplineResize object
 	/// @param name             Object name
 	SplineResize(const std::string& name = "");
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

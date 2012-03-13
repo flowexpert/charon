@@ -41,9 +41,6 @@ Images2Sequence<T>::Images2Sequence(const std::string& name) :
 
 template<typename T>
 void Images2Sequence<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	// Dimensions of the first input image
 	int width = this->images()[0].width();
 	int height = this->images()[0].height();

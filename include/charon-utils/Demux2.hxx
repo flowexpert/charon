@@ -43,9 +43,6 @@ Demux2<T>::Demux2(const std::string& name) :
 
 template<typename T>
 void Demux2<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const cimg_library::CImgList<T> &_in = in();
 
 	// Dimensions of the input image lists

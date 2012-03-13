@@ -62,24 +62,18 @@ AmplitudeThreshold<T>::AmplitudeThreshold(const std::string& name) :
 template <typename T>
 void AmplitudeThreshold<T>::execute() {
 	using namespace cimg_library ;
-
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const CImgList<T>& input = _input() ;
 	CImgList<T>& output = _output() ;
 	bool& killOutlier = _killOutlier();
 	double threshold = _threshold();
 	bool lowpass = _lowpass() ;
 	//check if input is valid
-	if(threshold < 0.0)
-	{
+	if(threshold < 0.0) {
 		ParameteredObject::raise("Amplitude can not be smaller than 0; "
 		"Negative thresholds make no sense");
 	}
 	
-	cimglist_for(input,l)
-	{
+	cimglist_for(input,l) {
 		if (l==0) continue;
 		if	   ((input[l].width() != input[l-1].width()) 
 			||	(input[l].height() != input[l-1].height())
@@ -92,46 +86,39 @@ void AmplitudeThreshold<T>::execute() {
 		}
 	}
 
-	
-	output.assign(input.size(),input[0].width(), input[0].height(), input[0].depth(),input[0].spectrum());
+	output.assign(
+				input.size(),
+				input[0].width(), input[0].height(),
+				input[0].depth(),input[0].spectrum());
 
-	cimg_forXYZC(input[0],x,y,z,c)
-	{
+	cimg_forXYZC(input[0],x,y,z,c) {
 		T val = T(0.0f);
-		cimglist_for(input,l)
-			{
-				val += (input[l](x,y,z,c)*input[l](x,y,z,c));
-			}
+		cimglist_for(input,l) {
+			val += (input[l](x,y,z,c)*input[l](x,y,z,c));
+		}
 		//length of current flow
 		double flowLength = sqrt((double)val);
 		
-		if(flowLength < 1e-15) //prevent division by zero errors
-		{
-			cimglist_for(input,l)
-			{
+		if(flowLength < 1e-15) {
+			//prevent division by zero errors
+			cimglist_for(input,l) {
 				output[l](x,y,z,c) = input[l](x,y,z,c);
 			}
 		}
 		else if ((lowpass && flowLength > threshold) ||
-				(!lowpass && flowLength < threshold))
-		{
+				(!lowpass && flowLength < threshold)) {
 			float scaleFactor = threshold / flowLength;
-			cimglist_for(input,l)
-			{
-				if (killOutlier==true) 
-					{
-						output[l](x,y,z,c) = T(0.0f);
-					}
-				else 
-					{
-						output[l](x,y,z,c) = input[l](x,y,z,c)* scaleFactor;
-					}
+			cimglist_for(input,l) {
+				if (killOutlier==true) {
+					output[l](x,y,z,c) = T(0.0f);
+				}
+				else {
+					output[l](x,y,z,c) = input[l](x,y,z,c)* scaleFactor;
+				}
 			}
 		}
-		else
-		{
-			cimglist_for(input,l)
-			{
+		else {
+			cimglist_for(input,l) {
 				output[l](x,y,z,c) = input[l](x,y,z,c);
 			}
 		}

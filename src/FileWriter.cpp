@@ -23,6 +23,7 @@
 /// Class name of the plugin
 #define TYPE FileWriter
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/FileWriter.hxx>
 
 /// Creates an instance of the plugin

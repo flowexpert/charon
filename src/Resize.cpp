@@ -23,6 +23,7 @@
 ///Class name of the plugin
 #define TYPE Resize
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Resize.hxx>
 
 /// Creates an instance of the plugin

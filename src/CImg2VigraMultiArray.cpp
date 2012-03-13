@@ -20,11 +20,13 @@
 /// @author Daniel Kondermann
 /// @date 19.01.2010
 
+#include <charon-core/ParameteredObject.hxx>
+#include <charon-utils/DataManagerVigraArray.hxx>
+#include <charon-utils/CImg2VigraMultiArray.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
+
 /// Class name of the plugin
 #define TYPE CImg2VigraMultiArray
-
-#include <charon-core/ParameteredObject.hxx>
-#include <charon-utils/CImg2VigraMultiArray.hxx>
 
 /// Creates an instance of the plugin
 extern "C" cimg2vigramultiarray_DECLDIR ParameteredObject*

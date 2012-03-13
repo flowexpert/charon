@@ -56,19 +56,19 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 		"\tUse the channelconverter plugin to change the representation",
 	"{Passthrough;Addition;Difference;Multiplication;Division;Power of;Bitwise And;Bitwise Or;Bitwise Xor;Bitwise Not;Left Shift;Right Shift;Mask;Log;Exp;to Gray;to RGB}") ;
 
-	ParameteredObject::_addParameter(_withValue, "withValue", 
-		"Set second operand to a single value<br>"
-		"(assumed true if no second input image is provided)", false) ;
-	ParameteredObject::_addParameter(_value, "value", "Second operand if withValue is true", T(0) ) ;
+	ParameteredObject::_addParameter(
+			_withValue, "withValue",
+			"Set second operand to a single value<br>"
+			"(assumed true if no second input image is provided)", false) ;
+	ParameteredObject::_addParameter(_value, "value",
+				"Second operand if withValue is true", T(0) ) ;
 
-	ParameteredObject::_addOutputSlot(_out, "out", "output image", "CImgList<T>"); 
+	ParameteredObject::_addOutputSlot(_out, "out",
+				"output image", "CImgList<T>");
 }
 
 template <typename T>
 void BinOperatorCImg<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const CImgList<T>& in1 = _in1() ;
 
 	CImgList<T> dummy ;
@@ -83,8 +83,7 @@ void BinOperatorCImg<T>::execute() {
 
 	bool withValue = (!_in2.connected() ||_withValue()) ;
 	
-	cimglist_for(in1, l)
-	{
+	cimglist_for(in1, l) {
 		const CImg<T>& first = in1(l) ;
 		const CImg<T>& second = in2(l) ;
 
@@ -110,33 +109,35 @@ void BinOperatorCImg<T>::execute() {
 			out(l) = (withValue ? first  << val : first << second) ;
 		else if(op == "Right Shift")
 			out(l) = (withValue ? first  >> val : first >> second) ;
-		else if(op == "Mask")
-		{
-			if(withValue)
+		else if(op == "Mask") {
+			if(withValue) {
 					out(l) = first ;
-			else
-			{	
+			}
+			else {
 				out(l).assign(first) ;
-				cimg_forXYZC(first,x,y,z,c)
-				{	out(l,x,y,z,c) = (second(x,y,z,c) == T(0.0) ? T(0) : first(x,y,z,c)) ;	}
+				cimg_forXYZC(first,x,y,z,c) {
+					out(l,x,y,z,c) =
+							(second(x,y,z,c)==T(0.0) ? T(0) : first(x,y,z,c));
+				}
 			}
 		}
 		else if(op == "Passthrough")
 			out(l) = first ;
 		else if(op == "to Gray")
 			out(l) = first.get_channel(0) ;
-		else if(op == "to RGB")
-		{
+		else if(op == "to RGB") {
 			out(l).assign(first.width(),first.height(),first.depth(),3) ;
-			out(l).get_shared_channel(0) = out(l).get_shared_channel(1) = out(l).get_shared_channel(2) = first.get_channel(0) ;
+			out(l).get_shared_channel(0) =
+					out(l).get_shared_channel(1) =
+					out(l).get_shared_channel(2) = first.get_channel(0) ;
 		}
 		else if(op == "Exp")
 			out(l) = first.get_exp() ;
 		else if(op == "Log")
 			out(l) = first.get_log() ;
-		else
-		{
-			sout << op << " : Unknown Operation! Defaulting to Passthrough" << std::endl ;
+		else {
+			sout << op << " : Unknown Operation! Defaulting to Passthrough"
+				 << std::endl ;
 			out(l) = first ;
 		} ;
 	}

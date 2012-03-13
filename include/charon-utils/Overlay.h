@@ -63,6 +63,7 @@ public:
 	/// foreground/background ratio, 0=back,1=front
 	Parameter< float > alpha;
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

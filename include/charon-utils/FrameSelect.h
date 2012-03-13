@@ -54,7 +54,7 @@ class frameselect_DECLDIR FrameSelect : public TemplatedParameteredObject<T>
 {
 public:
 	/// image data input slot
-	InputSlot< vigra::MultiArrayView<5,T> >  in;
+	InputSlot< vigra::MultiArray<5, T> > in;
 	/// image data output slot
 	OutputSlot< vigra::MultiArray<5,T> > out;
 	/// QWidget to be displayed in ArgosDisplay
@@ -75,6 +75,7 @@ public:
 
 	~FrameSelect() ;
 
+protected:
 	/// \implements ParameteredObject::execute
 	virtual void execute();
 

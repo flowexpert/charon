@@ -25,6 +25,7 @@
 ///Class name of the plugin
 #define TYPE WarpSymmetric
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/WarpSymmetric.hxx>
 
 /// Creates an instance of the plugin

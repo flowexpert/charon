@@ -64,9 +64,7 @@ namespace StatisticsDisplay {
 	class statisticsdisplay_DECLDIR StatisticsDisplayPlugin :
 			public TemplatedParameteredObject<T> {
 	public:
-	
-
-		///Name-Statistics Map
+		/// Name-Statistics Map
 		typedef std::map<std::string, double> StatMap ;
 
 		/// create a new StatisticsDisplay
@@ -76,17 +74,14 @@ namespace StatisticsDisplay {
 		/// Destruct Object
 		~StatisticsDisplayPlugin() ;
 
-		/// Update object.
-		virtual void execute();
-
 		/// The vigra::MultiArray input
-		InputSlot < vigra::MultiArrayView<5, T> > _vigraIn;
+		InputSlot < vigra::MultiArray<5, T> > _vigraIn;
 
 		/// The CImgList input
 		InputSlot < cimg_library::CImgList<T> > _cimgIn;
 
 		/// A mask to decide where to compute the statistics
-		InputSlot < vigra::MultiArrayView<5, T> > _vigraMask;
+		InputSlot < vigra::MultiArray<5, T> > _vigraMask;
 
 		/// A mask to decide where to compute the statistics
 		InputSlot < cimg_library::CImgList<T> > _cimgMask;
@@ -103,17 +98,16 @@ namespace StatisticsDisplay {
 		/// number of bins for histogram
 		Parameter <size_t> _numBins ;
 
-	
-	private:
+	protected:
+		/// Update object.
+		virtual void execute();
 
+	private:
 		/// pointer to the export widget
 		StatisticsDisplayWidget* _exportWidget ;
 	
 		/// statistics data for all input slots
 		std::vector<Statistics> _statistics ;
-
-
-
 	}; //class StatisticsDisplayPlugin
 
 } //namespace StatisticsDisplay

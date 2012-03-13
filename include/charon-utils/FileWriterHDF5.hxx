@@ -140,9 +140,6 @@ void FileWriterHDF5<T>::writeToFile (
 
 template<typename T>
 void FileWriterHDF5<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	vigra::MultiArrayShape<5>::type shape = in().shape();
 	sout << "\tInput data has shape " << shape[0] << "x" << shape[1] << "x"
 			<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;

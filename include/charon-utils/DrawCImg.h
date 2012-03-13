@@ -44,7 +44,6 @@ template <typename T>
 class drawcimg_DECLDIR DrawCImg :
 		public TemplatedParameteredObject<T> {
 public:
-
 	/// input image
 	InputSlot < cimg_library::CImgList<T> > _inputSource;
 
@@ -53,13 +52,13 @@ public:
 
 	/// output image
 	OutputSlot < cimg_library::CImgList<T> > _output;
-	
+
 	/// Parameters
 	Parameter < int > _posX;
 
 	/// Parameters
 	Parameter < int > _posY;
-	
+
 	/// Parameters
 	Parameter < float > _opacity;
 
@@ -69,14 +68,13 @@ public:
 	/// Parameters
 	Parameter < float > _threshold;
 
-
-    /// create a new DrawCImg object
+	/// create a new DrawCImg object
 	/// \param name          Instance name
-    DrawCImg(const std::string& name);
+	DrawCImg(const std::string& name);
 
+protected:
 	/// Update object.
 	virtual void execute();
-
 };
 
 #endif // _DRAWCIMG_H_

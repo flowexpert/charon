@@ -38,17 +38,14 @@ FileReader<T>::FileReader(const std::string& name) :
 
 template <typename T>
 void FileReader<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
 	try
 	{
 		out().load(filename().c_str());
 	}
 	catch(const cimg_library::CImgException& err)
 	{
-		throw std::runtime_error(
-			this->getClassName() + " instance \"" +
-			this->getName() + "\" Could not read file\n\t" + err.what());
+		ParameteredObject::raise(
+					std::string("Could not read file\n\t") + err.what());
 	}
 
 }

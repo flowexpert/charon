@@ -50,17 +50,18 @@ public:
 
 	/// output image
 	OutputSlot < cimg_library::CImgList<T> > _output;
-	
+
 	/// gamma (set to 1 for passthrough)
 	Parameter < double > _gamma;
-	/// the color value range of the input<br>
+	/// the color value range of the input
 	/** When set to zero, this will be set to the maximum of the input image */
 	Parameter < double > _maxColorValue;
 
-    /// create a new GammaCorrection object
+	/// create a new GammaCorrection object
 	/// \param name          Instance name
-    GammaCorrection(const std::string& name);
+	GammaCorrection(const std::string& name);
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

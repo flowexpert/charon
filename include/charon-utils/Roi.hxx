@@ -62,8 +62,6 @@ void Roi<T>::_init() {
 	ParameteredObject::_addOutputSlot(out, "out",
 		"pointer to this roi", "Roi<T>*");
 
-	out = this;
-
 	// add export symbols
 	_addFunction(Roi<T>::getWidth);
 	_addFunction(Roi<T>::getHeight);
@@ -94,6 +92,11 @@ Roi<T>::Roi(const ParameterFile& pf, std::string name) :
 TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
 	_init();
 	this->load(pf, name);
+}
+
+template <typename T>
+void Roi<T>::execute() {
+	out() = this;
 }
 
 template <typename T>

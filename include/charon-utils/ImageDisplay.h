@@ -87,6 +87,7 @@ public:
 	/** @param name             Object name*/
 	ImageDisplay(const std::string& name = "");
 
+protected:
 	/// \implements ParameteredObject::execute
 	virtual void execute();
 };

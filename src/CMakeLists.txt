@@ -12,8 +12,36 @@ ADD_LIBRARY(roi SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.h
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.hxx
 )
+
+ADD_LIBRARY(statementgenerator SHARED
+	StatementGenerator.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/StatementGenerator.h
+
+)
+ADD_LIBRARY(parametertoslot SHARED
+	ParameterToSlot.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/ParameterToSlot.h
+
+)
+
+ADD_LIBRARY(greatersmallerthenpar SHARED
+	GreaterSmallerThenPar.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.h
+	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.hxx
+
+)
+ADD_LIBRARY(printvalue SHARED
+        PrintValue.cpp
+        ${CHARON_UTILS_INCLUDE_DIR}/PrintValue.h
+
+
+)
 SET(Plugins
 	roi
+	statementgenerator
+	greatersmallerthenpar
+	parametertoslot
+        printvalue
 )
 
 IF(USE_CIMG)
@@ -349,7 +377,7 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.hxx
 		)
 		TARGET_LINK_LIBRARIES(filereaderhdf5 roi)
-		SET(Plugins_HDF5
+		LIST(APPEND Plugins_Vigra
 			filewriterhdf5
 			filereaderhdf5
 		)
@@ -358,13 +386,12 @@ IF(USE_VIGRA)
 		# fixed at least in cmake 2.8.5
 		#SET(HDF5_LIBRARIES ${HDF5_hdf5_LIBRARY} ${HDF5_hdf5_hl_LIBRARY})
 		#MESSAGE("HDF5_LIBRARIES: ${HDF5_LIBRARIES}")
-		FOREACH(X ${Plugins_HDF5})
+		FOREACH(X ${Plugins_Vigra})
 			TARGET_LINK_LIBRARIES(${X} ${HDF5_LIBRARIES})
 			IF(USE_MPI)
 				TARGET_LINK_LIBRARIES(${X} ${MPI_LIBRARIES})
 			ENDIF()
 		ENDFOREACH(X)
-		LIST(APPEND Plugins_Vigra ${Plugins_HDF5})
 	ENDIF(USE_HDF5)
 
 	IF(USE_QT)
@@ -392,6 +419,10 @@ IF(USE_VIGRA)
 		LIST(APPEND Plugins_CImg
 			argosdisplay
 		)
+		LIST(APPEND Plugins_Vigra
+			argosdisplay
+			frameselect
+		)
 
 		IF(USE_Boost)
 			INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
@@ -404,6 +435,9 @@ IF(USE_VIGRA)
 				statisticsdisplay
 			)
 			LIST(APPEND Plugins_CImg
+				statisticsdisplay
+			)
+			LIST(APPEND Plugins_Vigra
 				statisticsdisplay
 			)
 		ENDIF(USE_Boost)
@@ -421,6 +455,9 @@ IF(USE_VIGRA)
 		IF(USE_MPI)
 			TARGET_LINK_LIBRARIES(${X} ${MPI_LIBRARIES})
 		ENDIF()
+		IF(USE_HDF5)
+			TARGET_LINK_LIBRARIES(${X} ${HDF5_LIBRARIES})
+		ENDIF()
 	ENDFOREACH(X)
 	LIST(APPEND Plugins ${Plugins_Vigra})
 ENDIF(USE_VIGRA)
@@ -431,6 +468,7 @@ IF(USE_CIMG)
 	ENDFOREACH(X)
 ENDIF(USE_CIMG)
 
+LIST(REMOVE_DUPLICATES Plugins)
 FOREACH(X ${Plugins})
 	TARGET_LINK_LIBRARIES(${X} charon-core)
 	SET_TARGET_PROPERTIES(${X} PROPERTIES

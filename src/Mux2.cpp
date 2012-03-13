@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE Mux2
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Mux2.hxx>
 
 /// Creates an instance of the plugin

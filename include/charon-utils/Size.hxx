@@ -41,7 +41,8 @@ Size<T>::Size(const std::string& name) :
 			"Leave the offset slot unconnected,set resize factor to 2.0 "
 			"and connect the roi output to the roi input of the resize plugin."
 		),
-		offset(true,false)
+		offset(true,false),
+		roi(0)
 {
 	ParameteredObject::_addInputSlot(
 		image, "image",
@@ -64,7 +65,6 @@ Size<T>::Size(const std::string& name) :
 		roi, "roi",
 		"ROI(Region of Interest)",
 		"Roi<int>*");
-	roi() = 0 ;
 
 	ParameteredObject::_addParameter< double >(
 		resizeFactor, "resizeFactor",
@@ -76,9 +76,6 @@ Size<T>::Size(const std::string& name) :
 
 template <typename T>
 void Size<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	roi() = &_roi ;
 
 	const cimg_library::CImgList<T>& in = image ;

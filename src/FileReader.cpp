@@ -23,6 +23,7 @@
 /// Class name of the plugin
 #define TYPE FileReader
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/FileReader.hxx>
 
 /// Creates an instance of the plugin

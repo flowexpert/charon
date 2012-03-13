@@ -28,7 +28,7 @@
 template <typename T>
 VigraMultiArray2CImg<T>::VigraMultiArray2CImg(const std::string& name) :
 		TemplatedParameteredObject<T>("VigraMultiArray2CImg", name,
-			"Converts a vigra::MultiArrayView<5, T> to a CImgList-Object. "
+			"Converts a vigra::MultiArray<5, T> to a CImgList-Object. "
 			"The data is copied for compatibility reasons. Please note that "
 			"this conversion is not always possible if the MultiArray is "
 			"strided or has too many dimensions! Dimensions are mapped the "
@@ -46,9 +46,6 @@ VigraMultiArray2CImg<T>::VigraMultiArray2CImg(const std::string& name) :
 
 template <typename T>
 void VigraMultiArray2CImg<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	// store references to input/output to avoid function calls (-> slow)
 	const vigra::MultiArrayView<5, T>& i = in();
 	cimg_library::CImgList<T>& o = out();

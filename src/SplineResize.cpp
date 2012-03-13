@@ -23,6 +23,7 @@
 /// Class name of the plugin
 #define TYPE SplineResize
 
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/SplineResize.hxx>
 
 /// Creates an instance of the plugin

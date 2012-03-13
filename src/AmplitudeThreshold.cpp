@@ -21,12 +21,13 @@
  *  \date 13.01.2012
  */
 
-///Class name of the plugin
+/// Class name of the plugin
 #define TYPE AmplitudeThreshold
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/AmplitudeThreshold.hxx>
 
-///Creates an instance of the plugin
+/// Creates an instance of the plugin
 extern "C" amplitudethreshold_DECLDIR ParameteredObject*
 		create(const std::string & name, template_type t) {
 	switch(t) {
@@ -45,7 +46,7 @@ extern "C" amplitudethreshold_DECLDIR ParameteredObject*
 	}
 }
 
-///Deletes an instance of the plugin
+/// Deletes an instance of the plugin
 extern "C" amplitudethreshold_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
@@ -58,6 +59,3 @@ extern "C" amplitudethreshold_DECLDIR ParameteredObject::build_type getBuildType
 	return ParameteredObject::RELEASE_BUILD;
 #endif
 }
-
-
-

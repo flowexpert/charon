@@ -6,6 +6,7 @@ SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 IF(BUILD_TESTING)
 	# common definitions and test file configuration
 	SET(PENGUINFILE "${CMAKE_CURRENT_SOURCE_DIR}/Penguin.pgm")
+	SET(PENGUINJPGFILE "${CMAKE_CURRENT_SOURCE_DIR}/Penguin.jpg")
 	CONFIGURE_FILE(
 		${CMAKE_CURRENT_SOURCE_DIR}/Warptest.wrp.in
 		${CMAKE_CURRENT_BINARY_DIR}/Warptest.wrp
@@ -14,6 +15,7 @@ IF(BUILD_TESTING)
 	ADD_DEFINITIONS(-DWARPWRPFILE="${CMAKE_CURRENT_BINARY_DIR}/Warptest.wrp")
 	ADD_DEFINITIONS(-DWARPTESTWRPFILE="${CMAKE_CURRENT_BINARY_DIR}/sample.wrp")
 	ADD_DEFINITIONS(-DPENGUINFILE="${PENGUINFILE}")
+	ADD_DEFINITIONS(-DPENGUINJPGFILE="${PENGUINJPGFILE}")
 	
 	ADD_DEFINITIONS(-DTESTDIR="${CMAKE_CURRENT_SOURCE_DIR}")
 	IF(WIN32)
@@ -81,7 +83,10 @@ IF(BUILD_TESTING)
 		LIST(APPEND tests ImgTool)
 		LIST(APPEND testTargets imgToolTest)
 
-		ADD_EXECUTABLE(cImgTest cimgtest.cpp)
+		ADD_EXECUTABLE(cImgTest
+			cimgtest.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/CImg.h
+		)
 		TARGET_LINK_LIBRARIES(cImgTest ${CIMG_LINK_LIBRARIES})
 		ADD_TEST(
 			NAME CImg:Info
@@ -135,6 +140,33 @@ IF(BUILD_TESTING)
 			)
 			LIST(APPEND tests VigraConversion)
 			LIST(APPEND testTargets vigraconversion)
+
+			IF(USE_HDF5)
+				INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
+
+				# tests for input/output slot data passing including vigra
+				# and cimg arrays
+				ADD_EXECUTABLE(datapasstest2
+					dataPassing.cpp
+					${CHARON_UTILS_INCLUDE_DIR}/DataManagerCImgList.hxx
+					${CHARON_UTILS_INCLUDE_DIR}/DataManagerVigraArray.hxx
+				)
+				TARGET_LINK_LIBRARIES(datapasstest2
+					charon-core charon-plugins
+					${CIMG_LINK_LIBRARIES}
+					${VIGRA_LIBRARIES}
+					${HDF5_LIBRARIES}
+				)
+				IF(USE_MPI)
+					TARGET_LINK_LIBRARIES(datapasstest2 ${MPI_LIBRARIES})
+				ENDIF()
+				ADD_TEST(
+						NAME SlotDataPassing_CimgVigra
+						COMMAND datapasstest2
+				)
+				LIST(APPEND tests SlotDataPassing_CimgVigra)
+				LIST(APPEND testTargets datapasstest2)
+			ENDIF(USE_HDF5)
 		ENDIF(USE_VIGRA)
 
 		IF(WIN32)
@@ -154,6 +186,26 @@ IF(BUILD_TESTING)
 				)
 			ENDFOREACH(X)
 		ENDIF(WIN32)
+
+		# temporarily disabled because of group refactoring
+		IF(FALSE)
+			ADD_EXECUTABLE(groupVirtualSlot2
+				groupVirtualSlot.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/DataManagerCImgList.hxx
+
+			)
+			TARGET_LINK_LIBRARIES(groupVirtualSlot2
+				charon-core charon-plugins
+				${CIMG_LINK_LIBRARIES}
+
+			)
+			ADD_TEST(
+					NAME groupVirtualSlot_CimgVigra
+					COMMAND datapasstest2
+			)
+			LIST(APPEND tests groupVirtualSlot_CimgVigra)
+			LIST(APPEND testTargets groupVirtualSlot2)
+		ENDIF()
 	ENDIF(USE_CIMG)
 
 	# charon-xml-helper test

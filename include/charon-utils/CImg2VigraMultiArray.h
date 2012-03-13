@@ -60,6 +60,7 @@ public:
 	/// \param name             Instance name
 	CImg2VigraMultiArray(const std::string& name = "");
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

@@ -147,9 +147,6 @@ void FileReaderHDF5<T>::readHdf5(
 
 template<typename T>
 void FileReaderHDF5<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	readHdf5(out(),filename(),pathInFile(),(roi.connected()?roi():0));
 }
 

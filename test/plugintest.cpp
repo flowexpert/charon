@@ -32,7 +32,7 @@
 #endif
 
 /// unit tests
-int test() {
+void test() {
 	// load plugins
 	sout.assign(std::cout);
 
@@ -86,8 +86,6 @@ int test() {
 	man.destroyInstance(steerDeriv);
 	man.destroyInstance(channConv);
 	man.destroyInstance(strucTens);
-
-	return EXIT_SUCCESS;
 }
 
 /// main application

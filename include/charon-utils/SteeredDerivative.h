@@ -69,6 +69,7 @@ public:
 	/// Eigenvectors of the structure tensor
 	InputSlot<cimg_library::CImgList<T> > eigenVectors;
 
+protected:
 	/// calculate steered derivatives
 	virtual void execute();
 };

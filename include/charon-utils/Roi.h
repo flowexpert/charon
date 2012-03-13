@@ -64,6 +64,10 @@ private:
 	/// dummy function to get copy constructor compiled into dll
 	Roi<T> createCopy(const Roi<T>& rhs) const;
 
+protected:
+	/// \implements ParameteredObject::execute
+	virtual void execute();
+
 public:
 	///\name roi borders, "begin" is included, "end" is past the last element
 	//@{
@@ -74,9 +78,9 @@ public:
 	Parameter<T> vBegin;
 	Parameter<T> xEnd;
 	Parameter<T> yEnd;
-	Parameter<T> zEnd;	
+	Parameter<T> zEnd;
 	Parameter<T> tEnd;
-	Parameter<T> vEnd;	
+	Parameter<T> vEnd;
 	//@}
 
 	OutputSlot<Roi<T>*> out; ///< roi output slot

@@ -21,6 +21,7 @@
 ///     Jens-Malte Gottfried</a>
 /// \date 27.11.2010
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/FlowQuiver.hxx>
 
 /// Class name of the plugin

@@ -24,6 +24,7 @@
 ///Class name of the plugin
 #define TYPE BinOperatorCImg
 
+#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/BinOperatorCImg.hxx>
 
 ///Creates an instance of the plugin

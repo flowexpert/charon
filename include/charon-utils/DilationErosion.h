@@ -51,7 +51,7 @@ class dilationerosion_DECLDIR DilationErosion :
 {
 public:
 	/// data input
-	InputSlot< vigra::MultiArrayView<5,T> >  in;
+	InputSlot< vigra::MultiArray<5, T> >  in;
 	/// data output
 	OutputSlot< vigra::MultiArray<5,T> > out;
 
@@ -62,6 +62,7 @@ public:
 	/// @param name             Object name
 	DilationErosion(const std::string& name = "");
 
+protected:
 	/// \implements ParameteredObject::execute
 	virtual void execute ();
 };

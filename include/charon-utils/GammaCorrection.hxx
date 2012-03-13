@@ -40,7 +40,8 @@ GammaCorrection<T>::GammaCorrection(const std::string& name) :
 	ParameteredObject::_addParameter (_gamma, "gamma", 
 		"gamma (set to 1 for passthrough)", 0.5) ;
 	
-	ParameteredObject::_addInputSlot(_input, "input", "input image", "CImgList<T>") ;
+	ParameteredObject::_addInputSlot(
+				_input, "input", "input image", "CImgList<T>") ;
 	
 	ParameteredObject::_addOutputSlot(_output, "output", 
 		"output image (dimensions are unchanged)", "CImgList<T>"); 
@@ -50,19 +51,14 @@ template <typename T>
 void GammaCorrection<T>::execute() {
 	using namespace cimg_library ;
 
-    PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const CImgList<T>& input = _input() ; 
 	CImgList<T>& output = _output() ; //similiar for output slots
 	double gamma= _gamma();
 	double maxColorVal = _maxColorValue();
 	
 	//find maximum pixel value
-	if(maxColorVal == 0.0)
-	{
-		cimglist_for(input,l)
-		{
+	if(maxColorVal == 0.0) {
+		cimglist_for(input,l) {
 			double cMax = input(l).max() ;
 			if(l == 0)
 				maxColorVal = cMax ;
@@ -72,8 +68,7 @@ void GammaCorrection<T>::execute() {
 
 	output.assign(input);
 
-	cimglist_for(output,l)
-	{
+	cimglist_for(output,l) {
 		output[l].pow(gamma);
 		output[l] *= pow(maxColorVal, 1.0-gamma); //scale the image brighter
 	}

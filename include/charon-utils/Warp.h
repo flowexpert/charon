@@ -87,6 +87,7 @@ public:
 	/// \param name          Instance name
 	Warp(const std::string& name = "");
 
+protected:
 	/// Update object.
 	virtual void execute();
 };

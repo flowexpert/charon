@@ -58,9 +58,6 @@ Flow2HSV<T>::Flow2HSV(const std::string& name) :
 
 template<typename T>
 void Flow2HSV<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const T& maxMot = maxMotion();
 
 	// copy input image for manipulations

@@ -89,6 +89,7 @@ public:
 	/// @param name             Object name
 	Resize(const std::string& name = "");
 
+protected:
 	/// \implements ParameteredObject::execute
 	virtual void execute();
 };

@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE Subarray
 
+#include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/Subarray.hxx>
 
 /// Creates an instance of the plugin

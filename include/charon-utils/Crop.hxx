@@ -43,9 +43,6 @@ Crop<T>::Crop(const std::string& name) :
 
 template <typename T>
 void Crop<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	// check roi ranges
 	assert(roi());
 	assert(roi()->xBegin() <= roi()->xEnd());

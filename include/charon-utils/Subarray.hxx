@@ -46,11 +46,7 @@ Subarray<T>::Subarray(const std::string& name) :
 }
 
 template <typename T>
-void Subarray<T>::execute()
-{
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
+void Subarray<T>::execute() {
 	const Roi<int>& r = *roi();
 
 	typedef vigra::MultiArrayShape<5>::type Shape;

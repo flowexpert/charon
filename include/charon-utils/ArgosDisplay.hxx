@@ -68,11 +68,10 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"QWidgets to display in Dock areas.",
 			"QWidget*") ;
 
-	if(!qApp)
-	{
-		sout << "ArgosDisplayPlugin::No QApplication found! " 
-			<< "ArgosDisplay can only be used in a Qt GUI Application! "
-			"(e.g. Tuchulcha)" << std::endl ;
+	if (!qobject_cast<QApplication*>(qApp)) {
+		sout << "(WW) ArgosDisplayPlugin::No QApplication found!\n"
+			<< "(WW) ArgosDisplay can only be used in a Qt GUI Application!\n"
+			"(WW) (e.g. using tuchulcha-run)" << std::endl ;
 		return ;
 	}
 
@@ -87,10 +86,6 @@ ArgosDisplayPlugin<T>::~ArgosDisplayPlugin()
 
 template <typename T>
 void ArgosDisplayPlugin<T>::execute() {
-
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-	
 	// exit if QApplication is not running
 	// (when opened with command line charon)
 	if(!qApp)
@@ -99,9 +94,9 @@ void ArgosDisplayPlugin<T>::execute() {
 	//std::map<const Array* const, std::string> parentNames ;
 	// get pointers to all OutputSlots of the _in Multislot to get the names
 	// of the corresponding Plugin Instances
-	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>
+	typename std::set<AbstractSlot<vigra::MultiArray<5, T> >*>
 			::const_iterator it = _vigraIn.begin() ;
-	typename std::set<AbstractSlot<vigra::MultiArrayView<5, T> >*>
+	typename std::set<AbstractSlot<vigra::MultiArray<5, T> >*>
 			::const_iterator end = _vigraIn.end() ;
 
 	ViewStack& viewStack = _mainWindow->viewStack() ;
