@@ -22,8 +22,8 @@
  *  \date 05.01.2011
  */
 
-#ifndef _FILEWRITER_HDF5_H_
-#define _FILEWRITER_HDF5_H_
+#ifndef _FILEREADER_HDF5_H_
+#define _FILEREADER_HDF5_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef filereaderhdf5_EXPORTS
@@ -89,4 +89,4 @@ public:
 			const Roi<int>* roi = 0);
 };
 
-#endif /* _FILEWRITER_HDF5_H_ */
+#endif /* _FILEREADER_HDF5_H_ */

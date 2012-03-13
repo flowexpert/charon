@@ -22,8 +22,8 @@
  *  \date 05.01.2011
  */
 
-#ifndef _FILEWRITERHDF5_HXX_
-#define _FILEWRITERHDF5_HXX_
+#ifndef _FILEREADERHDF5_HXX_
+#define _FILEREADERHDF5_HXX_
 
 #include "FileReaderHDF5.h"
 #include <vigra/hdf5impex.hxx>
@@ -153,4 +153,4 @@ void FileReaderHDF5<T>::execute() {
 	readHdf5(out(),filename(),pathInFile(),(roi.connected()?roi():0));
 }
 
-#endif /* _FILEWRITERHDF5_HXX_ */
+#endif /* _FILEREADERHDF5_HXX_ */
