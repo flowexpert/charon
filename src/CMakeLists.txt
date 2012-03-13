@@ -2,6 +2,8 @@ INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIRECTORIES})
+
 IF(MSVC)
 	ADD_DEFINITIONS(/DHANDLE_DLL)
 ENDIF(MSVC)
@@ -77,11 +79,24 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Resize.hxx
 	)
 	TARGET_LINK_LIBRARIES(resize roi)
-	ADD_LIBRARY(filereader SHARED
-		FileReader.cpp
-		${CHARON_UTILS_INCLUDE_DIR}/FileReader.h
-		${CHARON_UTILS_INCLUDE_DIR}/FileReader.hxx
-	)
+	IF(QT4_FOUND)
+		SET(filereaderwatcher_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/FileReaderWatcher.h)
+		QT4_WRAP_CPP(filereaderwatcher_HEADERS_MOCKED ${filereaderwatcher_HEADERS_TOMOC})
+		ADD_LIBRARY(filereader SHARED
+			FileReader.cpp
+			FileReaderWatcher.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/FileReader.h
+			${CHARON_UTILS_INCLUDE_DIR}/FileReader.hxx
+			${filereaderwatcher_HEADERS_MOCKED}
+		)
+		TARGET_LINK_LIBRARIES(filereader ${QT_LIBRARIES})
+	ELSE(QT4_FOUND)
+		ADD_LIBRARY(filereader SHARED
+			FileReader.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/FileReader.h
+			${CHARON_UTILS_INCLUDE_DIR}/FileReader.hxx
+		)
+	ENDIF(QT4_FOUND)
 	ADD_LIBRARY(floreader SHARED
 		FloReader.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/FloReader.h

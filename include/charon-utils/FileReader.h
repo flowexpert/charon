@@ -41,6 +41,10 @@
 #define filereader_DECLDIR
 #endif
 
+#ifdef QT_CORE_LIB
+#include <charon-utils/FileReaderWatcher.h>
+#endif
+
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
 
@@ -58,6 +62,11 @@ public:
 	/// filename to read image from
 	Parameter<std::string> filename;
 
+#ifdef QT_CORE_LIB
+	/// if watchable is set, file is being monitored for changes
+	Parameter< bool > watchable;
+#endif
+
 	/// image data as output slot
 	OutputSlot<cimg_library::CImgList<T> > out;
 
@@ -69,6 +78,12 @@ protected:
 	/// Update object.
 	/// Reload image and put new data into the output slot.
 	virtual void execute();
+
+#ifdef QT_CORE_LIB
+private:
+	FileReaderWatcher *fileReaderWatcher;
+#endif
 };
 
 #endif // _FILEREADER_H_
+

@@ -32,12 +32,23 @@ FileReader<T>::FileReader(const std::string& name) :
 {
 	this->_addParameter (filename, "filename",
 		"filename to read image from", "fileopen");
+#ifdef QT_CORE_LIB
+	this->_addParameter (watchable, "watchable",
+		"if set, file is being monitored for changes", false);
+#endif
 	this->_addOutputSlot(out, "out",
 		"image output", "CImgList<T>");
+
+#ifdef QT_CORE_LIB
+	fileReaderWatcher = new FileReaderWatcher( this );
+#endif
 }
 
 template <typename T>
 void FileReader<T>::execute() {
+#ifdef QT_CORE_LIB
+	fileReaderWatcher->setFilename( this->filename() );
+#endif
 	try
 	{
 		out().load(filename().c_str());
@@ -51,3 +62,4 @@ void FileReader<T>::execute() {
 }
 
 #endif /* _FILEREADER_HXX_ */
+
