@@ -50,33 +50,34 @@
  */
 template <typename T>
 class penaltylorentzian_DECLDIR PenaltyLorentzian :
-public PenaltyFunction<T> {
- public:
-  /// default constructor
-  /// \param name          Instance name
-  PenaltyLorentzian(const std::string& name = "");
+	public PenaltyFunction<T> {
+public:
+	/// default constructor
+	/// \param name          Instance name
+	PenaltyLorentzian(const std::string& name = "");
 
-  /// main function
-  void execute();
+	/// penalty
+	T getPenalty( T );
 
-  /// penalty
-  T getPenalty( T );
+	/// penalty's 1st order derivative (gradient ;-)) wrt its argument
+	T getPenaltyGradient( T );
 
-  /// penalty's 1st order derivative (gradient ;-)) wrt its argument
-  T getPenaltyGradient( T );
+	/// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
+	T getPenaltyHessian( T );
 
-  /// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
-  T getPenaltyHessian( T );
+	/// parameter sigma
+	Parameter< T > sigma;
 
-  /// parameter sigma
-  Parameter< T > sigma;
+protected:
+	/// main function
+	void execute();
 
 private:
-  /// destructor
-  ~PenaltyLorentzian();
-
-  T _lamb;
-  T _sigma;
+	/// \name cache members
+	//\{
+	T _lamb;
+	T _sigma;
+	//\}
 };
 
 #endif // _PENALTYLORENTZIAN_H_

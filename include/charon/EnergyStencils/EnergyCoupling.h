@@ -92,8 +92,11 @@ public:
 	int getEnergyGradientDimensions();
 
 private:
+	/// \name cache members
+	//\{
 	T _lamb;
 	PenaltyFunction<T> *_penaltyFunction;
+	//\}
 };
 
 #endif // _ENERGYCOUPLING_H_

@@ -44,9 +44,9 @@
 #include <charon-utils/Roi.h>
 
 /// Second order Newton method
-/// x_{n+1} = x_{n} - \gamma \[ \mat{H} E \]^{-1} \cdot \nabla E
 /** This solver is based upon the second order Newton method.
  *  Hessian Stencils are needed.
+ *  \f[x_{n+1} = x_n-\gamma\left[\mathbf{H} E\right]^{-1}\cdot\nabla E\f]
  *
  *  \ingroup charon-flow-solvers
  *  \ingroup charon-modules

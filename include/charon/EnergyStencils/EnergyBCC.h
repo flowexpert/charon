@@ -59,16 +59,14 @@ class energybcc_DECLDIR EnergyBCC :
 		public Stencil::EnergyHessian<T>
 {
 public:
-  /// Input slot for penalty function
-  InputSlot< PenaltyFunction<T>* > penaltyFunction;
-
+	/// Input slot for penalty function
+	InputSlot< PenaltyFunction<T>* > penaltyFunction;
 	/// Input slot for image derivative wrt x
 	InputSlot< cimg_library::CImgList<T> > img_dx;  //  I_x
 	/// Input slot for image derivative wrt y
 	InputSlot< cimg_library::CImgList<T> > img_dy;  //  I_y
 	/// Input slot for image derivative wrt t
 	InputSlot< cimg_library::CImgList<T> > img_dt;  //  I_t
-
 	/// Input slot for current motion components
 	InputSlot< cimg_library::CImgList<T> > motionUV;
 
@@ -82,22 +80,22 @@ public:
 	/// stencil's energy gradient function
 	std::vector<T> getEnergyGradient( int nI, int xI, int yI, int zI, int cI );
 
-  /// stencil's energy Hessian function
-  std::vector<T> getEnergyHessian( int nI, int xI, int yI, int zI, int cI );
+	/// stencil's energy Hessian function
+	std::vector<T> getEnergyHessian( int nI, int xI, int yI, int zI, int cI );
 
 	/// stencil's count of gradient components
-  int getEnergyGradientDimensions();
+	int getEnergyGradientDimensions();
 
 protected:
 	/// stencil's main function
-	void execute();
+	virtual void execute();
 
 private:
-	/// destructor
-	~EnergyBCC();
-
-  T _lamb;
-  PenaltyFunction<T> *_penaltyFunction;
+	/// \name cache members
+	//\{
+	T _lamb;
+	PenaltyFunction<T>* _penaltyFunction;
+	//\}
 };
 
 #endif // _ENERGYBCC_H_

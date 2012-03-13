@@ -32,22 +32,22 @@
 
 template <class T>
 PenaltyQuadratic<T>::PenaltyQuadratic(const std::string& name) :
-  PenaltyFunction<T>(
-	     "PenaltyQuadratic", name,
-	     "<h2>Implementation of the quadratic penalty function."
-	     )
+	PenaltyFunction<T>(
+		"PenaltyQuadratic", name,
+		"<h2>Implementation of the quadratic penalty function."
+	)
 {
-  this->_addParameter( maxDiff, "maxDiff",
-                       "parabola will be truncated, if abs(diff) > maxDiff", T(127.0) );
+	this->_addParameter(
+		maxDiff, "maxDiff",
+		"parabola will be truncated, if abs(diff) > maxDiff",
+		T(127.0) );
 }
 
 template <class T>
 void PenaltyQuadratic<T>::execute() {
-  PARAMETEREDOBJECT_AVOID_REEXECUTION;
-  ParameteredObject::execute();
-
-  _lamb = this->lambda();
-  _maxDiff = maxDiff();
+	PenaltyFunction<T>::execute();
+	_lamb = this->lambda();
+	_maxDiff = maxDiff();
 }
 
 template <class T>
@@ -82,9 +82,6 @@ T PenaltyQuadratic<T>::getPenaltyHessian( T diff )
 		penaltyHessian = T(0.0);
 	return T(this->_lamb * penaltyHessian);
 }
-
-template <class T>
-PenaltyQuadratic<T>::~PenaltyQuadratic() {}
 
 #endif /* _PENALTYQUADRATIC_HXX_ */
 

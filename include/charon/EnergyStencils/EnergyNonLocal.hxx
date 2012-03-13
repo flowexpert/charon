@@ -44,43 +44,43 @@ EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
 		"EnergyNonLocal", name,
 		"<h2>Example for an EnergyStencil.")
 {
-  ParameteredObject::_addParameter< int >(useWeight,
-                      "useWeight",
-                      "use weighted median (1) or not (0)",
-                      0, "int");
-  ParameteredObject::_addParameter< int >(radius,
-		      "radius",
-		      "radius of the neighborhood",
-		      10, "int");
-  ParameteredObject::_addParameter< T >(sigma_spatial,
-		      "sigma_spatial",
-		      "spatial difference weight",
-		      7, "T");
-  ParameteredObject::_addParameter< T >(sigma_color,
-		      "sigma_color",
-		      "color difference weight",
-		      7, "T");
-  ParameteredObject::_addParameter< T >(sigma_occ_divergence,
-                      "sigma_occ_divergence",
-                      "occlusion divergence weight",
-                      0.3, "T");
-  ParameteredObject::_addParameter< T >(sigma_occ_color,
-                      "sigma_occ_color",
-                      "occlusion color difference weight",
-                      20, "T");
+	ParameteredObject::_addParameter< bool >(useWeight,
+			"useWeight",
+			"use weighted median (1) or not (0)",
+			true);
+	ParameteredObject::_addParameter< int >(radius,
+			"radius",
+			"radius of the neighborhood",
+			10, "int");
+	ParameteredObject::_addParameter< T >(sigma_spatial,
+			"sigma_spatial",
+			"spatial difference weight",
+			7, "T");
+	ParameteredObject::_addParameter< T >(sigma_color,
+			"sigma_color",
+			"color difference weight",
+			7, "T");
+	ParameteredObject::_addParameter< T >(sigma_occ_divergence,
+			"sigma_occ_divergence",
+			"occlusion divergence weight",
+			0.3, "T");
+	ParameteredObject::_addParameter< T >(sigma_occ_color,
+			"sigma_occ_color",
+			"occlusion color difference weight",
+			20, "T");
 
-  this->_addInputSlot(penaltyFunction,
-                      "penaltyFunction",
-                      "penalty function",
-                      "PenaltyFunction<T>*");
-  this->_addInputSlot(img,
-                      "img",
-                      "list of input images",
-                      "CImgList<T>");
-  this->_addInputSlot(motionUV,
-                      "motionUV",
-                      "current motion components",
-                      "CImgList<T>");
+	this->_addInputSlot(penaltyFunction,
+			"penaltyFunction",
+			"penalty function",
+			"PenaltyFunction<T>*");
+	this->_addInputSlot(img,
+			"img",
+			"list of input images",
+			"CImgList<T>");
+	this->_addInputSlot(motionUV,
+		"motionUV",
+		"current motion components",
+		"CImgList<T>");
 }
 
 template <class T>

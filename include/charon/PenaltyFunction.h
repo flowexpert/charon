@@ -54,8 +54,8 @@ public:
 
 	/// default constructor
 	PenaltyFunction(const std::string& classname /**[in] class name*/,
-	              const std::string& name /**[in] instance name*/,
-	              const std::string& doc /**[in] stencil documentation*/);
+		const std::string& name /**[in] instance name*/,
+		const std::string& doc /**[in] stencil documentation*/);
 
 	/// function yielding penalty
 	virtual T getPenalty( T difference ) = 0;
@@ -66,8 +66,9 @@ public:
 	/// function yielding penalty Hessian wrt its argument
 	virtual T getPenaltyHessian( T difference ) = 0;
 
-	// default destructor
-	virtual ~PenaltyFunction();
+protected:
+	/// \implements ParameteredObject::execute()
+	virtual void execute();
 };
 
 #endif

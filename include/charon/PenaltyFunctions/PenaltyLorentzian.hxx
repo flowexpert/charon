@@ -32,21 +32,19 @@
 
 template <class T>
 PenaltyLorentzian<T>::PenaltyLorentzian(const std::string& name) :
-  PenaltyFunction<T>(
-	     "PenaltyLorentzian", name,
-	     "<h2>Implementation of the Lorentzian penalty function."
-	     )
+	PenaltyFunction<T>(
+		"PenaltyLorentzian", name,
+		"<h2>Implementation of the Lorentzian penalty function."
+	)
 {
 	this->_addParameter(sigma, "sigma", "parameter sigma", T(0.03));
 }
 
 template <class T>
 void PenaltyLorentzian<T>::execute() {
-  PARAMETEREDOBJECT_AVOID_REEXECUTION;
-  ParameteredObject::execute();
-
-  _lamb = this->lambda();
-  _sigma = sigma();
+	PenaltyFunction<T>::execute();
+	_lamb = this->lambda();
+	_sigma = sigma();
 }
 
 template <class T>
@@ -69,9 +67,6 @@ T PenaltyLorentzian<T>::getPenaltyHessian( T diff )
 	T penaltyHessian = (_sigma*_sigma)/(diff*diff) - T(0.5) ;
 	return T(this->_lamb * penaltyHessian);
 }
-
-template <class T>
-PenaltyLorentzian<T>::~PenaltyLorentzian() {}
 
 #endif /* _PENALTYLORENTZIAN_HXX_ */
 

@@ -87,12 +87,18 @@ protected:
 	void execute();
 
 private:
+	/// \name clique potentials
+	//\{
 	T _energy( T x, T xo );
 	T _energyGradient( T x, T xo );
 	T _energyHessian( T x, T xo );
+	//\}
 
+	/// \name cache members
+	//\{
 	T _lamb;
-	PenaltyFunction<T> *_penaltyFunction;
+	PenaltyFunction<T>* _penaltyFunction;
+	//\}
 };
 
 #endif // _ENERGYCLASSIC_H_

@@ -32,10 +32,10 @@
 
 template <class T>
 PenaltyCharbonnier<T>::PenaltyCharbonnier(const std::string& name) :
-  PenaltyFunction<T>(
-	     "PenaltyCharbonnier", name,
-	     "<h2>Implementation of the Charbonnier penalty function."
-	     )
+	PenaltyFunction<T>(
+		"PenaltyCharbonnier", name,
+		"<h2>Implementation of the Charbonnier penalty function."
+	)
 {
 	this->_addParameter(maxDiff, "maxDiff", "truncation, if abs(diff) > maxDiff", T(127.0));
 	this->_addParameter(a, "a", "parameter a", T(0.45));
@@ -44,13 +44,11 @@ PenaltyCharbonnier<T>::PenaltyCharbonnier(const std::string& name) :
 
 template <class T>
 void PenaltyCharbonnier<T>::execute() {
-  PARAMETEREDOBJECT_AVOID_REEXECUTION;
-  ParameteredObject::execute();
-
-  _lamb = this->lambda();
-  _maxDiff = maxDiff();
-  _a = a();
-  _eps = eps();
+	PenaltyFunction<T>::execute();
+	_lamb = this->lambda();
+	_maxDiff = maxDiff();
+	_a = a();
+	_eps = eps();
 }
 
 template <class T>
@@ -88,9 +86,6 @@ T PenaltyCharbonnier<T>::getPenaltyHessian( T diff )
 	}
 	return T(this->_lamb * penaltyHessian);
 }
-
-template <class T>
-PenaltyCharbonnier<T>::~PenaltyCharbonnier() {}
 
 #endif /* _PENALTYCHARBONNIER_HXX_ */
 

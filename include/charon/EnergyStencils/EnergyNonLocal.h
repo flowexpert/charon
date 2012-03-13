@@ -57,18 +57,18 @@ public:
 	/// Input slot for penalty function
 	InputSlot< PenaltyFunction<T>* > penaltyFunction;
 
-	Parameter< int > useWeight;
+	Parameter< bool > useWeight;          ///<  use weighted median or not
 	Parameter< int > radius;              ///<  radius of the neighborhood
 	Parameter< T > sigma_spatial;         ///<  spatial difference weight
 	Parameter< T > sigma_color;           ///<  color difference weight
 	Parameter< T > sigma_occ_divergence;  ///<  occlusion divergence weight
 	Parameter< T > sigma_occ_color;       ///<  occlusion color weight
 
-  ///list of input images
-  InputSlot< cimg_library::CImgList<T> > img;
+	/// list of input images
+	InputSlot< cimg_library::CImgList<T> > img;
 
-  ///current motion components
-  InputSlot< cimg_library::CImgList<T> > motionUV;
+	/// current motion components
+	InputSlot< cimg_library::CImgList<T> > motionUV;
 
 	/// default constructor
 	/// \param name          Instance name
@@ -89,18 +89,24 @@ public:
 	/// stencil's gradient's components count
 	int getEnergyGradientDimensions();
 
-	///@{
+	/// \name cache members
+	//\{
 	T _lamb;
 	int _radius;
 	int _useWeight;
 	T _sigma_spatial, _sigma_color, _sigma_occ_divergence, _sigma_occ_color;
-	///@}
+	//\}
 
 private:
-  inline T _gauss( T x, T mu, T sigma );
-  inline T _dgauss( T x, T mu, T sigma );
+	/// gaussian
+	inline T _gauss( T x, T mu, T sigma );
+	/// derivative of gaussian
+	inline T _dgauss( T x, T mu, T sigma );
 
-  PenaltyFunction<T> *_penaltyFunction;
+	/// \name cache members
+	//\{
+	PenaltyFunction<T> *_penaltyFunction;
+	//\}
 };
 
 #endif // _ENERGYNONLOCAL_H_

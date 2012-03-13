@@ -50,34 +50,34 @@
  */
 template <typename T>
 class penaltyquadratic_DECLDIR PenaltyQuadratic :
-public PenaltyFunction<T> {
- public:
-  /// default constructor
-  /// \param name          Instance name
-  PenaltyQuadratic(const std::string& name = "");
+	public PenaltyFunction<T> {
+public:
+	/// default constructor
+	/// \param name          Instance name
+	PenaltyQuadratic(const std::string& name = "");
 
-  /// truncation difference
-  Parameter< T > maxDiff;
+	/// truncation difference
+	Parameter< T > maxDiff;
 
-  /// main function
-  void execute();
+	/// penalty
+	T getPenalty( T );
 
-  /// penalty
-  T getPenalty( T );
+	/// penalty's 1st order derivative (gradient ;-)) wrt its argument
+	T getPenaltyGradient( T );
 
-  /// penalty's 1st order derivative (gradient ;-)) wrt its argument
-  T getPenaltyGradient( T );
+	/// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
+	T getPenaltyHessian( T );
 
-  /// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
-  T getPenaltyHessian( T );
+protected:
+	/// main function
+	virtual void execute();
 
 private:
-  /// destructor
-  ~PenaltyQuadratic();
-
-  ///?
-  T _lamb;
-  T _maxDiff;
+	/// \name cache members
+	//\{
+	T _lamb;
+	T _maxDiff;
+	//\}
 };
 
 #endif // _PENALTYQUADRATIC_H_

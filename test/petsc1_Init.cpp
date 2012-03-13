@@ -22,6 +22,7 @@
 
 #include <petscksp.h>
 
+/// pass references of mat/vec types if petsc needs it
 #ifndef PTSC_FIX_REF
 #if (PETSC_VERSION_MAJOR==3 && PETSC_VERSION_MINOR>1)
 #define PTSC_FIX_REF(x) (&(x))

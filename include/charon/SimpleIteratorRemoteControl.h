@@ -26,24 +26,32 @@
 #define _SIMPLEITERATOR_REMOTECONTROL_H
 
 #include <QDialog>
-#include <QLabel>
-#include <QPushButton>
 
-#include <string>
+class QLabel;
+class QPushButton;
 
+/// gui class to provide step control of iterations
 class SimpleIteratorRemoteControl
 	: public QDialog
 {
 	Q_OBJECT
 public:
-	SimpleIteratorRemoteControl( const std::string caption, QWidget *parent = 0 );
+	/// default constructor, setting the dialog caption
+	SimpleIteratorRemoteControl(
+		QString caption, QWidget* parent = 0);
 public slots:
+	/// \name handle button clicks
+	//\{
 	void on_btnStep_clicked();
 	void on_btnBreak_clicked();
 	void on_btnContinue_clicked();
+	//\}
 private:
+	/// \name ui element refrences
+	//\{
 	QLabel *lbl;
 	QPushButton *btnStep, *btnBreak, *btnContinue;
+	//\}
 };
 
 #endif

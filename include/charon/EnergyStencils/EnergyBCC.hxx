@@ -133,10 +133,5 @@ std::vector<T> EnergyBCC<T>::getEnergyHessian( int, int xI, int yI, int zI, int 
 template <class T>
 int EnergyBCC<T>::getEnergyGradientDimensions() { return 2; }
 
-template <class T>
-EnergyBCC<T>::~EnergyBCC()
-{
-}
-
 #endif /* _ENERGYBCC_HXX_ */
 

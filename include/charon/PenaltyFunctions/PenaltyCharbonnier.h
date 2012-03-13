@@ -42,48 +42,49 @@
 /// Charbonnier PenaltyFunction
 /** Penalty function yielding the Charbonnier penalty.
  *
- *  It yields ( x ^ 2 + \eps ^ 2 ) ^ a wrt to its argument x
- *  and its gradient 2 * x * (x^2 + \eps^2) ^ a-1 .
+ *  It yields \f$(x^2 + \epsilon^2)^a\f$ wrt to its argument x
+ *  and its gradient \f$2x\cdot (x^2 + \epsilon^2)^{a-1}\f$ .
  *
  *  \ingroup charon-modules
  *  \ingroup charon-flow
  */
 template <typename T>
 class penaltycharbonnier_DECLDIR PenaltyCharbonnier :
-public PenaltyFunction<T> {
- public:
-  /// default constructor
-  /// \param name          Instance name
-  PenaltyCharbonnier(const std::string& name = "");
+	public PenaltyFunction<T> {
+public:
+	/// default constructor
+	/// \param name          Instance name
+	PenaltyCharbonnier(const std::string& name = "");
 
-  /// truncation difference
-  Parameter< T > maxDiff;
+	/// truncation difference
+	Parameter< T > maxDiff;
 
-  /// main function
-  void execute();
+	/// penalty
+	T getPenalty( T );
 
-  /// penalty
-  T getPenalty( T );
+	/// penalty's 1st order derivative (gradient ;-)) wrt its argument
+	T getPenaltyGradient( T );
 
-  /// penalty's 1st order derivative (gradient ;-)) wrt its argument
-  T getPenaltyGradient( T );
+	/// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
+	T getPenaltyHessian( T );
 
-  /// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
-  T getPenaltyHessian( T );
+	/// parameter a
+	Parameter< T > a;
 
-  /// parameter a
-  Parameter< T > a;
+	/// parameter epsilon
+	Parameter< T > eps;
 
-  /// parameter epsilon
-  Parameter< T > eps;
+protected:
+	/// main function
+	virtual void execute();
 
 private:
-  /// destructor
-  ~PenaltyCharbonnier();
-
-  T _lamb;
-  T _a, _eps;
-  T _maxDiff;
+	/// \name cache members
+	//\{
+	T _lamb;
+	T _a, _eps;
+	T _maxDiff;
+	//\}
 };
 
 #endif // _PENALTYCHARBONNIER_H_

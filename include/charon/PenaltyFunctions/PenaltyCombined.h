@@ -49,43 +49,43 @@
  */
 template <typename T>
 class penaltycombined_DECLDIR PenaltyCombined :
-public PenaltyFunction<T> {
- public:
-  /// default constructor
-  /// \param name          Instance name
-  PenaltyCombined(const std::string& name = "");
+	public PenaltyFunction<T> {
+public:
+	/// default constructor
+	/// \param name          Instance name
+	PenaltyCombined(const std::string& name = "");
 
-  /// main function
-  void execute();
+	/// penalty
+	T getPenalty( T );
+	/// penalty's 1st order derivative (gradient ;-)) wrt its argument
+	T getPenaltyGradient( T );
+	/// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
+	T getPenaltyHessian( T );
 
-  /// penalty
-  T getPenalty( T );
-  /// penalty's 1st order derivative (gradient ;-)) wrt its argument
-  T getPenaltyGradient( T );
-  /// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
-  T getPenaltyHessian( T );
+	/// parameter list containing weights for 1st penalty function
+	/// wrt the current iteration number
+	ParameterList< T > lambdaFst;
+	/// parameter list containing weights for 2nd penalty function
+	/// wrt the current iteration number
+	ParameterList< T > lambdaSnd;
 
-  /// parameter list containing weights for 1st penalty function
-  /// wrt the current iteration number
-  ParameterList< T > lambdaFst;
-  /// parameter list containing weights for 2nd penalty function
-  /// wrt the current iteration number
-  ParameterList< T > lambdaSnd;
+	/// input slot for 1st penalty function
+	InputSlot< PenaltyFunction<T>* > fstPenaltyFunction;
+	/// input slot for 1st penalty function
+	InputSlot< PenaltyFunction<T>* > sndPenaltyFunction;
 
-  /// input slot for 1st penalty function
-  InputSlot< PenaltyFunction<T>* > fstPenaltyFunction;
-  /// input slot for 1st penalty function
-  InputSlot< PenaltyFunction<T>* > sndPenaltyFunction;
+	/// input slot for current 'level'
+	InputSlot< unsigned int > level;
 
-  /// input slot for current 'level'
-  InputSlot< unsigned int > level;
+protected:
+	/// main function
+	virtual void execute();
 
 private:
-
-  T _lambda1, _lambda2;
-
-  /// destructor
-  ~PenaltyCombined();
+	/// \name cache members
+	//\{
+	T _lambda1, _lambda2;
+	//\}
 };
 
 #endif // _PENALTYCOMBINED_H_

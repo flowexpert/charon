@@ -32,10 +32,10 @@
 
 template <class T>
 PenaltyCombined<T>::PenaltyCombined(const std::string& name) :
-  PenaltyFunction<T>(
-	     "PenaltyCombined", name,
-	     "<h2>Implementation of the Charbonnier penalty function."
-	     )
+	PenaltyFunction<T>(
+		"PenaltyCombined", name,
+		"<h2>Implementation of the Charbonnier penalty function."
+	)
 {
 	this->_addParameter(lambdaFst, "lambdaFst", "weights for 1st penalty function","ParameterList<T>");
 	this->_addParameter(lambdaSnd, "lambdaSnd", "weights for 2nd penalty function","ParameterList<T>");
@@ -46,13 +46,12 @@ PenaltyCombined<T>::PenaltyCombined(const std::string& name) :
 
 template <class T>
 void PenaltyCombined<T>::execute() {
-  PARAMETEREDOBJECT_AVOID_REEXECUTION;
-  ParameteredObject::execute();
-
-  unsigned int _level = level();
-  _lambda1 = lambdaFst()[_level];
-  _lambda2 = lambdaSnd()[_level];
-//  sout << "(II) PenaltyCombined :: level, lambda[1,2] " << _level << ", " << _lambda1 << ", " << _lambda2 << std::endl;
+	PenaltyFunction<T>::execute();
+	unsigned int _level = level();
+	_lambda1 = lambdaFst()[_level];
+	_lambda2 = lambdaSnd()[_level];
+	//  sout << "(II) PenaltyCombined :: level, lambda[1,2] "
+	// << _level << ", " << _lambda1 << ", " << _lambda2 << std::endl;
 }
 
 template <class T>
@@ -81,9 +80,6 @@ T PenaltyCombined<T>::getPenaltyHessian( T diff )
 	               + _lambda2 * sndPenaltyFunction()->getPenaltyHessian( diff );
 	return T(penaltyHessian);
 }
-
-template <class T>
-PenaltyCombined<T>::~PenaltyCombined() {}
 
 #endif /* _PENALTYCOMBINED_HXX_ */
 

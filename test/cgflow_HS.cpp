@@ -76,7 +76,7 @@ int test() {
 	assert(comparator);
 
 	std::cout << "Executing workflow..." << std::endl;
-	man.executeWorkflow();
+	man.runWorkflow();
 	std::cout << "Workflow execution finished.\n" << std::endl;
 
 	std::cout << "mean endpoint error: "
