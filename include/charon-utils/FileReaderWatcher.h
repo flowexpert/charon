@@ -31,7 +31,20 @@
 
 #include <string>
 
-class FileReaderWatcher
+#if defined(MSVC) && defined(HANDLE_DLL)
+#ifdef filereader_EXPORTS
+///Visual C++ specific code
+#define filereader_DECLDIR __declspec(dllexport)
+#else
+#define filereader_DECLDIR __declspec(dllimport)
+#endif /*Export or import*/
+#else /* No DLL handling or GCC */
+///Not needed with GCC
+#define filereader_DECLDIR
+#endif
+
+
+class filereader_DECLDIR FileReaderWatcher
 	: public QFileSystemWatcher
 {
 	Q_OBJECT
