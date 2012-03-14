@@ -81,6 +81,9 @@ namespace ArgosDisplay
 		/// time interval for display reloading (0 disables)
 		Parameter < int > timeout;
 
+		/// update object
+		virtual void run();
+
 	protected:
 		/// Update object.
 		virtual void execute();
@@ -90,7 +93,7 @@ namespace ArgosDisplay
 		MainWindow* _mainWindow ;
 
 		/// timer based reloader for ArgosDisplay
-		ArgosDisplayReloader *displayReloader;
+		ArgosDisplayReloader* _displayReloader;
 
 	}; // class ArgosDisplayPlugin
 

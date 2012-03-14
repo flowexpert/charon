@@ -26,7 +26,8 @@
 #include <ParameteredObject.h>
 #include <charon-utils/ArgosDisplayReloader.h>
 
-ArgosDisplayReloader::ArgosDisplayReloader( ParameteredObject *argosDisplay )
+ArgosDisplayReloader::ArgosDisplayReloader(
+		ParameteredObject* argosDisplay)
 	: _argosDisplay(argosDisplay)
 {
 	_timer = new QTimer(this);

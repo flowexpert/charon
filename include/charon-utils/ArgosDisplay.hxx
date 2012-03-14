@@ -82,8 +82,7 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 	}
 
 	_mainWindow = new MainWindow(this->getName());
-
-	displayReloader = new ArgosDisplayReloader( this );
+	_displayReloader = new ArgosDisplayReloader(this);
 }
 
 template <typename T>
@@ -94,15 +93,15 @@ ArgosDisplayPlugin<T>::~ArgosDisplayPlugin()
 
 template <typename T>
 void ArgosDisplayPlugin<T>::execute() {
-	// setup timer for display reloading
-	displayReloader->setTimeout( timeout() );
-
 	// exit if QApplication is not running
 	// (when opened with command line charon)
 	if(!qApp){
 		return ;
 	}
 	
+	// setup timer for display reloading
+	_displayReloader->setTimeout( timeout() );
+
 	//std::map<const Array* const, std::string> parentNames ;
 	// get pointers to all OutputSlots of the _in Multislot to get the names
 	// of the corresponding Plugin Instances
@@ -162,11 +161,14 @@ void ArgosDisplayPlugin<T>::execute() {
 	for (std::size_t ii = 0 ; ii < _widgets.size() ; ii++) {
 		_mainWindow->addDockWidget(_widgets[ii]) ;
 	}
-
-	// start timer at execution end to avoid flooding of the event loop
-	displayReloader->start();
 }
 
+template<typename T>
+void ArgosDisplayPlugin<T>::run() {
+	ParameteredObject::run();
+	// start timer at execution end to avoid flooding of the event loop
+	_displayReloader->start();
+}
 
 AbstractPixelInspector::AbstractPixelInspector(
 		const std::string& name) :
