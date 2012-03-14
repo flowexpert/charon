@@ -111,6 +111,12 @@ public:
 	/// update rate, i.e. ratio of change that is used
 	Parameter < double > updateRate;
 
+	/// filename to write current flow to
+	Parameter < std::string > writeFlow;
+
+	/// filename to write previous flow to
+	Parameter < std::string > writeFlowInit;
+
 	/// flow result calculaged during current iteration 
 	InputSlot < cimg_library::CImgList<T> > flow;
 	/// initial flow guess if different from helper

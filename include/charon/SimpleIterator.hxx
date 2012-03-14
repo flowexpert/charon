@@ -79,6 +79,12 @@ void SimpleIterator<T>::_init() {
 	ParameteredObject::_addParameter(updateRate, "updateRate",
 		"update rate, i.e. ratio of change that is used", 1.);
 
+	ParameteredObject::_addParameter(writeFlow, "writeFlow",
+		"filename to write flow to (disabled if empty)", "");
+
+	ParameteredObject::_addParameter(writeFlowInit, "writeFlowInit",
+		"filename to write flowInit to (disabled if empty)", "");
+
 	ParameteredObject::_addInputSlot(flow, "flow",
 		"flow result calculaged during current iteration", "CImgList<T>");
 	ParameteredObject::_addInputSlot(flowInit, "flowInit",
@@ -324,6 +330,15 @@ bool SimpleIterator<T>::finishStep() {
 	}
 	else {
 		helpFlow.assign(newFlow);
+	}
+
+	/// write flow to file
+	if (!writeFlow().empty()) {
+		helpFlow.save(writeFlow().c_str());
+	}
+	/// write flowInit to file
+	if (!writeFlowInit().empty() && flowInit.connected()) {
+		flowInit().save(writeFlowInit().c_str());
 	}
 
 	sout << "\t\tnew flow size: "
