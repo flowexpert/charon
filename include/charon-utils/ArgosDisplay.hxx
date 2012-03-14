@@ -99,7 +99,7 @@ void ArgosDisplayPlugin<T>::execute() {
 #ifdef QT_CORE_LIB
 	// setup timer for display reloading
 	displayReloader->setTimeout( timeout() );
-	if (!timeoutStarted) {
+	if (!timeoutStarted && timeout()) {
 		displayReloader->start();
 	}
 #endif
