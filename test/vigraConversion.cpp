@@ -2,17 +2,17 @@
 #undef NDEBUG
 #endif
 
-//in win vigra must me included before any qt headers,
-//in unix is't the other way around
-#ifdef _WINDOWS
-	#include <charon-utils/VigraMultiArray2CImg.hxx>
-	#include <charon-utils/CImg2VigraMultiArray.hxx>
-	#include <charon-utils/FileReader.hxx>
-#else
-	#include <charon-utils/FileReader.hxx>
-	#include <charon-utils/VigraMultiArray2CImg.hxx>
-	#include <charon-utils/CImg2VigraMultiArray.hxx>
+// make sure that vigra and qt are loaded before X11/X.h (via CImg)
+// - in X11/X.h (~l.632), there is a definition of CursorShape
+// - in qnamespace.h (~l.1260), there is an enum with same name
+#include <vigra/multi_array.hxx>
+#ifdef QT_GUI_LIB
+#include <QtGui>
 #endif
+
+#include <charon-utils/VigraMultiArray2CImg.hxx>
+#include <charon-utils/CImg2VigraMultiArray.hxx>
+#include <charon-utils/FileReader.hxx>
 
 #ifndef PENGUINFILE
 #define PENGUINFILE
