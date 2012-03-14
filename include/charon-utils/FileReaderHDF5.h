@@ -83,7 +83,7 @@ public:
 	 *  \param roi           region-of-interest for block-read (5D only!)
 	 */
 	static void readHdf5(
-			vigra::MultiArray<5,T> dst,
+			vigra::MultiArray<5,T>& dst,
 			const std::string& filename,
 			const std::string& dsetName,
 			const Roi<int>* roi = 0);

@@ -80,7 +80,7 @@ FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
 
 template<typename T>
 void FileReaderHDF5<T>::readHdf5(
-		vigra::MultiArray<5,T> dst,
+		vigra::MultiArray<5,T>& dst,
 		const std::string& filename,
 		const std::string& dSet,
 		const Roi<int>* roi)
