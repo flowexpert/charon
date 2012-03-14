@@ -21,8 +21,8 @@
  *  @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">
  *     Cornelius Ratsch</a>
  *
- *  Original file written by Daniel Kondermann, modified by Jens-Malte
- *  Gottfried.
+ *  Original file written by Daniel Kondermann,
+ *      modified by Jens-Malte Gottfried et al.
  *
  *  @date 23.05.2009
  *

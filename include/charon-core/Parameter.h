@@ -45,10 +45,11 @@
 #define _Parameter_H
 
 #include "AbstractData.hxx"
-#include "ParameterFile.hxx"
 #include "DllEx.h"
+#include <string>
 
 class ParameteredObject;
+class ParameterFile;
 
 /// Parameter object handling.
 /// Provides assignment and setters/getters.

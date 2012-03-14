@@ -19,6 +19,10 @@
  *  \date 11.01.2011
  */
 
+#include <cassert>
+#include <charon-core/ParameterFile.h>
+#include <charon-core/StringTool.h>
+#include <charon-core/SplitStream.h>
 #include <charon-core/Slots.hxx>
 
 // ==========================   class Slot   ================================

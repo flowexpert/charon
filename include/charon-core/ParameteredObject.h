@@ -40,7 +40,7 @@
 #define _ParameteredObject_H
 
 #include <set>
-#include "ParameterFile.hxx"
+#include "ParameterFile.h"
 #include "Parameter.h"
 #include "Slots.h"
 #include "DllEx.h"

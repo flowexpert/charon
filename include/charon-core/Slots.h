@@ -36,12 +36,12 @@
 
 #include "TypeDetector.h"
 #include "AbstractData.hxx"
-#include "ParameterFile.h"
 #include <set>
 #include "DllEx.h"
 
 class ParameteredObject;
 class PluginManagerInterface;
+class ParameterFile;
 
 /// Commom properties of slot objects.
 class charon_core_DLL_PUBLIC Slot {

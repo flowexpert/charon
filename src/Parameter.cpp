@@ -19,7 +19,43 @@
  *
  *  @date 24.08.2009
  */
-#include <charon-core/Parameter.h>
+
+#include <charon-core/ParameterFile.h>
+#include <charon-core/Parameter.hxx>
+
+// ====================   class AbstractParameter   =========================
+
+AbstractParameter::AbstractParameter() :
+	_parent(0) {
+}
+
+void AbstractParameter::init(ParameteredObject* parent,
+		const std::string& name) {
+	if(_parent)
+		throw std::string("Parameter already assigned");
+	if(!parent)
+		throw std::string("Setting invalid parent object!");
+	if(!name.length())
+		throw std::string("Invalid name: length 0");
+
+	_parent = parent;
+	_name   = name;
+}
+
+AbstractParameter::~AbstractParameter() {
+}
+
+ParameteredObject& AbstractParameter::getParent() {
+	return *_parent;
+}
+
+const ParameteredObject& AbstractParameter::getParent() const {
+	return *_parent;
+}
+
+std::string AbstractParameter::getName() const {
+	return _name;
+}
 
 std::ostream & operator<<(
 		std::ostream& os, const AbstractParameter& parameter) {

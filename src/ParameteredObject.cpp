@@ -31,6 +31,8 @@
 #include <cassert>
 #include <stdexcept>
 #include <charon-core/ParameteredObject.hxx>
+#include <charon-core/SplitStream.h>
+#include <charon-core/StringTool.h>
 #include <charon-core/PluginManagerInterface.h>
 #include <charon-core/DataManagerParameterFile.hxx>
 

@@ -34,6 +34,7 @@
 
 #include "ParameteredObject.h"
 #include "PluginManagerInterface.h"
+#include <sstream>
 #include <stdexcept>
 
 // ========================   class AbstractSlot   ==========================
