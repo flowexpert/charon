@@ -22,27 +22,24 @@
  *  \date 13.03.2011
  */
 
+#include <charon-core/ParameteredObject.h>
 #include <charon-utils/FileReaderWatcher.h>
 
-#include <QString>
-#include <iostream>
-
-FileReaderWatcher::FileReaderWatcher( ParameteredObject *fileReader )
-	: QFileSystemWatcher()
+FileReaderWatcher::FileReaderWatcher( ParameteredObject* fileReader )
+	: QFileSystemWatcher(), _fileReader(fileReader)
 {
-	_fileReader = fileReader;
-	connect( this, SIGNAL( fileChanged( const QString & ) ),
-	         this, SLOT( resetFileReader() ) );
+	Q_ASSERT(fileReader);
+	connect(this, SIGNAL(fileChanged(QString)), SLOT(resetFileReader()));
 }
 
-void FileReaderWatcher::setFilename( const std::string &fn )
-{
+void FileReaderWatcher::setFilename( QString fn ) {
 //	(!!) watched files have to be removed on filename change (!!)
 //	this->removePaths( this->files() );  //  (!!) This does not work!
-	Parameter< bool > &watchable = dynamic_cast<Parameter< bool >& >(_fileReader->getParameter("watchable"));
+	Parameter<bool>& watchable = dynamic_cast< Parameter<bool>& >(
+			_fileReader->getParameter("watchable"));
 	if (watchable()) {
-		this->removePath( QString::fromStdString( fn ) );
-		this->addPath( QString::fromStdString( fn ) );
+		this->removePath(fn);
+		this->addPath(fn);
 	}
 }
 
@@ -50,7 +47,5 @@ void FileReaderWatcher::resetFileReader()
 {
 	_fileReader->resetExecuted();
 	sout << "(DD) FileReaderWatcher::resetFileReader() called !" << std::endl;
-//	(!!) timeout handling necessary,
-//      (!!) since files are being written continously
 }
 

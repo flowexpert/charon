@@ -26,10 +26,7 @@
 #define _FILEREADER_WATCHER_H
 
 #include <QtCore/QFileSystemWatcher>
-
-#include <charon-core/ParameteredObject.h>
-
-#include <string>
+class ParameteredObject;
 
 #if defined(MSVC) && defined(HANDLE_DLL)
 #ifdef filereader_EXPORTS
@@ -50,7 +47,7 @@ class filereader_DECLDIR FileReaderWatcher
 	Q_OBJECT
 public:
 	FileReaderWatcher( ParameteredObject *fileReader );
-	void setFilename( const std::string &fn );
+	void setFilename( QString fn );
 public slots:
 	void resetFileReader();
 private:

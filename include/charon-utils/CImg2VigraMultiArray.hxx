@@ -24,6 +24,7 @@
 #define _CIMG2VIGRAMULTIARRAY_HXX_
 
 #include "CImg2VigraMultiArray.h"
+#include <cassert>
 
 template <typename T>
 CImg2VigraMultiArray<T>::CImg2VigraMultiArray(const std::string& name) :

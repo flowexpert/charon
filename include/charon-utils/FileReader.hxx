@@ -47,7 +47,7 @@ FileReader<T>::FileReader(const std::string& name) :
 template <typename T>
 void FileReader<T>::execute() {
 #ifdef QT_CORE_LIB
-	fileReaderWatcher->setFilename( this->filename() );
+	fileReaderWatcher->setFilename(QString::fromStdString(this->filename()));
 #endif
 	try
 	{
