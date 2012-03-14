@@ -2,9 +2,17 @@
 #undef NDEBUG
 #endif
 
-#include <charon-utils/FileReader.hxx>
-#include <charon-utils/VigraMultiArray2CImg.hxx>
-#include <charon-utils/CImg2VigraMultiArray.hxx>
+//in win vigra must me included before any qt headers,
+//in unix is't the other way around
+#ifdef _WINDOWS
+	#include <charon-utils/VigraMultiArray2CImg.hxx>
+	#include <charon-utils/CImg2VigraMultiArray.hxx>
+	#include <charon-utils/FileReader.hxx>
+#else
+	#include <charon-utils/FileReader.hxx>
+	#include <charon-utils/VigraMultiArray2CImg.hxx>
+	#include <charon-utils/CImg2VigraMultiArray.hxx>
+#endif
 
 #ifndef PENGUINFILE
 #define PENGUINFILE
