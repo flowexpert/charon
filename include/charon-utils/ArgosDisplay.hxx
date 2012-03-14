@@ -38,10 +38,15 @@ using namespace ArgosDisplay ;
 template <typename T>
 ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("ArgosDisplay", name,
-			"Advanced Display Plugin<br>Allows inspection and display of vigra and cimg images as well as the use of connected QWidget instances<br><br>"
-			"Images with a size greater than 2 in the last dimension (CImgList.size() or vigra::MultiArray.size(0)) will be interpreted as RGB images<br>"
+			"Advanced Display Plugin<br>Allows inspection and display of "
+			"vigra and cimg images as well as the use "
+			"of connected QWidget instances<br><br>"
+			"Images with a size greater than 2 in the last dimension "
+			"(CImgList.size() or vigra::MultiArray.size(0)) "
+			"will be interpreted as RGB images<br>"
 			"(can be switched via the context menu)<br><br>"
-			"It's safe to use this plugin in a non-gui workflow (e.g. for use with command-line charon)<br>"
+			"It's safe to use this plugin in a non-gui workflow "
+			"(e.g. for use with command-line charon)<br>"
 			"Although it's execution will just be omitted"),
 			_vigraIn(true, true),
 			_cimgIn(true, true),
@@ -54,24 +59,20 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"Will display the first slice of an array "
 			"(meaning all dimensions except 0(width) and 1(height) are set to 0)",
 			"vigraArray5<T>");
-
 	ParameteredObject::_addInputSlot(
 			_cimgIn, "cimgIn",
 			"Multislot for input images.<br>"
 			"Will display the first slice of an array "
 			"(meaning all dimensions except 0(width) and 1(height) are set to 0)",
 			"CImgList<T>");
-
-
 	ParameteredObject::_addInputSlot(
 			_widgets, "widgets",
 			"QWidgets to display in Dock areas.",
 			"QWidget*") ;
 
-#ifdef QT_CORE_LIB
-	this->_addParameter( timeout, "timeout",
-	                    "timeout for display reloading (0 disables)", 0);
-#endif
+	ParameteredObject::_addParameter(
+			timeout, "timeout",
+			"time interval for display reloading (0 disables)", 0);
 
 	if (!qobject_cast<QApplication*>(qApp)) {
 		sout << "(WW) ArgosDisplayPlugin::No QApplication found!\n"
@@ -82,10 +83,7 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 
 	_mainWindow = new MainWindow(this->getName());
 
-#ifdef QT_CORE_LIB
 	displayReloader = new ArgosDisplayReloader( this );
-	timeoutStarted = 0;
-#endif
 }
 
 template <typename T>
@@ -96,18 +94,14 @@ ArgosDisplayPlugin<T>::~ArgosDisplayPlugin()
 
 template <typename T>
 void ArgosDisplayPlugin<T>::execute() {
-#ifdef QT_CORE_LIB
 	// setup timer for display reloading
 	displayReloader->setTimeout( timeout() );
-	if (!timeoutStarted) {
-		displayReloader->start();
-	}
-#endif
 
 	// exit if QApplication is not running
 	// (when opened with command line charon)
-	if(!qApp)
-	{	return ;	}
+	if(!qApp){
+		return ;
+	}
 	
 	//std::map<const Array* const, std::string> parentNames ;
 	// get pointers to all OutputSlots of the _in Multislot to get the names
@@ -168,6 +162,9 @@ void ArgosDisplayPlugin<T>::execute() {
 	for (std::size_t ii = 0 ; ii < _widgets.size() ; ii++) {
 		_mainWindow->addDockWidget(_widgets[ii]) ;
 	}
+
+	// start timer at execution end to avoid flooding of the event loop
+	displayReloader->start();
 }
 
 

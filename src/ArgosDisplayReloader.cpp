@@ -22,27 +22,30 @@
  *  \date 13.03.2011
  */
 
+#include <QTimer>
+#include <ParameteredObject.h>
 #include <charon-utils/ArgosDisplayReloader.h>
 
-#include <QString>
-#include <iostream>
-
 ArgosDisplayReloader::ArgosDisplayReloader( ParameteredObject *argosDisplay )
-	: QTimer()
+	: _argosDisplay(argosDisplay)
 {
-	_argosDisplay = argosDisplay;
-	connect( this, SIGNAL( timeout() ),
-	         this, SLOT( reloadArgosDisplay() ) );
+	_timer = new QTimer(this);
+	_timer->setSingleShot(true);
+	connect(_timer, SIGNAL(timeout()), SLOT(reloadArgosDisplay()));
 }
 
-void ArgosDisplayReloader::setTimeout( int msec )
-{
-	_msec = msec;
+void ArgosDisplayReloader::setTimeout( int msec ) {
+	_timer->setInterval(msec);
 }
 
-void ArgosDisplayReloader::reloadArgosDisplay()
-{
+void ArgosDisplayReloader::start() {
+	// skip singleshot if zero timeout
+	if (_timer->interval() > 0) {
+		_timer->start();
+	}
+}
+
+void ArgosDisplayReloader::reloadArgosDisplay() {
 	_argosDisplay->run();
-	this->start( _msec );
 }
 

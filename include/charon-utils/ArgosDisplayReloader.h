@@ -25,22 +25,29 @@
 #ifndef _ARGOSDISPLAY_RELOADER_H
 #define _ARGOSDISPLAY_RELOADER_H
 
-#include <QtCore/QTimer>
+#include <QObject>
+class ParameteredObject;
+class QTimer;
 
-#include <charon-core/ParameteredObject.h>
-
-class ArgosDisplayReloader
-	: public QTimer
+/// handle automatic dislpay refresh
+class ArgosDisplayReloader : public QObject
 {
 	Q_OBJECT
 public:
-	ArgosDisplayReloader( ParameteredObject *argosDisplay );
+	/// set up timer object, linking to parent display
+	ArgosDisplayReloader( ParameteredObject* argosDisplay );
+	/// timeout ( set to zero to disable timer )
 	void setTimeout( int msec );
 public slots:
+	/// handle timeout
 	void reloadArgosDisplay();
+	/// start timer (if timeout > 0)
+	void start();
 private:
+	/// parent display
 	ParameteredObject *_argosDisplay;
-	int _msec;
+	/// timer object
+	QTimer* _timer;
 };
 
 #endif

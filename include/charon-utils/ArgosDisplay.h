@@ -44,9 +44,7 @@
 
 class QWidget ;
 
-#ifdef QT_CORE_LIB
 #include <charon-utils/ArgosDisplayReloader.h>
-#endif
 
 namespace ArgosDisplay
 {
@@ -80,9 +78,8 @@ namespace ArgosDisplay
 		/// Pointers to widgets which will be displayed as QDockWidgets
 		InputSlot <QWidget*> _widgets;
 
-#ifdef QT_CORE_LIB
+		/// time interval for display reloading (0 disables)
 		Parameter < int > timeout;
-#endif
 
 	protected:
 		/// Update object.
@@ -92,13 +89,8 @@ namespace ArgosDisplay
 		/// main plugin window
 		MainWindow* _mainWindow ;
 
-#ifdef QT_CORE_LIB
 		/// timer based reloader for ArgosDisplay
 		ArgosDisplayReloader *displayReloader;
-
-		/// indicates whether timeout has started
-		int timeoutStarted;
-#endif
 
 	}; // class ArgosDisplayPlugin
 

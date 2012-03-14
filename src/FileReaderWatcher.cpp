@@ -24,6 +24,7 @@
 
 #include <charon-core/ParameteredObject.h>
 #include <charon-utils/FileReaderWatcher.h>
+#include <charon-core/SplitStream.h>
 
 FileReaderWatcher::FileReaderWatcher( ParameteredObject* fileReader )
 	: QFileSystemWatcher(), _fileReader(fileReader)
@@ -33,11 +34,11 @@ FileReaderWatcher::FileReaderWatcher( ParameteredObject* fileReader )
 }
 
 void FileReaderWatcher::setFilename( QString fn ) {
-//	(!!) watched files have to be removed on filename change (!!)
-//	this->removePaths( this->files() );  //  (!!) This does not work!
 	Parameter<bool>& watchable = dynamic_cast< Parameter<bool>& >(
 			_fileReader->getParameter("watchable"));
 	if (watchable()) {
+		// watched files have to be removed on filename change
+		// to avoid signals on changes of the old file
 		this->removePath(fn);
 		this->addPath(fn);
 	}
