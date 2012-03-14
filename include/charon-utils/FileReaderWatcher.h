@@ -40,17 +40,21 @@ class ParameteredObject;
 #define filereader_DECLDIR
 #endif
 
-
+/// watcher to notify file changes
 class filereader_DECLDIR FileReaderWatcher
 	: public QFileSystemWatcher
 {
 	Q_OBJECT
 public:
+	/// set up watcher and connect to given FileReader
 	FileReaderWatcher( ParameteredObject *fileReader );
+	/// filename to watch
 	void setFilename( QString fn );
 public slots:
+	/// handle file change event
 	void resetFileReader();
 private:
+	/// connection to parent FileReader
 	ParameteredObject *_fileReader;
 };
 

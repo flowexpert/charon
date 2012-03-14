@@ -24,6 +24,7 @@
 #define _VIGRAMULTIARRAY2CIMG_HXX_
 
 #include "VigraMultiArray2CImg.h"
+#include <charon-core/SplitStream.h>
 
 template <typename T>
 VigraMultiArray2CImg<T>::VigraMultiArray2CImg(const std::string& name) :
@@ -49,6 +50,9 @@ void VigraMultiArray2CImg<T>::execute() {
 	// store references to input/output to avoid function calls (-> slow)
 	const vigra::MultiArrayView<5, T>& i = in();
 	cimg_library::CImgList<T>& o = out();
+
+	sout << "\tData shape: " << i.size(0) << "x" << i.size(1) << "x"
+		 << i.size(2) << "x" << i.size(3) << " x " << i.size(4) << std::endl;
 
 	o.assign(i.size(4), i.size(0), i.size(1), i.size(2), i.size(3));
 	cimglist_for(o, v) {

@@ -60,6 +60,9 @@ void CImg2VigraMultiArray<T>::execute() {
 	const int dt = i[0].spectrum();
 	const int dv = i.size();
 
+	sout << "\tData shape: " << dx << "x" << dy << "x"
+		 << dz << "x" << dt << " x " << dv << std::endl;
+
 	o.reshape(typename vigra::MultiArray<5, T>::difference_type(
 			dx, dy, dz, dt, dv));
 

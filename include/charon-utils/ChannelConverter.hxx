@@ -95,9 +95,18 @@ inline unsigned int ChannelConverter<T>::_select(
 
 template <class T>
 void ChannelConverter<T>::execute() {
+	cimg_library::CImgList<T>& out_ = out() ;
+	const cimg_library::CImgList<T>& in_ = in() ;
+
+	// check for emtpy input
+	if (in_.size() == 0 || in_[0].size() == 0) {
+		sout << "(WW) \temtpy input!" << std::endl;
+		out_.assign();
+		return;
+	}
+
 	// check permutation scheme
 	const std::string& scheme_ = scheme() ;
-	
 	if(scheme_.size() != 5) {
 		std::ostringstream msg;
 		msg << __FILE__ << ":" << __LINE__ << "\n\t";
@@ -105,6 +114,7 @@ void ChannelConverter<T>::execute() {
 		msg << "(length=" << scheme().size() << ")\n\t";
 		msg << "you have to specify 5 dimensions!";
 	}
+
 	std::string missing;
 	if(StringTool::toLowerCase(scheme_).find('x') == std::string::npos &&
 		scheme_.find('0') == std::string::npos)
@@ -122,14 +132,9 @@ void ChannelConverter<T>::execute() {
 		scheme_.find('4') == std::string::npos)
 		missing.push_back('v');
 	if(missing.size()) {
-		std::ostringstream msg;
-		msg << __FILE__ << ":" << __LINE__ << "\n\t";
-		msg << "Some dimensions are missing!\n\t";
-		msg << "missing: " << missing;
+		ParameteredObject::raise(
+			"Some dimensions are missing!\n\t missing: " + missing);
 	}
-
-	cimg_library::CImgList<T>& out_ = out() ;
-	const cimg_library::CImgList<T>& in_ = in() ;
 
 	out_.assign(
 		_select(in_[0].width(),in_[0].height(),
@@ -144,7 +149,14 @@ void ChannelConverter<T>::execute() {
 				in_[0].depth(),in_[0].spectrum(),in_.size(), scheme_[3])
 	);
 
-	
+	sout << "\tData shape: "
+			<< in_[0].width() << "x" << in_[0].height()
+			<< "x" << in_[0].depth() << "x" << in_[0].spectrum()
+			<< " x " << in_.size() << " -> "
+			<< out_[0].width() << "x" << out_[0].height()
+			<< "x" << out_[0].depth() << "x" << out_[0].spectrum()
+			<< " x " << out_.size() << std::endl;
+
 	cimglist_for(in_, t) 
 		cimg_forXYZC(in_[t],x,y,z,v)
 			out_(
