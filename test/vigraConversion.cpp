@@ -2,13 +2,17 @@
 #undef NDEBUG
 #endif
 
-// make sure that vigra and qt are loaded before X11/X.h (via CImg)
+// make sure that qt is loaded before X11/X.h (via CImg)
 // - in X11/X.h (~l.632), there is a definition of CursorShape
 // - in qnamespace.h (~l.1260), there is an enum with same name
-#include <vigra/multi_array.hxx>
 #ifdef QT_GUI_LIB
 #include <QtGui>
 #endif
+
+// make sure that vigra is loaded before WinUser.h (via CImg->windows.h)
+// - in WinUser.h (~l.182), there is a definition of DIFFERENCE
+// - in vigra/accessor.hxx, DIFFERENCE is used as template typename (many times)
+#include <vigra/multi_array.hxx>
 
 #include <charon-utils/VigraMultiArray2CImg.hxx>
 #include <charon-utils/CImg2VigraMultiArray.hxx>
