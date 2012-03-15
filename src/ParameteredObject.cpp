@@ -64,13 +64,14 @@ ParameteredObject::ParameteredObject(const std::string& className,
 }
 
 ParameteredObject::~ParameteredObject() {
-	if (_createMetadata) {
-		_metadata.save(
-#ifdef UNIX
-				"lib" +
-#endif
-						_className + ".wrp");
+}
+
+const ParameterFile& ParameteredObject::getMetadata() {
+	if (!_createMetadata) {
+		sout << "(WW) requesting metadata, "
+				"but metadata generation was disabled." << std::endl;
 	}
+	return _metadata;
 }
 
 bool ParameteredObject::_addSomething(const std::string& extension,

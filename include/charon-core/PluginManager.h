@@ -154,15 +154,18 @@ private:
 	 */
 	void _unloadPlugin(PLUGIN_LOADER * p, bool erase = true);
 
-	/**
-	 * Creates metadata information for a specific plugin.
-	 * Loads the plugin (if not already loaded), creates an instance of the
-	 * plugin and destroys it immediately. If the plugin was not already loaded,
-	 * unloads the plugin afterwards.
-	 *
-	 * @param pluginName Name of the plugin (without prefix or extension)
+	/// Creates metadata information for a specific plugin.
+	/** Loads the plugin (if not already loaded), creates an instance of the
+	 *  plugin and destroys it immediately.
+	 *  If the plugin was not already loaded, unloads the plugin afterwards.
+	 *  The metadata information is stored in a parameter text file
+	 *  called "${targetPath}/${pluginName}.wrp"
+	 *  \param pluginName Name of the plugin (without prefix or extension)
+	 *  \param filename   Path to a file to store the metadata info
 	 */
-	void _createMetadataForPlugin(const std::string& pluginName);
+	void _generateMetadataForPlugin(
+		const std::string& pluginName,
+		const std::string& filename);
 
 	/// Look for execution target points
 	/** Iterates through the currently existing instances and looks for target

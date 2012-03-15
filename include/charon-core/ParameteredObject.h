@@ -300,6 +300,9 @@ public:
 	 */
 	void save(ParameterFile& pf) const;
 
+	/// get metadata
+	const ParameterFile& getMetadata();
+
 	/// Update object.
 	/**
 	 *  This function calls run on all InputSlots,

@@ -56,9 +56,11 @@ void UnixPluginLoader::load() throw (PluginException) {
 		if (!FileTool::exists(path)) {
 			throw PluginException("Failed to load the plugin \"" + pluginName
 					+ "\". The file lib" + pluginName + LIBRARY_EXTENSION +
-					+ " could not be found. (Possible suffix: " + libSuffix
-					+ ")\nDescription of the error:\n"
-					+ dlerror(), pluginName, PluginException::FILE_NOT_FOUND);
+					+ " could not be found."
+					+ (libSuffix.size() > 0 ?
+							" (Possible suffix: " + libSuffix + ")" :
+							" (suffix disabled)"),
+					pluginName, PluginException::FILE_NOT_FOUND);
 		} else {
 			throw PluginException("Failed to load the plugin \"" + pluginName
 					+ "\". Maybe the file is damaged."

@@ -115,7 +115,7 @@ void PluginManager::loadPlugin(std::string name)
 		}
 
 		_loadedPlugins[name] = newPlugin;
-		sout << "(II) Plugin \"" << name << "\" loaded successfully."
+		sout << "(DD) Plugin \"" << name << "\" loaded successfully."
 				<< std::endl;
 	} else {
 		throw(AbstractPluginLoader::PluginException(
@@ -180,7 +180,7 @@ ParameteredObject* PluginManager::createInstance(
 				loader->createInstance(instanceName, t);
 		_instances[newInstance] = loader;
 		objects[newInstance->getName()] = newInstance;
-		sout << "(II) Created Instance \"" << newInstance->getName()
+		sout << "(DD) Created Instance \"" << newInstance->getName()
 				<< "\" of the plugin \"" << pluginName << "\", type "
 				<< newInstance->getTemplateType() << std::endl;
 		return newInstance;
@@ -581,12 +581,6 @@ bool PluginManager::disconnect(const std::string& slot1,
 }
 
 void PluginManager::createMetadata(const std::string& targetPath) {
-	// Backup current configuration
-	// (Working directory and metadata creation preference)
-	bool wasEnabled = ParameteredObject::getCreateMetadata();
-	ParameteredObject::setCreateMetadata(true);
-	std::string pathBackup = FileTool::getCurrentDir();
-
 #ifndef MSVC
 	int start = 3;
 #else
@@ -597,14 +591,15 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 	std::set<std::string> pluginsU;
 
 	// Create metadata for all plugin paths
+	std::string pathBackup = FileTool::getCurrentDir();
 	for (std::vector<std::string>::const_iterator cur =
 			AbstractPluginLoader::pluginPaths.begin();
 			cur!=AbstractPluginLoader::pluginPaths.end(); cur++) {
 		FileTool::changeDir(*cur);
 
 		// Fetch list of existing plugins
-		std::vector<std::string> plugins = FileTool::getFilesWithSuffix(
-				PLUGIN_EXTENSION);
+		std::vector<std::string> plugins =
+				FileTool::getFilesWithSuffix(PLUGIN_EXTENSION);
 		std::vector<std::string>::iterator pIterW;
 		for (pIterW=plugins.begin(); pIterW != plugins.end(); pIterW++) {
 			// extract plugin name
@@ -618,25 +613,19 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 		// insert plugin names to plugin name set
 		pluginsU.insert(plugins.begin(),plugins.end());
 	}
-
-	// Metadata shall be created in the plugin folder
-	if (!targetPath.empty()) {
-		FileTool::changeDir(targetPath);
-	}
+	FileTool::changeDir(pathBackup);
 
 	// now generate metadata for all (unique) plugin names
 	// which file is now used is handled by the plugin loader
 	std::set<std::string>::const_iterator pIterU;
 	for (pIterU=pluginsU.begin(); pIterU != pluginsU.end(); pIterU++) {
-		_createMetadataForPlugin(*pIterU);
+		_generateMetadataForPlugin(*pIterU,targetPath+"/"+*pIterU+".wrp");
+		sout << "(DD) " << std::endl;
 	}
-
-	// restore former configuration
-	FileTool::changeDir(pathBackup);
-	ParameteredObject::setCreateMetadata(wasEnabled);
 }
 
-void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
+void PluginManager::_generateMetadataForPlugin(
+		const std::string& pluginName, const std::string& filename) {
 	if (!pluginName.size()) {
 		sout << "(EE) " << __FILE__ << ":" << __LINE__ << "\t"
 			<< "emtpy pluginName given (metadata generation)!\n" << std::endl;
@@ -659,7 +648,7 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 	std::vector<std::string>::const_iterator iter;
 	for(iter = excludeList.begin(); iter != excludeList.end(); iter++) {
 		if (pluginName.find(*iter)!=std::string::npos) {
-			sout << "(II) Discarding non-plugin file \"" << pluginName
+			sout << "(DD) Discarding non-plugin file \"" << pluginName
 				<< ".dll\" (matched pattern \"*" << *iter
 				<< "*\" of exclude list)\n" << std::endl;
 			return;
@@ -671,7 +660,11 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 		if (!alreadyLoaded) {
 			loadPlugin(pluginName);
 		}
-		destroyInstance(createInstance(pluginName));
+		ParameteredObject::setCreateMetadata(true);
+		ParameteredObject* curInst = createInstance(pluginName);
+		curInst->getMetadata().save(filename);
+		destroyInstance(curInst);
+		ParameteredObject::setCreateMetadata(false);
 
 		if (!alreadyLoaded) {
 			unloadPlugin(pluginName);
@@ -684,14 +677,13 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 				<< e.what() << std::endl;
 			break;
 		default:
-			sout << "(EE) Exception during metadata generation of \""
+			sout << "(EE) Could not generate metadata for module \""
 				<< e.getPluginName()
 				<< "\":\n(EE) \t"
 				<< e.what() << std::endl;
 			break;
 		}
 	}
-	sout << std::endl;
 }
 
 void PluginManager::reset() {
@@ -712,7 +704,7 @@ std::list<ParameteredObject*> PluginManager::_determineTargetPoints() {
 			connected = slotIter->second->connected();
 		}
 		if (!connected) {
-			sout << "(II) Found target point \"" << it->second->getName()
+			sout << "(DD) Found target point \"" << it->second->getName()
 					<< "\"" << std::endl;
 			targetPoints.push_back(it->second);
 		}
