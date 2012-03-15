@@ -86,7 +86,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 			+ ".dll could not be found. (Possible suffix: "+ libSuffix + ")",
 			pluginName, PluginException::FILE_NOT_FOUND);
 	}
-	sout << "(II) File: " << path << std::endl;
+	sout << "(DD) File: " << path << std::endl;
 
 	if (!hInstLibrary) {
 		// error loading dll file
@@ -203,7 +203,7 @@ void WindowsPluginLoader::unload() throw (PluginException) {
 		hInstLibrary = NULL;
 		create = NULL;
 		destroy = NULL;
-		sout << "(II) Successfully unloaded plugin \"" << pluginName << "\"."
+		sout << "(DD) Successfully unloaded plugin \"" << pluginName << "\"."
 				<< std::endl;
 	} else {
 		throw PluginException("Plugin \"" + pluginName + "\" is not loaded.",

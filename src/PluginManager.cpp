@@ -215,7 +215,7 @@ void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 				"This instance does not exist.", "unknown",
 				AbstractPluginLoader::PluginException::NO_SUCH_INSTANCE));
 	}
-	sout << "(II) Deleted Instance \"" << cur << "\" of the plugin \""
+	sout << "(DD) Deleted Instance \"" << cur << "\" of the plugin \""
 		<< curPlugin << "\"" << std::endl;
 }
 
