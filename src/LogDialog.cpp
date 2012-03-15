@@ -35,10 +35,16 @@
 
 LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 		QDialog(pp,wf), _decorator(dec), _proc(0) {
+	QSettings settings;
 	_proc = new QProcess(this);
 	_proc->setObjectName("proc");
 	_ui = new Ui::LogDialog;
 	_ui->setupUi(this);
+	settings.beginGroup("LogDialog");
+	_ui->checkDD->setChecked(settings.value("showDebugOutput",true).toBool());
+	_ui->checkScroll->setChecked(settings.value("autoScroll",true).toBool());
+	settings.endGroup();
+	_decorator->debugOutput = _ui->checkDD->isChecked();
 
 	QString title=_decorator->title();
 	QString desc=_decorator->desc();
@@ -53,7 +59,8 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 		".error {color:red;font-weight:bold;}"
 		".success {color:green;font-weight:bold;font-family:sans-serif;}"
 		".warning {color:orange;font-weight:normal;}"
-		".info {color:gray;}"
+		".info {color:#444;}"
+		".debug {color:gray;}"
 	);
 	QTextFrameFormat f;
 	_curRet=new QTextCursor(_ui->logText->textCursor().insertFrame(f));
@@ -74,7 +81,6 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 	}
 
 	// select process executable
-	QSettings settings;
 	QString procName = tcRun;
 	if ((!tcRunD.isNull()
 				&& settings.value("suffixedPlugins", false).toBool())
@@ -119,6 +125,11 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 }
 
 LogDialog::~LogDialog() {
+	QSettings settings;
+	settings.beginGroup("LogDialog");
+	settings.setValue("showDebugOutput",_ui->checkDD->isChecked());
+	settings.setValue("autoScroll",_ui->checkScroll->isChecked());
+	settings.endGroup();
 	delete _curEnd;
 	delete _curRet;
 	delete _ui;
@@ -181,18 +192,22 @@ void LogDialog::on_proc_readyReadStandardOutput() {
 			if (cur.isNull()) {
 				break;
 			}
-			cur = _decorator->highlightLine(cur);
 			if(_decorator->finishSignal(cur)) {
 				_curEnd->insertHtml(_decorator->finishMessage());
 				on_proc_finished(0);
 			}
-			form << cur << "<br>" << endl;
+			cur = _decorator->highlightLine(cur);
+			if (!cur.isNull()) {
+				form << cur << "<br>" << endl;
+			}
 		}
 		_curRet->insertHtml(formS);
 
 		// scroll down
-		QScrollBar* bar = _ui->logText->verticalScrollBar();
-		bar->setValue(bar->maximum());
+		if (_ui->checkScroll->isChecked()) {
+			QScrollBar* bar = _ui->logText->verticalScrollBar();
+			bar->setValue(bar->maximum());
+		}
 	}
 }
 
@@ -214,8 +229,10 @@ void LogDialog::on_proc_readyReadStandardError() {
 		_curRet->insertHtml(formS);
 
 		// scroll down
-		QScrollBar* bar = _ui->logText->verticalScrollBar();
-		bar->setValue(bar->maximum());
+		if (_ui->checkScroll->isChecked()) {
+			QScrollBar* bar = _ui->logText->verticalScrollBar();
+			bar->setValue(bar->maximum());
+		}
 	}
 }
 
@@ -266,7 +283,15 @@ void LogDialog::on_proc_error(QProcess::ProcessError) {
 			.arg(errorType));
 }
 
+void LogDialog::on_checkDD_toggled(bool checked) {
+	_decorator->debugOutput = checked;
+}
+
 // ============================ Decorators ===============================
+LogDialog::Decorator::Decorator() :
+		debugOutput(true) {
+}
+
 LogDialog::Decorator::~Decorator() {
 }
 
@@ -299,6 +324,15 @@ QString LogDialog::Decorator::highlightLine(QString line) {
 	else if (line.contains(
 			QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
 		line = QString("<span class=\"error\">%1</span>").arg(line);
+	}
+	else if (line.contains(
+			QRegExp("^\\(DD\\)\\s+",Qt::CaseInsensitive))) {
+		if (debugOutput) {
+			line = QString("<span class=\"debug\">%1</span>").arg(line);
+		}
+		else {
+			line = QString::null;
+		}
 	}
 	else {
 		line = QString("<span class=\"normal\">%1</span>").arg(line);

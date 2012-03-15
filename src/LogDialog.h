@@ -46,6 +46,7 @@ public:
 	/// decorator class to handle different kinds of log dialogs
 	class Decorator {
 	public:
+		Decorator();
 		virtual ~Decorator();
 		/// title string
 		virtual QString title();
@@ -71,6 +72,8 @@ public:
 		virtual bool finishSignal(QString line);
 		/// message shown if finished
 		virtual QString finishMessage();
+		/// debug output mode
+		bool debugOutput;
 	};
 
 public:
@@ -106,6 +109,8 @@ private slots:
 	void on_proc_finished(int);
 	/// handle errors running the process
 	void on_proc_error(QProcess::ProcessError);
+	/// handle debug checkbox
+	void on_checkDD_toggled(bool);
 
 private:
 	Decorator* _decorator; ///< decorator implementation
