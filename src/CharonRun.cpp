@@ -186,7 +186,7 @@ void CharonRun::runWorkflow(QString fName) {
 		const QDateTime& startTime = QDateTime::currentDateTime();
 		qout << tr("start time: %1").arg(startTime.toString(Qt::ISODate))
 			 << endl;
-		_man->runWorkflow();
+		_man->executeWorkflow();
 		const QDateTime& endTime = QDateTime::currentDateTime();
 		QTime runTime = QTime().addSecs(startTime.secsTo(endTime));
 
