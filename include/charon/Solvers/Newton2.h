@@ -65,6 +65,9 @@ public:
 	/// Output slot for feedback
 	OutputSlot< cimg_library::CImgList<T> > result;
 
+	/// Output slot for residual
+	OutputSlot< cimg_library::CImgList<T> > residual;
+
 	/// default constructor
 	Newton2(const std::string& name = "" /**[in] instance name*/);
 

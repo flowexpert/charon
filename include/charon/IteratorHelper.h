@@ -60,6 +60,8 @@ public:
 	OutputSlot < cimg_library::CImgList<T> > sequence;
 	/// current flow solution
 	OutputSlot < cimg_library::CImgList<T> > flow;
+	/// current residual energy
+	OutputSlot < cimg_library::CImgList<T> > residual;
 	/// iteration counter (resetted on iteration start, e.g. inner loop)
 	OutputSlot < unsigned int > count;
 	/// iteration counter (not resetted, increasing only)

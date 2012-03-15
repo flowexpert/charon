@@ -117,10 +117,20 @@ public:
 	/// filename to write previous flow to
 	Parameter < std::string > writeFlowInit;
 
+	/// filename to write current residual to
+	Parameter < std::string > writeResidual;
+
+	/// filename to write previous residual to
+	Parameter < std::string > writeResidualInit;
+
 	/// flow result calculaged during current iteration 
 	InputSlot < cimg_library::CImgList<T> > flow;
 	/// initial flow guess if different from helper
 	InputSlot < cimg_library::CImgList<T> > flowInit;
+	/// residual energy from current iteration
+	InputSlot < cimg_library::CImgList<T> > residual;
+	/// residual energy from previous iteration
+	InputSlot < cimg_library::CImgList<T> > residualInit;
 	/// iterator helper input
 	InputSlot < IteratorHelper<T>* > helper;
 	/// external stop criterion

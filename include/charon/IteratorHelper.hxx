@@ -48,6 +48,8 @@ IteratorHelper<T>::IteratorHelper(const std::string& name) :
 		"original sequence output", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(flow, "flow",
 		"current flow solution", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(residual, "residual",
+		"current residual energy", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(count, "count",
 		"iteration counter (resetted on iteration start, e.g. inner loop)");
 	ParameteredObject::_addOutputSlot(countAll, "countAll",
@@ -101,6 +103,11 @@ void IteratorHelper<T>::reset() {
 			seqIn[0].width(),seqIn[0].height(),seqIn[0].depth(),
 			seqIn[0].spectrum()-1,T(0));
 	}
+
+	// assign initial residual
+	residual().assign(1,
+	                  seqIn[0].width(),seqIn[0].height(),seqIn[0].depth(),
+	                  seqIn[0].spectrum()-1,T(0));
 }
 
 template <typename T>
@@ -115,3 +122,4 @@ void IteratorHelper<T>::update(bool c) {
 }
 
 #endif /* _ITERATOR_HELPER_HXX_ */
+

@@ -44,6 +44,10 @@ Newton2<T>::Newton2(const std::string& name) :
                              "result",
                              "result",
                              "CImgList<T>");
+	this->_addOutputSlot(residual,
+	                     "residual",
+	                     "residual",
+	                     "CImgList<T>");
 }
 
 template <typename T>
@@ -58,9 +62,16 @@ void Newton2<T>::execute() {
 	                                  _roi.yEnd - _roi.yBegin,
 	                                  _roi.zEnd - _roi.zBegin,
 	                                  1, T(0.0));
+	cimg_library::CImgList<T> _residual(1,
+	                                    _roi.xEnd - _roi.xBegin,
+	                                    _roi.yEnd - _roi.yBegin,
+	                                    _roi.zEnd - _roi.zBegin,
+	                                    1, T(0.0));
 
+	T tmp;
 	std::vector<T> tmp2( 2, T(0.0) );
 	std::vector<T> tmp4( 4, T(0.0) );
+	T energy;
 	std::vector<T> gradient( 2, T(0.0) );
 	std::vector<T> hessian( 4, T(0.0) );
 
@@ -74,6 +85,7 @@ void Newton2<T>::execute() {
 	for (y=_roi.yBegin; y<_roi.yEnd; ++y)
 	for (z=_roi.zBegin; z<_roi.zEnd; ++z)
 	{
+		energy = T(0.0);
 		gradient[0] = T(0.0);
 		gradient[1] = T(0.0);
 		hessian[0]  = T(0.0);
@@ -85,8 +97,10 @@ void Newton2<T>::execute() {
 		     sIt ++)
 		{
 			is = (*((InputSlot<Stencil::Base<T>*>*)*sIt))();
+			tmp  = dynamic_cast<Stencil::Energy<T>*>(is)->getEnergy( 0, x, y, z, 0 );
 			tmp2 = dynamic_cast<Stencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, x, y, z, 0 );
 			tmp4 = dynamic_cast<Stencil::EnergyHessian<T>*>(is)->getEnergyHessian( 0, x, y, z, 0 );
+			energy += tmp;
 			gradient[0] += tmp2[0];
 			gradient[1] += tmp2[1];
 			hessian[0]  += tmp4[0];
@@ -102,9 +116,13 @@ void Newton2<T>::execute() {
 		_result( 0, x, y, z, 0 ) = num/den;
 		num = gradient[1] * hessian[0] - gradient[0] * hessian[2] ;
 		_result( 1, x, y, z, 0 ) = num/den;
+
+		// write back residual (=energy)
+		_residual( 0, x, y, z, 0 ) = energy;
 	}
 
 	result() = _result;
+	residual() = _residual;
 }
 
 #endif // _NEWTON2_HXX_

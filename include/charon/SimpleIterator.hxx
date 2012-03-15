@@ -43,6 +43,8 @@ SimpleIterator<T>::SimpleIterator(const std::string& name) :
 			"zero."),
 		_remoteControl(0),
 		flowInit(true,false), // optional
+		residual(true,false), // optional
+		residualInit(true,false), // optional
 		stop(true,false) // optional
 {
 	_init();
@@ -81,14 +83,22 @@ void SimpleIterator<T>::_init() {
 
 	ParameteredObject::_addParameter(writeFlow, "writeFlow",
 		"filename to write flow to (disabled if empty)", "");
-
 	ParameteredObject::_addParameter(writeFlowInit, "writeFlowInit",
 		"filename to write flowInit to (disabled if empty)", "");
+
+	ParameteredObject::_addParameter(writeResidual, "writeResidual",
+		"filename to write residual to (disabled if empty)", "");
+	ParameteredObject::_addParameter(writeResidualInit, "writeResidualInit",
+		"filename to write residualInit to (disabled if empty)", "");
 
 	ParameteredObject::_addInputSlot(flow, "flow",
 		"flow result calculaged during current iteration", "CImgList<T>");
 	ParameteredObject::_addInputSlot(flowInit, "flowInit",
 		"initial flow guess if different from helper", "CImgList<T>");
+	ParameteredObject::_addInputSlot(residual, "residual",
+		"residual energy from current iteration", "CImgList<T>");
+	ParameteredObject::_addInputSlot(residualInit, "residualInit",
+		"residual energy from previous iteration", "CImgList<T>");
 	ParameteredObject::_addInputSlot(helper, "helper",
 		"iteration helper input", "IteratorHelper<T>*");
 	ParameteredObject::_addOutputSlot(result, "result",
@@ -249,12 +259,22 @@ bool SimpleIterator<T>::finishStep() {
 	assert(updateRate() >= 0.);
 	assert(updateRate() <= 1.);
 	cimg_library::CImgList<T>& helpFlow = help->flow();
+	cimg_library::CImgList<T>& helpResidual = help->residual();
 	const cimg_library::CImgList<T>& oldFlow =
 			(flowInit.connected() ? flowInit() : help->flow());
 	static cimg_library::CImgList<T> newFlow;
 	static cimg_library::CImgList<T> diffFlow;
 	const cimg_library::CImgList<T>& curFlow = flow();
 	double curChange;
+
+        /// write previous  flow to file
+        if (!writeFlowInit().empty() && flowInit.connected()) {
+                helpFlow.save(writeFlowInit().c_str());
+        }
+	/// write previous residual to file
+	if (!writeResidualInit().empty() && residualInit.connected() && residual.connected()) {
+		helpResidual.save(writeResidualInit().c_str());
+	}
 
 	sout << "\t\told flow size: "
 			<< oldFlow[0].width() << "x"
@@ -332,13 +352,19 @@ bool SimpleIterator<T>::finishStep() {
 		helpFlow.assign(newFlow);
 	}
 
+	if (residual.connected()) {
+		// write back residual to helper
+		helpResidual.assign(residual());
+
+		/// write current residual to file
+		if (!writeResidual().empty()) {
+			helpFlow.save(writeResidual().c_str());
+		}
+	}
+
 	/// write flow to file
 	if (!writeFlow().empty()) {
 		helpFlow.save(writeFlow().c_str());
-	}
-	/// write flowInit to file
-	if (!writeFlowInit().empty() && flowInit.connected()) {
-		flowInit().save(writeFlowInit().c_str());
 	}
 
 	sout << "\t\tnew flow size: "
