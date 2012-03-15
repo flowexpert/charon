@@ -194,7 +194,7 @@ void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,
 void ParameteredObject::run() {
 	// avoid duplicate execution
 	if (_executed) {
-		sout << "(II) Skipping reexecution of " << this->getClassName()
+		sout << "(DD) Skipping reexecution of " << this->getClassName()
 			<< " \"" << this->getName() << "\"" << std::endl;
 		return;
 	}

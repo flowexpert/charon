@@ -20,7 +20,7 @@
  *  @date 24.08.2009
  */
 
-#include <charon-core/ParameterFile.h>
+#include <charon-core/ParameterFile.hxx>
 #include <charon-core/Parameter.hxx>
 
 // ====================   class AbstractParameter   =========================
