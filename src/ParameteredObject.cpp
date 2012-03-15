@@ -428,11 +428,8 @@ void ParameteredObject::loadParameters(const ParameterFile& pf) {
 		par->second->load(pf);
 }
 
-void ParameteredObject::_load(const ParameterFile& pf,
+void ParameteredObject::loadSlots(const ParameterFile& pf,
 		const PluginManagerInterface * man) {
-	// load parameters
-	loadParameters(pf);
-
 	// load slot connections
 	std::map<std::string, Slot*>::const_iterator slotIter;
 	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++)
@@ -461,56 +458,6 @@ bool ParameteredObject::connected() const {
 		}
 	}
 	return res;
-}
-
-bool ParameteredObject::_connect(ParameteredObject* target,
-		const std::string& ownSlotStr, const std::string& targetSlotStr) {
-	std::map<std::string, Slot*>::const_iterator slotIter;
-	bool ownIsIn; // true if ownSlot is an input slot
-	slotIter = _inputs.find(ownSlotStr);
-	ownIsIn = (slotIter != _inputs.end());
-	if (!ownIsIn) {
-		slotIter = _outputs.find(ownSlotStr);
-		assert(slotIter != _outputs.end());
-	}
-	Slot* ownSlot = slotIter->second;
-
-	if (ownIsIn) {
-		slotIter = target->_outputs.find(targetSlotStr);
-		assert(slotIter != target->_outputs.end());
-	} else {
-		slotIter = target->_inputs.find(targetSlotStr);
-		assert(slotIter != target->_inputs.end());
-	}
-	Slot* targetSlot = slotIter->second;
-
-	// add target slot to target ist of own slot
-	return ownSlot->connect(*targetSlot);
-}
-
-bool ParameteredObject::_disconnect(ParameteredObject* target,
-		const std::string& ownSlotStr, const std::string& targetSlotStr) {
-	std::map<std::string, Slot*>::const_iterator slotIter;
-	bool ownIsIn; // true if ownSlot is an input slot
-	slotIter = _inputs.find(ownSlotStr);
-	ownIsIn = (slotIter != _inputs.end());
-	if (!ownIsIn) {
-		slotIter = _outputs.find(ownSlotStr);
-		assert(slotIter != _outputs.end());
-	}
-	Slot* ownSlot = slotIter->second;
-
-	if (ownIsIn) {
-		slotIter = target->_outputs.find(targetSlotStr);
-		assert(slotIter != target->_outputs.end());
-	} else {
-		slotIter = target->_inputs.find(targetSlotStr);
-		assert(slotIter != target->_inputs.end());
-	}
-	Slot* targetSlot = slotIter->second;
-
-	// remove target slot from target list of own slot
-	return ownSlot->disconnect(*targetSlot);
 }
 
 Slot* ParameteredObject::getSlot(const std::string& slotName) {

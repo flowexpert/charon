@@ -46,8 +46,6 @@
 #include "DllEx.h"
 
 class PluginManagerInterface;
-template<typename T>
-class TemplatedParameteredObject;
 
 /// Base class for serializable objects
 /** This is the base class for objects that should be able to save and
@@ -63,10 +61,6 @@ class TemplatedParameteredObject;
  */
 
 class charon_core_DLL_PUBLIC ParameteredObject {
-	friend class PluginManager;
-	template<typename T>
-	friend class TemplatedParameteredObject;
-
 private:
 	/// Count number of parametered objects with different class names.
 	static std::map<std::string, unsigned int> _genericClassNameCount;
@@ -113,57 +107,6 @@ private:
 
 	/// forbid instantiation without className etc.
 	ParameteredObject();
-
-	/// Load own content from the given parameter file.
-	/** All registered parameters are loaded from the ParameterFile.
-	 *  This function does NOT touch any slot.
-	 *  InstanceName is used as prefix.
-	 *  \param pf           ParameterFile to save to.
-	 *  \param man          Pointer to the currently active PluginManager
-	 */
-	void _load(
-			const ParameterFile& pf, const PluginManagerInterface * man);
-
-	/// Common code for _addParameter, _addInputSlot, _addOutputSlot.
-	/** This function does nothing, if _createMetadata is set to false.
-	 *  \param extension    section of metadata file where to add
-	 *                      (e.g. parameters, inputs, outputs)
-	 *  \param name         parameter name to pass to AbstractParameter::init()
-	 *  \param doc          parameter docstring (for metadata generation)
-	 *  \param type         Parameter type (string representation)
-	 *  \param defaultValue Default value, if any
-	 *  \retval true        Parameter/Slot name is unique
-	 */
-	bool _addSomething(
-			const std::string& extension, const std::string& name,
-			const std::string& doc, const std::string& type,
-			const std::string& defaultValue = "");
-
-	/// Connect slots.
-	/** String version for convenience.
-	 *  See _connect(ParameteredObject*, Slot&, Slot&).
-	 *  \param target       Target object.
-	 *  \param ownSlot      Slot of the *this object (in or out).
-	 *  \param targetSlot   Slot of the target (out or in).
-	 *  \retval true operation successful
-	 */
-	bool _connect(
-			ParameteredObject* target,
-			const std::string& ownSlot,
-			const std::string& targetSlot);
-
-	/// Disconnect slots.
-	/** This function has the same arguments as ParameteredObject::connect()
-	 *  but removes an established connection.
-	 *  \param target       Target object.
-	 *  \param ownSlot      Slot of the *this object (in or out).
-	 *  \param targetSlot   Slot of the target (out or in).
-	 *  \retval true operation successful
-	 */
-	bool _disconnect(
-			ParameteredObject* target,
-			const std::string& ownSlot,
-			const std::string& targetSlot);
 
 	/// prepare slot data
 	void _prepareSlots();
@@ -264,6 +207,21 @@ protected:
 	 *      This hack will only produce the full constructor, not the base one.
 	 */
 	#define _addConstructor(x) if (!this && new x) throw 42;
+
+	/// Common code for _addParameter, _addInputSlot, _addOutputSlot.
+	/** This function does nothing, if _createMetadata is set to false.
+	 *  \param extension    section of metadata file where to add
+	 *                      (e.g. parameters, inputs, outputs)
+	 *  \param name         parameter name to pass to AbstractParameter::init()
+	 *  \param doc          parameter docstring (for metadata generation)
+	 *  \param type         Parameter type (string representation)
+	 *  \param defaultValue Default value, if any
+	 *  \retval true        Parameter/Slot name is unique
+	 */
+	bool _addSomething(
+			const std::string& extension, const std::string& name,
+			const std::string& doc, const std::string& type,
+			const std::string& defaultValue = "");
 	//  \}
 
 	/// Default constructor.
@@ -374,12 +332,15 @@ public:
 	 */
 	virtual void resetExecuted(bool propagate = true);
 
-	/// Class name getter.
+	/// \name getter of plugin information
+	//\{
+
+	/// class name
 	inline const std::string& getClassName() const {
 		return _className;
 	}
 
-	/// Get instanceName
+	/// instance name
 	inline const std::string& getName() const {
 		return _instanceName;
 	}
@@ -424,6 +385,7 @@ public:
 	 *  \returns Map containing all output slots
 	 */
 	const std::map<std::string, AbstractParameter*>& getParameters() const;
+	//\}
 
 	/// Save parameters to parameter file
 	/** Saves parameters of the current parametered object
@@ -447,6 +409,16 @@ public:
 	 *  \param pf           ParameterFile to load from.
 	 */
 	virtual void loadParameters(const ParameterFile& pf);
+
+	/// Load slot connection from parameter file.
+	/** PluginManager is used to get pointers to the connected objects.
+	 *  Calls load on all input and output slots passing the given parameters.
+	 *  InstanceName is used as prefix.
+	 *  \param pf           ParameterFile to save to.
+	 *  \param man          Pointer to the currently active PluginManager
+	 */
+	void loadSlots(
+			const ParameterFile& pf, const PluginManagerInterface* man);
 
 	/// \name slot management
 	//  \{

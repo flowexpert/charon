@@ -277,7 +277,8 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 	std::map<std::string, ParameteredObject*>::const_iterator objIter;
 
 	for (objIter = objects.begin(); objIter != objects.end(); objIter++) {
-		objIter->second->_load(paramFile, this);
+		objIter->second->loadParameters(paramFile);
+		objIter->second->loadSlots(paramFile, this);
 	}
 }
 void PluginManager::loadParameterFile(const std::string & path) {
@@ -434,19 +435,36 @@ std::set<std::string> PluginManager::getConnected(
 }
 
 bool PluginManager::connect(Slot& slot1, Slot& slot2) {
-	ParameteredObject* obj1 = &slot1.getParent();
-	ParameteredObject* obj2 = &slot2.getParent();
-	std::string obj1sl = slot1.getName();
-	std::string obj2sl = slot2.getName();
+	ParameteredObject& obj1 = slot1.getParent();
+	ParameteredObject& obj2 = slot2.getParent();
+
+	// check if connection between input and output slot
+	const std::map<std::string, Slot*>& mIn1 = obj1.getInputSlots();
+	const std::map<std::string, Slot*>& mIn2 = obj2.getInputSlots();
+	const std::map<std::string, Slot*>& mOu1 = obj1.getOutputSlots();
+	const std::map<std::string, Slot*>& mOu2 = obj2.getOutputSlots();
+	bool invalid = false;
+
+	if (
+			(mIn1.find(slot1.getName()) == mIn1.end()) &&
+			(mIn2.find(slot2.getName()) == mIn2.end())) {
+		sout << "(WW) attempt to connect output/output" << std::endl;
+		invalid = true;
+	}
+	if (
+			((mOu1.find(slot1.getName()) == mOu1.end()) &&
+			 (mOu2.find(slot2.getName()) == mOu2.end()))) {
+		sout << "(WW) attempt to connect input/input" << std::endl;
+		invalid = true;
+	}
+	if (invalid) {
+		slot1.printWarning("source of invalid connection");
+		slot2.printWarning("target of invalid connection");
+		return false;
+	}
 
 	// connect those objects
-	bool ret = obj1->_connect(obj2, obj1sl, obj2sl);
-	ret = obj2->_connect(obj1, obj2sl, obj1sl) && ret;
-	return ret;
-}
-
-bool PluginManager::connect(Slot * slot1, Slot * slot2) {
-	return connect(*slot1, *slot2);
+	return slot1.connect(slot2);
 }
 
 bool PluginManager::connect(
@@ -471,22 +489,41 @@ bool PluginManager::connect(
 	assert(objIter != objects.end());
 	ParameteredObject* obj2 = objIter->second;
 
-	// connect those objects
-	bool ret = obj1->_connect(obj2, obj1sl, obj2sl);
-	ret = obj2->_connect(obj1, obj2sl, obj1sl) && ret;
-	return ret;
+	// find the corresponding slots
+	const std::map<std::string, Slot*>& mIn1 = obj1->getInputSlots();
+	const std::map<std::string, Slot*>& mIn2 = obj2->getInputSlots();
+	const std::map<std::string, Slot*>& mOu1 = obj1->getOutputSlots();
+	const std::map<std::string, Slot*>& mOu2 = obj2->getOutputSlots();
+	Slot *slotP1, *slotP2;
+	if (mIn1.find(obj1sl) != mIn1.end()) {
+		slotP1 = mIn1.find(obj1sl)->second;
+		if (mOu2.find(obj2sl) == mOu2.end()) {
+			slotP1->printWarning(
+					"target slot ("+slot2+") not found or no output slot");
+			return false;
+		}
+		slotP2 = mOu2.find(obj2sl)->second;
+	}
+	else if (mOu1.find(obj1sl) != mOu1.end()) {
+		slotP1 = mOu1.find(obj1sl)->second;
+		if (mIn2.find(obj2sl) == mIn2.end()) {
+			slotP1->printWarning(
+					"target slot ("+slot2+") not found or no input slot");
+			return false;
+		}
+		slotP2 = mIn2.find(obj2sl)->second;
+	}
+	else {
+		sout << "(WW) slot not found: " << slot1 << std::endl;
+		return false;
+	}
+
+	// connect those slots
+	return connect(*slotP1,*slotP2);
 }
 
 bool PluginManager::disconnect(Slot& slot1, Slot& slot2) {
-	ParameteredObject* obj1 = &slot1.getParent();
-	ParameteredObject* obj2 = &slot2.getParent();
-	std::string obj1sl = slot1.getName();
-	std::string obj2sl = slot2.getName();
-
-	// disconnect those objects
-	bool ret = obj1->_disconnect(obj2, obj1sl, obj2sl);
-	ret = obj2->_disconnect(obj1, obj2sl, obj1sl) && ret;
-	return ret;
+	return slot1.disconnect(slot2);
 }
 
 bool PluginManager::disconnect(const std::string& slot1,
@@ -511,10 +548,36 @@ bool PluginManager::disconnect(const std::string& slot1,
 	assert(objIter != objects.end());
 	ParameteredObject* obj2 = objIter->second;
 
-	// connect those objects
-	bool ret = obj1->_disconnect(obj2, obj1sl, obj2sl);
-	ret = obj2->_disconnect(obj1, obj2sl, obj1sl) && ret;
-	return ret;
+	// find the corresponding slots
+	const std::map<std::string, Slot*>& mIn1 = obj1->getInputSlots();
+	const std::map<std::string, Slot*>& mIn2 = obj2->getInputSlots();
+	const std::map<std::string, Slot*>& mOu1 = obj1->getOutputSlots();
+	const std::map<std::string, Slot*>& mOu2 = obj2->getOutputSlots();
+	Slot *slotP1, *slotP2;
+	if (mIn1.find(obj1sl) != mIn1.end()) {
+		slotP1 = mIn1.find(obj1sl)->second;
+		if (mOu2.find(obj2sl) == mOu2.end()) {
+			slotP1->printWarning(
+					"target slot ("+slot2+") not found or no output slot");
+			return false;
+		}
+		slotP2 = mOu2.find(obj2sl)->second;
+	}
+	else if (mOu1.find(obj1sl) != mOu1.end()) {
+		slotP1 = mOu1.find(obj1sl)->second;
+		if (mIn2.find(obj2sl) == mIn2.end()) {
+			slotP1->printWarning(
+					"target slot ("+slot2+") not found or no input slot");
+			return false;
+		}
+		slotP2 = mIn2.find(obj2sl)->second;
+	}
+	else {
+		sout << "(WW) slot not found: " << slot1 << std::endl;
+		return false;
+	}
+
+	return disconnect(*slotP1,*slotP2);
 }
 
 void PluginManager::createMetadata(const std::string& targetPath) {

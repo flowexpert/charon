@@ -492,13 +492,6 @@ public:
 	 */
 	bool connect(Slot& slot1, Slot& slot2);
 
-	/// Same method, but taking pointers.
-	/** \param slot1        Slot1 (in or out)
-	 *  \param slot2        Slot2 (out or in)
-	 *  \retval true        operation successful
-	 */
-	bool connect(Slot* slot1, Slot* slot2);
-
 	/// Connect slots by name.
 	/** You have to provide the slot names as "objectname.slotname",
 	 *  i.e. the same way you find them in the parameter file.
@@ -527,7 +520,6 @@ public:
 	 *  \retval true        operation successful
 	 */
 	bool disconnect(const std::string& slot1, const std::string& slot2);
-
 	// \}
 
 	/// Determine execution order
