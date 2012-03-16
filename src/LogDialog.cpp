@@ -32,9 +32,13 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QFileInfo>
+#include <QDir>
+#include <QFileDialog>
+#include <QMutexLocker>
 
 LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
-		QDialog(pp,wf), _decorator(dec), _proc(0) {
+	QDialog(pp,wf), _decorator(dec), _proc(0), _logMutex(new QMutex())
+{
 	QSettings settings;
 	_proc = new QProcess(this);
 	_proc->setObjectName("proc");
@@ -54,19 +58,8 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 	if (!desc.isEmpty()) {
 		_ui->lInfo->setText(desc);
 	}
-	_ui->logText->document()->setDefaultStyleSheet(
-		"*{white-space:pre;font-family:monospace;font-weight:normal}"
-		".error {color:red;font-weight:bold;}"
-		".success {color:green;font-weight:bold;font-family:sans-serif;}"
-		".warning {color:orange;font-weight:normal;}"
-		".info {color:#444;}"
-		".debug {color:gray;}"
-	);
-	QTextFrameFormat f;
-	_curRet=new QTextCursor(_ui->logText->textCursor().insertFrame(f));
-	_ui->logText->moveCursor(QTextCursor::End);
-	f.setLeftMargin(10);
-	_curEnd=new QTextCursor(_ui->logText->textCursor().insertFrame(f));
+
+	resetLogWidget();
 
 	// determine available run process executables
 	QStringList testArgs;
@@ -90,8 +83,7 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 
 	if (procName.isNull()) {
 		// warn if no valid executable found
-		_curEnd->insertHtml(
-			QString("<br><span class=\"error\">%1</span></br>")
+		printStatus(QString("<br><span class=\"error\">%1</span></br>")
 				.arg(tr("no working %1 process executable found")
 					 .arg("<tt>tuchulcha-run</tt>")));
 		_ui->lProcName->setText(
@@ -134,13 +126,31 @@ LogDialog::~LogDialog() {
 	delete _curRet;
 	delete _ui;
 	delete _decorator;
+	delete _logMutex;
+}
+
+void LogDialog::resetLogWidget() {
+	_ui->logText->clear();
+	_ui->logText->document()->setDefaultStyleSheet(
+		"*{white-space:pre;font-family:monospace;font-weight:normal}"
+		".error {color:red;font-weight:bold;}"
+		".success {color:green;font-weight:bold;font-family:sans-serif;}"
+		".warning {color:orange;font-weight:normal;}"
+		".info {color:#444;}"
+		".debug {color:gray;}"
+	);
+	QTextFrameFormat f;
+	_curRet=new QTextCursor(_ui->logText->textCursor().insertFrame(f));
+	_ui->logText->moveCursor(QTextCursor::End);
+	f.setLeftMargin(10);
+	_curEnd=new QTextCursor(_ui->logText->textCursor().insertFrame(f));
 }
 
 void LogDialog::done(int r) {
 	// terminate process if still running
 
 	if (_proc && (_proc->state() != QProcess::NotRunning)) {
-		_curEnd->insertHtml(
+		printStatus(
 			QString("<br><span class=\"warning\">%1</span><br>")
 				.arg(tr("waiting for process to quit..."))+
 			QString("<span class=\"warning\">%1</span><br>")
@@ -163,7 +173,7 @@ void LogDialog::terminate(bool force) {
 				this,tr("confirm terminate"),
 				tr("Process still running.<br>Terminate running process?"),
 				QMessageBox::No,QMessageBox::Yes)==QMessageBox::Yes)) {
-		_curEnd->insertHtml(QString("<span class=\"warning\">%1</span><br>")
+		printStatus(QString("<span class=\"warning\">%1</span><br>")
 			.arg(tr("asking for kill in 3 seconds")));
 		QTimer::singleShot(0,_proc,SLOT(terminate()));
 		QTimer::singleShot(3000,this,SLOT(kill()));
@@ -181,19 +191,22 @@ void LogDialog::kill(bool force) {
 }
 
 void LogDialog::on_proc_readyReadStandardOutput() {
+	QMutexLocker mLock(_logMutex);
 	if (_proc) {
 		QString origS = QString::fromLocal8Bit(_proc->readAllStandardOutput());
 		QString formS, cur;
 		QTextStream orig(&origS,QIODevice::ReadOnly);
 		QTextStream form(&formS,QIODevice::WriteOnly);
+		QTextStream cache(&_logCache,QIODevice::WriteOnly);
 
 		forever {
 			cur = orig.readLine();
 			if (cur.isNull()) {
 				break;
 			}
+			cache << cur << endl;
 			if(_decorator->finishSignal(cur)) {
-				_curEnd->insertHtml(_decorator->finishMessage());
+				printStatus(_decorator->finishMessage());
 				on_proc_finished(0);
 			}
 			cur = _decorator->highlightLine(cur);
@@ -209,19 +222,59 @@ void LogDialog::on_proc_readyReadStandardOutput() {
 			bar->setValue(bar->maximum());
 		}
 	}
+	mLock.unlock();
+}
+
+void LogDialog::reprint() {
+	QMutexLocker mLock(_logMutex);
+	QString formS, cur;
+	QTextStream cache(&_logCache,QIODevice::ReadOnly);
+	QTextStream form(&formS,QIODevice::WriteOnly);
+
+	resetLogWidget();
+
+	forever {
+		cur = cache.readLine();
+		if (cur.isNull()) {
+			break;
+		}
+		cur = _decorator->highlightLine(cur);
+		if (!cur.isNull()) {
+			form << cur << "<br>" << endl;
+		}
+	}
+	_curRet->insertHtml(formS);
+	_curEnd->insertHtml(_logEnd);
+
+	// scroll down
+	if (_ui->checkScroll->isChecked()) {
+		QScrollBar* bar = _ui->logText->verticalScrollBar();
+		bar->setValue(bar->maximum());
+	}
+
+	mLock.unlock();
 }
 
 void LogDialog::on_proc_readyReadStandardError() {
+	QMutexLocker mLock(_logMutex);
 	if (_proc) {
 		QString origS = QString::fromLocal8Bit(_proc->readAllStandardError());
 		QString formS, cur;
 		QTextStream orig(&origS,QIODevice::ReadOnly);
 		QTextStream form(&formS,QIODevice::WriteOnly);
+		QTextStream cache(&_logCache,QIODevice::WriteOnly);
 
 		forever {
 			cur = orig.readLine();
 			if (cur.isNull()) {
 				break;
+			}
+			if (cur.contains(
+					QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
+				cache << cur << endl;
+			}
+			else {
+				cache << "(EE) " << cur << endl;
 			}
 			cur = QString("<span class=\"error\">%1</span>").arg(cur);
 			form << cur << "<br>" << endl;
@@ -234,6 +287,7 @@ void LogDialog::on_proc_readyReadStandardError() {
 			bar->setValue(bar->maximum());
 		}
 	}
+	mLock.unlock();
 }
 
 void LogDialog::on_proc_started() {
@@ -277,14 +331,32 @@ void LogDialog::on_proc_error(QProcess::ProcessError) {
 		break;
 	}
 
-	_curEnd->insertHtml(
-		QString("<br><span class=\"error\">%1</span> %2<br>")
-			.arg(tr("Error during process execution:"))
-			.arg(errorType));
+	printStatus(QString("<br><span class=\"error\">%1</span> %2<br>")
+				.arg(tr("Error during process execution:"))
+				.arg(errorType));
+}
+
+void LogDialog::printStatus(QString msg) {
+	_logEnd = QString("%1\n%2").arg(_logEnd).arg(msg);
+	_curEnd->insertHtml(msg);
 }
 
 void LogDialog::on_checkDD_toggled(bool checked) {
 	_decorator->debugOutput = checked;
+	reprint();
+}
+
+void LogDialog::on_buttonSave_clicked() {
+	QString fName = QFileDialog::getSaveFileName(
+				this,tr("Save Log File"),_decorator->filenameHint(),
+				tr("Text File (*.txt *.log)"));
+	if (fName.isEmpty())
+		return;
+	QFile outputFile(fName);
+	if (outputFile.open(QFile::WriteOnly|QFile::Truncate)) {
+		QTextStream outStr(&outputFile);
+		outStr << _logCache << endl;
+	}
 }
 
 // ============================ Decorators ===============================
@@ -295,23 +367,23 @@ LogDialog::Decorator::Decorator() :
 LogDialog::Decorator::~Decorator() {
 }
 
-bool LogDialog::Decorator::finishSignal(QString) {
+bool LogDialog::Decorator::finishSignal(QString) const {
 	return false;
 }
 
-QString LogDialog::Decorator::finishMessage() {
+QString LogDialog::Decorator::finishMessage() const {
 	return QString::null;
 }
 
-QString LogDialog::Decorator::title() {
+QString LogDialog::Decorator::title() const {
 	return QString::null;
 }
 
-QString LogDialog::Decorator::desc() {
+QString LogDialog::Decorator::desc() const {
 	return QString::null;
 }
 
-QString LogDialog::Decorator::highlightLine(QString line) {
+QString LogDialog::Decorator::highlightLine(QString line) const {
 	// simple markup for higlighting
 	if (line.contains(
 			QRegExp("^\\(II\\)\\s+",Qt::CaseInsensitive))) {
@@ -340,35 +412,39 @@ QString LogDialog::Decorator::highlightLine(QString line) {
 	return line;
 }
 
-bool LogDialog::Decorator::ready(QWidget*) {
+bool LogDialog::Decorator::ready(QWidget*) const {
 	return true;
 }
 
-QStringList LogDialog::Decorator::postStartCommands(QWidget*) {
+QStringList LogDialog::Decorator::postStartCommands(QWidget*) const {
 	return QStringList();
 }
 
-QString LogDecorators::Update::title() {
+QString LogDecorators::Update::title() const {
 	return QCoreApplication::translate(
 		"LogDecorators::Update", "Plugin Information Update");
 }
 
-QString LogDecorators::Update::desc() {
+QString LogDecorators::Update::desc() const {
 	return QCoreApplication::translate(
 		"LogDecorators::Update", "Output of update process:");
 }
 
-QStringList LogDecorators::Update::arguments() {
+QStringList LogDecorators::Update::arguments() const {
 	QStringList args;
 	args << "--non-interactive" << "update";
 	return args;
+}
+
+QString LogDecorators::Update::filenameHint() const {
+	return QDir::home().absoluteFilePath("update-modules.log");
 }
 
 LogDecorators::RunWorkflow::RunWorkflow(QString fileName) :
 		_fileName(fileName) {
 }
 
-bool LogDecorators::RunWorkflow::ready(QWidget* pp) {
+bool LogDecorators::RunWorkflow::ready(QWidget* pp) const {
 	if(_fileName.isEmpty()) {
 		QMessageBox::warning(pp,
 			tr("missing workflow file"),
@@ -382,7 +458,7 @@ bool LogDecorators::RunWorkflow::ready(QWidget* pp) {
 	return true;
 }
 
-QStringList LogDecorators::RunWorkflow::arguments() {
+QStringList LogDecorators::RunWorkflow::arguments() const {
 	QSettings settings;
 	QStringList args;
 	args << "--quiet";
@@ -392,7 +468,7 @@ QStringList LogDecorators::RunWorkflow::arguments() {
 	return args;
 }
 
-QStringList LogDecorators::RunWorkflow::postStartCommands(QWidget* pp) {
+QStringList LogDecorators::RunWorkflow::postStartCommands(QWidget* pp) const {
 	QSettings settings;
 	QStringList cmds;
 	if (settings.value("delayExecution",false).toBool()) {
@@ -408,7 +484,7 @@ QStringList LogDecorators::RunWorkflow::postStartCommands(QWidget* pp) {
 	return cmds;
 }
 
-QString LogDecorators::RunWorkflow::highlightLine(QString line) {
+QString LogDecorators::RunWorkflow::highlightLine(QString line) const {
 	QRegExp curObj("^\\(II\\) Executing\\s*\\w*\\s*\"(\\w*)\"\\s*$");
 	if (line.contains(curObj)) {
 		emit highlightObject(curObj.cap(1));
@@ -416,14 +492,20 @@ QString LogDecorators::RunWorkflow::highlightLine(QString line) {
 	return LogDialog::Decorator::highlightLine(line);
 }
 
-bool LogDecorators::RunWorkflow::finishSignal(QString line) {
+bool LogDecorators::RunWorkflow::finishSignal(QString line) const {
 	// add status message if workflow execution finished
 	return (line.contains(
 		QCoreApplication::translate("CharonRun","Execution finished.")));
 }
 
-QString LogDecorators::RunWorkflow::finishMessage() {
+QString LogDecorators::RunWorkflow::finishMessage() const {
 	return QString("<br><span class=\"success\">%1</span><br>%2<br>")
 		.arg(tr("Workflow execution finished."))
 		.arg(tr("Plugins stay loaded until you close this dialog."));
+}
+
+QString LogDecorators::RunWorkflow::filenameHint() const {
+	QFileInfo wrpFile(_fileName);
+	return QString("%1/%2.log")
+			.arg(wrpFile.absolutePath()).arg(wrpFile.baseName());
 }
