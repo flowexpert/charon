@@ -32,6 +32,8 @@ class QLineEdit;
 class QFrame;
 class QVBoxLayout;
 class PrefixValidator;
+class QTextEdit;
+class QGroupBox;
 
 /// Object inspector widget.
 /** This widget contains a TableView to edit parameters used in a
@@ -100,6 +102,12 @@ public slots:
 	/// Clear model
 	void clear();
 
+	/// handle comment changes
+	void on_comment_textChanged();
+
+	/// update comment text
+	void on_model_prefixChanged(const QString& text);
+
 protected:
 	QVBoxLayout*        _mainLayout;    ///< GUI main layout
 	QTableView*         _view;          ///< View widget (tree view)
@@ -110,6 +118,8 @@ private:
 
 	PrefixValidator*    _validator;     ///< prefix validator
 	QLineEdit*          _prefix;        ///< prefix modification widget
+	QTextEdit*          _comment;       ///< comment modification widget
+	QGroupBox*          _commentBox;    ///< comment group box
 	ParameterFileModel* _model;         ///< Used model to display
 	bool                _ownModel;      ///< Class has Ownership of _model
 };

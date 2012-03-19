@@ -32,6 +32,7 @@
 #include "PrefixValidator.h"
 #include "FileManager.h"
 #include "InspectorDelegate.h"
+#include "QParameterFile.h"
 
 #include "ObjectInspector.moc"
 
@@ -42,6 +43,7 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 	_mainLayout = new QVBoxLayout(this);
 	_view = new QTableView(this);
 	_prefix = new QLineEdit(this);
+	_comment = new QTextEdit(this);
 
 	// init model
 	_model = new ParameterFileModel("", this);
@@ -52,6 +54,7 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 
 	// disable prefix editing
 	setEdit(false);
+	on_model_prefixChanged(_model->prefix());
 }
 
 void ObjectInspector::init() {
@@ -64,6 +67,12 @@ void ObjectInspector::init() {
 	prefixLayout->addWidget(label1, 0, 0);
 	prefixLayout->addWidget(_prefix, 0, 1);
 	_mainLayout->addWidget(prefixFrame);
+
+	// init comment widget
+	_commentBox = new QGroupBox(tr("&Comment"));
+	QHBoxLayout* commentLayout = new QHBoxLayout(_commentBox);
+	commentLayout->addWidget(_comment);
+	_mainLayout->addWidget(_commentBox);
 
 	// init view widget
 	_view->setAlternatingRowColors(true);
@@ -160,8 +169,11 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 			QString)));
 	connect(_prefix, SIGNAL(textEdited(QString)), _model, SLOT(setPrefix(
 			QString)));
-	connect(_model, SIGNAL(statusMessage(QString)), this, SIGNAL(statusMessage(
-			QString)));
+	connect(_model, SIGNAL(statusMessage(QString)),
+			SIGNAL(statusMessage(QString)));
+	connect(_comment, SIGNAL(textChanged()), SLOT(on_comment_textChanged()));
+	connect(_model, SIGNAL(prefixChanged(QString)),
+			SLOT(on_model_prefixChanged(QString)));
 
 	emit modelChanged(_model);
 }
@@ -222,4 +234,14 @@ void ObjectInspector::clear() {
 		model()->clear();
 		emit statusMessage(tr("cleared model content"));
 	}
+}
+
+void ObjectInspector::on_comment_textChanged() { // todo
+// change editcomment
+	// find entry in table and change it
+}
+
+void ObjectInspector::on_model_prefixChanged(const QString& prefix) {
+	_comment->setText(_model->parameterFile().get(prefix + ".editorcomment"));
+	_commentBox->setEnabled(!prefix.isEmpty());
 }
