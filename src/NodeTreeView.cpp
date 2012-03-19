@@ -111,6 +111,9 @@ void NodeTreeView::reload() {
 		root[0]->child(ii)->sortChildren(1);
 	}
 	_ui->treeView->setExpanded(root[0]->index(), true);
+
+	// update filter
+	on_editFilter_textChanged(_ui->editFilter->text());
 }
 
 void NodeTreeView::on_treeView_clicked(const QModelIndex& current) {
