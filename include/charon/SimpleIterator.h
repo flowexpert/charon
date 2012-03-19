@@ -123,6 +123,9 @@ public:
 	/// filename to write previous residual to
 	Parameter < std::string > writeResidualInit;
 
+	/// return inverse residual, if set
+	Parameter < bool > inverseResidual;
+
 	/// flow result calculaged during current iteration 
 	InputSlot < cimg_library::CImgList<T> > flow;
 	/// initial flow guess if different from helper
@@ -137,6 +140,8 @@ public:
 	InputSlot < bool > stop;
 	/// final flow result after all iterations
 	OutputSlot < cimg_library::CImgList<T> > result;
+	/// final residual after all iterations
+	OutputSlot < cimg_library::CImgList<T> > finalResidual;
 
 	/// create a new SimpleIterator object
 	/** \param name          Instance name */

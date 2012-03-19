@@ -91,6 +91,9 @@ void SimpleIterator<T>::_init() {
 	ParameteredObject::_addParameter(writeResidualInit, "writeResidualInit",
 		"filename to write residualInit to (disabled if empty)", "");
 
+	ParameteredObject::_addParameter (inverseResidual, "inverseResidual",
+		"return inverse residual, if set", false);
+
 	ParameteredObject::_addInputSlot(flow, "flow",
 		"flow result calculaged during current iteration", "CImgList<T>");
 	ParameteredObject::_addInputSlot(flowInit, "flowInit",
@@ -103,6 +106,8 @@ void SimpleIterator<T>::_init() {
 		"iteration helper input", "IteratorHelper<T>*");
 	ParameteredObject::_addOutputSlot(result, "result",
 		"final flow result after all iterations", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(finalResidual, "finalResidual",
+		"final residual after all iterations", "CImgList<T>");
 	ParameteredObject::_addInputSlot(
 		stop, "stop", "external stop criterion");
 
@@ -381,6 +386,17 @@ bool SimpleIterator<T>::finishStep() {
 template <typename T>
 void SimpleIterator<T>::finishIterations() {
 	result() = helper()->flow();
+	if (residual.connected()) {
+		cimg_library::CImgList<T> tmp = helper()->residual();
+		if (inverseResidual()) {
+			cimglist_for(tmp, kk)
+			cimg_forXYZC(tmp[kk], x, y, z, c)
+			{
+				tmp[kk]( x, y, z, c ) = T(1.0) / tmp[kk]( x, y, z, c );
+			}
+		}
+		finalResidual() = tmp;
+	}
 
 	// To insert code after the last iteration,
 	// use this hook in derived classes.
