@@ -163,6 +163,9 @@ public:
 	 */
 	QString getType(QString parName) const;
 
+	/// update comment of node
+	void setEditorComment(QString string);
+
 signals:
 	/// Property _fileName has changed
 	/** \param  fileName        new value */
@@ -190,6 +193,9 @@ signals:
 
 	/// inform about modifications
 	void modified(bool val /** new modification status*/);
+
+	/// inform about editor comment change
+	void commentChanged(QString comment);
 
 public slots:
 	/// Set new value for Property _fileName

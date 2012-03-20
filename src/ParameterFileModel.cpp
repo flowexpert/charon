@@ -558,3 +558,41 @@ QString ParameterFileModel::getType(QString parName) const {
 	}
 	return res;
 }
+
+void ParameterFileModel::setEditorComment(QString comment)
+{
+	if (_prefix.isEmpty()) {
+		return;
+	}
+
+	bool valSet = false;
+	setOnlyParams(false);
+
+	// check if "editorcomment" entry already exists
+	for (int i = 0; i < rowCount(); i++) {
+		QString str = data(index(i,0)).toString();
+		if (data(index(i,0)).toString() == "editorcomment") {
+			QString str = comment;
+			// delete if empty
+			if (str.isEmpty()) {
+				removeRow(i);
+			} else {
+				setData(index(i,1), comment);
+			}
+			valSet = true;
+			break;
+		}
+	}
+
+	// if not, insert row
+	if (!valSet && !comment.isEmpty()) {
+		insertRow(rowCount());
+		setData(index(rowCount()-1,0), "editorcomment");
+		setData(index(rowCount()-1,1), comment);
+	}
+
+	setOnlyParams(true);
+
+	// update selected node
+	emit commentChanged(comment);
+}

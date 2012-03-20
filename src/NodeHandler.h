@@ -73,6 +73,9 @@ public slots:
 	/// select some node
 	void selectNode(QString name);
 
+	/// update tooltip of selected node
+	void updateTooltip(QString comment);
+
 protected:
 	/** \name drag/drop handling
 	 *  Accepts drag events with mime data as they are set by

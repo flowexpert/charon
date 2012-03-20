@@ -241,27 +241,7 @@ void ObjectInspector::clear() {
 }
 
 void ObjectInspector::on_comment_textChanged() {
-	bool valSet = false;
-	_model->setOnlyParams(false);
-
-	// check if "editorcomment" entry already exists
-	for (int i = 0; i < _model->rowCount(); i++) {
-		QString str = _model->data(_model->index(i,0)).toString();
-		if (_model->data(_model->index(i,0)).toString() == "editorcomment") {
-			_model->setData(_model->index(i,1), _comment->toPlainText());
-			valSet = true;
-			break;
-		}
-	}
-
-	// if not, insert row
-	if (!valSet && !_comment->toPlainText().isEmpty()) {
-		_model->insertRow(_model->rowCount());
-		_model->setData(_model->index(_model->rowCount()-1,0), "editorcomment");
-		_model->setData(_model->index(_model->rowCount()-1,1), _comment->toPlainText());
-	}
-
-	_model->setOnlyParams(true);
+	_model->setEditorComment(_comment->toPlainText());
 }
 
 void ObjectInspector::on_model_prefixChanged(const QString& prefix) {

@@ -174,6 +174,11 @@ void NodeHandler::loadFromModel() {
 			node->setPos(x,y);
 		}
 
+		// set tooltip
+		if (_model->parameterFile().isSet(name+".editorcomment")) {
+			node->setToolTip(_model->parameterFile().get(name+".editorcomment"));
+		}
+
 		QStringList ins = mi->getInputs(cname);
 		QStringList outs = mi->getOutputs(cname);
 		for (int jj=0; jj < ins.size(); jj++) {
@@ -347,6 +352,14 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 	}
 
 	QGraphicsScene::dropEvent(ev);
+}
+
+void NodeHandler::updateTooltip(QString comment)
+{
+	// to prevent exceptions, ensure that _selectedNode is not empty
+	if (_selectedNode && !_nodeMap.isEmpty()) {
+		_selectedNode->setToolTip(comment);
+	}
 }
 
 #include "NodeHandler.moc"

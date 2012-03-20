@@ -40,7 +40,8 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 	_viewer->setRenderHints(QPainter::Antialiasing);
 	_viewer->setAcceptDrops(true);
 	_nodehandler = new NodeHandler(_viewer);
-	connect(_nodehandler, SIGNAL(statusMessage(QString, int)), this, SIGNAL(statusMessage(QString, int))) ;
+	connect(_nodehandler, SIGNAL(statusMessage(QString, int)),
+		SIGNAL(statusMessage(QString, int)));
 	_viewer->setScene(_nodehandler);
 
 	setWidget(_viewer);
@@ -55,6 +56,8 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 		this, SLOT(modify(bool)));
 	connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
 		this, SLOT(modify()));
+	connect(model(), SIGNAL(commentChanged(QString)), _nodehandler,
+		SLOT(updateTooltip(QString)));
 	setWindowTitle(tr("New file")+" [*]");
 }
 
