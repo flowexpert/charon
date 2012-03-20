@@ -164,6 +164,10 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	// update textEdit content
 	_prefix->setText(_model->prefix());
 
+	// empty comment text area
+	// text will be updated again, when an item is selected
+	_comment->setText("");
+
 	// update connections
 	connect(_model, SIGNAL(prefixChanged(QString)), _prefix, SLOT(setText(
 			QString)));
@@ -236,12 +240,32 @@ void ObjectInspector::clear() {
 	}
 }
 
-void ObjectInspector::on_comment_textChanged() { // todo
-// change editcomment
-	// find entry in table and change it
+void ObjectInspector::on_comment_textChanged() {
+	bool valSet = false;
+	_model->setOnlyParams(false);
+
+	// check if "editorcomment" entry already exists
+	for (int i = 0; i < _model->rowCount(); i++) {
+		QString str = _model->data(_model->index(i,0)).toString();
+		if (_model->data(_model->index(i,0)).toString() == "editorcomment") {
+			_model->setData(_model->index(i,1), _comment->toPlainText());
+			valSet = true;
+			break;
+		}
+	}
+
+	// if not, insert row
+	if (!valSet && !_comment->toPlainText().isEmpty()) {
+		_model->insertRow(_model->rowCount());
+		_model->setData(_model->index(_model->rowCount()-1,0), "editorcomment");
+		_model->setData(_model->index(_model->rowCount()-1,1), _comment->toPlainText());
+	}
+
+	_model->setOnlyParams(true);
 }
 
 void ObjectInspector::on_model_prefixChanged(const QString& prefix) {
-	_comment->setText(_model->parameterFile().get(prefix + ".editorcomment"));
+	// update comment text area
+	_comment->setPlainText(_model->parameterFile().get(prefix + ".editorcomment"));
 	_commentBox->setEnabled(!prefix.isEmpty());
 }

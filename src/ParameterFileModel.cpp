@@ -532,7 +532,6 @@ QStringList ParameterFileModel::_paramFilter(QStringList list) const {
 	// append all possible parameters for all objects
 	for (int ii = 0; ii < objects.size(); ii++) {
 		QStringList tmp;
-		tmp << "editorcomment";
 		tmp << metaInfo()->getParameters(getClass(objects[ii]));
 		tmp.replaceInStrings(QRegExp("(^.*$)"), objects[ii]+".\\1");
 		result << tmp;
