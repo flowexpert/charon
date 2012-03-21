@@ -31,5 +31,10 @@
         <file alias="stop.png">icons/oxygen/media-playback-stop.png</file>
         <file alias="configure.png">icons/oxygen/configure.png</file>
         <file alias="symlink.png">icons/oxygen/emblem-symbolic-link.png</file>
+        <file alias="priorityGrey.png">icons/priorityGrey.png</file>
+        <file alias="priorityGreen.png">icons/priorityGreen.png</file>
+        <file alias="priorityYellow.png">icons/priorityYellow.png</file>
+        <file alias="priorityRed.png">icons/priorityRed.png</file>
+        <file alias="prioritySignalLights.png">icons/signalLights.png</file>
     </qresource>
 </RCC>

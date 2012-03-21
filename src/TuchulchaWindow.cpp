@@ -166,7 +166,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 
 	toolbar->addSeparator();
 	action = toolbar->addAction(QIcon(":/icons/revert.png"),
-		tr("reset selected"), _inspector, SLOT(delParam()));
+		tr("reset selected"), _inspector, SLOT(on_deleteButton_clicked())); // TODO
 	action->setToolTip(tr("reset selected parameter(s) to their defaults"));
 
 	toolbar->addSeparator();

@@ -176,7 +176,7 @@ ParameterFileModel* ObjectInspector::model() const {
 
 void ObjectInspector::setEdit(bool on) {
 	_ui->prefix->setEnabled(on);
-	_ui->buttonFrame->setVisible(on);
+	_ui->buttonGroupBox->setVisible(on);
 }
 
 void ObjectInspector::openMetaData(QString fname) {
@@ -210,6 +210,9 @@ void ObjectInspector::on_deleteButton_clicked() {
 
 	// delete rows, reversed to avoid row movement below
 	while (rowStack.size() > 0) {
+		// TODO also remove potential "*.priority" parameters to be removed
+		// get parameterfile to check if existant - if not, search manually
+		QString str = model()->data(model()->index(rowStack.top(), 0)).toString();
 		model()->removeRow(rowStack.top(), QModelIndex());
 		rowStack.pop();
 	}
@@ -227,6 +230,19 @@ void ObjectInspector::on_clearButton_clicked() {
 		model()->clear();
 		emit statusMessage(tr("cleared model content"));
 	}
+}
+
+void ObjectInspector::on_setPriorityButton_clicked() {
+	// TODO open dialog
+}
+
+void ObjectInspector::on_filterBox_activated(int index) {
+	// TODO change filter
+}
+
+void ObjectInspector::on_resetFilterButton_clicked() {
+	// TODO reset all filter
+	// reset prefix
 }
 
 void ObjectInspector::on_comment_textChanged() {

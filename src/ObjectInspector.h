@@ -106,6 +106,15 @@ public slots:
 	/// Clear model
 	void on_clearButton_clicked();
 
+	/// set priority
+	void on_setPriorityButton_clicked();
+
+	/// filter by priority
+	void on_filterBox_activated(int);
+
+	/// reset filter
+	void on_resetFilterButton_clicked();
+
 	/// handle comment changes
 	void on_comment_textChanged();
 
