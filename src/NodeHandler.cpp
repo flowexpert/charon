@@ -176,7 +176,12 @@ void NodeHandler::loadFromModel() {
 
 		// set tooltip
 		if (_model->parameterFile().isSet(name+".editorcomment")) {
-			node->setToolTip(_model->parameterFile().get(name+".editorcomment"));
+			QString str = _model->parameterFile().get(name+".editorcomment");
+			if (str.isEmpty()) {
+				node->setToolTip("");
+			} else {
+				node->setToolTip("<b>" + tr("Comment:") + "</b><br/>" + str);
+			}
 		}
 
 		QStringList ins = mi->getInputs(cname);
