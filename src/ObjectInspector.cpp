@@ -53,7 +53,7 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 	InspectorDelegate* delegate = new InspectorDelegate(this);
 	_ui->view->setItemDelegateForColumn(1, delegate);
 
-	// disable prefix editing
+	// disable prefix editing and hide buttonFrame
 	setEdit(false);
 }
 
@@ -95,6 +95,8 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 		// disconnect everything from the old model
 		disconnect(_model, 0, 0, 0);
 		disconnect(_ui->prefix, 0, _model, 0);
+		disconnect(_ui->useMetadata, 0, _model, 0);
+		disconnect(_ui->onlyParams, 0, _model, 0);
 	}
 
 	if (newModel) {
@@ -136,6 +138,11 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	// text will be updated again, when an item is selected
 	_ui->comment->setText("");
 
+	// update values
+	_ui->useMetadata->setEnabled(model()->metaInfo());
+	_ui->useMetadata->setChecked(model()->useMetaInfo());
+	_ui->onlyParams->setChecked(model()->onlyParams());
+
 	// update connections
 	connect(_model, SIGNAL(prefixChanged(QString)), _ui->prefix, SLOT(setText(
 			QString)));
@@ -145,6 +152,18 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 			SIGNAL(statusMessage(QString)));
 	connect(_model, SIGNAL(prefixChanged(QString)),
 			SLOT(on_model_prefixChanged(QString)));
+
+	// connect additional widgets
+	connect(model(), SIGNAL(metaInfoChanged(bool)),
+		_ui->useMetadata, SLOT(setEnabled(bool)));
+	connect(_ui->useMetadata, SIGNAL(clicked(bool)),
+		model(), SLOT(setUseMetaInfo(bool)));
+	connect(model(), SIGNAL(useMetaInfoChanged(bool)),
+		_ui->useMetadata, SLOT(setChecked(bool)));
+	connect(_ui->onlyParams, SIGNAL(clicked(bool)),
+		model(), SLOT(setOnlyParams(bool)));
+	connect(model(), SIGNAL(onlyParamsChanged(bool)),
+		_ui->onlyParams, SLOT(setChecked(bool)));
 
 	on_model_prefixChanged(_model->prefix());
 
@@ -157,6 +176,7 @@ ParameterFileModel* ObjectInspector::model() const {
 
 void ObjectInspector::setEdit(bool on) {
 	_ui->prefix->setEnabled(on);
+	_ui->buttonFrame->setVisible(on);
 }
 
 void ObjectInspector::openMetaData(QString fname) {
@@ -168,11 +188,11 @@ void ObjectInspector::openMetaData(QString fname) {
 	_model->loadMetaInfo(fname);
 }
 
-void ObjectInspector::addParam() {
+void ObjectInspector::on_addButton_clicked() {
 	model()->insertRow(model()->rowCount(QModelIndex()), QModelIndex());
 }
 
-void ObjectInspector::delParam() {
+void ObjectInspector::on_deleteButton_clicked() {
 	QItemSelectionModel* selectionModel = _ui->view->selectionModel();
 	uint rows = _ui->view->model()->rowCount();
 
@@ -195,7 +215,7 @@ void ObjectInspector::delParam() {
 	}
 }
 
-void ObjectInspector::clear() {
+void ObjectInspector::on_clearButton_clicked() {
 	QMessageBox mbox(QMessageBox::Question, tr("confirm delete"), tr(
 			"Do you really want to delete the model content?"));
 	mbox.addButton(QMessageBox::Yes);
@@ -217,5 +237,4 @@ void ObjectInspector::on_model_prefixChanged(const QString& prefix) {
 	// update comment text area
 	_ui->comment->setPlainText(_model->parameterFile().get(prefix + ".editorcomment"));
 	_ui->commentBox->setEnabled(!prefix.isEmpty() && _model->prefixValid());
-	// zusätzliche bedingung! todo
 }

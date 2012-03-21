@@ -66,8 +66,6 @@ SET(EDITGRAPH_SOURCES
 )
 
 SET(INSPECTOR_SOURCES
-	AdvancedInspector.cpp
-	AdvancedInspector.h
 	ParamInspectorWindow.cpp
 	ParamInspectorWindow.h
 )

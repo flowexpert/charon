@@ -25,7 +25,7 @@
 #include <QDir>
 #include <QMessageBox>
 #include "ParamInspectorWindow.h"
-#include "AdvancedInspector.h"
+#include "ObjectInspector.h"
 #include "ParameterFileModel.h"
 #include "FileManager.h"
 
@@ -34,7 +34,8 @@
 ParamInspectorWindow::ParamInspectorWindow() :
 	QMainWindow() {
 	fileMenu = menuBar()->addMenu(tr("&File"));
-	_inspector = new AdvancedInspector(this);
+	_inspector = new ObjectInspector(this);
+	_inspector->setEdit(true);
 
 	fileMenu->addAction(tr("&Open"), this,
 			SLOT(openFile()), QKeySequence(tr("Ctrl+O")));

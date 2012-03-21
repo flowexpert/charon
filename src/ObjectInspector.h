@@ -98,13 +98,13 @@ public slots:
 	virtual void setEdit(bool on);
 
 	/// Add new Parameter
-	void addParam();
+	void on_addButton_clicked();
 
 	/// Delete selected parameter
-	void delParam();
+	void on_deleteButton_clicked();
 
 	/// Clear model
-	void clear();
+	void on_clearButton_clicked();
 
 	/// handle comment changes
 	void on_comment_textChanged();
