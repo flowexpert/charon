@@ -35,58 +35,26 @@
 #include "QParameterFile.h"
 
 #include "ObjectInspector.moc"
+#include "ui_ObjectInspector.h"
 
 ObjectInspector::ObjectInspector(QWidget* myParent,
 		ParameterFileModel* newModel) :
 	QWidget(myParent), _validator(0), _ownModel(true) {
-	// set up main layout
-	_mainLayout = new QVBoxLayout(this);
-	_view = new QTableView(this);
-	_prefix = new QLineEdit(this);
-	_comment = new QTextEdit(this);
+	_ui = new Ui::ObjectInspector;
+	_ui->setupUi(this);
 
 	// init model
 	_model = new ParameterFileModel("", this);
 	setModel(newModel);
 
-	// init GUI
-	init();
+	// init view
+	_ui->view->setColumnWidth(0, 120);
+	_ui->view->setColumnWidth(1, 120);
+	InspectorDelegate* delegate = new InspectorDelegate(this);
+	_ui->view->setItemDelegateForColumn(1, delegate);
 
 	// disable prefix editing
 	setEdit(false);
-	on_model_prefixChanged(_model->prefix());
-}
-
-void ObjectInspector::init() {
-	// init prefix widget
-	QFrame* prefixFrame = new QFrame();
-	prefixFrame->setFrameStyle(QFrame::Box | QFrame::Sunken);
-	QGridLayout* prefixLayout = new QGridLayout(prefixFrame);
-	QLabel* label1 = new QLabel(tr("&Prefix"));
-	label1->setBuddy(_prefix);
-	prefixLayout->addWidget(label1, 0, 0);
-	prefixLayout->addWidget(_prefix, 0, 1);
-	_mainLayout->addWidget(prefixFrame);
-
-	// init comment widget
-	_commentBox = new QGroupBox(tr("&Comment"));
-	QHBoxLayout* commentLayout = new QHBoxLayout(_commentBox);
-	commentLayout->addWidget(_comment);
-	_mainLayout->addWidget(_commentBox);
-
-	// init view widget
-	_view->setAlternatingRowColors(true);
-	_view->setEditTriggers(QAbstractItemView::AllEditTriggers);
-	_view->verticalHeader()->hide();
-	_view->setCornerButtonEnabled(false);
-	_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	_view->setColumnWidth(0, 120);
-	_view->setColumnWidth(1, 120);
-	_view->horizontalHeader()->setStretchLastSection(true);
-	InspectorDelegate* delegate = new InspectorDelegate(this);
-	_view->setItemDelegateForColumn(1, delegate);
-	_view->setMouseTracking(true);
-	_mainLayout->addWidget(_view);
 }
 
 ObjectInspector::~ObjectInspector() {
@@ -126,11 +94,11 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	if (_model) {
 		// disconnect everything from the old model
 		disconnect(_model, 0, 0, 0);
-		disconnect(_prefix, 0, _model, 0);
+		disconnect(_ui->prefix, 0, _model, 0);
 	}
 
 	if (newModel) {
-		_view->setModel(newModel);
+		_ui->view->setModel(newModel);
 
 		// delete model if class has ownership
 		if (_ownModel && _model)
@@ -139,7 +107,7 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	} else {
 		// create empty model
 		newModel = new ParameterFileModel();
-		_view->setModel(newModel);
+		_ui->view->setModel(newModel);
 
 		// delete old model if class has ownership
 		if (_ownModel)
@@ -154,30 +122,31 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 
 	// update validator
 	PrefixValidator* newValidator =
-			new PrefixValidator(_model->parameterFile(),_prefix);
-	_prefix->setValidator(newValidator);
+			new PrefixValidator(_model->parameterFile(),_ui->prefix);
+	_ui->prefix->setValidator(newValidator);
 
 	if (_validator)
 		delete _validator;
 	_validator = newValidator;
 
 	// update textEdit content
-	_prefix->setText(_model->prefix());
+	_ui->prefix->setText(_model->prefix());
 
 	// empty comment text area
 	// text will be updated again, when an item is selected
-	_comment->setText("");
+	_ui->comment->setText("");
 
 	// update connections
-	connect(_model, SIGNAL(prefixChanged(QString)), _prefix, SLOT(setText(
+	connect(_model, SIGNAL(prefixChanged(QString)), _ui->prefix, SLOT(setText(
 			QString)));
-	connect(_prefix, SIGNAL(textEdited(QString)), _model, SLOT(setPrefix(
+	connect(_ui->prefix, SIGNAL(textEdited(QString)), _model, SLOT(setPrefix(
 			QString)));
 	connect(_model, SIGNAL(statusMessage(QString)),
 			SIGNAL(statusMessage(QString)));
-	connect(_comment, SIGNAL(textChanged()), SLOT(on_comment_textChanged()));
 	connect(_model, SIGNAL(prefixChanged(QString)),
 			SLOT(on_model_prefixChanged(QString)));
+
+	on_model_prefixChanged(_model->prefix());
 
 	emit modelChanged(_model);
 }
@@ -187,7 +156,7 @@ ParameterFileModel* ObjectInspector::model() const {
 }
 
 void ObjectInspector::setEdit(bool on) {
-	_prefix->setEnabled(on);
+	_ui->prefix->setEnabled(on);
 }
 
 void ObjectInspector::openMetaData(QString fname) {
@@ -204,8 +173,8 @@ void ObjectInspector::addParam() {
 }
 
 void ObjectInspector::delParam() {
-	QItemSelectionModel* selectionModel = _view->selectionModel();
-	uint rows = _view->model()->rowCount();
+	QItemSelectionModel* selectionModel = _ui->view->selectionModel();
+	uint rows = _ui->view->model()->rowCount();
 
 	// collect selected rows
 	std::stack<int> rowStack;
@@ -241,11 +210,12 @@ void ObjectInspector::clear() {
 }
 
 void ObjectInspector::on_comment_textChanged() {
-	_model->setEditorComment(_comment->toPlainText());
+	_model->setEditorComment(_ui->comment->toPlainText());
 }
 
 void ObjectInspector::on_model_prefixChanged(const QString& prefix) {
 	// update comment text area
-	_comment->setPlainText(_model->parameterFile().get(prefix + ".editorcomment"));
-	_commentBox->setEnabled(!prefix.isEmpty());
+	_ui->comment->setPlainText(_model->parameterFile().get(prefix + ".editorcomment"));
+	_ui->commentBox->setEnabled(!prefix.isEmpty() && _model->prefixValid());
+	// zusätzliche bedingung! todo
 }

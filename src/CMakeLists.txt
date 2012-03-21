@@ -17,6 +17,7 @@ QT4_WRAP_UI(UI_SRC
 	LogDialog.ui
 	OptionsDialog.ui
 	NodeTreeView.ui
+	ObjectInspector.ui
 )
 
 SET(TUCHULCHA_COMMON_SOURCES

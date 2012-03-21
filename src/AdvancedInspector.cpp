@@ -29,6 +29,7 @@
 #include "MetaData.h"
 
 #include "AdvancedInspector.moc"
+#include "ui_ObjectInspector.h"
 
 AdvancedInspector::AdvancedInspector(QWidget* myParent,
 		ParameterFileModel* newModel) :
@@ -45,7 +46,7 @@ void AdvancedInspector::init() {
 	// init edit widget
 	_advancedFrame  = new QFrame();
 	_advancedFrame->setFrameStyle(QFrame::Box | QFrame::Sunken);
-	_mainLayout->addWidget(_advancedFrame);
+	_ui->verticalLayout->addWidget(_advancedFrame);
 
 	QGridLayout* editLayout = new QGridLayout(_advancedFrame);
 	QLabel* label2  = new QLabel(tr("Editing"));

@@ -35,6 +35,10 @@ class PrefixValidator;
 class QTextEdit;
 class QGroupBox;
 
+namespace Ui {
+	class ObjectInspector;
+}
+
 /// Object inspector widget.
 /** This widget contains a TableView to edit parameters used in a
  *  ParameterFileModel. Additional it adds the possibilty to add and
@@ -109,17 +113,11 @@ public slots:
 	void on_model_prefixChanged(const QString& text);
 
 protected:
-	QVBoxLayout*        _mainLayout;    ///< GUI main layout
-	QTableView*         _view;          ///< View widget (tree view)
+	/// designer gui
+	Ui::ObjectInspector* _ui;
 
 private:
-	/// setup widget layout
-	void init();
-
 	PrefixValidator*    _validator;     ///< prefix validator
-	QLineEdit*          _prefix;        ///< prefix modification widget
-	QTextEdit*          _comment;       ///< comment modification widget
-	QGroupBox*          _commentBox;    ///< comment group box
 	ParameterFileModel* _model;         ///< Used model to display
 	bool                _ownModel;      ///< Class has Ownership of _model
 };

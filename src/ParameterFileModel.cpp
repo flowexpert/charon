@@ -566,6 +566,7 @@ void ParameterFileModel::setEditorComment(QString comment)
 	}
 
 	bool valSet = false;
+	bool paramsBefore = _onlyParams;
 	setOnlyParams(false);
 
 	// check if "editorcomment" entry already exists
@@ -591,7 +592,7 @@ void ParameterFileModel::setEditorComment(QString comment)
 		setData(index(rowCount()-1,1), comment);
 	}
 
-	setOnlyParams(true);
+	setOnlyParams(paramsBefore);
 
 	// update selected node
 	emit commentChanged(comment);
