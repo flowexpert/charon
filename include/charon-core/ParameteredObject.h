@@ -245,19 +245,25 @@ protected:
 	/**
 	 *  This hack is useful to get some member functions compiled
 	 *  (and exported into) the (dynamic) library.
-	 *  No code is executed, because this is always not zero, but the
+	 *  No code is executed, because this-pointer is always non-zero, but the
 	 *  compiler is forced to compile the given (templated) function
 	 *  and export the symbol.
+	 *
+	 *  Example: <code>_addFunction(someFunction);</code>
+	 *
 	 *  \param x	function to export
 	 */
-	#define _addFunction(x) if (!this && &x) throw 42;
+	#define _addFunction(x)\
+		if (!this && &x) {\
+			throw 42;\
+		}
 
 	/// register some constructor
 	/**
 	 *  use this hack, if you have multiple templated constructors and want
 	 *  them to be compiled (and exported) into the (dynamic) library.
 	 *
-	 *  Example: <code>_addConstructor(myObject(par1,par2,par3));</code>
+	 *  Example: <code>_addConstructor( myObject(par1,par2,par3) );</code>
 	 *
 	 *  \warning
 	 *      at least on gcc, there are multiple kinds of constructors, i.e.
@@ -265,7 +271,10 @@ protected:
 	 *      full constructor that is used to create instances.
 	 *      This hack will only produce the full constructor, not the base one.
 	 */
-	#define _addConstructor(x) if (!this && new x) throw 42;
+	#define _addConstructor(x)\
+		if (!this && new x) {\
+			throw 42;\
+		}
 	//  \}
 
 	/// Default constructor.
