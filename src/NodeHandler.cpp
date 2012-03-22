@@ -364,7 +364,7 @@ void NodeHandler::updateTooltip(QString comment)
 	// to prevent exceptions, ensure that _selectedNode is not empty
 	if (_selectedNode && !_nodeMap.isEmpty()) {
 		if (comment.isEmpty()) {
-			_selectedNode->setToolTip();
+			_selectedNode->setToolTip("");
 		} else {
 			_selectedNode->setToolTip("<b>" + tr("Comment:") + "</b><br/>" + comment);
 		}
