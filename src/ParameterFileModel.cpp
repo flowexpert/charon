@@ -66,7 +66,7 @@ int ParameterFileModel::rowCount(const QModelIndex& /*parent*/) const {
 }
 
 int ParameterFileModel::columnCount(const QModelIndex& /*parent*/) const {
-	return 2;
+	return 3;
 }
 
 QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
@@ -92,22 +92,32 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 				return name;
 
 			case 1:
-				QVariant res = "";
-				QString className = getClass(_keys[row]);
-				if (_parameterFile->isSet(_keys[row]))
-					res = _parameterFile->get(_keys[row]);
-				else if (_onlyParams)
-					res = metaInfo()->getDefault(_keys[row], className);
+				{
+					QVariant res = "";
+					QString className = getClass(_keys[row]);
+					if (_parameterFile->isSet(_keys[row]))
+						res = _parameterFile->get(_keys[row]);
+					else if (_onlyParams)
+						res = metaInfo()->getDefault(_keys[row], className);
 
-				if (_useMetaInfo && metaInfo()->isParameter(_keys[row],
-						className)) {
-					QString typestring = getType(_keys[row]);
-					QVariant::Type type = mapper[typestring];
-					Q_ASSERT(res.canConvert(type));
-					res.convert(type);
+					if (_useMetaInfo && metaInfo()->isParameter(_keys[row],
+							className)) {
+						QString typestring = getType(_keys[row]);
+						QVariant::Type type = mapper[typestring];
+						Q_ASSERT(res.canConvert(type));
+						res.convert(type);
+					}
+					// simply return the string value
+					return res;
 				}
-				// simply return the string value
-				return res;
+
+			case 2:
+				if (_parameterFile->isSet(_keys[row] + ".editorpriority")) {
+					return _parameterFile->get(_keys[row] + ".editorpriority");
+				}
+				else {
+					return "0";
+				}
 			}
 		}
 	}
@@ -191,6 +201,29 @@ bool ParameterFileModel::setData(
 					return true;
 				}
 				break;
+			case 2:
+				if (value.canConvert(QVariant::Int)) {
+					// check if value is allowed
+					int valueInt = value.toInt();
+					QString valueStr = value.toString();
+					if (valueInt < 0 || valueInt > 3) {
+						return false;
+					}
+
+					if (valueInt == 0) {
+						_parameterFile->erase(_keys[ind.row()] + ".editorpriority");
+						emit dataChanged(index(ind.row(), 0), ind);
+						return true;
+					}
+
+					if (valueStr == _parameterFile->get(_keys[ind.row()] + ".editorpriority"))
+						return true; // nothing to do
+
+					_parameterFile->set(_keys[ind.row()] + ".editorpriority", valueStr);
+					emit dataChanged(index(ind.row(), 0), ind);
+					return true;
+				}
+				break;
 			}
 		}
 	}
@@ -224,6 +257,8 @@ Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 					| Qt::ItemIsUserCheckable;
 			return Qt::ItemIsSelectable | Qt::ItemIsEnabled
 					| Qt::ItemIsEditable;
+		case 2: // debug only - TODO
+			return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
 		default:
 			return 0;
 		}
@@ -241,6 +276,8 @@ QVariant ParameterFileModel::headerData(int section,
 				return "Parameter";
 			case 1:
 				return "Value";
+			case 2: // debug only - TODO
+				return "Priority";
 			}
 		} else {
 			if ((section >= 0) && (section < _keys.size()))
@@ -358,6 +395,7 @@ void ParameterFileModel::_update() {
 		tempList = _prefixFilter(tempList);
 	if (_onlyParams)
 		tempList = _paramFilter(tempList);
+	tempList = _priorityFilter(tempList);
 
 	// show selected parameters
 	if (tempList.size()) {
@@ -535,6 +573,18 @@ QStringList ParameterFileModel::_paramFilter(QStringList list) const {
 		tmp << metaInfo()->getParameters(getClass(objects[ii]));
 		tmp.replaceInStrings(QRegExp("(^.*$)"), objects[ii]+".\\1");
 		result << tmp;
+	}
+	return result;
+}
+
+QStringList ParameterFileModel::_priorityFilter(QStringList list) const {
+	QStringList result;
+	while (!list.empty()) {
+		QString str = list.first();
+		if (!str.endsWith(".editorpriority")) {
+			result << str;
+		}
+		list.pop_front();
 	}
 	return result;
 }

@@ -50,6 +50,7 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 	// init view
 	_ui->view->setColumnWidth(0, 120);
 	_ui->view->setColumnWidth(1, 120);
+	//_ui->view->setColumnHidden(2, true); // TODO
 	InspectorDelegate* delegate = new InspectorDelegate(this);
 	_ui->view->setItemDelegateForColumn(1, delegate);
 
@@ -210,9 +211,6 @@ void ObjectInspector::on_deleteButton_clicked() {
 
 	// delete rows, reversed to avoid row movement below
 	while (rowStack.size() > 0) {
-		// TODO also remove potential "*.priority" parameters to be removed
-		// get parameterfile to check if existant - if not, search manually
-		QString str = model()->data(model()->index(rowStack.top(), 0)).toString();
 		model()->removeRow(rowStack.top(), QModelIndex());
 		rowStack.pop();
 	}

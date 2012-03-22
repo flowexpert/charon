@@ -284,6 +284,12 @@ private:
 	 *  \returns                filtered list (only parameters)
 	 */
 	QStringList _paramFilter(QStringList list) const;
+
+	/// filter keys containing priority information
+	/** \param list             list to filter
+	 *  \returns                filtered list (no *.priority keys)
+	 */
+	QStringList _priorityFilter(QStringList list) const;
 };
 
 #endif /* PARAMETERFILEMODEL_H_ */
