@@ -33,6 +33,7 @@
 #include "FileManager.h"
 #include "InspectorDelegate.h"
 #include "QParameterFile.h"
+#include "PriorityDialog.h"
 
 #include "ObjectInspector.moc"
 #include "ui_ObjectInspector.h"
@@ -61,6 +62,7 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 ObjectInspector::~ObjectInspector() {
 	if (_ownModel)
 		delete _model;
+	delete _ui;
 }
 
 void ObjectInspector::openFile(QString fName) {
@@ -231,7 +233,37 @@ void ObjectInspector::on_clearButton_clicked() {
 }
 
 void ObjectInspector::on_setPriorityButton_clicked() {
-	// TODO open dialog
+	QItemSelectionModel* selectionModel = _ui->view->selectionModel();
+	uint rows = _ui->view->model()->rowCount();
+
+	// collect selected rows
+	std::stack<int> rowStack;
+	for (uint i = 0; i < rows; i++)
+		if (selectionModel->rowIntersectsSelection(i, QModelIndex()))
+			rowStack.push(i);
+
+	if (!rowStack.size()) {
+		return;
+	}
+
+	// old value, if only one row selected
+	int before = 0;
+	if (rowStack.size() == 1) {
+		before = _model->data(_model->index(rowStack.top(), 2)).toInt();
+	}
+
+	// open dialog
+	int priority = PriorityDialog::getPriority(this, before);
+
+	// determine if change needed
+	if (priority != before || rowStack.size() > 1) {
+		// change priority
+		while (rowStack.size() > 0) {
+			_model->setData(_model->index(rowStack.top(), 2), QVariant(priority));
+			rowStack.pop();
+		}
+	}
+	// TODO
 }
 
 void ObjectInspector::on_filterBox_activated(int index) {

@@ -18,6 +18,7 @@ QT4_WRAP_UI(UI_SRC
 	OptionsDialog.ui
 	NodeTreeView.ui
 	ObjectInspector.ui
+	PriorityDialog.ui
 )
 
 SET(TUCHULCHA_COMMON_SOURCES
@@ -48,6 +49,8 @@ SET(EDITPARAM_SOURCES
 	MetaData.h
 	QDirEdit.cpp
 	QDirEdit.h
+	PriorityDialog.cpp
+	PriorityDialog.h
 )
 
 SET(EDITGRAPH_SOURCES
