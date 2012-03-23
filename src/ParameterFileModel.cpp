@@ -211,15 +211,23 @@ bool ParameterFileModel::setData(
 					}
 
 					if (valueInt == 0) {
-						_parameterFile->erase(_keys[ind.row()] + ".editorpriority");
-						emit dataChanged(index(ind.row(), 0), ind);
+						// 0 is default value -> no entry needed
+						if (_parameterFile->isSet(
+							_keys[ind.row()] + ".editorpriority")) {
+							// check if value exists to prevent exceptions
+							_parameterFile->erase(
+								_keys[ind.row()] + ".editorpriority");
+							emit dataChanged(index(ind.row(), 0), ind);
+						}
 						return true;
 					}
 
-					if (valueStr == _parameterFile->get(_keys[ind.row()] + ".editorpriority"))
-						return true; // nothing to do
+					if (valueStr == _parameterFile->get(
+						_keys[ind.row()] + ".editorpriority"))
+							return true; // nothing to do
 
-					_parameterFile->set(_keys[ind.row()] + ".editorpriority", valueStr);
+					_parameterFile->set(
+						_keys[ind.row()] + ".editorpriority", valueStr);
 					emit dataChanged(index(ind.row(), 0), ind);
 					return true;
 				}
@@ -258,7 +266,7 @@ Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 			return Qt::ItemIsSelectable | Qt::ItemIsEnabled
 					| Qt::ItemIsEditable;
 		case 2: // debug only - TODO
-			return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+			return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 		default:
 			return 0;
 		}
