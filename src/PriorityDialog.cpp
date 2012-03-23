@@ -41,10 +41,8 @@ PriorityDialog::~PriorityDialog() {
 	delete _ui;
 }
 
-int PriorityDialog::getPriority(QWidget* parent, int selection) {
-	PriorityDialog dlg(parent, selection);
-	dlg.exec();
-	return dlg._selection;
+int PriorityDialog::selection() const {
+	return _selection;
 }
 
 void PriorityDialog::on_setButton_clicked() {

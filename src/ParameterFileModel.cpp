@@ -113,10 +113,10 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 
 			case 2:
 				if (_parameterFile->isSet(_keys[row] + ".editorpriority")) {
-					return _parameterFile->get(_keys[row] + ".editorpriority");
+					return _parameterFile->get(_keys[row] + ".editorpriority").toUInt();
 				}
 				else {
-					return "0";
+					return 0u;
 				}
 			}
 		}
@@ -130,6 +130,20 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 	if (role == Qt::ForegroundRole && _onlyParams) {
 		if (!_parameterFile->isSet(_keys[ind.row()]))
 			return Qt::lightGray;
+	}
+	if (role == Qt::BackgroundRole && _parameterFile->isSet(
+		_keys[ind.row()] + ".editorpriority")) {
+
+		switch (_parameterFile->get(_keys[ind.row()] + ".editorpriority").toInt()) {
+		case 1:
+			return QColor("#8f8");
+		case 2:
+			return QColor("#ff8");
+		case 3:
+			return QColor("#f80");
+		default:
+			break;
+		}
 	}
 	if (ind.column() == 1 && role == Qt::CheckStateRole && _useMetaInfo
 			&& metaInfo()->isParameter(_keys[ind.row()],
@@ -205,7 +219,7 @@ bool ParameterFileModel::setData(
 				if (value.canConvert(QVariant::Int)) {
 					// check if value is allowed
 					int valueInt = value.toInt();
-					QString valueStr = value.toString();
+					QString valueStr = QVariant(valueInt).toString();
 					if (valueInt < 0 || valueInt > 3) {
 						return false;
 					}
@@ -225,6 +239,10 @@ bool ParameterFileModel::setData(
 					if (valueStr == _parameterFile->get(
 						_keys[ind.row()] + ".editorpriority"))
 							return true; // nothing to do
+
+					if (valueInt == 3) {
+						setData(ind, QColor(Qt::red), Qt::BackgroundColorRole);
+					}
 
 					_parameterFile->set(
 						_keys[ind.row()] + ".editorpriority", valueStr);
@@ -324,6 +342,7 @@ bool ParameterFileModel::insertRows(int row, int count,
 		// apply modificators
 		if (!_prefix.isEmpty())
 			_keys = _prefixFilter(_keys);
+		_keys = _priorityFilter(_keys);
 
 		// check new number of elements
 		Q_ASSERT(_keys.size() == (row + count));

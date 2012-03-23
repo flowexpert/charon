@@ -253,7 +253,12 @@ void ObjectInspector::on_setPriorityButton_clicked() {
 	}
 
 	// open dialog
-	int priority = PriorityDialog::getPriority(this, before);
+	PriorityDialog dlg(this, before);
+
+	if (dlg.exec() == QDialog::Rejected)
+		return;
+
+	int priority = dlg.selection();
 
 	// determine if change needed
 	if (priority != before || rowStack.size() > 1) {
@@ -276,11 +281,13 @@ void ObjectInspector::on_resetFilterButton_clicked() {
 }
 
 void ObjectInspector::on_comment_textChanged() {
-	_model->setEditorComment(_ui->comment->toPlainText());
+	_model->setEditorComment(_ui->comment->toPlainText().replace(
+		QRegExp("\n"), "<br/>"));
 }
 
 void ObjectInspector::on_model_prefixChanged(const QString& prefix) {
 	// update comment text area
-	_ui->comment->setPlainText(_model->parameterFile().get(prefix + ".editorcomment"));
+	_ui->comment->setPlainText(_model->parameterFile().get(
+		prefix + ".editorcomment").replace(QRegExp("<br/?>"), "\n"));
 	_ui->commentBox->setEnabled(!prefix.isEmpty() && _model->prefixValid());
 }

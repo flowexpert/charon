@@ -50,13 +50,6 @@ public:
 	/// Get selected index
 	int selection() const;
 
-	/// Open Dialog and return result.
-	/** @param parent       parent widget
-	 *  @param selection  index of preselected value
-	 *  @returns  selected priority
-	 */
-	static int getPriority(QWidget* parent = 0, int selection = 0);
-
 public slots:
 	/// close and update selection
 	void on_setButton_clicked();
