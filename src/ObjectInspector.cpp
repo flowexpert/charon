@@ -34,6 +34,7 @@
 #include "InspectorDelegate.h"
 #include "QParameterFile.h"
 #include "PriorityDialog.h"
+#include "PriorityBox.h"
 
 #include "ObjectInspector.moc"
 #include "ui_ObjectInspector.h"
@@ -51,9 +52,19 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 	// init view
 	_ui->view->setColumnWidth(0, 120);
 	_ui->view->setColumnWidth(1, 120);
-	//_ui->view->setColumnHidden(2, true); // TODO
-	InspectorDelegate* delegate = new InspectorDelegate(this);
-	_ui->view->setItemDelegateForColumn(1, delegate);
+	_ui->view->setColumnWidth(2, 90);
+
+	InspectorDelegate* delegate1 = new InspectorDelegate(this);
+	_ui->view->setItemDelegateForColumn(1, delegate1);
+
+	QStyledItemDelegate* delegate2 = new QStyledItemDelegate(this);
+	QItemEditorCreatorBase* creator =
+		new QStandardItemEditorCreator<PriorityBox>();
+	QItemEditorFactory* ef = new QItemEditorFactory(
+		*QItemEditorFactory::defaultFactory());
+	ef->registerEditor(QVariant::UInt, creator);
+	delegate2->setItemEditorFactory(ef);
+	_ui->view->setItemDelegateForColumn(2, delegate2);
 
 	// disable prefix editing and hide buttonFrame
 	setEdit(false);
@@ -268,7 +279,6 @@ void ObjectInspector::on_setPriorityButton_clicked() {
 			rowStack.pop();
 		}
 	}
-	// TODO
 }
 
 void ObjectInspector::on_filterBox_activated(int index) {

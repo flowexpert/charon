@@ -31,6 +31,7 @@
 #include <QSet>
 #include <QSettings>
 #include <QMessageBox>
+#include <QIcon>
 
 #include "ParameterFileModel.moc"
 
@@ -112,6 +113,8 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 				}
 
 			case 2:
+				if (role == Qt::DisplayRole)
+					return QVariant();
 				if (_parameterFile->isSet(_keys[row] + ".editorpriority")) {
 					return _parameterFile->get(_keys[row] + ".editorpriority").toUInt();
 				}
@@ -127,10 +130,11 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 		if (!ret.isEmpty())
 			return ret;
 	}
-	if (role == Qt::ForegroundRole && _onlyParams) {
-		if (!_parameterFile->isSet(_keys[ind.row()]))
+
+	if (role == Qt::ForegroundRole && _onlyParams
+		&& !_parameterFile->isSet(_keys[ind.row()]))
 			return Qt::lightGray;
-	}
+
 	if (role == Qt::BackgroundRole && _parameterFile->isSet(
 		_keys[ind.row()] + ".editorpriority")) {
 
@@ -166,6 +170,41 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 					return Qt::Unchecked;
 			}
 		}
+	}
+	if (role == Qt::DecorationRole && ind.column() == 2) {
+		
+		// get selection - TODO
+
+
+		/*if (_parameterFile->isSet(_keys[ind.row()] + ".editorpriority")) {
+			QIcon icon;
+			switch (_parameterFile->get(
+				_keys[ind.row()] + ".editorpriority").toInt()) {
+
+			case 1:
+				icon.addFile(QString::fromUtf8(":/icons/priorityGreen.png"),
+					QSize(), QIcon::Normal, QIcon::Off);
+				break;
+			case 2:
+				icon.addFile(QString::fromUtf8(":/icons/priorityYellow.png"),
+					QSize(), QIcon::Normal, QIcon::Off);
+				break;
+			case 3:
+				icon.addFile(QString::fromUtf8(":/icons/priorityRed.png"),
+					QSize(), QIcon::Normal, QIcon::Off);
+				break;
+			default:
+				icon.addFile(QString::fromUtf8(":/icons/priorityGrey.png"),
+					QSize(), QIcon::Normal, QIcon::Off);
+				break;
+			}
+			return icon;
+		} else {
+			QIcon icon;
+			icon.addFile(QString::fromUtf8(":/icons/priorityGrey.png"),
+				QSize(), QIcon::Normal, QIcon::Off);
+			return icon;
+		}*/
 	}
 	return QVariant();
 }
@@ -283,8 +322,9 @@ Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 					| Qt::ItemIsUserCheckable;
 			return Qt::ItemIsSelectable | Qt::ItemIsEnabled
 					| Qt::ItemIsEditable;
-		case 2: // debug only - TODO
-			return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+		case 2:
+			return Qt::ItemIsSelectable | Qt::ItemIsEnabled
+					| Qt::ItemIsEditable;
 		default:
 			return 0;
 		}
@@ -302,7 +342,7 @@ QVariant ParameterFileModel::headerData(int section,
 				return "Parameter";
 			case 1:
 				return "Value";
-			case 2: // debug only - TODO
+			case 2:
 				return "Priority";
 			}
 		} else {

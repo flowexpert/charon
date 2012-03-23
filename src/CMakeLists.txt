@@ -51,6 +51,8 @@ SET(EDITPARAM_SOURCES
 	QDirEdit.h
 	PriorityDialog.cpp
 	PriorityDialog.h
+	PriorityBox.cpp
+	PriorityBox.h
 )
 
 SET(EDITGRAPH_SOURCES
