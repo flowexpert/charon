@@ -188,7 +188,7 @@ IF(BUILD_TESTING)
 		ENDIF(WIN32)
 
 		# temporarily disabled because of group refactoring
-		IF(FALSE)
+		IF(TRUE)
 			ADD_EXECUTABLE(groupVirtualSlot2
 				groupVirtualSlot.cpp
 				${CHARON_UTILS_INCLUDE_DIR}/DataManagerCImgList.hxx

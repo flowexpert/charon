@@ -24,8 +24,9 @@
 /// Class name of the plugin
 #define TYPE AmplitudeThreshold
 
-#include <charon-utils/DataManagerCImgList.hxx>
-#include <charon-utils/AmplitudeThreshold.hxx>
+#include "../include/charon-utils/AmplitudeThreshold.hxx"
+#include "../include/charon-utils/DataManagerCImgList.hxx"
+
 
 /// Creates an instance of the plugin
 extern "C" amplitudethreshold_DECLDIR ParameteredObject* create(
