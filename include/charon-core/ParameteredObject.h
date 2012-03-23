@@ -45,8 +45,7 @@
 #include "Slots.h"
 #include "DllEx.h"
 
-/// Integer which represents a template type.
-typedef unsigned short int template_type;
+
 
 class PluginManagerInterface;
 template<typename T>
@@ -74,6 +73,9 @@ class charon_core_DLL_PUBLIC ParameteredObject {
 public:
 	/// defined build type, see static members for options
 	typedef unsigned short int build_type ;
+	/// Integer which represents a template type.
+	typedef unsigned short int template_type;
+
 
 private:
 

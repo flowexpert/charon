@@ -72,18 +72,7 @@ public:
 	/// Load connections
 	void loadConnection(ParameterFile pf,PluginManagerInterface* man);
 
-	/// BundleContext
-	enum BundleContext
-	{
-	SAME_CONTEXT,      ///< inputSlots and outputSlots in same process/thread
-	DIFFERENT_CONTEXTS ///< inputSlots and outputSlots in different processes/threads
-	};
 
-	/// SetCacheOption
-	void setCacheOption(CacheOption opt);
-
-	/// GetCacheOption
-	CacheOption getCacheOption() const;
 
 	/// Size of bundle
 	virtual int size();
@@ -93,10 +82,10 @@ protected:
 	virtual void _removeAllSlots()=0;
 	std::vector<VirtualOutputSlot*> _virtualOutputSlots;
 	std::vector<VirtualInputSlot*> _virtualInputSlots;
-	BundleContext _context;
+
 
 private:
-	CacheOption _overrideCaches;
+
 
 	void _deleteAllSlots();
 

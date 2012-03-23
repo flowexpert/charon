@@ -32,7 +32,7 @@ const std::string& AbstractPluginLoader::getName() const {
 }
 
 ParameteredObject * AbstractPluginLoader::createInstance(
-		const std::string & name, template_type t) throw (PluginException) {
+		const std::string & name, ParameteredObject::template_type t) throw (PluginException) {
 	if (create) {
 		return create(name, t);
 	} else {

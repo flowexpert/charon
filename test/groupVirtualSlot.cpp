@@ -46,9 +46,9 @@ public:
 
 protected:
 	virtual void execute() {
-		sout << "(II) \tRead slot data: "
-			 << in1() << ", " << in2() << std::endl;
-	}
+	if(in1!=10  || in2!=5.5f)
+	    raise("Incorrect Values!");
+    }
 };
 
 /// sample ParameteredObject class.
@@ -94,10 +94,13 @@ public:
 
 	setNumberOfInputSlots(2);
 	Reader* rd=new Reader("Reader");
+
+	//Virtual slots receiving Data from outside
 	Slot* out1=dynamic_cast<Slot*>(getInputSlot(0).second);
 	Slot* out2=dynamic_cast<Slot*>(getInputSlot(1).second);
 	_pluginMan->insertInstance(rd);
 	//_pluginMan->connect(out1->getParent().getName()+"."+out1->getName(),rd->getName()+"."+rd->in1.getName());
+	//Connect virtual slot to reader. Reader should receive values from object outside of group
 	_pluginMan->connect(out1,&(rd->in1));
 	_pluginMan->connect(out2,&(rd->in2));
 
@@ -138,13 +141,17 @@ public:
 
 void testDataToGroup()
 {
+    //Needed to initialize the groups
     ParameterFile file;
     file.save("TestGroupReader.wrp");
 
+    //Create output generator
     Outputgen* generator=new Outputgen("OutgenReader");
     generator->out1.setCacheType(Slot::CACHE_MANAGED);
     std::vector<std::string> paths;
     paths.push_back(CHARON_PLUGINS);
+
+    //Create group
     TestGroupReader* group=new TestGroupReader;
     group->pluginPaths=paths;
     //generator.initialize();
@@ -154,6 +161,8 @@ void testDataToGroup()
     PluginManager* man=new PluginManager(paths);
     man->insertInstance(group);
     man->insertInstance(generator);
+
+    //Connect output generator to virtual slots of group. Data should flow from outputgen into group into nested reader
     Slot* in=dynamic_cast<Slot*>(group->getInputSlot(0).first);
     Slot* in2=dynamic_cast<Slot*>(group->getInputSlot(1).first);
     man->connect(&(generator->out1),in);

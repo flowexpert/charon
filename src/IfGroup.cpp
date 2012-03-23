@@ -52,7 +52,7 @@ void IfGroup::executeGroup() {
 // for class IfGroup to work as a charon plugin.
 /// create new IfGroup
 extern "C" ifgroup_DECLDIR ParameteredObject*
-		create(const std::string& name, template_type) {
+		create(const std::string& name, ParameteredObject::template_type) {
 	return new IfGroup(name);
 }
 

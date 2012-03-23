@@ -46,7 +46,7 @@ protected:
 	/**
 	 * Function pointer to the constructor of the plugin
 	 */
-	ParameteredObject* (*create)(const std::string &, template_type);
+	ParameteredObject* (*create)(const std::string &, ParameteredObject::template_type);
 
 	/**
 	 * Function pointer to the destructor of the plugin
@@ -211,7 +211,7 @@ public:
 	 * @throws AbstractPluginLoader::PluginException
 	 */
 	virtual ParameteredObject * createInstance(const std::string & name,
-			template_type t = ParameteredObject::TYPE_DOUBLE)
+			ParameteredObject::template_type t = ParameteredObject::TYPE_DOUBLE)
 			throw (PluginException);
 
 	/**

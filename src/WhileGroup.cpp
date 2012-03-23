@@ -56,7 +56,7 @@ void WhileGroup::executeGroup() {
 // the following functions are needed
 // for class WhileGroup to work as a charon plugin.
 extern "C" whilegroup_DECLDIR ParameteredObject*
-		create(const std::string& name, template_type) {
+		create(const std::string& name, ParameteredObject::template_type) {
 	return new WhileGroup(name);
 }
 

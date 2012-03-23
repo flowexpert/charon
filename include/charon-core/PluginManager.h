@@ -140,7 +140,7 @@ private:
 	/**
 	 * Saves the current default template type.
 	 */
-	template_type _defaultTemplateType;
+	ParameteredObject::template_type _defaultTemplateType;
 
 	/**
 	 * Deletes all instances of a loaded plugin.
@@ -320,7 +320,7 @@ public:
 	 * @return Pointer to a new instance
 	 */
 	ParameteredObject* createInstance(std::string pluginName,
-			const template_type t, const std::string& instanceName = "")
+			const ParameteredObject::template_type t, const std::string& instanceName = "")
 			throw (AbstractPluginLoader::PluginException);
 
 	/**
@@ -409,7 +409,7 @@ public:
 	 *          - ParameteredObject::TYPE_FLOAT for a float type
 	 *          - ParameteredObject::TYPE_INT for an integer type
 	 */
-	void setDefaultTemplateType(const template_type t);
+	void setDefaultTemplateType(const ParameteredObject::template_type t);
 
 	/**
 	 * Returns the current default template type property. Initially, it is set
@@ -421,7 +421,7 @@ public:
 	 *          - ParameteredObject::TYPE_FLOAT for a float type
 	 *          - ParameteredObject::TYPE_INT for an integer type
 	 */
-	template_type getDefaultTemplateType() const;
+	ParameteredObject::template_type getDefaultTemplateType() const;
 
 	/// run whole workflow
 	/** Calls run() on every target point.

@@ -60,7 +60,7 @@ DummyModule::DummyModule(const std::string& name) :
 
 /// Creates an instance of the plugin
 extern "C" dummymodule_DLL_PUBLIC ParameteredObject* create(
-		const std::string & name, template_type /*t*/) {
+		const std::string & name, ParameteredObject::template_type /*t*/) {
 	return new DummyModule(name);
 }
 
