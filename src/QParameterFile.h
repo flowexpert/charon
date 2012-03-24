@@ -29,8 +29,7 @@ class ParameterFile;
 #include <QStringList>
 
 /// Qt wrapper for ParameterFile class
-/** Hides unneeded complexity and provides getter and setter with
- *  Qt compatible data types like QString or QStringList
+/** Hides unneeded complexity and provides QString getter and setter.
  */
 class QParameterFile {
 public:
@@ -50,10 +49,11 @@ public:
 	 *  If parameter is unset, the getters return a null string.
 	 */
 	// \{
-	QString get(QString parameter) const;
 	void set(QString parameter, QString value);
-	QStringList getList(QString parameter) const;
-	void set(QString parameter, QStringList value);
+	QString get(QString parameter) const;
+	inline QStringList getList(QString parameter) const {
+		return get(parameter).split(";",QString::SkipEmptyParts);
+	}
 
 	/// Look for parameters beginning with a given string.
 	/** \param  beginsWith  Beginning of parameter name
@@ -67,9 +67,6 @@ public:
 
 	/// clear content
 	void clear();
-
-	/// get wrapped parameter file
-	const ParameterFile& toParameterFile() const;
 
 private:
 	/// wrapped parameter file instance

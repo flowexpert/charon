@@ -77,11 +77,3 @@ QStringList QParameterFile::getKeyList(QString beginsWith) const {
 void QParameterFile::clear() {
 	_pFile->clear();
 }
-
-QStringList QParameterFile::getList(QString parameter) const {
-	return get(parameter).split(";",QString::SkipEmptyParts);
-}
-
-const ParameterFile& QParameterFile::toParameterFile() const {
-	return *_pFile;
-}
