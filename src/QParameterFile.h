@@ -25,17 +25,20 @@
 #ifndef QPARAMETERFILE_H
 #define QPARAMETERFILE_H
 
-class ParameterFile;
 #include <QStringList>
+#include <QHash>
 
-/// Qt wrapper for ParameterFile class
+/// Qt implementation for ParameterFile class
 /** Hides unneeded complexity and provides QString getter and setter.
+ *  New implementation based on Qt file-i/o and QTextStream
+ *  to handle files with arbitrary encodings.
+ *  Also supports keys with mixed case values.
+ *  Parameter search is still done case-insensitive.
  */
 class QParameterFile {
 public:
 	/// default constructor
 	QParameterFile(QString fileName = "" /** [in] file to load */);
-	~QParameterFile();
 
 	/// load parameter file
 	void load(QString fileName);
@@ -49,7 +52,7 @@ public:
 	 *  If parameter is unset, the getters return a null string.
 	 */
 	// \{
-	void set(QString parameter, QString value);
+	void set(QString parameter, QString value = "");
 	QString get(QString parameter) const;
 	inline QStringList getList(QString parameter) const {
 		return get(parameter).split(";",QString::SkipEmptyParts);
@@ -69,8 +72,10 @@ public:
 	void clear();
 
 private:
-	/// wrapped parameter file instance
-	ParameterFile* _pFile;
+	/// key array, stored in mixed case
+	QStringList _keys;
+	/// value hash table, keys are stored in lowercase
+	QHash<QString,QString> _content;
 };
 
 #endif // QPARAMETERFILE_H

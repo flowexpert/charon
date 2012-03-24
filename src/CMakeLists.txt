@@ -110,8 +110,7 @@ ADD_LIBRARY(tc-run ${WF_RUNNER_SOURCES})
 ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC})
 
 # add dependencies
-TARGET_LINK_LIBRARIES(editparam
-	tc-common charon-plugins charon-core ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(editparam tc-common ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(editgraph editparam)
 TARGET_LINK_LIBRARIES(paraminspector-widgets editparam)
 TARGET_LINK_LIBRARIES(tc-run tc-common charon-plugins ${QT_LIBRARIES})

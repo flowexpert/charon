@@ -23,57 +23,128 @@
  */
 
 #include "QParameterFile.h"
-#include <charon-core/ParameterFile.hxx>
-#include <vector>
+#include <QFile>
+#include <QTextStream>
 
-QParameterFile::QParameterFile(QString fileName) :
-		_pFile(new ParameterFile())
+QParameterFile::QParameterFile(QString fileName)
 {
 	if(!fileName.isEmpty())
 		load(fileName);
 }
 
-QParameterFile::~QParameterFile() {
-	delete _pFile;
-}
-
 void QParameterFile::load(QString fileName) {
-	_pFile->load(fileName.toStdString());
+	_content.clear();
+	_keys.clear();
+	QFile inFile(fileName);
+	if (inFile.open(QFile::ReadOnly|QIODevice::Text)) {
+		QString fileContent = QString::fromLocal8Bit(inFile.readAll());
+		QTextStream str(&fileContent,QIODevice::ReadOnly);
+		// regexp instances for content analysis
+		QRegExp lb("(.*)\\\\\\s*");      // handle line breaks
+		QRegExp cm("(.*)#.*");           // strip comments
+		QRegExp kv("(\\S+)\\s+(\\S.*)"); // extract key/value
+		QRegExp ko("(\\S+)\\s*");        // empty keys
+		// line-based analyis
+		QString line;
+		uint lc = 0;
+		while (!str.atEnd()) {
+			// trim to avoid whitespace at begin/end
+			line = str.readLine().trimmed();
+			lc++;
+			// allow line breaks with backslash
+			while (lb.exactMatch(line)) {
+				line = lb.cap(1) + str.readLine().trimmed();
+				lc++;
+			}
+			// strip comments
+			if (cm.exactMatch(line)) {
+				line = cm.cap(1);
+			}
+			// skip empty lines
+			if (line.isEmpty()) {
+				continue;
+			}
+			// match key/value pair
+			if (kv.exactMatch(line)) {
+				QString par(kv.cap(1)), val(kv.cap(2));
+				Q_ASSERT(!par.isEmpty());
+				set(par,val);
+			}
+			else if (ko.exactMatch(line)) {
+				QString par(ko.cap(1));
+				Q_ASSERT(!par.isEmpty());
+				set(par);
+			}
+			else {
+				qDebug("%s:%d: malformed line",fileName.toAscii().constData(),lc);
+			}
+		}
+	}
 }
 
 void QParameterFile::save(QString fileName) const {
-	_pFile->save(fileName.toStdString());
+	QFile outFile(fileName);
+	if (outFile.open(QFile::WriteOnly|QIODevice::Truncate|QIODevice::Text)) {
+		QTextStream strm(&outFile);
+		QStringListIterator kIter(_keys);
+		while (kIter.hasNext()) {
+			QString cur = kIter.next();
+			strm << cur << "\t\t" << _content.value(cur.toLower()) << endl;
+		}
+	}
 }
 
 bool QParameterFile::isSet(QString parameter) const {
-	return _pFile->isSet(parameter.toStdString());
+	return _content.contains(parameter.toLower());
 }
 
 QString QParameterFile::get(QString parameter) const {
 	return isSet(parameter) ?
-			QString::fromStdString(
-					_pFile->get<std::string>(parameter.toStdString())) :
-			QString::null;
+		_content.value(parameter.toLower()) : QString::null;
 }
 
 void QParameterFile::erase(QString parameter) {
-	_pFile->erase(parameter.toStdString());
+	if (isSet(parameter)) {
+		_content.erase(_content.find(parameter.toLower()));
+		const int& pos = _keys.indexOf(
+				QRegExp(parameter,Qt::CaseInsensitive,QRegExp::FixedString));
+		Q_ASSERT(pos >= 0); Q_ASSERT(pos < _keys.size());
+		_keys.removeAt(pos);
+	}
 }
 
 void QParameterFile::set(QString parameter, QString value) {
-	_pFile->set<std::string>(parameter.toStdString(),value.toStdString());
+	if (parameter.isEmpty()) {
+		qDebug("Empty parameter given in set()");
+	}
+	else {
+		if (!isSet(parameter)) {
+			_keys.append(parameter);
+		}
+		if (value.isNull()) {
+			value = "";
+		}
+		_content.insert(parameter.toLower(),value);
+	}
 }
 
 QStringList QParameterFile::getKeyList(QString beginsWith) const {
-	std::vector<std::string> list =
-			_pFile->getKeyList(beginsWith.toStdString());
-	QStringList res;
-	std::vector<std::string>::const_iterator ii;
-	for(ii = list.begin(); ii != list.end(); ii++)
-		res << QString::fromStdString(*ii);
-	return res;
+	QStringList ret;
+	if (beginsWith.isEmpty()) {
+		ret = _keys;
+	}
+	else {
+		QStringListIterator ki(_keys);
+		while (ki.hasNext()) {
+			QString cur = ki.next();
+			if (cur.startsWith(beginsWith,Qt::CaseInsensitive)) {
+				ret << cur;
+			}
+		}
+	}
+	return ret;
 }
 
 void QParameterFile::clear() {
-	_pFile->clear();
+	_content.clear();
 }
