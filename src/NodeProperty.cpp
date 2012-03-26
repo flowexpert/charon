@@ -42,6 +42,7 @@ NodeProperty::NodeProperty(
 {
 	Q_ASSERT(_node);
 	setAcceptHoverEvents(true);
+	_color=Qt::lightGray;
 }
 
 void NodeProperty::moveBy(qreal, qreal) {
@@ -95,7 +96,8 @@ void NodeProperty::paint(
 	inner.adjust(12,0,-12,0);
 	painter->setPen(QPen(Qt::black,0.5f));
 	painter->setOpacity(1);
-	painter->setBrush(isUnderMouse() ? Qt::green : Qt::lightGray);
+	//painter->setBrush(isUnderMouse() ? Qt::green : Qt::lightGray);
+	painter->setBrush(_color);
 	painter->drawRoundRect(inner, 10, 100);
 	painter->setBrush(Qt::black);
 	inner.adjust(10,0,-10,0);
@@ -120,11 +122,13 @@ void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent* ev) {
 			"<p style='white-space:pre'><b>Slot: <i>%1</i><br>"
 			"Type:</b><br>%2</p>").arg(_name).arg(getType()));
 
+	_color=Qt::green;
 	changeConnectionLineColor(Qt::green);
 	QGraphicsItem::hoverEnterEvent(ev);
 }
 
 void NodeProperty::hoverLeaveEvent(QGraphicsSceneHoverEvent* event){
+	_color=Qt::lightGray;
 	changeConnectionLineColor(Qt::black, false);
 	QGraphicsItem::hoverLeaveEvent(event);
 }
@@ -145,6 +149,13 @@ void NodeProperty::changeConnectionLineColor(QColor lineColor, bool isHover){
 		else{
 			connectedLine->setLineColor(lineColor);
 		}
+		NodeProperty* prop=connectedLine->getEndProp();
+		if(prop==this)
+		    prop=connectedLine->getStartProp();
+		if(isHover)
+		    prop->setColor(Qt::red);
+		else
+		    prop->setColor(Qt::lightGray);
 	}
 }
 
@@ -164,4 +175,11 @@ QColor NodeProperty::_getSocketColor(QString tName) {
 
 	// add more color presets here
 	return Qt::gray;
+}
+
+void NodeProperty::setColor(QColor socketColor)
+{
+    _color=socketColor;
+
+
 }
