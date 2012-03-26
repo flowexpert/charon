@@ -260,7 +260,7 @@ void ObjectInspector::on_setPriorityButton_clicked() {
 	// old value, if only one row selected
 	int before = 0;
 	if (rowStack.size() == 1) {
-		before = _model->data(_model->index(rowStack.top(), 2)).toInt();
+		before = _model->data(_model->index(rowStack.top(), 2), Qt::EditRole).toInt();
 	}
 
 	// open dialog
