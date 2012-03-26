@@ -141,6 +141,9 @@ public:
 	/// Get property _onlyparams.
 	bool onlyParams() const;
 
+	/// Get property _minPriority
+	int minPriority() const;
+
 	/// Get const pointer of ParameterFile
 	const QParameterFile& parameterFile() const;
 
@@ -183,9 +186,13 @@ signals:
 	/** \param  value           new value */
 	void useMetaInfoChanged(bool value);
 
-	/// Property _onlyparams changed
+	/// Property _onlyParams changed
 	/** \param  value           new value */
 	void onlyParamsChanged(bool value);
+
+	/// Property _minPriority changed
+	/** \param value            new value */
+	void minPriorityChanged(int value);
 
 	/// send status message
 	/** \param  msg             message */
@@ -220,6 +227,10 @@ public slots:
 	/** \param  value           new value to set */
 	void setOnlyParams(bool value);
 
+	/// Set property _minPriority
+	/** \param  value           new value to set */
+	void setMinPriority(int value);
+
 	/// Load model content from parameterFile.
 	/** Shows OpenFile Dialog and loads the selected file.
 	 *  \param fName            file to load, shows OpenFile dialog if empty.
@@ -235,7 +246,7 @@ public slots:
 	 *  When filename is given, the internal filename will be overwritten.
 	 *  \param  fileName        name of the file to store
 	 */
-	virtual void save (const QString& fileName = "");
+	virtual void save(const QString& fileName = "");
 
 protected slots:
 	/// Load data without showing OpenFile Dialog.
@@ -267,6 +278,9 @@ private:
 	/// only show configurable parameters
 	bool _onlyParams;
 
+	/// minimum priority to be listed
+	int _minPriority;
+
 	/// Return set of objects contained in given parameter list.
 	/** \param list             parameter list
 	 *  \returns                set of objects (no duplicates)
@@ -288,6 +302,12 @@ private:
 	/// filter keys containing priority information
 	/** \param list             list to filter
 	 *  \returns                filtered list (no *.priority keys)
+	 */
+	QStringList _priorityTagFilter(QStringList list) const;
+
+	/// filter keys depending on their priority
+	/** \param list             list to filter
+	 *  \returns                filtered list
 	 */
 	QStringList _priorityFilter(QStringList list) const;
 };

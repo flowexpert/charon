@@ -43,7 +43,8 @@ ParameterFileModel::ParameterFileModel(
 		_prefix(""),
 		_metaInfos(0),
 		_useMetaInfo(false),
-		_onlyParams(false)
+		_onlyParams(false),
+		_minPriority(0)
 {
 	// this ParameterFile stores the description of classes.
 	if (!metaFile.isEmpty()) {
@@ -170,41 +171,6 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 					return Qt::Unchecked;
 			}
 		}
-	}
-	if (role == Qt::DecorationRole && ind.column() == 2) {
-		
-		// get selection - TODO
-
-
-		/*if (_parameterFile->isSet(_keys[ind.row()] + ".editorpriority")) {
-			QIcon icon;
-			switch (_parameterFile->get(
-				_keys[ind.row()] + ".editorpriority").toInt()) {
-
-			case 1:
-				icon.addFile(QString::fromUtf8(":/icons/priorityGreen.png"),
-					QSize(), QIcon::Normal, QIcon::Off);
-				break;
-			case 2:
-				icon.addFile(QString::fromUtf8(":/icons/priorityYellow.png"),
-					QSize(), QIcon::Normal, QIcon::Off);
-				break;
-			case 3:
-				icon.addFile(QString::fromUtf8(":/icons/priorityRed.png"),
-					QSize(), QIcon::Normal, QIcon::Off);
-				break;
-			default:
-				icon.addFile(QString::fromUtf8(":/icons/priorityGrey.png"),
-					QSize(), QIcon::Normal, QIcon::Off);
-				break;
-			}
-			return icon;
-		} else {
-			QIcon icon;
-			icon.addFile(QString::fromUtf8(":/icons/priorityGrey.png"),
-				QSize(), QIcon::Normal, QIcon::Off);
-			return icon;
-		}*/
 	}
 	return QVariant();
 }
@@ -375,6 +341,10 @@ bool ParameterFileModel::insertRows(int row, int count,
 				continue;
 			}
 			_parameterFile->set(name, "");
+			if (_minPriority > 0) {
+				_parameterFile->set(name + ".editorpriority",
+					QVariant(_minPriority).toString());
+			}
 			i++;
 		}
 		_keys = _parameterFile->getKeyList(_prefix);
@@ -382,6 +352,7 @@ bool ParameterFileModel::insertRows(int row, int count,
 		// apply modificators
 		if (!_prefix.isEmpty())
 			_keys = _prefixFilter(_keys);
+		_keys = _priorityTagFilter(_keys);
 		_keys = _priorityFilter(_keys);
 
 		// check new number of elements
@@ -462,6 +433,7 @@ void ParameterFileModel::_update() {
 		tempList = _prefixFilter(tempList);
 	if (_onlyParams)
 		tempList = _paramFilter(tempList);
+	tempList = _priorityTagFilter(tempList);
 	tempList = _priorityFilter(tempList);
 
 	// show selected parameters
@@ -596,6 +568,10 @@ bool ParameterFileModel::onlyParams() const {
 	return _onlyParams;
 }
 
+int ParameterFileModel::minPriority() const {
+	return _minPriority;
+}
+
 void ParameterFileModel::setOnlyParams(bool on) {
 	if (_onlyParams == on)
 		return;
@@ -644,11 +620,26 @@ QStringList ParameterFileModel::_paramFilter(QStringList list) const {
 	return result;
 }
 
-QStringList ParameterFileModel::_priorityFilter(QStringList list) const {
+QStringList ParameterFileModel::_priorityTagFilter(QStringList list) const {
 	QStringList result;
 	while (!list.empty()) {
 		QString str = list.first();
 		if (!str.endsWith(".editorpriority")) {
+			result << str;
+		}
+		list.pop_front();
+	}
+	return result;
+}
+
+QStringList ParameterFileModel::_priorityFilter(QStringList list) const {
+	if (_minPriority <= 0) {
+		return list;
+	}
+	QStringList result;
+	while (!list.empty()) {
+		QString str = list.first();
+		if (_parameterFile->get(str + ".editorpriority").toInt() >= _minPriority) {
 			result << str;
 		}
 		list.pop_front();
@@ -676,8 +667,7 @@ QString ParameterFileModel::getType(QString parName) const {
 	return res;
 }
 
-void ParameterFileModel::setEditorComment(QString comment)
-{
+void ParameterFileModel::setEditorComment(QString comment) {
 	if (_prefix.isEmpty()) {
 		return;
 	}
@@ -713,4 +703,15 @@ void ParameterFileModel::setEditorComment(QString comment)
 
 	// update selected node
 	emit commentChanged(comment);
+}
+
+void ParameterFileModel::setMinPriority(int value) {
+	if (value < 0 || value > 3) {
+		return;
+	}
+
+	_minPriority = value;
+	_update();
+
+	emit minPriorityChanged(value);
 }

@@ -39,6 +39,7 @@ public:
 	/// Default constructor, setting parent widget.
 	/** @param  parent    parent widget
 	 *  @param  priority  index of preselected value
+	 *  @param  strings   if true, descriptions will be added
 	 */
 	PriorityBox(QWidget* parent = 0, uint priority = 0, bool strings = true);
 

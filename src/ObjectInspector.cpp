@@ -282,12 +282,13 @@ void ObjectInspector::on_setPriorityButton_clicked() {
 }
 
 void ObjectInspector::on_filterBox_activated(int index) {
-	// TODO change filter
+	_model->setMinPriority(index);
 }
 
 void ObjectInspector::on_resetFilterButton_clicked() {
-	// TODO reset all filter
-	// reset prefix
+	_ui->filterBox->setCurrentIndex(0);
+	_model->setMinPriority(0);
+	_model->setPrefix("");
 }
 
 void ObjectInspector::on_comment_textChanged() {
