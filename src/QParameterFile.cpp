@@ -59,8 +59,8 @@ QString QParameterFile::get(QString parameter) const {
 void QParameterFile::erase(QString parameter) {
 	// also delete corresponding priority value if existent
 	std::string str = parameter.toStdString();
-	if (_pFile->isSet(str + ".priority")) {
-		_pFile->erase(str + ".priority");
+	if (_pFile->isSet(str + ".editorpriority")) {
+		_pFile->erase(str + ".editorpriority");
 	}
 	_pFile->erase(str);
 }

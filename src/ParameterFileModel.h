@@ -39,6 +39,7 @@ class ParameterFileModel: public QAbstractTableModel {
 	Q_PROPERTY(QString _prefix      READ prefix         WRITE setPrefix)
 	Q_PROPERTY(bool _useMetaInfo    READ useMetaInfo    WRITE setUseMetaInfo)
 	Q_PROPERTY(bool _onlyParams     READ onlyParams     WRITE setOnlyParams)
+	Q_PROPERTY(int _minPriority     READ minPriority    WRITE setMinPriority)
 
 public:
 	/// Constructor initializing the model with the given file.
@@ -256,6 +257,10 @@ protected slots:
 	/// Update content (e.g. when prefix has changed)
 	virtual void _update();
 
+	/// Update filter if priority changed
+	virtual void _updatePriority(const QModelIndex &topLeft,
+		const QModelIndex &bottomRight);
+
 private:
 	/// Pointer to the ParameterFile instance storing the model content
 	QParameterFile* _parameterFile;
@@ -301,7 +306,7 @@ private:
 
 	/// filter keys containing priority information
 	/** \param list             list to filter
-	 *  \returns                filtered list (no *.priority keys)
+	 *  \returns                filtered list (no *.editorpriority keys)
 	 */
 	QStringList _priorityTagFilter(QStringList list) const;
 

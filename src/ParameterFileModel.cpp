@@ -53,6 +53,9 @@ ParameterFileModel::ParameterFileModel(
 	}
 	if (!_fileName.isEmpty())
 		_load();
+
+	connect(this, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+		SLOT(_updatePriority(QModelIndex,QModelIndex)));
 }
 
 ParameterFileModel::~ParameterFileModel() {
@@ -244,10 +247,6 @@ bool ParameterFileModel::setData(
 					if (valueStr == _parameterFile->get(
 						_keys[ind.row()] + ".editorpriority"))
 							return true; // nothing to do
-
-					if (valueInt == 3) {
-						setData(ind, QColor(Qt::red), Qt::BackgroundColorRole);
-					}
 
 					_parameterFile->set(
 						_keys[ind.row()] + ".editorpriority", valueStr);
@@ -442,6 +441,21 @@ void ParameterFileModel::_update() {
 		_keys = tempList;
 		endInsertRows();
 	}
+}
+
+void ParameterFileModel::_updatePriority(const QModelIndex &topLeft,
+	const QModelIndex &bottomRight) {
+	// check if filter active
+	if (_minPriority <= 0) {
+		return;
+	}
+
+	// check if priority changed
+	if (bottomRight.column() != 2) {
+		return;
+	}
+
+	_update();
 }
 
 bool ParameterFileModel::load(const QString& fName) {
