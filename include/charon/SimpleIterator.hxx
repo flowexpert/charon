@@ -403,7 +403,7 @@ void SimpleIterator<T>::finishIterations() {
 	_afterIterationHook();
 
 	// post execution code
-	ParameteredObject::setExecuted(true);
+	ParameteredObject::_setExecuted(true);
 }
 
 #endif /* _SIMPLEITERATOR_HXX_ */
