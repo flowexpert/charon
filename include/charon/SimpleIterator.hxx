@@ -58,6 +58,8 @@ SimpleIterator<T>::SimpleIterator(
 		TemplatedParameteredObject<T>(className, instanceName,
 				doc + "<br><br>This class inherits SimpleIterator."),
 		flowInit(true,false), // optional
+		residual(true,false), // optional
+		residualInit(true,false), // optional
 		stop(true,false) // optional
 {
 	_init();
