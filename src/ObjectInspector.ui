@@ -94,6 +94,9 @@
         </property>
         <item>
          <widget class="QToolButton" name="resetParamButton">
+          <property name="toolTip">
+           <string>Delete selected parameters</string>
+          </property>
           <property name="icon">
            <iconset resource="../resources.qrc">
             <normaloff>:/icons/revert.png</normaloff>:/icons/revert.png</iconset>
@@ -108,6 +111,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="setPriorityButton">
+          <property name="toolTip">
+           <string>Change priority of selected parameters</string>
+          </property>
           <property name="icon">
            <iconset resource="../resources.qrc">
             <normaloff>:/icons/prioritySignalLights.png</normaloff>:/icons/prioritySignalLights.png</iconset>
@@ -157,12 +163,19 @@
            </widget>
           </item>
           <item>
-           <widget class="PriorityBox" name="filterBox"/>
+           <widget class="PriorityBox" name="filterBox">
+            <property name="toolTip">
+             <string>Filter by priority</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
         <item>
          <widget class="QToolButton" name="resetFilterButton">
+          <property name="toolTip">
+           <string>Reset all filters</string>
+          </property>
           <property name="icon">
            <iconset resource="../resources.qrc">
             <normaloff>:/icons/delete.png</normaloff>:/icons/delete.png</iconset>
@@ -231,6 +244,9 @@
          </property>
          <item>
           <widget class="QPushButton" name="addButton">
+           <property name="toolTip">
+            <string>Add new parameter</string>
+           </property>
            <property name="text">
             <string>&amp;Add</string>
            </property>
@@ -238,6 +254,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="deleteButton">
+           <property name="toolTip">
+            <string>Delete selected parameter</string>
+           </property>
            <property name="text">
             <string>&amp;Delete</string>
            </property>
@@ -245,6 +264,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="clearButton">
+           <property name="toolTip">
+            <string>Delete all parameters</string>
+           </property>
            <property name="text">
             <string>&amp;Clear</string>
            </property>
@@ -316,6 +338,22 @@
     <hint type="destinationlabel">
      <x>57</x>
      <y>467</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetParamButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ObjectInspector</receiver>
+   <slot>on_deleteButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>55</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>198</y>
     </hint>
    </hints>
   </connection>
