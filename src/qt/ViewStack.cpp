@@ -34,6 +34,7 @@ ViewStack::ViewStack(QWidget* p) : QWidget(p),
 	_index(0)
 {
 	_tabWidget = new QTabWidget(this) ;
+		_tabWidget->setMovable(true) ;
 	_tabWidget->setUsesScrollButtons(true) ;
 
 	QVBoxLayout* layout = new QVBoxLayout ;
