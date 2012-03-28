@@ -1,4 +1,5 @@
-/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2011, 2012 
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -38,7 +39,8 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 	Stencil::Base<T>(
 	     "EnergyBCC", name,
 	     "<h2>Implementation of the brightness constancy constraint."
-	     )
+	     ),
+	motionUV(true,false)
 {
 	this->_addInputSlot(penaltyFunction,
 	                    "penaltyFunction",
@@ -61,6 +63,10 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 	                    "motionUV",
                             "current motion components",
 	                    "CImgList<T>");
+
+        ParameteredObject::_addParameter(
+                        pUnknowns, "unknowns", "List of unknowns");
+
 }
 
 template <class T>
@@ -68,6 +74,26 @@ void EnergyBCC<T>::execute() {
 	Stencil::Base<T>::execute();
 	_lamb = this->lambda();
 	_penaltyFunction = penaltyFunction();
+
+        // Copy the unknowns from the Parameter list into the set, which was
+        // inherited from the Stencil class
+        std::vector<std::string>::iterator puIt;
+        for(puIt=pUnknowns().begin() ; puIt!=pUnknowns().end() ; puIt++) {
+                Point4D<int> center;
+                SubStencil<T> entry(1,1,1,1,center);
+                entry.pattern(0,0) = 1;
+                this->_subStencils[*puIt] = entry;
+                this->_unknowns.insert(*puIt);
+        }
+
+        _patternMask.assign(1,1,1,1);
+        _dataMask.assign(1,1,1,1);
+
+        _patternMask.fill( 1 );
+        _dataMask.fill( 1 );
+        _center = Point4D<int>(0,0,0,0);
+
+        _dataMask *= this->_lamb;
 }
 
 template <class T>
@@ -132,6 +158,50 @@ std::vector<T> EnergyBCC<T>::getEnergyHessian( int, int xI, int yI, int zI, int 
 
 template <class T>
 int EnergyBCC<T>::getEnergyGradientDimensions() { return 2; }
+
+template <class T>
+void EnergyBCC<T>::updateStencil(
+                const std::string& unknown,
+                const Point4D<int>& p, const int&)
+{
+        const bool isU = (unknown == "a1");
+
+        const unsigned int x = p.x;
+        const unsigned int y = p.y;
+        const unsigned int z = p.z;
+
+        // current values of ix,iy,it
+        const T cix = img_dx()(0,x,y,z,0);
+        const T ciy = img_dy()(0,x,y,z,0);
+        const T cit = img_dt()(0,x,y,z,0);
+        const T cik = isU ? cix : ciy;
+
+        // weighted Horn&Schunck equations
+        double dataU = cik * cix;
+        double dataV = cik * ciy;
+        double rhs   = cik * (-cit);
+
+	if (motionUV.connected()) {
+        	// initial flow guess from previous iteration
+	        const T u0 = motionUV()[0](x,y,z);
+	        const T v0 = motionUV()[1](x,y,z);
+		rhs += u0*dataU+v0*dataV;
+	}
+
+        // fill calculated data into stencil members, applying lambda
+        const T      l  = this->lambda();
+        this->_subStencils["a1"].data(0,0) = l * T(dataU);
+        this->_subStencils["a2"].data(0,0) = l * T(dataV);
+        this->_rhs  = l * T(rhs);
+}
+
+template <class T>
+cimg_library::CImg<T> EnergyBCC<T>::apply(
+                const cimg_library::CImgList<T>& seq,
+                const unsigned int frame) const
+{
+        return seq[frame];  //  not implemented yet (!!)
+}
 
 #endif /* _ENERGYBCC_HXX_ */
 
