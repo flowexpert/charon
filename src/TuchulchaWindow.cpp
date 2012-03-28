@@ -26,6 +26,8 @@
 #include <QTextBrowser>
 #include "DocGenerator.h"
 
+#include "WorkflowComments.h"
+
 #include "TuchulchaWindow.h"
 #include "ObjectInspector.h"
 #include "FlowWidget.h"
@@ -79,6 +81,15 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	docGen->showIntro();
 	connect(this, SIGNAL(metaDataUpdated()), docGen, SLOT(updateMetaData()));
 
+	// workflow comments
+	QDockWidget* commentBox = new QDockWidget(tr("Workflow Comments"), this);
+	commentBox -> setObjectName("RTFM Box");
+	WorkflowComments* commentWidget = new WorkflowComments(
+			_inspector,
+			commentBox);
+	commentBox -> setWidget(commentWidget);
+	
+
 	// select widget
 	QDockWidget* selectWidget = new QDockWidget(tr("Module Collection"), this);
 	selectWidget->setObjectName("selectwidget");
@@ -97,9 +108,20 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 			_inspector, SLOT(setModel(ParameterFileModel*)));
 	connect(this, SIGNAL(enableEditors(bool)),
 			_inspector, SLOT(setEnabled(bool)));
+	connect(this, SIGNAL(enableEditors(bool)),
+			commentWidget, SLOT(setEnabled(bool)));
+
+	// comment widget connections
+	connect(_inspector,
+			SIGNAL(modelChanged(ParameterFileModel*)),
+			commentWidget,
+			SLOT(update(ParameterFileModel*)));
+
+
 
 	// add widgets to dock area
 	addDockWidget(Qt::RightDockWidgetArea, inspectorWidget);
+	addDockWidget(Qt::RightDockWidgetArea, commentBox);
 	addDockWidget(Qt::BottomDockWidgetArea, selectWidget, Qt::Vertical);
 	addDockWidget(Qt::BottomDockWidgetArea, helpWidget, Qt::Vertical);
 	_centralArea = new QMdiArea(this);
@@ -234,6 +256,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	windowMenu->addAction(inspectorWidget->toggleViewAction());
 	windowMenu->addAction(helpWidget->toggleViewAction());
 	windowMenu->addAction(selectWidget->toggleViewAction());
+	windowMenu->addAction(commentBox->toggleViewAction());
 	windowMenu->addSeparator();
 	windowMenu->addAction(toolbar->toggleViewAction());
 

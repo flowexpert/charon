@@ -397,11 +397,13 @@ void ParameterFileModel::clear() {
 	setPrefix("");
 	uint keys = rowCount(QModelIndex());
 	if (keys > 0) {
-		beginRemoveRows(QModelIndex(), 0, keys - 1);
+		//beginRemoveRows(QModelIndex(), 0, keys - 1);
+		beginResetModel();
 		_parameterFile->clear();
 		_keys.clear();
 		setPrefix("");
-		endRemoveRows();
+		//endRemoveRows();
+		endResetModel();
 	}
 }
 
@@ -415,12 +417,13 @@ bool ParameterFileModel::_load() {
 
 void ParameterFileModel::_update() {
 	// remove keys
-	uint keys = _keys.size();
-	if (keys > 0) {
-		beginRemoveRows(QModelIndex(), 0, keys - 1);
-		_keys.clear();
-		endRemoveRows();
-	}
+	//uint keys = _keys.size();
+	beginResetModel();
+	//if (keys > 0) {
+		//beginRemoveRows(QModelIndex(), 0, keys - 1);
+	_keys.clear();
+		//endRemoveRows();
+	//}
 
 	// load all keys
 	QStringList tempList = _parameterFile->getKeyList();
@@ -436,11 +439,12 @@ void ParameterFileModel::_update() {
 	tempList = _priorityFilter(tempList);
 
 	// show selected parameters
-	if (tempList.size()) {
-		beginInsertRows(QModelIndex(), 0, tempList.size() - 1);
-		_keys = tempList;
-		endInsertRows();
-	}
+	//if (tempList.size()) {
+		//beginInsertRows(QModelIndex(), 0, tempList.size() - 1);
+	_keys = tempList;
+		//endInsertRows();
+	//}
+	endResetModel();
 }
 
 void ParameterFileModel::_updatePriority(const QModelIndex &topLeft,

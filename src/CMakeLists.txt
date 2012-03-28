@@ -93,6 +93,8 @@ SET(TUCHULCHA_SOURCES
 	OptionsDialog.h
 	NodeTreeView.cpp
 	NodeTreeView.h
+	WorkflowComments.cpp
+	WorkflowComments.h
 )
 
 # =============  generate moc files ====================
