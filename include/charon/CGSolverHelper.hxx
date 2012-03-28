@@ -31,7 +31,8 @@ CGSolverHelper<T>::CGSolverHelper(const std::string& name) :
 		TemplatedParameteredObject<T>("CGSolverHelper", name,
 			"Helper for connecting CGSolver to stencils. <br>"
 			"This provides current flow/initial flow for further "
-			"processing.")
+			"processing."),
+		initFlow(true,false)
 {
 	ParameteredObject::_addInputSlot(in, "in",
 		"original sequence input", "CImgList<T>");
@@ -50,7 +51,13 @@ CGSolverHelper<T>::CGSolverHelper(const std::string& name) :
 template <typename T>
 void CGSolverHelper<T>::execute() {
 	self() = this;
-	flow().assign(initFlow());
+	if (initFlow.connected()) {
+		flow().assign(initFlow());
+	} else {
+		flow().assign(flowDimensions(),
+                        in()[0].width(),in()[0].height(),in()[0].depth(),
+                        in()[0].spectrum()-1,T(0));
+	}
 	sequence().assign(in());
 }
 
