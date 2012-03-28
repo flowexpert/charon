@@ -40,7 +40,8 @@
 template <class T>
 EnergyClassic<T>::EnergyClassic(const std::string& name) :
 	Stencil::Base<T>("EnergyClassic", name,
-			"<h2>Energy stencil for classic regularization.")
+			"<h2>Energy stencil for classic regularization."),
+	motionUV(true,false)
 {
 	this->_addInputSlot(penaltyFunction,
 	                    "penaltyFunction",
@@ -51,6 +52,9 @@ EnergyClassic<T>::EnergyClassic(const std::string& name) :
 	                    "motionUV",
 	                    "current motion components",
 	                    "CImgList<T>");
+
+	ParameteredObject::_addParameter(
+			pUnknowns, "unknowns", "List of unknowns");
 }
 
 template <class T>
@@ -58,6 +62,38 @@ void EnergyClassic<T>::execute() {
 	Stencil::Base<T>::execute();
 	_lamb = this->lambda();
 	_penaltyFunction = penaltyFunction();
+
+	// Copy the unknowns from the Parameter list into the set, which was
+	// inherited from the Stencil class
+	std::vector<std::string>::iterator puIt;
+	for(puIt=pUnknowns().begin() ; puIt!=pUnknowns().end() ; puIt++) {
+		this->_unknowns.insert(*puIt);
+	}
+
+	_patternMask.assign(3,3,1,1);
+	_dataMask.assign(3,3,1,1);
+
+	_patternMask.fill(
+			0,  1,  0,
+			1,  1,  1,
+			0,  1,  0);
+	_dataMask.fill(
+			 0, -1,  0,
+			-1,  4, -1,
+			 0, -1,  0);
+	_center = Point4D<int>(1,1,0,0);
+
+	_dataMask *= this->_lamb;
+
+	// precalculate rhs values for whole image
+	if (motionUV.connected()) {
+		const cimg_library::CImgList<T>& flow = motionUV();
+		_rhsVals.assign(flow);
+		cimglist_for(flow, kk) {
+			_rhsVals[kk] = this->apply(flow, kk);
+			_rhsVals[kk] *= -1;
+		}
+	}
 }
 
 template <class T>
@@ -170,6 +206,44 @@ std::vector<T> EnergyClassic<T>::getEnergyHessian(
 
 template <class T>
 int EnergyClassic<T>::getEnergyGradientDimensions() { return 2; }
+
+template <class T>
+void EnergyClassic<T>::updateStencil(
+		const std::string& unknown,
+		const Point4D<int>& p, const int&)
+{
+	// fill stencil with masks
+	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
+		SubStencil<T> entry;
+		if(pUnknowns[i] == unknown) {
+			entry.center  = _center;
+
+			// shared assignment (no copying of values)
+			entry.data.assign(_dataMask,true);
+
+			entry.pattern.assign(_patternMask,true);
+			if (motionUV.connected()) {
+				this->_rhs = _rhsVals[i](p.x,p.y,p.z,p.t);
+			} else {
+				this->_rhs = T(0);
+			}
+		} else {
+			// empty substencil for other unknowns
+			entry.center = Point4D<int>();
+			entry.data.clear();
+			entry.pattern.clear();
+		}
+		this->_subStencils[pUnknowns[i]] = entry;
+	}
+}
+
+template <class T>
+cimg_library::CImg<T> EnergyClassic<T>::apply(
+		const cimg_library::CImgList<T>& seq,
+		const unsigned int frame) const
+{
+	return seq[frame].get_convolve(_dataMask);
+}
 
 #endif /* _ENERGYCLASSIC_HXX_ */
 

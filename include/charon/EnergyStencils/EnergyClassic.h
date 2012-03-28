@@ -57,7 +57,8 @@
  */
 template <typename T>
 class energyclassic_DECLDIR EnergyClassic :
-	public Stencil::EnergyHessian<T>
+	public Stencil::EnergyHessian<T>,
+	public Stencil::Mask<T>
 {
 public:
 	/// Input slot for penalty function
@@ -82,6 +83,16 @@ public:
 	/// stencil's count of gradient components
 	int getEnergyGradientDimensions();
 
+	/// ParameterList containing all unknowns of the Stencil.
+	ParameterList<std::string> pUnknowns;
+
+	virtual void updateStencil(
+			const std::string& unknown,
+			const Point4D<int>& p=Point4D<int>(), const int& v=0);
+	virtual cimg_library::CImg<T> apply(
+			const cimg_library::CImgList<T>& seq,
+			const unsigned int frame) const;
+
 protected:
 	/// stencil's main function
 	void execute();
@@ -99,6 +110,14 @@ private:
 	T _lamb;
 	PenaltyFunction<T>* _penaltyFunction;
 	//\}
+
+	/// \name precalculate substencil data
+	//  \{
+	cimg_library::CImg<T>     _dataMask;    ///< common data
+	cimg_library::CImg<char>  _patternMask; ///< common pattern
+	Point4D<int>              _center;      ///< common center
+	cimg_library::CImgList<T> _rhsVals;     ///< values for rhs (optional)
+	//  \}
 };
 
 #endif // _ENERGYCLASSIC_H_

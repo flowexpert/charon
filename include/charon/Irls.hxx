@@ -70,7 +70,7 @@ void Irls<T>::execute() {
 
 	cimg_forXYZC(o[0],xx,yy,zz,tt) {
 		for (int d=0; d<dim; ++d) {
-			window[d] = i[d].get_crop(xx-r,yy-r,zz,tt,xx+r,yy+r,zz,tt);
+			window[d] = i[d].get_crop(xx-r,yy-r,zz,tt,xx+r,yy+r,zz,tt, true);
 		}
 
 		// calculate mean as an initial guess
