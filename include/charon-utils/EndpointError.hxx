@@ -67,6 +67,7 @@ void EndpointError<T>::execute() {
 		sum = T(0);
 		for (unsigned int n=0; n<i1.size(); ++n) {
 			delta = fabs( double(i1(n,x,y,z,t) - i2(n,x,y,z,t)) );
+			if (delta > 1e9) delta = 0;
 			sum += pow( double(delta), 2 );
 		}
 		tmp(x,y,z,t) = pow( double(sum), double(1.0/2) );
