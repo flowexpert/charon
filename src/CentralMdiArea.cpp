@@ -32,10 +32,6 @@ CentralMdiArea::CentralMdiArea(QWidget* parent) : QMdiArea(parent) {
 	viewport()->setAcceptDrops(true);
 }
 
-CentralMdiArea::~CentralMdiArea() {
-
-}
-
 void CentralMdiArea::dragEnterEvent(QDragEnterEvent* e) {
 	e->acceptProposedAction();
 }

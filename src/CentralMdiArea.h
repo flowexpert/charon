@@ -38,9 +38,6 @@ public:
 	 */
 	CentralMdiArea(QWidget* parent = 0);
 
-	/// default destructor
-	virtual ~CentralMdiArea();
-
 signals:
 	/// files dropped inside area
 	void filesDropped(const QStringList list);
