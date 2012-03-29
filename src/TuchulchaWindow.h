@@ -26,8 +26,8 @@
 #define MAINWINDOW_H_
 
 #include <QMainWindow>
+#include "CentralMdiArea.h"
 
-class QMdiArea;
 class QMdiSubWindow;
 class FlowWidget;
 class ObjectInspector;
@@ -48,9 +48,15 @@ public:
 
 public slots:
 	/// open parameterfile and display flowchart content
-	/// \param fileName File to open.
-	///                 Shows file open dialog if empty.
-	void open(const QString& fileName = "");
+	/// \param fileName   File to open.
+	///                   Shows file open dialog if empty.
+	/// \param maximized  if file should be opened maximized
+	///                   (false, when more than one file is added at a time)
+	void open(const QString& fileName = "", bool maximized = true);
+
+	/// open parameterfiles
+	/// \param files      Files to open
+	void open(const QStringList& files);
 
 	/// create new empty flowchart
 	void openNew();
@@ -116,7 +122,7 @@ private slots:
 
 private:
 	/// Central widget to manage multiple windows
-	QMdiArea* _centralArea;
+	CentralMdiArea* _centralArea;
 	/// current flow widget
 	FlowWidget* _flow;
 	/// object inspector

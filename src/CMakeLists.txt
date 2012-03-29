@@ -95,6 +95,8 @@ SET(TUCHULCHA_SOURCES
 	NodeTreeView.h
 	WorkflowComments.cpp
 	WorkflowComments.h
+	CentralMdiArea.cpp
+	CentralMdiArea.h
 )
 
 # =============  generate moc files ====================

@@ -124,11 +124,13 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	addDockWidget(Qt::RightDockWidgetArea, commentBox);
 	addDockWidget(Qt::BottomDockWidgetArea, selectWidget, Qt::Vertical);
 	addDockWidget(Qt::BottomDockWidgetArea, helpWidget, Qt::Vertical);
-	_centralArea = new QMdiArea(this);
+	_centralArea = new CentralMdiArea(this);
 	setCentralWidget(_centralArea);
 
 	connect(_centralArea, SIGNAL(subWindowActivated (QMdiSubWindow*)),
 			this, SLOT(_windowActivated(QMdiSubWindow*)));
+	connect(_centralArea, SIGNAL(filesDropped(QStringList)),
+			this, SLOT(open(QStringList)));
 
 	// toolbar
 	ModelToolBar* toolbar = new ModelToolBar(tr("toolbar"));
@@ -188,7 +190,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 
 	toolbar->addSeparator();
 	action = toolbar->addAction(QIcon(":/icons/revert.png"),
-		tr("reset selected"), _inspector, SLOT(on_deleteButton_clicked())); // TODO
+		tr("reset selected"), _inspector, SLOT(on_deleteButton_clicked()));
 	action->setToolTip(tr("reset selected parameter(s) to their defaults"));
 
 	toolbar->addSeparator();
@@ -374,12 +376,16 @@ void TuchulchaWindow::_showAboutQt() {
 	QMessageBox::aboutQt(this, tr("About Qt"));
 }
 
-void TuchulchaWindow::open(const QString& fileName) {
+void TuchulchaWindow::open(const QString& fileName, bool maximized) {
 	FlowWidget* flowWidget = new FlowWidget(_centralArea);
 	_centralArea->addSubWindow(flowWidget);
 	connect(flowWidget, SIGNAL(statusMessage(const QString&, int)),
 			statusBar(), SLOT(showMessage(const QString&, int)));
-	flowWidget->showMaximized();
+	if (maximized) {
+		flowWidget->showMaximized();
+	} else {
+		flowWidget->showNormal();
+	}
 	flowWidget->load(fileName);
 }
 
@@ -521,4 +527,14 @@ void TuchulchaWindow::setCurrentFile(const QString& fileName) {
 void TuchulchaWindow::options() {
 	OptionsDialog dialog(isVisible()?this:0);
 	dialog.exec();
+}
+
+void TuchulchaWindow::open(const QStringList& files) {
+	if (files.isEmpty()) {
+		return;
+	}
+
+	for (int a = 0; a < files.size(); a++) {
+		open(files.at(a), false);
+	}
 }
