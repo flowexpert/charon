@@ -38,6 +38,7 @@
 
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
+#include <charon/CliqueWeight.h>
 
 /// calculate median of image windows
 /** Use image windows of given size, calculate median within this window
@@ -56,13 +57,13 @@ template <typename T> class weightedmedian_DECLDIR WeightedMedian :
 		public TemplatedParameteredObject<T>
 {
 public:
-	/// image data input slot
+	/// data input slot
 	InputSlot<cimg_library::CImgList<T> > in;
 
 	/// weight input slot
-	InputSlot<cimg_library::CImgList<T> > inWeight;
+	InputSlot<CliqueWeight<T>* > cliqueWeight;
 
-	/// image data output slot
+	/// data output slot
 	OutputSlot<cimg_library::CImgList<T> > out;
 
 	/// radius \f$r\f$ of image windows (size is \f$2*r+1\f$)

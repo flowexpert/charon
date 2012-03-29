@@ -26,6 +26,8 @@
 
 #include "WeightedMedian.h"
 
+#include <charon/CliqueWeight.hxx>
+
 template<typename T>
 WeightedMedian<T>::WeightedMedian(const std::string& name) :
 	TemplatedParameteredObject<T>(
@@ -39,9 +41,9 @@ WeightedMedian<T>::WeightedMedian(const std::string& name) :
 			"(A new median formula with applications to PDE based denoising) "
 			"equation 3.13, whereas lambda -> 0."  )
 {
-	this->_addInputSlot(in,    "in",    "image input",  "CImgList<T>");
-	this->_addInputSlot(inWeight, "inWeight", "weight input", "CImgList<T>");
-	this->_addOutputSlot(out,  "out",   "image output", "CImgList<T>");
+	this->_addInputSlot(in,    "in",    "data input",  "CImgList<T>");
+	this->_addInputSlot(cliqueWeight, "cliqueWeight", "clique weight function input", "CliqueWeight<T>*");
+	this->_addOutputSlot(out,  "out",   "data output", "CImgList<T>");
 	this->_addParameter(
 			windowRadius, "windowRadius",
 			"radius r of image windows (size is 2*r+1)",  7u);
@@ -65,7 +67,7 @@ void WeightedMedian<T>::execute() {
 	ParameteredObject::execute();
 
 	const cimg_library::CImgList<T>& img = in();
-	const cimg_library::CImgList<T>& inweight = inWeight();
+	CliqueWeight<T>* _cliqueWeight = cliqueWeight();
 
 	cimg_library::CImgList<T>& o = out();
 	const int& r = windowRadius();
@@ -90,13 +92,9 @@ void WeightedMedian<T>::execute() {
 		for (int y=-r; y<r+1; ++y)
 		{
 			neighborhood[idx].value  = T(img.atNXYZC( nn, xx+x, yy+y, zz, cc ));
-			neighborhood[idx].weight = T(inweight.atNXYZC( nn, xx+x, yy+y, zz, cc ));
+			neighborhood[idx].weight = _cliqueWeight->getCliqueWeight(
+				nn, xx, yy, zz, cc, 0, x, y, 0, 0 );
 			++idx;
-// (!!) TODO (!!)
-//			weightFunction->getCliqueWeight( nn, xx, yy, zz, cc, 0, x, y, 0, 0 );  //  (!!)
-// (!!) VERY IMPORTANT (!!)
-//			This clique weight depends on current window center (nn, xx, yy, zz, cc) (!!)
-//			AND window position (n, x, y, z, c) (!!)
 		}
 
 		std::sort( neighborhood.begin(), neighborhood.end(), by_value() );
