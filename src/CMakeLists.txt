@@ -119,6 +119,16 @@ LIST(APPEND Plugins
 	penaltylorentzian
 )
 
+# Clique Weights
+ADD_LIBRARY(cliqueweightuniform SHARED
+        ${charon_INCLUDE_DIR}/CliqueWeights/CliqueWeightUniform.h
+        ${charon_INCLUDE_DIR}/CliqueWeights/CliqueWeightUniform.hxx
+        CliqueWeightUniform.cpp
+)
+LIST(APPEND Plugins
+	cliqueweightuniform
+)
+
 # Solvers
 # PetSc Solver
 IF(USE_PETSC)
