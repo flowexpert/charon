@@ -71,6 +71,9 @@ public:
 	/// iteration count
 	Parameter<unsigned int> iterations;
 
+	/// spatial distance weight
+	Parameter< T > sigma_dist;
+
 	/// create a new Irls object
 	/** \param name             Object name */
 	Irls(const std::string& name = "");
@@ -78,6 +81,10 @@ public:
 	/// apply threshold to all given images
 	/// \implements ParameteredObject::execute
 	virtual void execute();
+
+private:
+        /// gaussian distribution function
+        inline T _gauss( T x, T mu, T sigma );
 };
 
 #endif // IRLS_H

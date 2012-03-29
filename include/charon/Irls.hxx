@@ -26,8 +26,6 @@
 
 #include "Irls.h"
 
-#define EPS_INVERSE 1e9
-
 template<typename T>
 Irls<T>::Irls(const std::string& name) :
 	TemplatedParameteredObject<T>(
@@ -48,6 +46,8 @@ Irls<T>::Irls(const std::string& name) :
 	this->_addParameter(
 			iterations, "iterations",
 			"iteration count (0 => mean filtering)", 10u);
+	this->_addParameter(sigma_dist, "sigma_dist",
+			"spatial distance weight", T(7));
 }
 
 template<typename T>
@@ -56,11 +56,12 @@ void Irls<T>::execute() {
 	const cimg_library::CImgList<T>& inweight = inWeight();
 
 	cimg_library::CImgList<T>& o = out();
-	const unsigned int& r = windowRadius();
+	const int& r = windowRadius();
+	const T _sigma_dist = sigma_dist();
+
 	o = i;
 
 	int dim = i.size();
-	std::vector<cimg_library::CImg<T> > window( dim );
 	std::vector<T> med( dim );
 	std::vector<T> tmp( dim );
 
@@ -69,52 +70,48 @@ void Irls<T>::execute() {
 	T weight, weight_sum, dist;
 
 	cimg_forXYZC(o[0],xx,yy,zz,tt) {
-		for (int d=0; d<dim; ++d) {
-			window[d] = i[d].get_crop(xx-r,yy-r,zz,tt,xx+r,yy+r,zz,tt, true);
-		}
 
 		// calculate mean as an initial guess
 		for (int d=0; d<dim; ++d) {
-			med[d] = T(0);
-			weight_sum = T(0);
-			for (unsigned int i=0; i<2*r+1; ++i)
-			for (unsigned int j=0; j<2*r+1; ++j)
-			{
-				weight_sum += inweight[0](i,j,zz,tt);
-				med[d] += (inweight[0](i,j,zz,tt) *
-				           window[d]( i, j, zz, tt ));
+			tmp[d] = T(0);
+		}
+		weight_sum = T(0);
+		for (int x=-r; x<r+1; ++x)
+		for (int y=-r; y<r+1; ++y)
+		{
+			weight = inweight.atNXYZC(0,xx+x,yy+y,zz,tt);
+			weight_sum += weight;
+			for (int d=0; d<dim; ++d) {
+				tmp[d] += weight * i.atNXYZC(d,xx+x,yy+y,zz,tt);
 			}
-			med[d] /= weight_sum;
+		}
+		for (int d=0; d<dim; ++d) {
+			med[d] = tmp[d] / weight_sum;
 		}
 
-		// perform iteratively weighted least squares
+		// perform iteratively reweighted least squares
 		// see "Numerical Methods for Scientific Computing Vol. II"
 		// by Germund Dahlquist and Åke Björck, section 8.7.5 for details
-		for (int i=0; i<_iterations; ++i) {
-			weight_sum = T(0);
+		for (int iter=0; iter<_iterations; ++iter) {
 			for (int d=0; d<dim; ++d) {
 				tmp[d] = T(0);
 			}
-			for (unsigned int i=0; i<2*r+1; ++i)
-			for (unsigned int j=0; j<2*r+1; ++j)
+			weight_sum = T(0);
+			for (int x=-r; x<r+1; ++x)
+			for (int y=-r; y<r+1; ++y)
 			{
 				dist = T(0);
 				for (int d=0; d<dim; ++d) {
-					dist += pow( double(window[d]( i, j, zz, tt ) - med[d]), double(2) );
+					dist += pow( double(i.atNXYZC(d,xx+x,yy+y,zz,tt) - med[d]), double(2) );
 				}
-				dist = pow( double(dist), 0.5 );
+				dist = pow( double(dist), double(0.5) );
 
-				if (dist != 0) {
-					weight = 1.0 / dist;
-				} else {
-					weight = EPS_INVERSE;
-				}
+				weight = _gauss( dist, 0, _sigma_dist );
 
-				weight *= inweight[0]( i, j, zz, tt );
-
+				weight *= inweight.atNXYZC(0,xx+x,yy+y,zz,tt);
 				weight_sum += weight;
 				for (int d=0; d<dim; ++d) {
-					tmp[d] += weight * window[d]( i, j, zz, tt );
+					tmp[d] += weight * i.atNXYZC(d,xx+x,yy+y,zz,tt);
 				}
 			}
 			for (int d=0; d<dim; ++d) {
@@ -124,9 +121,16 @@ void Irls<T>::execute() {
 
 		// write back
 		for (int d=0; d<dim; ++d) {
-			o(d,xx,yy,zz,tt) = med[d];
+			o.atNXYZC(d,xx,yy,zz,tt) = med[d];
 		}
 	}
+}
+
+template <typename T>
+inline T Irls<T>::_gauss( T x, T mu, T sigma )
+{
+	return 1/(sqrt(2*M_PI*sigma*sigma))
+	  * exp(double(-(x - mu)*(x - mu)/(2*sigma*sigma))) ;
 }
 
 #endif /* _IRLS_HXX_ */
