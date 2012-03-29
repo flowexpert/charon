@@ -26,8 +26,6 @@
 
 #include "WeightedMedian.h"
 
-#define EPS_INVERSE 1e9
-
 template<typename T>
 WeightedMedian<T>::WeightedMedian(const std::string& name) :
 	TemplatedParameteredObject<T>(
@@ -70,40 +68,35 @@ void WeightedMedian<T>::execute() {
 	const cimg_library::CImgList<T>& inweight = inWeight();
 
 	cimg_library::CImgList<T>& o = out();
-	const unsigned int& r = windowRadius();
+	const int& r = windowRadius();
 	o = img;
 
-	unsigned int imgSize = img.size();
-	unsigned int imgWidth = img[0].width();
-	unsigned int imgHeight = img[0].height();
-	unsigned int imgDepth = img[0].depth();
-	unsigned int imgSpectrum = img[0].spectrum();
-
-	unsigned int noOfElements = 4*r*r + 4*r + 1 ;
+	int nbhCnt = 4*r*r + 4*r + 1 ;
 
 	//  neighborhood and weights vectors
-	std::vector<SNeighborhood> neighborhood( noOfElements );
+	std::vector<SNeighborhood> neighborhood( nbhCnt );
 	typename std::vector<SNeighborhood>::const_iterator itNbh;
 
 	T weight_sum;
 	int offset;
-	unsigned int medianIdx;
+	int medianIdx;
 
-	unsigned int idx;
-	for (unsigned int z=0; z<imgDepth; ++z)
-	for (unsigned int t=0; t<imgSpectrum; ++t)
-	for (unsigned int v=0; v<imgSize; ++v)
-	for (unsigned int i=0; i<imgWidth; ++i)
-	for (unsigned int j=0; j<imgHeight; ++j)
+	int idx;
+	cimglist_for(o,nn)
+	cimg_forXYZC(o[nn], xx, yy, zz, cc)
 	{
-
 		idx = 0;
-		for (unsigned int di=0; di<(2*r+1); ++di)
-		for (unsigned int dj=0; dj<(2*r+1); ++dj)
+		for (int x=-r; x<r+1; ++x)
+		for (int y=-r; y<r+1; ++y)
 		{
-			neighborhood[idx].value  = T(img.atNXYZC( v, i+di-r, j+dj-r, z, t ));
-			neighborhood[idx].weight = T(inweight.atNXYZC( v, i+di-r, j+dj-r, z, t ));
+			neighborhood[idx].value  = T(img.atNXYZC( nn, xx+x, yy+y, zz, cc ));
+			neighborhood[idx].weight = T(inweight.atNXYZC( nn, xx+x, yy+y, zz, cc ));
 			++idx;
+// (!!) TODO (!!)
+//			weightFunction->getCliqueWeight( nn, xx, yy, zz, cc, 0, x, y, 0, 0 );  //  (!!)
+// (!!) VERY IMPORTANT (!!)
+//			This clique weight depends on current window center (nn, xx, yy, zz, cc) (!!)
+//			AND window position (n, x, y, z, c) (!!)
 		}
 
 		std::sort( neighborhood.begin(), neighborhood.end(), by_value() );
@@ -131,7 +124,7 @@ void WeightedMedian<T>::execute() {
 		}
 
 		medianIdx = 2*r*r + 2*r + (offset/2);
-		o( v, i, j, z, t ) = neighborhood[medianIdx].value;
+		o( nn, xx, yy, zz, cc ) = neighborhood[medianIdx].value;
 	}
 }
 
