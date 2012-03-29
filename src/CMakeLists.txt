@@ -125,8 +125,14 @@ ADD_LIBRARY(cliqueweightuniform SHARED
         ${charon_INCLUDE_DIR}/CliqueWeights/CliqueWeightUniform.hxx
         CliqueWeightUniform.cpp
 )
+ADD_LIBRARY(cliqueweightnonlocal SHARED
+	${charon_INCLUDE_DIR}/CliqueWeights/CliqueWeightNonLocal.h
+	${charon_INCLUDE_DIR}/CliqueWeights/CliqueWeightNonLocal.hxx
+	CliqueWeightNonLocal.cpp
+)
 LIST(APPEND Plugins
 	cliqueweightuniform
+	cliqueweightnonlocal
 )
 
 # Solvers
