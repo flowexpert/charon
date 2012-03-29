@@ -49,9 +49,6 @@ protected:
 	/// drag enter event
 	virtual void dragEnterEvent(QDragEnterEvent* event);
 
-	/// drag leave event
-	virtual void dragLeaveEvent(QDragLeaveEvent* event);
-
 	/// drage move event
 	virtual void dragMoveEvent(QDragMoveEvent* event);
 

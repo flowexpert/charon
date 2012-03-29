@@ -40,10 +40,6 @@ void CentralMdiArea::dragEnterEvent(QDragEnterEvent* e) {
 	e->acceptProposedAction();
 }
 
-void CentralMdiArea::dragLeaveEvent(QDragLeaveEvent* e) {
-	e->accept();
-}
-
 void CentralMdiArea::dragMoveEvent(QDragMoveEvent* e) {
 	e->acceptProposedAction();
 }
