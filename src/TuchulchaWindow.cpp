@@ -534,7 +534,11 @@ void TuchulchaWindow::open(const QStringList& files) {
 		return;
 	}
 
-	for (int a = 0; a < files.size(); a++) {
-		open(files.at(a), false);
+	if (files.size() == 1) {
+		open(files.at(0));
+	} else {
+		for (int a = 0; a < files.size(); a++) {
+			open(files.at(a), false);
+		}
 	}
 }
