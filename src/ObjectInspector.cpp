@@ -151,7 +151,11 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 
 	// empty comment text area
 	// text will be updated again, when an item is selected
+	disconnect(_ui->comment, SIGNAL(textChanged()),
+		this, SLOT(on_comment_textChanged()));
 	_ui->comment->setText("");
+	connect(_ui->comment, SIGNAL(textChanged()),
+		this, SLOT(on_comment_textChanged()));
 
 	// update values
 	_ui->useMetadata->setEnabled(model()->metaInfo());
