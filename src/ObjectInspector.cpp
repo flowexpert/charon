@@ -111,6 +111,7 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 		disconnect(_ui->prefix, 0, _model, 0);
 		disconnect(_ui->useMetadata, 0, _model, 0);
 		disconnect(_ui->onlyParams, 0, _model, 0);
+		disconnect(_ui->view, 0, _model, 0);
 	}
 
 	if (newModel) {
@@ -178,6 +179,8 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 		model(), SLOT(setOnlyParams(bool)));
 	connect(model(), SIGNAL(onlyParamsChanged(bool)),
 		_ui->onlyParams, SLOT(setChecked(bool)));
+	connect(_ui->view, SIGNAL(contentDropped(QModelIndex, QString)),
+		_model, SLOT(dropContent(QModelIndex, QString)));
 
 	on_model_prefixChanged(_model->prefix());
 

@@ -249,6 +249,9 @@ public slots:
 	 */
 	virtual void save(const QString& fileName = "");
 
+	/// Called when content is dropped into table
+	virtual void dropContent(const QModelIndex &index, const QString &content);
+
 protected slots:
 	/// Load data without showing OpenFile Dialog.
 	/** \retval false           error during load */

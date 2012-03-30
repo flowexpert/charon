@@ -733,3 +733,18 @@ void ParameterFileModel::setMinPriority(int value) {
 
 	emit minPriorityChanged(value);
 }
+
+void ParameterFileModel::dropContent(const QModelIndex &index,
+	const QString &content) {
+
+	// only droppable into "Value" column
+	if (index.column() != 1) {
+		return;
+	}
+	
+	// only droppable into text fields etc.
+	QVariant::Type dataType = data(index).type();
+	if (dataType == QVariant::String) {
+		setData(index, content);
+	}
+}
