@@ -38,7 +38,7 @@ Irls<T>::Irls(const std::string& name) :
 			"This uses the IRLS approach.")
 {
 	this->_addInputSlot(in,    "in",    "image input",  "CImgList<T>");
-	this->_addInputSlot(inWeight, "inWeight", "weight input", "CImgList<T>");
+	this->_addInputSlot(cliqueWeight, "cliqueWeight", "clique weight function input", "CliqueWeight<T>*");
 	this->_addOutputSlot(out,  "out",   "image output", "CImgList<T>");
 	this->_addParameter(
 			windowRadius, "windowRadius",
@@ -53,7 +53,7 @@ Irls<T>::Irls(const std::string& name) :
 template<typename T>
 void Irls<T>::execute() {
 	const cimg_library::CImgList<T>& i = in();
-	const cimg_library::CImgList<T>& inweight = inWeight();
+	CliqueWeight<T> *_cliqueWeight = cliqueWeight();
 
 	cimg_library::CImgList<T>& o = out();
 	const int& r = windowRadius();
@@ -79,7 +79,8 @@ void Irls<T>::execute() {
 		for (int x=-r; x<r+1; ++x)
 		for (int y=-r; y<r+1; ++y)
 		{
-			weight = inweight.atNXYZC(0,xx+x,yy+y,zz,tt);
+			weight = _cliqueWeight->getCliqueWeight(
+				0, xx, yy, zz, tt, 0, x, y, 0, 0 );
 			weight_sum += weight;
 			for (int d=0; d<dim; ++d) {
 				tmp[d] += weight * i.atNXYZC(d,xx+x,yy+y,zz,tt);
@@ -108,7 +109,8 @@ void Irls<T>::execute() {
 
 				weight = _gauss( dist, 0, _sigma_dist );
 
-				weight *= inweight.atNXYZC(0,xx+x,yy+y,zz,tt);
+				weight *= _cliqueWeight->getCliqueWeight(
+					0, xx, yy, zz, tt, 0, x, y, 0, 0 );
 				weight_sum += weight;
 				for (int d=0; d<dim; ++d) {
 					tmp[d] += weight * i.atNXYZC(d,xx+x,yy+y,zz,tt);

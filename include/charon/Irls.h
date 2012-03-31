@@ -38,6 +38,7 @@
 
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
+#include <charon/CliqueWeight.h>
 
 /// calculate median of image windows
 /** Use image windows of given size, calculate median within this window
@@ -60,7 +61,7 @@ public:
 	InputSlot<cimg_library::CImgList<T> > in;
 
 	/// weight input slot
-	InputSlot<cimg_library::CImgList<T> > inWeight;
+	InputSlot<CliqueWeight<T>* > cliqueWeight;
 
 	/// image data output slot
 	OutputSlot<cimg_library::CImgList<T> > out;
