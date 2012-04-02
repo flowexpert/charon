@@ -53,8 +53,6 @@ SET(EDITPARAM_SOURCES
 	PriorityDialog.h
 	PriorityBox.cpp
 	PriorityBox.h
-	ParameterTable.cpp
-	ParameterTable.h
 )
 
 SET(EDITGRAPH_SOURCES

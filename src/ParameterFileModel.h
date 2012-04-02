@@ -128,6 +128,13 @@ public:
 			int row, int count,
 			const QModelIndex& parent = QModelIndex());
 
+	virtual Qt::DropActions supportedDropActions() const;
+
+	virtual QStringList mimeTypes() const;
+
+	virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+		int row, int column, const QModelIndex &parent);
+
 	// \} // model/view interface
 
 	/// Get property _fileName
@@ -248,9 +255,6 @@ public slots:
 	 *  \param  fileName        name of the file to store
 	 */
 	virtual void save(const QString& fileName = "");
-
-	/// Called when content is dropped into table
-	virtual void dropContent(const QModelIndex &index, const QString &content);
 
 protected slots:
 	/// Load data without showing OpenFile Dialog.

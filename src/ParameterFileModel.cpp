@@ -32,6 +32,8 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QIcon>
+#include <QMimeData>
+#include <QUrl>
 
 #include "ParameterFileModel.moc"
 
@@ -279,14 +281,25 @@ Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 		case 0:
 			if (_onlyParams)
 				return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-		case 1:
+		case 1: {
+			QString paramType = getType(_keys[ind.row()]);
+			QVariant::Type dataType = data(ind).type();
 			if(_useMetaInfo && metaInfo()->isParameter(_keys[ind.row()],
-					getClass(_keys[ind.row()]))
-				&& getType(_keys[ind.row()]) == "bool")
+				getClass(_keys[ind.row()])) && paramType == "bool")
+
 				return Qt::ItemIsSelectable | Qt::ItemIsEnabled
 					| Qt::ItemIsUserCheckable;
+
+			if (dataType == QVariant::String
+				&& !paramType.contains(QRegExp("^\\{\\s*\\w.*\\}\\s*$"))) {
+
+				return Qt::ItemIsSelectable | Qt::ItemIsEnabled
+					| Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
+
+			}
 			return Qt::ItemIsSelectable | Qt::ItemIsEnabled
-					| Qt::ItemIsEditable;
+				| Qt::ItemIsEditable;
+			}
 		case 2:
 			return Qt::ItemIsSelectable | Qt::ItemIsEnabled
 					| Qt::ItemIsEditable;
@@ -734,17 +747,42 @@ void ParameterFileModel::setMinPriority(int value) {
 	emit minPriorityChanged(value);
 }
 
-void ParameterFileModel::dropContent(const QModelIndex &index,
-	const QString &content) {
+Qt::DropActions ParameterFileModel::supportedDropActions() const {
+	return Qt::CopyAction | Qt::MoveAction;
+}
+
+QStringList ParameterFileModel::mimeTypes() const {
+	QStringList list;
+	list << "text/plain";
+	list << "text/html";
+	list << "text/uri-list";
+	return list;
+}
+
+bool ParameterFileModel::dropMimeData(const QMimeData *mimeData,
+	Qt::DropAction action, int row, int column, const QModelIndex &parent) {
 
 	// only droppable into "Value" column
-	if (index.column() != 1) {
-		return;
+	if (parent.column() != 1) {
+		return false;
+	}
+
+	// only accept text
+	QString content;
+	if (mimeData->hasText()) {
+		content = mimeData->text();
+	} else if (mimeData->hasHtml()) {
+		content = mimeData->html();
+	} else if (mimeData->hasUrls()) {
+		QList<QUrl> urlList = mimeData->urls();
+		if (urlList.size() >= 1) {
+			content = urlList.at(0).path().mid(1);
+		}
+	} else {
+		return false;
 	}
 	
-	// only droppable into text fields etc.
-	QVariant::Type dataType = data(index).type();
-	if (dataType == QVariant::String) {
-		setData(index, content);
-	}
+	setData(parent, content);
+
+	return true;
 }
