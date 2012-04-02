@@ -26,8 +26,7 @@ SET_TARGET_PROPERTIES(tuchulcha-run PROPERTIES
 )
 
 ADD_EXECUTABLE(tuchulcha WIN32 tuchulcha ${QRC_RES} ${TC_ICO})
-TARGET_LINK_LIBRARIES(tuchulcha
-	tuchulcha-widgets ${QT_QTMAIN_LIBRARY} charon-plugins)
+TARGET_LINK_LIBRARIES(tuchulcha tuchulcha-widgets ${QT_QTMAIN_LIBRARY})
 
 SET_TARGET_PROPERTIES(paraminspector tuchulcha-run tuchulcha
 	PROPERTIES FOLDER "Tuchulcha")
