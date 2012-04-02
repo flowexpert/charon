@@ -754,7 +754,6 @@ Qt::DropActions ParameterFileModel::supportedDropActions() const {
 QStringList ParameterFileModel::mimeTypes() const {
 	QStringList list;
 	list << "text/plain";
-	list << "text/html";
 	list << "text/uri-list";
 	return list;
 }
@@ -762,24 +761,21 @@ QStringList ParameterFileModel::mimeTypes() const {
 bool ParameterFileModel::dropMimeData(const QMimeData *mimeData,
 	Qt::DropAction action, int row, int column, const QModelIndex &parent) {
 
-	// only droppable into "Value" column
-	if (parent.column() != 1) {
-		return false;
-	}
-
-	// only accept text
+	// only accept text and files
 	QString content;
-	if (mimeData->hasText()) {
-		content = mimeData->text();
-	} else if (mimeData->hasHtml()) {
-		content = mimeData->html();
-	} else if (mimeData->hasUrls()) {
+	if (mimeData->hasUrls()) {
 		QList<QUrl> urlList = mimeData->urls();
 		if (urlList.size() >= 1) {
 			content = urlList.at(0).path().mid(1);
 		}
+		for (int ii = 1; ii < urlList.size(); ii += 1) {
+			content += ";" + urlList.at(ii).path().mid(1);
+		}
+	} else if (mimeData->hasText()) {
+		content = mimeData->text();
 	} else {
-		return false;
+		return QAbstractTableModel::dropMimeData(mimeData, action,
+			row, column, parent);
 	}
 	
 	setData(parent, content);

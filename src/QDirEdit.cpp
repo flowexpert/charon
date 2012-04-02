@@ -67,9 +67,16 @@ void QDirEdit::fileDialog() {
 		if (_writeFile)
 			newVal = QFileDialog::getSaveFileName(
 					this,tr("select file to save to"), text());
-		else
-			newVal = QFileDialog::getOpenFileName(
-					this,tr("select file to open"), text());
+		else {
+			QStringList list = QFileDialog::getOpenFileNames(
+				this, tr("select one or more file(s) to open"), text());
+			if (list.size() > 0) {
+				newVal = list.at(0);
+			}
+			for (int ii = 1; ii < list.size(); ii += 1) {
+				newVal += ";" + list.at(ii);
+			}
+		}
 	}
 	else
 		newVal = QFileDialog::getExistingDirectory(
