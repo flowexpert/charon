@@ -167,6 +167,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/EndpointError.h
 		${CHARON_UTILS_INCLUDE_DIR}/EndpointError.hxx
 	)
+	ADD_LIBRARY(angularerror SHARED
+		AngularError.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/AngularError.h
+		${CHARON_UTILS_INCLUDE_DIR}/AngularError.hxx
+	)
 	ADD_LIBRARY(colormask SHARED
 		ColorMask.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/ColorMask.h
@@ -298,6 +303,7 @@ IF(USE_CIMG)
 		rgb2hsv
 		flow2hsv
 		endpointerror
+		angularerror
 		colormask
 		overlay
 		flowquiver
