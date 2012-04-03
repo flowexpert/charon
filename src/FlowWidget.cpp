@@ -58,6 +58,8 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 		this, SLOT(modify()));
 	connect(model(), SIGNAL(commentChanged(QString)), _nodehandler,
 		SLOT(updateTooltip(QString)));
+	connect(this, SIGNAL(windowStateChanged(Qt::WindowStates, Qt::WindowStates)),
+		this, SLOT(zoomFit(Qt::WindowStates, Qt::WindowStates)));
 	setWindowTitle(tr("New file")+" [*]");
 }
 
@@ -130,4 +132,11 @@ void FlowWidget::closeEvent(QCloseEvent* clEvent) {
 				QMessageBox::Save|QMessageBox::Discard) == QMessageBox::Save)
 		model()->save();
 	QMdiSubWindow::closeEvent(clEvent);
+}
+
+void FlowWidget::zoomFit(Qt::WindowStates oldStates, Qt::WindowStates newStates) {
+	// check if any flag except for Qt::WindowActive has changed
+	if ((oldStates ^ newStates) == Qt::WindowActive)
+		return;
+	zoomFit();
 }

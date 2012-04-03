@@ -70,6 +70,9 @@ public slots:
 	/// fit in view
 	void zoomFit();
 
+	/// fit in view after widget resize
+	void zoomFit(Qt::WindowStates oldState, Qt::WindowStates newState);
+
 	/// update title and main window file information
 	void updateFileName(const QString& fileName /** new filename*/);
 
