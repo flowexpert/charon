@@ -11,6 +11,7 @@ IF(BUILD_TESTING)
 	# common definitions
 	ADD_DEFINITIONS(-DDEFAULTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/sampleclasses.wrp")
 	ADD_DEFINITIONS(-DTESTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/testClasses.wrp")
+	ADD_DEFINITIONS(-DQPARAMETERTESTFILE="${CMAKE_CURRENT_SOURCE_DIR}/qparametertestfile.wrp")
 
 	# test ParameterFileModel
 	ADD_EXECUTABLE(modeltest modeltest.cpp)
@@ -32,6 +33,31 @@ IF(BUILD_TESTING)
 		ENDFOREACH(X)
 		FOREACH(X ${tuchulcha_QT_DLLS})
 			ADD_CUSTOM_COMMAND(TARGET POST_BUILD modeltest
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${X}" "${LOCAL_PLUGIN_DIR}"
+			)
+		ENDFOREACH(X)
+	ENDIF(WIN32)
+
+	# test QParameterFile
+	ADD_EXECUTABLE(qparameterfiletest qparameterfiletest.cpp)
+	TARGET_LINK_LIBRARIES(qparameterfiletest editparam)
+	ADD_TEST(
+		NAME QParameterFile
+		COMMAND qparameterfiletest
+	)
+	LIST(APPEND tests QParameterFile)
+	LIST(APPEND testTargets qparameterfiletest)
+
+	IF(WIN32)
+		GET_TARGET_PROPERTY(test_loc qparameterfiletest LOCATION)
+		GET_FILENAME_COMPONENT(LOCAL_PLUGIN_DIR ${test_loc} PATH)
+		FOREACH(X ${ADDITIONAL_DLL_DEPENDS})
+			ADD_CUSTOM_COMMAND(TARGET POST_BUILD qparameterfiletest
+				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${X}" "${LOCAL_PLUGIN_DIR}"
+			)
+		ENDFOREACH(X)
+		FOREACH(X ${tuchulcha_QT_DLLS})
+			ADD_CUSTOM_COMMAND(TARGET POST_BUILD qparameterfiletest
 				COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${X}" "${LOCAL_PLUGIN_DIR}"
 			)
 		ENDFOREACH(X)

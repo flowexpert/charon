@@ -84,6 +84,13 @@ void QParameterFile::load(QString fileName) {
 
 void QParameterFile::save(QString fileName) const {
 	QFile outFile(fileName);
+	if (outFile.exists()) {
+		QFile backupFile(fileName + "~");
+		if (backupFile.exists()) {
+			backupFile.remove();
+		}
+		outFile.copy(fileName + "~");
+	}
 	if (outFile.open(QFile::WriteOnly|QIODevice::Truncate|QIODevice::Text)) {
 		QTextStream strm(&outFile);
 		QStringListIterator kIter(_keys);
