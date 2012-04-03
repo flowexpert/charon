@@ -33,6 +33,18 @@ ADD_LIBRARY(greatersmallerthenpar SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.hxx
 
 )
+ADD_LIBRARY(valuebuffer SHARED
+	ValueBuffer.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/ValueBuffer.h
+	${CHARON_UTILS_INCLUDE_DIR}/ValueBuffer.hxx
+
+)
+ADD_LIBRARY(binoperatorvalue SHARED
+	BinOperatorValue.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/BinOperatorValue.h
+	${CHARON_UTILS_INCLUDE_DIR}/BinOperatorValue.hxx
+
+)
 ADD_LIBRARY(printvalue SHARED
         PrintValue.cpp
         ${CHARON_UTILS_INCLUDE_DIR}/PrintValue.h
@@ -45,6 +57,8 @@ SET(Plugins
 	greatersmallerthenpar
 	parametertoslot
         printvalue
+	valuebuffer
+	binoperatorvalue
 )
 
 IF(USE_CIMG)
