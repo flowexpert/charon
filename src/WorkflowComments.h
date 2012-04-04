@@ -67,7 +67,7 @@ class WorkflowComments : public QTextEdit {
 		 *	This prevents weird behavior of the QTextEdit box due to 
 		 *	emitted signals while editting the model.
 		 */
-		bool _loadLock;
+		QMutex* _textChangeLock;
 };
 
 #endif

@@ -716,6 +716,11 @@ void ParameterFileModel::setEditorComment(QString comment) {
 			if (str.isEmpty()) {
 				removeRow(i);
 			} else {
+				QString oldData = data(index(i, 1)).toString();
+				if (oldData == comment) {
+					setOnlyParams(paramsBefore);
+					return;
+				}
 				setData(index(i,1), comment);
 			}
 			valSet = true;

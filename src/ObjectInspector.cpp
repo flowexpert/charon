@@ -45,6 +45,8 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 	_ui = new Ui::ObjectInspector;
 	_ui->setupUi(this);
 
+	_commentFieldMutex = new QMutex(QMutex::NonRecursive);
+
 	// init model
 	_model = new ParameterFileModel("", this);
 	setModel(newModel);
@@ -105,6 +107,8 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	if (newModel == _model)
 		return;
 
+	bool locked = _commentFieldMutex->tryLock();
+
 	if (_model) {
 		// disconnect everything from the old model
 		disconnect(_model, 0, 0, 0);
@@ -150,11 +154,7 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 
 	// empty comment text area
 	// text will be updated again, when an item is selected
-	disconnect(_ui->comment, SIGNAL(textChanged()),
-		this, SLOT(on_comment_textChanged()));
 	_ui->comment->setText("");
-	connect(_ui->comment, SIGNAL(textChanged()),
-		this, SLOT(on_comment_textChanged()));
 
 	// update values
 	_ui->useMetadata->setEnabled(model()->metaInfo());
@@ -184,6 +184,10 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 		_ui->onlyParams, SLOT(setChecked(bool)));
 
 	on_model_prefixChanged(_model->prefix());
+
+	if (locked) {
+		_commentFieldMutex->unlock();
+	}
 
 	emit modelChanged(_model);
 }
@@ -296,13 +300,20 @@ void ObjectInspector::on_resetFilterButton_clicked() {
 }
 
 void ObjectInspector::on_comment_textChanged() {
-	_model->setEditorComment(_ui->comment->toPlainText().replace(
-		QRegExp("\n"), "<br/>"));
+	if (_commentFieldMutex->tryLock()) {
+		_model->setEditorComment(_ui->comment->toPlainText().replace(
+			QRegExp("\n"), "<br/>"));
+		_commentFieldMutex->unlock();
+	}
 }
 
 void ObjectInspector::on_model_prefixChanged(const QString& prefix) {
 	// update comment text area
+	bool locked = _commentFieldMutex->tryLock();
 	_ui->comment->setPlainText(_model->parameterFile().get(
 		prefix + ".editorcomment").replace(QRegExp("<br/?>"), "\n"));
 	_ui->commentBox->setEnabled(!prefix.isEmpty() && _model->prefixValid());
+	if (locked) {
+		_commentFieldMutex->unlock();
+	}
 }

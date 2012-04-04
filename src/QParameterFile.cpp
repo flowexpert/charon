@@ -51,14 +51,19 @@ void QParameterFile::load(QString fileName) {
 			// trim to avoid whitespace at begin/end
 			line = str.readLine().trimmed();
 			lc++;
-			// allow line breaks with backslash
-			while (lb.exactMatch(line)) {
-				line = lb.cap(1) + str.readLine().trimmed();
-				lc++;
-			}
 			// strip comments
 			if (cm.exactMatch(line)) {
 				line = cm.cap(1);
+			}
+			// allow line breaks with backslash
+			while (lb.exactMatch(line)) {
+				QString next = str.readLine().trimmed();
+				// strip comments
+				if (cm.exactMatch(next)) {
+					next = cm.cap(1);
+				}
+				line = lb.cap(1) + next;
+				lc++;
 			}
 			// skip empty lines
 			if (line.isEmpty()) {
@@ -85,11 +90,9 @@ void QParameterFile::load(QString fileName) {
 void QParameterFile::save(QString fileName) const {
 	QFile outFile(fileName);
 	if (outFile.exists()) {
-		QFile backupFile(fileName + "~");
-		if (backupFile.exists()) {
-			backupFile.remove();
-		}
-		outFile.copy(fileName + "~");
+		QString backupFileName(fileName + "~");
+		QFile::remove(backupFileName);
+		outFile.copy(backupFileName);
 	}
 	if (outFile.open(QFile::WriteOnly|QIODevice::Truncate|QIODevice::Text)) {
 		QTextStream strm(&outFile);

@@ -1,32 +1,24 @@
-reader.type		filereader
-reader.editorinfo		-358 -63
-writer.type		filewriter
-writer.editorinfo		-63 -45
-writer.in		reader.out
-reader.out		writer.in
-reader.editorcomment		This module reads.<br/>It reads a file.
-writer.editorcomment		This one <b><i><u>writes</u></i></b> a file...
-editorcomment		This is a workflow for reading<br>and writing a file.<br>...
-reader.filename		C:\Users\HiWi2\Tuchulcha\test11.wrp; C:\Users\HiWi2\Tuchulcha\test11.wrp~; C:\Users\HiWi2\Tuchulcha\test12.wrp
-reader.filename.editorpriority		2
-writer.filename		somewhat
-writer.filename.editorpriority		2
-anothernode.type		cdfitter
-anothernode.editorinfo		-210.527 15.6825
-anothernode.training		
-anothernode.editorcomment		In this <i>comment</i>,there is a test of diverse <b><u>HTML</u></b>-Code<br/>&amp; the possible effects on the new<br/>QParameterFile. It also contains ה&ouml;üß יאףû€@|<br/>to test for unicode support...<br/>100% correct?
-anothernode.addMirrored		1
-anothernode.addMirrored.editorpriority		3
-anothernode.templatetype.editorpriority		1
-anothernode.templatetype		float
-anothernode.gnuplotCall		somewhat
-anothernode.gnuplotCall.editorpriority		1
-anothernode.showHistogram.editorpriority		2
-anothernode.showProgress.editorpriority		3
-anothernode.results		results.txt
-anothernode.runs		99
-anothernode.mcmcSweeps		1
-anothernode.mcmcSigma		0.05
-anothernode.mcmcSigma.editorpriority		2
-anothernode.agStop		0
-anothernode.agStop.editorpriority		1
+# this is a test parameter file
+# to check consistency between ParameterFile class
+# and QParameterFile
+#
+# All parameters starting with "ignore" should be allowed
+# to differ between implementations (e.g. unicode values)
+param1		test # default: two tabs as separator
+param2  test2 # non-default white-space
+# empty line
+
+# multiline parameter/value pair
+param3     \
+value3
+# disabled multilinecomments \
+param4     10
+# mixed case parameter
+mixedCaseParam  5
+ # comment after whitespace
+param5 10.5;3.1;7 # parameter list
+# multiline param with comment
+param6 value1;\
+	value2;value3 # comment
+# test unicode chars
+ignore1 הצüßתפ

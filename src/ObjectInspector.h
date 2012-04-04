@@ -34,6 +34,7 @@ class QVBoxLayout;
 class PrefixValidator;
 class QTextEdit;
 class QGroupBox;
+class QMutex;
 
 namespace Ui {
 	class ObjectInspector;
@@ -126,9 +127,10 @@ protected:
 	Ui::ObjectInspector* _ui;
 
 private:
-	PrefixValidator*    _validator;     ///< prefix validator
-	ParameterFileModel* _model;         ///< Used model to display
-	bool                _ownModel;      ///< Class has Ownership of _model
+	PrefixValidator*    _validator;         ///< prefix validator
+	ParameterFileModel* _model;             ///< Used model to display
+	bool                _ownModel;          ///< Class has Ownership of _model
+	QMutex*             _commentFieldMutex; ///< lock for changes of comments
 };
 
 #endif /* OBJECTINSPECTOR_H_ */
