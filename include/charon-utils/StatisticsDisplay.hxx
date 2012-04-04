@@ -128,7 +128,6 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("StatisticsDisplay", name,
 			"Calculates various statistical properties of input object "
 			"and exports a QWidget for display<br>"
-			"Remark: The median value is only an estimate!<br>"
 			"The values NaN and +-Infinity will be ignored for "
 			"the calculation of mean, variance, sum and median"),
 			_vigraIn(true, true),
@@ -184,6 +183,11 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 	ParameteredObject::_addParameter<bool>(_writeToSout, "writeToSout",
 		"write results to stdout and status console", true, "bool");
 	
+	ParameteredObject::_addParameter<bool>(_calcQuantiles, "calculateQuantiles",
+		"Calculate 1/4, 1/2 (median) and 3/4 quantiles of pixel values<br>"
+		"This calculation is done for the whole image, masks are ignored<br>"
+		"increases memory consumption and computation time drastically",false) ;
+
 	ParameteredObject::_addParameter<size_t>(_numBins, "numberOfBins",
 		"number of bins for histogram", 256) ;
 	
@@ -225,6 +229,13 @@ void StatisticsDisplayPlugin<T>::execute() {
 		
 		const Array& img = _vigraIn[ii] ;
 		
+		Array* sortedImg = 0 ;
+		if(_calcQuantiles)
+		{
+			sortedImg = new Array(img) ;
+			std::sort(sortedImg->begin(), sortedImg->end()) ;
+		}
+
 		//create accumulators for each image, add tags as needed
 		//accumulator which can track infinities and NaN
 
@@ -236,8 +247,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 		
 		//accumulator for calculations where inf and NaN lead to errors
 		accumulator_set<double, stats<
-			tag::sum, tag::mean, tag::variance, 
-			tag::median
+			tag::sum, tag::mean, tag::variance
 		> > stable_acc;
 
 		//accumulate all pixel values
@@ -304,7 +314,13 @@ void StatisticsDisplayPlugin<T>::execute() {
 		s.stats.insert(StatPair("mean",mean(stable_acc))) ;
 		s.stats.insert(StatPair("variance",variance(stable_acc))) ;
 		s.stats.insert(StatPair("stddev",sqrt(variance(stable_acc)))) ;
-		s.stats.insert(StatPair("median",median(stable_acc))) ;
+		
+		if(_calcQuantiles)
+		{
+			s.stats.insert(StatPair("1/4 quantile", *(sortedImg->begin() + sortedImg->size() / 4))) ;
+			s.stats.insert(StatPair("median", *(sortedImg->begin() + sortedImg->size() / 2))) ;
+			s.stats.insert(StatPair("3/4 quantile", *(sortedImg->begin() + (sortedImg->size() * 3 / 4 )))) ;
+		}
 		s.origin = name ;
 
 		_statistics.push_back(s) ;
@@ -325,6 +341,8 @@ void StatisticsDisplayPlugin<T>::execute() {
 			_histograms()[1].append(histplot.get_shared_channel(1),'c') ;
 			_histograms()[2].append(histplot.get_shared_channel(2),'c') ;
 		}
+
+		delete sortedImg ;
 
 	}
 
@@ -348,15 +366,23 @@ void StatisticsDisplayPlugin<T>::execute() {
 		{
 			pixCount += cimg(l).size() ;
 		}
+		
+		std::vector<T> sortedImg ;
+		if(_calcQuantiles)
+		{
+			sortedImg.reserve(pixCount) ;
+		}
+
 		//accumulator which can track infinities and NaN
 		accumulator_set<double, stats<
 			tag::min, tag::max, tag::count, tag::density
 		> > acc(tag::density::num_bins = _numBins(),tag::density::cache_size = pixCount) ;
+
 		
+
 		//accumulator for calculations where inf and NaN lead to errors
 		accumulator_set<double, stats<
-			tag::sum, tag::mean, tag::variance, 
-			tag::median
+			tag::sum, tag::mean, tag::variance
 		> > stable_acc;
 
 		if(!_cimgMask.connected())
@@ -373,6 +399,8 @@ void StatisticsDisplayPlugin<T>::execute() {
 						-val != std::numeric_limits<T>::infinity()
 					)
 						stable_acc(val) ;
+					if(_calcQuantiles)
+					{	sortedImg.push_back(val) ;}
 				}
 			}
 		}
@@ -401,11 +429,15 @@ void StatisticsDisplayPlugin<T>::execute() {
 							-val != std::numeric_limits<T>::infinity()
 						)
 							stable_acc(val) ;
+						if(_calcQuantiles)
+						{	sortedImg.push_back(val) ;}
 					}
 				}
 			}
 		}
 
+		std::sort(sortedImg.begin(), sortedImg.end()) ;
+		
 		Statistics s ;
 
 		typedef std::pair<std::string, double> StatPair ;
@@ -421,8 +453,15 @@ void StatisticsDisplayPlugin<T>::execute() {
 		s.stats.insert(StatPair("mean",mean(stable_acc))) ;
 		s.stats.insert(StatPair("variance",variance(stable_acc))) ;
 		s.stats.insert(StatPair("stddev",sqrt(variance(stable_acc)))) ;
-		s.stats.insert(StatPair("median",median(stable_acc))) ;
 		s.origin = name ;
+
+		if(_calcQuantiles)
+		{
+			s.stats.insert(StatPair("1/4 quantile", *(sortedImg.begin() + sortedImg.size() / 4))) ;
+			s.stats.insert(StatPair("median", *(sortedImg.begin() + sortedImg.size() / 2))) ;
+			s.stats.insert(StatPair("3/4 quantile", *(sortedImg.begin() + (sortedImg.size() * 3 / 4 )))) ;
+		}
+
 
 		_statistics.push_back(s) ;
 
@@ -442,6 +481,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 			_histograms()[1].append(histplot.get_shared_channel(1),'c') ;
 			_histograms()[2].append(histplot.get_shared_channel(2),'c') ;
 		}
+
 	}
 
 	if(_display.connected() && _exportWidget)
@@ -449,6 +489,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 		//_exportWidget->setTitle(this->getName()) ;
 		_exportWidget->updateStats(_statistics) ;
 	}
+
 }
 
 
