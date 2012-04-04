@@ -24,6 +24,9 @@
 #ifndef ANGULARERROR_HXX_
 #define ANGULARERROR_HXX_
 
+#ifndef _USE_MATH_DEFINES
+	#define _USE_MATH_DEFINES
+#endif
 #include <cmath>
 #include <charon-core/ParameteredObject.hxx>
 #include "AngularError.h"
