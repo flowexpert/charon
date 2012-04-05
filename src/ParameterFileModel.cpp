@@ -460,8 +460,8 @@ void ParameterFileModel::_update() {
 	endResetModel();
 }
 
-void ParameterFileModel::_updatePriority(const QModelIndex &topLeft,
-	const QModelIndex &bottomRight) {
+void ParameterFileModel::_updatePriority(
+		const QModelIndex&, const QModelIndex &bottomRight) {
 	// check if filter active
 	if (_minPriority <= 0) {
 		return;

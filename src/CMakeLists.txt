@@ -35,8 +35,6 @@ SET(EDITPARAM_SOURCES
 	ParameterFileModel.h
 	PrefixValidator.cpp
 	PrefixValidator.h
-	ObjectInspector.cpp
-	ObjectInspector.h
 	InspectorDelegate.cpp
 	InspectorDelegate.h
 	ModelToolBar.cpp
@@ -49,10 +47,6 @@ SET(EDITPARAM_SOURCES
 	MetaData.h
 	QDirEdit.cpp
 	QDirEdit.h
-	PriorityDialog.cpp
-	PriorityDialog.h
-	PriorityBox.cpp
-	PriorityBox.h
 )
 
 SET(EDITGRAPH_SOURCES
@@ -68,11 +62,6 @@ SET(EDITGRAPH_SOURCES
 	NodeProperty.h
 	NodeHandler.cpp
 	NodeHandler.h
-)
-
-SET(INSPECTOR_SOURCES
-	ParamInspectorWindow.cpp
-	ParamInspectorWindow.h
 )
 
 SET(WF_RUNNER_SOURCES
@@ -97,6 +86,14 @@ SET(TUCHULCHA_SOURCES
 	WorkflowComments.h
 	CentralMdiArea.cpp
 	CentralMdiArea.h
+	ObjectInspector.cpp
+	ObjectInspector.h
+	ParamInspectorWindow.cpp
+	ParamInspectorWindow.h
+	PriorityDialog.cpp
+	PriorityDialog.h
+	PriorityBox.cpp
+	PriorityBox.h
 )
 
 # =============  generate moc files ====================
@@ -111,19 +108,17 @@ QT4_AUTOMOC(${TUCHULCHA_SOURCES})
 
 # create libraries
 ADD_LIBRARY(tc-common ${TUCHULCHA_COMMON_SOURCES})
+ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC})
 ADD_LIBRARY(editparam ${EDITPARAM_SOURCES})
 ADD_LIBRARY(editgraph ${EDITGRAPH_SOURCES})
-ADD_LIBRARY(paraminspector-widgets ${INSPECTOR_SOURCES})
 ADD_LIBRARY(tc-run ${WF_RUNNER_SOURCES})
-ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC})
 
 # add dependencies
 TARGET_LINK_LIBRARIES(editparam tc-common ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(editgraph editparam)
-TARGET_LINK_LIBRARIES(paraminspector-widgets editparam)
 TARGET_LINK_LIBRARIES(tc-run tc-common charon-plugins ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(tuchulcha-widgets editgraph)
 SET_TARGET_PROPERTIES(
-	tc-common editparam editgraph paraminspector-widgets
+	tc-common editparam editgraph
 	tc-run tuchulcha-widgets
 	PROPERTIES FOLDER "Tuchulcha")

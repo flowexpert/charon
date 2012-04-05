@@ -17,7 +17,7 @@ ENDIF()
 # standalone inspector application
 ADD_EXECUTABLE(paraminspector WIN32 paraminspector ${QRC_RES} ${INSP_ICO})
 TARGET_LINK_LIBRARIES(paraminspector
-	paraminspector-widgets ${QT_QTMAIN_LIBRARY})
+	tuchulcha-widgets ${QT_QTMAIN_LIBRARY})
 
 ADD_EXECUTABLE(tuchulcha-run tuchulcha-run)
 TARGET_LINK_LIBRARIES(tuchulcha-run tc-run)

@@ -41,7 +41,12 @@ public:
 	QParameterFile(QString fileName = "" /** [in] file to load */);
 
 	/// load parameter file
-	void load(QString fileName);
+	/** The file is interpreted as local 8-bit encoded.
+	 *  If specified, the given encoding is selected
+	 *  \param fileName   path of file to read
+	 *  \param encoding   enfoce given encoding
+	 */
+	void load(QString fileName, QString encoding=QString());
 	/// save to given plain text file
 	void save(QString fileName) const;
 

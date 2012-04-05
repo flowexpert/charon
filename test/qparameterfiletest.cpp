@@ -18,65 +18,100 @@
 /// @file qparameterfiletest.cpp
 /// Tests for correct behavior of QParameterFile
 
-#include <iostream>
 #include <QFile>
 #include <QTextStream>
 #include "QParameterFile.h"
-#include "ParameterFile.h"
+#include "ParameterFile.hxx"
 
 #ifndef QPARAMETERTESTFILE
 #error QPARAMETERTESTFILE not defined
 #endif
 
+QStringList fromStdStringList(const std::vector<std::string>& src) {
+	QStringList dst;
+	for (std::vector<std::string>::const_iterator iter = src.begin();
+			iter != src.end(); iter++) {
+		dst << QString::fromStdString(*iter);
+	}
+	return dst;
+}
+
+template <typename T>
+void checkEqual(bool& ok, T value1, T value2, QString desc) {
+	if (value1 != value2) {
+		QTextStream qerr(stderr,QIODevice::WriteOnly);
+		qerr << "Error: '" << value1 << "' != '" <<
+				value2 << "' (" << desc << ")" << endl;
+		ok = false;
+	}
+}
+
+/// unicode test string
+static const QChar unicode[14] = {
+	0xc3, 0xa4, 0xc3, 0xb6, 0xc3, 0xbc, 0xc3, 0x9f,
+	0xc3, 0xba, 0xc3, 0xb4, 0xc4, 0xa7};
+
 /// Starting point of test application.
 int main() {
 	QString fileName = QPARAMETERTESTFILE;
+	QTextStream qout(stdout,QIODevice::WriteOnly);
+	bool success = true;
 
-	QParameterFile qParamFile(fileName);
+	QParameterFile qParamFile;
+	qParamFile.load(fileName, "latin1");
 	ParameterFile paramFile(fileName.toStdString());
 
-	std::cout << "Loaded File '" << fileName.toStdString() << "'.\n";
+	qout << "Loaded File '" << fileName << "'" << endl;
 
 	QStringList keyList1 = qParamFile.getKeyList();
-	std::vector<std::string> keyList2 = paramFile.getKeyList();
+	QStringList keyList2 = fromStdStringList(paramFile.getKeyList());
 
-	std::cout << "Comparing size of key lists...\n";
-	std::cout << keyList1.size() << " - " << keyList2.size() << std::endl;
-	//Q_ASSERT(keyList1.size() == keyList2.size());
-	std::cout << "  OK!\n";
+	qout << "Comparing size of key lists: ";
+	qout << keyList1.size() << " - " << keyList2.size() << endl;
+	checkEqual(success, keyList1.size(), keyList2.size(), "key list size");
 
-	std::cout << "Comparing key lists (case insensitive)...\n";
+	qout << "\nKey lists:" << endl;
 	for (int ii = 0; ii < keyList1.size(); ii++) {
-		QString key1 = keyList1.at(ii).toLower();
-		std::cout << key1.toStdString() << " - ";
-		QString key2 = QString(keyList2.at(ii).c_str()).toLower();
-		std::cout << key2.toStdString() << "\n";
-		//Q_ASSERT(key1 == key2);
+		QString key1 = keyList1[ii];
+		QString key2 = keyList2[ii];
+		qout << "\t" << ii+1 << ": " << key1 << " - " << key2 << endl;
+		checkEqual(
+					success,QString::compare(key1, key2, Qt::CaseInsensitive),
+					0,QString("key list entry %1").arg(ii+1));
 	}
-	std::cout << "  OK!\n";
 
-	std::cout << "Comparing values...\n";
+	qout << "\nComparing values:" << endl;
 	for (int ii = 0; ii < keyList1.size(); ii++) {
-		QString key = keyList1.at(ii).toLower();
-		if (key.startsWith("ignore")) {
-			continue;
-		}
+		QString key = keyList1[ii];
 		QString value1 = qParamFile.get(key);
-		//paramFile.get<std::string>("param1");
-		//std::string str = paramFile.get<std::string>(key.toStdString());
-		//QString value2 = QString(str);
-		//Q_ASSERT(value1 == value2);
+		QString value2 = QString::fromStdString(
+					paramFile.get<std::string>(key.toStdString()));
+		qout << "\t" << key << ": '"
+			 << value1 << "' -- '" << value2 << "'" << endl;
+		if (!key.startsWith("ignore")) {
+			checkEqual(success,value1,value2,QString("value of %1").arg(key));
+		}
 	}
-	std::cout << "  OK!\n";
 
-	std::cout << "Some explicit testing...\n";
-	Q_ASSERT(qParamFile.get("param3") == "value3");
-	Q_ASSERT(qParamFile.get("param4") == "10");
-	Q_ASSERT(qParamFile.get("ignore1") == "הצü‗תפ");
-	std::cout << "  OK!\n";
+	// Some explicit testing
+	QString param, ref, value;
+	param = "param3"; ref = "value3"; value = qParamFile.get(param);
+	checkEqual(success,ref,value,param);
+	param = "param4"; ref = "10"; value = qParamFile.get(param);
+	checkEqual(success,ref,value,param);
+	param = "paramEmpty"; ref = ""; value = qParamFile.get(param);
+	checkEqual(success,ref,value,param);
+	param = "ignore1"; ref = QString::fromRawData(unicode,14);
+	value = qParamFile.get(param);
+	/*
+	// unicode content raw output
+	qout.setIntegerBase(16);
+	for (int i=0; i<value.size(); i++) {
+		qout << "0x" << (int)QChar(value[i]).unicode() << ", ";
+	qout << endl;
+	}
+	*/
+	checkEqual(success,ref,value,param);
 
-	std::cout << "\n################\nTest successful!\n################\n";
-	std::string var;
-	std::cin >> var;
-	return 0;
+	return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }

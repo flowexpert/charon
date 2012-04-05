@@ -80,7 +80,6 @@ void WorkflowComments :: save() {
 			model -> setPrefix( "" );
 			model -> setOnlyParams(false);
 		
-			int c = model->rowCount();
 			// search for the index of the row containing the comment
 			for ( i = 0; i < model -> rowCount(); ++i ) {
 				if (model -> data( model -> index(i, 0)).toString()

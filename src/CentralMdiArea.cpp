@@ -25,7 +25,7 @@
 #include "CentralMdiArea.moc"
 
 #include <QMdiArea>
-#include <QtGUI>
+#include <QtGui>
 
 CentralMdiArea::CentralMdiArea(QWidget* parent) : QMdiArea(parent) {
 	setAcceptDrops(true);

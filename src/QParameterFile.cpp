@@ -25,6 +25,7 @@
 #include "QParameterFile.h"
 #include <QFile>
 #include <QTextStream>
+#include <QTextCodec>
 
 QParameterFile::QParameterFile(QString fileName)
 {
@@ -32,18 +33,29 @@ QParameterFile::QParameterFile(QString fileName)
 		load(fileName);
 }
 
-void QParameterFile::load(QString fileName) {
+void QParameterFile::load(QString fileName, QString encoding) {
 	_content.clear();
 	_keys.clear();
 	QFile inFile(fileName);
 	if (inFile.open(QFile::ReadOnly|QIODevice::Text)) {
-		QString fileContent = QString::fromLocal8Bit(inFile.readAll());
+		QString fileContent;
+		if (encoding.isEmpty()) {
+			fileContent = QString::fromLocal8Bit(inFile.readAll());
+		}
+		else {
+			QTextCodec* decoder = QTextCodec::codecForName(encoding.toAscii());
+			if (!decoder) {
+				decoder = QTextCodec::codecForLocale();
+				QTextStream qerr(stderr,QIODevice::WriteOnly);
+				qerr << "Selected encoding: " << decoder->name() << endl;
+			}
+			fileContent = decoder->toUnicode(inFile.readAll());
+		}
 		QTextStream str(&fileContent,QIODevice::ReadOnly);
 		// regexp instances for content analysis
-		QRegExp lb("(.*)\\\\\\s*");      // handle line breaks
-		QRegExp cm("(.*)#.*");           // strip comments
-		QRegExp kv("(\\S+)\\s+(\\S.*)"); // extract key/value
-		QRegExp ko("(\\S+)\\s*");        // empty keys
+		QRegExp lb("(.*)\\\\\\s*");       // handle line breaks
+		QRegExp cm("(.*\\S)?\\s*#.*");    // strip comments
+		QRegExp kv("(\\S+)\\s*(\\S.*)?"); // extract key/value
 		// line-based analyis
 		QString line;
 		uint lc = 0;
@@ -74,11 +86,6 @@ void QParameterFile::load(QString fileName) {
 				QString par(kv.cap(1)), val(kv.cap(2));
 				Q_ASSERT(!par.isEmpty());
 				set(par,val);
-			}
-			else if (ko.exactMatch(line)) {
-				QString par(ko.cap(1));
-				Q_ASSERT(!par.isEmpty());
-				set(par);
 			}
 			else {
 				qDebug("%s:%d: malformed line",fileName.toAscii().constData(),lc);

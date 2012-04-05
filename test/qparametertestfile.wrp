@@ -8,6 +8,8 @@ param1		test # default: two tabs as separator
 param2  test2 # non-default white-space
 # empty line
 
+# empty parameter
+paramEmtpy
 # multiline parameter/value pair
 param3     \
 value3
@@ -20,5 +22,5 @@ param5 10.5;3.1;7 # parameter list
 # multiline param with comment
 param6 value1;\
 	value2;value3 # comment
-# test unicode chars
-ignore1 äöüßúô
+# test special chars
+ignore1		Ã¤Ã¶Ã¼ÃŸÃºÃ´Ä§

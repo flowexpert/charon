@@ -40,8 +40,7 @@ IF(BUILD_TESTING)
 
 	# test QParameterFile
 	ADD_EXECUTABLE(qparameterfiletest qparameterfiletest.cpp)
-	TARGET_LINK_LIBRARIES(qparameterfiletest editparam)
-	TARGET_LINK_LIBRARIES(qparameterfiletest charon-core)
+	TARGET_LINK_LIBRARIES(qparameterfiletest editparam charon-core)
 	ADD_TEST(
 		NAME QParameterFile
 		COMMAND qparameterfiletest
