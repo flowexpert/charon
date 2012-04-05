@@ -363,6 +363,11 @@ LIST(APPEND Plugins
 )
 
 # Misc plugins
+ADD_LIBRARY(gnc SHARED
+	Gnc.cpp
+	${charon_INCLUDE_DIR}/Gnc.h
+	${charon_INCLUDE_DIR}/Gnc.hxx
+)
 ADD_LIBRARY(sequencegenerator SHARED
 	SequenceGenerator.cpp
 	${charon_INCLUDE_DIR}/SequenceGenerator.h
@@ -395,6 +400,7 @@ ADD_LIBRARY(flowcomparator SHARED
 	${charon_INCLUDE_DIR}/FlowComparator.hxx
 )
 LIST(APPEND Plugins
+	gnc
 	sequencegenerator
 	edgysequencegenerator
 	diff2d
