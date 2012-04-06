@@ -39,12 +39,11 @@
 
 inline bool ParameterFile::isSet(std::string parameter) const {
 	_toLower(parameter);
-	return (_params.end() != _params.find(parameter));
+	return (_params.find(parameter) != _params.end());
 }
 
 template<class T>
 inline void ParameterFile::set(std::string parameter, const T& value) {
-	_toLower(parameter);
 	std::ostringstream str;
 	str << value;
 	_set(parameter, str.str());

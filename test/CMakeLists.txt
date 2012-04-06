@@ -16,14 +16,16 @@ IF(BUILD_TESTING)
 	LIST(APPEND testTargets streamtest)
 
 	# tests for ParameterFile
-	ADD_EXECUTABLE(paramtest parameterfiletest.cpp)
-	TARGET_LINK_LIBRARIES(paramtest charon-core)
+	ADD_DEFINITIONS(
+		-DTEST_WRP_FILE="${CMAKE_CURRENT_SOURCE_DIR}/parameterfiletest.wrp")
+	ADD_EXECUTABLE(parameterfiletest parameterfiletest.cpp)
+	TARGET_LINK_LIBRARIES(parameterfiletest charon-core charon-plugins)
 	ADD_TEST(
 		NAME ParameterFile
-		COMMAND paramtest
+		COMMAND parameterfiletest
 	)
 	LIST(APPEND tests ParameterFile)
-	LIST(APPEND testTargets paramtest)
+	LIST(APPEND testTargets parameterfiletest)
 
 	# tests for ParameteredObject etc.
 	ADD_EXECUTABLE(parametertest parametertest.cpp)
