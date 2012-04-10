@@ -111,7 +111,7 @@ public slots:
 	void on_setPriorityButton_clicked();
 
 	/// filter by priority
-	void on_filterBox_activated(int);
+	void on_filterBox_activated(int index);
 
 	/// reset filter
 	void on_resetFilterButton_clicked();
@@ -119,8 +119,26 @@ public slots:
 	/// handle comment changes
 	void on_comment_textChanged();
 
-	/// update comment text
+	/// handle prefix text field changes
+	void on_prefix_textEdited(QString text);
+
+	/// handle useMetadata checkbox changes
+	void on_useMetadata_clicked(bool state);
+
+	/// handle onlyParams checkbox changes
+	void on_onlyParams_clicked(bool state);
+
+	/// update prefix & comment text
 	void on_model_prefixChanged(const QString& text);
+
+	/// enable/disable useMetadata checkbox
+	void on_model_metaInfoChanged(bool state);
+	
+	/// update useMetadata checkbox state
+	void on_model_useMetaInfoChanged(bool state);
+
+	/// update onlyParams checkbox state
+	void on_model_onlyParamsChanged(bool state);
 
 protected:
 	/// designer gui

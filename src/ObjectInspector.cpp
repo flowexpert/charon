@@ -113,11 +113,6 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	if (_model) {
 		// disconnect everything from the old model
 		disconnect(_model, 0, this, 0);
-		disconnect(_model, 0, _ui->useMetadata, 0);
-		disconnect(_model, 0, _ui->onlyParams, 0);
-		disconnect(_ui->prefix, 0, _model, 0);
-		disconnect(_ui->useMetadata, 0, _model, 0);
-		disconnect(_ui->onlyParams, 0, _model, 0);
 	}
 
 	if (newModel) {
@@ -165,24 +160,16 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	_ui->onlyParams->setChecked(_model->onlyParams());
 
 	// update connections
-	connect(_ui->prefix, SIGNAL(textEdited(QString)), _model, SLOT(setPrefix(
-			QString)));
 	connect(_model, SIGNAL(statusMessage(QString)),
-			SIGNAL(statusMessage(QString)));
+		SIGNAL(statusMessage(QString)));
 	connect(_model, SIGNAL(prefixChanged(QString)),
-			SLOT(on_model_prefixChanged(QString)));
-
-	// connect additional widgets
-	connect(model(), SIGNAL(metaInfoChanged(bool)),
-		_ui->useMetadata, SLOT(setEnabled(bool)));
-	connect(_ui->useMetadata, SIGNAL(clicked(bool)),
-		model(), SLOT(setUseMetaInfo(bool)));
-	connect(model(), SIGNAL(useMetaInfoChanged(bool)),
-		_ui->useMetadata, SLOT(setChecked(bool)));
-	connect(_ui->onlyParams, SIGNAL(clicked(bool)),
-		model(), SLOT(setOnlyParams(bool)));
-	connect(model(), SIGNAL(onlyParamsChanged(bool)),
-		_ui->onlyParams, SLOT(setChecked(bool)));
+		SLOT(on_model_prefixChanged(QString)));
+	connect(_model, SIGNAL(metaInfoChanged(bool)),
+		SLOT(on_model_metaInfoChanged(bool)));
+	connect(_model, SIGNAL(useMetaInfoChanged(bool)),
+		SLOT(on_model_useMetaInfoChanged(bool)));
+	connect(_model, SIGNAL(onlyParamsChanged(bool)),
+		SLOT(on_model_onlyParamsChanged(bool)));
 
 	on_model_prefixChanged(_model->prefix());
 
@@ -318,4 +305,34 @@ void ObjectInspector::on_model_prefixChanged(const QString& prefix) {
 	if (locked) {
 		_commentFieldMutex->unlock();
 	}
+}
+
+void ObjectInspector::on_prefix_textEdited(QString text) {
+	if (_model) {
+		_model->setPrefix(text);
+	}
+}
+
+void ObjectInspector::on_useMetadata_clicked(bool state) {
+	if (_model) {
+		_model->setUseMetaInfo(state);
+	}
+}
+
+void ObjectInspector::on_onlyParams_clicked(bool state) {
+	if (_model) {
+		_model->setOnlyParams(state);
+	}
+}
+
+void ObjectInspector::on_model_metaInfoChanged(bool state) {
+	_ui->useMetadata->setEnabled(state);
+}
+
+void ObjectInspector::on_model_useMetaInfoChanged(bool state) {
+	_ui->useMetadata->setChecked(state);
+}
+
+void ObjectInspector::on_model_onlyParamsChanged(bool state) {
+	_ui->onlyParams->setChecked(state);
 }
