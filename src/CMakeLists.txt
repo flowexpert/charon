@@ -289,7 +289,18 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.h
 		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.hxx
 	)
-	
+	IF(QT4_FOUND)
+		SET(toggletimeout_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ToggleTimeout.h)
+		QT4_WRAP_CPP(toggletimeout_HEADERS_MOCKED ${toggletimeout_HEADERS_TOMOC})
+		ADD_LIBRARY(toggle SHARED
+			${toggletimeout_HEADERS_MOCKED}
+			ToggleTimeout.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/Toggle.h
+			${CHARON_UTILS_INCLUDE_DIR}/Toggle.hxx
+			Toggle.cpp
+		)
+		TARGET_LINK_LIBRARIES(toggle ${QT_LIBRARIES})
+	ENDIF(QT4_FOUND)
 	SET(Plugins_CImg
 		channelconverter
 		crop
@@ -333,6 +344,11 @@ IF(USE_CIMG)
 		size
 		fitsizes
 	)
+	IF(QT4_FOUND)
+		LIST(APPEND Plugins_CImg
+			toggle
+		)
+	ENDIF(QT4_FOUND)
 
 	LIST(APPEND Plugins
 		${Plugins_CImg}
