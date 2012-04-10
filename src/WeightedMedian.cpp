@@ -24,6 +24,7 @@
 /// Class name of the plugin
 #define TYPE WeightedMedian
 
+#define cliqueweight_EXPORTS
 #include <charon/WeightedMedian.hxx>
 
 /// Creates an instance of the plugin
