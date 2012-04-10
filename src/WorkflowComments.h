@@ -24,11 +24,13 @@
  */
 
 #ifndef WORKFLOWCOMMENTS_H_
-#define WORKFLOWCOMMENTS_H_	
+#define WORKFLOWCOMMENTS_H_
 
-class QTextEdit;
+#include <QTextEdit>
+
 class ObjectInspector;
 class ParameterFileModel;
+class QMutex;
 
 /// A widget to display comments for the current workflow
 class WorkflowComments : public QTextEdit {

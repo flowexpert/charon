@@ -709,7 +709,6 @@ void ParameterFileModel::setEditorComment(QString comment) {
 
 	// check if "editorcomment" entry already exists
 	for (int i = 0; i < rowCount(); i++) {
-		QString str = data(index(i,0)).toString();
 		if (data(index(i,0)).toString() == "editorcomment") {
 			QString str = comment;
 			// delete if empty
@@ -763,27 +762,27 @@ QStringList ParameterFileModel::mimeTypes() const {
 	return list;
 }
 
-bool ParameterFileModel::dropMimeData(const QMimeData *mimeData,
-	Qt::DropAction action, int row, int column, const QModelIndex &parent) {
+bool ParameterFileModel::dropMimeData(const QMimeData* mData,
+	Qt::DropAction action, int row, int column, const QModelIndex& pInd) {
 
 	// only accept text and files
 	QString content;
-	if (mimeData->hasUrls()) {
-		QList<QUrl> urlList = mimeData->urls();
+	if (mData->hasUrls()) {
+		QList<QUrl> urlList = mData->urls();
 		if (urlList.size() >= 1) {
 			content = urlList.at(0).path().mid(1);
 		}
 		for (int ii = 1; ii < urlList.size(); ii += 1) {
 			content += ";" + urlList.at(ii).path().mid(1);
 		}
-	} else if (mimeData->hasText()) {
-		content = mimeData->text();
+	} else if (mData->hasText()) {
+		content = mData->text();
 	} else {
-		return QAbstractTableModel::dropMimeData(mimeData, action,
-			row, column, parent);
+		return QAbstractTableModel::dropMimeData(mData, action,
+			row, column, pInd);
 	}
 	
-	setData(parent, content);
+	setData(pInd, content);
 
 	return true;
 }

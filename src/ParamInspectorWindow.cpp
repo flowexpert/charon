@@ -34,7 +34,9 @@
 ParamInspectorWindow::ParamInspectorWindow() :
 	QMainWindow() {
 	fileMenu = menuBar()->addMenu(tr("&File"));
-	_inspector = new ObjectInspector(this);
+	ParameterFileModel* model = new ParameterFileModel(
+			QString(),this,FileManager::instance().classesFile());
+	_inspector = new ObjectInspector(this,model);
 	_inspector->setEdit(true);
 
 	fileMenu->addAction(tr("&Open"), this,

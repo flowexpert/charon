@@ -77,12 +77,12 @@ public slots:
 	/// Open given file.
 	/** \param fName            file to open (empty: open file dialog)
 	 */
-	virtual void openFile(QString fName = QString::null);
+	virtual void openFile(QString fName = QString());
 
 	/// Open file containing metadata
 	/** \param fName            file to open (empty: open file dialog)
 	 */
-	virtual void openMetaData(QString fName = QString::null);
+	virtual void openMetaData(QString fName = QString());
 
 	/// Save File to it's old location.
 	virtual void saveFile() const;
@@ -98,6 +98,12 @@ public slots:
 	/// @param on       set editing
 	virtual void setEdit(bool on);
 
+	/// delete parameter
+	void delParam();
+
+private slots:
+	/// \name handle Gui events
+	// \{
 	/// Add new Parameter
 	void on_addButton_clicked();
 
@@ -127,27 +133,30 @@ public slots:
 
 	/// handle onlyParams checkbox changes
 	void on_onlyParams_clicked(bool state);
+	// \}
 
+	/// \name handle model events
+	/// (no on_... syntax to avoid connectSlotsByName misinterpretation)
+	// \{
 	/// update prefix & comment text
-	void on_model_prefixChanged(const QString& text);
+	void handle_model_prefixChanged(const QString& text);
 
 	/// enable/disable useMetadata checkbox
-	void on_model_metaInfoChanged(bool state);
+	void handle_model_metaInfoChanged(bool state);
 	
 	/// update useMetadata checkbox state
-	void on_model_useMetaInfoChanged(bool state);
+	void handle_model_useMetaInfoChanged(bool state);
 
 	/// update onlyParams checkbox state
-	void on_model_onlyParamsChanged(bool state);
+	void handle_model_onlyParamsChanged(bool state);
+	// \}
 
 protected:
 	/// designer gui
 	Ui::ObjectInspector* _ui;
 
 private:
-	PrefixValidator*    _validator;         ///< prefix validator
 	ParameterFileModel* _model;             ///< Used model to display
-	bool                _ownModel;          ///< Class has Ownership of _model
 	QMutex*             _commentFieldMutex; ///< lock for changes of comments
 };
 

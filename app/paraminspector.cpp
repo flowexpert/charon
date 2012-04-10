@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
 
 	ParamInspectorWindow window;
 	FileManager::dialogParent = &window;
-	window.resize(320, 480);
+	window.resize(620, 700);
 	window.show();
 #ifndef UNIX
 	QErrorMessage* handler = QErrorMessage::qtHandler();
