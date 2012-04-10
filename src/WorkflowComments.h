@@ -42,6 +42,8 @@ class WorkflowComments : public QTextEdit {
 		WorkflowComments(ObjectInspector* inspector,
 			QWidget* parent = 0);
 
+		~WorkflowComments();
+
 	public slots:
 		///	save the comment to the model
 		void save();

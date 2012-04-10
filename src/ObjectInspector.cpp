@@ -75,6 +75,7 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 ObjectInspector::~ObjectInspector() {
 	if (_ownModel)
 		delete _model;
+	delete _commentFieldMutex;
 	delete _ui;
 }
 
@@ -111,7 +112,9 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 
 	if (_model) {
 		// disconnect everything from the old model
-		disconnect(_model, 0, 0, 0);
+		disconnect(_model, 0, this, 0);
+		disconnect(_model, 0, _ui->useMetadata, 0);
+		disconnect(_model, 0, _ui->onlyParams, 0);
 		disconnect(_ui->prefix, 0, _model, 0);
 		disconnect(_ui->useMetadata, 0, _model, 0);
 		disconnect(_ui->onlyParams, 0, _model, 0);
@@ -157,13 +160,11 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	_ui->comment->setText("");
 
 	// update values
-	_ui->useMetadata->setEnabled(model()->metaInfo());
-	_ui->useMetadata->setChecked(model()->useMetaInfo());
-	_ui->onlyParams->setChecked(model()->onlyParams());
+	_ui->useMetadata->setEnabled(_model->metaInfo());
+	_ui->useMetadata->setChecked(_model->useMetaInfo());
+	_ui->onlyParams->setChecked(_model->onlyParams());
 
 	// update connections
-	connect(_model, SIGNAL(prefixChanged(QString)), _ui->prefix, SLOT(setText(
-			QString)));
 	connect(_ui->prefix, SIGNAL(textEdited(QString)), _model, SLOT(setPrefix(
 			QString)));
 	connect(_model, SIGNAL(statusMessage(QString)),
@@ -310,6 +311,7 @@ void ObjectInspector::on_comment_textChanged() {
 void ObjectInspector::on_model_prefixChanged(const QString& prefix) {
 	// update comment text area
 	bool locked = _commentFieldMutex->tryLock();
+	_ui->prefix->setText(prefix);
 	_ui->comment->setPlainText(_model->parameterFile().get(
 		prefix + ".editorcomment").replace(QRegExp("<br/?>"), "\n"));
 	_ui->commentBox->setEnabled(!prefix.isEmpty() && _model->prefixValid());
