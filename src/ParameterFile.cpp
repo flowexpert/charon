@@ -56,13 +56,13 @@ void ParameterFile::setConvertSlashes(bool convertSlashes) {
 }
 
 void ParameterFile::_set(std::string parameter, std::string value) {
-	_toLower(parameter);
 	if (isSet(parameter))
 		_setParams["[mod] " + parameter] = value;
 	else {
 		_setParams["      " + parameter] = value;
 		_parameterLines.push_back(parameter);
 	}
+	_toLower(parameter);
 	_params[parameter] = value;
 }
 
@@ -114,15 +114,22 @@ bool ParameterFile::load(std::string fileName) {
 
 std::vector<std::string> ParameterFile::getKeyList(std::string beginsWith) const {
 	std::vector<std::string> result;
+	_toLower(beginsWith);
 
-	// use parameterLines to preserve order
-	std::vector<std::string>::const_iterator i = _parameterLines.begin();
-	while (i != _parameterLines.end()) {
-		std::string key = *i;
-		if (key.length() && ((!beginsWith.length()) || key.substr(0,
-				beginsWith.length()) == beginsWith))
+	// use parameterLines to preserve order and case
+	std::vector<std::string>::const_iterator iter;
+	std::string key, keyL;
+	for (iter=_parameterLines.begin(); iter!=_parameterLines.end(); iter++) {
+		if (iter->empty()) {
+			continue;
+		}
+		key = keyL = *iter;
+		_toLower(keyL);
+		if (beginsWith.empty() ||
+				((keyL.length() >= beginsWith.length()) &&
+					(keyL.substr(0,beginsWith.length()) == beginsWith))) {
 			result.push_back(key);
-		++i;
+		}
 	}
 	return result;
 }
@@ -185,73 +192,61 @@ void ParameterFile::toStream(std::ostream& strm) const {
 
 void ParameterFile::fromStream(std::istream& strm) {
 	while (strm.good()) {
-		std::string key, value, line;
+		std::string key, line, value;
 		if (strm.peek() == '\n')
 			_parameterLines.push_back(""); //preserve empty lines
 		strm >> key;
 		key = StringTool::trim(key);
-		if (key != "") {
+		if (!key.empty()) {
 			if (key.substr(0, 1) != "#") {
-				line = "";
+				value = "";
 				bool cont = true;
-				do {
-					//allow spaces and empty strings as parameter value
-					getline(strm, value, '\n');
-					if (StringTool::trim(value) != "") {
-						std::string test = value.substr(value.length() - 2,
-								value.length() - 1);
-						//allow to continue line with this char sequence
-						cont = (test == " \\");
-						value = StringTool::trim(value);
-						if (cont && value.size() > 2)
-							value = value.substr(0, value.length() - 2);
-						else if (cont && value.size() <= 2)
-							value = "";
-						for (unsigned int i = 0; i < value.size(); ++i) {
-							//allow for comments after input
-							if (value[i] == '#') {
-								//conserve space before #
-								if (i && cont && value[i - 1] == ' ')
-									value
-											= StringTool::trim(value.substr(0,
-													i)) + " ";
-								else
-									value
-											= StringTool::trim(value.substr(0,
-													i));
-								break;
-							}
-						}
-						line += value;
-					} else
+				while (cont) {
+					// allow empty strings as parameter value
+					getline(strm, line);
+					line = StringTool::trim(line);
+					if (line.empty()) {
+						// stop continuing
 						cont = false;
-				} while (cont);
-
-				_toLower(key);
-				_params[key] = line;
-				_parameterLines.push_back(key);
+					}
+					else {
+						// strip comments (after input)
+						size_t cPos = line.find("#");
+						line = StringTool::trim(line.substr(0, cPos));
+						// handle line breaks (ending with '\')
+						const char& test = line.at(line.length()-1);
+						if ((cont = (test == '\\'))) {
+							line = line.substr(0, line.length()-1);
+						}
+						value += line;
+					}
+				}
+				_set(key,value);
 			} else {
 				//ignore whole line (when comment line)
-				getline(strm, value, '\n');
+				getline(strm, line);
 			}
 		}
 	}
 }
 
 void ParameterFile::erase(std::string parameter) {
-	_toLower(parameter);
 	if (!isSet(parameter))
 		throw ParameterFile::Unset("Parameter " + parameter + " not set");
 
 	// Add delete information into log list
-	_setParams["[del] " + parameter] = get<std::string> (parameter, "");
+	_setParams["[del] " + parameter] = get<std::string>(parameter);
 
 	// delete parameter from parameter store and parameterLines
+	_toLower(parameter);
 	_params.erase(parameter);
 
 	std::vector<std::string>::iterator pos = _parameterLines.begin();
+	std::string cur;
 	while (pos != _parameterLines.end()) {
-		if (*pos == parameter)
+		cur = *pos;
+		_toLower(cur);
+		if (cur == parameter)
 			break;
 		pos++;
 	}
