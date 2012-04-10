@@ -56,55 +56,49 @@ void WorkflowComments :: save() {
 	QString comment, oldPref;
 	ParameterFileModel* model;
 
-		comment = this -> toPlainText();
-	if (_textChangeLock->tryLock()) {
+	// Get the comment from the editor and escape the newlines to HTML
+	comment = this -> toPlainText();
+	comment.replace(QRegExp("\n"), "<br>");
 
-		// Get the comment from the editor and escape the newlines to HTML
-		comment = this -> toPlainText();
-		comment.replace(QRegExp("\n"), "<br>");
+	model = _inspector -> model();
 
-		model = _inspector -> model();
-
-		if (!model || !isEnabled()) {
-			// NOP if there is no model or if the widget is turned off
-		}
-		else { // start editing model
-			bool oldParam;
-			int i;
-
-			// store old values
-			oldPref = model -> prefix();
-			oldParam = model -> onlyParams();
-
-			// set them to editable values
-			model -> setPrefix( "" );
-			model -> setOnlyParams(false);
-		
-			// search for the index of the row containing the comment
-			for ( i = 0; i < model -> rowCount(); ++i ) {
-				if (model -> data( model -> index(i, 0)).toString()
-						.compare( "editorcomment", Qt::CaseInsensitive ) == 0 ) {
-					break;
-				}
-			}
-			// the entry doesn't exist yet, create it
-			if ( i >= model -> rowCount() ) {
-				model -> insertRow(i);
-				model -> setData( model -> index(i, 0), "editorcomment" );
-			}
-
-			QString oldV = model->data(model->index(i,1)).toString();
-			if (oldV != comment) {
-				model -> setData( model -> index(i, 1), comment );
-			}
-
-			// restore the old values
-			model -> setOnlyParams( oldParam );
-			model -> setPrefix( oldPref );
-		} // end editing model
-
-		_textChangeLock->unlock();
+	if (!model || !isEnabled()) {
+		// NOP if there is no model or if the widget is turned off
 	}
+	else { // start editing model
+		bool oldParam;
+		int i;
+
+		// store old values
+		oldPref = model -> prefix();
+		oldParam = model -> onlyParams();
+
+		// set them to editable values
+		model -> setPrefix( "" );
+		model -> setOnlyParams(false);
+		
+		// search for the index of the row containing the comment
+		for ( i = 0; i < model -> rowCount(); ++i ) {
+			if (model -> data( model -> index(i, 0)).toString()
+					.compare( "editorcomment", Qt::CaseInsensitive ) == 0 ) {
+				break;
+			}
+		}
+		// the entry doesn't exist yet, create it
+		if ( i >= model -> rowCount() ) {
+			model -> insertRow(i);
+			model -> setData( model -> index(i, 0), "editorcomment" );
+		}
+
+		QString oldV = model->data(model->index(i,1)).toString();
+		if (oldV != comment) {
+			model -> setData( model -> index(i, 1), comment );
+		}
+
+		// restore the old values
+		model -> setOnlyParams( oldParam );
+		model -> setPrefix( oldPref );
+	} // end editing model
 };
 
 void WorkflowComments :: load() {
