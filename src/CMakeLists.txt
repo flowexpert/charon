@@ -28,6 +28,8 @@ SET(TUCHULCHA_COMMON_SOURCES
 	imageManip.h
 	FileManager.cpp
 	FileManager.h
+	RecentFileHandler.cpp
+	RecentFileHandler.h
 )
 
 SET(EDITPARAM_SOURCES

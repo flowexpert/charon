@@ -151,11 +151,14 @@ private slots:
 	void handle_model_onlyParamsChanged(bool state);
 	// \}
 
-protected:
+private:
 	/// designer gui
 	Ui::ObjectInspector* _ui;
+	/// save settings like column widths
+	void _storeViewSettings() const;
+	/// restore settings like column widths
+	void _loadViewSettings();
 
-private:
 	ParameterFileModel* _model;             ///< Used model to display
 	QMutex*             _commentFieldMutex; ///< lock for changes of comments
 };

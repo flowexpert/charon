@@ -76,6 +76,7 @@ ObjectInspector::ObjectInspector(
 }
 
 ObjectInspector::~ObjectInspector() {
+	_storeViewSettings();
 	delete _commentFieldMutex;
 	delete _ui;
 }
@@ -107,6 +108,33 @@ void ObjectInspector::saveFileAs() const {
 		_model->save(fileName);
 }
 
+void ObjectInspector::_storeViewSettings() const {
+	if (_ui->view->model()) {
+		QSettings settings;
+		settings.beginGroup("ObjectInspector");
+
+		// store column widths
+		settings.setValue("column0", _ui->view->columnWidth(0));
+		settings.setValue("column1", _ui->view->columnWidth(1));
+		settings.setValue("column2", _ui->view->columnWidth(2));
+
+		settings.endGroup();
+	}
+}
+
+void ObjectInspector::_loadViewSettings() {
+	if (_ui->view->model()) {
+		QSettings settings;
+		settings.beginGroup("ObjectInspector");
+
+		_ui->view->setColumnWidth(0, settings.value("column0", 250).toInt());
+		_ui->view->setColumnWidth(1, settings.value("column1", 250).toInt());
+		_ui->view->setColumnWidth(2, settings.value("column2", 90).toInt());
+
+		settings.endGroup();
+	}
+}
+
 void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	if (newModel == _model)
 		return;
@@ -114,6 +142,9 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	bool locked = _commentFieldMutex->tryLock();
 
 	if (_model) {
+		// store view settings
+		_storeViewSettings();
+
 		// disconnect everything from the old model
 		disconnect(_model, 0, this, 0);
 	}
@@ -126,9 +157,7 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 
 	if (_model) {
 		// init view
-		_ui->view->setColumnWidth(0, 250);
-		_ui->view->setColumnWidth(1, 250);
-		_ui->view->setColumnWidth(2, 90);
+		_loadViewSettings();
 
 		// update validator
 		PrefixValidator* newValidator =

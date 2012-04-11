@@ -38,7 +38,7 @@ class FlowWidget : public QMdiSubWindow {
 
 public:
 	///	Default constructor.
-	///	@param parent		pointer to parent widget
+	///	@param parent        pointer to parent widget
 	FlowWidget(QWidget* parent = 0);
 
 	/// Default destructor.
@@ -81,12 +81,12 @@ public slots:
 
 signals:
 	/// Inform about changed model
-	///	@param model	new model
+	///	@param model        new model
 	void modelChanged(GraphModel* model);
 
 	/// Send status message.
-	/// @param msg			message
-	/// @param timeout		time to show the message
+	/// @param msg          message
+	/// @param timeout      time to show the message
 	void statusMessage(const QString& msg, int timeout) const;
 
 protected:

@@ -50,8 +50,6 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 		this, SLOT(updateFileName(QString)));
 	TuchulchaWindow* main = qobject_cast<TuchulchaWindow*>(parent()->parent());
 	Q_ASSERT(main);
-	connect(model(), SIGNAL(fileNameChanged (QString)),
-		main, SLOT(setCurrentFile(QString)));
 	connect(model(), SIGNAL(modified(bool)),
 		this, SLOT(modify(bool)));
 	connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
