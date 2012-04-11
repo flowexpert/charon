@@ -34,7 +34,7 @@ class PriorityBox : public QComboBox {
 	Q_OBJECT
 
 	/// priority value shown/modified in this combo box
-	Q_PROPERTY(uint priority READ priority WRITE setPriority USER true);
+	Q_PROPERTY(uint priority READ priority WRITE setPriority USER true)
 
 public:
 	/// Default constructor, setting parent widget.

@@ -27,7 +27,7 @@
 #include <QMdiArea>
 #include <QtGui>
 
-CentralMdiArea::CentralMdiArea(QWidget* parent) : QMdiArea(parent) {
+CentralMdiArea::CentralMdiArea(QWidget* pp) : QMdiArea(pp) {
 	setAcceptDrops(true);
 	viewport()->setAcceptDrops(true);
 }

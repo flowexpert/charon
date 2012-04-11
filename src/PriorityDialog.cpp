@@ -27,14 +27,14 @@
 
 #include <QDialog>
 
-PriorityDialog::PriorityDialog(QWidget* parent, int selection) :
-	QDialog(parent)
+PriorityDialog::PriorityDialog(QWidget* pp, int sel) :
+	QDialog(pp)
 {
 	_ui = new Ui::PriorityDialog;
 	_ui->setupUi(this);
 
-	_selection = selection;
-	_ui->priorityBox->setCurrentIndex(selection);
+	_selection = sel;
+	_ui->priorityBox->setCurrentIndex(sel);
 }
 
 PriorityDialog::~PriorityDialog() {

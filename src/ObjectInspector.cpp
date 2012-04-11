@@ -39,23 +39,23 @@
 #include "ObjectInspector.moc"
 #include "ui_ObjectInspector.h"
 
-ObjectInspector::ObjectInspector(QWidget* myParent,
-		ParameterFileModel* newModel) :
-	QWidget(myParent), _validator(0), _ownModel(true) {
+ObjectInspector::ObjectInspector(
+			QWidget* myParent, ParameterFileModel* newModel) :
+	QWidget(myParent), _model(0)
+{
 	_ui = new Ui::ObjectInspector;
 	_ui->setupUi(this);
 
 	_commentFieldMutex = new QMutex(QMutex::NonRecursive);
 
 	// init model
-	_model = new ParameterFileModel("", this);
-	setModel(newModel);
+	//_model = new ParameterFileModel("", this);
 
-	// init view
-	_ui->view->setColumnWidth(0, 120);
-	_ui->view->setColumnWidth(1, 120);
-	_ui->view->setColumnWidth(2, 90);
+	// use temporary model to set up view
+	ParameterFileModel tempModel;
+	setModel(&tempModel);
 
+	// set up delegates
 	InspectorDelegate* delegate1 = new InspectorDelegate(this);
 	_ui->view->setItemDelegateForColumn(1, delegate1);
 
@@ -68,23 +68,26 @@ ObjectInspector::ObjectInspector(QWidget* myParent,
 	delegate2->setItemEditorFactory(ef);
 	_ui->view->setItemDelegateForColumn(2, delegate2);
 
+	// unregister temporary model
+	setModel(newModel);
+
 	// disable prefix editing and hide buttonFrame
 	setEdit(false);
 }
 
 ObjectInspector::~ObjectInspector() {
-	if (_ownModel)
-		delete _model;
 	delete _commentFieldMutex;
 	delete _ui;
 }
 
 void ObjectInspector::openFile(QString fName) {
+	if (!_model)
+		return;
 	_model->load(fName);
 }
 
 void ObjectInspector::saveFile() const {
-	if (!isEnabled())
+	if (!_model || !isEnabled())
 		return;
 	if (_model->fileName().isEmpty())
 		saveFileAs();
@@ -93,7 +96,7 @@ void ObjectInspector::saveFile() const {
 }
 
 void ObjectInspector::saveFileAs() const {
-	if (!isEnabled())
+	if (!_model || !isEnabled())
 		return;
 	QString oldPath = _model->fileName();
 	if (oldPath.isEmpty())
@@ -115,63 +118,57 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 		disconnect(_model, 0, this, 0);
 	}
 
-	if (newModel) {
-		_ui->view->setModel(newModel);
-
-		// delete model if class has ownership
-		if (_ownModel && _model)
-			delete _model;
-		_ownModel = false;
-	} else {
-		// create empty model
-		newModel = new ParameterFileModel();
-		_ui->view->setModel(newModel);
-
-		// delete old model if class has ownership
-		if (_ownModel)
-			delete _model;
-		_ownModel = true;
-	}
+	_ui->view->setModel(newModel);
 
 	// commit changes
 	_model = newModel;
+	setEnabled(_model);
 
-	Q_ASSERT(_model);
+	if (_model) {
+		// init view
+		_ui->view->setColumnWidth(0, 250);
+		_ui->view->setColumnWidth(1, 250);
+		_ui->view->setColumnWidth(2, 90);
 
-	// update validator
-	PrefixValidator* newValidator =
-			new PrefixValidator(_model->parameterFile(),_ui->prefix);
-	_ui->prefix->setValidator(newValidator);
+		// update validator
+		PrefixValidator* newValidator =
+				new PrefixValidator(_model->parameterFile(),_ui->prefix);
+		QValidator* oldValidator = (QValidator*) _ui->prefix->validator();
+		_ui->prefix->setValidator(newValidator);
+		if (oldValidator) {
+			oldValidator->deleteLater();
+		}
 
-	if (_validator)
-		delete _validator;
-	_validator = newValidator;
+		// update textEdit content
+		_ui->prefix->setText(_model->prefix());
 
-	// update textEdit content
-	_ui->prefix->setText(_model->prefix());
+		// empty comment text area
+		// text will be updated again, when an item is selected
+		_ui->comment->setText("");
 
-	// empty comment text area
-	// text will be updated again, when an item is selected
-	_ui->comment->setText("");
+		// update values
+		_ui->useMetadata->setEnabled(_model->metaInfo());
+		_ui->useMetadata->setChecked(_model->useMetaInfo());
+		_ui->onlyParams->setChecked(_model->onlyParams());
 
-	// update values
-	_ui->useMetadata->setEnabled(_model->metaInfo());
-	_ui->useMetadata->setChecked(_model->useMetaInfo());
-	_ui->onlyParams->setChecked(_model->onlyParams());
+		// update connections
+		connect(_model, SIGNAL(statusMessage(QString)),
+			SIGNAL(statusMessage(QString)));
+		connect(_model, SIGNAL(prefixChanged(QString)),
+			SLOT(handle_model_prefixChanged(QString)));
+		connect(_model, SIGNAL(metaInfoChanged(bool)),
+			SLOT(handle_model_metaInfoChanged(bool)));
+		connect(_model, SIGNAL(useMetaInfoChanged(bool)),
+			SLOT(handle_model_useMetaInfoChanged(bool)));
+		connect(_model, SIGNAL(onlyParamsChanged(bool)),
+			SLOT(handle_model_onlyParamsChanged(bool)));
 
-	// update connections
-	connect(_model, SIGNAL(statusMessage(QString)),
-		SIGNAL(statusMessage(QString)));
-	connect(_model, SIGNAL(prefixChanged(QString)),
-		SLOT(on_model_prefixChanged(QString)));
-	connect(_model, SIGNAL(metaInfoChanged(bool)),
-		SLOT(on_model_metaInfoChanged(bool)));
-	connect(_model, SIGNAL(useMetaInfoChanged(bool)),
-		SLOT(on_model_useMetaInfoChanged(bool)));
-	connect(_model, SIGNAL(onlyParamsChanged(bool)),
-		SLOT(on_model_onlyParamsChanged(bool)));
-
-	on_model_prefixChanged(_model->prefix());
+		handle_model_prefixChanged(_model->prefix());
+	}
+	else {
+		_ui->prefix->clear();
+		_ui->comment->clear();
+	}
 
 	if (locked) {
 		_commentFieldMutex->unlock();
@@ -190,112 +187,130 @@ void ObjectInspector::setEdit(bool on) {
 }
 
 void ObjectInspector::openMetaData(QString fname) {
-	if (!QFileInfo(fname).exists()) {
-		fname = QFileDialog::getOpenFileName(0, tr("Open File"),
-				FileManager::instance().classesFile(),
-				tr("ParameterFile (*.*)"));
+	if (_model) {
+		if (!QFileInfo(fname).exists()) {
+			fname = QFileDialog::getOpenFileName(0, tr("Open File"),
+					FileManager::instance().classesFile(),
+					tr("ParameterFile (*.*)"));
+		}
+		_model->loadMetaInfo(fname);
 	}
-	_model->loadMetaInfo(fname);
+}
+
+void ObjectInspector::delParam() {
+	on_deleteButton_clicked();
 }
 
 void ObjectInspector::on_addButton_clicked() {
-	model()->insertRow(model()->rowCount(QModelIndex()), QModelIndex());
+	if (_model) {
+		_model->insertRow(model()->rowCount(QModelIndex()), QModelIndex());
+	}
 }
 
 void ObjectInspector::on_deleteButton_clicked() {
-	QItemSelectionModel* selectionModel = _ui->view->selectionModel();
-	uint rows = _ui->view->model()->rowCount();
+	if (_model) {
+		QItemSelectionModel* selectionModel = _ui->view->selectionModel();
+		uint rows = _model->rowCount();
 
-	// collect selected rows
-	std::stack<int> rowStack;
-	for (uint i = 0; i < rows; i++)
-		if (selectionModel->rowIntersectsSelection(i, QModelIndex()))
-			rowStack.push(i);
+		// collect selected rows
+		std::stack<int> rowStack;
+		for (uint i = 0; i < rows; i++)
+			if (selectionModel->rowIntersectsSelection(i, QModelIndex()))
+				rowStack.push(i);
 
-	if (!rowStack.size()) {
-		QMessageBox::warning(this, tr("delete failed"), tr(
-				"Please select an item to delete first."));
-		return;
-	}
+		if (!rowStack.size()) {
+			QMessageBox::warning(this, tr("delete failed"), tr(
+					"Please select an item to delete first."));
+			return;
+		}
 
-	// delete rows, reversed to avoid row movement below
-	while (rowStack.size() > 0) {
-		model()->removeRow(rowStack.top(), QModelIndex());
-		rowStack.pop();
-	}
-}
-
-void ObjectInspector::on_clearButton_clicked() {
-	QMessageBox mbox(QMessageBox::Question, tr("confirm delete"), tr(
-			"Do you really want to delete the model content?"));
-	mbox.addButton(QMessageBox::Yes);
-	mbox.addButton(QMessageBox::No);
-	mbox.setDefaultButton(QMessageBox::No);
-	mbox.setEscapeButton(QMessageBox::No);
-	mbox.exec();
-	if (mbox.result() == QMessageBox::Yes) {
-		model()->clear();
-		emit statusMessage(tr("cleared model content"));
-	}
-}
-
-void ObjectInspector::on_setPriorityButton_clicked() {
-	QItemSelectionModel* selectionModel = _ui->view->selectionModel();
-	uint rows = _ui->view->model()->rowCount();
-
-	// collect selected rows
-	std::stack<int> rowStack;
-	for (uint i = 0; i < rows; i++)
-		if (selectionModel->rowIntersectsSelection(i, QModelIndex()))
-			rowStack.push(i);
-
-	if (!rowStack.size()) {
-		return;
-	}
-
-	// old value, if only one row selected
-	int before = 0;
-	if (rowStack.size() == 1) {
-		before = _model->data(_model->index(rowStack.top(), 2), Qt::EditRole).toInt();
-	}
-
-	// open dialog
-	PriorityDialog dlg(this, before);
-
-	if (dlg.exec() == QDialog::Rejected)
-		return;
-
-	int priority = dlg.selection();
-
-	// determine if change needed
-	if (priority != before || rowStack.size() > 1) {
-		// change priority
+		// delete rows, reversed to avoid row movement below
 		while (rowStack.size() > 0) {
-			_model->setData(_model->index(rowStack.top(), 2), QVariant(priority));
+			_model->removeRow(rowStack.top(), QModelIndex());
 			rowStack.pop();
 		}
 	}
 }
 
+void ObjectInspector::on_clearButton_clicked() {
+	if (_model) {
+		QMessageBox mbox(QMessageBox::Question, tr("confirm delete"), tr(
+				"Do you really want to delete the model content?"));
+		mbox.addButton(QMessageBox::Yes);
+		mbox.addButton(QMessageBox::No);
+		mbox.setDefaultButton(QMessageBox::No);
+		mbox.setEscapeButton(QMessageBox::No);
+		mbox.exec();
+		if (mbox.result() == QMessageBox::Yes) {
+			_model->clear();
+			emit statusMessage(tr("cleared model content"));
+		}
+	}
+}
+
+void ObjectInspector::on_setPriorityButton_clicked() {
+	if (_model) {
+		QItemSelectionModel* selectionModel = _ui->view->selectionModel();
+		uint rows = _ui->view->model()->rowCount();
+
+		// collect selected rows
+		std::stack<int> rowStack;
+		for (uint i = 0; i < rows; i++)
+			if (selectionModel->rowIntersectsSelection(i, QModelIndex()))
+				rowStack.push(i);
+
+		if (!rowStack.size()) {
+			return;
+		}
+
+		// old value, if only one row selected
+		int before = 0;
+		if (rowStack.size() == 1) {
+			before = _model->data(_model->index(rowStack.top(), 2), Qt::EditRole).toInt();
+		}
+
+		// open dialog
+		PriorityDialog dlg(this, before);
+
+		if (dlg.exec() == QDialog::Rejected)
+			return;
+
+		int priority = dlg.selection();
+
+		// determine if change needed
+		if (priority != before || rowStack.size() > 1) {
+			// change priority
+			while (rowStack.size() > 0) {
+				_model->setData(_model->index(rowStack.top(), 2), QVariant(priority));
+				rowStack.pop();
+			}
+		}
+	}
+}
+
 void ObjectInspector::on_filterBox_activated(int index) {
-	_model->setMinPriority(index);
+	if (_model) {
+		_model->setMinPriority(index);
+	}
 }
 
 void ObjectInspector::on_resetFilterButton_clicked() {
-	_ui->filterBox->setCurrentIndex(0);
-	_model->setMinPriority(0);
-	_model->setPrefix("");
+	if (_model) {
+		_ui->filterBox->setCurrentIndex(0);
+		_model->setMinPriority(0);
+		_model->setPrefix("");
+	}
 }
 
 void ObjectInspector::on_comment_textChanged() {
-	if (_commentFieldMutex->tryLock()) {
+	if (_model && _commentFieldMutex->tryLock()) {
 		_model->setEditorComment(_ui->comment->toPlainText().replace(
 			QRegExp("\n"), "<br/>"));
 		_commentFieldMutex->unlock();
 	}
 }
 
-void ObjectInspector::on_model_prefixChanged(const QString& prefix) {
+void ObjectInspector::handle_model_prefixChanged(const QString& prefix) {
 	// update comment text area
 	bool locked = _commentFieldMutex->tryLock();
 	_ui->prefix->setText(prefix);
@@ -325,14 +340,14 @@ void ObjectInspector::on_onlyParams_clicked(bool state) {
 	}
 }
 
-void ObjectInspector::on_model_metaInfoChanged(bool state) {
+void ObjectInspector::handle_model_metaInfoChanged(bool state) {
 	_ui->useMetadata->setEnabled(state);
 }
 
-void ObjectInspector::on_model_useMetaInfoChanged(bool state) {
+void ObjectInspector::handle_model_useMetaInfoChanged(bool state) {
 	_ui->useMetadata->setChecked(state);
 }
 
-void ObjectInspector::on_model_onlyParamsChanged(bool state) {
+void ObjectInspector::handle_model_onlyParamsChanged(bool state) {
 	_ui->onlyParams->setChecked(state);
 }

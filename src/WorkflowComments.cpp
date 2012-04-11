@@ -23,13 +23,13 @@
  *	\author <a href=mailto:e.koenigs@stud.uni-heidelberg.de>Eric Koenigs</a>
  */
 
+#include "WorkflowComments.h"
 
 #include <QVBoxLayout>
 #include <QRegExp>
 #include <QTextEdit>
 #include <QMutex>
 
-#include "WorkflowComments.h"
 #include "QParameterFile.h"
 #include "ParameterFileModel.h"
 #include "ObjectInspector.h"
@@ -41,14 +41,13 @@ WorkflowComments :: WorkflowComments(
 		QWidget* myParent) :
 	QTextEdit(myParent),
 	_inspector(inspector),
-	_model(0) {
-
+	_model(0)
+{
 	this -> setAcceptRichText(false);
 
 	_textChangeLock = new QMutex();
 
-	connect( this, SIGNAL(textChanged()),
-			 this, SLOT(save()) );
+	connect(this, SIGNAL(textChanged()), SLOT(save()));
 }
 
 WorkflowComments::~WorkflowComments() {
@@ -56,81 +55,67 @@ WorkflowComments::~WorkflowComments() {
 }
 
 void WorkflowComments :: save() {
-	if (_textChangeLock->tryLock()) {
-		QString comment, oldPref;
-		ParameterFileModel* model;
+	// Get the comment from the editor and escape the newlines to HTML
+	QString comment = this -> toPlainText();
+	comment.replace(QRegExp("\n"), "<br>");
 
-		// Get the comment from the editor and escape the newlines to HTML
-		comment = this -> toPlainText();
-		comment.replace(QRegExp("\n"), "<br>");
+	ParameterFileModel* model = _inspector -> model();
 
-		model = _inspector -> model();
+	// start editing model
+	if (model && isEnabled() && _textChangeLock->tryLock()) {
+		// store old values
+		QString oldPref = model -> prefix();
+		bool oldParam = model -> onlyParams();
 
-		if (!model || !isEnabled()) {
-			// NOP if there is no model or if the widget is turned off
+		// set them to editable values
+		model -> setPrefix( "" );
+		model -> setOnlyParams(false);
+
+		// search for the index of the row containing the comment
+		int i;
+		for ( i = 0; i < model -> rowCount(); ++i ) {
+			if (model -> data( model -> index(i, 0)).toString()
+					.compare( "editorcomment", Qt::CaseInsensitive ) == 0 ) {
+				break;
+			}
 		}
-		else { // start editing model
-			bool oldParam;
-			int i;
+		// the entry doesn't exist yet, create it
+		if ( i >= model -> rowCount() ) {
+			model -> insertRow(i);
+			model -> setData( model -> index(i, 0), "editorcomment" );
+		}
 
-			// store old values
-			oldPref = model -> prefix();
-			oldParam = model -> onlyParams();
+		QString oldV = model->data(model->index(i,1)).toString();
+		if (oldV != comment) {
+			model -> setData( model -> index(i, 1), comment );
+		}
 
-			// set them to editable values
-			model -> setPrefix( "" );
-			model -> setOnlyParams(false);
-		
-			// search for the index of the row containing the comment
-			for ( i = 0; i < model -> rowCount(); ++i ) {
-				if (model -> data( model -> index(i, 0)).toString()
-						.compare( "editorcomment", Qt::CaseInsensitive ) == 0 ) {
-					break;
-				}
-			}
-			// the entry doesn't exist yet, create it
-			if ( i >= model -> rowCount() ) {
-				model -> insertRow(i);
-				model -> setData( model -> index(i, 0), "editorcomment" );
-			}
+		// restore the old values
+		model -> setOnlyParams( oldParam );
+		model -> setPrefix( oldPref );
+	} // end editing model
 
-			QString oldV = model->data(model->index(i,1)).toString();
-			if (oldV != comment) {
-				model -> setData( model -> index(i, 1), comment );
-			}
-
-			// restore the old values
-			model -> setOnlyParams( oldParam );
-			model -> setPrefix( oldPref );
-		} // end editing model
-
-		_textChangeLock->unlock();
-	}
+	_textChangeLock->unlock();
 }
 
 void WorkflowComments :: load() {
 	// Don't do anything if save() caused load() to be called.
 	if (_textChangeLock->tryLock()) {
-		ParameterFileModel* model;
-		QString comment, curComment;
-
 		// Get the current model
-		model = _inspector -> model();
-		if (model == 0) {
-			// There is no model, NOP.
-			return;
-		}
-		// Get the comment from the parameterfile
-		const QParameterFile& pf = model -> parameterFile();
-		comment = pf.get( "editorcomment" );
+		ParameterFileModel* model = _inspector -> model();
+		if (model) {
+			// Get the comment from the parameterfile
+			const QParameterFile& pf = model -> parameterFile();
+			QString comment = pf.get( "editorcomment" );
 
-		// Replace HTML newlines with escaped newlines
-		comment.replace(QRegExp("<br\\s*/?>", Qt::CaseInsensitive), "\n");
+			// Replace HTML newlines with escaped newlines
+			comment.replace(QRegExp("<br\\s*/?>", Qt::CaseInsensitive), "\n");
 
-		// Update the text field if it has changed
-		curComment = this -> toPlainText();
-		if ( curComment != comment ) {
-			this -> setPlainText( comment );
+			// Update the text field if it has changed
+			QString curComment = this -> toPlainText();
+			if ( curComment != comment ) {
+				this -> setPlainText( comment );
+			}
 		}
 		_textChangeLock->unlock();
 	}
@@ -142,16 +127,16 @@ void WorkflowComments :: update( ParameterFileModel* model ) {
 		// model didn't change, NOP
 		return;
 	}
-	// if a model exists, disconnect its load slot,
-	// and set it as the active model
+	// if a model exists, disconnect it,
+	// and set the new model as the active model
 	if (_model) {
-		disconnect(_model, 0, this, SLOT(load()));
+		disconnect(_model, 0, this, 0);
 		_model = model; 
 	}
 	// reconnect the load slot to the new model
-	connect(model,
-			SIGNAL(modelReset()),
-			this,
-			SLOT(load()));
-	load();
+	if (_model) {
+		connect(_model, SIGNAL(modelReset()), SLOT(load()));
+		load();
+	}
+	setEnabled(_model);
 }

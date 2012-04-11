@@ -26,20 +26,20 @@
 
 #include <QComboBox>
 
-PriorityBox::PriorityBox(QWidget* parent, uint priority, bool strings) :
-	QComboBox(parent)
+PriorityBox::PriorityBox(QWidget* pp, uint prio, bool strings) :
+	QComboBox(pp)
 {
-    QIcon icon1;
-    icon1.addFile(QString::fromUtf8(":/icons/priorityGrey.png"),
+	QIcon icon1;
+	icon1.addFile(QString::fromUtf8(":/icons/priorityGrey.png"),
 		QSize(), QIcon::Normal, QIcon::Off);
-    QIcon icon2;
-    icon2.addFile(QString::fromUtf8(":/icons/priorityGreen.png"),
+	QIcon icon2;
+	icon2.addFile(QString::fromUtf8(":/icons/priorityGreen.png"),
 		QSize(), QIcon::Normal, QIcon::Off);
-    QIcon icon3;
-    icon3.addFile(QString::fromUtf8(":/icons/priorityYellow.png"),
+	QIcon icon3;
+	icon3.addFile(QString::fromUtf8(":/icons/priorityYellow.png"),
 		QSize(), QIcon::Normal, QIcon::Off);
-    QIcon icon4;
-    icon4.addFile(QString::fromUtf8(":/icons/priorityRed.png"),
+	QIcon icon4;
+	icon4.addFile(QString::fromUtf8(":/icons/priorityRed.png"),
 		QSize(), QIcon::Normal, QIcon::Off);
 
 	if (strings) {
@@ -54,7 +54,7 @@ PriorityBox::PriorityBox(QWidget* parent, uint priority, bool strings) :
 		addItem(icon4, QString());
 	}
 
-	setCurrentIndex(priority);
+	setCurrentIndex(prio);
 }
 
 uint PriorityBox::priority() const {
