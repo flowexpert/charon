@@ -1,4 +1,4 @@
-/*  Copyright (C) 2011 Jens-Malte Gottfried
+/*  Copyright (C) 2012 David Stronczek
 
 	This file is part of Tuchulcha.
 
