@@ -27,31 +27,28 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QWheelEvent>
+#include <QDir>
 #include "TuchulchaWindow.h"
 #include "GraphModel.h"
 #include "NodeHandler.h"
 
 #include "FlowWidget.moc"
 
-FlowWidget::FlowWidget(QWidget* myParent) :
+FlowWidget::FlowWidget(GraphModel* modelIn, QWidget* myParent) :
 		QMdiSubWindow(myParent) {
 	// init GUI
 	_viewer = new QGraphicsView(this);
 	_viewer->setRenderHints(QPainter::Antialiasing);
 	_viewer->setAcceptDrops(true);
-	_nodehandler = new NodeHandler(_viewer);
-	connect(_nodehandler, SIGNAL(statusMessage(QString, int)),
-		SIGNAL(statusMessage(QString, int)));
+	_nodehandler = new NodeHandler(modelIn, _viewer);
 	_viewer->setScene(_nodehandler);
 
 	setWidget(_viewer);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 	connect(model(), SIGNAL(fileNameChanged (QString)),
 		this, SLOT(updateFileName(QString)));
-	TuchulchaWindow* main = qobject_cast<TuchulchaWindow*>(parent()->parent());
-	Q_ASSERT(main);
-	connect(model(), SIGNAL(fileNameChanged (QString)),
-		main, SLOT(setCurrentFile(QString)));
+	connect(_nodehandler, SIGNAL(statusMessage(QString)),
+		SIGNAL(statusMessage(QString)));
 	connect(model(), SIGNAL(modified(bool)),
 		this, SLOT(modify(bool)));
 	connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
@@ -60,26 +57,17 @@ FlowWidget::FlowWidget(QWidget* myParent) :
 		SLOT(updateTooltip(QString)));
 	connect(this, SIGNAL(windowStateChanged(Qt::WindowStates, Qt::WindowStates)),
 		this, SLOT(zoomFit(Qt::WindowStates, Qt::WindowStates)));
-	setWindowTitle(tr("New file")+" [*]");
-}
-
-FlowWidget::~FlowWidget() {
+	updateFileName(model()->fileName());
 }
 
 void FlowWidget::updateFileName(const QString& fileName) {
-	setWindowTitle(QString("%1 [*]")
-			.arg(QFileInfo(fileName).absoluteFilePath()));
-}
-
-void FlowWidget::load(const QString& fileName) {
-	if (_nodehandler->load(fileName)) {
-		setWindowTitle(QString("%1 [*]")
-			.arg(QFileInfo(model()->fileName())
-				.absoluteFilePath()));
-		zoomFit();
+	if (fileName.isEmpty() || fileName == QDir::homePath()) {
+		setWindowTitle(tr("New file")+" [*]");
 	}
-	else
-		close();
+	else {
+		setWindowTitle(QString("%1 [*]")
+				.arg(QFileInfo(fileName).absoluteFilePath()));
+	}
 }
 
 GraphModel* FlowWidget::model() {

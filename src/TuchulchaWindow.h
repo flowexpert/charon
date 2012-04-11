@@ -34,6 +34,7 @@ class ObjectInspector;
 class ParameterFileModel;
 class NodeTreeView;
 class QAction;
+class RecentFileHandler;
 
 ///	Management of the application's main window.
 class TuchulchaWindow : public QMainWindow {
@@ -79,11 +80,11 @@ public slots:
 	/// runn current workflow
 	void runWorkflow();
 
-	/// insert file as current file to recent file list
-	void setCurrentFile(const QString& fileName);
-
 	/// edit options
 	void options();
+
+	/// print status message
+	void showMessage(QString msg) const;
 
 signals:
 	/// inform about changed graph to edit
@@ -111,37 +112,20 @@ private slots:
 	void _showAboutQt();
 
 	/// update windows when new flowchart has been selected
-	/// \param window	activated window
+	/// \param window   activated window
 	void _windowActivated(QMdiSubWindow* window);
-
-	/// open recent file
-	void _openRecentFile();
-
-	/// updated the list of recent files
-	void _updateRecentFileActions();
 
 private:
 	/// Central widget to manage multiple windows
 	CentralMdiArea* _centralArea;
+	/// recent file handler
+	RecentFileHandler* _rfHandler;
 	/// current flow widget
 	FlowWidget* _flow;
 	/// object inspector
 	ObjectInspector* _inspector;
 	/// selector widget
 	NodeTreeView* _selector;
-
-	/// separator above recent files
-	QAction* _separatorAct;
-	/// maximal number of recent files
-	enum { _maxRecentFiles = 5 };
-	/// actions to open recent files
-	QAction* _recentFileActs[_maxRecentFiles];
-
-	/// strip file name
-	/** \param fullFileName    filenane to strip
-	 *  \returns               stripped name
-	 */
-	QString _strippedName(const QString& fullFileName) const;
 };
 
 #endif /* MAINWINDOW_H_ */

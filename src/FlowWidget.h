@@ -37,12 +37,11 @@ class FlowWidget : public QMdiSubWindow {
 	Q_OBJECT
 
 public:
-	///	Default constructor.
-	///	@param parent		pointer to parent widget
-	FlowWidget(QWidget* parent = 0);
-
-	/// Default destructor.
-	virtual ~FlowWidget();
+	/// Default constructor.
+	/** \param model         model to be used within this flow widget
+	 *  \param parent        pointer to parent widget
+	 */
+	FlowWidget(GraphModel* model, QWidget* parent = 0);
 
 	/// Get used model
 	GraphModel* model();
@@ -51,13 +50,6 @@ public:
 	const GraphModel* model() const;
 
 public slots:
-	/// Load ParameterFile and display content.
-	/** The file to load can be specified in an openFile
-	 *  dialog.
-	 *  \param fileName     file to open (file dialog if empty)
-	 */
-	void load(const QString& fileName = "");
-
 	/// Save flowchart diagram to graphics file.
 	void saveFlowChart() const;
 
@@ -81,13 +73,12 @@ public slots:
 
 signals:
 	/// Inform about changed model
-	///	@param model	new model
+	/// @param model        new model
 	void modelChanged(GraphModel* model);
 
 	/// Send status message.
-	/// @param msg			message
-	/// @param timeout		time to show the message
-	void statusMessage(const QString& msg, int timeout) const;
+	/// @param msg          message
+	void statusMessage(QString msg) const;
 
 protected:
 	/// viewer

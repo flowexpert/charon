@@ -491,7 +491,7 @@ bool ParameterFileModel::load(const QString& fName) {
 				guess = QDir::homePath();
 		}
 		fromDialog = QFileDialog::getOpenFileName(0, tr("Open File"),
-				guess, tr("ParameterFile (*.*)"));
+				guess, tr("ParameterFile (*.wrp);;All Files (*.*)"));
 	}
 	if (fromDialog.isEmpty())
 		return false;

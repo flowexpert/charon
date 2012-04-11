@@ -37,6 +37,7 @@
 #include "FileManager.h"
 #include "LogDialog.h"
 #include "OptionsDialog.h"
+#include "RecentFileHandler.h"
 
 #include "TuchulchaWindow.moc"
 
@@ -116,8 +117,6 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 			SIGNAL(modelChanged(ParameterFileModel*)),
 			commentWidget,
 			SLOT(update(ParameterFileModel*)));
-
-
 
 	// add widgets to dock area
 	addDockWidget(Qt::RightDockWidgetArea, inspectorWidget);
@@ -216,15 +215,9 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 		SLOT(saveFile()), QKeySequence(tr("Ctrl+S")));
 	fileMenu->addAction(QIcon(":/icons/save_as.png"), tr("Save &as..."),
 		_inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
-	_separatorAct = fileMenu->addSeparator();
-	for (int i = 0; i < _maxRecentFiles; ++i) {
-		_recentFileActs[i] = new QAction(this);
-		_recentFileActs[i]->setVisible(false);
-		connect(_recentFileActs[i], SIGNAL(triggered()),
-			this, SLOT(_openRecentFile()));
-		fileMenu->addAction(_recentFileActs[i]);
-	}
-	_updateRecentFileActions();
+	_rfHandler = new RecentFileHandler(this);
+	_rfHandler->registerRecentFileEntries(fileMenu);
+	connect(_rfHandler,SIGNAL(openFile(QString)),SLOT(open(QString)));
 	fileMenu->addSeparator();
 	fileMenu->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
 			this, SLOT(updateMetadata()), QKeySequence("Ctrl+U"));
@@ -377,24 +370,46 @@ void TuchulchaWindow::_showAboutQt() {
 }
 
 void TuchulchaWindow::open(const QString& fileName, bool maximized) {
-	FlowWidget* flowWidget = new FlowWidget(_centralArea);
-	_centralArea->addSubWindow(flowWidget);
-	connect(flowWidget, SIGNAL(statusMessage(const QString&, int)),
-			statusBar(), SLOT(showMessage(const QString&, int)));
-	if (maximized) {
-		flowWidget->showMaximized();
-	} else {
-		flowWidget->showNormal();
+	GraphModel* model = new GraphModel(
+				QString(), this, FileManager::instance().classesFile());
+	connect(model, SIGNAL(fileNameChanged (QString)),
+		_rfHandler, SLOT(setCurrentFile(QString)));
+	connect(model, SIGNAL(statusMessage(QString)),
+			SLOT(showMessage(QString)));
+	if (model->load(fileName)) {
+		FlowWidget* flowWidget = new FlowWidget(model, _centralArea);
+		_centralArea->addSubWindow(flowWidget);
+		connect(flowWidget, SIGNAL(statusMessage(QString)),
+				SLOT(showMessage(QString)));
+		connect(flowWidget,SIGNAL(destroyed()), model, SLOT(deleteLater()));
+		if (maximized) {
+			flowWidget->showMaximized();
+		} else {
+			flowWidget->showNormal();
+		}
 	}
-	flowWidget->load(fileName);
+	else {
+		model->deleteLater();
+	}
 }
 
 void TuchulchaWindow::openNew() {
-	FlowWidget* flowWidget = new FlowWidget(_centralArea);
+	GraphModel* model = new GraphModel(
+				QString(), this, FileManager::instance().classesFile());
+	FlowWidget* flowWidget = new FlowWidget(model, _centralArea);
 	_centralArea->addSubWindow(flowWidget);
+	connect(flowWidget,SIGNAL(destroyed()), model, SLOT(deleteLater()));
+	connect(model, SIGNAL(fileNameChanged (QString)),
+			_rfHandler, SLOT(setCurrentFile(QString)));
+	connect(model, SIGNAL(statusMessage(QString)),
+			SLOT(showMessage(QString)));
 	connect(flowWidget, SIGNAL(statusMessage(const QString&, int)),
-			statusBar(), SLOT(showMessage(const QString&, int)));
+			SLOT(showMessage(const QString&, int)));
 	flowWidget->showMaximized();
+}
+
+void TuchulchaWindow::showMessage(QString msg) const {
+	statusBar()->showMessage(msg, 5000);
 }
 
 void TuchulchaWindow::saveFlowChart() const {
@@ -476,54 +491,6 @@ void TuchulchaWindow::runWorkflow() {
 	model->setPrefix(oldPref);
 }
 
-void TuchulchaWindow::_openRecentFile() {
-QAction *action = qobject_cast<QAction *>(sender());
-	if (action)
-		open(action->data().toString());
-}
-
-void TuchulchaWindow::_updateRecentFileActions() {
-	QSettings settings;
-	QStringList files = settings.value("recentFileList").toStringList();
-
-	int numRecentFiles = qMin(files.size(), (int)_maxRecentFiles);
-
-	for (int i = 0; i < numRecentFiles; ++i) {
-		QString text = QString("&%1 %2")
-			.arg(i + 1).arg(_strippedName(files[i]));
-		_recentFileActs[i]->setText(text);
-		_recentFileActs[i]->setData(files[i]);
-		_recentFileActs[i]->setStatusTip(
-				tr("Open recent file \"%1\"").arg(files[i]));
-		_recentFileActs[i]->setVisible(true);
-	}
-	for (int j = numRecentFiles; j < _maxRecentFiles; ++j)
-		_recentFileActs[j]->setVisible(false);
-
-	_separatorAct->setVisible(numRecentFiles > 0);
-}
-
-QString TuchulchaWindow::_strippedName(const QString& fullFileName) const {
-	return QFileInfo(fullFileName).fileName();
-}
-
-void TuchulchaWindow::setCurrentFile(const QString& fileName) {
-	if (fileName.isEmpty())
-		return;
-
-	QSettings settings;
-	QStringList files = settings.value("recentFileList").toStringList();
-	QString fname = QFileInfo(fileName).absoluteFilePath();
-	files.removeAll(fname);
-	files.prepend(fname);
-	while (files.size() > _maxRecentFiles)
-		files.removeLast();
-
-	settings.setValue("recentFileList", files);
-
-	_updateRecentFileActions();
-}
-
 void TuchulchaWindow::options() {
 	OptionsDialog dialog(isVisible()?this:0);
 	dialog.exec();
@@ -533,10 +500,10 @@ void TuchulchaWindow::open(const QStringList& files) {
 	if (files.isEmpty()) {
 		return;
 	}
-
 	if (files.size() == 1) {
 		open(files.at(0));
-	} else {
+	}
+	else {
 		for (int a = 0; a < files.size(); a++) {
 			open(files.at(a), false);
 		}

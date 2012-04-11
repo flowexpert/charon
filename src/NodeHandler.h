@@ -38,8 +38,9 @@ class NodeHandler: public QGraphicsScene {
 public:
 	/// default constructor
 	/** \param parent         parent QObject
+	 *  \param model          model to be used within this node handler
 	 */
-	NodeHandler(QObject* parent = 0);
+	NodeHandler(GraphModel* model, QObject* parent = 0);
 
 	/// default destructor
 	virtual ~NodeHandler() ;
@@ -127,7 +128,7 @@ private:
 
 signals:
 	/// message to display on status bar
-	void statusMessage(QString msg, int timeout);
+	void statusMessage(QString msg) const;
 };
 
 #endif /* NODEHANDLER_H_ */

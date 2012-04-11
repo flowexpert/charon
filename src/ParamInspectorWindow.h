@@ -29,6 +29,7 @@
 
 class QMenu;
 class ObjectInspector;
+class RecentFileHandler;
 
 /// Main Window to display a HierarchyModel using a QTreeView.
 class ParamInspectorWindow : public QMainWindow
@@ -36,15 +37,21 @@ class ParamInspectorWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	ParamInspectorWindow();
-	
+	/// default constructor
+	ParamInspectorWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
+
+protected:
+	/// save geometry etc.
+	virtual void closeEvent(QCloseEvent* event);
+
 public slots:
 	/// open file and update window title
-	void openFile(QString fName = "");
+	void openFile(QString fName = QString());
 
 private:
-	QMenu*	fileMenu;				///< File menu
-	ObjectInspector* _inspector;	///< Inspector widget
+	RecentFileHandler* _rfHandler;    ///< recent files
+	QMenu*             _fileMenu;     ///< File menu
+	ObjectInspector*   _inspector;    ///< Inspector widget
 };
 
 #endif /* PARAMINSPECTORWINDOW_H_ */

@@ -38,16 +38,18 @@
 #include "QParameterFile.h"
 #include <stdexcept>
 
-NodeHandler::NodeHandler(QObject* pp) :
+NodeHandler::NodeHandler(GraphModel* model, QObject* pp) :
 		QGraphicsScene(pp),
 		_cline(0),
+		_model(model),
 		_addLine(false)
 {
-	_model = new GraphModel("", this, FileManager::instance().classesFile());
+	Q_ASSERT(_model);
 	connect(_model, SIGNAL(graphChanged()), this, SLOT(loadFromModel()));
 	connect(_model, SIGNAL(prefixChanged(QString)),
 			this, SLOT(selectNode(QString)));
-
+	loadFromModel();
+	selectNode(_model->prefix());
 }
 
 NodeHandler::~NodeHandler()
@@ -135,7 +137,7 @@ void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 					_startProp->getFullName(),
 					prop->getFullName(),true);
 		} catch (const std::runtime_error& err) {
-			emit statusMessage(err.what(), 8000); // 8 sec timeout
+			emit statusMessage(err.what());
 		}
 	}
 	_addLine = false;

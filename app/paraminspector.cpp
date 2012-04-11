@@ -1,4 +1,4 @@
-/*	Copyright (C) 2009 Jens-Malte Gottfried
+/*  Copyright (C) 2009 Jens-Malte Gottfried
 
 	This file is part of Tuchulcha.
 
@@ -37,6 +37,8 @@
  */
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
+	app.setOrganizationName("Heidelberg Collaboratory for Image Processing");
+	app.setApplicationName("Paraminspector");
 	Q_INIT_RESOURCE(resources);
 
 	// translation of qt dialog buttons (apply, close etc.)
@@ -59,7 +61,6 @@ int main(int argc, char *argv[]) {
 
 	ParamInspectorWindow window;
 	FileManager::dialogParent = &window;
-	window.resize(620, 700);
 	window.show();
 #ifndef UNIX
 	QErrorMessage* handler = QErrorMessage::qtHandler();
