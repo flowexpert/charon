@@ -24,9 +24,9 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <charon-core\ParameteredObject.hxx>
-#include <charon-core\ExceptionHandler.h>
-#include <charon-core\SplitStream.h>
+#include <charon-core/ParameteredObject.hxx>
+#include <charon-core/ExceptionHandler.h>
+#include <charon-core/SplitStream.h>
 
 class DummyDynamicInputModule : public ParameteredObject {
 public:
