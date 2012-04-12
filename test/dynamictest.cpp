@@ -27,33 +27,48 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-core/ExceptionHandler.h>
 #include <charon-core/SplitStream.h>
+#include <charon-core/PluginManager.h>
 
 class DummyDynamicInputModule : public ParameteredObject {
 public:
 	InputSlot<int> in1, in2, in3, in4;
 
-	int length;
+	Parameter<int> param1, param2, param3, param4;
 
 	DummyDynamicInputModule(const std::string& name = "") :
-		ParameteredObject("DummyDynamicInputModule", name, "dummy dynamic input module") {
+		ParameteredObject("DummyDynamicInputModule", name,
+			"dummy dynamic input module") {
 
 		_addInputSlot(in1, "in1", "input slot 1");
-		length = 1;
+		_addParameter(param1, "parameters", "Number of Parameters", 2);
+		_addParameter(param2, "length", "Number of Slots", 1);
 		_setDynamic(true);
 	}
 
 	virtual void prepareDynamicInterface(const ParameterFile& file) {
-		if (file.isSet(getName() + ".length")) {
-			length = file.get<int>(getName() + ".length");
-			if (length >= 2) {
-				_addInputSlot(in2, "in2", "input slot 2");
-			}
+		param2.load(file);
+		if (param2() >= 2) {
+			_addInputSlot(in2, "in2", "input slot 2");
+		}
+		param1.load(file);
+		if (param1() >= 3) {
+			_addParameter(param3, "param3", "parameter 3", 0);
+		}
+		if (param1() >= 4) {
+			_addParameter(param4, "param4", "parameter 4", 0);
 		}
 	}
 
 protected:
 	virtual void execute() {
-		sout << "length = " << length << "\n";
+		sout << "parameters = " << param1() << "\n";
+		sout << "length = " << param2() << "\n";
+		if (param1() >= 3) {
+			sout << "param3 = " << param3() << "\n";
+		}
+		if (param1() >= 4) {
+			sout << "param4 = " << param4() << "\n";
+		}
 	}
 };
 
@@ -64,7 +79,8 @@ public:
 	int length;
 
 	DummyDynamicOutputModule(const std::string& name = "") :
-		ParameteredObject("DummyDynamicOutputModule", name, "dummy dynamic output module") {
+		ParameteredObject("DummyDynamicOutputModule", name,
+			"dummy dynamic output module") {
 
 		_addOutputSlot(out1, "out1", "output slot 1");
 		length = 1;
@@ -89,29 +105,35 @@ protected:
 void manualTest() {
 	ParameteredObject::setCreateMetadata(true);
 
+	sout << "### Manual Test ###" << std::endl << std::endl;
+
 	DummyDynamicInputModule modIn("input");
 	DummyDynamicOutputModule modOut("output");
 
 	modIn.in1.connect(modOut.out1);
 
 	modIn.run();
-	sout << "\n";
+	sout << std::endl;
 
 	ParameterFile file;
+	file.set("input.type", "DummyDynamicInputModule");
 	file.set("input.length", 2);
 	file.set("output.length", 2);
+	file.set("input.parameters", 4);
+	file.set("input.param4", 987);
 	
 	modIn.saveMetadata("DummyDynamicInputModule.before.wrp");
 	modOut.saveMetadata("DummyDynamicOutputModule.before.wrp");
 
 	modIn.prepareDynamicInterface(file);
+	modIn.loadParameters(file);
 	modOut.prepareDynamicInterface(file);
 	
 	modIn.saveMetadata("DummyDynamicInputModule.after.wrp");
 	modOut.saveMetadata("DummyDynamicOutputModule.after.wrp");
 
 	modOut.resetExecuted();
-	sout << "\n";
+	sout << std::endl;
 
 	if (modIn.connected()) {
 		throw "everything is connected!";
@@ -119,11 +141,56 @@ void manualTest() {
 
 	modIn.in2.connect(modOut.out2);
 	if (modIn.connected()) {
-		sout << "everything is connected\n";
+		sout << "everything is connected" << std::endl;
 	}
 
 	modIn.run();
-	sout << "\n";
+	sout << std::endl << "### End of Test ###" << std::endl << std::endl;
+}
+
+void pluginManagerTest() {
+	sout << "### PluginManager Test ###" << std::endl << std::endl;
+
+	PluginManager* man = new PluginManager(MODULE_DIR);
+
+	ParameterFile file;
+	// setup a dummy module that gets data from dynamic dummy module
+	file.set("dynamic.type", "dynamicdummymodule");
+	file.set("dummy.type", "dummymodule");
+	file.set("dynamic.input", 0);
+	file.set("dynamic.output", 1);
+	file.set("dynamic.out1", "dummy.in");
+	file.set("dummy.in", "dynamic.out1");
+
+	man->loadParameterFile(file);
+
+	sout << std::endl;
+	man->runWorkflow();
+	sout << std::endl;
+
+	sout << "~~~~~~~" << std::endl;
+	
+	// add dynamic dummy module and connect it to first dynamic module
+	file.set("dynamic2.type", "dynamicdummymodule");
+	file.set("dynamic.input", 2);
+	file.set("dynamic2.input", 0);
+	file.set("dynamic2.output", 2);
+	file.set("dynamic2.parameters", 5);
+	file.set("dynamic2.param4", 999);
+	file.set("dynamic.in1", "dynamic2.out1");
+	file.set("dynamic2.out1", "dynamic.in1");
+	file.set("dynamic.in2", "dynamic2.out2");
+	file.set("dynamic2.out2", "dynamic.in2");
+
+	man->loadParameterFile(file);
+
+	sout << std::endl;
+	man->runWorkflow();
+	sout << std::endl;
+
+	delete man;
+
+	sout << std::endl << "### End of Test ###" << std::endl << std::endl;
 }
 
 int main() {
@@ -132,6 +199,7 @@ int main() {
 	int ret = EXIT_SUCCESS;
 
 	ret |= ExceptionHandler::run(manualTest);
+	ret |= ExceptionHandler::run(pluginManagerTest);
 
 	return ret;
 }

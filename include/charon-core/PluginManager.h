@@ -427,6 +427,16 @@ public:
 	void createMetadata(const std::string & targetPath = "");
 
 	/**
+	 * Creates metadata of dynamic plugin based on parameter file
+	 *
+	 * @param pluginName  Name of dynamic plugin
+	 * @param paramFile   ParameterFile containing parameters for plugin
+	 * @param fileName    File in which to save metadata
+	 */
+	void createDynamicMetadata(const std::string& pluginName,
+		const ParameterFile& paramFile, const std::string& fileName);
+
+	/**
 	 * Resets this PluginManager instance to its initial state.
 	 * Unloads all plugins, resets defaultTemplateType parameter and deletes
 	 * target points.

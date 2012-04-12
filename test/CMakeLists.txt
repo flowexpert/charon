@@ -64,6 +64,10 @@ IF(BUILD_TESTING)
 	GET_FILENAME_COMPONENT(MODULE_DIR "${DUMMY_LOC}" PATH)
 	ADD_DEFINITIONS(-DMODULE_DIR="${MODULE_DIR}")
 
+	# dynamic dummy test module for PluginManager tests
+	ADD_LIBRARY(dynamicdummymodule SHARED DynamicDummyModule.cpp)
+	TARGET_LINK_LIBRARIES(dynamicdummymodule charon-core)
+
 	# tests for ParameterReferences
 	ADD_EXECUTABLE(toposorttest topoSortTest.cpp)
 	TARGET_LINK_LIBRARIES(toposorttest charon-core charon-plugins)
