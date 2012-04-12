@@ -351,7 +351,7 @@ void ObjectInspector::handle_model_prefixChanged(const QString& prefix) {
 	}
 }
 
-void ObjectInspector::on_prefix_textEdited(QString text) {
+void ObjectInspector::on_prefix_textChanged(QString text) {
 	if (_model) {
 		_model->setPrefix(text);
 	}

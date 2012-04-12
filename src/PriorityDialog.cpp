@@ -45,16 +45,17 @@ int PriorityDialog::selection() const {
 	return _selection;
 }
 
-void PriorityDialog::on_setButton_clicked() {
+void PriorityDialog::accept() {
 	_selection = _ui->priorityBox->currentIndex();
-	accept();
+	QDialog::accept();
 }
 
-void PriorityDialog::on_resetButton_clicked() {
-	_selection = 0;
-	accept();
-}
-
-void PriorityDialog::on_cancelButton_clicked() {
-	reject();
+void PriorityDialog::on_buttonBox_clicked(QAbstractButton* button) const {
+	switch (_ui->buttonBox->buttonRole(button)) {
+	case QDialogButtonBox::ResetRole:
+		_ui->priorityBox->setCurrentIndex(0);
+		break;
+	default:
+		break;
+	}
 }

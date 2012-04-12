@@ -29,6 +29,7 @@
 namespace Ui {
 	class PriorityDialog;
 }
+class QAbstractButton;
 
 /// Priority Dialog.
 /** This dialog contains a ComboBox and buttons to change the
@@ -51,14 +52,11 @@ public:
 	int selection() const;
 
 public slots:
-	/// close and update selection
-	void on_setButton_clicked();
+	/// set selection value
+	virtual void accept();
 
-	/// close and set selection to 0
-	void on_resetButton_clicked();
-
-	/// close and don't change selection
-	void on_cancelButton_clicked();
+	/// handle buttonBox clicks
+	void on_buttonBox_clicked(QAbstractButton* button) const;
 
 protected:
 	/// designer gui

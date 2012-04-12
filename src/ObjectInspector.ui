@@ -6,193 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>481</height>
+    <width>584</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout_4">
    <property name="margin">
     <number>4</number>
    </property>
-   <item>
-    <widget class="QFrame" name="prefixFrame">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="margin">
-       <number>4</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="prefixLabel">
-        <property name="text">
-         <string>Prefix</string>
-        </property>
-        <property name="buddy">
-         <cstring>prefix</cstring>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="prefix"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="commentBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Comment</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="margin">
-       <number>4</number>
-      </property>
-      <item>
-       <widget class="QTextEdit" name="comment"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="toolAndFilterLayout">
-     <item>
-      <widget class="QGroupBox" name="toolBox">
-       <property name="title">
-        <string>Tools</string>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
-         <number>4</number>
-        </property>
-        <item>
-         <widget class="QToolButton" name="resetParamButton">
-          <property name="toolTip">
-           <string>Delete selected parameters</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources.qrc">
-            <normaloff>:/icons/revert.png</normaloff>:/icons/revert.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="setPriorityButton">
-          <property name="toolTip">
-           <string>Change priority of selected parameters</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources.qrc">
-            <normaloff>:/icons/prioritySignalLights.png</normaloff>:/icons/prioritySignalLights.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="filterGroupBox">
-       <property name="title">
-        <string>Filter</string>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
-         <number>4</number>
-        </property>
-        <item>
-         <layout class="QVBoxLayout" name="priorityFilterBox">
-          <item>
-           <widget class="QLabel" name="priorityFilterLabel">
-            <property name="text">
-             <string>Priority</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <property name="buddy">
-             <cstring>filterBox</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="PriorityBox" name="filterBox">
-            <property name="toolTip">
-             <string>Filter by priority</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QToolButton" name="resetFilterButton">
-          <property name="toolTip">
-           <string>Reset all filters</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources.qrc">
-            <normaloff>:/icons/delete.png</normaloff>:/icons/delete.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item>
     <widget class="QTableView" name="view">
      <property name="sizePolicy">
@@ -225,81 +49,260 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="buttonGroupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Editing</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <property name="margin">
-       <number>4</number>
-      </property>
-      <item row="0" column="0">
-       <widget class="QWidget" name="widget" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <property name="margin">
-          <number>0</number>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QFrame" name="prefixFrame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="margin">
+         <number>4</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="prefixLabel">
+          <property name="text">
+           <string>Selected Node</string>
+          </property>
+          <property name="buddy">
+           <cstring>prefix</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="prefix"/>
+        </item>
+        <item>
+         <widget class="QToolButton" name="resetPrefixButton">
+          <property name="toolTip">
+           <string>reset prefix filters</string>
+          </property>
+          <property name="text">
+           <string>clear prefix</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/icons/edit-clear.png</normaloff>:/icons/edit-clear.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="commentBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Node-Comment</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="margin">
+         <number>4</number>
+        </property>
+        <item>
+         <widget class="QTextEdit" name="comment"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="toolAndFilterLayout">
+       <item>
+        <widget class="QGroupBox" name="toolBox">
+         <property name="title">
+          <string>Tools</string>
          </property>
-         <item>
-          <widget class="QPushButton" name="addButton">
-           <property name="toolTip">
-            <string>Add new parameter</string>
-           </property>
-           <property name="text">
-            <string>&amp;Add</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="deleteButton">
-           <property name="toolTip">
-            <string>Delete selected parameter</string>
-           </property>
-           <property name="text">
-            <string>&amp;Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="clearButton">
-           <property name="toolTip">
-            <string>Delete all parameters</string>
-           </property>
-           <property name="text">
-            <string>&amp;Clear</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="useMetadata">
-        <property name="enabled">
-         <bool>false</bool>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QToolButton" name="resetParamButton">
+            <property name="toolTip">
+             <string>reset selected parameter(s) to their defaults
+This deletes the parameter(s) from the parameter file.</string>
+            </property>
+            <property name="text">
+             <string>reset selected</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/revert.png</normaloff>:/icons/revert.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="setPriorityButton">
+            <property name="toolTip">
+             <string>Change priority of selected parameters</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/prioritySignalLights.png</normaloff>:/icons/prioritySignalLights.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="filterGroupBox">
+         <property name="title">
+          <string>Filter</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="priorityFilterLabel">
+            <property name="text">
+             <string>Priority</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="buddy">
+             <cstring>filterBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="PriorityBox" name="filterBox">
+            <property name="toolTip">
+             <string>Filter by priority</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="resetFilterButton">
+            <property name="toolTip">
+             <string>reset applied filters</string>
+            </property>
+            <property name="text">
+             <string>reset filters</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/disconnect.png</normaloff>:/icons/disconnect.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="buttonGroupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Editing</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="margin">
+         <number>4</number>
         </property>
-        <property name="text">
-         <string>use metadata</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QCheckBox" name="onlyParams">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>show editable parameters only</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+        <item row="0" column="0">
+         <widget class="QWidget" name="widget" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="margin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="addButton">
+             <property name="toolTip">
+              <string>Add new parameter</string>
+             </property>
+             <property name="text">
+              <string>&amp;Add</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="deleteButton">
+             <property name="toolTip">
+              <string>Delete selected parameter</string>
+             </property>
+             <property name="text">
+              <string>&amp;Delete</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="clearButton">
+             <property name="toolTip">
+              <string>Delete all parameters</string>
+             </property>
+             <property name="text">
+              <string>&amp;Clear</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="useMetadata">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>use metadata</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QCheckBox" name="onlyParams">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>show editable parameters only</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -315,8 +318,6 @@
   <tabstop>comment</tabstop>
   <tabstop>resetParamButton</tabstop>
   <tabstop>setPriorityButton</tabstop>
-  <tabstop>filterBox</tabstop>
-  <tabstop>resetFilterButton</tabstop>
   <tabstop>view</tabstop>
   <tabstop>addButton</tabstop>
   <tabstop>deleteButton</tabstop>
@@ -335,12 +336,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>54</x>
-     <y>438</y>
+     <x>362</x>
+     <y>308</y>
     </hint>
     <hint type="destinationlabel">
-     <x>57</x>
-     <y>467</y>
+     <x>365</x>
+     <y>334</y>
     </hint>
    </hints>
   </connection>
@@ -351,12 +352,28 @@
    <slot>on_deleteButton_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>55</x>
-     <y>176</y>
+     <x>359</x>
+     <y>221</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1</x>
-     <y>198</y>
+     <x>251</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetPrefixButton</sender>
+   <signal>clicked()</signal>
+   <receiver>prefix</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>557</x>
+     <y>31</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>512</x>
+     <y>25</y>
     </hint>
    </hints>
   </connection>

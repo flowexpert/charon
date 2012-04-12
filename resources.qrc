@@ -36,5 +36,6 @@
         <file alias="priorityYellow.png">icons/priorityYellow.png</file>
         <file alias="priorityRed.png">icons/priorityRed.png</file>
         <file alias="prioritySignalLights.png">icons/signalLights.png</file>
+        <file alias="edit-clear.png">icons/oxygen/edit-clear-locationbar-rtl.png</file>
     </qresource>
 </RCC>

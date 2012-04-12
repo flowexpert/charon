@@ -126,7 +126,7 @@ private slots:
 	void on_comment_textChanged();
 
 	/// handle prefix text field changes
-	void on_prefix_textEdited(QString text);
+	void on_prefix_textChanged(QString text);
 
 	/// handle useMetadata checkbox changes
 	void on_useMetadata_clicked(bool state);

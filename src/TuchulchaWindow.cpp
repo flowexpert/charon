@@ -158,6 +158,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	action = toolbar->addAction(QIcon(":/icons/export.png"),
 		tr("export flowchart"), this, SLOT(saveFlowChart()));
 	action->setToolTip(tr("export flowchart to an image file"));
+	action->setShortcut(Qt::Key_F12);
 
 	toolbar->addSeparator();
 	action = toolbar->addAction(
@@ -188,12 +189,6 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	action->setToolTip(tr("fit flowchart in view"));
 
 	toolbar->addSeparator();
-	action = toolbar->addAction(QIcon(":/icons/revert.png"),
-		tr("reset selected"), _inspector, SLOT(on_deleteButton_clicked()));
-	action->setToolTip(tr("reset selected parameter(s) to their defaults"));
-
-	toolbar->addSeparator();
-
 	action = toolbar->addAction(QIcon(":/icons/intro.png"),
 		tr("introduction to tuchulcha"), docGen, SLOT(showIntro()));
 	action->setToolTip(tr("show introductin page"));

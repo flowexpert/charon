@@ -41,10 +41,12 @@ void ModelToolBar::addModelActions() {
 	QAction* act;
 	act = addAction(QIcon(":/icons/delete.png"), tr("delete node"),
 		this, SLOT(_delete()));
+	act->setShortcut(Qt::Key_Delete);
 	act->setToolTip(tr("delete selected node"));
 	
 	act = addAction(QIcon(":/icons/rename.png"), tr("rename node"),
 		this, SLOT(_rename()));
+	act->setShortcut(Qt::Key_F2);
 	act->setToolTip(tr("rename selected node"));
 	
 	act = addAction(QIcon(":/icons/disconnect.png"), tr("disconnect node"),

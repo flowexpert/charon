@@ -297,22 +297,14 @@ void NodeHandler::saveFlowchart() {
 
 void NodeHandler::keyReleaseEvent(QKeyEvent* keyEvent) {
 	switch(keyEvent->key()) {
-	case Qt::Key_F12:
-		saveFlowchart();
-		break;
-
-	case Qt::Key_Delete:
-		if (_selectedNode) {
-			_model->deleteNode(_selectedNode->getInstanceName());
-		}
-		break;
-
 	case Qt::Key_Right:
 		_model->selectNext(false);
 		break;
 
 	case Qt::Key_Left:
 		_model->selectNext(true);
+		break;
+	default:
 		break;
 	}
 }
