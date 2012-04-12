@@ -365,7 +365,7 @@ bool SimpleIterator<T>::finishStep() {
 
 		/// write current residual to file
 		if (!writeResidual().empty()) {
-			helpFlow.save(writeResidual().c_str());
+			helpResidual.save(writeResidual().c_str());
 		}
 	}
 
