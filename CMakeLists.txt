@@ -58,6 +58,9 @@ IF(USE_CIMG)
 ENDIF()
 INCLUDE(ReleaseSys)
 
+# Qwt5 for plotting widgets
+INCLUDE(FindQwt5)
+
 # Test suite
 INCLUDE(CTest)
 
@@ -68,3 +71,4 @@ INCLUDE(InstallDlls)
 ADD_SUBDIRECTORY(app)
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(test)
+

@@ -4,6 +4,9 @@ INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIRECTORIES})
+IF(Qwt5_Qt4_FOUND)
+	INCLUDE_DIRECTORIES(${Qwt5_INCLUDE_DIR})
+ENDIF(Qwt5_Qt4_FOUND)
 
 IF(MSVC)
 	ADD_DEFINITIONS(/DHANDLE_DLL)
@@ -487,6 +490,20 @@ IF(USE_VIGRA)
 			argosdisplay
 			frameselect
 		)
+
+		IF(Qwt5_Qt4_FOUND)
+			ADD_LIBRARY(residualplot SHARED
+				ResidualPlot.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.h
+				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.hxx
+			)
+			LIST(APPEND Plugins_Qt
+				residualplot
+			)
+			LIST(APPEND Plugins_CImg
+				residualplot
+			)
+		ENDIF(Qwt5_Qt4_FOUND)
 
 		IF(USE_Boost)
 			INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
