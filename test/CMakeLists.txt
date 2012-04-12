@@ -74,6 +74,16 @@ IF(BUILD_TESTING)
 	LIST(APPEND tests ExecutionOrder_TopoSort)
 	LIST(APPEND testTargets toposorttest)
 
+	# tests for DynamicModules
+	ADD_EXECUTABLE(dynamictest dynamictest.cpp)
+	TARGET_LINK_LIBRARIES(dynamictest charon-core charon-plugins)
+	ADD_TEST(
+		NAME DynamicModuleTest
+		COMMAND dynamictest
+	)
+	LIST(APPEND tests DynamicModuleTest)
+	LIST(APPEND testTargets dynamictest)
+
 	# add test labels for dashboard submission
 	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS charon-core)
 	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon-core Tests")

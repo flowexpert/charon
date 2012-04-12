@@ -61,16 +61,12 @@ ParameteredObject::ParameteredObject(const std::string& className,
 		_metadata.set<std::string> (_className + ".inputs");
 		_metadata.set<std::string> (_className + ".outputs");
 	}
+
+	_setDynamic(false);
 }
 
 ParameteredObject::~ParameteredObject() {
-	if (_createMetadata) {
-		_metadata.save(
-#ifdef UNIX
-				"lib" +
-#endif
-						_className + ".wrp");
-	}
+
 }
 
 bool ParameteredObject::_addSomething(const std::string& extension,
@@ -508,7 +504,6 @@ void ParameteredObject::setCreateMetadata(bool c) {
 }
 
 bool ParameteredObject::getCreateMetadata() {
-
 	return _createMetadata;
 }
 
@@ -550,5 +545,23 @@ std::string ParameteredObject::templateTypeToString(template_type t) {
 		return "int";
 	default:
 		return "double";
+	}
+}
+
+void ParameteredObject::prepareDynamicInterface(const ParameterFile& file) {
+
+}
+
+void ParameteredObject::saveMetadata(const std::string& file) const {
+	if (_createMetadata) {
+		_metadata.save(file);
+	} else {
+		sout << "(WW) Flag _createMetadata not set! Will not save!" << std::endl;
+	}
+}
+
+void ParameteredObject::_setDynamic(bool v) {
+	if (_createMetadata) {
+		_metadata.set(_className + ".isDynamicModule", v);
 	}
 }

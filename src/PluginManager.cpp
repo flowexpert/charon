@@ -278,6 +278,7 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 
 	for (objIter = objects.begin(); objIter != objects.end(); objIter++) {
 		objIter->second->loadParameters(paramFile);
+		objIter->second->prepareDynamicInterface(paramFile);
 		objIter->second->loadSlots(paramFile, this);
 	}
 }
@@ -671,7 +672,13 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 		if (!alreadyLoaded) {
 			loadPlugin(pluginName);
 		}
-		destroyInstance(createInstance(pluginName));
+		ParameteredObject* obj = createInstance(pluginName);
+		obj->saveMetadata(
+#ifdef UNIX
+				"lib" +
+#endif
+					obj->getClassName() + ".wrp");
+		destroyInstance(obj);
 
 		if (!alreadyLoaded) {
 			unloadPlugin(pluginName);

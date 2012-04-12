@@ -115,6 +115,9 @@ private:
 	void _commitSlots();
 
 protected:
+	/// Specifies if the ParameteredObject is dynamic
+	void _setDynamic(bool v);
+
 	/// Common code for _addParameter, _addInputSlot, _addOutputSlot.
 	/** This function does nothing, if _createMetadata is set to false.
 	 *  \param extension    section of metadata file where to add
@@ -129,7 +132,6 @@ protected:
 			const std::string& extension, const std::string& name,
 			const std::string& doc, const std::string& type,
 			const std::string& defaultValue = "");
-	//  \}
 
 	/// Add parameters.
 	/** If _createMetadata is true, the parameter is also recorded to the
@@ -197,6 +199,7 @@ protected:
 	 */
 	void _addOutputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type = "");
+	//  \}
 
 	/// register member function
 	/**
@@ -341,6 +344,15 @@ public:
 	 */
 	virtual void resetExecuted(bool propagate = true);
 
+	/// prepare slots
+	/** This changes the quantity and quality of slots/parameters
+	 *  depending on certain parameters in the ParameterFile.
+	 *
+	 *  This function is empty for most modules,
+	 *  only dynamic modules need to overwrite it.
+	 */
+	virtual void prepareDynamicInterface(const ParameterFile& file);
+
 	/// \name getter of plugin information
 	//\{
 
@@ -471,6 +483,8 @@ public:
 
 	static void setCreateMetadata(bool c);
 	static bool getCreateMetadata();
+
+	void saveMetadata(const std::string& file) const;
 
 	template <typename T>
 	void setParameter(std::string name, T value);
