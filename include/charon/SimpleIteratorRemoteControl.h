@@ -29,6 +29,7 @@
 
 class QLabel;
 class QPushButton;
+class QProgressBar;
 
 /// gui class to provide step control of iterations
 class SimpleIteratorRemoteControl
@@ -38,7 +39,11 @@ class SimpleIteratorRemoteControl
 public:
 	/// default constructor, setting the dialog caption
 	SimpleIteratorRemoteControl(
-		QString caption, QWidget* parent = 0);
+		QString caption,
+		unsigned int maxRuns,
+		QWidget* parent = 0);
+	/// set current iteration (e.g. for progressbar)
+	void setCurrentIteration( unsigned int currentIteration );
 public slots:
 	/// \name handle button clicks
 	//\{
@@ -51,7 +56,10 @@ private:
 	//\{
 	QLabel *lbl;
 	QPushButton *btnStep, *btnBreak, *btnContinue;
+	QProgressBar *progress;
 	//\}
+signals:
+	void pbValueChanged( int val );
 };
 
 #endif

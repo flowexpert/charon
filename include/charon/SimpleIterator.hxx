@@ -148,7 +148,9 @@ void SimpleIterator<T>::run() {
 	// add remote control to iterator
 	if (qobject_cast<QApplication*>(qApp)) {
 		_remoteControl = new SimpleIteratorRemoteControl(
-					QString::fromStdString(this->getName()));
+					QString::fromStdString(this->getName()),
+		                        maxRuns()
+		                        );
 	}
 #endif
 
@@ -205,6 +207,7 @@ void SimpleIterator<T>::iterate() {
 	do {
 #ifdef QT_GUI_LIB
 		if (_remoteControl && breakPoint()) {
+			_remoteControl->setCurrentIteration( helper()->count() );
 			_remoteControl->setModal(true);
 			ret = _remoteControl->exec();
 			sout << "ret = " << ret << std::endl;

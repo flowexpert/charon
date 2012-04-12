@@ -24,28 +24,44 @@
 
 #include <charon/SimpleIteratorRemoteControl.h>
 
+#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QLabel>
+#include <QProgressBar>
+
+#include <iostream>
 
 SimpleIteratorRemoteControl::SimpleIteratorRemoteControl(
-		QString caption, QWidget* pp) : QDialog(pp)
+	QString caption,
+	unsigned int maxRuns,
+	QWidget* pp) : QDialog(pp)
 {
 	setWindowTitle(caption);
-	QHBoxLayout* layout = new QHBoxLayout(this);
+
+	QVBoxLayout *windowLayout = new QVBoxLayout(0);
+	QHBoxLayout *buttons = new QHBoxLayout(0);
 	btnStep = new QPushButton("STEP");
 	btnStep->setObjectName("btnStep");
-	layout->addWidget(btnStep);
+	buttons->addWidget(btnStep);
 	btnBreak = new QPushButton("BREAK");
 	btnBreak->setObjectName("btnBreak");
-	layout->addWidget(btnBreak);
+	buttons->addWidget(btnBreak);
 	btnContinue = new QPushButton("CONTINUE");
 	btnContinue->setObjectName("btnContinue");
-	layout->addWidget(btnContinue);
+	buttons->addWidget(btnContinue);
+	progress = new QProgressBar();
+	progress->setMinimum( 0 );
+	progress->setMaximum( maxRuns );
 
-	setLayout( layout );
+	windowLayout->addWidget( progress );
+	windowLayout->addLayout( buttons );
+
+	this->setLayout(windowLayout);
 
 	QMetaObject::connectSlotsByName( this );
+	QObject::connect( this, SIGNAL( pbValueChanged(int) ),
+	                  progress, SLOT( setValue(int) ) );
 }
 
 void SimpleIteratorRemoteControl::on_btnStep_clicked() {
@@ -59,3 +75,10 @@ void SimpleIteratorRemoteControl::on_btnBreak_clicked() {
 void SimpleIteratorRemoteControl::on_btnContinue_clicked() {
 	done(3);
 }
+
+void SimpleIteratorRemoteControl::setCurrentIteration(
+	unsigned int currentIteration )
+{
+	emit pbValueChanged( (int)currentIteration );
+}
+
