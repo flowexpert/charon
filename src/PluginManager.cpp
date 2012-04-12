@@ -96,7 +96,8 @@ void PluginManager::_unloadPlugin(PLUGIN_LOADER * loader, bool erase) {
 
 	loader->unload();
 	if (erase) {
-		_loadedPlugins.erase(loader->getName());
+		std::string nameL = StringTool::toLowerCase(loader->getName());
+		_loadedPlugins.erase(nameL);
 	}
 	delete loader;
 }
@@ -127,8 +128,9 @@ void PluginManager::loadPlugin(std::string name)
 
 void PluginManager::unloadPlugin(const std::string & name)
 		throw (AbstractPluginLoader::PluginException) {
-	if (_loadedPlugins.find(name) != _loadedPlugins.end()) {
-		_unloadPlugin(_loadedPlugins[name]);
+	std::string nameL = StringTool::toLowerCase(name);
+	if (_loadedPlugins.find(nameL) != _loadedPlugins.end()) {
+		_unloadPlugin(_loadedPlugins[nameL]);
 	} else {
 		throw(AbstractPluginLoader::PluginException(
 				"There is no Plugin loaded with the name \"" + name + "\".",
@@ -137,7 +139,8 @@ void PluginManager::unloadPlugin(const std::string & name)
 }
 
 bool PluginManager::isLoaded(const std::string & name) const {
-	return _loadedPlugins.find(name) != _loadedPlugins.end();
+	std::string nameL = StringTool::toLowerCase(name);
+	return _loadedPlugins.find(nameL) != _loadedPlugins.end();
 }
 
 size_t PluginManager::getLoadedPluginsCount() const {
