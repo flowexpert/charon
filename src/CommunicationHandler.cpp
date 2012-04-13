@@ -50,6 +50,9 @@ void CommunicationHandler::run() {
 		else if (s == "run" && argIter.hasNext()) {
 			emit runWorkflow(argIter.next());
 		}
+		else if (s == "update-dynamics" && argIter.hasNext()) {
+			emit updateDynamics(argIter.next());
+		}
 		else {
 			QTextStream qerr(stderr,QIODevice::WriteOnly);
 			qerr << tr("Argument \"%1\" not recognized.").arg(s) << endl;
@@ -73,6 +76,7 @@ void CommunicationHandler::run() {
 	QTextStream qin(stdin,QIODevice::ReadOnly);
 	QString line;
 	QRegExp runRgx("^run\\s+(.+)$");
+	QRegExp updRgx("^update-dynamics\\s+(.+)$");
 	do {
 		line = qin.readLine() ;
 		if(line == "quit") {
@@ -83,6 +87,9 @@ void CommunicationHandler::run() {
 		}
 		else if (line.contains(runRgx)) {
 			emit runWorkflow(runRgx.cap(1));
+		}
+		else if (line.contains(updRgx)) {
+			emit updateDynamics(updRgx.cap(1));
 		}
 		else if (!line.isEmpty()) {
 			QTextStream qerr(stderr,QIODevice::WriteOnly);

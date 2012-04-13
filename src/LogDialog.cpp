@@ -383,6 +383,10 @@ QString LogDialog::Decorator::desc() const {
 	return QString::null;
 }
 
+QString LogDialog::Decorator::filenameHint() const {
+	return QString::null;
+}
+
 QString LogDialog::Decorator::highlightLine(QString line) const {
 	// simple markup for higlighting
 	if (line.contains(
@@ -438,6 +442,16 @@ QStringList LogDecorators::Update::arguments() const {
 
 QString LogDecorators::Update::filenameHint() const {
 	return QDir::home().absoluteFilePath("update-modules.log");
+}
+
+LogDecorators::UpdateDynamics::UpdateDynamics(QString fileName) :
+		_fileName(fileName) {
+}
+
+QStringList LogDecorators::UpdateDynamics::arguments() const {
+	QStringList args;
+	args << "--non-interactive" << "update-dynamics" << _fileName;
+	return args;
 }
 
 LogDecorators::RunWorkflow::RunWorkflow(QString fileName) :

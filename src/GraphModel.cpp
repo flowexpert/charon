@@ -53,6 +53,8 @@ GraphModel::GraphModel(QString fName, QObject* myParent, QString metaFile) :
 	// here we need some metaFile
 	if (metaFile.isEmpty())
 		qFatal("No metaFile in GraphModel given! Pleas specify one!");
+
+	connect(this,SIGNAL(dynamicUpdate()),SIGNAL(graphChanged()),Qt::QueuedConnection);
 }
 
 GraphModel::~GraphModel() {
@@ -145,9 +147,8 @@ bool GraphModel::connected(QString source,
 	QString sourceSlot = sourceSep[1];
 	QString targetSlot = targetSep[1];
 
-	QString sourceClass = getClass(source);
-	QStringList sourceOutputs = metaInfo()->getOutputs(sourceClass);
-	QStringList sourceInputs  = metaInfo()->getInputs(sourceClass);
+	QStringList sourceOutputs = getOutputs(source);
+	QStringList sourceInputs  = getInputs(source);
 
 	// source has to be an input/output
 	bool sourceIsOutput = true;
@@ -163,9 +164,8 @@ bool GraphModel::connected(QString source,
 	}
 
 	// check if target is of the corresponding slot type (input <-> output)
-	QString targetClass = getClass(target);
-	QStringList targetOutputs = metaInfo()->getOutputs(targetClass);
-	QStringList targetInputs  = metaInfo()->getInputs(targetClass);
+	QStringList targetOutputs = getOutputs(target);
+	QStringList targetInputs  = getInputs(target);
 
 	if (sourceIsOutput) {
 		if(targetInputs.indexOf(QRegExp(targetSlot,Qt::CaseInsensitive))<0)
@@ -247,9 +247,6 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 		qSwap(sourcePar,targetPar);
 		qSwap(sourceClass,targetClass);
 	}
-
-	Q_ASSERT(metaInfo()->isInputSlot (source, sourceClass));
-	Q_ASSERT(metaInfo()->isOutputSlot(target, targetClass));
 
 	// check slot types
 	QString inSlotType  = getType(target);
@@ -611,27 +608,29 @@ QString GraphModel::addNode(QString className, bool draw) {
 
 bool GraphModel::setData(const QModelIndex& ind, const QVariant& value,
 						 int role) {
-	if ((ind.column() == 1) && (data(index(ind.row(), 0)) == "templatetype")) {
-		if ((role != Qt::DisplayRole) && (role != Qt::EditRole))
-			return false;
-
+	if (ind.column() == 1) {
 		if (value == data(ind))
 			return ParameterFileModel::setData(ind, value, role);
-		bool res = ParameterFileModel::setData(ind, value, role);
+		if (data(index(ind.row(), 0)) == "templatetype") {
+			if ((role != Qt::DisplayRole) && (role != Qt::EditRole))
+				return false;
 
-		QStringList l = _connections(prefix());
-		for (int i = 0; i < l.size(); i++) {
-			QStringList connection = l[i].split(";");
-			QString slotType = metaInfo()->getType(
-					connection[0], getClass(prefix()));
-			if (slotType.contains(
-					QRegExp("<\\s*t\\s*>",Qt::CaseInsensitive))) {
-				disconnectSlot(
-					prefix()+"."+connection[0],connection[1], false);
+			bool res = ParameterFileModel::setData(ind, value, role);
+
+			QStringList l = _connections(prefix());
+			for (int i = 0; i < l.size(); i++) {
+				QStringList connection = l[i].split(";");
+				QString slotType = metaInfo()->getType(
+						connection[0], getClass(prefix()));
+				if (slotType.contains(
+						QRegExp("<\\s*t\\s*>",Qt::CaseInsensitive))) {
+					disconnectSlot(
+						prefix()+"."+connection[0],connection[1], false);
+				}
 			}
+			reDraw();
+			return res;
 		}
-		reDraw();
-		return res;
 	}
 	return ParameterFileModel::setData(ind, value, role);
 }

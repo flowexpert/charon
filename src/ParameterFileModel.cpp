@@ -26,6 +26,8 @@
 #include "PrefixValidator.h"
 #include "VarTypeMap.h"
 #include "MetaData.h"
+#include "FileManager.h"
+#include "LogDialog.h"
 #include <QFileDialog>
 #include <QDir>
 #include <QSet>
@@ -34,6 +36,7 @@
 #include <QIcon>
 #include <QMimeData>
 #include <QUrl>
+#include <QTimer>
 
 #include "ParameterFileModel.moc"
 
@@ -217,10 +220,20 @@ bool ParameterFileModel::setData(
 			case 1:
 				if (value.canConvert(QVariant::String)) {
 					QString valueStr = value.toString();
-					if (valueStr == _parameterFile->get(_keys[ind.row()]))
+					QString keyStr = _keys[ind.row()];
+					if (valueStr == _parameterFile->get(keyStr))
 						return true; // nothing to do
 
-					_parameterFile->set(_keys[ind.row()], valueStr);
+					_parameterFile->set(keyStr, valueStr);
+					if (_onlyParams && _metaInfos->isDynamic(getClass(keyStr))) {
+
+						save();
+						LogDialog dialog(
+							new LogDecorators::UpdateDynamics(_fileName));
+						dialog.exec();
+						QTimer::singleShot(0, this, SLOT(_update()));
+						emit dynamicUpdate();
+					}
 					emit dataChanged(index(ind.row(), 0), ind);
 					return true;
 				}
@@ -423,6 +436,9 @@ void ParameterFileModel::clear() {
 bool ParameterFileModel::_load() {
 	clear();
 	_parameterFile->load(_fileName);
+	LogDialog dialog(
+		new LogDecorators::UpdateDynamics(_fileName));
+	dialog.exec();
 	_update();
 	emit statusMessage(QString("File %1 loaded.").arg(_fileName));
 	return true;
@@ -644,7 +660,7 @@ QStringList ParameterFileModel::_paramFilter(QStringList list) const {
 	// append all possible parameters for all objects
 	for (int ii = 0; ii < objects.size(); ii++) {
 		QStringList tmp;
-		tmp << metaInfo()->getParameters(getClass(objects[ii]));
+		tmp << getParameters(objects[ii]);
 		tmp.replaceInStrings(QRegExp("(^.*$)"), objects[ii]+".\\1");
 		result << tmp;
 	}
@@ -681,7 +697,18 @@ QStringList ParameterFileModel::_priorityFilter(QStringList list) const {
 QString ParameterFileModel::getType(QString parName) const {
 	if(!_useMetaInfo)
 		return "";
-	QString res = metaInfo()->getType(parName, getClass(parName));
+	QString cName = getClass(parName);
+	QString res;
+	if (metaInfo()->isDynamic(cName)) {
+		QFileInfo fileInfo(_getDynamicMetaFile(parName.section(".",0,0)));
+		if (fileInfo.exists()) {
+			QParameterFile pFile(fileInfo.absoluteFilePath());
+			res = pFile.get(cName + "." + parName.section(".",1) + ".type");
+		}
+	}
+	if (res.isEmpty()) {
+		res = metaInfo()->getType(parName, cName);
+	}
 	if (res.contains(
 			QRegExp("^\\s*(.*<\\s*T\\s*>.*|T)\\s*$",Qt::CaseInsensitive))) {
 		parName = parName.section(".",0,0);
@@ -785,4 +812,49 @@ bool ParameterFileModel::dropMimeData(const QMimeData* mData,
 	setData(pInd, content);
 
 	return true;
+}
+
+QString ParameterFileModel::_getDynamicMetaFile(QString objName) const {
+	const FileManager& fm = FileManager::instance();
+	return fm.configDir().absoluteFilePath("dynamics/"
+		+ QFileInfo(_fileName).baseName() + "_" + objName + ".wrp");
+}
+
+QStringList ParameterFileModel::getInputs(QString objName) const {
+	objName = objName.section(".",0,0);
+	QString className = getClass(objName);
+	if (_metaInfos->isDynamic(className)) {
+		QFileInfo fileInfo(_getDynamicMetaFile(objName));
+		if (fileInfo.exists()) {
+			QParameterFile pFile(fileInfo.absoluteFilePath());
+			return pFile.getList(className + ".inputs");
+		}
+	}
+	return _metaInfos->getInputs(className);
+}
+
+QStringList ParameterFileModel::getOutputs(QString objName) const {
+	objName = objName.section(".",0,0);
+	QString className = getClass(objName);
+	if (_metaInfos->isDynamic(className)) {
+		QFileInfo fileInfo(_getDynamicMetaFile(objName));
+		if (fileInfo.exists()) {
+			QParameterFile pFile(fileInfo.absoluteFilePath());
+			return pFile.getList(className + ".outputs");
+		}
+	}
+	return _metaInfos->getOutputs(className);
+}
+
+QStringList ParameterFileModel::getParameters(QString objName) const {
+	objName = objName.section(".",0,0);
+	QString className = getClass(objName);
+	if (_metaInfos->isDynamic(className)) {
+		QFileInfo fileInfo(_getDynamicMetaFile(objName));
+		if (fileInfo.exists()) {
+			QParameterFile pFile(fileInfo.absoluteFilePath());
+			return pFile.getList(className + ".parameters");
+		}
+	}
+	return _metaInfos->getParameters(className);
 }

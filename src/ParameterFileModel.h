@@ -177,6 +177,24 @@ public:
 	/// update comment of node
 	void setEditorComment(QString string);
 
+	/// Get input slots of object
+	/** \param  objName         name of the object
+	 *  \returns                name of input slots
+	 */
+	QStringList getInputs(QString objName) const;
+
+	/// Get output slots of object
+	/** \param  objName         name of the object
+	 *  \returns                name of output slots
+	 */
+	QStringList getOutputs(QString objName) const;
+
+	/// Get parameters of object
+	/** \param  objName         name of the object
+	 *  \returns                name of parameters
+	 */
+	QStringList getParameters(QString objName) const;
+
 signals:
 	/// Property _fileName has changed
 	/** \param  fileName        new value */
@@ -211,6 +229,9 @@ signals:
 
 	/// inform about editor comment change
 	void commentChanged(QString comment);
+
+	/// inform about dynamic plugin update
+	void dynamicUpdate();
 
 public slots:
 	/// Set new value for Property _fileName
@@ -322,6 +343,9 @@ private:
 	 *  \returns                filtered list
 	 */
 	QStringList _priorityFilter(QStringList list) const;
+
+	/// creates path to dynamic meta info file for object
+	QString _getDynamicMetaFile(QString objName) const;
 };
 
 #endif /* PARAMETERFILEMODEL_H_ */
