@@ -216,8 +216,15 @@ ADD_LIBRARY(brightnessmodels_constant SHARED
 	${charon_INCLUDE_DIR}/BrightnessModels/Constant.hxx
 	${charon_INCLUDE_DIR}/BrightnessModel.h
 )
+#ADD_LIBRARY(brightnessmodels_diffusion SHARED
+#	BrightnessModelDiffusion.cpp
+#	${charon_INCLUDE_DIR}/BrightnessModels/Diffusion.h
+#	${charon_INCLUDE_DIR}/BrightnessModels/Diffusion.hxx
+#	${charon_INCLUDE_DIR}/BrightnessModel.h
+#)
 LIST(APPEND Plugins
 	brightnessmodels_constant
+#	brightnessmodels_diffusion
 )
 
 # Motion models (currently only local constant motion available)
