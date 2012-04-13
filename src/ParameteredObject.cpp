@@ -565,3 +565,7 @@ void ParameteredObject::_setDynamic(bool v) {
 		_metadata.set(_className + ".isDynamicModule", v);
 	}
 }
+
+bool ParameteredObject::isDynamic() {
+	return _metadata.get<int>(_className + ".isDynamicModule", 0);
+}

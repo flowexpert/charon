@@ -778,6 +778,73 @@ PluginManager::~PluginManager() {
 	reset();
 }
 
+void PluginManager::createDynamicMetadata(const ParameterFile& paramFile,
+	const std::string& filePrefix) {
+
+	bool createMetaBefore = ParameteredObject::getCreateMetadata();
+	ParameteredObject::setCreateMetadata(true);
+
+	// Determine default template type
+	if (paramFile.isSet("global.templatetype")) {
+		std::string templateType = paramFile.get<std::string> (
+				"global.templatetype");
+		if (templateType == "int") {
+			_defaultTemplateType = ParameteredObject::TYPE_INT;
+		} else if (templateType == "float") {
+			_defaultTemplateType = ParameteredObject::TYPE_FLOAT;
+		} else {
+			_defaultTemplateType = ParameteredObject::TYPE_DOUBLE;
+		}
+	}
+
+	std::vector<std::string> keys = paramFile.getKeyList();
+
+	try {
+		// Load Plugins and create _instances
+		for (unsigned int i = 0; i < keys.size(); i++) {
+			if (keys[i].substr(keys[i].find_last_of(".") + 1,
+					keys[i].find_first_of(" ")) == "type") {
+				std::string pluginName = paramFile.get<std::string> (keys[i]);
+				bool alreadyLoaded = isLoaded(pluginName);
+				if (!alreadyLoaded) {
+					loadPlugin(pluginName);
+				}
+				std::string instanceName = keys[i].substr(0,
+						keys[i].find_first_of("."));
+				ParameteredObject* obj = createInstance(
+					pluginName, instanceName);
+				if (!obj->isDynamic()) {
+					continue;
+				}
+				obj->prepareDynamicInterface(paramFile);
+				sout << std::endl << std::endl << "saving module "
+					<< (filePrefix + "_" + instanceName + ".wrp")
+						<< std::endl << std::endl << std::endl;
+				obj->saveMetadata(filePrefix + "_" + instanceName + ".wrp");
+				destroyInstance(obj);
+				if (!alreadyLoaded) {
+					unloadPlugin(pluginName);
+				}
+			}
+		}
+	} catch (AbstractPluginLoader::PluginException e) {
+		sout << "(EE) Error during load: " << e.what() << std::endl;
+	} catch (std::string s) {
+		sout << "(EE) Error during load: " << s << std::endl;
+	} catch (...) {
+		sout << "(EE) caught unknown exception during load" << std::endl;
+	}
+	sout << std::endl;
+
+	ParameteredObject::setCreateMetadata(createMetaBefore);
+}
+
+void PluginManager::createDynamicMetadata(const std::string& paramFile,
+	const std::string& filePrefix) {
+
+		createDynamicMetadata(ParameterFile(paramFile), filePrefix);
+}
+
 void PluginManager::createDynamicMetadata(const std::string& pluginName,
 		const ParameterFile& paramFile, const std::string& fileName) {
 

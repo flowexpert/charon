@@ -427,6 +427,27 @@ public:
 	void createMetadata(const std::string & targetPath = "");
 
 	/**
+	 * Creates metadata of all dynamic plugins in given parameter file.
+	 * FilePrefix should be some/file_prefix instead of some/file_prefix.wrp
+	 * since this method writes the metadata into
+	 * some/file_prefix_instance_name.wrp
+	 *
+	 * @param paramFile   ParameterFile containing parameters for plugin
+	 * @param filePrefix  File prefix to determine save file names
+	 */
+	void createDynamicMetadata(const ParameterFile& paramFile,
+		const std::string& filePrefix);
+
+	/**
+	 *  Same method, but loads a ParameterFile from the given path.
+	 *
+	 *  @param paramFile   path to ParameterFile
+	 *  @param filePrefix  File prefix to determine save file names
+	 */
+	void createDynamicMetadata(const std::string& paramFile,
+		const std::string& filePrefix);
+
+	/**
 	 * Creates metadata of dynamic plugin based on parameter file
 	 *
 	 * @param pluginName  Name of dynamic plugin

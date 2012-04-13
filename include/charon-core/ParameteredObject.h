@@ -484,6 +484,8 @@ public:
 	static void setCreateMetadata(bool c);
 	static bool getCreateMetadata();
 
+	bool isDynamic();
+
 	void saveMetadata(const std::string& file) const;
 
 	template <typename T>

@@ -58,7 +58,7 @@ DynamicDummyModule::DynamicDummyModule(const std::string& name) :
 		ParameteredObject("DynamicDummyModule", name, "some dummy class")
 {
 	_addOutputSlot(out1, "out1", "dummy output slot 1");
-	_addParameter(param1, "parameters", "Number of Parameters", 3);
+	_addParameter(param1, "paramNum", "Number of Parameters", 3);
 	_addParameter(param2, "input", "Number of Input Slots", 0);
 	_addParameter(param3, "output", "Number of Output Slots", 1);
 	_setDynamic(true);
@@ -94,7 +94,7 @@ void DynamicDummyModule::prepareDynamicInterface(const ParameterFile& file) {
 }
 
 void DynamicDummyModule::execute() {
-	sout << getName() << ".parameters = " << param1() << std::endl;
+	sout << getName() << ".paramNum = " << param1() << std::endl;
 	sout << getName() << ".input = " << param2() << std::endl;
 	sout << getName() << ".output = " << param3() << std::endl;
 	if (param1() >= 4) {
