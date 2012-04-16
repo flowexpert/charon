@@ -21,7 +21,6 @@
  *      Helen Morrison</a>
  *  \date 27.03.2012
  *
- * DOES NOT WORK YET!!!
  */
 
 #ifndef _BrightnessModels_Diffusion_HXX_
@@ -33,8 +32,8 @@ template<class T>
 BrightnessModels::Diffusion<T>::Diffusion(const std::string& name) :
 		BrightnessModel<T>("brightnessmodels_diffusion", name)
 {
-	_addInputSlot(dxx, "dx", "derivation in x", "CImgList<T>");
-	_addInputSlot(dyy, "dy", "derivation in y", "CImgList<T>");
+	_addInputSlot(dx, "dx", "derivation in x", "CImgList<T>");
+	_addInputSlot(dy, "dy", "derivation in y", "CImgList<T>");
 	_addInputSlot(dxx, "dxx", "second derivation in x", "CImgList<T>");
 	_addInputSlot(dyy, "dyy", "second derivation in y", "CImgList<T>");
 
@@ -67,15 +66,15 @@ void BrightnessModels::Diffusion<T>::compute(
 		const std::string& unknown)
 {
 
-//	const T& iX = this->dx()(v, p.x, p.y, p.z, p.t);
-//	const T& iY = this->dy()(v, p.x, p.y, p.z, p.t);
+	const T& iX = this->dx()(v, p.x, p.y, p.z, p.t);
+	const T& iY = this->dy()(v, p.x, p.y, p.z, p.t);
 	const T& iXX = this->dxx()(v, p.x, p.y, p.z, p.t);
 	const T& iYY = this->dyy()(v, p.x, p.y, p.z, p.t);
 
-//	T factor = T(1);
+	T factor = T(1);
 
 	// multiply with derivative wrt unkown, if any unknown is given
-/*	if (unknown.length()) {
+	if (unknown.length()) {
 		if (unknown == "a1")
 			factor = iX;
 		else if (unknown == "a2")
@@ -88,10 +87,10 @@ void BrightnessModels::Diffusion<T>::compute(
 			throw std::out_of_range(msg.str().c_str());
 		}
 	}
-*/
+
 	// calculate values to return
-//	rhs += factor * 0.005 * (iXX + iYY);
-	rhs += 0.005 * (iXX + iYY);
+	rhs += factor * 0.005 * (iXX + iYY);
+//	rhs += 0.005 * (iXX + iYY);
 }
 
 #endif /* _DIFFUSION_HXX_ */

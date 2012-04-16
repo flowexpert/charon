@@ -21,7 +21,6 @@
  *      Helen Morrison</a>
  *  \date 27.03.2012
  *
- * DOES NOT WORK YET!!!
  */
 
 #ifndef _BrightnessModels_Diffusion_H_
@@ -58,8 +57,7 @@ public:
 	/// default constructor
 	Diffusion(const std::string& name = "");
 
-//	InputSlot<cimg_library::CImgList<T> > dx, dy;
-	InputSlot<cimg_library::CImgList<T> > dxx, dyy;
+	InputSlot<cimg_library::CImgList<T> > dx, dy, dxx, dyy;
 
 	/// \copydoc ParameteredObject::execute()
 	virtual void execute();
