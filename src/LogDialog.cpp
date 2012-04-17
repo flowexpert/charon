@@ -36,6 +36,9 @@
 #include <QFileDialog>
 #include <QMutexLocker>
 
+#include <QPainter>
+#include <QSplashScreen>
+
 LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 	QDialog(pp,wf), _decorator(dec), _proc(0), _logMutex(new QMutex())
 {
@@ -188,6 +191,16 @@ void LogDialog::kill(bool force) {
 				QMessageBox::No,QMessageBox::Yes)==QMessageBox::Yes)) {
 		_proc->kill();
 	}
+}
+
+bool LogDialog::waitForFinished(int msecs) {
+	if (_proc->state() == QProcess::Starting) {
+		_proc->waitForStarted(msecs);
+	}
+	if (_proc->state() == QProcess::Running) {
+		return _proc->waitForFinished(msecs);
+	}
+	return false;
 }
 
 void LogDialog::on_proc_readyReadStandardOutput() {

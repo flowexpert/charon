@@ -89,6 +89,11 @@ public:
 	explicit LogDialog(
 		Decorator* decorator, QWidget* parent=0, Qt::WindowFlags f=0);
 	virtual ~LogDialog();
+	/// wait for process to finish
+	/** \param msecs     time to wait
+	 *  \retval false    process still running (timeout)
+	 */
+	bool waitForFinished(int msecs=500);
 
 public slots:
 	/// handle process termination

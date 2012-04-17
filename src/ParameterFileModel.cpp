@@ -230,7 +230,7 @@ bool ParameterFileModel::setData(
 						save();
 						LogDialog dialog(
 							new LogDecorators::UpdateDynamics(_fileName));
-						dialog.exec();
+						dialog.waitForFinished();
 						QTimer::singleShot(0, this, SLOT(_update()));
 						emit dynamicUpdate();
 					}
@@ -438,7 +438,7 @@ bool ParameterFileModel::_load() {
 	_parameterFile->load(_fileName);
 	LogDialog dialog(
 		new LogDecorators::UpdateDynamics(_fileName));
-	dialog.exec();
+	dialog.waitForFinished(1000);
 	_update();
 	emit statusMessage(QString("File %1 loaded.").arg(_fileName));
 	return true;
