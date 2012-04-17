@@ -115,6 +115,24 @@ private:
 	void _commitSlots();
 
 protected:
+	/// Specifies if the ParameteredObject is dynamic
+	void _setDynamic(bool v);
+
+	/// Common code for _addParameter, _addInputSlot, _addOutputSlot.
+	/** This function does nothing, if _createMetadata is set to false.
+	 *  \param extension    section of metadata file where to add
+	 *                      (e.g. parameters, inputs, outputs)
+	 *  \param name         parameter name to pass to AbstractParameter::init()
+	 *  \param doc          parameter docstring (for metadata generation)
+	 *  \param type         Parameter type (string representation)
+	 *  \param defaultValue Default value, if any
+	 *  \retval true        Parameter/Slot name is unique
+	 */
+	bool _addSomething(
+			const std::string& extension, const std::string& name,
+			const std::string& doc, const std::string& type,
+			const std::string& defaultValue = "");
+
 	/// Add parameters.
 	/** If _createMetadata is true, the parameter is also recorded to the
 	 *  class information in the _metadata parameter file.
@@ -181,24 +199,31 @@ protected:
 	 */
 	void _addOutputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type = "");
+	//  \}
 
 	/// register member function
 	/**
 	 *  This hack is useful to get some member functions compiled
 	 *  (and exported into) the (dynamic) library.
-	 *  No code is executed, because this is always not zero, but the
+	 *  No code is executed, because this-pointer is always non-zero, but the
 	 *  compiler is forced to compile the given (templated) function
 	 *  and export the symbol.
+	 *
+	 *  Example: <code>_addFunction(someFunction);</code>
+	 *
 	 *  \param x	function to export
 	 */
-	#define _addFunction(x) if (!this && &x) throw 42;
+	#define _addFunction(x)\
+		if (!this && &x) {\
+			throw 42;\
+		}
 
 	/// register some constructor
 	/**
 	 *  use this hack, if you have multiple templated constructors and want
 	 *  them to be compiled (and exported) into the (dynamic) library.
 	 *
-	 *  Example: <code>_addConstructor(myObject(par1,par2,par3));</code>
+	 *  Example: <code>_addConstructor( myObject(par1,par2,par3) );</code>
 	 *
 	 *  \warning
 	 *      at least on gcc, there are multiple kinds of constructors, i.e.
@@ -206,23 +231,10 @@ protected:
 	 *      full constructor that is used to create instances.
 	 *      This hack will only produce the full constructor, not the base one.
 	 */
-	#define _addConstructor(x) if (!this && new x) throw 42;
-
-	/// Common code for _addParameter, _addInputSlot, _addOutputSlot.
-	/** This function does nothing, if _createMetadata is set to false.
-	 *  \param extension    section of metadata file where to add
-	 *                      (e.g. parameters, inputs, outputs)
-	 *  \param name         parameter name to pass to AbstractParameter::init()
-	 *  \param doc          parameter docstring (for metadata generation)
-	 *  \param type         Parameter type (string representation)
-	 *  \param defaultValue Default value, if any
-	 *  \retval true        Parameter/Slot name is unique
-	 */
-	bool _addSomething(
-			const std::string& extension, const std::string& name,
-			const std::string& doc, const std::string& type,
-			const std::string& defaultValue = "");
-	//  \}
+	#define _addConstructor(x)\
+		if (!this && new x) {\
+			throw 42;\
+		}
 
 	/// Default constructor.
 	/** Init class name with given string.
@@ -334,6 +346,19 @@ public:
 	 *  \param propagate    reset dependent objects too
 	 */
 	virtual void resetExecuted(bool propagate = true);
+
+	/// prepare slots
+	/** This function may change the quantity and quality of slots/parameters
+	 *  depending on certain parameters in the ParameterFile.
+	 *  Since the interface may change depending on the parameter file
+	 *  content, such modules are called dynamic modules.
+	 *
+	 *  This function is empty for most modules (default implementation),
+	 *  only dynamic modules need to overwrite it.
+	 *
+	 *  \param file         parameter file describing the workflow
+	 */
+	virtual void prepareDynamicInterface(const ParameterFile& file);
 
 	/// \name getter of plugin information
 	//\{
@@ -465,6 +490,8 @@ public:
 
 	static void setCreateMetadata(bool c);
 	static bool getCreateMetadata();
+
+	bool isDynamic();
 
 	template <typename T>
 	void setParameter(std::string name, T value);

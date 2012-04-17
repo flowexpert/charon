@@ -96,7 +96,8 @@ void PluginManager::_unloadPlugin(PLUGIN_LOADER * loader, bool erase) {
 
 	loader->unload();
 	if (erase) {
-		_loadedPlugins.erase(loader->getName());
+		std::string nameL = StringTool::toLowerCase(loader->getName());
+		_loadedPlugins.erase(nameL);
 	}
 	delete loader;
 }
@@ -127,8 +128,9 @@ void PluginManager::loadPlugin(std::string name)
 
 void PluginManager::unloadPlugin(const std::string & name)
 		throw (AbstractPluginLoader::PluginException) {
-	if (_loadedPlugins.find(name) != _loadedPlugins.end()) {
-		_unloadPlugin(_loadedPlugins[name]);
+	std::string nameL = StringTool::toLowerCase(name);
+	if (_loadedPlugins.find(nameL) != _loadedPlugins.end()) {
+		_unloadPlugin(_loadedPlugins[nameL]);
 	} else {
 		throw(AbstractPluginLoader::PluginException(
 				"There is no Plugin loaded with the name \"" + name + "\".",
@@ -137,7 +139,8 @@ void PluginManager::unloadPlugin(const std::string & name)
 }
 
 bool PluginManager::isLoaded(const std::string & name) const {
-	return _loadedPlugins.find(name) != _loadedPlugins.end();
+	std::string nameL = StringTool::toLowerCase(name);
+	return _loadedPlugins.find(nameL) != _loadedPlugins.end();
 }
 
 size_t PluginManager::getLoadedPluginsCount() const {
@@ -262,7 +265,9 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 						templateType = ParameteredObject::TYPE_DOUBLE;
 					}
 				}
-				createInstance(pluginName, templateType, instanceName);
+				ParameteredObject* obj = createInstance(
+					pluginName, templateType, instanceName);
+				obj->prepareDynamicInterface(paramFile);
 			}
 		}
 	} catch (AbstractPluginLoader::PluginException e) {
@@ -615,22 +620,7 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 	}
 	FileTool::changeDir(pathBackup);
 
-	// now generate metadata for all (unique) plugin names
-	// which file is now used is handled by the plugin loader
-	std::set<std::string>::const_iterator pIterU;
-	for (pIterU=pluginsU.begin(); pIterU != pluginsU.end(); pIterU++) {
-		_generateMetadataForPlugin(*pIterU,targetPath+"/"+*pIterU+".wrp");
-		sout << "(DD) " << std::endl;
-	}
-}
-
-void PluginManager::_generateMetadataForPlugin(
-		const std::string& pluginName, const std::string& filename) {
-	if (!pluginName.size()) {
-		sout << "(EE) " << __FILE__ << ":" << __LINE__ << "\t"
-			<< "emtpy pluginName given (metadata generation)!\n" << std::endl;
-		return;
-	}
+	// exclude list on metadata generation
 	static std::vector<std::string> excludeList;
 	if (excludeList.size() == 0) {
 #ifdef _MSC_VER
@@ -645,14 +635,36 @@ void PluginManager::_generateMetadataForPlugin(
 		excludeList.push_back("dll");
 #endif
 	}
-	std::vector<std::string>::const_iterator iter;
-	for(iter = excludeList.begin(); iter != excludeList.end(); iter++) {
-		if (pluginName.find(*iter)!=std::string::npos) {
-			sout << "(DD) Discarding non-plugin file \"" << pluginName
-				<< ".dll\" (matched pattern \"*" << *iter
-				<< "*\" of exclude list)\n" << std::endl;
-			return;
+
+	// Now generate metadata for all (unique) plugin names
+	// skipping the names from the exclude list.
+	// Which dll file to use is now handled by the plugin loader.
+	std::set<std::string>::const_iterator pIterU;
+	for (pIterU=pluginsU.begin(); pIterU != pluginsU.end(); pIterU++) {
+		bool ignore = false;
+		std::vector<std::string>::const_iterator iter;
+		for(iter = excludeList.begin(); iter != excludeList.end(); iter++) {
+			if (pIterU->find(*iter)!=std::string::npos) {
+				sout << "(II) Discarding non-plugin file \"" << *pIterU
+					<< ".dll\" (matched pattern \"*" << *iter
+					<< "*\" of exclude list)\n" << std::endl;
+				ignore = true;
+				break;
+			}
 		}
+		if (!ignore) {
+			_generateMetadataForPlugin(*pIterU,targetPath+"/"+*pIterU+".wrp");
+			sout << "(DD) " << std::endl;
+		}
+	}
+}
+
+void PluginManager::_generateMetadataForPlugin(
+		const std::string& pluginName, const std::string& filename) {
+	if (!pluginName.size()) {
+		sout << "(EE) " << __FILE__ << ":" << __LINE__ << "\t"
+			<< "emtpy pluginName given (metadata generation)!\n" << std::endl;
+		return;
 	}
 	try {
 		bool alreadyLoaded = isLoaded(pluginName);
@@ -754,4 +766,113 @@ std::list<ParameteredObject*> PluginManager::determineExecutionOrder() {
 
 PluginManager::~PluginManager() {
 	reset();
+}
+
+void PluginManager::createDynamicMetadata(const ParameterFile& paramFile,
+	const std::string& filePrefix) {
+
+	// Determine default template type
+	if (paramFile.isSet("global.templatetype")) {
+		std::string templateType = paramFile.get<std::string> (
+				"global.templatetype");
+		if (templateType == "int") {
+			_defaultTemplateType = ParameteredObject::TYPE_INT;
+		} else if (templateType == "float") {
+			_defaultTemplateType = ParameteredObject::TYPE_FLOAT;
+		} else {
+			_defaultTemplateType = ParameteredObject::TYPE_DOUBLE;
+		}
+	}
+
+	std::vector<std::string> keys = paramFile.getKeyList();
+
+	ParameteredObject::setCreateMetadata(true);
+	try {
+		// Load Plugins and create _instances
+		for (unsigned int i = 0; i < keys.size(); i++) {
+			if (keys[i].substr(keys[i].find_last_of(".") + 1,
+					keys[i].find_first_of(" ")) == "type") {
+				std::string pluginName = paramFile.get<std::string> (keys[i]);
+				bool alreadyLoaded = isLoaded(pluginName);
+				if (!alreadyLoaded) {
+					loadPlugin(pluginName);
+				}
+				std::string instanceName = keys[i].substr(0,
+						keys[i].find_first_of("."));
+
+				ParameteredObject* obj = createInstance(
+					pluginName, instanceName);
+				if (obj->isDynamic()) {
+					obj->prepareDynamicInterface(paramFile);
+					std::string targetFileName =
+							filePrefix + "_" + instanceName + ".wrp";
+					sout << "(DD) saving dynamic metadata for module  to "
+						<< targetFileName << std::endl;
+					obj->getMetadata().save(targetFileName);
+				}
+				destroyInstance(obj);
+				if (!alreadyLoaded) {
+					unloadPlugin(pluginName);
+				}
+			}
+		}
+	} catch (AbstractPluginLoader::PluginException e) {
+		sout << "(EE) Error during load: " << e.what() << std::endl;
+	} catch (std::string s) {
+		sout << "(EE) Error during load: " << s << std::endl;
+	} catch (...) {
+		sout << "(EE) caught unknown exception during load" << std::endl;
+	}
+	sout << std::endl;
+
+	ParameteredObject::setCreateMetadata(false);
+}
+
+void PluginManager::createDynamicMetadata(const std::string& paramFile,
+	const std::string& filePrefix) {
+
+		createDynamicMetadata(ParameterFile(paramFile), filePrefix);
+}
+
+void PluginManager::createDynamicMetadata(const std::string& pluginName,
+		const ParameterFile& paramFile, const std::string& fileName) {
+
+	if (!pluginName.size()) {
+		sout << "(EE) " << __FILE__ << ":" << __LINE__ << "\t"
+			<< "emtpy pluginName given (dynamic metadata generation)!\n"
+				<< std::endl;
+		return;
+	}
+	try {
+		bool alreadyLoaded = isLoaded(pluginName);
+		if (!alreadyLoaded) {
+			loadPlugin(pluginName);
+		}
+
+		ParameteredObject::setCreateMetadata(true);
+		ParameteredObject* obj = createInstance(pluginName);
+		obj->prepareDynamicInterface(paramFile);
+		obj->getMetadata().save(fileName);
+		destroyInstance(obj);
+		ParameteredObject::setCreateMetadata(false);
+
+		if (!alreadyLoaded) {
+			unloadPlugin(pluginName);
+		}
+	} catch (const AbstractPluginLoader::PluginException& e) {
+		switch(e.getErrorCode()) {
+		case AbstractPluginLoader::PluginException::INVALID_PLUGIN_FORMAT:
+			sout << "(WW) \"" << e.getPluginName()
+				<< "\" is no charon plugin:\n(WW) \t"
+				<< e.what() << std::endl;
+			break;
+		default:
+			sout << "(EE) Exception during (dynamic) metadata generation of \""
+				<< e.getPluginName()
+				<< "\":\n(EE) \t"
+				<< e.what() << std::endl;
+			break;
+		}
+	}
+	sout << std::endl;
 }

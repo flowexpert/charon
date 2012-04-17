@@ -61,6 +61,8 @@ ParameteredObject::ParameteredObject(const std::string& className,
 		_metadata.set<std::string> (_className + ".inputs");
 		_metadata.set<std::string> (_className + ".outputs");
 	}
+
+	_setDynamic(false);
 }
 
 ParameteredObject::~ParameteredObject() {
@@ -509,7 +511,6 @@ void ParameteredObject::setCreateMetadata(bool c) {
 }
 
 bool ParameteredObject::getCreateMetadata() {
-
 	return _createMetadata;
 }
 
@@ -551,5 +552,25 @@ std::string ParameteredObject::templateTypeToString(template_type t) {
 		return "int";
 	default:
 		return "double";
+	}
+}
+
+void ParameteredObject::prepareDynamicInterface(const ParameterFile&) {
+}
+
+void ParameteredObject::_setDynamic(bool v) {
+	if (_createMetadata) {
+		_metadata.set(_className + ".isDynamicModule", v);
+	}
+}
+
+bool ParameteredObject::isDynamic() {
+	if (_createMetadata) {
+		return _metadata.get<bool>(_className + ".isDynamicModule", false);
+	}
+	else {
+		sout << "(WW) called isDynamic() without enabled metadata generation"
+			 << std::endl;
+		return false;
 	}
 }
