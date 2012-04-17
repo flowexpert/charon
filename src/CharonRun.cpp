@@ -186,7 +186,7 @@ void CharonRun::runWorkflow(QString fName) {
 		const QDateTime& startTime = QDateTime::currentDateTime();
 		qout << tr("start time: %1").arg(startTime.toString(Qt::ISODate))
 			 << endl;
-		_man->executeWorkflow();
+		_man->runWorkflow();
 		const QDateTime& endTime = QDateTime::currentDateTime();
 		QTime runTime = QTime().addSecs(startTime.secsTo(endTime));
 
@@ -238,4 +238,35 @@ void CharonRun::unlock() {
 	if (_lockCount == 0) {
 		QApplication::exit();
 	}
+}
+
+void CharonRun::updateDynamics(QString fName) {
+	lock();
+
+	QString baseN = QFileInfo(fName).baseName();
+
+	// delete old wrp files
+	const FileManager& fm = FileManager::instance();
+	QDir dynamPath = fm.configDir().absoluteFilePath("dynamics");
+	if (dynamPath.exists()) {
+		QStringList wrpFiles = dynamPath.entryList(
+			QStringList("*.wrp"), QDir::Files);
+		wrpFiles = wrpFiles.filter(QRegExp("^" + baseN + "_"));
+		for (int i=0; i < wrpFiles.size(); i++) {
+			Q_ASSERT(QFileInfo(dynamPath.absoluteFilePath(wrpFiles[i])).exists());
+			Q_ASSERT(QFileInfo(dynamPath.absoluteFilePath(wrpFiles[i])).isFile());
+			Q_ASSERT(wrpFiles[i].indexOf(".wrp") > 0);
+			dynamPath.remove(wrpFiles[i]);
+			Q_ASSERT(!QFileInfo(wrpFiles[i]).exists());
+		}
+	} else {
+		Q_ASSERT(fm.configDir().mkdir("dynamics"));
+	}
+
+	_setupMan("updateLog.txt");
+	_man->createDynamicMetadata(fName.toStdString(),
+		dynamPath.absoluteFilePath(baseN).toStdString());
+	_freeMan();
+
+	unlock();
 }

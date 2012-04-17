@@ -21,7 +21,7 @@ QT4_WRAP_UI(UI_SRC
 	PriorityDialog.ui
 )
 
-SET(TUCHULCHA_COMMON_SOURCES
+SET(TUCHULCHA_SOURCES
 	Qtiostream.cpp
 	Qtiostream.h
 	imageManip.cpp
@@ -30,9 +30,6 @@ SET(TUCHULCHA_COMMON_SOURCES
 	FileManager.h
 	RecentFileHandler.cpp
 	RecentFileHandler.h
-)
-
-SET(EDITPARAM_SOURCES
 	ParameterFileModel.cpp
 	ParameterFileModel.h
 	PrefixValidator.cpp
@@ -49,9 +46,6 @@ SET(EDITPARAM_SOURCES
 	MetaData.h
 	QDirEdit.cpp
 	QDirEdit.h
-)
-
-SET(EDITGRAPH_SOURCES
 	GraphModel.cpp
 	GraphModel.h
 	FlowWidget.cpp
@@ -64,16 +58,6 @@ SET(EDITGRAPH_SOURCES
 	NodeProperty.h
 	NodeHandler.cpp
 	NodeHandler.h
-)
-
-SET(WF_RUNNER_SOURCES
-	CommunicationHandler.h
-	CommunicationHandler.cpp
-	CharonRun.h
-	CharonRun.cpp
-)
-
-SET(TUCHULCHA_SOURCES
 	TuchulchaWindow.cpp
 	TuchulchaWindow.h
 	DocGenerator.cpp
@@ -98,29 +82,26 @@ SET(TUCHULCHA_SOURCES
 	PriorityBox.h
 )
 
+SET(WF_RUNNER_SOURCES
+	CommunicationHandler.h
+	CommunicationHandler.cpp
+	CharonRun.h
+	CharonRun.cpp
+)
+
 # =============  generate moc files ====================
 
 # create moc files
-QT4_AUTOMOC(${TUCHULCHA_COMMON_SOURCES})
-QT4_AUTOMOC(${EDITPARAM_SOURCES})
-QT4_AUTOMOC(${EDITGRAPH_SOURCES})
-QT4_AUTOMOC(${INSPECTOR_SOURCES})
-QT4_AUTOMOC(${WF_RUNNER_SOURCES})
 QT4_AUTOMOC(${TUCHULCHA_SOURCES})
+QT4_AUTOMOC(${WF_RUNNER_SOURCES})
 
 # create libraries
-ADD_LIBRARY(tc-common ${TUCHULCHA_COMMON_SOURCES})
-ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC})
-ADD_LIBRARY(editparam ${EDITPARAM_SOURCES})
-ADD_LIBRARY(editgraph ${EDITGRAPH_SOURCES})
+ADD_LIBRARY(tc-common ${TUCHULCHA_SOURCES} ${UI_SRC})
 ADD_LIBRARY(tc-run ${WF_RUNNER_SOURCES})
 
 # add dependencies
-TARGET_LINK_LIBRARIES(editparam tc-common ${QT_LIBRARIES})
-TARGET_LINK_LIBRARIES(editgraph editparam)
+TARGET_LINK_LIBRARIES(tc-common ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(tc-run tc-common charon-plugins ${QT_LIBRARIES})
-TARGET_LINK_LIBRARIES(tuchulcha-widgets editgraph)
 SET_TARGET_PROPERTIES(
-	tc-common editparam editgraph
-	tc-run tuchulcha-widgets
+	tc-common tc-run
 	PROPERTIES FOLDER "Tuchulcha")

@@ -74,7 +74,7 @@ public:
 		/// message shown if finished
 		virtual QString finishMessage() const;
 		/// hint for filename on save dialog
-		virtual QString filenameHint() const = 0;
+		virtual QString filenameHint() const;
 		/// debug output mode
 		bool debugOutput;
 	};
@@ -143,6 +143,17 @@ namespace LogDecorators {
 		virtual QString title() const;
 		virtual QString desc() const;
 		virtual QString filenameHint() const;
+	};
+
+	/// decorator for update dynamics dialog
+	class UpdateDynamics : public LogDialog::Decorator {
+	public:
+		/// constructor
+		/** \param fileName worflow file to analyze */
+		UpdateDynamics(QString fileName);
+		virtual QStringList arguments() const;
+	private:
+		QString _fileName; ///< filename cache
 	};
 
 	/// decorator for run workspace dialog

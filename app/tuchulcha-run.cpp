@@ -62,6 +62,8 @@ int main(int argc, char *argv[]) {
 	CharonRun run;
 	run.connect(&comm,SIGNAL(updatePlugins()),SLOT(updatePlugins()));
 	run.connect(&comm,SIGNAL(runWorkflow(QString)),SLOT(runWorkflow(QString)));
+	run.connect(&comm,SIGNAL(updateDynamics(QString)),
+		SLOT(updateDynamics(QString)));
 	run.connect(&comm,SIGNAL(started()),SLOT(lock()));
 	run.connect(&comm,SIGNAL(finished()),SLOT(unlock()));
 

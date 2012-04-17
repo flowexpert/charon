@@ -46,6 +46,9 @@ signals:
 	/// run given workflow file
 	/** \param fName   workflow filename */
 	void runWorkflow(QString fName);
+	/// update dynamic plugins of given workflow file
+	/** \param fName   workflow filename */
+	void updateDynamics(QString fName);
 
 protected:
 	/// thread execution code

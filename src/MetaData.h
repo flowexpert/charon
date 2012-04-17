@@ -129,6 +129,13 @@ public:
 	 *  \retval true            slot may have multiple targets
 	 */
 	bool isMultiSlot(QString slotName, QString className) const;
+
+	/// Check if module is dynamic
+	/**
+	 *  \param  className       object class name
+	 *  \retval true            module is dynamic
+	 */
+	bool isDynamic(QString className) const;
 	//  \}  // queries
 
 private:

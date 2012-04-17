@@ -44,6 +44,9 @@ public slots:
 	/// run given workflow file
 	/** \param fName  workflow filename */
 	void runWorkflow(QString fName);
+	/// update dynamic plugins of given workflow file
+	/** \param fName  workflow filename */
+	void updateDynamics(QString fName);
 
 	/// lock exiting, register task
 	void lock();

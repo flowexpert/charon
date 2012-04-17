@@ -135,3 +135,7 @@ bool MetaData::isMultiSlot(QString slotName, QString className) const {
 	return _data->isSet(optName) ?
 			QVariant(_data->get(optName)).toBool() : !slotIsIn;
 }
+
+bool MetaData::isDynamic(QString className) const {
+	return QVariant(_data->get(className + ".isDynamicModule")).toBool();
+}

@@ -156,7 +156,6 @@ void NodeHandler::loadFromModel() {
 	clear();
 	_nodeMap.clear();
 	_deselectAllNodes();
-	const MetaData* mi = _model->metaInfo();
 	QStringList nodes = _model->nodes();
 	QStringList nodesout,nodesin;
 	QStringList slotout,slotin;
@@ -186,8 +185,8 @@ void NodeHandler::loadFromModel() {
 			}
 		}
 
-		QStringList ins = mi->getInputs(cname);
-		QStringList outs = mi->getOutputs(cname);
+		QStringList ins = _model->getInputs(name);
+		QStringList outs = _model->getOutputs(name);
 		for (int jj=0; jj < ins.size(); jj++) {
 			node->addProperty(ins[jj], true);
 		}
