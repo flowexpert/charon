@@ -25,7 +25,6 @@
 #define _ARGOSDISPLAY_VIEWSTACK_HPP_
 
 #include "charonwidgets.h"
-//#include <charon-core/ParameteredObject.hxx>
 #include <QWidget>
 #include "vigraqt/vigraqimage.hxx"
 #include "vigraqt/qimageviewer.hxx"
@@ -55,12 +54,18 @@ namespace ArgosDisplay {
 		void clear();
 
 		/// get index of current tab widget
-		int currentIndex() const ;
+		int currentIndex() const;
 
 		/// set active tab widget (does check for valid index)
-		void setCurrentIndex(int index) ;
+		void setCurrentIndex(int index);
 
-		///register instance of PixelInspector whose image will be displayed on the next call to linkImage()
+		/// get active zoom level
+		int getZoomLevel() const;
+		/// set active zoom level
+		void setZoomLevel(int level /** [in] new default zoom level*/);
+
+		/// register instance of PixelInspector whose image
+		/// will be displayed on the next call to linkImage()
 		void linkImage(AbstractPixelInspector*) ;
 
 	protected:
@@ -68,7 +73,6 @@ namespace ArgosDisplay {
 		virtual void keyPressEvent(QKeyEvent * event ) ;
 
 	private:
-
 		/// create all QActions
 		void _createActions() ;
 		
@@ -97,6 +101,9 @@ namespace ArgosDisplay {
 
 		/// tab widget index which will be set on next update
 		int _index ;
+
+		/// saved zoom level
+		int _zoomLevel;
 
 	private slots:
 		/// handle mouse movement in ImageDisplays

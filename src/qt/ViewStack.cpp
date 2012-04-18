@@ -31,7 +31,7 @@ using namespace ArgosDisplay ;
 
 ViewStack::ViewStack(QWidget* p) : QWidget(p),
 	_updatePending(false),
-	_index(0)
+	_index(0), _zoomLevel(0)
 {
 	_tabWidget = new QTabWidget(this) ;
 	_tabWidget->setUsesScrollButtons(true) ;
@@ -149,6 +149,7 @@ void ViewStack::_linkImages()
 			connect(
 					viewer, SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int))) ;
+			viewer->setZoomLevel(_zoomLevel);
 		}
 		else
 		{
@@ -164,7 +165,7 @@ void ViewStack::_linkImages()
 			connect(
 					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int)));
-
+			viewer->imageViewer()->setZoomLevel(_zoomLevel);
 		}
 	}
 	_tabWidget->setCurrentIndex(_index) ;
@@ -311,13 +312,26 @@ void ViewStack::_saveCurrentView()
 
 void ViewStack::_centerAndResetZoom()
 {
-	try
-	{	QImageViewer& viewer = _currentViewer() ;
+	try {
+		QImageViewer& viewer = _currentViewer() ;
 		viewer.setZoomLevel(0) ;
-		viewer.centerOn(QPoint(viewer.originalWidth() / 2,viewer.originalHeight() / 2)) ;
+		viewer.centerOn(QPoint(
+				viewer.originalWidth()/2, viewer.originalHeight()/2));
 	}
-	catch(std::exception&)
-	{
+	catch(std::exception&) {
 		return ;
+	}
+}
+
+void ViewStack::setZoomLevel(int level) {
+	_zoomLevel = level;
+}
+
+int ViewStack::getZoomLevel() const {
+	try {
+		return _currentViewer().zoomLevel();
+	}
+	catch (...) {
+		return _zoomLevel;
 	}
 }
