@@ -34,11 +34,14 @@ pass the instance name. Then we have to initialize the parameters and
 output slots. Input slot <em>in2</em> is initialized as optional multislot.
 The effects are described below. Within the constructor, we have to add
 all parameters and slots to the corresponding management lists. This is done
-by calls of ParameteredObject::_addInputSlot, ParameteredObject::_addOutputSlot
-and ParameteredObject::_addParameter. This can also be delegated to some
-init() function if there are more than one constructor. The parameter
-initialization can <em>not</em> be delegated! The parameters of the _addXX
-functions are described in the API documentation.
+by calls of the following functions:
+- ParameteredObject::_addInputSlot
+- ParameteredObject::_addOutputSlot
+- ParameteredObject::_addParameter
+
+This can also be delegated to some init() function if there are more
+than one constructor.
+The parameters of the _addXX functions are described in the API documentation.
 
 \until };
 The second example class is declared similarly.
@@ -62,15 +65,35 @@ existing slot connections.
 \until }
 At the end, we save the ParameterFile to the disk.
 
-\section tools  Other tools and frameworks in charon-utils
-The most importent framework in charon-utils is the parametered object
+\section dynamic-modules Dynamic Modules
+It is possible to write Modules where the number or kind of
+Parameters and Slots is not fix in any configuration.
+Such modules, where this parameter/slot interface depends on its
+configuration (i.e., in the most general case, it depends on the
+workflow configuration parameter file) are called <em>dynamic Modules</em>.
+
+For writing such dynamic modules, you have to call the function
+ParameteredObject::_setDynamic() within the constructor to set
+up the module metadata such that other tools know, that the module
+interface has to be queried providing the current configuration.
+
+The next step is to reimplement the virtual function
+ParameteredObject::prepareDynamicInterface(const ParameterFile&)
+where the current configuration is provided as a parameter file.
+Within this function, the information from the parameter file may
+be used to determine, which parameters and slots to set up.
+Definition/registration of these parameter/slots is done there
+as usual.
+Do not forget to call the following routines for registration:
+- ParameteredObject::_addParameter
+- ParameteredObject::_addInputSlot
+- ParameteredObject::_addOutputSlot
+
+\section tools  Other tools and frameworks in charon-core
+The most important framework in charon-core is the ParameteredObject
 framework mentioned above. But there are even more nice features.
 These features are easy to understand so the API documentation should be
 sufficient:
--   namespace ImgTool:<br>
-    image manipulation routines
--   namespace Convolution:<br>
-    advanced convolution implementations
 -   class FileTool:<br>
     platform independent file manipulations
 -   class ParameterFile:<br>
@@ -82,9 +105,4 @@ sufficient:
     string manipulations
 -   class TypeDetector:<br>
     guessing of basic data types
--   class Pyramid and class Pyramid2DGauss:<br>
-    management of image pyramids
--   class PdeBoundaryHandler:<br>
-    management of boundary conditions useful when
-    solving differential equations
  */

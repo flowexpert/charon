@@ -347,14 +347,19 @@ public:
 	 */
 	virtual void resetExecuted(bool propagate = true);
 
-	/// prepare slots
-	/** This function may change the quantity and quality of slots/parameters
+	/// prepare interface of parameters and slots
+	/** This function may change the number and kind of slots/parameters
 	 *  depending on certain parameters in the ParameterFile.
 	 *  Since the interface may change depending on the parameter file
-	 *  content, such modules are called dynamic modules.
+	 *  content, such modules are called <em>dynamic modules</em>.
 	 *
-	 *  This function is empty for most modules (default implementation),
-	 *  only dynamic modules need to overwrite it.
+	 *  The default implementation does nothing and is suitable for
+	 *  all non-dynamic modules. Re-implement this function
+	 *  in <em>dynamic modules</em>.
+	 *
+	 *  \note
+	 *  Make sure that ParameteredObject::_setDynamic() is called in the
+	 *  constructor if implementing a dynamic module!
 	 *
 	 *  \param file         parameter file describing the workflow
 	 */
@@ -486,15 +491,14 @@ public:
 	 */
 	void raise(const std::string& message) const ;
 
-	AbstractParameter & getParameter(const std::string & name) const;
+	AbstractParameter& getParameter(const std::string & name) const;
+	template <typename T>
+	void setParameter(std::string name, T value);
 
 	static void setCreateMetadata(bool c);
 	static bool getCreateMetadata();
 
 	bool isDynamic();
-
-	template <typename T>
-	void setParameter(std::string name, T value);
 	//  \}
 };
 
