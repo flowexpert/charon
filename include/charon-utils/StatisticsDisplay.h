@@ -95,6 +95,8 @@ namespace StatisticsDisplay {
 		/// also write the results to sout stream
 		Parameter <bool> _writeToSout ;
 
+		Parameter <bool> _calcQuantiles ;
+
 		/// number of bins for histogram
 		Parameter <size_t> _numBins ;
 

@@ -1,4 +1,5 @@
-/*  Copyright (C) 2011 Julian Coordts
+/*  Copyright (C) 2011, 2012
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -18,7 +19,8 @@
 /** \file EmptyCImg.h
  *  Declaration of the class EmptyCImg.
  *  \author Julian Coordts
- *  \date 13.01.2012
+ *  \author Michael Baron
+ *  \date 26.03.2012
  */
 
 
@@ -39,12 +41,16 @@
 
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
+#include <charon-utils/Roi.h>
 
 /// plugin does nothing
 template <typename T>
 class emptycimg_DECLDIR EmptyCImg :
 		public TemplatedParameteredObject<T> {
 public:
+	/// region of interest
+	InputSlot < Roi<int>* > roi;
+
 	/// output image
 	OutputSlot < cimg_library::CImgList<T> > _output;
 
@@ -76,3 +82,4 @@ protected:
 };
 
 #endif // _EMPTYCIMG_H_
+

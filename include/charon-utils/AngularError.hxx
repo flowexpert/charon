@@ -15,25 +15,26 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// \file EndpointError.hxx
-/// Implementation of the parameter class EndpointError.
+/// \file AngularError.hxx
+/// Implementation of the parameter class AngularError.
 /// \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
 ///     Michael Baron</a>
-/// \date 18.01.2012
+/// \date 03.04.2012
 
-#ifndef ENDPOINTERROR_HXX_
-#define ENDPOINTERROR_HXX_
+#ifndef ANGULARERROR_HXX_
+#define ANGULARERROR_HXX_
 
-#include <cassert>
-#include <vector>
-#include <algorithm>
+#ifndef _USE_MATH_DEFINES
+	#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
 #include <charon-core/ParameteredObject.hxx>
-#include "EndpointError.h"
+#include "AngularError.h"
 
 template<typename T>
-EndpointError<T>::EndpointError(const std::string& name) :
-		TemplatedParameteredObject<T>("EndpointError", name,
-				"Compute Endpoint Error between flow fields")
+AngularError<T>::AngularError(const std::string& name) :
+		TemplatedParameteredObject<T>("AngularError", name,
+				"Compute Angular Error between two-dimensional flow fields")
 {
 	ParameteredObject::_addInputSlot(
 			flow, "flow",
@@ -42,12 +43,12 @@ EndpointError<T>::EndpointError(const std::string& name) :
 			groundTruth, "groundTruth",
 	                "ground truth input", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
-			out, "out", "hsv representation output [t](x,y,z,c)",
+			out, "out", "angular error output",
 			"CImgList<T>");
 }
 
 template<typename T>
-void EndpointError<T>::execute() {
+void AngularError<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
@@ -59,24 +60,26 @@ void EndpointError<T>::execute() {
 	cimg_library::CImg<T> tmp( i1[0].width(), i1[0].height(), i1[0].depth(),
 	                           i1[0].spectrum() );
 
-	T sum;
-	T delta;
+	T angle1, angle2;
+	T angularError;
+
+	T sum = T(0);
 	unsigned int pixelCnt = 0;
-	T sumsum = T(0);
-	cimg_forXYZC(tmp,x,y,z,t) {
-		sum = T(0);
-		for (unsigned int n=0; n<i1.size(); ++n) {
-			delta = fabs( double(i1(n,x,y,z,t) - i2(n,x,y,z,t)) );
-			if (delta > 1e9) delta = 0;
-			sum += pow( double(delta), 2 );
-		}
-		tmp(x,y,z,t) = pow( double(sum), double(1.0/2) );
-		sumsum += tmp(x,y,z,t);
+	cimg_forXY(tmp,x,y) {
+
+		angle1 = atan2(fabs(double(i1(1,x,y,0,0))), fabs(double(i1(0,x,y,0,0))));
+		angle2 = atan2(fabs(double(i2(1,x,y,0,0))), fabs(double(i2(0,x,y,0,0))));
+		angularError  = fabs(double(angle1 - angle2));
+
+		angularError /= M_PI;
+		angularError *= T(180);
+		tmp(x,y,0,0) = angularError;
+		sum += angularError;
 		++pixelCnt;
 	}
 
-	sout << "(II) EndpointError :: Mean Endpoint Error = ";
-	sout << ((1.0*sumsum) / pixelCnt) << std::endl;
+	sout << "(II) AngularError :: Mean Angular Error = ";
+	sout << (sum / pixelCnt) << std::endl;
 
 	o = cimg_library::CImgList<T>( tmp );
 }

@@ -1,8 +1,12 @@
+
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIRECTORIES})
+IF(Qwt5_Qt4_FOUND)
+	INCLUDE_DIRECTORIES(${Qwt5_INCLUDE_DIR})
+ENDIF(Qwt5_Qt4_FOUND)
 
 IF(MSVC)
 	ADD_DEFINITIONS(/DHANDLE_DLL)
@@ -32,6 +36,18 @@ ADD_LIBRARY(greatersmallerthenpar SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.hxx
 
 )
+ADD_LIBRARY(valuebuffer SHARED
+	ValueBuffer.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/ValueBuffer.h
+	${CHARON_UTILS_INCLUDE_DIR}/ValueBuffer.hxx
+
+)
+ADD_LIBRARY(binoperatorvalue SHARED
+	BinOperatorValue.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/BinOperatorValue.h
+	${CHARON_UTILS_INCLUDE_DIR}/BinOperatorValue.hxx
+
+)
 ADD_LIBRARY(printvalue SHARED
         PrintValue.cpp
         ${CHARON_UTILS_INCLUDE_DIR}/PrintValue.h
@@ -44,6 +60,8 @@ SET(Plugins
 	greatersmallerthenpar
 	parametertoslot
         printvalue
+	valuebuffer
+	binoperatorvalue
 )
 
 IF(USE_CIMG)
@@ -151,6 +169,16 @@ IF(USE_CIMG)
 		EndpointError.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/EndpointError.h
 		${CHARON_UTILS_INCLUDE_DIR}/EndpointError.hxx
+	)
+	ADD_LIBRARY(angularerror SHARED
+		AngularError.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/AngularError.h
+		${CHARON_UTILS_INCLUDE_DIR}/AngularError.hxx
+	)
+	ADD_LIBRARY(lengtherror SHARED
+		LengthError.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/LengthError.h
+		${CHARON_UTILS_INCLUDE_DIR}/LengthError.hxx
 	)
 	ADD_LIBRARY(colormask SHARED
 		ColorMask.cpp
@@ -264,7 +292,18 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.h
 		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.hxx
 	)
-	
+	IF(QT4_FOUND)
+		SET(toggletimeout_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ToggleTimeout.h)
+		QT4_WRAP_CPP(toggletimeout_HEADERS_MOCKED ${toggletimeout_HEADERS_TOMOC})
+		ADD_LIBRARY(toggle SHARED
+			${toggletimeout_HEADERS_MOCKED}
+			ToggleTimeout.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/Toggle.h
+			${CHARON_UTILS_INCLUDE_DIR}/Toggle.hxx
+			Toggle.cpp
+		)
+		TARGET_LINK_LIBRARIES(toggle ${QT_LIBRARIES})
+	ENDIF(QT4_FOUND)
 	SET(Plugins_CImg
 		channelconverter
 		crop
@@ -283,6 +322,8 @@ IF(USE_CIMG)
 		rgb2hsv
 		flow2hsv
 		endpointerror
+		angularerror
+		lengtherror
 		colormask
 		overlay
 		flowquiver
@@ -306,6 +347,11 @@ IF(USE_CIMG)
 		size
 		fitsizes
 	)
+	IF(QT4_FOUND)
+		LIST(APPEND Plugins_CImg
+			toggle
+		)
+	ENDIF(QT4_FOUND)
 
 	LIST(APPEND Plugins
 		${Plugins_CImg}
@@ -444,6 +490,20 @@ IF(USE_VIGRA)
 			argosdisplay
 			frameselect
 		)
+
+		IF(Qwt5_Qt4_FOUND)
+			ADD_LIBRARY(residualplot SHARED
+				ResidualPlot.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.h
+				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.hxx
+			)
+			LIST(APPEND Plugins_Qt
+				residualplot
+			)
+			LIST(APPEND Plugins_CImg
+				residualplot
+			)
+		ENDIF(Qwt5_Qt4_FOUND)
 
 		IF(USE_Boost)
 			INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})

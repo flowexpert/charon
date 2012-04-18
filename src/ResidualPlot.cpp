@@ -1,4 +1,4 @@
-/*  Copyright (C) 2011 Julian Coordts
+/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -15,21 +15,19 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file AmplitudeThreshold.cpp
- *  This file is needed for class AmplitudeThreshold to work as a plugin.
- *  \author Julian Coordts
- *  \date 13.01.2012
+/** \file ResidualPlot.cpp
+ *  This file is needed for class ResidualPlot to work as a plugin.
+ *  \author Michael Baron
+ *  \date 11.04.2012
  */
 
 /// Class name of the plugin
-#define TYPE AmplitudeThreshold
+#define TYPE ResidualPlot
 
-#include "../include/charon-utils/AmplitudeThreshold.hxx"
-#include "../include/charon-utils/DataManagerCImgList.hxx"
-
+#include <charon-utils/ResidualPlot.hxx>
 
 /// Creates an instance of the plugin
-extern "C" amplitudethreshold_DECLDIR ParameteredObject* create(
+extern "C" residualplot_DECLDIR ParameteredObject* create(
 		const std::string & name, ParameteredObject::template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
@@ -48,15 +46,17 @@ extern "C" amplitudethreshold_DECLDIR ParameteredObject* create(
 }
 
 /// Deletes an instance of the plugin
-extern "C" amplitudethreshold_DECLDIR void destroy(ParameteredObject * b) {
+extern "C" residualplot_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
 
 /// Report build configuration to prevent linking of incompatibel runtime libs
-extern "C" amplitudethreshold_DECLDIR ParameteredObject::build_type getBuildType() {
+extern "C" residualplot_DECLDIR
+ParameteredObject::build_type getBuildType() {
 #ifdef _DEBUG
 	return ParameteredObject::DEBUG_BUILD;
 #else
 	return ParameteredObject::RELEASE_BUILD;
 #endif
 }
+

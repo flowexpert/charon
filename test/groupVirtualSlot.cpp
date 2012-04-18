@@ -16,7 +16,7 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file   groupVirtualSlot.cpp
- *  @brief  Unit tests VirtualSlot and ParameteredGroupObject class.
+ *  @brief  Unit tests VirtualSlot and ParameteredGroupObject class. See groupVirtualSlot.cpp in charon-core/test/ for details
  *  @date   06.02.2012
  *  @author <a href="mailto:gerald.mwangi@gmx.de">Gerald Mwangi</a>
  */

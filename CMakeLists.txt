@@ -20,6 +20,7 @@ ENDIF()
 
 # set up documentation generation
 FIND_PACKAGE(charon-core REQUIRED HINTS $ENV{CHARON_DIR})
+
 FIND_PACKAGE(Doxygen QUIET)
 FIND_PACKAGE(Vigra 1.7.1)
 IF(NOT Vigra_FOUND)
@@ -57,6 +58,9 @@ IF(USE_CIMG)
 ENDIF()
 INCLUDE(ReleaseSys)
 
+# Qwt5 for plotting widgets
+INCLUDE(FindQwt5)
+
 # Test suite
 INCLUDE(CTest)
 
@@ -67,3 +71,4 @@ INCLUDE(InstallDlls)
 ADD_SUBDIRECTORY(app)
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(test)
+

@@ -31,16 +31,18 @@ PrintValue::PrintValue(const std::string& name) :
 			"<h2>Prints a value to stdout</h2><br>Prints a value to stdout"
 		)
 {
+
 	ParameteredObject::_addInputSlot(
 		value, "value",
 		"value",
 		"double");
+
 }
 
 void PrintValue::execute() {
-	sout<<"######################################################"<<std::endl;
-	sout<<getClassName()<<" "<<getName()<<": "<<value<<std::endl;
-	sout<<"######################################################"<<std::endl;
+	std::cout<<"######################################################"<<std::endl;
+	std::cout<<getClassName()<<" "<<getName()<<": "<<value<<std::endl;
+	std::cout<<"######################################################"<<std::endl;
 }
 
 // the following functions are needed

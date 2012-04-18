@@ -15,25 +15,26 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/// \file EndpointError.hxx
-/// Implementation of the parameter class EndpointError.
+/// \file LengthError.hxx
+/// Implementation of the parameter class LengthError.
 /// \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
 ///     Michael Baron</a>
-/// \date 18.01.2012
+/// \date 05.04.2012
 
-#ifndef ENDPOINTERROR_HXX_
-#define ENDPOINTERROR_HXX_
+#ifndef LENGTHERROR_HXX_
+#define LENGTHERROR_HXX_
 
-#include <cassert>
-#include <vector>
-#include <algorithm>
+#ifndef _USE_MATH_DEFINES
+	#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
 #include <charon-core/ParameteredObject.hxx>
-#include "EndpointError.h"
+#include "LengthError.h"
 
 template<typename T>
-EndpointError<T>::EndpointError(const std::string& name) :
-		TemplatedParameteredObject<T>("EndpointError", name,
-				"Compute Endpoint Error between flow fields")
+LengthError<T>::LengthError(const std::string& name) :
+		TemplatedParameteredObject<T>("LengthError", name,
+				"Compute Angular Error between two-dimensional flow fields")
 {
 	ParameteredObject::_addInputSlot(
 			flow, "flow",
@@ -42,12 +43,12 @@ EndpointError<T>::EndpointError(const std::string& name) :
 			groundTruth, "groundTruth",
 	                "ground truth input", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
-			out, "out", "hsv representation output [t](x,y,z,c)",
+			out, "out", "angular error output",
 			"CImgList<T>");
 }
 
 template<typename T>
-void EndpointError<T>::execute() {
+void LengthError<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
@@ -59,24 +60,26 @@ void EndpointError<T>::execute() {
 	cimg_library::CImg<T> tmp( i1[0].width(), i1[0].height(), i1[0].depth(),
 	                           i1[0].spectrum() );
 
-	T sum;
-	T delta;
+	T length1, length2;
+	T lengthError;
+
+	T sum = T(0);
 	unsigned int pixelCnt = 0;
-	T sumsum = T(0);
-	cimg_forXYZC(tmp,x,y,z,t) {
-		sum = T(0);
-		for (unsigned int n=0; n<i1.size(); ++n) {
-			delta = fabs( double(i1(n,x,y,z,t) - i2(n,x,y,z,t)) );
-			if (delta > 1e9) delta = 0;
-			sum += pow( double(delta), 2 );
-		}
-		tmp(x,y,z,t) = pow( double(sum), double(1.0/2) );
-		sumsum += tmp(x,y,z,t);
+	cimg_forXY(tmp,x,y) {
+
+		length1 = pow( pow(double(i1(1,x,y,0,0)), double(2.0))
+		             + pow(double(i1(0,x,y,0,0)), double(2.0)), double(0.5) );
+		length2 = pow( pow(double(i2(1,x,y,0,0)), double(2.0))
+		             + pow(double(i2(0,x,y,0,0)), double(2.0)), double(0.5) );
+		lengthError  = fabs(double(length1 - length2));
+
+		tmp(x,y,0,0) = lengthError;
+		sum += lengthError;
 		++pixelCnt;
 	}
 
-	sout << "(II) EndpointError :: Mean Endpoint Error = ";
-	sout << ((1.0*sumsum) / pixelCnt) << std::endl;
+	sout << "(II) LengthError :: Mean Length Error = ";
+	sout << (sum / pixelCnt) << std::endl;
 
 	o = cimg_library::CImgList<T>( tmp );
 }
