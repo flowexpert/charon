@@ -68,6 +68,9 @@ namespace ArgosDisplay {
 		/// will be displayed on the next call to linkImage()
 		void linkImage(AbstractPixelInspector*) ;
 
+		/// get current viewer
+		QWidget *getCurrentViewer();
+
 	protected:
 		/// set active tab widget by keypress
 		virtual void keyPressEvent(QKeyEvent * event ) ;

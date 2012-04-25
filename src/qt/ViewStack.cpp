@@ -336,3 +336,28 @@ int ViewStack::getZoomLevel() const {
 		return _zoomLevel;
 	}
 }
+
+QWidget* ViewStack::getCurrentViewer()
+{
+	int index = _tabWidget->currentIndex() ;
+	if(index < 0 || _inspectors.size() <= size_t(index) || _inspectors[index] ==0)
+	{       throw std::runtime_error("No active Viewer instance available!") ;      }
+
+	QString className = _tabWidget->currentWidget()->metaObject()->className() ;
+	if(className == "FImageViewer")
+	{
+		FImageViewer* fViewer = qobject_cast<FImageViewer*>(_tabWidget->currentWidget()) ;
+		if(!fViewer)
+		{       throw std::runtime_error("Unknown Tab Widget!") ;       }
+		return fViewer->imageViewer() ;
+	}
+	else if(className == "QImageViewer")
+	{
+		QImageViewer* viewer = qobject_cast<QImageViewer*>(_tabWidget->currentWidget()) ;
+		if(!viewer)
+		{       throw std::runtime_error("Unknown Tab Widget!") ;       }
+		return viewer ;
+	}
+	throw std::runtime_error("Unknown Tab Widget!") ;
+}
+

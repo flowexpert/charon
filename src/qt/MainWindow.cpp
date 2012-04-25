@@ -43,17 +43,22 @@ MainWindow::MainWindow(const std::string& title) : _viewStack(0),
 	QObject::connect(
 			_viewStack, SIGNAL(exportDimensionsMessage(QString)),
 			dimBar, SLOT(setText(QString))) ;
-	QObject::connect(this, SIGNAL(widgetAdded()), this, SLOT(_addDockWidgets()), Qt::QueuedConnection) ;
+	QObject::connect(this, SIGNAL(dockWidgetAdded()), this, SLOT(_addDockWidgets()), Qt::QueuedConnection) ;
+	QObject::connect(this, SIGNAL(overlayWidgetAdded()), this, SLOT(_addOverlayWidgets()), Qt::QueuedConnection) ;
 
 	_createMenus() ;
 }
 
 MainWindow::~MainWindow()
 {
-	//seize parentship of all connected dock widgets so they can be deleted in their respective Parametered Objects
-	for(size_t ii = 0 ; ii < _widgets.size() ; ii++)
+	//seize parentship of all connected widgets so they can be deleted in their respective Parametered Objects
+	for(size_t ii = 0 ; ii < _dockWidgets.size() ; ii++)
 	{
-		_widgets[ii]->setParent(0) ;
+		_dockWidgets[ii]->setParent(0);
+	}
+	for(size_t ii = 0 ; ii < _overlayWidgets.size() ; ii++)
+	{
+		_overlayWidgets[ii]->setParent(0);
 	}
 }
 
@@ -72,10 +77,21 @@ ViewStack& MainWindow::viewStack()
 void MainWindow::addDockWidget(QWidget* widget)
 {
 	Q_ASSERT(widget);
-	_widgets.push_back(widget) ;
+	_dockWidgets.push_back(widget) ;
 	if(!_updatePending)
 	{	_updatePending = true ;
-		emit widgetAdded() ;
+		emit dockWidgetAdded() ;
+	}
+}
+
+void MainWindow::addOverlayWidget(QWidget* widget)
+{
+	Q_ASSERT(widget);
+	_overlayWidgets.push_back(widget);
+	if(!_updatePending)
+	{
+		_updatePending = true;
+		emit overlayWidgetAdded();
 	}
 }
 
@@ -84,9 +100,9 @@ void MainWindow::_addDockWidgets()
 	if(!_updatePending)
 		return ;
 	
-	for(size_t ii = 0 ; ii < _widgets.size() ; ii++)
+	for(size_t ii = 0 ; ii < _dockWidgets.size() ; ii++)
 	{
-		QWidget* widget = _widgets[ii] ;
+		QWidget* widget = _dockWidgets[ii] ;
 		Q_ASSERT(widget) ;
 		if (widget->parent() != 0)
 			return;
@@ -111,3 +127,22 @@ void MainWindow::_addDockWidgets()
 	_updatePending = false ;
 
 }
+
+void MainWindow::_addOverlayWidgets()
+{
+	if(!_updatePending) return;
+
+	for(size_t ii = 0 ; ii < _overlayWidgets.size() ; ii++)
+	{
+		QWidget* widget = _overlayWidgets[ii];
+		Q_ASSERT(widget);
+		if (widget->parent() != 0) return;
+
+		widget->setParent( _viewStack->getCurrentViewer() );
+		widget->resize( _viewStack->size() );
+		widget->setPalette( Qt::transparent );
+		widget->setAttribute( Qt::WA_TransparentForMouseEvents );
+		widget->show();
+	}
+}
+

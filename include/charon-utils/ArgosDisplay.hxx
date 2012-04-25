@@ -48,7 +48,8 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"Although it's execution will just be omitted"),
 			_vigraIn(true, true),
 			_cimgIn(true, true),
-			_widgets(true, true),
+			_dockWidgets(true, true),
+			_overlayWidgets(true, true),
 			_mainWindow(0)
 {
 	ParameteredObject::_addInputSlot(
@@ -64,8 +65,12 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"(meaning all dimensions except 0(width) and 1(height) are set to 0)",
 			"CImgList<T>");
 	ParameteredObject::_addInputSlot(
-			_widgets, "widgets",
+			_dockWidgets, "dockWidgets",
 			"QWidgets to display in Dock areas.",
+			"QWidget*") ;
+	ParameteredObject::_addInputSlot(
+			_overlayWidgets, "overlayWidgets",
+			"QWidgets to lay over displayed image.",
 			"QWidget*") ;
 
 	ParameteredObject::_addParameter(
@@ -86,6 +91,7 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 template <typename T>
 ArgosDisplayPlugin<T>::~ArgosDisplayPlugin()
 {
+	delete _displayReloader;
 	delete _mainWindow ;
 }
 
@@ -157,8 +163,11 @@ void ArgosDisplayPlugin<T>::execute() {
 
 	viewStack.setCurrentIndex(index) ;
 	
-	for (std::size_t ii = 0 ; ii < _widgets.size() ; ii++) {
-		_mainWindow->addDockWidget(_widgets[ii]) ;
+	for (std::size_t ii = 0 ; ii < _dockWidgets.size() ; ii++) {
+		_mainWindow->addDockWidget(_dockWidgets[ii]) ;
+	}
+	for (std::size_t ii = 0 ; ii < _overlayWidgets.size() ; ii++) {
+		_mainWindow->addOverlayWidget(_overlayWidgets[ii]) ;
 	}
 }
 
