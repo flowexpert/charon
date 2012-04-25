@@ -33,8 +33,6 @@ Slot::Slot() :
 
 void Slot::init(ParameteredObject* parent, std::string name,
 		std::string type) {
-	assert(!_parent); // not yet initialized
-	assert(parent); // parent valid
 	_parent = parent;
 	_name = name;
 	_type = StringTool::toLowerCase(type);

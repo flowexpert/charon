@@ -236,7 +236,9 @@ void ParameteredObject::runPreceeding() const {
 	// run all preceeding objects
 	std::set<ParameteredObject*>::iterator curObj = targetObjects.begin();
 	for (; curObj != targetObjects.end(); curObj++) {
-		(*curObj)->run();
+		if (*curObj) {
+			(*curObj)->run();
+		}
 	}
 }
 
