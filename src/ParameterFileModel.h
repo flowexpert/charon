@@ -314,6 +314,9 @@ private:
 	/// minimum priority to be listed
 	int _minPriority;
 
+	/// update dynamic objects
+	void _updateDynamics();
+
 	/// Return set of objects contained in given parameter list.
 	/** \param list             parameter list
 	 *  \returns                set of objects (no duplicates)

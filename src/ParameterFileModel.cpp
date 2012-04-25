@@ -37,6 +37,7 @@
 #include <QMimeData>
 #include <QUrl>
 #include <QTimer>
+#include <QApplication>
 
 #include "ParameterFileModel.moc"
 
@@ -228,9 +229,7 @@ bool ParameterFileModel::setData(
 					if (_onlyParams && _metaInfos->isDynamic(getClass(keyStr))) {
 
 						save();
-						LogDialog dialog(
-							new LogDecorators::UpdateDynamics(_fileName));
-						dialog.waitForFinished();
+						_updateDynamics();
 						QTimer::singleShot(0, this, SLOT(_update()));
 						emit dynamicUpdate();
 					}
@@ -433,12 +432,21 @@ void ParameterFileModel::clear() {
 	}
 }
 
+void ParameterFileModel::_updateDynamics() {
+	if (QApplication::instance()) {
+		LogDialog dialog(
+			new LogDecorators::UpdateDynamics(_fileName));
+		dialog.waitForFinished(1000);
+	}
+	else {
+		qDebug("(WW) no qapplication, skipping dynamic loading");
+	}
+}
+
 bool ParameterFileModel::_load() {
 	clear();
 	_parameterFile->load(_fileName);
-	LogDialog dialog(
-		new LogDecorators::UpdateDynamics(_fileName));
-	dialog.waitForFinished(1000);
+	_updateDynamics();
 	_update();
 	emit statusMessage(QString("File %1 loaded.").arg(_fileName));
 	return true;
