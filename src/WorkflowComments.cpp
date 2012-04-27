@@ -131,8 +131,16 @@ void WorkflowComments :: update( ParameterFileModel* model ) {
 	// and set the new model as the active model
 	if (_model) {
 		disconnect(_model, 0, this, 0);
-		_model = model; 
 	}
+
+	// assign new model
+	_model = model;
+
+	// clear old content
+	_textChangeLock->lock();
+	clear();
+	_textChangeLock->unlock();
+
 	// reconnect the load slot to the new model
 	if (_model) {
 		connect(_model, SIGNAL(modelReset()), SLOT(load()));
