@@ -55,66 +55,37 @@ WorkflowComments::~WorkflowComments() {
 }
 
 void WorkflowComments :: save() {
+	QString comment;
+	
 	// Get the comment from the editor and escape the newlines to HTML
-	QString comment = this -> toPlainText();
+	comment = toPlainText();
 	comment.replace(QRegExp("\n"), "<br>");
 
 	ParameterFileModel* model = _inspector -> model();
 
-	// start editing model
 	if (model && isEnabled() && _textChangeLock->tryLock()) {
-		// store old values
-		QString oldPref = model -> prefix();
-		bool oldParam = model -> onlyParams();
-
-		// set them to editable values
-		model -> setPrefix( "" );
-		model -> setOnlyParams(false);
-
-		// search for the index of the row containing the comment
-		int i;
-		for ( i = 0; i < model -> rowCount(); ++i ) {
-			if (model -> data( model -> index(i, 0)).toString()
-					.compare( "editorcomment", Qt::CaseInsensitive ) == 0 ) {
-				break;
-			}
-		}
-		// the entry doesn't exist yet, create it
-		if ( i >= model -> rowCount() ) {
-			model -> insertRow(i);
-			model -> setData( model -> index(i, 0), "editorcomment" );
-		}
-
-		QString oldV = model->data(model->index(i,1)).toString();
-		if (oldV != comment) {
-			model -> setData( model -> index(i, 1), comment );
-		}
-
-		// restore the old values
-		model -> setOnlyParams( oldParam );
-		model -> setPrefix( oldPref );
-	} // end editing model
+		model -> setParam("editorcomment", comment);
+	} 
 
 	_textChangeLock->unlock();
 }
 
 void WorkflowComments :: load() {
+	QString comment;
+
 	// Don't do anything if save() caused load() to be called.
 	if (_textChangeLock->tryLock()) {
 		// Get the current model
 		ParameterFileModel* model = _inspector -> model();
 		if (model) {
-			// Get the comment from the parameterfile
-			const QParameterFile& pf = model -> parameterFile();
-			QString comment = pf.get( "editorcomment" );
+			comment = model -> getParam("editorcomment");
 
 			// Replace HTML newlines with escaped newlines
 			comment.replace(QRegExp("<br\\s*/?>", Qt::CaseInsensitive), "\n");
 
 			// Update the text field if it has changed
-			QString curComment = this -> toPlainText();
-			if ( curComment != comment ) {
-				this -> setPlainText( comment );
+			if ( toPlainText() != comment ) {
+				setPlainText( comment );
 			}
 		}
 		_textChangeLock->unlock();

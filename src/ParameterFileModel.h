@@ -177,6 +177,23 @@ public:
 	/// update comment of node
 	void setEditorComment(QString string);
 
+	/// Get a parameter from the underlying parameter file
+	/**	\param parName			name of the parameter
+	 * 	\returns				the parameter QString
+	 */
+	QString getParam(QString parName) const;
+
+	/// Set a parameter in the underlying parameter file
+	/**	\param parName			name of the parameter
+	 * 	\param value			value of the parameter
+	 */
+	void setParam(QString parName, QString value);
+
+	///	Delete a parameter from the the underlying parameter file
+	/**	\param parName			name of the parameter
+	 */
+	void delParam(QString parName);
+
 signals:
 	/// Property _fileName has changed
 	/** \param  fileName        new value */

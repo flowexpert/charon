@@ -740,6 +740,32 @@ void ParameterFileModel::setEditorComment(QString comment) {
 	emit commentChanged(comment);
 }
 
+QString ParameterFileModel::getParam(QString parName) const {
+	return _parameterFile -> get(parName);
+}
+
+void ParameterFileModel::setParam(QString parName, QString value) {
+	QStringList keys = _parameterFile -> getKeyList();
+	int i;
+
+	if (!value.isEmpty()) {
+		_parameterFile -> set(parName, value);
+	}
+	else {
+		delParam(parName);
+	}
+
+	if ((i = keys.indexOf(parName)) != -1) {
+		emit dataChanged(index(i, 0), index(i, 1));
+		_update();
+	}
+}
+
+void ParameterFileModel::delParam(QString parName) {
+	_parameterFile -> erase(parName);
+}
+
+
 void ParameterFileModel::setMinPriority(int value) {
 	if (value < 0 || value > 3) {
 		return;
