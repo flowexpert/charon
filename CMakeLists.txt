@@ -60,6 +60,8 @@ INCLUDE(ReleaseSys)
 
 # Qwt5 for plotting widgets
 INCLUDE(FindQwt5)
+# MathGL for quiver plots
+INCLUDE(FindMathGL)
 
 # Test suite
 INCLUDE(CTest)

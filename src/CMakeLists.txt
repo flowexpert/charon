@@ -8,6 +8,10 @@ IF(Qwt5_Qt4_FOUND)
 	INCLUDE_DIRECTORIES(${Qwt5_INCLUDE_DIR})
 ENDIF(Qwt5_Qt4_FOUND)
 
+IF(MATHGL_FOUND)
+	INCLUDE_DIRECTORIES(${MATHGL_INCLUDE_DIR})
+ENDIF(MATHGL_FOUND)
+
 IF(MSVC)
 	ADD_DEFINITIONS(/DHANDLE_DLL)
 ENDIF(MSVC)
@@ -479,12 +483,25 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.hxx
 		)
 		TARGET_LINK_LIBRARIES(frameselect roi)
+		QT4_WRAP_CPP(quiverplot_MOC
+			${CHARON_UTILS_INCLUDE_DIR}/QuiverPlot.h)
+		ADD_LIBRARY(quiver SHARED
+			Quiver.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/Quiver.h
+			${CHARON_UTILS_INCLUDE_DIR}/Quiver.hxx
+			${CHARON_UTILS_INCLUDE_DIR}/QuiverPlot.h
+			QuiverPlot.cpp
+			${quiverplot_MOC}
+		)
+		TARGET_LINK_LIBRARIES(quiver ${QT_LIBRARIES} ${MATHGL_LIBS})
 		LIST(APPEND Plugins_Qt
 			argosdisplay
 			frameselect
+			quiver
 		)
 		LIST(APPEND Plugins_CImg
 			argosdisplay
+			quiver
 		)
 		LIST(APPEND Plugins_Vigra
 			argosdisplay

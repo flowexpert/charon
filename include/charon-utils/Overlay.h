@@ -63,6 +63,9 @@ public:
 	/// foreground/background ratio, 0=back,1=front
 	Parameter< float > alpha;
 
+	/// black is treated as transparent, if set
+	Parameter< bool > blackIsTransparent;
+
 protected:
 	/// Update object.
 	virtual void execute();

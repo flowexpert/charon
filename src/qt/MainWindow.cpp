@@ -139,7 +139,7 @@ void MainWindow::_addOverlayWidgets()
 		if (widget->parent() != 0) return;
 
 		widget->setParent( _viewStack->getCurrentViewer() );
-		widget->resize( _viewStack->size() );
+//		widget->resize( _viewStack->size() );
 		widget->setPalette( Qt::transparent );
 		widget->setAttribute( Qt::WA_TransparentForMouseEvents );
 		widget->show();
