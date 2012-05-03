@@ -83,7 +83,7 @@ void Quiver<T>::execute()
 
 		idx = x+_width*(_height-y-1);  //  put origin top-left
 		quiverPlot->draw.a.a[idx] = _motion[0]( imX, imY, 0, 0 );
-		quiverPlot->draw.b.a[idx] = _motion[1]( imX, 0, 0 );
+		quiverPlot->draw.b.a[idx] = -_motion[1]( imX, imY, 0, 0 );
 	}
 
 	quiverPlot->setSize(_imWidth,_imHeight);
