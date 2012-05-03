@@ -130,6 +130,8 @@ public:
 	InputSlot < cimg_library::CImgList<T> > flow;
 	/// initial flow guess if different from helper
 	InputSlot < cimg_library::CImgList<T> > flowInit;
+	/// additional flow
+	InputSlot < cimg_library::CImgList<T> > flowAdditional;
 	/// residual energy from current iteration
 	InputSlot < cimg_library::CImgList<T> > residual;
 	/// residual energy from previous iteration

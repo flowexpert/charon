@@ -43,6 +43,7 @@ SimpleIterator<T>::SimpleIterator(const std::string& name) :
 			"zero."),
 		_remoteControl(0),
 		flowInit(true,false), // optional
+		flowAdditional(true,false), // optional
 		residual(true,false), // optional
 		residualInit(true,false), // optional
 		stop(true,false) // optional
@@ -58,6 +59,7 @@ SimpleIterator<T>::SimpleIterator(
 		TemplatedParameteredObject<T>(className, instanceName,
 				doc + "<br><br>This class inherits SimpleIterator."),
 		flowInit(true,false), // optional
+		flowAdditional(true,false), // optional
 		residual(true,false), // optional
 		residualInit(true,false), // optional
 		stop(true,false) // optional
@@ -100,6 +102,8 @@ void SimpleIterator<T>::_init() {
 		"flow result calculaged during current iteration", "CImgList<T>");
 	ParameteredObject::_addInputSlot(flowInit, "flowInit",
 		"initial flow guess if different from helper", "CImgList<T>");
+	ParameteredObject::_addInputSlot(flowAdditional, "flowAdditional",
+		"additional flow", "CImgList<T>");
 	ParameteredObject::_addInputSlot(residual, "residual",
 		"residual energy from current iteration", "CImgList<T>");
 	ParameteredObject::_addInputSlot(residualInit, "residualInit",
@@ -374,7 +378,16 @@ bool SimpleIterator<T>::finishStep() {
 
 	/// write flow to file
 	if (!writeFlow().empty()) {
-		helpFlow.save(writeFlow().c_str());
+		cimg_library::CImgList<T> saveFlow = helpFlow;
+		if (flowAdditional.connected()) {
+			cimg_library::CImgList<T> _flowAdditional = flowAdditional();
+			cimglist_for(saveFlow, nn)
+			cimg_forXYZC(saveFlow[nn], xx, yy, zz, cc)
+			{
+				saveFlow[nn](xx,yy,zz,cc) += _flowAdditional[nn](xx,yy,zz,cc);
+			}
+		}
+		saveFlow.save(writeFlow().c_str());
 	}
 
 	sout << "\t\tnew flow size: "
