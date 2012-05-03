@@ -176,6 +176,10 @@ void ArgosDisplayPlugin<T>::run() {
 	ParameteredObject::run();
 	// start timer at execution end to avoid flooding of the event loop
 	_displayReloader->start();
+
+	for (std::size_t ii = 0 ; ii < _overlayWidgets.size() ; ii++) {
+		_mainWindow->addOverlayWidget(_overlayWidgets[ii]) ;
+	}
 }
 
 AbstractPixelInspector::AbstractPixelInspector(

@@ -91,7 +91,9 @@ void QuiverPlot::_mglConvertFromGraphAlpha(QPixmap &pic, mglCanvas *gr, uchar **
         for (int h=0; h<imgHeight; ++h)
         {
                 old_color = img.pixel(w,h);
-                new_color = qRgba(255,0,0, 255 - qRed(old_color));
+//                new_color = qRgba(255,0,0, 255 - qRed(old_color));  //  red
+                new_color = qRgba(0,255,0, 255 - qGreen(old_color)); //  green
+//                new_color = qRgba(0,0,255, 255 - qBlue(old_color)); //  blue
                 img.setPixel(w, h, new_color);
         }
         pic = QPixmap::fromImage(img);

@@ -91,7 +91,7 @@ void Quiver<T>::execute()
 	QPixmap pix = quiverPlot->getPixmap();
 	QImage img = pix.toImage();
 
-	cimg_library::CImgList<T> _quiverImage(1,_imWidth,_imHeight,1,1);
+	cimg_library::CImgList<T> _quiverImage(1,_imWidth,_imHeight,1,3);
 	cimg_forXYZC(_quiverImage[0],x,y,z,c)
 	{
 		switch (c) {
