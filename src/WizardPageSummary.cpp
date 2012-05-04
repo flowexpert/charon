@@ -32,9 +32,7 @@ WizardPageSummary::~WizardPageSummary() {
 void WizardPageSummary::initializePage() {
 	QWizardPage::initializePage();
 
-	QSettings settings(
-		"Heidelberg Collaboratory for Image Processing",
-		"TemplateGenerator");
+	QSettings settings;
 
 	settings.beginGroup("Paths");
 	_ui->checkHeaderSep->setChecked(
@@ -67,13 +65,17 @@ void WizardPageSummary::initializePage() {
 void WizardPageSummary::_updateOut() {
 	QString prefixH, prefixS;
 	if (_ui->checkHeaderSep->isChecked()) {
-		prefixH = _ui->editHeaderOut->text();
-		prefixS = _ui->editSourceOut->text();
+		prefixH = _ui->editHeaderOut->text().trimmed();
+		prefixS = _ui->editSourceOut->text().trimmed();
 	}
 	else {
-		prefixH = _ui->editOutPath->text();
-		prefixS = _ui->editOutPath->text();
+		prefixH = _ui->editOutPath->text().trimmed();
+		prefixS = _ui->editOutPath->text().trimmed();
 	}
+
+	// remove trailing slashes
+	prefixH.replace(QRegExp("[/\\\\]*$"),"");
+	prefixS.replace(QRegExp("[/\\\\]*$"),"");
 
 	_ui->editHOut->setText(
 		QString("%1/%2.h").arg(prefixH).arg(field("name").toString()));

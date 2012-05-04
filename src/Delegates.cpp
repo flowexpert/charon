@@ -30,8 +30,7 @@ TypeDelegate::TypeDelegate(QString t, QObject* pp) :
 
 QWidget* TypeDelegate::createEditor(
 			QWidget* pp, const QStyleOptionViewItem&,
-			const QModelIndex& idx) const {
-	Q_ASSERT(idx.model()->data(idx).type() == QVariant::String);
+			const QModelIndex&) const {
 	QSettings c(":/config/config.ini", QSettings::IniFormat);
 	QSettings s(":/config/cppTypeMap.ini", QSettings::IniFormat);
 	QComboBox* ed = new QComboBox(pp);

@@ -27,6 +27,8 @@ protected:
 	virtual void done(int result);
 
 private:
+	/// check if output Paths exist, create if wanted (ask)
+	bool _checkPaths();
 	/// write files using resource templates
 	bool _writeFiles();
 	/// update existing CMake file adding the new module

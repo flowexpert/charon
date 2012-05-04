@@ -16,6 +16,10 @@ WizardPageStart::WizardPageStart(QWidget* p) :
 	_ui->editLoadMod->acceptFiles(true,false);
 	registerField("loadPath",_ui->editLoadMod);
 	registerField("loadExisting",_ui->selLoadMod);
+
+	// hide boxes with unimplemented features
+	_ui->boxStart->hide();
+	_ui->boxLoad->hide();
 }
 
 WizardPageStart::~WizardPageStart() {
@@ -25,9 +29,7 @@ WizardPageStart::~WizardPageStart() {
 void WizardPageStart::initializePage() {
 	QWizardPage::initializePage();
 
-	QSettings settings(
-		"Heidelberg Collaboratory for Image Processing",
-		"TemplateGenerator");
+	QSettings settings;
 	_ui->editLoadMod->setText(
 			settings.value("recentInput", QDir::homePath()).toString());
 }

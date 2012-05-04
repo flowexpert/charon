@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QStatusBar>
+#include <QStack>
 #include "WizardPageStart.h"
 #include "WizardPageMetadata.h"
 #include "WizardPageSlots.h"
@@ -32,9 +33,7 @@ Wizard::Wizard(QWidget* p) :
 	connect(filter, SIGNAL(statusMessage(QString)),
 			sWidget, SLOT(showMessage(QString)));
 
-	QSettings settings(
-			"Heidelberg Collaboratory for Image Processing",
-			"TemplateGenerator");
+	QSettings settings;
 
 	settings.beginGroup("MainWindow");
 	if (settings.contains("geometry")) {
@@ -57,13 +56,17 @@ Wizard::~Wizard() {
 
 void Wizard::done(int res) {
 	// save settings
-	QSettings settings(
-			"Heidelberg Collaboratory for Image Processing",
-			"TemplateGenerator");
+	QSettings settings;
+	bool ok = true;
 
-	if (res == QDialog::Accepted) {
-		if (!_writeFiles())
-			return;
+	switch(res) {
+	case QDialog::Accepted:
+		ok = ok && _checkPaths();
+		ok = ok && _writeFiles();
+
+		if (!ok) {
+			return; // don't close on errors
+		}
 
 		if(field("loadExisting").toBool()) {
 			settings.setValue("recentInput", field("loadPath"));
@@ -77,8 +80,9 @@ void Wizard::done(int res) {
 		settings.setValue("headerOut", field("headerOut"));
 		settings.setValue("sourceOut", field("sourceOut"));
 		settings.endGroup();
-	}
-	else {
+		break;
+
+	default:
 		if(visitedPages().size() > 1 && QMessageBox::question(
 				this,tr("confirm exit"),
 				tr("Do you really want to close?<br>"
@@ -86,8 +90,7 @@ void Wizard::done(int res) {
 				QMessageBox::Ok,QMessageBox::Cancel) ==
 					QMessageBox::Cancel)
 		{
-			// abort closing
-			return;
+			return; // abort closing
 		}
 	}
 
@@ -96,6 +99,83 @@ void Wizard::done(int res) {
 	settings.endGroup();
 
 	QWizard::done(res);
+}
+
+bool Wizard::_checkPaths() {
+	QStack<QString> needed;
+	QStringList missing, errors;
+	if (field("headerSeparate").toBool()) {
+		needed.push(field("headerOut").toString());
+		needed.push(field("sourceOut").toString());
+	}
+	else {
+		needed.push(field("commonOut").toString());
+	}
+
+	while (!needed.isEmpty()) {
+		QString curS = needed.pop().trimmed();
+		curS.replace(QRegExp("[/\\\\]*$"),"");
+		QFileInfo cur(curS);
+		if (cur.exists()) {
+			if (!cur.isDir()) {
+				errors << cur.absoluteFilePath();
+			}
+		}
+		else {
+			missing.push_front(cur.absoluteFilePath());
+			needed.push(cur.path());
+		}
+	}
+
+	if (!errors.isEmpty()) {
+		QString msg;
+		QTextStream strm(&msg,QIODevice::WriteOnly);
+		strm << tr("%Ln invalid directory path(s) found:","",errors.size());
+		strm << "<ul>";
+		QStringListIterator iter(errors);
+		while (iter.hasNext()) {
+			strm << "<li>" << iter.next() << "</li>";
+		}
+		strm << "</ul>";
+		strm << tr("Please check, that there are <em>directories</em> "
+					"in this list, only.");
+		QMessageBox::warning(this,tr("Path Errors"),msg);
+		return false;
+	}
+
+	if (!missing.isEmpty()) {
+		QString msg;
+		QTextStream strm(&msg,QIODevice::WriteOnly);
+		strm << tr("The following %Ln paths don't exist:","",missing.size());
+		strm << "<ul>";
+		QStringListIterator iter(missing);
+		while (iter.hasNext()) {
+			strm << "<li>" << iter.next() << "</li>";
+		}
+		strm << "</ul>";
+		strm << tr("Do you want to create these directories?");
+		if (QMessageBox::question(
+				this,tr("Path Errors"),msg,QMessageBox::Yes,QMessageBox::No)
+				== QMessageBox::Yes) {
+			QStringListIterator cIter(missing);
+			while (cIter.hasNext()) {
+				QString curC = cIter.next();
+				QFileInfo curF(curC);
+				QDir parent(curF.absoluteDir());
+
+				if (!parent.mkdir(curF.fileName())) {
+					QMessageBox::warning(this,tr("error creating directory"),
+							tr("Failed to create directory %1").arg(curC));
+					return false;
+				}
+			}
+		}
+		else {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool Wizard::_writeFiles() {

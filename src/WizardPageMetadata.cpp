@@ -36,9 +36,7 @@ WizardPageMetadata::~WizardPageMetadata() {
 void WizardPageMetadata::initializePage() {
 	QWizardPage::initializePage();
 
-	QSettings settings(
-		"Heidelberg Collaboratory for Image Processing",
-		"TemplateGenerator");
+	QSettings settings;
 
 	_ui->editAuthor->setText(
 			settings.value("author", tr("Unknown")).toString());
