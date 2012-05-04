@@ -85,9 +85,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	// workflow comments
 	QDockWidget* commentBox = new QDockWidget(tr("Workflow Comments"), this);
 	commentBox -> setObjectName("RTFM Box");
-	WorkflowComments* commentWidget = new WorkflowComments(
-			_inspector,
-			commentBox);
+	WorkflowComments* commentWidget = new WorkflowComments(commentBox);
 	commentBox -> setWidget(commentWidget);
 	
 

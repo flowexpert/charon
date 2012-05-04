@@ -38,11 +38,9 @@ class WorkflowComments : public QTextEdit {
 
 	public:
 		/**	Default Constructor
-		 * \param inspector	pointer to the ObjectInspector
 		 * \param parent	pointer to the parent widget
 		 */
-		WorkflowComments(ObjectInspector* inspector,
-			QWidget* parent = 0);
+		WorkflowComments(QWidget* parent = 0);
 
 		~WorkflowComments();
 
@@ -60,10 +58,6 @@ class WorkflowComments : public QTextEdit {
 	
 
 	private:
-		/// A pointer to the ObjectInspector,
-		/// used to get the current model
-		ObjectInspector* _inspector;
-
 		/// The currently active model.
 		ParameterFileModel* _model;
 

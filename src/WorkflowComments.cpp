@@ -36,17 +36,12 @@
 
 #include "WorkflowComments.moc"
 
-WorkflowComments :: WorkflowComments(
-		ObjectInspector* inspector,
-		QWidget* myParent) :
+WorkflowComments :: WorkflowComments(QWidget* myParent) :
 	QTextEdit(myParent),
-	_inspector(inspector),
-	_model(0)
+	_model(0),
+	_textChangeLock(new QMutex())
 {
-	this -> setAcceptRichText(false);
-
-	_textChangeLock = new QMutex();
-
+	setAcceptRichText(false);
 	connect(this, SIGNAL(textChanged()), SLOT(save()));
 }
 
@@ -59,63 +54,56 @@ void WorkflowComments :: save() {
 	QString comment = this -> toPlainText();
 	comment.replace(QRegExp("\n"), "<br>");
 
-	ParameterFileModel* model = _inspector -> model();
-
 	// start editing model
-	if (model && isEnabled() && _textChangeLock->tryLock()) {
+	if (_model && isEnabled() && _textChangeLock->tryLock()) {
 		// store old values
-		QString oldPref = model -> prefix();
-		bool oldParam = model -> onlyParams();
+		QString oldPref = _model -> prefix();
+		bool oldParam = _model -> onlyParams();
 
 		// set them to editable values
-		model -> setPrefix( "" );
-		model -> setOnlyParams(false);
+		_model -> setPrefix( "" );
+		_model -> setOnlyParams(false);
 
 		// search for the index of the row containing the comment
 		int i;
-		for ( i = 0; i < model -> rowCount(); ++i ) {
-			if (model -> data( model -> index(i, 0)).toString()
+		for ( i = 0; i < _model -> rowCount(); ++i ) {
+			if (_model -> data( _model -> index(i, 0)).toString()
 					.compare( "editorcomment", Qt::CaseInsensitive ) == 0 ) {
 				break;
 			}
 		}
 		// the entry doesn't exist yet, create it
-		if ( i >= model -> rowCount() ) {
-			model -> insertRow(i);
-			model -> setData( model -> index(i, 0), "editorcomment" );
+		if ( i >= _model -> rowCount() ) {
+			_model -> insertRow(i);
+			_model -> setData( _model -> index(i, 0), "editorcomment" );
 		}
 
-		QString oldV = model->data(model->index(i,1)).toString();
+		QString oldV = _model->data(_model->index(i,1)).toString();
 		if (oldV != comment) {
-			model -> setData( model -> index(i, 1), comment );
+			_model -> setData( _model -> index(i, 1), comment );
 		}
 
 		// restore the old values
-		model -> setOnlyParams( oldParam );
-		model -> setPrefix( oldPref );
+		_model -> setOnlyParams( oldParam );
+		_model -> setPrefix( oldPref );
+		_textChangeLock->unlock();
 	} // end editing model
-
-	_textChangeLock->unlock();
 }
 
 void WorkflowComments :: load() {
 	// Don't do anything if save() caused load() to be called.
-	if (_textChangeLock->tryLock()) {
-		// Get the current model
-		ParameterFileModel* model = _inspector -> model();
-		if (model) {
-			// Get the comment from the parameterfile
-			const QParameterFile& pf = model -> parameterFile();
-			QString comment = pf.get( "editorcomment" );
+	if (_model && _textChangeLock->tryLock()) {
+		// Get the comment from the parameterfile
+		const QParameterFile& pf = _model -> parameterFile();
+		QString comment = pf.get( "editorcomment" );
 
-			// Replace HTML newlines with escaped newlines
-			comment.replace(QRegExp("<br\\s*/?>", Qt::CaseInsensitive), "\n");
+		// Replace HTML newlines with escaped newlines
+		comment.replace(QRegExp("<br\\s*/?>", Qt::CaseInsensitive), "\n");
 
-			// Update the text field if it has changed
-			QString curComment = this -> toPlainText();
-			if ( curComment != comment ) {
-				this -> setPlainText( comment );
-			}
+		// Update the text field if it has changed
+		QString curComment = this -> toPlainText();
+		if ( curComment != comment ) {
+			this -> setPlainText( comment );
 		}
 		_textChangeLock->unlock();
 	}
