@@ -47,6 +47,7 @@ NodeTreeView::~NodeTreeView() {
 void NodeTreeView::reload() {
 	// reset content
 	_model->clear();
+	_model->setSortRole(Qt::UserRole);
 	QList<QStandardItem*> root;
 	root << new QStandardItem(tr("Modules"));
 	root << new QStandardItem;
@@ -76,6 +77,7 @@ void NodeTreeView::reload() {
 
 		// new node to be added
 		QStandardItem* node = new QStandardItem(name);
+		node->setData(name.toLower(),Qt::UserRole);
 		node->setEditable(false);
 		node->setDragEnabled(true);
 		QList<QStandardItem*> names, sTypes, cTypes, all;
@@ -100,6 +102,7 @@ void NodeTreeView::reload() {
 			all[jj]->setEditable(false);
 			all[jj]->setDragEnabled(false);
 			all[jj]->setSelectable(false);
+			all[jj]->setData(all[jj]->data(Qt::DisplayRole),Qt::UserRole);
 		}
 		node->appendColumn(names);
 		node->appendColumn(sTypes);
