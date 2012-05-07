@@ -72,5 +72,6 @@ int main(int argc, char *argv[]) {
 	if (lastArgInfo.exists() && (lastArgInfo.absoluteFilePath()
 			!= QFileInfo(app.applicationFilePath()).absoluteFilePath()))
 		window.open(lastArgInfo.absoluteFilePath());
+	window.show();
 	return app.exec();
 }

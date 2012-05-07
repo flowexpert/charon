@@ -43,6 +43,7 @@ WorkflowComments :: WorkflowComments(QWidget* myParent) :
 {
 	setAcceptRichText(false);
 	connect(this, SIGNAL(textChanged()), SLOT(save()));
+	setEnabled(false);
 }
 
 WorkflowComments::~WorkflowComments() {

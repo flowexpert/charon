@@ -61,6 +61,9 @@ public:
 	/// Get value of property _model
 	ParameterFileModel* model() const;
 
+	/// get inspector viewer widget
+	QWidget* getViewer();
+
 signals:
 	/// Inform about changed model
 	/// @param  model   new model

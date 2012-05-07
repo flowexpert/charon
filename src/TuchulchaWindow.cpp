@@ -48,6 +48,8 @@
 	#define DEFAULT_DEBUG_SUFFIX true
 #endif
 
+const int TuchulchaWindow::_saveStateVersion = 1;
+
 TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QMainWindow(myParent), _flow(0) {
 
@@ -67,11 +69,15 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	setWindowTitle("Tuchulcha");
 
 	// object inspector
+	QDockWidget* inspectorTools = new QDockWidget(
+			tr("ObjectInspector Tools"), this);
 	QDockWidget* inspectorWidget = new QDockWidget(
-			tr("ObjectInspector"), this);
+			tr("ObjectInspector"), inspectorTools);
 	inspectorWidget->setObjectName("inspectorwidget");
+	inspectorTools->setObjectName("inspectortools");
 	_inspector = new ObjectInspector(inspectorWidget);
-	inspectorWidget->setWidget(_inspector);
+	inspectorTools->setWidget(_inspector);
+	inspectorWidget->setWidget(_inspector->getViewer());
 
 	// help viewer
 	QDockWidget* helpWidget = new QDockWidget(tr("Help Browser"), this);
@@ -105,10 +111,6 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 			statusBar(), SLOT(showMessage(const QString&, int)));
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
 			_inspector, SLOT(setModel(ParameterFileModel*)));
-	connect(this, SIGNAL(enableEditors(bool)),
-			_inspector, SLOT(setEnabled(bool)));
-	connect(this, SIGNAL(enableEditors(bool)),
-			commentWidget, SLOT(setEnabled(bool)));
 
 	// comment widget connections
 	connect(_inspector,
@@ -117,10 +119,11 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 			SLOT(update(ParameterFileModel*)));
 
 	// add widgets to dock area
-	addDockWidget(Qt::RightDockWidgetArea, inspectorWidget);
-	addDockWidget(Qt::RightDockWidgetArea, commentBox);
-	addDockWidget(Qt::BottomDockWidgetArea, selectWidget, Qt::Vertical);
-	addDockWidget(Qt::BottomDockWidgetArea, helpWidget, Qt::Vertical);
+	addDockWidget(Qt::RightDockWidgetArea, helpWidget);
+	addDockWidget(Qt::BottomDockWidgetArea, selectWidget);
+	addDockWidget(Qt::BottomDockWidgetArea, inspectorWidget);
+	addDockWidget(Qt::BottomDockWidgetArea, inspectorTools);
+	addDockWidget(Qt::BottomDockWidgetArea, commentBox);
 	_centralArea = new CentralMdiArea(this);
 	setCentralWidget(_centralArea);
 
@@ -242,6 +245,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	// window menu
 	QMenu* windowMenu = menuBar()->addMenu(tr("&Window"));
 	windowMenu->addAction(inspectorWidget->toggleViewAction());
+	windowMenu->addAction(inspectorTools->toggleViewAction());
 	windowMenu->addAction(helpWidget->toggleViewAction());
 	windowMenu->addAction(selectWidget->toggleViewAction());
 	windowMenu->addAction(commentBox->toggleViewAction());
@@ -259,18 +263,16 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	helpMenu->addAction(QIcon(":/icons/qt.png"), tr("About &Qt"), this, SLOT(
 			_showAboutQt()));
 
-	// nothing loaded yet, so editors have to be disabled
-	emit enableEditors(false);
-
 	// load window state config
 	QSettings settings;
-	if (settings.value("windowState").isValid()) {
-		QByteArray state = settings.value("windowState").toByteArray();
-		restoreState(state);
-	}
-
-	if (!myParent)
-		showMaximized();
+	QSettings defaultS(":/config/default.ini",QSettings::IniFormat);
+	restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
+	restoreState(
+			defaultS.value("MainWindow/windowState").toByteArray(),
+			_saveStateVersion);
+	restoreState(
+			settings.value("MainWindow/windowState").toByteArray(),
+			_saveStateVersion);
 
 	updateMetadata();
 }
@@ -281,7 +283,10 @@ TuchulchaWindow::~TuchulchaWindow() {
 void TuchulchaWindow::closeEvent(QCloseEvent *cEvent) {
 	// save window state config
 	QSettings settings;
-	settings.setValue("windowState", saveState());
+	settings.beginGroup("MainWindow");
+	settings.setValue("geometry", saveGeometry());
+	settings.setValue("windowState", saveState(_saveStateVersion));
+	settings.endGroup();
 
 	_centralArea->closeAllSubWindows();
 
@@ -424,10 +429,8 @@ void TuchulchaWindow::_windowActivated(QMdiSubWindow* /*window*/) {
 	if (flow) {
 		ParameterFileModel* model = flow->model();
 		emit activeGraphModelChanged(model);
-		emit enableEditors(true);
 	} else {
 		emit activeGraphModelChanged(0);
-		emit enableEditors(false);
 	}
 }
 

@@ -81,6 +81,10 @@ ObjectInspector::~ObjectInspector() {
 	delete _ui;
 }
 
+QWidget* ObjectInspector::getViewer() {
+	return _ui->view;
+}
+
 void ObjectInspector::openFile(QString fName) {
 	if (!_model)
 		return;

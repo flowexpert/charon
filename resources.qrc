@@ -38,4 +38,7 @@
         <file alias="prioritySignalLights.png">icons/signalLights.png</file>
         <file alias="edit-clear.png">icons/oxygen/edit-clear-locationbar-rtl.png</file>
     </qresource>
+    <qresource prefix="/config">
+        <file alias="default.ini">cfg/default.ini</file>
+    </qresource>
 </RCC>

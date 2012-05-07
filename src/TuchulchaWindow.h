@@ -91,10 +91,6 @@ signals:
 	/// \param model	new model to edit, 0 if no model exists
 	void activeGraphModelChanged(ParameterFileModel* model);
 
-	/// enable/disable edit widgets
-	/// \param enable	if to enable widgets or not
-	void enableEditors(bool enable);
-
 	/// meta data has been updated, plugins reloaded
 	void metaDataUpdated() ;
 
@@ -126,6 +122,8 @@ private:
 	ObjectInspector* _inspector;
 	/// selector widget
 	NodeTreeView* _selector;
+	/// window state version identifier
+	static const int _saveStateVersion;
 };
 
 #endif /* MAINWINDOW_H_ */
