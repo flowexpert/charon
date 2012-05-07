@@ -72,7 +72,7 @@ void AmplitudeThreshold<T>::execute() {
 		ParameteredObject::raise("Amplitude can not be smaller than 0; "
 		"Negative thresholds make no sense");
 	}
-	
+
 	cimglist_for(input,l) {
 		if (l==0) continue;
 		if	   ((input[l].width() != input[l-1].width()) 

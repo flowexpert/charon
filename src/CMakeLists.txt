@@ -483,32 +483,35 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.hxx
 		)
 		TARGET_LINK_LIBRARIES(frameselect roi)
-		QT4_WRAP_CPP(quiverplot_MOC
-			${CHARON_UTILS_INCLUDE_DIR}/QuiverPlot.h)
-		ADD_LIBRARY(quiver SHARED
-			Quiver.cpp
-			${CHARON_UTILS_INCLUDE_DIR}/Quiver.h
-			${CHARON_UTILS_INCLUDE_DIR}/Quiver.hxx
-			${CHARON_UTILS_INCLUDE_DIR}/QuiverPlot.h
-			QuiverPlot.cpp
-			${quiverplot_MOC}
-		)
-		TARGET_LINK_LIBRARIES(quiver ${QT_LIBRARIES} ${MATHGL_LIBS})
 		LIST(APPEND Plugins_Qt
 			argosdisplay
 			frameselect
-			quiver
 		)
 		LIST(APPEND Plugins_CImg
 			argosdisplay
-			quiver
 		)
 		LIST(APPEND Plugins_Vigra
 			argosdisplay
 			frameselect
 		)
 
-		IF(Qwt5_Qt4_FOUND)
+		IF(USE_MathGL)
+			QT4_WRAP_CPP(quiverplot_MOC
+				${CHARON_UTILS_INCLUDE_DIR}/QuiverPlot.h)
+			ADD_LIBRARY(quiver SHARED
+				Quiver.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/Quiver.h
+				${CHARON_UTILS_INCLUDE_DIR}/Quiver.hxx
+				${CHARON_UTILS_INCLUDE_DIR}/QuiverPlot.h
+				QuiverPlot.cpp
+				${quiverplot_MOC}
+			)
+			TARGET_LINK_LIBRARIES(quiver ${QT_LIBRARIES} ${MATHGL_LIBS})
+			LIST(APPEND Plugins_Qt quiver)
+			LIST(APPEND Plugins_CImg quiver)
+		ENDIF(USE_MathGL)
+
+		IF(USE_Qwt5)
 			ADD_LIBRARY(residualplot SHARED
 				ResidualPlot.cpp
 				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.h
@@ -520,7 +523,7 @@ IF(USE_VIGRA)
 			LIST(APPEND Plugins_CImg
 				residualplot
 			)
-		ENDIF(Qwt5_Qt4_FOUND)
+		ENDIF(USE_Qwt5)
 
 		IF(USE_Boost)
 			INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
