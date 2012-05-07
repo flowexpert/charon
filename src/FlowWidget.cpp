@@ -66,7 +66,7 @@ void FlowWidget::updateFileName(const QString& fileName) {
 	}
 	else {
 		setWindowTitle(QString("%1 [*]")
-				.arg(QFileInfo(fileName).absoluteFilePath()));
+				.arg(QFileInfo(fileName).baseName()));
 	}
 }
 

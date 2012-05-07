@@ -125,6 +125,8 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	addDockWidget(Qt::BottomDockWidgetArea, inspectorTools);
 	addDockWidget(Qt::BottomDockWidgetArea, commentBox);
 	_centralArea = new CentralMdiArea(this);
+	_centralArea->setViewMode(QMdiArea::TabbedView);
+	_centralArea->setDocumentMode(true);
 	setCentralWidget(_centralArea);
 
 	connect(_centralArea, SIGNAL(subWindowActivated (QMdiSubWindow*)),

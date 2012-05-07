@@ -174,6 +174,7 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 
 		// update textEdit content
 		_ui->prefix->setText(_model->prefix());
+		_ui->filterBox->setCurrentIndex(_model->minPriority());
 
 		// empty comment text area
 		// text will be updated again, when an item is selected
