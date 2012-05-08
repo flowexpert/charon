@@ -231,142 +231,91 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 		return;
 
 	// identify input and output slot
-	QString sourceObj   = source.section(".", 0, 0).toLower();
-	QString sourcePar   = source.section(".",-1,-1).toLower();
-	QString sourceClass = getClass(source).toLower();
-
-	QString targetObj   = target.section(".", 0, 0).toLower();;
-	QString targetPar   = target.section(".",-1,-1).toLower();
-	QString targetClass = getClass(target).toLower();
-
 	bool sourceIsIn = isInputSlot(source);
 	if(!sourceIsIn) {
 		// swap source and target
 		qSwap(source,target);
-		qSwap(sourceObj,targetObj);
-		qSwap(sourcePar,targetPar);
-		qSwap(sourceClass,targetClass);
 	}
 
 	// check slot types
-	QString inSlotType  = getType(target);
-	QString outSlotType = getType(source);
+	QString inSlotType  = getType(source);
+	QString outSlotType = getType(target);
 	if (inSlotType != outSlotType)
 		throw std::runtime_error(
-				"Type of \"" + target.toStdString()
+				"Type of \"" + source.toStdString()
 				+ "\" (" + inSlotType.toStdString()
 				+ ") does not match type of \""
-				+ source.toStdString() + "\" ("
+				+ target.toStdString() + "\" ("
 				+ outSlotType.toStdString() + ")");
 
 
 	// disconnect input slot, if assigned and not multi slot
 	if (!isMultiSlot(source)) {
 		QString val;
-		if (parameterFile().isSet(source))
-			val = parameterFile().get(source);
+		if (isSet(source))
+			val = getValue(source);
 		if (!val.isEmpty())
 			disconnectSlot(source, val, false);
 	}
 
 	// add target to source
-	QString pref = setPrefix(sourceObj);
-	setOnlyParams(false);
-	if (parameterFile().isSet(source)) {
-		for(int i=0; i<rowCount(); i++) {
-			if (data(index(i, 0)) == sourcePar) {
-				// check target is not in list
-				QString content = data(index(i, 1)).toString().toLower();
-				Q_ASSERT(content.indexOf(target) < 0);
-				QStringList targetList = content.split(
-						";", QString::SkipEmptyParts);
-				// add new target
-				targetList << target;
-				setData(index(i, 1), targetList.join(";"));
-				break;
-			}
-		}
+	if (isSet(source)) {
+		QString content = getValue(source);
+		Q_ASSERT(content.indexOf(target) < 0);
+		QStringList targetList = content.split(
+				";", QString::SkipEmptyParts);
+		// add new target
+		targetList << target;
+		setValue(source, targetList.join(";"));
 	}
 	else {
-		uint row = rowCount();
-		insertRow(row);
-		setData(index(row, 0), sourcePar);
-		setData(index(row, 1), target);
+		setValue(source, target);
 	}
 
 	// add source to target
-	setPrefix(targetObj);
-	if (parameterFile().isSet(target)) {
-		for(int i=0; i<rowCount(); i++) {
-			if (data(index(i, 0)) == targetPar) {
-				// check source is not in list
-				QString content = data(index(i, 1)).toString().toLower();
-				if (content.indexOf(source) < 0) {
-					QStringList sourceList = content.split(
-							";", QString::SkipEmptyParts);
-					// add new target
-					sourceList << source;
-					setData(index(i, 1), sourceList.join(";"));
-				}
-				break;
-			}
+	if (isSet(target)) {
+		QString content = getValue(target);
+		if (content.indexOf(source) < 0) {
+			QStringList sourceList = content.split(
+					";", QString::SkipEmptyParts);
+			// add new target
+			sourceList << source;
+			setValue(target, sourceList.join(";"));
 		}
 	}
 	else {
-		uint row = rowCount();
-		insertRow(row);
-		setData(index(row, 0), targetPar);
-		setData(index(row, 1), source);
+		setValue(target, source);
 	}
-
-	// restore prefix and onlyparams
-	setOnlyParams(true);
-	setPrefix(pref);
 
 	if(draw)
 		emit graphChanged();
 
-	emit statusMessage(tr("attempt to connect %1 with %2")
-					   .arg(source).arg(target));
+	emit statusMessage(
+			tr("connect slot %1 with %2").arg(source).arg(target));
 }
 
 void GraphModel::disconnectSlot(QString source, QString target, bool draw) {
-	QStringList sourceSep = source.toLower().split(".");
-	QStringList targetSep = target.toLower().split(".");
-	Q_ASSERT(sourceSep.size() == 2);
-	Q_ASSERT(targetSep.size() == 2);
-	QString prefixSave = setPrefix(sourceSep[0]);
-	setOnlyParams(false);
-	Q_ASSERT(prefixValid());
-	for(int i=0; i<rowCount(); i++) {
-		if (data(createIndex(i, 0)) == sourceSep[1]) {
-			// check target is in list
-			QString content = data(createIndex(i, 1)).toString().toLower();
-			QStringList targets = content.split(
-					";", QString::SkipEmptyParts);
-			int pos = targets.indexOf(target.toLower());
-			if (pos >= 0) {
-				targets.removeAt(pos);
-				setData(createIndex(i, 1), targets.join(";"));
-			}
+	if (isSet(source)) {
+		// check target is in list
+		QString content = getValue(source).toLower();
+		QStringList targets = content.split(
+				";", QString::SkipEmptyParts);
+		int pos = targets.indexOf(target.toLower());
+		if (pos >= 0) {
+			targets.removeAt(pos);
+			setValue(source, targets.join(";"));
 		}
 	}
-	setPrefix(targetSep[0]);
-	for(int i=0; i<rowCount(); i++) {
-		if (data(createIndex(i, 0)) == targetSep[1]) {
-			// check target is in list
-			QString content = data(createIndex(i, 1)).toString().toLower();
-			QStringList targets = content.split(";", QString::SkipEmptyParts);
-			int pos = targets.indexOf(source.toLower());
-			if (pos >= 0) {
-				targets.removeAt(pos);
-				setData(createIndex(i, 1), targets.join(";"));
-			}
+	if (isSet(target)) {
+		// check target is in list
+		QString content = getValue(target).toLower();
+		QStringList targets = content.split(";", QString::SkipEmptyParts);
+		int pos = targets.indexOf(source.toLower());
+		if (pos >= 0) {
+			targets.removeAt(pos);
+			setValue(target, targets.join(";"));
 		}
 	}
-
-	setOnlyParams(true);
-	setPrefix(prefixSave);
 
 	if(draw)
 		emit graphChanged();
