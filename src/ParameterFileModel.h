@@ -158,8 +158,13 @@ public:
 	/// Check prefix
 	bool prefixValid() const;
 
-	/// Metadata access
-	const MetaData* metaInfo() const;
+	/// \name Metadata Queries with dynamic Information
+	// \{
+	/// check for available metaInfos
+	bool metaInfoValid() const;
+
+	/// get classes contained in metadata file
+	QStringList getClasses() const;
 
 	/// get class of some given object
 	/** \param  objName         name of the object
@@ -174,8 +179,8 @@ public:
 	 */
 	QString getType(QString parName) const;
 
-	/// update comment of node
-	void setEditorComment(QString string);
+	/// pass to metaInfo, use dynamic metadata if needed
+	QString getDefault(QString parName) const;
 
 	/// Get input slots of object
 	/** \param  objName         name of the object
@@ -194,6 +199,54 @@ public:
 	 *  \returns                name of parameters
 	 */
 	QStringList getParameters(QString objName) const;
+
+	/// Check if some parameter/slot is a parameter.
+	/** \param  name            name of the parameter/slot
+	 *  \retval true            given object is a parameter
+	 */
+	bool isParameter(QString name) const;
+
+	/// Check if some parameter/slot is an input slot.
+	/** \param  name            name of the slot
+	 *  \retval true            given object is an input slot
+	 */
+	bool isInputSlot(QString name) const;
+
+	/// Check if some parameter/slot is an output slot.
+	/** \param  name            name of the slot
+	 *  \retval true            given object is an output slot
+	 */
+	bool isOutputSlot(QString name) const;
+
+	/// Check if some slot is a multi slot.
+	/** \param  name            name of the slot
+	 *  \retval true            slot may have multiple targets
+	 */
+	bool isMultiSlot(QString name) const;
+	// \}
+
+	/// \name QParameterFile wrapper functions
+	// \{
+	/// Get a parameter from the underlying parameter file
+	/** \param parName          name of the parameter
+	 *  \returns                QParameterFile parameter value
+	 */
+	QString getValue(QString parName) const;
+
+	/// Set a parameter in the underlying parameter file
+	/** \param parName          name of the parameter
+	 *  \param value            new value of the parameter
+	 */
+	void setValue(QString parName, QString value);
+
+	/// pass to QParameterFile::isSet
+	bool isSet(QString parName) const;
+
+	///	Delete a parameter from the the underlying parameter file
+	/**	\param parName          name of the parameter
+	 */
+	void erase(QString parName);
+	// \}
 
 signals:
 	/// Property _fileName has changed

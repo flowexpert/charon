@@ -143,8 +143,6 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 	if (newModel == _model)
 		return;
 
-	bool locked = _commentFieldMutex->tryLock();
-
 	if (_model) {
 		// store view settings
 		_storeViewSettings();
@@ -173,15 +171,11 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 		}
 
 		// update textEdit content
-		_ui->prefix->setText(_model->prefix());
+		handle_model_prefixChanged(_model->prefix());
 		_ui->filterBox->setCurrentIndex(_model->minPriority());
 
-		// empty comment text area
-		// text will be updated again, when an item is selected
-		_ui->comment->setText("");
-
 		// update values
-		_ui->useMetadata->setEnabled(_model->metaInfo());
+		_ui->useMetadata->setEnabled(_model->metaInfoValid());
 		_ui->useMetadata->setChecked(_model->useMetaInfo());
 		_ui->onlyParams->setChecked(_model->onlyParams());
 
@@ -196,16 +190,10 @@ void ObjectInspector::setModel(ParameterFileModel* newModel) {
 			SLOT(handle_model_useMetaInfoChanged(bool)));
 		connect(_model, SIGNAL(onlyParamsChanged(bool)),
 			SLOT(handle_model_onlyParamsChanged(bool)));
-
-		handle_model_prefixChanged(_model->prefix());
 	}
 	else {
 		_ui->prefix->clear();
 		_ui->comment->clear();
-	}
-
-	if (locked) {
-		_commentFieldMutex->unlock();
 	}
 
 	emit modelChanged(_model);
@@ -337,23 +325,23 @@ void ObjectInspector::on_resetFilterButton_clicked() {
 }
 
 void ObjectInspector::on_comment_textChanged() {
-	if (_model && _commentFieldMutex->tryLock()) {
-		_model->setEditorComment(_ui->comment->toPlainText().replace(
-			QRegExp("\n"), "<br/>"));
+	if (_model && isEnabled() && _commentFieldMutex->tryLock()) {
+		QString comment = _ui->comment->toPlainText();
+		comment.replace(QRegExp("\n"), "<br/>");
+		_model->setValue(_model->prefix()+".editorcomment",comment);
 		_commentFieldMutex->unlock();
 	}
 }
 
 void ObjectInspector::handle_model_prefixChanged(const QString& prefix) {
 	// update comment text area
-	bool locked = _commentFieldMutex->tryLock();
+	QMutexLocker locker (_commentFieldMutex);
 	_ui->prefix->setText(prefix);
-	_ui->comment->setPlainText(_model->parameterFile().get(
-		prefix + ".editorcomment").replace(QRegExp("<br/?>"), "\n"));
+	QString comment = _model->getValue(prefix + ".editorcomment");
+	comment.replace(QRegExp("<br/?>"), "\n");
+	_ui->comment->setPlainText(comment);
 	_ui->commentBox->setEnabled(!prefix.isEmpty() && _model->prefixValid());
-	if (locked) {
-		_commentFieldMutex->unlock();
-	}
+	locker.unlock();
 }
 
 void ObjectInspector::on_prefix_textChanged(QString text) {

@@ -96,7 +96,7 @@ bool GraphModel::_load() {
 
 	// collect unknown classes
 	QStringList uClasses;
-	const QStringList& knownClasses = metaInfo()->getClasses();
+	const QStringList& knownClasses = getClasses();
 	foreach(const QString& s, wClasses) {
 		if (!knownClasses.contains(s,Qt::CaseInsensitive)) {
 			uClasses << s;
@@ -239,7 +239,7 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 	QString targetPar   = target.section(".",-1,-1).toLower();
 	QString targetClass = getClass(target).toLower();
 
-	bool sourceIsIn = metaInfo()->isInputSlot(source, sourceClass);
+	bool sourceIsIn = isInputSlot(source);
 	if(!sourceIsIn) {
 		// swap source and target
 		qSwap(source,target);
@@ -261,7 +261,7 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 
 
 	// disconnect input slot, if assigned and not multi slot
-	if (!metaInfo()->isMultiSlot(source, sourceClass)) {
+	if (!isMultiSlot(source)) {
 		QString val;
 		if (parameterFile().isSet(source))
 			val = parameterFile().get(source);
@@ -380,8 +380,8 @@ QStringList GraphModel::_connections(QString node) const {
 	QString className = getClass(node);
 
 	// collect input & output slots
-	QStringList inputs  = metaInfo()->getInputs (className);
-	QStringList outputs = metaInfo()->getOutputs(className);
+	QStringList inputs  = getInputs (node);
+	QStringList outputs = getOutputs(node);
 	QStringList curSlot;
 
 	QStringList::const_iterator slot;
@@ -392,12 +392,11 @@ QStringList GraphModel::_connections(QString node) const {
 	// collect inputs
 	for (slot = inputs.begin(); slot != inputs.end(); slot++) {
 		QString slotName = QString("%1.%2").arg(node).arg(*slot);
-		if (!parameterFile().isSet(slotName))
+		if (!isSet(slotName))
 			continue;
 		curSlot = parameterFile().getList(slotName);
 		// only multi slots can have more than one source!
-		Q_ASSERT(metaInfo()->isMultiSlot(*slot, className)
-				 || (curSlot.size() <= 1));
+		Q_ASSERT(isMultiSlot(slotName) || (curSlot.size() <= 1));
 		QStringList::const_iterator curSlotIter;
 		for(curSlotIter = curSlot.begin(); curSlotIter != curSlot.end();
 		curSlotIter++)
@@ -467,8 +466,8 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 				setData(createIndex(i, 0), parName.join("."));
 			}
 			// rename target slots of other nodes
-			else if (metaInfo()->isInputSlot(parName[1],getClass(parName[0]))
-				|| metaInfo()->isOutputSlot(parName[1],getClass(parName[0]))) {
+			else if (isInputSlot(parName.join("."))
+					|| isOutputSlot(parName.join("."))) {
 				QStringList parVals =
 						data(createIndex(i,1)).toString().split(";");
 				for (int j=0; j<parVals.size(); j++) {
@@ -620,8 +619,7 @@ bool GraphModel::setData(const QModelIndex& ind, const QVariant& value,
 			QStringList l = _connections(prefix());
 			for (int i = 0; i < l.size(); i++) {
 				QStringList connection = l[i].split(";");
-				QString slotType = metaInfo()->getType(
-						connection[0], getClass(prefix()));
+				QString slotType = getType(connection[0]);
 				if (slotType.contains(
 						QRegExp("<\\s*t\\s*>",Qt::CaseInsensitive))) {
 					disconnectSlot(

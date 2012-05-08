@@ -105,14 +105,12 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 			case 1:
 				{
 					QVariant res = "";
-					QString className = getClass(_keys[row]);
 					if (_parameterFile->isSet(_keys[row]))
 						res = _parameterFile->get(_keys[row]);
 					else if (_onlyParams)
-						res = metaInfo()->getDefault(_keys[row], className);
+						res = getDefault(_keys[row]);
 
-					if (_useMetaInfo && metaInfo()->isParameter(_keys[row],
-							className)) {
+					if (_useMetaInfo && isParameter(_keys[row])) {
 						QString typestring = getType(_keys[row]);
 						QVariant::Type type = mapper[typestring];
 						Q_ASSERT(res.canConvert(type));
@@ -135,7 +133,7 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 		}
 	}
 	if ((role == Qt::ToolTipRole) && _useMetaInfo) {
-		QString ret = metaInfo()->getDocString(_keys[ind.row()], getClass(
+		QString ret = _metaInfos->getDocString(_keys[ind.row()], getClass(
 				_keys[ind.row()]));
 		if (!ret.isEmpty())
 			return ret;
@@ -160,8 +158,7 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 		}
 	}
 	if (ind.column() == 1 && role == Qt::CheckStateRole && _useMetaInfo
-			&& metaInfo()->isParameter(_keys[ind.row()],
-					getClass(_keys[ind.row()]))) {
+			&& isParameter(_keys[ind.row()])) {
 		QString typestring = getType(_keys[ind.row()]);
 		if (typestring == "bool") {
 			if(_parameterFile->isSet(_keys[ind.row()])) {
@@ -172,8 +169,7 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 					return Qt::Unchecked;
 			}
 			else {
-				QVariant defVal = metaInfo()->getDefault(
-						_keys[ind.row()], getClass(_keys[ind.row()]));
+				QVariant defVal = getDefault(_keys[ind.row()]);
 				if (defVal.toBool())
 					return Qt::Checked;
 				else
@@ -272,8 +268,7 @@ bool ParameterFileModel::setData(
 		}
 	}
 	if (ind.column() == 1 && role == Qt::CheckStateRole && _useMetaInfo
-				&& metaInfo()->isParameter(_keys[ind.row()],
-						getClass(_keys[ind.row()]))) {
+				&& isParameter(_keys[ind.row()])) {
 		Q_ASSERT(getType(_keys[ind.row()]) == "bool");
 		Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt()) ;
 		if(state == Qt::Checked || state == Qt::PartiallyChecked)
@@ -296,8 +291,8 @@ Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 		case 1: {
 			QString paramType = getType(_keys[ind.row()]);
 			QVariant::Type dataType = data(ind).type();
-			if(_useMetaInfo && metaInfo()->isParameter(_keys[ind.row()],
-				getClass(_keys[ind.row()])) && paramType == "bool")
+			if(_useMetaInfo && isParameter(_keys[ind.row()])
+						&& paramType == "bool")
 
 				return Qt::ItemIsSelectable | Qt::ItemIsEnabled
 					| Qt::ItemIsUserCheckable;
@@ -615,10 +610,6 @@ void ParameterFileModel::setUseMetaInfo(bool value) {
 	emit useMetaInfoChanged(value);
 }
 
-const MetaData* ParameterFileModel::metaInfo() const {
-	return _metaInfos;
-}
-
 bool ParameterFileModel::onlyParams() const {
 	return _onlyParams;
 }
@@ -707,7 +698,7 @@ QString ParameterFileModel::getType(QString parName) const {
 		return "";
 	QString cName = getClass(parName);
 	QString res;
-	if (metaInfo()->isDynamic(cName)) {
+	if (_metaInfos->isDynamic(cName)) {
 		QFileInfo fileInfo(_getDynamicMetaFile(parName.section(".",0,0)));
 		if (fileInfo.exists()) {
 			QParameterFile pFile(fileInfo.absoluteFilePath());
@@ -715,14 +706,14 @@ QString ParameterFileModel::getType(QString parName) const {
 		}
 	}
 	if (res.isEmpty()) {
-		res = metaInfo()->getType(parName, cName);
+		res = _metaInfos->getType(parName, cName);
 	}
 	if (res.contains(
 			QRegExp("^\\s*(.*<\\s*T\\s*>.*|T)\\s*$",Qt::CaseInsensitive))) {
 		parName = parName.section(".",0,0);
-		QString tType = parameterFile().get(parName + ".templatetype");
+		QString tType = getValue(parName + ".templatetype");
 		if(tType.isEmpty()) {
-			tType = metaInfo()->getDefault("templatetype", getClass(parName));
+			tType = getDefault(parName + ".templatetype");
 		}
 		res.replace(
 				QRegExp("<\\s*T\\s*>",Qt::CaseInsensitive),
@@ -733,46 +724,48 @@ QString ParameterFileModel::getType(QString parName) const {
 	return res;
 }
 
-void ParameterFileModel::setEditorComment(QString comment) {
-	if (_prefix.isEmpty()) {
-		return;
+QString ParameterFileModel::getValue(QString parName) const {
+	return _parameterFile -> get(parName);
+}
+
+bool ParameterFileModel::isSet(QString parName) const {
+	return _parameterFile->isSet(parName);
+}
+
+void ParameterFileModel::setValue(QString parName, QString value) {
+	QStringList keys = _parameterFile -> getKeyList();
+
+	bool existed = _parameterFile->isSet(parName);
+
+	// write value to parameter file
+	_parameterFile -> set(parName, value);
+
+	if (parName.contains(".editorcomment")) {
+		emit commentChanged(value);
 	}
 
-	bool valSet = false;
-	bool paramsBefore = _onlyParams;
-	setOnlyParams(false);
-
-	// check if "editorcomment" entry already exists
-	for (int i = 0; i < rowCount(); i++) {
-		if (data(index(i,0)).toString() == "editorcomment") {
-			QString str = comment;
-			// delete if empty
-			if (str.isEmpty()) {
-				removeRow(i);
-			} else {
-				QString oldData = data(index(i, 1)).toString();
-				if (oldData == comment) {
-					setOnlyParams(paramsBefore);
-					return;
-				}
-				setData(index(i,1), comment);
-			}
-			valSet = true;
-			break;
+	if (existed) {
+		// parameter existed before, so inform about change,
+		// if parameter is visible
+		int i = keys.indexOf(parName);
+		if ( i >= 0) {
+			emit dataChanged(index(i, 1), index(i, 1));
 		}
 	}
-
-	// if not, insert row
-	if (!valSet && !comment.isEmpty()) {
-		insertRow(rowCount());
-		setData(index(rowCount()-1,0), "editorcomment");
-		setData(index(rowCount()-1,1), comment);
+	else {
+		// parameter did not exist before,
+		// so perhaps it would appear and an update run is neccessary
+		_update();
 	}
+}
 
-	setOnlyParams(paramsBefore);
-
-	// update selected node
-	emit commentChanged(comment);
+void ParameterFileModel::erase(QString parName) {
+	if (_parameterFile->isSet(parName)) {
+		_parameterFile -> erase(parName);
+		if (_keys.indexOf(parName) >= 0) {
+			_update();
+		}
+	}
 }
 
 void ParameterFileModel::setMinPriority(int value) {
@@ -865,4 +858,59 @@ QStringList ParameterFileModel::getParameters(QString objName) const {
 		}
 	}
 	return _metaInfos->getParameters(className);
+}
+
+bool ParameterFileModel::isParameter(QString name) const {
+	QString obj = name.section(".",0,0);
+	name =  name.section(".",-1);
+	QStringList list = getParameters(obj);
+	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
+}
+
+bool ParameterFileModel::isInputSlot(QString name) const {
+	QString obj = name.section(".",0,0);
+	name =  name.section(".",-1);
+	QStringList list = getInputs(obj);
+	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
+}
+
+bool ParameterFileModel::isOutputSlot(QString name) const {
+	QString obj = name.section(".",0,0);
+	name =  name.section(".",-1);
+	QStringList list = getOutputs(obj);
+	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
+}
+
+bool ParameterFileModel::isMultiSlot(QString slotName) const {
+	QString className = getClass(slotName);
+	QString objName = slotName.section(".",0,0);
+	if (_metaInfos->isDynamic(className)) {
+		QFileInfo fileInfo(_getDynamicMetaFile(objName));
+		if (fileInfo.exists()) {
+			MetaData tmp(fileInfo.absoluteFilePath());
+			return tmp.isMultiSlot(slotName,className);
+		}
+	}
+	return _metaInfos->isMultiSlot(slotName,className);
+}
+
+QStringList ParameterFileModel::getClasses() const {
+	return _metaInfos->getClasses();
+}
+
+QString ParameterFileModel::getDefault(QString parName) const {
+	QString className = getClass(parName);
+	QString objName = parName.section(".",0,0);
+	if (_metaInfos->isDynamic(className)) {
+		QFileInfo fileInfo(_getDynamicMetaFile(objName));
+		if (fileInfo.exists()) {
+			MetaData tmp(fileInfo.absoluteFilePath());
+			return tmp.getDefault(parName,className);
+		}
+	}
+	return _metaInfos->getDefault(parName,className);
+}
+
+bool ParameterFileModel::metaInfoValid() const {
+	return _metaInfos;
 }
