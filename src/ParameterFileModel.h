@@ -175,9 +175,10 @@ public:
 	/// Get type of some parameter or slot.
 	/** This also handles presence of some template parameters.
 	 *  \param parName          name of the parameter
+	 *  \param applyTmplType    replace template parameter by selected type
 	 *  \returns                parameter/slot type
 	 */
-	QString getType(QString parName) const;
+	QString getType(QString parName, bool applyTmplType = true) const;
 
 	/// pass to metaInfo, use dynamic metadata if needed
 	QString getDefault(QString parName) const;

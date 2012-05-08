@@ -693,7 +693,7 @@ QStringList ParameterFileModel::_priorityFilter(QStringList list) const {
 	return result;
 }
 
-QString ParameterFileModel::getType(QString parName) const {
+QString ParameterFileModel::getType(QString parName, bool tmplType) const {
 	if(!_useMetaInfo)
 		return "";
 	QString cName = getClass(parName);
@@ -708,7 +708,7 @@ QString ParameterFileModel::getType(QString parName) const {
 	if (res.isEmpty()) {
 		res = _metaInfos->getType(parName, cName);
 	}
-	if (res.contains(
+	if (tmplType && res.contains(
 			QRegExp("^\\s*(.*<\\s*T\\s*>.*|T)\\s*$",Qt::CaseInsensitive))) {
 		parName = parName.section(".",0,0);
 		QString tType = getValue(parName + ".templatetype");

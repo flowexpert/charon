@@ -619,9 +619,10 @@ bool GraphModel::setData(const QModelIndex& ind, const QVariant& value,
 			QStringList l = _connections(prefix());
 			for (int i = 0; i < l.size(); i++) {
 				QStringList connection = l[i].split(";");
-				QString slotType = getType(connection[0]);
-				if (slotType.contains(
-						QRegExp("<\\s*t\\s*>",Qt::CaseInsensitive))) {
+				QString slotNameC = prefix()+"."+connection[0];
+				QString slotTypeR = getType(slotNameC, true);
+				QString slotTypeT = getType(slotNameC, false);
+				if (slotTypeR != slotTypeT) {
 					disconnectSlot(
 						prefix()+"."+connection[0],connection[1], false);
 				}
