@@ -427,16 +427,19 @@ QString GraphModel::addNode(QString className, bool draw) {
 
 bool GraphModel::setData(
 		const QModelIndex& ind, const QVariant& value, int role) {
+	QString param = data(index(ind.row(),0)).toString();
+	if (!prefix().isEmpty()) {
+		param = prefix() + "." + param;
+	}
 	QRegExp ttype("(.*\\.)?templatetype",Qt::CaseInsensitive);
 	if (
-			role == Qt::DisplayRole &&
+			(role == Qt::DisplayRole || role == Qt::EditRole) &&
 			ind.column() == 1 &&
 			value != data(ind) &&
-			ttype.exactMatch(data(index(ind.row(), 0)).toString())) {
+			ttype.exactMatch(param)) {
 
 		// disconnect slots on template type change, if neccessary
-		QString node = data(index(ind.row(),0))
-					.toString().section(".",0,0).toLower();
+		QString node = param.section(".",0,0).toLower();
 		QString slotName;
 		foreach (const QString& slot, getInputs(node)) {
 			slotName = QString("%1.%2").arg(node).arg(slot);
@@ -465,18 +468,17 @@ bool GraphModel::setData(
 bool GraphModel::removeRows(int row, int count,
 		const QModelIndex& parentInd) {
 	QRegExp ttype("(.*\\.)?templatetype",Qt::CaseInsensitive);
-	QString defaultType = getValue("global.templatetype");
-	if (defaultType.isEmpty()) {
-		defaultType = "double";
-	}
 
 	// Check if template type is about to be removed
 	// and reset it to it's default value before deletion.
 	// This handles proper disconnection on reset.
 	for (int i = row; i < row+count; i++) {
 		QString cur = data(index(row,0)).toString();
+		if (!prefix().isEmpty()) {
+			cur = prefix() + "." + cur;
+		}
 		if (ttype.exactMatch(cur)) {
-			setData(index(row,1),defaultType);
+			setData(index(row,1),getDefault(cur));
 		}
 	}
 

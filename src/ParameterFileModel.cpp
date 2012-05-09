@@ -83,12 +83,6 @@ int ParameterFileModel::columnCount(const QModelIndex& /*parent*/) const {
 QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 	// mapper to convert parameter.type into QVariant::Type
 	const VarTypeMap& mapper = VarTypeMap::instance();
-	QRegExp ttype("(.*\\.)?templatetype",Qt::CaseInsensitive);
-	QString defaultTmplType = getValue("global.templatetype");
-	if (defaultTmplType.isEmpty()) {
-		defaultTmplType = "double";
-	}
-
 	int row = ind.row();
 
 	switch (role) {
@@ -117,13 +111,7 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 						res = _parameterFile->get(_keys[row]);
 					}
 					else if (_onlyParams) {
-						// handle default template type
-						if (ttype.exactMatch(_keys[row])) {
-							res = defaultTmplType;
-						}
-						else {
-							res = getDefault(_keys[row]);
-						}
+						res = getDefault(_keys[row]);
 					}
 
 					if (_useMetaInfo && isParameter(_keys[row])) {
@@ -721,9 +709,10 @@ QStringList ParameterFileModel::_priorityFilter(QStringList list) const {
 
 QString ParameterFileModel::getType(QString parName, bool tmplType) const {
 	if(!_useMetaInfo)
-		return "";
+		return QString();
 	QString cName = getClass(parName);
 	QString res;
+
 	if (_metaInfos->isDynamic(cName)) {
 		QFileInfo fileInfo(_getDynamicMetaFile(parName.section(".",0,0)));
 		if (fileInfo.exists()) {
@@ -927,6 +916,14 @@ QStringList ParameterFileModel::getClasses() const {
 QString ParameterFileModel::getDefault(QString parName) const {
 	QString className = getClass(parName);
 	QString objName = parName.section(".",0,0);
+
+	// handle default template type
+	QRegExp ttype("(.*\\.)?templatetype",Qt::CaseInsensitive);
+	QString defaultTmplType = getValue("global.templatetype");
+	if (ttype.exactMatch(parName) && !defaultTmplType.isEmpty()) {
+		return defaultTmplType;
+	}
+
 	if (_metaInfos->isDynamic(className)) {
 		QFileInfo fileInfo(_getDynamicMetaFile(objName));
 		if (fileInfo.exists()) {
