@@ -41,9 +41,6 @@ public:
 	GraphModel(QString fileName = "", QObject* parent = 0,
 		QString metaFile = "");
 
-	/// Default destructor.
-	virtual ~GraphModel();
-
 	/// Clear ParameterFile content.
 	/** \param draw         emit display refresh signal if true */
 	virtual void clear(bool draw);

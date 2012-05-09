@@ -294,7 +294,7 @@ void NodeHandler::saveFlowchart() {
 	}
 }
 
-void NodeHandler::keyReleaseEvent(QKeyEvent* keyEvent) {
+void NodeHandler::keyPressEvent(QKeyEvent* keyEvent) {
 	switch(keyEvent->key()) {
 	case Qt::Key_Right:
 		_model->selectNext(false);
@@ -306,6 +306,8 @@ void NodeHandler::keyReleaseEvent(QKeyEvent* keyEvent) {
 	default:
 		break;
 	}
+
+	QGraphicsScene::keyPressEvent(keyEvent);
 }
 
 

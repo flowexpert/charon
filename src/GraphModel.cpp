@@ -51,13 +51,17 @@ GraphModel::GraphModel(QString fName, QObject* myParent, QString metaFile) :
 		ParameterFileModel(fName, myParent, metaFile) {
 
 	// here we need some metaFile
-	if (metaFile.isEmpty())
+	if (metaFile.isEmpty()) {
 		qFatal("No metaFile in GraphModel given! Pleas specify one!");
+	}
+	if (!useMetaInfo()) {
+		qFatal("MetaInfo not usable!");
+	}
 
-	connect(this,SIGNAL(dynamicUpdate()),SIGNAL(graphChanged()),Qt::QueuedConnection);
-}
-
-GraphModel::~GraphModel() {
+	connect(
+			this, SIGNAL(dynamicUpdate()),
+			this, SIGNAL(graphChanged()),
+			Qt::QueuedConnection);
 }
 
 void GraphModel::clear(bool draw) {
@@ -83,16 +87,11 @@ bool GraphModel::_load() {
 	Q_ASSERT(useMetaInfo());
 
 	// check which classes are used in the workflow
-	setPrefix("");
-	setOnlyParams(false);
 	QSet<QString> wClasses;
-	for (int i=0; i < rowCount(); i++) {
-		QString cur = getClass(data(createIndex(i,0)).toString());
-		if (!cur.isEmpty()) {
-			wClasses << cur;
-		}
+	const QStringList& nds = nodes();
+	foreach (const QString& cur, nds) {
+		wClasses << getClass(cur);
 	}
-	setOnlyParams(true);
 
 	// collect unknown classes
 	QStringList uClasses;
@@ -118,9 +117,8 @@ bool GraphModel::_load() {
 	}
 
 	emit graphChanged();
-	QStringList n = nodes();
-	if(n.size())
-		setPrefix(n[0]);
+	selectNext();
+
 	return true;
 }
 
@@ -128,8 +126,8 @@ bool GraphModel::nodeValid(const QString& name) const {
 	return !getClass(name).isEmpty();
 }
 
-bool GraphModel::connected(QString source,
-						   QString target) const {
+bool GraphModel::connected(
+			QString source, QString target) const {
 	// assert lowercase names
 	source = source.toLower();
 	target = target.toLower();
@@ -471,22 +469,21 @@ QStringList GraphModel::nodes() const {
 
 	// detect objects
 	QStringList keys = parameterFile().getKeyList();
-	for (int i = 0; i < keys.size(); i++) {
-		nodeSet << keys[i].section(".",0,0);
+	foreach (const QString& ckey, keys) {
+		nodeSet << ckey.section(".",0,0);
 	}
 
 	QStringList result;
-	QSet<QString>::const_iterator node;
-
-	for(node = nodeSet.begin(); node != nodeSet.end(); node++)
-		if(nodeValid(*node))
-			result << *node;
+	foreach(const QString& node, nodeSet) {
+		if(nodeValid(node))
+			result << node;
+	}
 
 	return result;
 }
 
 void GraphModel::selectNext(bool back) {
-	QStringList curNodes = nodes();
+	const QStringList& curNodes = nodes();
 
 	// skip, if no nodes to select avaiable
 	if (!curNodes.size())
@@ -494,16 +491,16 @@ void GraphModel::selectNext(bool back) {
 
 	int pos = 0;
 
-	if(prefix().isEmpty())
-		pos = 1;
-	else {
+	if(!prefix().isEmpty() && prefixValid()) {
 		pos = curNodes.indexOf(prefix());
+		Q_ASSERT(pos >= 0);
+		if (back) {
+			pos = (pos - 1 + curNodes.size()) % curNodes.size();
+		}
+		else {
+			pos = (pos + 1) % curNodes.size();
+		}
 	}
-
-	if (back)
-		pos = (pos - 1 + curNodes.size()) % curNodes.size();
-	else
-		pos = (pos + 1) % curNodes.size();
 
 	setPrefix(curNodes[pos]);
 }

@@ -93,10 +93,8 @@ protected:
 	/// handles mouse press events
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
-	/// handles key release events
-	/// del -  deletes the selected node
-	/// F12 -  renders a workflow to a given png or jpg file
-	virtual void keyReleaseEvent(QKeyEvent* keyEvent);
+	/// handles key press events
+	virtual void keyPressEvent(QKeyEvent* keyEvent);
 
 	/// handles all mousebutton release events
 	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
