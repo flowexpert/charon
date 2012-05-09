@@ -57,15 +57,18 @@ QStringList MetaData::getClasses() const {
 }
 
 QStringList MetaData::getOutputs (QString className) const {
-	return _data->getList(className + ".outputs");
+	return _data->get(className + ".outputs")
+			.split(";",QString::SkipEmptyParts);
 }
 
 QStringList MetaData::getInputs(QString className) const {
-	return _data->getList(className + ".inputs");
+	return _data->get(className + ".inputs")
+			.split(";",QString::SkipEmptyParts);
 }
 
 QStringList MetaData::getParameters(QString className) const {
-	return _data->getList(className + ".parameters");
+	return _data->get(className + ".parameters")
+			.split(";",QString::SkipEmptyParts);
 }
 
 QString MetaData::getType(QString parName, QString className) const {
@@ -102,21 +105,9 @@ QString MetaData::getDocFile(QString parName, QString className) const {
 	return result;
 }
 
-bool MetaData::isParameter(QString name, QString className) const {
-	name =  name.section(".",-1,-1).toLower();
-	QStringList list = getParameters(className);
-	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
-}
-
 bool MetaData::isInputSlot(QString name, QString className) const {
 	name =  name.section(".",-1,-1).toLower();
 	QStringList list = getInputs(className);
-	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
-}
-
-bool MetaData::isOutputSlot(QString name, QString className) const {
-	name =  name.section(".",-1,-1).toLower();
-	QStringList list = getOutputs(className);
 	return (list.indexOf(QRegExp(name,Qt::CaseInsensitive)) >= 0);
 }
 

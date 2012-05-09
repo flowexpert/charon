@@ -155,7 +155,7 @@ int Node::getHeight() const {
 
 void Node::_checkWidth(int s) {
 	s = qMax(s,qMax(_instanceName.size(), _className.size()));
-	_width = qMax(_width, 50 + s * 6);
+	_width = qMax(_width, 50 + s * 7);
 }
 
 NodeProperty* Node::getProperty(QString propName) const {

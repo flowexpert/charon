@@ -162,27 +162,25 @@ void NodeHandler::loadFromModel() {
 
 	for (int ii=0;ii<nodes.size();ii++) {
 		QString name = nodes[ii];
-		QString cname = _model->getClass(nodes[ii]);
+		QString cname = _model->getClass(nodes[ii], true);
 
 		Node* node = new Node(_model,name,10*ii,10*ii,this);
 		node->setClassName(cname);
 		_nodeMap.insert(name,node);
 
-		if (_model->parameterFile().isSet(name+".editorinfo")) {
-			QString pdata = _model->parameterFile().get(name+".editorinfo");
-			float x = pdata.split(" ")[0].toFloat();
-			float y = pdata.split(" ")[1].toFloat();
+		QStringList pdata = _model->getValue(name+".editorinfo").split(" ");
+		if (pdata.size() >= 2) {
+			float x = pdata.at(0).toFloat();
+			float y = pdata.at(1).toFloat();
 			node->setPos(x,y);
 		}
 
 		// set tooltip
-		if (_model->parameterFile().isSet(name+".editorcomment")) {
-			QString str = _model->parameterFile().get(name+".editorcomment");
-			if (str.isEmpty()) {
-				node->setToolTip("");
-			} else {
-				node->setToolTip("<b>" + tr("Comment:") + "</b><br/>" + str);
-			}
+		QString str = _model->getValue(name+".editorcomment");
+		if (str.isEmpty()) {
+			node->setToolTip("");
+		} else {
+			node->setToolTip("<b>" + tr("Comment:") + "</b><br/>" + str);
 		}
 
 		QStringList ins = _model->getInputs(name);
@@ -195,14 +193,13 @@ void NodeHandler::loadFromModel() {
 		}
 		for (int jj=0; jj < outs.size(); jj++) {
 			QString curO = name+"."+outs[jj];
-			if (_model->parameterFile().isSet(curO)) {
-				QStringList conns = _model->parameterFile().getList(curO);
-				for (int kk=0; kk < conns.size(); kk++) {
-					nodesout << name;
-					slotout << outs[jj];
-					slotin << conns[kk].section(".",-1,-1);
-					nodesin << conns[kk].section(".",0,0);
-				}
+			QStringList conns =
+				_model->getValue(curO).split(";",QString::SkipEmptyParts);
+			foreach (const QString& con, conns) {
+				nodesout << name;
+				slotout << outs[jj];
+				slotin << con.section(".",-1,-1);
+				nodesin << con.section(".",0,0);
 			}
 		}
 		node->moveBy(0,0);
@@ -310,7 +307,6 @@ void NodeHandler::keyPressEvent(QKeyEvent* keyEvent) {
 	QGraphicsScene::keyPressEvent(keyEvent);
 }
 
-
 void NodeHandler::dragEnterEvent(QGraphicsSceneDragDropEvent* ev) {
 	if (ev->mimeData()->hasFormat("application/x-qstandarditemmodeldatalist"))
 		ev->accept();
@@ -333,17 +329,15 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 		_selectedNode = 0;
 		QString instName = _model->addNode(className,false);
 
-		//if plugin instanziation was successfull, set its coordinates to the drop position
+		// if plugin instanziation was successfull,
+		// set its coordinates to the drop position
 		if(!instName.isEmpty()) {
 			_model->setPrefix(instName);
-			QPointF pos = ev->scenePos() ; //classic DropEvent->pos is always zero for this case
+			// classic DropEvent->pos is always zero for this case
+			QPointF pos = ev->scenePos();
 			QString posString = QString("%0 %1").arg(pos.x()).arg(pos.y());
-			_model->setOnlyParams(false);
 			// insert editor info
-			_model->insertRow(_model->rowCount());
-			_model->setData(_model->index(_model->rowCount()-1,0),"editorinfo");
-			_model->setData(_model->index(_model->rowCount()-1,1),posString);
-			_model->setOnlyParams(true) ;
+			_model->setValue(instName+".editorinfo", posString);
 			loadFromModel();
 			selectNode(_model->prefix());
 			ev->accept();
@@ -354,14 +348,14 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 	QGraphicsScene::dropEvent(ev);
 }
 
-void NodeHandler::updateTooltip(QString comment)
-{
+void NodeHandler::updateTooltip (QString comment) {
 	// to prevent exceptions, ensure that _selectedNode is not empty
 	if (_selectedNode && !_nodeMap.isEmpty()) {
 		if (comment.isEmpty()) {
 			_selectedNode->setToolTip("");
 		} else {
-			_selectedNode->setToolTip("<b>" + tr("Comment:") + "</b><br/>" + comment);
+			_selectedNode->setToolTip(
+				"<b>" + tr("Comment:") + "</b><br/>" + comment);
 		}
 	}
 }

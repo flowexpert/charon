@@ -168,9 +168,10 @@ public:
 
 	/// get class of some given object
 	/** \param  objName         name of the object
+	 *  \param  fixCase         class list lookup to get name case right
 	 *  \returns                empty string if class is unknown
 	 */
-	QString getClass(QString objName) const;
+	QString getClass(QString objName, bool fixCase = false) const;
 
 	/// Get type of some parameter or slot.
 	/** This also handles presence of some template parameters.
@@ -358,6 +359,9 @@ private:
 
 	/// ParameterFile describing classes and in-/output slots
 	const MetaData* _metaInfos;
+
+	/// map to fix class name cases
+	QMap<QString,QString> _classCaseMap;
 
 	/// toggle usage of metadata
 	bool _useMetaInfo;

@@ -83,10 +83,18 @@ int ParameterFileModel::columnCount(const QModelIndex& /*parent*/) const {
 QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 	// mapper to convert parameter.type into QVariant::Type
 	const VarTypeMap& mapper = VarTypeMap::instance();
+	QRegExp ttype("(.*\\.)?templatetype",Qt::CaseInsensitive);
+	QString defaultTmplType = getValue("global.templatetype");
+	if (defaultTmplType.isEmpty()) {
+		defaultTmplType = "double";
+	}
 
-	if ((role == Qt::DisplayRole) || (role == Qt::EditRole)) {
-		int row = ind.row();
+	int row = ind.row();
 
+	switch (role) {
+
+	case Qt::EditRole:
+	case Qt::DisplayRole:
 		if ((row >= 0) && (row < _keys.size())) {
 			QString name;
 
@@ -105,10 +113,18 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 			case 1:
 				{
 					QVariant res = "";
-					if (_parameterFile->isSet(_keys[row]))
+					if (_parameterFile->isSet(_keys[row])) {
 						res = _parameterFile->get(_keys[row]);
-					else if (_onlyParams)
-						res = getDefault(_keys[row]);
+					}
+					else if (_onlyParams) {
+						// handle default template type
+						if (ttype.exactMatch(_keys[row])) {
+							res = defaultTmplType;
+						}
+						else {
+							res = getDefault(_keys[row]);
+						}
+					}
 
 					if (_useMetaInfo && isParameter(_keys[row])) {
 						QString typestring = getType(_keys[row]);
@@ -121,32 +137,30 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 				}
 
 			case 2:
-				if (role == Qt::DisplayRole)
+				if (role == Qt::DisplayRole) {
 					return QVariant();
-				if (_parameterFile->isSet(_keys[row] + ".editorpriority")) {
-					return _parameterFile->get(_keys[row] + ".editorpriority").toUInt();
 				}
-				else {
-					return 0u;
-				}
+				return getValue(_keys[row] + ".editorpriority").toUInt();
 			}
 		}
-	}
-	if ((role == Qt::ToolTipRole) && _useMetaInfo) {
-		QString ret = _metaInfos->getDocString(_keys[ind.row()], getClass(
-				_keys[ind.row()]));
-		if (!ret.isEmpty())
-			return ret;
-	}
+		break;
 
-	if (role == Qt::ForegroundRole && _onlyParams
-		&& !_parameterFile->isSet(_keys[ind.row()]))
+	case Qt::ToolTipRole:
+		if (_useMetaInfo) {
+			QString ret = _metaInfos->getDocString(
+						_keys[row], getClass(_keys[row]));
+			return ret.isEmpty() ? QVariant() : ret;
+		}
+		break;
+
+	case Qt::ForegroundRole:
+		if (_onlyParams && !_parameterFile->isSet(_keys[row])) {
 			return Qt::lightGray;
+		}
+		break;
 
-	if (role == Qt::BackgroundRole && _parameterFile->isSet(
-		_keys[ind.row()] + ".editorpriority")) {
-
-		switch (_parameterFile->get(_keys[ind.row()] + ".editorpriority").toInt()) {
+	case Qt::BackgroundRole:
+		switch (_parameterFile->get(_keys[row]+".editorpriority").toInt()) {
 		case 1:
 			return QColor("#8f8");
 		case 2:
@@ -156,27 +170,28 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 		default:
 			break;
 		}
-	}
-	if (ind.column() == 1 && role == Qt::CheckStateRole && _useMetaInfo
-			&& isParameter(_keys[ind.row()])) {
-		QString typestring = getType(_keys[ind.row()]);
-		if (typestring == "bool") {
-			if(_parameterFile->isSet(_keys[ind.row()])) {
-				if (QVariant(_parameterFile->get(
-						_keys[ind.row()])).toBool())
+		break;
+
+	case Qt::CheckStateRole:
+		if (_useMetaInfo && ind.column() == 1 &&
+				isParameter(_keys[row]) && getType(_keys[row]) == "bool") {
+			if(_parameterFile->isSet(_keys[row])) {
+				if (QVariant(_parameterFile->get(_keys[row])).toBool())
 					return Qt::Checked;
 				else
 					return Qt::Unchecked;
 			}
 			else {
-				QVariant defVal = getDefault(_keys[ind.row()]);
-				if (defVal.toBool())
+				if (QVariant(getDefault(_keys[row])).toBool())
 					return Qt::Checked;
 				else
 					return Qt::Unchecked;
 			}
 		}
-	}
+		break;
+
+	} // role switch
+
 	return QVariant();
 }
 
@@ -592,6 +607,13 @@ void ParameterFileModel::loadMetaInfo(const QString& fName) {
 		emit metaInfoChanged(false);
 	} else {
 		_metaInfos = new MetaData(fName);
+		// update class case map
+		_classCaseMap.clear();
+		const QStringList& classes = _metaInfos->getClasses();
+		foreach (const QString& cur, classes) {
+			_classCaseMap.insert(cur.toLower(), cur);
+		}
+
 		emit metaInfoChanged(true);
 	}
 }
@@ -628,9 +650,13 @@ void ParameterFileModel::setOnlyParams(bool on) {
 	emit onlyParamsChanged(_onlyParams);
 }
 
-QString ParameterFileModel::getClass(QString name) const {
+QString ParameterFileModel::getClass(QString name, bool fixCase) const {
 	name = name.section(".",0,0);
-	return _parameterFile->get(name + ".type");
+	QString cName = getValue(name + ".type").toLower();
+	if (fixCase) {
+		cName = _classCaseMap.value(cName,cName);
+	}
+	return cName;
 }
 
 QStringList ParameterFileModel::_prefixFilter(QStringList list) const {
@@ -827,8 +853,8 @@ QStringList ParameterFileModel::getInputs(QString objName) const {
 	if (_metaInfos->isDynamic(className)) {
 		QFileInfo fileInfo(_getDynamicMetaFile(objName));
 		if (fileInfo.exists()) {
-			QParameterFile pFile(fileInfo.absoluteFilePath());
-			return pFile.getList(className + ".inputs");
+			MetaData tmp(fileInfo.absoluteFilePath());
+			return tmp.getInputs(className);
 		}
 	}
 	return _metaInfos->getInputs(className);
@@ -840,8 +866,8 @@ QStringList ParameterFileModel::getOutputs(QString objName) const {
 	if (_metaInfos->isDynamic(className)) {
 		QFileInfo fileInfo(_getDynamicMetaFile(objName));
 		if (fileInfo.exists()) {
-			QParameterFile pFile(fileInfo.absoluteFilePath());
-			return pFile.getList(className + ".outputs");
+			MetaData tmp(fileInfo.absoluteFilePath());
+			return tmp.getOutputs(className);
 		}
 	}
 	return _metaInfos->getOutputs(className);
@@ -853,8 +879,8 @@ QStringList ParameterFileModel::getParameters(QString objName) const {
 	if (_metaInfos->isDynamic(className)) {
 		QFileInfo fileInfo(_getDynamicMetaFile(objName));
 		if (fileInfo.exists()) {
-			QParameterFile pFile(fileInfo.absoluteFilePath());
-			return pFile.getList(className + ".parameters");
+			MetaData tmp(fileInfo.absoluteFilePath());
+			return tmp.getParameters(className);
 		}
 	}
 	return _metaInfos->getParameters(className);

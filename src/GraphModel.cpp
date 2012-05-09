@@ -253,56 +253,41 @@ void GraphModel::disconnectSlot(QString source, QString target, bool draw) {
 }
 
 QStringList GraphModel::_connections(QString node) const {
-	node = node.split(".")[0].toLower(); // get base name
-	QString className = getClass(node);
-
-	// collect input & output slots
-	QStringList inputs  = getInputs (node);
-	QStringList outputs = getOutputs(node);
-	QStringList curSlot;
-
-	QStringList::const_iterator slot;
-	QStringList::const_iterator target;
-
+	node = node.section(".",0,0).toLower(); // get base name
 	QStringList result;
 
 	// collect inputs
-	for (slot = inputs.begin(); slot != inputs.end(); slot++) {
-		QString slotName = QString("%1.%2").arg(node).arg(*slot);
-		if (!isSet(slotName))
-			continue;
-		curSlot = parameterFile().getList(slotName);
+	foreach (const QString& slot, getInputs(node)) {
+		QString slotName = QString("%1.%2").arg(node).arg(slot);
+		QStringList curSlot =
+				getValue(slotName).split(";",QString::SkipEmptyParts);
 		// only multi slots can have more than one source!
 		Q_ASSERT(isMultiSlot(slotName) || (curSlot.size() <= 1));
-		QStringList::const_iterator curSlotIter;
-		for(curSlotIter = curSlot.begin(); curSlotIter != curSlot.end();
-		curSlotIter++)
-			result << QString("%1;%2").arg(*slot).arg(*curSlotIter);
+		foreach (const QString& target, curSlot) {
+			result << QString("%1;%2").arg(slot).arg(target);
+		}
 	}
 
 	// collect outputs
-	for (slot = outputs.begin(); slot != outputs.end(); slot++) {
-		QString slotName = QString("%1.%2").arg(node).arg(*slot);
-		if (!parameterFile().isSet(slotName))
-			continue;
-		curSlot = parameterFile().getList(slotName);
-		if (curSlot.size() > 0)
-			// number of targets of an output slot is unlimited
-			for(target = curSlot.begin(); target != curSlot.end(); target++)
-				result << QString("%1;%2").arg(*slot).arg(*target);
+	foreach (const QString& slot, getOutputs(node)) {
+		QString slotName = QString("%1.%2").arg(node).arg(slot);
+		QStringList curSlot =
+				getValue(slotName).split(";",QString::SkipEmptyParts);
+		foreach (const QString& target, curSlot) {
+			result << QString("%1;%2").arg(slot).arg(target);
+		}
 	}
 
 	return result;
 }
 
 void GraphModel::disconnectAllSlots(QString node, bool draw) {
-	node = node.split(".")[0]; // get base name
+	node = node.section(".",0,0).toLower(); // get base name
 	QStringList connections = _connections(node);
-	QStringList::const_iterator con;
 
 	// disconnect each slot
-	for(con = connections.begin(); con != connections.end(); con++){
-		QStringList sep = con->split(";");
+	foreach (const QString& con, connections){
+		QStringList sep = con.split(";");
 		Q_ASSERT(sep.size() == 2);
 		disconnectSlot(QString("%1.%2").arg(node).arg(sep[0]), sep[1], false);
 	}
@@ -314,7 +299,7 @@ void GraphModel::disconnectAllSlots(QString node, bool draw) {
 }
 
 void GraphModel::renameNode(QString nodename, bool draw) {
-	nodename = nodename.split(".")[0];
+	nodename = nodename.section(".",0,0).toLower();
 	bool ok;
 	QString newName = QInputDialog::getText(
 			0, tr("rename node"),
@@ -336,29 +321,27 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 		// sweep through all parameters
 		for(int i = 0; i < rowCount(); i++) {
 			// rename node
-			QStringList parName = data(createIndex(i,0)).toString().split(".");
-			Q_ASSERT(parName.size() > 0);
-			if (parName[0] == nodename) {
+			QString curPar = data(index(i,0)).toString();
+			if (curPar.startsWith(nodename+".")) {
+				QStringList parName = curPar.split(".");
+				Q_ASSERT(parName.size() > 0);
 				parName[0] = newName;
-				setData(createIndex(i, 0), parName.join("."));
+				setData(index(i, 0), parName.join("."));
+				continue;
 			}
 			// rename target slots of other nodes
-			else if (isInputSlot(parName.join("."))
-					|| isOutputSlot(parName.join("."))) {
+			else if (isInputSlot(curPar) || isOutputSlot(curPar)) {
 				QStringList parVals =
-						data(createIndex(i,1)).toString().split(";");
-				for (int j=0; j<parVals.size(); j++) {
-					QStringList target = parVals[j].split(".");
+					getValue(curPar).split(";",QString::SkipEmptyParts);
+				for (int i = 0; i < parVals.size(); i++) {
+					QStringList target = parVals.at(i).split(".");
 					Q_ASSERT(target.size() > 0);
-					if (target[0].isEmpty())
-						continue;
-					Q_ASSERT(target.size() == 2);
 					if (target[0] == nodename) {
 						target[0] = newName;
-						parVals[j] = target.join(".");
+						parVals[i] = target.join(".");
 					}
 				}
-				setData(createIndex(i,1), parVals.join(";"));
+				setValue(curPar, parVals.join(";"));
 			}
 		}
 		setOnlyParams(true);
@@ -367,8 +350,8 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 		if(draw)
 			emit graphChanged();
 
-		emit statusMessage(tr("renamed node %1 to %2").arg(nodename)
-						   .arg(newName));
+		emit statusMessage(
+				tr("renamed node %1 to %2").arg(nodename).arg(newName));
 	}
 }
 
@@ -439,40 +422,29 @@ QString GraphModel::addNode(QString className, bool draw) {
 	// new name input and check if valid
 	static int nameNr = 0 ;
 	QString newName = QString("newnode%1").arg(nameNr++) ;
-	QString	info;
-	bool ok ;
-	do {
-		ok = false;
+	QString info;
+	bool retry = true;
+	while (retry) {
 		newName = QInputDialog::getText(
 				0, tr("add new node"),
 				info + tr("Enter a name for the new node:"),
-				QLineEdit::Normal, newName, &ok);
-		if(!ok)
-			return "";
-		//parameter file does only support lowercase and handling is inconsistent
-		//convert to lowercase to prevent problems later
+				QLineEdit::Normal, newName);
+		if (newName.isEmpty()) {
+			return QString();
+		}
+		// convert to lowercase to prevent problems later
 		newName = newName.toLower() ;
-		if( (ok = nodeValid(newName)) ) {
+		if( (retry = nodeValid(newName)) ) {
 			info = tr("This name is already in use.") + "\n"
 					+ tr("Please use another name.") + "\n";
 		}
-		if(newName.contains(QRegExp("[\\s\\.]")))
-		{	
-			ok = true ;
+		if( retry || (retry = newName.contains(QRegExp("[\\s\\.]"))) ) {
 			info = tr("Whitespace and dots in names are not allowed.") + "\n"
 					+ tr("Please use a valid name.") + "\n";
 		}
-	} while (newName.isEmpty() || ok) ;
+	}
 
-	setPrefix("");
-	setOnlyParams(false);
-
-
-	insertRow(rowCount());
-	setData(index(rowCount()-1, 0), newName + ".type");
-	setData(index(rowCount()-1, 1), className);
-	setPrefix(newName);
-	setOnlyParams(true);
+	setValue(newName+".type", className);
 
 	emit statusMessage(
 			tr("add node %1 of class %2").arg(newName).arg(className));
@@ -481,40 +453,51 @@ QString GraphModel::addNode(QString className, bool draw) {
 	return newName;
 }
 
-bool GraphModel::setData(const QModelIndex& ind, const QVariant& value,
-						 int role) {
-	if (ind.column() == 1) {
-		if (value == data(ind))
-			return ParameterFileModel::setData(ind, value, role);
-		if (data(index(ind.row(), 0)) == "templatetype") {
-			if ((role != Qt::DisplayRole) && (role != Qt::EditRole))
-				return false;
+bool GraphModel::setData(
+		const QModelIndex& ind, const QVariant& value, int role) {
+	QRegExp ttype("(.*\\.)?templatetype",Qt::CaseInsensitive);
+	if (
+			role == Qt::DisplayRole &&
+			ind.column() == 1 &&
+			value != data(ind) &&
+			ttype.exactMatch(data(index(ind.row(), 0)).toString())) {
 
-			bool res = ParameterFileModel::setData(ind, value, role);
-
-			QStringList l = _connections(prefix());
-			for (int i = 0; i < l.size(); i++) {
-				QStringList connection = l[i].split(";");
-				QString slotNameC = prefix()+"."+connection[0];
-				QString slotTypeR = getType(slotNameC, true);
-				QString slotTypeT = getType(slotNameC, false);
-				if (slotTypeR != slotTypeT) {
-					disconnectSlot(
-						prefix()+"."+connection[0],connection[1], false);
-				}
+		// disconnect slots on template type change, if neccessary
+		QStringList l = _connections(prefix());
+		for (int i = 0; i < l.size(); i++) {
+			QStringList connection = l[i].split(";");
+			QString slotNameC = prefix()+"."+connection[0];
+			QString slotTypeR = getType(slotNameC, true);
+			QString slotTypeT = getType(slotNameC, false);
+			if (slotTypeR != slotTypeT) {
+				// slot type depends on template type
+				disconnectSlot(
+					prefix()+"."+connection[0],connection[1], false);
 			}
-			reDraw();
-			return res;
 		}
+		emit graphChanged();
 	}
 	return ParameterFileModel::setData(ind, value, role);
 }
 
 bool GraphModel::removeRows(int row, int count,
 		const QModelIndex& parentInd) {
-	bool res = ParameterFileModel::removeRows(row, count, parentInd);
-	if(rowCount() > 0 && data(index(row,0)) == "templatetype")
-		reDraw();
-	return res;
+	QRegExp ttype("(.*\\.)?templatetype",Qt::CaseInsensitive);
+	QString defaultType = getValue("global.templatetype");
+	if (defaultType.isEmpty()) {
+		defaultType = "double";
+	}
+
+	// Check if template type is about to be removed
+	// and reset it to it's default value before deletion.
+	// This handles proper disconnection on reset.
+	for (int i = row; i < row+count; i++) {
+		QString cur = data(index(row,0)).toString();
+		if (ttype.exactMatch(cur)) {
+			setData(index(row,1),defaultType);
+		}
+	}
+
+	return ParameterFileModel::removeRows(row, count, parentInd);
 }
 

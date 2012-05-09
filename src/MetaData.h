@@ -91,26 +91,12 @@ public:
 	 */
 	QString getDocFile(QString parName, QString className) const;
 
-	/// Check if some parameter/slot is a parameter.
-	/** \param  name            name of the parameter/slot
-	 *  \param  className       object class name
-	 *  \retval true            given object is a parameter
-	 */
-	bool isParameter(QString name, QString className) const;
-
 	/// Check if some parameter/slot is an input slot.
 	/** \param  name            name of the slot
 	 *  \param  className       object class name
 	 *  \retval true            given object is an input slot
 	 */
 	bool isInputSlot(QString name, QString className) const;
-
-	/// Check if some parameter/slot is an output slot.
-	/** \param  name            name of the slot
-	 *  \param  className       object class name
-	 *  \retval true            given object is an output slot
-	 */
-	bool isOutputSlot(QString name, QString className) const;
 
 	/// Check if some slot is optional.
 	/** \param  slotName        name of the slot

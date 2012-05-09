@@ -59,9 +59,6 @@ public:
 	// \{
 	void set(QString parameter, QString value = "");
 	QString get(QString parameter) const;
-	inline QStringList getList(QString parameter) const {
-		return get(parameter).split(";",QString::SkipEmptyParts);
-	}
 
 	/// Look for parameters beginning with a given string.
 	/** \param  beginsWith  Beginning of parameter name
