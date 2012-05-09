@@ -231,65 +231,37 @@ void GraphModel::disconnectSlot(QString source, QString target, bool draw) {
 
 	QString content = getValue(source).toLower();
 	QStringList targets = content.split(";", QString::SkipEmptyParts);
-	int pos = targets.indexOf(target);
-	if (pos >= 0) {
-		targets.removeAt(pos);
-		setValue(source, targets.join(";"));
+	if (target.isEmpty()) {
+		foreach (const QString& tar, targets) {
+			setValue(source,QString());
+			disconnectSlot(tar,source,false);
+		}
 	}
-
-	content = getValue(target).toLower();
-	targets = content.split(";", QString::SkipEmptyParts);
-	pos = targets.indexOf(source);
-	if (pos >= 0) {
-		targets.removeAt(pos);
-		setValue(target, targets.join(";"));
+	else {
+		int pos = targets.indexOf(target);
+		if (pos >= 0) {
+			targets.removeAt(pos);
+			setValue(source, targets.join(";"));
+			disconnectSlot(target,source,false);
+		}
 	}
 
 	if(draw)
 		emit graphChanged();
 
 	emit statusMessage(
-			tr("disconnected node %1 from %2").arg(source).arg(target));
-}
-
-QStringList GraphModel::_connections(QString node) const {
-	node = node.section(".",0,0).toLower(); // get base name
-	QStringList result;
-
-	// collect inputs
-	foreach (const QString& slot, getInputs(node)) {
-		QString slotName = QString("%1.%2").arg(node).arg(slot);
-		QStringList curSlot =
-				getValue(slotName).split(";",QString::SkipEmptyParts);
-		// only multi slots can have more than one source!
-		Q_ASSERT(isMultiSlot(slotName) || (curSlot.size() <= 1));
-		foreach (const QString& target, curSlot) {
-			result << QString("%1;%2").arg(slot).arg(target);
-		}
-	}
-
-	// collect outputs
-	foreach (const QString& slot, getOutputs(node)) {
-		QString slotName = QString("%1.%2").arg(node).arg(slot);
-		QStringList curSlot =
-				getValue(slotName).split(";",QString::SkipEmptyParts);
-		foreach (const QString& target, curSlot) {
-			result << QString("%1;%2").arg(slot).arg(target);
-		}
-	}
-
-	return result;
+			target.isEmpty() ?
+				tr("disconnected slot %1 from all targets").arg(source) :
+				tr("disconnected slot %1 from %2").arg(source).arg(target));
 }
 
 void GraphModel::disconnectAllSlots(QString node, bool draw) {
 	node = node.section(".",0,0).toLower(); // get base name
-	QStringList connections = _connections(node);
-
-	// disconnect each slot
-	foreach (const QString& con, connections){
-		QStringList sep = con.split(";");
-		Q_ASSERT(sep.size() == 2);
-		disconnectSlot(QString("%1.%2").arg(node).arg(sep[0]), sep[1], false);
+	foreach (const QString& slot, getInputs(node)) {
+		disconnectSlot(QString("%1.%2").arg(node).arg(slot),QString(),false);
+	}
+	foreach (const QString& slot, getOutputs(node)) {
+		disconnectSlot(QString("%1.%2").arg(node).arg(slot),QString(),false);
 	}
 
 	if(draw)
@@ -463,18 +435,28 @@ bool GraphModel::setData(
 			ttype.exactMatch(data(index(ind.row(), 0)).toString())) {
 
 		// disconnect slots on template type change, if neccessary
-		QStringList l = _connections(prefix());
-		for (int i = 0; i < l.size(); i++) {
-			QStringList connection = l[i].split(";");
-			QString slotNameC = prefix()+"."+connection[0];
-			QString slotTypeR = getType(slotNameC, true);
-			QString slotTypeT = getType(slotNameC, false);
+		QString node = data(index(ind.row(),0))
+					.toString().section(".",0,0).toLower();
+		QString slotName;
+		foreach (const QString& slot, getInputs(node)) {
+			slotName = QString("%1.%2").arg(node).arg(slot);
+			QString slotTypeR = getType(slotName, true);
+			QString slotTypeT = getType(slotName, false);
 			if (slotTypeR != slotTypeT) {
 				// slot type depends on template type
-				disconnectSlot(
-					prefix()+"."+connection[0],connection[1], false);
+				disconnectSlot(slotName, QString(), false);
 			}
 		}
+		foreach (const QString& slot, getOutputs(node)) {
+			slotName = QString("%1.%2").arg(node).arg(slot);
+			QString slotTypeR = getType(slotName, true);
+			QString slotTypeT = getType(slotName, false);
+			if (slotTypeR != slotTypeT) {
+				// slot type depends on template type
+				disconnectSlot(slotName, QString(), false);
+			}
+		}
+
 		emit graphChanged();
 	}
 	return ParameterFileModel::setData(ind, value, role);

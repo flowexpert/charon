@@ -127,10 +127,10 @@ void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent* ev) {
 	QGraphicsItem::hoverEnterEvent(ev);
 }
 
-void NodeProperty::hoverLeaveEvent(QGraphicsSceneHoverEvent* event){
+void NodeProperty::hoverLeaveEvent(QGraphicsSceneHoverEvent* ev) {
 	_color=Qt::lightGray;
 	changeConnectionLineColor(Qt::black, false);
-	QGraphicsItem::hoverLeaveEvent(event);
+	QGraphicsItem::hoverLeaveEvent(ev);
 }
 
 void NodeProperty::changeConnectionLineColor(QColor lineColor, bool isHover){
@@ -151,11 +151,11 @@ void NodeProperty::changeConnectionLineColor(QColor lineColor, bool isHover){
 		}
 		NodeProperty* prop=connectedLine->getEndProp();
 		if(prop==this)
-		    prop=connectedLine->getStartProp();
+			prop=connectedLine->getStartProp();
 		if(isHover)
-		    prop->setColor(Qt::red);
+			prop->setColor(Qt::red);
 		else
-		    prop->setColor(Qt::lightGray);
+			prop->setColor(Qt::lightGray);
 	}
 }
 
@@ -179,7 +179,5 @@ QColor NodeProperty::_getSocketColor(QString tName) {
 
 void NodeProperty::setColor(QColor socketColor)
 {
-    _color=socketColor;
-
-
+	_color = socketColor;
 }

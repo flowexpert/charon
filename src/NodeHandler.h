@@ -80,8 +80,9 @@ public slots:
 protected:
 	/** \name drag/drop handling
 	 *  Accepts drag events with mime data as they are set by
-	 *  standart item models. This way it is possible to use arbitrary
-	 *  standart item views as drag sources.
+	 *  standard item models.
+	 *  This way it is possible to use arbitrary
+	 *  standard item views as drag sources.
 	 *  Checks if the contained data represent a class name.
 	 */
 	// \{
@@ -94,6 +95,9 @@ protected:
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 	/// handles key press events
+	/** provides node navigation via the left/right arrow keys
+	 *  \param keyEvent  key event
+	 */
 	virtual void keyPressEvent(QKeyEvent* keyEvent);
 
 	/// handles all mousebutton release events
@@ -101,6 +105,13 @@ protected:
 
 	/// handles mouse movement
 	virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+
+	/// context menu
+	/** This provides a context menu for slots.
+	 *  Currently it contains an option to disconnect this slot.
+	 *  \param event     context menu event
+	 */
+	virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent* event);
 
 private:
 	/// deselects all nodes

@@ -112,10 +112,11 @@ public slots:
 
 	/// disconnect slots
 	/** \param source       source slot ("\<object\>.\<slot\>")
-	 *  \param target       target slot ("\<object\>.\<slot\>")
+	 *  \param target       target slot ("\<object\>.\<slot\>"),
+	 *                      disconnect from all targets, if empty
 	 *  \param draw         emit display refresh signal if true
 	 */
-	void disconnectSlot(QString source, QString target, bool draw = true);
+	void disconnectSlot(QString source, QString target = QString(), bool draw = true);
 
 	/// disconnect all slots of given node
 	/** \param node         node name ("\<object\>")
@@ -133,15 +134,6 @@ public slots:
 	 *  has been changed so that the graph structure has to be redrawn
 	 */
 	void reDraw();
-
-protected:
-	/// Collect connections of a given node.
-	/** The connections are stored in the format
-	 *  <tt>\<source-slot\>;\<target-node\>.\<target-slot\></tt>
-	 *  \param node         nodename to look for connections
-	 *  \returns            list of connections
-	 */
-	QStringList _connections(QString node) const;
 
 protected slots:
 	/// Load data without showing OpenFile Dialog.

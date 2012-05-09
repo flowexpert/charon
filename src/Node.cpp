@@ -88,6 +88,7 @@ void Node::changeConnectionLineColor(QColor lineColor){
 
 void Node::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 	QGraphicsItem::mouseMoveEvent(ev);
+
 	qreal dx = (ev->scenePos()-ev->lastScenePos()).x();
 	qreal dy = (ev->scenePos()-ev->lastScenePos()).y();
 	for (int i=0; i<children().size(); i++) {
@@ -98,25 +99,11 @@ void Node::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 	}
 
 	// update model
-	GraphModel* model = ((NodeHandler*)scene())->model();
-	QString posString = QString("%0 %1").arg(pos().x()).arg(pos().y());
-	model->setOnlyParams(false);
-	bool found = false;
-	// search for entry
-	for(int i=0; i<model->rowCount(); i++) {
-		if(model->data(model->index(i,0)).toString() == "editorinfo"){
-		model->setData(model->index(i,1),posString);
-		found = true;
-		break;
-		}
-	}
-	// insert editor info
-	if (!found) {
-		model->insertRow(model->rowCount());
-		model->setData(model->index(model->rowCount()-1,0),"editorinfo");
-		model->setData(model->index(model->rowCount()-1,1),posString);
-	}
-	model->setOnlyParams(true);
+	NodeHandler* handler = qobject_cast<NodeHandler*>(scene());
+	Q_ASSERT(handler);
+	GraphModel* model = handler->model();
+	QString posString = QString("%1 %2").arg(pos().x()).arg(pos().y());
+	model->setValue(_instanceName+".editorinfo",posString);
 }
 
 void Node::paint(

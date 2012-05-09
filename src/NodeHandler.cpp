@@ -29,6 +29,7 @@
 #include <QStandardItemModel>
 #include <QKeyEvent>
 #include <QPrinter>
+#include <QMenu>
 
 #include "ConnectionLine.h"
 #include "NodeHandler.h"
@@ -49,7 +50,6 @@ NodeHandler::NodeHandler(GraphModel* model, QObject* pp) :
 	connect(_model, SIGNAL(prefixChanged(QString)),
 			this, SLOT(selectNode(QString)));
 	loadFromModel();
-	selectNode(_model->prefix());
 }
 
 NodeHandler::~NodeHandler()
@@ -84,29 +84,31 @@ void NodeHandler::selectNode(QString name) {
 void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 	QGraphicsScene::mousePressEvent(ev);
 
-	QGraphicsItem* itm = itemAt(ev->scenePos());
-	if (!itm) {
-		return;
-	}
-	Node* np = dynamic_cast<Node*>(itm);
-	if (!np) {
-		np = dynamic_cast<Node*>(itm->parentItem());
-	}
-	if (np) {
-		_model->setPrefix(np->getInstanceName());
-	}
-	NodeProperty* prop = dynamic_cast<NodeProperty*>(itm);
-	if (prop != 0) {
-		_startProp = prop;
-		delete _cline ; _cline = 0 ;
-		_cline = new ConnectionLine(this);
-		QPointF sckPos(prop->pos()+prop->getSocketCenter());
-		QPointF curPos(ev->scenePos().x(),ev->scenePos().y());
-		const bool isIn = prop->isInput();
-		_cline->setStartPoint(isIn ? curPos : sckPos);
-		_cline->setEndPoint  (isIn ? sckPos : curPos);
-		_addLine = true;
-		update(_cline->boundingRect());
+	if (ev->button() == Qt::LeftButton) {
+		QGraphicsItem* itm = itemAt(ev->scenePos());
+		if (!itm) {
+			return;
+		}
+		Node* np = dynamic_cast<Node*>(itm);
+		if (!np) {
+			np = dynamic_cast<Node*>(itm->parentItem());
+		}
+		if (np) {
+			_model->setPrefix(np->getInstanceName());
+		}
+		NodeProperty* prop = dynamic_cast<NodeProperty*>(itm);
+		if (prop != 0) {
+			_startProp = prop;
+			delete _cline ; _cline = 0 ;
+			_cline = new ConnectionLine(this);
+			QPointF sckPos(prop->pos()+prop->getSocketCenter());
+			QPointF curPos(ev->scenePos().x(),ev->scenePos().y());
+			const bool isIn = prop->isInput();
+			_cline->setStartPoint(isIn ? curPos : sckPos);
+			_cline->setEndPoint  (isIn ? sckPos : curPos);
+			_addLine = true;
+			update(_cline->boundingRect());
+		}
 	}
 }
 
@@ -228,6 +230,7 @@ void NodeHandler::loadFromModel() {
 		}
 	}
 	update();
+	selectNode(_model->prefix());
 }
 
 void NodeHandler::connectNodes(
@@ -346,6 +349,30 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 	}
 
 	QGraphicsScene::dropEvent(ev);
+}
+
+void NodeHandler::contextMenuEvent(QGraphicsSceneContextMenuEvent* ev) {
+	QGraphicsItem* item = itemAt(ev->scenePos());
+	NodeProperty* prop = dynamic_cast<NodeProperty*>(item);
+	if (prop) {
+		QMenu menu;
+
+		// set up menu actions
+		QAction* disconnect = menu.addAction(
+					QIcon(":/icons/disconnect.png"), tr("disconnect slot"));
+		disconnect->setStatusTip(
+					tr("disconnect this slot from all target slots"));
+
+		// show menu and handle selection
+		QAction* selectedAction = menu.exec(ev->screenPos());
+		if (selectedAction == disconnect) {
+			_model->disconnectSlot(prop->getFullName());
+		}
+		ev->accept();
+	}
+	else {
+		QGraphicsScene::contextMenuEvent(ev);
+	}
 }
 
 void NodeHandler::updateTooltip (QString comment) {
