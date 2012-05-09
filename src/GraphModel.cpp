@@ -128,52 +128,20 @@ bool GraphModel::nodeValid(const QString& name) const {
 
 bool GraphModel::connected(
 			QString source, QString target) const {
-	// assert lowercase names
-	source = source.toLower();
-	target = target.toLower();
-
-	QStringList sourceSep = source.split(".");
-	QStringList targetSep = target.split(".");
-
-	// source and target have to be slots
-	Q_ASSERT(source.indexOf(";") < 0);
-	Q_ASSERT(target.indexOf(";") < 0);
-	Q_ASSERT(sourceSep.size() == 2);
-	Q_ASSERT(targetSep.size() == 2);
-
-	// for convenience
-	QString sourceSlot = sourceSep[1];
-	QString targetSlot = targetSep[1];
-
-	QStringList sourceOutputs = getOutputs(source);
-	QStringList sourceInputs  = getInputs(source);
-
-	// source has to be an input/output
-	bool sourceIsOutput = true;
-
-	if(sourceOutputs.indexOf(QRegExp(sourceSlot,Qt::CaseInsensitive))<0)
-		sourceIsOutput = false;
-
-	if(!sourceIsOutput) {
-		if(sourceInputs.indexOf(QRegExp(sourceSlot, Qt::CaseInsensitive))<0)
-			throw std::runtime_error(
-					"source " + source.toStdString()
-					+ " is neither input nor output slot!");
+	// assert that source is an input slot
+	if (!isInputSlot(source)) {
+		qSwap(source,target);
+	}
+	if (!isInputSlot(source)) {
+		throw std::runtime_error(
+				tr("At least one of (%1,%2) has to be an input slot!")
+					.arg(source).arg(target).toStdString());
 	}
 
 	// check if target is of the corresponding slot type (input <-> output)
-	QStringList targetOutputs = getOutputs(target);
-	QStringList targetInputs  = getInputs(target);
-
-	if (sourceIsOutput) {
-		if(targetInputs.indexOf(QRegExp(targetSlot,Qt::CaseInsensitive))<0)
-			throw std::runtime_error(
-					target.toStdString() + " has to be an input!");
-	}
-	else {
-		if(targetOutputs.indexOf(QRegExp(targetSlot,Qt::CaseInsensitive))<0)
-			throw std::runtime_error(
-					target.toStdString() + " has to be an output!");
+	if (!isOutputSlot(target)) {
+		throw std::runtime_error(
+			tr("%1 has to be an output slot!").arg(target).toStdString());
 	}
 
 	// check slot types
@@ -181,36 +149,19 @@ bool GraphModel::connected(
 	QString outSlotType = getType(source);
 	if (inSlotType != outSlotType)
 		throw std::runtime_error(
-				"Type of \"" + target.toStdString()
-				+ "\" (" + inSlotType.toStdString()
-				+ ") does not match type of \""
-				+ source.toStdString() + "\" ("
-				+ outSlotType.toStdString() + ")");
+				tr("Type of \"%1\" (%2) does not match type of \"%3\" (%4)")
+				.arg(target).arg(inSlotType).arg(source).arg(outSlotType)
+				.toStdString());
 
-	bool established = true;
-
-	if(!parameterFile().isSet(source))
-		established = false;
-	else {
-		QString outList = parameterFile().get(source);
-		if (!outList.contains(QRegExp(target,Qt::CaseInsensitive)))
-			established = false;
-	}
+	bool established =
+			getValue(source).contains(QRegExp(target,Qt::CaseInsensitive));
 
 	// check if target node is in input/ouput list of source
-	if (!parameterFile().isSet(target)) {
-		if (established)
-			throw std::runtime_error(
-					"Node " + source.toStdString() + " missing in List "
-					+ target.toStdString() + "!");
-	}
-	else {
-		QString inList = parameterFile().get(target);
-		if (!inList.contains(QRegExp(source,Qt::CaseInsensitive))
-				&& established)
-			throw std::runtime_error(
-					"Node " + source.toStdString() + " missing in List "
-					+ target.toStdString() + "!");
+	if (established &&
+			!(getValue(target).contains(QRegExp(source,Qt::CaseInsensitive)))) {
+		throw std::runtime_error(
+			tr("Node %1 missing in List %2!")
+				.arg(source).arg(target).toStdString());
 	}
 
 	return established;
@@ -229,60 +180,42 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 		return;
 
 	// identify input and output slot
-	bool sourceIsIn = isInputSlot(source);
-	if(!sourceIsIn) {
+	if(!isInputSlot(source)) {
 		// swap source and target
 		qSwap(source,target);
 	}
 
-	// check slot types
-	QString inSlotType  = getType(source);
-	QString outSlotType = getType(target);
-	if (inSlotType != outSlotType)
-		throw std::runtime_error(
-				"Type of \"" + source.toStdString()
-				+ "\" (" + inSlotType.toStdString()
-				+ ") does not match type of \""
-				+ target.toStdString() + "\" ("
-				+ outSlotType.toStdString() + ")");
-
-
 	// disconnect input slot, if assigned and not multi slot
 	if (!isMultiSlot(source)) {
-		QString val;
-		if (isSet(source))
-			val = getValue(source);
+		QString val = getValue(source);
 		if (!val.isEmpty())
 			disconnectSlot(source, val, false);
 	}
 
+	source = source.toLower();
+	target = target.toLower();
+
 	// add target to source
-	if (isSet(source)) {
-		QString content = getValue(source);
-		Q_ASSERT(content.indexOf(target) < 0);
-		QStringList targetList = content.split(
-				";", QString::SkipEmptyParts);
-		// add new target
-		targetList << target;
-		setValue(source, targetList.join(";"));
-	}
-	else {
-		setValue(source, target);
-	}
+	QString content = getValue(source).toLower();
+	Q_ASSERT(content.indexOf(target) < 0);
+	QStringList targetList = content.split(
+			";", QString::SkipEmptyParts);
+	// add new target
+	targetList << target;
+	setValue(source, targetList.join(";"));
 
 	// add source to target
-	if (isSet(target)) {
-		QString content = getValue(target);
-		if (content.indexOf(source) < 0) {
-			QStringList sourceList = content.split(
-					";", QString::SkipEmptyParts);
-			// add new target
-			sourceList << source;
-			setValue(target, sourceList.join(";"));
-		}
-	}
-	else {
-		setValue(target, source);
+	content = getValue(target).toLower();
+	// this if instead of a strict Q_ASSERT
+	// is a workaround to accept some old (buggy)
+	// parameter files with left-over entries
+	// within the output slot connections
+	if (content.indexOf(source) < 0) {
+		QStringList sourceList = content.split(
+				";", QString::SkipEmptyParts);
+		// add new target
+		sourceList << source;
+		setValue(target, sourceList.join(";"));
 	}
 
 	if(draw)
@@ -293,26 +226,23 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 }
 
 void GraphModel::disconnectSlot(QString source, QString target, bool draw) {
-	if (isSet(source)) {
-		// check target is in list
-		QString content = getValue(source).toLower();
-		QStringList targets = content.split(
-				";", QString::SkipEmptyParts);
-		int pos = targets.indexOf(target.toLower());
-		if (pos >= 0) {
-			targets.removeAt(pos);
-			setValue(source, targets.join(";"));
-		}
+	source = source.toLower();
+	target = target.toLower();
+
+	QString content = getValue(source).toLower();
+	QStringList targets = content.split(";", QString::SkipEmptyParts);
+	int pos = targets.indexOf(target);
+	if (pos >= 0) {
+		targets.removeAt(pos);
+		setValue(source, targets.join(";"));
 	}
-	if (isSet(target)) {
-		// check target is in list
-		QString content = getValue(target).toLower();
-		QStringList targets = content.split(";", QString::SkipEmptyParts);
-		int pos = targets.indexOf(source.toLower());
-		if (pos >= 0) {
-			targets.removeAt(pos);
-			setValue(target, targets.join(";"));
-		}
+
+	content = getValue(target).toLower();
+	targets = content.split(";", QString::SkipEmptyParts);
+	pos = targets.indexOf(source);
+	if (pos >= 0) {
+		targets.removeAt(pos);
+		setValue(target, targets.join(";"));
 	}
 
 	if(draw)
