@@ -38,12 +38,14 @@
 #include <QUrl>
 #include <QTimer>
 #include <QApplication>
+#include <QMutex>
 
 #include "ParameterFileModel.moc"
 
 ParameterFileModel::ParameterFileModel(
 			QString fName, QObject* myParent, QString metaFile) :
 		QAbstractTableModel(myParent),
+		_resetMutex(new QMutex()),
 		_parameterFile(new QParameterFile()),
 		_fileName(fName),
 		_prefix(""),
@@ -70,6 +72,7 @@ ParameterFileModel::~ParameterFileModel() {
 		_metaInfos = 0;
 	}
 	delete _parameterFile;
+	delete _resetMutex;
 }
 
 int ParameterFileModel::rowCount(const QModelIndex& /*parent*/) const {
@@ -163,18 +166,10 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 	case Qt::CheckStateRole:
 		if (_useMetaInfo && ind.column() == 1 &&
 				isParameter(_keys[row]) && getType(_keys[row]) == "bool") {
-			if(_parameterFile->isSet(_keys[row])) {
-				if (QVariant(_parameterFile->get(_keys[row])).toBool())
-					return Qt::Checked;
-				else
-					return Qt::Unchecked;
-			}
-			else {
-				if (QVariant(getDefault(_keys[row])).toBool())
-					return Qt::Checked;
-				else
-					return Qt::Unchecked;
-			}
+			const bool& checked = isSet(_keys[row]) ?
+					QVariant(getValue(_keys[row])).toBool() :
+					QVariant(getDefault(_keys[row])).toBool();
+			return checked ? Qt::Checked : Qt::Unchecked;
 		}
 		break;
 
@@ -273,14 +268,9 @@ bool ParameterFileModel::setData(
 	case Qt::CheckStateRole:
 		if (_useMetaInfo && ind.column()==1 && isParameter(_keys[ind.row()])) {
 			Q_ASSERT(getType(_keys[ind.row()]) == "bool");
-			Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt());
-			if (state == Qt::Unchecked) {
-				setValue(_keys[ind.row()],"0");
-			}
-			else {
-				setValue(_keys[ind.row()],"1");
-			}
-			emit dataChanged(createIndex(ind.row(),0),ind);
+			bool checked (value.toBool());
+			setValue (_keys[ind.row()], checked ? "true" : "false");
+			emit dataChanged(index(ind.row(),0),ind);
 		}
 		break;
 	}
@@ -289,39 +279,55 @@ bool ParameterFileModel::setData(
 
 Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 	if (!prefixValid())
-		return 0;
-	if ((ind.row() >= 0) && (ind.row() <= _keys.size())) {
-		switch (ind.column()) {
-		case 0:
-			if (_onlyParams)
-				return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-		case 1: {
-			QString paramType = getType(_keys[ind.row()]);
-			QVariant::Type dataType = data(ind).type();
-			if(_useMetaInfo && isParameter(_keys[ind.row()])
-						&& paramType == "bool")
+		return Qt::NoItemFlags;
+	Q_ASSERT(ind.row() >= 0);
+	Q_ASSERT(ind.row() <= _keys.size());
 
-				return Qt::ItemIsSelectable | Qt::ItemIsEnabled
-					| Qt::ItemIsUserCheckable;
+	Qt::ItemFlags res = Qt::NoItemFlags;
+	QString paramType;
+	QVariant::Type dataType;
 
-			if (dataType == QVariant::String
-				&& !paramType.contains(QRegExp("^\\{\\s*\\w.*\\}\\s*$"))) {
-
-				return Qt::ItemIsSelectable | Qt::ItemIsEnabled
-					| Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
-
-			}
-			return Qt::ItemIsSelectable | Qt::ItemIsEnabled
-				| Qt::ItemIsEditable;
-			}
-		case 2:
-			return Qt::ItemIsSelectable | Qt::ItemIsEnabled
-					| Qt::ItemIsEditable;
-		default:
-			return 0;
+	switch (ind.column()) {
+	case 0:
+		// parameter names editable, if _onlyParams is not selected
+		res = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+		if (!_onlyParams) {
+			res = res | Qt::ItemIsEditable;
 		}
+		break;
+
+	case 1:
+		res = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+
+		paramType = getType(_keys[ind.row()]);
+		dataType = data(ind).type();
+		if (_useMetaInfo && isParameter(_keys[ind.row()])
+				&& paramType == "bool") {
+			// bool parameters are user checkable
+			res = res | Qt::ItemIsUserCheckable;
+		}
+		else {
+			// all non-bool parameters allow editing (delegate)
+			res = res | Qt::ItemIsEditable;
+
+			if (dataType == QVariant::String &&
+					!paramType.contains(QRegExp("^\\{\\s*\\w.*\\}\\s*$"))) {
+				// string entries that do not represent a selection
+				// may be entered by dropping some values
+				res = res | Qt::ItemIsDropEnabled;
+			}
+		}
+		break;
+
+	case 2:
+		res = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+		break;
+
+	default:
+		break;
 	}
-	return 0;
+
+	return res;
 }
 
 QVariant ParameterFileModel::headerData(int section,
@@ -424,11 +430,17 @@ bool ParameterFileModel::removeRows(int row, int count,
 
 void ParameterFileModel::clear() {
 	if (_parameterFile->getKeyList().size() > 0) {
-		beginResetModel();
+		bool lock = _resetMutex->tryLock();
+		if (lock) {
+			beginResetModel();
+		}
 		_parameterFile->clear();
 		_keys.clear();
 		setPrefix("");
-		endResetModel();
+		if (lock) {
+			endResetModel();
+			_resetMutex->unlock();
+		}
 	}
 }
 
@@ -444,17 +456,24 @@ void ParameterFileModel::_updateDynamics() {
 }
 
 bool ParameterFileModel::_load() {
+	QMutexLocker locker(_resetMutex);
+	beginResetModel();
 	clear();
 	_parameterFile->load(_fileName);
 	_updateDynamics();
 	_update();
+	endResetModel();
+	locker.unlock();
 	emit statusMessage(QString("File %1 loaded.").arg(_fileName));
 	return true;
 }
 
 void ParameterFileModel::_update() {
 	// remove keys
-	beginResetModel();
+	bool lock = _resetMutex->tryLock();
+	if (lock) {
+		beginResetModel();
+	}
 	_keys.clear();
 
 	// load all keys
@@ -469,7 +488,10 @@ void ParameterFileModel::_update() {
 		// show selected parameters
 		_keys = tempList;
 	}
-	endResetModel();
+	if (lock) {
+		endResetModel();
+		_resetMutex->unlock();
+	}
 }
 
 void ParameterFileModel::_updatePriority(
@@ -598,10 +620,16 @@ bool ParameterFileModel::useMetaInfo() const {
 void ParameterFileModel::setUseMetaInfo(bool value) {
 	if (value == _useMetaInfo)
 		return;
+
 	if ((!value) && _onlyParams)
 		setOnlyParams(false);
 	_useMetaInfo = value;
-	reset();
+
+	// let view reread information about clomumn 1 (values)
+	if (rowCount() > 0) {
+		emit dataChanged(index(0,1),index(rowCount()-1,1));
+	}
+
 	emit useMetaInfoChanged(value);
 }
 

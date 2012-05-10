@@ -28,6 +28,7 @@
 #include <QStringList>
 
 class QParameterFile;
+class QMutex;
 class MetaData;
 class PrefixValidator;
 
@@ -343,6 +344,10 @@ protected slots:
 	/// Update filter if priority changed
 	virtual void _updatePriority(const QModelIndex &topLeft,
 		const QModelIndex &bottomRight);
+
+protected:
+	/// avoid multiple reset model calls
+	QMutex* _resetMutex;
 
 private:
 	/// Pointer to the ParameterFile instance storing the model content
