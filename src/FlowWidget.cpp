@@ -51,8 +51,6 @@ FlowWidget::FlowWidget(GraphModel* modelIn, QWidget* myParent) :
 		SIGNAL(statusMessage(QString)));
 	connect(model(), SIGNAL(modified(bool)),
 		this, SLOT(modify(bool)));
-	connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-		this, SLOT(modify()));
 	connect(model(), SIGNAL(commentChanged(QString)), _nodehandler,
 		SLOT(updateTooltip(QString)));
 	connect(this, SIGNAL(windowStateChanged(Qt::WindowStates, Qt::WindowStates)),

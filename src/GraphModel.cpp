@@ -328,16 +328,36 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 }
 
 bool GraphModel::deleteNode(QString nodename, bool draw) {
-	if(QMessageBox::question(
+	if(nodeValid(nodename) && QMessageBox::question(
 			0, tr("confirm delete"),
 			tr("Do you really want to delete node \"%1\"?").arg(nodename),
 			QMessageBox::No | QMessageBox::Yes, QMessageBox::No)
 			== QMessageBox::Yes) {
 		disconnectAllSlots(nodename, false);
-		setOnlyParams(false);
-		setPrefix(nodename);
-		removeRows(0, rowCount());
-		setOnlyParams(true);
+
+		// select next node, so that erase just touches the parameter file
+		// which is the most efficient way of deleting values
+		if (QString::compare(nodename,prefix(),Qt::CaseInsensitive) == 0) {
+			selectNext();
+		}
+		if (QString::compare(nodename,prefix(),Qt::CaseInsensitive) == 0) {
+			// still same prefix
+			// this is the case, if only one node left, so use old style code
+			setOnlyParams(false);
+			removeRows(0, rowCount());
+			setOnlyParams(true);
+			setPrefix("");
+		}
+		else {
+			// erase all keys of this node.
+			// since the next code has been selected, all of the
+			// parameters are currently not visible in the model, so
+			// erase can just remove them without data change in the view
+			QStringList toDelete = parameterFile().getKeyList(nodename+".");
+			foreach (const QString& cur, toDelete) {
+				erase(cur);
+			}
+		}
 
 		if(draw)
 			emit graphChanged();
@@ -363,6 +383,7 @@ QStringList GraphModel::nodes() const {
 		if(nodeValid(node))
 			result << node;
 	}
+	result.sort();
 
 	return result;
 }
@@ -391,30 +412,49 @@ void GraphModel::selectNext(bool back) {
 }
 
 QString GraphModel::addNode(QString className, bool draw) {
-	// new name input and check if valid
-	static int nameNr = 0 ;
-	QString newName = QString("newnode%1").arg(nameNr++) ;
-	QString info;
-	bool retry = true;
-	while (retry) {
+	QString info, newName, baseName = className.toLower();
+	QRegExp cNameCheck("([\\w]+)[\\s\\.]+.*");
+	if (cNameCheck.exactMatch(baseName)) {
+		baseName = cNameCheck.cap(1).toLower();
+		Q_ASSERT(!baseName.isEmpty());
+	}
+	bool retry = false;
+
+	// loop until a valid name is found or add node canceled
+	do {
+		retry = false;
+		// generate new unique name based on the class name
+		int nameNr = 0;
+		do {
+			newName = QString("%1%2").arg(baseName).arg(++nameNr);
+		} while (nodeValid(newName));
+
+		// ask user
 		newName = QInputDialog::getText(
 				0, tr("add new node"),
 				info + tr("Enter a name for the new node:"),
-				QLineEdit::Normal, newName);
+				QLineEdit::Normal, newName).trimmed();
+
 		if (newName.isEmpty()) {
-			return QString();
+			return QString();  // cancel adding node
 		}
+
 		// convert to lowercase to prevent problems later
 		newName = newName.toLower() ;
-		if( (retry = nodeValid(newName)) ) {
+
+		// check instance name rules
+		if( nodeValid(newName) ) {
+			retry = true;
 			info = tr("This name is already in use.") + "\n"
 					+ tr("Please use another name.") + "\n";
 		}
-		if( retry || (retry = newName.contains(QRegExp("[\\s\\.]"))) ) {
+		if( cNameCheck.exactMatch(newName) ) {
+			retry = true;
 			info = tr("Whitespace and dots in names are not allowed.") + "\n"
 					+ tr("Please use a valid name.") + "\n";
+			baseName = cNameCheck.cap(1).toLower();
 		}
-	}
+	} while (retry);
 
 	setValue(newName+".type", className);
 
@@ -422,6 +462,7 @@ QString GraphModel::addNode(QString className, bool draw) {
 			tr("add node %1 of class %2").arg(newName).arg(className));
 	if(draw)
 		emit graphChanged();
+
 	return newName;
 }
 
@@ -429,6 +470,7 @@ bool GraphModel::setData(
 		const QModelIndex& ind, const QVariant& value, int role) {
 	QString param = data(index(ind.row(),0)).toString();
 	if (!prefix().isEmpty()) {
+		Q_ASSERT(prefixValid());
 		param = prefix() + "." + param;
 	}
 	QRegExp ttype("(.*\\.)?templatetype",Qt::CaseInsensitive);
@@ -440,26 +482,17 @@ bool GraphModel::setData(
 
 		// disconnect slots on template type change, if neccessary
 		QString node = param.section(".",0,0).toLower();
-		QString slotName;
-		foreach (const QString& slot, getInputs(node)) {
-			slotName = QString("%1.%2").arg(node).arg(slot);
-			QString slotTypeR = getType(slotName, true);
-			QString slotTypeT = getType(slotName, false);
+		QStringList allSlots;
+		allSlots << getInputs(node) << getOutputs(node);
+		foreach (const QString& slot, allSlots) {
+			QString slotName = QString("%1.%2").arg(node).arg(slot);
+			QString slotTypeR = getType(slotName, true);   // tmpltype applied
+			QString slotTypeT = getType(slotName, false);  // plain type
 			if (slotTypeR != slotTypeT) {
 				// slot type depends on template type
 				disconnectSlot(slotName, QString(), false);
 			}
 		}
-		foreach (const QString& slot, getOutputs(node)) {
-			slotName = QString("%1.%2").arg(node).arg(slot);
-			QString slotTypeR = getType(slotName, true);
-			QString slotTypeT = getType(slotName, false);
-			if (slotTypeR != slotTypeT) {
-				// slot type depends on template type
-				disconnectSlot(slotName, QString(), false);
-			}
-		}
-
 		emit graphChanged();
 	}
 	return ParameterFileModel::setData(ind, value, role);

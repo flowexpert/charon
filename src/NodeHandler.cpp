@@ -303,6 +303,24 @@ void NodeHandler::keyPressEvent(QKeyEvent* keyEvent) {
 	case Qt::Key_Left:
 		_model->selectNext(true);
 		break;
+
+	case Qt::Key_F2:
+		if (_model && !_model->prefix().isEmpty() && _model->prefixValid()) {
+			_model->renameNode(_model->prefix());
+		}
+		break;
+
+	case Qt::Key_Delete:
+		if (_model && !_model->prefix().isEmpty() && _model->prefixValid()) {
+			_model->deleteNode(_model->prefix());
+		}
+		break;
+
+	case Qt::Key_Escape:
+		if (_model) {
+			_model->setPrefix(QString());
+		}
+
 	default:
 		break;
 	}

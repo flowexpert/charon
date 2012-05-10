@@ -95,7 +95,11 @@ protected:
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 	/// handles key press events
-	/** provides node navigation via the left/right arrow keys
+	/** provided key actions:
+	 *  - node navigation via the left/right arrow keys
+	 *  - renaming via F2 key
+	 *  - delete node via DEL key
+	 *  - deselect node via ESC key
 	 *  \param keyEvent  key event
 	 */
 	virtual void keyPressEvent(QKeyEvent* keyEvent);

@@ -41,12 +41,10 @@ void ModelToolBar::addModelActions() {
 	QAction* act;
 	act = addAction(QIcon(":/icons/delete.png"), tr("delete node"),
 		this, SLOT(_delete()));
-	act->setShortcut(Qt::Key_Delete);
 	act->setToolTip(tr("delete selected node"));
 	
 	act = addAction(QIcon(":/icons/rename.png"), tr("rename node"),
 		this, SLOT(_rename()));
-	act->setShortcut(Qt::Key_F2);
 	act->setToolTip(tr("rename selected node"));
 	
 	act = addAction(QIcon(":/icons/disconnect.png"), tr("disconnect node"),
@@ -59,16 +57,16 @@ void ModelToolBar::setModel(ParameterFileModel* model) {
 }
 
 void ModelToolBar::_delete() {
-	if (_model && !_model->prefix().isEmpty())
+	if (_model && !_model->prefix().isEmpty() && _model->prefixValid())
 		_model->deleteNode(_model->prefix());
 }
 	
 void ModelToolBar::_rename() {
-	if (_model && !_model->prefix().isEmpty())
+	if (_model && !_model->prefix().isEmpty() && _model->prefixValid())
 		_model->renameNode(_model->prefix());
 }
 
 void ModelToolBar::_disconnect() {
-	if (_model && !_model->prefix().isEmpty())
+	if (_model && !_model->prefix().isEmpty() && _model->prefixValid())
 		_model->disconnectAllSlots(_model->prefix());
 }

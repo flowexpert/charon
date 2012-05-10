@@ -189,7 +189,9 @@ bool ParameterFileModel::setData(
 	if (!prefixValid())
 		return false;
 
-	if ((role == Qt::DisplayRole) || (role == Qt::EditRole)) {
+	switch (role) {
+	case Qt::EditRole:
+	case Qt::DisplayRole:
 		if ((ind.row() >= 0) && (ind.row() < _keys.size())) {
 			switch (ind.column()) {
 			case 0:
@@ -209,9 +211,9 @@ bool ParameterFileModel::setData(
 						return false; // don't overwrite existing value
 
 					// save value
-					QString val = _parameterFile->get(oldName);
-					_parameterFile->erase(oldName);
-					_parameterFile->set(newName, val);
+					QString val = getValue(oldName);
+					erase(oldName);
+					setValue(newName, val);
 					oldName = newName; // save new name in name cache
 					emit dataChanged(ind, ind);
 					return true;
@@ -221,12 +223,11 @@ bool ParameterFileModel::setData(
 				if (value.canConvert(QVariant::String)) {
 					QString valueStr = value.toString();
 					QString keyStr = _keys[ind.row()];
-					if (valueStr == _parameterFile->get(keyStr))
+					if (valueStr == getValue(keyStr))
 						return true; // nothing to do
 
-					_parameterFile->set(keyStr, valueStr);
+					setValue(keyStr, valueStr);
 					if (_onlyParams && _metaInfos->isDynamic(getClass(keyStr))) {
-
 						save();
 						_updateDynamics();
 						QTimer::singleShot(0, this, SLOT(_update()));
@@ -247,38 +248,41 @@ bool ParameterFileModel::setData(
 
 					if (valueInt == 0) {
 						// 0 is default value -> no entry needed
-						if (_parameterFile->isSet(
-							_keys[ind.row()] + ".editorpriority")) {
+						if (isSet(_keys[ind.row()] + ".editorpriority")) {
 							// check if value exists to prevent exceptions
-							_parameterFile->erase(
-								_keys[ind.row()] + ".editorpriority");
+							erase(_keys[ind.row()] + ".editorpriority");
 							emit dataChanged(index(ind.row(), 0), ind);
 						}
 						return true;
 					}
 
-					if (valueStr == _parameterFile->get(
-						_keys[ind.row()] + ".editorpriority"))
-							return true; // nothing to do
+					if (valueStr ==
+							getValue(_keys[ind.row()] + ".editorpriority")) {
+						return true; // nothing to do
+					}
 
-					_parameterFile->set(
-						_keys[ind.row()] + ".editorpriority", valueStr);
+					setValue(_keys[ind.row()] + ".editorpriority", valueStr);
 					emit dataChanged(index(ind.row(), 0), ind);
 					return true;
 				}
 				break;
 			}
 		}
-	}
-	if (ind.column() == 1 && role == Qt::CheckStateRole && _useMetaInfo
-				&& isParameter(_keys[ind.row()])) {
-		Q_ASSERT(getType(_keys[ind.row()]) == "bool");
-		Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt()) ;
-		if(state == Qt::Checked || state == Qt::PartiallyChecked)
-			_parameterFile->set(_keys[ind.row()],"1");
-		if(state == Qt::Unchecked)
-			_parameterFile->set(_keys[ind.row()],"0");
-		emit dataChanged(createIndex(ind.row(),0),ind);
+		break;
+
+	case Qt::CheckStateRole:
+		if (_useMetaInfo && ind.column()==1 && isParameter(_keys[ind.row()])) {
+			Q_ASSERT(getType(_keys[ind.row()]) == "bool");
+			Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt());
+			if (state == Qt::Unchecked) {
+				setValue(_keys[ind.row()],"0");
+			}
+			else {
+				setValue(_keys[ind.row()],"1");
+			}
+			emit dataChanged(createIndex(ind.row(),0),ind);
+		}
+		break;
 	}
 	return false;
 }
@@ -362,9 +366,9 @@ bool ParameterFileModel::insertRows(int row, int count,
 				offset++;
 				continue;
 			}
-			_parameterFile->set(name, "");
+			setValue(name, "");
 			if (_minPriority > 0) {
-				_parameterFile->set(name + ".editorpriority",
+				setValue(name + ".editorpriority",
 					QVariant(_minPriority).toString());
 			}
 			i++;
@@ -400,9 +404,11 @@ bool ParameterFileModel::removeRows(int row, int count,
 		if (!_onlyParams)
 			beginRemoveRows(parentInd, row, row + count - 1);
 
-		for (int i = row; i < row + count; i++)
-			if (_parameterFile->isSet(_keys[i]))
+		for (int i = row; i < row + count; i++) {
+			if (isSet(_keys[i])) {
 				_parameterFile->erase(_keys[i]);
+			}
+		}
 
 		// keys have not to be changed on onlyparam mode
 		if (!_onlyParams) {
@@ -417,15 +423,11 @@ bool ParameterFileModel::removeRows(int row, int count,
 }
 
 void ParameterFileModel::clear() {
-	setPrefix("");
-	uint keys = rowCount(QModelIndex());
-	if (keys > 0) {
-		//beginRemoveRows(QModelIndex(), 0, keys - 1);
+	if (_parameterFile->getKeyList().size() > 0) {
 		beginResetModel();
 		_parameterFile->clear();
 		_keys.clear();
 		setPrefix("");
-		//endRemoveRows();
 		endResetModel();
 	}
 }
@@ -452,49 +454,30 @@ bool ParameterFileModel::_load() {
 
 void ParameterFileModel::_update() {
 	// remove keys
-	//uint keys = _keys.size();
 	beginResetModel();
-	//if (keys > 0) {
-		//beginRemoveRows(QModelIndex(), 0, keys - 1);
 	_keys.clear();
-		//endRemoveRows();
-	//}
 
 	// load all keys
 	QStringList tempList = _parameterFile->getKeyList();
-	if (tempList.size() == 0)
-		return;
-
-	// apply modificators
-	if (!_prefix.isEmpty())
+	if (tempList.size() > 0) {
+		// apply modificators
 		tempList = _prefixFilter(tempList);
-	if (_onlyParams)
 		tempList = _paramFilter(tempList);
-	tempList = _priorityTagFilter(tempList);
-	tempList = _priorityFilter(tempList);
+		tempList = _priorityTagFilter(tempList);
+		tempList = _priorityFilter(tempList);
 
-	// show selected parameters
-	//if (tempList.size()) {
-		//beginInsertRows(QModelIndex(), 0, tempList.size() - 1);
-	_keys = tempList;
-		//endInsertRows();
-	//}
+		// show selected parameters
+		_keys = tempList;
+	}
 	endResetModel();
 }
 
 void ParameterFileModel::_updatePriority(
 		const QModelIndex&, const QModelIndex &bottomRight) {
-	// check if filter active
-	if (_minPriority <= 0) {
-		return;
+	// check if filter active and priority changed
+	if (_minPriority > 0 && bottomRight.column() >= 2) {
+		_update();
 	}
-
-	// check if priority changed
-	if (bottomRight.column() != 2) {
-		return;
-	}
-
-	_update();
 }
 
 bool ParameterFileModel::load(const QString& fName) {
@@ -513,25 +496,26 @@ bool ParameterFileModel::load(const QString& fName) {
 				guess = QDir::homePath();
 		}
 		fromDialog = QFileDialog::getOpenFileName(0, tr("Open File"),
-				guess, tr("ParameterFile (*.wrp);;All Files (*.*)"));
+				guess, tr("ParameterFiles (*.wrp);;All Files (*.*)"));
 	}
-	if (fromDialog.isEmpty())
-		return false;
-	if (!QFileInfo(fromDialog).isFile()) {
+	if (fromDialog.isEmpty()) {
+		emit statusMessage(tr("no file selected"));
+	}
+	else if (!QFileInfo(fromDialog).isFile()) {
 		QMessageBox::warning(0, tr("Error loading file"),
 				tr("File <em>%1</em> does not exist or is no file!")
 						.arg(fromDialog));
-		return false;
 	}
-	if (!QFileInfo(fromDialog).isReadable()) {
+	else if (!QFileInfo(fromDialog).isReadable()) {
 		QMessageBox::warning(0, tr("Error loading file"),
 				tr("File <em>%1</em> is not readable!").arg(fromDialog));
-		return false;
 	}
-
-	// fromDialog is a readable file now
-	setFileName(fromDialog);
-	return _load();
+	else {
+		// fromDialog is a readable file now
+		setFileName(fromDialog);
+		return _load();
+	}
+	return false;
 }
 
 void ParameterFileModel::save(const QString& fName) {
@@ -550,6 +534,7 @@ void ParameterFileModel::save(const QString& fName) {
 	} else
 		emit statusMessage("File not saved! (no filename given)");
 }
+
 void ParameterFileModel::setFileName(const QString& fName) {
 	if (fName.isEmpty() || fName == _fileName)
 		return;
@@ -648,7 +633,10 @@ QString ParameterFileModel::getClass(QString name, bool fixCase) const {
 }
 
 QStringList ParameterFileModel::_prefixFilter(QStringList list) const {
-	if(prefixValid()) {
+	if (_prefix.isEmpty()) {
+		return list;
+	}
+	else if (prefixValid()) {
 		return list.filter(QRegExp("^\\s*"+_prefix+"\\."));
 	}
 	else {
@@ -666,28 +654,30 @@ QStringList ParameterFileModel::_collectObjects(QStringList list) const {
 }
 
 QStringList ParameterFileModel::_paramFilter(QStringList list) const {
-	Q_ASSERT(_onlyParams);
-	QStringList result;
-	QStringList objects = _collectObjects(list);
+	if (_onlyParams) {
+		QStringList result;
+		QStringList objects = _collectObjects(list);
 
-	// append all possible parameters for all objects
-	for (int ii = 0; ii < objects.size(); ii++) {
-		QStringList tmp;
-		tmp << getParameters(objects[ii]);
-		tmp.replaceInStrings(QRegExp("(^.*$)"), objects[ii]+".\\1");
-		result << tmp;
+		// append all possible parameters for all objects
+		for (int ii = 0; ii < objects.size(); ii++) {
+			QStringList tmp;
+			tmp << getParameters(objects[ii]);
+			tmp.replaceInStrings(QRegExp("(^.*$)"), objects[ii]+".\\1");
+			result << tmp;
+		}
+		return result;
 	}
-	return result;
+	else {
+		return list;
+	}
 }
 
 QStringList ParameterFileModel::_priorityTagFilter(QStringList list) const {
 	QStringList result;
-	while (!list.empty()) {
-		QString str = list.first();
-		if (!str.endsWith(".editorpriority")) {
-			result << str;
+	foreach (const QString& cur, list) {
+		if (!cur.endsWith(".editorpriority", Qt::CaseInsensitive)) {
+			result << cur;
 		}
-		list.pop_front();
 	}
 	return result;
 }
@@ -697,12 +687,10 @@ QStringList ParameterFileModel::_priorityFilter(QStringList list) const {
 		return list;
 	}
 	QStringList result;
-	while (!list.empty()) {
-		QString str = list.first();
-		if (_parameterFile->get(str + ".editorpriority").toInt() >= _minPriority) {
-			result << str;
+	foreach (const QString& cur, list) {
+		if (getValue(cur+".editorpriority").toInt() >= _minPriority) {
+			result << cur;
 		}
-		list.pop_front();
 	}
 	return result;
 }
@@ -748,20 +736,22 @@ bool ParameterFileModel::isSet(QString parName) const {
 }
 
 void ParameterFileModel::setValue(QString parName, QString value) {
-	QStringList keys = _parameterFile -> getKeyList();
-
-	bool existed = _parameterFile->isSet(parName);
+	if (getValue(parName) == value) {
+		return;
+	}
 
 	// write value to parameter file
+	bool existed = isSet(parName);
 	_parameterFile -> set(parName, value);
 
-	if (parName.contains(".editorcomment")) {
+	if (parName.endsWith(".editorcomment", Qt::CaseInsensitive)) {
 		emit commentChanged(value);
 	}
 
 	if (existed) {
 		// parameter existed before, so inform about change,
 		// if parameter is visible
+		const QStringList& keys = _parameterFile -> getKeyList();
 		int i = keys.indexOf(parName);
 		if ( i >= 0) {
 			emit dataChanged(index(i, 1), index(i, 1));
@@ -772,14 +762,20 @@ void ParameterFileModel::setValue(QString parName, QString value) {
 		// so perhaps it would appear and an update run is neccessary
 		_update();
 	}
+	emit modified(true);
 }
 
 void ParameterFileModel::erase(QString parName) {
 	if (_parameterFile->isSet(parName)) {
-		_parameterFile -> erase(parName);
-		if (_keys.indexOf(parName) >= 0) {
-			_update();
+		int pos = _keys.indexOf(parName);
+		if (pos >= 0) {
+			beginRemoveRows(QModelIndex(),pos,pos);
 		}
+		_parameterFile -> erase(parName);
+		if (pos >= 0) {
+			endRemoveRows();
+		}
+		emit modified(true);
 	}
 }
 
