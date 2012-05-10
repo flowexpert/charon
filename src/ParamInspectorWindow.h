@@ -39,6 +39,7 @@ class ParamInspectorWindow : public QMainWindow
 public:
 	/// default constructor
 	ParamInspectorWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
+	~ParamInspectorWindow();
 
 protected:
 	/// save geometry etc.

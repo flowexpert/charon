@@ -38,7 +38,7 @@ ParamInspectorWindow::ParamInspectorWindow(QWidget *pp, Qt::WindowFlags ff) :
 	_fileMenu = menuBar()->addMenu(tr("&File"));
 	_inspector = new ObjectInspector(this);
 	ParameterFileModel* model = new ParameterFileModel(
-			QString(),_inspector,FileManager::instance().classesFile());
+			QString(),_inspector, FileManager::instance().classesFile());
 	_inspector->setModel(model);
 	_inspector->setEdit(true);
 
@@ -60,10 +60,12 @@ ParamInspectorWindow::ParamInspectorWindow(QWidget *pp, Qt::WindowFlags ff) :
 	_fileMenu->addAction(tr("E&xit"), this,
 			SLOT(close()), QKeySequence(tr("Ctrl+Q")));
 
-	setCentralWidget(_inspector);
+	setCentralWidget(_inspector->getViewer());
+	QDockWidget* dock = new QDockWidget(tr("Tools"),this);
+	dock->setObjectName("tools");
+	dock->setWidget(_inspector);
+	addDockWidget(Qt::RightDockWidgetArea, dock);
 
-	_inspector->openMetaData(FileManager::instance().classesFile());
-	
 	connect(_inspector, SIGNAL(statusMessage(const QString&, int)),
 		statusBar(), SLOT(showMessage(const QString&, int)));
 
@@ -72,11 +74,21 @@ ParamInspectorWindow::ParamInspectorWindow(QWidget *pp, Qt::WindowFlags ff) :
 	resize(620, 700);
 	QSettings settings;
 	restoreGeometry(settings.value("geometry").toByteArray());
+	restoreState(settings.value("windowState").toByteArray());
+}
+
+ParamInspectorWindow::~ParamInspectorWindow() {
+	setCentralWidget(0);
+	delete _inspector;
+	QDockWidget* dock = findChild<QDockWidget*>("tools");
+	Q_ASSERT(dock);
+	delete dock;
 }
 
 void ParamInspectorWindow::closeEvent(QCloseEvent* cEv) {
 	QSettings settings;
 	settings.setValue("geometry", saveGeometry());
+	settings.setValue("windowState",saveState());
 	QMainWindow::closeEvent(cEv);
 }
 

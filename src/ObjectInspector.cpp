@@ -113,7 +113,7 @@ void ObjectInspector::saveFileAs() const {
 }
 
 void ObjectInspector::_storeViewSettings() const {
-	if (_ui->view->model()) {
+	if (_ui->view && _ui->view->model()) {
 		QSettings settings;
 		settings.beginGroup("ObjectInspector");
 
