@@ -30,7 +30,6 @@ Node::Node(const ParameterFileModel* pFile, QString title,
 	setPos(xpos,ypos);
 	setFlag(QGraphicsItem::ItemIsMovable);
 	setFlag(QGraphicsItem::ItemIsSelectable);
-
 }
 
 void Node::setId(unsigned int id) {

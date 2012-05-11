@@ -370,26 +370,81 @@ void NodeHandler::dropEvent(QGraphicsSceneDragDropEvent* ev) {
 }
 
 void NodeHandler::contextMenuEvent(QGraphicsSceneContextMenuEvent* ev) {
+	QString nodeName, propName;
+
+	// try to determine node and/or slot name
 	QGraphicsItem* item = itemAt(ev->scenePos());
-	NodeProperty* prop = dynamic_cast<NodeProperty*>(item);
-	if (prop) {
-		QMenu menu;
+	if (item) {
+		Node* node = dynamic_cast<Node*>(item);
+		NodeProperty* prop = dynamic_cast<NodeProperty*>(item);
 
-		// set up menu actions
-		QAction* disconnect = menu.addAction(
-					QIcon(":/icons/disconnect.png"), tr("disconnect slot"));
-		disconnect->setStatusTip(
-					tr("disconnect this slot from all target slots"));
-
-		// show menu and handle selection
-		QAction* selectedAction = menu.exec(ev->screenPos());
-		if (selectedAction == disconnect) {
-			_model->disconnectSlot(prop->getFullName());
+		if (prop) {
+			node = dynamic_cast<Node*>(prop->parentItem());
+			propName = prop->getFullName();
 		}
-		ev->accept();
+		if (node) {
+			nodeName = node->getInstanceName();
+		}
+	}
+
+	if (nodeName.isEmpty()) {
+		QGraphicsScene::contextMenuEvent(ev);
 	}
 	else {
-		QGraphicsScene::contextMenuEvent(ev);
+		// node and prop may not be used after this point because model
+		// changes let them disappear (disconnect/rename/etc.)
+		ev->accept();
+
+		// node context menu
+		QMenu menu;
+		QIcon disIco(":/icons/disconnect.png");
+		QIcon renIco(":/icons/rename.png");
+		QIcon delIco(":/icons/delete.png");
+
+		// if context menu was called on a slot, provide option
+		// concerning this slot at a prominent position (top)
+		if (!propName.isEmpty()) {
+			QAction* act = menu.addAction(
+				disIco, tr("disconnect %1").arg(propName.section(".",1)));
+			act->setData(propName);
+			menu.addSeparator();
+		}
+
+		// common options
+		QAction* delAct = menu.addAction(delIco, tr("delete"));
+		QAction* renAct = menu.addAction(renIco, tr("rename"));
+		QAction* disAct = menu.addAction(disIco, tr("disconnect all slots"));
+
+		// submenu for slot disconnection (all slots are provided)
+		QStringList slotNames;
+		slotNames << _model->getInputs(nodeName)
+				<< _model->getOutputs(nodeName);
+
+		QMenu* dmenu = menu.addMenu(disIco, tr("disconnect slot"));
+		foreach (const QString& cur, slotNames) {
+			QAction* curAct =
+				dmenu->addAction(disIco, cur);
+			curAct->setData(QString("%1.%2").arg(nodeName).arg(cur));
+		}
+
+		// handle user selection
+		QAction* selAct = menu.exec(ev->screenPos());
+		if (selAct) {
+			QString data = selAct->data().toString();
+			if (!data.isEmpty()) {
+				Q_ASSERT(data.contains(QRegExp("^[\\w_-]+\\.[\\w_-]+$")));
+				_model->disconnectSlot(data);
+			}
+			else if (selAct == delAct) {
+				_model->deleteNode(nodeName);
+			}
+			else if (selAct == renAct) {
+				_model->renameNode(nodeName);
+			}
+			else if (selAct == disAct) {
+				_model->disconnectAllSlots(nodeName);
+			}
+		}
 	}
 }
 

@@ -119,9 +119,6 @@ private:
 
 	/// link to parameter file
 	const ParameterFileModel* _pFile;
-
-
-
 };
 
 #endif /* NODE_H_ */
