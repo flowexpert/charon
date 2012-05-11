@@ -31,7 +31,7 @@
 
 template <typename T>
 FrameSelect<T>::FrameSelect(const std::string& name) :
-		TemplatedParameteredObject<T>("frameselect", name, "select frames"),
+		TemplatedParameteredObject<T>("FrameSelect", name, "select frames"),
 		in(true,false), // optional
 		widget(0), roi(0),
 		_gui(0)

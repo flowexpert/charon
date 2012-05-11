@@ -27,7 +27,7 @@
 
 template <typename T>
 FileReader<T>::FileReader(const std::string& name) :
-		TemplatedParameteredObject<T>("filereader", name,
+		TemplatedParameteredObject<T>("FileReader", name,
 			"read image from image file using cimg")
 {
 	this->_addParameter (filename, "filename",
