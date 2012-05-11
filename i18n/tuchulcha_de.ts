@@ -461,17 +461,21 @@ Please use a valid name.
     <message>
         <location filename="../src/LogDialog.ui" line="103"/>
         <source>scroll down on new output</source>
-        <translation>bei neuen Ausgaben ans Ende springen</translation>
+        <translation>bei neuen Ausgaben
+ans Ende springen</translation>
     </message>
     <message>
         <location filename="../src/LogDialog.ui" line="113"/>
-        <source>show debug output (lines with &quot;(DD)&quot; prefix)</source>
-        <translation>Debug-Hinweise anzeigen (Zeilen, die mit &quot;(DD)&quot; beginnen)</translation>
+        <source>show debug output
+(lines with &quot;(DD)&quot; prefix)</source>
+        <translation>Debug-Hinweise anzeigen
+(Zeilen, die mit &quot;(DD)&quot; beginnen)</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="123"/>
+        <location filename="../src/LogDialog.ui" line="124"/>
         <source>Save Log</source>
-        <translation>Protokoll speichern</translation>
+        <translation>Protokoll
+speichern</translation>
     </message>
     <message>
         <location filename="../src/LogDialog.cpp" line="90"/>

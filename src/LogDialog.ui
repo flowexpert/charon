@@ -110,7 +110,8 @@
       <item>
        <widget class="QCheckBox" name="checkDD">
         <property name="text">
-         <string>show debug output (lines with &quot;(DD)&quot; prefix)</string>
+         <string>show debug output
+(lines with &quot;(DD)&quot; prefix)</string>
         </property>
         <property name="checked">
          <bool>true</bool>
