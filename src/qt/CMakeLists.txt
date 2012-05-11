@@ -1,7 +1,7 @@
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-IF(Qwt5_Qt4_FOUND)
+IF(USE_Qwt5)
 	INCLUDE_DIRECTORIES(${Qwt5_INCLUDE_DIR})
-ENDIF(Qwt5_Qt4_FOUND)
+ENDIF(USE_Qwt5)
 SET(charonwidgets_HEADERS
 	charonwidgets.h
 )
@@ -17,14 +17,14 @@ SET(charonwidgets_SOURCES
 	FrameSelectWidget.cpp
 	StatisticsDisplayWidget.cpp
 )
-IF(Qwt5_Qt4_FOUND)
+IF(USE_Qwt5)
 	LIST(APPEND charonwidgets_QT_HEADERS
 		ResidualPlotWidget.hpp
 	)
 	LIST(APPEND charonwidgets_SOURCES
 		ResidualPlotWidget.cpp
 	)
-ENDIF(Qwt5_Qt4_FOUND)
+ENDIF(USE_Qwt5)
 QT4_WRAP_UI(charonwidgets_UIS
 	FrameSelectWidget.ui
 )
