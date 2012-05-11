@@ -59,6 +59,7 @@ private:
 	QProgressBar *progress;
 	//\}
 signals:
+	/// inform about button value changes
 	void pbValueChanged( int val );
 };
 
