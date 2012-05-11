@@ -50,6 +50,7 @@ extern "C" dataconstant_DECLDIR ParameteredObject* create(
 extern "C" dataconstant_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
+
 /// Report build configuration to prevent linking of incompatibel runtime libs
 extern "C" dataconstant_DECLDIR ParameteredObject::build_type getBuildType() {
 #ifdef _DEBUG
