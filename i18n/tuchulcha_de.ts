@@ -59,7 +59,7 @@
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="193"/>
-        <location filename="../src/LogDialog.cpp" line="525"/>
+        <location filename="../src/LogDialog.cpp" line="547"/>
         <source>Execution finished.</source>
         <translation>Ausführung beendet.</translation>
     </message>
@@ -383,32 +383,32 @@ Please use a valid name.
 <context>
     <name>LogDecorators::RunWorkflow</name>
     <message>
-        <location filename="../src/LogDialog.cpp" line="477"/>
+        <location filename="../src/LogDialog.cpp" line="499"/>
         <source>missing workflow file</source>
         <translation>keine Datei angegeben</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="478"/>
+        <location filename="../src/LogDialog.cpp" line="500"/>
         <source>The workflow cannot be started because it has not been saved to disk (empty filename given). Please save it and retry execution.</source>
         <translation>Die Ausführung konnte nicht gestartet werden, da das Dokument nicht gespeichert wurde. Bitte speichern und erneut ausführen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="503"/>
+        <location filename="../src/LogDialog.cpp" line="525"/>
         <source>wait before workflow execution</source>
         <translation>vor der Ausführung warten</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="504"/>
+        <location filename="../src/LogDialog.cpp" line="526"/>
         <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the run process. Workflow will be started, when you close this message box.</source>
-        <translation>Warte mit dem Start der Ausführung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Ausführungsprozess hängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
+        <translation>Warte mit dem Start der Ausführung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Ausführungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="530"/>
+        <location filename="../src/LogDialog.cpp" line="552"/>
         <source>Workflow execution finished.</source>
         <translation>Ausführung wurde beendet.</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="531"/>
+        <location filename="../src/LogDialog.cpp" line="553"/>
         <source>Plugins stay loaded until you close this dialog.</source>
         <translation>Die Plugins bleiben geladen, bis dieser Dialog geschlossen wird.</translation>
     </message>
@@ -424,6 +424,16 @@ Please use a valid name.
         <location filename="../src/LogDialog.cpp" line="446"/>
         <source>Output of update process:</source>
         <translation>Ausgabe der Aktualisierung:</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.cpp" line="465"/>
+        <source>wait before plugin update</source>
+        <translation>vor der Aktualisierung warten</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.cpp" line="467"/>
+        <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the update process. Update will be started, when you close this message box.</source>
+        <translation>Warte mit dem Start der Aktualisierung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Aktualisierungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
 </context>
 <context>
@@ -1040,6 +1050,11 @@ File name &lt;span id=&apos;code&apos;&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; in
 </context>
 <context>
     <name>ParameterFileModel</name>
+    <message>
+        <location filename="../src/ParameterFileModel.cpp" line="467"/>
+        <source>File %1 loaded.</source>
+        <translation>Datei %1 geladen.</translation>
+    </message>
     <message>
         <location filename="../src/ParameterFileModel.cpp" line="520"/>
         <source>Open File</source>

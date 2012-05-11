@@ -448,9 +448,31 @@ QString LogDecorators::Update::desc() const {
 }
 
 QStringList LogDecorators::Update::arguments() const {
+	QSettings settings;
 	QStringList args;
-	args << "--non-interactive" << "update";
+	args << "--quiet";
+	if (!settings.value("delayExecution",false).toBool()) {
+		args << "--non-interactive" << "update";
+	}
 	return args;
+}
+
+QStringList LogDecorators::Update::postStartCommands(QWidget* pp) const {
+	QSettings settings;
+	QStringList cmds;
+	if (settings.value("delayExecution",false).toBool()) {
+		QMessageBox::information(pp,
+			QCoreApplication::translate("LogDecorators::Update",
+				"wait before plugin update"),
+			QCoreApplication::translate("LogDecorators::Update",
+				"Waiting because <em>delayExecution</em> option set. "
+				"You can now attach your debugger to the update process. "
+				"Update will be started, when you close this message box."
+			)
+		);
+		cmds << "update" << "quit";
+	}
+	return cmds;
 }
 
 QString LogDecorators::Update::filenameHint() const {

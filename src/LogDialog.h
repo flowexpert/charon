@@ -145,6 +145,7 @@ namespace LogDecorators {
 	class Update : public LogDialog::Decorator {
 	public:
 		virtual QStringList arguments() const;
+		virtual QStringList postStartCommands(QWidget* parent) const;
 		virtual QString title() const;
 		virtual QString desc() const;
 		virtual QString filenameHint() const;

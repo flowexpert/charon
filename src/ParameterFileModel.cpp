@@ -464,7 +464,7 @@ bool ParameterFileModel::_load() {
 	_update();
 	endResetModel();
 	locker.unlock();
-	emit statusMessage(QString("File %1 loaded.").arg(_fileName));
+	emit statusMessage(tr("File %1 loaded.").arg(_fileName));
 	return true;
 }
 
