@@ -41,24 +41,36 @@ int main(int argc, char *argv[]) {
 	app.setApplicationName("Paraminspector");
 	Q_INIT_RESOURCE(resources);
 
+	// translator search paths
+	QStringList tPaths;
+	tPaths << QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+#ifdef TUCHULCHA_QM_DIR
+	tPaths << TUCHULCHA_QM_DIR;
+#endif
+	tPaths << QCoreApplication::applicationDirPath();
+
+	// qt system translator
 	// translation of qt dialog buttons (apply, close etc.)
 	QTranslator qtTranslator;
-	qtTranslator.load(
-		"qt_" + QLocale::system().name(),
-		QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+	QString tName = "qt_" + QLocale::system().name();
+	foreach (QString tPath, tPaths) {
+		if (qtTranslator.load(tName, tPath)) {
+			break;
+		}
+	}
 	app.installTranslator(&qtTranslator);
 
 	// translation of tr(...) commands
 	QTranslator translator;
-	translator.load(
-		"tuchulcha_" + QLocale::system().name(),
-#ifdef TUCHULCHA_QM_DIR
-		TUCHULCHA_QM_DIR);
-#else
-		QCoreApplication::applicationDirPath());
-#endif
+	tName = "tuchulcha_" + QLocale::system().name();
+	foreach (QString tPath, tPaths) {
+		if (translator.load(tName, tPath)) {
+			break;
+		}
+	}
 	app.installTranslator(&translator);
 
+	// main window
 	ParamInspectorWindow window;
 	FileManager::dialogParent = &window;
 	window.show();
@@ -66,6 +78,8 @@ int main(int argc, char *argv[]) {
 	QErrorMessage* handler = QErrorMessage::qtHandler();
 	handler->setModal(true);
 #endif
+
+	// handle command line arguments
 	QStringList args = app.arguments();
 	QFileInfo lastArgInfo(args.last());
 	if (lastArgInfo.exists() && (lastArgInfo.absoluteFilePath()
