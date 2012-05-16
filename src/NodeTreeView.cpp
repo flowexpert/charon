@@ -27,14 +27,32 @@
 #include "ui_NodeTreeView.h"
 #include <QTreeView>
 #include <QStandardItemModel>
+#include <QSortFilterProxyModel>
 #include <QVBoxLayout>
+
+/// filter proxy subclass keeping all top-level entities
+class MySortFilterProxy : public QSortFilterProxyModel {
+protected:
+	/// include top-level entities in the model
+	virtual bool filterAcceptsRow(
+		int source_row, const QModelIndex& source_parent) const {
+		return source_parent.isValid() ?
+			QSortFilterProxyModel::filterAcceptsRow(source_row,source_parent) :
+			true;
+	}
+};
 
 NodeTreeView::NodeTreeView(QWidget* pp) : QWidget(pp) {
 	_ui = new Ui::NodeTreeView;
 	_ui->setupUi(this);
-	_model = new QStandardItemModel(1,3,_ui->treeView);
+	_model = new QStandardItemModel(1,1);
+	_filter = new MySortFilterProxy();
 	_ui->treeView->setAnimated(true);
-	_ui->treeView->setModel(_model);
+	_filter->setSourceModel(_model);
+	_filter->setFilterCaseSensitivity(Qt::CaseInsensitive);
+	_filter->setSortCaseSensitivity(Qt::CaseInsensitive);
+	_filter->setDynamicSortFilter(true);
+	_ui->treeView->setModel(_filter);
 	_ui->treeView->setDragEnabled(true);
 	_ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
 	reload();
@@ -47,105 +65,41 @@ NodeTreeView::~NodeTreeView() {
 void NodeTreeView::reload() {
 	// reset content
 	_model->clear();
-	_model->setSortRole(Qt::UserRole);
-	QList<QStandardItem*> root;
-	root << new QStandardItem(tr("Modules"));
-	root << new QStandardItem;
-	root << new QStandardItem;
-	for(int ii=0; ii<root.size(); ii++) {
-		root[ii]->setDragEnabled(false);
-		root[ii]->setEditable(false);
-		root[ii]->setSelectable(false);
-		_model->setItem(0,ii,root[ii]);
-	}
+	QStandardItem* root = new QStandardItem(tr("Modules"));
+	root->setDragEnabled(false);
+	root->setEditable(false);
+	root->setSelectable(false);
+	_model->setItem(0,0,root);
 	QStringList labels;
-	labels << tr("Name") << tr("Parameter/Slot") << tr("Type");
+	labels << tr("Names");
 	_model->setHorizontalHeaderLabels(labels);
-	_model->horizontalHeaderItem(0)->setSizeHint(QSize(300,0));
-	_model->horizontalHeaderItem(1)->setSizeHint(QSize(200,0));
-	_ui->treeView->resizeColumnToContents(0);
-	_ui->treeView->resizeColumnToContents(1);
 
 	// load modules
 	MetaData md(FileManager::instance().classesFile());
-	QStringList classes = md.getClasses();
-	for (int ii=0; ii < classes.size(); ii++) {
-		QString name = classes[ii];
-		QStringList ins = md.getInputs(classes[ii]);
-		QStringList outs = md.getOutputs(classes[ii]);
-		QStringList params = md.getParameters(classes[ii]);
-
+	const QStringList& classes = md.getClasses();
+	foreach (const QString& cur, classes) {
 		// new node to be added
-		QStandardItem* node = new QStandardItem(name);
-		node->setData(name.toLower(),Qt::UserRole);
+		QStandardItem* node = new QStandardItem(cur);
 		node->setEditable(false);
 		node->setDragEnabled(true);
-		QList<QStandardItem*> names, sTypes, cTypes, all;
-
-		for (int jj=0; jj<ins.size(); jj++) {
-			names << new QStandardItem(ins[jj]);
-			sTypes << new QStandardItem(tr("InputSlot"));
-			cTypes << new QStandardItem(md.getType(ins[jj],classes[ii]));
-		}
-		for (int jj=0; jj<outs.size(); jj++) {
-			names << new QStandardItem(outs[jj]);
-			sTypes << new QStandardItem(tr("OutputSlot"));
-			cTypes << new QStandardItem(md.getType(outs[jj],classes[ii]));
-		}
-		for (int jj=0; jj<params.size(); jj++) {
-			names << new QStandardItem(params[jj]);
-			sTypes << new QStandardItem(tr("Parameter"));
-			cTypes << new QStandardItem(md.getType(params[jj],classes[ii]));
-		}
-		all << names << sTypes << cTypes;
-		for (int jj=0; jj < all.size(); jj++) {
-			all[jj]->setEditable(false);
-			all[jj]->setDragEnabled(false);
-			all[jj]->setSelectable(false);
-			all[jj]->setData(all[jj]->data(Qt::DisplayRole),Qt::UserRole);
-		}
-		node->appendColumn(names);
-		node->appendColumn(sTypes);
-		node->appendColumn(cTypes);
-		root[0]->appendRow(node);
+		root->appendRow(node);
 	}
-	root[0]->sortChildren(0);
-	for(int ii=0; ii < root[0]->rowCount(); ii++) {
-		root[0]->child(ii)->sortChildren(1);
-	}
-	_ui->treeView->setExpanded(root[0]->index(), true);
 
-	// update filter
-	on_editFilter_textChanged(_ui->editFilter->text());
+	// update view
+	_ui->treeView->setExpanded(_filter->mapFromSource(root->index()), true);
+	_ui->treeView->sortByColumn(0,Qt::AscendingOrder);
 }
 
-void NodeTreeView::on_treeView_clicked(const QModelIndex& current) {
+void NodeTreeView::on_treeView_clicked(const QModelIndex& cur) {
 	// check if a module is selected, if below, go up to module name
 	// show doc for selected module
-	if (current.parent().isValid()) {
-		QModelIndex idx = current;
-		while (idx.parent().parent().isValid()) {
-			idx = idx.parent();
-		}
-		emit showClassDoc(_model->data(idx).toString());
+	if (cur.parent().isValid()) {
+		emit showClassDoc(_filter->data(cur).toString());
 	}
 }
 
 void NodeTreeView::on_editFilter_textChanged(const QString& text) {
-	QRegExp rgx(text, Qt::CaseInsensitive, QRegExp::WildcardUnix);
-	for(int ii=0; ii < _model->rowCount(); ii++) {
-		QModelIndex root = _model->index(ii,0);
-		for(int sub=0; root.child(sub,0).isValid(); sub++) {
-			QModelIndex cur = root.child(sub,0);
-			if(text.isEmpty()) {
-				_ui->treeView->setRowHidden(sub,root,false);
-			}
-			else {
-				QString cont = cur.data().toString();
-				_ui->treeView->setRowHidden(sub,root,!cont.contains(rgx));
-			}
-		}
-	}
+	_filter->setFilterWildcard(text);
 }
 
 #include "NodeTreeView.moc"

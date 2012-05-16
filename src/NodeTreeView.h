@@ -31,6 +31,7 @@ class Node;
 class TreeViewItem;
 class QTreeView;
 class QStandardItemModel;
+class QSortFilterProxyModel;
 class QModelIndex;
 
 namespace Ui {
@@ -70,6 +71,8 @@ private:
 	Ui::NodeTreeView* _ui;
 	/// the model of the view
 	QStandardItemModel* _model;
+	/// sort and filter proxy
+	QSortFilterProxyModel* _filter;
 };
 
 #endif	/* NODETREEVIEW_H */

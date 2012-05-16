@@ -35,7 +35,14 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="3">
-    <widget class="QTreeView" name="treeView"/>
+    <widget class="QTreeView" name="treeView">
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="animated">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
