@@ -32,11 +32,16 @@
 #include <QtGui>
 
 /// class QuiverDraw
+/** wraps mglDraw, fixing alpha effects */
 class QuiverDraw : public mglDraw
 {
 public:
+	/// draw quiver graph
 	int Draw( mglGraph *gr );
+	/// \name data
+	//  \{
 	mglData a, b;
+	//  \}
 };
 
 /// class QuiverPlot
