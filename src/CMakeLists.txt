@@ -24,8 +24,6 @@ QT4_WRAP_UI(UI_SRC
 SET(TUCHULCHA_SOURCES
 	Qtiostream.cpp
 	Qtiostream.h
-	imageManip.cpp
-	imageManip.h
 	FileManager.cpp
 	FileManager.h
 	RecentFileHandler.cpp
@@ -96,12 +94,28 @@ QT4_AUTOMOC(${TUCHULCHA_SOURCES})
 QT4_AUTOMOC(${WF_RUNNER_SOURCES})
 
 # create libraries
-ADD_LIBRARY(tc-common ${TUCHULCHA_SOURCES} ${UI_SRC})
+ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC})
 ADD_LIBRARY(tc-run ${WF_RUNNER_SOURCES})
 
 # add dependencies
-TARGET_LINK_LIBRARIES(tc-common ${QT_LIBRARIES})
-TARGET_LINK_LIBRARIES(tc-run tc-common charon-plugins ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(tuchulcha-widgets ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(tc-run tuchulcha-widgets charon-plugins ${QT_LIBRARIES})
 SET_TARGET_PROPERTIES(
-	tc-common tc-run
+	tuchulcha-widgets tc-run
 	PROPERTIES FOLDER "Tuchulcha")
+
+# add install target for library
+INSTALL(TARGETS tuchulcha-widgets
+	EXPORT tuchulcha
+	DESTINATION lib${LIB_SUFFIX}
+	COMPONENT   libraries
+)
+INSTALL(DIRECTORY .
+	DESTINATION include/tuchulcha
+	COMPONENT   libraries
+	FILES_MATCHING PATTERN "*.h"
+)
+INSTALL(EXPORT tuchulcha
+	DESTINATION ${CONFIG_INSTALL}
+	COMPONENT   libraries
+)

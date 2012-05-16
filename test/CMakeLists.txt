@@ -15,7 +15,7 @@ IF(BUILD_TESTING)
 
 	# test ParameterFileModel
 	ADD_EXECUTABLE(modeltest modeltest.cpp)
-	TARGET_LINK_LIBRARIES(modeltest tc-common)
+	TARGET_LINK_LIBRARIES(modeltest tuchulcha-widgets)
 	ADD_TEST(
 		NAME ParameterFileModel
 		COMMAND modeltest
@@ -40,7 +40,7 @@ IF(BUILD_TESTING)
 
 	# test QParameterFile
 	ADD_EXECUTABLE(qparameterfiletest qparameterfiletest.cpp)
-	TARGET_LINK_LIBRARIES(qparameterfiletest tc-common charon-core)
+	TARGET_LINK_LIBRARIES(qparameterfiletest tuchulcha-widgets charon-core)
 	ADD_TEST(
 		NAME QParameterFile
 		COMMAND qparameterfiletest

@@ -35,6 +35,8 @@ INCLUDE(Documentation)
 INCLUDE(CTest)
 # try to query VCS revision information
 INCLUDE(RevInfo)
+# project config file
+INCLUDE(GenConfig)
 
 # the RPATH to be used when installing
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
