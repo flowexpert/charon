@@ -403,8 +403,8 @@ void TuchulchaWindow::openNew() {
 			_rfHandler, SLOT(setCurrentFile(QString)));
 	connect(model, SIGNAL(statusMessage(QString)),
 			SLOT(showMessage(QString)));
-	connect(flowWidget, SIGNAL(statusMessage(const QString&, int)),
-			SLOT(showMessage(const QString&, int)));
+	connect(flowWidget, SIGNAL(statusMessage(QString)),
+			SLOT(showMessage(QString)));
 	flowWidget->showMaximized();
 }
 

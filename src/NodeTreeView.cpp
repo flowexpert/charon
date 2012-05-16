@@ -32,6 +32,10 @@
 
 /// filter proxy subclass keeping all top-level entities
 class MySortFilterProxy : public QSortFilterProxyModel {
+public:
+	/// default constructor
+	MySortFilterProxy(QObject* pp=0) : QSortFilterProxyModel(pp) {}
+
 protected:
 	/// include top-level entities in the model
 	virtual bool filterAcceptsRow(
@@ -45,16 +49,13 @@ protected:
 NodeTreeView::NodeTreeView(QWidget* pp) : QWidget(pp) {
 	_ui = new Ui::NodeTreeView;
 	_ui->setupUi(this);
-	_model = new QStandardItemModel(1,1);
-	_filter = new MySortFilterProxy();
-	_ui->treeView->setAnimated(true);
+	_filter = new MySortFilterProxy(_ui->treeView);
+	_model = new QStandardItemModel(1,1,_filter);
 	_filter->setSourceModel(_model);
 	_filter->setFilterCaseSensitivity(Qt::CaseInsensitive);
 	_filter->setSortCaseSensitivity(Qt::CaseInsensitive);
 	_filter->setDynamicSortFilter(true);
 	_ui->treeView->setModel(_filter);
-	_ui->treeView->setDragEnabled(true);
-	_ui->treeView->setSelectionMode(QAbstractItemView::SingleSelection);
 	reload();
 }
 
