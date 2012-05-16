@@ -56,6 +56,8 @@ public:
 
 	/// parameter epsilon
 	Parameter<double> epsilon;
+	/// parameter a
+	Parameter<double> a;
 	/// rescaling
 	Parameter<double> lambda;
 
