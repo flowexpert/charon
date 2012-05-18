@@ -22,8 +22,8 @@
  *  \date 20.08.2009
  *
  *  \b Changelog:
- *  -    <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a> 2009-09-17:\n
- *           use CImgList rather than CImg
+ *  - <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a> 2009-09-17:\n
+ *    use CImgList rather than CImg
  */
 
 #ifndef _FILEREADER_H_
@@ -41,11 +41,8 @@
 #define filereader_DECLDIR
 #endif
 
-#ifdef QT_CORE_LIB
-#include <charon-utils/FileReaderWatcher.h>
-#endif
-
 #include <charon-core/ParameteredObject.hxx>
+#include <charon-utils/FileReaderWatcher.h>
 #include <charon-utils/CImg.h>
 
 /// Simple class to read image files.
@@ -59,31 +56,64 @@
 template <typename T>
 class filereader_DECLDIR FileReader : public TemplatedParameteredObject<T> {
 public:
-	/// filename to read image from
+	/// filename/pattern to read image from
 	Parameter<std::string> filename;
 
-#ifdef QT_CORE_LIB
-	/// if watchable is set, file is being monitored for changes
+	/// list of image files
+	/** If this is not empty, the list will be added to the CImgList
+	 *  according to the paramter value of frameDimension.
+	 *  Mixes with filename.
+	 */
+	ParameterList<std::string> fileList;
+
+	/// if watchable is set, files are monitored for changes
 	Parameter< bool > watchable;
-#endif
+
+	/// store frames in z, v or list dimension?
+	/** Depending on application conventions the list of frames
+	 *  will be stored in the CImgList-entries or one of the last
+	 *  two dimensions of a single CImg.
+	 */
+	Parameter<std::string> frameDimension;
+
+	/// is filename a pattern?
+	/** Currently only a simple pattern with one integer is allowed,
+	 *  such as "image-%6.pgm".
+	 *  Pattern Syntax is QRegExp("(.*)%([0-9]+)(.*)").
+	 *  Prefix and tail are kept, the number after the percent sign
+	 *  is the field width, fillup character is zero.
+	 */
+	Parameter<bool> fileNameIsPattern;
+
+	/// pattern parameter start
+	Parameter<unsigned int> start;
+
+	/// pattern parameter step
+	Parameter<unsigned int> step;
+
+	/// pattern parameter end (i < end)
+	Parameter<unsigned int> end;
 
 	/// image data as output slot
 	OutputSlot<cimg_library::CImgList<T> > out;
 
 	/// create a new sample object
-	/// @param name             Object name
+	/// \param name             Object name
 	FileReader(const std::string& name = "");
+	virtual ~FileReader();
 
 protected:
 	/// Update object.
-	/// Reload image and put new data into the output slot.
+	/** (re)load image(s) and put data into the output slot */
 	virtual void execute();
 
-#ifdef QT_CORE_LIB
 private:
-	FileReaderWatcher *fileReaderWatcher;
-#endif
+	/// append image to output slot handling dim switch
+	void _append(const cimg_library::CImgList<T>& tmp);
+	/// print current memory consumption of output slot
+	void _mem();
+	/// watch for file changes
+	FileReaderWatcher* _fileReaderWatcher;
 };
 
 #endif // _FILEREADER_H_
-
