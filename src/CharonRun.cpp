@@ -84,27 +84,62 @@ void CharonRun::_setupMan(QString logFileName) {
 #endif // MSVC
 
 	QTextStream qout(stdout,QIODevice::WriteOnly);
-	qout << "(II) " << (debug?tr("prefering"):tr("ignoring"))
-	<< " " << tr("plugins with debug suffix") << endl;
+	qout << "(II) "
+		<< tr("%1 plugins with debug suffix")
+			.arg((debug?tr("prefering"):tr("ignoring"))) << endl;
 
 	QStringList paths;
+	QStringList libFilter;
+	libFilter << "*.dll" << "*.so" << "*.dylib";
+	QStringList excludeList = settings.value("excludeList").toStringList();
+	QStringList exclExp;
 	paths << settings.value(privPathTag).toStringList();
 	paths << settings.value("globalPluginPath").toStringList();
 	paths.removeDuplicates();
 	paths.removeAll("");
 
 	qout << "(II) " << tr("Paths:") << endl;
+	std::vector<std::string> pathsS, exclS;
+	foreach (QString cur, paths) {
+		QDir curD(cur);
+		cur = curD.canonicalPath();
 
-	std::vector<std::string> pathsS;
-	QStringListIterator iter(paths);
-	while (iter.hasNext()) {
-		QString cur = iter.next().trimmed();
-		qout << "(II) \t" << cur << endl;
-		pathsS.push_back(cur.toStdString());
+		if (curD.exists()) {
+			qout << "(II) \t" << cur << endl;
+			pathsS.push_back(cur.toStdString());
+			// globbing for excludes
+			QStringList libs = curD.entryList(libFilter);
+			foreach (QString lib, libs) {
+				QFileInfo lin(lib);
+				lib = lin.completeBaseName();
+				lib.remove(QRegExp("_d$",Qt::CaseInsensitive));
+#ifndef _MSC_VER
+				lib.remove(QRegExp("^lib",Qt::CaseInsensitive));
+#endif
+				foreach (QString ex, excludeList) {
+					QRegExp rex(ex,Qt::CaseInsensitive,QRegExp::WildcardUnix);
+					if (rex.exactMatch(lib)) {
+						exclExp << lib;
+					}
+				}
+			}
+		}
+		else {
+			qout << "(WW) \t"
+				 << tr("skipping non-existing path: %1").arg(cur) << endl;
+		}
 	}
 	qout << endl;
+	exclExp.removeDuplicates();
+	qout << "(DD) " << tr("found excludes:") << endl;
+	foreach (QString exc, exclExp) {
+		qout << "(DD) \t" << exc << endl;
+		exclS.push_back(exc.toStdString());
+	}
+	qout << "(DD) " << endl;
 
 	// initialize plugin manager with determined settings
+	PluginManager::setExcludeList(exclS);
 	_man = new PluginManager(pathsS, debug);
 }
 

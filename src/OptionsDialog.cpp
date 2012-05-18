@@ -121,8 +121,10 @@ void OptionsDialog::_setExcludes(QStringList list) const {
 QStringList OptionsDialog::_getExcludes() const {
 	QStringList res;
 	for (int i=0; i < _ui->tableExclude->rowCount(); i++) {
-		res << _ui->tableExclude->item(i,0)->
-				data(Qt::DisplayRole).toString().trimmed();
+		QTableWidgetItem* it = _ui->tableExclude->item(i,0);
+		if (it) {
+			res << it->data(Qt::DisplayRole).toString().trimmed();
+		}
 	}
 	res.removeAll(QString(""));
 	res.removeAll(QString::null);

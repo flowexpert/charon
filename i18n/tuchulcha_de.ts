@@ -4,37 +4,47 @@
 <context>
     <name>CharonRun</name>
     <message>
-        <location filename="../src/CharonRun.cpp" line="87"/>
+        <location filename="../src/CharonRun.cpp" line="89"/>
         <source>prefering</source>
         <translation>bevorzuge</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="87"/>
+        <location filename="../src/CharonRun.cpp" line="89"/>
         <source>ignoring</source>
         <translation>ignoriere</translation>
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="88"/>
-        <source>plugins with debug suffix</source>
-        <translation>Plugins mit Debug-Suffix</translation>
+        <source>%1 plugins with debug suffix</source>
+        <translation>%1 Module mit Debug-Endung</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="96"/>
+        <location filename="../src/CharonRun.cpp" line="101"/>
         <source>Paths:</source>
         <translation>Pfade:</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="148"/>
+        <location filename="../src/CharonRun.cpp" line="129"/>
+        <source>skipping non-existing path: %1</source>
+        <translation>überspringe nicht existierenden Pfad: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/CharonRun.cpp" line="134"/>
+        <source>found excludes:</source>
+        <translation>ausgeschlossene Dateien:</translation>
+    </message>
+    <message>
+        <location filename="../src/CharonRun.cpp" line="183"/>
         <source>error updating meta data</source>
         <translation>Fehler beim aktualisieren der Metadaten</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="149"/>
+        <location filename="../src/CharonRun.cpp" line="184"/>
         <source>could not open classes file for writing</source>
         <translation>Klassendatei konnte nicht zum Schreiben geöffnet werden</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="165"/>
+        <location filename="../src/CharonRun.cpp" line="200"/>
         <source>
 # from file &quot;%1&quot;:
 </source>
@@ -43,38 +53,38 @@
 </translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="182"/>
+        <location filename="../src/CharonRun.cpp" line="217"/>
         <source>Loading parameter file &quot;%1&quot;</source>
         <translation>Lade Parameter Datei &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="185"/>
+        <location filename="../src/CharonRun.cpp" line="220"/>
         <source>== Executing Workflow ==</source>
         <translation>== Starte Ausführung ==</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="187"/>
+        <location filename="../src/CharonRun.cpp" line="222"/>
         <source>start time: %1</source>
         <translation>Start-Zeit: %1</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="193"/>
+        <location filename="../src/CharonRun.cpp" line="228"/>
         <location filename="../src/LogDialog.cpp" line="547"/>
         <source>Execution finished.</source>
         <translation>Ausführung beendet.</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="194"/>
+        <location filename="../src/CharonRun.cpp" line="229"/>
         <source>end time : %1</source>
         <translation>End-Zeit: %1</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="195"/>
+        <location filename="../src/CharonRun.cpp" line="230"/>
         <source>runtime  : %1</source>
         <translation>Zeitdauer: %1</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="200"/>
+        <location filename="../src/CharonRun.cpp" line="235"/>
         <source>Caught exception of type &quot;std::string&quot;.</source>
         <oldsource>Caught exception of type &quot;std::string&quot;.
 
@@ -83,14 +93,14 @@ Message:
         <translation>Exception vom Typ &quot;std::string&quot; gefangen.</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="201"/>
-        <location filename="../src/CharonRun.cpp" line="210"/>
-        <location filename="../src/CharonRun.cpp" line="215"/>
+        <location filename="../src/CharonRun.cpp" line="236"/>
+        <location filename="../src/CharonRun.cpp" line="245"/>
+        <location filename="../src/CharonRun.cpp" line="250"/>
         <source>Message:</source>
         <translation>Nachricht:</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="209"/>
+        <location filename="../src/CharonRun.cpp" line="244"/>
         <source>Caught exception of type &quot;%1&quot;.</source>
         <oldsource>Caught exception of type &quot;%1&quot;.
 
@@ -99,7 +109,7 @@ Message:
         <translation>Exception vom Typ &quot;%1&quot; gefangen.</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="214"/>
+        <location filename="../src/CharonRun.cpp" line="249"/>
         <source>Caught exception of type &quot;char*&quot;.</source>
         <oldsource>Caught exception of type &quot;char*&quot;.
 
@@ -108,13 +118,13 @@ Message:
         <translation>Exception vom Typ &quot;char*&quot; gefangen.</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="218"/>
+        <location filename="../src/CharonRun.cpp" line="253"/>
         <source>Caught exception of unknown type.</source>
         <oldsource>Caught exception of unknown type</oldsource>
         <translation>Unbekannte Exception gefangen.</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="222"/>
+        <location filename="../src/CharonRun.cpp" line="257"/>
         <source>Error during execution:</source>
         <translation>Fehler während der Ausführung:</translation>
     </message>
@@ -674,39 +684,14 @@ node</oldsource>
 <context>
     <name>NodeTreeView</name>
     <message>
-        <location filename="../src/NodeTreeView.cpp" line="52"/>
+        <location filename="../src/NodeTreeView.cpp" line="69"/>
         <source>Modules</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/NodeTreeView.cpp" line="62"/>
-        <source>Name</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <location filename="../src/NodeTreeView.cpp" line="62"/>
-        <source>Parameter/Slot</source>
-        <translation>Parameter/Slot</translation>
-    </message>
-    <message>
-        <location filename="../src/NodeTreeView.cpp" line="62"/>
-        <source>Type</source>
-        <translation>Typ</translation>
-    </message>
-    <message>
-        <location filename="../src/NodeTreeView.cpp" line="87"/>
-        <source>InputSlot</source>
-        <translation>Eingang</translation>
-    </message>
-    <message>
-        <location filename="../src/NodeTreeView.cpp" line="92"/>
-        <source>OutputSlot</source>
-        <translation>Ausgang</translation>
-    </message>
-    <message>
-        <location filename="../src/NodeTreeView.cpp" line="97"/>
-        <source>Parameter</source>
-        <translation>Parameter</translation>
+        <location filename="../src/NodeTreeView.cpp" line="75"/>
+        <source>Names</source>
+        <translation>Module</translation>
     </message>
     <message>
         <location filename="../src/NodeTreeView.ui" line="17"/>
@@ -887,17 +872,22 @@ Dies löscht die Parameter aus der Parameterdatei.</translation>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="21"/>
+        <location filename="../src/OptionsDialog.ui" line="31"/>
+        <source>Paths</source>
+        <translation>Pfade</translation>
+    </message>
+    <message>
+        <location filename="../src/OptionsDialog.ui" line="37"/>
         <source>Path settings</source>
         <translation>Pfade</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="30"/>
+        <location filename="../src/OptionsDialog.ui" line="46"/>
         <source>global plugin path</source>
         <translation>globaler Plugin-Pfad</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="40"/>
+        <location filename="../src/OptionsDialog.ui" line="56"/>
         <source>&lt;h3&gt;Module installation directory:&lt;/h3&gt;
 Enter the paths, where your charon Modules are located.&lt;br&gt;&lt;br&gt;
 You may enter multiple paths here, separated by semicolon (;)</source>
@@ -906,7 +896,7 @@ Hier bitte die Pfade eingeben, in denen die Module gespeichert sind.&lt;br&gt;&l
 Mehrere Pfade können getrennt durch Semikolon (;) hintereinander eingegeben werden</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="49"/>
+        <location filename="../src/OptionsDialog.ui" line="65"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -920,59 +910,95 @@ Set this to the directory where the plugins you are currently working on are gen
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="68"/>
+        <location filename="../src/OptionsDialog.ui" line="84"/>
         <source>debug plugin path</source>
         <translation>debug Plugin-Pfad</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="78"/>
+        <location filename="../src/OptionsDialog.ui" line="94"/>
         <source>release plugin path</source>
         <translation>release Plugin-Pfad</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="91"/>
+        <location filename="../src/OptionsDialog.ui" line="107"/>
         <source>General:</source>
         <translation>Allgemein:</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="104"/>
+        <location filename="../src/OptionsDialog.ui" line="120"/>
         <source>Addidional:</source>
         <translation>Zusätzlich:</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="114"/>
-        <source>Plugin Settings</source>
-        <translation>Plugin-Einstellungen</translation>
+        <location filename="../src/OptionsDialog.ui" line="127"/>
+        <source>for each entry, multiple paths separated by semicolon (;) may be given</source>
+        <translation>für die Einträge können jeweils mehrere Pfade
+- durch Semikolon getrennt - angegeben werden</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="120"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-#code {font-family:&apos;monospace&apos;; color:#0000ff; }
-&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;p&gt;
-&lt;h3&gt;Suffixed Modules:&lt;/h3&gt;
-File name &lt;span id=&apos;code&apos;&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &lt;span id=&apos;code&apos;&gt;&amp;lt;name&amp;gt;&lt;/span&gt;). If this option is enabled, suffixed modules are preferred if found, unsuffixed name is used as fallback. Unchecking this option causes suffixed modules to be ignored.&lt;br /&gt;&lt;br /&gt;This option is always on on Debug builds (&lt;span id=&apos;code&apos;&gt;tuchulcha_d&lt;/span&gt;) and may not be changed in Windows (MSVC build).
-&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <location filename="../src/OptionsDialog.ui" line="138"/>
+        <source>Config</source>
+        <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="130"/>
-        <source>Load suffixed modules (debug), unsuffixed as fallback (see what&apos;s this help)</source>
-        <translation>Module mit Debug-Suffix laden, falls möglich (siehe Hilfe)</translation>
+        <location filename="../src/OptionsDialog.ui" line="144"/>
+        <source>Plugin Config</source>
+        <translation>Modul-Konfiguration</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="137"/>
+        <location filename="../src/OptionsDialog.ui" line="150"/>
+        <source>Debug</source>
+        <translation>Debug</translation>
+    </message>
+    <message>
+        <location filename="../src/OptionsDialog.ui" line="157"/>
+        <source>Release</source>
+        <translation>Release</translation>
+    </message>
+    <message>
+        <location filename="../src/OptionsDialog.ui" line="167"/>
+        <source>Debug: prefer modules with debug suffix ( _d), unsuffixed as fallback</source>
+        <translation>Debug: Module mit Debug-Endung (_d) bevorzugen,
+als Ausweichnamen den Namen ohne Endung verwenden</translation>
+    </message>
+    <message>
+        <location filename="../src/OptionsDialog.ui" line="177"/>
+        <source>Workflow Execution</source>
+        <translation>Ausführung</translation>
+    </message>
+    <message>
+        <location filename="../src/OptionsDialog.ui" line="194"/>
+        <source>Exludes</source>
+        <translation>Ausschließen</translation>
+    </message>
+    <message>
+        <location filename="../src/OptionsDialog.ui" line="200"/>
+        <source>Enter dynamic lib names that should be excluded from module search.&lt;br&gt;
+You may use wildcard expressions.&lt;br&gt;
+Enter the names withoud &quot;lib&quot; prefix, debug suffix (_d) or file extension (.so/.dll/...)</source>
+        <translation>Hier können Namen von dynamischen Bibliotheken angegeben werden,&lt;br&gt;
+die bei der Suche nach Modulen übersprungen werden.&lt;br&gt;
+Es können Wildcard-Ausdrücke verwendet werden.&lt;br&gt;
+Bitte die Namen ohne &quot;lib&quot;-Präfix oder die Debug-Endung (_d)&lt;br&gt;
+oder Dateierweiterung (.so/.dll/...) angeben</translation>
+    </message>
+    <message>
+        <location filename="../src/OptionsDialog.ui" line="239"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../src/OptionsDialog.ui" line="183"/>
         <source>delay execution of Workflow (usefull for attaching a debugger)</source>
         <translation>vor der Ausführung warten (für Debugging)</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.cpp" line="122"/>
+        <location filename="../src/OptionsDialog.cpp" line="173"/>
         <source>path not found</source>
         <translation>Pfad nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.cpp" line="123"/>
+        <location filename="../src/OptionsDialog.cpp" line="174"/>
         <source>path &lt;tt&gt;%1&lt;/tt&gt; has not been found.&lt;/br&gt;Remove it from &lt;em&gt;%2&lt;/em&gt;?</source>
         <translation>Der Pfad &lt;tt&gt;%1&lt;/tt&gt; wurde nicht gefunden.&lt;br&gt;Soll er aus &lt;em&gt;%2&lt;/em&gt; entfernt werden?</translation>
     </message>
