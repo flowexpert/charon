@@ -29,6 +29,8 @@
 #include <QSettings>
 #include <QDir>
 #include <QMessageBox>
+#include <QTableWidgetItem>
+#include <QVariant>
 #include <QCoreApplication>
 
 OptionsDialog::OptionsDialog(QWidget* pp, Qt::WindowFlags f) :
@@ -52,10 +54,11 @@ void OptionsDialog::refresh() {
 		settings.value("privatePluginPath").toStringList().join("; "));
 	_ui->ePrivPathD->setText(
 		settings.value("privatePluginPathD").toStringList().join("; "));
-	_ui->checkSuffix->setChecked(
+	_ui->checkDebug->setChecked(
 		settings.value("suffixedPlugins", false).toBool());
 	_ui->checkDelay->setChecked(
 		settings.value("delayExecution",false).toBool());
+	_setExcludes(settings.value("excludeList").toStringList());
 }
 
 void OptionsDialog::apply() {
@@ -66,14 +69,16 @@ void OptionsDialog::apply() {
 		.split(QRegExp("\\s*;\\s*"),QString::SkipEmptyParts));
 	settings.setValue("privatePluginPathD",_ui->ePrivPathD->text()
 		.split(QRegExp("\\s*;\\s*"),QString::SkipEmptyParts));
-	settings.setValue("suffixedPlugins",_ui->checkSuffix->isChecked());
+	settings.setValue("suffixedPlugins",_ui->checkDebug->isChecked());
 	settings.setValue("delayExecution", _ui->checkDelay->isChecked());
+	settings.setValue("excludeList",_getExcludes());
 	if (check()) {
 		refresh();
 	}
 }
 
 void OptionsDialog::restore() {
+	QSettings defaults(":/config/default.ini",QSettings::IniFormat);
 #ifdef UNIX
 	// standard install path on linux systems
 	QString globalPath = "/usr/lib/charon-plugins";
@@ -85,8 +90,9 @@ void OptionsDialog::restore() {
 	_ui->eGlobPath->setText(globalPath);
 	_ui->ePrivPath->setText(QString());
 	_ui->ePrivPathD->setText(QString());
-	_ui->checkSuffix->setChecked(false);
+	_ui->checkRelease->setChecked(true);
 	_ui->checkDelay->setChecked(false);
+	_setExcludes(defaults.value("excludeList").toStringList());
 }
 
 void OptionsDialog::on_bBox_clicked(QAbstractButton* button) {
@@ -103,9 +109,52 @@ void OptionsDialog::on_bBox_clicked(QAbstractButton* button) {
 	}
 }
 
+void OptionsDialog::_setExcludes(QStringList list) const {
+	_ui->tableExclude->clear();
+	_ui->tableExclude->setRowCount(list.size()+1);
+	for (int i = 0; i < list.size(); i++) {
+		_ui->tableExclude->setItem(i,0,new QTableWidgetItem(list[i]));
+	}
+	_ui->tableExclude->setItem(list.size(),0,new QTableWidgetItem());
+}
+
+QStringList OptionsDialog::_getExcludes() const {
+	QStringList res;
+	for (int i=0; i < _ui->tableExclude->rowCount(); i++) {
+		res << _ui->tableExclude->item(i,0)->
+				data(Qt::DisplayRole).toString().trimmed();
+	}
+	res.removeAll(QString(""));
+	res.removeAll(QString::null);
+	return res;
+}
+
+void OptionsDialog::on_tableExclude_itemChanged(QTableWidgetItem* item) const {
+	QTableWidget* tab = _ui->tableExclude;
+	int row = item->row();
+	int rowc = tab->rowCount();
+	if (item->data(Qt::DisplayRole).toString().isEmpty()) {
+		if (row < rowc-1) {
+			tab->removeRow(row);
+		}
+	}
+	else {
+		if (row >= rowc-1) {
+			tab->insertRow(rowc);
+		}
+	}
+}
+
 bool OptionsDialog::check() {
 	QSettings settings;
 	bool errors = false;
+
+	// make sure, that the exclude list is populated
+	// with default entries if unset
+	QSettings defaults(":/config/default.ini",QSettings::IniFormat);
+	if(!settings.contains("excludeList")) {
+		settings.setValue("excludeList",defaults.value("excludeList"));
+	}
 
 	// check current path values
 	QStringList pVars;

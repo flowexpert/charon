@@ -29,6 +29,7 @@
 
 namespace Ui {class OptionsDialog;}
 class QAbstractButton;
+class QTableWidgetItem;
 
 /// option dialog widget
 class OptionsDialog : public QDialog
@@ -58,11 +59,16 @@ public slots:
 private slots:
 	/// handle button click events
 	void on_bBox_clicked(QAbstractButton* button);
+	/// handle exclude list changes
+	void on_tableExclude_itemChanged(QTableWidgetItem* item) const;
+	/// set exclude list
+	void _setExcludes(QStringList list) const;
 
 private:
 	/// designer gui
 	Ui::OptionsDialog* _ui;
-
+	/// get exclude list
+	QStringList _getExcludes() const;
 };
 
 #endif // OPTIONSDIALOG_H

@@ -7,46 +7,62 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>297</height>
+    <width>585</width>
+    <height>301</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Options</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <widget class="QGroupBox" name="pathBox">
-     <property name="title">
-      <string>Path settings</string>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabOptions">
+     <property name="tabPosition">
+      <enum>QTabWidget::West</enum>
      </property>
-     <layout class="QFormLayout" name="formLayout">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabPaths">
+      <property name="enabled">
+       <bool>true</bool>
       </property>
-      <item row="1" column="0">
-       <widget class="QLabel" name="labelGPath">
-        <property name="text">
-         <string>global plugin path</string>
-        </property>
-        <property name="buddy">
-         <cstring>eGlobPath</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDirEdit" name="eGlobPath">
-        <property name="whatsThis">
-         <string>&lt;h3&gt;Module installation directory:&lt;/h3&gt;
+      <attribute name="title">
+       <string>Paths</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QGroupBox" name="pathBox">
+         <property name="title">
+          <string>Path settings</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+          </property>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelGPath">
+            <property name="text">
+             <string>global plugin path</string>
+            </property>
+            <property name="buddy">
+             <cstring>eGlobPath</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDirEdit" name="eGlobPath">
+            <property name="whatsThis">
+             <string>&lt;h3&gt;Module installation directory:&lt;/h3&gt;
 Enter the paths, where your charon Modules are located.&lt;br&gt;&lt;br&gt;
 You may enter multiple paths here, separated by semicolon (;)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QDirEdit" name="ePrivPath">
-        <property name="whatsThis">
-         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDirEdit" name="ePrivPath">
+            <property name="whatsThis">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 #code {font-family:'monospace'; color:#0000ff; }
@@ -56,92 +72,180 @@ One path only is allowed here. It is stored seperately for &lt;span id='code'&gt
 This path will be prepended to the paths given above. This causes these &lt;em&gt;private&lt;/em&gt; plugins to be found first, so having a higher priority than the global ones.&lt;br&gt;&lt;br&gt;
 Set this to the directory where the plugins you are currently working on are generated. Use the directory where the plugins compiled in Debug mode are generated if opened with &lt;span id='code'&gt;tuchulcha_d&lt;/span&gt; and the path of Release mode compilation in  &lt;span id='code'&gt;tuchulca&lt;/span&gt;.
 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QDirEdit" name="ePrivPathD"/>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="lPPathD">
-        <property name="text">
-         <string>debug plugin path</string>
-        </property>
-        <property name="buddy">
-         <cstring>ePrivPath</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="lPPath">
-        <property name="text">
-         <string>release plugin path</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>General:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Addidional:</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QDirEdit" name="ePrivPathD"/>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="lPPathD">
+            <property name="text">
+             <string>debug plugin path</string>
+            </property>
+            <property name="buddy">
+             <cstring>ePrivPath</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="lPPath">
+            <property name="text">
+             <string>release plugin path</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>General:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Addidional:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>for each entry, multiple paths separated by semicolon (;) may be given</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabConfig">
+      <attribute name="title">
+       <string>Config</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="groupSuffix">
+         <property name="title">
+          <string>Plugin Config</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="checkDebug">
+            <property name="text">
+             <string>Debug</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QRadioButton" name="checkRelease">
+            <property name="text">
+             <string>Release</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QLabel" name="lSuffix">
+            <property name="text">
+             <string>Debug: prefer modules with debug suffix ( _d), unsuffixed as fallback</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Workflow Execution</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QCheckBox" name="checkDelay">
+            <property name="text">
+             <string>delay execution of Workflow (usefull for attaching a debugger)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabExclude">
+      <attribute name="title">
+       <string>Exludes</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Enter dynamic lib names that should be excluded from module search.&lt;br&gt;
+You may use wildcard expressions.&lt;br&gt;
+Enter the names withoud &quot;lib&quot; prefix, debug suffix (_d) or file extension (.so/.dll/...)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="tableExclude">
+         <property name="editTriggers">
+          <set>QAbstractItemView::AllEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+         <attribute name="horizontalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
-   <item>
-    <widget class="QGroupBox" name="groupSuffix">
-     <property name="title">
-      <string>Plugin Settings</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QCheckBox" name="checkSuffix">
-        <property name="whatsThis">
-         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-#code {font-family:'monospace'; color:#0000ff; }
-&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;p&gt;
-&lt;h3&gt;Suffixed Modules:&lt;/h3&gt;
-File name &lt;span id='code'&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &lt;span id='code'&gt;&amp;lt;name&amp;gt;&lt;/span&gt;). If this option is enabled, suffixed modules are preferred if found, unsuffixed name is used as fallback. Unchecking this option causes suffixed modules to be ignored.&lt;br /&gt;&lt;br /&gt;This option is always on on Debug builds (&lt;span id='code'&gt;tuchulcha_d&lt;/span&gt;) and may not be changed in Windows (MSVC build).
-&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>Load suffixed modules (debug), unsuffixed as fallback (see what's this help)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkDelay">
-        <property name="text">
-         <string>delay execution of Workflow (usefull for attaching a debugger)</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QDialogButtonBox" name="bBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
@@ -165,7 +269,6 @@ File name &lt;span id='code'&gt;&amp;lt;name&amp;gt;_d&lt;/span&gt; instead of &
   <tabstop>bBox</tabstop>
   <tabstop>eGlobPath</tabstop>
   <tabstop>ePrivPath</tabstop>
-  <tabstop>checkSuffix</tabstop>
  </tabstops>
  <resources/>
  <connections>
