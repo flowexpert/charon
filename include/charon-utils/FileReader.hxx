@@ -93,7 +93,7 @@ void FileReader<T>::_append(const cimg_library::CImgList<T>& tmp) {
 	}
 	else if (frameDimension() == "list") {
 		// add to list always works
-		sout << "(DD) Appending " << tmp.size()
+		sout << "(DD) \t\tappending " << tmp.size()
 				<< " entries to CImgList." << std::endl;
 		o.push_back(tmp);
 	}
@@ -148,7 +148,7 @@ void FileReader<T>::_mem() {
 	cimglist_for(o, i) {
 		cnt +=o[i].size()*sizeof(T);
 	}
-	sout << "(DD) Current memory consumption for output-Slot: "
+	sout << "(DD) \t\tcurrent memory consumption for output-Slot: "
 		<< cnt/1024.0f/1024.0f << " MB" << std::endl;
 }
 
@@ -204,9 +204,8 @@ void FileReader<T>::execute() {
 	out().assign();
 	try {
 		foreach (QString cur, files) {
-			const char* fn = cur.toLocal8Bit().constData();
-			sout << "Loading file '" << fn << "':" << std::endl;
-			cimg_library::CImgList<T> tmp(fn);
+			sout << "(II) \tloading file: " << cur.toStdString() << std::endl;
+			cimg_library::CImgList<T> tmp(cur.toLocal8Bit().constData());
 			_append(tmp);
 			_mem();
 		}

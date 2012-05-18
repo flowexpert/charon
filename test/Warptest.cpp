@@ -50,14 +50,14 @@ void test() {
 	Warp<double> warp;
 	InterpolatorLinear<double> interp;
 	imgObj.filename = PENGUINFILE;
-	imgObj.run();
+	flowObj.filename = PENGUINFILE;
 	imgObj.out.connect(warp.seqInput);
 	flowObj.out.connect(warp.flowInput);
 	interp.out.connect(warp.interpolator);
 
 	// initialize flow
 	std::cout << "-- Load test data" << std::endl;
-	flowObj.filename = PENGUINFILE;
+	imgObj.run();
 	flowObj.run();
 	cimg_library::CImgList<double>& seq = imgObj.out();
 	assert(seq.size() == 1);
