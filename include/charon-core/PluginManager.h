@@ -192,10 +192,12 @@ private:
 	/// @param pf           ParameterFile to read connections from.
 	void _getConnected(std::set<std::string>& visited, const std::set<
 			std::string>& cur, const ParameterFile& pf) const;
-
 	// @}
-public:
 
+	/// exclude list for metadata generation
+	static std::vector<std::string> _excludeList;
+
+public:
 	/// default lib suffix
 #ifdef NDEBUG
 	#define DEFAULT_DEBUG_SUFFIX false
@@ -419,6 +421,9 @@ public:
 	charon_DEPRECATED void executeWorkflow() {
 		runWorkflow();
 	}
+
+	/// set exclude list
+	static void setExcludeList(const std::vector<std::string>& list);
 
 	/**
 	 * Iterates through the plugins available inside the plugin path and

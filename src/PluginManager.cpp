@@ -585,6 +585,8 @@ bool PluginManager::disconnect(const std::string& slot1,
 	return disconnect(*slotP1,*slotP2);
 }
 
+std::vector<std::string> PluginManager::_excludeList;
+
 void PluginManager::createMetadata(const std::string& targetPath) {
 #ifndef MSVC
 	int start = 3;
@@ -620,43 +622,26 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 	}
 	FileTool::changeDir(pathBackup);
 
-	// exclude list on metadata generation
-	static std::vector<std::string> excludeList;
-	if (excludeList.size() == 0) {
-#ifdef _MSC_VER
-		excludeList.push_back("charon-core");
-		excludeList.push_back("msvc");
-		excludeList.push_back("Qt");
-		excludeList.push_back("phonon");
-		excludeList.push_back("libpng");
-		excludeList.push_back("libtiff");
-		excludeList.push_back("zlib");
-		excludeList.push_back("vigraimpex");
-		excludeList.push_back("dll");
-#endif
-	}
-
 	// Now generate metadata for all (unique) plugin names
 	// skipping the names from the exclude list.
 	// Which dll file to use is now handled by the plugin loader.
 	std::set<std::string>::const_iterator pIterU;
 	for (pIterU=pluginsU.begin(); pIterU != pluginsU.end(); pIterU++) {
-		bool ignore = false;
-		std::vector<std::string>::const_iterator iter;
-		for(iter = excludeList.begin(); iter != excludeList.end(); iter++) {
-			if (pIterU->find(*iter)!=std::string::npos) {
-				sout << "(II) Discarding non-plugin file \"" << *pIterU
-					<< ".dll\" (matched pattern \"*" << *iter
-					<< "*\" of exclude list)\n" << std::endl;
-				ignore = true;
-				break;
-			}
-		}
-		if (!ignore) {
+		if (std::find(_excludeList.begin(),_excludeList.end(),*pIterU)
+				== _excludeList.end()) {
+			// not in exclude list
 			_generateMetadataForPlugin(*pIterU,targetPath+"/"+*pIterU+".wrp");
 			sout << "(DD) " << std::endl;
 		}
+		else {
+			sout << "(DD) Discarding non-plugin file: "
+				 << *pIterU << "\n(DD) " << std::endl;
+		}
 	}
+}
+
+void PluginManager::setExcludeList(const std::vector<std::string>& list) {
+	_excludeList = list;
 }
 
 void PluginManager::_generateMetadataForPlugin(
