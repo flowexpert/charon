@@ -111,7 +111,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 #endif
 	}
 
-	create  = (ParameteredObject*(*)(const std::string&, template_type))
+	create  = (ParameteredObject*(*)(const std::string&, ParameteredObject::template_type))
 				GetProcAddress(hInstLibrary,"create");
 	if (!create) {
 		FreeLibrary(hInstLibrary);

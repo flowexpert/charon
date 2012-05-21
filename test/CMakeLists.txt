@@ -57,16 +57,15 @@ IF(BUILD_TESTING)
 	LIST(APPEND tests ParameterRef)
 	LIST(APPEND testTargets paramreftest)
 
-	# dummy test module for PluginManager tests
+	# dummy test modules for PluginManager tests
+	ADD_DEFINITIONS(-DMODULE_DIR="${MODULE_DIR}")
 	ADD_LIBRARY(dummymodule SHARED DummyModule.cpp)
 	TARGET_LINK_LIBRARIES(dummymodule charon-core)
 	GET_TARGET_PROPERTY(DUMMY_LOC dummymodule LOCATION)
 	GET_FILENAME_COMPONENT(MODULE_DIR "${DUMMY_LOC}" PATH)
-	ADD_DEFINITIONS(-DMODULE_DIR="${MODULE_DIR}")
-
-	# dynamic dummy test module for PluginManager tests
 	ADD_LIBRARY(dynamicdummymodule SHARED DynamicDummyModule.cpp)
 	TARGET_LINK_LIBRARIES(dynamicdummymodule charon-core)
+	LIST(APPEND testTargets dummymodule dynamicdummymodule)
 
 	# tests for ParameterReferences
 	ADD_EXECUTABLE(toposorttest topoSortTest.cpp)
