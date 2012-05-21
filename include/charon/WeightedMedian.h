@@ -63,11 +63,14 @@ public:
 	/// weight input slot
 	InputSlot<CliqueWeight<T>* > cliqueWeight;
 
+	/// current pyramid level
+	InputSlot< unsigned int > level;
+
 	/// data output slot
 	OutputSlot<cimg_library::CImgList<T> > out;
 
-	/// radius \f$r\f$ of image windows (size is \f$2*r+1\f$)
-	Parameter<unsigned int> windowRadius;
+	/// radius list of image windows
+	ParameterList<unsigned int> windowRadiusList;
 
 	/// create a new WeightedMedian object
 	/** \param name             Object name */

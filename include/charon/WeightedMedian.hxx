@@ -39,14 +39,17 @@ WeightedMedian<T>::WeightedMedian(const std::string& name) :
 			"e.g. flow estimation more robust. "
 			"This uses the approach described by Li and Osher "
 			"(A new median formula with applications to PDE based denoising) "
-			"equation 3.13, whereas lambda -> 0."  )
+			"equation 3.13, whereas lambda -> 0."  ),
+	level(true,false),
+	windowRadiusList("7")
 {
 	this->_addInputSlot(in,    "in",    "data input",  "CImgList<T>");
 	this->_addInputSlot(cliqueWeight, "cliqueWeight", "clique weight function input", "CliqueWeight<T>*");
+	this->_addInputSlot(level,    "level",    "current pyramide level (optional)",  "uint");
 	this->_addOutputSlot(out,  "out",   "data output", "CImgList<T>");
 	this->_addParameter(
-			windowRadius, "windowRadius",
-			"radius r of image windows (size is 2*r+1)",  7u);
+			windowRadiusList, "windowRadiusList",
+			"radius list of image windows, level selects, otherwise first element is chosen", "T_list");
 }
 
 struct SNeighborhood {
@@ -70,8 +73,13 @@ void WeightedMedian<T>::execute() {
 	CliqueWeight<T>* _cliqueWeight = cliqueWeight();
 
 	cimg_library::CImgList<T>& o = out();
-	const int& r = windowRadius();
 	o = img;
+
+	int r;
+	if (level.connected())
+		r = windowRadiusList()[level()];
+	else
+		r = windowRadiusList()[0];
 
 	int nbhCnt = 4*r*r + 4*r + 1 ;
 
