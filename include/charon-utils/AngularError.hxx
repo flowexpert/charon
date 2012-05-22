@@ -60,11 +60,11 @@ void AngularError<T>::execute() {
 	cimg_library::CImg<T> tmp( i1[0].width(), i1[0].height(), i1[0].depth(),
 	                           i1[0].spectrum() );
 
-	T angle1, angle2;
-	T angularError;
+	double angle1, angle2;
+	double angularError;
 
-	T sum = T(0);
-	unsigned int pixelCnt = 0;
+	double sum = 0.0;
+	size_t pixelCnt = 0;
 	cimg_forXY(tmp,x,y) {
 
 		angle1 = atan2(fabs(double(i1(1,x,y,0,0))), fabs(double(i1(0,x,y,0,0))));
@@ -73,7 +73,7 @@ void AngularError<T>::execute() {
 
 		angularError /= M_PI;
 		angularError *= T(180);
-		tmp(x,y,0,0) = angularError;
+		tmp(x,y,0,0) = T(angularError);
 		sum += angularError;
 		++pixelCnt;
 	}

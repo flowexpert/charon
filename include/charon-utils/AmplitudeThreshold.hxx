@@ -107,13 +107,13 @@ void AmplitudeThreshold<T>::execute() {
 		}
 		else if ((lowpass && flowLength > threshold) ||
 				(!lowpass && flowLength < threshold)) {
-			float scaleFactor = threshold / flowLength;
+			double scaleFactor = threshold / flowLength;
 			cimglist_for(input,l) {
 				if (killOutlier==true) {
 					output[l](x,y,z,c) = T(0.0f);
 				}
 				else {
-					output[l](x,y,z,c) = input[l](x,y,z,c)* scaleFactor;
+					output[l](x,y,z,c) = T(input[l](x,y,z,c)* scaleFactor);
 				}
 			}
 		}

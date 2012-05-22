@@ -54,7 +54,7 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 		"\tKeep in mind that charon uses a CImgList of width 3 for color images,"
 		" not a single CImg with the spectrum(c) dimension set to 3 like this operation does.<br>"
 		"\tUse the channelconverter plugin to change the representation",
-	"{Passthrough;Addition;Difference;Multiplication;Division;Power of;Bitwise And;Bitwise Or;Bitwise Xor;Bitwise Not;Left Shift;Right Shift;Mask;Log;Exp;to Gray;to RGB}") ;
+	"{Passthrough;Addition;Difference;Multiplication;Division;Power of;Absolute;Bitwise And;Bitwise Or;Bitwise Xor;Bitwise Not;Left Shift;Right Shift;Mask;Log;Exp;to Gray;to RGB}") ;
 
 	ParameteredObject::_addParameter(
 			_withValue, "withValue",
@@ -95,8 +95,10 @@ void BinOperatorCImg<T>::execute() {
 				out(l) = (withValue ? first * val : first.get_mul(second)) ;
 		else if(op == "Division")
 				out(l) = (withValue ? first / val : first.get_div(second)) ;
-		else if(op == "Power of")		
+		else if(op == "Power of")
 			out(l) = (withValue ? first.get_pow(val) : first.get_pow(second)) ;
+		else if(op == "Absolute")
+			out(l) = first.get_abs() ;
 		else if(op == "Bitwise And")
 			out(l) = (withValue ? first & val : first & second) ;
 		else if(op == "Bitwise Or")

@@ -81,8 +81,8 @@ void Overlay<T>::execute() {
 			fgnd = fg(kk,xx,yy,zz,cc);
 			bgnd = bg(kk,xx,yy,zz,cc);
 
-			fe = f;
-			be = b;
+			fe = T(f);
+			be = T(b);
 
 			if (_blackIsTransparent) {
 				if (fgnd == 0)

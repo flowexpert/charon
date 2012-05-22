@@ -121,7 +121,7 @@ void Resize<T>::execute() {
 		// rescale
 		cimg_forXYZC( out()[k], x, y, z, t )
 		{
-			out()[k]( x, y, z, t ) = _scaling * out()[k]( x, y, z, t );
+			out()[k]( x, y, z, t ) = T(_scaling * out()[k]( x, y, z, t ));
 		}
 	}
 }

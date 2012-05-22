@@ -118,9 +118,9 @@ void Flow2HSV<T>::execute() {
 		const double& hue = interm(1,x,y,z,t);
 		assert(hue >= 0. && hue <= 360.);
 		// here conversion from double to T is performed
-		o(t,x,y,z,0) = hue;
-		o(t,x,y,z,1) = (sc==0) ? len : 1.; // length is saturation
-		o(t,x,y,z,2) = (sc==1) ? len : 1.; // length is value
+		o(t,x,y,z,0) = T(hue);
+		o(t,x,y,z,1) = T((sc==0) ? len : 1.); // length is saturation
+		o(t,x,y,z,2) = T((sc==1) ? len : 1.); // length is value
 	}
 	cimglist_for(o,kk) {
 		o.at(kk).HSVtoRGB();

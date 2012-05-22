@@ -99,7 +99,8 @@ void Warp<T>::execute() {
 		sout << "\tignoring first " << ignore << " image(s) of sequence "
 				<< "(leaving them untouched)" << std::endl;
 
-	float xn, yn, zn, res;
+	float xn, yn, zn ;
+	T res ;
 	int tf;
 	cimglist_for(warped, i) {
 		cimg_forC(warped[i], t) {
@@ -108,11 +109,11 @@ void Warp<T>::execute() {
 				continue;
 
 			cimg_forXYZ(warped[i],x,y,z) {
-				xn = x+l*flow(0u,x,y,z,tf);
-				yn = y+l*flow(1u,x,y,z,tf);
-				zn = z;
+				xn = float(x+l*flow(0u,x,y,z,tf));
+				yn = float(y+l*flow(1u,x,y,z,tf));
+				zn = float(z);
 				if(is3D) {
-					zn += l*flow(2u,x,y,z,tf);
+					zn += float(l*flow(2u,x,y,z,tf));
 				}
 				res = interp.interpolate(
 						seq[i], xn, yn, zn, t);
