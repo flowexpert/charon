@@ -296,6 +296,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.h
 		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.hxx
 	)
+	ADD_LIBRARY(cut SHARED
+		Cut.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Cut.h
+		${CHARON_UTILS_INCLUDE_DIR}/Cut.hxx
+	)
 	IF(QT4_FOUND)
 		SET(toggletimeout_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ToggleTimeout.h)
 		QT4_WRAP_CPP(toggletimeout_HEADERS_MOCKED ${toggletimeout_HEADERS_TOMOC})
@@ -350,6 +355,7 @@ IF(USE_CIMG)
 		strictresizexy
 		size
 		fitsizes
+		cut
 	)
 	IF(QT4_FOUND)
 		LIST(APPEND Plugins_CImg
