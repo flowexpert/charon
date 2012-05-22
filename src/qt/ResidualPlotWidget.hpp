@@ -24,6 +24,10 @@
 #ifndef RESIDUALPLOTWIDGET_HPP_
 #define RESIDUALPLOTWIDGET_HPP_
 
+#ifdef _MSC_VER
+#define QWT_DLL
+#endif
+
 #include <qwt_data.h>
 #include <qwt_plot.h>
 #include <qwt_plot_canvas.h>
