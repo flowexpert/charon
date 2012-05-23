@@ -40,8 +40,7 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 	     "EnergyBCC", name,
 	     "<h2>Implementation of the brightness constancy constraint."
 	     ),
-	motionUV(true,false),
-	penaltyFunction(true,false)
+	motionUV(true,false)
 {
 	this->_addInputSlot(penaltyFunction,
 	                    "penaltyFunction",

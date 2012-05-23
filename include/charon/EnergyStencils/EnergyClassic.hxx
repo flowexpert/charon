@@ -212,6 +212,11 @@ void EnergyClassic<T>::updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p, const int&)
 {
+	// penalty function derivative
+	std::vector<T> d_psi( 2, T(1.0) );
+	if (penaltyFunction.connected())
+		d_psi = this->getEnergyGradient( 0, p.x, p.y, p.z, 0 );
+
 	// fill stencil with masks
 	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
 		SubStencil<T> entry;
@@ -220,13 +225,15 @@ void EnergyClassic<T>::updateStencil(
 
 			// shared assignment (no copying of values)
 			entry.data.assign(_dataMask,true);
+			entry.data *= d_psi[i];
 
 			entry.pattern.assign(_patternMask,true);
 			if (motionUV.connected()) {
-				this->_rhs = _rhsVals[i](p.x,p.y,p.z,p.t);
+				this->_rhs = d_psi[i] * _rhsVals[i](p.x,p.y,p.z,p.t);
 			} else {
 				this->_rhs = T(0);
 			}
+
 		} else {
 			// empty substencil for other unknowns
 			entry.center = Point4D<int>();
