@@ -40,7 +40,8 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 	     "EnergyBCC", name,
 	     "<h2>Implementation of the brightness constancy constraint."
 	     ),
-	motionUV(true,false)
+	motionUV(true,false),
+	penaltyFunction(true,false)
 {
 	this->_addInputSlot(penaltyFunction,
 	                    "penaltyFunction",
@@ -181,18 +182,24 @@ void EnergyBCC<T>::updateStencil(
         double dataV = cik * ciy;
         double rhs   = cik * (-cit);
 
+	// penalty function derivative
+	double d_psi = 1.0;
 	if (motionUV.connected()) {
+
         	// initial flow guess from previous iteration
 	        const T u0 = motionUV()[0](x,y,z);
 	        const T v0 = motionUV()[1](x,y,z);
 		rhs += u0*dataU+v0*dataV;
+
+		if (penaltyFunction.connected())
+			d_psi = _penaltyFunction->getPenaltyGradient( pow( cit + cix*u0 + ciy*v0, 2 ) );
 	}
 
         // fill calculated data into stencil members, applying lambda
         const T      l  = this->lambda();
-        this->_subStencils["a1"].data(0,0) = l * T(dataU);
-        this->_subStencils["a2"].data(0,0) = l * T(dataV);
-        this->_rhs  = l * T(rhs);
+        this->_subStencils["a1"].data(0,0) = l * d_psi * T(dataU);
+        this->_subStencils["a2"].data(0,0) = l * d_psi * T(dataV);
+        this->_rhs  = l * d_psi * T(rhs);
 }
 
 template <class T>
