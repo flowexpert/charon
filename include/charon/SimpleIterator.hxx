@@ -24,8 +24,12 @@
 #ifndef _SIMPLEITERATOR_HXX_
 #define _SIMPLEITERATOR_HXX_
 
+
 #include "SimpleIterator.h"
 #include <limits>
+#ifdef QT_GUI_LIB
+#include <QApplication>
+#endif
 
 template <typename T>
 SimpleIterator<T>::SimpleIterator(const std::string& name) :
@@ -113,7 +117,10 @@ void SimpleIterator<T>::execute() {
 
 #ifdef QT_GUI_LIB
 	// add remote control to iterator
-	_remoteControl = new SimpleIteratorRemoteControl(this->getName());
+	if (qobject_cast<QApplication*>(qApp)) {
+		_remoteControl = new SimpleIteratorRemoteControl(
+					QString::fromStdString(this->getName()));
+	}
 #endif
 
 	initialize();
@@ -160,9 +167,9 @@ void SimpleIterator<T>::iterate() {
 	bool cont;
 	do {
 #ifdef QT_GUI_LIB
-	        if (breakPoint()) {
-        	        _remoteControl->setModal(true);
-                	ret = _remoteControl->exec();
+		if (_remoteControl && breakPoint()) {
+			_remoteControl->setModal(true);
+			ret = _remoteControl->exec();
 			sout << "ret = " << ret << std::endl;
 			switch (ret) {
 			case 1:    //    STEP
@@ -177,7 +184,7 @@ void SimpleIterator<T>::iterate() {
 				breakPoint() = false;
 				break;
 			}
-       		 }
+		}
 #endif
 		cont = singleStep();
 		if (stop.connected()) {

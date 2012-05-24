@@ -24,14 +24,15 @@
 
 #include <charon/SimpleIteratorRemoteControl.h>
 
-#include <QtGui/QHBoxLayout>
-#include <QtCore/QString>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QLabel>
 
-SimpleIteratorRemoteControl::SimpleIteratorRemoteControl( const std::string caption, QWidget *parent )
-	: QDialog(parent)
+SimpleIteratorRemoteControl::SimpleIteratorRemoteControl(
+		QString caption, QWidget* pp) : QDialog(pp)
 {
-	this->setWindowTitle(QString::fromStdString(caption));
-	QHBoxLayout *layout = new QHBoxLayout(this);
+	setWindowTitle(caption);
+	QHBoxLayout* layout = new QHBoxLayout(this);
 	btnStep = new QPushButton("STEP");
 	btnStep->setObjectName("btnStep");
 	layout->addWidget(btnStep);
@@ -47,18 +48,14 @@ SimpleIteratorRemoteControl::SimpleIteratorRemoteControl( const std::string capt
 	QMetaObject::connectSlotsByName( this );
 }
 
-void SimpleIteratorRemoteControl::on_btnStep_clicked()
-{
+void SimpleIteratorRemoteControl::on_btnStep_clicked() {
 	done(1);
 }
 
-void SimpleIteratorRemoteControl::on_btnBreak_clicked()
-{
+void SimpleIteratorRemoteControl::on_btnBreak_clicked() {
 	done(2);
 }
 
-void SimpleIteratorRemoteControl::on_btnContinue_clicked()
-{
+void SimpleIteratorRemoteControl::on_btnContinue_clicked() {
 	done(3);
 }
-
