@@ -25,35 +25,36 @@
 #define _CUT_HXX_
 
 #include "Cut.h"
-#include <sstream>
-
-using namespace cimg_library ;
 
 template <typename T>
 Cut<T>::Cut(const std::string& name) :
-		TemplatedParameteredObject<T>("Cut", name, "cutoff values<br>"
-		"pixel values higher than upperCut will be set to upperCut, and vice versa for lowerCut<br>"
+	TemplatedParameteredObject<T>(
+		"Cut", name, "cutoff values<br>"
+		"pixel values higher than upperCut will be set to upperCut, "
+		"and vice versa for lowerCut<br>"
 		"image dimensions remain unchanged")
 {
 
-	ParameteredObject::_addParameter (_upperCut, "upperCut", "upper cutoff value", 1.0) ;
-	ParameteredObject::_addParameter (_lowerCut, "lowerCut", "lower cutoff value", 0.0) ;
+	ParameteredObject::_addParameter (
+				_upperCut, "upperCut", "upper cutoff value", 1.0) ;
+	ParameteredObject::_addParameter (
+				_lowerCut, "lowerCut", "lower cutoff value", 0.0) ;
 
-	ParameteredObject::_addInputSlot(_in, "in", "input image", "CImgList<T>"); 
-	ParameteredObject::_addOutputSlot(_out, "out", "output image", "CImgList<T>"); 
+	ParameteredObject::_addInputSlot(
+				_in, "in", "input image", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(
+				_out, "out", "output image", "CImgList<T>");
 }
 
 template <typename T>
 void Cut<T>::execute() {
-
-	const CImgList<T>& in = _in() ;
+	const cil::CImgList<T>& in = _in() ;
 	_out().assign(in) ;
-	CImgList<T>& out = _out() ;
+	cil::CImgList<T>& out = _out() ;
 	cimglist_for(in, l)
 	{
 		out(l) = in(l).get_cut(T(_lowerCut()),T(_upperCut())) ;
 	}
-
 }
 
 #endif /* _DIST2DEPTH_HXX_ */

@@ -44,26 +44,23 @@ template <typename T>
 class cut_DECLDIR Cut :
 		public TemplatedParameteredObject<T> {
 public:
-	
+	/// lower cutoff value
 	Parameter < double > _lowerCut ;
-
+	/// upper cutoff value
 	Parameter < double > _upperCut ;
 
-
 	/// input image
-	InputSlot < cimg_library::CImgList<T> > _in;
-
+	InputSlot < cil::CImgList<T> > _in;
 	/// cut output
-	OutputSlot < cimg_library::CImgList<T> > _out;
-	
+	OutputSlot < cil::CImgList<T> > _out;
 
 	/// create a new Cut object
 	/// \param name          Instance name
 	Cut(const std::string& name);
 
+protected:
 	/// Update object.
 	virtual void execute();
-
 };
 
 #endif // _DISP2DEPTH_H_
