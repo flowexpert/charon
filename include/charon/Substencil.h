@@ -24,7 +24,7 @@
 #ifndef _SUBSTENCIL_H_
 #define _SUBSTENCIL_H_
 
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 #include "Point4D.h"
 
 /// Mask for one unknown or general mask if no unknowns are used
