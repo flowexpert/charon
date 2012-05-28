@@ -58,13 +58,13 @@ public:
 		const std::string& doc /**[in] stencil documentation*/);
 
 	/// function yielding penalty
-	virtual T getPenalty( T difference ) = 0;
+	virtual T getPenalty( T squaredDifference ) = 0;
 
 	/// function yielding penalty gradient wrt its argument
-	virtual T getPenaltyGradient( T difference ) = 0;
+	virtual T getPenaltyGradient( T squaredDifference ) = 0;
 
 	/// function yielding penalty Hessian wrt its argument
-	virtual T getPenaltyHessian( T difference ) = 0;
+	virtual T getPenaltyHessian( T squaredDifference ) = 0;
 
 protected:
 	/// \implements ParameteredObject::execute()

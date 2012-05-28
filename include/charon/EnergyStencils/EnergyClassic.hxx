@@ -99,19 +99,19 @@ void EnergyClassic<T>::execute() {
 template <class T>
 T EnergyClassic<T>::_energy( T x, T xo )
 {
-	return _penaltyFunction->getPenalty( x - xo );
+	return _penaltyFunction->getPenalty( pow(x - xo, 2) );
 }
 
 template <class T>
 T EnergyClassic<T>::_energyGradient( T x, T xo )
 {
-	return _penaltyFunction->getPenaltyGradient( x - xo );
+	return _penaltyFunction->getPenaltyGradient( pow(x - xo, 2) );
 }
 
 template <class T>
 T EnergyClassic<T>::_energyHessian( T x, T xo )
 {
-	return _penaltyFunction->getPenaltyHessian( x - xo );
+	return _penaltyFunction->getPenaltyHessian( pow(x - xo, 2) );
 }
 
 template <class T>

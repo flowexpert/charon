@@ -48,23 +48,23 @@ void PenaltyLorentzian<T>::execute() {
 }
 
 template <class T>
-T PenaltyLorentzian<T>::getPenalty( T diff )
+T PenaltyLorentzian<T>::getPenalty( T sqrDiff )
 {
-	T penalty = log( double(1 + (diff*diff)/(2*_sigma*_sigma)) ) ;
+	T penalty = log( double(1 + sqrDiff/(2*_sigma*_sigma)) ) ;
 	return T(this->_lamb * penalty);
 }
 
 template <class T>
-T PenaltyLorentzian<T>::getPenaltyGradient( T diff )
+T PenaltyLorentzian<T>::getPenaltyGradient( T sqrDiff )
 {
-	T penaltyGradient = (diff / (_sigma*_sigma)) / ( 1 + (diff*diff)/(2*_sigma*_sigma) );
+	T penaltyGradient = (pow(sqrDiff, 0.5) / (_sigma*_sigma)) / ( 1 + sqrDiff/(2*_sigma*_sigma) );
 	return T(this->_lamb * penaltyGradient);
 }
 
 template <class T>
-T PenaltyLorentzian<T>::getPenaltyHessian( T diff )
+T PenaltyLorentzian<T>::getPenaltyHessian( T sqrDiff )
 {
-	T penaltyHessian = (_sigma*_sigma)/(diff*diff) - T(0.5) ;
+	T penaltyHessian = (_sigma*_sigma)/sqrDiff - T(0.5) ;
 	return T(this->_lamb * penaltyHessian);
 }
 

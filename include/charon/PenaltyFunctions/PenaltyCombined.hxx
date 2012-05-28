@@ -55,29 +55,29 @@ void PenaltyCombined<T>::execute() {
 }
 
 template <class T>
-T PenaltyCombined<T>::getPenalty( T diff )
+T PenaltyCombined<T>::getPenalty( T sqrDiff )
 {
 	T penalty;
-	penalty = _lambda1 * fstPenaltyFunction()->getPenalty( diff )
-	        + _lambda2 * sndPenaltyFunction()->getPenalty( diff );
+	penalty = _lambda1 * fstPenaltyFunction()->getPenalty( sqrDiff )
+	        + _lambda2 * sndPenaltyFunction()->getPenalty( sqrDiff );
 	return T(penalty);
 }
 
 template <class T>
-T PenaltyCombined<T>::getPenaltyGradient( T diff )
+T PenaltyCombined<T>::getPenaltyGradient( T sqrDiff )
 {
 	T penaltyGradient;
-	penaltyGradient = _lambda1 * fstPenaltyFunction()->getPenaltyGradient( diff )
-	                + _lambda2 * sndPenaltyFunction()->getPenaltyGradient( diff );
+	penaltyGradient = _lambda1 * fstPenaltyFunction()->getPenaltyGradient( sqrDiff )
+	                + _lambda2 * sndPenaltyFunction()->getPenaltyGradient( sqrDiff );
 	return T(penaltyGradient);
 }
 
 template <class T>
-T PenaltyCombined<T>::getPenaltyHessian( T diff )
+T PenaltyCombined<T>::getPenaltyHessian( T sqrDiff )
 {
 	T penaltyHessian;
-	penaltyHessian = _lambda1 * fstPenaltyFunction()->getPenaltyHessian( diff )
-	               + _lambda2 * sndPenaltyFunction()->getPenaltyHessian( diff );
+	penaltyHessian = _lambda1 * fstPenaltyFunction()->getPenaltyHessian( sqrDiff )
+	               + _lambda2 * sndPenaltyFunction()->getPenaltyHessian( sqrDiff );
 	return T(penaltyHessian);
 }
 

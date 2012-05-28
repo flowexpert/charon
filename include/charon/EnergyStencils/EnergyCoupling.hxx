@@ -61,8 +61,8 @@ T EnergyCoupling<T>::getEnergy( int, int xI, int yI, int zI, int )
 	T u2 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
 	T v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-	T energy = _penaltyFunction->getPenalty( u1 - u2 )
-	         + _penaltyFunction->getPenalty( v1 - v2 );
+	T energy = _penaltyFunction->getPenalty( pow(u1 - u2, 2) )
+	         + _penaltyFunction->getPenalty( pow(v1 - v2, 2) );
 
 	return T(_lamb * energy);
 }
@@ -77,8 +77,8 @@ std::vector<T> EnergyCoupling<T>::getEnergyGradient(
 	T v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
 	// IMPORTANT! Gradients wrt u1 resp. v1 !
-	T energyGradientU1 = _penaltyFunction->getPenaltyGradient( u1 - u2 );
-	T energyGradientV1 = _penaltyFunction->getPenaltyGradient( v1 - v2 );
+	T energyGradientU1 = _penaltyFunction->getPenaltyGradient( pow(u1 - u2, 2) );
+	T energyGradientV1 = _penaltyFunction->getPenaltyGradient( pow(v1 - v2, 2) );
 
 	std::vector<T> ret( 2, T(0.0) );
 	ret[0] = T(_lamb * energyGradientU1);
@@ -96,9 +96,9 @@ std::vector<T> EnergyCoupling<T>::getEnergyHessian(
 	T u2 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
 	T v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-	T energyHessianU1U1 = _penaltyFunction->getPenaltyHessian( u1 - u2 );
+	T energyHessianU1U1 = _penaltyFunction->getPenaltyHessian( pow(u1 - u2, 2) );
 	T energyHessianU1V1 = T(0.0);
-	T energyHessianV1V1 = _penaltyFunction->getPenaltyHessian( v1 - v2 );
+	T energyHessianV1V1 = _penaltyFunction->getPenaltyHessian( pow(v1 - v2, 2) );
 
 	std::vector<T> ret( 4, T(0.0) );
 	ret[0] = T(_lamb * energyHessianU1U1);

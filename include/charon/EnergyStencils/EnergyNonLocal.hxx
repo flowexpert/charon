@@ -143,11 +143,11 @@ T EnergyNonLocal<T>::getEnergy( int, int xI, int yI, int zI, int )
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      pixelEnergy += weight * _penaltyFunction->getPenalty( fabs(double(du)) );
-      pixelEnergy += weight * _penaltyFunction->getPenalty( fabs(double(dv)) );
+      pixelEnergy += weight * _penaltyFunction->getPenalty( pow(double(du), 2) );
+      pixelEnergy += weight * _penaltyFunction->getPenalty( pow(double(dv), 2) );
     } else {
-      pixelEnergy += _penaltyFunction->getPenalty( fabs(double(du)) );
-      pixelEnergy += _penaltyFunction->getPenalty( fabs(double(dv)) );
+      pixelEnergy += _penaltyFunction->getPenalty( pow(double(du), 2) );
+      pixelEnergy += _penaltyFunction->getPenalty( pow(double(dv), 2) );
       weight_sum += 1.0;
     }
   }
@@ -220,11 +220,11 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      pixelGradientU += weight * _penaltyFunction->getPenaltyGradient( fabs(double(du)) ) * signum(du);
-      pixelGradientV += weight * _penaltyFunction->getPenaltyGradient( fabs(double(dv)) ) * signum(dv);
+      pixelGradientU += weight * _penaltyFunction->getPenaltyGradient( pow(double(du), 2) ) * signum(du);
+      pixelGradientV += weight * _penaltyFunction->getPenaltyGradient( pow(double(dv), 2) ) * signum(dv);
     } else {
-      pixelGradientU += _penaltyFunction->getPenaltyGradient( fabs(double(du)) ) * signum(double(du));
-      pixelGradientV += _penaltyFunction->getPenaltyGradient( fabs(double(dv)) ) * signum(double(dv));
+      pixelGradientU += _penaltyFunction->getPenaltyGradient( pow(double(du), 2) ) * signum(double(du));
+      pixelGradientV += _penaltyFunction->getPenaltyGradient( pow(double(dv), 2) ) * signum(double(dv));
       weight_sum += 1.0;
     }
   }
@@ -297,11 +297,11 @@ std::vector<T> EnergyNonLocal<T>::getEnergyHessian(
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      energyHessianUU += weight * _penaltyFunction->getPenaltyHessian(du);
-      energyHessianVV += weight * _penaltyFunction->getPenaltyHessian(dv);
+      energyHessianUU += weight * _penaltyFunction->getPenaltyHessian(pow(du,2));
+      energyHessianVV += weight * _penaltyFunction->getPenaltyHessian(pow(dv,2));
     } else {
-      energyHessianUU += _penaltyFunction->getPenaltyHessian(du);
-      energyHessianVV += _penaltyFunction->getPenaltyHessian(dv);
+      energyHessianUU += _penaltyFunction->getPenaltyHessian(pow(du,2));
+      energyHessianVV += _penaltyFunction->getPenaltyHessian(pow(dv,2));
       weight_sum += 1.0;
     }
   }
