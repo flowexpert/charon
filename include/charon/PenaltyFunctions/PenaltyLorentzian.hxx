@@ -64,7 +64,7 @@ T PenaltyLorentzian<T>::getPenaltyGradient( T sqrDiff )
 template <class T>
 T PenaltyLorentzian<T>::getPenaltyHessian( T sqrDiff )
 {
-	T penaltyHessian = -pow((2*_sigma*_sigma + sqrDiff), -2);
+	T penaltyHessian = -pow(double(2.0*_sigma*_sigma + sqrDiff), -2.0);
 	return T(this->_lamb * penaltyHessian);
 }
 

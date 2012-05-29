@@ -85,7 +85,8 @@ void PyramidRescale<T>::execute() {
 	// rescale sequence
 	so = si;
 	if(stepsDown > 0) {
-		const double blur = sigma * stepsDown;
+		//can be float as CImg::deriche only takes float as input
+		const float blur = float(sigma * stepsDown);
 		cimglist_for(so,kk) {
 			so.at(kk).deriche(blur,0,'x');
 			so.at(kk).deriche(blur,0,'y');
@@ -100,7 +101,7 @@ void PyramidRescale<T>::execute() {
 #ifndef NDEBUG
 		sout << "\t" << "scaling down to " << tx << "x" << ty << std::endl;
 #endif
-		const double blur = sigma * stepsDown;
+		const float blur = sigma * stepsDown;
 		cimglist_for(fo,kk) {
 			assert(fo.at(kk).is_sameXY(sx,sy));
 			fo.at(kk).deriche(blur,0,'x');

@@ -41,7 +41,7 @@ void SampleGenerator<T>::execute() {
 			const std::vector<double>& spl = sampler()->sample();
 			assert(spl.size() == n);
 			for (kk = 0; kk < n; kk++)
-				res(kk,x,y,z,t) = spl[kk];
+				res(kk,x,y,z,t) = T(spl[kk]);
 		}
 	}
 	catch (std::bad_alloc) {

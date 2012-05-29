@@ -106,7 +106,7 @@ T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
 	T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
 	T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-	T energy = _penaltyFunction->getPenalty( pow(It + Ix*u + Iy*v, 2) );
+	T energy = _penaltyFunction->getPenalty( pow(double(It + Ix*u + Iy*v), 2.0) );
 
 	return T(this->_lamb * energy);
 }
@@ -122,7 +122,7 @@ std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int
         T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
 	T tmp  = It + Ix*u + Iy*v ;
-        T tmp2 = _penaltyFunction->getPenaltyGradient( pow(tmp, 2) );
+        T tmp2 = _penaltyFunction->getPenaltyGradient( pow(double(tmp), 2.0) );
 	T tmp3 = tmp * tmp2;
 
 	T energyGradientU = Ix * tmp3;
@@ -145,7 +145,7 @@ std::vector<T> EnergyBCC<T>::getEnergyHessian( int, int xI, int yI, int zI, int 
 	T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
 	T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-	T tmp  = pow(It + Ix*u + Iy*v, 2) ;
+	T tmp  = pow(double(It + Ix*u + Iy*v), 2.0) ;
 	T tmp2 = _penaltyFunction->getPenaltyGradient( tmp );
 	T tmp3 = _penaltyFunction->getPenaltyHessian( tmp );
 	T tmp4 = tmp2 + tmp * tmp3 ;

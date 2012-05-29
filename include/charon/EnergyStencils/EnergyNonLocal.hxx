@@ -297,11 +297,11 @@ std::vector<T> EnergyNonLocal<T>::getEnergyHessian(
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      energyHessianUU += weight * _penaltyFunction->getPenaltyHessian(pow(du,2));
-      energyHessianVV += weight * _penaltyFunction->getPenaltyHessian(pow(dv,2));
+      energyHessianUU += weight * _penaltyFunction->getPenaltyHessian(pow(double(du),2.0));
+      energyHessianVV += weight * _penaltyFunction->getPenaltyHessian(pow(double(dv),2.0));
     } else {
-      energyHessianUU += _penaltyFunction->getPenaltyHessian(pow(du,2));
-      energyHessianVV += _penaltyFunction->getPenaltyHessian(pow(dv,2));
+      energyHessianUU += _penaltyFunction->getPenaltyHessian(pow(double(du),2));
+      energyHessianVV += _penaltyFunction->getPenaltyHessian(pow(double(dv),2));
       weight_sum += 1.0;
     }
   }
