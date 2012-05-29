@@ -121,9 +121,12 @@ std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int
         T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
         T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-        T tmp = _penaltyFunction->getPenaltyGradient( pow(It + Ix*u + Iy*v, 2) );
-	T energyGradientU = Ix * tmp;
-	T energyGradientV = Iy * tmp;
+	T tmp  = It + Ix*u + Iy*v ;
+        T tmp2 = _penaltyFunction->getPenaltyGradient( pow(tmp, 2) );
+	T tmp3 = tmp * tmp2;
+
+	T energyGradientU = Ix * tmp3;
+	T energyGradientV = Iy * tmp3;
 
 	std::vector<T> ret( 2, T(0.0) );
 	ret[0] = T(this->_lamb * energyGradientU);
@@ -142,10 +145,14 @@ std::vector<T> EnergyBCC<T>::getEnergyHessian( int, int xI, int yI, int zI, int 
 	T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
 	T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-	T tmp = _penaltyFunction->getPenaltyHessian( pow(It + Ix*u + Iy*v, 2) );
-	T energyHessianUU = Ix * Ix * tmp;
-	T energyHessianUV = Ix * Iy * tmp;
-	T energyHessianVV = Iy * Iy * tmp;
+	T tmp  = pow(It + Ix*u + Iy*v, 2) ;
+	T tmp2 = _penaltyFunction->getPenaltyGradient( tmp );
+	T tmp3 = _penaltyFunction->getPenaltyHessian( tmp );
+	T tmp4 = tmp2 + tmp * tmp3 ;
+
+	T energyHessianUU = Ix * Ix * tmp4;
+	T energyHessianUV = Ix * Iy * tmp4;
+	T energyHessianVV = Iy * Iy * tmp4;
 
 	std::vector<T> ret( 4, T(0.0) );
 	ret[0] = T(this->_lamb * energyHessianUU);
@@ -182,23 +189,22 @@ void EnergyBCC<T>::updateStencil(
         double rhs   = cik * (-cit);
 
 	// penalty function derivative
-	double d_psi = 1.0;
-	if (motionUV.connected()) {
+	std::vector<T> d_psi( 2, T(1.0) );
+	if (penaltyFunction.connected())
+		d_psi = this->getEnergyGradient( 0, p.x, p.y, p.z, 0 );
 
+	if (motionUV.connected()) {
         	// initial flow guess from previous iteration
 	        const T u0 = motionUV()[0](x,y,z);
 	        const T v0 = motionUV()[1](x,y,z);
 		rhs += u0*dataU+v0*dataV;
-
-		if (penaltyFunction.connected())
-			d_psi = _penaltyFunction->getPenaltyGradient( pow( cit + cix*u0 + ciy*v0, 2 ) );
 	}
 
         // fill calculated data into stencil members, applying lambda
         const T      l  = this->lambda();
-        this->_subStencils["a1"].data(0,0) = l * d_psi * T(dataU);
-        this->_subStencils["a2"].data(0,0) = l * d_psi * T(dataV);
-        this->_rhs  = l * d_psi * T(rhs);
+        this->_subStencils["a1"].data(0,0) = l * d_psi[isU ? 0 : 1] * T(dataU);
+        this->_subStencils["a2"].data(0,0) = l * d_psi[isU ? 0 : 1] * T(dataV);
+        this->_rhs  = l * d_psi[isU ? 0 : 1] * T(rhs);
 }
 
 template <class T>

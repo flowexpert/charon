@@ -54,7 +54,7 @@ template <class T>
 T PenaltyQuadratic<T>::getPenalty( T sqrDiff )
 {
 	T penalty;
-	if (fabs(double(sqrDiff)) < _maxDiff*_maxDiff)
+	if (sqrDiff < _maxDiff*_maxDiff)
 		penalty = sqrDiff ;
 	else
 		penalty = _maxDiff * _maxDiff ;
@@ -65,22 +65,17 @@ template <class T>
 T PenaltyQuadratic<T>::getPenaltyGradient( T sqrDiff )
 {
 	T penaltyGradient;
-	if (fabs(double(sqrDiff)) < _maxDiff*_maxDiff)
-		penaltyGradient = 2 * pow(sqrDiff, 0.5) ;
+	if (sqrDiff < _maxDiff*_maxDiff)
+		penaltyGradient = T(1.0);
 	else
 		penaltyGradient = T(0.0);
 	return T(this->_lamb * penaltyGradient);
 }
 
 template <class T>
-T PenaltyQuadratic<T>::getPenaltyHessian( T sqrDiff )
+T PenaltyQuadratic<T>::getPenaltyHessian( T )
 {
-	T penaltyHessian;
-	if (fabs(double(sqrDiff)) < _maxDiff*_maxDiff)
-		penaltyHessian = T(2.0);
-	else
-		penaltyHessian = T(0.0);
-	return T(this->_lamb * penaltyHessian);
+	return T(0.0);
 }
 
 #endif /* _PENALTYQUADRATIC_HXX_ */

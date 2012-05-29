@@ -105,13 +105,14 @@ T EnergyClassic<T>::_energy( T x, T xo )
 template <class T>
 T EnergyClassic<T>::_energyGradient( T x, T xo )
 {
-	return _penaltyFunction->getPenaltyGradient( pow(x - xo, 2) );
+	return _penaltyFunction->getPenaltyGradient( pow(x - xo, 2) ) * (x - xo);
 }
 
 template <class T>
 T EnergyClassic<T>::_energyHessian( T x, T xo )
 {
-	return _penaltyFunction->getPenaltyHessian( pow(x - xo, 2) );
+	return _penaltyFunction->getPenaltyGradient( pow(x - xo, 2) )
+	     + pow(x - xo, 2) * _penaltyFunction->getPenaltyHessian( pow(x - xo, 2) );
 }
 
 template <class T>

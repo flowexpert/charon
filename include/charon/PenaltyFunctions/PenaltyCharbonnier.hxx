@@ -55,10 +55,10 @@ template <class T>
 T PenaltyCharbonnier<T>::getPenalty( T sqrDiff )
 {
 	T penalty;
-	if (fabs(double(sqrDiff)) < _maxDiff*_maxDiff)
-		penalty = pow( double(sqrDiff + _eps*_eps), double(_a)) ;
+	if (sqrDiff < _maxDiff*_maxDiff)
+		penalty = pow( double(sqrDiff + _eps*_eps), double(_a) );
 	else
-		penalty = pow( double(_maxDiff*_maxDiff + _eps*_eps), double(_a)) ;
+		penalty = pow( double(_maxDiff*_maxDiff + _eps*_eps), double(_a) );
 	return T(this->_lamb * penalty);
 }
 
@@ -66,8 +66,8 @@ template <class T>
 T PenaltyCharbonnier<T>::getPenaltyGradient( T sqrDiff )
 {
 	T penaltyGradient;
-	if (fabs(double(sqrDiff)) < _maxDiff*_maxDiff)
-		penaltyGradient = 2 * _a * pow(sqrDiff, 0.5) * pow( double(sqrDiff + _eps*_eps), double(_a-1) ) ;
+	if (sqrDiff < _maxDiff*_maxDiff)
+		penaltyGradient = _a * pow( double(sqrDiff + _eps*_eps), double(_a-1) );
 	else
 		penaltyGradient = T(0.0);
 	return T(this->_lamb * penaltyGradient);
@@ -76,14 +76,11 @@ T PenaltyCharbonnier<T>::getPenaltyGradient( T sqrDiff )
 template <class T>
 T PenaltyCharbonnier<T>::getPenaltyHessian( T sqrDiff )
 {
-	T penaltyHessian, tmp1, tmp2;
-	if (fabs(double(sqrDiff)) < _maxDiff*_maxDiff) {
-		tmp1 = pow( double(sqrDiff + _eps*_eps), double(_a-1) ) ;
-		tmp2 = pow( double(sqrDiff + _eps*_eps), double(_a-2) ) ;
-		penaltyHessian = 2 * _a * ( tmp1 + 2*(_a-1) * sqrDiff * tmp2 ) ;
-	} else {
+	T penaltyHessian;
+	if (sqrDiff < _maxDiff*_maxDiff)
+		penaltyHessian = _a * (_a - 1) * pow( double(sqrDiff + _eps*_eps), double(_a-2) );
+	else
 		penaltyHessian = T(0.0);
-	}
 	return T(this->_lamb * penaltyHessian);
 }
 
