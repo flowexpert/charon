@@ -195,7 +195,6 @@ void EnergyBCC<T>::updateStencil(
         	// initial flow guess from previous iteration
 	        const T u0 = motionUV()[0](x,y,z);
 	        const T v0 = motionUV()[1](x,y,z);
-		rhs += u0*dataU+v0*dataV;
 
 		d_psi = _penaltyFunction->getPenaltyGradient( pow(double(cit + cix*u0 + ciy*v0), 2.0) );
 	}
