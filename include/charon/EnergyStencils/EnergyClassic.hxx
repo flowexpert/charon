@@ -77,23 +77,13 @@ void EnergyClassic<T>::execute() {
 			0,  1,  0,
 			1,  1,  1,
 			0,  1,  0);
+
+	T l = this->_lamb;
 	_dataMask.fill(
-			 0, -1,  0,
-			-1,  4, -1,
-			 0, -1,  0);
+			 0,  -l,  0,
+			-l, 4*l, -l,
+			 0,  -l,  0);
 	_center = Point4D<int>(1,1,0,0);
-
-	_dataMask *= this->_lamb;
-
-	// precalculate rhs values for whole image
-	if (motionUV.connected()) {
-		const cimg_library::CImgList<T>& flow = motionUV();
-		_rhsVals.assign(flow);
-		cimglist_for(flow, kk) {
-			_rhsVals[kk] = this->apply(flow, kk);
-			_rhsVals[kk] *= -1;
-		}
-	}
 }
 
 template <class T>
@@ -215,28 +205,38 @@ void EnergyClassic<T>::updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p, const int&)
 {
-	// penalty function derivative
-	std::vector<T> d_psi( 2, T(1.0) );
-	if (penaltyFunction.connected())
-		d_psi = this->getEnergyGradient( 0, p.x, p.y, p.z, 0 );
+	// motion component in neighborhood
+	T motionC, motionN, motionE, motionS, motionW;
+
+	// penalty in neighborhood
+	T pCN, pCE, pCS, pCW;
+	T pSum = T(0.0);
 
 	// fill stencil with masks
 	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
 		SubStencil<T> entry;
 		if(pUnknowns[i] == unknown) {
 			entry.center  = _center;
-
-			// shared assignment (no copying of values)
-			entry.data.assign(_dataMask,true);
-			entry.data *= d_psi[i];
-
 			entry.pattern.assign(_patternMask,true);
 			if (motionUV.connected()) {
-				this->_rhs = d_psi[i] * _rhsVals[i](p.x,p.y,p.z,p.t);
-			} else {
-				this->_rhs = T(0);
+				motionC = motionUV().atNXYZC( i, p.x,   p.y,   p.z, 0 );
+				motionN = motionUV().atNXYZC( i, p.x,   p.y-1, p.z, 0 );
+				motionE = motionUV().atNXYZC( i, p.x+1, p.y,   p.z, 0 );
+				motionS = motionUV().atNXYZC( i, p.x,   p.y+1, p.z, 0 );
+				motionW = motionUV().atNXYZC( i, p.x-1, p.y,   p.z, 0 );
+				T l = this->_lamb;
+				pCN = l*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionN), 2.0) );
+				pCE = l*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionE), 2.0) );
+				pCS = l*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionS), 2.0) );
+				pCW = l*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionW), 2.0) );
+				pSum = pCN + pCE + pCS + pCW;
+				_dataMask.fill(
+					   0, -pCN,  0,
+					-pCW, pSum, -pCE,
+					   0, -pCS,  0);
 			}
-
+			entry.data = _dataMask;
+			this->_rhs = T(0.0);
 		} else {
 			// empty substencil for other unknowns
 			entry.center = Point4D<int>();
