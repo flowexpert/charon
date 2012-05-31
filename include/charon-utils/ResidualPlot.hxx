@@ -56,7 +56,6 @@ ResidualPlot<T>::ResidualPlot(const std::string& name) :
 			<< std::endl ;
 		return ;
 	}
-	_exportWidget = new ResidualPlotWidget ;
 
 	executionCount = 0;
 }
@@ -69,6 +68,9 @@ ResidualPlot<T>::~ResidualPlot()
 
 template <typename T>
 void ResidualPlot<T>::execute() {
+	if(!_exportWidget)
+		_exportWidget = new ResidualPlotWidget ;
+
 	_display() = _exportWidget ;
 
 	double residualEnergy = 0;

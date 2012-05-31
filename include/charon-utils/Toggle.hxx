@@ -30,7 +30,8 @@
 template<typename T>
 Toggle<T>::Toggle(const std::string& name) :
 	TemplatedParameteredObject<T>("Toggle", name,
-		"Toggle two inputs wrt a given timeout")
+		"Toggle two inputs wrt a given timeout"),
+	toggleTimeout(0)
 {
 	ParameteredObject::_addParameter(timeout, "timeout",
 		"timeout between toggles", 500);
@@ -41,15 +42,19 @@ Toggle<T>::Toggle(const std::string& name) :
 		"second input slot", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(out, "out",
 		"output slot", "CImgList<T>");
+}
 
-	toggleTimeout = new ToggleTimeout( this );
+template<typename T>
+Toggle<T>::~Toggle()
+{
+	delete toggleTimeout ;
 }
 
 template<typename T>
 void Toggle<T>::execute()
 {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
+	if(!toggleTimeout)
+		toggleTimeout = new ToggleTimeout( this );
 
 	toggleTimeout->setTimeout( this->timeout() );
 	toggleTimeout->start();

@@ -56,15 +56,12 @@ public:
 template<typename T>
 class toggle_DECLDIR Toggle :
 	public TemplatedParameteredObject<T>,
-	public virtual ToggleInterface
+	public ToggleInterface
 {
 public:
 	/// standard constructor
 	Toggle(const std::string& name = "" /** [in] instance name*/);
-
-	/// \copybrief ParameteredObject::execute()
-	/** \copydetails ParameteredObject::execute() */
-	virtual void execute();
+	virtual ~Toggle() ;
 
 	/// timeout parameter
 	Parameter< int > timeout;
@@ -79,7 +76,12 @@ public:
 	OutputSlot<cimg_library::CImgList<T> > out;
 
 	/// toggleToggle interface implementation
-	void toggleToggle();
+	virtual void toggleToggle();
+
+protected:
+	/// \copybrief ParameteredObject::execute()
+	/** \copydetails ParameteredObject::execute() */
+	virtual void execute();
 
 private:
 	/// toggle timeout object
