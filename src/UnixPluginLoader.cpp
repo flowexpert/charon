@@ -103,9 +103,12 @@ void UnixPluginLoader::unload() throw (PluginException) {
 	if (libHandle) {
 		dlclose(libHandle);
 		if (dlerror()) {
-			throw PluginException("Error unloading plugin \"" + pluginName
-					+ "\". Description of the error:\n" + dlerror(),
-					pluginName, PluginException::PLUGIN_NOT_LOADED);
+			std::ostringstream msgs;
+			msgs << "Error unloading plugin \"" << pluginName
+				<< "\". Description of the error: " << dlerror();
+			std::string msg = msgs.str();
+			throw PluginException(
+				msg, pluginName, PluginException::PLUGIN_NOT_LOADED);
 		}
 		libHandle = NULL;
 		create = NULL;
