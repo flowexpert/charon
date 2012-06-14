@@ -25,7 +25,7 @@
 #define TYPE Residual
 
 #include <charon/Residual.hxx>
-#include <charon-utils/DataManagerCImgList.hxx>
+//#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" residual_DECLDIR ParameteredObject* create(
