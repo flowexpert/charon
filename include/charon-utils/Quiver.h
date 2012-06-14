@@ -58,6 +58,8 @@ public:
 	/// standard constructor
 	Quiver(const std::string& name = "" /** [in] instance name*/);
 
+	virtual ~Quiver() ;
+
 	/// \copybrief ParameteredObject::execute()
 	/** \copydetails ParameteredObject::execute() */
 	virtual void execute();

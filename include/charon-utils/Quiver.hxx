@@ -33,7 +33,8 @@ template<typename T>
 Quiver<T>::Quiver(const std::string& name) :
 	TemplatedParameteredObject<T>("Quiver", name,
 		"Plot flow quiver"),
-	_display(0)
+	_display(0),
+	quiverPlot(0)
 {
 	ParameteredObject::_addInputSlot(motion, "motion",
 		"motion", "CImgList<T>");
@@ -44,14 +45,21 @@ Quiver<T>::Quiver(const std::string& name) :
 	ParameteredObject::_addParameter(stepWidth, "stepWidth",
 		"step width", "unsigned int");
 
-	quiverPlot = new QuiverPlot;
+}
+
+template<typename T>
+Quiver<T>::~Quiver()
+{
+	delete quiverPlot ;
 }
 
 template<typename T>
 void Quiver<T>::execute()
 {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
+
+	if(!quiverPlot)
+		quiverPlot = new QuiverPlot;
+
 
 	hasWidget = false;
 	if (_display.connected()) hasWidget = true;
