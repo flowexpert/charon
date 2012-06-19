@@ -56,6 +56,9 @@ public:
 	/// \param name          Instance name
 	PenaltyQuadratic(const std::string& name = "");
 
+	/// sigma
+	Parameter< T > sigma;
+
 	/// truncation difference
 	Parameter< T > maxDiff;
 
@@ -76,6 +79,7 @@ private:
 	/// \name cache members
 	//\{
 	T _lamb;
+	T _sigma;
 	T _maxDiff;
 	//\}
 };

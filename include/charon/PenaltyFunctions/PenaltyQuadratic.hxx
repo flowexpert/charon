@@ -38,6 +38,10 @@ PenaltyQuadratic<T>::PenaltyQuadratic(const std::string& name) :
 	)
 {
 	this->_addParameter(
+		sigma, "sigma",
+		"sigma",
+		T(1.0) );
+	this->_addParameter(
 		maxDiff, "maxDiff",
 		"parabola will be truncated, if abs(diff) > maxDiff",
 		T(127.0) );
@@ -47,6 +51,7 @@ template <class T>
 void PenaltyQuadratic<T>::execute() {
 	PenaltyFunction<T>::execute();
 	_lamb = this->lambda();
+	_sigma = sigma();
 	_maxDiff = maxDiff();
 }
 
@@ -55,9 +60,9 @@ T PenaltyQuadratic<T>::getPenalty( T sqrDiff )
 {
 	T penalty;
 	if (sqrDiff < _maxDiff*_maxDiff)
-		penalty = sqrDiff ;
+		penalty = sqrDiff / pow(_sigma,2.0);
 	else
-		penalty = _maxDiff * _maxDiff ;
+		penalty = _maxDiff * _maxDiff / pow(_sigma,2.0);
 	return T(this->_lamb * penalty);
 }
 
@@ -66,7 +71,7 @@ T PenaltyQuadratic<T>::getPenaltyGradient( T sqrDiff )
 {
 	T penaltyGradient;
 	if (sqrDiff < _maxDiff*_maxDiff)
-		penaltyGradient = T(1.0);
+		penaltyGradient = T(1.0) / pow(_sigma,2.0);
 	else
 		penaltyGradient = T(0.0);
 	return T(this->_lamb * penaltyGradient);
