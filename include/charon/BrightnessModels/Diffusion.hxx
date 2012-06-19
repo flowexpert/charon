@@ -37,6 +37,8 @@ BrightnessModels::Diffusion<T>::Diffusion(const std::string& name) :
 	_addInputSlot(dxx, "dxx", "second derivation in x", "CImgList<T>");
 	_addInputSlot(dyy, "dyy", "second derivation in y", "CImgList<T>");
 
+	ParameteredObject::_addParameter(D, "diffusion_coeff", "Diffusion coefficient", 0.005f);
+
 	_addFunction(BrightnessModels::Diffusion<T>::getUnknowns);
 	_addFunction(BrightnessModels::Diffusion<T>::compute);
 
@@ -89,7 +91,7 @@ void BrightnessModels::Diffusion<T>::compute(
 	}
 
 	// calculate values to return
-	rhs += factor * 0.005 * (iXX + iYY);
+	rhs += factor * this->D * (iXX + iYY);
 //	rhs += 0.005 * (iXX + iYY);
 }
 

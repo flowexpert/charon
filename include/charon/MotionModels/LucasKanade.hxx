@@ -31,8 +31,6 @@ std::set<std::string>& MotionModels::LucasKanade<T>::getUnknowns()
 {
 	this->unknowns.insert("a1");
 	this->unknowns.insert("a2");
-	if (dz.connected())
-		this->unknowns.insert("a3");
 	return this->unknowns;
 }
 
@@ -42,70 +40,17 @@ void MotionModels::LucasKanade<T>::compute(
 		std::map<std::string, T>& term, T& rhs,
 		const std::string& unknown)
 {
-	static const bool is3D = dz.connected();
-	if(!is3D)
-		assert(p.z == 0u); // 2D only
-
-	cimg_library::CImgList<T> smooth_dx;
-	cimg_library::CImgList<T> smooth_dy;
-	cimg_library::CImgList<T> smooth_dz;
-	cimg_library::CImgList<T> smooth_dt;
-
-	cimg_library::CImg<T> smoothX(smoothMask().size(),1u,1u,1u);
-	cimg_library::CImg<T> smoothY(1u,smoothMask().size(),1u,1u);
-	cimg_library::CImg<T> smoothTZ(1u,1u,smoothMask().size(),1u);
-
-	cimg_forX(smoothX, x) smoothX(x,0,0,0) = smoothMask()[x];
-	cimg_forY(smoothY, y) smoothY(0,y,0,0) = smoothMask()[y];
-	cimg_forZ(smoothTZ, z) smoothTZ(0,0,z,0) = smoothMask()[z];
-
-	smooth_dx.assign(this->dx());
-	cimglist_for(smooth_dx,kk) {
-		Convolution::convolve(smoothX, smooth_dx[kk],smooth_dx[kk]);
-	}
-
-	smooth_dy.assign(this->dy());
-	cimglist_for(smooth_dy,kk) {
-		Convolution::convolve(smoothY, smooth_dy[kk],smooth_dy[kk]);
-	}
-
-	if(dz.connected()){
-		smooth_dz.assign(this->dz());
-		cimglist_for(smooth_dz,kk) {
-			Convolution::convolve(smoothTZ, smooth_dz[kk],smooth_dz[kk]);
-		}
-	}
-
-	smooth_dt.assign(this->dt());
-	// since convolution along dim4 does not work, we have
-	// to switch dim3 and dim4 in temporary CImg instance.
-	cimg_library::CImg<T> temp(
-			this->dt()[0].width(),
-			this->dt()[0].height(),
-			this->dt()[0].spectrum(),
-			this->dt()[0].depth());
-	cimglist_for(this->dt(),kk) {
-		cimg_forXYZC(this->dt()[kk],x,y,z,t)
-			temp(x,y,t,z) = this->dt()(kk,x,y,z,t);
-		Convolution::convolve(smoothTZ,temp,temp);
-		cimg_forXYZC(this->dt()[kk],x,y,z,t)
-			smooth_dt(kk,x,y,z,t) = temp(x,y,t,z);
-	}
-
-	const T& iX = smooth_dx(v, p.x, p.y, p.z, p.t);
-	const T& iY = smooth_dy(v, p.x, p.y, p.z, p.t);
-	const T& iZ = dz.connected() ? smooth_dz(v, p.x, p.y, p.z, p.t) : T(0);
-	const T& iT = smooth_dt(v, p.x, p.y, p.z, p.t);
-	T factor = T(1);
-
-	// multiply with derivative wrt unkown, if any unknown is given
 	if (unknown.length()) {
-		if (unknown == "a1")
-			factor = iX;
-		else if (unknown == "a2")
-			factor = iY;
-		else if (is3D && unknown == "a3")
-			factor = iZ;
+		if (unknown == "a1"){
+			term["a1"] += this->IxIx()(v, p.x, p.y, p.z, p.t);
+			term["a2"] += this->IxIy()(v, p.x, p.y, p.z, p.t);
+			rhs -= this->IxIt()(v, p.x, p.y, p.z, p.t);
+		}
+		else if (unknown == "a2"){
+			term["a1"] += this->IxIy()(v, p.x, p.y, p.z, p.t);
+			term["a2"] += this->IyIy()(v, p.x, p.y, p.z, p.t);
+			rhs -= this->IyIt()(v, p.x, p.y, p.z, p.t);
+		}
 		else {
 			std::ostringstream msg;
 			msg << __FILE__ << ":" << __LINE__ << std::endl;
@@ -115,26 +60,16 @@ void MotionModels::LucasKanade<T>::compute(
 		}
 	}
 
-	// calculate values to return
-	term["a1"] += factor * iX;
-	term["a2"] += factor * iY;
-	if (is3D)
-		term["a3"] += factor * iZ;
-	rhs -= factor * iT;
 }
 
 template<class T>
 MotionModels::LucasKanade<T>::LucasKanade(const std::string& name) :
-		MotionModel<T>::MotionModel("motionmodels_lucaskanade", name),
-		smoothMask("0.1875;0.625;0.1875"),
-		dz(true, false)  // dz is optional, for handling 3D flows
+		MotionModel<T>::MotionModel("motionmodels_lucaskanade", name)
 {
-	_addInputSlot(dx, "dx", "derivation in x", "CImgList<T>");
-	_addInputSlot(dy, "dy", "derivation in y", "CImgList<T>");
-	_addInputSlot(dz, "dz", "derivation in z (for 3D mode)", "CImgList<T>");
-	_addInputSlot(dt, "dt", "derivation in t", "CImgList<T>");
-	_addParameter (smoothMask, "smoothMask",
-			"linear 1D filter mask applied to derivatives",
-			"T_list");
+	_addInputSlot(IxIx, "IxIx", "<I_x * I_x>", "CImgList<T>");
+	_addInputSlot(IxIy, "IxIy", "<I_x * I_y>", "CImgList<T>");
+	_addInputSlot(IyIy, "IyIy", "<I_y * I_y>", "CImgList<T>");
+	_addInputSlot(IxIt, "IxIt", "<I_x * I_t>", "CImgList<T>");
+	_addInputSlot(IyIt, "IyIt", "<I_y * I_t>", "CImgList<T>");
 }
 #endif

@@ -59,6 +59,8 @@ public:
 
 	InputSlot<cimg_library::CImgList<T> > dx, dy, dxx, dyy;
 
+	Parameter < float > D;
+
 	/// \copydoc ParameteredObject::execute()
 	virtual void execute();
 

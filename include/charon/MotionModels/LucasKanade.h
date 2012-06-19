@@ -66,11 +66,9 @@ public:
 	/// default constructor
 	LucasKanade(const std::string& name = "");
 
-	ParameterList<T> smoothMask;
-
 	/// @name input slots for the derivatives
 	//@{
-	InputSlot<cimg_library::CImgList<T> > dx, dy, dz, dt;
+	InputSlot<cimg_library::CImgList<T> > IxIx, IxIy, IyIy, IxIt, IyIt;
 	//@}
 
 	virtual void compute(
