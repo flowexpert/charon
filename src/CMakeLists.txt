@@ -232,8 +232,15 @@ ADD_LIBRARY(brightnessmodels_constant SHARED
 	${charon_INCLUDE_DIR}/BrightnessModels/Constant.hxx
 	${charon_INCLUDE_DIR}/BrightnessModel.h
 )
+ADD_LIBRARY(brightnessmodels_diffusion SHARED
+	BrightnessModelDiffusion.cpp
+	${charon_INCLUDE_DIR}/BrightnessModels/Diffusion.h
+	${charon_INCLUDE_DIR}/BrightnessModels/Diffusion.hxx
+	${charon_INCLUDE_DIR}/BrightnessModel.h
+)
 LIST(APPEND Plugins
 	brightnessmodels_constant
+	brightnessmodels_diffusion
 )
 
 # Motion models (currently only local constant motion available)
@@ -248,8 +255,15 @@ ADD_LIBRARY(motionmodels_localconstant SHARED
 	${charon_INCLUDE_DIR}/MotionModels/LocalConstant.hxx
 	${charon_INCLUDE_DIR}/MotionModel.h
 )
+ADD_LIBRARY(motionmodels_lucaskanade SHARED
+	MotionModelLucasKanade.cpp
+	${charon_INCLUDE_DIR}/MotionModels/LucasKanade.h
+	${charon_INCLUDE_DIR}/MotionModels/LucasKanade.hxx
+	${charon_INCLUDE_DIR}/MotionModel.h
+)
 LIST(APPEND Plugins
 	motionmodels_localconstant
+	motionmodels_lucaskanade
 )
 
 # Iterator plugins
@@ -384,6 +398,11 @@ ADD_LIBRARY(diff2d SHARED
 	${charon_INCLUDE_DIR}/Diff2D.h
 	${charon_INCLUDE_DIR}/Diff2D.hxx
 )
+ADD_LIBRARY(lucas_kanade_smoothing SHARED
+	LucasKanadeSmoothing.cpp
+	${charon_INCLUDE_DIR}/LucasKanadeSmoothing.h
+	${charon_INCLUDE_DIR}/LucasKanadeSmoothing.hxx
+)
 IF(MSVC)
 	# avoid strange linker errors
 	TARGET_LINK_LIBRARIES(diff2d interpolatorlinear)
@@ -404,6 +423,7 @@ LIST(APPEND Plugins
 	sequencegenerator
 	edgysequencegenerator
 	diff2d
+	lucas_kanade_smoothing
 	pyramidrescale
 	flowcomparator
 )
