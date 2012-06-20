@@ -57,8 +57,12 @@ public:
 	/// default constructor
 	Diffusion(const std::string& name = "");
 
+	/// \name Image Derivatives wrt mentioned coordinates
+	//  \{
 	InputSlot<cimg_library::CImgList<T> > dx, dy, dxx, dyy;
+	//  \}
 
+	/// Diffusion coefficient
 	Parameter < float > D;
 
 	/// \copydoc ParameteredObject::execute()
@@ -72,5 +76,5 @@ public:
 	virtual std::set<std::string>& getUnknowns();
 };
 
-} //namespace
+} // namespace
 #endif // _DIFFUSION_H_

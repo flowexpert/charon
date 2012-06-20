@@ -32,12 +32,13 @@ template<class T>
 BrightnessModels::Diffusion<T>::Diffusion(const std::string& name) :
 		BrightnessModel<T>("brightnessmodels_diffusion", name)
 {
-	_addInputSlot(dx, "dx", "derivation in x", "CImgList<T>");
-	_addInputSlot(dy, "dy", "derivation in y", "CImgList<T>");
-	_addInputSlot(dxx, "dxx", "second derivation in x", "CImgList<T>");
-	_addInputSlot(dyy, "dyy", "second derivation in y", "CImgList<T>");
+	_addInputSlot(dx, "dx", "derivative wrt x", "CImgList<T>");
+	_addInputSlot(dy, "dy", "derivative wrt y", "CImgList<T>");
+	_addInputSlot(dxx, "dxx", "second derivative wrt x", "CImgList<T>");
+	_addInputSlot(dyy, "dyy", "second derivative wrt y", "CImgList<T>");
 
-	ParameteredObject::_addParameter(D, "diffusion_coeff", "Diffusion coefficient", 0.005f);
+	ParameteredObject::_addParameter(
+				D, "diffusion_coeff", "Diffusion coefficient", 0.005f);
 
 	_addFunction(BrightnessModels::Diffusion<T>::getUnknowns);
 	_addFunction(BrightnessModels::Diffusion<T>::compute);
@@ -64,10 +65,11 @@ std::set<std::string>& BrightnessModels::Diffusion<T>::getUnknowns()
 template<class T>
 void BrightnessModels::Diffusion<T>::compute(
 		const Point4D<int>& p, const int& v,
-		std::map<std::string, T>& term, T& rhs,
+		std::map<std::string, T>& /*term*/, T& rhs,
 		const std::string& unknown)
 {
-
+	// diffusion only applies to the RHS, so the term variable
+	// does not need to be used
 	const T& iX = this->dx()(v, p.x, p.y, p.z, p.t);
 	const T& iY = this->dy()(v, p.x, p.y, p.z, p.t);
 	const T& iXX = this->dxx()(v, p.x, p.y, p.z, p.t);
@@ -92,7 +94,6 @@ void BrightnessModels::Diffusion<T>::compute(
 
 	// calculate values to return
 	rhs += factor * this->D * (iXX + iYY);
-//	rhs += 0.005 * (iXX + iYY);
 }
 
 #endif /* _DIFFUSION_HXX_ */
