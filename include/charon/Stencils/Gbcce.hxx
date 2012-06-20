@@ -59,7 +59,7 @@ void Gbcce<T>::execute() {
 
 	// Collision detection
 
-	// check if there are some unknowns in bm and mm witch have the same name
+	// check if there are some unknowns in bm and mm which have the same name
 	for (bmIt = bmUnknowns.begin(); bmIt != bmUnknowns.end(); bmIt++) {
 		for (mmIt = mmUnknowns.begin(); mmIt != mmUnknowns.end(); mmIt++) {
 			if (*bmIt == *mmIt) {
