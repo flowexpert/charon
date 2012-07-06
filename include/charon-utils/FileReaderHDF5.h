@@ -69,10 +69,6 @@ public:
 	/// default constructor
 	FileReaderHDF5(const std::string& name = "" /** [in] Instance name */);
 
-protected:
-	/// Update object.
-	virtual void execute();
-
 	/// read routine called in execute()
 	/** This is provided separatly to be used e.g. from outside.
 	 *  Data with more than 5 dimensions is not supported.
@@ -88,6 +84,11 @@ protected:
 			const std::string& filename,
 			const std::string& dsetName,
 			const Roi<int>* roi = 0);
+
+protected:
+	/// Update object.
+	virtual void execute();
+
 };
 
 #endif /* _FILEREADER_HDF5_H_ */

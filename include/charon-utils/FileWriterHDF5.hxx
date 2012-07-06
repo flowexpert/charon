@@ -27,6 +27,7 @@
 #define _FILEWRITERHDF5_HXX_
 
 #include "FileWriterHDF5.h"
+#include <typeinfo>
 #include <vigra/hdf5impex.hxx>
 
 template<typename T>
@@ -35,17 +36,22 @@ FileWriterHDF5<T>::FileWriterHDF5(const std::string& name) :
 			"Write 5D vigra::MultiArray into a HDF5 file") {
 	ParameteredObject::_addParameter(
 			filename, "filename",
-			"name of the hdf5 file to be written", "filewrite");
+			"Name of the hdf5 file to be written", "filewrite");
+	ParameteredObject::_addParameter< std::string >(
+			fileDataType, "fileDataType",
+			"Data type to which the array data is cast before"
+			"the file is written.", "ignore",
+			"{char;unsigned char;short;unsigned short;int;"
+			"unsigned int;float;double;ignore}");
 	ParameteredObject::_addParameter<std::string>(
 			pathInFile, "pathInFile",
-			"path to the dataset to be created within the hdf5 file<br>"
+			"Path to the dataset to be created within the hdf5 file<br>"
 			"examples: /data group1/dataset1",
 			"/data", "string");
 	ParameteredObject::_addParameter(
 			comment, "comment",
-			"string that is written into the comment attribute of the "
-			"dataset to be stored (no comment attribute is set if empty)",
-			"string");
+			"String that is written into the comment attribute of the "
+			"dataset to be stored (no comment attribute is set if empty)");
 	ParameteredObject::_addParameter(
 			noSingletonDimensions, "noSingletonDimensions",
 			"Do not write singleton dimensions<br>"
@@ -83,16 +89,75 @@ void charon_core_LOCAL writeHdf5NoSingletons(
 	file.write(pathInFile.c_str(), res);
 }
 
+/// cast data to T2 before writing
+template<typename T, int N, typename T2>
+void charon_core_LOCAL writeHdf5NoSingletonsC(
+		const std::vector<vigra::MultiArrayIndex>& tShape,
+		vigra::HDF5File& file,
+		const std::string& pathInFile, T* data) {
+	size_t size = 1;
+	for (int i=0; i<N; i++) {
+		size *= tShape[i];
+	}
+
+	sout << "(DD) Casting (without rounding!) type to fileDataType, "
+		<< "EXTRA memory(" << sizeof(T2)*size << " bytes) allocated!"
+		<< std::endl;
+	T2* data2 = new T2[size];
+	if (data2 == 0) {
+		throw std::runtime_error(
+				"HDF5Writer error: could not allocate memory.");
+	}
+	for (size_t i =0; i < size; ++i) {
+		data2[i] =(T2) data[i];
+	}
+	writeHdf5NoSingletons<T2,N>(tShape,file,pathInFile,data2);
+	delete[] data2;
+}
+
+/// select data type to cast to
+template<typename T, int N>
+void charon_core_LOCAL writeHdf5NoSingletonsT(
+		const std::vector<vigra::MultiArrayIndex>& tShape,
+		vigra::HDF5File& file,
+		const std::string& pathInFile, T* data, std::string type) {
+	if(type == "char")
+		writeHdf5NoSingletonsC<T,4,char>(tShape,file,pathInFile,data);
+	else if(type == "unsigned char")
+		writeHdf5NoSingletonsC<T,4,unsigned char>(tShape,file,pathInFile,data);
+	else if(type == "short")
+		writeHdf5NoSingletonsC<T,4,short>(tShape,file,pathInFile,data);
+	else if(type == "unsigned short")
+		writeHdf5NoSingletonsC<T,4,unsigned short>(tShape,file,pathInFile,data);
+	else if(type == "int")
+		writeHdf5NoSingletonsC<T,4,int>(tShape,file,pathInFile,data);
+	else if(type == "unsigned int")
+		writeHdf5NoSingletonsC<T,4,unsigned int>(tShape,file,pathInFile,data);
+	else if(type == "float")
+		writeHdf5NoSingletonsC<T,4,float>(tShape,file,pathInFile,data);
+	else if(type == "double")
+		writeHdf5NoSingletonsC<T,4,double>(tShape,file,pathInFile,data);
+	else if(type == "ignore")
+		writeHdf5NoSingletons<T,4>(tShape,file,pathInFile,data);
+	else {
+		throw std::runtime_error(
+			std::string("HDF5Writer error: fileDataType ")
+				+ type + " is not supported!");
+	}
+}
+
 template<typename T>
 void FileWriterHDF5<T>::writeToFile (
 			const vigra::MultiArrayView<5,T>& data,
-			const std::string& filename,
-			const std::string& dsetName,
+			const std::string& fName,
+			const std::string& sName,
 			const bool& noSingletonDimensions,
-			const std::string& comment)
+			const std::string& comment,
+			const std::string& dType)
 {
-	vigra::HDF5File file(filename, vigra::HDF5File::Open);
+	vigra::HDF5File file(fName, vigra::HDF5File::Open);
 	vigra::MultiArrayShape<5>::type shape = data.shape();
+	T* dPtr = data.data();
 
 	if(noSingletonDimensions) {
 		std::vector<vigra::MultiArrayIndex> tShape;
@@ -105,35 +170,38 @@ void FileWriterHDF5<T>::writeToFile (
 		sout << "\tTruncating to " << curDim << " dimensions." << std::endl;
 		switch(curDim) {
 		case 5:
-			sout << "\tNo truncating needed!" << std::endl;
-			file.write(dsetName, data);
+			writeHdf5NoSingletonsT<T,5>(tShape,file,sName,dPtr,dType);
 			break;
 		case 4:
-			writeHdf5NoSingletons<T,4>(tShape,file,dsetName,data.data());
+			writeHdf5NoSingletonsT<T,4>(tShape,file,sName,dPtr,dType);
 			break;
 		case 3:
-			writeHdf5NoSingletons<T,3>(tShape,file,dsetName,data.data());
+			writeHdf5NoSingletonsT<T,3>(tShape,file,sName,dPtr,dType);
 			break;
 		case 2:
-			writeHdf5NoSingletons<T,2>(tShape,file,dsetName,data.data());
+			writeHdf5NoSingletonsT<T,2>(tShape,file,sName,dPtr,dType);
 			break;
 		case 1:
-			writeHdf5NoSingletons<T,1>(tShape,file,dsetName,data.data());
+			writeHdf5NoSingletonsT<T,1>(tShape,file,sName,dPtr,dType);
 			break;
 		default:
-			sout << "output with zero dims not possible." << std::endl;
+			sout << "(WW) output with zero dims not possible." << std::endl;
 			break;
 		}
 	}
 	else {
-		file.write(dsetName, data);
+		std::vector<vigra::MultiArrayIndex> tShape;
+		for(vigra::MultiArrayIndex ii=0; ii<5; ii++) {
+			tShape.push_back(shape[ii]);
+		}
+		writeHdf5NoSingletonsT<T,5>(tShape,file,sName,dPtr,dType);
 	}
 	if (!comment.empty()) {
 #if (VIGRA_VERSION_MAJOR == 1) && (VIGRA_VERSION_MINOR < 8)
 		// set attribute method renamed from vigra 1.7.1 -> 1.8.0
-		file.setAttribute(dsetName,"comment",comment);
+		file.setAttribute(sName,"comment",comment);
 #else
-		file.writeAttribute(dsetName,"comment",comment);
+		file.writeAttribute(sName,"comment",comment);
 #endif // vigra < 1.8.0
 	}
 }
@@ -144,7 +212,10 @@ void FileWriterHDF5<T>::execute() {
 	sout << "\tInput data has shape " << shape[0] << "x" << shape[1] << "x"
 			<< shape[2] << "x" << shape[3] << "x" << shape[4] << std::endl;
 
-	writeToFile(in(),filename(),pathInFile(),noSingletonDimensions(),comment());
+	writeToFile(
+				in(),filename(),pathInFile(),
+				noSingletonDimensions(),comment(),
+				fileDataType());
 }
 
 #endif /* _FILEWRITERHDF5_HXX_ */

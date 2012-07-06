@@ -62,7 +62,7 @@ void StrictResizeXY<T>::execute() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	out().assign(in.size());
+	out().assign((unsigned int)(in.size()));
 	
 	if(factor() < 1) {
 		ParameteredObject::raise("resize factor must be > 0") ;

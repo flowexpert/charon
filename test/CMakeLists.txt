@@ -143,6 +143,9 @@ IF(BUILD_TESTING)
 
 			IF(USE_HDF5)
 				INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
+				IF(USE_MPI)
+					INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
+				ENDIF()
 
 				# tests for input/output slot data passing including vigra
 				# and cimg arrays

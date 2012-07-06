@@ -56,7 +56,7 @@ EmptyCImg<T>::EmptyCImg(const std::string& name) :
 		"value of all pixels in output image", T(0)) ;
 
 	ParameteredObject::_addInputSlot(roi, "roi",
-		"region of interest (to use this plugin within pyramids)");
+		"region of interest (to use this plugin within pyramids)", "Roi<int>*");
 
 	ParameteredObject::_addOutputSlot(_output, "output", 
 		"output image", "CImgList<T>"); 

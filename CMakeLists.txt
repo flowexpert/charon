@@ -40,18 +40,27 @@ IF(USE_CIMG)
 	INCLUDE(CImgConfig)
 ENDIF()
 
+# Qwt5 for plotting widgets
+INCLUDE(FindQwt5)
+# MathGL for quiver plots
+INCLUDE(FindMathGL)
+
 MESSAGE(STATUS "Charon-utils library configuration:")
 OPTION(USE_VIGRA "enable plugins using Vigra library" ${Vigra_FOUND})
 OPTION(USE_HDF5 "enable plugins using HDF5 library" ${HDF5_FOUND})
 OPTION(USE_MPI "enable plugins using MPI" ${MPI_FOUND})
 OPTION(USE_QT "enable plugins using QT (needs Vigra)" ${QT_FOUND})
 OPTION(USE_Boost "enable plugins using QT" ${Boost_FOUND})
+OPTION(USE_MathGL "enable plugins using MathGL" ${MathGL_FOUND})
+OPTION(USE_Qwt5 "enable plugins using MathGL" ${Qwt5_Qt4_FOUND})
 MESSAGE(STATUS "    CImg         : ${USE_CIMG}")
 MESSAGE(STATUS "    Vigra        : ${USE_VIGRA}")
 MESSAGE(STATUS "    HDF5         : ${USE_HDF5}")
 MESSAGE(STATUS "    MPI          : ${USE_MPI}")
 MESSAGE(STATUS "    QT           : ${USE_QT}")
 MESSAGE(STATUS "    Boost        : ${USE_Boost}")
+MESSAGE(STATUS "    MathGL       : ${USE_MathGL}")
+MESSAGE(STATUS "    Qwt5         : ${USE_Qwt5}")
 
 IF(USE_CIMG)
 	CImgLibInfo()
@@ -68,3 +77,4 @@ INCLUDE(InstallDlls)
 ADD_SUBDIRECTORY(app)
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(test)
+

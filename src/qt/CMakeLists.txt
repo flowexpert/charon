@@ -1,4 +1,7 @@
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+IF(USE_Qwt5)
+	INCLUDE_DIRECTORIES(${Qwt5_INCLUDE_DIR})
+ENDIF(USE_Qwt5)
 SET(charonwidgets_HEADERS
 	charonwidgets.h
 )
@@ -14,6 +17,14 @@ SET(charonwidgets_SOURCES
 	FrameSelectWidget.cpp
 	StatisticsDisplayWidget.cpp
 )
+IF(USE_Qwt5)
+	LIST(APPEND charonwidgets_QT_HEADERS
+		ResidualPlotWidget.hpp
+	)
+	LIST(APPEND charonwidgets_SOURCES
+		ResidualPlotWidget.cpp
+	)
+ENDIF(USE_Qwt5)
 QT4_WRAP_UI(charonwidgets_UIS
 	FrameSelectWidget.ui
 )
@@ -84,6 +95,9 @@ TARGET_LINK_LIBRARIES(charonwidgets
 	${QT_OPENGL_LIBRARIES}
 	${OPENGL_LIBRARIES}
 )
+IF(USE_Qwt5)
+	TARGET_LINK_LIBRARIES(charonwidgets ${Qwt5_Qt4_LIBRARY})
+ENDIF()
 
 SET_TARGET_PROPERTIES(charonwidgets PROPERTIES
 	FOLDER "charon-utils Modules"

@@ -49,6 +49,7 @@ namespace ArgosDisplay
 		ViewStack& viewStack() ;
 
 		void addDockWidget(QWidget* widget) ;
+		void addOverlayWidget(QWidget* widget) ;
 
 	private:
 		void _createMenus() ;
@@ -56,19 +57,22 @@ namespace ArgosDisplay
 		/// central Widget for image view management
 		ViewStack* _viewStack ;
 
-		std::vector<QWidget* > _widgets ;
+		std::vector<QWidget* > _dockWidgets ;
+		std::vector<QWidget* > _overlayWidgets ;
 
 		bool _updatePending ;
 
 	private slots:
 		void _addDockWidgets() ;
+		void _addOverlayWidgets() ;
 
 	signals:
-		void widgetAdded() ;
-
+		void dockWidgetAdded() ;
+		void overlayWidgetAdded() ;
 
 	} ; /* class MainWindow */
 
 } /* namespace ArgosDisplay */
 
 #endif /* _ARGOSDISPLAY_MAINWINDOW_HPP_ */
+

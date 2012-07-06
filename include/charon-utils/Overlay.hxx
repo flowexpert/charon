@@ -50,6 +50,10 @@ Overlay<T>::Overlay(const std::string& name) :
 		alpha, "alpha",
 		"foreground/background ratio, 0=back,1=front",
 		0.5, "float");
+	ParameteredObject::_addParameter< bool >(
+		blackIsTransparent, "blackIsTransparent",
+		"if set, black is treated as transparent",
+		false, "bool");
 }
 
 template <typename T>
@@ -68,11 +72,35 @@ void Overlay<T>::execute() {
 	}
 
 	o.assign(bg);
+
+	bool _blackIsTransparent = blackIsTransparent();
+
+	T fe, be, fgnd, bgnd;
 	cimglist_for(o, kk) {
 		cimg_forXYZC(o[kk],xx,yy,zz,cc) {
-			o(kk,xx,yy,zz,cc) = f*fg(kk,xx,yy,zz,cc) + b*bg(kk,xx,yy,zz,cc);
+			fgnd = fg(kk,xx,yy,zz,cc);
+			bgnd = bg(kk,xx,yy,zz,cc);
+
+			fe = T(f);
+			be = T(b);
+
+			if (_blackIsTransparent) {
+				if (fgnd == 0)
+					if (bgnd != 0) {
+						fe = 0;
+						be = 1;
+					}
+				if (bgnd == 0)
+					if (fgnd != 0) {
+						fe = 1;
+						be = 0;
+					}
+			}
+
+			o(kk,xx,yy,zz,cc) = fe*fgnd + be*bgnd;
 		}
 	}
 }
 
 #endif /* _OVERLAY_HXX_ */
+

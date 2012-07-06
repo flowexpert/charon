@@ -4,6 +4,13 @@ INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIRECTORIES})
+IF(Qwt5_Qt4_FOUND)
+	INCLUDE_DIRECTORIES(${Qwt5_INCLUDE_DIR})
+ENDIF(Qwt5_Qt4_FOUND)
+
+IF(USE_MathGL)
+	INCLUDE_DIRECTORIES(${MathGL_INCLUDE_DIR})
+ENDIF(USE_MathGL)
 
 IF(MSVC)
 	ADD_DEFINITIONS(/DHANDLE_DLL)
@@ -167,6 +174,16 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/EndpointError.h
 		${CHARON_UTILS_INCLUDE_DIR}/EndpointError.hxx
 	)
+	ADD_LIBRARY(angularerror SHARED
+		AngularError.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/AngularError.h
+		${CHARON_UTILS_INCLUDE_DIR}/AngularError.hxx
+	)
+	ADD_LIBRARY(lengtherror SHARED
+		LengthError.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/LengthError.h
+		${CHARON_UTILS_INCLUDE_DIR}/LengthError.hxx
+	)
 	ADD_LIBRARY(colormask SHARED
 		ColorMask.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/ColorMask.h
@@ -279,7 +296,23 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.h
 		${CHARON_UTILS_INCLUDE_DIR}/FitSizes.hxx
 	)
-	
+	ADD_LIBRARY(cut SHARED
+		Cut.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Cut.h
+		${CHARON_UTILS_INCLUDE_DIR}/Cut.hxx
+	)
+	IF(QT4_FOUND)
+		SET(toggletimeout_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ToggleTimeout.h)
+		QT4_WRAP_CPP(toggletimeout_HEADERS_MOCKED ${toggletimeout_HEADERS_TOMOC})
+		ADD_LIBRARY(toggle SHARED
+			${toggletimeout_HEADERS_MOCKED}
+			ToggleTimeout.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/Toggle.h
+			${CHARON_UTILS_INCLUDE_DIR}/Toggle.hxx
+			Toggle.cpp
+		)
+		TARGET_LINK_LIBRARIES(toggle ${QT_LIBRARIES})
+	ENDIF(QT4_FOUND)
 	SET(Plugins_CImg
 		channelconverter
 		crop
@@ -298,6 +331,8 @@ IF(USE_CIMG)
 		rgb2hsv
 		flow2hsv
 		endpointerror
+		angularerror
+		lengtherror
 		colormask
 		overlay
 		flowquiver
@@ -320,7 +355,13 @@ IF(USE_CIMG)
 		strictresizexy
 		size
 		fitsizes
+		cut
 	)
+	IF(QT4_FOUND)
+		LIST(APPEND Plugins_CImg
+			toggle
+		)
+	ENDIF(QT4_FOUND)
 
 	LIST(APPEND Plugins
 		${Plugins_CImg}
@@ -459,6 +500,36 @@ IF(USE_VIGRA)
 			argosdisplay
 			frameselect
 		)
+
+		IF(USE_MathGL)
+			QT4_WRAP_CPP(quiverplot_MOC
+				${CHARON_UTILS_INCLUDE_DIR}/QuiverPlot.h)
+			ADD_LIBRARY(quiver SHARED
+				Quiver.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/Quiver.h
+				${CHARON_UTILS_INCLUDE_DIR}/Quiver.hxx
+				${CHARON_UTILS_INCLUDE_DIR}/QuiverPlot.h
+				QuiverPlot.cpp
+				${quiverplot_MOC}
+			)
+			TARGET_LINK_LIBRARIES(quiver ${QT_LIBRARIES} ${MathGL_LIBS})
+			LIST(APPEND Plugins_Qt quiver)
+			LIST(APPEND Plugins_CImg quiver)
+		ENDIF(USE_MathGL)
+
+		IF(USE_Qwt5)
+			ADD_LIBRARY(residualplot SHARED
+				ResidualPlot.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.h
+				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.hxx
+			)
+			LIST(APPEND Plugins_Qt
+				residualplot
+			)
+			LIST(APPEND Plugins_CImg
+				residualplot
+			)
+		ENDIF(USE_Qwt5)
 
 		IF(USE_Boost)
 			INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})

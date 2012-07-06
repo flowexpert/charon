@@ -38,7 +38,9 @@ typedef boost::iterator_range
 	<std::vector<std::pair<double, double> >::iterator> histogram_type;
 
 cimg_library::CImg<unsigned char> histogramPlot(
-		const histogram_type& histogram,double mean) {
+		const histogram_type& histogram,double mean, 
+		double median= std::numeric_limits<double>::infinity()) 
+{
 	using namespace cimg_library ;
 
 	int leftBorder = 50 ;
@@ -49,6 +51,8 @@ cimg_library::CImg<unsigned char> histogramPlot(
 	int imgHeight = 600 ;
 	unsigned char foreground[] = {255,255,255} ;
 	unsigned char textcolor[] = {255,0,0} ;
+	unsigned char green[] = {0,192,0} ;
+	unsigned char blue[] = {96,96,255} ;
 	unsigned char background[] = {0,0,0} ;
 
 	CImg<unsigned char> target(imgWidth,imgHeight,1,3,0) ;
@@ -56,9 +60,10 @@ cimg_library::CImg<unsigned char> histogramPlot(
 	//draw graph
 	CImg<unsigned char> graph(graphWidth, graphHeight, 1, 3, 0) ;
 	CImg<double> histdata(histogram.size() - 2,1) ;
-	double maxdensity = 0.0 ;
-	double minBin = histogram[1].first ; 
-	double maxBin = histogram.back().first ;
+	double maxdensity = 0.0 ; //density of largest histogram bin
+	double minBin = histogram[1].first ; //value of leftmost bin
+	double maxBin = histogram.back().first ; //value of rightmost bin
+	double maxDensityBin = 0.0 ; //value of bin with highest density
 
 	std::vector<std::pair<double, double> >::iterator it = histogram.begin() ;
 	//start at second bin, the first one is an underflow bin which is not used
@@ -69,7 +74,9 @@ cimg_library::CImg<unsigned char> histogramPlot(
 		double val = it->second ;
 		histdata[ii] = val ;
 		if(val > maxdensity)
-			maxdensity = val ;
+		{	maxdensity = val ;
+			maxDensityBin = it->first ;
+		}
 	}
 	graph.draw_graph(histdata, foreground, 1.0, 3, 1, maxdensity,0.0) ;
 	
@@ -80,29 +87,42 @@ cimg_library::CImg<unsigned char> histogramPlot(
 	char minCountS[32] ;
 	char maxCountS[32] ;
 	char middleValS[32] ;
-	res = sprintf(minValS, "%.1f", minBin) ;
-	res = sprintf(middleValS, "%.1f", (maxBin + minBin) * 0.5) ;
-	res = sprintf(maxValS, "%.1f", maxBin) ;
+	char meanValS[32] ;
+	char maxDensityValS[32] ;
+	char medianValS[32] ;
+	res = sprintf(minValS, "%.2e", minBin) ;
+	res = sprintf(middleValS, "%.2e", (maxBin + minBin) * 0.5) ;
+	res = sprintf(meanValS, "mean: %.2e", mean) ;
+	res = sprintf(maxValS, "%.2e", maxBin) ;
 	res = sprintf(minCountS, "0") ;
-	res = sprintf(maxCountS, "%.1f", maxdensity) ;
+	res = sprintf(maxCountS, "%.2f", maxdensity) ;
+	res = sprintf(maxDensityValS, "%.2e", maxDensityBin) ;
+	if(median != std::numeric_limits<double>::infinity())
+		res = sprintf(medianValS, "median: %.2e", median) ;
 	cimg::unused(res);
 
 	//combine parts
 	target.draw_rectangle(leftBorder, topBorder, leftBorder+ graphWidth + 2,
-			topBorder + graphHeight + 2, foreground) ;
+			topBorder + graphHeight + 2, textcolor) ;
 	target.draw_image(leftBorder + 1, topBorder + 1, 0, 0, graph) ;
 
 	//draw lines at median and mean
-	/* //median is only estimated, sometimes badly; 
-	   //so there's little sense in showing it
-	float medianX = (median - minBin) * graphWidth / (maxBin - minBin) + leftBorder ;
-	target.draw_line(medianX, topBorder-10, medianX,topBorder+graphHeight+5, foreground) ;
-	target.draw_text(medianX, topBorder - 10, "median", foreground, background) ;
-	*/
 	float meanX = (mean - minBin) * graphWidth / (maxBin -minBin) + leftBorder ;
-	target.draw_line(meanX, topBorder - 18, meanX,
-		topBorder+graphHeight+5, foreground) ;
-	target.draw_text(meanX, topBorder - 18, "mean", textcolor, background) ;
+	target.draw_line(meanX, topBorder - 42, meanX,
+		topBorder+graphHeight+5, textcolor) ;
+	target.draw_text(meanX, topBorder - 44, meanValS, textcolor, background) ;
+
+	if(median != std::numeric_limits<double>::infinity())
+	{
+		float medianX = (median - minBin) * graphWidth / (maxBin - minBin) + leftBorder ;
+		target.draw_line(medianX, topBorder-28, medianX,topBorder+graphHeight+5, green) ;
+		target.draw_text(medianX, topBorder - 30, medianValS, green, background) ;
+	}
+
+	float maxDenBin = (maxDensityBin - minBin) * graphWidth / (maxBin - minBin) + leftBorder ;
+	target.draw_line(maxDenBin, topBorder - 12, maxDenBin,
+		topBorder+graphHeight+5, blue) ;
+	target.draw_text(maxDenBin, topBorder - 16, maxDensityValS, blue, background) ;
 
 	//draw axis ticks
 	target.draw_text(int(leftBorder *0.5), topBorder, maxCountS,
@@ -117,7 +137,7 @@ cimg_library::CImg<unsigned char> histogramPlot(
 		topBorder + graphHeight + 10, middleValS, textcolor, background) ;
 	target.draw_text(leftBorder + graphWidth - 20, topBorder+ graphHeight + 10,
 		maxValS, textcolor, background) ;
-	
+
 	//convert to charon color representation
 	return target ;
 }
@@ -128,7 +148,6 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("StatisticsDisplay", name,
 			"Calculates various statistical properties of input object "
 			"and exports a QWidget for display<br>"
-			"Remark: The median value is only an estimate!<br>"
 			"The values NaN and +-Infinity will be ignored for "
 			"the calculation of mean, variance, sum and median"),
 			_vigraIn(true, true),
@@ -172,6 +191,7 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 			"Image showing the distribution of values in each input image<br>"
 			"This is a color image of dimension 800x600x1xnx3 "
 			"(where n is the number of input images)<br>"
+			"additionaly mean, median and the (rough) position of the largest bin are also visualized<br>"
 			"Remark: The histogram calculation does currently not work with masks",
 			"CImgList<T>");
 
@@ -184,6 +204,11 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 	ParameteredObject::_addParameter<bool>(_writeToSout, "writeToSout",
 		"write results to stdout and status console", true, "bool");
 	
+	ParameteredObject::_addParameter<bool>(_calcQuantiles, "calculateQuantiles",
+		"Calculate 1/4, 1/2 (median) and 3/4 quantiles of pixel values<br>"
+		"This calculation is done for the whole image, masks are ignored<br>"
+		"increases memory consumption and computation time drastically",false) ;
+
 	ParameteredObject::_addParameter<size_t>(_numBins, "numberOfBins",
 		"number of bins for histogram", 256) ;
 	
@@ -225,6 +250,13 @@ void StatisticsDisplayPlugin<T>::execute() {
 		
 		const Array& img = _vigraIn[ii] ;
 		
+		Array* sortedImg = 0 ;
+		if(_calcQuantiles)
+		{
+			sortedImg = new Array(img) ;
+			std::sort(sortedImg->begin(), sortedImg->end()) ;
+		}
+
 		//create accumulators for each image, add tags as needed
 		//accumulator which can track infinities and NaN
 
@@ -236,8 +268,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 		
 		//accumulator for calculations where inf and NaN lead to errors
 		accumulator_set<double, stats<
-			tag::sum, tag::mean, tag::variance, 
-			tag::median
+			tag::sum, tag::mean, tag::variance
 		> > stable_acc;
 
 		//accumulate all pixel values
@@ -304,7 +335,13 @@ void StatisticsDisplayPlugin<T>::execute() {
 		s.stats.insert(StatPair("mean",mean(stable_acc))) ;
 		s.stats.insert(StatPair("variance",variance(stable_acc))) ;
 		s.stats.insert(StatPair("stddev",sqrt(variance(stable_acc)))) ;
-		s.stats.insert(StatPair("median",median(stable_acc))) ;
+		
+		if(_calcQuantiles)
+		{
+			s.stats.insert(StatPair("1/4 quantile", *(sortedImg->begin() + sortedImg->size() / 4))) ;
+			s.stats.insert(StatPair("median", *(sortedImg->begin() + sortedImg->size() / 2))) ;
+			s.stats.insert(StatPair("3/4 quantile", *(sortedImg->begin() + (sortedImg->size() * 3 / 4 )))) ;
+		}
 		s.origin = name ;
 
 		_statistics.push_back(s) ;
@@ -320,11 +357,16 @@ void StatisticsDisplayPlugin<T>::execute() {
 		
 		if(_histograms.connected())
 		{
-			CImg<unsigned char> histplot = histogramPlot(density(acc), mean(stable_acc)) ;
+			double med = std::numeric_limits<double>::infinity() ;
+			if(_calcQuantiles())
+				med = *(sortedImg->begin() + sortedImg->size() / 2) ;
+			CImg<unsigned char> histplot = histogramPlot(density(acc), mean(stable_acc), med) ;
 			_histograms()[0].append(histplot.get_shared_channel(0),'c') ;
 			_histograms()[1].append(histplot.get_shared_channel(1),'c') ;
 			_histograms()[2].append(histplot.get_shared_channel(2),'c') ;
 		}
+
+		delete sortedImg ;
 
 	}
 
@@ -348,15 +390,23 @@ void StatisticsDisplayPlugin<T>::execute() {
 		{
 			pixCount += cimg(l).size() ;
 		}
+		
+		std::vector<T> sortedImg ;
+		if(_calcQuantiles)
+		{
+			sortedImg.reserve(pixCount) ;
+		}
+
 		//accumulator which can track infinities and NaN
 		accumulator_set<double, stats<
 			tag::min, tag::max, tag::count, tag::density
 		> > acc(tag::density::num_bins = _numBins(),tag::density::cache_size = pixCount) ;
+
 		
+
 		//accumulator for calculations where inf and NaN lead to errors
 		accumulator_set<double, stats<
-			tag::sum, tag::mean, tag::variance, 
-			tag::median
+			tag::sum, tag::mean, tag::variance
 		> > stable_acc;
 
 		if(!_cimgMask.connected())
@@ -373,6 +423,8 @@ void StatisticsDisplayPlugin<T>::execute() {
 						-val != std::numeric_limits<T>::infinity()
 					)
 						stable_acc(val) ;
+					if(_calcQuantiles)
+					{	sortedImg.push_back(val) ;}
 				}
 			}
 		}
@@ -401,11 +453,15 @@ void StatisticsDisplayPlugin<T>::execute() {
 							-val != std::numeric_limits<T>::infinity()
 						)
 							stable_acc(val) ;
+						if(_calcQuantiles)
+						{	sortedImg.push_back(val) ;}
 					}
 				}
 			}
 		}
 
+		std::sort(sortedImg.begin(), sortedImg.end()) ;
+		
 		Statistics s ;
 
 		typedef std::pair<std::string, double> StatPair ;
@@ -421,8 +477,15 @@ void StatisticsDisplayPlugin<T>::execute() {
 		s.stats.insert(StatPair("mean",mean(stable_acc))) ;
 		s.stats.insert(StatPair("variance",variance(stable_acc))) ;
 		s.stats.insert(StatPair("stddev",sqrt(variance(stable_acc)))) ;
-		s.stats.insert(StatPair("median",median(stable_acc))) ;
 		s.origin = name ;
+
+		if(_calcQuantiles)
+		{
+			s.stats.insert(StatPair("1/4 quantile", *(sortedImg.begin() + sortedImg.size() / 4))) ;
+			s.stats.insert(StatPair("median", *(sortedImg.begin() + sortedImg.size() / 2))) ;
+			s.stats.insert(StatPair("3/4 quantile", *(sortedImg.begin() + (sortedImg.size() * 3 / 4 )))) ;
+		}
+
 
 		_statistics.push_back(s) ;
 
@@ -437,11 +500,15 @@ void StatisticsDisplayPlugin<T>::execute() {
 	
 		if(_histograms.connected())
 		{
-			CImg<unsigned char> histplot = histogramPlot(density(acc), mean(stable_acc)) ;
+			double med = std::numeric_limits<double>::infinity() ;
+			if(_calcQuantiles())
+				med = *(sortedImg.begin() + sortedImg.size() / 2) ;
+			CImg<unsigned char> histplot = histogramPlot(density(acc), mean(stable_acc), med) ;
 			_histograms()[0].append(histplot.get_shared_channel(0),'c') ;
 			_histograms()[1].append(histplot.get_shared_channel(1),'c') ;
 			_histograms()[2].append(histplot.get_shared_channel(2),'c') ;
 		}
+
 	}
 
 	if(_display.connected() && _exportWidget)
@@ -449,6 +516,7 @@ void StatisticsDisplayPlugin<T>::execute() {
 		//_exportWidget->setTitle(this->getName()) ;
 		_exportWidget->updateStats(_statistics) ;
 	}
+
 }
 
 

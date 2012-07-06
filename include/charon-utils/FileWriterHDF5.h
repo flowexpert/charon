@@ -70,15 +70,17 @@ public:
 	 */
 	Parameter<bool> noSingletonDimensions;
 
+	/// Specify data type in file
+	/** This will cast the data type before saving to the file.
+	 *  Specify "ignore" to skip typecasting (saves memory).
+	 */
+	Parameter<std::string> fileDataType;
+
 	/// The vigra::MultiArray object to be written to a hdf5 file.
 	InputSlot < vigra::MultiArray<5, T> > in;
 
 	/// default constructor
 	FileWriterHDF5(const std::string& name = "" /** [in] Instance name */);
-
-protected:
-	/// Update object.
-	virtual void execute();
 
 	/// write routine called in execute()
 	/** This is provided separatly to be used e.g. from outside.
@@ -90,13 +92,19 @@ protected:
 	 *  \param dsetName               name of dataset in the file
 	 *  \param noSingletonDimensions  skip empty dimension
 	 *  \param comment                dataset comment attribute string
+	 *  \param fileDataType           cast to given type
 	 */
 	static void writeToFile(
 		const vigra::MultiArrayView<5,T>& data,
 		const std::string& filename,
 		const std::string& dsetName,
 		const bool& noSingletonDimensions = false,
-		const std::string& comment = "");
+		const std::string& comment = "",
+		const std::string& fileDataType = "ignore");
+
+protected:
+	/// Update object.
+	virtual void execute();
 };
 
 #endif /* _FILEWRITER_HDF5_H_ */

@@ -118,8 +118,8 @@ void WarpSymmetric<T>::execute() {
 
 		cimg_forXYZ(seq[kk],x,y,z) {
 			// calculate positions where to evaluate the flow
-			xf1=x+wf1*flow(0u,x,y,z);   yf1=y+wf1*flow(1u,x,y,z);   zf1=z;
-			xf2=x+wf2*flow(0u,x,y,z);   yf2=y+wf2*flow(1u,x,y,z);   zf2=z;
+			xf1=float(x+wf1*flow(0u,x,y,z));   yf1=float(y+wf1*flow(1u,x,y,z));   zf1=float(z);
+			xf2=float(x+wf2*flow(0u,x,y,z));   yf2=float(y+wf2*flow(1u,x,y,z));   zf2=float(z);
 
 			// get interpolated flow values at calculated positions
 			flowX1 = interp.interpolate(flow[0u],xf1,yf1,zf1);
@@ -129,17 +129,17 @@ void WarpSymmetric<T>::execute() {
 			flowY2 = interp.interpolate(flow[1u],xf2,yf2,zf2);
 
 			// calculate positions where to read the image
-			xn1 = x+wn1*flowX1;   yn1 = y+wn1*flowY1;   zn1 = z;
-			xn2 = x+wn2*flowX2;   yn2 = y+wn2*flowY2;   zn2 = z;
+			xn1 = float(x+wn1*flowX1);   yn1 = float(y+wn1*flowY1);   zn1 = float(z);
+			xn2 = float(x+wn2*flowX2);   yn2 = float(y+wn2*flowY2);   zn2 = float(z);
 
 			if(is3D) {
 				// same processing for z dimension
-				zf1 += wf1*flow(2u,x,y,z);
-				zf2 += wf2*flow(2u,x,y,z);
+				zf1 += float(wf1*flow(2u,x,y,z));
+				zf2 += float(wf2*flow(2u,x,y,z));
 				flowZ1 = interp.interpolate(flow[2u],xf1,yf1,zf1);
 				flowZ2 = interp.interpolate(flow[2u],xf2,yf2,zf2);
-				zn1 += wn1*flowZ1;
-				zn2 += wn2*flowZ2;
+				zn1 += float(wn1*flowZ1);
+				zn2 += float(wn2*flowZ2);
 			}
 
 			// get interpolated image values (= warping)

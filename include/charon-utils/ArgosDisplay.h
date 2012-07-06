@@ -76,7 +76,10 @@ namespace ArgosDisplay
 		InputSlot < cimg_library::CImgList<T> > _cimgIn ;
 
 		/// Pointers to widgets which will be displayed as QDockWidgets
-		InputSlot <QWidget*> _widgets;
+		InputSlot <QWidget*> _dockWidgets;
+
+		/// Pointers to widgets which will be layed over the displayed image
+		InputSlot <QWidget*> _overlayWidgets;
 
 		/// time interval for display reloading (0 disables)
 		Parameter < int > timeout;

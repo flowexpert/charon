@@ -95,6 +95,12 @@ namespace StatisticsDisplay {
 		/// also write the results to sout stream
 		Parameter <bool> _writeToSout ;
 
+		/// calculate 1/4, 1/2 (median) and 3/4 quantiles of pixel values
+		/** This calculation is done for the whole image, masks are ignored.
+		 *  increases memory consumption and computation time drastically
+		 */
+		Parameter <bool> _calcQuantiles ;
+
 		/// number of bins for histogram
 		Parameter <size_t> _numBins ;
 

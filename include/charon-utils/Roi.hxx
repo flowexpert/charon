@@ -83,13 +83,13 @@ void Roi<T>::_init() {
 
 template <typename T>
 Roi<T>::Roi(std::string name) :
-TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
+TemplatedParameteredObject<T> ("Roi", name, "Region of interest") {
 	_init();
 }
 
 template <typename T>
 Roi<T>::Roi(const ParameterFile& pf, std::string name) :
-TemplatedParameteredObject<T> ("roi", name, "Region of interest") {
+TemplatedParameteredObject<T> ("Roi", name, "Region of interest") {
 	_init();
 	this->load(pf, name);
 }
