@@ -34,12 +34,13 @@
 #include <cassert>
 
 template <typename T>
-Interpolator<T>::Interpolator(const std::string& className,
-                              const std::string& name,
-                              const std::string& doc) :
-        TemplatedParameteredObject<T>(className, name, doc),
-        out(0) {
-    _addOutputSlot(out, "out", "interpolator pointer", "Interpolator<T>*");
+Interpolator<T>::Interpolator(
+		const std::string& className, const std::string& name,
+		const std::string& doc) :
+			TemplatedParameteredObject<T>(className, name, doc),
+			out(0) {
+	ParameteredObject::_addOutputSlot(
+				out, "out", "interpolator pointer", "Interpolator<T>*");
 }
 
 template <typename T>
