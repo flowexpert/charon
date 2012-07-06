@@ -33,7 +33,7 @@
 
 /// Creates an instance of the plugin
 extern "C" brightnessmodels_diffusion_DECLDIR ParameteredObject*
-		create(const std::string & name, template_type t) {
+		create(const std::string & name, ParameteredObject::template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);

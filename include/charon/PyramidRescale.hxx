@@ -71,8 +71,11 @@ void PyramidRescale<T>::execute() {
 	const unsigned int maxL = endL-1;
 	const unsigned int stepsDown = maxL-curL;
 
-	if(curL > maxL)
-		throw std::invalid_argument("current level too large");
+	if(curL > maxL) {
+		std::ostringstream msg;
+		msg << "current level too large: cur=" << curL << "; max=" << maxL;
+		ParameteredObject::raise(msg.str());
+	}
 
 	// input sequence remains unscaled over time and is the pyramid base
 	const int sx = si[0].width(), sy = si[0].height();
