@@ -177,7 +177,7 @@ void InputSlot<T>::load(const ParameterFile& pf,
 
 		// typecheck is performed in _addTarget that is called in connect
 		AbstractSlot<T>* tmp = (AbstractSlot<T>*) (targetSlot);
-		connect(*tmp);
+		Slot::connect(*tmp);
 	}
 }
 
