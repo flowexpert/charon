@@ -52,6 +52,8 @@ public:
 
 	/// Update object.
 	virtual void execute();
+private:
+	int _iteration;
 };
 
 #endif /* _PRINTVALUE_H_ */

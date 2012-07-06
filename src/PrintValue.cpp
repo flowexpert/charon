@@ -36,13 +36,15 @@ PrintValue::PrintValue(const std::string& name) :
 		value, "value",
 		"value",
 		"double");
+	_iteration=0;
 
 }
 
 void PrintValue::execute() {
 	std::cout<<"######################################################"<<std::endl;
-	std::cout<<getClassName()<<" "<<getName()<<": "<<value<<std::endl;
+	std::cout<<getClassName()<<" "<<getName()<<" Iteration: "<<_iteration<<" Val:"<<value<<std::endl;
 	std::cout<<"######################################################"<<std::endl;
+	_iteration++;
 }
 
 // the following functions are needed
