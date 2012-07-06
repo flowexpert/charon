@@ -60,9 +60,6 @@ LucasKanadeSmoothing<T>::LucasKanadeSmoothing(const std::string& name) :
 
 template <typename T>
 void LucasKanadeSmoothing<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	sout << "\tcalculating products:" << std::endl;
 
 	IxIx().assign(this->dx());

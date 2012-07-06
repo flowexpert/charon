@@ -64,8 +64,10 @@ public:
 		TemplatedParameteredObject<T>(classname, name,
 				"computes the vectors for brightness-modeling")
 	{
-		_addOutputSlot(out, "this", "Pointer to itself", "BrightnessModel<T>");
-		_addInputSlot(img, "image", "Image to work with", "CImgList<T>");
+		ParameteredObject::_addOutputSlot(
+					out, "this", "Pointer to itself", "BrightnessModel<T>");
+		ParameteredObject::_addInputSlot(
+					img, "image", "Image to work with", "CImgList<T>");
 	}
 
 	/// OutputSlot containing pointer to this BrightnessModel
