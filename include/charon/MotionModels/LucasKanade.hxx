@@ -66,10 +66,15 @@ template<class T>
 MotionModels::LucasKanade<T>::LucasKanade(const std::string& name) :
 		MotionModel<T>::MotionModel("motionmodels_lucaskanade", name)
 {
-	_addInputSlot(IxIx, "IxIx", "<I_x * I_x>", "CImgList<T>");
-	_addInputSlot(IxIy, "IxIy", "<I_x * I_y>", "CImgList<T>");
-	_addInputSlot(IyIy, "IyIy", "<I_y * I_y>", "CImgList<T>");
-	_addInputSlot(IxIt, "IxIt", "<I_x * I_t>", "CImgList<T>");
-	_addInputSlot(IyIt, "IyIt", "<I_y * I_t>", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+				IxIx, "IxIx", "<I_x * I_x>", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+				IxIy, "IxIy", "<I_x * I_y>", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+				IyIy, "IyIy", "<I_y * I_y>", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+				IxIt, "IxIt", "<I_x * I_t>", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+				IyIt, "IyIt", "<I_y * I_t>", "CImgList<T>");
 }
 #endif
