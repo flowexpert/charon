@@ -32,10 +32,14 @@ template<class T>
 BrightnessModels::Diffusion<T>::Diffusion(const std::string& name) :
 		BrightnessModel<T>("brightnessmodels_diffusion", name)
 {
-	_addInputSlot(dx, "dx", "derivative wrt x", "CImgList<T>");
-	_addInputSlot(dy, "dy", "derivative wrt y", "CImgList<T>");
-	_addInputSlot(dxx, "dxx", "second derivative wrt x", "CImgList<T>");
-	_addInputSlot(dyy, "dyy", "second derivative wrt y", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+				dx, "dx", "derivative wrt x", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+				dy, "dy", "derivative wrt y", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+				dxx, "dxx", "second derivative wrt x", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+				dyy, "dyy", "second derivative wrt y", "CImgList<T>");
 
 	ParameteredObject::_addParameter(
 				D, "diffusion_coeff", "Diffusion coefficient", 0.005f);
