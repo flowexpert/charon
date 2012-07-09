@@ -44,6 +44,9 @@ EndpointError<T>::EndpointError(const std::string& name) :
 	ParameteredObject::_addOutputSlot(
 			out, "out", "hsv representation output [t](x,y,z,c)",
 			"CImgList<T>");
+	ParameteredObject::_addParameter(
+			threshold, "threshold",
+			"threshold to cut off", "T");
 }
 
 template<typename T>
@@ -59,6 +62,8 @@ void EndpointError<T>::execute() {
 	cimg_library::CImg<T> tmp( i1[0].width(), i1[0].height(), i1[0].depth(),
 	                           i1[0].spectrum() );
 
+	T _threshold = threshold();
+
 	T sum;
 	T delta;
 	unsigned int pixelCnt = 0;
@@ -67,7 +72,7 @@ void EndpointError<T>::execute() {
 		sum = T(0);
 		for (unsigned int n=0; n<i1.size(); ++n) {
 			delta = fabs( double(i1(n,x,y,z,t) - i2(n,x,y,z,t)) );
-			if (delta > 1e9) delta = 0;
+			if (delta > _threshold) delta = 0;
 			sum += pow( double(delta), 2 );
 		}
 		tmp(x,y,z,t) = pow( double(sum), double(1.0/2) );

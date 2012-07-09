@@ -63,6 +63,9 @@ public:
 
 	/// endpoint error output
 	OutputSlot<cimg_library::CImgList<T> > out;
+
+	/// threshold
+	Parameter<T> threshold;
 };
 
 #endif
