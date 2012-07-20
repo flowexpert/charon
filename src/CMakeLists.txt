@@ -101,7 +101,7 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Resize.hxx
 	)
 	TARGET_LINK_LIBRARIES(resize roi)
-	IF(QT4_FOUND)
+	IF(USE_QT)
 		SET(filereaderwatcher_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/FileReaderWatcher.h)
 		QT4_WRAP_CPP(filereaderwatcher_HEADERS_MOCKED ${filereaderwatcher_HEADERS_TOMOC})
 		ADD_LIBRARY(filereader SHARED
@@ -112,13 +112,13 @@ IF(USE_CIMG)
 			${filereaderwatcher_HEADERS_MOCKED}
 		)
 		TARGET_LINK_LIBRARIES(filereader ${QT_LIBRARIES})
-	ELSE(QT4_FOUND)
+	ELSE(USE_QT)
 		ADD_LIBRARY(filereader SHARED
 			FileReader.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/FileReader.h
 			${CHARON_UTILS_INCLUDE_DIR}/FileReader.hxx
 		)
-	ENDIF(QT4_FOUND)
+	ENDIF(USE_QT)
 	ADD_LIBRARY(floreader SHARED
 		FloReader.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/FloReader.h
@@ -301,7 +301,7 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Cut.h
 		${CHARON_UTILS_INCLUDE_DIR}/Cut.hxx
 	)
-	IF(QT4_FOUND)
+	IF(USE_QT)
 		SET(toggletimeout_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ToggleTimeout.h)
 		QT4_WRAP_CPP(toggletimeout_HEADERS_MOCKED ${toggletimeout_HEADERS_TOMOC})
 		ADD_LIBRARY(toggle SHARED
@@ -312,7 +312,7 @@ IF(USE_CIMG)
 			Toggle.cpp
 		)
 		TARGET_LINK_LIBRARIES(toggle ${QT_LIBRARIES})
-	ENDIF(QT4_FOUND)
+	ENDIF(USE_QT)
 	SET(Plugins_CImg
 		channelconverter
 		crop
@@ -357,11 +357,11 @@ IF(USE_CIMG)
 		fitsizes
 		cut
 	)
-	IF(QT4_FOUND)
+	IF(USE_QT)
 		LIST(APPEND Plugins_CImg
 			toggle
 		)
-	ENDIF(QT4_FOUND)
+	ENDIF(USE_QT)
 
 	LIST(APPEND Plugins
 		${Plugins_CImg}
@@ -489,12 +489,31 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.hxx
 		)
 		TARGET_LINK_LIBRARIES(frameselect roi)
+		
+		QT4_WRAP_CPP(ScriptorCimg_MOC
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h)
+			
+		ADD_LIBRARY(ScriptorCimg SHARED
+			${ScriptorCimg_MOC}
+			ScriptorCimgPlugin.cpp
+			ScriptorExecuter.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorBase.h
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorBase.hxx
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorCimg.h
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorCimg.hxx
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorCimgPlugin.h
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorCimgPlugin.hxx
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h
+		)
+		
 		LIST(APPEND Plugins_Qt
 			argosdisplay
 			frameselect
+			ScriptorCimg
 		)
 		LIST(APPEND Plugins_CImg
 			argosdisplay
+			ScriptorCimg
 		)
 		LIST(APPEND Plugins_Vigra
 			argosdisplay
