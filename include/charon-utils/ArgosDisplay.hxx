@@ -169,6 +169,7 @@ void ArgosDisplayPlugin<T>::execute() {
 	for (std::size_t ii = 0 ; ii < _overlayWidgets.size() ; ii++) {
 		_mainWindow->addOverlayWidget(_overlayWidgets[ii]) ;
 	}
+	QApplication::processEvents() ;
 }
 
 template<typename T>
