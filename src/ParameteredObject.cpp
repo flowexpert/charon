@@ -479,12 +479,15 @@ Slot* ParameteredObject::getSlot(const std::string& slotName) const {
 		return slot->second;
 	}
 
-	// try to fixe slot casing
+	// try to fix slot casing
+	// this is more expensive than simple map lookup,
+	// so this is done only if needed
 	std::string slotNameFixed = fixCase(slotName);
-	sout << "(WW) misspelled slot casing: " << slotName
-		 << " (corrected: " << slotNameFixed << ")" << std::endl;
+	sout << "(WW) getSlot: wrong slot casing: " << _instanceName
+		 << "." << slotName  << " (fixed: " << slotNameFixed << ")"
+		 << std::endl;
 
-	// try again
+	// try again with fixed name
 	slot = _inputs.find(slotNameFixed);
 	if (slot != _inputs.end()) {
 		return slot->second;

@@ -67,11 +67,13 @@ void checkPFile(const ParameterFile& pf) {
 	assert(mod2->iN.connected());
 	assert(!mod2->oUt.connected());
 	man->reset();
+	sout << std::endl;
 }
 
-/// test connection with parameter file
+/// test connection with parameter file, check auto case correction
 void paramFile() {
 	ParameterFile pFile;
+
 	// this is, how it should look like
 	pFile.set<std::string>("mod1.type","CasedDummy");
 	pFile.set<std::string>("mod2.type","CasedDummy");
@@ -82,6 +84,13 @@ void paramFile() {
 	// misspell target cases
 	pFile.set<std::string>("mod1.oUt","mod2.in");
 	pFile.set<std::string>("mod2.iN","mod1.out");
+	checkPFile(pFile);
+
+	// misspell source cases
+	pFile.erase("mod1.oUt");
+	pFile.erase("mod2.iN");
+	pFile.set<std::string>("mod1.out","mod2.iN");
+	pFile.set<std::string>("mod2.in","mod1.oUt");
 	checkPFile(pFile);
 }
 
