@@ -37,6 +37,16 @@ IF(BUILD_TESTING)
 	LIST(APPEND tests ParameterTest)
 	LIST(APPEND testTargets parametertest)
 
+	# tests for name casing
+	ADD_EXECUTABLE(casetest namecasing.cpp)
+	TARGET_LINK_LIBRARIES(casetest charon-core charon-plugins)
+	ADD_TEST(
+		NAME NameCasing
+		COMMAND casetest
+	)
+	LIST(APPEND tests NameCasing)
+	LIST(APPEND testTargets casetest)
+
 	# tests for input/output slot data passing
 	ADD_EXECUTABLE(datapasstest dataPassing.cpp)
 	TARGET_LINK_LIBRARIES(datapasstest charon-core charon-plugins)
@@ -62,7 +72,9 @@ IF(BUILD_TESTING)
 	TARGET_LINK_LIBRARIES(dummymodule charon-core)
 	ADD_LIBRARY(dynamicdummymodule SHARED DynamicDummyModule.cpp)
 	TARGET_LINK_LIBRARIES(dynamicdummymodule charon-core)
-	LIST(APPEND testTargets dummymodule dynamicdummymodule)
+	ADD_LIBRARY(caseddummy SHARED CasedDummy.cpp)
+	TARGET_LINK_LIBRARIES(caseddummy charon-core)
+	LIST(APPEND testTargets dummymodule dynamicdummymodule caseddummy)
 	
 	# locate module directory
 	GET_TARGET_PROPERTY(DUMMY_LOC dummymodule LOCATION)
