@@ -41,6 +41,19 @@ void standalone() {
 	assert(!mod2.oUt.connected());
 }
 
+void checkFixCase() {
+	CasedDummy mod1;
+	std::string res;
+	res = mod1.fixCase("in");
+	assert(res == "iN");
+	res = mod1.fixCase("In");
+	assert(res == "iN");
+	res = mod1.fixCase("out");
+	assert(res == "oUt");
+	res = mod1.fixCase("ouT");
+	assert(res == "oUt");
+}
+
 void checkPFile(const ParameterFile& pf) {
 	PluginManager* man = new PluginManager(MODULE_DIR);
 	man->loadParameterFile(pf);
@@ -79,6 +92,7 @@ int main() {
 
 	int ret = EXIT_SUCCESS;
 	ret += ExceptionHandler::run(standalone);
+	ret += ExceptionHandler::run(checkFixCase);
 	ret += ExceptionHandler::run(paramFile);
 	return ret;
 }

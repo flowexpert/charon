@@ -315,6 +315,9 @@ public:
 	/// get metadata
 	const ParameterFile& getMetadata();
 
+	/// restore parameter/slot name casing
+	std::string fixCase(const std::string& parOrSlotName) const;
+
 	/// Update object.
 	/**
 	 *  This function calls run on all InputSlots,
@@ -390,14 +393,7 @@ public:
 	 *  \throws std::invalid_argument if slot does not exist
 	 *  \returns requested slot
 	 */
-	Slot* getSlot(const std::string& slotName);
-
-	/// Const version
-	/** \param slotName     Name of the slot to look for
-	 *  \throws std::invalid_argument if slot does not exist
-	 *  \returns requested slot
-	 */
-	const Slot* getSlot(const std::string& slotName) const;
+	Slot* getSlot(const std::string& slotName) const;
 
 	/// Get all input slots as map
 	/** Returns a map linking the names of the input slots to the Slots itself.

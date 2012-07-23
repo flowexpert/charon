@@ -79,12 +79,18 @@ const ParameterFile& ParameteredObject::getMetadata() {
 bool ParameteredObject::_addSomething(const std::string& extension,
 		const std::string& name, const std::string& doc,
 		const std::string& type, const std::string& defaultValue) {
+	std::string nameL = name;
+	std::transform(
+		nameL.begin(), nameL.end(), nameL.begin(), (int(*)(int)) tolower);
 
 	// Check that param is not yet registered.
 	// Parameters can only be assigned once!
 	if( _parameters.find(name) != _parameters.end() ||
 		_inputs.find(name) != _inputs.end() ||
-		_outputs.find(name) != _outputs.end()) {
+		_outputs.find(name) != _outputs.end() ||
+		_parameters.find(nameL) != _parameters.end() ||
+		_inputs.find(nameL) != _inputs.end() ||
+		_outputs.find(nameL) != _outputs.end()) {
 		sout << "(EE) ******************************************************\n"
 			 << "(EE) The parameter or slot \"" << name
 			 << "\" has already been defined!\n"
@@ -103,21 +109,16 @@ bool ParameteredObject::_addSomething(const std::string& extension,
 		std::vector<std::string> someList;
 		// get all elements of the given section
 		if (_metadata.isSet(_className + "." + extension)) {
-			someList = _metadata.getList<std::string> (_className + "."
-					+ extension);
+			someList = _metadata.getList<std::string> (
+					_className + "." + extension);
 		}
 
-		std::vector<std::string>::const_iterator found = std::find(
-				someList.begin(), someList.end(), name);
-
-		if (found == someList.end()) {
-			someList.push_back(name);
-			_metadata.set<std::string>(_className+"."+extension, someList);
-			_metadata.set<std::string>(_className+"."+name + ".type", type);
-			_metadata.set<std::string>(_className+"."+name + ".doc", doc);
-			if (defaultValue.length())
-				_metadata.set<std::string> (_className + "." + name,
-						defaultValue);
+		someList.push_back(name);
+		_metadata.set<std::string>(_className+"."+extension, someList);
+		_metadata.set<std::string>(_className+"."+name + ".type", type);
+		_metadata.set<std::string>(_className+"."+name + ".doc", doc);
+		if (defaultValue.length()) {
+			_metadata.set<std::string> (_className + "." + name, defaultValue);
 		}
 	}
 
@@ -465,32 +466,39 @@ bool ParameteredObject::connected() const {
 	return res;
 }
 
-Slot* ParameteredObject::getSlot(const std::string& slotName) {
-	std::map<std::string, Slot*>::iterator slot;
-	slot = _inputs.find(slotName);
-	if (slot == _inputs.end()) {
-		slot = _outputs.find(slotName);
-		if (slot == _outputs.end())
-			throw std::invalid_argument(
-				std::string("Slot \"") + slotName + "\" in instance \""
-					+ getName() + "\" of plugin \"" + getClassName()
-					+ "\" not found!");
-	}
-	return slot->second;
-}
-
-const Slot* ParameteredObject::getSlot(const std::string& slotName) const {
+Slot* ParameteredObject::getSlot(const std::string& slotName) const {
 	std::map<std::string, Slot*>::const_iterator slot;
+	// try input slot
 	slot = _inputs.find(slotName);
-	if (slot == _inputs.end()) {
-		slot = _outputs.find(slotName);
-		if (slot == _outputs.end())
-			throw std::invalid_argument(
-				std::string("Slot \"") + slotName + "\" in instance \""
-					+ getName() + "\" of plugin \"" + getClassName()
-					+ "\" not found!");
+	if (slot != _inputs.end()) {
+		return slot->second;
 	}
-	return slot->second;
+	// try output slot
+	slot = _outputs.find(slotName);
+	if (slot != _outputs.end()) {
+		return slot->second;
+	}
+
+	// try to fixe slot casing
+	std::string slotNameFixed = fixCase(slotName);
+	sout << "(WW) misspelled slot casing: " << slotName
+		 << " (corrected: " << slotNameFixed << ")" << std::endl;
+
+	// try again
+	slot = _inputs.find(slotNameFixed);
+	if (slot != _inputs.end()) {
+		return slot->second;
+	}
+	slot = _outputs.find(slotNameFixed);
+	if (slot != _outputs.end()) {
+		return slot->second;
+	}
+
+	// if everything else fails
+	throw std::invalid_argument(
+		std::string("Slot \"") + slotName + "\" in instance \""
+			+ getName() + "\" of plugin \"" + getClassName()
+				+ "\" not found!");
 }
 
 const std::map<std::string, Slot*>&
@@ -575,4 +583,33 @@ bool ParameteredObject::isDynamic() {
 			 << std::endl;
 		return false;
 	}
+}
+
+std::string ParameteredObject::fixCase(const std::string& name) const {
+	std::string nameL=name, curL;
+	std::transform(
+		nameL.begin(), nameL.end(), nameL.begin(),(int(*)(int)) tolower);
+	std::set<std::string> names;
+	std::map<std::string, Slot*>::const_iterator sIter;
+	std::map<std::string, AbstractParameter*>::const_iterator pIter;
+	for(sIter=_inputs.begin();sIter!=_inputs.end();sIter++) {
+		names.insert(sIter->first);
+	}
+	for(sIter=_outputs.begin();sIter!=_outputs.end();sIter++) {
+		names.insert(sIter->first);
+	}
+	for(pIter=_parameters.begin();pIter!=_parameters.end();pIter++) {
+		names.insert(pIter->first);
+	}
+	std::set<std::string>::const_iterator nIter;
+	for(nIter=names.begin(); nIter!=names.end(); nIter++) {
+		curL=*nIter;
+		std::transform(
+			curL.begin(),curL.end(), curL.begin(),(int(*)(int)) tolower);
+		if (nameL==curL) {
+			return *nIter;
+		}
+	}
+	raise("Parameter/Slot " + name + " not found!");
+	return std::string();
 }
