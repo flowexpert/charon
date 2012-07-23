@@ -34,15 +34,33 @@ ENDIF(USE_VIGRA)
 
 INCLUDE(InitFlags)
 
+SET(Plugins) # this list contains all plugin targets
+
 # module generation
 ADD_LIBRARY(@modulename@ SHARED
 	@ModuleName@.cpp
 	@ModuleName@.h
 @ModHxx@)
-TARGET_LINK_LIBRARIES(@modulename@
-	charon-core
-	${CIMG_LINK_LIBRARIES}
-	${Vigra_LIBRARIES}
-)
+LIST(APPEND Plugins @modulename@)
 
 # add additional modules here
+
+
+# common linking and install target
+LIST(REMOVE_DUPLICATES Plugins)
+FOREACH(Pl ${Plugins})
+	TARGET_LINK_LIBRARIES(${Pl}
+		charon-core
+		${CIMG_LINK_LIBRARIES}
+		${Vigra_LIBRARIES}
+	)
+ENDFOREACH(Pl)
+SET_TARGET_PROPERTIES(${Plugins} PROPERTIES
+	INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
+)
+INSTALL(
+	TARGETS          ${Plugins}
+	RUNTIME          DESTINATION bin${BIN_SUFFIX}
+	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+)
