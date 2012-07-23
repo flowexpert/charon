@@ -161,9 +161,9 @@ bool Wizard::_checkPaths() {
 			while (cIter.hasNext()) {
 				QString curC = cIter.next();
 				QFileInfo curF(curC);
-				QDir parent(curF.absoluteDir());
+				QDir parentDir(curF.absoluteDir());
 
-				if (!parent.mkdir(curF.fileName())) {
+				if (!parentDir.mkdir(curF.fileName())) {
 					QMessageBox::warning(this,tr("error creating directory"),
 							tr("Failed to create directory %1").arg(curC));
 					return false;

@@ -1,6 +1,6 @@
 PROJECT(templategenerator)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-SET(templategenerator_VERSION 0.1.4)
+SET(templategenerator_VERSION 0.1.5)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -19,6 +19,10 @@ FIND_PACKAGE(Qt4 4.7.0
 )
 INCLUDE(${QT_USE_FILE})
 INCLUDE(InstallDlls)
+
+# try to query VCS revision information
+INCLUDE(CTest)
+INCLUDE(RevInfo)
 
 # recurse into subdirectories
 ADD_SUBDIRECTORY (src)
