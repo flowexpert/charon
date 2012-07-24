@@ -28,6 +28,8 @@
 #undef NDEBUG
 #include <cassert>
 
+#define caseddummy_EXPORTS
+
 #include "CasedDummy.h"
 #include <charon-core/PluginManager.h>
 
