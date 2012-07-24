@@ -39,6 +39,11 @@ void FloReader<T>::execute() {
 	try {
 		const char *fn = filename().c_str();
 		FILE *stream = fopen(fn, "rb");
+
+		if (!stream) {
+			ParameteredObject::raise("Failed to open file!");
+		}
+
 		int width, height;
 		float tag;
 		size_t read;
