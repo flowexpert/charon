@@ -493,7 +493,7 @@ IF(USE_VIGRA)
 		QT4_WRAP_CPP(ScriptorCimg_MOC
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h)
 			
-		ADD_LIBRARY(ScriptorCimg SHARED
+		ADD_LIBRARY(scriptorcimg SHARED
 			${ScriptorCimg_MOC}
 			ScriptorCimgPlugin.cpp
 			ScriptorExecuter.cpp
@@ -509,11 +509,11 @@ IF(USE_VIGRA)
 		LIST(APPEND Plugins_Qt
 			argosdisplay
 			frameselect
-			ScriptorCimg
+			scriptorcimg
 		)
 		LIST(APPEND Plugins_CImg
 			argosdisplay
-			ScriptorCimg
+			scriptorcimg
 		)
 		LIST(APPEND Plugins_Vigra
 			argosdisplay
