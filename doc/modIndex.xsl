@@ -5,20 +5,12 @@
 	<!-- Parameters that may be passed to this stylesheet -->
 	<xsl:param name="basedir" select="'.'"/>
 
-	<xsl:template match="/">
-		<html>
-			<head>
-				<xsl:call-template name="common-head" />
-				<title>Class Index</title>
-			</head>
-			<body>
-				<h1>Class Index</h1>
-				<table class="index">
-					<xsl:apply-templates select="doxygenindex/compound[@kind='class']"/>
-				</table>
-				<xsl:call-template name="footer" />
-			</body>
-		</html>
+	<xsl:variable name="title" select="'Class Index'" />
+	<xsl:template name="content">
+		<h1>Class Index</h1>
+		<table class="index">
+			<xsl:apply-templates select="doxygenindex/compound[@kind='class']"/>
+		</table>
 	</xsl:template>
 
 	<xsl:template match="compound">

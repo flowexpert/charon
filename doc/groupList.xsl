@@ -6,20 +6,12 @@
 	<xsl:param name="basedir" select="'.'"/>
 	<xsl:param name="exclude"/>
 
-	<xsl:template match="/">
-		<html>
-			<head>
-				<xsl:call-template name="common-head" />
-				<title>Group Index</title>
-			</head>
-			<body>
-				<h1>Module Groups</h1>
-				<table class="index">
-					<xsl:apply-templates select="doxygenindex/compound[@kind='group']"/>
-				</table>
-				<xsl:call-template name="footer"/>
-			</body>
-		</html>
+	<xsl:variable name="title" select="'Group Index'" />
+	<xsl:template name="content">
+		<h1>Module Groups</h1>
+		<table class="index">
+			<xsl:apply-templates select="doxygenindex/compound[@kind='group']"/>
+		</table>
 	</xsl:template>
 
 	<xsl:template match="compound[@kind='group']">

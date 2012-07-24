@@ -2,17 +2,9 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="common.xsl"/>
 
-	<xsl:template match="/">
-		<html>
-			<head>
-				<xsl:call-template name="common-head" />
-				<title><xsl:value-of select="/doxygen/compounddef/compoundname"/></title>
-			</head>
-			<body>
-				<xsl:apply-templates select="doxygen/compounddef"/>
-				<xsl:call-template name="footer" />
-			</body>
-		</html>
+	<xsl:variable name="title" select="/doxygen/compounddef/compoundname" />
+	<xsl:template name="content">
+		<xsl:apply-templates select="doxygen/compounddef"/>
 	</xsl:template>
 
 	<xsl:template match="compounddef">

@@ -6,24 +6,15 @@
 	<xsl:param name="basedir" select="'.'"/>
 	<xsl:param name="index" select="0"/>
 
-	<xsl:template match="/">
-		<html>
-			<head>
-				<xsl:call-template name="common-head" />
-				<xsl:choose>
-					<xsl:when test="$index=0">
-						<title>Module Group Index</title>
-					</xsl:when>
-					<xsl:otherwise>
-						<title>Module Index</title>
-					</xsl:otherwise>
-				</xsl:choose>
-			</head>
-			<body>
-				<xsl:apply-templates select="doxygen/compounddef"/>
-				<xsl:call-template name="footer" />
-			</body>
-		</html>
+	<xsl:variable name="title">
+		<xsl:choose>
+			<xsl:when test="$index=0">Module Group Index</xsl:when>
+			<xsl:otherwise>Module Index</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+
+	<xsl:template name="content">
+		<xsl:apply-templates select="doxygen/compounddef"/>
 	</xsl:template>
 
 	<xsl:template match="compounddef[@kind='group']">

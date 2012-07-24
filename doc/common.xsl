@@ -19,13 +19,26 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template name="common-head">
-		<link rel="stylesheet" type="text/css">
-			<xsl:attribute name="href"><xsl:value-of select="$stylesheet"/></xsl:attribute>
-		</link>
-	</xsl:template>
-
+	<xsl:variable name="title" />
+	<xsl:template name="header" />
+	<xsl:template name="content" />
 	<xsl:template name="footer">
 		<xsl:call-template name="add-sf-logo" />
+	</xsl:template>
+
+	<xsl:template match="/">
+		<html>
+			<head>
+				<link rel="stylesheet" type="text/css">
+					<xsl:attribute name="href"><xsl:value-of select="$stylesheet"/></xsl:attribute>
+				</link>
+				<title><xsl:value-of select="$title" /></title>
+			</head>
+			<body>
+				<xsl:call-template name="header" />
+				<xsl:call-template name="content" />
+				<xsl:call-template name="footer" />
+			</body>
+		</html>
 	</xsl:template>
 </xsl:stylesheet>
