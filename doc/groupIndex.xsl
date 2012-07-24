@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:import href="sf-logo.xsl"/>
 	<xsl:output method="html" encoding="UTF-8"
 		doctype-public="-//W3C//DTD HTML 4.01//EN"
 		doctype-system="http://www.w3.org/TR/html4/strict.dtd"/>
@@ -26,6 +27,7 @@
 			</head>
 			<body>
 				<xsl:apply-templates select="doxygen/compounddef"/>
+				<xsl:call-template name="add-sf-logo"/>
 			</body>
 		</html>
 	</xsl:template>
