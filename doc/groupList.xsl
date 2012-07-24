@@ -1,29 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:import href="sf-logo.xsl"/>
-	<xsl:output method="html" encoding="UTF-8"
-		doctype-public="-//W3C//DTD HTML 4.01//EN"
-		doctype-system="http://www.w3.org/TR/html4/strict.dtd"/>
+	<xsl:import href="common.xsl"/>
 
 	<!-- Parameters that may be passed to this stylesheet -->
 	<xsl:param name="basedir" select="'.'"/>
-	<xsl:param name="stylesheet" select="'styles.css'"/>
 	<xsl:param name="exclude"/>
 
 	<xsl:template match="/">
 		<html>
 			<head>
+				<xsl:call-template name="common-head" />
 				<title>Group Index</title>
-				<link rel="stylesheet" type="text/css">
-					<xsl:attribute name="href"><xsl:value-of select="$stylesheet"/></xsl:attribute>
-				</link>
 			</head>
 			<body>
 				<h1>Module Groups</h1>
 				<table class="index">
 					<xsl:apply-templates select="doxygenindex/compound[@kind='group']"/>
 				</table>
-				<xsl:call-template name="add-sf-logo"/>
+				<xsl:call-template name="footer"/>
 			</body>
 		</html>
 	</xsl:template>

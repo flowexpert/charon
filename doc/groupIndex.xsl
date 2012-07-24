@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:import href="sf-logo.xsl"/>
-	<xsl:output method="html" encoding="UTF-8"
-		doctype-public="-//W3C//DTD HTML 4.01//EN"
-		doctype-system="http://www.w3.org/TR/html4/strict.dtd"/>
+	<xsl:import href="common.xsl"/>
 
 	<!-- Parameters that may be passed to this stylesheet -->
 	<xsl:param name="basedir" select="'.'"/>
-	<xsl:param name="stylesheet" select="'styles.css'"/>
 	<xsl:param name="index" select="0"/>
 
 	<xsl:template match="/">
 		<html>
 			<head>
+				<xsl:call-template name="common-head" />
 				<xsl:choose>
 					<xsl:when test="$index=0">
 						<title>Module Group Index</title>
@@ -21,13 +18,10 @@
 						<title>Module Index</title>
 					</xsl:otherwise>
 				</xsl:choose>
-				<link rel="stylesheet" type="text/css">
-					<xsl:attribute name="href"><xsl:value-of select="$stylesheet"/></xsl:attribute>
-				</link>
 			</head>
 			<body>
 				<xsl:apply-templates select="doxygen/compounddef"/>
-				<xsl:call-template name="add-sf-logo"/>
+				<xsl:call-template name="footer" />
 			</body>
 		</html>
 	</xsl:template>
