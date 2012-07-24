@@ -253,7 +253,8 @@ void CharonRun::runWorkflow(QString fName) {
 		errorMsg = tr("Caught exception of unknown type.");
 	}
 	if (!errorMsg.isEmpty()) {
-		qout << "\n****************************************************\n\n"
+		QTextStream qerr(stderr);
+		qerr << "\n****************************************************\n\n"
 				<< tr("Error during execution:") << "\n\n"
 				<< errorMsg << "\n\n"
 				<< "****************************************************"

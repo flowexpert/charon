@@ -278,10 +278,11 @@ bool ParameterFileModel::setData(
 }
 
 Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
-	if (!prefixValid())
+	if (!prefixValid() || ind.row() < 0 || ind.row() >= _keys.size()) {
 		return Qt::NoItemFlags;
+	}
 	Q_ASSERT(ind.row() >= 0);
-	Q_ASSERT(ind.row() <= _keys.size());
+	Q_ASSERT(ind.row() < _keys.size());
 
 	Qt::ItemFlags res = Qt::NoItemFlags;
 	QString paramType;
@@ -837,10 +838,10 @@ bool ParameterFileModel::dropMimeData(const QMimeData* mData,
 	if (mData->hasUrls()) {
 		QList<QUrl> urlList = mData->urls();
 		if (urlList.size() >= 1) {
-			content = urlList.at(0).path().mid(1);
+			content = urlList.at(0).path();
 		}
 		for (int ii = 1; ii < urlList.size(); ii += 1) {
-			content += ";" + urlList.at(ii).path().mid(1);
+			content += ";" + urlList.at(ii).path();
 		}
 	} else if (mData->hasText()) {
 		content = mData->text();

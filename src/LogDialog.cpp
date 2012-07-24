@@ -282,6 +282,10 @@ void LogDialog::on_proc_readyReadStandardError() {
 			if (cur.isNull()) {
 				break;
 			}
+			if(_decorator->finishSignal(cur)) {
+				printStatus(_decorator->finishMessage());
+				on_proc_finished(0);
+			}
 			if (cur.contains(
 					QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
 				cache << cur << endl;
@@ -544,7 +548,9 @@ QString LogDecorators::RunWorkflow::highlightLine(QString line) const {
 bool LogDecorators::RunWorkflow::finishSignal(QString line) const {
 	// add status message if workflow execution finished
 	return (line.contains(
-		QCoreApplication::translate("CharonRun","Execution finished.")));
+		QCoreApplication::translate("CharonRun","Execution finished.")) ||
+		line.contains(
+		QCoreApplication::translate("CharonRun","Error during execution:")));
 }
 
 QString LogDecorators::RunWorkflow::finishMessage() const {
