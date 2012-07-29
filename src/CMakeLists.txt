@@ -413,6 +413,11 @@ ADD_LIBRARY(pyramidrescale SHARED
 	${charon_INCLUDE_DIR}/PyramidRescale.hxx
 )
 TARGET_LINK_LIBRARIES(pyramidrescale interpolatorlinear roi)
+ADD_LIBRARY(pyramidlowpass SHARED
+	PyramidLowpass.cpp
+	${charon_INCLUDE_DIR}/PyramidLowpass.h
+	${charon_INCLUDE_DIR}/PyramidLowpass.hxx
+)
 ADD_LIBRARY(flowcomparator SHARED
 	FlowComparator.cpp
 	${charon_INCLUDE_DIR}/FlowComparator.h
@@ -425,6 +430,7 @@ LIST(APPEND Plugins
 	diff2d
 	lucas_kanade_smoothing
 	pyramidrescale
+	pyramidlowpass
 	flowcomparator
 )
 
