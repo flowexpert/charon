@@ -15,59 +15,76 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file PyramidLowpass.h
- *  Declaration of the parameter class PyramidLowpass.
+/** \file PyramidRescaleMatlab.h
+ *  Declaration of the parameter class PyramidRescaleMatlab.
  *  \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">Michael Baron</a>
- *  \date 26.07.2012
+ *  \date 02.08.2012
  */
 
-#ifndef _PYRAMID_LOWPASS_H_
-#define _PYRAMID_LOWPASS_H_
+#ifndef _PYRAMID_RESCALE_MATLAB_H_
+#define _PYRAMID_RESCALE_MATLAB_H_
 
 #if defined(MSVC) && defined(HANDLE_DLL)
-#ifdef pyramidlowpass_EXPORTS
+#ifdef pyramidrescalematlab_EXPORTS
 /// Visual C++ specific code
-#define pyramidlowpass_DECLDIR __declspec(dllexport)
+#define pyramidrescalematlab_DECLDIR __declspec(dllexport)
 #else
-#define pyramidlowpass_DECLDIR __declspec(dllimport)
+#define pyramidrescalematlab_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else /* No DLL handling or GCC */
 /// Not needed with GCC
-#define pyramidlowpass_DECLDIR
+#define pyramidrescalematlab_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
+#include <charon-utils/Roi.h>
 
-/// Lowpass filtering for pyramid-based flow-estimation algorithms.
+/// MATLAB-like Rescaling for pyramid-based flow-estimation algorithms.
 /**
  *  \ingroup charon-modules
  *  \ingroup charon-flow
  *  \ingroup charon-image-manipulators
  */
 template <typename T>
-class pyramidlowpass_DECLDIR PyramidLowpass :
+class pyramidrescalematlab_DECLDIR PyramidRescaleMatlab :
 		public TemplatedParameteredObject<T> {
 public:
 	/// sequence input
 	InputSlot < cimg_library::CImgList<T> > seqIn;
-	/// level select (from small to larger blur factors)
+	/// flow input
+	InputSlot < cimg_library::CImgList<T> > flowIn;
+	/// level select (from small to larger scales)
 	InputSlot < unsigned int > level;
 
 	/// sequence output
 	OutputSlot < cimg_library::CImgList<T> > seqOut;
+	/// flow output
+	OutputSlot < cimg_library::CImgList<T> > flowOut;
+	/// current size
+	OutputSlot < Roi<int>* > size;
 
-	/// blur levels
-	ParameterList < T > sigmas;
+	/// scale factor
+	Parameter < double > scaleFactor;
+	/// scale levels
+	Parameter < unsigned int > levels;
+	/// sigma used to blur before downsampling
+	Parameter < double > sigma;
+	/// interpolation type (see CImg::resize() documentation)
+	Parameter < int > interpolation;
 
-	/// create a new PyramidLowpass object
+	/// create a new PyramidRescaleMatlab object
 	/// \param name          Instance name
-	PyramidLowpass(const std::string& name = "");
+	PyramidRescaleMatlab(const std::string& name = "");
 
 protected:
 	/// Update object.
 	virtual void execute();
+
+private:
+	/// content for roi pointer output slot
+	Roi<int> _size;
 };
 
-#endif // _PYRAMID_LOWPASS_H_
+#endif // _PYRAMID_RESCALE_MATLAB_H_
 

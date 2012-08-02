@@ -40,33 +40,41 @@ PyramidLowpass<T>::PyramidLowpass(const std::string& name) :
 	ParameteredObject::_addOutputSlot(
 			seqOut, "seqOut", "sequence output", "CImgList<T>");
 	ParameteredObject::_addParameter (
-			levels, "levels", "blur levels", 5u);
+			sigmas, "sigmas", "list of std. deviations in decreasing order", "T_list");
 }
 
 template <typename T>
 void PyramidLowpass<T>::execute() {
 	const cimg_library::CImgList<T>& si = seqIn();
 	cimg_library::CImgList<T>& so = seqOut();
-
-	const unsigned int curL = level();
-	const unsigned int endL = levels();
-	const unsigned int maxL = endL-1;
-	const unsigned int stepsDown = maxL-curL;
-
-	if(curL > maxL) {
-		std::ostringstream msg;
-		msg << "current level too large: cur=" << curL << "; max=" << maxL;
-		ParameteredObject::raise(msg.str());
-	}
-
-	// blur sequence
 	so = si;
-	//can be float as CImg::deriche only takes float as input
-	const float blurFactor = 1.0;
-	const float blur = float(blurFactor*stepsDown);
-	cimglist_for(so,kk) {
-		so.at(kk).deriche(blur,0,'x');
-		so.at(kk).deriche(blur,0,'y');
+
+	float blurFactor1 = 0.0;
+	float blurFactor2 = 0.0;
+
+	if (level() == 0) {
+		blurFactor2 = sigmas()[level()];
+		cimglist_for(so,kk)
+		{
+			so.at(kk).blur(blurFactor2);
+		}
+	} else {
+		cimg_library::CImgList<T> tmp1 = si;
+		cimg_library::CImgList<T> tmp2 = si;
+		blurFactor1 = sigmas()[level()-1];
+		cimglist_for(tmp1,kk)
+		{
+			tmp1.at(kk).blur(blurFactor1);
+		}
+		blurFactor2 = sigmas()[level()];
+		cimglist_for(tmp2,kk)
+		{
+			tmp2.at(kk).blur(blurFactor2);
+		}
+		cimglist_for(so,kk)
+		{
+			so.at(kk) = tmp2.at(kk) - tmp1.at(kk);
+		}
 	}
 }
 #endif /* _PYRAMID_LOWPASS_HXX_ */

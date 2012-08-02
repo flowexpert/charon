@@ -1,0 +1,148 @@
+/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+
+    This file is part of Charon.
+
+    Charon is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Charon is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/** \file PyramidRescaleMatlab.hxx
+ *  Implementation of the parameter class PyramidRescaleMatlab.
+ *  \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">Michael Baron</a>
+ *  \date 02.08.2012
+ */
+
+#ifndef _PYRAMID_RESCALE_MATLAB_HXX_
+#define _PYRAMID_RESCALE_MATLAB_HXX_
+
+#include "PyramidRescaleMatlab.h"
+#include <charon-utils/Convolution.h>
+#include <iomanip>
+
+template <typename T>
+PyramidRescaleMatlab<T>::PyramidRescaleMatlab(const std::string& name) :
+		TemplatedParameteredObject<T>("PyramidRescaleMatlab", name,
+			"MATLAB (imresize)-like Rescaling for pyramid-based flow-estimation algorithms.")
+{
+	ParameteredObject::_addInputSlot(
+			seqIn, "seqIn", "sequence input", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+			flowIn, "flowIn", "flow input", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+			level, "level", "level select (from small to larger scales)");
+	ParameteredObject::_addOutputSlot(
+			seqOut, "seqOut", "sequence output", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(
+			flowOut, "flowOut", "flow output", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(
+			size, "size", "current size", "Roi<int>*");
+	ParameteredObject::_addParameter (
+			scaleFactor, "scaleFactor", "scale factor", 0.5);
+	ParameteredObject::_addParameter (
+			levels, "levels", "scale levels", 5u);
+	ParameteredObject::_addParameter (
+			sigma, "sigma", "sigma used to blur before downsampling", 0.7);
+	ParameteredObject::_addParameter (
+			interpolation, "interpolation",
+			"interpolation type (see CImg::resize() documentation)", 3);
+}
+
+template <typename T>
+void PyramidRescaleMatlab<T>::execute() {
+	size() = &_size;
+
+	cimg_library::CImgList<T> si = seqIn();
+	cimg_library::CImgList<T>& so = seqOut();
+
+	const int seqN = si.size();
+	const int seqZ = si[0].depth();
+	const int seqC = si[0].spectrum();
+
+	cimg_library::CImgList<T> fi = flowIn();
+	cimg_library::CImgList<T>& fo = flowOut();
+
+	const int flowN = fi.size();
+	const int flowZ = fi[0].depth();
+	const int flowC = fi[0].spectrum();
+
+	const unsigned int curL = level();
+	const unsigned int endL = levels();
+	const unsigned int maxL = endL-1;
+	const unsigned int stepsDown = maxL-curL;
+
+	if(curL > maxL) {
+		std::ostringstream msg;
+		msg << "current level too large: cur=" << curL << "; max=" << maxL;
+		ParameteredObject::raise(msg.str());
+	}
+
+	// input sequence remains unscaled over time and is the pyramid base
+	const int sx = si[0].width(), sy = si[0].height();
+
+	// target sizes
+	const double shrink = std::pow(scaleFactor(),(double)stepsDown);
+	const int tx = _size.xEnd = sx * shrink;
+	const int ty = _size.yEnd = sy * shrink;
+
+	const double scale = 1 / shrink;
+
+	// rescale sequence
+	so = cimg_library::CImgList<T>( seqN, tx, ty, seqZ, seqC );
+	if(stepsDown > 0) {
+		const float blur = (float)sigma();
+		cimglist_for(so,kk) {
+			si.at(kk).blur(blur);
+			cimg_forXYZC( so.at(kk), x, y, z, c )
+			{
+				so[kk].atXYZC( x, y, z, c ) = si[kk].atXYZC( x*scale+(scale/2), y*scale+(scale/2), z, c );
+			}
+		}
+	}
+
+	// rescale flow
+	fo = fi;
+	if(fo.is_sameXY(si)) {
+		// scale down (initial guess)
+#ifndef NDEBUG
+		sout << "\t" << "scaling down to " << tx << "x" << ty << std::endl;
+#endif
+		fo = cimg_library::CImgList<T>( flowN, tx, ty, flowZ, flowC );
+		const float blur = (float)sigma();
+		cimglist_for(fo,kk) {
+			assert(fo.at(kk).is_sameXY(sx,sy));
+			fi.at(kk).blur(blur);
+			cimg_forXYZC( so.at(kk), x, y, z, c )
+			{
+				fo[kk].atXYZC( x, y, z, c ) = fi[kk].atXYZC( x*scale+(scale/2), y*scale+(scale/2), z, c );
+			}
+			fo.at(kk) *= shrink;
+		}
+	}
+	else {
+		// scale up last result
+#ifndef NDEBUG
+		sout << "\t" << "scaling up to "
+				<< tx << "x" << ty << ": got "
+				<< fo[0].width() << "x" << fo[0].height()
+				<< " expected: "
+				<< std::fixed << std::setprecision(0)
+				<< tx*scaleFactor() << "x" << ty*scaleFactor()
+				<< std::endl;
+#endif
+		cimglist_for(fo,kk) {
+			fo.at(kk).resize(tx,ty,-100,-100,interpolation());
+			fo.at(kk) /= scaleFactor();
+		}
+	}
+}
+#endif /* _PYRAMID_RESCALE_MATLAB_HXX_ */
+
