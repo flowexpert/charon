@@ -85,6 +85,9 @@ public:
 	/// scaling parameter
 	Parameter<float> scaling;
 
+	/// if set, rescales values using ratio "roi" dimensions / "in" dimensions
+	Parameter<bool> rescaleUsingRoiInRatio;
+
 	/// standard constructor
 	/// @param name             Object name
 	Resize(const std::string& name = "");

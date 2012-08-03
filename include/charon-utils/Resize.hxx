@@ -62,6 +62,8 @@ Resize<T>::Resize(const std::string& name) :
 			"control blur strength on image size reduction", 0.4f);
 	this->_addParameter(
 			scaling, "scaling", "controls scaling", 1.0f);
+
+	this->_addParameter(rescaleUsingRoiInRatio, "rescaleUsingRoiInRatio", "rescales values using ratio of roi and in dimensions", false);
 }
 
 template <typename T>
@@ -119,10 +121,19 @@ void Resize<T>::execute() {
 		out()[k].resize(size_x, size_y, size_z, size_t, m);
 
 		// rescale
-		cimg_forXYZC( out()[k], x, y, z, t )
-		{
-			out()[k]( x, y, z, t ) = T(_scaling * out()[k]( x, y, z, t ));
+		if (rescaleUsingRoiInRatio()) {
+			T __scaling = T(roi()->getWidth()) / T(in()[0].width());
+			cimg_forXYZC( out()[k], x, y, z, t )
+			{
+				out()[k]( x, y, z, t ) = T(__scaling * out()[k]( x, y, z, t ));
+			}
+		} else {
+			cimg_forXYZC( out()[k], x, y, z, t )
+			{
+				out()[k]( x, y, z, t ) = T(_scaling * out()[k]( x, y, z, t ));
+			}
 		}
 	}
 }
 #endif // _RESIZE_HXX_
+
