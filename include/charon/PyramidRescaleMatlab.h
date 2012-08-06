@@ -84,6 +84,12 @@ protected:
 private:
 	/// content for roi pointer output slot
 	Roi<int> _size;
+
+	/// computes FilterMask
+	cimg_library::CImg<T> _computeFilterMask( T smooth_sigma );
+
+	/// normal distribution
+	T _gauss( T x, T mu, T sigma );
 };
 
 #endif // _PYRAMID_RESCALE_MATLAB_H_

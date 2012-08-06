@@ -267,6 +267,11 @@ LIST(APPEND Plugins
 )
 
 # Iterator plugins
+ADD_LIBRARY(value SHARED
+	${charon_INCLUDE_DIR}/Value.h
+	${charon_INCLUDE_DIR}/Value.hxx
+	Value.cpp
+)
 ADD_LIBRARY(iteratorhelper SHARED
 	${charon_INCLUDE_DIR}/IteratorHelper.h
 	${charon_INCLUDE_DIR}/IteratorHelper.hxx
@@ -311,6 +316,7 @@ ELSE(QT4_FOUND)
         TARGET_LINK_LIBRARIES(relaxingiterator gbcce iteratorhelper)
 ENDIF(QT4_FOUND)
 LIST(APPEND Plugins
+	value
 	iteratorhelper
 	simpleiterator
 	relaxingiterator
