@@ -63,10 +63,6 @@ void PyramidRescaleMatlab<T>::execute() {
 	cimg_library::CImgList<T> si = seqIn();
 	cimg_library::CImgList<T>& so = seqOut();
 
-	const int seqN = si.size();
-	const int seqZ = si[0].depth();
-	const int seqC = si[0].spectrum();
-
 	cimg_library::CImgList<T> fi = flowIn();
 	cimg_library::CImgList<T>& fo = flowOut();
 
@@ -89,6 +85,8 @@ void PyramidRescaleMatlab<T>::execute() {
 	const int sx = si[0].width(), sy = si[0].height();
 
 	// target sizes
+	const double _scaleFactor = scaleFactor();
+	const double _scaleInverse = T(1.0) / _scaleFactor;
 	const double shrink = std::pow(scaleFactor(),(double)stepsDown);
 	const int tx = _size.xEnd = sx * shrink;
 	const int ty = _size.yEnd = sy * shrink;
@@ -99,16 +97,24 @@ void PyramidRescaleMatlab<T>::execute() {
 	cimg_library::CImg<T> filterMask = _computeFilterMask( sigma() );
 
 	// rescale sequence
-	so = cimg_library::CImgList<T>( seqN, tx, ty, seqZ, seqC );
-	if(stepsDown > 0) {
-		cimglist_for(so,kk) {
-			si.at(kk).convolve(filterMask);
-			cimg_forXYZC( so.at(kk), x, y, z, c )
+	cimg_library::CImgList<T> tmp, tmp2;
+	tmp = si;
+	for (unsigned int i=0; i<stepsDown; i++) {
+		tmp2 = cimg_library::CImgList<T>( tmp.size(),
+		                                  tmp[0].width()*_scaleFactor, tmp[0].height()*_scaleFactor,
+		                                  tmp[0].depth(), tmp[0].spectrum() );
+		cimglist_for(tmp,kk) {
+			tmp.at(kk).convolve(filterMask);
+			cimg_forXYZC( tmp2.at(kk), x, y, z, c )
 			{
-				so[kk].atXYZC( x, y, z, c ) = si[kk].atXYZC( x*scale+(scale/2), y*scale+(scale/2), z, c );
+				tmp2[kk].atXYZC( x, y, z, c )
+				= tmp[kk].atXYZC( x*_scaleInverse+(_scaleInverse/2),
+				                  y*_scaleInverse+(_scaleInverse/2), z, c );
 			}
 		}
+		tmp = tmp2;
 	}
+	so = tmp;
 
 	// rescale flow
 	fo = fi;
