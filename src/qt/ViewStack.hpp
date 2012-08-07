@@ -96,6 +96,9 @@ namespace ArgosDisplay {
 
 		QAction* _switchLogModeAct ;
 
+		/// set center pixel and zoom level of all views to the same as the current view
+		QAction* _alignAndZoomAct ;
+
 		/// objects to access pixel data
 		std::vector<AbstractPixelInspector*> _inspectors ;
 
@@ -126,6 +129,8 @@ namespace ArgosDisplay {
 
 		/// move current view to center and reset zoom level
 		void _centerAndResetZoom() ;
+
+		void _alignAndZoom() ;
 
 		void _currentChanged(int index) ;
 

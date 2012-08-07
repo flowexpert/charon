@@ -43,7 +43,7 @@ namespace ArgosDisplay
 		MainWindow(const std::string& title = std::string()) ;
 
 		/// standard destructor
-		~MainWindow() ;
+		virtual ~MainWindow() ;
 
 		/// link images to the Windows central ViewStack widget
 		ViewStack& viewStack() ;

@@ -31,7 +31,13 @@ using namespace ArgosDisplay ;
 
 ViewStack::ViewStack(QWidget* p) : QWidget(p),
 	_updatePending(false),
-	_index(0), _zoomLevel(0)
+	_index(0), _zoomLevel(0),
+	_tabWidget(0),
+	_switchColorModeAct(0),
+	_saveCurrentViewAct(0),
+	_centerAndResetZoomAct(0),
+	_alignAndZoomAct(0)
+
 {
 	_tabWidget = new QTabWidget(this) ;
 		_tabWidget->setMovable(true) ;
@@ -53,7 +59,9 @@ ViewStack::ViewStack(QWidget* p) : QWidget(p),
 }
 
 ViewStack::~ViewStack() {
+	this->clear() ;
 }
+
 
 void ViewStack::_createActions()
 {
@@ -76,7 +84,12 @@ void ViewStack::_createActions()
 	_switchLogModeAct->setStatusTip(QString("switch floating-point display to logarithmic scaling")) ;
 	connect(_switchLogModeAct, SIGNAL(triggered()), this, SLOT(_switchLogMode())) ;
 	this->addAction(_switchLogModeAct) ;
-
+	
+	_alignAndZoomAct = new QAction(QString("align other views"), this);
+	_alignAndZoomAct->setStatusTip(QString("align all other views of same size to this one")) ;
+	connect(_alignAndZoomAct, SIGNAL(triggered()), this, SLOT(_alignAndZoom()));
+	this->addAction(_alignAndZoomAct) ;
+	
 }
 
 void ViewStack::clear() {
@@ -111,7 +124,7 @@ void ViewStack::setCurrentIndex(int index) {
 	_index = index ;
 	if(!_updatePending)
 	{	_updatePending = true ;
-		emit imageLinked() ;
+		//emit imageLinked() ;
 	}
 }
 
@@ -171,6 +184,7 @@ void ViewStack::_linkImages()
 	}
 	_tabWidget->setCurrentIndex(_index) ;
 	_updatePending = false ;
+	_alignAndZoom() ;
 	this->parentWidget()->show() ;
 }
 
@@ -322,6 +336,46 @@ void ViewStack::_centerAndResetZoom()
 	catch(std::exception&) {
 		return ;
 	}
+}
+
+void ViewStack::_alignAndZoom()
+{
+	if(this->_tabWidget->count() == 0)
+		return ;
+	//rember the index of the active tab
+	int index = _tabWidget->currentIndex() ;
+	
+	int zoom = _currentViewer().zoomLevel() ;
+	QPoint upperLeft = _currentViewer().upperLeft() ;
+	int h = _currentViewer().originalHeight() ;
+	int w = _currentViewer().originalWidth() ;
+	for(int ii = 0 ; ii < _tabWidget->count() ; ii++)
+	{
+		if(ii == _tabWidget->currentIndex())
+			continue ;
+		QImageViewer* viewer = 0 ;
+		QString className = _tabWidget->widget(ii)->metaObject()->className() ;
+		if(className == "FImageViewer")
+		{
+			FImageViewer* fViewer = qobject_cast<FImageViewer*>(_tabWidget->widget(ii)) ;
+			if(fViewer)
+				viewer = fViewer->imageViewer() ;
+		}
+		else if(className == "QImageViewer")
+		{
+			QImageViewer* qviewer = qobject_cast<QImageViewer*>(_tabWidget->widget(ii)) ;
+			viewer = qviewer ;
+		}
+
+		if(!viewer || viewer->originalHeight() != h || viewer->originalWidth() != w)
+			continue ;
+		//zooming and slide does not work correctly when the viewer tab is in the background
+		//bring it to the front and reset the active index afterwards
+		_tabWidget->setCurrentIndex(ii) ;
+		viewer->setZoomLevel(zoom) ;
+		viewer->slideBy(upperLeft - viewer->upperLeft()) ;
+	}
+	_tabWidget->setCurrentIndex(index) ;
 }
 
 void ViewStack::setZoomLevel(int level) {
