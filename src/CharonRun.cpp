@@ -260,7 +260,9 @@ void CharonRun::runWorkflow(QString fName) {
 				<< "****************************************************"
 				<< endl;
 	}
-	QDir::setCurrent(pathBak);
+	//don't reset the working Dir, some plugins may still be running
+	//(e.g. FileReaderWatcher or ArgosDisplayReloader)
+	//QDir::setCurrent(pathBak);
 
 	unlock();
 }
