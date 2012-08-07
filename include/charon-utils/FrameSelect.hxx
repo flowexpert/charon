@@ -58,7 +58,6 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 		return ;
 	}
 
-	_gui = new FrameSelectWidget(this,cropV,z,t,v);
 }
 
 template <typename T>
@@ -69,6 +68,9 @@ FrameSelect<T>::~FrameSelect()
 
 template <typename T>
 void FrameSelect<T>::execute() {
+	if(!_gui)
+		_gui = new FrameSelectWidget(this,cropV,z,t,v);
+
 	widget() = _gui;
 	roi() = &_roi;
 	vigra::MultiArrayIndex lz = z() ;

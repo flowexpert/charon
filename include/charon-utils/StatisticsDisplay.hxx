@@ -219,7 +219,6 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 			<< std::endl ;
 		return ;
 	}
-	_exportWidget = new StatisticsDisplayWidget() ;
 }
 
 template <typename T>
@@ -230,6 +229,9 @@ StatisticsDisplayPlugin<T>::~StatisticsDisplayPlugin()
 
 template <typename T>
 void StatisticsDisplayPlugin<T>::execute() {
+	if(!_exportWidget)
+		_exportWidget = new StatisticsDisplayWidget() ;
+
 	using namespace boost::accumulators;
 	using namespace cimg_library ;
 	typedef vigra::MultiArray<5, T> Array ;
