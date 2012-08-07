@@ -91,8 +91,6 @@ void PyramidRescaleMatlab<T>::execute() {
 	const int tx = _size.xEnd = sx * shrink;
 	const int ty = _size.yEnd = sy * shrink;
 
-	const double scale = 1 / shrink;
-
 	// compute filter mask for blurring
 	cimg_library::CImg<T> filterMask = _computeFilterMask( sigma() );
 
@@ -129,7 +127,8 @@ void PyramidRescaleMatlab<T>::execute() {
 			fi.at(kk).convolve(filterMask);
 			cimg_forXYZC( so.at(kk), x, y, z, c )
 			{
-				fo[kk].atXYZC( x, y, z, c ) = fi[kk].atXYZC( x*scale+(scale/2), y*scale+(scale/2), z, c );
+				fo[kk].atXYZC( x, y, z, c ) = fi[kk].atXYZC( x*_scaleInverse+(_scaleInverse/2),
+				                                             y*_scaleInverse+(_scaleInverse/2), z, c );
 			}
 			fo.at(kk) *= shrink;
 		}
