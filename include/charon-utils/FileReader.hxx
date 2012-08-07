@@ -196,8 +196,8 @@ void FileReader<T>::execute() {
 	if (watchable()) {
 		if (!_fileReaderWatcher) {
 			_fileReaderWatcher = new FileReaderWatcher(this);
+			_fileReaderWatcher->addPaths(files);
 		}
-		_fileReaderWatcher->addPaths(files);
 	}
 
 	// load

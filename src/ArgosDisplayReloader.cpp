@@ -25,6 +25,8 @@
 #include <QTimer>
 #include <ParameteredObject.h>
 #include <charon-utils/ArgosDisplayReloader.h>
+#include <QMessageBox>
+#include <QApplication>
 
 ArgosDisplayReloader::ArgosDisplayReloader(
 		ParameteredObject* argosDisplay)
@@ -47,6 +49,14 @@ void ArgosDisplayReloader::start() {
 }
 
 void ArgosDisplayReloader::reloadArgosDisplay() {
-	_argosDisplay->run();
+	try
+	{	_argosDisplay->run();	}
+	catch(std::exception &err)
+	{	
+		_timer->stop() ;
+		QMessageBox::critical(0,"ArgosDisplayReloader",
+		QString("Exception was caught during the reexecution of ArgosDisplay:\n") +
+		err.what()) ;
+	}
 }
 
