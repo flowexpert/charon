@@ -48,6 +48,7 @@ class QWidget ;
 
 namespace ArgosDisplay
 {
+	class AbstractPixelInspector ;
 	class MainWindow ;
 
 	/// Charon Plugin Frontend for advanced Argos Display
@@ -97,6 +98,8 @@ namespace ArgosDisplay
 
 		/// timer based reloader for ArgosDisplay
 		ArgosDisplayReloader* _displayReloader;
+
+		std::vector<AbstractPixelInspector*> _inspectors ;
 
 	}; // class ArgosDisplayPlugin
 

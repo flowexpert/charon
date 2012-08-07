@@ -50,7 +50,8 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			_cimgIn(true, true),
 			_dockWidgets(true, true),
 			_overlayWidgets(true, true),
-			_mainWindow(0)
+			_mainWindow(0),
+			_displayReloader(0)
 {
 	ParameteredObject::_addInputSlot(
 			_vigraIn, "vigraIn",
@@ -84,8 +85,6 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 		return ;
 	}
 
-	_mainWindow = new MainWindow(this->getName());
-	_displayReloader = new ArgosDisplayReloader(this);
 }
 
 template <typename T>
@@ -93,6 +92,12 @@ ArgosDisplayPlugin<T>::~ArgosDisplayPlugin()
 {
 	delete _displayReloader;
 	delete _mainWindow ;
+
+	for(size_t ii = 0 ; ii < _inspectors.size() ; ii++)
+	{
+		delete _inspectors[ii] ;
+	}
+	_inspectors.clear() ;
 }
 
 template <typename T>
@@ -102,7 +107,11 @@ void ArgosDisplayPlugin<T>::execute() {
 	if(!qApp){
 		return ;
 	}
-	
+	if(!_mainWindow)
+		_mainWindow = new MainWindow(this->getName());
+	if(!_displayReloader)
+		_displayReloader = new ArgosDisplayReloader(this);
+
 	// setup timer for display reloading
 	_displayReloader->setTimeout( timeout() );
 
@@ -122,6 +131,12 @@ void ArgosDisplayPlugin<T>::execute() {
 	viewStack.setZoomLevel(viewStack.getZoomLevel());
 	viewStack.clear() ;
 
+	for(size_t ii = 0 ; ii < _inspectors.size() ; ii++)
+	{
+		delete _inspectors[ii] ;
+	}
+	_inspectors.clear() ;
+
 	//register connected vigra images
 	for( ; it != end ; it++)
 	{
@@ -136,8 +151,11 @@ void ArgosDisplayPlugin<T>::execute() {
 					"In/Output slot may be invalid!");
 
 		// register all Arrays with the ViewStack
-		viewStack.linkImage(
-				new VigraPixelInspector<T>(temp->operator()(), name)) ;
+		AbstractPixelInspector* inspector = new VigraPixelInspector<T>(temp->operator()(), name) ;
+		if(inspector)
+		{	viewStack.linkImage(inspector) ;
+			_inspectors.push_back(inspector) ;
+		}
 	}
 
 	typename std::set<AbstractSlot<cimg_library::CImgList<T> >*>
@@ -157,11 +175,15 @@ void ArgosDisplayPlugin<T>::execute() {
 						+ " : cast of cimg_library::CImgList failed! "
 					"In/Output slot \"" + name + "\" may be invalid!");
 		}
-		viewStack.linkImage(
-				new CImgPixelInspector<T>(temp->operator()(), name)) ;
+		AbstractPixelInspector* inspector = new CImgPixelInspector<T>(temp->operator()(), name) ;
+		if(inspector)
+		{	viewStack.linkImage(inspector) ;
+			_inspectors.push_back(inspector) ;
+		}
 	}
 
 	viewStack.setCurrentIndex(index) ;
+
 	
 	for (std::size_t ii = 0 ; ii < _dockWidgets.size() ; ii++) {
 		_mainWindow->addDockWidget(_dockWidgets[ii]) ;
@@ -169,7 +191,7 @@ void ArgosDisplayPlugin<T>::execute() {
 	for (std::size_t ii = 0 ; ii < _overlayWidgets.size() ; ii++) {
 		_mainWindow->addOverlayWidget(_overlayWidgets[ii]) ;
 	}
-	QApplication::processEvents() ;
+	
 }
 
 template<typename T>
@@ -177,10 +199,11 @@ void ArgosDisplayPlugin<T>::run() {
 	ParameteredObject::run();
 	// start timer at execution end to avoid flooding of the event loop
 	_displayReloader->start();
-
+	QApplication::processEvents() ;
+	/*
 	for (std::size_t ii = 0 ; ii < _overlayWidgets.size() ; ii++) {
 		_mainWindow->addOverlayWidget(_overlayWidgets[ii]) ;
-	}
+	}*/
 }
 
 AbstractPixelInspector::AbstractPixelInspector(
