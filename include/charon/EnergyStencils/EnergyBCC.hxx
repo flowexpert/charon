@@ -197,6 +197,9 @@ void EnergyBCC<T>::updateStencil(
 	        const T v0 = motionUV()[1](x,y,z);
 
 		d_psi = _penaltyFunction->getPenaltyGradient( pow(double(cit + cix*u0 + ciy*v0), 2.0) );
+		rhs -= (cik * cix * u0 + cik * ciy * v0);
+	} else {
+		d_psi = _penaltyFunction->getPenaltyGradient( pow(double(cit), 2.0) );
 	}
 
         // fill calculated data into stencil members, applying lambda
