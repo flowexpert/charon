@@ -22,12 +22,6 @@ ADD_LIBRARY(roi SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.h
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.hxx
 )
-ADD_LIBRARY(getroi SHARED
-	GetRoi.cpp
-	${CHARON_UTILS_INCLUDE_DIR}/GetRoi.h
-	${CHARON_UTILS_INCLUDE_DIR}/GetRoi.hxx
-)
-TARGET_LINK_LIBRARIES(getroi roi)
 
 ADD_LIBRARY(statementgenerator SHARED
 	StatementGenerator.cpp
@@ -66,7 +60,6 @@ ADD_LIBRARY(printvalue SHARED
 )
 SET(Plugins
 	roi
-	getroi
 	statementgenerator
 	greatersmallerthenpar
 	parametertoslot
