@@ -36,10 +36,7 @@ WeightedMedian<T>::WeightedMedian(const std::string& name) :
 			"Use image windows of given size, calculate weighted median within this "
 			"window and use the result as new value for the window center "
 			"pixel. This eliminates outliers and makes "
-			"e.g. flow estimation more robust. "
-			"This uses the approach described by Li and Osher "
-			"(A new median formula with applications to PDE based denoising) "
-			"equation 3.13, whereas lambda -> 0."  ),
+			"e.g. flow estimation more robust. " ),
 	level(true,false),
 	windowRadiusList("7")
 {
@@ -87,9 +84,7 @@ void WeightedMedian<T>::execute() {
 	std::vector<SNeighborhood> neighborhood( nbhCnt );
 	typename std::vector<SNeighborhood>::const_iterator itNbh;
 
-	T weight_sum;
-	int offset;
-	int medianIdx;
+	T weight_sum, partial_weight_sum;
 
 	int idx;
 	cimglist_for(o,nn)
@@ -107,30 +102,29 @@ void WeightedMedian<T>::execute() {
 
 		std::sort( neighborhood.begin(), neighborhood.end(), by_value() );
 
-		weight_sum = T(0);
+		weight_sum = T(0.0);
 		for (  itNbh =  neighborhood.begin();
 		       itNbh != neighborhood.end();
 		     ++itNbh)
 		{
 			weight_sum += itNbh->weight ;
 		}
+		weight_sum /= 2.0;
 
-		offset = 0;
-
+		partial_weight_sum = T(0.0);
+		idx = 0;
 		for (  itNbh =  neighborhood.begin();
 		       itNbh != neighborhood.end();
 		     ++itNbh)
 		{
-			if (weight_sum > 0) {
-				++offset;
-			} else {
-				--offset;
+			partial_weight_sum += itNbh->weight ;
+			if (partial_weight_sum >= weight_sum) {
+				break;
 			}
-			weight_sum -= (2 * itNbh->weight) ;
+			idx++;
 		}
 
-		medianIdx = 2*r*r + 2*r + (offset/2);
-		o( nn, xx, yy, zz, cc ) = neighborhood[medianIdx].value;
+		o( nn, xx, yy, zz, cc ) = neighborhood[idx].value;
 	}
 }
 
