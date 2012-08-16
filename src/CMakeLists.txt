@@ -358,9 +358,14 @@ IF(USE_CIMG)
 			${CHARON_UTILS_INCLUDE_DIR}/KittiReader.h
 			${CHARON_UTILS_INCLUDE_DIR}/KittiReader.hxx
 		)
-		TARGET_LINK_LIBRARIES(kittireader ${PNG_LIBRARIES})
+		ADD_LIBRARY(kittiwriter SHARED
+			KittiWriter.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/KittiWriter.h
+			${CHARON_UTILS_INCLUDE_DIR}/KittiWriter.hxx
+		)
 		LIST(APPEND Plugins_CImg
 			kittireader
+			kittiwriter
 		)
 	ENDIF(USE_PNG)
 	LIST(APPEND Plugins

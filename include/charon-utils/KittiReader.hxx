@@ -71,6 +71,8 @@ KittiReader<T>::KittiReader(const std::string& name) :
 	ParameteredObject::_addParameter(index, "index", "image pair index", 0u);
 	ParameteredObject::_addParameter<bool>(gt_occ, "gt_occ",
 		"switch between ground truth with or without occlusions", false);
+	ParameteredObject::_addParameter(interp, "interp",
+		"interpolate background", true);
 }
 
 template <typename T>
@@ -110,10 +112,15 @@ void KittiReader<T>::execute() {
 			gt().assign(2,ciFirst.width(),ciFirst.height(),1,1);
 			valid().assign(1,ciFirst.width(),ciFirst.height(),1,1);
 			cimg_library::CImg<T>& u=gt()[0], & v=gt()[1], & o=valid()[0];
+			cimg_forXY(o,xx,yy) {
+				o(xx,yy) = kitGT.isValid(xx,yy);
+			}
+			if (interp()) {
+				kitGT.interpolateBackground();
+			}
 			cimg_forXY(u,xx,yy) {
 				u(xx,yy) = kitGT.getFlowU(xx,yy);
 				v(xx,yy) = kitGT.getFlowV(xx,yy);
-				o(xx,yy) = kitGT.isValid(xx,yy);
 			}
 		}
 		else {
@@ -122,9 +129,14 @@ void KittiReader<T>::execute() {
 			gt().assign(1,ciFirst.width(),ciFirst.height(),1,1);
 			valid().assign(1,ciFirst.width(),ciFirst.height(),1,1);
 			cimg_library::CImg<T>& d=gt()[0], & o=valid()[0];
+			cimg_forXY(o,xx,yy) {
+				o(xx,yy) = kitGT.isValid(xx,yy);
+			}
+			if(interp()) {
+				kitGT.interpolateBackground();
+			}
 			cimg_forXY(d,xx,yy) {
 				d(xx,yy) = kitGT.getDisp(xx,yy);
-				o(xx,yy) = kitGT.isValid(xx,yy);
 			}
 		}
 	}

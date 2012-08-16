@@ -72,6 +72,8 @@ public:
 	Parameter< std::string > folder;
 	/// image pair index
 	Parameter< unsigned int > index;
+	/// interpolate background
+	Parameter< bool > interp;
 	/// switch between ground truth with or without occlusions
 	Parameter< bool > gt_occ;
 
