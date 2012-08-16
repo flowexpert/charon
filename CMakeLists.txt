@@ -2,7 +2,7 @@ PROJECT(charon-utils C CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.5)
 # HDF5 components interface and debug/release library handling
 # is available/fixed since CMake 2.8.5 (broken in 2.8.4 and ealier)
-SET(charon-utils_VERSION 0.1.6)
+SET(charon-utils_VERSION 0.1.8)
 
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -22,13 +22,17 @@ ENDIF()
 FIND_PACKAGE(charon-core REQUIRED HINTS $ENV{CHARON_DIR})
 
 FIND_PACKAGE(Doxygen QUIET)
-FIND_PACKAGE(Vigra 1.7.1)
-IF(NOT Vigra_FOUND)
-	MESSAGE(STATUS "Set Vigra_DIR to point to the vigra lib directory")
-ENDIF(NOT Vigra_FOUND)
-
+IF(NOT DEFINED USE_VIGRA OR USE_VIGRA)
+	FIND_PACKAGE(Vigra 1.7.1)
+	IF(NOT Vigra_FOUND)
+		MESSAGE(STATUS "Set Vigra_DIR to point to the vigra lib directory")
+	ENDIF(NOT Vigra_FOUND)
+ENDIF()
 FIND_PACKAGE(HDF5 COMPONENTS C HL)
-FIND_PACKAGE(MPI)
+IF(NOT DEFINED USE_MPI OR USE_MPI)
+	# find script fails if fortran not available
+	FIND_PACKAGE(MPI)
+ENDIF()
 FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtCore QtGui QtOpenGL QtXml)
 INCLUDE(${QT_USE_FILE})
 FIND_PACKAGE(Boost 1.40)

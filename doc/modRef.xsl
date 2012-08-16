@@ -1,24 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output method="html" encoding="UTF-8"
-		doctype-public="-//W3C//DTD HTML 4.01//EN"
-		doctype-system="http://www.w3.org/TR/html4/strict.dtd"/>
+	<xsl:import href="common.xsl"/>
 
-	<!-- Parameters that may be passed to this stylesheet -->
-	<xsl:param name="stylesheet" select="'styles.css'"/>
-	
-	<xsl:template match="/">
-		<html>
-			<head>
-				<title><xsl:value-of select="/doxygen/compounddef/compoundname"/></title>
-				<link rel="stylesheet" type="text/css">
-					<xsl:attribute name="href"><xsl:value-of select="$stylesheet"/></xsl:attribute>
-				</link>
-			</head>
-			<body>
-				<xsl:apply-templates select="doxygen/compounddef"/>
-			</body>
-		</html>
+	<xsl:variable name="title" select="/doxygen/compounddef/compoundname" />
+	<xsl:template name="content">
+		<xsl:apply-templates select="doxygen/compounddef"/>
 	</xsl:template>
 
 	<xsl:template match="compounddef">
