@@ -26,44 +26,36 @@ ADD_LIBRARY(roi SHARED
 ADD_LIBRARY(statementgenerator SHARED
 	StatementGenerator.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/StatementGenerator.h
-
 )
 ADD_LIBRARY(parametertoslot SHARED
 	ParameterToSlot.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/ParameterToSlot.h
-
 )
-
 ADD_LIBRARY(greatersmallerthenpar SHARED
 	GreaterSmallerThenPar.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.h
 	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.hxx
-
 )
 ADD_LIBRARY(valuebuffer SHARED
 	ValueBuffer.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/ValueBuffer.h
 	${CHARON_UTILS_INCLUDE_DIR}/ValueBuffer.hxx
-
 )
 ADD_LIBRARY(binoperatorvalue SHARED
 	BinOperatorValue.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/BinOperatorValue.h
 	${CHARON_UTILS_INCLUDE_DIR}/BinOperatorValue.hxx
-
 )
 ADD_LIBRARY(printvalue SHARED
-        PrintValue.cpp
-        ${CHARON_UTILS_INCLUDE_DIR}/PrintValue.h
-
-
+	PrintValue.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/PrintValue.h
 )
 SET(Plugins
 	roi
 	statementgenerator
 	greatersmallerthenpar
 	parametertoslot
-        printvalue
+	printvalue
 	valuebuffer
 	binoperatorvalue
 )
@@ -225,16 +217,16 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Images2Sequence.h
 		${CHARON_UTILS_INCLUDE_DIR}/Images2Sequence.hxx
 	)
-        ADD_LIBRARY(mux2 SHARED
-                Mux2.cpp
-                ${CHARON_UTILS_INCLUDE_DIR}/Mux2.h
-                ${CHARON_UTILS_INCLUDE_DIR}/Mux2.hxx
-        )
-        ADD_LIBRARY(demux2 SHARED
-                Demux2.cpp
-                ${CHARON_UTILS_INCLUDE_DIR}/Demux2.h
-                ${CHARON_UTILS_INCLUDE_DIR}/Demux2.hxx
-        )
+	ADD_LIBRARY(mux2 SHARED
+		Mux2.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Mux2.h
+		${CHARON_UTILS_INCLUDE_DIR}/Mux2.hxx
+	)
+	ADD_LIBRARY(demux2 SHARED
+		Demux2.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Demux2.h
+		${CHARON_UTILS_INCLUDE_DIR}/Demux2.hxx
+	)
 	ADD_LIBRARY(warp SHARED
 		Warp.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Warp.h
@@ -301,18 +293,6 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Cut.h
 		${CHARON_UTILS_INCLUDE_DIR}/Cut.hxx
 	)
-	IF(USE_QT)
-		SET(toggletimeout_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ToggleTimeout.h)
-		QT4_WRAP_CPP(toggletimeout_HEADERS_MOCKED ${toggletimeout_HEADERS_TOMOC})
-		ADD_LIBRARY(toggle SHARED
-			${toggletimeout_HEADERS_MOCKED}
-			ToggleTimeout.cpp
-			${CHARON_UTILS_INCLUDE_DIR}/Toggle.h
-			${CHARON_UTILS_INCLUDE_DIR}/Toggle.hxx
-			Toggle.cpp
-		)
-		TARGET_LINK_LIBRARIES(toggle ${QT_LIBRARIES})
-	ENDIF(USE_QT)
 	SET(Plugins_CImg
 		channelconverter
 		crop
@@ -358,11 +338,31 @@ IF(USE_CIMG)
 		cut
 	)
 	IF(USE_QT)
+		SET(toggletimeout_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ToggleTimeout.h)
+		QT4_WRAP_CPP(toggletimeout_HEADERS_MOCKED ${toggletimeout_HEADERS_TOMOC})
+		ADD_LIBRARY(toggle SHARED
+			${toggletimeout_HEADERS_MOCKED}
+			ToggleTimeout.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/Toggle.h
+			${CHARON_UTILS_INCLUDE_DIR}/Toggle.hxx
+			Toggle.cpp
+		)
+		TARGET_LINK_LIBRARIES(toggle ${QT_LIBRARIES})
 		LIST(APPEND Plugins_CImg
 			toggle
 		)
 	ENDIF(USE_QT)
-
+	IF(USE_PNG)
+		ADD_LIBRARY(kittireader SHARED
+			KittiReader.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/KittiReader.h
+			${CHARON_UTILS_INCLUDE_DIR}/KittiReader.hxx
+		)
+		TARGET_LINK_LIBRARIES(kittireader ${PNG_LIBRARIES})
+		LIST(APPEND Plugins_CImg
+			kittireader
+		)
+	ENDIF(USE_PNG)
 	LIST(APPEND Plugins
 		${Plugins_CImg}
 	)
