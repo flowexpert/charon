@@ -30,13 +30,14 @@
 using namespace ArgosDisplay ;
 
 ViewStack::ViewStack(QWidget* p) : QWidget(p),
-	_updatePending(false),
-	_index(0), _zoomLevel(0),
 	_tabWidget(0),
 	_switchColorModeAct(0),
 	_saveCurrentViewAct(0),
 	_centerAndResetZoomAct(0),
-	_alignAndZoomAct(0)
+	_alignAndZoomAct(0),
+	_updatePending(false),
+	_index(0),
+	_zoomLevel(0)
 
 {
 	_tabWidget = new QTabWidget(this) ;
