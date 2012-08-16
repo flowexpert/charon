@@ -34,16 +34,13 @@
 }
 
 void @ModuleName@::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	// your code goes here :-)
 }
 
 // the following functions are needed
 // for class @ModuleName@ to work as a charon plugin.
 extern "C" @modulename@_DECLDIR ParameteredObject*
-		create(const std::string& name, template_type) {
+		create(const std::string& name, ParameteredObject::template_type) {
 	return new @ModuleName@(name);
 }
 

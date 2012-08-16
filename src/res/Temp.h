@@ -47,6 +47,8 @@ public:
 	/// \param name          Instance name
 	@ModuleName@(const std::string& name = "");
 @ParamSlots@
+
+protected:
 	/// Update object.
 	virtual void execute();
 };

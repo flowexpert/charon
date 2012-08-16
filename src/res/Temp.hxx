@@ -38,9 +38,6 @@ template <typename T>
 
 template <typename T>
 void @ModuleName@<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	// your code goes here :-)
 }
 

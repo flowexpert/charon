@@ -49,7 +49,7 @@ WizardPageStart::WizardPageStart(QWidget* p) :
 	_ui->lBuildSys->setText(
 		buildSystem
 #ifdef BUILD_INFO
-		+QString(" (%1)").arg(BUILD_INFO)
+		+QString("\n%1").arg(BUILD_INFO)
 #endif
 	);
 
