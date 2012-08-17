@@ -49,7 +49,7 @@ void CentralMdiArea::dropEvent(QDropEvent* e) {
 		QList<QUrl> urlList = mimeData->urls();
 		for (int i = 0; i < urlList.size(); i++) {
 			QString url = urlList.at(i).path();
-			files << url.mid(1);
+			files << url;
 		}
 	}
 	e->acceptProposedAction();
