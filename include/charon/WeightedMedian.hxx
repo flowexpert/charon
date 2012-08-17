@@ -63,9 +63,6 @@ struct by_value {
 
 template<typename T>
 void WeightedMedian<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const cimg_library::CImgList<T>& img = in();
 	CliqueWeight<T>* _cliqueWeight = cliqueWeight();
 

@@ -179,6 +179,7 @@ void SimpleIterator<T>::prepareIterations() {
 	}
 
 	// initialize helper object
+	ParameteredObject::_prepareSlots();
 	ParameteredObject::runPreceeding(helper);
 	helper()->reset();
 
@@ -281,10 +282,10 @@ bool SimpleIterator<T>::finishStep() {
 	const cimg_library::CImgList<T>& curFlow = flow();
 	double curChange;
 
-        /// write previous  flow to file
-        if (!writeFlowInit().empty() && flowInit.connected()) {
-                helpFlow.save(writeFlowInit().c_str());
-        }
+	/// write previous  flow to file
+	if (!writeFlowInit().empty() && flowInit.connected()) {
+		helpFlow.save(writeFlowInit().c_str());
+	}
 	/// write previous residual to file
 	if (!writeResidualInit().empty() && residualInit.connected() && residual.connected()) {
 		helpResidual.save(writeResidualInit().c_str());
@@ -421,6 +422,7 @@ void SimpleIterator<T>::finishIterations() {
 	_afterIterationHook();
 
 	// post execution code
+	ParameteredObject::_commitSlots();
 	ParameteredObject::_setExecuted(true);
 }
 

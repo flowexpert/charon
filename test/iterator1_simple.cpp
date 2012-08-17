@@ -83,9 +83,9 @@ int test() {
 	// check if data from sequence generator really reach the iteration
 	// helper output slots after helper->run()
 	// this detects a bug fixed in IteratorHelper (for regression testing)
+	helper->run();
 	const cimg_library::CImgList<double>& helperSeq =
 			helper->sequence();
-	helper->run();
 	assert(helperSeq.size() > 0);
 	std::cout << "Sequence output: " << helperSeq.size() << " element(s) "
 			<< "-- max=" << helperSeq.max() << ", min=" << helperSeq.min()
