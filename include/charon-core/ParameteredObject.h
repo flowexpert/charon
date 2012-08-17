@@ -108,12 +108,6 @@ private:
 	/// forbid instantiation without className etc.
 	ParameteredObject();
 
-	/// prepare slot data
-	void _prepareSlots();
-
-	/// commit slot data
-	void _commitSlots();
-
 protected:
 	/// Specifies if the ParameteredObject is dynamic
 	void _setDynamic(bool v);
@@ -275,6 +269,12 @@ protected:
 	/** \param slot   select slot where preceeding
 	 *                objects should be run */
 	void runPreceeding(const Slot& slot) const;
+
+	/// prepare slot data
+	void _prepareSlots();
+
+	/// commit slot data
+	void _commitSlots();
 
 public:
 	/// Integer which represents a template type.
