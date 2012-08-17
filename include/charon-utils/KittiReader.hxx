@@ -56,9 +56,14 @@ KittiReader<T>::KittiReader(const std::string& name) :
 		)
 {
 	ParameteredObject::_addOutputSlot(seq, "seq", "image pair", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(gt, "gt", "ground truth", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(valid, "valid",
-		"valid ground truth mask", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(gt_occ, "gt_occ",
+		"ground truth (occlusions)", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(gt_noc, "gt_noc",
+		"ground truth (no occlusions)", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(valid_occ, "valid_occ",
+		"valid ground truth mask (to gt_occ)", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(valid_noc, "valid_noc",
+		"valid ground truth mask (to gt_noc)", "CImgList<T>");
 
 	ParameteredObject::_addParameter(
 		folder, "folder",
@@ -69,8 +74,6 @@ KittiReader<T>::KittiReader(const std::string& name) :
 		"select stereo or flow data",
 		"flow", "{flow;stereo}");
 	ParameteredObject::_addParameter(index, "index", "image pair index", 0u);
-	ParameteredObject::_addParameter<bool>(gt_occ, "gt_occ",
-		"switch between ground truth with or without occlusions", false);
 	ParameteredObject::_addParameter(interp, "interp",
 		"interpolate background", true);
 }
@@ -84,14 +87,16 @@ void KittiReader<T>::execute() {
 	strm << folder() << "/image_0/" << std::setfill('0') << std::setw(6)
 		<< index() << "_10.png";
 	std::string imFirst = strm.str();
-	std::string imSecond = imFirst, imGT = imFirst;
+	std::string imSecond = imFirst, imGTo = imFirst, imGTn = imFirst;
 	if (kind() == "flow") {
 		imSecond.replace(imSecond.length()-5,1,1,'1');
-		imGT.replace(imGT.length()-21,7,(gt_occ()?"flow_occ":"flow_noc"));
+		imGTo.replace(imGTo.length()-21,7,"flow_occ");
+		imGTn.replace(imGTn.length()-21,7,"flow_noc");
 	}
 	else if (kind() == "stereo") {
 		imSecond.replace(imSecond.length()-15,1,1,'1');
-		imGT.replace(imGT.length()-21,7,(gt_occ()?"disp_occ":"disp_noc"));
+		imGTo.replace(imGTo.length()-21,7,"disp_occ");
+		imGTn.replace(imGTn.length()-21,7,"disp_noc");
 	}
 	else {
 		ParameteredObject::raise("invalid kind given: " + kind());
@@ -107,36 +112,51 @@ void KittiReader<T>::execute() {
 
 	try {
 		if (kind() == "flow") {
-			FlowImage kitGT(imGT);
-			assert(ciFirst.is_sameXY(kitGT.width(),kitGT.height()));
-			gt().assign(2,ciFirst.width(),ciFirst.height(),1,1);
-			valid().assign(1,ciFirst.width(),ciFirst.height(),1,1);
-			cimg_library::CImg<T>& u=gt()[0], & v=gt()[1], & o=valid()[0];
-			cimg_forXY(o,xx,yy) {
-				o(xx,yy) = kitGT.isValid(xx,yy);
+			FlowImage kitGTo(imGTo), kitGTn(imGTn);
+			assert(ciFirst.is_sameXY(kitGTo.width(),kitGTo.height()));
+			assert(ciFirst.is_sameXY(kitGTn.width(),kitGTn.height()));
+			gt_occ().assign(2,ciFirst.width(),ciFirst.height(),1,1);
+			gt_noc().assign(2,ciFirst.width(),ciFirst.height(),1,1);
+			valid_occ().assign(1,ciFirst.width(),ciFirst.height(),1,1);
+			valid_noc().assign(1,ciFirst.width(),ciFirst.height(),1,1);
+			cil::CImg<T>&uo=gt_occ()[0], &vo=gt_occ()[1], & oo=valid_occ()[0];
+			cil::CImg<T>&un=gt_noc()[0], &vn=gt_noc()[1], & on=valid_noc()[0];
+			cimg_forXY(oo,xx,yy) {
+				oo(xx,yy) = kitGTo.isValid(xx,yy);
+				on(xx,yy) = kitGTn.isValid(xx,yy);
 			}
 			if (interp()) {
-				kitGT.interpolateBackground();
+				kitGTo.interpolateBackground();
+				kitGTn.interpolateBackground();
 			}
-			cimg_forXY(u,xx,yy) {
-				u(xx,yy) = kitGT.getFlowU(xx,yy);
-				v(xx,yy) = kitGT.getFlowV(xx,yy);
+			cimg_forXY(uo,xx,yy) {
+				uo(xx,yy) = kitGTo.getFlowU(xx,yy);
+				vo(xx,yy) = kitGTo.getFlowV(xx,yy);
+				un(xx,yy) = kitGTn.getFlowU(xx,yy);
+				vn(xx,yy) = kitGTn.getFlowV(xx,yy);
 			}
 		}
 		else {
-			DisparityImage kitGT(imGT);
-			assert(ciFirst.is_sameXY(kitGT.width(),kitGT.height()));
-			gt().assign(1,ciFirst.width(),ciFirst.height(),1,1);
-			valid().assign(1,ciFirst.width(),ciFirst.height(),1,1);
-			cimg_library::CImg<T>& d=gt()[0], & o=valid()[0];
-			cimg_forXY(o,xx,yy) {
-				o(xx,yy) = kitGT.isValid(xx,yy);
+			DisparityImage kitGTo(imGTo), kitGTn(imGTn);
+			assert(ciFirst.is_sameXY(kitGTo.width(),kitGTo.height()));
+			assert(ciFirst.is_sameXY(kitGTn.width(),kitGTn.height()));
+			gt_occ().assign(1,ciFirst.width(),ciFirst.height(),1,1);
+			gt_noc().assign(1,ciFirst.width(),ciFirst.height(),1,1);
+			valid_occ().assign(1,ciFirst.width(),ciFirst.height(),1,1);
+			valid_noc().assign(1,ciFirst.width(),ciFirst.height(),1,1);
+			cimg_library::CImg<T>& dio=gt_occ()[0], & oo=valid_occ()[0];
+			cimg_library::CImg<T>& din=gt_noc()[0], & on=valid_noc()[0];
+			cimg_forXY(oo,xx,yy) {
+				oo(xx,yy) = kitGTo.isValid(xx,yy);
+				on(xx,yy) = kitGTn.isValid(xx,yy);
 			}
 			if(interp()) {
-				kitGT.interpolateBackground();
+				kitGTo.interpolateBackground();
+				kitGTn.interpolateBackground();
 			}
-			cimg_forXY(d,xx,yy) {
-				d(xx,yy) = kitGT.getDisp(xx,yy);
+			cimg_forXY(dio,xx,yy) {
+				dio(xx,yy) = kitGTo.getDisp(xx,yy);
+				din(xx,yy) = kitGTn.getDisp(xx,yy);
 			}
 		}
 	}

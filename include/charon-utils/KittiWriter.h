@@ -65,6 +65,14 @@ public:
 	InputSlot< cimg_library::CImgList<T> > result;
 	/// valid pixel mask input
 	InputSlot< cimg_library::CImgList<T> > valid;
+	/// ground truth (with occlusions, for error check)
+	InputSlot< cimg_library::CImgList<T> > gt_occ;
+	/// ground truth (without occlusions, for error check)
+	InputSlot< cimg_library::CImgList<T> > gt_noc;
+	/// ground truth valid (for gt_occ)
+	InputSlot< cimg_library::CImgList<T> > gtvalid_occ;
+	/// ground truth valid (for gt_noc)
+	InputSlot< cimg_library::CImgList<T> > gtvalid_noc;
 
 	/// path to output folder
 	Parameter< std::string > path;

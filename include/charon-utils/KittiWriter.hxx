@@ -47,12 +47,24 @@ KittiWriter<T>::KittiWriter(const std::string& name) :
 			"named like fcol000123.png<br>"
 			"Delete these files before creating the zip file for submission."
 		),
-		valid(true,false) // optional
+		valid(true,false), // optional
+		gt_occ(true,false),
+		gt_noc(true,false),
+		gtvalid_occ(true,false),
+		gtvalid_noc(true,false)
 {
 	ParameteredObject::_addInputSlot(
 		result, "result", "result input", "CImgList<T>");
 	ParameteredObject::_addInputSlot(
 		valid, "valid", "valid pixel mask input", "CImgList<T>");
+	ParameteredObject::_addInputSlot(gt_occ, "gt_occ",
+		"ground truth (with occlusions) for error check", "CImgList<T>");
+	ParameteredObject::_addInputSlot(gt_noc, "gt_noc",
+		"ground truth (without occlusions) for error check", "CImgList<T>");
+	ParameteredObject::_addInputSlot(gtvalid_occ, "gtvalid_occ",
+		"ground truth valid (for gt_occ)", "CImgList<T>");
+	ParameteredObject::_addInputSlot(gtvalid_noc, "gtvalid_noc",
+		"ground truth valid (for gt_noc)", "CImgList<T>");
 
 	ParameteredObject::_addParameter(
 		path, "path", "path to output folder", "Path");
@@ -77,6 +89,8 @@ void KittiWriter<T>::execute() {
 	std::string nRes = strm.str(), nFCol = strm.str();
 	nRes.erase(nRes.length()-17,4);
 	nFCol.erase(nFCol.length()-7,3);
+	std::string nErr = nFCol;
+	nErr.replace(nErr.length()-14,4,"err");
 
 	if (flow) {
 		const cimg_library::CImg<T>& u=result()[0], &v=result()[1];
@@ -101,6 +115,40 @@ void KittiWriter<T>::execute() {
 		kitRes.write(nRes);
 		sout << "(DD) \twriting " << nFCol << std::endl;
 		kitRes.writeColor(nFCol);
+		if (gt_occ.connected() && gt_noc.connected()) {
+			assert(gt_occ().size()>=2);
+			assert(gt_noc().size()>=2);
+			const cimg_library::CImg<T> &guo=gt_occ()[0], &gvo=gt_occ()[1];
+			const cimg_library::CImg<T> &gun=gt_noc()[0], &gvn=gt_noc()[1];
+			assert(u.is_sameXYZC(guo));
+			assert(v.is_sameXYZC(gvo));
+			assert(u.is_sameXYZC(gun));
+			assert(v.is_sameXYZC(gvn));
+			FlowImage kitGto(u.width(),u.height());
+			FlowImage kitGtn(u.width(),u.height());
+			cimg_forXY(u,xx,yy) {
+				kitGto.setValid(xx,yy,true);
+				kitGto.setFlowU(xx,yy,guo(xx,yy));
+				kitGto.setFlowV(xx,yy,gvo(xx,yy));
+				kitGtn.setValid(xx,yy,true);
+				kitGtn.setFlowU(xx,yy,gun(xx,yy));
+				kitGtn.setFlowV(xx,yy,gvn(xx,yy));
+			}
+			if (gtvalid_occ.connected() && gtvalid_noc.connected()) {
+				assert(gtvalid_occ().size() == 1);
+				assert(gtvalid_noc().size() == 1);
+				const cimg_library::CImg<T>& oo=gtvalid_occ()[0];
+				const cimg_library::CImg<T>& on=gtvalid_noc()[0];
+				assert(oo.is_sameXY(guo));
+				assert(on.is_sameXY(gun));
+				cimg_forXY(oo,xx,yy) {
+					kitGto.setValid(xx,yy,(oo(xx,yy)>0));
+					kitGtn.setValid(xx,yy,(on(xx,yy)>0));
+				}
+			}
+			sout << "(DD) \twriting " << nErr << std::endl;
+			kitRes.errorImage(kitGtn,kitGto).write(nErr.c_str());
+		}
 	}
 	else {
 		const cimg_library::CImg<T>& u=result()[0];

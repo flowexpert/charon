@@ -357,11 +357,15 @@ IF(USE_CIMG)
 			KittiReader.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/KittiReader.h
 			${CHARON_UTILS_INCLUDE_DIR}/KittiReader.hxx
+			${CHARON_UTILS_INCLUDE_DIR}/kitti-devkit/io_flow.h
+			${CHARON_UTILS_INCLUDE_DIR}/kitti-devkit/io_disp.h
 		)
 		ADD_LIBRARY(kittiwriter SHARED
 			KittiWriter.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/KittiWriter.h
 			${CHARON_UTILS_INCLUDE_DIR}/KittiWriter.hxx
+			${CHARON_UTILS_INCLUDE_DIR}/kitti-devkit/io_flow.h
+			${CHARON_UTILS_INCLUDE_DIR}/kitti-devkit/io_disp.h
 		)
 		LIST(APPEND Plugins_CImg
 			kittireader

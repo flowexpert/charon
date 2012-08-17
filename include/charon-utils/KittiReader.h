@@ -61,10 +61,14 @@ public:
 
 	/// image pair
 	OutputSlot< cimg_library::CImgList<T> > seq;
-	/// ground truth
-	OutputSlot< cimg_library::CImgList<T> > gt;
-	/// occlusion mask
-	OutputSlot< cimg_library::CImgList<T> > valid;
+	/// ground truth (with occlusions)
+	OutputSlot< cimg_library::CImgList<T> > gt_occ;
+	/// ground truth (no occlusions)
+	OutputSlot< cimg_library::CImgList<T> > gt_noc;
+	/// occlusion mask (to gt_occ)
+	OutputSlot< cimg_library::CImgList<T> > valid_occ;
+	/// occlusion mask (to gt_noc)
+	OutputSlot< cimg_library::CImgList<T> > valid_noc;
 
 	/// select stereo or flow data
 	Parameter< std::string > kind;
@@ -74,8 +78,6 @@ public:
 	Parameter< unsigned int > index;
 	/// interpolate background
 	Parameter< bool > interp;
-	/// switch between ground truth with or without occlusions
-	Parameter< bool > gt_occ;
 
 protected:
 	/// Update object.
