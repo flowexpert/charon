@@ -46,7 +46,8 @@ KittiWriter<T>::KittiWriter(const std::string& name) :
 			"False color representations are written into the same folder "
 			"named like fcol000123.png<br>"
 			"Delete these files before creating the zip file for submission."
-		)
+		),
+		valid(true,false) // optional
 {
 	ParameteredObject::_addInputSlot(
 		result, "result", "result input", "CImgList<T>");
@@ -83,18 +84,22 @@ void KittiWriter<T>::execute() {
 		assert(u.is_sameZC(1,1));
 		FlowImage kitRes(u.width(),u.height());
 		cimg_forXY(u,xx,yy) {
+			kitRes.setValid(xx,yy,true);
 			kitRes.setFlowU(xx,yy,u(xx,yy));
 			kitRes.setFlowV(xx,yy,v(xx,yy));
 		}
 		if (valid.connected()) {
-			assert(valid().size() > 0);
+			assert(valid().size() == 1);
 			const cimg_library::CImg<T>& o=valid()[0];
 			assert(o.is_sameXY(u));
 			cimg_forXY(o,xx,yy) {
 				kitRes.setValid(xx,yy,(o(xx,yy)>0));
 			}
 		}
+		sout << "(DD) \tmax flow: " << kitRes.maxFlow() << std::endl;
+		sout << "(DD) \twriting " << nRes << std::endl;
 		kitRes.write(nRes);
+		sout << "(DD) \twriting " << nFCol << std::endl;
 		kitRes.writeColor(nFCol);
 	}
 	else {
@@ -105,9 +110,10 @@ void KittiWriter<T>::execute() {
 			kitRes.setDisp(xx,yy,u(xx,yy));
 		}
 		if (valid.connected()) {
-			assert(valid().size() > 0);
+			assert(valid().size() == 1);
 			const cimg_library::CImg<T>& o=valid()[0];
 			assert(o.is_sameXY(u));
+			assert(o.is_sameZC(1,1));
 			cimg_forXY(o,xx,yy) {
 				if (o(xx,yy) <= 0) {
 					kitRes.setInvalid(xx,yy);
@@ -115,7 +121,9 @@ void KittiWriter<T>::execute() {
 			}
 		}
 		kitRes.write(nRes);
+		sout << "(DD) \twriting " << nRes << std::endl;
 		kitRes.writeColor(nFCol);
+		sout << "(DD) \twriting " << nFCol << std::endl;
 	}
 }
 
