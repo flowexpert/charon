@@ -192,27 +192,22 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 			disconnectSlot(source, val, false);
 	}
 
-	source = source.toLower();
-	target = target.toLower();
-
 	// add target to source
-	QString content = getValue(source).toLower();
-	Q_ASSERT(content.indexOf(target) < 0);
-	QStringList targetList = content.split(
-			";", QString::SkipEmptyParts);
+	QString content = getValue(source);
+	Q_ASSERT(content.indexOf(target,Qt::CaseInsensitive) < 0);
+	QStringList targetList = content.split(";", QString::SkipEmptyParts);
 	// add new target
 	targetList << target;
 	setValue(source, targetList.join(";"));
 
 	// add source to target
-	content = getValue(target).toLower();
+	content = getValue(target);
 	// this if instead of a strict Q_ASSERT
 	// is a workaround to accept some old (buggy)
 	// parameter files with left-over entries
 	// within the output slot connections
-	if (content.indexOf(source) < 0) {
-		QStringList sourceList = content.split(
-				";", QString::SkipEmptyParts);
+	if (content.indexOf(source,Qt::CaseInsensitive) < 0) {
+		QStringList sourceList = content.split(";", QString::SkipEmptyParts);
 		// add new target
 		sourceList << source;
 		setValue(target, sourceList.join(";"));
@@ -226,10 +221,7 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 }
 
 void GraphModel::disconnectSlot(QString source, QString target, bool draw) {
-	source = source.toLower();
-	target = target.toLower();
-
-	QString content = getValue(source).toLower();
+	QString content = getValue(source);
 	QStringList targets = content.split(";", QString::SkipEmptyParts);
 	if (target.isEmpty()) {
 		foreach (const QString& tar, targets) {
@@ -238,7 +230,7 @@ void GraphModel::disconnectSlot(QString source, QString target, bool draw) {
 		}
 	}
 	else {
-		int pos = targets.indexOf(target);
+		int pos = targets.indexOf(target,Qt::CaseInsensitive);
 		if (pos >= 0) {
 			targets.removeAt(pos);
 			setValue(source, targets.join(";"));
@@ -277,8 +269,6 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 			0, tr("rename node"),
 			tr("Enter new name for node \"%1\":").arg(nodename),
 			QLineEdit::Normal, nodename, &ok);
-	//parameter file does only support lowercase and handling is inconsistent
-	//convert to lowercase to prevent problems later
 	newName = newName.toLower() ;
 	if (ok) {
 		if(nodeValid(newName)) {
@@ -294,7 +284,7 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 		for(int i = 0; i < rowCount(); i++) {
 			// rename node
 			QString curPar = data(index(i,0)).toString();
-			if (curPar.startsWith(nodename+".")) {
+			if (curPar.startsWith(nodename+".",Qt::CaseInsensitive)) {
 				QStringList parName = curPar.split(".");
 				Q_ASSERT(parName.size() > 0);
 				parName[0] = newName;
@@ -308,7 +298,8 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 				for (int i = 0; i < parVals.size(); i++) {
 					QStringList target = parVals.at(i).split(".");
 					Q_ASSERT(target.size() > 0);
-					if (target[0] == nodename) {
+					if (QString::compare(target[0],nodename,
+							Qt::CaseInsensitive)==0) {
 						target[0] = newName;
 						parVals[i] = target.join(".");
 					}
