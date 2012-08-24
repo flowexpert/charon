@@ -37,7 +37,7 @@
 #endif
 
 #include <charon-core/ParameteredObject.hxx>
-#include <CImg.h>
+#include <charon-utils/CImg.h>
 
 /// Helper for iterative image processing algorithms.
 /** This provides current values/initial values for further processing.
