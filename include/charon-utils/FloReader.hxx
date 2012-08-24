@@ -28,11 +28,19 @@ template <typename T>
 FloReader<T>::FloReader(const std::string& name) :
 		TemplatedParameteredObject<T>("floreader", name,
 			"read motion from motion file using cimg") {
-	this->_addParameter (filename, "filename",
+	ParameteredObject::_addParameter (filename, "filename",
 		"filename to read image from", "fileopen");
-	this->_addOutputSlot(out, "out",
+	ParameteredObject::_addParameter (invToZero, "invToZero",
+		"set invalid flow values to zero", false);
+	ParameteredObject::_addOutputSlot(out, "out",
 		"image output", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(valid, "valid",
+		"flow validity mask (1=valid,0=flow unknown)", "CImgList<T>");
 }
+
+// from http://vision.middlebury.edu/flow/code/flow-code/README.txt
+template <typename T>
+const float FloReader<T>::maxKnown = 1.e9;
 
 template <typename T>
 void FloReader<T>::execute() {
@@ -49,6 +57,8 @@ void FloReader<T>::execute() {
 		size_t read;
 
 		cimg_library::CImgList<T>& o = out();
+		valid().assign(1u);
+		cimg_library::CImg<T>& v = valid()[0];
 
 		read = fread(&tag,    sizeof(float), 1, stream);
 		if (read != 1) {
@@ -65,6 +75,8 @@ void FloReader<T>::execute() {
 
 		int nBands = 2;
 		o.assign(nBands, width, height, 1, 1);
+		v.assign(width,height);
+		v.fill(T(1));
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < nBands*width; x++) {
 				float fv;
@@ -72,7 +84,15 @@ void FloReader<T>::execute() {
 				if (read != 1) {
 					throw std::runtime_error("error reading flo values");
 				}
-				o.atNXYZC(x%nBands, x/nBands, y, 0, 0) = T(fv);
+				o.atNXY(x%nBands, x/nBands, y) = T(fv);
+				if (std::abs((double)fv) > maxKnown) {
+					v(x/nBands, y) = T(0);
+					if (invToZero()) {
+						cimglist_for(o,kk) {
+							o.atNXY(kk, x/nBands, y) = T(0);
+						}
+					}
+				}
 			}
 		}
 		fclose(stream);

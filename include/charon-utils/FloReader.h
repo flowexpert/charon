@@ -52,8 +52,16 @@ public:
 	/// filename to read ground-truth from
 	Parameter<std::string> filename;
 
-	/// motion data as output slot
+	/// set invalid flow values to zero
+	Parameter<bool> invToZero;
+
+	/// flow data as output slot
 	OutputSlot<cimg_library::CImgList<T> > out;
+	/// flow validity mask (1=valid,0=flow unknown)
+	/** flow values are considered unknown
+	 *  where |u| or |v| are larger than 1e9
+	 */
+	OutputSlot<cimg_library::CImgList<T> > valid;
 
 	/// create a new sample object
 	/// \param name             Object name
@@ -63,6 +71,10 @@ protected:
 	/// Update object.
 	/// Reload image and put new data into the output slot.
 	virtual void execute();
+
+private:
+	/// maximal reasonable absolute value of flow component
+	static const float maxKnown;
 };
 
 #endif // _FLOREADER_H_
