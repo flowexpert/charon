@@ -56,14 +56,14 @@ KittiReader<T>::KittiReader(const std::string& name) :
 		)
 {
 	ParameteredObject::_addOutputSlot(seq, "seq", "image pair", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(gt_occ, "gt_occ",
-		"ground truth (occlusions)", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(gt_noc, "gt_noc",
-		"ground truth (no occlusions)", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(valid_occ, "valid_occ",
-		"valid ground truth mask (to gt_occ)", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(valid_noc, "valid_noc",
-		"valid ground truth mask (to gt_noc)", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(flow1, "flow1",
+		"flow 1 (usually from gt_occ)", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(flow2, "flow2",
+		"flow 2 (usually from gt_noc)", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(valid1, "valid1",
+		"valid mask (of flow1) ", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(valid2, "valid2",
+		"valid mask (of flow2)", "CImgList<T>");
 
 	ParameteredObject::_addParameter(
 		folder, "folder",
@@ -74,8 +74,14 @@ KittiReader<T>::KittiReader(const std::string& name) :
 		"select stereo or flow data",
 		"flow", "{flow;stereo}");
 	ParameteredObject::_addParameter(index, "index", "image pair index", 0u);
-	ParameteredObject::_addParameter(interp, "interp",
-		"interpolate background", true);
+	ParameteredObject::_addParameter<std::string>(
+		pf1, "pf1", "path to flow1 (in disparity mode, "
+		"this should be disp_occ)", "flow_occ");
+	ParameteredObject::_addParameter<std::string>(
+		pf2, "pf2", "path to flow2 (in disparity mode, "
+		"this should be disp_noc)", "flow_noc");
+	ParameteredObject::_addParameter(
+		interp, "interp", "interpolate background", false);
 }
 
 template <typename T>
@@ -87,81 +93,119 @@ void KittiReader<T>::execute() {
 	strm << folder() << "/image_0/" << std::setfill('0') << std::setw(6)
 		<< index() << "_10.png";
 	std::string imFirst = strm.str();
-	std::string imSecond = imFirst, imGTo = imFirst, imGTn = imFirst;
+	std::string imSecond = imFirst, imGT1 = imFirst, imGT2 = imFirst;
 	if (kind() == "flow") {
 		imSecond.replace(imSecond.length()-5,1,1,'1');
-		imGTo.replace(imGTo.length()-21,7,"flow_occ");
-		imGTn.replace(imGTn.length()-21,7,"flow_noc");
 	}
 	else if (kind() == "stereo") {
 		imSecond.replace(imSecond.length()-15,1,1,'1');
-		imGTo.replace(imGTo.length()-21,7,"disp_occ");
-		imGTn.replace(imGTn.length()-21,7,"disp_noc");
 	}
 	else {
 		ParameteredObject::raise("invalid kind given: " + kind());
 	}
-
-	cimg_library::CImg<T> ciFirst, ciSecond;
-	ciFirst.load_png(imFirst.c_str());
-	ciSecond.load_png(imSecond.c_str());
-	assert(ciFirst.is_sameXYZC(ciSecond));
-	assert(ciFirst.is_sameZC(1,1));
-	seq().clear();
-	seq().push_back(ciFirst.get_append(ciSecond, 'c'));
+	imGT1.replace(imGT1.length()-21,7,pf1());
+	imGT2.replace(imGT2.length()-21,7,pf2());
 
 	try {
-		if (kind() == "flow") {
-			FlowImage kitGTo(imGTo), kitGTn(imGTn);
-			assert(ciFirst.is_sameXY(kitGTo.width(),kitGTo.height()));
-			assert(ciFirst.is_sameXY(kitGTn.width(),kitGTn.height()));
-			gt_occ().assign(2,ciFirst.width(),ciFirst.height(),1,1);
-			gt_noc().assign(2,ciFirst.width(),ciFirst.height(),1,1);
-			valid_occ().assign(1,ciFirst.width(),ciFirst.height(),1,1);
-			valid_noc().assign(1,ciFirst.width(),ciFirst.height(),1,1);
-			cil::CImg<T>&uo=gt_occ()[0], &vo=gt_occ()[1], & oo=valid_occ()[0];
-			cil::CImg<T>&un=gt_noc()[0], &vn=gt_noc()[1], & on=valid_noc()[0];
-			cimg_forXY(oo,xx,yy) {
-				oo(xx,yy) = kitGTo.isValid(xx,yy);
-				on(xx,yy) = kitGTn.isValid(xx,yy);
+		cimg_library::CImg<T> ciFirst, ciSecond;
+		ciFirst.load_png(imFirst.c_str());
+		ciSecond.load_png(imSecond.c_str());
+		assert(ciFirst.is_sameXYZC(ciSecond));
+		assert(ciFirst.is_sameZC(1,1));
+		seq().clear();
+		seq().push_back(ciFirst.get_append(ciSecond, 'c'));
+	}
+	catch (const cimg_library::CImgException& e) {
+		sout << "(WW) failed to load sequence:\n\(WW) \t" << e.what();
+		seq().clear();
+	}
+
+	if (kind() == "flow") {
+		try {
+			FlowImage kitF(imGT1);
+			flow1().assign(2,kitF.width(),kitF.height(),1,1);
+			valid1().assign(1,kitF.width(),kitF.height(),1,1);
+			cil::CImg<T>&u=flow1()[0], &v=flow1()[1], & o=valid1()[0];
+			cimg_forXY(o,xx,yy) {
+				o(xx,yy) = kitF.isValid(xx,yy);
 			}
 			if (interp()) {
-				kitGTo.interpolateBackground();
-				kitGTn.interpolateBackground();
+				kitF.interpolateBackground();
 			}
-			cimg_forXY(uo,xx,yy) {
-				uo(xx,yy) = kitGTo.getFlowU(xx,yy);
-				vo(xx,yy) = kitGTo.getFlowV(xx,yy);
-				un(xx,yy) = kitGTn.getFlowU(xx,yy);
-				vn(xx,yy) = kitGTn.getFlowV(xx,yy);
+			cimg_forXY(u,xx,yy) {
+				u(xx,yy) = kitF.getFlowU(xx,yy);
+				v(xx,yy) = kitF.getFlowV(xx,yy);
 			}
 		}
-		else {
-			DisparityImage kitGTo(imGTo), kitGTn(imGTn);
-			assert(ciFirst.is_sameXY(kitGTo.width(),kitGTo.height()));
-			assert(ciFirst.is_sameXY(kitGTn.width(),kitGTn.height()));
-			gt_occ().assign(1,ciFirst.width(),ciFirst.height(),1,1);
-			gt_noc().assign(1,ciFirst.width(),ciFirst.height(),1,1);
-			valid_occ().assign(1,ciFirst.width(),ciFirst.height(),1,1);
-			valid_noc().assign(1,ciFirst.width(),ciFirst.height(),1,1);
-			cimg_library::CImg<T>& dio=gt_occ()[0], & oo=valid_occ()[0];
-			cimg_library::CImg<T>& din=gt_noc()[0], & on=valid_noc()[0];
-			cimg_forXY(oo,xx,yy) {
-				oo(xx,yy) = kitGTo.isValid(xx,yy);
-				on(xx,yy) = kitGTn.isValid(xx,yy);
+		catch(...) {
+			sout << "(WW) failed to load flow 1" << std::endl;
+			flow1().clear();
+		}
+		try {
+			FlowImage kitF(imGT2);
+			flow2().assign(2,kitF.width(),kitF.height(),1,1);
+			valid2().assign(1,kitF.width(),kitF.height(),1,1);
+			cil::CImg<T>&u=flow2()[0], &v=flow2()[1], & o=valid2()[0];
+			cimg_forXY(o,xx,yy) {
+				o(xx,yy) = kitF.isValid(xx,yy);
 			}
-			if(interp()) {
-				kitGTo.interpolateBackground();
-				kitGTn.interpolateBackground();
+			if (interp()) {
+				kitF.interpolateBackground();
 			}
-			cimg_forXY(dio,xx,yy) {
-				dio(xx,yy) = kitGTo.getDisp(xx,yy);
-				din(xx,yy) = kitGTn.getDisp(xx,yy);
+			cimg_forXY(u,xx,yy) {
+				u(xx,yy) = kitF.getFlowU(xx,yy);
+				v(xx,yy) = kitF.getFlowV(xx,yy);
 			}
+		}
+		catch(...) {
+			sout << "(WW) failed to load flow 2" << std::endl;
+			flow2().clear();
 		}
 	}
-	catch (...) {
-		sout << "(II) \tNo ground truth found." << std::endl;
+	else {
+		if ((pf1() == "flow_occ") || (pf2() == "flow_noc")) {
+			sout << "(WW) using flow directories in disparity mode\n"
+				<< "(WW) check if pf1/pf2 sould be disp_occ/noc!"
+				<< std::endl;
+		}
+		try {
+			DisparityImage kitD(imGT1);
+			flow1().assign(1,kitD.width(),kitD.height(),1,1);
+			valid1().assign(1,kitD.width(),kitD.height(),1,1);
+			cimg_library::CImg<T>& di=flow1()[0], & oo=valid1()[0];
+			cimg_forXY(oo,xx,yy) {
+				oo(xx,yy) = kitD.isValid(xx,yy);
+			}
+			if(interp()) {
+				kitD.interpolateBackground();
+			}
+			cimg_forXY(di,xx,yy) {
+				di(xx,yy) = kitD.getDisp(xx,yy);
+			}
+		}
+		catch(...) {
+			sout << "(WW) failed to load disparity 1" << std::endl;
+			flow1().clear();
+		}
+		try {
+			DisparityImage kitD(imGT2);
+			flow2().assign(1,kitD.width(),kitD.height(),1,1);
+			valid2().assign(1,kitD.width(),kitD.height(),1,1);
+			cimg_library::CImg<T>& di=flow2()[0], & oo=valid2()[0];
+			cimg_forXY(oo,xx,yy) {
+				oo(xx,yy) = kitD.isValid(xx,yy);
+			}
+			if(interp()) {
+				kitD.interpolateBackground();
+			}
+			cimg_forXY(di,xx,yy) {
+				di(xx,yy) = kitD.getDisp(xx,yy);
+			}
+		}
+		catch(...) {
+			sout << "(WW) failed to load disparity 2" << std::endl;
+			flow2().clear();
+		}
 	}
 }
 

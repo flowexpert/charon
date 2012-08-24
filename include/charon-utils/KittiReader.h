@@ -61,19 +61,23 @@ public:
 
 	/// image pair
 	OutputSlot< cimg_library::CImgList<T> > seq;
-	/// ground truth (with occlusions)
-	OutputSlot< cimg_library::CImgList<T> > gt_occ;
-	/// ground truth (no occlusions)
-	OutputSlot< cimg_library::CImgList<T> > gt_noc;
-	/// occlusion mask (to gt_occ)
-	OutputSlot< cimg_library::CImgList<T> > valid_occ;
-	/// occlusion mask (to gt_noc)
-	OutputSlot< cimg_library::CImgList<T> > valid_noc;
+	/// flow 1 (usually from gt_occ)
+	OutputSlot< cimg_library::CImgList<T> > flow1;
+	/// flow 2 (usually from gt_noc)
+	OutputSlot< cimg_library::CImgList<T> > flow2;
+	/// valid mask (to gt1)
+	OutputSlot< cimg_library::CImgList<T> > valid1;
+	/// valid mask (to gt2)
+	OutputSlot< cimg_library::CImgList<T> > valid2;
 
 	/// select stereo or flow data
 	Parameter< std::string > kind;
-	/// base folder (containing at least the folders image_0 and image_1)
+	/// base folder (containing at least the folder image_0)
 	Parameter< std::string > folder;
+	/// path to flow1 (in disparity mode, this should be disp_occ)
+	Parameter < std::string > pf1;
+	/// path to flow2 (in disparity mode, this should be disp_noc)
+	Parameter < std::string > pf2;
 	/// image pair index
 	Parameter< unsigned int > index;
 	/// interpolate background
