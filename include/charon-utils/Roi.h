@@ -42,7 +42,7 @@
 #define roi_DECLDIR
 #endif
 
-#include "ParameteredObject.hxx"
+#include <charon-core/ParameteredObject.hxx>
 #include <iostream>
 
 /// ROI - Region of Interest.
