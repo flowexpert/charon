@@ -45,13 +45,13 @@ template <typename T>
 class binoperatorcimg_DECLDIR BinOperatorCImg :
 		public TemplatedParameteredObject<T> {
 public:
-	///operation type
+	/// operation type
 	Parameter < std::string > _opType ;
 
-	///second operand of operation of _withValue is true
+	/// second operand of operation of _withValue is true
 	Parameter < T > _value ;
 
-	///use scalar as second input operand
+	/// use scalar as second input operand
 	Parameter < bool > _withValue ;
 
 	/// input image 1
