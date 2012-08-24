@@ -25,32 +25,34 @@
 #define _FLOWCOMPARATOR_HXX_
 
 #include "FlowComparator.h"
+#include <iomanip>
 
 template <typename T>
 FlowComparator<T>::FlowComparator(const std::string& name) :
 		TemplatedParameteredObject<T>("FlowComparator", name,
 			"Compare results of some flow calculation with the underlaying "
 			"ground truth.<br> Calculation results are passed through, e.g. "
-			"to be saved later.<br> This may avoid multiple calculations.") {
+			"to be saved later.<br> This may avoid multiple calculations."),
+	mask(true,false) // optional
+{
 	ParameteredObject::_addInputSlot(result, "result",
 		"flow result from some flow estimation", "CImgList<T>");
 	ParameteredObject::_addInputSlot(groundtruth, "groundtruth",
 		"underlaying ground truth", "CImgList<T>");
-	ParameteredObject::_addOutputSlot(passthrough, "passthrough",
-		"result passthrough", "CImgList<T>");
+	ParameteredObject::_addInputSlot(mask, "mask",
+		"mask for weigthed mean (validity of gt or result)", "CImgList<T>");
 }
 
 template <typename T>
 void FlowComparator<T>::execute() {
-	passthrough().assign(result(), true); // shared assignment, no copying
-	sout << "\tmean endpoint error: " << getMeanEndpointError() << std::endl;
+	sout << "     \tmean endpoint error: <b>"
+		<< std::fixed << getMeanEndpointError() << "</b>" << std::endl;
 }
 
 template <typename T>
 double FlowComparator<T>::getMeanEndpointError() const {
 	if (!result().is_sameNXYZC(groundtruth())) {
 		std::ostringstream msg;
-		msg << __FILE__ << ":" << __LINE__ << "\n\t";
 		msg << "Dimensions of result and groundtruth do not match.";
 		msg << "\n\t\tResult     : ";
 		const cimg_library::CImgList<T>& res = result();
@@ -81,17 +83,30 @@ double FlowComparator<T>::getMeanEndpointError() const {
 		}
 		else
 			msg << " (no content)";
-		throw std::invalid_argument(msg.str());
+		ParameteredObject::raise(msg.str());
+	}
+	if (result().size() < 1) {
+		ParameteredObject::raise("empty result list");
 	}
 
 	// perform calculations
-	cimg_library::CImg<T> endpointError(result()[0]);
-	endpointError.fill(T(0));
-	cimglist_for(result(), kk) {
-		endpointError += (result()[kk]-groundtruth()[kk]).sqr();
+	const cimg_library::CImgList<T> &res=result(), &gt=groundtruth();
+	cimg_library::CImg<T> epe(res[0]);
+	epe.fill(T(0));
+	cimglist_for(res, kk) {
+		epe += (res[kk]-gt[kk]).sqr();
 	}
-	endpointError.sqrt();
-	return endpointError.mean();;
+	epe.sqrt();
+	if (mask.connected()) {
+		sout << "(II) \tusing weighted mean" << std::endl;
+		if (mask().size() < 1) {
+			ParameteredObject::raise("emty mask list");
+		}
+		const cimg_library::CImg<T> &m = mask()[0];
+		epe.mul(m);
+		return (epe.sum() / m.sum());
+	}
+	return epe.mean();;
 }
 
 #endif /* _FLOWCOMPARATOR_HXX_ */

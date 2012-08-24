@@ -53,10 +53,10 @@ class flowcomparator_DECLDIR FlowComparator :
 public:
 	/// flow result from some flow estimation 
 	InputSlot < cimg_library::CImgList<T> > result;
-	/// underlaying ground truth 
+	/// underlaying ground truth
 	InputSlot < cimg_library::CImgList<T> > groundtruth;
-	/// result passthrough 
-	OutputSlot < cimg_library::CImgList<T> > passthrough;
+	/// mask for weigthed mean (validity of gt or result)
+	InputSlot < cimg_library::CImgList<T> > mask;
 
 	/// create a new FlowComparator object
 	/// \param name          Instance name
