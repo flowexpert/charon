@@ -50,8 +50,6 @@ PyramidRescale<T>::PyramidRescale(const std::string& name) :
 	ParameteredObject::_addParameter (
 			levels, "levels", "scale levels", 5u);
 	ParameteredObject::_addParameter (
-			sigma, "sigma", "sigma used to blur before downsampling", 0.7);
-	ParameteredObject::_addParameter (
 			interpolation, "interpolation",
 			"interpolation type (see CImg::resize() documentation)", 3);
 }
@@ -85,14 +83,15 @@ void PyramidRescale<T>::execute() {
 	const int tx = _size.xEnd = sx * shrink;
 	const int ty = _size.yEnd = sy * shrink;
 
+	// can be float as CImg::blur only takes float as input
+	// value calculation taken from OFH paper
+	const float blur = float(std::sqrt(2.f)/4.f/shrink);
+
 	// rescale sequence
 	so = si;
 	if(stepsDown > 0) {
-		//can be float as CImg::deriche only takes float as input
-		const float blur = float(sigma * stepsDown);
 		cimglist_for(so,kk) {
-			so.at(kk).deriche(blur,0,'x');
-			so.at(kk).deriche(blur,0,'y');
+			so.at(kk).blur(blur);
 			so.at(kk).resize(tx,ty,-100,-100,interpolation());
 		}
 	}
@@ -104,11 +103,9 @@ void PyramidRescale<T>::execute() {
 #ifndef NDEBUG
 		sout << "\t" << "scaling down to " << tx << "x" << ty << std::endl;
 #endif
-		const float blur = sigma * stepsDown;
 		cimglist_for(fo,kk) {
 			assert(fo.at(kk).is_sameXY(sx,sy));
-			fo.at(kk).deriche(blur,0,'x');
-			fo.at(kk).deriche(blur,0,'y');
+			fo.at(kk).blur(blur);
 			fo.at(kk).resize(tx,ty,-100,-100,interpolation());
 			fo.at(kk) *= shrink;
 		}

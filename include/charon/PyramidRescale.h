@@ -68,8 +68,6 @@ public:
 	Parameter < double > scaleFactor;
 	/// scale levels
 	Parameter < unsigned int > levels;
-	/// sigma used to blur before downsampling
-	Parameter < double > sigma;
 	/// interpolation type (see CImg::resize() documentation)
 	Parameter < int > interpolation;
 
