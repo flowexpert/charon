@@ -41,7 +41,9 @@ SimpleIterator<T>::SimpleIterator(const std::string& name) :
 			"You have to activate at least one stop criterion by "
 			"setting maxRuns or epsilon to a value greater than "
 			"zero."),
+#ifdef QT_GUI_LIB
 		_remoteControl(0),
+#endif
 		flowInit(true,false), // optional
 		flowAdditional(true,false), // optional
 		residual(true,false), // optional
