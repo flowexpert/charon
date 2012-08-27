@@ -49,6 +49,9 @@ Flow2HSV<T>::Flow2HSV(const std::string& name) :
 			maxMotion, "maxMotion",
 			"If length of motion exceeds maxMotion, "
 			"it will be truncated. Use zero to disable this.", "T");
+	ParameteredObject::_addParameter(invalid, "invalid",
+			"if a flow component exceeds this value, this pixel will be "
+			"considered as invalid and be ignored (zero flow)", 1.e9);
 	ParameteredObject::_addInputSlot(
 			flow, "flow", "flow input", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
@@ -59,6 +62,7 @@ Flow2HSV<T>::Flow2HSV(const std::string& name) :
 template<typename T>
 void Flow2HSV<T>::execute() {
 	const T& maxMot = maxMotion();
+	const double& invMot = invalid();
 
 	// copy input image for manipulations
 	const cimg_library::CImgList<T>& i = flow();
@@ -83,14 +87,22 @@ void Flow2HSV<T>::execute() {
 	cimg_forXYZC(i[0],x,y,z,t) {
 		const double u = i(0,x,y,z,t);
 		const double v = i(1,x,y,z,t);
-		double len = std::sqrt(std::pow(u,2)+std::pow(v,2));
-		// truncate lenght if maxMotion set
-		if (maxMot > 0) {
-			len = (len < maxMot) ? len : maxMot;
+		if (std::abs(u) > invMot || std::abs(v) > invMot) {
+			sout << "(WW) invalid flow at: ("
+				<< x << "," << y << "," << z << "," << t << ")" << std::endl;
+			interm(0,x,y,z,t) = 0.;
+			interm(1,x,y,z,t) = 0.;
 		}
-		double phi = std::atan2(v, u);
-		interm(0,x,y,z,t) = len;
-		interm(1,x,y,z,t) = phi;
+		else {
+			double len = std::sqrt(std::pow(u,2)+std::pow(v,2));
+			// truncate lenght if maxMotion set
+			if (maxMot > 0) {
+				len = (len < maxMot) ? len : maxMot;
+			}
+			double phi = std::atan2(v, u);
+			interm(0,x,y,z,t) = len;
+			interm(1,x,y,z,t) = phi;
+		}
 	}
 
 	// normalize lenth (max lenth will be set to 1)
@@ -116,11 +128,17 @@ void Flow2HSV<T>::execute() {
 	cimg_forXYZC(i[0],x,y,z,t) {
 		const double& len = interm(0,x,y,z,t);
 		const double& hue = interm(1,x,y,z,t);
-		assert(hue >= 0. && hue <= 360.);
-		// here conversion from double to T is performed
-		o(t,x,y,z,0) = T(hue);
-		o(t,x,y,z,1) = T((sc==0) ? len : 1.); // length is saturation
-		o(t,x,y,z,2) = T((sc==1) ? len : 1.); // length is value
+		if(hue < 0. || hue > 360.) {
+			o(t,x,y,z,0) = 0;
+			o(t,x,y,z,1) = 0;
+			o(t,x,y,z,2) = 0;
+		}
+		else {
+			// here conversion from double to T is performed
+			o(t,x,y,z,0) = T(hue);
+			o(t,x,y,z,1) = T((sc==0) ? len : 1.); // length is saturation
+			o(t,x,y,z,2) = T((sc==1) ? len : 1.); // length is value
+		}
 	}
 	cimglist_for(o,kk) {
 		o.at(kk).HSVtoRGB();
