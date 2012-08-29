@@ -26,6 +26,8 @@
 #define _SCRIPTOR_CIMG1_HXX_
 
 #include "ScriptorCimgPlugin.h"
+#include "ScriptorCimg.h"
+#include "ScriptorBase.h"
 
 template <typename T>
 ScriptorCimgPlugin<T>::ScriptorCimgPlugin(const std::string& name) :

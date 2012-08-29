@@ -28,13 +28,13 @@
 #ifdef _MSC_VER
 #ifdef ScriptorCimg_EXPORTS
 /// Visual C++ specific code
-#define ScriptorCimgPlugin_DECLDIR __declspec(dllexport)
+#define ScriptorCimg_DECLDIR __declspec(dllexport)
 #else
-#define ScriptorCimgPlugin_DECLDIR __declspec(dllimport)
+#define ScriptorCimg_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else
 /// Not needed without MSVC
-#define ScriptorCimgPlugin_DECLDIR
+#define ScriptorCimg_DECLDIR
 #endif
 
 #include "ScriptorCimg.h"
@@ -44,7 +44,7 @@
  * This module demonstrates how to derive an actual module from Scriptor
  */
 template <typename T>
-class ScriptorCimgPlugin_DECLDIR ScriptorCimgPlugin : public ScriptorCimg<T>
+class ScriptorCimg_DECLDIR ScriptorCimgPlugin : public ScriptorCimg<T>
 {
 	private:
 

@@ -26,12 +26,15 @@
 #define TYPE ScriptorCimgPlugin
 
 #define ScriptorBase_EXPORTS
-//#define ScriptorCimg_EXPORTS
+#define ScriptorCimg_EXPORTS
 
+#include <charon-utils/Scriptor/ScriptorBase.hxx>
+#include <charon-utils/Scriptor/ScriptorCimg.hxx>
 #include <charon-utils/Scriptor/ScriptorCimgPlugin.hxx>
 
+
 /// Creates an instance of the plugin
-extern "C" ScriptorCimgPlugin_DECLDIR ParameteredObject* create(
+extern "C" ScriptorCimg_DECLDIR ParameteredObject* create(
 		const std::string & name, ParameteredObject::template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
@@ -50,12 +53,12 @@ extern "C" ScriptorCimgPlugin_DECLDIR ParameteredObject* create(
 }
 
 /// Deletes an instance of the plugin
-extern "C" ScriptorCimgPlugin_DECLDIR void destroy(ParameteredObject * b) {
+extern "C" ScriptorCimg_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
 
 /// Report build configuration to prevent linking of incompatibel runtime libs
-extern "C" ScriptorCimgPlugin_DECLDIR ParameteredObject::build_type getBuildType() {
+extern "C" ScriptorCimg_DECLDIR ParameteredObject::build_type getBuildType() {
 #ifdef _DEBUG
 	return ParameteredObject::DEBUG_BUILD;
 #else
