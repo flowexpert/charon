@@ -30,7 +30,18 @@
 template <typename T>
 FileReader<T>::FileReader(const std::string& name) :
 		TemplatedParameteredObject<T>("FileReader", name,
-			"read image from image file using cimg"),
+			"read image from image file using cimg<br>"
+			"Native supported file types:<ul>"
+			"<li>BMP</li>"
+			"<li>HDR (Radiance)</li>"
+			"<li>TXT/ASC (comma separated, one line per scanline)</li>"
+			"<li>PPM/PGM</li>"
+			"<li>CIMG</li>"
+			"</ul><br>To support the following formats, additional libaries need to be linked:<ul>"
+			"<li>PNG (libpng)</li>"
+			"<li>TIFF (libtiff)</li>"
+			"<li>JPEG/JPG(libjpeg)</li>"
+			"</ul>"),
 		_fileReaderWatcher(0)
 {
 	ParameteredObject::_addParameter (filename, "filename",
@@ -152,6 +163,204 @@ void FileReader<T>::_mem() {
 		<< cnt/1024.0f/1024.0f << " MB" << std::endl;
 }
 
+//utility functions for reading radiance hdr images
+//hdr code by Igor Kravtchenko (igor@obraz.net)
+namespace hdr {
+
+	int  MINELEN	= 8;		// minimum scanline length for encoding
+	int  MAXELEN	= 0x7fff;	// maximum scanline length for encoding
+
+	int R = 0;
+	int G = 1;
+	int B = 2;
+	int E = 3;
+	typedef unsigned char RGBE[4];
+
+	static void workOnRGBE(RGBE *scan, int len, float *cols);
+	static bool decrunch(RGBE *scanline, int len, FILE *file);
+	static bool oldDecrunch(RGBE *scanline, int len, FILE *file);
+
+	float convertComponent(int expo, int val)
+	{
+		float v = val / 256.0f;
+		float d = (float) pow(2.0f, float(expo));
+		return v * d;
+	}
+
+	void workOnRGBE(RGBE *scan, int len, float *cols)
+	{
+		while (len-- > 0) {
+			int expo = scan[0][E] - 128;
+			cols[0] = convertComponent(expo, scan[0][R]);
+			cols[1] = convertComponent(expo, scan[0][G]);
+			cols[2] = convertComponent(expo, scan[0][B]);
+			cols += 3;
+			scan++;
+		}
+	}
+
+	bool decrunch(RGBE *scanline, int len, FILE *file)
+	{
+		int  i, j;
+					
+		if (len < MINELEN || len > MAXELEN)
+			return oldDecrunch(scanline, len, file);
+
+		i = fgetc(file);
+		if (i != 2) {
+			fseek(file, -1, SEEK_CUR);
+			return oldDecrunch(scanline, len, file);
+		}
+
+		scanline[0][G] = fgetc(file);
+		scanline[0][B] = fgetc(file);
+		i = fgetc(file);
+
+		if (scanline[0][G] != 2 || scanline[0][B] & 128) {
+			scanline[0][R] = 2;
+			scanline[0][E] = i;
+			return oldDecrunch(scanline + 1, len - 1, file);
+		}
+
+		// read each component
+		for (i = 0; i < 4; i++) {
+			for (j = 0; j < len; ) {
+				unsigned char code = fgetc(file);
+				if (code > 128) { // run
+					code &= 127;
+					unsigned char val = fgetc(file);
+					while (code--)
+						scanline[j++][i] = val;
+				}
+				else  {	// non-run
+					while(code--)
+						scanline[j++][i] = fgetc(file);
+				}
+			}
+		}
+
+		return feof(file) ? false : true;
+	}
+
+	bool oldDecrunch(RGBE *scanline, int len, FILE *file)
+	{
+		int i;
+		int rshift = 0;
+	
+		while (len > 0) {
+			scanline[0][R] = fgetc(file);
+			scanline[0][G] = fgetc(file);
+			scanline[0][B] = fgetc(file);
+			scanline[0][E] = fgetc(file);
+			if (feof(file))
+				return false;
+
+			if (scanline[0][R] == 1 &&
+				scanline[0][G] == 1 &&
+				scanline[0][B] == 1) {
+				for (i = scanline[0][E] << rshift; i > 0; i--) {
+					memcpy(&scanline[0][0], &scanline[-1][0], 4);
+					scanline++;
+					len--;
+				}
+				rshift += 8;
+			}
+			else {
+				scanline++;
+				len--;
+				rshift = 0;
+			}
+		}
+		return true;
+	}
+	
+
+} // namespace hdr
+
+template <typename T>
+cimg_library::CImgList<T> FileReader<T>::_readHDR(const std::string& filename)
+{
+	int i;
+	char str[200];
+	FILE *file;
+
+	file = fopen(filename.c_str(), "rb");
+	if (!file)
+		ParameteredObject::raise(std::string("Could not open ")+filename) ;
+
+	fread(str, 10, 1, file);
+	if (memcmp(str, "#?RADIANCE", 10)) {
+		fclose(file);
+		ParameteredObject::raise(filename + " is not an Radiance HDR file!") ;
+	}
+
+	fseek(file, 1, SEEK_CUR);
+
+	char cmd[200];
+	i = 0;
+	char c = 0, oldc;
+	while(true) {
+		oldc = c;
+		c = fgetc(file);
+		if (c == 0xa && oldc == 0xa)
+			break;
+		cmd[i++] = c;
+	}
+
+	char reso[200];
+	i = 0;
+	while(true) {
+		c = fgetc(file);
+		reso[i++] = c;
+		if (c == 0xa)
+			break;
+	}
+
+	int w, h;
+	if (!sscanf(reso, "-Y %ld +X %ld", &h, &w)) {
+		fclose(file);
+		ParameteredObject::raise("File could be corrupt or is no HDR file!") ;
+	}
+
+	float *data = new float[w * h * 3];
+	float* cols = data ;
+	hdr::RGBE *scanline = new hdr::RGBE[w];
+	if (!scanline) {
+		fclose(file);
+		ParameteredObject::raise("File could be corrupt or is no HDR file!") ;
+	}
+
+	// convert image 
+	for (int y = h - 1; y >= 0; y--) {
+		if (hdr::decrunch(scanline, w, file) == false)
+			break;
+		hdr::workOnRGBE(scanline, w, cols);
+		cols += w * 3;
+	}
+
+	delete [] scanline;
+	fclose(file);
+
+	///deinterleave rgb channels and copy to CImgList
+	cimg_library::CImgList<T> result(3,w,h,1,1,0.0) ;
+	float* src = data ;
+	float* end = data + w * h * 3 ;
+	T* dstR = result[0].data() ;
+	T* dstG = result[1].data();
+	T* dstB = result[2].data();
+
+	while(src < end)
+	{
+		*(dstR++) = *(src++) ;
+		*(dstG++) = *(src++) ;
+		*(dstB++) = *(src++) ;
+	}
+	delete[] data ;
+	return result ;
+}
+
+
+
 template <typename T>
 void FileReader<T>::execute() {
 	if (filename() == "" && fileList.size() == 0) {
@@ -205,7 +414,11 @@ void FileReader<T>::execute() {
 	try {
 		foreach (QString cur, files) {
 			sout << "(II) \tloading file: " << cur.toStdString() << std::endl;
-			cimg_library::CImgList<T> tmp(cur.toLocal8Bit().constData());
+			cimg_library::CImgList<T> tmp ;
+			if(cur.endsWith("hdr", Qt::CaseInsensitive))
+				tmp = _readHDR(cur.toStdString());
+			else
+				tmp.load(cur.toLocal8Bit().constData());
 			_append(tmp);
 			_mem();
 		}

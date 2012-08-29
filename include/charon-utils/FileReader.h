@@ -112,6 +112,8 @@ private:
 	void _append(const cimg_library::CImgList<T>& tmp);
 	/// print current memory consumption of output slot
 	void _mem();
+	///helper function for reading the radiance hdr image file format	
+	cimg_library::CImgList<T> _readHDR(const std::string& filename) ;
 	/// watch for file changes
 	FileReaderWatcher* _fileReaderWatcher;
 };
