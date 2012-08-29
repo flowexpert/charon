@@ -190,7 +190,7 @@ public:
     for (int32_t v=1; v<height()-1; v++) {
       for (int32_t u=1; u<width()-1; u++) {
         if (D_occ.isValid(u,v)) {
-          float d_err = std::min(fabs(getDisp(u,v)-D_occ.getDisp(u,v)),5.0)/5.0;
+          float d_err = std::min<float>(fabs(getDisp(u,v)-D_occ.getDisp(u,v)),5.0)/5.0;
           png::rgb_pixel val;
           val.red   = (uint8_t)(d_err*255.0);
           val.green = (uint8_t)(d_err*255.0);
