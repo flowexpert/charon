@@ -225,7 +225,7 @@ public:
         if (F_occ.isValid(u,v)) {
           float dfu = getFlowU(u,v)-F_occ.getFlowU(u,v);
           float dfv = getFlowV(u,v)-F_occ.getFlowV(u,v);
-          float f_err = std::min(sqrt(dfu*dfu+dfv*dfv),5.0)/5.0;
+          float f_err = std::min<float>(sqrt(dfu*dfu+dfv*dfv),5.0)/5.0;
           png::rgb_pixel val;
           val.red   = (uint8_t)(f_err*255.0);
           val.green = (uint8_t)(f_err*255.0);
@@ -293,7 +293,7 @@ private:
   inline void hsvToRgb (float h, float s, float v, float &r, float &g, float &b) {
     float c  = v*s;
     float h2 = 6.0*h;
-    float x  = c*(1.0-fabs(fmod(h2,2.0)-1.0));
+    float x  = c*(1.0-fabs(fmod(float(h2),2.0f)-1.0));
     if (0<=h2&&h2<1)       { r = c; g = x; b = 0; }
     else if (1<=h2&&h2<2)  { r = x; g = c; b = 0; }
     else if (2<=h2&&h2<3)  { r = 0; g = c; b = x; }

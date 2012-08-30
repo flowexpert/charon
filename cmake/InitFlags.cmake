@@ -57,6 +57,8 @@ IF(WIN32)
 		# Tell MSVC not to use the unholy min and max macros
 		ADD_DEFINITIONS(-DNOMINMAX)
 		ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
+		#MATH DEFINES like M_PI are standard for GCC, use them in any case
+		ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
 	ENDIF(MSVC)
 	IF(MINGW)
 		ADD_DEFINITIONS(-DMINGW)

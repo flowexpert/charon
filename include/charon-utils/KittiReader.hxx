@@ -116,7 +116,7 @@ void KittiReader<T>::execute() {
 		seq().push_back(ciFirst.get_append(ciSecond, 'c'));
 	}
 	catch (const cimg_library::CImgException& e) {
-		sout << "(WW) failed to load sequence:\n\(WW) \t" << e.what();
+		sout << "(WW) failed to load sequence:\n(WW) \t" << e.what();
 		seq().clear();
 	}
 

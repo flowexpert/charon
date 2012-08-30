@@ -122,23 +122,23 @@ void charon_core_LOCAL writeHdf5NoSingletonsT(
 		vigra::HDF5File& file,
 		const std::string& pathInFile, T* data, std::string type) {
 	if(type == "char")
-		writeHdf5NoSingletonsC<T,4,char>(tShape,file,pathInFile,data);
+		writeHdf5NoSingletonsC<T,N,char>(tShape,file,pathInFile,data);
 	else if(type == "unsigned char")
-		writeHdf5NoSingletonsC<T,4,unsigned char>(tShape,file,pathInFile,data);
+		writeHdf5NoSingletonsC<T,N,unsigned char>(tShape,file,pathInFile,data);
 	else if(type == "short")
-		writeHdf5NoSingletonsC<T,4,short>(tShape,file,pathInFile,data);
+		writeHdf5NoSingletonsC<T,N,short>(tShape,file,pathInFile,data);
 	else if(type == "unsigned short")
-		writeHdf5NoSingletonsC<T,4,unsigned short>(tShape,file,pathInFile,data);
+		writeHdf5NoSingletonsC<T,N,unsigned short>(tShape,file,pathInFile,data);
 	else if(type == "int")
-		writeHdf5NoSingletonsC<T,4,int>(tShape,file,pathInFile,data);
+		writeHdf5NoSingletonsC<T,N,int>(tShape,file,pathInFile,data);
 	else if(type == "unsigned int")
-		writeHdf5NoSingletonsC<T,4,unsigned int>(tShape,file,pathInFile,data);
+		writeHdf5NoSingletonsC<T,N,unsigned int>(tShape,file,pathInFile,data);
 	else if(type == "float")
-		writeHdf5NoSingletonsC<T,4,float>(tShape,file,pathInFile,data);
+		writeHdf5NoSingletonsC<T,N,float>(tShape,file,pathInFile,data);
 	else if(type == "double")
-		writeHdf5NoSingletonsC<T,4,double>(tShape,file,pathInFile,data);
+		writeHdf5NoSingletonsC<T,N,double>(tShape,file,pathInFile,data);
 	else if(type == "ignore")
-		writeHdf5NoSingletons<T,4>(tShape,file,pathInFile,data);
+		writeHdf5NoSingletons<T,N>(tShape,file,pathInFile,data);
 	else {
 		throw std::runtime_error(
 			std::string("HDF5Writer error: fileDataType ")
