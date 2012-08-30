@@ -252,9 +252,12 @@ void SimpleIterator<T>::prepareStep() {
 	// To insert code at the beginning of each iteration,
 	// use this hook in derived classes.
 	_beginIterationHook();
-	sout << "\tstarting iteration " << helper()->count()+1 << " of ";
-	sout << this->getClassName() << " \"";
-	sout << this->getName() << "\"" << std::endl;
+	sout << this->getName() << ": starting iteration "
+		<< helper()->count()+1;
+	if (maxRuns() > 0) {
+		sout << " of " << maxRuns();
+	}
+	sout << std::endl;
 	helper()->resetExecuted(true);
 }
 
@@ -269,9 +272,12 @@ void SimpleIterator<T>::performStep() {
 template <typename T>
 bool SimpleIterator<T>::finishStep() {
 	IteratorHelper<T>* help = helper();
-	sout << "\titeration " << help->count()+1 << " of ";
-	sout << this->getClassName() << " \"";
-	sout << this->getName() << "\" finished\n";
+	sout << this->getName() << ": iteration "
+		<< help->count()+1;
+	if (maxRuns() > 0) {
+		sout << " of " << maxRuns();
+	}
+	sout << " finished" << std::endl;
 
 	assert(updateRate() >= 0.);
 	assert(updateRate() <= 1.);
