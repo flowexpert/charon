@@ -59,6 +59,8 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 		"<li>Mask (Input is set to zero where mask(in2) is zero "
 		"and kept otherwise, acts as passtrough when withValue is true)</li>"
 		"<li>Flow Magnitude</li>"
+		"<li>Limit Magnitude (set vector value to m*(v/|v|) "
+		"if magnitude is larger than m)</li>"
 		"<li>toGray (use only the first spectrum(c) channel of each CImg)</li>"
 		"<li>toRGB (duplicate first spectrum(c) channel twice) "
 		"This does not perform a correct RGB->grayscale conversion, "
@@ -72,7 +74,7 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 		"{Passthrough;Addition;Difference;Multiplication;Division;Power of;"
 		"Absolute;Bitwise And;Bitwise Or;Bitwise Xor;Bitwise Not;"
 		"Left Shift;Right Shift;Mask;Log;Exp;Sin;Cos;Tan;Asin;Acos;Atan;Atan2;"
-		"Flow Magnitude;to Gray;to RGB}") ;
+		"Flow Magnitude;Limit Magnitude;to Gray;to RGB}") ;
 
 	ParameteredObject::_addParameter(
 			_withValue, "withValue",
@@ -80,7 +82,6 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 			"(assumed true if no second input image is provided)", false) ;
 	ParameteredObject::_addParameter(_value, "value",
 				"Second operand if withValue is true", T(0) ) ;
-
 	ParameteredObject::_addOutputSlot(_out, "out",
 				"output image", "CImgList<T>");
 }
@@ -107,9 +108,45 @@ void BinOperatorCImg<T>::execute() {
 		if (in1.size() < 2) {
 			ParameteredObject::raise("in1 is no flow (less than 2 elements)");
 		}
-		const CImg<T>& u = in1[0];
-		const CImg<T>& v = in1[1];
-		out.assign((u.get_sqr()+v.get_sqr()).get_sqrt());
+		out.assign(1u, in1[0].width(),in1[0].height(),
+			in1[0].depth(),in1[0].spectrum(),T(0));
+		cimglist_for(in1,kk) {
+			out[0] += in1[kk].get_sqr();
+		}
+		out[0].sqrt();
+	}
+	else if(op == "Limit Magnitude") {
+		out.assign(in1);
+		const T& v = _value();
+		if (v <= 0) {
+			ParameteredObject::raise("magnitude limit has to be positive!");
+		}
+		// calculate current flow magnitudes
+		cimg_library::CImg<T> mag(in1[0].width(),in1[0].height(),
+			in1[0].depth(),in1[0].spectrum(),T(0));
+		cimglist_for(in1,kk) {
+			mag += in1[kk].get_sqr();
+		}
+		mag.sqrt();
+		// apply limit, if magnitude too large
+		// (set to max allowed magnitude, keep direction)
+		unsigned int num = 0u;
+		cimg_forXYZC(mag, xx,yy,zz,tt) {
+			const T& cur = mag(xx,yy,zz,tt);
+			if(cur > v) {
+				num++;
+				cimglist_for(out,kk) {
+					T& o = out(kk,xx,yy,zz,tt);
+					o *= v;
+					o /= cur;
+				}
+			}
+		}
+		if (num > 0) {
+			sout << "(II) \tlimit magnitude applied to "
+				<< num << " pixels (" << (100.f*num/mag.size())
+				<< "%)." << std::endl;
+		}
 	}
 	else {
 		out.assign(in1.size()) ;

@@ -61,6 +61,10 @@ public:
 	/// if motion exceeds maximum, it will be truncated, zero to disable
 	Parameter< T > maxMotion;
 
+	/// if a flow component exceeds this value, this pixel will be
+	/// considered as invalid and be ignored (zero flow)
+	Parameter < double > invalid;
+
 	/// flow input
 	InputSlot<cimg_library::CImgList<T> > flow;
 
