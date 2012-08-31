@@ -137,6 +137,17 @@ cimg_library::CImg<unsigned char> histogramPlot(
 		topBorder + graphHeight + 10, middleValS, textcolor, background) ;
 	target.draw_text(leftBorder + graphWidth - 20, topBorder+ graphHeight + 10,
 		maxValS, textcolor, background) ;
+	
+	//draw line at zero for orientation
+	if(minBin < 0.0 && maxBin > 0.0)
+	{
+		float zeroX = - minBin * graphWidth / (maxBin - minBin) + leftBorder ;
+		target.draw_line(zeroX, topBorder + graphHeight -5,
+			zeroX, topBorder + graphHeight + 5, foreground) ;
+		target.draw_text(zeroX -10, topBorder + graphHeight + 10,
+				"0.0", textcolor, background) ;
+	}
+
 
 	//convert to charon color representation
 	return target ;
