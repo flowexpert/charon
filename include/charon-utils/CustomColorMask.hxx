@@ -25,11 +25,11 @@
 #ifndef _CUSTOMCOLORMASK_HXX_
 #define _CUSTOMCOLORMASK_HXX_
 
+#include <CustomColorMaskWidget.hpp>
+#include <QApplication>
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CustomColorMask.h>
-#include <CustomColorMaskWidget.hpp>
 #include <list>
-#include <QApplication>
 
 template <typename T>
 CustomColorMask<T>::CustomColorMask(const std::string& name) :
@@ -225,10 +225,12 @@ void CustomColorMask<T>::execute() {
 		if(maskIndex() == "Rainbow")
 			maskType = 2;
 		if(maskIndex() == "Custom")
-			if(mask.size() == 0)
+        {
+            if(mask.size() == 0)
 				maskType = 2;
 			else
 				maskType = 3;
+        }
 	}
 	_updateQt = false;
 
