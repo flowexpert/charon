@@ -262,9 +262,9 @@ const std::vector<double>& VigraPixelInspector<T>::operator()(
 }
 
 template <typename T>
-const vigra::QRGBImage VigraPixelInspector<T>::getRGBImage() const{
+const vigra::QRGBImage VigraPixelInspector<T>::getRGBImage(RGBChannels mode) const{
 	vigra::QRGBImage img(_mArray.size(0), _mArray.size(1)) ;
-	if(_mArray.size(4) >= 3) {
+	if(mode == RGB4 && _mArray.size(4) >= 3) {
 		for (int xx = 0 ; xx < _mArray.size(0) ; ++xx) {
 			for (int yy = 0 ; yy < _mArray.size(1) ; ++yy) {
 				vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference
@@ -275,6 +275,18 @@ const vigra::QRGBImage VigraPixelInspector<T>::getRGBImage() const{
 			}
 		}
 	}
+	else if(mode == RGB3 && _mArray.size(3) >= 3) {
+		for (int xx = 0 ; xx < _mArray.size(0) ; ++xx) {
+			for (int yy = 0 ; yy < _mArray.size(1) ; ++yy) {
+				vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference
+						pixel = img(xx,yy);
+				pixel.red() = _mArray(xx,yy,0,0,0);
+				pixel.green() = _mArray(xx,yy,0,1,0);
+				pixel.blue() = _mArray(xx,yy,0,2,0);
+			}
+		}
+	}
+
 	else {
 		for (int xx = 0 ; xx < _mArray.size(0) ; ++xx)
 			for (int yy = 0 ; yy < _mArray.size(1) ; ++yy) {
@@ -298,8 +310,13 @@ const vigra::FImage VigraPixelInspector<T>::getFImage() const{
 }
 
 template <typename T>
-bool VigraPixelInspector<T>::isRGB() const {
-	return _mArray.size(4) >= 3 ;
+RGBChannels VigraPixelInspector<T>::isRGB() const {
+	if(_mArray.size(4) >= 3)
+		return RGB4 ;
+	if(_mArray.size(3) >= 3)
+		return RGB3 ;
+	return NONE ;
+
 }
 
 template <typename T>
@@ -358,12 +375,12 @@ const std::vector<int>& CImgPixelInspector<T>::dim() const
 }
 
 template <typename T>
-const vigra::QRGBImage CImgPixelInspector<T>::getRGBImage() const
+const vigra::QRGBImage CImgPixelInspector<T>::getRGBImage(RGBChannels mode) const
 {
 	if(_mArray.size() <= 0)
 	{	return vigra::QRGBImage(0,0) ;	}
 	vigra::QRGBImage img(_mArray(0).width(), _mArray(0).height()) ;
-	if(_mArray.width() >= 3)
+	if(mode == RGB4 &&_mArray.width() >= 3)
 	{	
 		for(int xx = 0 ; xx < _mArray(0).width() ; ++xx)
 			for(int yy = 0 ; yy < _mArray(0).height() ; ++yy)
@@ -371,6 +388,16 @@ const vigra::QRGBImage CImgPixelInspector<T>::getRGBImage() const
 				pixel.red() = _mArray(0,xx,yy,0,0) ;
 				pixel.green() = _mArray(1,xx,yy,0,0) ;
 				pixel.blue() = _mArray(2,xx,yy,0,0) ;
+			}
+	}
+	else if(mode == RGB3 && _mArray(0).spectrum() >= 3)
+	{	
+		for(int xx = 0 ; xx < _mArray(0).width() ; ++xx)
+			for(int yy = 0 ; yy < _mArray(0).height() ; ++yy)
+			{	vigra::VigraQImage<vigra::QRGBValue<uchar> >::reference pixel = img(xx,yy) ;
+				pixel.red() = _mArray(0,xx,yy,0,0) ;
+				pixel.green() = _mArray(0,xx,yy,0,1) ;
+				pixel.blue() = _mArray(0,xx,yy,0,2) ;
 			}
 	}
 	else
@@ -399,9 +426,13 @@ const vigra::FImage CImgPixelInspector<T>::getFImage() const
 }
 
 template <typename T>
-bool CImgPixelInspector<T>::isRGB() const
+RGBChannels CImgPixelInspector<T>::isRGB() const
 {
-	return _mArray.width() >= 3 ;
+	if(_mArray.width() >= 3)
+		return RGB4 ;
+	if(_mArray.width() >= 0 && _mArray(0).spectrum() >= 3)
+		return RGB3 ;
+	return NONE ;
 }
 
 template <typename T>

@@ -39,6 +39,15 @@ class QStatusBar ;
 
 namespace ArgosDisplay {
 
+
+	struct View {
+		View(AbstractPixelInspector* i = 0, RGBChannels mode = NONE) ;
+
+		RGBChannels channelMode ;
+		AbstractPixelInspector* inspector ;
+	} ;
+
+	
 	/// creates and manages all imageviewer instances
 	class charonwidgets_DECLDIR ViewStack : public QWidget {
 		Q_OBJECT
@@ -100,7 +109,7 @@ namespace ArgosDisplay {
 		QAction* _alignAndZoomAct ;
 
 		/// objects to access pixel data
-		std::vector<AbstractPixelInspector*> _inspectors ;
+		std::vector<View> _views ;
 
 		/// was update signal issued to event queue ?
 		bool _updatePending ;

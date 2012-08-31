@@ -48,6 +48,14 @@ class QWidget ;
 
 namespace ArgosDisplay
 {
+	
+	///describres in which image dimension the RGB channels are located
+	enum RGBChannels {
+		NONE,
+		RGB4,
+		RGB3
+	} ;
+
 	class AbstractPixelInspector ;
 	class MainWindow ;
 
@@ -107,6 +115,7 @@ namespace ArgosDisplay
 	/// templated image data
 	class AbstractPixelInspector
 	{
+
 	public :
 		/// constructor
 		/** \param name          displayed name
@@ -123,13 +132,13 @@ namespace ArgosDisplay
 		virtual const std::vector<double>& operator()(int x, int y) const = 0;
 
 		/// return RGBA copy of image data
-		virtual const vigra::QRGBImage getRGBImage() const = 0;
+		virtual const vigra::QRGBImage getRGBImage(RGBChannels mode = RGB4) const = 0;
 
 		/// return float copy of image data
 		virtual const vigra::FImage getFImage() const = 0;
 
 		/// is last dimension at least of size 3
-		virtual bool isRGB() const = 0;
+		virtual RGBChannels isRGB() const = 0;
 		
 		/// is any image dimension zero
 		virtual bool isEmpty() const = 0 ;
@@ -154,9 +163,9 @@ namespace ArgosDisplay
 		
 		inline virtual const std::vector<int>& dim() const ;
 		inline virtual const std::vector<double>& operator()(int x, int y) const ;
-		virtual const vigra::QRGBImage getRGBImage() const;
+		virtual const vigra::QRGBImage getRGBImage(RGBChannels mode = RGB4) const;
 		virtual const vigra::FImage getFImage() const;
-		virtual bool isRGB() const ;
+		virtual RGBChannels isRGB() const ;
 		virtual bool isEmpty() const  ;
 
 	private:
@@ -179,9 +188,9 @@ namespace ArgosDisplay
 
 		inline virtual const std::vector<int>& dim() const ;
 		inline virtual const std::vector<double>& operator()(int x, int y) const ;
-		virtual const vigra::QRGBImage getRGBImage() const;
+		virtual const vigra::QRGBImage getRGBImage(RGBChannels mode = RGB4) const;
 		virtual const vigra::FImage getFImage() const;
-		virtual bool isRGB() const ;
+		virtual RGBChannels isRGB() const ;
 		virtual bool isEmpty() const ;
 
 	private:

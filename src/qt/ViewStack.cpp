@@ -29,6 +29,10 @@
 
 using namespace ArgosDisplay ;
 
+View::View(AbstractPixelInspector* i, RGBChannels mode) :
+	inspector(i), channelMode(mode)
+{ ;	}
+
 ViewStack::ViewStack(QWidget* p) : QWidget(p),
 	_tabWidget(0),
 	_switchColorModeAct(0),
@@ -100,14 +104,14 @@ void ViewStack::clear() {
 		_tabWidget->removeTab(c);
 		delete cur;
 	}
-	_inspectors.clear() ;
+	_views.clear() ;
 }
 
 void ViewStack:: linkImage(AbstractPixelInspector* inspector)
 {
 	if(inspector == 0)
 	{	return ;	}
-	_inspectors.push_back(inspector) ;
+	_views.push_back(View(inspector,NONE)) ;
 	
 	//TODO: make this thread safe?
 	if(!_updatePending)
@@ -130,33 +134,51 @@ void ViewStack::setCurrentIndex(int index) {
 }
 
 void ViewStack::_currentChanged(int index) {
-	if(index < 0 || index >= (int)_inspectors.size()) {
+	if(index < 0 || index >= (int)_views.size()) {
 		// fix bug on selection change
 		return;
 	}
-	if(_inspectors[index] == 0) {
+	if(_views[index].inspector == 0) {
 		return;
 	}
-	const std::vector<int>& dims = _inspectors[index]->dim();
+	const std::vector<int>& dims = _views[index].inspector->dim();
 	QString message = QString("%1 x %2 x %3 x %4 x %5")
 			.arg(dims[0]).arg(dims[1]).arg(dims[2]).arg(dims[3]).arg(dims[4]);
+	switch(_views[index].channelMode) {
+		case(NONE) : {
+			message += " [GRAY 1. channel]" ;
+			break ;
+		 }
+		case(RGB4) : {
+			message += " [RGB 4. dimension]" ;
+			break ;
+		}
+		case(RGB3) : {
+			message += " [RGB 3. dimension]" ;
+			break ;
+		}
+	}
+
 	emit exportDimensionsMessage(message) ;
 }
 
 void ViewStack::_linkImages()
 {
 	//this->clear() ;
-	for(size_t ii = 0 ; ii < _inspectors.size() ; ii++)
+	for(size_t ii = 0 ; ii < _views.size() ; ii++)
 	{
-		if(_inspectors[ii] == 0)
+		View& view = _views[ii] ;
+		if(view.inspector == 0)
 			continue ;
-		if(_inspectors[ii]->isRGB()) //default: register image as RGB image
+		view.channelMode = view.inspector->isRGB() ;
+		
+		if(view.channelMode == RGB4 || view.channelMode == RGB3) //default: register image as RGB image
 		{
 			QImageViewer* viewer = new QImageViewer(0) ;
-			_tabWidget->addTab(viewer, QString::fromStdString(_inspectors[ii]->name)) ;
-			if(!_inspectors[ii]->isEmpty())
+			_tabWidget->addTab(viewer, QString::fromStdString(_views[ii].inspector->name)) ;
+			if(!_views[ii].inspector->isEmpty())
 			{	try{
-					viewer->setImage(_inspectors[ii]->getRGBImage().qImage()) ;
+					viewer->setImage(_views[ii].inspector->getRGBImage(view.channelMode).qImage()) ;
 				}
 				catch(std::exception&)
 				{	;/*occurs if image has size zero*/	}
@@ -169,10 +191,11 @@ void ViewStack::_linkImages()
 		else
 		{
 			FImageViewer* viewer = new FImageViewer(0) ;
-			_tabWidget->addTab(viewer, QString::fromStdString(_inspectors[ii]->name)) ;
-			if(!_inspectors[ii]->isEmpty())
+			_tabWidget->addTab(viewer, QString::fromStdString(_views[ii].inspector->name)) ;
+			_views[ii].channelMode = NONE ;
+			if(!_views[ii].inspector->isEmpty())
 			{	try{
-					viewer->setImage(_inspectors[ii]->getFImage()) ;
+					viewer->setImage(_views[ii].inspector->getFImage()) ;
 				}
 				catch(std::exception&)
 				{	;/*occurs if image has size zero*/	}
@@ -192,28 +215,42 @@ void ViewStack::_linkImages()
 void ViewStack::_switchColorMode()
 {
 	int index = _tabWidget->currentIndex() ;
-	if(index < 0 || _inspectors[index] ==0)
+	View& view = _views[index] ;
+	if(index < 0 || view.inspector ==0)
 	{	return ;	}
 	QString className = _tabWidget->currentWidget()->metaObject()->className() ;
-	if(className == "FImageViewer")
+	if(view.channelMode == NONE && className == "FImageViewer")
 	{
 		_tabWidget->removeTab(index) ;
 		QImageViewer* viewer = new QImageViewer(0) ;
-		_tabWidget->insertTab(index, viewer, QString::fromStdString(_inspectors[index]->name)) ;
-		viewer->setImage(_inspectors[index]->getRGBImage().qImage()) ;
+		_tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
+		viewer->setImage(view.inspector->getRGBImage(RGB4).qImage()) ;
 		connect(
 					viewer, SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int))) ;
+		view.channelMode = RGB4 ;
 	}
-	else if(className == "QImageViewer")
+	else if(view.channelMode == RGB4 && className == "QImageViewer")
+	{
+		_tabWidget->removeTab(index) ;
+		QImageViewer* viewer = new QImageViewer(0) ;
+		_tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
+		viewer->setImage(view.inspector->getRGBImage(RGB3).qImage()) ;
+		connect(
+					viewer, SIGNAL(mouseOver(int, int)),
+					this, SLOT(_processMouseMovement(int, int))) ;
+		view.channelMode = RGB3 ;
+	}
+	else if(view.channelMode == RGB3 && className == "QImageViewer")
 	{
 		_tabWidget->removeTab(index) ;
 		FImageViewer* viewer = new FImageViewer(0) ;
-		_tabWidget->insertTab(index, viewer, QString::fromStdString(_inspectors[index]->name)) ;
-		viewer->setImage(_inspectors[index]->getFImage()) ;
+		_tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
+		viewer->setImage(view.inspector->getFImage()) ;
 		connect(
 					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int))) ;
+		view.channelMode = NONE ;
 	}
 	else //unknown tab type
 	{
@@ -225,7 +262,7 @@ void ViewStack::_switchColorMode()
 
 void ViewStack::_switchLogMode() {
 	int index = _tabWidget->currentIndex() ;
-	if(index < 0 || _inspectors[index] ==0)
+	if(index < 0 || _views[index].inspector ==0)
 	{	return ;	}
 	FImageViewer* viewer = qobject_cast<FImageViewer*>(_tabWidget->currentWidget()) ;
 	if(!viewer)
@@ -237,10 +274,10 @@ void ViewStack::_switchLogMode() {
 void ViewStack::_processMouseMovement(int x, int y) {
 	QString message = QString("x : %1 y : %2  ").arg(x).arg(y) ;
 
-	for(size_t ii = 0 ; ii < _inspectors.size() ; ii++)
+	for(size_t ii = 0 ; ii < _views.size() ; ii++)
 	{
-		message += QString::fromStdString(_inspectors[ii]->name) + QString(" {") ;
-		std::vector<double> vals = _inspectors[ii]->operator()(x,y) ;
+		message += QString::fromStdString(_views[ii].inspector->name) + QString(" {") ;
+		std::vector<double> vals = _views[ii].inspector->operator()(x,y) ;
 		for(size_t jj = 0 ; jj < vals.size() ; jj++)
 		{
 			message += QString("%1 ").arg(vals[jj]) ;
@@ -277,7 +314,7 @@ void ViewStack::keyPressEvent(QKeyEvent* event) {
 QImageViewer& ViewStack::_currentViewer() const
 {
 	int index = _tabWidget->currentIndex() ;
-	if(index < 0 || _inspectors.size() <= size_t(index) || _inspectors[index] ==0)
+	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
 	{	throw std::runtime_error("No active Viewer instance available!") ;	}
 	
 	QString className = _tabWidget->currentWidget()->metaObject()->className() ;
@@ -303,7 +340,7 @@ void ViewStack::_saveCurrentView()
 {
 	static QString workingDir = QString() ;
 	int index = _tabWidget->currentIndex() ;
-	if(index < 0 || _inspectors.size() <= size_t(index) || _inspectors[index] ==0)
+	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
 	{	return ;	}
 	try
 	{	const QImageViewer& viewer = _currentViewer() ;
@@ -395,7 +432,7 @@ int ViewStack::getZoomLevel() const {
 QWidget* ViewStack::getCurrentViewer()
 {
 	int index = _tabWidget->currentIndex() ;
-	if(index < 0 || _inspectors.size() <= size_t(index) || _inspectors[index] ==0)
+	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
 	{       throw std::runtime_error("No active Viewer instance available!") ;      }
 
 	QString className = _tabWidget->currentWidget()->metaObject()->className() ;
