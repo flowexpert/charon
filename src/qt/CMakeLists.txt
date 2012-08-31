@@ -10,12 +10,14 @@ SET(charonwidgets_QT_HEADERS
 	ViewStack.hpp
 	FrameSelectWidget.hpp
 	StatisticsDisplayWidget.hpp
+	CustomColorMaskWidget.hpp
 )
 SET(charonwidgets_SOURCES
 	MainWindow.cpp
 	ViewStack.cpp
 	FrameSelectWidget.cpp
 	StatisticsDisplayWidget.cpp
+	CustomColorMaskWidget.cpp
 )
 IF(USE_Qwt5)
 	LIST(APPEND charonwidgets_QT_HEADERS
