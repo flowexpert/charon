@@ -306,6 +306,7 @@ cimg_library::CImgList<T> FileReader<T>::_readHDR(const std::string& filename)
 			break;
 		cmd[i++] = c;
 	}
+	cimg_library::cimg::unused(cmd);
 
 	char reso[200];
 	i = 0;
@@ -316,7 +317,7 @@ cimg_library::CImgList<T> FileReader<T>::_readHDR(const std::string& filename)
 			break;
 	}
 
-	int w, h;
+	long int w, h;
 	if (!sscanf(reso, "-Y %ld +X %ld", &h, &w)) {
 		fclose(file);
 		ParameteredObject::raise("File could be corrupt or is no HDR file!") ;

@@ -530,6 +530,7 @@ IF(USE_VIGRA)
 		LIST(APPEND Plugins_CImg
 			argosdisplay
 			scriptorcimg
+			customcolormask
 		)
 		LIST(APPEND Plugins_Vigra
 			argosdisplay

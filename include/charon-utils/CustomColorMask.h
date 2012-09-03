@@ -73,8 +73,11 @@ public:
 	/// max value to applay mask
 	Parameter<T> end;
 
+	/// \name widget references
+	// \{
 	Parameter<double> wBegin;
 	Parameter<double> wEnd;
+	// \}
 
 	/// mask type
 	Parameter<std::string> maskIndex; 
@@ -82,7 +85,7 @@ public:
 	/// max value to applay mask
 	Parameter<bool> minimap;
 
-	//which mask?
+	/// which mask
 	int maskType;
 
 	//destruktor

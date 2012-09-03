@@ -30,8 +30,8 @@
 using namespace ArgosDisplay ;
 
 View::View(AbstractPixelInspector* i, RGBChannels mode) :
-	inspector(i), channelMode(mode)
-{ ;	}
+	channelMode(mode), inspector(i) {
+}
 
 ViewStack::ViewStack(QWidget* p) : QWidget(p),
 	_tabWidget(0),

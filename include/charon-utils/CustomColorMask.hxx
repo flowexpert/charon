@@ -189,7 +189,6 @@ void CustomColorMask<T>::execute() {
 		end() = wEnd();
 	}
 
-
 	//bounds ok?
 	double cmin;
 	double cmax;
