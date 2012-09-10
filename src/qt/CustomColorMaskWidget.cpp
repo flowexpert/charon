@@ -28,18 +28,20 @@ CustomColorMaskWidget::CustomColorMaskWidget(
 		Parameter<bool>& minimap,
 		Parameter<double>& begin,
 		Parameter<double>& end,
-		int& maskType,
-		QString title,
+		Parameter<std::string>& maskType,
+		const std::string& title,
 		QWidget* pw) :
 	QDockWidget(pw),
-	_active(false),
+	_running(false),
 	_parent(pp),
 	_display(0),
 	_minimap(minimap),
 	_begin(begin),
 	_end(end),
 	_maskType(maskType),
-	_updatePending(false)
+	_currentMin(0.0),
+	_currentMax(0.0),
+	_step(0.0)
 {
 	this->setEnabled(true);
 
@@ -59,24 +61,43 @@ CustomColorMaskWidget::CustomColorMaskWidget(
 	_maxDisp = new QLineEdit("0");
 	_minDisp->setAlignment(Qt::AlignLeft);
 	_maxDisp->setAlignment(Qt::AlignLeft);
+	QDoubleValidator* validator = new QDoubleValidator(_begin(),_begin(),2,0) ;
+	validator->setNotation(QDoubleValidator::ScientificNotation) ;
+	_minDisp->setValidator(validator) ;
+	_minDisp->setText(QString("%1").arg(_begin(),0,'E')) ;
+	validator = new QDoubleValidator(_end,_end(),2,0) ;
+	validator->setNotation(QDoubleValidator::ScientificNotation) ;
+	_maxDisp->setValidator(validator) ;
+	_maxDisp->setText(QString("%1").arg(_end(),0,'E')) ;
 
 	//slider
-	_min = new QSlider(Qt::Horizontal);
-	_max = new QSlider(Qt::Horizontal);
-	_min->setMaximum(100);
-	_max->setMaximum(100);
+	_minSlider = new QSlider(Qt::Horizontal);
+	_maxSlider = new QSlider(Qt::Horizontal);
+	_minSlider->setMaximum(100); _minSlider->setMinimum(0) ;
+	_maxSlider->setMaximum(100); _maxSlider->setMinimum(0) ;
+	_minSlider->setTracking(true) ;
+	_maxSlider->setTracking(true) ;
 
 	//mask select combo box
 	_maskSelect = new QComboBox();
-	_maskSelect->addItem("Black-White");
-	_maskSelect->addItem("White-Black");
+	_maskSelect->addItem("BlackWhite");
+	_maskSelect->addItem("WhiteBlack");
 	_maskSelect->addItem("Rainbow");
+	_maskSelect->addItem("Custom");
+	if(maskType() == "BlackWhite")
+		_maskSelect->setCurrentIndex(0) ;
+	else if(maskType() == "WhiteBlack")
+		_maskSelect->setCurrentIndex(1) ;
+	else if(maskType() == "Rainbow")
+		_maskSelect->setCurrentIndex(2) ;
+	else if(maskType() == "Custom")
+		_maskSelect->setCurrentIndex(3) ;
 
 	//connecting
-	connect(_min, SIGNAL(valueChanged(int)), this, SLOT(dispMin(int)));
-	connect(_max, SIGNAL(valueChanged(int)), this, SLOT(dispMax(int)));
-	connect(_minDisp, SIGNAL(returnPressed()), this, SLOT(minRet()));
-	connect(_maxDisp, SIGNAL(returnPressed()), this, SLOT(maxRet()));
+	connect(_minSlider, SIGNAL(sliderReleased()), this, SLOT(dispMin()));
+	connect(_maxSlider, SIGNAL(sliderReleased()), this, SLOT(dispMax()));
+	connect(_minDisp, SIGNAL(textEdited(const QString&)), this, SLOT(click()));
+	connect(_maxDisp, SIGNAL(textEdited(const QString&)), this, SLOT(click()));
 	connect(_maskSelect, SIGNAL(currentIndexChanged(int)), this, SLOT(changeMask(int)));
 	connect(_mapBox, SIGNAL(clicked()), this, SLOT(click()));
 
@@ -93,10 +114,10 @@ CustomColorMaskWidget::CustomColorMaskWidget(
 
 	_slideOut->addWidget(_minLab, 0, 0);
 	_slideOut->addWidget(_minDisp, 0, 1);
-	_slideOut->addWidget(_min, 1, 0, 1, 2);
+	_slideOut->addWidget(_minSlider, 1, 0, 1, 2);
 	_slideOut->addWidget(_maxLab, 2, 0);
 	_slideOut->addWidget(_maxDisp, 2, 1);
-	_slideOut->addWidget(_max, 3, 0, 3, 2);
+	_slideOut->addWidget(_maxSlider, 3, 0, 3, 2);
 
 	_layout->addWidget(_title);
 	_layout->addLayout(_slideOut);
@@ -114,7 +135,7 @@ CustomColorMaskWidget::CustomColorMaskWidget(
 	
 	_central->setLayout(_cLayout);
 
-	this->setWindowTitle("CustomColorMask(" + title + ")");
+	this->setWindowTitle("CustomColorMask(" + QString::fromStdString(title) + ")");
 
 	this->setWidget(_central);
 }
@@ -125,44 +146,41 @@ CustomColorMaskWidget::~CustomColorMaskWidget()
 	delete _layout;
 }
 
-void CustomColorMaskWidget::dispMax(int i)
+void CustomColorMaskWidget::dispMax()
 {
-	_maxDisp->setText(QString::number((double)i*_step+_low));
+	if(_running)
+		return ;
+	_maxDisp->setText(QString::number(double(_maxSlider->value()) * _step + _currentMin));
 	click();
 }
 
-void CustomColorMaskWidget::dispMin(int i)
+void CustomColorMaskWidget::dispMin()
 {
-	_minDisp->setText(QString::number((double)i*_step+_low));
+	if(_running)
+		return ;
+	_minDisp->setText(QString::number(double(_minSlider->value()) * _step + _currentMin));
 	click();
 }
 
 void CustomColorMaskWidget::click()
 {
-	//begin, end <= slider Position
-	double minPos = _min->value()*_step+_low;
-	double maxPos = _max->value()*_step+_low;
-	//begin, end <= line edit text
-	if(_minDisp->text().toDouble() < minPos || _minManual)
-		minPos = _minDisp->text().toDouble();
-	if(_maxDisp->text().toDouble() > maxPos || _maxManual)
-		maxPos = _maxDisp->text().toDouble();
+	//uninitialized
+	if(_running || (_currentMin == _currentMax))
+		return ;
+	_running = true ;
+
+	_begin() = _minDisp->text().toDouble() ;
+	_end() = _maxDisp->text().toDouble() ;
 	
-	_begin() = minPos;
-	_end() = maxPos;	
+	_minSlider->setValue((_begin() - _currentMin) / _step);
+	_maxSlider->setValue((_end() - _currentMin) / _step);
+
 	_minimap() = _mapBox->isChecked();
-	_parent->resetExecuted();
-	_display->run();
-}
-
-void CustomColorMaskWidget::slideMin(QString s)
-{
-	_min->setValue((s.toDouble()-_low)/_step);
-}
-
-void CustomColorMaskWidget::slideMax(QString s)
-{
-	_max->setValue((s.toDouble()-_low)/_step);
+	if(_parent)
+		_parent->resetExecuted();
+	if(_display)
+		_display->run();
+	_running = false ;
 }
 
 void CustomColorMaskWidget::setDisplay(ParameteredObject* display)
@@ -170,33 +188,19 @@ void CustomColorMaskWidget::setDisplay(ParameteredObject* display)
 	_display = display;
 }
 
-void CustomColorMaskWidget::setMinMax(double min, double max, bool map, bool custom)
+void CustomColorMaskWidget::setMinMax(double min, double max)
 {
-	_low = min;
-	_step = (max-min)/100;
-	_minDisp->setText(QString::number(min));
-	_maxDisp->setText(QString::number(max));
-	_mapBox->setChecked(map);
-	_min->setValue((min-_low)/_step);
-	_max->setValue((max-_low)/_step);
-	if(custom && _maskSelect->count() < 4)
-		_maskSelect->addItem("Custom");
+	_currentMin = min ;
+	const_cast<QDoubleValidator*>(qobject_cast<const QDoubleValidator*>(_minDisp->validator()))->setRange(min,max,2) ;
+	_currentMax = max ;
+	const_cast<QDoubleValidator*>(qobject_cast<const QDoubleValidator*>(_maxDisp->validator()))->setRange(min,max,2) ;
+	_step = (_currentMax - _currentMin) / 100 ;
+	_minSlider->setValue((_begin() - _currentMin) / _step);
+	_maxSlider->setValue((_end() - _currentMin) / _step);
 }
 
 void CustomColorMaskWidget::changeMask(int mask)
 {
-	_maskType = mask;
-	click();
-}
-
-void CustomColorMaskWidget::minRet()
-{
-	_minManual = true;
-	click();
-}
-
-void CustomColorMaskWidget::maxRet()
-{
-	_maxManual = true;
+	_maskType() = _maskSelect->currentText().toStdString();
 	click();
 }

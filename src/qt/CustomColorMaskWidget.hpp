@@ -39,22 +39,20 @@ class charonwidgets_DECLDIR CustomColorMaskWidget : public QDockWidget
 {
 	Q_OBJECT
 private:
-	bool _active ;
+	bool _running ;
 	ParameteredObject* _parent;
 	ParameteredObject* _display;
 	Parameter<bool>& _minimap;
 	Parameter<double>& _begin;
 	Parameter<double>& _end;
-	int& _maskType;
+	Parameter<std::string>& _maskType;
 
 	void _updatePlugin();
-	bool _updatePending ;
 
-	double _low;
-	double _step;
+	double _currentMin ;
+	double _currentMax ;
 
-	bool _minManual;
-	bool _maxManual;
+	double _step ;
 
 	//Widget Components
 	QLabel* _title;
@@ -66,8 +64,8 @@ private:
 	QLineEdit* _minDisp;
 	QLineEdit* _maxDisp;
 
-	QSlider* _min;
-	QSlider* _max;
+	QSlider* _minSlider;
+	QSlider* _maxSlider;
 
 	QComboBox* _maskSelect;
 
@@ -87,21 +85,17 @@ public:
 			Parameter<bool>&,
 			Parameter<double>&,
 			Parameter<double>&,
-			int&,
-			QString,
+			Parameter<std::string>&,
+			const std::string&,
 			QWidget* parentWidget = 0);
 	~CustomColorMaskWidget();
 
 	void setDisplay(ParameteredObject* display);
-	void setMinMax(double, double, bool, bool);
+	void setMinMax(double, double);
 
 private slots:
-	void dispMin(int);
-	void dispMax(int);
-	void slideMin(QString);
-	void slideMax(QString);
-	void minRet();
-	void maxRet();
+	void dispMin();
+	void dispMax();
 	void changeMask(int);
 	void click();
 

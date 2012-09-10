@@ -80,13 +80,10 @@ public:
 	// \}
 
 	/// mask type
-	Parameter<std::string> maskIndex; 
+	Parameter<std::string> maskType; 
 
 	/// max value to applay mask
 	Parameter<bool> minimap;
-
-	/// which mask
-	int maskType;
 
 	//destruktor
 	~CustomColorMask();

@@ -52,7 +52,7 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 	ParameteredObject::_addParameter(
 		minimap, "minimap", "adds a colorbar to the output image", false);
 
-	ParameteredObject::_addParameter(maskIndex, "maskType", "Available masks are:<br>"
+	ParameteredObject::_addParameter(maskType, "maskType", "Available masks are:<br>"
 		"<u>BlackWhite<br>WhiteBlack<br>Rainbow<br>Custom</u> <p>(input slot \"mask\" must be connected otherwise Rainbow will be selected)</p>"
 		"<p>top line of \"mask\" image will be custom mask</p><br>",
 	"{BlackWhite;WhiteBlack;Rainbow;Custom}") ;
@@ -75,8 +75,8 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 
 	ParameteredObject::_addOutputSlot(widget, "widget",
 		"QWidget to be displayed in ArgosDisplay", "QWidget*");
+	widget.prepare() ;
 	widget = 0;
-	maskType = 0;
 
 	_updateQt = true;
 	
@@ -165,73 +165,36 @@ template <typename T>
 void CustomColorMask<T>::execute() {
 	
 	if(!qApp)
-	{
-		sout << "Error: qApp not found" << std::endl;
-	}
-	else if(_gui == NULL)
-	{
-		//create DockWIdget
-		wBegin() = begin();
-		wEnd() = end();
-		_gui = new CustomColorMaskWidget(this, minimap, wBegin, wEnd, maskType, QString(ParameteredObject::getName().c_str()));
-		widget = _gui;
-	}
+	{	sout << "Error: qApp not found" << std::endl;	}
 
 	//no image
 	if(in().size() == 0)
 		ParameteredObject::raise("Empty sequence given!");
 	const cimg_library::CImgList<T>& i = in();
 
-	//assign widget values
-	if(_gui && widget.connected())
-	{	
-		begin() = wBegin();
-		end() = wEnd();
-	}
-
 	//bounds ok?
 	double cmin;
 	double cmax;
 	cmax = i.get_append('c').max_min(cmin);
-	// if 0 0 set min max
-	if(end == 0 && begin == 0)
+
+	if(begin() == end())
 	{
-		begin = cmin;
-		end = cmax;
-	}
-	else if(end() == begin())
-	{
-		return;
-	}
-	else if(end() < begin())
-	{
-		return;
+		begin() = cmin ;
+		end() == cmax ;
 	}
 
-	//Setting Display for Widget and adjusting min, max, minimap and masktype
-	if(_updateQt && _gui && widget.connected())
-		{
-			_gui->setDisplay(&(*widget.getTargets().begin())->getParent());
-			_gui->setMinMax(cmin, cmax, minimap(), (mask.size() > 0));
-		}
-	// no gui => select by input Parameter
-	if(!_gui || !widget.connected())
+	//create gui and populate it with values set in ObjectInspector
+	if(_gui == NULL)
 	{
-		if(maskIndex() == "BlackWhite")
-			maskType = 0;
-		if(maskIndex() == "WhiteBlack")
-			maskType = 1;
-		if(maskIndex() == "Rainbow")
-			maskType = 2;
-		if(maskIndex() == "Custom")
-        {
-            if(mask.size() == 0)
-				maskType = 2;
-			else
-				maskType = 3;
-        }
+		wBegin() = begin() ;
+		wEnd() = end() ;
+		
+		//create DockWIdget
+		_gui = new CustomColorMaskWidget(this, minimap, wBegin, wEnd, maskType,this->ParameteredObject::getName());
+			_gui->setDisplay(&(*widget.getTargets().begin())->getParent());
+		widget = _gui;
 	}
-	_updateQt = false;
+	_gui->setMinMax(cmin,cmax) ;
 
 	//pointer for mask values
 	T* rValues;
@@ -240,30 +203,23 @@ void CustomColorMask<T>::execute() {
 
 	//mask length
 	unsigned int mWidth;
-
 	//select Mask
-	switch(maskType)
-	{
-	case 0:		//SW
-		rValues = _maskSw;
-		gValues = _maskSw;
-		bValues = _maskSw;
+	if(maskType() == "BlackWhite")
+	{	rValues = gValues= bValues = _maskSw;
 		mWidth = 255;
-		break;
-	case 1:		//WS
-		rValues = _maskWs;
-		gValues = _maskWs;
-		bValues = _maskWs;
+	}
+	else if(maskType() =="WhiteBlack")
+	{	rValues = gValues = bValues = _maskWs;
 		mWidth = 255;
-		break;
-	case 2:		//Rainbow
-		rValues = _maskRainbowR;
+	}
+	else if(maskType() == "Rainbow")
+	{	rValues = _maskRainbowR;
 		gValues = _maskRainbowG;
 		bValues = _maskRainbowB;
 		mWidth = 306;
-		break;
-	case 3:		//Custom
-		const cimg_library::CImgList<T>& m = mask();
+	}
+	else if(maskType() == "Custom" && mask.connected() && mask().size() > 0)
+	{	const cimg_library::CImgList<T>& m = mask();
 		mWidth = m[0].width();
 		rValues = new T[mWidth];
 		gValues = new T[mWidth];
@@ -274,7 +230,10 @@ void CustomColorMask<T>::execute() {
 			gValues[x] = m[0](x, 0, 0, 1);
 			bValues[x] = m[0](x, 0, 0, 2);
 		}
-		break;
+	}
+	else //default to BlackWhite
+	{	rValues = gValues= bValues = _maskSw;
+		mWidth = 255;
 	}
 
 	//calc bounds
@@ -291,7 +250,7 @@ void CustomColorMask<T>::execute() {
 		for(int y = i[0].height(); y < i[0].height()+10; ++y)
 			for(int x = 0; x < i[0].width(); ++x)
 			{
-				T val = begin() + (diff * x)/i[0].width();
+				T val = wBegin() + (diff * x)/i[0].width();
 				o[0](x, y, 0, 0) = val;
 				o[0](x, y, 0, 1) = val;
 				o[0](x, y, 0, 2) = val;
@@ -326,10 +285,10 @@ void CustomColorMask<T>::execute() {
 				//red value
 				T first = i[0](x,y,z,0);
 
-				if((first >= begin() && first <= end()) || (first >= end() && first <= begin()))
+				if((first >= wBegin() && first <= wEnd()) || (first >= wEnd() && first <= wBegin()))
 				{
 					//calc mask index
-					unsigned int index = valToInd((T)begin, (T)end, first, mWidth);
+					unsigned int index = valToInd((T)wBegin, (T)wEnd, first, mWidth);
 					//apply mask
 					o[0](x,y,z,0) = rValues[index];
 					o[0](x,y,z,1) = gValues[index];
