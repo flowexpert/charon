@@ -515,22 +515,15 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h
 		)
 		
-		ADD_LIBRARY(customcolormask SHARED
-			CustomColorMask.cpp
-			${CHARON_UTILS_INCLUDE_DIR}/CustomColorMask.hxx
-			${CHARON_UTILS_INCLUDE_DIR}/CustomColorMask.h
-		)
 		
 		LIST(APPEND Plugins_Qt
 			argosdisplay
 			frameselect
 			scriptorcimg
-			customcolormask
 		)
 		LIST(APPEND Plugins_CImg
 			argosdisplay
 			scriptorcimg
-			customcolormask
 		)
 		LIST(APPEND Plugins_Vigra
 			argosdisplay
@@ -583,7 +576,21 @@ IF(USE_VIGRA)
 			LIST(APPEND Plugins_Vigra
 				statisticsdisplay
 			)
-		ENDIF(USE_Boost)
+
+			ADD_LIBRARY(customcolormask SHARED
+				CustomColorMask.cpp
+				${CHARON_UTILS_INCLUDE_DIR}/CustomColorMask.hxx
+				${CHARON_UTILS_INCLUDE_DIR}/CustomColorMask.h
+			)
+			LIST(APPEND Plugins_Qt
+				customcolormask
+			)
+			LIST(APPEND Plugins_CImg
+				customcolormask
+			)
+
+
+			ENDIF(USE_Boost)
 
 		LIST(APPEND Plugins
 			${Plugins_Qt}
