@@ -30,6 +30,7 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CustomColorMask.h>
 #include <list>
+#include <boost/assign/std/vector.hpp>
 
 template <typename T>
 CustomColorMask<T>::CustomColorMask(const std::string& name) :
@@ -53,7 +54,7 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 		minimap, "minimap", "adds a colorbar to the output image", false);
 
 	ParameteredObject::_addParameter(maskType, "maskType", "Available masks are:<br>"
-		"<u>BlackWhite<br>WhiteBlack<br>Rainbow<br>Custom</u> <p>(input slot \"mask\" must be connected otherwise Rainbow will be selected)</p>"
+		"<u>BlackWhite<br>WhiteBlack<br>Rainbow<br>Jet<br>Custom</u> <p>(input slot \"mask\" must be connected otherwise Rainbow will be selected)</p>"
 		"<p>top line of \"mask\" image will be custom mask</p><br>",
 	"{BlackWhite;WhiteBlack;Rainbow;Custom}") ;
 
@@ -80,20 +81,16 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 
 	_updateQt = true;
 	
-	//BlackWhite mask
-	_maskSw = new T[255];
-	//WhiteBlack mask
-	_maskWs = new T[255];
 	//Rainbow mask
-	_maskRainbowR = new T[306];
-	_maskRainbowG = new T[306];
-	_maskRainbowB = new T[306];
+	_maskRainbow[0].assign(306,T(0.0));
+	_maskRainbow[1].assign(306,T(0.0));
+	_maskRainbow[2].assign(306,T(0.0));
 
 	//calc values for bw and wb
 	for(int i = 0; i < 255; ++i)
 	{
-		_maskSw[i] = (T)i;
-		_maskWs[i] = (T)(255 - i);
+		_maskSw.push_back((T)i);
+		_maskWs.push_back((T)(255 - i));
 	}
 	
 	//calc values for rainbow mask
@@ -105,36 +102,91 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 		xg -= 5;
 
 		int ind = i;
-		_maskRainbowR[ind] = 255;
-		_maskRainbowG[ind] = xu;
-		_maskRainbowB[ind] = 0;
+		_maskRainbow[0][ind] = 255;
+		_maskRainbow[1][ind] = xu;
+		_maskRainbow[2][ind] = 0;
 
 		ind += 51;
-		_maskRainbowR[ind] = xg;
-		_maskRainbowG[ind] = 255;
-		_maskRainbowB[ind] = 0;
+		_maskRainbow[0][ind] = xg;
+		_maskRainbow[1][ind] = 255;
+		_maskRainbow[2][ind] = 0;
 
 		ind += 51;
-		_maskRainbowR[ind] = 0;
-		_maskRainbowG[ind] = 255;
-		_maskRainbowB[ind] = xu;
+		_maskRainbow[0][ind] = 0;
+		_maskRainbow[1][ind] = 255;
+		_maskRainbow[2][ind] = xu;
 
 		ind += 51;
-		_maskRainbowR[ind] = 0;
-		_maskRainbowG[ind] = xg;
-		_maskRainbowB[ind] = 255;
+		_maskRainbow[0][ind] = 0;
+		_maskRainbow[1][ind] = xg;
+		_maskRainbow[2][ind] = 255;
 
 		ind += 51;
-		_maskRainbowR[ind] = xu;
-		_maskRainbowG[ind] = 0;
-		_maskRainbowB[ind] = 255;
+		_maskRainbow[0][ind] = xu;
+		_maskRainbow[1][ind] = 0;
+		_maskRainbow[2][ind] = 255;
 
 		ind += 51;
-		_maskRainbowR[ind] = 255;
-		_maskRainbowG[ind] = 0;
-		_maskRainbowB[ind] = xg;
+		_maskRainbow[0][ind] = 255;
+		_maskRainbow[1][ind] = 0;
+		_maskRainbow[2][ind] = xg;
 	}
 	
+	using namespace boost::assign;
+	#pragma warning(push)
+	#pragma warning(disable : 4305) 
+
+	_maskJet[0] += 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.015625,0.03125,
+					0.046875,0.0625,0.078125,0.09375,0.10938,0.125,0.14063,0.15625,0.17188,0.1875,
+					0.20313,0.21875,0.23438,0.25,0.26563,0.28125,0.29688,0.3125,0.32813,0.34375,
+					0.35938,0.375,0.39063,0.40625,0.42188,0.4375,0.45313,0.46875,0.48438,0.5,
+					0.51563,0.53125,0.54688,0.5625,0.57813,0.59375,0.60938,0.625,0.64063,0.65625,
+					0.67188,0.6875,0.70313,0.71875,0.73438,0.75,0.76563,0.78125,0.79688,0.8125,
+					0.82813,0.84375,0.85938,0.875,0.89063,0.90625,0.92188,0.9375,0.95313,0.96875,
+					0.98438,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.98438,0.96875,
+					0.95313,0.9375,0.92188,0.90625,0.89063,0.875,0.85938,0.84375,0.82813,0.8125,
+					0.79688,0.78125,0.76563,0.75,0.73438,0.71875,0.70313,0.6875,0.67188,0.65625,
+					0.64063,0.625,0.60938,0.59375,0.57813,0.5625,0.54688,0.53125,0.51563,0.5;
+
+	_maskJet[1] += 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.015625,
+					0.03125,0.046875,0.0625,0.078125,0.09375,0.10938,0.125,0.14063,0.15625,0.17188,
+					0.1875,0.20313,0.21875,0.23438,0.25,0.26563,0.28125,0.29688,0.3125,0.32813,0.34375,
+					0.35938,0.375,0.39063,0.40625,0.42188,0.4375,0.45313,0.46875,0.48438,0.5,0.51563,
+					0.53125,0.54688,0.5625,0.57813,0.59375,0.60938,0.625,0.64063,0.65625,0.67188,0.6875,
+					0.70313,0.71875,0.73438,0.75,0.76563,0.78125,0.79688,0.8125,0.82813,0.84375,0.85938,
+					0.875,0.89063,0.90625,0.92188,0.9375,0.95313,0.96875,0.98438,1,1,1,1,1,1,1,1,1,1,1,1,
+					1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					1,1,1,1,1,1,1,1,1,1,0.98438,0.96875,0.95313,0.9375,0.92188,0.90625,0.89063,0.875,0.85938,
+					0.84375,0.82813,0.8125,0.79688,0.78125,0.76563,0.75,0.73438,0.71875,0.70313,0.6875,
+					0.67188,0.65625,0.64063,0.625,0.60938,0.59375,0.57813,0.5625,0.54688,0.53125,0.51563,
+					0.5,0.48438,0.46875,0.45313,0.4375,0.42188,0.40625,0.39063,0.375,0.35938,0.34375,0.32813,
+					0.3125,0.29688,0.28125,0.26563,0.25,0.23438,0.21875,0.20313,0.1875,0.17188,0.15625,0.14063,
+					0.125,0.10938,0.09375,0.078125,0.0625,0.046875,0.03125,0.015625,0,0,0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;
+	_maskJet[2] += 0.51563,0.53125,0.54688,0.5625,0.57813,0.59375,0.60938,0.625,0.64063,0.65625,0.67188,0.6875,
+					0.70313,0.71875,0.73438,0.75,0.76563,0.78125,0.79688,0.8125,0.82813,0.84375,0.85938,0.875,
+					0.89063,0.90625,0.92188,0.9375,0.95313,0.96875,0.98438,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+					1,0.98438,0.96875,0.95313,0.9375,0.92188,0.90625,0.89063,0.875,0.85938,0.84375,0.82813,0.8125,
+					0.79688,0.78125,0.76563,0.75,0.73438,0.71875,0.70313,0.6875,0.67188,0.65625,0.64063,0.625,
+					0.60938,0.59375,0.57813,0.5625,0.54688,0.53125,0.51563,0.5,0.48438,0.46875,0.45313,0.4375,
+					0.42188,0.40625,0.39063,0.375,0.35938,0.34375,0.32813,0.3125,0.29688,0.28125,0.26563,0.25,
+					0.23438,0.21875,0.20313,0.1875,0.17188,0.15625,0.14063,0.125,0.10938,0.09375,0.078125,0.0625,
+					0.046875,0.03125,0.015625,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;
+
+	#pragma warning (pop)
+
+	for(size_t ii = 0 ; ii < _maskJet[0].size() ; ii++)
+	{
+		_maskJet[0][ii] *= 255.0 ;
+		_maskJet[1][ii] *= 255.0 ;
+		_maskJet[2][ii] *= 255.0 ;
+	}
 
 }
 
@@ -142,13 +194,6 @@ template<typename T>
 CustomColorMask<T>::~CustomColorMask()
 {
 	delete _gui;
-	delete[] _maskRainbowR;
-	delete[] _maskRainbowG;
-	delete[] _maskRainbowB;
-
-	delete[] _maskSw;
-
-	delete[] _maskWs;
 }
 
 //calc red value to index
@@ -180,7 +225,7 @@ void CustomColorMask<T>::execute() {
 	if(begin() == end())
 	{
 		begin() = cmin ;
-		end() == cmax ;
+		end() = cmax ;
 	}
 
 	//create gui and populate it with values set in ObjectInspector
@@ -197,44 +242,55 @@ void CustomColorMask<T>::execute() {
 	_gui->setMinMax(cmin,cmax) ;
 
 	//pointer for mask values
-	T* rValues;
-	T* gValues;
-	T* bValues;
+	std::vector<T>* rgbValues[3] ;
 
 	//mask length
 	unsigned int mWidth;
 	//select Mask
 	if(maskType() == "BlackWhite")
-	{	rValues = gValues= bValues = _maskSw;
-		mWidth = 255;
+	{	rgbValues[0] = rgbValues[1]= rgbValues[2] = &_maskSw;
+		mWidth = _maskSw.size();
 	}
 	else if(maskType() =="WhiteBlack")
-	{	rValues = gValues = bValues = _maskWs;
-		mWidth = 255;
+	{	rgbValues[0] = rgbValues[1]= rgbValues[2] = &_maskWs;
+		mWidth = _maskWs.size();
 	}
 	else if(maskType() == "Rainbow")
-	{	rValues = _maskRainbowR;
-		gValues = _maskRainbowG;
-		bValues = _maskRainbowB;
-		mWidth = 306;
+	{	rgbValues[0] = &_maskRainbow[0];
+		rgbValues[1] = &_maskRainbow[1];
+		rgbValues[2] = &_maskRainbow[2];
+		mWidth = _maskRainbow[0].size() ;
 	}
-	else if(maskType() == "Custom" && mask.connected() && mask().size() > 0)
-	{	const cimg_library::CImgList<T>& m = mask();
-		mWidth = m[0].width();
-		rValues = new T[mWidth];
-		gValues = new T[mWidth];
-		bValues = new T[mWidth];
-		cimg_forX(m[0], x)
+	else if(maskType() == "Jet")
+	{	rgbValues[0] = &_maskJet[0];
+		rgbValues[1] = &_maskJet[1];
+		rgbValues[2] = &_maskJet[2];
+		mWidth = _maskJet[0].size() ;
+	}
+	else if(maskType() == "Custom" && mask.connected() && mask().size() > 0 && mask()[0].spectrum() >= 3)
+	{	
+		_maskCustom[0].clear() ; _maskCustom[1].clear() ; _maskCustom[2].clear() ;
+		const cimg_library::CImg<T>& m = mask()[0];
+		mWidth = m.width();
+		cimg_forX(m, x)
 		{
-			rValues[x] = m[0](x, 0, 0, 0);
-			gValues[x] = m[0](x, 0, 0, 1);
-			bValues[x] = m[0](x, 0, 0, 2);
+			_maskCustom[0].push_back(m(x, 0, 0, 0));
+			_maskCustom[1].push_back(m(x, 0, 0, 1));
+			_maskCustom[2].push_back(m(x, 0, 0, 2));
 		}
+		rgbValues[0] = &_maskCustom[0];
+		rgbValues[1] = &_maskCustom[1];
+		rgbValues[2] = &_maskCustom[2];
+
 	}
 	else //default to BlackWhite
-	{	rValues = gValues= bValues = _maskSw;
-		mWidth = 255;
+	{	rgbValues[0] = rgbValues[1]= rgbValues[2] = &_maskSw;
+		mWidth = _maskSw.size();
 	}
+
+	const std::vector<T>& rValues = *(rgbValues[0]) ;
+	const std::vector<T>& gValues = *(rgbValues[1]) ;
+	const std::vector<T>& bValues = *(rgbValues[2]) ;
 
 	//calc bounds
 	T diff = end-begin;

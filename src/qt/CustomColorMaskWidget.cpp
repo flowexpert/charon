@@ -64,11 +64,11 @@ CustomColorMaskWidget::CustomColorMaskWidget(
 	QDoubleValidator* validator = new QDoubleValidator(_begin(),_begin(),2,0) ;
 	validator->setNotation(QDoubleValidator::ScientificNotation) ;
 	_minDisp->setValidator(validator) ;
-	_minDisp->setText(QString("%1").arg(_begin(),0,'E')) ;
+	_minDisp->setText(QString("%1").arg(_begin(),0,'E',2)) ;
 	validator = new QDoubleValidator(_end,_end(),2,0) ;
 	validator->setNotation(QDoubleValidator::ScientificNotation) ;
 	_maxDisp->setValidator(validator) ;
-	_maxDisp->setText(QString("%1").arg(_end(),0,'E')) ;
+	_maxDisp->setText(QString("%1").arg(_end(),0,'E',2)) ;
 
 	//slider
 	_minSlider = new QSlider(Qt::Horizontal);
@@ -83,6 +83,7 @@ CustomColorMaskWidget::CustomColorMaskWidget(
 	_maskSelect->addItem("BlackWhite");
 	_maskSelect->addItem("WhiteBlack");
 	_maskSelect->addItem("Rainbow");
+	_maskSelect->addItem("Jet");
 	_maskSelect->addItem("Custom");
 	if(maskType() == "BlackWhite")
 		_maskSelect->setCurrentIndex(0) ;
@@ -90,8 +91,10 @@ CustomColorMaskWidget::CustomColorMaskWidget(
 		_maskSelect->setCurrentIndex(1) ;
 	else if(maskType() == "Rainbow")
 		_maskSelect->setCurrentIndex(2) ;
-	else if(maskType() == "Custom")
+	else if(maskType() == "Jet")
 		_maskSelect->setCurrentIndex(3) ;
+	else if(maskType() == "Custom")
+		_maskSelect->setCurrentIndex(4) ;
 
 	//connecting
 	connect(_minSlider, SIGNAL(sliderReleased()), this, SLOT(dispMin()));
@@ -142,15 +145,14 @@ CustomColorMaskWidget::CustomColorMaskWidget(
 
 CustomColorMaskWidget::~CustomColorMaskWidget()
 {
-	delete _title;
-	delete _layout;
 }
 
 void CustomColorMaskWidget::dispMax()
 {
 	if(_running)
 		return ;
-	_maxDisp->setText(QString::number(double(_maxSlider->value()) * _step + _currentMin));
+	double val = double(_maxSlider->value()) * _step + _currentMin ;
+	_maxDisp->setText(QString("%1").arg(val,0,'E',2));
 	click();
 }
 
@@ -158,7 +160,8 @@ void CustomColorMaskWidget::dispMin()
 {
 	if(_running)
 		return ;
-	_minDisp->setText(QString::number(double(_minSlider->value()) * _step + _currentMin));
+	double val = double(_minSlider->value()) * _step + _currentMin ;
+	_minDisp->setText(QString("%1").arg(val,0,'E',2));
 	click();
 }
 

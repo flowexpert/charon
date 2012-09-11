@@ -91,13 +91,15 @@ public:
 private:
 	CustomColorMaskWidget* _gui;
 
-	T* _maskSw;
+	std::vector<T> _maskSw;
 
-	T* _maskWs;
+	std::vector<T> _maskWs;
 
-	T* _maskRainbowR;
-	T* _maskRainbowG;
-	T* _maskRainbowB;
+	std::vector<T> _maskRainbow[3];
+
+	std::vector<T> _maskJet[3] ;
+
+	std::vector<T> _maskCustom[3] ;
 
 	bool _updateQt;
 
