@@ -108,17 +108,16 @@ T EnergyClassic<T>::_energyHessian( T x, T xo )
 template <class T>
 T EnergyClassic<T>::getEnergy( int, int x, int y, int z, int )
 {
-    const cimg_library::CImgList<T>& uv = motionUV();
-    T motionUC = uv.atNXYZC( 0, x,   y,   z, 0 );
-    T motionUN = uv.atNXYZC( 0, x,   y-1, z, 0 );
-    T motionUE = uv.atNXYZC( 0, x+1, y,   z, 0 );
-    T motionUS = uv.atNXYZC( 0, x,   y+1, z, 0 );
-    T motionUW = uv.atNXYZC( 0, x-1, y,   z, 0 );
-    T motionVC = uv.atNXYZC( 1, x,   y,   z, 0 );
-    T motionVN = uv.atNXYZC( 1, x,   y-1, z, 0 );
-    T motionVE = uv.atNXYZC( 1, x+1, y,   z, 0 );
-    T motionVS = uv.atNXYZC( 1, x,   y+1, z, 0 );
-    T motionVW = uv.atNXYZC( 1, x-1, y,   z, 0 );
+	T motionUC = motionUV().atNXYZC( 0, x,   y,   z, 0 );
+	T motionUN = motionUV().atNXYZC( 0, x,   y-1, z, 0 );
+	T motionUE = motionUV().atNXYZC( 0, x+1, y,   z, 0 );
+	T motionUS = motionUV().atNXYZC( 0, x,   y+1, z, 0 );
+	T motionUW = motionUV().atNXYZC( 0, x-1, y,   z, 0 );
+	T motionVC = motionUV().atNXYZC( 1, x,   y,   z, 0 );
+	T motionVN = motionUV().atNXYZC( 1, x,   y-1, z, 0 );
+	T motionVE = motionUV().atNXYZC( 1, x+1, y,   z, 0 );
+	T motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
+	T motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
 
 	T energy =  _energy( motionUC, motionUN )
 	         +  _energy( motionUC, motionUE )
@@ -136,17 +135,16 @@ template <class T>
 std::vector<T> EnergyClassic<T>::getEnergyGradient(
   int, int x, int y, int z, int )
 {
-        const cimg_library::CImgList<T>& uv = motionUV();
-        T motionUC = uv.atNXYZC( 0, x,   y,   z, 0 );
-        T motionUN = uv.atNXYZC( 0, x,   y-1, z, 0 );
-        T motionUE = uv.atNXYZC( 0, x+1, y,   z, 0 );
-        T motionUS = uv.atNXYZC( 0, x,   y+1, z, 0 );
-        T motionUW = uv.atNXYZC( 0, x-1, y,   z, 0 );
-        T motionVC = uv.atNXYZC( 1, x,   y,   z, 0 );
-        T motionVN = uv.atNXYZC( 1, x,   y-1, z, 0 );
-        T motionVE = uv.atNXYZC( 1, x+1, y,   z, 0 );
-        T motionVS = uv.atNXYZC( 1, x,   y+1, z, 0 );
-        T motionVW = uv.atNXYZC( 1, x-1, y,   z, 0 );
+        T motionUC = motionUV().atNXYZC( 0, x,   y,   z, 0 );
+        T motionUN = motionUV().atNXYZC( 0, x,   y-1, z, 0 );
+        T motionUE = motionUV().atNXYZC( 0, x+1, y,   z, 0 );
+        T motionUS = motionUV().atNXYZC( 0, x,   y+1, z, 0 );
+        T motionUW = motionUV().atNXYZC( 0, x-1, y,   z, 0 );
+        T motionVC = motionUV().atNXYZC( 1, x,   y,   z, 0 );
+        T motionVN = motionUV().atNXYZC( 1, x,   y-1, z, 0 );
+        T motionVE = motionUV().atNXYZC( 1, x+1, y,   z, 0 );
+        T motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
+        T motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
 
         T energyGradientU = _energyGradient( motionUC, motionUN )
                           + _energyGradient( motionUC, motionUE )
