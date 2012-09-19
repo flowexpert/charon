@@ -55,6 +55,7 @@ CustomColorMaskWidget::CustomColorMaskWidget(
 	_mapBox = new QGroupBox("add minimap");
 	_mapBox->setFlat(true);
 	_mapBox->setCheckable(true);
+	_mapBox->setChecked(_minimap());
 
 	//line edit
 	_minDisp = new QLineEdit("0");

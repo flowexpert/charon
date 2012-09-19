@@ -56,7 +56,7 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 	ParameteredObject::_addParameter(maskType, "maskType", "Available masks are:<br>"
 		"<u>BlackWhite<br>WhiteBlack<br>Rainbow<br>Jet<br>Custom</u> <p>(input slot \"mask\" must be connected otherwise Rainbow will be selected)</p>"
 		"<p>top line of \"mask\" image will be custom mask</p><br>",
-	"{BlackWhite;WhiteBlack;Rainbow;Custom}") ;
+	"{BlackWhite;WhiteBlack;Rainbow;Jet;Custom}") ;
 
 	ParameteredObject::_addInputSlot(
 		in, "in",
@@ -293,7 +293,7 @@ void CustomColorMask<T>::execute() {
 	const std::vector<T>& bValues = *(rgbValues[2]) ;
 
 	//calc bounds
-	T diff = end-begin;
+	T diff = wEnd()-wBegin();
 
 	//create output
 	cimg_library::CImgList<T>& o = out();
