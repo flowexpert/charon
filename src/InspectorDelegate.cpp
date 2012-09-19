@@ -98,13 +98,13 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 		// fix decimals for double editors
 		// (also handles parameters of type T)
 		if (ind.model()->data(ind).type() == QVariant::Double) {
-			QDoubleSpinBox* editor = qobject_cast<QDoubleSpinBox*>(
-					QStyledItemDelegate::createEditor(p,opt,ind));
+			QLineEdit* editor = new QLineEdit(p) ;
+			QDoubleValidator* validator = new QDoubleValidator ;
+				validator->setNotation(QDoubleValidator::ScientificNotation) ;
+			editor->setValidator(validator) ;
+			editor->setObjectName("doubleLineEdit") ;
+			editor->setText(QString("%1").arg(ind.model()->data(ind).toDouble(),0,'G',16)) ;	
 			Q_ASSERT(editor);
-			// using the provided standart editor, min/max values
-			// have already been set to reasonable values,
-			// decimals have to be corrected only
-			editor->setDecimals(6) ;
 			return editor;
 		}
 	}
@@ -117,6 +117,11 @@ void InspectorDelegate::setModelData (QWidget* editor,
 	if(editor && (editor->objectName() == "selectBox")) {
 		QComboBox* box = qobject_cast<QComboBox*>(editor);
 		model->setData(index,box->currentText());
+		return;
+	}
+	else if(editor && (editor->objectName() == "doubleLineEdit")) {
+		QLineEdit* line = qobject_cast<QLineEdit*>(editor);
+		model->setData(index,line->text().toDouble());
 		return;
 	}
 	QStyledItemDelegate::setModelData(editor, model, index);
