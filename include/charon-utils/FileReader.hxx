@@ -97,7 +97,7 @@ FileReader<T>::~FileReader() {
 template <typename T>
 void FileReader<T>::_append(const cimg_library::CImgList<T>& tmp) {
 	cimg_library::CImgList<T>& o = out();
-	bool first = o.size() > 0;
+	bool first = (o.size() == 0);
 	if (tmp.size() == 0) {
 		// nothing to do
 		return;
