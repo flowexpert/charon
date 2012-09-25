@@ -223,8 +223,6 @@ void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 }
 
 void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
-	reset();
-
 	// Determine default template type
 	if (paramFile.isSet("global.templatetype")) {
 		std::string templateType = paramFile.get<std::string> (
