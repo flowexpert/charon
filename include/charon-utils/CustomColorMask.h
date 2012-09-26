@@ -101,8 +101,6 @@ private:
 
 	std::vector<T> _maskCustom[3] ;
 
-	bool _updateQt;
-
 };
 
 #endif // _CUSTOMCOLORMASK_H_

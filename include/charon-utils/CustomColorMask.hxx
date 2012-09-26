@@ -42,6 +42,7 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 		),
 		in(false, false),
 		mask(true, false),
+		widget(0),
 		_gui(0)
 {
 	ParameteredObject::_addParameter(
@@ -76,11 +77,8 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 
 	ParameteredObject::_addOutputSlot(widget, "widget",
 		"QWidget to be displayed in ArgosDisplay", "QWidget*");
-	widget.prepare() ;
-	widget = 0;
 
-	_updateQt = true;
-	
+
 	//Rainbow mask
 	_maskRainbow[0].assign(306,T(0.0));
 	_maskRainbow[1].assign(306,T(0.0));
@@ -132,9 +130,12 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 		_maskRainbow[2][ind] = xg;
 	}
 	
+	//matlab jet colormap
 	using namespace boost::assign;
-	#pragma warning(push)
-	#pragma warning(disable : 4305) 
+	#ifdef MSVC
+		#pragma warning(push)
+		#pragma warning(disable : 4305) 
+	#endif /*MSVC */
 
 	_maskJet[0] += 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -179,7 +180,9 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;
 
-	#pragma warning (pop)
+	#ifdef MSVC
+		#pragma warning (pop)
+	#endif /*MSVC */
 
 	for(size_t ii = 0 ; ii < _maskJet[0].size() ; ii++)
 	{
@@ -229,15 +232,17 @@ void CustomColorMask<T>::execute() {
 	}
 
 	//create gui and populate it with values set in ObjectInspector
-	if(_gui == NULL)
+	if(!_gui)
 	{
 		wBegin() = begin() ;
 		wEnd() = end() ;
 		
 		//create DockWIdget
 		_gui = new CustomColorMaskWidget(this, minimap, wBegin, wEnd, maskType,this->ParameteredObject::getName());
-			_gui->setDisplay(&(*widget.getTargets().begin())->getParent());
 		widget = _gui;
+		std::set<Slot*>::iterator it = widget.getTargets().begin() ;
+		if(it != widget.getTargets().end())
+			_gui->setDisplay(&((*it)->getParent()));
 	}
 	_gui->setMinMax(cmin,cmax) ;
 
