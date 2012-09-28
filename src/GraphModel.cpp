@@ -221,7 +221,7 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 }
 
 void GraphModel::disconnectSlot(QString source, QString target, bool draw) {
-	QString content = getValue(source);
+	QString content = getValue(source).toLower();
 	QStringList targets = content.split(";", QString::SkipEmptyParts);
 	if (target.isEmpty()) {
 		foreach (const QString& tar, targets) {
@@ -230,7 +230,7 @@ void GraphModel::disconnectSlot(QString source, QString target, bool draw) {
 		}
 	}
 	else {
-		int pos = targets.indexOf(target,Qt::CaseInsensitive);
+		int pos = targets.indexOf(target.toLower(),0);
 		if (pos >= 0) {
 			targets.removeAt(pos);
 			setValue(source, targets.join(";"));
