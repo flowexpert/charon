@@ -99,7 +99,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 		// (also handles parameters of type T)
 		if (ind.model()->data(ind).type() == QVariant::Double) {
 			QLineEdit* editor = new QLineEdit(p) ;
-			QDoubleValidator* validator = new QDoubleValidator ;
+			QDoubleValidator* validator = new QDoubleValidator(editor) ;
 				validator->setNotation(QDoubleValidator::ScientificNotation) ;
 			editor->setValidator(validator) ;
 			editor->setObjectName("doubleLineEdit") ;
