@@ -47,23 +47,40 @@ template <typename T>
 void SimpleDiff<T>::execute() {
 	sout << "\tcalculating derivatives:" << std::endl;
 
-	CImg_3x3( I, T );
 	if(dx.connected()) {
 		sout << "\t\twrt. dx" << std::endl;
 		dx().assign(img());
 		cimglist_for( img(),kk )
-		cimg_for3x3( img()[kk], x, y, 0, 0, I, T )
+		cimg_forXY( img()[kk], x, y )
 		{
-			dx().atNXYZC(kk,x,y,0,0) = (Inc - Ipc)/2.0;
+			dx().atNXYZC(kk,x,y,0,0) = (   img().atNXYZC(kk,x-2,y,0,0)
+			                           - 8*img().atNXYZC(kk,x-1,y,0,0)
+			                           + 8*img().atNXYZC(kk,x+1,y,0,0)
+			                           -   img().atNXYZC(kk,x+2,y,0,0) ) / 12.0;
+		}
+		cimg_forXY( img()[0], x, y )
+		{
+			dx().atNXYZC(0,x,y,0,0) += dx().atNXYZC(1,x,y,0,0) ;
+			dx().atNXYZC(0,x,y,0,0) /= 2.0 ;
+			dx().atNXYZC(1,x,y,0,0) = dx().atNXYZC(0,x,y,0,0) ;
 		}
 	}
 	if(dy.connected()) {
 		sout << "\t\twrt. dy" << std::endl;
 		dy().assign(img());
 		cimglist_for( img(),kk )
-		cimg_for3x3( img()[kk], x, y, 0, 0, I, T )
+		cimg_forXY( img()[kk], x, y )
 		{
-			dy().atNXYZC(kk,x,y,0,0) = (Icn - Icp)/2.0;
+			dy().atNXYZC(kk,x,y,0,0) = (   img().atNXYZC(kk,x,y-2,0,0)
+			                           - 8*img().atNXYZC(kk,x,y-1,0,0)
+			                           + 8*img().atNXYZC(kk,x,y+1,0,0)
+			                           -   img().atNXYZC(kk,x,y+2,0,0) ) / 12.0;
+		}
+		cimg_forXY( img()[0], x, y )
+		{
+			dy().atNXYZC(0,x,y,0,0) += dy().atNXYZC(1,x,y,0,0) ;
+			dy().atNXYZC(0,x,y,0,0) /= 2.0 ;
+			dy().atNXYZC(1,x,y,0,0) = dy().atNXYZC(0,x,y,0,0) ;
 		}
 	}
 	if(dt.connected()) {
