@@ -404,6 +404,11 @@ ADD_LIBRARY(diff2d SHARED
 	${charon_INCLUDE_DIR}/Diff2D.h
 	${charon_INCLUDE_DIR}/Diff2D.hxx
 )
+ADD_LIBRARY(simplediff SHARED
+	SimpleDiff.cpp
+	${charon_INCLUDE_DIR}/SimpleDiff.h
+	${charon_INCLUDE_DIR}/SimpleDiff.hxx
+)
 ADD_LIBRARY(lucas_kanade_smoothing SHARED
 	LucasKanadeSmoothing.cpp
 	${charon_INCLUDE_DIR}/LucasKanadeSmoothing.h
@@ -440,6 +445,7 @@ LIST(APPEND Plugins
 	sequencegenerator
 	edgysequencegenerator
 	diff2d
+	simplediff
 	lucas_kanade_smoothing
 	pyramidrescale
 	pyramidrescalematlab
