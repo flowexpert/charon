@@ -118,9 +118,25 @@ bool NodeProperty::isInput() const {
 }
 
 void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent* ev) {
+    QListIterator<ConnectionLine *> cl(_connectionList);
+    ConnectionLine* connectedLine;
+    QString connectedNodes;
+    int nodenum=0;
+    while(cl.hasNext())
+    {
+	connectedLine=cl.next();
+	connectedNodes+=QString("%1: ").arg(nodenum);
+	NodeProperty* prop=connectedLine->getEndProp();
+	if(prop==this)
+	    prop=connectedLine->getStartProp();
+
+	connectedNodes+=prop->getFullName();
+	connectedNodes+="<br>";
+	nodenum++;
+    }
 	setToolTip(QString(
 			"<p style='white-space:pre'><b>Slot: <i>%1</i><br>"
-			"Type:</b><br>%2</p>").arg(_name).arg(getType()));
+			"Type:</b><br>%2<br>""<b>Connected To:</b><br>%3</p>").arg(_name).arg(getType()).arg(connectedNodes));
 
 	_color=Qt::green;
 	changeConnectionLineColor(Qt::green);
