@@ -226,7 +226,7 @@ int run() {
 	if (Config::verbose) {
 		std::cout << "Starting workflow execution." << std::endl;
 	}
-        Config::man->execute();
+	Config::man->runWorkflow();
 
 	if (Config::verbose) {
 		std::cout << "Finished workflow execution." << std::endl;

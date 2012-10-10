@@ -274,7 +274,9 @@ void ParameteredGroupObject::onSave(ParameterFile&) const
 
 void SlotBundle::loadConnection(ParameterFile pf, PluginManagerInterface* man)
 {
-	_load(pf,man);
+//	_load(pf,man);
+    ParameteredObject::loadParameters(pf);
+    ParameteredObject::loadSlots(pf,man);
 }
 
 void ParameteredGroupObject::loopOutputToInput(int output, int input)

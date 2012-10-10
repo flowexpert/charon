@@ -625,6 +625,88 @@ std::string ParameteredObject::fixCase(const std::string& name) const {
 	raise("Parameter/Slot " + name + " not found!");
 	return std::string();
 }
+
+void ParameteredObject::_removeInputSlot(std::string name)
+{
+	// remove metadata
+	if (_removeSomething("inputs", name)) {
+		// and remove it from the input slot list
+		if(_inputs.find(name)!=_inputs.end()) {
+			_inputs.erase(name);
+		}
+		if(_metadata.isSet(_className + "." + name+ ".multi")) {
+			_metadata.erase(_className + "." + name+ ".multi");
+		}
+		if(_metadata.isSet(_className + "." + name+ ".optional")) {
+			_metadata.erase(_className + "." + name+ ".optional");
+		}
+	}
+}
+
+bool ParameteredObject::_removeSomething(
+		const std::string &extension, const std::string &name)
+{
+	// Check that param is  registered.
+	// Parameters can only be assigned once!
+	if( _parameters.find(name) == _parameters.end() ||
+		_inputs.find(name) == _inputs.end() ||
+		_outputs.find(name) == _outputs.end()) {
+		sout << "(EE) ******************************************************\n"
+			 << "(EE) The parameter or slot \"" << name
+			 << "\" has not been defined!\n"
+			 << "(EE) Slots and Parameter names must be unique "
+			 << "for each Plugin!\n"
+			 << "(EE) ******************************************************\n"
+			 << std::endl;
+		return false;
+	}
+
+	if (_createMetadata) {
+		std::vector<std::string> someList;
+		// get all elements of the given section
+		if (_metadata.isSet(_className + "." + extension)) {
+			someList = _metadata.getList<std::string> (_className + "."
+					+ extension);
+		}
+		std::vector<std::string>::iterator found = std::find(
+				someList.begin(), someList.end(), name);
+		if (found != someList.end()) {
+			if(_metadata.isSet(_className+"."+name + ".type")) {
+				_metadata.erase(_className+"."+name + ".type");
+			}
+			if(_metadata.isSet(_className+"."+name + ".doc")) {
+				_metadata.erase(_className+"."+name + ".doc");
+			}
+			if(_metadata.isSet(_className + "." + name)) {
+				_metadata.erase(_className + "." + name);
+			}
+			if(_metadata.isSet(_className+"."+extension)) {
+				_metadata.erase(_className+"."+extension);
+			}
+			someList.erase(found);
+			_metadata.set<std::string>(_className+"."+extension, someList);
+		}
+	}
+
+	return true;
+}
+
+void ParameteredObject::_removeOutputSlot(std::string name) {
+	// remove metadata
+	if (_removeSomething("outputs", name)) {
+		// and remove it from the output slot list
+		if(_outputs.find(name)!=_outputs.end()) {
+			_outputs.erase(name);
+		}
+		if(_metadata.isSet(_className + "." + name+ ".multi")) {
+			_metadata.erase(_className + "." + name+ ".multi");
+		}
+		if(_metadata.isSet(_className + "." + name+ ".optional")) {
+			_metadata.erase(_className + "." + name+ ".optional");
+		}
+	}
+}
+
 void ParameteredObject::initialize() {
 	if(this->_initialized)
 		raise("Plugin is already initialized!");

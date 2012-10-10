@@ -448,11 +448,7 @@ public:
 
 	/// set exclude list
 	static void setExcludeList(const std::vector<std::string>& list);
-	/// Resets this PluginManager instance to its initial state.
-	/** Unloads all plugins, resets defaultTemplateType parameter
-	 *  and deletes target points.
-	 */
-	virtual void reset();
+
 
 	/// Set the executed flags of the objects to false.
 	/** This function leaves the objects otherwise untouched */

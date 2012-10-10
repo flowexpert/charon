@@ -116,6 +116,15 @@ protected:
 	/// Specifies if the ParameteredObject is dynamic
 	void _setDynamic(bool v);
 
+	/// Remove an input slot
+	void _removeInputSlot(std::string name);
+
+	/// Remove an output slot
+	void _removeOutputSlot(std::string name);
+
+	/// Remove something. Iverse of _addSomething.
+	bool _removeSomething(const std::string &extension, const std::string &name);
+
 	/// Common code for _addParameter, _addInputSlot, _addOutputSlot.
 	/** This function does nothing, if _createMetadata is set to false.
 	 *  \param extension    section of metadata file where to add
@@ -414,12 +423,7 @@ public:
 	 */
 	Slot* getSlot(const std::string& slotName) const;
 
-	/// Const version
-	/** \param slotName     Name of the slot to look for
-	 *  \throws std::invalid_argument if slot does not exist
-	 *  \returns requested slot
-	 */
-	const Slot* getSlot(const std::string& slotName) const;
+
 
 	/// Get all input slots as map
 	/** Returns a map linking the names of the input slots to the Slots itself.

@@ -229,7 +229,7 @@ void testWhileIterationSimplOutput()
     testWhilegroup->initialize();
     man.runWorkflow();
     //Did we shoot over the maximum?
-    if(_iter>_maxit)
+    if(_iter!=_maxit)
 	throw;
 }
 
