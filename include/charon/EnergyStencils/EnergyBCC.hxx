@@ -99,8 +99,8 @@ void EnergyBCC<T>::execute() {
 template <class T>
 T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
 {
-	T Ix = img_dx().atNXYZC( 1, xI, yI, zI, 0 );
-	T Iy = img_dy().atNXYZC( 1, xI, yI, zI, 0 );
+	T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 1 );
+	T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 1 );
 	T It = img_dt().atNXYZC( 0, xI, yI, zI, 0 ); // (!!) works for temporal _difference_ [+1,-1] only
 
 	T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
@@ -114,8 +114,8 @@ T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
 template <class T>
 std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int )
 {
-        T Ix = img_dx().atNXYZC( 1, xI, yI, zI, 0 );
-        T Iy = img_dy().atNXYZC( 1, xI, yI, zI, 0 );
+        T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 1 );
+        T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 1 );
         T It = img_dt().atNXYZC( 0, xI, yI, zI, 0 ); // (!!) works for temporal _difference_ [+1,-1] only
 
         T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
@@ -138,8 +138,8 @@ std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int
 template <class T>
 std::vector<T> EnergyBCC<T>::getEnergyHessian( int, int xI, int yI, int zI, int )
 {
-	T Ix = img_dx().atNXYZC( 1, xI, yI, zI, 0 );
-	T Iy = img_dy().atNXYZC( 1, xI, yI, zI, 0 );
+	T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 1 );
+	T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 1 );
 	T It = img_dt().atNXYZC( 0, xI, yI, zI, 0 ); // (!!) works for temporal _difference_ [+1,-1] only
 
 	T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
@@ -178,8 +178,8 @@ void EnergyBCC<T>::updateStencil(
         const unsigned int z = p.z;
 
         // current values of ix,iy,it
-        const T cix = img_dx()(1,x,y,z,0);
-        const T ciy = img_dy()(1,x,y,z,0);
+        const T cix = img_dx()(0,x,y,z,1);
+        const T ciy = img_dy()(0,x,y,z,1);
         const T cit = img_dt()(0,x,y,z,0); // (!!) works for temporal _difference_ [+1,-1] only
         const T cik = isU ? cix : ciy;
 

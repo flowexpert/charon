@@ -50,46 +50,43 @@ void SimpleDiff<T>::execute() {
 	if(dx.connected()) {
 		sout << "\t\twrt. dx" << std::endl;
 		dx().assign(img());
-		cimglist_for( img(),kk )
-		cimg_forXY( img()[kk], x, y )
+		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dx().atNXYZC(kk,x,y,0,0) = (   img().atNXYZC(kk,x-2,y,0,0)
-			                           - 8*img().atNXYZC(kk,x-1,y,0,0)
-			                           + 8*img().atNXYZC(kk,x+1,y,0,0)
-			                           -   img().atNXYZC(kk,x+2,y,0,0) ) / 12.0;
+			dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x-2,y,0,c)
+			                          - 8*img().atNXYZC(0,x-1,y,0,c)
+			                          + 8*img().atNXYZC(0,x+1,y,0,c)
+			                          -   img().atNXYZC(0,x+2,y,0,c) ) / 12.0;
 		}
 		cimg_forXY( img()[0], x, y )
 		{
-			dx().atNXYZC(0,x,y,0,0) += dx().atNXYZC(1,x,y,0,0) ;
+			dx().atNXYZC(0,x,y,0,0) += dx().atNXYZC(0,x,y,0,1) ;
 			dx().atNXYZC(0,x,y,0,0) /= 2.0 ;
-			dx().atNXYZC(1,x,y,0,0) = dx().atNXYZC(0,x,y,0,0) ;
+			dx().atNXYZC(0,x,y,0,1) =  dx().atNXYZC(0,x,y,0,0) ;
 		}
 	}
 	if(dy.connected()) {
 		sout << "\t\twrt. dy" << std::endl;
 		dy().assign(img());
-		cimglist_for( img(),kk )
-		cimg_forXY( img()[kk], x, y )
+		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dy().atNXYZC(kk,x,y,0,0) = (   img().atNXYZC(kk,x,y-2,0,0)
-			                           - 8*img().atNXYZC(kk,x,y-1,0,0)
-			                           + 8*img().atNXYZC(kk,x,y+1,0,0)
-			                           -   img().atNXYZC(kk,x,y+2,0,0) ) / 12.0;
+			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x,y-2,0,c)
+			                          - 8*img().atNXYZC(0,x,y-1,0,c)
+			                          + 8*img().atNXYZC(0,x,y+1,0,c)
+			                          -   img().atNXYZC(0,x,y+2,0,c) ) / 12.0;
 		}
 		cimg_forXY( img()[0], x, y )
 		{
-			dy().atNXYZC(0,x,y,0,0) += dy().atNXYZC(1,x,y,0,0) ;
+			dy().atNXYZC(0,x,y,0,0) += dy().atNXYZC(0,x,y,0,1) ;
 			dy().atNXYZC(0,x,y,0,0) /= 2.0 ;
-			dy().atNXYZC(1,x,y,0,0) = dy().atNXYZC(0,x,y,0,0) ;
+			dy().atNXYZC(0,x,y,0,1) =  dy().atNXYZC(0,x,y,0,0) ;
 		}
 	}
 	if(dt.connected()) {
 		sout << "\t\twrt. dt" << std::endl;
 		dt().assign(img());
-		cimglist_for(img(),kk)
-		cimg_forXY( img()[kk], x, y )
+		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dt().atNXYZC(kk,x,y,0,0) = img().atNXYZC(kk+1,x,y,0,0) - img().atNXYZC(kk,x,y,0,0);
+			dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0,x,y,0,1) - img().atNXYZC(0,x,y,0,0);
 		}
 	}
 }
