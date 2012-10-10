@@ -226,6 +226,9 @@ int test() {
 	{	;	}
 	assert(hasThrown) ;
 
+	sample->getMetadata().save("sample.wrp") ;
+	outgen->getMetadata().save("outputgen.wrp") ;
+	
 	delete exceptSample ;
 	delete sample;
 	delete outgen;
@@ -233,15 +236,10 @@ int test() {
 	TypeDetector::destroy();
 
 	// check metadata generation
-#ifdef MSVC
+
 	assert(FileTool::exists("sample.wrp"));
 	assert(FileTool::exists("outputgen.wrp"));
 	testfile.load("sample.wrp");
-#else
-	assert(FileTool::exists("libsample.wrp"));
-	assert(FileTool::exists("liboutputgen.wrp"));
-	testfile.load("libsample.wrp");
-#endif
 
 	// check if input slot flags are correctly written
 	assert(testfile.get<bool>("sample.in2.multi"));

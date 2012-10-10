@@ -30,8 +30,11 @@
 #include <algorithm>
 #include <cassert>
 #include <stdexcept>
-#include "../include/charon-core/ParameteredObject.hxx"
-#include "../include/charon-core/PluginManagerInterface.h"
+#include <charon-core/ParameteredObject.hxx>
+#include <charon-core/SplitStream.h>
+#include <charon-core/StringTool.h>
+#include <charon-core/PluginManagerInterface.h>
+#include <charon-core/DataManagerParameterFile.hxx>
 
 // Instantiate static variables.
 std::map<std::string, unsigned int> ParameteredObject::_genericClassNameCount;
@@ -59,29 +62,38 @@ ParameteredObject::ParameteredObject(const std::string& className,
 		_metadata.set<std::string> (_className + ".outputs");
 	}
         _initialized=false;
+
+	_setDynamic(false);
 }
 
 ParameteredObject::~ParameteredObject() {
-	if (_createMetadata) {
-		_metadata.save(
-#ifdef UNIX
-				"lib" +
-#endif
-						_className + ".wrp");
-	}
         if(_initialized)
             finalize();
+}
+
+const ParameterFile& ParameteredObject::getMetadata() {
+	if (!_createMetadata) {
+		sout << "(WW) requesting metadata, "
+				"but metadata generation was disabled." << std::endl;
+	}
+	return _metadata;
 }
 
 bool ParameteredObject::_addSomething(const std::string& extension,
 		const std::string& name, const std::string& doc,
 		const std::string& type, const std::string& defaultValue) {
+	std::string nameL = name;
+	std::transform(
+		nameL.begin(), nameL.end(), nameL.begin(), (int(*)(int)) tolower);
 
 	// Check that param is not yet registered.
 	// Parameters can only be assigned once!
 	if( _parameters.find(name) != _parameters.end() ||
 		_inputs.find(name) != _inputs.end() ||
-		_outputs.find(name) != _outputs.end()) {
+		_outputs.find(name) != _outputs.end() ||
+		_parameters.find(nameL) != _parameters.end() ||
+		_inputs.find(nameL) != _inputs.end() ||
+		_outputs.find(nameL) != _outputs.end()) {
 		sout << "(EE) ******************************************************\n"
 			 << "(EE) The parameter or slot \"" << name
 			 << "\" has already been defined!\n"
@@ -100,21 +112,16 @@ bool ParameteredObject::_addSomething(const std::string& extension,
 		std::vector<std::string> someList;
 		// get all elements of the given section
 		if (_metadata.isSet(_className + "." + extension)) {
-			someList = _metadata.getList<std::string> (_className + "."
-					+ extension);
+			someList = _metadata.getList<std::string> (
+					_className + "." + extension);
 		}
 
-		std::vector<std::string>::const_iterator found = std::find(
-				someList.begin(), someList.end(), name);
-
-		if (found == someList.end()) {
-			someList.push_back(name);
-			_metadata.set<std::string>(_className+"."+extension, someList);
-			_metadata.set<std::string>(_className+"."+name + ".type", type);
-			_metadata.set<std::string>(_className+"."+name + ".doc", doc);
-			if (defaultValue.length())
-				_metadata.set<std::string> (_className + "." + name,
-						defaultValue);
+		someList.push_back(name);
+		_metadata.set<std::string>(_className+"."+extension, someList);
+		_metadata.set<std::string>(_className+"."+name + ".type", type);
+		_metadata.set<std::string>(_className+"."+name + ".doc", doc);
+		if (defaultValue.length()) {
+			_metadata.set<std::string> (_className + "." + name, defaultValue);
 		}
 	}
 
@@ -194,7 +201,7 @@ void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,
 void ParameteredObject::run() {
 	// avoid duplicate execution
 	if (_executed) {
-		sout << "(II) Skipping reexecution of " << this->getClassName()
+		sout << "(DD) Skipping reexecution of " << this->getClassName()
 			<< " \"" << this->getName() << "\"" << std::endl;
 		return;
 	}
@@ -233,7 +240,9 @@ void ParameteredObject::runPreceeding() const {
 	// run all preceeding objects
 	std::set<ParameteredObject*>::iterator curObj = targetObjects.begin();
 	for (; curObj != targetObjects.end(); curObj++) {
-		(*curObj)->run();
+		if (*curObj) {
+			(*curObj)->run();
+		}
 	}
 }
 
@@ -283,6 +292,10 @@ void ParameteredObject::_commitSlots() {
 }
 
 void ParameteredObject::resetExecuted(bool propagate) {
+	if (_executed) {
+		sout << "(II) resetting execution state of " << getClassName()
+			 << " \"" << getName() << "\"" << std::endl;
+	}
 	_executed = false;
 	if (propagate) {
 		for (std::map<std::string, Slot*>::iterator it = _outputs.begin();
@@ -427,11 +440,8 @@ void ParameteredObject::loadParameters(const ParameterFile& pf) {
 		par->second->load(pf);
 }
 
-void ParameteredObject::_load(const ParameterFile& pf,
-		const PluginManagerInterface* man) {
-	// load parameters
-	loadParameters(pf);
-
+void ParameteredObject::loadSlots(const ParameterFile& pf,
+		const PluginManagerInterface * man) {
 	// load slot connections
 	std::map<std::string, Slot*>::const_iterator slotIter;
 	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++)
@@ -446,91 +456,61 @@ void ParameteredObject::_load(const ParameterFile& pf,
 bool ParameteredObject::connected() const {
 	std::map<std::string, Slot*>::const_iterator slotIter;
 	bool res = true;
-	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++)
-		res = res && (slotIter->second->getOptional()
-				|| slotIter->second->connected());
-	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
-		res = res && (slotIter->second->getOptional()
-				|| slotIter->second->connected());
+	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++) {
+		const Slot* cur = slotIter->second;
+		if (!cur->getOptional() && !cur->connected()) {
+			sout << "(WW) unconnected: " << cur->getParent().getName()
+					<< "." << cur->getName() << std::endl;
+			res = false;
+		}
+	}
+	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++) {
+		const Slot* cur = slotIter->second;
+		if (!cur->getOptional() && !cur->connected()) {
+			sout << "(WW) unconnected: " << cur->getParent().getName()
+					<< "." << cur->getName() << std::endl;
+			res = false;
+		}
+	}
 	return res;
 }
 
-bool ParameteredObject::_connect(ParameteredObject* target,
-		const std::string& ownSlotStr, const std::string& targetSlotStr) {
-	std::map<std::string, Slot*>::const_iterator slotIter;
-	bool ownIsIn; // true if ownSlot is an input slot
-	slotIter = _inputs.find(ownSlotStr);
-	ownIsIn = (slotIter != _inputs.end());
-	if (!ownIsIn) {
-		slotIter = _outputs.find(ownSlotStr);
-		assert(slotIter != _outputs.end());
-	}
-	Slot* ownSlot = slotIter->second;
-
-	if (ownIsIn) {
-		slotIter = target->_outputs.find(targetSlotStr);
-		assert(slotIter != target->_outputs.end());
-	} else {
-		slotIter = target->_inputs.find(targetSlotStr);
-		assert(slotIter != target->_inputs.end());
-	}
-	Slot* targetSlot = slotIter->second;
-
-	// add target slot to target ist of own slot
-	return ownSlot->connect(*targetSlot);
-}
-
-bool ParameteredObject::_disconnect(ParameteredObject* target,
-		const std::string& ownSlotStr, const std::string& targetSlotStr) {
-	std::map<std::string, Slot*>::const_iterator slotIter;
-	bool ownIsIn; // true if ownSlot is an input slot
-	slotIter = _inputs.find(ownSlotStr);
-	ownIsIn = (slotIter != _inputs.end());
-	if (!ownIsIn) {
-		slotIter = _outputs.find(ownSlotStr);
-		assert(slotIter != _outputs.end());
-	}
-	Slot* ownSlot = slotIter->second;
-
-	if (ownIsIn) {
-		slotIter = target->_outputs.find(targetSlotStr);
-		assert(slotIter != target->_outputs.end());
-	} else {
-		slotIter = target->_inputs.find(targetSlotStr);
-		assert(slotIter != target->_inputs.end());
-	}
-	Slot* targetSlot = slotIter->second;
-
-	// remove target slot from target list of own slot
-	return ownSlot->disconnect(*targetSlot);
-}
-
-Slot* ParameteredObject::getSlot(const std::string& slotName) {
-	std::map<std::string, Slot*>::iterator slot;
-	slot = _inputs.find(slotName);
-	if (slot == _inputs.end()) {
-		slot = _outputs.find(slotName);
-		if (slot == _outputs.end())
-			throw std::invalid_argument(
-				std::string("Slot \"") + slotName + "\" in instance \""
-					+ getName() + "\" of plugin \"" + getClassName()
-					+ "\" not found!");
-	}
-	return slot->second;
-}
-
-const Slot* ParameteredObject::getSlot(const std::string& slotName) const {
+Slot* ParameteredObject::getSlot(const std::string& slotName) const {
 	std::map<std::string, Slot*>::const_iterator slot;
+	// try input slot
 	slot = _inputs.find(slotName);
-	if (slot == _inputs.end()) {
-		slot = _outputs.find(slotName);
-		if (slot == _outputs.end())
-			throw std::invalid_argument(
-				std::string("Slot \"") + slotName + "\" in instance \""
-					+ getName() + "\" of plugin \"" + getClassName()
-					+ "\" not found!");
+	if (slot != _inputs.end()) {
+		return slot->second;
 	}
-	return slot->second;
+	// try output slot
+	slot = _outputs.find(slotName);
+	if (slot != _outputs.end()) {
+		return slot->second;
+	}
+
+	// try to fix slot casing
+	// this is more expensive than simple map lookup,
+	// so this is done only if needed
+	std::string slotNameFixed = fixCase(slotName);
+	sout << "(WW) getSlot: wrong slot casing: " << _instanceName
+		 << "." << slotName  << " (fixed: " << slotNameFixed << ")"
+		 << std::endl;
+
+	// try again with fixed name
+	slot = _inputs.find(slotNameFixed);
+	if (slot != _inputs.end()) {
+		return slot->second;
+	}
+	slot = _outputs.find(slotNameFixed);
+	if (slot != _outputs.end()) {
+		return slot->second;
+	}
+
+	// if everything else fails
+	throw std::invalid_argument(
+		std::string("Slot \"") + slotName + "\" in instance \""
+			+ getName() + "\" of plugin \"" + getClassName()
+				+ "\" not found!");
 }
 
 const std::map<std::string, Slot*>&
@@ -553,7 +533,6 @@ void ParameteredObject::setCreateMetadata(bool c) {
 }
 
 bool ParameteredObject::getCreateMetadata() {
-
 	return _createMetadata;
 }
 
@@ -567,6 +546,7 @@ void ParameteredObject::raise(const std::string& message) const
 
 	throw std::runtime_error(msg) ;
 }
+
 
 AbstractParameter & ParameteredObject::getParameter(
 		const std::string & name) const {
@@ -593,10 +573,58 @@ std::string ParameteredObject::templateTypeToString(template_type t) {
 	case ParameteredObject::TYPE_INT:
 		return "int";
 	default:
-		return ParameteredObject::TYPE_DOUBLE;
+		return "double";
 	}
 }
 
+void ParameteredObject::prepareDynamicInterface(const ParameterFile&) {
+}
+
+void ParameteredObject::_setDynamic(bool v) {
+	if (_createMetadata) {
+		_metadata.set(_className + ".isDynamicModule", v);
+	}
+}
+
+bool ParameteredObject::isDynamic() {
+	if (_createMetadata) {
+		return _metadata.get<bool>(_className + ".isDynamicModule", false);
+	}
+	else {
+		sout << "(WW) called isDynamic() without enabled metadata generation"
+			 << std::endl;
+		return false;
+	}
+}
+
+std::string ParameteredObject::fixCase(const std::string& name) const {
+	std::string nameL=name, curL;
+	std::transform(
+		nameL.begin(), nameL.end(), nameL.begin(),(int(*)(int)) tolower);
+	std::set<std::string> names;
+	std::map<std::string, Slot*>::const_iterator sIter;
+	std::map<std::string, AbstractParameter*>::const_iterator pIter;
+	for(sIter=_inputs.begin();sIter!=_inputs.end();sIter++) {
+		names.insert(sIter->first);
+	}
+	for(sIter=_outputs.begin();sIter!=_outputs.end();sIter++) {
+		names.insert(sIter->first);
+	}
+	for(pIter=_parameters.begin();pIter!=_parameters.end();pIter++) {
+		names.insert(pIter->first);
+	}
+	std::set<std::string>::const_iterator nIter;
+	for(nIter=names.begin(); nIter!=names.end(); nIter++) {
+		curL=*nIter;
+		std::transform(
+			curL.begin(),curL.end(), curL.begin(),(int(*)(int)) tolower);
+		if (nameL==curL) {
+			return *nIter;
+		}
+	}
+	raise("Parameter/Slot " + name + " not found!");
+	return std::string();
+}
 void ParameteredObject::initialize() {
 	if(this->_initialized)
 		raise("Plugin is already initialized!");
@@ -607,87 +635,6 @@ void ParameteredObject::finalize() {
 	if(!_initialized)
 		raise("Plugin was not initialied, or has been already finalized");
 	_initialized=false;
-}
-
-void ParameteredObject::_removeInputSlot(std::string name)
-{
-	// remove metadata
-	if (_removeSomething("inputs", name)) {
-		// and remove it from the input slot list
-		if(_inputs.find(name)!=_inputs.end()) {
-			_inputs.erase(name);
-		}
-		if(_metadata.isSet(_className + "." + name+ ".multi")) {
-			_metadata.erase(_className + "." + name+ ".multi");
-		}
-		if(_metadata.isSet(_className + "." + name+ ".optional")) {
-			_metadata.erase(_className + "." + name+ ".optional");
-		}
-	}
-}
-
-bool ParameteredObject::_removeSomething(
-		const std::string &extension, const std::string &name)
-{
-	// Check that param is  registered.
-	// Parameters can only be assigned once!
-	if( _parameters.find(name) == _parameters.end() ||
-		_inputs.find(name) == _inputs.end() ||
-		_outputs.find(name) == _outputs.end()) {
-		sout << "(EE) ******************************************************\n"
-			 << "(EE) The parameter or slot \"" << name
-			 << "\" has not been defined!\n"
-			 << "(EE) Slots and Parameter names must be unique "
-			 << "for each Plugin!\n"
-			 << "(EE) ******************************************************\n"
-			 << std::endl;
-		return false;
-	}
-
-	if (_createMetadata) {
-		std::vector<std::string> someList;
-		// get all elements of the given section
-		if (_metadata.isSet(_className + "." + extension)) {
-			someList = _metadata.getList<std::string> (_className + "."
-					+ extension);
-		}
-		std::vector<std::string>::iterator found = std::find(
-				someList.begin(), someList.end(), name);
-		if (found != someList.end()) {
-			if(_metadata.isSet(_className+"."+name + ".type")) {
-				_metadata.erase(_className+"."+name + ".type");
-			}
-			if(_metadata.isSet(_className+"."+name + ".doc")) {
-				_metadata.erase(_className+"."+name + ".doc");
-			}
-			if(_metadata.isSet(_className + "." + name)) {
-				_metadata.erase(_className + "." + name);
-			}
-			if(_metadata.isSet(_className+"."+extension)) {
-				_metadata.erase(_className+"."+extension);
-			}
-			someList.erase(found);
-			_metadata.set<std::string>(_className+"."+extension, someList);
-		}
-	}
-
-	return true;
-}
-
-void ParameteredObject::_removeOutputSlot(std::string name) {
-	// remove metadata
-	if (_removeSomething("outputs", name)) {
-		// and remove it from the output slot list
-		if(_outputs.find(name)!=_outputs.end()) {
-			_outputs.erase(name);
-		}
-		if(_metadata.isSet(_className + "." + name+ ".multi")) {
-			_metadata.erase(_className + "." + name+ ".multi");
-		}
-		if(_metadata.isSet(_className + "." + name+ ".optional")) {
-			_metadata.erase(_className + "." + name+ ".optional");
-		}
-	}
 }
 
 void ParameteredObject::onLoad(

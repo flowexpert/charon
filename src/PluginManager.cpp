@@ -38,33 +38,24 @@ PluginManager::PluginManager(
 	if(paths.size() == 0) {
 		throw std::invalid_argument("PluginLoader: Empty paths list given!");
 	}
-
-
 	AbstractPluginLoader::pluginPaths = paths;
 	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
 	_initializePluginOnLoad=initializeOnLoad;
-
-
-
 }
-
-
 
 PluginManager::PluginManager(
 			const std::string& path1, const std::string& path2, bool dbg,bool initializeOnLoad) :
 		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
 {
-    std::vector<std::string> paths;
 	if (path2.size() > 0) {
 		// put local path (if any) in front of global path
-                paths.push_back(path2);
+		AbstractPluginLoader::pluginPaths.push_back(path2);
 	}
 	if (path1.size() == 0) {
 		throw std::invalid_argument(
 				"PluginManger: at least one non-emtpy path has to be given!");
 	}
-        paths.push_back(path1);
-	AbstractPluginLoader::pluginPaths=paths;
+	AbstractPluginLoader::pluginPaths.push_back(path1);
 	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
 	_initializePluginOnLoad=initializeOnLoad;
 
@@ -94,10 +85,7 @@ void PluginManager::_unloadAllPlugins() {
 	// destroy instances in reverse execution order
 	std::list<ParameteredObject*> ordered = determineExecutionOrder();
 	while (!ordered.empty()) {
-		//if(!isInternal(ordered.back()))
-		    destroyInstance(ordered.back());
-		//else
-		  //  delete ordered.back();
+		destroyInstance(ordered.back());
 		ordered.pop_back();
 	}
 	// unload plugins
@@ -115,7 +103,8 @@ void PluginManager::_unloadPlugin(PLUGIN_LOADER * loader, bool erase) {
 
 	loader->unload();
 	if (erase) {
-		_loadedPlugins.erase(loader->getName());
+		std::string nameL = StringTool::toLowerCase(loader->getName());
+		_loadedPlugins.erase(nameL);
 	}
 	delete loader;
 }
@@ -134,7 +123,7 @@ void PluginManager::loadPlugin(std::string name)
 		}
 
 		_loadedPlugins[name] = newPlugin;
-		sout << "(II) Plugin \"" << name << "\" loaded successfully."
+		sout << "(DD) Plugin \"" << name << "\" loaded successfully."
 				<< std::endl;
 	} else {
 		throw(AbstractPluginLoader::PluginException(
@@ -146,8 +135,9 @@ void PluginManager::loadPlugin(std::string name)
 
 void PluginManager::unloadPlugin(const std::string & name)
 		throw (AbstractPluginLoader::PluginException) {
-	if (_loadedPlugins.find(name) != _loadedPlugins.end()) {
-		_unloadPlugin(_loadedPlugins[name]);
+	std::string nameL = StringTool::toLowerCase(name);
+	if (_loadedPlugins.find(nameL) != _loadedPlugins.end()) {
+		_unloadPlugin(_loadedPlugins[nameL]);
 	} else {
 		throw(AbstractPluginLoader::PluginException(
 				"There is no Plugin loaded with the name \"" + name + "\".",
@@ -156,7 +146,8 @@ void PluginManager::unloadPlugin(const std::string & name)
 }
 
 bool PluginManager::isLoaded(const std::string & name) const {
-	return _loadedPlugins.find(name) != _loadedPlugins.end();
+	std::string nameL = StringTool::toLowerCase(name);
+	return _loadedPlugins.find(nameL) != _loadedPlugins.end();
 }
 
 size_t PluginManager::getLoadedPluginsCount() const {
@@ -181,13 +172,13 @@ ParameteredObject * PluginManager::getInstance(
 	}
 }
 
-ParameteredObject * PluginManager::createInstance(
-		std::string pluginName, const ParameteredObject::template_type t,
+ParameteredObject* PluginManager::createInstance(
+		std::string pluginName, ParameteredObject::template_type t,
 		const std::string& instanceName)
 		throw (AbstractPluginLoader::PluginException) {
 	pluginName = StringTool::toLowerCase(pluginName);
 	if (instanceName == "" || objects.find(instanceName) == objects.end()) {
-                if (_loadedPlugins.find(pluginName) == _loadedPlugins.end()) {
+		if (_loadedPlugins.find(pluginName) == _loadedPlugins.end()) {
 			try {
 				loadPlugin(pluginName);
 			} catch (AbstractPluginLoader::PluginException e) {
@@ -195,11 +186,11 @@ ParameteredObject * PluginManager::createInstance(
 			}
 		}
 		PLUGIN_LOADER * loader = _loadedPlugins[pluginName];
-		ParameteredObject * newInstance = loader->createInstance(instanceName,
-				t);
+		ParameteredObject * newInstance =
+				loader->createInstance(instanceName, t);
 		_instances[newInstance] = loader;
 		objects[newInstance->getName()] = newInstance;
-		sout << "(II) Created Instance \"" << newInstance->getName()
+		sout << "(DD) Created Instance \"" << newInstance->getName()
 				<< "\" of the plugin \"" << pluginName << "\", type "
 				<< newInstance->getTemplateType() << std::endl;
 		return newInstance;
@@ -240,9 +231,9 @@ void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 	} else {
 	    if(objects.find(toDestroy->getName())!=objects.end())
 	    {
-		objects.erase(toDestroy->getName());
-		delete toDestroy;
-		sout << "(II) Deleted Instance \"" << cur<<std::endl;
+			objects.erase(toDestroy->getName());
+			delete toDestroy;
+			sout << "(II) Deleted Instance \"" << cur<<std::endl;
 	    }
 	    else
 	    {
@@ -251,7 +242,8 @@ void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 				AbstractPluginLoader::PluginException::NO_SUCH_INSTANCE));
 	    }
 	}
-
+	sout << "(DD) Deleted Instance \"" << cur << "\" of the plugin \""
+		<< curPlugin << "\"" << std::endl;
 }
 
 void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
@@ -278,25 +270,28 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 			if (keys[i].substr(keys[i].find_last_of(".") + 1,
 					keys[i].find_first_of(" ")) == "type") {
 				std::string pluginName = paramFile.get<std::string> (keys[i]);
-                                if (!isLoaded(pluginName)) {
-                                        loadPlugin(pluginName);
-                                }
-                                std::string instanceName = keys[i].substr(0,
-                                                keys[i].find_first_of("."));
+				if (!isLoaded(pluginName)) {
+					loadPlugin(pluginName);
+				}
+				std::string instanceName = keys[i].substr(0,
+						keys[i].find_first_of("."));
 
-				ParameteredObject::template_type templateType = _defaultTemplateType;
-                                if (paramFile.isSet(instanceName + ".templatetype")) {
-                                        std::string type = paramFile.get<std::string> (
-                                                instanceName + ".templatetype");
-                                        if (type == "int") {
-                                                templateType = ParameteredObject::TYPE_INT;
-                                        } else if (type == "float") {
-                                                templateType = ParameteredObject::TYPE_FLOAT;
-                                        } else {
-                                                templateType = ParameteredObject::TYPE_DOUBLE;
-                                        }
-                                }
-                                createInstance(pluginName, templateType, instanceName);
+				ParameteredObject::template_type templateType =
+						_defaultTemplateType;
+				if (paramFile.isSet(instanceName + ".templatetype")) {
+					std::string type = paramFile.get<std::string> (
+						instanceName + ".templatetype");
+					if (type == "int") {
+						templateType = ParameteredObject::TYPE_INT;
+					} else if (type == "float") {
+						templateType = ParameteredObject::TYPE_FLOAT;
+					} else {
+						templateType = ParameteredObject::TYPE_DOUBLE;
+					}
+				}
+				ParameteredObject* obj = createInstance(
+					pluginName, templateType, instanceName);
+				obj->prepareDynamicInterface(paramFile);
 			}
 		}
 	} catch (AbstractPluginLoader::PluginException e) {
@@ -311,7 +306,8 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 	std::map<std::string, ParameteredObject*>::const_iterator objIter;
 
 	for (objIter = objects.begin(); objIter != objects.end(); objIter++) {
-		objIter->second->_load(paramFile, this);
+		objIter->second->loadParameters(paramFile);
+		objIter->second->loadSlots(paramFile, this);
 	}
 }
 void PluginManager::loadParameterFile(const std::string & path) {
@@ -351,7 +347,7 @@ ParameteredObject::template_type PluginManager::getDefaultTemplateType() const {
 	return _defaultTemplateType;
 }
 
-void PluginManager::setDefaultTemplateType(const ParameteredObject::template_type t) {
+void PluginManager::setDefaultTemplateType(ParameteredObject::template_type t) {
 	if (t < 3) {
 		_defaultTemplateType = t;
 	}
@@ -371,11 +367,6 @@ void PluginManager::runWorkflow() {
 	}
 
 	for (iter = tPoints.begin(); iter != tPoints.end(); iter++) {
-//            if(isGroup((*iter)))
-//            {
-//                AbstractBaseGroupIntf* grpIntf=dynamic_cast<AbstractBaseGroupIntf*>((*iter));
-//                grpIntf->loadWorkflow(AbstractPluginLoader::pluginPaths);
-//            }
 		(*iter)->run();
 	}
 }
@@ -473,15 +464,36 @@ std::set<std::string> PluginManager::getConnected(
 }
 
 bool PluginManager::connect(Slot& slot1, Slot& slot2) {
-	ParameteredObject* obj1 = &slot1.getParent();
-	ParameteredObject* obj2 = &slot2.getParent();
-	std::string obj1sl = slot1.getName();
-	std::string obj2sl = slot2.getName();
+	ParameteredObject& obj1 = slot1.getParent();
+	ParameteredObject& obj2 = slot2.getParent();
+
+	// check if connection between input and output slot
+	const std::map<std::string, Slot*>& mIn1 = obj1.getInputSlots();
+	const std::map<std::string, Slot*>& mIn2 = obj2.getInputSlots();
+	const std::map<std::string, Slot*>& mOu1 = obj1.getOutputSlots();
+	const std::map<std::string, Slot*>& mOu2 = obj2.getOutputSlots();
+	bool invalid = false;
+
+	if (
+			(mIn1.find(slot1.getName()) == mIn1.end()) &&
+			(mIn2.find(slot2.getName()) == mIn2.end())) {
+		sout << "(WW) attempt to connect output/output" << std::endl;
+		invalid = true;
+	}
+	if (
+			((mOu1.find(slot1.getName()) == mOu1.end()) &&
+			 (mOu2.find(slot2.getName()) == mOu2.end()))) {
+		sout << "(WW) attempt to connect input/input" << std::endl;
+		invalid = true;
+	}
+	if (invalid) {
+		slot1.printWarning("source of invalid connection");
+		slot2.printWarning("target of invalid connection");
+		return false;
+	}
 
 	// connect those objects
-	bool ret = obj1->_connect(obj2, obj1sl, obj2sl);
-	ret = obj2->_connect(obj1, obj2sl, obj1sl) && ret;
-	return ret;
+	return slot1.connect(slot2);
 }
 
 bool PluginManager::connect(Slot * slot1, Slot * slot2) {
@@ -510,22 +522,41 @@ bool PluginManager::connect(
 	assert(objIter != objects.end());
 	ParameteredObject* obj2 = objIter->second;
 
-	// connect those objects
-	bool ret = obj1->_connect(obj2, obj1sl, obj2sl);
-	ret = obj2->_connect(obj1, obj2sl, obj1sl) && ret;
-	return ret;
+	// find the corresponding slots
+	const std::map<std::string, Slot*>& mIn1 = obj1->getInputSlots();
+	const std::map<std::string, Slot*>& mIn2 = obj2->getInputSlots();
+	const std::map<std::string, Slot*>& mOu1 = obj1->getOutputSlots();
+	const std::map<std::string, Slot*>& mOu2 = obj2->getOutputSlots();
+	Slot *slotP1, *slotP2;
+	if (mIn1.find(obj1sl) != mIn1.end()) {
+		slotP1 = mIn1.find(obj1sl)->second;
+		if (mOu2.find(obj2sl) == mOu2.end()) {
+			slotP1->printWarning(
+					"target slot ("+slot2+") not found or no output slot");
+			return false;
+		}
+		slotP2 = mOu2.find(obj2sl)->second;
+	}
+	else if (mOu1.find(obj1sl) != mOu1.end()) {
+		slotP1 = mOu1.find(obj1sl)->second;
+		if (mIn2.find(obj2sl) == mIn2.end()) {
+			slotP1->printWarning(
+					"target slot ("+slot2+") not found or no input slot");
+			return false;
+		}
+		slotP2 = mIn2.find(obj2sl)->second;
+	}
+	else {
+		sout << "(WW) slot not found: " << slot1 << std::endl;
+		return false;
+	}
+
+	// connect those slots
+	return connect(*slotP1,*slotP2);
 }
 
 bool PluginManager::disconnect(Slot& slot1, Slot& slot2) {
-	ParameteredObject* obj1 = &slot1.getParent();
-	ParameteredObject* obj2 = &slot2.getParent();
-	std::string obj1sl = slot1.getName();
-	std::string obj2sl = slot2.getName();
-
-	// disconnect those objects
-	bool ret = obj1->_disconnect(obj2, obj1sl, obj2sl);
-	ret = obj2->_disconnect(obj1, obj2sl, obj1sl) && ret;
-	return ret;
+	return slot1.disconnect(slot2);
 }
 
 bool PluginManager::disconnect(const std::string& slot1,
@@ -550,19 +581,41 @@ bool PluginManager::disconnect(const std::string& slot1,
 	assert(objIter != objects.end());
 	ParameteredObject* obj2 = objIter->second;
 
-	// connect those objects
-	bool ret = obj1->_disconnect(obj2, obj1sl, obj2sl);
-	ret = obj2->_disconnect(obj1, obj2sl, obj1sl) && ret;
-	return ret;
+	// find the corresponding slots
+	const std::map<std::string, Slot*>& mIn1 = obj1->getInputSlots();
+	const std::map<std::string, Slot*>& mIn2 = obj2->getInputSlots();
+	const std::map<std::string, Slot*>& mOu1 = obj1->getOutputSlots();
+	const std::map<std::string, Slot*>& mOu2 = obj2->getOutputSlots();
+	Slot *slotP1, *slotP2;
+	if (mIn1.find(obj1sl) != mIn1.end()) {
+		slotP1 = mIn1.find(obj1sl)->second;
+		if (mOu2.find(obj2sl) == mOu2.end()) {
+			slotP1->printWarning(
+					"target slot ("+slot2+") not found or no output slot");
+			return false;
+		}
+		slotP2 = mOu2.find(obj2sl)->second;
+	}
+	else if (mOu1.find(obj1sl) != mOu1.end()) {
+		slotP1 = mOu1.find(obj1sl)->second;
+		if (mIn2.find(obj2sl) == mIn2.end()) {
+			slotP1->printWarning(
+					"target slot ("+slot2+") not found or no input slot");
+			return false;
+		}
+		slotP2 = mIn2.find(obj2sl)->second;
+	}
+	else {
+		sout << "(WW) slot not found: " << slot1 << std::endl;
+		return false;
+	}
+
+	return disconnect(*slotP1,*slotP2);
 }
 
-void PluginManager::createMetadata(const std::string& targetPath) {
-	// Backup current configuration
-	// (Working directory and metadata creation preference)
-	bool wasEnabled = ParameteredObject::getCreateMetadata();
-	ParameteredObject::setCreateMetadata(true);
-	std::string pathBackup = FileTool::getCurrentDir();
+std::vector<std::string> PluginManager::_excludeList;
 
+void PluginManager::createMetadata(const std::string& targetPath) {
 #ifndef MSVC
 	int start = 3;
 #else
@@ -573,15 +626,15 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 	std::set<std::string> pluginsU;
 
 	// Create metadata for all plugin paths
-
+	std::string pathBackup = FileTool::getCurrentDir();
 	for (std::vector<std::string>::const_iterator cur =
 			AbstractPluginLoader::pluginPaths.begin();
 			cur!=AbstractPluginLoader::pluginPaths.end(); cur++) {
 		FileTool::changeDir(*cur);
 
 		// Fetch list of existing plugins
-		std::vector<std::string> plugins = FileTool::getFilesWithSuffix(
-				PLUGIN_EXTENSION);
+		std::vector<std::string> plugins =
+				FileTool::getFilesWithSuffix(PLUGIN_EXTENSION);
 		std::vector<std::string>::iterator pIterW;
 		for (pIterW=plugins.begin(); pIterW != plugins.end(); pIterW++) {
 			// extract plugin name
@@ -595,52 +648,36 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 		// insert plugin names to plugin name set
 		pluginsU.insert(plugins.begin(),plugins.end());
 	}
+	FileTool::changeDir(pathBackup);
 
-	// Metadata shall be created in the plugin folder
-	if (!targetPath.empty()) {
-		FileTool::changeDir(targetPath);
-	}
-
-	// now generate metadata for all (unique) plugin names
-	// which file is now used is handled by the plugin loader
+	// Now generate metadata for all (unique) plugin names
+	// skipping the names from the exclude list.
+	// Which dll file to use is now handled by the plugin loader.
 	std::set<std::string>::const_iterator pIterU;
 	for (pIterU=pluginsU.begin(); pIterU != pluginsU.end(); pIterU++) {
-		_createMetadataForPlugin(*pIterU);
+		if (std::find(_excludeList.begin(),_excludeList.end(),*pIterU)
+				== _excludeList.end()) {
+			// not in exclude list
+			_generateMetadataForPlugin(*pIterU,targetPath+"/"+*pIterU+".wrp");
+			sout << "(DD) " << std::endl;
+		}
+		else {
+			sout << "(DD) Discarding non-plugin file: "
+				 << *pIterU << "\n(DD) " << std::endl;
+		}
 	}
-
-	// restore former configuration
-	FileTool::changeDir(pathBackup);
-	ParameteredObject::setCreateMetadata(wasEnabled);
 }
 
-void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
+void PluginManager::setExcludeList(const std::vector<std::string>& list) {
+	_excludeList = list;
+}
+
+void PluginManager::_generateMetadataForPlugin(
+		const std::string& pluginName, const std::string& filename) {
 	if (!pluginName.size()) {
 		sout << "(EE) " << __FILE__ << ":" << __LINE__ << "\t"
 			<< "emtpy pluginName given (metadata generation)!\n" << std::endl;
 		return;
-	}
-	static std::vector<std::string> excludeList;
-	if (excludeList.size() == 0) {
-#ifdef _MSC_VER
-		excludeList.push_back("charon-core");
-		excludeList.push_back("msvc");
-		excludeList.push_back("Qt");
-		excludeList.push_back("phonon");
-		excludeList.push_back("libpng");
-		excludeList.push_back("libtiff");
-		excludeList.push_back("zlib");
-		excludeList.push_back("vigraimpex");
-		excludeList.push_back("dll");
-#endif
-	}
-	std::vector<std::string>::const_iterator iter;
-	for(iter = excludeList.begin(); iter != excludeList.end(); iter++) {
-		if (pluginName.find(*iter)!=std::string::npos) {
-			sout << "(II) Discarding non-plugin file \"" << pluginName
-				<< ".dll\" (matched pattern \"*" << *iter
-				<< "*\" of exclude list)\n" << std::endl;
-			return;
-		}
 	}
 	try {
 		bool alreadyLoaded = isLoaded(pluginName);
@@ -648,7 +685,11 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 		if (!alreadyLoaded) {
 			loadPlugin(pluginName);
 		}
-		destroyInstance(createInstance(pluginName));
+		ParameteredObject::setCreateMetadata(true);
+		ParameteredObject* curInst = createInstance(pluginName);
+		curInst->getMetadata().save(filename);
+		destroyInstance(curInst);
+		ParameteredObject::setCreateMetadata(false);
 
 		if (!alreadyLoaded) {
 			unloadPlugin(pluginName);
@@ -661,36 +702,34 @@ void PluginManager::_createMetadataForPlugin(const std::string& pluginName) {
 				<< e.what() << std::endl;
 			break;
 		default:
-			sout << "(EE) Exception during metadata generation of \""
+			sout << "(EE) Could not generate metadata for module \""
 				<< e.getPluginName()
 				<< "\":\n(EE) \t"
 				<< e.what() << std::endl;
 			break;
 		}
 	}
-	sout << std::endl;
 }
 
 void PluginManager::reset() {
 	_unloadAllPlugins();
 	_defaultTemplateType = ParameteredObject::TYPE_DOUBLE;
-
 }
 
 std::list<ParameteredObject*> PluginManager::_determineTargetPoints() {
 	std::list<ParameteredObject*> targetPoints;
 	std::map<std::string, ParameteredObject *>::const_iterator it;
 	for (it = objects.begin(); it != objects.end(); it++) {
-		bool hasChildren = false;
+		bool connected = false;
 		std::map<std::string, Slot *> outputslots =
 				it->second->getOutputSlots();
 		std::map<std::string, Slot *>::const_iterator slotIter;
-		for (slotIter = outputslots.begin(); !hasChildren && slotIter
+		for (slotIter = outputslots.begin(); !connected && slotIter
 				!= outputslots.end(); slotIter++) {
-			hasChildren = slotIter->second->connected();
+			connected = slotIter->second->connected();
 		}
-		if (!hasChildren) {
-			sout << "(II) Found target point \"" << it->second->getName()
+		if (!connected) {
+			sout << "(DD) Found target point \"" << it->second->getName()
 					<< "\"" << std::endl;
 			targetPoints.push_back(it->second);
 		}
@@ -726,8 +765,8 @@ std::list<ParameteredObject*> PluginManager::determineExecutionOrder() {
 	std::list<ParameteredObject*>::iterator iEnd = finished.end();
 	std::list<ParameteredObject*>::iterator iter = iBegin;
 	while (iter != iEnd) {
-		const ParameteredObject* curIt = *iter;
-		iEnd = std::remove(++iter, iEnd, curIt);
+		const ParameteredObject* curObj = *iter;
+		iEnd = std::remove(++iter, iEnd, curObj);
 	}
 
 	// remove tail that may contain bogus elements
@@ -793,3 +832,112 @@ void PluginManager::resetExecuted()
 
 
 
+
+void PluginManager::createDynamicMetadata(const ParameterFile& paramFile,
+	const std::string& filePrefix) {
+
+	// Determine default template type
+	if (paramFile.isSet("global.templatetype")) {
+		std::string templateType = paramFile.get<std::string> (
+				"global.templatetype");
+		if (templateType == "int") {
+			_defaultTemplateType = ParameteredObject::TYPE_INT;
+		} else if (templateType == "float") {
+			_defaultTemplateType = ParameteredObject::TYPE_FLOAT;
+		} else {
+			_defaultTemplateType = ParameteredObject::TYPE_DOUBLE;
+		}
+	}
+
+	std::vector<std::string> keys = paramFile.getKeyList();
+
+	ParameteredObject::setCreateMetadata(true);
+	try {
+		// Load Plugins and create _instances
+		for (unsigned int i = 0; i < keys.size(); i++) {
+			if (keys[i].substr(keys[i].find_last_of(".") + 1,
+					keys[i].find_first_of(" ")) == "type") {
+				std::string pluginName = paramFile.get<std::string> (keys[i]);
+				bool alreadyLoaded = isLoaded(pluginName);
+				if (!alreadyLoaded) {
+					loadPlugin(pluginName);
+				}
+				std::string instanceName = keys[i].substr(0,
+						keys[i].find_first_of("."));
+
+				ParameteredObject* obj = createInstance(
+					pluginName, instanceName);
+				if (obj->isDynamic()) {
+					obj->prepareDynamicInterface(paramFile);
+					std::string targetFileName =
+							filePrefix + "_" + instanceName + ".wrp";
+					sout << "(DD) saving dynamic metadata for module  to "
+						<< targetFileName << std::endl;
+					obj->getMetadata().save(targetFileName);
+				}
+				destroyInstance(obj);
+				if (!alreadyLoaded) {
+					unloadPlugin(pluginName);
+				}
+			}
+		}
+	} catch (AbstractPluginLoader::PluginException e) {
+		sout << "(EE) Error during load: " << e.what() << std::endl;
+	} catch (std::string s) {
+		sout << "(EE) Error during load: " << s << std::endl;
+	} catch (...) {
+		sout << "(EE) caught unknown exception during load" << std::endl;
+	}
+	sout << std::endl;
+
+	ParameteredObject::setCreateMetadata(false);
+}
+
+void PluginManager::createDynamicMetadata(const std::string& paramFile,
+	const std::string& filePrefix) {
+
+		createDynamicMetadata(ParameterFile(paramFile), filePrefix);
+}
+
+void PluginManager::createDynamicMetadata(const std::string& pluginName,
+		const ParameterFile& paramFile, const std::string& fileName) {
+
+	if (!pluginName.size()) {
+		sout << "(EE) " << __FILE__ << ":" << __LINE__ << "\t"
+			<< "emtpy pluginName given (dynamic metadata generation)!\n"
+				<< std::endl;
+		return;
+	}
+	try {
+		bool alreadyLoaded = isLoaded(pluginName);
+		if (!alreadyLoaded) {
+			loadPlugin(pluginName);
+		}
+
+		ParameteredObject::setCreateMetadata(true);
+		ParameteredObject* obj = createInstance(pluginName);
+		obj->prepareDynamicInterface(paramFile);
+		obj->getMetadata().save(fileName);
+		destroyInstance(obj);
+		ParameteredObject::setCreateMetadata(false);
+
+		if (!alreadyLoaded) {
+			unloadPlugin(pluginName);
+		}
+	} catch (const AbstractPluginLoader::PluginException& e) {
+		switch(e.getErrorCode()) {
+		case AbstractPluginLoader::PluginException::INVALID_PLUGIN_FORMAT:
+			sout << "(WW) \"" << e.getPluginName()
+				<< "\" is no charon plugin:\n(WW) \t"
+				<< e.what() << std::endl;
+			break;
+		default:
+			sout << "(EE) Exception during (dynamic) metadata generation of \""
+				<< e.getPluginName()
+				<< "\":\n(EE) \t"
+				<< e.what() << std::endl;
+			break;
+		}
+	}
+	sout << std::endl;
+}

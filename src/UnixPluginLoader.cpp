@@ -48,7 +48,7 @@ void UnixPluginLoader::load() throw (PluginException) {
 			}
 		}
 		if (FileTool::exists(path)) {
-			sout << "(II) Loading " << path << std::endl;
+			sout << "(DD) File: " << path << std::endl;
 			libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 			break;
 		}
@@ -57,9 +57,11 @@ void UnixPluginLoader::load() throw (PluginException) {
 		if (!FileTool::exists(path)) {
 			throw PluginException("Failed to load the plugin \"" + pluginName
 					+ "\". The file lib" + pluginName + LIBRARY_EXTENSION +
-					+ " could not be found. (Possible suffix: " + libSuffix
-					+ ")\nDescription of the error:\n"
-					+ dlerror(), pluginName, PluginException::FILE_NOT_FOUND);
+					+ " could not be found."
+					+ (libSuffix.size() > 0 ?
+							" (Possible suffix: " + libSuffix + ")" :
+							" (suffix disabled)"),
+					pluginName, PluginException::FILE_NOT_FOUND);
 		} else {
 			throw PluginException("Failed to load the plugin \"" + pluginName
 					+ "\". Maybe the file is damaged."
@@ -102,14 +104,17 @@ void UnixPluginLoader::unload() throw (PluginException) {
 	if (libHandle) {
 		dlclose(libHandle);
 		if (dlerror()) {
-			throw PluginException("Error unloading plugin \"" + pluginName
-					+ "\". Description of the error:\n" + dlerror(),
-					pluginName, PluginException::PLUGIN_NOT_LOADED);
+			std::ostringstream msgs;
+			msgs << "Error unloading plugin \"" << pluginName
+				<< "\". Description of the error: " << dlerror();
+			std::string msg = msgs.str();
+			throw PluginException(
+				msg, pluginName, PluginException::PLUGIN_NOT_LOADED);
 		}
 		libHandle = NULL;
 		create = NULL;
 		destroy = NULL;
-		sout << "(II) Successfully unloaded plugin \"" << pluginName << "\"."
+		sout << "(DD) Successfully unloaded plugin \"" << pluginName << "\"."
 				<< std::endl;
 	} else {
 		throw PluginException("Plugin \"" + pluginName + "\" is not loaded.",

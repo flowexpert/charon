@@ -19,7 +19,11 @@
  *  \date 11.01.2011
  */
 
-#include "../include/charon-core/Slots.hxx"
+#include <cassert>
+#include <charon-core/ParameterFile.h>
+#include <charon-core/StringTool.h>
+#include <charon-core/SplitStream.h>
+#include <charon-core/Slots.hxx>
 
 // ==========================   class Slot   ================================
 
@@ -65,11 +69,11 @@ bool Slot::getOptional() const {
 	return _optional;
 }
 
-bool Slot::connected() {
+bool Slot::connected() const {
 	return (getTargets().size() > 0);
 }
 
-bool Slot::connected(Slot& target) {
+bool Slot::connected(Slot& target) const {
 	std::set<Slot *> targets = getTargets();
 	return (targets.find(&target) != targets.end());
 }

@@ -1,19 +1,19 @@
 /*  Copyright (C) 2009 Jens-Malte Gottfried
 
-    This file is part of Charon.
-    
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This file is part of Charon.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file   parameterfiletest.cpp
  *  @brief  Unit tests for ParameterFile class.
@@ -21,115 +21,160 @@
  *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
-#include <cstdlib>
 #include <charon-core/ParameterFile.hxx>
+#include <charon-core/ExceptionHandler.h>
 
 /// Test application for class ParameterFile.
-int main(){
-    try{
-        sout.assign(std::cout);
-        ParameterFile* paramtest = new ParameterFile();
+int test() {
+	sout.assign(std::cout);
+	ParameterFile* paramtest = new ParameterFile();
 
-        // test setting and getting of values
-        paramtest->set("param1", "value1 test");
-        paramtest->set("param2", 10);
-        std::string	val1 = paramtest->get<std::string>("param1");
-        int			val2 = paramtest->get<int>("param2");
-        sout << "val1 = " << val1 << std::endl;
-        sout << "val2 = " << val2 << std::endl;
-        if((val1 != "value1 test") || (val2 != 10))
-            throw std::string("Values do not match!");
+	// test setting and getting of values
+	paramtest->set("param1", "value1 test");
+	paramtest->set("param2", 10);
+	std::string	val1 = paramtest->get<std::string>("param1");
+	int			val2 = paramtest->get<int>("param2");
+	sout << "val1 = " << val1 << std::endl;
+	sout << "val2 = " << val2 << std::endl;
+	if((val1 != "value1 test") || (val2 != 10))
+		throw "Values do not match!";
 
-        // modification
-        paramtest->set("param2", 15);
-        val2 = paramtest->get<int>("param2");
-        sout << "val2 = " << val2 << std::endl;
-        if (val2 != 15)
-            throw std::string("Failure loading modified value!");
+	// modification
+	paramtest->set("param2", 15);
+	val2 = paramtest->get<int>("param2");
+	sout << "val2 = " << val2 << std::endl;
+	if (val2 != 15)
+		throw "Failure loading modified value!";
 
-        // information about set/modified parameters
-        sout << "Output from showSetParams():" << std::endl;
-        paramtest->showSetParams ();
-        sout << "Size: " << paramtest->getKeyList().size() << std::endl;
-        if(paramtest->getKeyList().size() != 2)
-            throw std::string("Failure loading KeyList!");
+	// information about set/modified parameters
+	sout << "Output from showSetParams():" << std::endl;
+	paramtest->showSetParams ();
+	sout << "Size: " << paramtest->getKeyList().size() << std::endl;
+	if(paramtest->getKeyList().size() != 2)
+		throw "Failure loading KeyList!";
 
-        // test save and reload
-        sout << "Saving to file \"test.txt\"." << std::endl;
-        paramtest->save("test.txt");
-        delete paramtest;
+	// test save and reload
+	sout << "Saving to file \"test.txt\"." << std::endl;
+	paramtest->save("test.txt");
+	delete paramtest;
 
-        sout << "Reloading file" << std::endl;
-        paramtest = new ParameterFile("test.txt");
+	sout << "Reloading file" << std::endl;
+	paramtest = new ParameterFile("test.txt");
 
-        sout << "Checking values..." << std::flush;
-        val1 = paramtest->get<std::string>("param1");
-        val2 = paramtest->get<int>("param2");
-        if((val1 != "value1 test") || (val2 != 15))
-            throw std::string("reloaded values do not match!");
-        sout << "ok" << std::endl;
+	sout << "Checking values..." << std::flush;
+	val1 = paramtest->get<std::string>("param1");
+	val2 = paramtest->get<int>("param2");
+	if((val1 != "value1 test") || (val2 != 15))
+		throw "reloaded values do not match!";
+	sout << "ok" << std::endl;
 
-        // test value deletion
-        sout << "deleting param1..." << std::flush;
-        paramtest->erase("param1");
-        if(paramtest->isSet("param1"))
-            throw std::string("deleted value still set!");
-        if(paramtest->getKeyList().size() != 1)
-            throw std::string("length is not 1!");
-        sout << "ok" << std::endl;
+	// test value deletion
+	sout << "deleting param1..." << std::flush;
+	paramtest->erase("param1");
+	if(paramtest->isSet("param1"))
+		throw "deleted value still set!";
+	if(paramtest->getKeyList().size() != 1)
+		throw "length is not 1!";
+	sout << "ok" << std::endl;
 
-        sout << "deleting param2..." << std::flush;
-        paramtest->erase("param2");
-        if(paramtest->isSet("param2"))
-            throw std::string("deleted value still set!");
-        if(paramtest->getKeyList().size() != 0)
-            throw std::string("length is not 0!");
-        sout << "ok" << std::endl;
+	sout << "deleting param2..." << std::flush;
+	paramtest->erase("param2");
+	if(paramtest->isSet("param2"))
+		throw "deleted value still set!";
+	if(paramtest->getKeyList().size() != 0)
+		throw "length is not 0!";
+	sout << "ok" << std::endl;
 
-        sout << "checking exceptions..." << std::flush;
-        bool fail = true;
-        try {
-            val1 = paramtest->get<std::string>("param1");
-        }
-		catch(const ParameterFile::Unset&) {
-			fail = false;
-        }
-        if (fail)
-            throw std::string("no exception from get caught!");
+	sout << "checking mixedCase..." << std::flush;
+	paramtest->set<std::string>("parMix","blah");
+	if (paramtest->get<std::string>("pArMiX") != "blah") {
+		throw "failed to get parameter case insensitive";
+	}
+	paramtest->set<std::string>("pArMix","blubb");
+	if (paramtest->get<std::string>("paRMix") != "blubb") {
+		throw "failed to get parameter case insensitive";
+	}
+	paramtest->erase("PaRmIx");
+	if(paramtest->getKeyList().size() != 0)
+		throw "length is not 0!";
+	sout << "ok" << std::endl;
+	sout << "Output from showSetParams():" << std::endl;
+	paramtest->showSetParams ();
 
-        fail = true;
-        try {
-            paramtest->erase("param2");
-        }
-		catch(const ParameterFile::Unset&) {
-			fail = false;
-        }
-        if (fail)
-            throw std::string("no exception from erase caught!");
+	sout << "checking exceptions..." << std::flush;
+	bool fail = true;
+	try {
+		val1 = paramtest->get<std::string>("param1");
+	}
+	catch(const ParameterFile::Unset&) {
+		fail = false;
+	}
+	if (fail)
+		throw "no exception from get caught!";
 
-        fail = true;
-        try {
-            paramtest->getList<float>("bla");
-        }
-		catch(const ParameterFile::Unset&) {
-			fail = false;
-        }
-        if (fail)
-            throw std::string("no exception from getList caught!");
+	fail = true;
+	try {
+		paramtest->erase("param2");
+	}
+	catch(const ParameterFile::Unset&) {
+		fail = false;
+	}
+	if (fail)
+		throw "no exception from erase caught!";
 
-        sout << "ok" << std::endl;
-        delete paramtest;
-    }
-    catch(std::string message) {
-        std::cerr << "\n\nFailure:" << std::endl;
-        std::cerr << message << std::endl;
-        return EXIT_FAILURE;
-    }
-    catch(...) {
-        std::cerr << "Unhandled exception!" << std::endl;
-        return EXIT_FAILURE;
-    }
+	fail = true;
+	try {
+		paramtest->getList<float>("bla");
+	}
+	catch(const ParameterFile::Unset&) {
+		fail = false;
+	}
+	if (fail)
+		throw "no exception from getList caught!";
 
-    // Tests passed
-    return EXIT_SUCCESS;
+	sout << "ok" << std::endl;
+	delete paramtest;
+
+	sout << "loading prepared parameter file..." << std::flush;
+	paramtest = new ParameterFile(TEST_WRP_FILE);
+	if (paramtest->getKeyList().size() != 8) {
+		throw "lenght mismatch in loaded file";
+	}
+	sout << "ok" << std::endl;
+	sout << "Output from showSetParams():" << std::endl;
+	paramtest->showSetParams ();
+
+	sout << "checking content..." << std::flush;
+	if (paramtest->get<std::string>("param1") != "test") {
+		throw "param1 failed";
+	}
+	if (paramtest->get<std::string>("param2") != "test2") {
+		throw "param2 failed";
+	}
+	if (paramtest->get<std::string>("param3") != "value3") {
+		throw "param3 failed";
+	}
+	if (paramtest->get<int>("param4") != 10) {
+		throw "param4 failed";
+	}
+	if (paramtest->getList<float>("param5")[2] != 7) {
+		throw "param5 failed";
+	}
+	if (paramtest->get<std::string>("param6") != "value1;value2;value3") {
+		throw "param6 failed";
+	}
+	if (paramtest->get<int>("mixedCaseParam") != 5) {
+		throw "mixedCaseParam failed";
+	}
+	if (paramtest->get<std::string>("paramEmpty") != "") {
+		throw "paramEmpty failed";
+	}
+	sout << "ok" << std::endl;
+
+	return 0;
+}
+
+/// main routine
+int main() {
+	return ExceptionHandler::run(test);
 }

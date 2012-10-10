@@ -19,7 +19,7 @@
  *
  *  @date 24.08.2009
  */
-#include "../include/charon-core/AbstractPluginLoader.h"
+#include <charon-core/AbstractPluginLoader.h>
 
 AbstractPluginLoader::AbstractPluginLoader(const std::string & n) :
 	pluginName(StringTool::toLowerCase(n)) {
@@ -32,7 +32,9 @@ const std::string& AbstractPluginLoader::getName() const {
 }
 
 ParameteredObject * AbstractPluginLoader::createInstance(
-		const std::string & name, ParameteredObject::template_type t) throw (PluginException) {
+		const std::string & name, ParameteredObject::template_type t)
+		throw (PluginException)
+{
 	if (create) {
 		return create(name, t);
 	} else {

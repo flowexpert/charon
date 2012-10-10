@@ -36,42 +36,8 @@
 
 #include "ParameteredObject.h"
 #include "TypeDetector.h"
+#include <sstream>
 #include <set>
-
-
-// ====================   class AbstractParameter   =========================
-
-inline AbstractParameter::AbstractParameter() :
-	_parent(0) {
-}
-
-inline void AbstractParameter::init(ParameteredObject* parent,
-		const std::string& name) {
-	if(_parent)
-		throw std::string("Parameter already assigned");
-	if(!parent)
-		throw std::string("Setting invalid parent object!");
-	if(!name.length())
-		throw std::string("Invalid name: length 0");
-
-	_parent = parent;
-	_name   = name;
-}
-
-inline AbstractParameter::~AbstractParameter() {
-}
-
-inline ParameteredObject& AbstractParameter::getParent() {
-	return *_parent;
-}
-
-inline const ParameteredObject& AbstractParameter::getParent() const {
-	return *_parent;
-}
-
-inline std::string AbstractParameter::getName() const {
-	return _name;
-}
 
 // =========================   class Parameter   ============================
 

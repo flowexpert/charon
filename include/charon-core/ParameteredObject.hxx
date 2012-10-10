@@ -29,6 +29,7 @@
 #define _PARAMETERED_OBJECT_HXX_
 
 #include "ParameteredObject.h"
+#include "ParameterFile.hxx"
 #include "Parameter.hxx"
 #include "Slots.hxx"
 

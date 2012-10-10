@@ -165,15 +165,18 @@ private:
 	 */
 	void _unloadPlugin(PLUGIN_LOADER * p, bool erase = true);
 
-	/**
-	 * Creates metadata information for a specific plugin.
-	 * Loads the plugin (if not already loaded), creates an instance of the
-	 * plugin and destroys it immediately. If the plugin was not already loaded,
-	 * unloads the plugin afterwards.
-	 *
-	 * @param pluginName Name of the plugin (without prefix or extension)
+	/// Creates metadata information for a specific plugin.
+	/** Loads the plugin (if not already loaded), creates an instance of the
+	 *  plugin and destroys it immediately.
+	 *  If the plugin was not already loaded, unloads the plugin afterwards.
+	 *  The metadata information is stored in a parameter text file
+	 *  called "${targetPath}/${pluginName}.wrp"
+	 *  \param pluginName Name of the plugin (without prefix or extension)
+	 *  \param filename   Path to a file to store the metadata info
 	 */
-	void _createMetadataForPlugin(const std::string& pluginName);
+	void _generateMetadataForPlugin(
+		const std::string& pluginName,
+		const std::string& filename);
 
 	/// Look for execution target points
 	/** Iterates through the currently existing instances and looks for target
@@ -201,6 +204,9 @@ private:
 	void _getConnected(std::set<std::string>& visited, const std::set<
 			std::string>& cur, const ParameterFile& pf) const;
 	// @}
+
+	/// exclude list for metadata generation
+	static std::vector<std::string> _excludeList;
 
 public:
 	/// default lib suffix
@@ -257,22 +263,25 @@ public:
 	void loadPlugin(std::string name)
 			throw (AbstractPluginLoader::PluginException);
 
-	/// Unloads a plugin.
-	/** @warning All instances of the plugin become obsolete and will be deleted
-	 *  therefore.
+	/**
+	 * Unloads a plugin.
+	 * @warning All instances of the plugin become obsolete and will be deleted
+	 * therefore.
 	 *
-	 *  @see loadPlugin(const std::string &)
-	 *  @see AbstractPluginLoader::unload()
-	 *  @see UnixPluginLoader::unload()
-	 *  @see WindowsPluginLoader::unload()
-	 *  @param name Name of the plugin
+	 * @see loadPlugin(const std::string &)
+	 * @see AbstractPluginLoader::unload()
+	 * @see UnixPluginLoader::unload()
+	 * @see WindowsPluginLoader::unload()
+	 * @param name Name of the plugin
 	 */
 	void unloadPlugin(const std::string & name)
 			throw (AbstractPluginLoader::PluginException);
 
-	/// Checks if a plugin is loaded
-	/** @param name name of the plugin
-	 *  @return true if the plugin is loaded
+	/**
+	 * Checks if a plugin is loaded
+	 *
+	 * @param name name of the plugin
+	 * @return true if the plugin is loaded
 	 */
 	bool isLoaded(const std::string & name) const;
 
@@ -319,8 +328,10 @@ public:
 	 * @param instanceName Name of the instance
 	 * @return Pointer to a new instance
 	 */
-	ParameteredObject* createInstance(std::string pluginName,
-			const ParameteredObject::template_type t, const std::string& instanceName = "")
+	ParameteredObject* createInstance(
+		std::string pluginName,
+		ParameteredObject::template_type t,
+		const std::string& instanceName = "")
 			throw (AbstractPluginLoader::PluginException);
 
 	/**
@@ -372,7 +383,7 @@ public:
 	 * @param pf ParameterFile to load from
 	 * @return Map linking the instance names to the created instances
 	 */
-	void loadParameterFile(const ParameterFile& pf);
+	void loadParameterFile(const ParameterFile & pf);
 
 	/**
 	 * Same method, but loads a ParameterFile from the given path.
@@ -380,7 +391,7 @@ public:
 	 * @param path Path to the parameter file
 	 * @return Map linking the instance names to the created instances
 	 */
-	void loadParameterFile(const std::string& path);
+	void loadParameterFile(const std::string & path);
 
 	/**
 	 * Save content of all currently loaded instances to the given
@@ -404,12 +415,13 @@ public:
 	 * are created using this template type. Initially, the value is set to
 	 * ParameteredObject::TYPE_DOUBLE.
 	 *
+	 *
 	 * @param t New default template type
 	 *          - ParameteredObject::TYPE_DOUBLE for a double type
 	 *          - ParameteredObject::TYPE_FLOAT for a float type
 	 *          - ParameteredObject::TYPE_INT for an integer type
 	 */
-	void setDefaultTemplateType(const ParameteredObject::template_type t);
+	void setDefaultTemplateType(ParameteredObject::template_type t);
 
 	/**
 	 * Returns the current default template type property. Initially, it is set
@@ -429,16 +441,13 @@ public:
 	 */
 	void runWorkflow();
 
-	/// Calls executeGroup()
-	virtual void execute() {
-		runWorkflow();
-	}
-
-	/// deprectated, use runWorkflow instead
+	/// for compatibility, use runWorkflow instead
 	charon_DEPRECATED void executeWorkflow() {
 		runWorkflow();
 	}
 
+	/// set exclude list
+	static void setExcludeList(const std::vector<std::string>& list);
 	/// Resets this PluginManager instance to its initial state.
 	/** Unloads all plugins, resets defaultTemplateType parameter
 	 *  and deletes target points.
@@ -457,6 +466,44 @@ public:
 	 *                   plugin path if empty.
 	 */
 	void createMetadata(const std::string & targetPath = "");
+
+	/**
+	 * Creates metadata of all dynamic plugins in given parameter file.
+	 * FilePrefix should be some/file_prefix instead of some/file_prefix.wrp
+	 * since this method writes the metadata into
+	 * some/file_prefix_instance_name.wrp
+	 *
+	 * @param paramFile   ParameterFile containing parameters for plugin
+	 * @param filePrefix  File prefix to determine save file names
+	 */
+	void createDynamicMetadata(const ParameterFile& paramFile,
+		const std::string& filePrefix);
+
+	/**
+	 *  Same method, but loads a ParameterFile from the given path.
+	 *
+	 *  @param paramFile   path to ParameterFile
+	 *  @param filePrefix  File prefix to determine save file names
+	 */
+	void createDynamicMetadata(const std::string& paramFile,
+		const std::string& filePrefix);
+
+	/**
+	 * Creates metadata of dynamic plugin based on parameter file
+	 *
+	 * @param pluginName  Name of dynamic plugin
+	 * @param paramFile   ParameterFile containing parameters for plugin
+	 * @param fileName    File in which to save metadata
+	 */
+	void createDynamicMetadata(const std::string& pluginName,
+		const ParameterFile& paramFile, const std::string& fileName);
+
+	/**
+	 * Resets this PluginManager instance to its initial state.
+	 * Unloads all plugins, resets defaultTemplateType parameter and deletes
+	 * target points.
+	 */
+	void reset();
 
 	/**
 	 * Deletes all existing instances of any loaded plugin and then unloads all

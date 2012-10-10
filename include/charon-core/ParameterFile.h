@@ -21,8 +21,8 @@
  *  @author <a href="mailto:bc002@ix.urz.uni-heidelberg.de">
  *     Cornelius Ratsch</a>
  *
- *  Original file written by Daniel Kondermann, modified by Jens-Malte
- *  Gottfried.
+ *  Original file written by Daniel Kondermann,
+ *      modified by Jens-Malte Gottfried et al.
  *
  *  @date 23.05.2009
  *
@@ -142,11 +142,13 @@ public:
 	/// get parameter component of a full name
 	/// @param  fullName    full name descriptor (e.g. "obj1.par1")
 	/// @return             parameter name part  (e.g. "par1")
+	charon_DEPRECATED
 	static std::string parName(std::string fullName);
 
 	/// get object name component of a full name
 	/// @param  fullName    full name descriptor (e.g. "obj1.par1")
 	/// @return             object name part     (e.g. "obj1")
+	charon_DEPRECATED
 	static std::string objName(std::string fullName);
 
 	/// Change property delimiter
@@ -226,6 +228,7 @@ public:
 	 *                     This vector has the same sorting
 	 *                     as the lines in the textfile.
 	 */
+	charon_DEPRECATED
 	std::vector<std::string> getEveryParameter(const std::string& param) const;
 
 	/// Print a list of all set parameters to sout.

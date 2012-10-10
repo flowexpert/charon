@@ -18,14 +18,16 @@ IF(BUILD_TESTING)
 	LIST(APPEND testTargets streamtest)
 
 	# tests for ParameterFile
-	ADD_EXECUTABLE(paramtest parameterfiletest.cpp)
-	TARGET_LINK_LIBRARIES(paramtest charon-core)
+	ADD_DEFINITIONS(
+		-DTEST_WRP_FILE="${CMAKE_CURRENT_SOURCE_DIR}/parameterfiletest.wrp")
+	ADD_EXECUTABLE(parameterfiletest parameterfiletest.cpp)
+	TARGET_LINK_LIBRARIES(parameterfiletest charon-core charon-plugins)
 	ADD_TEST(
 		NAME ParameterFile
-		COMMAND paramtest
+		COMMAND parameterfiletest
 	)
 	LIST(APPEND tests ParameterFile)
-	LIST(APPEND testTargets paramtest)
+	LIST(APPEND testTargets parameterfiletest)
 
 	# tests for ParameteredObject etc.
 	ADD_EXECUTABLE(parametertest parametertest.cpp)
@@ -36,6 +38,16 @@ IF(BUILD_TESTING)
 	)
 	LIST(APPEND tests ParameterTest)
 	LIST(APPEND testTargets parametertest)
+
+	# tests for name casing
+	ADD_EXECUTABLE(casetest namecasing.cpp)
+	TARGET_LINK_LIBRARIES(casetest charon-core charon-plugins)
+	ADD_TEST(
+		NAME NameCasing
+		COMMAND casetest
+	)
+	LIST(APPEND tests NameCasing)
+	LIST(APPEND testTargets casetest)
 
 	# tests for input/output slot data passing
 	ADD_EXECUTABLE(datapasstest dataPassing.cpp)
@@ -57,9 +69,16 @@ IF(BUILD_TESTING)
 	LIST(APPEND tests ParameterRef)
 	LIST(APPEND testTargets paramreftest)
 
-	# dummy test module for PluginManager tests
+	# dummy test modules for PluginManager tests
 	ADD_LIBRARY(dummymodule SHARED DummyModule.cpp)
 	TARGET_LINK_LIBRARIES(dummymodule charon-core)
+	ADD_LIBRARY(dynamicdummymodule SHARED DynamicDummyModule.cpp)
+	TARGET_LINK_LIBRARIES(dynamicdummymodule charon-core)
+	ADD_LIBRARY(caseddummy SHARED CasedDummy.cpp)
+	TARGET_LINK_LIBRARIES(caseddummy charon-core)
+	LIST(APPEND testTargets dummymodule dynamicdummymodule caseddummy)
+	
+	# locate module directory
 	GET_TARGET_PROPERTY(DUMMY_LOC dummymodule LOCATION)
 	GET_FILENAME_COMPONENT(MODULE_DIR "${DUMMY_LOC}" PATH)
 	ADD_DEFINITIONS(-DMODULE_DIR="${MODULE_DIR}")
@@ -73,6 +92,17 @@ IF(BUILD_TESTING)
 	)
 	LIST(APPEND tests ExecutionOrder_TopoSort)
 	LIST(APPEND testTargets toposorttest)
+
+	# tests for DynamicModules
+	ADD_EXECUTABLE(dynamictest dynamictest.cpp)
+	TARGET_LINK_LIBRARIES(dynamictest charon-core charon-plugins)
+	ADD_TEST(
+		NAME DynamicModuleTest
+		COMMAND dynamictest
+	)
+	LIST(APPEND tests DynamicModuleTest)
+	LIST(APPEND testTargets dynamictest)
+
 
 
 	# tests for virtual slot data passing
@@ -98,7 +128,4 @@ IF(BUILD_TESTING)
 	# add test labels for dashboard submission
 	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS charon-core)
 	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon-core Tests")
-
-
-
 ENDIF(BUILD_TESTING)

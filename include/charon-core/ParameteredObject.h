@@ -40,17 +40,12 @@
 #define _ParameteredObject_H
 
 #include <set>
-#include "ParameterFile.hxx"
+#include "ParameterFile.h"
 #include "Parameter.h"
 #include "Slots.h"
 #include "DllEx.h"
 
-
-
 class PluginManagerInterface;
-template<typename T>
-class TemplatedParameteredObject;
-
 
 /// Base class for serializable objects
 /** This is the base class for objects that should be able to save and
@@ -66,17 +61,6 @@ class TemplatedParameteredObject;
  */
 
 class charon_core_DLL_PUBLIC ParameteredObject {
-	friend class PluginManager;
-	template<typename T>
-	friend class TemplatedParameteredObject;
-
-public:
-	/// defined build type, see static members for options
-	typedef unsigned short int build_type ;
-	/// Integer which represents a template type.
-	typedef unsigned short int template_type;
-
-
 private:
 
 	/// status of initialization
@@ -128,9 +112,9 @@ private:
 	/// forbid instantiation without className etc.
 	ParameteredObject();
 
-
-
-
+protected:
+	/// Specifies if the ParameteredObject is dynamic
+	void _setDynamic(bool v);
 
 	/// Common code for _addParameter, _addInputSlot, _addOutputSlot.
 	/** This function does nothing, if _createMetadata is set to false.
@@ -147,49 +131,6 @@ private:
 			const std::string& doc, const std::string& type,
 			const std::string& defaultValue = "");
 
-	/// Common code for removing meta data of Slots an Parameters
-	/** This function does nothing, if _createMetadata is set to false.
-	 *  \param extension    section of metadata file where to add
-	 *                      (e.g. parameters, inputs, outputs)
-	 *  \param name         parameter name to pass to AbstractParameter::init()
-	 *  \retval true        Parameter/Slot name was found
-	 */
-	bool _removeSomething(
-	    const std::string& extension, const std::string& name);
-
-	/// Connect slots.
-	/** String version for convenience.
-	 *  See _connect(ParameteredObject*, Slot&, Slot&).
-	 *  \param target       Target object.
-	 *  \param ownSlot      Slot of the *this object (in or out).
-	 *  \param targetSlot   Slot of the target (out or in).
-	 *  \retval true operation successful
-	 */
-	bool _connect(
-			ParameteredObject* target,
-			const std::string& ownSlot,
-			const std::string& targetSlot);
-
-	/// Disconnect slots.
-	/** This function has the same arguments as ParameteredObject::connect()
-	 *  but removes an established connection.
-	 *  \param target       Target object.
-	 *  \param ownSlot      Slot of the *this object (in or out).
-	 *  \param targetSlot   Slot of the target (out or in).
-	 *  \retval true operation successful
-	 */
-	bool _disconnect(
-			ParameteredObject* target,
-			const std::string& ownSlot,
-			const std::string& targetSlot);
-
-	/// prepare slot data
-	void _prepareSlots();
-
-	/// commit slot data
-	void _commitSlots();
-
-protected:
 	/// Add parameters.
 	/** If _createMetadata is true, the parameter is also recorded to the
 	 *  class information in the _metadata parameter file.
@@ -222,16 +163,6 @@ protected:
 			Parameter<T>& param, const std::string& name,
 			const std::string& doc, const T& defVal,
 			const std::string& type = "");
-
-	/// Load own content from the given parameter file.
-	/** All registered parameters are loaded from the ParameterFile.
-	 *  This function does NOT touch any slot.
-	 *  InstanceName is used as prefix.
-	 *  \param pf           ParameterFile to save to.
-	 *  \param man          Pointer to the currently active PluginManager
-	 */
-	void _load(
-			const ParameterFile& pf, const PluginManagerInterface * man);
 
 	/// \name Register input/output slots.
 	/** These functions needs to be called by the derived class in order
@@ -266,34 +197,31 @@ protected:
 	 */
 	void _addOutputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type = "");
-
-	/// Remove input slot
-	/** \param slot		Slot to be removed
-	  */
-	void _removeInputSlot(std::string name);
-
-	/// Remove output slot
-	/** \param slot		Slot to be removed
-	  */
-	void _removeOutputSlot(std::string name);
+	//  \}
 
 	/// register member function
 	/**
 	 *  This hack is useful to get some member functions compiled
 	 *  (and exported into) the (dynamic) library.
-	 *  No code is executed, because this is always not zero, but the
+	 *  No code is executed, because this-pointer is always non-zero, but the
 	 *  compiler is forced to compile the given (templated) function
 	 *  and export the symbol.
+	 *
+	 *  Example: <code>_addFunction(someFunction);</code>
+	 *
 	 *  \param x	function to export
 	 */
-	#define _addFunction(x) if (!this && &x) throw 42;
+	#define _addFunction(x)\
+		if (!this && &x) {\
+			throw 42;\
+		}
 
 	/// register some constructor
 	/**
 	 *  use this hack, if you have multiple templated constructors and want
 	 *  them to be compiled (and exported) into the (dynamic) library.
 	 *
-	 *  Example: <code>_addConstructor(myObject(par1,par2,par3));</code>
+	 *  Example: <code>_addConstructor( myObject(par1,par2,par3) );</code>
 	 *
 	 *  \warning
 	 *      at least on gcc, there are multiple kinds of constructors, i.e.
@@ -301,8 +229,10 @@ protected:
 	 *      full constructor that is used to create instances.
 	 *      This hack will only produce the full constructor, not the base one.
 	 */
-	#define _addConstructor(x) if (!this && new x) throw 42;
-	//  \}
+	#define _addConstructor(x)\
+		if (!this && new x) {\
+			throw 42;\
+		}
 
 	/// Default constructor.
 	/** Init class name with given string.
@@ -315,15 +245,12 @@ protected:
 		const std::string& name = "", const std::string& doc = "");
 
 
-
 	/// get target nodes
 	/** Determine target leaves of the execution workflow (i.e. Parametered
 	 *  Objects with no targets connected to output slots).
 	 *  \returns set of target nodes
 	 */
 	std::set<ParameteredObject*> _getTargetNodes();
-
-
 
 	/// execute plugin code
 	/** The default implementation does nothing at all.
@@ -348,30 +275,28 @@ protected:
 	 *                objects should be run */
 	void runPreceeding(const Slot& slot) const;
 
+	/// prepare slot data
+	void _prepareSlots();
+
+	/// commit slot data
+	void _commitSlots();
+
 public:
-	/// The template type of the instance is double
-	static const template_type TYPE_DOUBLE = 0;
+	/// Integer which represents a template type.
+	enum template_type {
+		TYPE_DOUBLE = 0, ///< The template type of the instance is double
+		TYPE_FLOAT = 1,  ///< The template type of the instance is float
+		TYPE_INT = 2     ///< The template type of the instance is integer
+	};
 
-	/// The template type of the instance is float
-	static const template_type TYPE_FLOAT = 1;
-
-	/// The template type of the instance is integer
-	static const template_type TYPE_INT = 2;
-
-	/// The build type was not defined explicitly,
-	/// make no assumptions about the release/debug configuration
-	static const build_type UNDEFINED_BUILD = 0 ;
-
-	/// the object was compiled in debug mode
-	static const build_type DEBUG_BUILD = 1 ;
-
-	/// the object was compiled in release mode
-	static const build_type RELEASE_BUILD = 2 ;
-
-	// get the build type of this object
-	/* \returns            build_type defaults to UNDEFINED_BUILD
-	 */
-	//virtual build_type getBuildType() const ;
+	/// defined build type, see static members for options
+	enum build_type {
+		/// The build type was not defined explicitly,
+		/// make no assumptions about the release/debug configuration
+		UNDEFINED_BUILD = 0,
+		DEBUG_BUILD = 1,     ///< the object was compiled in debug mode
+		RELEASE_BUILD = 2    ///< the object was compiled in release mode
+	};
 
 	/// Converts template_type to std::string
 	/** \param t            template type to convert
@@ -391,6 +316,12 @@ public:
 	 *  \param pf           ParameterFile to save to.
 	 */
 	void save(ParameterFile& pf) const;
+
+	/// get metadata
+	const ParameterFile& getMetadata();
+
+	/// restore parameter/slot name casing
+	std::string fixCase(const std::string& parOrSlotName) const;
 
 	/// Update object.
 	/**
@@ -430,16 +361,41 @@ public:
 	 *  Per default, all depending objects are resetted too, but setting
 	 *  the propagate parameter to false, only the object itself will
 	 *  be resetted.
+	 *
+	 *  This function is virtual to be able to react to the reset signal.
+	 *  Make sure you call this base function on overriding resetExecuted.
+	 *
 	 *  \param propagate    reset dependent objects too
 	 */
-	void resetExecuted(bool propagate = true);
+	virtual void resetExecuted(bool propagate = true);
 
-	/// Class name getter.
+	/// prepare interface of parameters and slots
+	/** This function may change the number and kind of slots/parameters
+	 *  depending on certain parameters in the ParameterFile.
+	 *  Since the interface may change depending on the parameter file
+	 *  content, such modules are called <em>dynamic modules</em>.
+	 *
+	 *  The default implementation does nothing and is suitable for
+	 *  all non-dynamic modules. Re-implement this function
+	 *  in <em>dynamic modules</em>.
+	 *
+	 *  \note
+	 *  Make sure that ParameteredObject::_setDynamic() is called in the
+	 *  constructor if implementing a dynamic module!
+	 *
+	 *  \param file         parameter file describing the workflow
+	 */
+	virtual void prepareDynamicInterface(const ParameterFile& file);
+
+	/// \name getter of plugin information
+	//\{
+
+	/// class name
 	inline const std::string& getClassName() const {
 		return _className;
 	}
 
-	/// Get instanceName
+	/// instance name
 	inline const std::string& getName() const {
 		return _instanceName;
 	}
@@ -456,7 +412,7 @@ public:
 	 *  \throws std::invalid_argument if slot does not exist
 	 *  \returns requested slot
 	 */
-	Slot* getSlot(const std::string& slotName);
+	Slot* getSlot(const std::string& slotName) const;
 
 	/// Const version
 	/** \param slotName     Name of the slot to look for
@@ -484,6 +440,7 @@ public:
 	 *  \returns Map containing all output slots
 	 */
 	const std::map<std::string, AbstractParameter*>& getParameters() const;
+	//\}
 
 	/// Save parameters to parameter file
 	/** Saves parameters of the current parametered object
@@ -507,6 +464,17 @@ public:
 	 *  \param pf           ParameterFile to load from.
 	 */
 	virtual void loadParameters(const ParameterFile& pf);
+
+	/// Load slot connection from parameter file.
+	/** PluginManager is used to get pointers to the connected objects.
+	 *  Calls load on all input and output slots passing the given parameters.
+	 *  InstanceName is used as prefix.
+	 *  \param pf           ParameterFile to save to.
+	 *  \param man          Pointer to the currently active PluginManager
+	 */
+	void loadSlots(
+			const ParameterFile& pf, const PluginManagerInterface* man);
+
 
 	/// Custom Load operation
 	/** Is called by _load. Can be used for additional initialization upon a load operation
@@ -550,7 +518,6 @@ public:
 	 */
 	virtual bool connected() const;
 
-	
 	/// throw an exception with information about the ParameteredObject
 	/** Throws an excption of class std::runtime_error with 
 	 *  additional information about the class type, template type 
@@ -560,16 +527,19 @@ public:
 	 */
 	void raise(const std::string& message) const ;
 
-
-	AbstractParameter & getParameter(const std::string & name) const;
+	AbstractParameter& getParameter(const std::string & name) const;
+	template <typename T>
+	void setParameter(std::string name, T value);
 
 	static void setCreateMetadata(bool c);
 	static bool getCreateMetadata();
 
-	template <typename T>
-	charon_DEPRECATED void setParameter(std::string name, T value);
+	bool isDynamic();
 	//  \}
 };
+
+/// for transition to ParameteredObject::template_type
+charon_DEPRECATED typedef ParameteredObject::template_type template_type;
 
 /// Base class for templated classes derived from ParameteredObject.
 /** Implements the method getTemplateType, so it does not have to be
