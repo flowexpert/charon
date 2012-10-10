@@ -431,7 +431,7 @@ void SimpleIterator<T>::finishIterations() {
 
 	// post execution code
 	ParameteredObject::_commitSlots();
-	ParameteredObject::_setExecuted(true);
+	ParameteredObject::setExecuted(true);
 }
 
 #endif /* _SIMPLEITERATOR_HXX_ */
