@@ -222,11 +222,20 @@ void EnergyClassic<T>::updateStencil(
 				motionE = motionUV().atNXYZC( i, p.x+1, p.y,   p.z, 0 );
 				motionS = motionUV().atNXYZC( i, p.x,   p.y+1, p.z, 0 );
 				motionW = motionUV().atNXYZC( i, p.x-1, p.y,   p.z, 0 );
-				T l = this->_lamb;
-				pCN = l*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionN), 2.0) );
-				pCE = l*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionE), 2.0) );
-				pCS = l*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionS), 2.0) );
-				pCW = l*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionW), 2.0) );
+				pCN = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionN), 2.0) );
+				pCE = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionE), 2.0) );
+				pCS = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionS), 2.0) );
+				pCW = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionW), 2.0) );
+				pSum = pCN + pCE + pCS + pCW;
+				_dataMask.fill(
+					   0, -pCN,  0,
+					-pCW, pSum, -pCE,
+					   0, -pCS,  0);
+			} else {
+				pCN = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
+				pCE = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
+				pCS = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
+				pCW = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
 				pSum = pCN + pCE + pCS + pCW;
 				_dataMask.fill(
 					   0, -pCN,  0,
