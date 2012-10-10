@@ -47,15 +47,21 @@ template <typename T>
 void SimpleDiff<T>::execute() {
 	sout << "\tcalculating derivatives:" << std::endl;
 
+	int _width = img()[0].width();
+	int _height = img()[0].height();
+
 	if(dx.connected()) {
 		sout << "\t\twrt. dx" << std::endl;
 		dx().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
+			if ((x>0) && (x<_width-1) && (y>0) && (y<_height-1))
 			dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x-2,y,0,c)
 			                          - 8*img().atNXYZC(0,x-1,y,0,c)
 			                          + 8*img().atNXYZC(0,x+1,y,0,c)
 			                          -   img().atNXYZC(0,x+2,y,0,c) ) / 12.0;
+			else
+			dx().atNXYZC(0,x,y,0,c) = T(0);
 		}
 		cimg_forXY( img()[0], x, y )
 		{
@@ -69,10 +75,13 @@ void SimpleDiff<T>::execute() {
 		dy().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
+			if ((x>0) && (x<_width-1) && (y>0) && (y<_height-1))
 			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x,y-2,0,c)
 			                          - 8*img().atNXYZC(0,x,y-1,0,c)
 			                          + 8*img().atNXYZC(0,x,y+1,0,c)
 			                          -   img().atNXYZC(0,x,y+2,0,c) ) / 12.0;
+			else
+			dy().atNXYZC(0,x,y,0,c) = T(0);
 		}
 		cimg_forXY( img()[0], x, y )
 		{
