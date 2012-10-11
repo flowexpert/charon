@@ -1,4 +1,5 @@
-/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2011, 2012
+    University of Heidelberg (IWR/HCI)
 
     This file is part of Charon.
 
@@ -42,6 +43,7 @@
 #include <charon/PenaltyFunction.h>
 #include <CImg.h>
 #include <vector>
+#include <charon-utils/Roi.h>
 
 /// EnergyStencil for so called classic regularization
 /**
@@ -66,6 +68,9 @@ public:
 
 	/// Input slot for current motion components
 	InputSlot< cimg_library::CImgList<T> > motionUV;
+
+	/// Input slot for region of interest
+	InputSlot< Roi<int>* > roi;
 
 	/// default constructor
 	/// \param name          Instance name
@@ -109,6 +114,10 @@ private:
 	//\{
 	T _lamb;
 	PenaltyFunction<T>* _penaltyFunction;
+	int _xBegin;
+	int _xEnd;
+	int _yBegin;
+	int _yEnd;
 	//\}
 
 	/// \name precalculate substencil data

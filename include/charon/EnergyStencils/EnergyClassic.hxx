@@ -1,4 +1,5 @@
-/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2011, 2012
+    University of Heidelberg (IWR/HCI)
 
     This file is part of Charon.
 
@@ -53,6 +54,8 @@ EnergyClassic<T>::EnergyClassic(const std::string& name) :
 	                    "current motion components",
 	                    "CImgList<T>");
 
+	this->_addInputSlot(roi, "roi", "region of interest", "Roi<int>*");
+
 	ParameteredObject::_addParameter(
 			pUnknowns, "unknowns", "List of unknowns");
 }
@@ -63,27 +66,19 @@ void EnergyClassic<T>::execute() {
 	_lamb = this->lambda();
 	_penaltyFunction = penaltyFunction();
 
+	const Roi<int>& _roi = *(this->roi());
+
+	_xBegin = _roi.xBegin();
+	_xEnd = _roi.xEnd();
+	_yBegin = _roi.yBegin();
+	_yEnd = _roi.yEnd();
+
 	// Copy the unknowns from the Parameter list into the set, which was
 	// inherited from the Stencil class
 	std::vector<std::string>::iterator puIt;
 	for(puIt=pUnknowns().begin() ; puIt!=pUnknowns().end() ; puIt++) {
 		this->_unknowns.insert(*puIt);
 	}
-
-	_patternMask.assign(3,3,1,1);
-	_dataMask.assign(3,3,1,1);
-
-	_patternMask.fill(
-			0,  1,  0,
-			1,  1,  1,
-			0,  1,  0);
-
-	T l = this->_lamb;
-	_dataMask.fill(
-			 0,  -l,  0,
-			-l, 4*l, -l,
-			 0,  -l,  0);
-	_center = Point4D<int>(1,1,0,0);
 }
 
 template <class T>
@@ -213,44 +208,97 @@ void EnergyClassic<T>::updateStencil(
 	// fill stencil with masks
 	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
 		SubStencil<T> entry;
-		if(pUnknowns[i] == unknown) {
-			entry.center  = _center;
-			entry.pattern.assign(_patternMask,true);
-			if (motionUV.connected()) {
-				motionC = motionUV().atNXYZC( i, p.x,   p.y,   p.z, 0 );
-				motionN = motionUV().atNXYZC( i, p.x,   p.y-1, p.z, 0 );
-				motionE = motionUV().atNXYZC( i, p.x+1, p.y,   p.z, 0 );
-				motionS = motionUV().atNXYZC( i, p.x,   p.y+1, p.z, 0 );
-				motionW = motionUV().atNXYZC( i, p.x-1, p.y,   p.z, 0 );
-				pCN = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionN), 2.0) );
-				pCE = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionE), 2.0) );
-				pCS = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionS), 2.0) );
-				pCW = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionW), 2.0) );
-				pSum = pCN + pCE + pCS + pCW;
-				_dataMask.fill(
-					   0, -pCN,  0,
-					-pCW, pSum, -pCE,
-					   0, -pCS,  0);
-			} else {
-				pCN = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
-				pCE = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
-				pCS = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
-				pCW = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
-				pSum = pCN + pCE + pCS + pCW;
-				_dataMask.fill(
-					   0, -pCN,  0,
-					-pCW, pSum, -pCE,
-					   0, -pCS,  0);
-			}
-			entry.data = _dataMask;
-			this->_rhs = T(0.0);
+		if (motionUV.connected()) {
+			motionC = motionUV().atNXYZC( i, p.x,   p.y,   p.z, 0 );
+			motionN = motionUV().atNXYZC( i, p.x,   p.y-1, p.z, 0 );
+			motionE = motionUV().atNXYZC( i, p.x+1, p.y,   p.z, 0 );
+			motionS = motionUV().atNXYZC( i, p.x,   p.y+1, p.z, 0 );
+			motionW = motionUV().atNXYZC( i, p.x-1, p.y,   p.z, 0 );
+			pCN = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionN), 2.0) );
+			pCE = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionE), 2.0) );
+			pCS = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionS), 2.0) );
+			pCW = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionW), 2.0) );
 		} else {
-			// empty substencil for other unknowns
-			entry.center = Point4D<int>();
-			entry.data.clear();
-			entry.pattern.clear();
+			pCN = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
+			pCE = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
+			pCS = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
+			pCW = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
 		}
+
+		_dataMask.assign(3,3,1,1);
+		_patternMask.assign(3,3,1,1);
+		_center = Point4D<int>(1,1,0,0);
+		_dataMask.fill(    0, 0, 0,     0, 0, 0,     0, 0, 0 );
+		_patternMask.fill( 0, 0, 0,     0, 0, 0,     0, 0, 0 );
+
+		if ((p.x == _xBegin) && (p.y == _yBegin)   && (pUnknowns[i] == unknown))
+		{
+			pSum = pCE + pCS;
+			_dataMask.fill(    0,    0, 0,        0, pSum, -pCE,     0, -pCS,  0 );
+			_patternMask.fill( 0,    0, 0,        0,    1,    1,     0,    1,  0 );
+		}
+
+		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y == _yBegin)   && (pUnknowns[i] == unknown))
+		{
+			pSum = pCE + pCS + pCW;
+			_dataMask.fill(    0,    0, 0,     -pCW, pSum, -pCE,     0, -pCS,  0 );
+			_patternMask.fill( 0,    0, 0,        1,    1,    1,     0,    1,  0 );
+		}
+
+		if ((p.x == _xEnd-1) && (p.y == _yBegin)   && (pUnknowns[i] == unknown))
+		{
+			pSum = pCS + pCW;
+			_dataMask.fill(    0,    0, 0,     -pCW, pSum,    0,     0, -pCS,  0 );
+			_patternMask.fill( 0,    0, 0,        1,    1,    0,     0,    1,  0 );
+		}
+
+		if ((p.x == _xBegin) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
+		{
+			pSum = pCN + pCE + pCS;
+			_dataMask.fill(    0, -pCN, 0,        0, pSum, -pCE,     0, -pCS,  0 );
+			_patternMask.fill( 0,    1, 0,        0,    1,    1,     0,    1,  0 );
+		}
+
+		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
+		{
+			pSum = pCN + pCE + pCS + pCW;
+			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum, -pCE,     0, -pCS,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
+		}
+
+		if ((p.x == _xEnd-1) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
+		{
+			pSum = pCN + pCS + pCW;
+			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum,    0,     0, -pCS,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    0,     0,    1,  0 );
+		}
+
+		if ((p.x == _xBegin) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
+		{
+			pSum = pCN + pCE;
+			_dataMask.fill(    0, -pCN, 0,        0, pSum, -pCE,     0,    0,  0 );
+			_patternMask.fill( 0,    1, 0,        0,    1,    1,     0,    0,  0 );
+		}
+
+		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
+		{
+			pSum = pCN + pCE + pCW;
+			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum, -pCE,     0,    0,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    0,  0 );
+		}
+
+		if ((p.x == _xEnd-1) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
+		{
+			pSum = pCN + pCW;
+			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum,    0,     0,    0,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    0,     0,    0,  0 );
+		}
+
+		entry.data = _dataMask;
+		entry.pattern = _patternMask;
+		entry.center = _center;
 		this->_subStencils[pUnknowns[i]] = entry;
+		this->_rhs = T(0.0);
 	}
 }
 
