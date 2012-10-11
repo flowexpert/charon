@@ -23,8 +23,6 @@
 #ifndef _PETSCSOLVER_HXX_
 #define _PETSCSOLVER_HXX_
 
-#define NDEBUG
-
 #include "PetscSolver.h"
 #include "../Solver.hxx"
 #include <charon-utils/ImgTool.hxx>
@@ -554,7 +552,6 @@ int PetscSolver<T>::petscExecute() {
 	KSP             ksp(0);         // KSP context
 	PetscInt        j;              // row index
 	PetscInt        Istart, Iend;   // Ownership range
-	PetscViewer	view;
 
 	// Create Vector
 	ierr = VecCreate(PETSC_COMM_WORLD,&x); CHKERRQ(ierr);
@@ -675,13 +672,6 @@ int PetscSolver<T>::petscExecute() {
 	ierr = MatAssemblyEnd(A,MAT_FINAL_ASSEMBLY); CHKERRQ(ierr);
 	ierr = VecAssemblyBegin(b); CHKERRQ(ierr);
 	ierr = VecAssemblyEnd(b); CHKERRQ(ierr);
-
-	ierr = PetscViewerBinaryOpen(PETSC_COMM_WORLD,"PetscMat",FILE_MODE_WRITE,&view);
-	MatView(A, view);
-	PetscViewerDestroy(view);
-	ierr = PetscViewerBinaryOpen(PETSC_COMM_WORLD,"PetscRhs",FILE_MODE_WRITE,&view);
-	VecView(b, view);
-	PetscViewerDestroy(view);
 
 	ierr = KSPCreate(PETSC_COMM_WORLD, &ksp); CHKERRQ(ierr);
 	ierr = KSPSetFromOptions(ksp); CHKERRQ(ierr);
