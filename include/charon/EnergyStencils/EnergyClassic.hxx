@@ -235,28 +235,28 @@ void EnergyClassic<T>::updateStencil(
 		{
 			pSum = pCE + pCS;
 			_dataMask.fill(    0,    0, 0,        0, pSum, -pCE,     0, -pCS,  0 );
-			_patternMask.fill( 0,    0, 0,        0,    1,    1,     0,    1,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 		}
 
 		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y == _yBegin)   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCE + pCS + pCW;
 			_dataMask.fill(    0,    0, 0,     -pCW, pSum, -pCE,     0, -pCS,  0 );
-			_patternMask.fill( 0,    0, 0,        1,    1,    1,     0,    1,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 		}
 
 		if ((p.x == _xEnd-1) && (p.y == _yBegin)   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCS + pCW;
 			_dataMask.fill(    0,    0, 0,     -pCW, pSum,    0,     0, -pCS,  0 );
-			_patternMask.fill( 0,    0, 0,        1,    1,    0,     0,    1,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 		}
 
 		if ((p.x == _xBegin) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCN + pCE + pCS;
 			_dataMask.fill(    0, -pCN, 0,        0, pSum, -pCE,     0, -pCS,  0 );
-			_patternMask.fill( 0,    1, 0,        0,    1,    1,     0,    1,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 		}
 
 		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
@@ -270,28 +270,28 @@ void EnergyClassic<T>::updateStencil(
 		{
 			pSum = pCN + pCS + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum,    0,     0, -pCS,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    0,     0,    1,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 		}
 
 		if ((p.x == _xBegin) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCN + pCE;
 			_dataMask.fill(    0, -pCN, 0,        0, pSum, -pCE,     0,    0,  0 );
-			_patternMask.fill( 0,    1, 0,        0,    1,    1,     0,    0,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 		}
 
 		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCN + pCE + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum, -pCE,     0,    0,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    0,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 		}
 
 		if ((p.x == _xEnd-1) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCN + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum,    0,     0,    0,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    0,     0,    0,  0 );
+			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 		}
 
 		entry.data = _dataMask;
