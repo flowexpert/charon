@@ -199,16 +199,19 @@ void EnergyClassic<T>::updateStencil(
 		const Point4D<int>& p, const int&)
 {
 	// motion component in neighborhood
-	T motionC, motionN, motionE, motionS, motionW;
+	T motionN, motionE, motionS, motionW;
+	T motionC = T(0);
 
 	// penalty in neighborhood
 	T pCN, pCE, pCS, pCW;
 	T pSum = T(0.0);
 
+	int motionConnected = motionUV.connected();
+
 	// fill stencil with masks
 	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
 		SubStencil<T> entry;
-		if (motionUV.connected()) {
+		if (motionConnected) {
 			motionC = motionUV().atNXYZC( i, p.x,   p.y,   p.z, 0 );
 			motionN = motionUV().atNXYZC( i, p.x,   p.y-1, p.z, 0 );
 			motionE = motionUV().atNXYZC( i, p.x+1, p.y,   p.z, 0 );
@@ -236,6 +239,11 @@ void EnergyClassic<T>::updateStencil(
 			pSum = pCE + pCS;
 			_dataMask.fill(    0,    0, 0,        0, pSum, -pCE,     0, -pCS,  0 );
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
+			if (motionConnected) {
+				this->_rhs = motionE + motionS - 2*motionC;
+			} else {
+				this->_rhs = T(0.0);
+			}
 		}
 
 		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y == _yBegin)   && (pUnknowns[i] == unknown))
@@ -243,6 +251,11 @@ void EnergyClassic<T>::updateStencil(
 			pSum = pCE + pCS + pCW;
 			_dataMask.fill(    0,    0, 0,     -pCW, pSum, -pCE,     0, -pCS,  0 );
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
+			if (motionConnected) {
+				this->_rhs = motionE + motionS + motionW - 3*motionC;
+			} else {
+				this->_rhs = T(0.0);
+			}
 		}
 
 		if ((p.x == _xEnd-1) && (p.y == _yBegin)   && (pUnknowns[i] == unknown))
@@ -250,6 +263,11 @@ void EnergyClassic<T>::updateStencil(
 			pSum = pCS + pCW;
 			_dataMask.fill(    0,    0, 0,     -pCW, pSum,    0,     0, -pCS,  0 );
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
+			if (motionConnected) {
+				this->_rhs = motionS + motionW - 2*motionC;
+			} else {
+				this->_rhs = T(0.0);
+			}
 		}
 
 		if ((p.x == _xBegin) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
@@ -257,6 +275,11 @@ void EnergyClassic<T>::updateStencil(
 			pSum = pCN + pCE + pCS;
 			_dataMask.fill(    0, -pCN, 0,        0, pSum, -pCE,     0, -pCS,  0 );
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
+			if (motionConnected) {
+				this->_rhs = motionN + motionE + motionS - 3*motionC;
+			} else {
+				this->_rhs = T(0.0);
+			}
 		}
 
 		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
@@ -264,6 +287,11 @@ void EnergyClassic<T>::updateStencil(
 			pSum = pCN + pCE + pCS + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum, -pCE,     0, -pCS,  0 );
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
+			if (motionConnected) {
+				this->_rhs = motionN + motionE + motionS + motionW - 4*motionC;
+			} else {
+				this->_rhs = T(0.0);
+			}
 		}
 
 		if ((p.x == _xEnd-1) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
@@ -271,6 +299,11 @@ void EnergyClassic<T>::updateStencil(
 			pSum = pCN + pCS + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum,    0,     0, -pCS,  0 );
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
+			if (motionConnected) {
+				this->_rhs = motionN + motionS + motionW - 3*motionC;
+			} else {
+				this->_rhs = T(0.0);
+			}
 		}
 
 		if ((p.x == _xBegin) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
@@ -278,6 +311,11 @@ void EnergyClassic<T>::updateStencil(
 			pSum = pCN + pCE;
 			_dataMask.fill(    0, -pCN, 0,        0, pSum, -pCE,     0,    0,  0 );
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
+			if (motionConnected) {
+				this->_rhs = motionN + motionE - 2*motionC;
+			} else {
+				this->_rhs = T(0.0);
+			}
 		}
 
 		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
@@ -285,6 +323,11 @@ void EnergyClassic<T>::updateStencil(
 			pSum = pCN + pCE + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum, -pCE,     0,    0,  0 );
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
+			if (motionConnected) {
+				this->_rhs = motionN + motionE + motionW - 3*motionC;
+			} else {
+				this->_rhs = T(0.0);
+			}
 		}
 
 		if ((p.x == _xEnd-1) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
@@ -292,13 +335,17 @@ void EnergyClassic<T>::updateStencil(
 			pSum = pCN + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum,    0,     0,    0,  0 );
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
+			if (motionConnected) {
+				this->_rhs = motionN + motionW - 2*motionC;
+			} else {
+				this->_rhs = T(0.0);
+			}
 		}
 
 		entry.data = _dataMask;
 		entry.pattern = _patternMask;
 		entry.center = _center;
 		this->_subStencils[pUnknowns[i]] = entry;
-		this->_rhs = T(0.0);
 	}
 }
 
