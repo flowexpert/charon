@@ -68,13 +68,13 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 	QStringList testArgs;
 	testArgs << "--quiet" << "--non-interactive";
 	QString tcRun = QApplication::applicationDirPath() + "/tuchulcha-run";
-	if (QProcess::execute(tcRun,testArgs)) {
-		tcRun = QString::null;
-	}
+	//if (QProcess::execute(tcRun,testArgs)) {
+		//tcRun = QString::null;
+	//}
 	QString tcRunD = QApplication::applicationDirPath() + "/tuchulcha-run_d";
-	if (QProcess::execute(tcRunD,testArgs)) {
-		tcRunD = QString::null;
-	}
+	//if (QProcess::execute(tcRunD,testArgs)) {
+		//tcRunD = QString::null;
+	//}
 
 	// select process executable
 	QString procName = tcRun;
