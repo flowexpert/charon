@@ -2,7 +2,6 @@
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 SET(CHARON_CORE_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME})
 SET(CHARON_FILES
-
 	${CHARON_CORE_INCLUDE_DIR}/AbstractData.hxx
 	${CHARON_CORE_INCLUDE_DIR}/DllEx.h
 	${CHARON_CORE_INCLUDE_DIR}/FileTool.h
@@ -18,10 +17,8 @@ SET(CHARON_FILES
 	${CHARON_CORE_INCLUDE_DIR}/SplitStream.h
 	${CHARON_CORE_INCLUDE_DIR}/StringTool.h
 	${CHARON_CORE_INCLUDE_DIR}/TypeDetector.h
-        ${CHARON_CORE_INCLUDE_DIR}/ParameteredGroupObject.h
-
-
-        ParameteredGroupObject.cpp
+	${CHARON_CORE_INCLUDE_DIR}/ParameteredGroupObject.h
+	ParameteredGroupObject.cpp
 	FileTool.cpp
 	Parameter.cpp
 	ParameteredObject.cpp
@@ -29,9 +26,7 @@ SET(CHARON_FILES
 	SplitStream.cpp
 	StringTool.cpp
 	TypeDetector.cpp
-
 	Slots.cpp
-
 )
 
 SET(PLUGIN_FILES
@@ -88,7 +83,34 @@ TARGET_LINK_LIBRARIES(whilegroup
         charon-core
 )
 
+ADD_LIBRARY(groupobject SHARED
+		GroupObject.cpp
+		${CHARON_CORE_INCLUDE_DIR}/GroupObject.h
+)
 
+TARGET_LINK_LIBRARIES(groupobject
+		charon-core
+)
+
+
+ADD_LIBRARY(inputslotbundle SHARED
+		InputSlotBundle.cpp
+		SlotBundle.cpp
+		${CHARON_CORE_INCLUDE_DIR}/InputSlotBundle.h
+		${CHARON_CORE_INCLUDE_DIR}/SlotBundle.h
+		${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
+)
+
+ADD_LIBRARY(outputslotbundle SHARED
+		OutputSlotBundle.cpp
+		SlotBundle.cpp
+		${CHARON_CORE_INCLUDE_DIR}/OutputSlotBundle.h
+		${CHARON_CORE_INCLUDE_DIR}/SlotBundle.h
+		${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
+)
+
+TARGET_LINK_LIBRARIES(inputslotbundle charon-core)
+TARGET_LINK_LIBRARIES(outputslotbundle charon-core)
 # install library
 SET_TARGET_PROPERTIES(charon-core charon-plugins PROPERTIES
 	VERSION ${${PROJECT_NAME}_VERSION}
@@ -109,7 +131,38 @@ SET_TARGET_PROPERTIES(ifgroup PROPERTIES
 	INSTALL_RPATH CHARON_PLUGINS
 )
 SET_TARGET_PROPERTIES(whilegroup PROPERTIES
-        INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
+		INSTALL_RPATH CHARON_PLUGINS
+)
+
+SET_TARGET_PROPERTIES(groupobject PROPERTIES
+		INSTALL_RPATH CHARON_PLUGINS
+)
+
+SET_TARGET_PROPERTIES(inputslotbundle PROPERTIES
+		INSTALL_RPATH CHARON_PLUGINS
+)
+
+
+SET_TARGET_PROPERTIES(outputslotbundle PROPERTIES
+		INSTALL_RPATH CHARON_PLUGINS
+)
+
+INSTALL(
+	TARGETS          inputslotbundle
+	EXPORT           ${EXPORT_NAME}
+	RUNTIME          DESTINATION bin${BIN_SUFFIX}
+	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	COMPONENT        libraries
+)
+
+INSTALL(
+	TARGETS          outputslotbundle
+	EXPORT           ${EXPORT_NAME}
+	RUNTIME          DESTINATION bin${BIN_SUFFIX}
+	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	COMPONENT        libraries
 )
 INSTALL(
 	TARGETS          ifgroup
@@ -126,6 +179,15 @@ INSTALL(
         LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
         ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
         COMPONENT        libraries
+)
+
+INSTALL(
+		TARGETS          groupobject
+		EXPORT           ${EXPORT_NAME}
+		RUNTIME          DESTINATION bin${BIN_SUFFIX}
+		LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+		ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+		COMPONENT        libraries
 )
 
 

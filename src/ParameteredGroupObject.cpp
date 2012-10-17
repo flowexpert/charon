@@ -23,6 +23,10 @@ ParameteredGroupObject::ParameteredGroupObject(const std::string &className, con
 	_addParameter(pluginPaths,"pluginPaths","The paths where the plugins are stored.","string");
 	_addParameter(workFlowFile,"workflowfile","The workflow contained in this group","FileOpen");
 	_pluginMan=0;
+	_inputs=0;
+	_outputs=0;
+	_setDynamic(true);
+
 }
 
 ParameteredGroupObject::~ParameteredGroupObject()
@@ -33,6 +37,38 @@ void ParameteredGroupObject::initialize()
 {
 	ParameteredObject::initialize();
 
+	if(_inputs)
+	{
+		std::vector<VirtualInputSlot*> vinput=_inputs->getSlotVector();
+		for(int i=0;i<vinput.size();i++)
+		{
+			VirtualInputSlot* in=vinput[i];
+			_removeInputSlot(in->getName());
+			Parameter<int> *par=_loopOutputNumber[i];
+			_removeSomething("parameters",par->getName());
+			delete par;
+			breakLoop(i);
+
+
+		}
+
+	}
+	_loopOutputNumber.clear();
+
+	if(_outputs)
+	{
+		std::vector<VirtualOutputSlot*> voutput=_outputs->getSlotVector();
+		for(int i=0;i<voutput.size();i++)
+		{
+			VirtualOutputSlot* out=voutput[i];
+			_removeOutputSlot(out->getName());
+
+		}
+
+	}
+	_inputs=0;
+
+	_outputs=0;
 	if(_pluginMan!=0)
 	{
 	_pluginMan->reset();
@@ -41,14 +77,51 @@ void ParameteredGroupObject::initialize()
 	}
 	_pluginMan=new PluginManager(pluginPaths(),true);
 
-	_inputs=new InputSlotBundle("InputSlotBundle",getName()+"-inputs");
-	_outputs=new OutputSlotBundle("OutputSlotBundle",getName()+"-outputs");
+
 
 	_pluginMan->loadParameterFile(workFlowFile());
-	//_inputs->setNumberOfVirtualSlots(4);
-	//_outputs->setNumberOfVirtualSlots(4);
-	_pluginMan->insertInstance(_inputs);
-	_pluginMan->insertInstance(_outputs);
+
+	std::map<std::string, ParameteredObject *> objs=_pluginMan->getObjectList();
+
+	std::map<std::string, ParameteredObject *>::iterator it=objs.begin();
+	for(;it!=objs.end();it++)
+	{
+		ParameteredObject* obj=it->second;
+		InputSlotBundleIntf* tinputs=dynamic_cast<InputSlotBundleIntf*>(obj);
+		OutputSlotBundleIntf* toutputs=dynamic_cast<OutputSlotBundleIntf*>(obj);
+		if(tinputs)
+			_inputs=tinputs;
+		if(toutputs)
+			_outputs=toutputs;
+	}
+
+	if(_inputs)
+	{
+		std::vector<VirtualInputSlot*> vinput=_inputs->getSlotVector();
+		for(int i=0;i<vinput.size();i++)
+		{
+			VirtualInputSlot* in=vinput[i];
+			_addInputSlot(*in,in->getName(),"",in->getType());
+			Parameter<int> *par=new Parameter<int>(-1);
+			std::stringstream pname;
+			pname<<"loop_input_"<<i<<"_to_output";
+			std::stringstream pdoc;
+			pdoc<<"The input "<<i<<" gets the data of the given output after one iteration of a loop. To disable the connection, set to -1";
+			_addParameter(*par,pname.str(),pdoc.str(),"int");
+			_loopOutputNumber.push_back(par);
+
+		}
+
+	}
+	if(_outputs)
+	{
+		std::vector<VirtualOutputSlot*> voutput=_outputs->getSlotVector();
+		for(int i=0;i<voutput.size();i++)
+		{
+			VirtualOutputSlot* out=voutput[i];
+			_addOutputSlot(*out,out->getName(),"",out->getType());
+		}
+	}
 
 	initializeGroup();
 
@@ -95,205 +168,43 @@ void ParameteredGroupObject::executeGroup() {
 	}
 }
 
-SlotBundle::SlotBundle(
-		const std::string &className, const std::string &name,
-		const std::string &doc)
-	:ParameteredObject(className,name,doc) {
-}
 
-SlotBundle::~SlotBundle() {
-}
 
-void SlotBundle::execute() {
-	//executeBundle();
-}
 
-InputSlotBundle::InputSlotBundle(
-		const std::string &className, const std::string &name,
-		const std::string &doc)
-	:SlotBundle(className,name,doc) {
-}
 
-OutputSlotBundle::OutputSlotBundle(
-		const std::string &className, const std::string &name,
-		const std::string &doc)
-	:SlotBundle(className,name,doc) {
-}
 
-void SlotBundle::initialize() {
-}
 
-void SlotBundle::finalize() {
-}
 
-int SlotBundle::size() {
-	return _virtualOutputSlots.size();
-}
 
-void InputSlotBundle::_removeAllSlots() {
-	for(size_t i=0;i<_virtualOutputSlots.size();i++) {
-		_removeOutputSlot(_virtualOutputSlots[i]->getName());
-	}
-}
 
-void OutputSlotBundle::_removeAllSlots() {
-	for(size_t i=0;i<_virtualInputSlots.size();i++) {
-		_removeInputSlot(_virtualInputSlots[i]->getName());
-	}
-}
 
-void InputSlotBundle::_addAllSlots() {
-	for(size_t i=0;i<_virtualOutputSlots.size();i++) {
-		_addOutputSlot(*((Slot*)_virtualOutputSlots[i]),
-			_virtualOutputSlots[i]->getName(),
-			"Virtual Slot",_virtualOutputSlots[i]->getType());
-	}
-}
 
-void OutputSlotBundle::_addAllSlots() {
-	for(size_t i=0;i<_virtualInputSlots.size();i++) {
-		_addInputSlot(*((Slot*)_virtualInputSlots[i]),
-			_virtualInputSlots[i]->getName(),
-			"Virtual Slot",_virtualInputSlots[i]->getType());
-	}
-}
 
-void SlotBundle::_deleteAllSlots()
-{
-	_removeAllSlots();
-	for(size_t i=0;i<_virtualOutputSlots.size();i++) {
-		delete _virtualOutputSlots[i];
-		delete _virtualInputSlots[i];
-	}
-	_virtualOutputSlots.clear();
-	_virtualInputSlots.clear();
-}
 
-void SlotBundle::setNumberOfVirtualSlots(int num)
-{
-	_deleteAllSlots();
-	for(int i=0;i<num;i++) {
-		VirtualOutputSlot* out=new VirtualOutputSlot(i);
-		VirtualInputSlot* in= new VirtualInputSlot(i);
-		out->setVirtualPartnerSlot(in);
-		_virtualOutputSlots.push_back(out);
-		_virtualInputSlots.push_back(in);
-	}
-	_addAllSlots();
-}
 
-std::vector<VirtualInputSlot*>& InputSlotBundle::getSlotVector()
-{
-	return _virtualInputSlots;
-}
-
-std::vector<VirtualOutputSlot*>& OutputSlotBundle::getSlotVector()
-{
-	return _virtualOutputSlots;
-}
-
-int ParameteredGroupObject::getNumberOfInputSlots() const
-{
-	return _inputs->size();
-}
-
-int ParameteredGroupObject::getNumberOfOutputSlots() const
-{
-	return _outputs->size();
-}
-
-const std::pair<InputSlotIntf*,OutputSlotIntf*>
-	ParameteredGroupObject::getInputSlot(int slotnr) const
-{
-	if(slotnr<0||slotnr>_inputs->size())
-	ParameteredObject::raise("(EE) Index out of range!!");
-	VirtualOutputSlot* int_out=_inputs->getInternalSlotVector()[slotnr];
-	VirtualInputSlot* in=_inputs->getSlotVector()[slotnr];
-
-	return std::pair<InputSlotIntf*,OutputSlotIntf*>(
-				dynamic_cast<InputSlotIntf*>(in),
-				dynamic_cast<OutputSlotIntf*>(int_out));
-}
-
-const std::pair<OutputSlotIntf*,InputSlotIntf*>
-	ParameteredGroupObject::getOutputSlot(int slotnr) const
-{
-	VirtualOutputSlot* out=_outputs->getSlotVector()[slotnr];
-	VirtualInputSlot* int_in=_outputs->getInternalSlotVector()[slotnr];
-	if(slotnr<0||slotnr>_outputs->size())
-	ParameteredObject::raise("(EE) Index out of range!!");
-	return std::pair<OutputSlotIntf*,InputSlotIntf*>(
-				dynamic_cast<OutputSlotIntf*>(out),
-				dynamic_cast<InputSlotIntf*>(int_in));
-}
-
-void ParameteredGroupObject::setNumberOfInputSlots(int num)
-{
-	std::vector<VirtualInputSlot*>& ins=_inputs->getSlotVector();
-
-	for(size_t i=0;i<ins.size();i++) {
-		_removeInputSlot(ins[i]->getName());
-	}
-	_inputs->setNumberOfVirtualSlots(num);
-
-	for(size_t i=0;i<ins.size();i++) {
-		_addInputSlot(*(dynamic_cast<Slot*>(ins[i])),
-			ins[i]->getName(),"VirtualInput",ins[i]->getType());
-	}
-}
-
-void ParameteredGroupObject::setNumberOfOuputSlots(int num)
-{
-	std::vector<VirtualOutputSlot*>& outs=_outputs->getSlotVector();
-	for(size_t i=0;i<outs.size();i++)
-	{
-		_removeOutputSlot(outs[i]->getName());
-	}
-	_outputs->setNumberOfVirtualSlots(num);
-
-	for(size_t i=0;i<outs.size();i++) {
-		_addOutputSlot(*(dynamic_cast<Slot*>(outs[i])),outs[i]->getName(),
-					"VirtualOutput",outs[i]->getType());
-	}
-}
-
-std::vector<VirtualOutputSlot *> & InputSlotBundle::getInternalSlotVector()
-{
-	return _virtualOutputSlots;
-}
-
-std::vector<VirtualInputSlot *> & OutputSlotBundle::getInternalSlotVector()
-{
-	return _virtualInputSlots;
-}
 
 void ParameteredGroupObject::onSave(ParameterFile&) const
 {
 	_pluginMan->saveParameterFile(workFlowFile());
 }
 
-void SlotBundle::loadConnection(ParameterFile pf, PluginManagerInterface* man)
-{
-//	_load(pf,man);
-    ParameteredObject::loadParameters(pf);
-    ParameteredObject::loadSlots(pf,man);
-}
 
-void ParameteredGroupObject::loopOutputToInput(int output, int input)
+
+void ParameteredGroupObject::loopInputToOutput(int input, int output)
 {
-	VirtualOutputSlot* out=_inputs->getInternalSlotVector()[output];
-	VirtualInputSlot* in=_outputs->getInternalSlotVector()[input];
+	VirtualOutputSlot* out=_inputs->getInternalSlotVector()[input];
+	VirtualInputSlot* in=_outputs->getInternalSlotVector()[output];
 	out->setLoopPartner(in);
 	out->setLoop(false);
-	_loopedSlots.insert(std::pair<int,VirtualOutputSlot*>(output,out));
+	_loopedSlots.insert(std::pair<int,VirtualOutputSlot*>(input,out));
 }
 
-void ParameteredGroupObject::breakLoop(int output)
+void ParameteredGroupObject::breakLoop(int input)
 {
 	std::map<int,VirtualOutputSlot*>::iterator it;
-	it=_loopedSlots.find(output);
+	it=_loopedSlots.find(input);
 	if(it==_loopedSlots.end())
-	raise("Output is not looped!");
+		sout<<this->getName()<<": Input "<<input<<" is not looped!";
 
 	VirtualOutputSlot* out=(*it).second;
 	out->setLoopPartner(0);
@@ -321,6 +232,25 @@ void ParameteredGroupObject::disableLoopConnections()
 	}
 }
 
+void ParameteredGroupObject::prepareDynamicInterface(const ParameterFile &file)
+{
+	workFlowFile.load(file);
+	pluginPaths.load(file);
+	initialize();
+}
+
+void ParameteredGroupObject::onLoad(const ParameterFile &pf, const PluginManagerInterface *man)
+{
+	for(int i=0;i<_loopOutputNumber.size();i++)
+	{
+		Parameter<int> *par=_loopOutputNumber[i];
+		par->load(pf);
+		if((*par)()>=0)
+		{
+			loopInputToOutput(i,(*par)());
+		}
+	}
+}
 
 
 

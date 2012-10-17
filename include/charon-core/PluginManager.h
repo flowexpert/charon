@@ -228,7 +228,7 @@ public:
 	PluginManager(
 			const std::vector<std::string>& pluginPaths,
 			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
-			bool initializeOnLoad=true
+			bool initializeOnLoad=false
 	);
 
 	/// default constructor
@@ -246,7 +246,7 @@ public:
 			const std::string& globalPath,
 			const std::string& localPath = "",
 			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
-			bool initializeOnLoad=true
+			bool initializeOnLoad=false
 	);
 
 	/**

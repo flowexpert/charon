@@ -411,10 +411,18 @@ void ParameteredObject::save(ParameterFile& pf) const {
 	std::map<std::string, Slot*>::const_iterator slotIter;
 
 	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++)
-		slotIter->second->save(pf);
+	{
+		Slot* sl=slotIter->second;
+		if(sl->connected())
+			sl->save(pf);
+	}
 
 	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
-		slotIter->second->save(pf);
+	{
+		Slot* sl=slotIter->second;
+		if(sl->connected())
+			sl->save(pf);
+	}
 	onSave(pf);
 }
 
@@ -578,6 +586,7 @@ std::string ParameteredObject::templateTypeToString(template_type t) {
 }
 
 void ParameteredObject::prepareDynamicInterface(const ParameterFile&) {
+	initialize();
 }
 
 void ParameteredObject::_setDynamic(bool v) {

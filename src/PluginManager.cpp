@@ -794,8 +794,8 @@ void PluginManager::insertInstance(ParameteredObject *instance)
 
 bool PluginManager::isInternal(ParameteredObject *obj)
 {
-    if(dynamic_cast<SlotBundle*>(obj))
-	return true;
+	//if(dynamic_cast<SlotBundle*>(obj))
+	//return true;
  //   else if(dynamic_cast<ParameteredGroupObject*>(obj))
 //	return true;
     return false;

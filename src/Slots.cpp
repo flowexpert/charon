@@ -23,7 +23,7 @@
 #include <charon-core/ParameterFile.h>
 #include <charon-core/StringTool.h>
 #include <charon-core/SplitStream.h>
-#include <charon-core/Slots.hxx>
+#include "../include/charon-core/Slots.hxx"
 
 // ==========================   class Slot   ================================
 
@@ -182,26 +182,18 @@ bool VirtualSlot::_removeTarget(Slot *target) {
 void VirtualSlot::save(ParameterFile &pf) const
 {
 	Slot::save(pf);
-
-	if(_target.size()>0) {
-		Slot* sl=*(_target.begin());
-		std::string target=sl->getParent().getName() + "."+ sl->getName();
-		pf.set<std::string> (_parent->getName() + "." + _name+".outslot", target);
-	}
-	else {
-		if (pf.isSet(_parent->getName() + "." + _name+".outslot")) {
-			pf.erase(_parent->getName() + "." + _name+".outslot");
-		}
-		if (pf.isSet(_parent->getName() + "." + _name+".displayName")) {
-			pf.erase(_parent->getName() + "." + _name+".displayName");
-		}
-		if (pf.isSet(_parent->getName() + "." + _name+".type")) {
-			pf.erase(_parent->getName() + "." + _name+".type");
-		}
-	}
+	std::vector<std::string> targetList;
+	typename std::set<Slot*>::const_iterator slot;
+	for (slot = _target.begin(); slot != _target.end(); slot++)
+		targetList.push_back((*slot)->getParent().getName() + "."
+				+ (*slot)->getName());
+	if (targetList.size())
+		pf.set<std::string> (_parent->getName() + "." + _name, targetList);
+	else if (pf.isSet(_parent->getName() + "." + _name))
+		pf.erase(_parent->getName() + "." + _name);
 
 	pf.set<std::string> (_parent->getName() + "." + _name+".displayName", _displayName);
-	pf.set<std::string> (_parent->getName() + "." + _name+".type", _type);
+	pf.set<std::string> (_parent->getName() + "." + _name+".typeSlot", _type);
 	onSave(pf);
 }
 
@@ -229,16 +221,44 @@ const OutputSlotIntf* VirtualOutputSlot::getThisPointer() const {
 
 void VirtualSlot::load(const ParameterFile &pf, const PluginManagerInterface *man)
 {
-	std::string outsl=pf.get<std::string>(_parent->getName() + "." + _name+".outslot");
-	//std::string insl=pf.get<std::string>(_parent->getName() + "." + _virtualNum+".inslot");
+	// disconnect from other slots
+	Slot::disconnect();
 
-	OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(man->getInstance(outsl));
-	assert(sl);
-	_target.insert(dynamic_cast<Slot*>(sl));
+	if (!pf.isSet(Slot::_parent->getName() + "." + Slot::_name))
+		// nothing to do
+		return;
 
-	_displayName=pf.get<std::string>(_parent->getName() + "." + _name+".displayName");
-	_type=pf.get<std::string>(_parent->getName() + "." + _name+".type");
+	// get all targets from parameter file
+	std::vector<std::string> targetList = pf.getList<std::string> (
+			Slot::_parent->getName() + "." + Slot::_name);
+
+	// only multislots can be connected to more than one source!
+	if (!(Slot::_multiSlot || (targetList.size() < 2))) {
+		Slot::raise("multiple targets but not a multi-slot");
+	}
+
+	if (!targetList.size())
+		// nothing to do
+		return;
+
+	typename std::vector<std::string>::const_iterator tStrIter;
+
+	// and add corresponding slots to _targets
+	for (tStrIter = targetList.begin(); tStrIter != targetList.end(); tStrIter++) {
+		ParameteredObject* targObj = man->getInstance(tStrIter->substr(0,
+				tStrIter->find(".")));
+
+		Slot * targetSlot = targObj->getSlot(
+					tStrIter->substr(tStrIter->find(".") + 1));
+		Slot::connect(*targetSlot);
+	}
+
+	if(pf.isSet(_parent->getName() + "." + _name+".displayName"))
+		_displayName=pf.get<std::string>(_parent->getName() + "." + _name+".displayName");
+	if(pf.isSet(_parent->getName() + "." + _name+".typeSlot"))
+		_type=pf.get<std::string>(_parent->getName() + "." + _name+".typeSlot");
 	onLoad(pf,man);
+
 }
 
 void VirtualSlot::setVirtualPartnerSlot(VirtualSlot *insl)
@@ -277,7 +297,7 @@ std::set<Slot *> VirtualSlot::getTargets() const {
 }
 
 VirtualInputSlot::VirtualInputSlot(int num)
-	:VirtualSlot("Slot",num)
+	:VirtualSlot("Slot-in",num)
 {
 }
 
@@ -286,11 +306,11 @@ std::string VirtualInputSlot::getType() const {
 }
 
 std::string VirtualInputSlot::getName() const {
-	return VirtualSlot::getName()+"-in";
+	return VirtualSlot::getName();
 }
 
 VirtualOutputSlot::VirtualOutputSlot(int num)
-	:VirtualSlot("Slot",num)
+	:VirtualSlot("Slot-out",num)
 {
 	_loopPartner=0;
 	_loop=0;
@@ -375,7 +395,7 @@ std::string VirtualOutputSlot::getType() const {
 }
 
 std::string VirtualOutputSlot::getName() const {
-	return VirtualSlot::getName()+"-out";
+	return VirtualSlot::getName();
 }
 
 std::string VirtualSlot::getType() const {
@@ -391,18 +411,20 @@ void VirtualSlot::onSave(ParameterFile&) const {
 
 void VirtualOutputSlot::onLoad(
 			const ParameterFile &pf, const PluginManagerInterface*) {
-	_managerconfig=pf.get<std::string>(
-				_parent->getName() + "." + _name+".config");
-	std::string cType=pf.get<std::string>(
-				_parent->getName()+"."+_name+".cache_type");
-	if(cType=="Cache_mem") {
-		_cacheType=CACHE_MEM;
-	}
-	else if(cType=="Cache_managed") {
-		_cacheType=CACHE_MANAGED;
-	}
-	else {
-		_cacheType=CACHE_INVALID;
+	if(pf.isSet(_parent->getName() + "." + _name+".config"))
+		_managerconfig=pf.get<std::string>(_parent->getName() + "." + _name+".config");
+	if(pf.isSet(_parent->getName()+"."+_name+".cache_type"))
+	{
+		std::string cType=pf.get<std::string>(_parent->getName()+"."+_name+".cache_type");
+		if(cType=="Cache_mem") {
+			_cacheType=CACHE_MEM;
+		}
+		else if(cType=="Cache_managed") {
+			_cacheType=CACHE_MANAGED;
+		}
+		else {
+			_cacheType=CACHE_INVALID;
+		}
 	}
 }
 

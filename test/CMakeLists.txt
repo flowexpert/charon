@@ -82,7 +82,7 @@ IF(BUILD_TESTING)
 	GET_TARGET_PROPERTY(DUMMY_LOC dummymodule LOCATION)
 	GET_FILENAME_COMPONENT(MODULE_DIR "${DUMMY_LOC}" PATH)
 	ADD_DEFINITIONS(-DMODULE_DIR="${MODULE_DIR}")
-
+	ADD_DEFINITIONS(-DLIB_SUFFIX="${LIB_SUFFIX}")
 	# tests for ParameterReferences
 	ADD_EXECUTABLE(toposorttest topoSortTest.cpp)
 	TARGET_LINK_LIBRARIES(toposorttest charon-core charon-plugins)
@@ -119,13 +119,25 @@ IF(BUILD_TESTING)
 	ADD_EXECUTABLE(whilegrouptest testWhileGroup.cpp)
 	TARGET_LINK_LIBRARIES(whilegrouptest charon-core charon-plugins whilegroup)
 	ADD_TEST(
-		NAME whilegrouptest
+		NAME WhileGroupTest
 		COMMAND whilegrouptest
 	)
-	LIST(APPEND tests SlotDataPassing)
-	LIST(APPEND testTargets datapasstest)
+	LIST(APPEND tests WhileGroupTest)
+	LIST(APPEND testTargets whilegrouptest)
+
+
+	ADD_EXECUTABLE(testparametergroupobject testParameterGroupObject.cpp)
+
+	TARGET_LINK_LIBRARIES(testparametergroupobject charon-core )
+	ADD_TEST(
+		NAME ParameterGroupObjectTest
+		COMMAND testparametergroupobject
+	)
+	LIST(APPEND tests ParameterGroupObjectTest)
+	LIST(APPEND testTargets testparametergroupobject)
 
 	# add test labels for dashboard submission
 	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS charon-core)
 	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon-core Tests")
+MESSAGE("Builddir" ${PROJECT_SOURCE_DIR})
 ENDIF(BUILD_TESTING)

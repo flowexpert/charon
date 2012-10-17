@@ -46,7 +46,8 @@ template <typename T>
 void ParameteredObject::setParameter(std::string name, T value) {
 	if(_parameters.find(name) != _parameters.end()) {
 		Parameter<T>& p = dynamic_cast<Parameter<T>&>(*_parameters[name]);
-		p.operator T() = value;
+		//p.operator T() = value;
+		p=value;
 	}
 	else
 		throw std::invalid_argument("parameter not found");

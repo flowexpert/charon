@@ -186,9 +186,9 @@ public:
     }
     void initializeWhileGroup()
     {
-	setNumberOfInputSlots(2);
-	setNumberOfOuputSlots(2);
-	loopOutputToInput(0,0);
+//	setNumberOfInputSlots(2);
+	//setNumberOfOuputSlots(2);
+	loopInputToOutput(0,0);
 	StatementGenerator* st=new StatementGenerator("Statementgen");
 
 	WhileGroupStatement* wst=dynamic_cast<WhileGroupStatement*>(_pluginMan->getInstance("WhileGroupStatement"));
@@ -201,15 +201,15 @@ public:
 	_pluginMan->insertInstance(intreader2);
 	_pluginMan->insertInstance(st);
 	_pluginMan->connect(st->statement,wst->statement);
-	OutputSlotIntf* in1=getInputSlot(0).second;
-	OutputSlotIntf* in2=getInputSlot(1).second;
+	OutputSlotIntf* in1=0;//getInputSlot(0).second;
+	OutputSlotIntf* in2=0;//getInputSlot(1).second;
 	_pluginMan->connect(&intreader->in1,dynamic_cast<Slot*>(in1));
 	_pluginMan->connect(&intreader->in2,dynamic_cast<Slot*>(in2));
 	_pluginMan->connect(&intreader2->in1,dynamic_cast<Slot*>(in1));
 	_pluginMan->connect(&intreader2->in2,dynamic_cast<Slot*>(in2));
 
-	_pluginMan->connect(&intoutgen->out1,dynamic_cast<Slot*>(getOutputSlot(0).second));
-	_pluginMan->connect(&intoutgen->out2,dynamic_cast<Slot*>(getOutputSlot(1).second));
+//	_pluginMan->connect(&intoutgen->out1,dynamic_cast<Slot*>(getOutputSlot(0).second));
+	//_pluginMan->connect(&intoutgen->out2,dynamic_cast<Slot*>(getOutputSlot(1).second));
 
     }
 };
@@ -252,10 +252,10 @@ void testWhileIterationLoop()
     Reader* extreader=new Reader("ExternReader");
     man.insertInstance(extoutgen);
     man.insertInstance(extreader);
-    man.connect(&extoutgen->out1,dynamic_cast<Slot*>(testWhilegroup->getInputSlot(0).first));
-    man.connect(&extoutgen->out2,dynamic_cast<Slot*>(testWhilegroup->getInputSlot(1).first));
-    man.connect(&extreader->in1,dynamic_cast<Slot*>(testWhilegroup->getOutputSlot(0).first));
-    man.connect(&extreader->in2,dynamic_cast<Slot*>(testWhilegroup->getOutputSlot(1).first));
+	//man.connect(&extoutgen->out1,dynamic_cast<Slot*>(testWhilegroup->getInputSlot(0).first));
+	//man.connect(&extoutgen->out2,dynamic_cast<Slot*>(testWhilegroup->getInputSlot(1).first));
+	//man.connect(&extreader->in1,dynamic_cast<Slot*>(testWhilegroup->getOutputSlot(0).first));
+	//man.connect(&extreader->in2,dynamic_cast<Slot*>(testWhilegroup->getOutputSlot(1).first));
     man.runWorkflow();
 }
 

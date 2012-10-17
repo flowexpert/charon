@@ -18,117 +18,28 @@
 
 #include "ParameteredObject.h"
 #include "PluginManager.h"
-
-/// Interface for SlotBundle
-class SlotBundleIntf
-{
-public:
-	/// Size of bundle
-	virtual int size()=0;
-};
-
-/// Represents slot interface of group
-/** Loadable into a nested group workflow to expose slots to a global group.
- */
-class SlotBundle: public ParameteredObject,public SlotBundleIntf
-{
-public:
-	/// Default constructor.
-	/** Init class name with given string.
-	 *  Also generates a unique instance name if necessary.
-	 *  \param className    Initialization value for className property.
-	 *  \param name         Instance name (auto generation if empty)
-	 *  \param doc  Class docstring (for metadata)
-	 */
-	SlotBundle(const std::string& className,
-		   const std::string& name = "", const std::string& doc = "");
-	virtual ~SlotBundle();
-
-	/// Set the number of slots
-	void setNumberOfVirtualSlots(int num);
-
-	/// Initialize
-	void initialize();
-
-	/// Execute
-	/** Depending on the cache settings of the slots and the bundle cache setting
-	  * this execute() will handle the transport of the data in the slots
-	  */
-	void execute();
-
-	/// Finalize
-	void finalize();
-
-	/// CacheOption
-	/** Bundle cache setting.
-	 *  Determines whether to override the individual
-	 *  cache settings of the slots.
-	 */
-	enum CacheOption {
-		OVERRIDE,
-		NO_OVERRIDE
-	};
-
-	/// Load connections
-	void loadConnection(ParameterFile pf,PluginManagerInterface* man);
+#include "SlotBundleInterfaces.h"
 
 
 
-	/// Size of bundle
-	virtual int size();
-
-protected:
-	virtual void _addAllSlots()=0;
-	virtual void _removeAllSlots()=0;
-	std::vector<VirtualOutputSlot*> _virtualOutputSlots;
-	std::vector<VirtualInputSlot*> _virtualInputSlots;
 
 
-private:
 
 
-	void _deleteAllSlots();
+///// The function getSlotVector exposes _outputSlots to the parent group.
+//class OutputSlotBundle: public SlotBundle
+//{
+//public:
+//	OutputSlotBundle(const std::string& className,
+//			const std::string& name = "", const std::string& doc = "");
+//	std::vector<VirtualOutputSlot*>&  getSlotVector();
+//	std::vector<VirtualInputSlot*>& getInternalSlotVector();
+//protected:
+//	void _addAllSlots();
+//	void _removeAllSlots();
+//};
 
-	/// Configuration.
-	/**
-	  * stores name, doc, types of the slots.
-	  */
-	ParameterList<std::string> _config;
-
-	ParameterFile _bundleConfigFile;
-
-	/// Execute Bundle
-	//void executeBundle();
-};
-
-/// The function getSlotVector exposes _inputSlots to the parent group.
-class InputSlotBundle:public SlotBundle
-{
-public:
-	InputSlotBundle(const std::string& className,
-			const std::string& name = "", const std::string& doc = "");
-	std::vector<VirtualInputSlot*>& getSlotVector();
-	std::vector<VirtualOutputSlot*>& getInternalSlotVector();
-
-protected:
-	void _addAllSlots();
-	void _removeAllSlots();
-};
-
-/// The function getSlotVector exposes _outputSlots to the parent group.
-class OutputSlotBundle: public SlotBundle
-{
-public:
-	OutputSlotBundle(const std::string& className,
-			const std::string& name = "", const std::string& doc = "");
-	std::vector<VirtualOutputSlot*>&  getSlotVector();
-	std::vector<VirtualInputSlot*>& getInternalSlotVector();
-protected:
-	void _addAllSlots();
-	void _removeAllSlots();
-};
-
-class ParameteredGroupObject : public ParameteredObject
+class  ParameteredGroupObject : public ParameteredObject
 {
 public:
 	/// Default constructor.
@@ -138,7 +49,7 @@ public:
 	 *  \param name         Instance name (auto generation if empty)
 	 *  \param doc  Class docstring (for metadata)
 	 */
-	ParameteredGroupObject(const std::string& className,
+	ParameteredGroupObject(const std::string& className="ParameteredGroupObject",
 		const std::string& name = "", const std::string& doc = "");
 
 	ParameterList<std::string> pluginPaths;
@@ -146,6 +57,12 @@ public:
 
 	/// Default deconstructor
 	virtual ~ParameteredGroupObject();
+
+	/// Prepare the interface.
+	/** Loads the child workflow file given by the parent workflow file,
+	  * and searches for the input and output slot bundles. These, if  found, are added to the interface
+	  */
+	virtual void prepareDynamicInterface(const ParameterFile &file);
 
 	/// Initialization
 	/** Calls initialize Group */
@@ -171,25 +88,19 @@ public:
 	/** Does nothing. Can be used in derived classes. */
 	virtual void finalizeGroup();
 
-	void setNumberOfInputSlots(int i);
-	void setNumberOfOuputSlots(int i);
 
-	int getNumberOfInputSlots() const;
-	int getNumberOfOutputSlots() const;
 
-	const std::pair<InputSlotIntf*,OutputSlotIntf*> getInputSlot(int slotnr) const;
-	const std::pair<OutputSlotIntf*,InputSlotIntf*> getOutputSlot(int slotnr) const;
 
 	/// LoopOutToInput
 	/** Loop the given output to an input.
 	 *  The loop connection is only valid after one iteration of the group
 	 */
-	void loopOutputToInput(int output,int input);
+	void loopInputToOutput(int input,int output);
 
 	/// breakLoop
 	/** Break a loop connection.
 	  */
-	void breakLoop(int output);
+	void breakLoop(int input);
 
 	/// enableLoopConnections
 	/** enable all looped connections
@@ -203,11 +114,16 @@ public:
 	/** saves the internal workflow */
 	virtual void onSave(ParameterFile &pf) const;
 
+	/// Custom load
+	/** Load the loop connections*/
+	virtual void onLoad(const ParameterFile &pf, const PluginManagerInterface *man);
+
 protected:
 	PluginManager* _pluginMan;
-	InputSlotBundle* _inputs;
-	OutputSlotBundle* _outputs;
+	InputSlotBundleIntf* _inputs;
+	OutputSlotBundleIntf* _outputs;
 	std::map<int,VirtualOutputSlot*> _loopedSlots;
+	std::vector<Parameter<int>* > _loopOutputNumber; //For ever
 };
 
 #endif // PARAMETEREDGROUPOBJECT_H

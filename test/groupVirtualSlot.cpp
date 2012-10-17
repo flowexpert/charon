@@ -92,12 +92,12 @@ public:
     {
 
 
-	setNumberOfInputSlots(2);
+//	setNumberOfInputSlots(2);
 	Reader* rd=new Reader("Reader");
 
 	//Virtual slots receiving Data from outside
-	Slot* out1=dynamic_cast<Slot*>(getInputSlot(0).second);
-	Slot* out2=dynamic_cast<Slot*>(getInputSlot(1).second);
+	Slot* out1=0;//dynamic_cast<Slot*>(getInputSlot(0).second);
+	Slot* out2=0;//dynamic_cast<Slot*>(getInputSlot(1).second);
 	_pluginMan->insertInstance(rd);
 	//_pluginMan->connect(out1->getParent().getName()+"."+out1->getName(),rd->getName()+"."+rd->in1.getName());
 	//Connect virtual slot to reader. Reader should receive values from object outside of group
@@ -122,11 +122,11 @@ public:
     {
 
 
-	setNumberOfOuputSlots(2);
+//	setNumberOfOuputSlots(2);
 	Outputgen* outgen=new Outputgen("OutputgenWriter");
 	outgen->out2.setCacheType(Slot::CACHE_MANAGED);
-	Slot* in1=dynamic_cast<Slot*>(getOutputSlot(0).second);
-	Slot* in2=dynamic_cast<Slot*>(getOutputSlot(1).second);
+	Slot* in1=0;//dynamic_cast<Slot*>(getOutputSlot(0).second);
+	Slot* in2=0;//dynamic_cast<Slot*>(getOutputSlot(1).second);
 	_pluginMan->insertInstance(outgen);
 	_pluginMan->connect(&(outgen->out1),in1);
 	_pluginMan->connect(&(outgen->out2),in2);
@@ -163,12 +163,12 @@ void testDataToGroup()
     man->insertInstance(generator);
 
     //Connect output generator to virtual slots of group. Data should flow from outputgen into group into nested reader
-    Slot* in=dynamic_cast<Slot*>(group->getInputSlot(0).first);
-    Slot* in2=dynamic_cast<Slot*>(group->getInputSlot(1).first);
+	Slot* in=0;//dynamic_cast<Slot*>(group->getInputSlot(0).first);
+	Slot* in2=0;//dynamic_cast<Slot*>(group->getInputSlot(1).first);
     man->connect(&(generator->out1),in);
     man->connect(&(generator->out2),in2);
-    sout<<"Number of input in Testgroupreader "<<group->getNumberOfInputSlots()<<std::endl;
-    sout<<"Number of output in Testgroupreader "<<group->getNumberOfOutputSlots()<<std::endl;
+	sout<<"Number of input in Testgroupreader "<<std::endl;//group->getNumberOfInputSlots()<<std::endl;
+	sout<<"Number of output in Testgroupreader "<<std::endl;//group->getNumberOfOutputSlots()<<std::endl;
 
     man->runWorkflow();
     man->saveParameterFile("testDataToGroup.wrp");
@@ -194,12 +194,12 @@ void testDataFromGroup()
     PluginManager* man=new PluginManager(paths);
     man->insertInstance(group);
     man->insertInstance(readerob);
-    Slot* out1=dynamic_cast<Slot*>(group->getOutputSlot(0).first);
-    Slot* out2=dynamic_cast<Slot*>(group->getOutputSlot(1).first);
+	Slot* out1=0;//dynamic_cast<Slot*>(group->getOutputSlot(0).first);
+	Slot* out2=0;//dynamic_cast<Slot*>(group->getOutputSlot(1).first);
     man->connect(out1,&(readerob->in1));
     man->connect(out2,&(readerob->in2));
-    sout<<"Number of input in Testgroupwriter "<<group->getNumberOfInputSlots()<<std::endl;
-    sout<<"Number of output in Testgroupwriter "<<group->getNumberOfOutputSlots()<<std::endl;
+	//sout<<"Number of input in Testgroupwriter "<<group->getNumberOfInputSlots()<<std::endl;
+	//sout<<"Number of output in Testgroupwriter "<<group->getNumberOfOutputSlots()<<std::endl;
     man->runWorkflow();
     man->saveParameterFile("testDataFromGroup.wrp");
 

@@ -85,7 +85,7 @@ bool AbstractSlot<T>::_removeTarget(Slot* target) {
 	}
 	// dynamic_cast isn't possible on dynamically loaded plugins.
 	// AbstractSlot<T>* t = dynamic_cast<AbstractSlot<T>*>(target);
-	AbstractSlot<T>* abstarget=dynamic_cast<AbstractSlot<T>*>(target);
+	AbstractSlot<T>* abstarget=(AbstractSlot<T>*)target;
 	return (_targets.erase( abstarget) > 0);
 }
 
@@ -184,8 +184,15 @@ void InputSlot<T>::load(const ParameterFile& pf,
 					tStrIter->substr(tStrIter->find(".") + 1));
 
 		// typecheck is performed in _addTarget that is called in connect
-		AbstractSlot<T>* tmp = (AbstractSlot<T>*) (targetSlot);
-		Slot::connect(*tmp);
+		//AbstractSlot<T>* tmp = (AbstractSlot<T>*) (targetSlot);
+		AbstractSlot<T>* tmp=dynamic_cast<AbstractSlot<T>* >(targetSlot);
+		if(tmp)
+			Slot::connect(*tmp);
+		else
+		{
+			VirtualSlot* vtmp=dynamic_cast<VirtualSlot*>(targetSlot);
+			Slot	::connect(*vtmp);
+		}
 	}
 }
 
