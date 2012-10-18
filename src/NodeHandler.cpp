@@ -187,11 +187,14 @@ void NodeHandler::loadFromModel() {
 
 		QStringList ins = _model->getInputs(name);
 		QStringList outs = _model->getOutputs(name);
+		QStringList dins = _model->getInputDisplayNames(name);
+		QStringList douts = _model->getOutputDisplayNames(name);
 		for (int jj=0; jj < ins.size(); jj++) {
-			node->addProperty(ins[jj], true);
+
+			node->addProperty(ins[jj],dins[jj], true);
 		}
 		for (int jj=0; jj < outs.size(); jj++) {
-			node->addProperty(outs[jj], false);
+			node->addProperty(outs[jj],douts[jj], false);
 		}
 		for (int jj=0; jj < outs.size(); jj++) {
 			QString curO = name+"."+outs[jj];

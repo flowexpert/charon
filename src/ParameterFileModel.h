@@ -191,11 +191,23 @@ public:
 	 */
 	QStringList getInputs(QString objName) const;
 
+	/// Get input slots of object
+	/** \param  objName         name of the object
+	 *  \returns                name of input slots
+	 */
+	QStringList getInputDisplayNames(QString objName) const;
+
 	/// Get output slots of object
 	/** \param  objName         name of the object
 	 *  \returns                name of output slots
 	 */
 	QStringList getOutputs(QString objName) const;
+
+	/// Get output slots of object
+	/** \param  objName         name of the object
+	 *  \returns                name of output slots
+	 */
+	QStringList getOutputDisplayNames(QString objName) const;
 
 	/// Get parameters of object
 	/** \param  objName         name of the object

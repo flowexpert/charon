@@ -46,6 +46,19 @@ public:
 			Node* parentNode, QString name,
 			int propNr, bool input,
 			const ParameterFileModel* pFile);
+	/// default constructor
+	/** \param parentNode      the node which the property belongs to
+	 *  \param name            name of the property
+	 *  \param displayname     display name of the property
+	 *  \param propNr          number of the property
+	 *                         (needed for correct positioning)
+	 *  \param input           input output type of the property
+	 *  \param pFile           link to given parameter file
+	 */
+	NodeProperty(
+			Node* parentNode, QString name,QString displayname,
+			int propNr, bool input,
+			const ParameterFileModel* pFile);
 
 	/// area for hover event
 	virtual QRectF boundingRect() const;
@@ -103,6 +116,9 @@ private:
 
 	/// name of the property
 	QString _name;
+
+	/// name of the property
+	QString _displayname;
 
 	/// list of all connectionlines
 	QList<ConnectionLine *> _connectionList;

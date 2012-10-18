@@ -36,6 +36,23 @@ NodeProperty::NodeProperty(
 			QGraphicsItem(parentNode),
 			_propNr(propNr),
 			_name(name),
+			_displayname(name),
+			_isInput(input),
+			_node(parentNode),
+			_pFile(pF)
+{
+	Q_ASSERT(_node);
+	setAcceptHoverEvents(true);
+	_color=Qt::lightGray;
+}
+
+NodeProperty::NodeProperty(
+		Node* parentNode, QString name,QString displayname, int propNr,
+		bool input, const ParameterFileModel* pF) :
+			QGraphicsItem(parentNode),
+			_propNr(propNr),
+			_name(name),
+			_displayname(displayname),
 			_isInput(input),
 			_node(parentNode),
 			_pFile(pF)
@@ -104,7 +121,7 @@ void NodeProperty::paint(
 	QFont f = painter->font();
 	f.setPixelSize(14);
 	painter->setFont(f);
-	painter->drawText(inner, _name);
+	painter->drawText(inner, _displayname);
 	painter->setBrush(_getSocketColor(getType()));
 	painter->drawEllipse(_getSocketRect());
 }
@@ -136,7 +153,7 @@ void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent* ev) {
     }
 	setToolTip(QString(
 			"<p style='white-space:pre'><b>Slot: <i>%1</i><br>"
-			"Type:</b><br>%2<br>""<b>Connected To:</b><br>%3</p>").arg(_name).arg(getType()).arg(connectedNodes));
+			"Type:</b><br>%2<br>""<b>Connected To:</b><br>%3</p>").arg(_displayname).arg(getType()).arg(connectedNodes));
 
 	_color=Qt::green;
 	changeConnectionLineColor(Qt::green);

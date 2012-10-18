@@ -874,6 +874,19 @@ QStringList ParameterFileModel::getInputs(QString objName) const {
 	return _metaInfos->getInputs(className);
 }
 
+QStringList ParameterFileModel::getInputDisplayNames(QString objName) const {
+	objName = objName.section(".",0,0);
+	QString className = getClass(objName);
+	if (_metaInfos->isDynamic(className)) {
+		QFileInfo fileInfo(_getDynamicMetaFile(objName));
+		if (fileInfo.exists()) {
+			MetaData tmp(fileInfo.absoluteFilePath());
+			return tmp.getInputDisplayNames(className);
+		}
+	}
+	return _metaInfos->getInputDisplayNames(className);
+}
+
 QStringList ParameterFileModel::getOutputs(QString objName) const {
 	objName = objName.section(".",0,0);
 	QString className = getClass(objName);
@@ -886,6 +899,20 @@ QStringList ParameterFileModel::getOutputs(QString objName) const {
 	}
 	return _metaInfos->getOutputs(className);
 }
+
+QStringList ParameterFileModel::getOutputDisplayNames(QString objName) const {
+	objName = objName.section(".",0,0);
+	QString className = getClass(objName);
+	if (_metaInfos->isDynamic(className)) {
+		QFileInfo fileInfo(_getDynamicMetaFile(objName));
+		if (fileInfo.exists()) {
+			MetaData tmp(fileInfo.absoluteFilePath());
+			return tmp.getOutputDisplayNames(className);
+		}
+	}
+	return _metaInfos->getOutputDisplayNames(className);
+}
+
 
 QStringList ParameterFileModel::getParameters(QString objName) const {
 	objName = objName.section(".",0,0);

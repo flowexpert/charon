@@ -56,6 +56,15 @@ void Node::addProperty(QString name, bool input) {
 		_checkWidth(name.size());
 }
 
+void Node::addProperty(QString name,QString displayname, bool input) {
+		NodeProperty* prop = new NodeProperty(
+						this,name,displayname,_nProps,input,_pFile);
+		_height += 25;
+		_properties.insert(name.toLower(),prop);
+		_nProps++;
+		_checkWidth(name.size());
+}
+
 QRectF Node::boundingRect() const {
 	QRectF bb(0,0,_width,_height);
 	bb.adjust(-1,-1,+1,+1);
