@@ -24,6 +24,7 @@
 #include <charon-core/StringTool.h>
 #include <charon-core/SplitStream.h>
 #include "../include/charon-core/Slots.hxx"
+#include "../include/charon-core/SlotBundleInterfaces.h"
 
 // ==========================   class Slot   ================================
 
@@ -44,6 +45,21 @@ void Slot::init(ParameteredObject* parent, std::string name,
 
 	}
 	_displayName=name;
+}
+
+void Slot::init(ParameteredObject* parent, std::string name,std::string displayname,
+		std::string type) {
+
+	assert(parent); // parent valid
+	_parent = parent;
+
+	_type = StringTool::toLowerCase(type);
+	if(_type!="virtual")
+	{
+		_name = name;
+
+	}
+	_displayName=displayname;
 }
 
 Slot::~Slot() {
@@ -253,10 +269,10 @@ void VirtualSlot::load(const ParameterFile &pf, const PluginManagerInterface *ma
 		Slot::connect(*targetSlot);
 	}
 
-	if(pf.isSet(_parent->getName() + "." + _name+".displayName"))
-		_displayName=pf.get<std::string>(_parent->getName() + "." + _name+".displayName");
-	if(pf.isSet(_parent->getName() + "." + _name+".typeSlot"))
-		_type=pf.get<std::string>(_parent->getName() + "." + _name+".typeSlot");
+	//if(pf.isSet(_parent->getName() + "." + _name+".displayName"))
+		//_displayName=pf.get<std::string>(_parent->getName() + "." + _name+".displayName");
+	//if(pf.isSet(_parent->getName() + "." + _name+".typeSlot"))
+		//_type=pf.get<std::string>(_parent->getName() + "." + _name+".typeSlot");
 	onLoad(pf,man);
 
 }
@@ -338,6 +354,11 @@ bool VirtualSlot::onRemoveTarget(Slot*) {
 }
 
 bool VirtualInputSlot::onAddTarget(Slot *target) {
+	if(dynamic_cast<SlotBundleIntf*>(_parent))
+	{
+		_partner->_displayName=target->getParent().getName()+"."+target->getDisplayName();
+	}
+
 	if(_target.size()>0) {
 		return false;
 	}
@@ -345,8 +366,8 @@ bool VirtualInputSlot::onAddTarget(Slot *target) {
 		_type=target->getType();
 	}
 	_target.insert(target);
-	_displayName=target->getName();
-	_partner->setDisplayNameAndType(_displayName,_type);
+	//_displayName=target->getName();
+	//_partner->setDisplayNameAndType(_displayName,_type);
 	//target->_addTarget(dynamic_cast<Slot*>(this));
 	OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(target);
 	VirtualOutputSlot* partner=dynamic_cast<VirtualOutputSlot*>(_partner);
@@ -373,7 +394,10 @@ bool VirtualInputSlot::onRemoveTarget(Slot *target) {
 		if(_partner->_target.size()==0) {
 			_partner->_type="virtual";
 		}
-		_partner->_displayName=_partner->_name;
+		if(dynamic_cast<SlotBundleIntf*>(_parent))
+		{
+			_partner->_displayName=_partner->_name;
+		}
 		_target.erase(target);
 		return true;
 	}
@@ -488,9 +512,14 @@ void VirtualOutputSlot::setLoopPartner(VirtualInputSlot *loopPartner) {
 }
 
 bool VirtualOutputSlot::onAddTarget(Slot *target) {
+	if(dynamic_cast<SlotBundleIntf*>(_parent))
+	{
+		_partner->_displayName=target->getParent().getName()+"."+target->getDisplayName();
+	}
 	if(StringTool::toLowerCase(_type)=="virtual") {
 		_type=target->getType();
 		_partner->_type=_type;
+
 	}
 	_target.insert(target);
 

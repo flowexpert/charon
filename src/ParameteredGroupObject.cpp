@@ -101,7 +101,7 @@ void ParameteredGroupObject::initialize()
 		for(int i=0;i<vinput.size();i++)
 		{
 			VirtualInputSlot* in=vinput[i];
-			_addInputSlot(*in,in->getName(),"",in->getType());
+			_addInputSlot(*in,in->getName(),in->getDisplayName(),"",in->getType());
 			Parameter<int> *par=new Parameter<int>(-1);
 			std::stringstream pname;
 			pname<<"loop_input_"<<i<<"_to_output";
@@ -119,7 +119,7 @@ void ParameteredGroupObject::initialize()
 		for(int i=0;i<voutput.size();i++)
 		{
 			VirtualOutputSlot* out=voutput[i];
-			_addOutputSlot(*out,out->getName(),"",out->getType());
+			_addOutputSlot(*out,out->getName(),out->getDisplayName(),"",out->getType());
 		}
 	}
 

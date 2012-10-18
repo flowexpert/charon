@@ -149,13 +149,18 @@ void ParameteredObject::_addParameter(AbstractParameter& param,
 
 void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type) {
+	_addInputSlot(slot,name,name,doc,type);
+}
+
+void ParameteredObject::_addInputSlot(Slot &slot, const std::string &name,const std::string &displayname, const std::string &doc, const std::string &type)
+{
 	// if type is given, we do not need guessing
 	std::string guessedType = type;
 	if (!guessedType.size())
 		guessedType = slot.guessType();
 
 	// assign parameter to this object
-	slot.init(this, name, guessedType);
+	slot.init(this, name,displayname, guessedType);
 
 	// add metadata
 	if (_addSomething("inputs", name, doc, guessedType)) {
@@ -163,6 +168,8 @@ void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 		_inputs.insert(std::make_pair(name, &slot));
 
 		if (_createMetadata) {
+			_metadata.set<std::string> (_className + "." + name
+					+ ".displayname", slot.getDisplayName());
 			if (slot.getMulti())
 				_metadata.set<std::string> (_className + "." + name
 						+ ".multi", "true");
@@ -175,19 +182,26 @@ void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 
 void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type) {
+	_addOutputSlot(slot,name,name,doc,type);
+}
+
+void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,  const std::string& displayname,
+		const std::string& doc, const std::string& type) {
 	// if type is given, we do not need guessing
 	std::string guessedType = type;
 	if (!guessedType.size())
 		guessedType = slot.guessType();
 
 	// assign parameter to this object
-	slot.init(this, name, guessedType);
+	slot.init(this, name,displayname, guessedType);
 
 	// add metadata
 	if (_addSomething("outputs", name, doc, guessedType)) {
 		// and add it to the output slot list
 		_outputs.insert(std::make_pair(name, &slot));
 		if (_createMetadata) {
+			_metadata.set<std::string> (_className + "." + name
+					+ ".displayname", slot.getDisplayName());
 			if (!slot.getMulti())
 				_metadata.set<std::string> (_className + "." + name
 						+ ".multi", "false");

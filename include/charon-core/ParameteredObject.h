@@ -208,6 +208,26 @@ protected:
 		const std::string& doc, const std::string& type = "");
 	//  \}
 
+	/// Register input slot.
+	/** \param slot         New slot to add
+	 *  \param name         parameter name to pass to AbstractParameter::init()
+	 *  \param displayname  parameter displyname to pass to AbstractParameter::init()
+	 *  \param doc          parameter docstring (for metadata generation)
+	 *  \param type         Parameter type (string representation)
+	 */
+	void _addInputSlot(Slot& slot, const std::string& name, const std::string& displayname,
+		const std::string& doc, const std::string& type);
+
+	/// Register output slot.
+	/** \param slot         New slot to add
+	 *  \param name         parameter name to pass to AbstractParameter::init()
+	 *  \param displayname  parameter displyname to pass to AbstractParameter::init()
+	 *  \param doc          parameter docstring (for metadata generation)
+	 *  \param type         Parameter type (string representation)
+	 */
+	void _addOutputSlot(Slot& slot, const std::string& name, const std::string& displayname,
+		const std::string& doc, const std::string& type);
+
 	/// register member function
 	/**
 	 *  This hack is useful to get some member functions compiled

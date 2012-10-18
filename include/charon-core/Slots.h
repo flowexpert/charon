@@ -94,6 +94,14 @@ public:
 	/// @throws std::string     Error message if invalid parent set.
 	void init(ParameteredObject* parent, std::string name, std::string type);
 
+	/// initialize parent and name and displayname
+	/// @param parent           parent object
+	/// @param name             slot name
+	/// @param displayname      slot display name
+	/// @param type             slot type
+	/// @throws std::string     Error message if invalid parent set.
+	void init(ParameteredObject* parent, std::string name, std::string displayname, std::string type);
+
 	/// prepare slot
 	/** this may be used on input/output slots to allocate memory */
 	virtual void prepare() = 0;
