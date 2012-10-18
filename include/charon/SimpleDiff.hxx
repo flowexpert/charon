@@ -55,13 +55,18 @@ void SimpleDiff<T>::execute() {
 		dx().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			if ((x>0) && (x<_width-1) && (y>0) && (y<_height-1))
+			dx().atNXYZC(0,x,y,0,c) = T(0);
+
+                        if ((x<_width-1) && (y<_height-1) && (x == 0))
+			dx().atNXYZC(0,x,y,0,c) = ( 1*img().atNXYZC(0,x+1,y,0,c)
+                                                  - 8*img().atNXYZC(0,x,y,0,c)
+                                                  + 8*img().atNXYZC(0,x+1,y,0,c)
+                                                  - 1*img().atNXYZC(0,x+2,y,0,c) ) / 12.0;
+			if ((x<_width-1) && (y<_height-1) && (x > 0))
 			dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x-2,y,0,c)
 			                          - 8*img().atNXYZC(0,x-1,y,0,c)
 			                          + 8*img().atNXYZC(0,x+1,y,0,c)
 			                          -   img().atNXYZC(0,x+2,y,0,c) ) / 12.0;
-			else
-			dx().atNXYZC(0,x,y,0,c) = T(0);
 		}
 		cimg_forXY( img()[0], x, y )
 		{
@@ -75,13 +80,18 @@ void SimpleDiff<T>::execute() {
 		dy().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			if ((x>0) && (x<_width-1) && (y>0) && (y<_height-1))
+			dy().atNXYZC(0,x,y,0,c) = T(0);
+
+			if ((x<_width-1) && (y<_height-1) && (y == 0))
+			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x,y+1,0,c)
+                                                  - 8*img().atNXYZC(0,x,y,0,c)
+                                                  + 8*img().atNXYZC(0,x,y+1,0,c)
+                                                  -   img().atNXYZC(0,x,y+2,0,c) ) / 12.0;
+			if ((x<_width-1) && (y<_height-1) && (y > 0))
 			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x,y-2,0,c)
 			                          - 8*img().atNXYZC(0,x,y-1,0,c)
 			                          + 8*img().atNXYZC(0,x,y+1,0,c)
 			                          -   img().atNXYZC(0,x,y+2,0,c) ) / 12.0;
-			else
-			dy().atNXYZC(0,x,y,0,c) = T(0);
 		}
 		cimg_forXY( img()[0], x, y )
 		{
@@ -95,6 +105,9 @@ void SimpleDiff<T>::execute() {
 		dt().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
+			dt().atNXYZC(0,x,y,0,c) = T(0);
+
+			if ((x<_width-1) && (y<_height-1))
 			dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0,x,y,0,1) - img().atNXYZC(0,x,y,0,0);
 		}
 	}
