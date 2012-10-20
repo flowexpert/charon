@@ -63,6 +63,8 @@ public:
 	OutputSlot < cimg_library::CImgList<T> > flowOut;
 	/// current size
 	OutputSlot < Roi<int>* > size;
+	/// unscaled size
+	OutputSlot < Roi<int>* > unscaledSize;
 
 	/// scale factor
 	Parameter < double > scaleFactor;
@@ -82,6 +84,8 @@ protected:
 private:
 	/// content for roi pointer output slot
 	Roi<int> _size;
+	/// dto. for unscaled size
+	Roi<int> _unscaledSize;
 };
 
 #endif // _PYRAMID_RESCALE_H_

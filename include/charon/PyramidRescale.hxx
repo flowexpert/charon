@@ -31,7 +31,8 @@
 template <typename T>
 PyramidRescale<T>::PyramidRescale(const std::string& name) :
 		TemplatedParameteredObject<T>("PyramidRescale", name,
-			"Rescaling for pyramid-based flow-estimation algorithms.")
+			"Rescaling for pyramid-based flow-estimation algorithms."),
+		flowIn(true,false)
 {
 	ParameteredObject::_addInputSlot(
 			seqIn, "seqIn", "sequence input", "CImgList<T>");
@@ -45,6 +46,8 @@ PyramidRescale<T>::PyramidRescale(const std::string& name) :
 			flowOut, "flowOut", "flow output", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 			size, "size", "current size", "Roi<int>*");
+	ParameteredObject::_addOutputSlot(
+			unscaledSize, "unscaledSize", "unscaled size", "Roi<int>*");
 	ParameteredObject::_addParameter (
 			scaleFactor, "scaleFactor", "scale factor", 0.5);
 	ParameteredObject::_addParameter (
@@ -57,12 +60,14 @@ PyramidRescale<T>::PyramidRescale(const std::string& name) :
 template <typename T>
 void PyramidRescale<T>::execute() {
 	size() = &_size;
+	unscaledSize() = &_unscaledSize;
 
 	const cimg_library::CImgList<T>& si = seqIn();
 	cimg_library::CImgList<T>& so = seqOut();
-
-	const cimg_library::CImgList<T>& fi = flowIn();
 	cimg_library::CImgList<T>& fo = flowOut();
+
+	cimg_library::CImgList<T> fi;
+	if (flowIn.connected()) fi = flowIn();
 
 	const unsigned int curL = level();
 	const unsigned int endL = levels();
@@ -77,6 +82,8 @@ void PyramidRescale<T>::execute() {
 
 	// input sequence remains unscaled over time and is the pyramid base
 	const int sx = si[0].width(), sy = si[0].height();
+	_unscaledSize.xEnd = sx;
+	_unscaledSize.yEnd = sy;
 
 	// target sizes
 	const double shrink = std::pow(scaleFactor(),(double)stepsDown);
@@ -97,33 +104,35 @@ void PyramidRescale<T>::execute() {
 	}
 
 	// rescale flow
-	fo = fi;
-	if(fo.is_sameXY(si)) {
-		// scale down (initial guess)
+	if (flowIn.connected()) {
+		fo = fi;
+		if(fo.is_sameXY(si)) {
+			// scale down (initial guess)
 #ifndef NDEBUG
-		sout << "\t" << "scaling down to " << tx << "x" << ty << std::endl;
+			sout << "\t" << "scaling down to " << tx << "x" << ty << std::endl;
 #endif
-		cimglist_for(fo,kk) {
-			assert(fo.at(kk).is_sameXY(sx,sy));
-			fo.at(kk).blur(blur);
-			fo.at(kk).resize(tx,ty,-100,-100,interpolation());
-			fo.at(kk) *= shrink;
+			cimglist_for(fo,kk) {
+				assert(fo.at(kk).is_sameXY(sx,sy));
+				fo.at(kk).blur(blur);
+				fo.at(kk).resize(tx,ty,-100,-100,interpolation());
+				fo.at(kk) *= shrink;
+			}
 		}
-	}
-	else {
-		// scale up last result
+		else {
+			// scale up last result
 #ifndef NDEBUG
-		sout << "\t" << "scaling up to "
-				<< tx << "x" << ty << ": got "
-				<< fo[0].width() << "x" << fo[0].height()
-				<< " expected: "
-				<< std::fixed << std::setprecision(0)
-				<< tx*scaleFactor() << "x" << ty*scaleFactor()
-				<< std::endl;
+			sout << "\t" << "scaling up to "
+					<< tx << "x" << ty << ": got "
+					<< fo[0].width() << "x" << fo[0].height()
+					<< " expected: "
+					<< std::fixed << std::setprecision(0)
+					<< tx*scaleFactor() << "x" << ty*scaleFactor()
+					<< std::endl;
 #endif
-		cimglist_for(fo,kk) {
-			fo.at(kk).resize(tx,ty,-100,-100,interpolation());
-			fo.at(kk) /= scaleFactor();
+			cimglist_for(fo,kk) {
+				fo.at(kk).resize(tx,ty,-100,-100,interpolation());
+				fo.at(kk) /= scaleFactor();
+			}
 		}
 	}
 }
