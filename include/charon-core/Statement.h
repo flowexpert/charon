@@ -15,54 +15,52 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file WhileGroup.h
+/** \file Statement.h
  *  \author <a href="mailto:gerald.mwangi@gmx.de">
  *      Gerald Mwangi</a>
- *  \date 16.02.2012
- *  Declaraion of parameter class WhileGroup.
+ *  \date 29.10.2012
+ *  Declaraion of parameter class Statement.
  */
-#ifndef _WHILEGROUP_H_
-#define _WHILEGROUP_H_
+#ifndef _STATEMENT_H_
+#define _STATEMENT_H_
 
 #ifdef _MSC_VER
-#ifdef whilegroup_EXPORTS
+#ifdef statement_EXPORTS
 /// Visual C++ specific code
-#define whilegroup_DECLDIR __declspec(dllexport)
+#define statement_DECLDIR __declspec(dllexport)
 #else
-#define whilegroup_DECLDIR __declspec(dllimport)
+#define statement_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else
 /// Not needed without MSVC
-#define whilegroup_DECLDIR
+#define statement_DECLDIR
 #endif
 
-#include "ParameteredGroupObject.h"
+#include <charon-core/ParameteredObject.h>
+#include "../include/charon-core/StatementIntf.h"
 
-
-/// Executes the group as long as a given statement is true
-/** Executes the group as long as a given statement is true
+/// Statement module to be used in loops
+/** Statement module to be used in loops. This plugin is intended for loops
+ *  (e.g. WhileGroup). It interfaces the loop  with the bool statement
+ *  connected to it.
  */
-class StatementIntf;
-
-class whilegroup_DECLDIR WhileGroup : public ParameteredGroupObject {
+class statement_DECLDIR Statement : public ParameteredObject,public StatementIntf {
 public:
 	/// default constructor
 	/// \param name             instance name
-	WhileGroup(const std::string& name = "");
+	Statement(const std::string& name = "");
 
-        void initializeGroup();
+	/// Statement to interface to the external loop
+	InputSlot< bool > statement;
 
-	virtual void initializeWhileGroup();
+	virtual bool operator ()() const;
 
-        InputSlot<bool> statement;
 
+protected:
 	/// Update object.
-	 void executeGroup();
+	virtual void execute();
 private:
-	StatementIntf* _innerWhilestatement;
-
+	bool _statement;
 };
 
-
-
-#endif /* _WHILEGROUP_H_ */
+#endif /* _STATEMENT_H_ */

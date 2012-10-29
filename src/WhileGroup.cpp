@@ -24,6 +24,7 @@
 
 #include <charon-core/ParameteredObject.hxx>
 #include "../include/charon-core/WhileGroup.h"
+#include "../include/charon-core/StatementIntf.h"
 
 WhileGroup::WhileGroup(const std::string& name) :
 		ParameteredGroupObject(
@@ -35,17 +36,22 @@ WhileGroup::WhileGroup(const std::string& name) :
 {
     _addInputSlot(statement,"Statement","Statement for this whilegroup","bool");
    // statement=true;
+	_innerWhilestatement=0;
 }
 
 void WhileGroup::executeGroup() {
 	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
-	_innerWhilestatement=true;
+	bool extstatement=true;
+	if(!_innerWhilestatement)
+		return;
+
+
 	if(statement.connected()) {
-		_innerWhilestatement=_innerWhilestatement&&statement();
+		extstatement=extstatement&&statement();
 	}
-	while(_innerWhilestatement) {
+	while((*_innerWhilestatement)&&extstatement) {
 		_pluginMan->runWorkflow();
 		enableLoopConnections();
 		_pluginMan->resetExecuted();
@@ -73,25 +79,35 @@ extern "C" whilegroup_DECLDIR ParameteredObject::build_type getBuildType() {
 #endif
 }
 
-WhileGroupStatement::WhileGroupStatement(bool * pstatement)
-	:ParameteredObject(
-			"WhileGroupStatement","WhileGroupStatement",
-			"Statement used in a Whilegroup")
-{
-	_whilestatement=pstatement;
-	_addInputSlot(statement,"Statement","Statement for this whilegroup","bool");
-}
 
-void WhileGroupStatement::execute() {
-	(*_whilestatement)=statement();
-}
 
 void WhileGroup::initializeGroup() {
-	WhileGroupStatement* st=new WhileGroupStatement(&_innerWhilestatement);
-	st->initialize();
-	_pluginMan->insertInstance(st);
+
 	initializeWhileGroup();
+
+	std::map<std::string, ParameteredObject *> objs=_pluginMan->getObjectList();
+
+	std::map<std::string, ParameteredObject *>::iterator it=objs.begin();
+	for(;it!=objs.end();it++)
+	{
+		ParameteredObject* obj=it->second;
+		StatementIntf* statement=dynamic_cast<StatementIntf*>(obj);
+
+		if(statement)
+		{
+			_innerWhilestatement=statement;
+			break;
+		}
+
+	}
+	if(!_innerWhilestatement)
+	{
+		std::stringstream msg;
+		msg<<"Could not find a statement module in the workflow: "<<this->workFlowFile();
+		raise(msg.str());
+	}
 }
 
 void WhileGroup::initializeWhileGroup() {
+
 }

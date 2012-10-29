@@ -166,13 +166,13 @@ public:
     {
 	StatementGenerator* st=new StatementGenerator("Statementgen");
 
-	WhileGroupStatement* wst=dynamic_cast<WhileGroupStatement*>(_pluginMan->getInstance("WhileGroupStatement"));
+	//WhileGroupStatement* wst=0;//dynamic_cast<WhileGroupStatement*>(_pluginMan->getInstance("WhileGroupStatement"));
 
 
 	SimpleOutput* simpleout=new SimpleOutput("Simpleout");
 	_pluginMan->insertInstance(simpleout);
 	_pluginMan->insertInstance(st);
-	_pluginMan->connect(st->statement,wst->statement);
+	//_pluginMan->connect(st->statement,wst->statement);
     }
 };
 
@@ -191,7 +191,7 @@ public:
 	loopInputToOutput(0,0);
 	StatementGenerator* st=new StatementGenerator("Statementgen");
 
-	WhileGroupStatement* wst=dynamic_cast<WhileGroupStatement*>(_pluginMan->getInstance("WhileGroupStatement"));
+	//WhileGroupStatement* wst=0;//dynamic_cast<WhileGroupStatement*>(_pluginMan->getInstance("WhileGroupStatement"));
 
 	Reader* intreader=new Reader("Reader");
 	Reader* intreader2=new Reader("Reader2");
@@ -200,7 +200,7 @@ public:
 	_pluginMan->insertInstance(intreader);
 	_pluginMan->insertInstance(intreader2);
 	_pluginMan->insertInstance(st);
-	_pluginMan->connect(st->statement,wst->statement);
+	//_pluginMan->connect(st->statement,wst->statement);
 	OutputSlotIntf* in1=0;//getInputSlot(0).second;
 	OutputSlotIntf* in2=0;//getInputSlot(1).second;
 	_pluginMan->connect(&intreader->in1,dynamic_cast<Slot*>(in1));

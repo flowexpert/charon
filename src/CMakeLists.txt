@@ -77,10 +77,23 @@ TARGET_LINK_LIBRARIES(ifgroup
 ADD_LIBRARY(whilegroup SHARED
         WhileGroup.cpp
         ${CHARON_CORE_INCLUDE_DIR}/WhileGroup.h
+		${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
 )
+
 
 TARGET_LINK_LIBRARIES(whilegroup
         charon-core
+)
+
+ADD_LIBRARY(statement SHARED
+		Statement.cpp
+		${CHARON_CORE_INCLUDE_DIR}/Statement.h
+		${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
+)
+
+
+TARGET_LINK_LIBRARIES(statement
+		charon-core
 )
 
 ADD_LIBRARY(groupobject SHARED
@@ -183,6 +196,15 @@ INSTALL(
 
 INSTALL(
 		TARGETS          groupobject
+		EXPORT           ${EXPORT_NAME}
+		RUNTIME          DESTINATION bin${BIN_SUFFIX}
+		LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+		ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+		COMPONENT        libraries
+)
+
+INSTALL(
+		TARGETS          statement
 		EXPORT           ${EXPORT_NAME}
 		RUNTIME          DESTINATION bin${BIN_SUFFIX}
 		LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
