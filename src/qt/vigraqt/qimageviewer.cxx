@@ -302,7 +302,7 @@ void QImageViewerBase::setZoomLevel(int level)
     int newWidth = zoom(originalWidth(), level);
     int newHeight = zoom(originalHeight(), level);
 
-    if(newWidth < 16 || newHeight < 16)
+    if(newWidth < 1 || newHeight < 1)
         return;
 
     zoomLevel_ = level;
