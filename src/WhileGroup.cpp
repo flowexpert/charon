@@ -40,7 +40,6 @@ WhileGroup::WhileGroup(const std::string& name) :
 }
 
 void WhileGroup::executeGroup() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
 	ParameteredObject::execute();
 
 	bool extstatement=true;

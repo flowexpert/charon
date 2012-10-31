@@ -82,7 +82,7 @@ ADD_LIBRARY(whilegroup SHARED
 
 
 TARGET_LINK_LIBRARIES(whilegroup
-        charon-core
+        charon-core charon-plugins
 )
 
 ADD_LIBRARY(statement SHARED
@@ -122,8 +122,8 @@ ADD_LIBRARY(outputslotbundle SHARED
 		${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
 )
 
-TARGET_LINK_LIBRARIES(inputslotbundle charon-core)
-TARGET_LINK_LIBRARIES(outputslotbundle charon-core)
+TARGET_LINK_LIBRARIES(inputslotbundle charon-core charon-plugins)
+TARGET_LINK_LIBRARIES(outputslotbundle charon-core charon-plugins)
 # install library
 SET_TARGET_PROPERTIES(charon-core charon-plugins PROPERTIES
 	VERSION ${${PROJECT_NAME}_VERSION}

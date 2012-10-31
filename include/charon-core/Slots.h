@@ -470,7 +470,7 @@ public:
 ///  This class holds a pointer to an output if the output is CACHE_MEM, otherwise it loads
 ///  a config string from a given parameterfile
 
-class VirtualSlot
+class charon_core_DLL_PUBLIC VirtualSlot
 	:public Slot
 {
 public:
@@ -527,7 +527,7 @@ protected:
 
 };
 class VirtualInputSlot;
-class VirtualOutputSlot
+class charon_core_DLL_PUBLIC VirtualOutputSlot
 	:public VirtualSlot,public OutputSlotIntf
 {
 public:
@@ -575,7 +575,7 @@ private:
 
 
 
-class VirtualInputSlot
+class charon_core_DLL_PUBLIC VirtualInputSlot
 	:public VirtualSlot,public InputSlotIntf
 {
 public:

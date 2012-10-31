@@ -199,7 +199,7 @@ void VirtualSlot::save(ParameterFile &pf) const
 {
 	Slot::save(pf);
 	std::vector<std::string> targetList;
-	typename std::set<Slot*>::const_iterator slot;
+	std::set<Slot*>::const_iterator slot;
 	for (slot = _target.begin(); slot != _target.end(); slot++)
 		targetList.push_back((*slot)->getParent().getName() + "."
 				+ (*slot)->getName());
@@ -257,7 +257,7 @@ void VirtualSlot::load(const ParameterFile &pf, const PluginManagerInterface *ma
 		// nothing to do
 		return;
 
-	typename std::vector<std::string>::const_iterator tStrIter;
+	std::vector<std::string>::const_iterator tStrIter;
 
 	// and add corresponding slots to _targets
 	for (tStrIter = targetList.begin(); tStrIter != targetList.end(); tStrIter++) {
@@ -333,11 +333,11 @@ VirtualOutputSlot::VirtualOutputSlot(int num)
 }
 
 bool VirtualOutputSlot::isValidPartner(VirtualSlot *insl) {
-	return dynamic_cast<VirtualInputSlot*>(insl);
+	return (dynamic_cast<VirtualInputSlot*>(insl) != 0);
 }
 
 bool VirtualInputSlot::isValidPartner(VirtualSlot *insl) {
-	return dynamic_cast<VirtualOutputSlot*>(insl);
+	return (dynamic_cast<VirtualOutputSlot*>(insl) != 0);
 }
 
 void VirtualSlot::setDisplayNameAndType(std::string name, std::string type) {
@@ -372,7 +372,9 @@ bool VirtualInputSlot::onAddTarget(Slot *target) {
 	OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(target);
 	VirtualOutputSlot* partner=dynamic_cast<VirtualOutputSlot*>(_partner);
 	if(sl) {
-#warning This is ugly, OutputSlot should not have to deal with DataManager. Maybe put DataManager into VirtualSlot??
+		#ifndef MSVC
+			#warning This is ugly, OutputSlot should not have to deal with DataManager. Maybe put DataManager into VirtualSlot??
+		#endif
 		sl->setConfig(_parent->getName()+"."+_name);
 		partner->_managerconfig=sl->getConfig();
 		partner->_cacheType=sl->getCacheType();
@@ -406,12 +408,12 @@ bool VirtualInputSlot::onRemoveTarget(Slot *target) {
 
 bool VirtualOutputSlot::isValidTarget(Slot *target) {
 	InputSlotIntf *sl=dynamic_cast<InputSlotIntf*>(target);
-	return sl;
+	return (sl != 0);
 }
 
 bool VirtualInputSlot::isValidTarget(Slot *target) {
 	OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(target);
-	return sl;
+	return (sl != 0);
 }
 
 std::string VirtualOutputSlot::getType() const {

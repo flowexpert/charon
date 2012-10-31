@@ -27,6 +27,7 @@
 #ifdef _MSC_VER
 #ifdef outputslotbundle_EXPORTS
 /// Visual C++ specific code
+#define slotbundle_EXPORTS
 #define outputslotbundle_DECLDIR __declspec(dllexport)
 #else
 #define outputslotbundle_DECLDIR __declspec(dllimport)
