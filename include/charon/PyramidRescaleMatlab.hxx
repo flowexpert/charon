@@ -154,14 +154,14 @@ void PyramidRescaleMatlab<T>::execute() {
 template<typename T>
 cimg_library::CImg<T> PyramidRescaleMatlab<T>::_computeFilterMask( T smooth_sigma )
 {
-	int d = 2*round(1.5*smooth_sigma) + 1;
+	int d = 2*int(floor(1.5*smooth_sigma+ 0.5)) + 1;
 	int r = d/2;
 	cimg_library::CImg<T> mask( d, d, 1, 1 );
 
 	T sum = 0.0;
 	cimg_forXY( mask, x, y )
 	{
-		mask.atXY(x,y) = _gauss( pow(pow(x-r,2)+pow(y-r,2),0.5), 0.0, smooth_sigma );
+		mask.atXY(x,y) = _gauss( T(pow(double(pow(double(x-r),2)+pow(double(y-r),2)),0.5)), T(0.0), T(smooth_sigma) );
 		sum += mask.atXY(x,y);
 	}
 	cimg_forXY( mask, x, y )

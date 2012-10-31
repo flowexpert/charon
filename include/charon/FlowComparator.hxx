@@ -50,7 +50,7 @@ void FlowComparator<T>::execute() {
 }
 
 template <typename T>
-double FlowComparator<T>::getMeanEndpointError() const {
+double FlowComparator<T>::getMeanEndpointError()  {
 	if (!result().is_sameNXYZC(groundtruth())) {
 		std::ostringstream msg;
 		msg << "Dimensions of result and groundtruth do not match.";

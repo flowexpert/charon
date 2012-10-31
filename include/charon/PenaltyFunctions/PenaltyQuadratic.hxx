@@ -58,11 +58,11 @@ void PenaltyQuadratic<T>::execute() {
 template <class T>
 T PenaltyQuadratic<T>::getPenalty( T sqrDiff )
 {
-	T penalty;
+	double penalty;
 	if (sqrDiff < _maxDiff*_maxDiff)
-		penalty = sqrDiff / pow(_sigma,2.0);
+		penalty = sqrDiff / pow(double(_sigma),2.0);
 	else
-		penalty = _maxDiff * _maxDiff / pow(_sigma,2.0);
+		penalty = _maxDiff * _maxDiff / pow(double(_sigma),2.0);
 	return T(this->_lamb * penalty);
 }
 
@@ -71,7 +71,7 @@ T PenaltyQuadratic<T>::getPenaltyGradient( T sqrDiff )
 {
 	T penaltyGradient;
 	if (sqrDiff < _maxDiff*_maxDiff)
-		penaltyGradient = T(1.0) / pow(_sigma,2.0);
+		penaltyGradient = T(1.0) / pow(double(_sigma),2.0);
 	else
 		penaltyGradient = T(0.0);
 	return T(this->_lamb * penaltyGradient);

@@ -64,7 +64,7 @@ public:
 
 	/// \name getters of calculated information
 	//  \{
-	double getMeanEndpointError() const;
+	double getMeanEndpointError() ;
 	//  \}
 
 protected:
