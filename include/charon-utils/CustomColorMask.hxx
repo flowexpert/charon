@@ -240,9 +240,9 @@ void CustomColorMask<T>::execute() {
 		//create DockWIdget
 		_gui = new CustomColorMaskWidget(this, minimap, wBegin, wEnd, maskType,this->ParameteredObject::getName());
 		widget = _gui;
-		std::set<Slot*>::iterator it = widget.getTargets().begin() ;
-		if(it != widget.getTargets().end())
-			_gui->setDisplay(&((*it)->getParent()));
+		std::set<Slot*> targets = widget.getTargets() ;
+		if(targets.begin() != targets.end())
+			_gui->setDisplay(&((*targets.begin())->getParent()));
 	}
 	_gui->setMinMax(cmin,cmax) ;
 
