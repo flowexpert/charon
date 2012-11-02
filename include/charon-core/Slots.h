@@ -39,6 +39,8 @@
 #include <set>
 #include "DllEx.h"
 
+#define SUPERNODES_BRANCH 1//Allow ArgosDisplay to compile with charon-core in main and charon-core in supernodes. REMOVE AFTER MERGING supernodes with main
+
 class ParameteredObject;
 class PluginManagerInterface;
 class ParameterFile;
