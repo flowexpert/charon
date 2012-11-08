@@ -92,9 +92,16 @@ ADD_LIBRARY(statement SHARED
 		${CHARON_CORE_INCLUDE_DIR}/Statement.h
 		${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
 )
-
+ADD_LIBRARY(forstatement SHARED
+		ForStatement.cpp
+		${CHARON_CORE_INCLUDE_DIR}/ForStatement.h
+		${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
+)
 
 TARGET_LINK_LIBRARIES(statement
+		charon-core
+)
+TARGET_LINK_LIBRARIES(forstatement
 		charon-core
 )
 
@@ -214,6 +221,14 @@ INSTALL(
 		COMPONENT        libraries
 )
 
+INSTALL(
+		TARGETS          forstatement
+		EXPORT           ${EXPORT_NAME}
+		RUNTIME          DESTINATION bin${BIN_SUFFIX}
+		LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+		ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
+		COMPONENT        libraries
+)
 
 IF(NOT SKIP_EXPORT_INSTALL)
 	INSTALL(
