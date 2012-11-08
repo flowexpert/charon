@@ -315,6 +315,7 @@ std::set<Slot *> VirtualSlot::getTargets() const {
 VirtualInputSlot::VirtualInputSlot(int num)
 	:VirtualSlot("Slot-in",num)
 {
+	_multiSlot=false;
 }
 
 std::string VirtualInputSlot::getType() const {
@@ -328,6 +329,7 @@ std::string VirtualInputSlot::getName() const {
 VirtualOutputSlot::VirtualOutputSlot(int num)
 	:VirtualSlot("Slot-out",num)
 {
+	_multiSlot=true;
 	_loopPartner=0;
 	_loop=0;
 }
