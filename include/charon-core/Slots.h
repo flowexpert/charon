@@ -389,7 +389,7 @@ public:
 
 
     /// Return a pointer to a real slot
-    virtual const OutputSlotIntf* getThisPointer() const=0;
+	virtual const OutputSlotIntf* getDataSlot() const=0;
 
 };
 
@@ -444,7 +444,7 @@ public:
 
 
 	/// Return a pointer to a real slot
-	const OutputSlotIntf* getThisPointer() const
+	const OutputSlotIntf* getDataSlot() const
 	{
 	    return this;
 	}
@@ -472,7 +472,7 @@ public:
 ///  This class holds a pointer to an output if the output is CACHE_MEM, otherwise it loads
 ///  a config string from a given parameterfile
 
-class charon_core_DLL_PUBLIC VirtualSlot
+class  VirtualSlot
 	:public Slot
 {
 public:
@@ -551,7 +551,7 @@ public:
     const std::string& getConfig() const;
 
     /// Return a pointer to a real slot
-    const OutputSlotIntf* getThisPointer() const;
+	const OutputSlotIntf* getDataSlot() const;
 
     /// set manager configuration string
     virtual void setConfig(std::string conf);

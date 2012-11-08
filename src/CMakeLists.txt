@@ -19,6 +19,7 @@ SET(CHARON_FILES
 	${CHARON_CORE_INCLUDE_DIR}/TypeDetector.h
 	${CHARON_CORE_INCLUDE_DIR}/ParameteredGroupObject.h
 	ParameteredGroupObject.cpp
+
 	FileTool.cpp
 	Parameter.cpp
 	ParameteredObject.cpp
@@ -76,6 +77,7 @@ TARGET_LINK_LIBRARIES(ifgroup
 
 ADD_LIBRARY(whilegroup SHARED
         WhileGroup.cpp
+
         ${CHARON_CORE_INCLUDE_DIR}/WhileGroup.h
 		${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
 )

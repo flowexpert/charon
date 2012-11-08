@@ -213,12 +213,12 @@ void VirtualSlot::save(ParameterFile &pf) const
 	onSave(pf);
 }
 
-const OutputSlotIntf* VirtualOutputSlot::getThisPointer() const {
+const OutputSlotIntf* VirtualOutputSlot::getDataSlot() const {
 	if(_loop) {
 		if(_loopPartner) {
 			OutputSlotIntf* sl= dynamic_cast<OutputSlotIntf*>(
 						*(_loopPartner->getTargets().begin()));
-			return sl;
+			return sl->getDataSlot();
 		}
 		else {
 			raise("_loopset to true but no _loopPartner!!");
@@ -228,7 +228,7 @@ const OutputSlotIntf* VirtualOutputSlot::getThisPointer() const {
 		if(_partner->getTargets().size()) {
 			OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(
 						*(_partner->getTargets().begin()));
-			return sl;
+			return sl->getDataSlot();
 		}
 		//Slot::raise(_partner->getName()+" not connected!!");
 	}

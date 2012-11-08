@@ -248,7 +248,7 @@ const T& InputSlot<T>::_getDataFromOutputSlot(
 
 	// c-style cast can produce weird errors, so use dynamic cast to make sure
 	// const OutputSlot<T>* source = (const OutputSlot<T>*) slot;
-	const OutputSlotIntf* source = slot->getThisPointer();
+	const OutputSlotIntf* source = slot->getDataSlot();
 
 	if (source->getType() != this->getType()) {
 		Slot::raise("input connection type mismatch");
