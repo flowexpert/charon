@@ -95,14 +95,13 @@ public:
 //	setNumberOfInputSlots(2);
 	Reader* rd=new Reader("Reader");
 
+
 	//Virtual slots receiving Data from outside
-	Slot* out1=0;//dynamic_cast<Slot*>(getInputSlot(0).second);
-	Slot* out2=0;//dynamic_cast<Slot*>(getInputSlot(1).second);
-	_pluginMan->insertInstance(rd);
-	//_pluginMan->connect(out1->getParent().getName()+"."+out1->getName(),rd->getName()+"."+rd->in1.getName());
-	//Connect virtual slot to reader. Reader should receive values from object outside of group
-	_pluginMan->connect(out1,&(rd->in1));
-	_pluginMan->connect(out2,&(rd->in2));
+
+
+		_pluginMan->insertInstance(rd);
+		_pluginMan->connect("inputs.VirtualSlot-out0","Reader.in1");
+		_pluginMan->connect("inputs.VirtualSlot-out1","Reader.in2");
 
 
     }
@@ -122,14 +121,11 @@ public:
     {
 
 
-//	setNumberOfOuputSlots(2);
-	Outputgen* outgen=new Outputgen("OutputgenWriter");
-	outgen->out2.setCacheType(Slot::CACHE_MANAGED);
-	Slot* in1=0;//dynamic_cast<Slot*>(getOutputSlot(0).second);
-	Slot* in2=0;//dynamic_cast<Slot*>(getOutputSlot(1).second);
-	_pluginMan->insertInstance(outgen);
-	_pluginMan->connect(&(outgen->out1),in1);
-	_pluginMan->connect(&(outgen->out2),in2);
+
+		Outputgen* outgen=new Outputgen("OutputgenWriter");
+		_pluginMan->insertInstance(outgen);
+		_pluginMan->connect("outputs.VirtualSlot-in0","OutputgenWriter.out1");
+		_pluginMan->connect("outputs.VirtualSlot-in1","OutputgenWriter.out2");
 
 
 
@@ -138,6 +134,52 @@ public:
 
 
 };
+
+void createChildWorkflows()
+{
+	PluginManager man(MODULE_DIR,CHARON_PLUGINS);
+
+
+
+
+	ParameteredObject* out=man.createInstance("OutputSlotBundle","outputs");
+
+
+
+	ParameterFile pfout;
+
+
+	out->setParameter("num_slots",2);
+
+	out->saveParameters(pfout);
+	out->prepareDynamicInterface(pfout);
+
+
+
+	man.saveParameterFile("TestGroupWriter.wrp");
+
+	man.reset();
+
+	ParameteredObject* in=man.createInstance("InputSlotBundle","inputs");
+	in->setParameter("num_slots",2);
+	ParameterFile pf;
+
+	in->saveParameters(pf);
+	in->prepareDynamicInterface(pf);
+
+	man.saveParameterFile("TestGroupReader.wrp");
+
+	man.reset();
+
+	in=man.createInstance("InputSlotBundle","inputs");
+	out=man.createInstance("OutputSlotBundle","outputs");
+
+	man.connect("inputs.VirtualSlot-out0","outputs.VirtualSlot-in0");
+	man.connect("inputs.VirtualSlot-out1","outputs.VirtualSlot-in1");
+	man.saveParameterFile("TestGroupPassThrough.wrp");
+
+
+}
 
 void testDataToGroup()
 {

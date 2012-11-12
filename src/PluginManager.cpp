@@ -28,8 +28,8 @@
 #include "../include/charon-core/ParameteredGroupObject.h"
 #include <sstream>
 
-std::vector<std::string> AbstractPluginLoader::pluginPaths;
-std::string AbstractPluginLoader::libSuffix;
+
+
 
 PluginManager::PluginManager(
 			const std::vector<std::string>& paths, bool dbg,bool initializeOnLoad):
@@ -38,8 +38,8 @@ PluginManager::PluginManager(
 	if(paths.size() == 0) {
 		throw std::invalid_argument("PluginLoader: Empty paths list given!");
 	}
-	AbstractPluginLoader::pluginPaths = paths;
-	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
+	pluginPaths = paths;
+	libSuffix = dbg ? "_d" : "";
 	_initializePluginOnLoad=initializeOnLoad;
 }
 
@@ -49,14 +49,14 @@ PluginManager::PluginManager(
 {
 	if (path2.size() > 0) {
 		// put local path (if any) in front of global path
-		AbstractPluginLoader::pluginPaths.push_back(path2);
+		pluginPaths.push_back(path2);
 	}
 	if (path1.size() == 0) {
 		throw std::invalid_argument(
 				"PluginManger: at least one non-emtpy path has to be given!");
 	}
-	AbstractPluginLoader::pluginPaths.push_back(path1);
-	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
+	pluginPaths.push_back(path1);
+	libSuffix = dbg ? "_d" : "";
 	_initializePluginOnLoad=initializeOnLoad;
 
 
@@ -113,7 +113,7 @@ void PluginManager::loadPlugin(std::string name)
 		throw (AbstractPluginLoader::PluginException) {
 	name = StringTool::toLowerCase(name);
 	if (!isLoaded(name)) {
-		PLUGIN_LOADER * newPlugin = new PLUGIN_LOADER(name);
+		PLUGIN_LOADER * newPlugin = new PLUGIN_LOADER(name,pluginPaths,libSuffix);
 
 		try {
 			newPlugin->load();
@@ -613,7 +613,7 @@ bool PluginManager::disconnect(const std::string& slot1,
 	return disconnect(*slotP1,*slotP2);
 }
 
-std::vector<std::string> PluginManager::_excludeList;
+//std::vector<std::string> PluginManager::_excludeList;
 
 void PluginManager::createMetadata(const std::string& targetPath) {
 #ifndef MSVC
@@ -628,8 +628,8 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 	// Create metadata for all plugin paths
 	std::string pathBackup = FileTool::getCurrentDir();
 	for (std::vector<std::string>::const_iterator cur =
-			AbstractPluginLoader::pluginPaths.begin();
-			cur!=AbstractPluginLoader::pluginPaths.end(); cur++) {
+			pluginPaths.begin();
+			cur!=pluginPaths.end(); cur++) {
 		FileTool::changeDir(*cur);
 
 		// Fetch list of existing plugins
@@ -783,7 +783,7 @@ PluginManager::~PluginManager() {
 
 const std::vector<std::string>& PluginManager::getPluginPaths() const {
 
-    return AbstractPluginLoader::pluginPaths;
+	return pluginPaths;
 }
 
 void PluginManager::insertInstance(ParameteredObject *instance)

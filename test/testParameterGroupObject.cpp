@@ -99,6 +99,12 @@ int testLoadInputSlots()
 		std::stringstream name;
 		name<<"VirtualSlot-in"<<i;
 
+		std::string displayname;
+		if(i==0)
+			displayname="dummy.iN";
+		else
+			displayname=name.str();
+
 		std::map<std::string, Slot*>::iterator it=inputs.find(name.str());
 		if(it==inputs.end())
 		{
@@ -108,9 +114,15 @@ int testLoadInputSlots()
 		else
 		{
 			Slot* sl=it->second;
-			if(sl->getDisplayName()!=name.str())
+			if(sl->getDisplayName()!=displayname)
 			{
 				std::cerr<<"Wrong displayname "<<sl->getDisplayName()<<" of slot in TestGroup"<<std::endl;
+				std::cerr<<"Should be "<<name.str()<<std::endl;
+				return EXIT_FAILURE;
+			}
+			if(sl->getName()!=name.str())
+			{
+				std::cerr<<"Wrong name "<<sl->getName()<<" of slot in TestGroup"<<std::endl;
 				std::cerr<<"Should be "<<name.str()<<std::endl;
 				return EXIT_FAILURE;
 			}
@@ -162,6 +174,11 @@ int testLoadOutputSlots()
 	{
 		std::stringstream name;
 		name<<"VirtualSlot-out"<<i;
+		std::string displayname;
+		if(i==0)
+			displayname="dummy.oUt";
+		else
+			displayname=name.str();
 
 		std::map<std::string, Slot*>::iterator it=outputs.find(name.str());
 		if(it==outputs.end())
@@ -172,9 +189,15 @@ int testLoadOutputSlots()
 		else
 		{
 			Slot* sl=it->second;
-			if(sl->getDisplayName()!=name.str())
+			if(sl->getDisplayName()!=displayname)
 			{
 				std::cerr<<"Wrong displayname "<<sl->getDisplayName()<<" of slot in TestGroup"<<std::endl;
+				std::cerr<<"Should be "<<name.str()<<std::endl;
+				return EXIT_FAILURE;
+			}
+			if(sl->getName()!=name.str())
+			{
+				std::cerr<<"Wrong name "<<sl->getName()<<" of slot in TestGroup"<<std::endl;
 				std::cerr<<"Should be "<<name.str()<<std::endl;
 				return EXIT_FAILURE;
 			}

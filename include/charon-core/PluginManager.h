@@ -127,6 +127,14 @@
 class PluginManager: public PluginManagerInterface {
 private:
 	/**
+	 * Paths where the plugins are stored
+	 */
+	std::vector<std::string> pluginPaths;
+
+
+	/// Lib suffix e.g. <tt>_d</tt> for debug builds
+	std::string libSuffix;
+	/**
 	 * Saves the currently loaded plugins
 	 */
 	std::map<std::string, PLUGIN_LOADER*> _loadedPlugins;
@@ -206,7 +214,7 @@ private:
 	// @}
 
 	/// exclude list for metadata generation
-	static std::vector<std::string> _excludeList;
+	std::vector<std::string> _excludeList;
 
 public:
 	/// default lib suffix
@@ -447,7 +455,7 @@ public:
 	}
 
 	/// set exclude list
-	static void setExcludeList(const std::vector<std::string>& list);
+	void setExcludeList(const std::vector<std::string>& list);
 
 
 	/// Set the executed flags of the objects to false.

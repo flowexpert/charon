@@ -29,8 +29,8 @@
 #include <dlfcn.h>
 #include <charon-core/UnixPluginLoader.h>
 
-UnixPluginLoader::UnixPluginLoader(const std::string & n) :
-	AbstractPluginLoader(n) {
+UnixPluginLoader::UnixPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix) :
+	AbstractPluginLoader(n,plpaths,lSuffix) {
 	libHandle = NULL;
 }
 

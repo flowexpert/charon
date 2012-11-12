@@ -358,6 +358,7 @@ bool VirtualSlot::onRemoveTarget(Slot*) {
 bool VirtualInputSlot::onAddTarget(Slot *target) {
 	if(dynamic_cast<SlotBundleIntf*>(_parent))
 	{
+
 		_partner->_displayName=target->getParent().getName()+"."+target->getDisplayName();
 	}
 
@@ -366,6 +367,8 @@ bool VirtualInputSlot::onAddTarget(Slot *target) {
 	}
 	if(StringTool::toLowerCase(_type)=="virtual") {
 		_type=target->getType();
+		_partner->_type=_type;
+
 	}
 	_target.insert(target);
 	//_displayName=target->getName();
@@ -380,6 +383,7 @@ bool VirtualInputSlot::onAddTarget(Slot *target) {
 		sl->setConfig(_parent->getName()+"."+_name);
 		partner->_managerconfig=sl->getConfig();
 		partner->_cacheType=sl->getCacheType();
+
 		return true;
 	}
 	return false;
