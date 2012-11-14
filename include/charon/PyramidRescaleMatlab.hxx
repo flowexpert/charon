@@ -102,12 +102,12 @@ void PyramidRescaleMatlab<T>::execute() {
 		                                  tmp[0].width()*_scaleFactor, tmp[0].height()*_scaleFactor,
 		                                  tmp[0].depth(), tmp[0].spectrum() );
 		cimglist_for(tmp,kk) {
-			tmp.at(kk).convolve(filterMask);
+			tmp.at(kk).correlate(filterMask);
 			cimg_forXYZC( tmp2.at(kk), x, y, z, c )
 			{
 				tmp2[kk].atXYZC( x, y, z, c )
-				= tmp[kk].atXYZC( x*_scaleInverse+(_scaleInverse/2),
-				                  y*_scaleInverse+(_scaleInverse/2), z, c );
+				= tmp[kk].atXYZC( int((double(x+0.5))*_scaleInverse),
+				                  int((double(y+0.5))*_scaleInverse), z, c );
 			}
 		}
 		tmp = tmp2;
@@ -124,11 +124,11 @@ void PyramidRescaleMatlab<T>::execute() {
 		fo = cimg_library::CImgList<T>( flowN, tx, ty, flowZ, flowC );
 		cimglist_for(fo,kk) {
 			assert(fo.at(kk).is_sameXY(sx,sy));
-			fi.at(kk).convolve(filterMask);
+			fi.at(kk).correlate(filterMask);
 			cimg_forXYZC( so.at(kk), x, y, z, c )
 			{
-				fo[kk].atXYZC( x, y, z, c ) = fi[kk].atXYZC( x*_scaleInverse+(_scaleInverse/2),
-				                                             y*_scaleInverse+(_scaleInverse/2), z, c );
+				fo[kk].atXYZC( x, y, z, c ) = fi[kk].atXYZC( int((double(x)+0.5)*_scaleInverse),
+				                                             int((double(y)+0.5)*_scaleInverse), z, c );
 			}
 			fo.at(kk) *= shrink;
 		}
@@ -154,14 +154,14 @@ void PyramidRescaleMatlab<T>::execute() {
 template<typename T>
 cimg_library::CImg<T> PyramidRescaleMatlab<T>::_computeFilterMask( T smooth_sigma )
 {
-	int d = 2*int(floor(1.5*smooth_sigma+ 0.5)) + 1;
+	int d = 2*int(1.5*smooth_sigma + 0.5) + 1;
 	int r = d/2;
 	cimg_library::CImg<T> mask( d, d, 1, 1 );
 
 	T sum = 0.0;
 	cimg_forXY( mask, x, y )
 	{
-		mask.atXY(x,y) = _gauss( T(pow(double(pow(double(x-r),2)+pow(double(y-r),2)),0.5)), T(0.0), T(smooth_sigma) );
+		mask.atXY(x,y) = _gauss( double(pow(double(pow(double(x-r),2)+pow(double(y-r),2)),0.5)), T(0.0), T(smooth_sigma) );
 		sum += mask.atXY(x,y);
 	}
 	cimg_forXY( mask, x, y )
@@ -169,6 +169,9 @@ cimg_library::CImg<T> PyramidRescaleMatlab<T>::_computeFilterMask( T smooth_sigm
 		mask.atXY(x,y) /= sum;
 	}
 
+	mask = cimg_library::CImg<T>( 1, 1, 1, 1 );
+	mask(0,0,0,0) = double(1);
+	mask.save("mask.cimg");
 	return mask;
 }
 
