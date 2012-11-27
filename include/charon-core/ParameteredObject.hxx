@@ -28,6 +28,8 @@
 #ifndef _PARAMETERED_OBJECT_HXX_
 #define _PARAMETERED_OBJECT_HXX_
 
+#define CHARON_SUPERNODES
+
 #include "ParameteredObject.h"
 #include "ParameterFile.hxx"
 #include "Parameter.hxx"
