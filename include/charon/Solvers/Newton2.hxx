@@ -96,7 +96,15 @@ void Newton2<T>::execute() {
 		     sIt != this->stencils.end();
 		     sIt ++)
 		{
+#ifdef SUPERNODES_BRANCH
+			Slot *sIt_sl = (Slot*)(*sIt);
+			OutputSlotIntf *sIt_out = dynamic_cast<OutputSlotIntf*>(sIt_sl);
+			const OutputSlot<Stencil::Base<T>*> *temp =
+			      dynamic_cast<const OutputSlot<Stencil::Base<T>*>*>(sIt_out->getDataSlot());
+			is = temp->operator()();
+#else
 			is = (*((InputSlot<Stencil::Base<T>*>*)*sIt))();
+#endif
 			tmp  = dynamic_cast<Stencil::Energy<T>*>(is)->getEnergy( 0, x, y, z, 0 );
 			tmp2 = dynamic_cast<Stencil::EnergyGradient<T>*>(is)->getEnergyGradient( 0, x, y, z, 0 );
 			tmp4 = dynamic_cast<Stencil::EnergyHessian<T>*>(is)->getEnergyHessian( 0, x, y, z, 0 );
