@@ -266,6 +266,7 @@ void SimpleIterator<T>::performStep() {
 	// iteration by calling execute() on all parent objects,
 	// since the iteration helper object is only executed once,
 	// only the "inner objects" are iterated.
+	ParameteredObject::runPreceeding(flow);
 	ParameteredObject::runPreceeding();
 }
 
