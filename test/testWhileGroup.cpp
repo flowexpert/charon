@@ -22,241 +22,166 @@
  *  @brief  Unit tests WhileGroup and WhileGroupStatement class.
  *  @date   06.02.2012
  *  @author <a href="mailto:gerald.mwangi@gmx.de">Gerald Mwangi</a>
- *  This test contains a whilegroup. OUTSIDE of the group there is a number generator (extoutgen) with 2 slots, and a reader object (extreader).
- *  INSIDE the group there are 2 nested readers (intreader,intreader2) connected to the Virtual input slots and a generator connected to the virtual output slots (intoutgen).
- *  In loop mode, the virtual output slot 0 is looped to the virtual input slot 0.
- *  The while group should run 3 iterations.
- *  0th iteration: (intreader,intreader2).in1=extoutgen.out1 and (intreader,intreader2).in2=extoutgen.out2
- *  1st - 3rd iteration: (intreader,intreader2).in1=intoutgen.out1 and (intreader,intreader2).in2=extoutgen.out2
- *  after 3rd iteration: extreader.in1=intoutgen.in1, extreader.in2=intoutgen.in2
  */
 
-int _iter;
-int _maxit;
-bool loopMode=false;
-/// sample ParameteredObject class.
-class Reader : public ParameteredObject {
-public:
-	/// sample integer input slot
-	InputSlot<int>   in1;
-	/// sample float input slot
-	InputSlot<float> in2;
-
-	/// create a new sample object
-	/// @param name             Object name
-	Reader(const std::string& name = "") :
-			ParameteredObject("Reader", name, "read slot data")
-	{
-		_addInputSlot (in1,  "in1",  "integer input slot");
-		_addInputSlot (in2,  "in2",  "float input slot");
-	}
-
-protected:
-	virtual void execute() {
-	    if(getName()=="ExternReader")
-	    {
-		if(in1!=20||in2!=0.33f) //Values of intoutgen
-			raise("Incorrect Values in Loopmode!");
-	    }
-	    else if(loopMode)
-	    {
-
-		//0th iter values of extoutgen, else   (intreader,intreader2).in1=intoutgen.out1 and (intreader,intreader2).in2=extoutgen.out2
-		if((_iter>0)&&(in1!=20||in2!=5.5f)||(_iter==0&&(in1!=10||in2!=5.5f)))
-			raise("Incorrect Values in Loopmode!");
-	    }
-	    else
-	    {
-		if(in1!=10||in2!=5.5f)
-			raise("Incorrect Values in Loopmode!");
-	    }
-	    //Did we shoot over the maximum?
-	    if(_iter>_maxit)
-		raise("Too many iterations!");
-
-	}
-};
-
-/// sample ParameteredObject class.
-class Outputgen : public ParameteredObject {
-
-public:
-	/// sample integer output slot
-	OutputSlot<int>    out1;
-	/// sample float output slot
-	OutputSlot<float>  out2;
-
-	/// create a new sample object
-	/// @param name             Object name
-	Outputgen(const std::string& name = "",int val1=10,float val2=5.5f) :
-			ParameteredObject("outputgen", name,
-				"class to generate int and float output"),
-			out1(val1),   // set initial values
-			out2(val2)  // ------- " --------
-	{
-		// slots
-		_addOutputSlot(out1, "out1", "integer output slot");
-		_addOutputSlot(out2, "out2", "float output slot");
-	}
-
-protected:
-	virtual void execute() {
-	}
-};
-
-class SimpleOutput : public ParameteredObject {
-public:
-
-
-	/// create a new sample object
-	/// @param name             Object name
-	SimpleOutput(const std::string& name = "") :
-			ParameteredObject("SimpleOutput", name, "send name to standard output")
-	{
-
-	}
-
-protected:
-	virtual void execute() {
-	    std::cout<<getName()<<std::endl;
-	}
-};
-
-class StatementGenerator : public ParameteredObject {
-public:
-	/// default constructor
-	/// \param name             instance name
-	StatementGenerator(const std::string& name = "",int max=3)
-	    :ParameteredObject("StatementGenerator",name,"StatementGenerator")
-	{
-	    _maxit=max;
-	    _iter=0;
-	    _addOutputSlot(statement,"statement","","bool");
-
-	   // statement=true;
-	}
-
-	/// statement
-	OutputSlot< bool > statement;
-
-
-
-	/// Update object.
-	virtual void execute()
-	{
-	    statement=_iter<_maxit;
-	    sout<<"Iteration "<<_iter<<std::endl;
-	    if(statement)
-		_iter++;
-	}
-
-private:
-
-};
-
-class TestWhileGroup:public WhileGroup
+void test()
 {
-public:
-    TestWhileGroup()
-	:WhileGroup("TestWhileGroup")
-    {
-	workFlowFile="TestWhileGroup.wrp";
-    }
-    void initializeWhileGroup()
-    {
-	StatementGenerator* st=new StatementGenerator("Statementgen");
-
-	//WhileGroupStatement* wst=0;//dynamic_cast<WhileGroupStatement*>(_pluginMan->getInstance("WhileGroupStatement"));
+	PluginManager man(MODULE_DIR,CHARON_PLUGINS);
 
 
-	SimpleOutput* simpleout=new SimpleOutput("Simpleout");
-	_pluginMan->insertInstance(simpleout);
-	_pluginMan->insertInstance(st);
-	//_pluginMan->connect(st->statement,wst->statement);
-    }
-};
+	//Create TestWhileGroup-child.wrp
+	ParameteredObject* in=man.createInstance("InputSlotBundle","inbundle");
 
-class TestWhileGroupLoop:public WhileGroup
-{
-public:
-    TestWhileGroupLoop()
-	:WhileGroup("TestWhileGroupLoop")
-    {
-	workFlowFile="TestWhileGroupLoop.wrp";
-    }
-    void initializeWhileGroup()
-    {
-//	setNumberOfInputSlots(2);
-	//setNumberOfOuputSlots(2);
-	loopInputToOutput(0,0);
-	StatementGenerator* st=new StatementGenerator("Statementgen");
+	ParameteredObject* out=man.createInstance("OutputSlotBundle","outbundle");
 
-	//WhileGroupStatement* wst=0;//dynamic_cast<WhileGroupStatement*>(_pluginMan->getInstance("WhileGroupStatement"));
+	ParameteredObject* internReader=man.createInstance("WhileGroupTestReader","InternReader");
 
-	Reader* intreader=new Reader("Reader");
-	Reader* intreader2=new Reader("Reader2");
-	Outputgen* intoutgen=new Outputgen("InnerOutgen",20,0.33f);
-	_pluginMan->insertInstance(intoutgen);
-	_pluginMan->insertInstance(intreader);
-	_pluginMan->insertInstance(intreader2);
-	_pluginMan->insertInstance(st);
-	//_pluginMan->connect(st->statement,wst->statement);
-	OutputSlotIntf* in1=0;//getInputSlot(0).second;
-	OutputSlotIntf* in2=0;//getInputSlot(1).second;
-	_pluginMan->connect(&intreader->in1,dynamic_cast<Slot*>(in1));
-	_pluginMan->connect(&intreader->in2,dynamic_cast<Slot*>(in2));
-	_pluginMan->connect(&intreader2->in1,dynamic_cast<Slot*>(in1));
-	_pluginMan->connect(&intreader2->in2,dynamic_cast<Slot*>(in2));
+	ParameteredObject* internWriter=man.createInstance("WhileGroupTestWriter","InternWriter");
 
-//	_pluginMan->connect(&intoutgen->out1,dynamic_cast<Slot*>(getOutputSlot(0).second));
-	//_pluginMan->connect(&intoutgen->out2,dynamic_cast<Slot*>(getOutputSlot(1).second));
+	man.createInstance("WhileGroupTestStatement","statement");
 
-    }
-};
+	in->setParameter("num_slots",2);
+	ParameterFile pf;
 
-void testWhileIterationSimplOutput()
-{
-    loopMode=false;
-    ParameterFile file;
-    file.save("TestWhileGroup.wrp");
+	in->saveParameters(pf);
+	in->prepareDynamicInterface(pf);
 
-    TestWhileGroup* testWhilegroup=new TestWhileGroup;
-    std::vector<std::string> paths;
-    paths.push_back(CHARON_PLUGINS);
-    testWhilegroup->pluginPaths=paths;
-    PluginManager man(paths);
-    man.insertInstance(testWhilegroup);
-    testWhilegroup->initialize();
-    man.runWorkflow();
-    //Did we shoot over the maximum?
-    if(_iter!=_maxit)
-	throw;
-}
+	out->setParameter("num_slots",3);
 
-void testWhileIterationLoop()
-{
-    loopMode=true;
-    ParameterFile file;
-    file.save("TestWhileGroupLoop.wrp");
+	out->saveParameters(pf);
+	out->prepareDynamicInterface(pf);
 
-    TestWhileGroupLoop* testWhilegroup=new TestWhileGroupLoop;
-    std::vector<std::string> paths;
-    paths.push_back(CHARON_PLUGINS);
-    testWhilegroup->pluginPaths=paths;
-    PluginManager man(paths);
+	internWriter->setParameter("inside_group",true);
+	internWriter->saveParameters(pf);
+	internWriter->prepareDynamicInterface(pf);
 
-    man.insertInstance(testWhilegroup);
-    testWhilegroup->initialize();
+	man.connect("inbundle.VirtualSlot-out0","InternReader.in1");
+	man.connect("inbundle.VirtualSlot-out1","InternReader.in2");
+	man.connect("outbundle.VirtualSlot-in0","InternWriter.out1");
+	man.connect("outbundle.VirtualSlot-in1","InternWriter.out2");
+	man.connect("outbundle.VirtualSlot-in2","statement.iteration");
+	man.saveParameterFile("TestWhileGroup-child.wrp");
+	man.reset();
 
-    Outputgen* extoutgen=new Outputgen("ExternOutputgen");
-    Reader* extreader=new Reader("ExternReader");
-    man.insertInstance(extoutgen);
-    man.insertInstance(extreader);
-	//man.connect(&extoutgen->out1,dynamic_cast<Slot*>(testWhilegroup->getInputSlot(0).first));
-	//man.connect(&extoutgen->out2,dynamic_cast<Slot*>(testWhilegroup->getInputSlot(1).first));
-	//man.connect(&extreader->in1,dynamic_cast<Slot*>(testWhilegroup->getOutputSlot(0).first));
-	//man.connect(&extreader->in2,dynamic_cast<Slot*>(testWhilegroup->getOutputSlot(1).first));
-    man.runWorkflow();
+
+	//Create TestWhileGroup-childloop.wrp
+	ParameteredObject* inloop=man.createInstance("InputSlotBundle","inbundle");
+
+	ParameteredObject* outloop=man.createInstance("OutputSlotBundle","outbundle");
+
+	ParameteredObject* internReaderloop=man.createInstance("WhileGroupTestReader","InternReader");
+
+	ParameteredObject* internWriterloop=man.createInstance("WhileGroupTestWriter","InternWriter");
+
+	man.createInstance("WhileGroupTestStatement","statement");
+
+	inloop->setParameter("num_slots",2);
+	ParameterFile pfloop;
+
+	inloop->saveParameters(pfloop);
+	inloop->prepareDynamicInterface(pfloop);
+
+	outloop->setParameter("num_slots",3);
+
+	outloop->saveParameters(pf);
+	outloop->prepareDynamicInterface(pf);
+
+	//InternReader tests loop
+	internReaderloop->setParameter("loopmode",true);
+	internReaderloop->saveParameters(pf);
+	internReaderloop->prepareDynamicInterface(pf);
+
+	internWriterloop->setParameter("inside_group",true);
+	internWriterloop->saveParameters(pf);
+	internWriterloop->prepareDynamicInterface(pf);
+	man.connect("inbundle.VirtualSlot-out0","InternReader.in1");
+	man.connect("inbundle.VirtualSlot-out1","InternReader.in2");
+	man.connect("outbundle.VirtualSlot-in0","InternWriter.out1");
+	man.connect("outbundle.VirtualSlot-in1","InternWriter.out2");
+	man.connect("outbundle.VirtualSlot-in2","statement.iteration");
+	man.saveParameterFile("TestWhileGroup-childloop.wrp");
+	man.reset();
+
+
+	//Create TestWhileGroup-parent.wrp
+	//Create TestGroup. TestGroup just iterates over TestWhileGroup-child.wrp 10 times. No Loops.
+	ParameteredGroupObject* group=dynamic_cast<ParameteredGroupObject*>(man.createInstance("WhileGroup","TestGroup"));
+
+	std::stringstream childworkflow;
+
+
+	childworkflow<<FileTool::getCurrentDir()<<FileTool::slash<<"TestWhileGroup-child.wrp";
+
+
+
+	group->workFlowFile=childworkflow.str();
+	std::vector<std::string> path;
+	path.push_back(CHARON_PLUGINS);
+	path.push_back(MODULE_DIR);
+	group->pluginPaths=path;
+
+	group->initialize();
+
+	ParameteredObject* externReader=man.createInstance("WhileGroupTestReader","ExternReader");
+
+	ParameteredObject* externWriter=man.createInstance("WhileGroupTestWriter","ExternWriter");
+
+	man.connect("TestGroup.VirtualSlot-out0","ExternReader.in1");
+	man.connect("TestGroup.VirtualSlot-out1","ExternReader.in2");
+	man.connect("TestGroup.VirtualSlot-in0","ExternWriter.out1");
+	man.connect("TestGroup.VirtualSlot-in1","ExternWriter.out2");
+
+
+
+
+	//Create TestGroupLoop
+	//TestGroupLoop iterates over TestWhileGroup-childloop.wrp and loops its output 0 to input 0!!
+	ParameteredGroupObject* grouploop=dynamic_cast<ParameteredGroupObject*>(man.createInstance("WhileGroup","TestGroupLoop"));
+
+	std::stringstream childworkflowloop;
+
+
+	childworkflowloop<<FileTool::getCurrentDir()<<FileTool::slash<<"TestWhileGroup-childloop.wrp";
+
+
+
+	grouploop->workFlowFile=childworkflowloop.str();
+
+	grouploop->pluginPaths=path;
+
+	grouploop->initialize();
+
+
+	grouploop->setParameter("loop_input_0_to_output",0);
+	grouploop->saveParameters(pf);
+	grouploop->onLoad(pf,&man);
+
+	ParameteredObject* externReaderloop=man.createInstance("WhileGroupTestReader","ExternReaderLoop");
+
+	ParameteredObject* externWriterloop=man.createInstance("WhileGroupTestWriter","ExternWriterLoop");
+
+	man.connect("TestGroupLoop.VirtualSlot-out0","ExternReaderLoop.in1");
+	man.connect("TestGroupLoop.VirtualSlot-out1","ExternReaderLoop.in2");
+	man.connect("TestGroupLoop.VirtualSlot-in0","ExternWriterLoop.out1");
+	man.connect("TestGroupLoop.VirtualSlot-in1","ExternWriterLoop.out2");
+
+	man.saveParameterFile("/home/gmwangi/Test.wrp");
+
+	std::stringstream parentwrp;
+
+
+	parentwrp<<FileTool::getCurrentDir()<<FileTool::slash<<"TestWhileGroup-parent.wrp";
+
+	man.saveParameterFile(parentwrp.str());
+
+	//man.reset();
+
+	//man.loadParameterFile(parentwrp.str());
+	man.runWorkflow();
+
+
+
+
 }
 
 int main()
@@ -264,8 +189,8 @@ int main()
     sout.assign(std::cout);
     int ret = EXIT_SUCCESS;
 
-    ret |= ExceptionHandler::run(testWhileIterationSimplOutput);
-    ret |= ExceptionHandler::run(testWhileIterationLoop);
+	ret |= ExceptionHandler::run(test);
+	//ret |= ExceptionHandler::run(testWhileIterationLoop);
 
     return ret;
 

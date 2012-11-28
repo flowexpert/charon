@@ -76,11 +76,23 @@ IF(BUILD_TESTING)
 	# dummy test modules for PluginManager tests
 	ADD_LIBRARY(dummymodule SHARED DummyModule.cpp)
 	TARGET_LINK_LIBRARIES(dummymodule charon-core)
+
 	ADD_LIBRARY(dynamicdummymodule SHARED DynamicDummyModule.cpp)
 	TARGET_LINK_LIBRARIES(dynamicdummymodule charon-core)
 	ADD_LIBRARY(caseddummy SHARED CasedDummy.cpp)
 	TARGET_LINK_LIBRARIES(caseddummy charon-core)
-	LIST(APPEND testTargets dummymodule dynamicdummymodule caseddummy)
+	ADD_LIBRARY(whilegrouptestreader SHARED WhileGroupTestReader.cpp)
+	TARGET_LINK_LIBRARIES(whilegrouptestreader charon-core)
+	ADD_LIBRARY(whilegrouptestwriter SHARED WhileGroupTestWriter.cpp)
+	TARGET_LINK_LIBRARIES(whilegrouptestwriter charon-core)
+	ADD_LIBRARY(whilegroupteststatement SHARED WhileGroupTestStatement.cpp)
+	TARGET_LINK_LIBRARIES(whilegrouptestwriter charon-core)
+	ADD_LIBRARY(virtualslottestwriter SHARED VirtualSlotTestWriter.cpp)
+	TARGET_LINK_LIBRARIES(virtualslottestwriter charon-core)
+	ADD_LIBRARY(virtualslottestreader SHARED VirtualSlotTestReader.cpp)
+	TARGET_LINK_LIBRARIES(virtualslottestreader charon-core)
+	LIST(APPEND testTargets dummymodule dynamicdummymodule caseddummy whilegrouptestreader whilegrouptestwriter whilegroupteststatement
+		virtualslottestwriter virtualslottestreader)
 	
 	# locate module directory
 	GET_TARGET_PROPERTY(DUMMY_LOC dummymodule LOCATION)

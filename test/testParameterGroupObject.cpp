@@ -26,55 +26,14 @@
  *  @brief  Unit tests ParameteredBroupObject class.
  *  @date   15.10.2012
  *  @author <a href="mailto:gerald.mwangi@gmx.de">Gerald Mwangi</a>
+ *	This Test creates a workflow called TestParameteredGroupObject-child.wrp which is populated with an input slot bundle an output slot bundle
+ *	and a dummy module. It creates a TestParameteredGroupObject-parent.wrp file which is populated by a GroupObject (which loads TestParameteredGroupObject-child.wrp).
+ *	It is tested if the GroupObject has the right amount of in an output after loading TestParameteredGroupObject-child.wrp, and if the in and outputs have the
+ *	right names, displaynames and types
  */
 
 int numins=10;
 int numouts=20;
-void createWorkFlowWithBundle()
-{
-	PluginManager man(CHARON_PLUGINS);
-
-
-	ParameteredObject* in=man.createInstance("InputSlotBundle");
-
-	ParameteredObject* out=man.createInstance("OutputSlotBundle");
-
-	in->setParameter("num_slots",numins);
-	//ParameterFile pf;
-
-	//in->saveParameters(pf);
-	//in->prepareDynamicInterface(pf);
-
-	out->setParameter("num_slots",numouts);
-
-	//out->saveParameters(pf);
-	//out->prepareDynamicInterface(pf);
-
-
-	man.saveParameterFile("TestParameteredGroupObject-child.wrp");
-
-	man.reset();
-
-	ParameteredGroupObject* group=dynamic_cast<ParameteredGroupObject*>(man.createInstance("GroupObject","TestGroup"));
-
-	std::stringstream childworkflow;
-
-
-	childworkflow<<FileTool::getCurrentDir()<<FileTool::slash<<"TestParameteredGroupObject-child.wrp";
-
-
-
-	group->workFlowFile=childworkflow.str();
-	std::vector<std::string> path;
-	path.push_back(CHARON_PLUGINS);
-	group->pluginPaths=path;
-
-	group->initialize();
-	man.saveParameterFile("TestParameteredGroupObject-parent.wrp");
-
-
-
-}
 
 int testLoadInputSlots()
 {
