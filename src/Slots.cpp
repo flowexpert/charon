@@ -20,7 +20,7 @@
  */
 
 #include <cassert>
-#include <charon-core/ParameterFile.h>
+#include <charon-core/ParameterFile.hxx>
 #include <charon-core/StringTool.h>
 #include <charon-core/SplitStream.h>
 #include "../include/charon-core/Slots.hxx"
