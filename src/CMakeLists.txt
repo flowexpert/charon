@@ -122,6 +122,7 @@ ADD_LIBRARY(inputslotbundle SHARED
 		${CHARON_CORE_INCLUDE_DIR}/SlotBundle.h
 		${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
 )
+SET_TARGET_PROPERTIES(inputslotbundle PROPERTIES COMPILE_DEFINITIONS slotbundle_EXPORTS)
 
 ADD_LIBRARY(outputslotbundle SHARED
 		OutputSlotBundle.cpp
@@ -130,6 +131,7 @@ ADD_LIBRARY(outputslotbundle SHARED
 		${CHARON_CORE_INCLUDE_DIR}/SlotBundle.h
 		${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
 )
+SET_TARGET_PROPERTIES(outputslotbundle PROPERTIES COMPILE_DEFINITIONS slotbundle_EXPORTS)
 
 TARGET_LINK_LIBRARIES(inputslotbundle charon-core charon-plugins)
 TARGET_LINK_LIBRARIES(outputslotbundle charon-core charon-plugins)

@@ -86,7 +86,7 @@ IF(BUILD_TESTING)
 	ADD_LIBRARY(whilegrouptestwriter SHARED WhileGroupTestWriter.cpp)
 	TARGET_LINK_LIBRARIES(whilegrouptestwriter charon-core)
 	ADD_LIBRARY(whilegroupteststatement SHARED WhileGroupTestStatement.cpp)
-	TARGET_LINK_LIBRARIES(whilegrouptestwriter charon-core)
+	TARGET_LINK_LIBRARIES(whilegroupteststatement charon-core)
 	ADD_LIBRARY(virtualslottestwriter SHARED VirtualSlotTestWriter.cpp)
 	TARGET_LINK_LIBRARIES(virtualslottestwriter charon-core)
 	ADD_LIBRARY(virtualslottestreader SHARED VirtualSlotTestReader.cpp)
@@ -147,7 +147,7 @@ IF(BUILD_TESTING)
 
 	ADD_EXECUTABLE(testparametergroupobject testParameterGroupObject.cpp)
 
-	TARGET_LINK_LIBRARIES(testparametergroupobject charon-core )
+	TARGET_LINK_LIBRARIES(testparametergroupobject charon-core charon-plugins)
 	ADD_TEST(
 		NAME ParameterGroupObjectTest
 		COMMAND testparametergroupobject

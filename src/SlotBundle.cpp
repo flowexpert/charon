@@ -1,4 +1,5 @@
-#include "charon-core/SlotBundle.h"
+#include <charon-core/SlotBundle.h>
+#include <charon-core/Slots.h>
 
 SlotBundle::SlotBundle(
 		const std::string &className, const std::string &name,

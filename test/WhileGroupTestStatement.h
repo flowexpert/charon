@@ -36,7 +36,7 @@
 #define whilegroupteststatement_DECLDIR
 #endif
 
-#include <charon-core/ParameteredObject.h>
+#include <charon-core/ParameteredObject.hxx>
 #include <charon-core/StatementIntf.h>
 /// Test statement for whilegroup
 /** Test statement for whilegroup

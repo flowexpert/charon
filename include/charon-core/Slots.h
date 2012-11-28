@@ -289,7 +289,7 @@ public:
 	//  @}
 };
 
-class InputSlotIntf
+class charon_core_PUBLIC InputSlotIntf
 {
 public:
 
@@ -302,7 +302,7 @@ public:
 
 };
 
-class OutputSlotIntf;
+class charon_core_PUBLIC OutputSlotIntf;
 
 /// Input slot.
 /// This slot does not stores the data itself, but contains a pointer
@@ -367,7 +367,7 @@ private:
 };
 
 
-class OutputSlotIntf
+class charon_core_PUBLIC OutputSlotIntf
 {
 public:
     /// set manager configuration string
@@ -472,7 +472,7 @@ public:
 ///  This class holds a pointer to an output if the output is CACHE_MEM, otherwise it loads
 ///  a config string from a given parameterfile
 
-class  VirtualSlot
+class  charon_core_DLL_PUBLIC VirtualSlot
 	:public Slot
 {
 public:
@@ -493,9 +493,9 @@ public:
 
 
 
-    void prepare();
+    virtual void prepare();
 
-    void finalize();
+    virtual void finalize();
 
     std::string guessType() const;
 

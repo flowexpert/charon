@@ -17,6 +17,9 @@
 #define slotbundle_DECLDIR
 #endif
 
+class VirtualOutputSlot ;
+class VirtualInputSlot ;
+
 class slotbundle_DECLDIR SlotBundle: public ParameteredObject,public SlotBundleIntf
 {
 public:
