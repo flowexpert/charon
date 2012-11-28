@@ -51,21 +51,20 @@ void VirtualSlotTestReader::execute() {
 	if(integer!=42)
 		raise("The answer is not 42!");
 	//Test image
-	cimg_library::CImgList<double> imlist=image();
-	if(imlist.size()!=1)
-		raise("Incomplete number of images");
-	cimg_library::CImg<double> im=imlist(0);
-	if(im.width()!=3||im.height()!=3||im.depth()!=1)//||im.channels()!=1)
+	std::vector<double> im=image();
+	if(im.size()!=1000000)
 		raise("Image has incorrect dimensions!");
-	for(int i=0;i<3;i++)
-		for(int j=0;j<3;j++)
-		{
-			if((i==j&&im(i,j)!=1)||(i!=j&&im(i,j)!=0))
-				raise("Image has incorrect values!");
-		}
+
+
+	for(int i=0;i<1000000;i++)
+	{
+		if(im[i]!=i+0.5f)
+			raise("Image has incorrect dimensions!");
+	}
+
 
 	//Test image again, with data retrieval as applied for multislots
-	std::set<AbstractSlot<cimg_library::CImgList<double> >*>::const_iterator it=image.begin();
+	std::set<AbstractSlot<std::vector<double> >*>::const_iterator it=image.begin();
 	Slot* sl=(Slot*)(*it);
 	OutputSlotIntf* out=dynamic_cast<OutputSlotIntf*>(sl);
 	if(!out) {
@@ -73,21 +72,19 @@ void VirtualSlotTestReader::execute() {
 				this->getClassName() + " : " + this->getName()
 					+ " : cast of cimg_library::CImgList failed! ");
 	}
-	const OutputSlot<cimg_library::CImgList<double> >* temp =
-		dynamic_cast<const OutputSlot<cimg_library::CImgList<double> >*>(out->getDataSlot());
+	const OutputSlot<std::vector<double> >* temp =
+		dynamic_cast<const OutputSlot<std::vector<double> >*>(out->getDataSlot());
 
-	cimg_library::CImgList<double> imlist2=temp->operator ()();
-	if(imlist2.size()!=1)
-		raise("Incomplete number of images");
-	im=imlist2(0);
-	if(im.width()!=3||im.height()!=3||im.depth()!=1)//||im.channels!=1)
+	std::vector<double> im2=temp->operator ()();
+	if(im2.size()!=1000000)
 		raise("Image has incorrect dimensions!");
-	for(int i=0;i<3;i++)
-		for(int j=0;j<3;j++)
-		{
-			if((i==j&&im(i,j)!=1)||(i!=j&&im(i,j)!=0))
-				raise("Image has incorrect values!");
-		}
+
+
+	for(int i=0;i<1000000;i++)
+	{
+		if(im2[i]!=i+0.5f)
+			raise("Image has incorrect dimensions!");
+	}
 
 
 

@@ -37,7 +37,7 @@
 #endif
 
 #include <charon-core/ParameteredObject.h>
-#include <CImg.h>
+
 
 /// Generates an integer and a CImg image to test the virtual slots
 /** Generates an integer and a CImg image to test the virtual slots
@@ -51,7 +51,7 @@ public:
 	/// integer
 	OutputSlot< int > integer;
 	/// image
-	OutputSlot< cimg_library::CImgList<double> > image;
+	OutputSlot< std::vector<double> > image;
 
 
 protected:

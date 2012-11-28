@@ -47,15 +47,12 @@ VirtualSlotTestWriter::VirtualSlotTestWriter(const std::string& name) :
 
 void VirtualSlotTestWriter::execute() {
 
-	cimg_library::CImg<double> im(3,3);
-	for(int i=0;i<3;i++)
-		for(int j=0;j<3;j++)
-		{
-			if(i==j)
-				im(i,j)=1;
-			else
-				im(i,j)=0;
-		}
+
+	std::vector<double> im;
+	for(int i=0;i<1000000;i++)
+	{
+		im.push_back(i+0.5);
+	}
 	image()=im;
 	integer=42;// The Answer, as you should know! ;)
 
