@@ -105,6 +105,7 @@ int testLoadInputSlots()
 
 
 	}
+	return EXIT_SUCCESS;
 }
 
 
@@ -178,6 +179,7 @@ int testLoadOutputSlots()
 
 
 	}
+	return EXIT_SUCCESS;
 }
 
 void createWorkFlowWithBundleAndDummyModule()
