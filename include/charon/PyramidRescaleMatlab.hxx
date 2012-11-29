@@ -26,6 +26,7 @@
 
 #include "PyramidRescaleMatlab.h"
 #include <charon-utils/Convolution.h>
+#include <charon-utils/Roi.hxx>
 #include <iomanip>
 
 template <typename T>

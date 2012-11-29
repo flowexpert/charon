@@ -25,6 +25,7 @@
 #define _EDGYSEQUENCEGENERATOR_HXX_
 
 #include "EdgySequenceGenerator.h"
+#include <charon-utils/Roi.hxx>
 #include <charon-utils/ImgTool.hxx>
 
 template <typename T>
