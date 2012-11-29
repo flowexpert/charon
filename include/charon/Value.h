@@ -49,7 +49,7 @@ class value_DECLDIR Value :
 		public TemplatedParameteredObject<T> {
 public:
 	/// output value
-	OutputSlot < unsigned int > out;
+	OutputSlot < T > out;
 
 	/// parameter value
 	Parameter< T > value;
