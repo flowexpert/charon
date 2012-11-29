@@ -139,8 +139,9 @@ void CharonRun::_setupMan(QString logFileName) {
 	qout << "(DD) " << endl;
 
 	// initialize plugin manager with determined settings
-	PluginManager::setExcludeList(exclS);
+	//PluginManager::setExcludeList(exclS);
 	_man = new PluginManager(pathsS, debug);
+	_man->setExcludeList(exclS);
 }
 
 void CharonRun::_freeMan() {

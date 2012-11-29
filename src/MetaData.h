@@ -46,12 +46,26 @@ public:
 	 */
 	QStringList getOutputs(QString className) const;
 
+	/// get input slots of some given object
+	/** \param className        object class name
+	 *                          (use ParameterFileModel::getClass to get this)
+	 *  \returns                list of input slots
+	 */
+	QStringList getOutputDisplayNames(QString className) const;
+
 	/// get output slots of some given object
 	/** \param className        object class name
 	 *                          (use ParameterFileModel::getClass to get this)
 	 *  \returns                list of output slots
 	 */
 	QStringList getInputs(QString className) const;
+
+	/// get output slots of some given object
+	/** \param className        object class name
+	 *                          (use ParameterFileModel::getClass to get this)
+	 *  \returns                list of output slots
+	 */
+	QStringList getInputDisplayNames(QString className) const;
 
 	/// get parameters of some given object
 	/** \param className        object class name

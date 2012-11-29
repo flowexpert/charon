@@ -40,6 +40,12 @@ public:
 	/// @param input    input or output type of property
 	void addProperty(QString name, bool input);
 
+	/// adds a property to the node
+	/// @param name     name of parameter
+	/// @param displayname     display name of parameter
+	/// @param input    input or output type of property
+	void addProperty(QString name,QString displayname, bool input);
+
 	/// sets the id of the node
 	/// @param id      ID to set
 	void setId(unsigned int id);

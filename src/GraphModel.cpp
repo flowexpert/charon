@@ -147,7 +147,7 @@ bool GraphModel::connected(
 	// check slot types
 	QString inSlotType  = getType(target);
 	QString outSlotType = getType(source);
-	if (inSlotType != outSlotType)
+	if ((inSlotType.toLower() != outSlotType.toLower())&&!(inSlotType.toLower()=="virtual"||outSlotType.toLower()=="virtual"))
 		throw std::runtime_error(
 				tr("Type of \"%1\" (%2) does not match type of \"%3\" (%4)")
 				.arg(target).arg(inSlotType).arg(source).arg(outSlotType)

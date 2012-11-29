@@ -59,11 +59,14 @@ QStringList MetaData::getClasses() const {
 QStringList MetaData::getOutputs (QString className) const {
 	return _data->get(className + ".outputs")
 			.split(";",QString::SkipEmptyParts);
+
 }
 
 QStringList MetaData::getInputs(QString className) const {
+
 	return _data->get(className + ".inputs")
 			.split(";",QString::SkipEmptyParts);
+
 }
 
 QStringList MetaData::getParameters(QString className) const {
@@ -129,4 +132,38 @@ bool MetaData::isMultiSlot(QString slotName, QString className) const {
 
 bool MetaData::isDynamic(QString className) const {
 	return QVariant(_data->get(className + ".isDynamicModule")).toBool();
+}
+
+QStringList MetaData::getInputDisplayNames(QString className) const
+{
+	QStringList inputs= _data->get(className + ".inputs")
+			.split(";",QString::SkipEmptyParts);
+	QStringList res;
+	foreach(const QString& inp , inputs)
+	{
+		QString disp=_data->get(className +"."+inp+".displayname");
+
+		if(disp!=QString::null)
+			res.push_back(disp);
+		else
+			res.push_back(inp);
+	}
+	return res;
+}
+
+QStringList MetaData::getOutputDisplayNames(QString className) const
+{
+	QStringList outputs= _data->get(className + ".outputs")
+			.split(";",QString::SkipEmptyParts);
+	QStringList res;
+	foreach(const QString& outp , outputs)
+	{
+		QString disp=_data->get(className +"."+outp+".displayname");
+
+		if(disp!=QString::null)
+			res.push_back(disp);
+		else
+			res.push_back(outp);
+	}
+	return res;
 }
