@@ -24,6 +24,8 @@
 ///Class name of the plugin
 #define TYPE PyramidRescale
 
+#define roi_EXPORTS
+
 #include <charon-utils/Convolution.hxx>
 #include <charon/PyramidRescale.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>
