@@ -29,6 +29,8 @@
 
 #include "FrameSelect.h"
 
+#include <charon-utils/Roi.hxx>
+
 template <typename T>
 FrameSelect<T>::FrameSelect(const std::string& name) :
 		TemplatedParameteredObject<T>("FrameSelect", name, "select frames"),
