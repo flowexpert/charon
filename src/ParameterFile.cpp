@@ -143,7 +143,7 @@ std::vector<std::string> ParameterFile::getEveryParameter(
 
 	for (it = _parameterLines.begin(); it != _parameterLines.end(); it++) {
 		std::string key = *it;
-		unsigned int pos = key.find_first_of('.');
+		size_t pos = key.find_first_of('.');
 		if (key.length() >= pos + param.length() && (key.substr(pos + 1,
 				param.length()) == param))
 			result.push_back(key);
