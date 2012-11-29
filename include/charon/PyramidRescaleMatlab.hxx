@@ -92,7 +92,7 @@ void PyramidRescaleMatlab<T>::execute() {
 	const int ty = _size.yEnd = sy * shrink;
 
 	// compute filter mask for blurring
-	cimg_library::CImg<T> filterMask = _computeFilterMask( sigma() );
+	cimg_library::CImg<T> filterMask = _computeFilterMask( T(sigma()) );
 
 	// rescale sequence
 	cimg_library::CImgList<T> tmp, tmp2;
@@ -158,10 +158,10 @@ cimg_library::CImg<T> PyramidRescaleMatlab<T>::_computeFilterMask( T smooth_sigm
 	int r = d/2;
 	cimg_library::CImg<T> mask( d, d, 1, 1 );
 
-	T sum = 0.0;
+	T sum = T(0.0);
 	cimg_forXY( mask, x, y )
 	{
-		mask.atXY(x,y) = _gauss( double(pow(double(pow(double(x-r),2)+pow(double(y-r),2)),0.5)), T(0.0), T(smooth_sigma) );
+		mask.atXY(x,y) = _gauss( double(pow(double(pow(double(x-r),2.0)+pow(double(y-r),2)),0.5)), T(0.0), T(smooth_sigma) );
 		sum += mask.atXY(x,y);
 	}
 	cimg_forXY( mask, x, y )
@@ -170,7 +170,7 @@ cimg_library::CImg<T> PyramidRescaleMatlab<T>::_computeFilterMask( T smooth_sigm
 	}
 
 	mask = cimg_library::CImg<T>( 1, 1, 1, 1 );
-	mask(0,0,0,0) = double(1);
+	mask(0,0,0,0) = T(1.0);
 	mask.save("mask.cimg");
 	return mask;
 }
@@ -178,8 +178,8 @@ cimg_library::CImg<T> PyramidRescaleMatlab<T>::_computeFilterMask( T smooth_sigm
 template<typename T>
 T PyramidRescaleMatlab<T>::_gauss( T x, T mu, T sigma )
 {
-	return 1/(sqrt(2*M_PI*sigma*sigma))
-	  * exp(double(-(x - mu)*(x - mu)/(2*sigma*sigma))) ;
+	return T(1.0/(sqrt(2.0*M_PI*sigma*sigma))
+	  * exp(double(-(x - mu)*(x - mu)/(2.0*sigma*sigma)))) ;
 }
 
 #endif /* _PYRAMID_RESCALE_MATLAB_HXX_ */
