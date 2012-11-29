@@ -24,6 +24,8 @@
 /// Class name of the plugin
 #define TYPE EdgySequenceGenerator
 
+#define roi_EXPORTS
+
 #include <charon/EdgySequenceGenerator.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>
 

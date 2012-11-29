@@ -24,6 +24,8 @@
 ///Class name of the plugin
 #define TYPE PyramidRescaleMatlab
 
+#define roi_EXPORTS
+
 #include <charon-utils/Convolution.hxx>
 #include <charon/PyramidRescaleMatlab.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>
