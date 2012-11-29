@@ -21,10 +21,11 @@
  */
 #include <charon-core/AbstractPluginLoader.h>
 
-AbstractPluginLoader::AbstractPluginLoader(const std::string & n) :
-	pluginName(StringTool::toLowerCase(n)) {
+AbstractPluginLoader::AbstractPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix) :
+	pluginName(StringTool::toLowerCase(n)),pluginPaths(plpaths),libSuffix(lSuffix) {
 	create = NULL;
 	destroy = NULL;
+
 }
 
 const std::string& AbstractPluginLoader::getName() const {

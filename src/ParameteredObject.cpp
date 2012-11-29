@@ -61,11 +61,14 @@ ParameteredObject::ParameteredObject(const std::string& className,
 		_metadata.set<std::string> (_className + ".inputs");
 		_metadata.set<std::string> (_className + ".outputs");
 	}
+        _initialized=false;
 
 	_setDynamic(false);
 }
 
 ParameteredObject::~ParameteredObject() {
+        if(_initialized)
+            finalize();
 }
 
 const ParameterFile& ParameteredObject::getMetadata() {
@@ -146,13 +149,18 @@ void ParameteredObject::_addParameter(AbstractParameter& param,
 
 void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type) {
+	_addInputSlot(slot,name,name,doc,type);
+}
+
+void ParameteredObject::_addInputSlot(Slot &slot, const std::string &name,const std::string &displayname, const std::string &doc, const std::string &type)
+{
 	// if type is given, we do not need guessing
 	std::string guessedType = type;
 	if (!guessedType.size())
 		guessedType = slot.guessType();
 
 	// assign parameter to this object
-	slot.init(this, name, guessedType);
+	slot.init(this, name,displayname, guessedType);
 
 	// add metadata
 	if (_addSomething("inputs", name, doc, guessedType)) {
@@ -160,6 +168,8 @@ void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 		_inputs.insert(std::make_pair(name, &slot));
 
 		if (_createMetadata) {
+			_metadata.set<std::string> (_className + "." + name
+					+ ".displayname", slot.getDisplayName());
 			if (slot.getMulti())
 				_metadata.set<std::string> (_className + "." + name
 						+ ".multi", "true");
@@ -172,19 +182,26 @@ void ParameteredObject::_addInputSlot(Slot& slot, const std::string& name,
 
 void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,
 		const std::string& doc, const std::string& type) {
+	_addOutputSlot(slot,name,name,doc,type);
+}
+
+void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,  const std::string& displayname,
+		const std::string& doc, const std::string& type) {
 	// if type is given, we do not need guessing
 	std::string guessedType = type;
 	if (!guessedType.size())
 		guessedType = slot.guessType();
 
 	// assign parameter to this object
-	slot.init(this, name, guessedType);
+	slot.init(this, name,displayname, guessedType);
 
 	// add metadata
 	if (_addSomething("outputs", name, doc, guessedType)) {
 		// and add it to the output slot list
 		_outputs.insert(std::make_pair(name, &slot));
 		if (_createMetadata) {
+			_metadata.set<std::string> (_className + "." + name
+					+ ".displayname", slot.getDisplayName());
 			if (!slot.getMulti())
 				_metadata.set<std::string> (_className + "." + name
 						+ ".multi", "false");
@@ -260,6 +277,8 @@ void ParameteredObject::runPreceeding(const Slot& slot) const {
 }
 
 void ParameteredObject::execute() {
+	if(!_initialized)
+		raise("This plugin must be initialized before execution!");
 	// empty default implementation
 	sout << "(WW) this plugin has not overridden execute() or does call "
 		 << "ParameteredObject::execute() directly which is deprecated."
@@ -406,10 +425,19 @@ void ParameteredObject::save(ParameterFile& pf) const {
 	std::map<std::string, Slot*>::const_iterator slotIter;
 
 	for (slotIter = _inputs.begin(); slotIter != _inputs.end(); slotIter++)
-		slotIter->second->save(pf);
+	{
+		Slot* sl=slotIter->second;
+		if(sl->connected())
+			sl->save(pf);
+	}
 
 	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
-		slotIter->second->save(pf);
+	{
+		Slot* sl=slotIter->second;
+		if(sl->connected())
+			sl->save(pf);
+	}
+	onSave(pf);
 }
 
 void ParameteredObject::loadParameters(const ParameterFile& pf) {
@@ -442,6 +470,9 @@ void ParameteredObject::loadSlots(const ParameterFile& pf,
 		slotIter->second->load(pf, man);
 	for (slotIter = _outputs.begin(); slotIter != _outputs.end(); slotIter++)
 		slotIter->second->load(pf, man);
+
+
+	    onLoad(pf,man);
 }
 
 bool ParameteredObject::connected() const {
@@ -569,6 +600,7 @@ std::string ParameteredObject::templateTypeToString(template_type t) {
 }
 
 void ParameteredObject::prepareDynamicInterface(const ParameterFile&) {
+	initialize();
 }
 
 void ParameteredObject::_setDynamic(bool v) {
@@ -615,4 +647,107 @@ std::string ParameteredObject::fixCase(const std::string& name) const {
 	}
 	raise("Parameter/Slot " + name + " not found!");
 	return std::string();
+}
+
+void ParameteredObject::_removeInputSlot(std::string name)
+{
+	// remove metadata
+	if (_removeSomething("inputs", name)) {
+		// and remove it from the input slot list
+		if(_inputs.find(name)!=_inputs.end()) {
+			_inputs.erase(name);
+		}
+		if(_metadata.isSet(_className + "." + name+ ".multi")) {
+			_metadata.erase(_className + "." + name+ ".multi");
+		}
+		if(_metadata.isSet(_className + "." + name+ ".optional")) {
+			_metadata.erase(_className + "." + name+ ".optional");
+		}
+	}
+}
+
+bool ParameteredObject::_removeSomething(
+		const std::string &extension, const std::string &name)
+{
+	// Check that param is  registered.
+	// Parameters can only be assigned once!
+	if( _parameters.find(name) == _parameters.end() ||
+		_inputs.find(name) == _inputs.end() ||
+		_outputs.find(name) == _outputs.end()) {
+		sout << "(EE) ******************************************************\n"
+			 << "(EE) The parameter or slot \"" << name
+			 << "\" has not been defined!\n"
+			 << "(EE) Slots and Parameter names must be unique "
+			 << "for each Plugin!\n"
+			 << "(EE) ******************************************************\n"
+			 << std::endl;
+		return false;
+	}
+
+	if (_createMetadata) {
+		std::vector<std::string> someList;
+		// get all elements of the given section
+		if (_metadata.isSet(_className + "." + extension)) {
+			someList = _metadata.getList<std::string> (_className + "."
+					+ extension);
+		}
+		std::vector<std::string>::iterator found = std::find(
+				someList.begin(), someList.end(), name);
+		if (found != someList.end()) {
+			if(_metadata.isSet(_className+"."+name + ".type")) {
+				_metadata.erase(_className+"."+name + ".type");
+			}
+			if(_metadata.isSet(_className+"."+name + ".doc")) {
+				_metadata.erase(_className+"."+name + ".doc");
+			}
+			if(_metadata.isSet(_className + "." + name)) {
+				_metadata.erase(_className + "." + name);
+			}
+			if(_metadata.isSet(_className+"."+extension)) {
+				_metadata.erase(_className+"."+extension);
+			}
+			someList.erase(found);
+			_metadata.set<std::string>(_className+"."+extension, someList);
+		}
+	}
+
+	return true;
+}
+
+void ParameteredObject::_removeOutputSlot(std::string name) {
+	// remove metadata
+	if (_removeSomething("outputs", name)) {
+		// and remove it from the output slot list
+		if(_outputs.find(name)!=_outputs.end()) {
+			_outputs.erase(name);
+		}
+		if(_metadata.isSet(_className + "." + name+ ".multi")) {
+			_metadata.erase(_className + "." + name+ ".multi");
+		}
+		if(_metadata.isSet(_className + "." + name+ ".optional")) {
+			_metadata.erase(_className + "." + name+ ".optional");
+		}
+	}
+}
+
+void ParameteredObject::initialize() {
+	if(this->_initialized)
+		raise("Plugin is already initialized!");
+	_initialized=true;
+}
+
+void ParameteredObject::finalize() {
+	if(!_initialized)
+		raise("Plugin was not initialied, or has been already finalized");
+	_initialized=false;
+}
+
+void ParameteredObject::onLoad(
+		const ParameterFile&, const PluginManagerInterface* man) {
+	if(man->initializePluginOnLoad()) {
+		initialize();
+	}
+}
+
+void ParameteredObject::onSave(ParameterFile&) const {
 }

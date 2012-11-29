@@ -35,6 +35,8 @@ protected:
 	 * Saves currently existing instances
 	 */
 	std::map<std::string, ParameteredObject *> objects;
+
+	bool _initializePluginOnLoad;
 public:
 	/**
 	 * Default Constructor
@@ -81,6 +83,14 @@ public:
 
 	/// Default destructor
 	virtual ~PluginManagerInterface() {
+	}
+	bool initializePluginOnLoad() const
+	{
+	    return _initializePluginOnLoad;
+	}
+	void setInitiailizePluginOnLoad(bool initOnLoad)
+	{
+	   _initializePluginOnLoad=initOnLoad;
 	}
 };
 

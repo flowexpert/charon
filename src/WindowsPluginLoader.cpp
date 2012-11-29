@@ -31,8 +31,8 @@
 #include <charon-core/WindowsPluginLoader.h>
 #include <charon-core/ParameterFile.h>
 
-WindowsPluginLoader::WindowsPluginLoader(const std::string & n) :
-	AbstractPluginLoader(n) {
+WindowsPluginLoader::WindowsPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix) :
+	AbstractPluginLoader(n,plpaths,lSuffix) {
 	hInstLibrary = NULL;
 }
 

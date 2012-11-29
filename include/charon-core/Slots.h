@@ -39,6 +39,8 @@
 #include <set>
 #include "DllEx.h"
 
+#define SUPERNODES_BRANCH 1//Allow ArgosDisplay to compile with charon-core in main and charon-core in supernodes. REMOVE AFTER MERGING supernodes with main
+
 class ParameteredObject;
 class PluginManagerInterface;
 class ParameterFile;
@@ -70,6 +72,9 @@ protected:
 	/// Slot name.
 	std::string _name;
 
+	/// Slot display name
+	std::string _displayName;
+
 	/// Slot type
 	std::string _type;
 
@@ -91,6 +96,14 @@ public:
 	/// @throws std::string     Error message if invalid parent set.
 	void init(ParameteredObject* parent, std::string name, std::string type);
 
+	/// initialize parent and name and displayname
+	/// @param parent           parent object
+	/// @param name             slot name
+	/// @param displayname      slot display name
+	/// @param type             slot type
+	/// @throws std::string     Error message if invalid parent set.
+	void init(ParameteredObject* parent, std::string name, std::string displayname, std::string type);
+
 	/// prepare slot
 	/** this may be used on input/output slots to allocate memory */
 	virtual void prepare() = 0;
@@ -108,7 +121,10 @@ public:
 	const ParameteredObject& getParent() const;
 
 	/// Get slot name.
-	std::string getName() const;
+	virtual std::string getName() const;
+
+	/// Get slot display name.
+	virtual std::string getDisplayName() const;
 
 	/// print info message with slot name to sout
 	void printInfo(const std::string& msg) const;
@@ -239,6 +255,7 @@ protected:
 	/// Pointer to data of connected output slot.
 	std::set<AbstractSlot<T>*> _targets;
 
+
 	/// Add slot target.
 	/// This does not touch the target slot itself.
 	/// @param target       Target slot to add.
@@ -272,13 +289,28 @@ public:
 	//  @}
 };
 
+class charon_core_PUBLIC InputSlotIntf
+{
+public:
+
+
+    /// get the name
+    virtual std::string getName() const=0;
+
+    /// get the type
+    virtual std::string getType() const =0;
+
+};
+
+class charon_core_PUBLIC OutputSlotIntf;
+
 /// Input slot.
 /// This slot does not stores the data itself, but contains a pointer
 /// to the connected output slot. Data are read from this source, if needed.
 template <typename T>
 class charon_core_PUBLIC InputSlot :
 		public AbstractSlot<T>, public AbstractROData<T>,
-		public AbstractMultiROData<T> {
+		public AbstractMultiROData<T>, public InputSlotIntf {
 public:
 	/// Create new input slot.
 	/// @param optional     make this slot optional
@@ -307,6 +339,19 @@ public:
 	 */
 	virtual void prepare();
 	virtual void finalize();
+
+	virtual std::string getName() const
+	{
+	    return AbstractSlot<T>::getName();
+	}
+
+	virtual std::string getType() const
+	{
+	    return AbstractSlot<T>::getType();
+	}
+
+
+
 private:
 	/// handle data extraction from output slot
 	/** \warning make sure that the given slot is really an output slot,
@@ -314,17 +359,45 @@ private:
 	 *  \param slot         output slot to extract data from
 	 *  \returns            extracted data
 	 */
-	const T& _getDataFromOutputSlot(const AbstractSlot<T>* slot) const;
+	const T& _getDataFromOutputSlot(const OutputSlotIntf* slot) const;
+	const T& _getDataFromOutputSlot(const Slot* slot) const;
 
 	/// data cache for managed output slots
 	std::map<std::string, T> _dataCache;
+};
+
+
+class charon_core_PUBLIC OutputSlotIntf
+{
+public:
+    /// set manager configuration string
+    virtual void setConfig(std::string conf)=0;
+    /// get manager configuration string
+    virtual const std::string& getConfig() const=0;
+
+    /// change data cache type
+    virtual void setCacheType(Slot::CacheType type)=0;
+
+    /// get the name
+    virtual std::string getName() const =0;
+
+    /// get the type
+    virtual std::string getType() const =0;
+
+    /// query data cache type
+    virtual Slot::CacheType getCacheType() const=0;
+
+
+    /// Return a pointer to a real slot
+	virtual const OutputSlotIntf* getDataSlot() const=0;
+
 };
 
 /// Output slot.
 /// This slot stores the output data and a list of connected slots.
 template <typename T>
 class charon_core_PUBLIC OutputSlot :
-		public AbstractSlot<T>, public AbstractData<T> {
+		public AbstractSlot<T>, public AbstractData<T>,public OutputSlotIntf {
 
 private:
 	/// initial value cache
@@ -356,7 +429,7 @@ public:
 		return _cacheType;
 	}
 	/// get manager configuration string
-	const std::string& getConfig() const {
+	virtual const std::string& getConfig() const {
 		return _managerConfig;
 	}
 
@@ -367,6 +440,178 @@ public:
 	virtual T& operator= (const T& B);
 	virtual void prepare();
 	virtual void finalize();
+
+
+
+	/// Return a pointer to a real slot
+	const OutputSlotIntf* getDataSlot() const
+	{
+	    return this;
+	}
+
+	virtual std::string getName() const
+	{
+	    return AbstractSlot<T>::getName();
+	}
+
+	virtual std::string getType() const
+	{
+	    return AbstractSlot<T>::getType();
+	}
+	/// set manager configuration string
+	virtual void setConfig(std::string conf)
+	{
+	    _managerConfig=conf;
+	}
+
+
 };
+
+
+/// VirtualOutputSlot
+///  This class holds a pointer to an output if the output is CACHE_MEM, otherwise it loads
+///  a config string from a given parameterfile
+
+class  charon_core_DLL_PUBLIC VirtualSlot
+	:public Slot
+{
+public:
+    friend class VirtualInputSlot;
+    friend class VirtualOutputSlot;
+    VirtualSlot(std::string virtType,int num=0);
+    /// overload Slot functions. Load and save the config string
+    virtual void load(
+		    const ParameterFile& pf, const PluginManagerInterface* man);
+    virtual void save(ParameterFile& pf) const;
+
+    /// set _slot to Casted target
+    bool _addTarget(Slot *target);
+
+    /// remove target
+    bool _removeTarget(Slot *target);
+
+
+
+
+    virtual void prepare();
+
+    virtual void finalize();
+
+    std::string guessType() const;
+
+    std::string getName() const;
+
+    std::string getType() const;
+
+    /// Get pointers to the connected targets.
+    virtual std::set<Slot*> getTargets() const;
+
+    /// Set corresponding partner VirtualSlot
+    void setVirtualPartnerSlot(VirtualSlot* insl);
+protected:
+    virtual bool isValidPartner(VirtualSlot* insl)=0;
+    virtual bool isValidTarget(Slot* target)=0;
+
+	void setDisplayNameAndType(std::string name,std::string type);
+
+	virtual void onLoad(const ParameterFile& pf, const PluginManagerInterface* man);
+
+	virtual void onSave(ParameterFile& pf) const;
+	virtual bool onAddTarget(Slot* target);
+	virtual bool onRemoveTarget(Slot* target);
+
+    VirtualSlot* _partner;
+    std::set<Slot*> _target;
+
+
+
+
+
+};
+class VirtualInputSlot;
+class charon_core_DLL_PUBLIC VirtualOutputSlot
+	:public VirtualSlot,public OutputSlotIntf
+{
+public:
+    friend class VirtualInputSlot;
+    VirtualOutputSlot(int num=0);
+    /// set the cache type of _slot
+    void setCacheType(Slot::CacheType type);
+
+    /// get the cache type from _slot
+    Slot::CacheType getCacheType() const;
+
+    /// overloaded getType
+    std::string getType() const;
+
+    /// get the Name
+    std::string getName() const ;
+
+    /// get the manager config
+    const std::string& getConfig() const;
+
+    /// Return a pointer to a real slot
+	const OutputSlotIntf* getDataSlot() const;
+
+    /// set manager configuration string
+    virtual void setConfig(std::string conf);
+
+    void setLoopPartner(VirtualInputSlot* loopPartner);
+    void setLoop(bool loop);
+protected:
+    virtual bool isValidPartner(VirtualSlot *insl);
+    virtual bool isValidTarget(Slot *target);
+    void onLoad(const ParameterFile &pf, const PluginManagerInterface *man);
+    void onSave(ParameterFile &pf) const;
+    virtual bool onAddTarget(Slot *target);
+    virtual bool onRemoveTarget(Slot *target);
+
+private:
+    std::string _managerconfig;
+    Slot::CacheType _cacheType;
+    VirtualInputSlot* _loopPartner;
+    bool _loop;
+
+
+};
+
+
+
+class charon_core_DLL_PUBLIC VirtualInputSlot
+	:public VirtualSlot,public InputSlotIntf
+{
+public:
+    friend class VirtualOutputSlot;
+    VirtualInputSlot(int num=0);
+
+
+
+
+
+    /// overloaded getType
+    std::string getType() const;
+
+    /// get the Name
+    std::string getName() const ;
+
+protected:
+    virtual bool isValidPartner(VirtualSlot *insl);
+    virtual bool onAddTarget(Slot *target);
+    virtual bool onRemoveTarget(Slot *target);
+    virtual bool isValidTarget(Slot *target);
+
+
+
+
+
+
+
+
+
+};
+
+
+
+
 
 #endif /* _SLOTS_H */

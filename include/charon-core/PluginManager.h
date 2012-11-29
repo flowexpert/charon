@@ -52,6 +52,7 @@
 #include <map>
 #include <list>
 #include "PluginManagerInterface.h"
+#include "ParameteredObject.h"
 
 /**
  * Manages ParameteredObject based plugins and their instances.
@@ -125,15 +126,28 @@
  */
 class PluginManager: public PluginManagerInterface {
 private:
-	/// currently loaded plugins
+	/**
+	 * Paths where the plugins are stored
+	 */
+	std::vector<std::string> pluginPaths;
+
+
+	/// Lib suffix e.g. <tt>_d</tt> for debug builds
+	std::string libSuffix;
+	/**
+	 * Saves the currently loaded plugins
+	 */
 	std::map<std::string, PLUGIN_LOADER*> _loadedPlugins;
 
-	/// Link the instances to their PluginLoader
-	/** so the PluginManager can determine of which type the instance is
+	/**
+	 * Links the instances to their PluginLoader, so the PluginManager can
+	 * determine of which type the instance is
 	 */
 	std::map<ParameteredObject*, PLUGIN_LOADER*> _instances;
 
-	/// current default template type.
+	/**
+	 * Saves the current default template type.
+	 */
 	ParameteredObject::template_type _defaultTemplateType;
 
 	/**
@@ -146,6 +160,11 @@ private:
 	 * Unloads all Plugins and destroys all instances.
 	 */
 	void _unloadAllPlugins();
+
+	/**
+	  * Check if parametered object is an internal object
+	  */
+	bool isInternal(ParameteredObject* obj);
 
 	/**
 	 * Unloads a plugin and destroys instances
@@ -195,7 +214,7 @@ private:
 	// @}
 
 	/// exclude list for metadata generation
-	static std::vector<std::string> _excludeList;
+	std::vector<std::string> _excludeList;
 
 public:
 	/// default lib suffix
@@ -216,7 +235,9 @@ public:
 	 */
 	PluginManager(
 			const std::vector<std::string>& pluginPaths,
-			bool debugSuffix = DEFAULT_DEBUG_SUFFIX);
+			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
+			bool initializeOnLoad=false
+	);
 
 	/// default constructor
 	/**
@@ -230,8 +251,11 @@ public:
 	 *                    fallback to libs without suffix.
 	 */
 	PluginManager(
-			const std::string& globalPath, const std::string& localPath = "",
-			bool debugSuffix = DEFAULT_DEBUG_SUFFIX);
+			const std::string& globalPath,
+			const std::string& localPath = "",
+			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
+			bool initializeOnLoad=false
+	);
 
 	/**
 	 * Loads a plugin stored in the previously declared folder.
@@ -268,6 +292,9 @@ public:
 	 * @return true if the plugin is loaded
 	 */
 	bool isLoaded(const std::string & name) const;
+
+	/// Gets the plugin paths
+	const std::vector<std::string>& getPluginPaths() const;
 
 	/**
 	 * @return number of currently loaded plugins.
@@ -314,6 +341,12 @@ public:
 		ParameteredObject::template_type t,
 		const std::string& instanceName = "")
 			throw (AbstractPluginLoader::PluginException);
+
+	/**
+	  * Insert an existing parametered object instance.
+	  * @warning instance will be managed by pluginmanager.
+	  */
+	void insertInstance(ParameteredObject* instance);
 
 	/**
 	 * Same Method, but allowing to leave the template type out. Current
@@ -410,10 +443,9 @@ public:
 	 */
 	ParameteredObject::template_type getDefaultTemplateType() const;
 
-	/**
-	 * Calls run() on every target point.
-	 *
-	 * @see addTargetPoint(ParameteredObject *)
+	/// run whole workflow
+	/** Calls run() on every target point.
+	 *  @see addTargetPoint(ParameteredObject *)
 	 */
 	void runWorkflow();
 
@@ -423,7 +455,12 @@ public:
 	}
 
 	/// set exclude list
-	static void setExcludeList(const std::vector<std::string>& list);
+	void setExcludeList(const std::vector<std::string>& list);
+
+
+	/// Set the executed flags of the objects to false.
+	/** This function leaves the objects otherwise untouched */
+	void resetExecuted();
 
 	/**
 	 * Iterates through the plugins available inside the plugin path and
@@ -530,6 +567,13 @@ public:
 	 *  \retval true        operation successful
 	 */
 	bool connect(Slot& slot1, Slot& slot2);
+
+	/// Same method, but taking pointers.
+	/** \param slot1        Slot1 (in or out)
+	 *  \param slot2        Slot2 (out or in)
+	 *  \retval true        operation successful
+	 */
+	bool connect(Slot* slot1, Slot* slot2);
 
 	/// Connect slots by name.
 	/** You have to provide the slot names as "objectname.slotname",

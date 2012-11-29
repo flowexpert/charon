@@ -58,7 +58,7 @@ public:
 	 * Default constructor.
 	 * @param name Name of the plugin
 	 */
-	WindowsPluginLoader(const std::string & name);
+	WindowsPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix);
 	virtual void load() throw (PluginException);
 	virtual void unload() throw (PluginException);
 

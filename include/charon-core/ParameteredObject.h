@@ -62,6 +62,10 @@ class PluginManagerInterface;
 
 class charon_core_DLL_PUBLIC ParameteredObject {
 private:
+
+	/// status of initialization
+	bool _initialized;
+
 	/// Count number of parametered objects with different class names.
 	static std::map<std::string, unsigned int> _genericClassNameCount;
 
@@ -111,6 +115,15 @@ private:
 protected:
 	/// Specifies if the ParameteredObject is dynamic
 	void _setDynamic(bool v);
+
+	/// Remove an input slot
+	void _removeInputSlot(std::string name);
+
+	/// Remove an output slot
+	void _removeOutputSlot(std::string name);
+
+	/// Remove something. Iverse of _addSomething.
+	bool _removeSomething(const std::string &extension, const std::string &name);
 
 	/// Common code for _addParameter, _addInputSlot, _addOutputSlot.
 	/** This function does nothing, if _createMetadata is set to false.
@@ -195,6 +208,26 @@ protected:
 		const std::string& doc, const std::string& type = "");
 	//  \}
 
+	/// Register input slot.
+	/** \param slot         New slot to add
+	 *  \param name         parameter name to pass to AbstractParameter::init()
+	 *  \param displayname  parameter displyname to pass to AbstractParameter::init()
+	 *  \param doc          parameter docstring (for metadata generation)
+	 *  \param type         Parameter type (string representation)
+	 */
+	void _addInputSlot(Slot& slot, const std::string& name, const std::string& displayname,
+		const std::string& doc, const std::string& type);
+
+	/// Register output slot.
+	/** \param slot         New slot to add
+	 *  \param name         parameter name to pass to AbstractParameter::init()
+	 *  \param displayname  parameter displyname to pass to AbstractParameter::init()
+	 *  \param doc          parameter docstring (for metadata generation)
+	 *  \param type         Parameter type (string representation)
+	 */
+	void _addOutputSlot(Slot& slot, const std::string& name, const std::string& displayname,
+		const std::string& doc, const std::string& type);
+
 	/// register member function
 	/**
 	 *  This hack is useful to get some member functions compiled
@@ -240,12 +273,6 @@ protected:
 	ParameteredObject(const std::string& className,
 		const std::string& name = "", const std::string& doc = "");
 
-	/// set property _executed
-	/** \param value        New value of _executed
-	 */
-	void _setExecuted(bool value) {
-		_executed = value;
-	}
 
 	/// get target nodes
 	/** Determine target leaves of the execution workflow (i.e. Parametered
@@ -260,6 +287,13 @@ protected:
 	 *  This function may be pure virtual in future releases.
 	 */
 	virtual void execute();
+
+	/// finalize plugin
+	/** The default implementation does nothing at all.
+	 *  Override this function implementing new modules.
+	 *  This function may be pure virtual in future releases.
+	 */
+	virtual void finalize();
 
 	/// run all preceeding objects
 	void runPreceeding() const;
@@ -328,6 +362,20 @@ public:
 	 */
 	virtual void run();
 
+	/// initialize plugin
+	/** The default implementation does nothing at all.
+	 *  Override this function implementing new modules.
+	 *  This function may be pure virtual in future releases.
+	 */
+	virtual void initialize();
+
+	/// set property _executed
+	/** \param value        New value of _executed
+	 */
+	void setExecuted(bool value) {
+		_executed = value;
+	}
+
 	/// get execution status
 	bool executed() const {
 		return _executed;
@@ -395,6 +443,8 @@ public:
 	 */
 	Slot* getSlot(const std::string& slotName) const;
 
+
+
 	/// Get all input slots as map
 	/** Returns a map linking the names of the input slots to the Slots itself.
 	 *  \returns Map containing all input slots
@@ -448,6 +498,20 @@ public:
 	 */
 	void loadSlots(
 			const ParameterFile& pf, const PluginManagerInterface* man);
+
+
+	/// Custom Load operation
+	/** Is called by _load. Can be used for additional initialization upon a load operation
+	  * \param pf parameter file to be loaded
+	  * \param man The plugin manager, from which loadWorkflow() is called.
+	  */
+	virtual void onLoad(const ParameterFile& pf,const PluginManagerInterface* man);
+
+	/// Custom Save operation
+	/** Is called by _save. Can be used for additional initialization upon a save operation
+	  * \param pf parameter file to be saved
+	  */
+	virtual void onSave(ParameterFile& pf) const;
 
 	/// \name slot management
 	//  \{
@@ -520,6 +584,8 @@ public:
 		const std::string& name = "", const std::string& doc = "");
 
 	virtual const std::string getTemplateType() const;
+
+        virtual ~TemplatedParameteredObject();
 };
 
 

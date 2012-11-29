@@ -28,6 +28,8 @@
 #ifndef _PARAMETERED_OBJECT_HXX_
 #define _PARAMETERED_OBJECT_HXX_
 
+#define CHARON_SUPERNODES
+
 #include "ParameteredObject.h"
 #include "ParameterFile.hxx"
 #include "Parameter.hxx"
@@ -46,7 +48,8 @@ template <typename T>
 void ParameteredObject::setParameter(std::string name, T value) {
 	if(_parameters.find(name) != _parameters.end()) {
 		Parameter<T>& p = dynamic_cast<Parameter<T>&>(*_parameters[name]);
-		p.operator T() = value;
+		//p.operator T() = value;
+		p=value;
 	}
 	else
 		throw std::invalid_argument("parameter not found");
@@ -60,6 +63,12 @@ TemplatedParameteredObject<T>::TemplatedParameteredObject(
 		_addSomething(
 				"parameters", "templatetype", "template type",
 				"{int;float;double}", "double");
+}
+
+template<typename T>
+TemplatedParameteredObject<T>::~TemplatedParameteredObject()
+{
+
 }
 
 template<typename T>

@@ -25,9 +25,9 @@
 #ifdef __GNUG__
 #include <cxxabi.h>
 #endif // __GNUG__
-#include <charon-core/ExceptionHandler.h>
-#include <charon-core/TypeDetector.h>
-#include <charon-core/SplitStream.h>
+#include "../include/charon-core/ExceptionHandler.h"
+#include "../include/charon-core/TypeDetector.h"
+#include "../include/charon-core/SplitStream.h"
 
 int ExceptionHandler::run(int (&method)()) {
 	int ret = EXIT_FAILURE;

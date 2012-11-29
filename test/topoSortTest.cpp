@@ -24,9 +24,9 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <charon-core/ParameteredObject.hxx>
-#include <charon-core/ExceptionHandler.h>
-#include <charon-core/PluginManager.h>
+#include "../include/charon-core/ParameteredObject.hxx"
+#include "../include/charon-core/ExceptionHandler.h"
+#include "../include/charon-core/PluginManager.h"
 
 // make sure that assert() works (nothing is tested otherwise)
 #undef NDEBUG
@@ -102,7 +102,7 @@ int test() {
 	man.connect("2.out", "3.in");
 	man.connect("3.out", "4.in");
 	man.connect("3.out", "5.in");
-	sout << "Layout: 0-1-3-4\n         \\ / \\\n          2   5" <<std::endl;
+	sout << "Layout: 0-1-3-4\n         \\ / \\\n          2   5" << std::endl;
 	tst = man.determineExecutionOrder();
 	assert(tst.size() == num2);
 	tstrm.str("");

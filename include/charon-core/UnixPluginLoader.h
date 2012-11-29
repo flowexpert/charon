@@ -49,7 +49,7 @@ public:
 	 * Default constructor.
 	 * @param name Name of the plugin
 	 */
-	UnixPluginLoader(const std::string & name);
+	UnixPluginLoader(const std::string & name,std::vector<std::string> &plpaths,std::string &lSuffix);
 	virtual void load() throw (PluginException);
 	virtual void unload() throw (PluginException);
 

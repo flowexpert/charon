@@ -23,36 +23,43 @@
 #include <cstdlib>
 #include <set>
 #include <algorithm>
-#include <charon-core/PluginManager.h>
-#include <charon-core/ParameteredObject.hxx>
+#include "../include/charon-core/PluginManager.h"
+#include "../include/charon-core/ParameteredObject.hxx"
+#include "../include/charon-core/ParameteredGroupObject.h"
+#include <sstream>
 
-std::vector<std::string> AbstractPluginLoader::pluginPaths;
-std::string AbstractPluginLoader::libSuffix;
+
+
 
 PluginManager::PluginManager(
-		const std::vector<std::string>& paths, bool dbg) :
-	_defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
+			const std::vector<std::string>& paths, bool dbg,bool initializeOnLoad):
+		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
+{
 	if(paths.size() == 0) {
 		throw std::invalid_argument("PluginLoader: Empty paths list given!");
 	}
-	AbstractPluginLoader::pluginPaths = paths;
-	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
+	pluginPaths = paths;
+	libSuffix = dbg ? "_d" : "";
+	_initializePluginOnLoad=initializeOnLoad;
 }
 
 PluginManager::PluginManager(
-		const std::string& path1, const std::string& path2,
-		bool dbg) :
-	_defaultTemplateType(ParameteredObject::TYPE_DOUBLE) {
+			const std::string& path1, const std::string& path2, bool dbg,bool initializeOnLoad) :
+		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
+{
 	if (path2.size() > 0) {
 		// put local path (if any) in front of global path
-		AbstractPluginLoader::pluginPaths.push_back(path2);
+		pluginPaths.push_back(path2);
 	}
 	if (path1.size() == 0) {
 		throw std::invalid_argument(
 				"PluginManger: at least one non-emtpy path has to be given!");
 	}
-	AbstractPluginLoader::pluginPaths.push_back(path1);
-	AbstractPluginLoader::libSuffix = dbg ? "_d" : "";
+	pluginPaths.push_back(path1);
+	libSuffix = dbg ? "_d" : "";
+	_initializePluginOnLoad=initializeOnLoad;
+
+
 }
 
 void PluginManager::_destroyAllInstances(PLUGIN_LOADER * loader) {
@@ -106,7 +113,7 @@ void PluginManager::loadPlugin(std::string name)
 		throw (AbstractPluginLoader::PluginException) {
 	name = StringTool::toLowerCase(name);
 	if (!isLoaded(name)) {
-		PLUGIN_LOADER * newPlugin = new PLUGIN_LOADER(name);
+		PLUGIN_LOADER * newPlugin = new PLUGIN_LOADER(name,pluginPaths,libSuffix);
 
 		try {
 			newPlugin->load();
@@ -207,22 +214,41 @@ ParameteredObject * PluginManager::createInstance(
 
 void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 		throw (AbstractPluginLoader::PluginException) {
+    if(isInternal(toDestroy))
+    {
+	sout<<"(II) Object "<<toDestroy->getName()<<" is an internal object"<<std::endl;
+	delete toDestroy;
+	return;
+    }
 	std::string cur = toDestroy->getName(), curPlugin;
 	if (_instances.find(toDestroy) != _instances.end()) {
 		objects.erase(toDestroy->getName());
 		curPlugin = _instances[toDestroy]->getName();
 		_instances[toDestroy]->destroyInstance(toDestroy);
 		_instances.erase(toDestroy);
+		sout << "(II) Deleted Instance \"" << cur << "\" of the plugin \""
+			<< curPlugin << "\"" << std::endl;
 	} else {
+	    if(objects.find(toDestroy->getName())!=objects.end())
+	    {
+			objects.erase(toDestroy->getName());
+			delete toDestroy;
+			sout << "(II) Deleted Instance \"" << cur<<std::endl;
+	    }
+	    else
+	    {
 		throw(AbstractPluginLoader::PluginException(
 				"This instance does not exist.", "unknown",
 				AbstractPluginLoader::PluginException::NO_SUCH_INSTANCE));
+	    }
 	}
 	sout << "(DD) Deleted Instance \"" << cur << "\" of the plugin \""
 		<< curPlugin << "\"" << std::endl;
 }
 
 void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
+	reset();
+
 	// Determine default template type
 	if (paramFile.isSet("global.templatetype")) {
 		std::string templateType = paramFile.get<std::string> (
@@ -470,6 +496,10 @@ bool PluginManager::connect(Slot& slot1, Slot& slot2) {
 	return slot1.connect(slot2);
 }
 
+bool PluginManager::connect(Slot * slot1, Slot * slot2) {
+	return connect(*slot1, *slot2);
+}
+
 bool PluginManager::connect(
 		const std::string& slot1, const std::string& slot2) {
 	// extract objects and slots
@@ -583,7 +613,7 @@ bool PluginManager::disconnect(const std::string& slot1,
 	return disconnect(*slotP1,*slotP2);
 }
 
-std::vector<std::string> PluginManager::_excludeList;
+//std::vector<std::string> PluginManager::_excludeList;
 
 void PluginManager::createMetadata(const std::string& targetPath) {
 #ifndef MSVC
@@ -598,8 +628,8 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 	// Create metadata for all plugin paths
 	std::string pathBackup = FileTool::getCurrentDir();
 	for (std::vector<std::string>::const_iterator cur =
-			AbstractPluginLoader::pluginPaths.begin();
-			cur!=AbstractPluginLoader::pluginPaths.end(); cur++) {
+			pluginPaths.begin();
+			cur!=pluginPaths.end(); cur++) {
 		FileTool::changeDir(*cur);
 
 		// Fetch list of existing plugins
@@ -750,6 +780,58 @@ std::list<ParameteredObject*> PluginManager::determineExecutionOrder() {
 PluginManager::~PluginManager() {
 	reset();
 }
+
+const std::vector<std::string>& PluginManager::getPluginPaths() const {
+
+	return pluginPaths;
+}
+
+void PluginManager::insertInstance(ParameteredObject *instance)
+{
+    assert(instance);
+    objects[instance->getName()]=instance;
+}
+
+bool PluginManager::isInternal(ParameteredObject *obj)
+{
+	//if(dynamic_cast<SlotBundle*>(obj))
+	//return true;
+ //   else if(dynamic_cast<ParameteredGroupObject*>(obj))
+//	return true;
+    return false;
+
+}
+
+void PluginManager::resetExecuted()
+{
+
+    std::map<std::string, ParameteredObject *>::const_iterator iter;
+
+
+    if (objects.empty()) {
+            throw AbstractPluginLoader::PluginException(
+                    "Could not reset executed flags in workflow:\n\t"
+                    "No valid target point found.\n\tPlease check if "
+                    "all required plugins could be loaded,\n\tthen check if this is "
+                    "a valid parameter file.", "unknown",
+                    AbstractPluginLoader::PluginException::OTHER);
+    }
+
+    for (iter = objects.begin(); iter != objects.end(); iter++) {
+//            if(isGroup((*iter)))
+//            {
+//                AbstractBaseGroupIntf* grpIntf=dynamic_cast<AbstractBaseGroupIntf*>((*iter));
+//                grpIntf->loadWorkflow(AbstractPluginLoader::pluginPaths);
+//            }
+	(*iter).second->setExecuted(false);
+    }
+}
+
+
+
+
+
+
 
 void PluginManager::createDynamicMetadata(const ParameterFile& paramFile,
 	const std::string& filePrefix) {

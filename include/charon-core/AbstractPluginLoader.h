@@ -58,15 +58,17 @@ protected:
 	 * Function pointer to the getBuildType function of the plugin
 	  */
 	ParameteredObject::build_type (*getBuildType)() ;
-
-public:
 	/**
 	 * Paths where the plugins are stored
 	 */
-	static std::vector<std::string> pluginPaths;
+	std::vector<std::string> &pluginPaths;
+
 
 	/// Lib suffix e.g. <tt>_d</tt> for debug builds
-	static std::string libSuffix;
+	std::string &libSuffix;
+
+public:
+
 
 	/**
 	 * Exception class
@@ -169,7 +171,7 @@ public:
 	 * @param name The name of the Plugin (without prefix "lib" and without
 	 *             extension)
 	 */
-	AbstractPluginLoader(const std::string& name);
+	AbstractPluginLoader(const std::string& name,std::vector<std::string> &plpaths,std::string &lSuffix);
 
 	/**
 	 * Loads the plugin.

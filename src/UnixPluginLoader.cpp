@@ -29,13 +29,14 @@
 #include <dlfcn.h>
 #include <charon-core/UnixPluginLoader.h>
 
-UnixPluginLoader::UnixPluginLoader(const std::string & n) :
-	AbstractPluginLoader(n) {
+UnixPluginLoader::UnixPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix) :
+	AbstractPluginLoader(n,plpaths,lSuffix) {
 	libHandle = NULL;
 }
 
 void UnixPluginLoader::load() throw (PluginException) {
 	std::string path, pathS;
+
 	for(std::vector<std::string>::const_iterator  cur = pluginPaths.begin();
 			cur != pluginPaths.end(); cur++) {
 		path = *cur + "/lib" + pluginName + LIBRARY_EXTENSION;
