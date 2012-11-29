@@ -152,7 +152,7 @@ void ArgosDisplayPlugin<T>::execute() {
 					"cast of vigra::MultiArrayView failed! "
 					"In/Output slot may be invalid!");
 		const OutputSlot<vigra::MultiArray<5,T> >* temp =
-			dynamic_cast<const OutputSlot<vigra::MultiArray<5, T> >*>(out->getThisPointer());
+			dynamic_cast<const OutputSlot<vigra::MultiArray<5, T> >*>(out->getDataSlot());
 #else
 		const OutputSlot<vigra::MultiArray<5,T> >* temp =
 			dynamic_cast<const OutputSlot<vigra::MultiArray<5, T> >*>(*it);
@@ -191,7 +191,7 @@ void ArgosDisplayPlugin<T>::execute() {
 					"In/Output slot \"" + name + "\" may be invalid!");
 		}
 		const OutputSlot<cimg_library::CImgList<T> >* temp =
-			dynamic_cast<const OutputSlot<cimg_library::CImgList<T> >*>(out->getThisPointer());
+			dynamic_cast<const OutputSlot<cimg_library::CImgList<T> >*>(out->getDataSlot());
 #else
 		const OutputSlot<cimg_library::CImgList<T> >* temp =
 			dynamic_cast<const OutputSlot<cimg_library::CImgList<T> >*>(*cit);
