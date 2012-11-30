@@ -40,7 +40,6 @@ SET(PLUGIN_FILES
 	PluginManager.cpp
 )
 
-
 IF(WIN32)
 	LIST(APPEND PLUGIN_FILES
 		${CHARON_CORE_INCLUDE_DIR}/WindowsPluginLoader.h
@@ -63,85 +62,119 @@ ADD_LIBRARY(charon-plugins STATIC ${PLUGIN_FILES})
 TARGET_LINK_LIBRARIES(charon-plugins charon-core)
 IF(UNIX)
 	TARGET_LINK_LIBRARIES(charon-plugins dl)
-        TARGET_LINK_LIBRARIES(charon-core dl)
+	TARGET_LINK_LIBRARIES(charon-core dl)
 ENDIF(UNIX)
+
+# create plugins
+
+# determine plugin rpath
+SET(LIB_INSTALL_PATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
+SET(PLUGIN_RPATH "${LIB_INSTALL_PATH}/charon-plugins")
+LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${LIB_INSTALL_PATH}" isSystemDir)
+IF("${isSystemDir}" STREQUAL "-1")
+	SET(PLUGIN_RPATH "${PLUGIN_RPATH}:${LIB_INSTALL_PATH}")
+ENDIF("${isSystemDir}" STREQUAL "-1")
+UNSET(LIB_INSTALL_PATH)
+UNSET(isSystemDir)
 
 ADD_LIBRARY(ifgroup SHARED
 	IfGroup.cpp
 	${CHARON_CORE_INCLUDE_DIR}/IfGroup.h
 )
-
 TARGET_LINK_LIBRARIES(ifgroup
 	charon-core
 )
-
-ADD_LIBRARY(whilegroup SHARED
-        WhileGroup.cpp
-
-        ${CHARON_CORE_INCLUDE_DIR}/WhileGroup.h
-		${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
+SET_TARGET_PROPERTIES(ifgroup PROPERTIES
+	INSTALL_RPATH "${PLUGIN_RPATH}"
+	FOLDER "charon-core-modules"
 )
 
-
+ADD_LIBRARY(whilegroup SHARED
+	WhileGroup.cpp
+	${CHARON_CORE_INCLUDE_DIR}/WhileGroup.h
+	${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
+)
 TARGET_LINK_LIBRARIES(whilegroup
-        charon-core charon-plugins
+	charon-core charon-plugins
+)
+SET_TARGET_PROPERTIES(whilegroup PROPERTIES
+	INSTALL_RPATH "${PLUGIN_RPATH}"
+	FOLDER "charon-core-modules"
 )
 
 ADD_LIBRARY(statement SHARED
-		Statement.cpp
-		${CHARON_CORE_INCLUDE_DIR}/Statement.h
-		${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
+	Statement.cpp
+	${CHARON_CORE_INCLUDE_DIR}/Statement.h
+	${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
 )
-ADD_LIBRARY(forstatement SHARED
-		ForStatement.cpp
-		${CHARON_CORE_INCLUDE_DIR}/ForStatement.h
-		${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
+TARGET_LINK_LIBRARIES(statement
+	charon-core
+)
+SET_TARGET_PROPERTIES(statement PROPERTIES
+	INSTALL_RPATH "${PLUGIN_RPATH}"
+	FOLDER "charon-core-modules"
 )
 
-TARGET_LINK_LIBRARIES(statement
-		charon-core
+ADD_LIBRARY(forstatement SHARED
+	ForStatement.cpp
+	${CHARON_CORE_INCLUDE_DIR}/ForStatement.h
+	${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
 )
 TARGET_LINK_LIBRARIES(forstatement
-		charon-core
+	charon-core
+)
+SET_TARGET_PROPERTIES(forstatement PROPERTIES
+	INSTALL_RPATH "${PLUGIN_RPATH}"
+	FOLDER "charon-core-modules"
 )
 
 ADD_LIBRARY(groupobject SHARED
-		GroupObject.cpp
-		${CHARON_CORE_INCLUDE_DIR}/GroupObject.h
+	GroupObject.cpp
+	${CHARON_CORE_INCLUDE_DIR}/GroupObject.h
 )
-
 TARGET_LINK_LIBRARIES(groupobject
-		charon-core
+	charon-core
 )
-
+SET_TARGET_PROPERTIES(groupobject PROPERTIES
+	INSTALL_RPATH "${PLUGIN_RPATH}"
+	FOLDER "charon-core-modules"
+)
 
 ADD_LIBRARY(inputslotbundle SHARED
-		InputSlotBundle.cpp
-		SlotBundle.cpp
-		${CHARON_CORE_INCLUDE_DIR}/InputSlotBundle.h
-		${CHARON_CORE_INCLUDE_DIR}/SlotBundle.h
-		${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
+	InputSlotBundle.cpp
+	SlotBundle.cpp
+	${CHARON_CORE_INCLUDE_DIR}/InputSlotBundle.h
+	${CHARON_CORE_INCLUDE_DIR}/SlotBundle.h
+	${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
 )
-SET_TARGET_PROPERTIES(inputslotbundle PROPERTIES COMPILE_DEFINITIONS slotbundle_EXPORTS)
+SET_TARGET_PROPERTIES(inputslotbundle PROPERTIES
+	COMPILE_DEFINITIONS slotbundle_EXPORTS
+	INSTALL_RPATH "${PLUGIN_RPATH}"
+	FOLDER "charon-core-modules"
+)
+TARGET_LINK_LIBRARIES(inputslotbundle charon-core charon-plugins)
 
 ADD_LIBRARY(outputslotbundle SHARED
-		OutputSlotBundle.cpp
-		SlotBundle.cpp
-		${CHARON_CORE_INCLUDE_DIR}/OutputSlotBundle.h
-		${CHARON_CORE_INCLUDE_DIR}/SlotBundle.h
-		${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
+	OutputSlotBundle.cpp
+	SlotBundle.cpp
+	${CHARON_CORE_INCLUDE_DIR}/OutputSlotBundle.h
+	${CHARON_CORE_INCLUDE_DIR}/SlotBundle.h
+	${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
 )
-SET_TARGET_PROPERTIES(outputslotbundle PROPERTIES COMPILE_DEFINITIONS slotbundle_EXPORTS)
-
-TARGET_LINK_LIBRARIES(inputslotbundle charon-core charon-plugins)
+SET_TARGET_PROPERTIES(outputslotbundle PROPERTIES
+	COMPILE_DEFINITIONS slotbundle_EXPORTS
+	INSTALL_RPATH "${PLUGIN_RPATH}"
+	FOLDER "charon-core-modules"
+)
 TARGET_LINK_LIBRARIES(outputslotbundle charon-core charon-plugins)
+
 # install library
 SET_TARGET_PROPERTIES(charon-core charon-plugins PROPERTIES
 	VERSION ${${PROJECT_NAME}_VERSION}
 	FOLDER "charon-core"
 )
 INSTALL(
-	TARGETS      charon-core charon-plugins 
+	TARGETS      charon-core charon-plugins
 	EXPORT       ${EXPORT_NAME}
 	RUNTIME      DESTINATION bin${BIN_SUFFIX}
 	LIBRARY      DESTINATION lib${LIB_SUFFIX}
@@ -149,87 +182,16 @@ INSTALL(
 	COMPONENT    libraries
 )
 
-# install sys plugin-library
-SET(CHARON_PLUGINS ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins)
-SET_TARGET_PROPERTIES(ifgroup PROPERTIES
-	INSTALL_RPATH CHARON_PLUGINS
-)
-SET_TARGET_PROPERTIES(whilegroup PROPERTIES
-		INSTALL_RPATH CHARON_PLUGINS
-)
-
-SET_TARGET_PROPERTIES(groupobject PROPERTIES
-		INSTALL_RPATH CHARON_PLUGINS
-)
-
-SET_TARGET_PROPERTIES(inputslotbundle PROPERTIES
-		INSTALL_RPATH CHARON_PLUGINS
-)
-
-
-SET_TARGET_PROPERTIES(outputslotbundle PROPERTIES
-		INSTALL_RPATH CHARON_PLUGINS
-)
-
+# install charon-core modules
 INSTALL(
-	TARGETS          inputslotbundle
+	TARGETS          inputslotbundle outputslotbundle
+	                 ifgroup whilegroup groupobject
+	                 statement forstatement
 	EXPORT           ${EXPORT_NAME}
 	RUNTIME          DESTINATION bin${BIN_SUFFIX}
 	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
 	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
 	COMPONENT        libraries
-)
-
-INSTALL(
-	TARGETS          outputslotbundle
-	EXPORT           ${EXPORT_NAME}
-	RUNTIME          DESTINATION bin${BIN_SUFFIX}
-	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-	COMPONENT        libraries
-)
-INSTALL(
-	TARGETS          ifgroup
-	EXPORT           ${EXPORT_NAME}
-	RUNTIME          DESTINATION bin${BIN_SUFFIX}
-	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-	COMPONENT        libraries
-)
-INSTALL(
-        TARGETS          whilegroup
-        EXPORT           ${EXPORT_NAME}
-        RUNTIME          DESTINATION bin${BIN_SUFFIX}
-        LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-        ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-        COMPONENT        libraries
-)
-
-INSTALL(
-		TARGETS          groupobject
-		EXPORT           ${EXPORT_NAME}
-		RUNTIME          DESTINATION bin${BIN_SUFFIX}
-		LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-		ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-		COMPONENT        libraries
-)
-
-INSTALL(
-		TARGETS          statement
-		EXPORT           ${EXPORT_NAME}
-		RUNTIME          DESTINATION bin${BIN_SUFFIX}
-		LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-		ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-		COMPONENT        libraries
-)
-
-INSTALL(
-		TARGETS          forstatement
-		EXPORT           ${EXPORT_NAME}
-		RUNTIME          DESTINATION bin${BIN_SUFFIX}
-		LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-		ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-		COMPONENT        libraries
 )
 
 IF(NOT SKIP_EXPORT_INSTALL)
@@ -245,5 +207,4 @@ INSTALL(
 	DIRECTORY   ${CHARON_CORE_INCLUDE_DIR}
 	DESTINATION include
 	COMPONENT   headers
-	PATTERN ".svn" EXCLUDE
 )
