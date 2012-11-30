@@ -40,7 +40,7 @@ int testLoadInputSlots()
 #ifdef CMAKE_INTDIR
 	PluginManager man(CHARON_PLUGINS "/" CMAKE_INTDIR);
 #else
-	PluginManager man(CHARON_PLUGINS);
+	PluginManager man(CHARON_PLUGINS, MODULE_DIR);
 #endif
 
 	man.loadParameterFile("TestParameteredGroupObject-parent.wrp");
@@ -100,24 +100,17 @@ int testLoadInputSlots()
 				std::cerr<<"Should be "<<refType<<std::endl;
 				return EXIT_FAILURE;
 			}
-
-
-
 		}
-
-
-
 	}
 	return EXIT_SUCCESS;
 }
-
 
 int testLoadOutputSlots()
 {
 #ifdef CMAKE_INTDIR
 	PluginManager man(CHARON_PLUGINS "/" CMAKE_INTDIR);
 #else
-	PluginManager man(CHARON_PLUGINS);
+	PluginManager man(CHARON_PLUGINS, MODULE_DIR);
 #endif
 
 	man.loadParameterFile("TestParameteredGroupObject-parent.wrp");
@@ -133,8 +126,6 @@ int testLoadOutputSlots()
 		std::cerr<<"Incorrect number of inputs in TestGroup"<<std::endl;
 		return EXIT_FAILURE;
 	}
-
-
 
 	for(int i=0;i<numouts;i++)
 	{
@@ -179,11 +170,7 @@ int testLoadOutputSlots()
 				std::cerr<<"Should be "<<refType<<std::endl;
 				return EXIT_FAILURE;
 			}
-
 		}
-
-
-
 	}
 	return EXIT_SUCCESS;
 }
@@ -193,14 +180,12 @@ void createWorkFlowWithBundleAndDummyModule()
 #ifdef CMAKE_INTDIR
 	PluginManager man(CHARON_PLUGINS "/" CMAKE_INTDIR);
 #else
-	PluginManager man(CHARON_PLUGINS);
+	PluginManager man(CHARON_PLUGINS, MODULE_DIR);
 #endif
-
 
 	ParameteredObject* in=man.createInstance("InputSlotBundle","inbundle");
 
 	ParameteredObject* out=man.createInstance("OutputSlotBundle","outbundle");
-
 
 	man.createInstance("CasedDummy","dummy");
 
@@ -226,10 +211,7 @@ void createWorkFlowWithBundleAndDummyModule()
 
 	std::stringstream childworkflow;
 
-
 	childworkflow<<FileTool::getCurrentDir()<<FileTool::slash<<"TestParameteredGroupObject-child.wrp";
-
-
 
 	group->workFlowFile=childworkflow.str();
 	std::vector<std::string> path;
@@ -239,26 +221,15 @@ void createWorkFlowWithBundleAndDummyModule()
 
 	group->initialize();
 	man.saveParameterFile("TestParameteredGroupObject-parent.wrp");
-
-
-
 }
-
-
-
 
 int main()
 {
 	sout.assign(std::cout);
 	int ret = EXIT_SUCCESS;
-
-
-
 	ret |= ExceptionHandler::run(createWorkFlowWithBundleAndDummyModule);
 	ret |= ExceptionHandler::run(testLoadInputSlots);
 	ret |= ExceptionHandler::run(testLoadOutputSlots);
 
 	return ret;
-
-
 }
