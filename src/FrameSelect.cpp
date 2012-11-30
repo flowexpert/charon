@@ -24,6 +24,8 @@
 /// Class name of the plugin
 #define TYPE FrameSelect
 
+#define roi_EXPORTS
+
 #include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/FrameSelect.hxx>
 
