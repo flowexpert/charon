@@ -37,6 +37,8 @@ BinOperator<T>::BinOperator(const std::string& name) :
 		"Which operator is applied may be selected using the operation "
 		"parameter.")
 {
+	ParameteredObject::_setTags("charon-utils;Vigra") ;
+	
 	ParameteredObject::_addParameter<std::string>(
 			operation, "operation",
 			"Operation selector ("

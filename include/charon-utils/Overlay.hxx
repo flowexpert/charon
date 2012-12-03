@@ -38,6 +38,8 @@ Overlay<T>::Overlay(const std::string& name) :
 			"adjusted."
 		)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(
 		foreground, "foreground", "foreground image", "CImgList<T>");
 	ParameteredObject::_addInputSlot(

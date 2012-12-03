@@ -31,6 +31,7 @@ PrintValue::PrintValue(const std::string& name) :
 			"<h2>Prints a value to stdout</h2><br>Prints a value to stdout"
 		)
 {
+	ParameteredObject::_setTags("charon-utils") ;
 
 	ParameteredObject::_addInputSlot(
 		value, "value",

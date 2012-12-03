@@ -31,6 +31,8 @@ template<typename T>
 FileWriter<T>::FileWriter(const std::string& name) :
 	TemplatedParameteredObject<T>("filewriter", name,
 			"write image file from image using cimg") {
+	ParameteredObject::_setTags("charon-utils;CImg;I/O") ;
+
 	this->_addParameter(
 			filename, "filename", "filename to write image to", "filewrite");
 	this->_addParameter(exitOnError, "exitOnError",

@@ -31,6 +31,8 @@ Normalize<T>::Normalize(const std::string& name) :
 	TemplatedParameteredObject<T>(
 			"normalize", name, "normalize images using cimg")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	this->_addParameter(lower, "lower", "lower bound",  (T) 0);
 	this->_addParameter(upper, "upper", "upper bound",  (T) 255);
 	this->_addInputSlot(in,    "in",    "image input",  "CImgList<T>");

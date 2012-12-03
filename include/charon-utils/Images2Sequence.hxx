@@ -33,6 +33,8 @@ Images2Sequence<T>::Images2Sequence(const std::string& name) :
 			"Generates an image sequence out of multiple images"),
 			images(false, true) // multislot
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(images, "images",
 			"One or more images", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(image_sequence, "image_sequence",

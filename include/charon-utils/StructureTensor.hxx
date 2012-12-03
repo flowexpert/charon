@@ -32,6 +32,8 @@ StructureTensor<T>::StructureTensor(const std::string& name) :
 		TemplatedParameteredObject<T>("StructureTensor", name, 
 			"Structure Tensor and Eigenvector analysis")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(in, "in", 
 		"image input", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(out, "out",

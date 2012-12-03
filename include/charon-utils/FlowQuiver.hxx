@@ -34,6 +34,8 @@ FlowQuiver<T>::FlowQuiver(const std::string& name) :
 				"Draw overlay with arrows representing the optical flow"),
 		color("255;0;0")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addParameter(
 			length, "length", "quiver lenght", 5.f);
 	ParameteredObject::_addParameter(

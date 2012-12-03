@@ -55,6 +55,8 @@ KittiReader<T>::KittiReader(const std::string& name) :
 			"as well as between occluded and non-occluded ground truth."
 		)
 {
+	ParameteredObject::_setTags("charon-utils;CImg;I/O") ;
+
 	ParameteredObject::_addOutputSlot(seq, "seq", "image pair", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(flow1, "flow1",
 		"flow 1 (usually from gt_occ)", "CImgList<T>");

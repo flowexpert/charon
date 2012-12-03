@@ -39,6 +39,8 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 		),
 		_in2(true, false)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(_in1, "in1", "input image 1", "CImgList<T>"); 
 	ParameteredObject::_addInputSlot(_in2, "in2", "input image 2", "CImgList<T>"); 
 	ParameteredObject::_addParameter(_opType, "opType",

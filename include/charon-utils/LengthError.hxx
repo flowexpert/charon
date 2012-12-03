@@ -36,6 +36,8 @@ LengthError<T>::LengthError(const std::string& name) :
 		TemplatedParameteredObject<T>("LengthError", name,
 				"Compute Angular Error between two-dimensional flow fields")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(
 			flow, "flow",
 	                "flow input", "CImgList<T>");

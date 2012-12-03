@@ -45,6 +45,8 @@ CustomColorMask<T>::CustomColorMask(const std::string& name) :
 		widget(0),
 		_gui(0)
 {
+	ParameteredObject::_setTags("charon-utils;CImg;Qt") ;
+
 	ParameteredObject::_addParameter(
 		begin, "begin", "start value to apply mask (lower values will be assigned zero)", "T");
 

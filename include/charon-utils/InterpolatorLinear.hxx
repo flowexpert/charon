@@ -35,6 +35,8 @@
 template <typename T>
 InterpolatorLinear<T>::InterpolatorLinear(const std::string& name) :
 		Interpolator<T>("interpolatorlinear", name, "linear interpolator") {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 }
 
 template <typename T>

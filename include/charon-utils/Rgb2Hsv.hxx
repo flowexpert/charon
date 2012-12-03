@@ -30,6 +30,8 @@ template <typename T>
 Rgb2Hsv<T>::Rgb2Hsv(const std::string& name) :
 	TemplatedParameteredObject<T>("Rgb2Hsv", name,
 		"convert RGB color images to HSV representation") {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	this->_addInputSlot (in,     "in",     "image input",  "CImgList<T>");
 	this->_addOutputSlot(out,    "out",    "image output", "CImgList<T>");
 }

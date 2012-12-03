@@ -36,6 +36,8 @@ GreaterSmallerThenPar<T>::GreaterSmallerThenPar(const std::string& name) :
 			"Compares the input value to a threshold"
 		)
 {
+	ParameteredObject::_setTags("charon-utils") ;
+
 	ParameteredObject::_addInputSlot(
 		value, "value",
 		"value",

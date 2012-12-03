@@ -30,6 +30,8 @@ template <typename T>
 Crop<T>::Crop(const std::string& name) :
 		TemplatedParameteredObject<T>("crop", name, "crop images")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	this->_addInputSlot (roi,   "roi",   "region to crop",  "Roi<int>*");
 	this->_addInputSlot (in,    "in",    "image input",     "CImgList<T>");
 	this->_addOutputSlot(out,   "out",   "image output",    "CImgList<T>");

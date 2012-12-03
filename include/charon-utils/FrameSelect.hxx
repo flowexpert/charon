@@ -38,6 +38,8 @@ FrameSelect<T>::FrameSelect(const std::string& name) :
 		widget(0), roi(0),
 		_gui(0)
 {
+	ParameteredObject::_setTags("charon-utils;Vigra;Qt") ;
+
 	ParameteredObject::_addInputSlot(in, "in",
 			"image input", "vigraArray5<T>");
 	ParameteredObject::_addOutputSlot(out, "out",

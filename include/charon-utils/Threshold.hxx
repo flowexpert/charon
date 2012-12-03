@@ -36,6 +36,8 @@ Threshold<T>::Threshold(const std::string& name) :
 		"[lower, heigher]) result is set to yesresult, "
 		"otherwise to noresult.")
 {
+	ParameteredObject::_setTags("charon-utils;Vigra") ;
+
 	ParameteredObject::_addParameter<T>(
 			lower,  "lower",  "lower bound", 0, "T");
 	ParameteredObject::_addParameter<T>(

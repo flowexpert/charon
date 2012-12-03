@@ -33,6 +33,8 @@ SteeredDerivative<T>::SteeredDerivative(const std::string& name) :
 		"calculate derivatives aligned and orthogonal to the local "
 		"image structure")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(dX, "dX",
 		"derivative in x direction", "CImgList<T>");
 	ParameteredObject::_addInputSlot(dY, "dY",

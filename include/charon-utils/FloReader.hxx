@@ -28,6 +28,8 @@ template <typename T>
 FloReader<T>::FloReader(const std::string& name) :
 		TemplatedParameteredObject<T>("floreader", name,
 			"read motion from motion file using cimg") {
+	ParameteredObject::_setTags("charon-utils;CImg;I/O") ;
+
 	ParameteredObject::_addParameter (filename, "filename",
 		"filename to read image from", "fileopen");
 	ParameteredObject::_addParameter (invToZero, "invToZero",

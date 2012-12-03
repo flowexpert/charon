@@ -38,6 +38,8 @@ ResidualPlot<T>::ResidualPlot(const std::string& name) :
 		_display(0),
 		_exportWidget(0)
 {
+	ParameteredObject::_setTags("charon-utils;CImg;Qt") ;
+
 	ParameteredObject::_addInputSlot(
 		residual, "residual",
 		"residual image",

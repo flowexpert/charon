@@ -31,6 +31,8 @@ Demux2<T>::Demux2(const std::string& name) :
 	TemplatedParameteredObject<T> ("Demux2", name,
 			"Generates an image sequence out of multiple images")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(in, "in",
 			"a CImgList<T>", "CImgList<T>");
 

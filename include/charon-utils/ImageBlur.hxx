@@ -32,6 +32,8 @@ ImageBlur<T>::ImageBlur(const std::string& name) :
 			"apply a blur effect on an image"),
 	roi(true,false) // optional
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	this->_addInputSlot(roi, "roi", "region to blur", "Roi<int>*");
 	this->_addInputSlot(in, "in", "image input", "CImgList<T>");
 	this->_addOutputSlot(out, "out", "image output", "CImgList<T>");

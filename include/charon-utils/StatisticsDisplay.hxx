@@ -169,6 +169,8 @@ StatisticsDisplayPlugin<T>::StatisticsDisplayPlugin(const std::string& name) :
 			_writeToSout(true),
 			_exportWidget(0)
 {
+	ParameteredObject::_setTags("charon-utils;CImg;Vigra;Qt") ;
+
 	ParameteredObject::_addInputSlot(
 			_vigraIn, "vigraIn",
 			"The vigra::MultiArray<5, T> input.",

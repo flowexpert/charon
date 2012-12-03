@@ -37,6 +37,8 @@ AmplitudeThreshold<T>::AmplitudeThreshold(const std::string& name) :
 		"This Plugin is mostly usefull for visualizing flow fields with some outliers."
 		)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addParameter (_threshold, "threshold", 
 		"Flow Amplitude Threshold Value", 0.0) ;
 	

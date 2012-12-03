@@ -33,6 +33,8 @@ Toggle<T>::Toggle(const std::string& name) :
 		"Toggle two inputs wrt a given timeout"),
 	toggleTimeout(0)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addParameter(timeout, "timeout",
 		"timeout between toggles", 500);
 	

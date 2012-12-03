@@ -36,6 +36,8 @@ Quiver<T>::Quiver(const std::string& name) :
 	_display(0),
 	quiverPlot(0)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(motion, "motion",
 		"motion", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(_display, "display",

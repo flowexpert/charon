@@ -35,6 +35,8 @@ LinearFilter<T>::LinearFilter(const std::string& name) :
 				"Linear filtering by convolution"),
 		masks(false, true)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(
 			masks, "masks", "filter mask input", "CImgList<T>");
 	ParameteredObject::_addInputSlot(

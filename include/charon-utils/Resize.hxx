@@ -30,6 +30,8 @@ template <typename T>
 Resize<T>::Resize(const std::string& name) :
 		TemplatedParameteredObject<T>("resize", name, "resize images")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	this->_addInputSlot (
 			roi, "roi",
 			"new size (only width, height etc are considered)", "Roi<int>*");

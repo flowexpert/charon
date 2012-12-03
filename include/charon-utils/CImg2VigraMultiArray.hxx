@@ -32,6 +32,8 @@ CImg2VigraMultiArray<T>::CImg2VigraMultiArray(const std::string& name) :
 			"Converts a CImgList-Object to a vigra::MultiArray<5, T>. "
 			"The data is copied.")
 {
+	ParameteredObject::_setTags("charon-utils;CImg;Vigra") ;
+	
 	ParameteredObject::_addInputSlot(
 			in, "in",
 			"The CImg object to be converted", "CImgList<T>");

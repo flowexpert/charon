@@ -56,6 +56,8 @@ WarpSymmetric<T>::WarpSymmetric(const std::string& name) :
 			"direction (weight = -1) or warping half-way (weight = 0.5) "
 			"is possible."
 			) {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(seqInput, "seqInput",
 			"Image sequence", "CImgList<T>");
 	ParameteredObject::_addInputSlot(flowInput, "flowInput",

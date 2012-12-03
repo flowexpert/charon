@@ -40,6 +40,8 @@ FitSizes<T>::FitSizes(const std::string& name) :
 			"Uses CImg internal interpolation methods."
 		)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(
 		target, "target",
 		"This image remains untouched. Only its size (x,y,z) is used as"

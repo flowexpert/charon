@@ -36,6 +36,8 @@ ValueBuffer<T>::ValueBuffer(const std::string& name) :
 			"Buffers a value for use in Whilegroups"
 		)
 {
+	ParameteredObject::_setTags("charon-utils") ;
+
 	ParameteredObject::_addInputSlot(
 		value, "value",
 		"value to be buffered",

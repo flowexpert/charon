@@ -41,6 +41,8 @@ MaskedBlur<T>::MaskedBlur(const std::string& name) :
 			"maximum sigma value which is used as blur strength."
 		)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(
 		img, "img",
 		"Image to be blurred",

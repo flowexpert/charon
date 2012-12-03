@@ -44,6 +44,8 @@ Size<T>::Size(const std::string& name) :
 		offset(true,false),
 		roi(0)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(
 		image, "image",
 		"input image"

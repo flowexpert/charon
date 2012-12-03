@@ -36,6 +36,8 @@ BinOperatorValue<T>::BinOperatorValue(const std::string& name) :
 			"Binary operators for numbers"
 		)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(
 		value1, "value1",
 		"value1",

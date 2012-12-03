@@ -39,6 +39,8 @@ StrictResizeXY<T>::StrictResizeXY(const std::string& name) :
 			"will be treated such that the final row/column are discarded."
 		)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(
 		in, "in",
 		"Input image sequence (all dimensions handled correctly)",

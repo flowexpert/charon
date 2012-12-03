@@ -34,6 +34,7 @@ Cut<T>::Cut(const std::string& name) :
 		"and vice versa for lowerCut<br>"
 		"image dimensions remain unchanged")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
 
 	ParameteredObject::_addParameter (
 				_upperCut, "upperCut", "upper cutoff value", 1.0) ;

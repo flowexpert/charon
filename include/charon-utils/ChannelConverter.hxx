@@ -35,6 +35,8 @@ ChannelConverter<T>::ChannelConverter(const std::string& name) :
 		"Select permutation using the parameter <i>scheme</i>.<br>"
 		"Per default converts v dimension to t and vice versa.")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(in,"input",
 		"sequence to convert","CImgList<T>");
 	ParameteredObject::_addOutputSlot(out,"output",

@@ -37,6 +37,8 @@ Roi<T> Roi<T>::createCopy(const Roi<T>& rhs) const {
 
 template <typename T>
 void Roi<T>::_init() {
+	ParameteredObject::_setTags("charon-utils") ;
+	
 	// register parameters and slots
 	ParameteredObject::_addParameter<T>(xBegin, "xBegin",
 		"upper bound", T(0), "T");

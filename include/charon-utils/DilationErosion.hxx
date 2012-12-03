@@ -32,6 +32,8 @@ DilationErosion<T>::DilationErosion(const std::string& name) :
 	TemplatedParameteredObject<T>("dilationerosion", name,
 		"morphology operation to dilate or erode")
 {
+	ParameteredObject::_setTags("charon-utils;Vigra") ;
+
 	ParameteredObject::_addParameter(
 			radius, "radius",
 			"dilation radius (pos: dilate, neg: erode)", 1);

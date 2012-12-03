@@ -35,6 +35,8 @@ VigraMultiArray2CImg<T>::VigraMultiArray2CImg(const std::string& name) :
 			"strided or has too many dimensions! Dimensions are mapped the "
 			"following way: 0->X, 1->Y, 2->Z, 3->V, 4->ListIndex.")
 {
+	ParameteredObject::_setTags("charon-utils;CImg;Vigra") ;
+
 	ParameteredObject::_addInputSlot(
 			in, "in",
 			"The vigra::MultiArray<5, T> object to be converted.",

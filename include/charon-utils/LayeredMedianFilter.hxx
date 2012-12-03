@@ -37,6 +37,8 @@ LayeredMedianFilter<T>::LayeredMedianFilter(const std::string& name) :
 			"e.g. flow estimation more robust."),
 	windowRadiusList("0;0;1;1;2;2")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	this->_addInputSlot(in,    "in",    "image input",   "CImgList<T>");
 	ParameteredObject::_addInputSlot(layer, "layer", "current layer");
 	this->_addOutputSlot(out,  "out",   "image output",  "CImgList<T>");

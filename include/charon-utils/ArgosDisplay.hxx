@@ -53,6 +53,8 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			_mainWindow(0),
 			_displayReloader(0)
 {
+	ParameteredObject::_setTags("charon-utils;Qt;CImg;Vigra") ;
+	
 	ParameteredObject::_addInputSlot(
 			_vigraIn, "vigraIn",
 			"Multislot for input images.<br>"

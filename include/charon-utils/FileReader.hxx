@@ -44,6 +44,8 @@ FileReader<T>::FileReader(const std::string& name) :
 			"</ul>"),
 		_fileReaderWatcher(0)
 {
+	ParameteredObject::_setTags("charon-utils;CImg;I/O") ;
+
 	ParameteredObject::_addParameter (filename, "filename",
 		"Filename to read image from", "fileopen");
 

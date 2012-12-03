@@ -32,6 +32,8 @@ Mux2<T>::Mux2(const std::string& name) :
 	TemplatedParameteredObject<T> ("Mux2", name,
 			"Generates an image sequence out of multiple images")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(list1, "list1",
 			"first CImgList<T>", "CImgList<T>");
 	ParameteredObject::_addInputSlot(list2, "list2",

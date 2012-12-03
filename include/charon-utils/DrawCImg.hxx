@@ -31,6 +31,8 @@ template <typename T>
 DrawCImg<T>::DrawCImg(const std::string& name) :
 		TemplatedParameteredObject<T>("drawcimg", name,
 			"draws one cimg into another") {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addParameter (_posX, "posx", 
 		"the x coordinate where the source should be placed on target", 0) ;
 	

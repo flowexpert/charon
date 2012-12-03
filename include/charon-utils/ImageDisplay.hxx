@@ -35,6 +35,8 @@ ImageDisplay<T>::ImageDisplay(const std::string& name) :
 			"read image from image file using cimg"),
 		title("Display")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	this->_addParameter(slice,   "slice",
 		"select slice (dimz) to display", 0u);
 	this->_addParameter(channel, "channel",

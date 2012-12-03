@@ -31,6 +31,8 @@ Subarray<T>::Subarray(const std::string& name) :
 	TemplatedParameteredObject<T>("subarray", name,
 		"vigra implementation of crop")
 {
+	ParameteredObject::_setTags("charon-utils;Vigra") ;
+
 	ParameteredObject::_addInputSlot(
 			in,"in","data input","vigraArray5<T>");
 	ParameteredObject::_addOutputSlot(

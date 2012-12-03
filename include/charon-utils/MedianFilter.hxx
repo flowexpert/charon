@@ -36,6 +36,8 @@ MedianFilter<T>::MedianFilter(const std::string& name) :
 			"pixel. This eliminates outliers and makes "
 			"e.g. flow estimation more robust.")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	this->_addInputSlot(in,    "in",    "image input",  "CImgList<T>");
 	this->_addOutputSlot(out,  "out",   "image output", "CImgList<T>");
 	this->_addParameter(

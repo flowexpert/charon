@@ -32,6 +32,8 @@ StatementGenerator::StatementGenerator(const std::string& name) :
 			"Takes a bool as parameter and outputs it to a slot"
 		)
 {
+	ParameteredObject::_setTags("charon-utils") ;
+
 	ParameteredObject::_addOutputSlot(
 		statement, "statement", "statement");
 

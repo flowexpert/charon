@@ -32,6 +32,8 @@ Mirror<T>::Mirror(const std::string& name) :
 	TemplatedParameteredObject<T>("mirror", name,
 		"mirror selected dimension(s)")
 {
+	ParameteredObject::_setTags("charon-utils;Vigra") ;
+
 	ParameteredObject::_addInputSlot(
 			in,"in","data input","vigraArray5<T>");
 	ParameteredObject::_addOutputSlot(

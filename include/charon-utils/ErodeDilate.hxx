@@ -39,6 +39,8 @@ ErodeDilate<T>::ErodeDilate(const std::string& name) :
 			"Wraps CImg-Function erode()/dilate()"
 		)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(
 		in, "in",
 		"Input Image",

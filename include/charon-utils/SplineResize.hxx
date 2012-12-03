@@ -42,6 +42,7 @@ SplineResize<T>::SplineResize(const std::string& name) :
 			"source image is larger than the destination, it is smoothed "
 			"(band limited) using a recursive exponential filter.")
 {
+	ParameteredObject::_setTags("charon-utils;Vigra") ;
 
 	ParameteredObject::_addParameter (
 			factorX, "factorX",

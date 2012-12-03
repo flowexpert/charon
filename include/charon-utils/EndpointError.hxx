@@ -35,6 +35,8 @@ EndpointError<T>::EndpointError(const std::string& name) :
 		TemplatedParameteredObject<T>("EndpointError", name,
 				"Compute Endpoint Error between flow fields")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addInputSlot(
 			flow, "flow",
 	                "flow input", "CImgList<T>");

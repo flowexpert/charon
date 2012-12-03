@@ -32,6 +32,8 @@ GammaCorrection<T>::GammaCorrection(const std::string& name) :
 			"Adjust gamma curve of input image.<br>"
 			"output = input^gamma * (maxColorVal^(gamma - 1).")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addParameter (_maxColorValue, "maxcolorvalue", 
 		"the color value range of the input<br>"
 		"When set to zero, this will be set to the maximum of the input image",

@@ -35,6 +35,8 @@ ColorMask<T>::ColorMask(const std::string& name) :
 				"<br><br>"
 				"Assigns red to negative values and blue to positive values")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addParameter<std::string>(
 				colorMask, "colorMask", "color mask selection",
 				"RB","{RB;Rainbow}");

@@ -32,6 +32,8 @@ ParameterToSlot::ParameterToSlot(const std::string& name) :
 			"Copies a parameter to a slot"
 		)
 {
+	ParameteredObject::_setTags("charon-utils") ;
+
 
 	ParameteredObject::_addOutputSlot(
 		value, "value",

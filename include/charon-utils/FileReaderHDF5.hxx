@@ -64,6 +64,8 @@ FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
 				),
 		roi(true,false) // optional
 {
+	ParameteredObject::_setTags("charon-utils;Vigra;I/O") ;
+
 	ParameteredObject::_addParameter(
 			filename, "filename",
 			"name of the hdf5 file to be read", "fileopen");

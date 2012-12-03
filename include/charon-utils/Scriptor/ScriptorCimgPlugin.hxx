@@ -54,6 +54,8 @@ ScriptorCimgPlugin<T>::ScriptorCimgPlugin(const std::string& name) :
 					"<li>searchPathForScript: when unchecked the full path to the powershell executable must be provided as the scriptpath parameter</li>"
 					"</ul>This is equivalent to using the following command line: powershell.exe -File script.ps1<br>")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addParameter(
 		scriptpath, "scriptpath",
 		"path to the script or executable to run",

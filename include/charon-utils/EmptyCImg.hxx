@@ -37,6 +37,8 @@ EmptyCImg<T>::EmptyCImg(const std::string& name) :
 			"Individual CImg's will have dimension x X y X z X t."),
 		roi(true, false)
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addParameter (_sizeX, "sizex", 
 		"size in x direction (width)", 1) ;
 	

@@ -53,6 +53,8 @@ KittiWriter<T>::KittiWriter(const std::string& name) :
 		gtvalid_occ(true,false),
 		gtvalid_noc(true,false)
 {
+	ParameteredObject::_setTags("charon-utils;CImg;I/O") ;
+
 	ParameteredObject::_addInputSlot(
 		result, "result", "result input", "CImgList<T>");
 	ParameteredObject::_addInputSlot(

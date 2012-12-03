@@ -32,6 +32,8 @@ Mask1D<T>::Mask1D(const std::string& name) :
 		TemplatedParameteredObject<T>(
 				"Mask1D", name, "generate simple 1d mask")
 {
+	ParameteredObject::_setTags("charon-utils;CImg") ;
+
 	ParameteredObject::_addParameter(
 			values, "values", "mask values");
 	ParameteredObject::_addParameter(
