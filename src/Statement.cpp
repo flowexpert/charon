@@ -34,6 +34,7 @@ Statement::Statement(const std::string& name) :
 			"bool statement connected to it."
 		)
 {
+	ParameteredObject::_setTags("charon-core") ;
 
 	ParameteredObject::_addInputSlot(
 		statement, "statement",

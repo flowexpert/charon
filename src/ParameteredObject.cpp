@@ -212,6 +212,13 @@ void ParameteredObject::_addOutputSlot(Slot& slot, const std::string& name,  con
 	}
 }
 
+void ParameteredObject::_setTags(const std::string& tags) {
+	if(_createMetadata) {
+		_metadata.set<std::string> (_className + ".tags", tags);
+	}
+}
+
+
 void ParameteredObject::run() {
 	// avoid duplicate execution
 	if (_executed) {

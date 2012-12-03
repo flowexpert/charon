@@ -228,6 +228,13 @@ protected:
 	void _addOutputSlot(Slot& slot, const std::string& name, const std::string& displayname,
 		const std::string& doc, const std::string& type);
 
+	/// Register additional tag names for grouping ParameteredObjects
+	/**
+	 *  Tags from the base class or previous calls to this function will be overwritten
+	 *  \param tags.........List of tags as single ;-separated string
+	 */
+	void _setTags(const std::string& tags) ;
+
 	/// register member function
 	/**
 	 *  This hack is useful to get some member functions compiled

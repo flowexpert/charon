@@ -34,6 +34,8 @@ IfGroup::IfGroup(const std::string& name) :
                     "Execute a group of objects if a given statement is true"
                     )
 {
+	ParameteredObject::_setTags("charon-core") ;
+
 	ParameteredObject::_addInputSlot(
 				statement, "statement",
 				"determines if group is executed", "bool");

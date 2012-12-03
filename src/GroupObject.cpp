@@ -32,7 +32,7 @@ GroupObject::GroupObject(const std::string& name) :
 			"Loads a child workflow and executes it"
 		)
 {
-
+	ParameteredObject::_setTags("charon-core") ;
 }
 
 void GroupObject::execute() {

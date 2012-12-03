@@ -39,6 +39,8 @@ ForStatement::ForStatement(const std::string& name) :
 			"on its counter value."
 		)
 {
+	ParameteredObject::_setTags("charon-core") ;
+	
 	ParameteredObject::_addInputSlot(
 		initialValue, "initialValue", "initial value", "double" );
 	ParameteredObject::_addInputSlot(

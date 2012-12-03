@@ -40,7 +40,7 @@ OutputSlotBundle::OutputSlotBundle(const std::string& name) :
 			"(same type, same name)."
 		)
 {
-
+	ParameteredObject::_setTags("charon-core") ;
 }
 
 

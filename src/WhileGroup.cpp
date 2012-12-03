@@ -34,8 +34,10 @@ WhileGroup::WhileGroup(const std::string& name) :
 			"Executes the group as long as a given statement is true"
 		),statement(true,false)
 {
-    _addInputSlot(statement,"Statement","Statement for this whilegroup","bool");
-   // statement=true;
+	ParameteredObject::_setTags("charon-core") ;
+
+	_addInputSlot(statement,"Statement","Statement for this whilegroup","bool");
+	// statement=true;
 	_innerWhilestatement=0;
 }
 
