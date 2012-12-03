@@ -134,6 +134,11 @@ bool MetaData::isDynamic(QString className) const {
 	return QVariant(_data->get(className + ".isDynamicModule")).toBool();
 }
 
+QStringList MetaData::getTags(QString className) const {
+	QString result = _data->get(className + ".tags") ;
+	return result.split(";", QString::SkipEmptyParts);
+}
+
 QStringList MetaData::getInputDisplayNames(QString className) const
 {
 	QStringList inputs= _data->get(className + ".inputs")

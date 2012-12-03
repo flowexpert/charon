@@ -136,6 +136,13 @@ public:
 	 *  \retval true            module is dynamic
 	 */
 	bool isDynamic(QString className) const;
+	
+	/// Get the tags of a given object
+	/**
+	 *  \param  className ......object class name
+	 */
+	QStringList getTags(QString className) const;
+	
 	//  \}  // queries
 
 private:

@@ -66,14 +66,24 @@ NodeTreeView::~NodeTreeView() {
 void NodeTreeView::reload() {
 	// reset content
 	_model->clear();
-	QStandardItem* root = new QStandardItem(tr("Modules"));
+	QStandardItem* root = new QStandardItem(tr("All Modules"));
 	root->setDragEnabled(false);
 	root->setEditable(false);
 	root->setSelectable(false);
-	_model->setItem(0,0,root);
+	int rootIndex = 0 ;
+	_model->setItem(rootIndex++,0,root);
+
+	QStandardItem* untaggedRoot = new QStandardItem(tr("Untagged"));
+	untaggedRoot->setDragEnabled(false);
+	untaggedRoot->setEditable(false);
+	untaggedRoot->setSelectable(false);
+	_model->setItem(rootIndex++,0,untaggedRoot);
+
 	QStringList labels;
 	labels << tr("Names");
 	_model->setHorizontalHeaderLabels(labels);
+
+	QMap<QString,QStandardItem*> allTags ;
 
 	// load modules
 	MetaData md(FileManager::instance().classesFile());
@@ -84,6 +94,38 @@ void NodeTreeView::reload() {
 		node->setEditable(false);
 		node->setDragEnabled(true);
 		root->appendRow(node);
+		
+		//get list of tags for this module
+		QStringList tags = md.getTags(cur) ;
+
+		//put module in the untagged list if it has no tags
+		if(tags.isEmpty())
+		{
+			QStandardItem* node = new QStandardItem(cur);
+			node->setEditable(false);
+			node->setDragEnabled(true);
+			untaggedRoot->appendRow(node);
+		}
+		//insert node for every present tag
+		foreach (const QString& tag, tags) {
+			QStandardItem* node = new QStandardItem(cur);
+			node->setEditable(false);
+			node->setDragEnabled(true);
+			
+			//check if root node for this tag exists, create it otherwise
+			if(!allTags.contains(tag))
+			{
+				QStandardItem* newRoot = new QStandardItem(tag) ;
+				newRoot->setDragEnabled(false);
+				newRoot->setEditable(false);
+				newRoot->setSelectable(false);
+				_model->setItem(rootIndex++,0,newRoot);
+				allTags.insert(tag,newRoot) ;
+			}
+			allTags[tag]->appendRow(node) ;
+
+		}
+
 	}
 
 	// update view
