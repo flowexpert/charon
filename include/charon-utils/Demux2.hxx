@@ -41,6 +41,7 @@ Demux2<T>::Demux2(const std::string& name) :
 
 	ParameteredObject::_addOutputSlot(out2, "out2",
 			"multiplexed CImgList<T>", "CImgList<T>");
+	ParameteredObject::_setTags("charon-utils");
 }
 
 template<typename T>

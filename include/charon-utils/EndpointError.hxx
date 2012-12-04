@@ -49,6 +49,7 @@ EndpointError<T>::EndpointError(const std::string& name) :
 	ParameteredObject::_addParameter(
 			threshold, "threshold",
 			"threshold to cut off", "T");
+	ParameteredObject::_setTags("charon-utils;Evaluation");
 }
 
 template<typename T>

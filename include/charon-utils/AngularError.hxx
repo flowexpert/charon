@@ -47,6 +47,7 @@ AngularError<T>::AngularError(const std::string& name) :
 	ParameteredObject::_addOutputSlot(
 			out, "out", "angular error output",
 			"CImgList<T>");
+	ParameteredObject::_setTags("charon-utils;Evaluation");
 }
 
 template<typename T>

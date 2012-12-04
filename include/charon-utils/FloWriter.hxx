@@ -36,6 +36,7 @@ FloWriter<T>::FloWriter(const std::string& name) :
 		"filename to write image to", "fileopen");
 	this->_addInputSlot(in, "in",
 		"image input", "CImgList<T>");
+	ParameteredObject::_setTags("charon-utils;I/O");
 }
 
 template <typename T>

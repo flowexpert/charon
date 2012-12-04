@@ -41,6 +41,8 @@ Mux2<T>::Mux2(const std::string& name) :
 
 	ParameteredObject::_addOutputSlot(out, "out",
 			"multiplexed CImgList<T>", "CImgList<T>");
+
+	ParameteredObject::_setTags("charon-utils");
 }
 
 template<typename T>

@@ -44,6 +44,7 @@ Toggle<T>::Toggle(const std::string& name) :
 		"second input slot", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(out, "out",
 		"output slot", "CImgList<T>");
+	ParameteredObject::_setTags("charon-utils;Visualization;Qt");
 }
 
 template<typename T>

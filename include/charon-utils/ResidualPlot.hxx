@@ -51,6 +51,8 @@ ResidualPlot<T>::ResidualPlot(const std::string& name) :
 		"can for example be connected to a ArgosDisplay instance",
 		"QWidget*") ;
 
+	ParameteredObject::_setTags("charon-utils;Visualization;Qt");
+
 	if(!qobject_cast<QApplication*>(qApp))
 	{
 		sout << "(WW) ResidualPlot::No QApplication found!\n"

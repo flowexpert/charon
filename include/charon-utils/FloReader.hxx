@@ -38,6 +38,7 @@ FloReader<T>::FloReader(const std::string& name) :
 		"image output", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(valid, "valid",
 		"flow validity mask (1=valid,0=flow unknown)", "CImgList<T>");
+	ParameteredObject::_setTags("charon-utils;I/O");
 }
 
 // from http://vision.middlebury.edu/flow/code/flow-code/README.txt

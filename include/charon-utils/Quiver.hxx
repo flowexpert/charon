@@ -47,6 +47,7 @@ Quiver<T>::Quiver(const std::string& name) :
 	ParameteredObject::_addParameter(stepWidth, "stepWidth",
 		"step width", "unsigned int");
 
+	ParameteredObject::_setTags("charon-utils;Visualization;Qt");
 }
 
 template<typename T>
