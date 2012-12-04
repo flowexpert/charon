@@ -64,6 +64,8 @@ Diff2D<T>::Diff2D(const std::string& name) :
 			dxy, "dxy", "second derivative wrt x,y", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 			dyy, "dyy", "second derivative wrt y", "CImgList<T>");
+
+	ParameteredObject::_setTags("charon-flow;Differentiators;CImg");
 }
 
 template <typename T>

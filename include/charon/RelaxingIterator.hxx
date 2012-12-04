@@ -54,6 +54,8 @@ RelaxingIterator<T>::RelaxingIterator(const std::string& name) :
 	ParameteredObject::_addParameter(finalWeight, "finalWeight",
 		"mixture at last iteration", 1.);
 	_addFunction(RelaxingIterator<T>::getCur);
+
+	ParameteredObject::_setTags("charon-flow;Iterators");
 }
 
 template <typename T>

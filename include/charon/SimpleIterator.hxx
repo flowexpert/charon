@@ -124,6 +124,8 @@ void SimpleIterator<T>::_init() {
 			std::string(),std::string(),std::string()));
 	_addFunction(SimpleIterator<T>::singleStep);
 	_addFunction(SimpleIterator<T>::finishIterations);
+
+	ParameteredObject::_setTags("charon-flow;Iterators");
 }
 
 template <typename T>

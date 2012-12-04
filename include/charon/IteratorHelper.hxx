@@ -56,6 +56,8 @@ IteratorHelper<T>::IteratorHelper(const std::string& name) :
 		"iteration counter (not resetted, increasing only)");
 	ParameteredObject::_addOutputSlot(self, "self",
 		"self-pointer", "IteratorHelper<T>*");
+
+	ParameteredObject::_setTags("charon-flow;Iterators");
 }
 
 template <typename T>

@@ -280,6 +280,8 @@ PetscSolver<T>::PetscSolver(const std::string& name) :
 			entriesPerRowHint, "entriesPerRowHint",
 			"add hint how many entries to allocate per row "
 			"(zero = auto guess)", 0u);
+
+	ParameteredObject::_setTags("charon-flow;Solvers;CImg");
 }
 
 template <typename T>
