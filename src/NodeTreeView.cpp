@@ -106,24 +106,39 @@ void NodeTreeView::reload() {
 			node->setDragEnabled(true);
 			untaggedRoot->appendRow(node);
 		}
-		//insert node for every present tag
+		
 		foreach (const QString& tag, tags) {
-			QStandardItem* node = new QStandardItem(cur);
-			node->setEditable(false);
-			node->setDragEnabled(true);
 			
-			//check if root node for this tag exists, create it otherwise
-			if(!allTags.contains(tag))
+			int subIndex = 0 ; //index of current "/"
+			QString parentTag = "" ;
+			//split tag at each "/" and create subnodes 
+			do
 			{
-				QStandardItem* newRoot = new QStandardItem(tag) ;
-				newRoot->setDragEnabled(false);
-				newRoot->setEditable(false);
-				newRoot->setSelectable(false);
-				_model->setItem(rootIndex++,0,newRoot);
-				allTags.insert(tag,newRoot) ;
-			}
-			allTags[tag]->appendRow(node) ;
+				QStandardItem* node = new QStandardItem(cur);
+				node->setEditable(false);
+				node->setDragEnabled(true);
 
+				subIndex = tag.indexOf("/",subIndex+1) ;
+				QString subtag = tag.mid(0,subIndex) ; 
+				
+				if(!allTags.contains(subtag))
+				{
+					//current innermost tag
+					QString subsubtag = subtag.mid(subtag.lastIndexOf("/")+1,-1) ;
+					QStandardItem* newRoot = new QStandardItem(subsubtag) ;
+					newRoot->setDragEnabled(false);
+					newRoot->setEditable(false);
+					newRoot->setSelectable(false);
+					if(parentTag.isEmpty()) //handle root nodes differently
+						_model->setItem(rootIndex++,0,newRoot);
+					else
+						allTags[parentTag]->appendRow(newRoot) ;
+					allTags.insert(subtag,newRoot) ;
+				}
+				parentTag = subtag ;
+				allTags[subtag]->appendRow(node) ;
+			}while(subIndex != -1) ;
+			
 		}
 
 	}

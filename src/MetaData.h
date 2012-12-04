@@ -140,6 +140,7 @@ public:
 	/// Get the tags of a given object
 	/**
 	 *  \param  className ......object class name
+	 *  \returns................list of tags
 	 */
 	QStringList getTags(QString className) const;
 	
