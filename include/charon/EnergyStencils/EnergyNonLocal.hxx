@@ -81,6 +81,8 @@ EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
 		"motionUV",
 		"current motion components",
 		"CImgList<T>");
+
+	ParameteredObject::_setTags("charon-flow;Stencils;CImg;deprecated");
 }
 
 template <class T>

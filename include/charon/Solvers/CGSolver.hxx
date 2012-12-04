@@ -69,6 +69,8 @@ CGSolver<T>::CGSolver(const std::string& name) :
 	this->_addParameter(doNotFailLineSearch,
 	                    "doNotFailLineSearch",
 	                    "do not fail line search (necessary for some penalty functions)", false);
+
+	ParameteredObject::_setTags("charon-flow;Solvers;CImg");
 }
 
 template <typename T>

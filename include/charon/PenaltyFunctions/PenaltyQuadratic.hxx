@@ -45,6 +45,8 @@ PenaltyQuadratic<T>::PenaltyQuadratic(const std::string& name) :
 		maxDiff, "maxDiff",
 		"parabola will be truncated, if abs(diff) > maxDiff",
 		T(127.0) );
+
+	ParameteredObject::_setTags("charon-flow;PenaltyFunctions;CImg");
 }
 
 template <class T>

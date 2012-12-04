@@ -40,6 +40,7 @@ Gnc<T>::Gnc(const std::string& name) :
 			step, "step", "current GNC iteration step");
 	ParameteredObject::_addOutputSlot(
 			out, "out", "data output", "CImgList<T>");
+	ParameteredObject::_setTags("deprecated");
 }
 
 template <typename T>

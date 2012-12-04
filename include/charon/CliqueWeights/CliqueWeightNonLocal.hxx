@@ -47,6 +47,8 @@ CliqueWeightNonLocal<T>::CliqueWeightNonLocal(const std::string& name) :
 	                    "occlusion divergence stddev", T(0.3));
 	this->_addParameter(sigma_occ_color, "sigma_occ_color",
 	                    "occlusion color difference stddev", T(20));
+
+	ParameteredObject::_setTags("charon-flow;MedianFilters;CImg");
 }
 
 template <class T>

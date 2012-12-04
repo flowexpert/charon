@@ -40,6 +40,8 @@ PenaltyCharbonnier<T>::PenaltyCharbonnier(const std::string& name) :
 	this->_addParameter(maxDiff, "maxDiff", "truncation, if abs(diff) > maxDiff", T(127.0));
 	this->_addParameter(a, "a", "parameter a", T(0.45));
 	this->_addParameter(eps, "eps", "parameter eps", T(0.001));
+
+	ParameteredObject::_setTags("charon-flow;PenaltyFunctions;CImg");
 }
 
 template <class T>

@@ -41,6 +41,8 @@ PyramidLowpass<T>::PyramidLowpass(const std::string& name) :
 			seqOut, "seqOut", "sequence output", "CImgList<T>");
 	ParameteredObject::_addParameter (
 			sigmas, "sigmas", "list of std. deviations in decreasing order", "T_list");
+
+	ParameteredObject::_setTags("charon-flow;MultiscaleApproaches;CImg");
 }
 
 template <typename T>

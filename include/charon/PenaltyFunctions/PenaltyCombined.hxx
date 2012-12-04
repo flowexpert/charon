@@ -42,6 +42,8 @@ PenaltyCombined<T>::PenaltyCombined(const std::string& name) :
 	this->_addInputSlot(fstPenaltyFunction, "fstPenaltyFunction", "first penalty function","PenaltyFunction<T>*");
 	this->_addInputSlot(sndPenaltyFunction, "sndPenaltyFunction", "second penalty function","PenaltyFunction<T>*");
 	this->_addInputSlot(level, "level", "level to select scaling weights from lists");
+
+	ParameteredObject::_setTags("charon-flow;PenaltyFunctions;CImg;deprecated");
 }
 
 template <class T>

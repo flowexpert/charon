@@ -48,6 +48,8 @@ Irls<T>::Irls(const std::string& name) :
 			"iteration count (0 => mean filtering)", 10u);
 	this->_addParameter(sigma_dist, "sigma_dist",
 			"spatial distance weight", T(7));
+
+	ParameteredObject::_setTags("charon-flow;MedianFilters;CImg");
 }
 
 template<typename T>

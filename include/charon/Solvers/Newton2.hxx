@@ -48,6 +48,7 @@ Newton2<T>::Newton2(const std::string& name) :
 	                     "residual",
 	                     "residual",
 	                     "CImgList<T>");
+	ParameteredObject::_setTags("charon-flow;Solvers;CImg");
 }
 
 template <typename T>

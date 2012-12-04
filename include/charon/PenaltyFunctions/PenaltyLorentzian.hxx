@@ -38,6 +38,8 @@ PenaltyLorentzian<T>::PenaltyLorentzian(const std::string& name) :
 	)
 {
 	this->_addParameter(sigma, "sigma", "parameter sigma", T(0.03));
+
+	ParameteredObject::_setTags("charon-flow;PenaltyFunctions;CImg;deprecated");
 }
 
 template <class T>

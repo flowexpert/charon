@@ -52,6 +52,7 @@ WeightsNonLocal<T>::WeightsNonLocal(const std::string& name) :
 	this->_addParameter(
 			sigma_occ_color, "sigma_occ_color",
 			"occlusion color difference weight", T(20));
+	ParameteredObject::_setTags("deprecated");
 }
 
 template<typename T>

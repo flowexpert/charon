@@ -45,6 +45,8 @@ Residual<T>::Residual(const std::string& name) :
 
 	this->_addParameter(inverseResidual, "inverseResidual",
 	                    "invert residual output", false);
+
+	ParameteredObject::_setTags("charon-flow;CImg");
 }
 
 template<typename T>

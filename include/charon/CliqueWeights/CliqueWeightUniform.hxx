@@ -36,6 +36,7 @@ CliqueWeightUniform<T>::CliqueWeightUniform(const std::string& name) :
 		"<h2>Implementation of the uniform clique weight."
 	)
 {
+	ParameteredObject::_setTags("charon-flow;MedianFilters;CImg");
 }
 
 template <class T>

@@ -67,6 +67,7 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
         ParameteredObject::_addParameter(
                         pUnknowns, "unknowns", "List of unknowns");
 
+	ParameteredObject::_setTags("charon-flow;Stencils;CImg");
 }
 
 template <class T>

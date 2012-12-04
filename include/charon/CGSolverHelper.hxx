@@ -46,6 +46,7 @@ CGSolverHelper<T>::CGSolverHelper(const std::string& name) :
 		"current flow solution", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(self, "self",
 		"self-pointer", "CGSolverHelper<T>*");
+	ParameteredObject::_setTags("charon-flow;Solvers");
 }
 
 template <typename T>

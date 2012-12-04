@@ -44,6 +44,8 @@ EnergyCoupling<T>::EnergyCoupling(const std::string& name) :
 			"first flow field", "CImgList<T>");
 	this->_addInputSlot(secondMotionUV, "secondMotionUV",
 			"second flow field", "CImgList<T>");
+
+	ParameteredObject::_setTags("charon-flow;Stencils;CImg;deprecated");
 }
 
 template <class T>

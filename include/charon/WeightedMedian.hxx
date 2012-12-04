@@ -47,6 +47,8 @@ WeightedMedian<T>::WeightedMedian(const std::string& name) :
 	this->_addParameter(
 			windowRadiusList, "windowRadiusList",
 			"radius list of image windows, level selects, otherwise first element is chosen", "T_list");
+
+	ParameteredObject::_setTags("charon-flow;MedianFilters;CImg");
 }
 
 struct SNeighborhood {

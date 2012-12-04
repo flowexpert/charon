@@ -41,6 +41,7 @@ SimpleDiff<T>::SimpleDiff(const std::string& name) :
 			dy, "dy", "derivative wrt y", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 			dt, "dt", "derivative wrt t", "CImgList<T>");
+	ParameteredObject::_setTags("charon-flow;Differentiators;CImg");
 }
 
 template <typename T>

@@ -55,6 +55,8 @@ PyramidRescaleMatlab<T>::PyramidRescaleMatlab(const std::string& name) :
 	ParameteredObject::_addParameter (
 			interpolation, "interpolation",
 			"interpolation type (see CImg::resize() documentation)", 3);
+
+	ParameteredObject::_setTags("charon-flow;MultiscaleApproaches;CImg");
 }
 
 template <typename T>
