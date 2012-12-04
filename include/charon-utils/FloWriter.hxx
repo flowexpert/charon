@@ -30,13 +30,12 @@ template <typename T>
 FloWriter<T>::FloWriter(const std::string& name) :
 		TemplatedParameteredObject<T>("flowriter", name,
 			"write motion to motion file using cimg") {
-	ParameteredObject::_setTags("charon-utils;CImg;I/O") ;
+	ParameteredObject::_setTags("charon-utils;CImg;DiskIO") ;
 
 	this->_addParameter (filename, "filename",
 		"filename to write image to", "fileopen");
 	this->_addInputSlot(in, "in",
 		"image input", "CImgList<T>");
-	ParameteredObject::_setTags("charon-utils;I/O");
 }
 
 template <typename T>

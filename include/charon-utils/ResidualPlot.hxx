@@ -38,7 +38,7 @@ ResidualPlot<T>::ResidualPlot(const std::string& name) :
 		_display(0),
 		_exportWidget(0)
 {
-	ParameteredObject::_setTags("charon-utils;CImg;Qt") ;
+	ParameteredObject::_setTags("charon-utils;CImg;Qt;Visualization") ;
 
 	ParameteredObject::_addInputSlot(
 		residual, "residual",
@@ -50,8 +50,6 @@ ResidualPlot<T>::ResidualPlot(const std::string& name) :
 		"A QWidget displaying the residual plot, "
 		"can for example be connected to a ArgosDisplay instance",
 		"QWidget*") ;
-
-	ParameteredObject::_setTags("charon-utils;Visualization;Qt");
 
 	if(!qobject_cast<QApplication*>(qApp))
 	{

@@ -64,7 +64,7 @@ FileReaderHDF5<T>::FileReaderHDF5(const std::string& name) :
 				),
 		roi(true,false) // optional
 {
-	ParameteredObject::_setTags("charon-utils;Vigra;I/O") ;
+	ParameteredObject::_setTags("charon-utils;Vigra;DiskIO") ;
 
 	ParameteredObject::_addParameter(
 			filename, "filename",

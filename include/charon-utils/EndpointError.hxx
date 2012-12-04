@@ -35,7 +35,7 @@ EndpointError<T>::EndpointError(const std::string& name) :
 		TemplatedParameteredObject<T>("EndpointError", name,
 				"Compute Endpoint Error between flow fields")
 {
-	ParameteredObject::_setTags("charon-utils;CImg") ;
+	ParameteredObject::_setTags("charon-utils;CImg;Evaluation") ;
 
 	ParameteredObject::_addInputSlot(
 			flow, "flow",
@@ -49,7 +49,6 @@ EndpointError<T>::EndpointError(const std::string& name) :
 	ParameteredObject::_addParameter(
 			threshold, "threshold",
 			"threshold to cut off", "T");
-	ParameteredObject::_setTags("charon-utils;Evaluation");
 }
 
 template<typename T>

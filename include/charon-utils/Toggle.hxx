@@ -33,7 +33,7 @@ Toggle<T>::Toggle(const std::string& name) :
 		"Toggle two inputs wrt a given timeout"),
 	toggleTimeout(0)
 {
-	ParameteredObject::_setTags("charon-utils;CImg") ;
+	ParameteredObject::_setTags("charon-utils;CImg;Visualization;Qt") ;
 
 	ParameteredObject::_addParameter(timeout, "timeout",
 		"timeout between toggles", 500);
@@ -44,7 +44,6 @@ Toggle<T>::Toggle(const std::string& name) :
 		"second input slot", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(out, "out",
 		"output slot", "CImgList<T>");
-	ParameteredObject::_setTags("charon-utils;Visualization;Qt");
 }
 
 template<typename T>

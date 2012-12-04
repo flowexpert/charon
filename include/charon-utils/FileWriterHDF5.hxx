@@ -34,7 +34,7 @@ template<typename T>
 FileWriterHDF5<T>::FileWriterHDF5(const std::string& name) :
 	TemplatedParameteredObject<T>("FileWriterHDF5", name,
 			"Write 5D vigra::MultiArray into a HDF5 file") {
-	ParameteredObject::_setTags("charon-utils;Vigra;I/O") ;
+	ParameteredObject::_setTags("charon-utils;Vigra;DiskIO") ;
 
 	ParameteredObject::_addParameter(
 			filename, "filename",

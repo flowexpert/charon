@@ -36,7 +36,7 @@ Quiver<T>::Quiver(const std::string& name) :
 	_display(0),
 	quiverPlot(0)
 {
-	ParameteredObject::_setTags("charon-utils;CImg") ;
+	ParameteredObject::_setTags("charon-utils;CImg;Visualization;Qt") ;
 
 	ParameteredObject::_addInputSlot(motion, "motion",
 		"motion", "CImgList<T>");
@@ -47,7 +47,6 @@ Quiver<T>::Quiver(const std::string& name) :
 	ParameteredObject::_addParameter(stepWidth, "stepWidth",
 		"step width", "unsigned int");
 
-	ParameteredObject::_setTags("charon-utils;Visualization;Qt");
 }
 
 template<typename T>

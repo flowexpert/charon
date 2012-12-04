@@ -36,7 +36,7 @@ AngularError<T>::AngularError(const std::string& name) :
 		TemplatedParameteredObject<T>("AngularError", name,
 				"Compute Angular Error between two-dimensional flow fields")
 {
-	ParameteredObject::_setTags("charon-utils;CImg") ;
+	ParameteredObject::_setTags("charon-utils;CImg;Evaluation") ;
 
 	ParameteredObject::_addInputSlot(
 			flow, "flow",
@@ -47,7 +47,6 @@ AngularError<T>::AngularError(const std::string& name) :
 	ParameteredObject::_addOutputSlot(
 			out, "out", "angular error output",
 			"CImgList<T>");
-	ParameteredObject::_setTags("charon-utils;Evaluation");
 }
 
 template<typename T>

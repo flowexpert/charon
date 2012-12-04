@@ -28,7 +28,7 @@ template <typename T>
 FloReader<T>::FloReader(const std::string& name) :
 		TemplatedParameteredObject<T>("floreader", name,
 			"read motion from motion file using cimg") {
-	ParameteredObject::_setTags("charon-utils;CImg;I/O") ;
+	ParameteredObject::_setTags("charon-utils;CImg;DiskIO") ;
 
 	ParameteredObject::_addParameter (filename, "filename",
 		"filename to read image from", "fileopen");
@@ -38,7 +38,6 @@ FloReader<T>::FloReader(const std::string& name) :
 		"image output", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(valid, "valid",
 		"flow validity mask (1=valid,0=flow unknown)", "CImgList<T>");
-	ParameteredObject::_setTags("charon-utils;I/O");
 }
 
 // from http://vision.middlebury.edu/flow/code/flow-code/README.txt
