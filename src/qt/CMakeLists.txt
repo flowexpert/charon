@@ -78,7 +78,7 @@ SOURCE_GROUP("vigraqt sources" FILES ${vigraqt_SOURCES})
 	
 ############################################################
 
-ADD_LIBRARY(charonwidgets SHARED 
+ADD_LIBRARY(charonwidgets SHARED
 	${charonwidgets_HEADERS}
 	${charonwidgets_QT_HEADERS}
 	${charonwidgets_SOURCES}
@@ -89,7 +89,6 @@ ADD_LIBRARY(charonwidgets SHARED
 	${vigraqt_SOURCES}
 	${vigraqt_MOCS}
 )
-
 TARGET_LINK_LIBRARIES(charonwidgets
 	charon-core
 	${QT_LIBRARIES}
@@ -103,6 +102,7 @@ ENDIF()
 
 SET_TARGET_PROPERTIES(charonwidgets PROPERTIES
 	FOLDER "charon-utils Modules"
+	SOVERSION ${charon-utils_VERSION}
 )
 
 INSTALL(
