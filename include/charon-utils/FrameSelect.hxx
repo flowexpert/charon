@@ -28,8 +28,7 @@
 #include <QString>
 
 #include "FrameSelect.h"
-
-#include <charon-utils/Roi.hxx>
+#include "Roi.hxx"
 
 template <typename T>
 FrameSelect<T>::FrameSelect(const std::string& name) :

@@ -1,4 +1,3 @@
-
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
@@ -22,7 +21,6 @@ ADD_LIBRARY(roi SHARED
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.h
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.hxx
 )
-
 ADD_LIBRARY(statementgenerator SHARED
 	StatementGenerator.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/StatementGenerator.h
@@ -86,13 +84,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Crop.h
 		${CHARON_UTILS_INCLUDE_DIR}/Crop.hxx
 	)
-	TARGET_LINK_LIBRARIES(crop roi)
 	ADD_LIBRARY(resize SHARED
 		Resize.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Resize.h
 		${CHARON_UTILS_INCLUDE_DIR}/Resize.hxx
 	)
-	TARGET_LINK_LIBRARIES(resize roi)
 	IF(USE_QT)
 		SET(filereaderwatcher_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/FileReaderWatcher.h)
 		QT4_WRAP_CPP(filereaderwatcher_HEADERS_MOCKED ${filereaderwatcher_HEADERS_TOMOC})
@@ -130,7 +126,6 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/ImageBlur.h
 		${CHARON_UTILS_INCLUDE_DIR}/ImageBlur.hxx
 	)
-	TARGET_LINK_LIBRARIES(imageblur roi)
 	ADD_LIBRARY(imagedisplay SHARED
 		ImageDisplay.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/ImageDisplay.h
@@ -277,7 +272,6 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/StrictResizeXY.h
 		${CHARON_UTILS_INCLUDE_DIR}/StrictResizeXY.hxx
 	)
-	
 	ADD_LIBRARY(size SHARED
 		Size.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Size.h
@@ -405,13 +399,11 @@ IF(USE_VIGRA)
 		${CHARON_UTILS_INCLUDE_DIR}/Subarray.h
 		${CHARON_UTILS_INCLUDE_DIR}/Subarray.hxx
 	)
-	TARGET_LINK_LIBRARIES(subarray roi)
 	ADD_LIBRARY(mirror SHARED
 		Mirror.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Mirror.h
 		${CHARON_UTILS_INCLUDE_DIR}/Mirror.hxx
 	)
-
 	SET(Plugins_Vigra
 		splineresize
 		threshold
@@ -420,6 +412,7 @@ IF(USE_VIGRA)
 		subarray
 		mirror
 	)
+
 	IF(USE_CIMG)
 		ADD_LIBRARY(cimg2vigramultiarray SHARED
 			CImg2VigraMultiArray.cpp
@@ -456,16 +449,10 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.h
 			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.hxx
 		)
-		TARGET_LINK_LIBRARIES(filereaderhdf5 roi)
 		LIST(APPEND Plugins_Vigra
 			filewriterhdf5
 			filereaderhdf5
 		)
-		# workaround to avoid linking against debug libraries in release mode,
-		# setup of variable HDF5_LIBRARIES is buggy in old cmake versions.
-		# fixed at least in cmake 2.8.5
-		#SET(HDF5_LIBRARIES ${HDF5_hdf5_LIBRARY} ${HDF5_hdf5_hl_LIBRARY})
-		#MESSAGE("HDF5_LIBRARIES: ${HDF5_LIBRARIES}")
 		FOREACH(X ${Plugins_Vigra})
 			TARGET_LINK_LIBRARIES(${X} ${HDF5_LIBRARIES})
 			IF(USE_MPI)
@@ -497,7 +484,6 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.h
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.hxx
 		)
-		TARGET_LINK_LIBRARIES(frameselect roi)
 		
 		QT4_WRAP_CPP(ScriptorCimg_MOC
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h)

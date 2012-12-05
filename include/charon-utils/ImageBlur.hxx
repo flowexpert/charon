@@ -25,6 +25,7 @@
 #define _IMAGEBLUR_HXX_
 
 #include "ImageBlur.h"
+#include "Roi.hxx"
 
 template<typename T>
 ImageBlur<T>::ImageBlur(const std::string& name) :

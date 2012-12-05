@@ -27,6 +27,7 @@
 
 #include "FileReaderHDF5.h"
 #include <vigra/hdf5impex.hxx>
+#include "Roi.hxx"
 
 template<typename T, int N>
 vigra::MultiArray<5,T> charon_core_LOCAL readNDimHDF5(

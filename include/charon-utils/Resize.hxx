@@ -25,6 +25,7 @@
 #define _RESIZE_HXX_
 
 #include "Resize.h"
+#include "Roi.hxx"
 
 template <typename T>
 Resize<T>::Resize(const std::string& name) :

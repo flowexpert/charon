@@ -25,6 +25,7 @@
 #define _CROP_HXX_
 
 #include "Crop.h"
+#include "Roi.hxx"
 
 template <typename T>
 Crop<T>::Crop(const std::string& name) :

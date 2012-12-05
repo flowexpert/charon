@@ -25,6 +25,7 @@
 #define _SUBARRAY_HXX_
 
 #include "Subarray.h"
+#include "Roi.hxx"
 
 template <typename T>
 Subarray<T>::Subarray(const std::string& name) :
