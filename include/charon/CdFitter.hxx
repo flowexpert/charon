@@ -8,6 +8,7 @@
 #include <cassert>
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-core/FileTool.h>
+#include <charon-utils/Roi.hxx>
 #include <charon-utils/ImgTool.hxx>
 #include <charon/CDFitFunction.h>
 #include <charon/McmcSampler.h>

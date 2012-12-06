@@ -2,6 +2,7 @@
 #define SAMPLE_GENERATOR_HXX
 
 #include <charon-core/ParameteredObject.hxx>
+#include <charon-utils/Roi.hxx>
 #include <charon/Functions/Function.h>
 #include "SampleGenerator.h"
 #include <cassert>

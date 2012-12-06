@@ -25,6 +25,8 @@
 #define _RELAXINGITERATOR_HXX_
 
 #include "RelaxingIterator.h"
+#include "IteratorHelper.hxx"
+#include "Stencil.hxx"
 #ifndef NDEBUG
 #include <limits>
 #endif

@@ -154,8 +154,6 @@ IF(USE_PETSC)
 	ENDIF()
 	TARGET_LINK_LIBRARIES(petscsolver
 		${PETSC_LIBRARIES}
-		roi
-		gbcce
 	)
 	LIST(APPEND Plugins
 		petscsolver
@@ -173,14 +171,13 @@ ADD_LIBRARY(cgsolver SHARED
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.h
 	${charon_INCLUDE_DIR}/Solvers/CGSolver.hxx
 )
-TARGET_LINK_LIBRARIES(cgsolver cgsolverhelper roi)
+
 # second order Newton method
 ADD_LIBRARY(newton2 SHARED
 	${charon_INCLUDE_DIR}/Solvers/Newton2.h
 	${charon_INCLUDE_DIR}/Solvers/Newton2.hxx
 	Newton2.cpp
 )
-TARGET_LINK_LIBRARIES(newton2 roi)
 
 # Iteratively reweighted least squares
 ADD_LIBRARY(irls SHARED
@@ -188,38 +185,44 @@ ADD_LIBRARY(irls SHARED
 	${charon_INCLUDE_DIR}/Irls.hxx
 	Irls.cpp
 )
+
 # weighted median filtering, as proposed by Li and Osher (2010, eq. 3.13)
 ADD_LIBRARY(weightedmedian SHARED
 	${charon_INCLUDE_DIR}/WeightedMedian.h
 	${charon_INCLUDE_DIR}/WeightedMedian.hxx
 	WeightedMedian.cpp
 )
+
 # non-local weight calculation function
 ADD_LIBRARY(weightsnonlocal SHARED
 	${charon_INCLUDE_DIR}/WeightsNonLocal.h
 	${charon_INCLUDE_DIR}/WeightsNonLocal.hxx
 	WeightsNonLocal.cpp
 )
+
 # residual calculation
 ADD_LIBRARY(residual SHARED
 	${charon_INCLUDE_DIR}/Residual.h
 	${charon_INCLUDE_DIR}/Residual.hxx
 	Residual.cpp
 )
+
 # non local median filtering
 ADD_LIBRARY(irlsnonlocal SHARED
 	${charon_INCLUDE_DIR}/IrlsNonLocal.h
 	${charon_INCLUDE_DIR}/IrlsNonLocal.hxx
 	IrlsNonLocal.cpp
 )
-LIST(APPEND Plugins cgsolverhelper)
-LIST(APPEND Plugins cgsolver)
-LIST(APPEND Plugins newton2)
-LIST(APPEND Plugins irls)
-LIST(APPEND Plugins weightedmedian)
-LIST(APPEND Plugins weightsnonlocal)
-LIST(APPEND Plugins residual)
-LIST(APPEND Plugins irlsnonlocal)
+LIST(APPEND Plugins
+	cgsolverhelper
+	cgsolver
+	newton2
+	irls
+	weightedmedian
+	weightsnonlocal
+	residual
+	irlsnonlocal
+)
 
 # Brightness models (currently only constant brightness available)
 # to-be-ported and yet untested (ask for work of René):
@@ -287,14 +290,13 @@ IF(QT4_FOUND)
 		SimpleIteratorRemoteControl.cpp
 		SimpleIterator.cpp
 	)
-	TARGET_LINK_LIBRARIES(simpleiterator iteratorhelper ${QT_LIBRARIES})
+	TARGET_LINK_LIBRARIES(simpleiterator ${QT_LIBRARIES})
 ELSE(QT4_FOUND)
 	ADD_LIBRARY(simpleiterator SHARED
 		${charon_INCLUDE_DIR}/SimpleIterator.h
 		${charon_INCLUDE_DIR}/SimpleIterator.hxx
 		SimpleIterator.cpp
 	)
-	TARGET_LINK_LIBRARIES(simpleiterator iteratorhelper)
 ENDIF(QT4_FOUND)
 IF(QT4_FOUND)
         SET(simpleiteratorremotecontrol_HEADERS_TOMOC ${charon_INCLUDE_DIR}/SimpleIteratorRemoteControl.h)
@@ -306,14 +308,13 @@ IF(QT4_FOUND)
                 SimpleIteratorRemoteControl.cpp
                 RelaxingIterator.cpp
         )
-        TARGET_LINK_LIBRARIES(relaxingiterator gbcce iteratorhelper ${QT_LIBRARIES})
+        TARGET_LINK_LIBRARIES(relaxingiterator ${QT_LIBRARIES})
 ELSE(QT4_FOUND)
         ADD_LIBRARY(relaxingiterator SHARED
                 ${charon_INCLUDE_DIR}/RelaxingIterator.h
                 ${charon_INCLUDE_DIR}/RelaxingIterator.hxx
                 RelaxingIterator.cpp
         )
-        TARGET_LINK_LIBRARIES(relaxingiterator gbcce iteratorhelper)
 ENDIF(QT4_FOUND)
 LIST(APPEND Plugins
 	value
@@ -328,6 +329,10 @@ ADD_LIBRARY(cdfitfunction SHARED
 	${charon_INCLUDE_DIR}/CDFitFunction.h
 	${charon_INCLUDE_DIR}/Functions/Function.h
 )
+SET_TARGET_PROPERTIES(cdfitfunction PROPERTIES
+	SOVERSION ${charon_VERSION}
+)
+
 ADD_LIBRARY(mixtureofgaussians SHARED
 	MixtureOfGaussians.cpp
 	${charon_INCLUDE_DIR}/CDFitFunction.h
@@ -357,9 +362,15 @@ ADD_LIBRARY(sampler SHARED
 	${charon_INCLUDE_DIR}/Sampler.h
 	Sampler.cpp
 )
+SET_TARGET_PROPERTIES(sampler PROPERTIES
+	SOVERSION ${charon_VERSION}
+)
 ADD_LIBRARY(mcmcsampler SHARED
 	${charon_INCLUDE_DIR}/McmcSampler.h
 	McmcSampler.cpp
+)
+SET_TARGET_PROPERTIES(mcmcsampler PROPERTIES
+	SOVERSION ${charon_VERSION}
 )
 TARGET_LINK_LIBRARIES(mcmcsampler sampler)
 ADD_LIBRARY(samplegenerator SHARED
@@ -367,13 +378,13 @@ ADD_LIBRARY(samplegenerator SHARED
 	${charon_INCLUDE_DIR}/SampleGenerator.hxx
 	SampleGenerator.cpp
 )
-TARGET_LINK_LIBRARIES(samplegenerator sampler roi)
+TARGET_LINK_LIBRARIES(samplegenerator sampler)
 ADD_LIBRARY(cdfitter SHARED
 	${charon_INCLUDE_DIR}/CdFitter.h
 	${charon_INCLUDE_DIR}/CdFitter.hxx
 	CdFitter.cpp
 )
-TARGET_LINK_LIBRARIES(cdfitter mcmcsampler cdfitfunction roi)
+TARGET_LINK_LIBRARIES(cdfitter mcmcsampler cdfitfunction)
 
 LIST(APPEND Plugins
 	sampler
@@ -398,7 +409,6 @@ ADD_LIBRARY(edgysequencegenerator SHARED
 	${charon_INCLUDE_DIR}/EdgySequenceGenerator.hxx
 	EdgySequenceGenerator.cpp
 )
-TARGET_LINK_LIBRARIES(edgysequencegenerator roi)
 ADD_LIBRARY(diff2d SHARED
 	Diff2D.cpp
 	${charon_INCLUDE_DIR}/Diff2D.h

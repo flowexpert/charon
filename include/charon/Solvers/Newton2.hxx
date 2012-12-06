@@ -28,6 +28,7 @@
 #include "Newton2.h"
 
 #include <charon-core/ParameteredObject.hxx>
+#include <charon-utils/Roi.hxx>
 #include <vector>
 
 template <typename T>

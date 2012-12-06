@@ -26,6 +26,7 @@
 
 
 #include "SimpleIterator.h"
+#include "IteratorHelper.hxx"
 #include <limits>
 #ifdef QT_GUI_LIB
 #include <QApplication>

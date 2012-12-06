@@ -25,7 +25,9 @@
 
 #include "PetscSolver.h"
 #include "../Solver.hxx"
+#include "../Stencil.hxx"
 #include <charon-utils/ImgTool.hxx>
+#include <charon-utils/Roi.hxx>
 #include <sstream>
 
 #ifndef PTSC_FIX_REF

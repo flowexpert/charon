@@ -26,7 +26,8 @@
 #include "CGSolver.h"
 
 #include <charon-core/ParameteredObject.hxx>
-#include <charon/CGSolverHelper.h>
+#include <charon-utils/Roi.hxx>
+#include <charon/CGSolverHelper.hxx>
 
 #include <cmath>
 #include <vector>
