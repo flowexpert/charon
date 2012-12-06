@@ -231,7 +231,7 @@ protected:
 	/// Register additional tag names for grouping ParameteredObjects
 	/**
 	 *  Tags from the base class or previous calls to this function will be overwritten
-	 *  \param tags.........List of tags as single ;-separated string
+	 *  \param tags List of tags as single ;-separated string
 	 */
 	void _setTags(const std::string& tags) ;
 

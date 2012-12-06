@@ -56,7 +56,9 @@ private:
 public:
 	/**
 	 * Default constructor.
-	 * @param name Name of the plugin
+	 * @param n Name of the plugin
+	 * @param plpaths List of plugin search paths
+	 * @param lSuffix suffix which gets appended to the plugin name before a search
 	 */
 	WindowsPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix);
 	virtual void load() throw (PluginException);

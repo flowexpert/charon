@@ -170,6 +170,9 @@ public:
 	 *
 	 * @param name The name of the Plugin (without prefix "lib" and without
 	 *             extension)
+	 * @param plpaths list of paths which are searched for the plugin
+	 * @param lSuffix suffix which will be appended to the plugin name before search operations.
+	 *        This is typically used to append _d for searching debug libraries.
 	 */
 	AbstractPluginLoader(const std::string& name,std::vector<std::string> &plpaths,std::string &lSuffix);
 

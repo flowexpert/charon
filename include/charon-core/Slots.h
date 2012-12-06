@@ -289,6 +289,7 @@ public:
 	//  @}
 };
 
+///Abstract interface class for input slots
 class charon_core_PUBLIC InputSlotIntf
 {
 public:
@@ -367,6 +368,7 @@ private:
 };
 
 
+///abstract interface class for output slots
 class charon_core_PUBLIC OutputSlotIntf
 {
 public:
