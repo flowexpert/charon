@@ -28,9 +28,6 @@
 #include "../include/charon-core/ParameteredGroupObject.h"
 #include <sstream>
 
-
-
-
 PluginManager::PluginManager(
 			const std::vector<std::string>& paths, bool dbg,bool initializeOnLoad):
 		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
@@ -58,8 +55,6 @@ PluginManager::PluginManager(
 	pluginPaths.push_back(path1);
 	libSuffix = dbg ? "_d" : "";
 	_initializePluginOnLoad=initializeOnLoad;
-
-
 }
 
 void PluginManager::_destroyAllInstances(PLUGIN_LOADER * loader) {
@@ -226,14 +221,11 @@ void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 		curPlugin = _instances[toDestroy]->getName();
 		_instances[toDestroy]->destroyInstance(toDestroy);
 		_instances.erase(toDestroy);
-		sout << "(II) Deleted Instance \"" << cur << "\" of the plugin \""
-			<< curPlugin << "\"" << std::endl;
 	} else {
 	    if(objects.find(toDestroy->getName())!=objects.end())
 	    {
 			objects.erase(toDestroy->getName());
 			delete toDestroy;
-			sout << "(II) Deleted Instance \"" << cur<<std::endl;
 	    }
 	    else
 	    {
