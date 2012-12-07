@@ -87,71 +87,80 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 	// mapper to convert parameter.type into QVariant::Type
 	const VarTypeMap& mapper = VarTypeMap::instance();
 	int row = ind.row();
+	int col = ind.column();
+	QString key = _keys[row];
+	QString val;
+	QVariant res;
 
 	switch (role) {
 
 	case Qt::EditRole:
 	case Qt::DisplayRole:
 		if ((row >= 0) && (row < _keys.size())) {
-			QString name;
-
-			switch (ind.column()) {
+			switch (col) {
 			case 0:
 				// parameter name (without prefix)
-				name = _keys[row];
 				if (!_prefix.isEmpty())
-					name.remove(0, _prefix.length());
+					key.remove(0, _prefix.length());
 
 				// remove dot after valid prefix
-				if (name[0] == '.')
-					name.remove(0, 1);
-				return name;
+				if (key[0] == '.')
+					key.remove(0, 1);
+				return key;
 
 			case 1:
-				{
-					QVariant res = "";
-					if (_parameterFile->isSet(_keys[row])) {
-						res = _parameterFile->get(_keys[row]);
-					}
-					else if (_onlyParams) {
-						res = getDefault(_keys[row]);
-					}
-
-					if (_useMetaInfo && isParameter(_keys[row])) {
-						QString typestring = getType(_keys[row]);
-						QVariant::Type type = mapper[typestring];
-						Q_ASSERT(res.canConvert(type));
-						res.convert(type);
-					}
-					// simply return the string value
-					return res;
+				if (_parameterFile->isSet(_keys[row])) {
+					val = _parameterFile->get(_keys[row]);
 				}
+				else if (_onlyParams) {
+					val = getDefault(_keys[row]);
+				}
+
+				// handle parameter links
+				if (val.startsWith('@')) {
+					QString ref = val.mid(1);
+					if(_parameterFile->isSet(ref)) {
+						val = _parameterFile->get(ref);
+					}
+					else if(role == Qt::DisplayRole) {
+						val = tr("[invalid reference to %1]").arg(ref);
+					}
+				}
+
+				// handle QVariant type
+				res = val;
+				if (_useMetaInfo && isParameter(key)) {
+					QString typestring = getType(key);
+					QVariant::Type type = mapper[typestring];
+					Q_ASSERT(res.canConvert(type));
+					res.convert(type);
+				}
+				return res;
 
 			case 2:
 				if (role == Qt::DisplayRole) {
 					return QVariant();
 				}
-				return getValue(_keys[row] + ".editorpriority").toUInt();
+				return getValue(key + ".editorpriority").toUInt();
 			}
 		}
 		break;
 
 	case Qt::ToolTipRole:
 		if (_useMetaInfo) {
-			QString ret = _metaInfos->getDocString(
-						_keys[row], getClass(_keys[row]));
+			QString ret = _metaInfos->getDocString(key, getClass(key));
 			return ret.isEmpty() ? QVariant() : ret;
 		}
 		break;
 
 	case Qt::ForegroundRole:
-		if (_onlyParams && !_parameterFile->isSet(_keys[row])) {
+		if (_onlyParams && !isSet(key)) {
 			return Qt::lightGray;
 		}
 		break;
 
 	case Qt::BackgroundRole:
-		switch (_parameterFile->get(_keys[row]+".editorpriority").toInt()) {
+		switch (getValue(key+".editorpriority").toInt()) {
 		case 1:
 			return QColor("#8f8");
 		case 2:
@@ -164,12 +173,34 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 		break;
 
 	case Qt::CheckStateRole:
-		if (_useMetaInfo && ind.column() == 1 &&
-				isParameter(_keys[row]) && getType(_keys[row]) == "bool") {
-			const bool& checked = isSet(_keys[row]) ?
-					QVariant(getValue(_keys[row])).toBool() :
-					QVariant(getDefault(_keys[row])).toBool();
+		if (_useMetaInfo && col == 1 &&
+				isParameter(key) && getType(key) == "bool") {
+			const bool& checked = isSet(key) ?
+					QVariant(getValue(key)).toBool() :
+					QVariant(getDefault(key)).toBool();
 			return checked ? Qt::Checked : Qt::Unchecked;
+		}
+		break;
+
+	case Qt::StatusTipRole:
+		if(col == 1) {
+			if (isSet(key)) {
+				QString ret = getValue(key);
+				if(ret.startsWith('@')) {
+					return tr("link to: %1").arg(ret.mid(1));
+				}
+			}
+		}
+		break;
+
+	case Qt::DecorationRole:
+		if(col == 1) {
+			if (isSet(key)) {
+				QString ret = getValue(key);
+				if(ret.startsWith('@')) {
+					return QIcon(":/icons/symlink.png");
+				}
+			}
 		}
 		break;
 
