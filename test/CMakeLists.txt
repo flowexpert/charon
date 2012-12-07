@@ -2,7 +2,6 @@
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 
 IF(BUILD_TESTING)
-
 	SET(tests)
 	SET(testTargets)
 
@@ -86,14 +85,27 @@ IF(BUILD_TESTING)
 	TARGET_LINK_LIBRARIES(virtualslottestwriter charon-core)
 	ADD_LIBRARY(virtualslottestreader SHARED VirtualSlotTestReader.cpp)
 	TARGET_LINK_LIBRARIES(virtualslottestreader charon-core)
-	LIST(APPEND testTargets dummymodule dynamicdummymodule caseddummy whilegrouptestreader whilegrouptestwriter whilegroupteststatement
-		virtualslottestwriter virtualslottestreader)
+	LIST(APPEND testTargets
+		dummymodule
+		dynamicdummymodule
+		caseddummy
+		whilegrouptestreader
+		whilegrouptestwriter
+		whilegroupteststatement
+		virtualslottestwriter
+		virtualslottestreader
+	)
 	
-	# locate module directory
+	# locate module directories:
+	# MODULE_DIR: test module directory
+	# CHARON_PLUGINS: (global) directory of charon-core-modules
 	GET_TARGET_PROPERTY(DUMMY_LOC dummymodule LOCATION)
 	GET_FILENAME_COMPONENT(MODULE_DIR "${DUMMY_LOC}" PATH)
 	ADD_DEFINITIONS(-DMODULE_DIR="${MODULE_DIR}")
-	ADD_DEFINITIONS(-DLIB_SUFFIX="${LIB_SUFFIX}")
+	GET_TARGET_PROPERTY(GOBJ_LOC groupobject LOCATION)
+	GET_FILENAME_COMPONENT(CHARON_PLUGINS "${GOBJ_LOC}" PATH)
+	ADD_DEFINITIONS(-DCHARON_PLUGINS="${CHARON_PLUGINS}")
+
 	# tests for ParameterReferences
 	ADD_EXECUTABLE(toposorttest topoSortTest.cpp)
 	TARGET_LINK_LIBRARIES(toposorttest charon-core charon-plugins)
@@ -114,18 +126,7 @@ IF(BUILD_TESTING)
 	LIST(APPEND tests DynamicModuleTest)
 	LIST(APPEND testTargets dynamictest)
 
-
 	# tests for virtual slot data passing
-
-	IF(WIN32)
-		#ADD_DEFINITIONS(-DGLOBAL_PLUGIN_DIR="${CHARON_UTILS_ROOT_DIR}/bin")
-		ADD_DEFINITIONS(-DCHARON_PLUGINS="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-	ELSE(WIN32)
-		#ADD_DEFINITIONS(-DGLOBAL_PLUGIN_DIR="${CHARON_UTILS_ROOT_DIR}/lib${LIB_SUFFIX}/charon-plugins")
-		ADD_DEFINITIONS(-DCHARON_PLUGINS="${PROJECT_BINARY_DIR}/src")
-	ENDIF(WIN32)
-
-
 	ADD_EXECUTABLE(groupVirtualSlot groupVirtualSlot.cpp)
 	TARGET_LINK_LIBRARIES(groupVirtualSlot charon-core charon-plugins)
 	ADD_TEST(
@@ -134,10 +135,6 @@ IF(BUILD_TESTING)
 	)
 	LIST(APPEND tests groupVirtualSlot)
 	LIST(APPEND testTargets groupVirtualSlot)
-
-
-
-
 
 	ADD_EXECUTABLE(whilegrouptest testWhileGroup.cpp)
 	TARGET_LINK_LIBRARIES(whilegrouptest charon-core charon-plugins whilegroup)
@@ -162,5 +159,4 @@ IF(BUILD_TESTING)
 	# add test labels for dashboard submission
 	SET_TESTS_PROPERTIES(${tests} PROPERTIES LABELS charon-core)
 	SET_TARGET_PROPERTIES(${testTargets} PROPERTIES FOLDER "charon-core Tests")
-MESSAGE("Builddir" ${PROJECT_SOURCE_DIR})
 ENDIF(BUILD_TESTING)
