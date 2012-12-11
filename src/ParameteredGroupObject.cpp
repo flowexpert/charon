@@ -117,9 +117,6 @@ void ParameteredGroupObject::initializeGroup()
 
 void ParameteredGroupObject::execute()
 {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	executeGroup();
 }
 

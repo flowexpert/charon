@@ -17,8 +17,7 @@
 */
 /** \file IfGroup.cpp
  *  Implementation of parameter class IfGroup.
- *  \author <a href="mailto:gerald.mwangi@gmx.de">
- *      Gerald Mwangi</a>
+ *  \author <a href="mailto:gerald.mwangi@gmx.de">Gerald Mwangi</a>
  *  \date 17.01.2012
  */
 
@@ -43,11 +42,9 @@ IfGroup::IfGroup(const std::string& name) :
 
 
 void IfGroup::executeGroup() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
-        if(this->statement)
-	    ParameteredGroupObject::executeGroup();
+	if(this->statement) {
+		ParameteredGroupObject::executeGroup();
+	}
 }
 
 // the following functions are needed
