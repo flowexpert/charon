@@ -189,13 +189,13 @@ void createWorkFlowWithBundleAndDummyModule()
 
 	man.createInstance("CasedDummy","dummy");
 
-	in->setParameter("num_slots",numins);
+	in->setParameter<int>("num_slots",numins);
 	ParameterFile pf;
 
 	in->saveParameters(pf);
 	in->prepareDynamicInterface(pf);
 
-	out->setParameter("num_slots",numouts);
+	out->setParameter<int>("num_slots",numouts);
 
 	out->saveParameters(pf);
 	out->prepareDynamicInterface(pf);

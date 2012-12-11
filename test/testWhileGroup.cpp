@@ -32,7 +32,7 @@ void test()
 	//Create TestWhileGroup-child.wrp
 	ParameteredObject* in=man.createInstance("InputSlotBundle","inbundle");
 	ParameteredObject* out=man.createInstance("OutputSlotBundle","outbundle");
-	//ParameteredObject* internReader=man.createInstance("WhileGroupTestReader","InternReader");
+	man.createInstance("WhileGroupTestReader","InternReader");
 	ParameteredObject* internWriter=man.createInstance("WhileGroupTestWriter","InternWriter");
 
 	man.createInstance("WhileGroupTestStatement","statement");
@@ -63,11 +63,8 @@ void test()
 
 	//Create TestWhileGroup-childloop.wrp
 	ParameteredObject* inloop=man.createInstance("InputSlotBundle","inbundle");
-
 	ParameteredObject* outloop=man.createInstance("OutputSlotBundle","outbundle");
-
 	ParameteredObject* internReaderloop=man.createInstance("WhileGroupTestReader","InternReader");
-
 	ParameteredObject* internWriterloop=man.createInstance("WhileGroupTestWriter","InternWriter");
 
 	man.createInstance("WhileGroupTestStatement","statement");
@@ -106,10 +103,7 @@ void test()
 
 	std::stringstream childworkflow;
 
-
 	childworkflow<<FileTool::getCurrentDir()<<FileTool::slash<<"TestWhileGroup-child.wrp";
-
-
 
 	group->workFlowFile=childworkflow.str();
 	std::vector<std::string> path;
@@ -119,8 +113,8 @@ void test()
 
 	group->initialize();
 
-	//ParameteredObject* externReader=man.createInstance("WhileGroupTestReader","ExternReader");
-	//ParameteredObject* externWriter=man.createInstance("WhileGroupTestWriter","ExternWriter");
+	man.createInstance("WhileGroupTestReader","ExternReader");
+	man.createInstance("WhileGroupTestWriter","ExternWriter");
 
 	man.connect("TestGroup.VirtualSlot-out0","ExternReader.in1");
 	man.connect("TestGroup.VirtualSlot-out1","ExternReader.in2");
@@ -136,24 +130,18 @@ void test()
 
 	std::stringstream childworkflowloop;
 
-
 	childworkflowloop<<FileTool::getCurrentDir()<<FileTool::slash<<"TestWhileGroup-childloop.wrp";
 
-
-
 	grouploop->workFlowFile=childworkflowloop.str();
-
 	grouploop->pluginPaths=path;
-
 	grouploop->initialize();
-
 
 	grouploop->setParameter("loop_input_0_to_output",0);
 	grouploop->saveParameters(pf);
 	grouploop->onLoad(pf,&man);
 
-	//ParameteredObject* externReaderloop=man.createInstance("WhileGroupTestReader","ExternReaderLoop");
-	//ParameteredObject* externWriterloop=man.createInstance("WhileGroupTestWriter","ExternWriterLoop");
+	man.createInstance("WhileGroupTestReader","ExternReaderLoop");
+	man.createInstance("WhileGroupTestWriter","ExternWriterLoop");
 
 	man.connect("TestGroupLoop.VirtualSlot-out0","ExternReaderLoop.in1");
 	man.connect("TestGroupLoop.VirtualSlot-out1","ExternReaderLoop.in2");
@@ -163,32 +151,22 @@ void test()
 	man.saveParameterFile("/home/gmwangi/Test.wrp");
 
 	std::stringstream parentwrp;
-
-
 	parentwrp<<FileTool::getCurrentDir()<<FileTool::slash<<"TestWhileGroup-parent.wrp";
-
 	man.saveParameterFile(parentwrp.str());
 
 	//man.reset();
 
 	//man.loadParameterFile(parentwrp.str());
 	man.runWorkflow();
-
-
-
-
 }
 
 int main()
 {
-    sout.assign(std::cout);
-    int ret = EXIT_SUCCESS;
+	sout.assign(std::cout);
+	int ret = EXIT_SUCCESS;
 
 	ret |= ExceptionHandler::run(test);
 	//ret |= ExceptionHandler::run(testWhileIterationLoop);
 
-    return ret;
-
+	return ret;
 }
-
-

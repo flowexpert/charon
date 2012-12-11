@@ -36,7 +36,6 @@ void createGroup(PluginManager& man,std::string name,std::string workflowfile)
 	group->workFlowFile=workflowfile;
 	group->pluginPaths=path;
 	group->initialize();
-
 }
 
 void createWorkflows()
@@ -51,7 +50,7 @@ void createWorkflows()
 	in->saveParameters(pf);
 	in->prepareDynamicInterface(pf);
 
-	//ParameteredObject* intreader=man.createInstance("VirtualSlotTestReader","reader");
+	man.createInstance("VirtualSlotTestReader","reader");
 	man.connect("inputs.VirtualSlot-out0","reader.integer");
 	man.connect("inputs.VirtualSlot-out1","reader.image");
 	std::stringstream childworkflow;
@@ -101,10 +100,8 @@ void createWorkflows()
 
 	std::stringstream childworkflow3;
 
-
 	childworkflow3<<FileTool::getCurrentDir()<<FileTool::slash<<"TestVirtualSlot-childdatapassing.wrp";
 	man.saveParameterFile(childworkflow3.str());
-
 }
 
 void testDataToGroup()
@@ -112,9 +109,7 @@ void testDataToGroup()
 	PluginManager man(MODULE_DIR,CHARON_PLUGINS);
 	std::stringstream childworkflow;
 
-
 	childworkflow<<FileTool::getCurrentDir()<<FileTool::slash<<"TestVirtualSlot-childreader.wrp";
-
 
 	ParameteredGroupObject* group=dynamic_cast<ParameteredGroupObject*>(man.createInstance("GroupObject","TestGroup"));
 
@@ -125,7 +120,6 @@ void testDataToGroup()
 	group->pluginPaths=path;
 	group->initialize();
 	std::stringstream pworkflow;
-
 
 	pworkflow<<FileTool::getCurrentDir()<<FileTool::slash<<"TestVirtualSlot-parent.wrp";
 
@@ -134,8 +128,6 @@ void testDataToGroup()
 	man.connect("writer.image","TestGroup.VirtualSlot-in1");
 	man.saveParameterFile(pworkflow.str());
 	man.runWorkflow();
-
-
 }
 
 void testDataFromGroup()
@@ -143,9 +135,7 @@ void testDataFromGroup()
 	PluginManager man(MODULE_DIR,CHARON_PLUGINS);
 	std::stringstream childworkflow;
 
-
 	childworkflow<<FileTool::getCurrentDir()<<FileTool::slash<<"TestVirtualSlot-childwriter.wrp";
-
 
 	ParameteredGroupObject* group=dynamic_cast<ParameteredGroupObject*>(man.createInstance("GroupObject","TestGroup"));
 
@@ -157,7 +147,6 @@ void testDataFromGroup()
 	group->initialize();
 	std::stringstream pworkflow;
 
-
 	pworkflow<<FileTool::getCurrentDir()<<FileTool::slash<<"TestVirtualSlot-parent2.wrp";
 
 	man.createInstance("VirtualSlotTestReader","reader");
@@ -165,7 +154,6 @@ void testDataFromGroup()
 	man.connect("reader.image","TestGroup.VirtualSlot-out1");
 	man.saveParameterFile(pworkflow.str());
 	man.runWorkflow();
-
 }
 
 void testDataPassing()
@@ -191,14 +179,11 @@ void testDataPassing()
 
 int main()
 {
-    sout.assign(std::cout);
-    int ret = EXIT_SUCCESS;
+	sout.assign(std::cout);
+	int ret = EXIT_SUCCESS;
 	ret |= ExceptionHandler::run(createWorkflows);
-    ret |= ExceptionHandler::run(testDataToGroup);
-    ret |= ExceptionHandler::run(testDataFromGroup);
+	ret |= ExceptionHandler::run(testDataToGroup);
+	ret |= ExceptionHandler::run(testDataFromGroup);
 	ret |= ExceptionHandler::run(testDataPassing);
-
-    return ret;
-
-
+	return ret;
 }
