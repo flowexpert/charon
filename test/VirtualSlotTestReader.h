@@ -53,7 +53,7 @@ public:
 	/// integer
 	InputSlot< int > integer;
 	/// image
-	InputSlot< std::vector<double> > image;
+	InputSlot< std::string > image;
 
 
 protected:

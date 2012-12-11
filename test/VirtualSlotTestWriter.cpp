@@ -33,29 +33,15 @@ VirtualSlotTestWriter::VirtualSlotTestWriter(const std::string& name) :
 			"Generates an integer and a CImg image to test the virtual slots"
 		)
 {
-
 	ParameteredObject::_addOutputSlot(
-		integer, "integer",
-		"integer",
-		"int");
+		integer, "integer", "integer");
 	ParameteredObject::_addOutputSlot(
-		image, "image",
-		"image",
-		"CImgList<T>");
-
+		image, "image", "image");
 }
 
 void VirtualSlotTestWriter::execute() {
-
-
-	std::vector<double> im;
-	for(int i=0;i<1000000;i++)
-	{
-		im.push_back(i+0.5);
-	}
-	image()=im;
-	integer=42;// The Answer, as you should know! ;)
-
+	image()="image";
+	integer()=42;// The Answer, as you should know! ;)
 }
 
 // the following functions are needed

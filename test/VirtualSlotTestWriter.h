@@ -51,7 +51,7 @@ public:
 	/// integer
 	OutputSlot< int > integer;
 	/// image
-	OutputSlot< std::vector<double> > image;
+	OutputSlot< std::string > image;
 
 
 protected:

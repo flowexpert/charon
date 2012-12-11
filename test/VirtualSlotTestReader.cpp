@@ -42,7 +42,7 @@ VirtualSlotTestReader::VirtualSlotTestReader(const std::string& name) :
 	ParameteredObject::_addInputSlot(
 		image, "image",
 		"image",
-		"CImgList<T>");
+		"string");
 
 }
 
@@ -51,44 +51,24 @@ void VirtualSlotTestReader::execute() {
 	if(integer!=42)
 		raise("The answer is not 42!");
 	//Test image
-	std::vector<double> im=image();
-	if(im.size()!=1000000)
-		raise("Image has incorrect dimensions!");
-
-
-	for(int i=0;i<1000000;i++)
-	{
-		if(im[i]!=i+0.5f)
-			raise("Image has incorrect dimensions!");
+	if (image()!="image") {
+		raise("Image not correctly passed!");
 	}
 
-
 	//Test image again, with data retrieval as applied for multislots
-	std::set<AbstractSlot<std::vector<double> >*>::const_iterator it=image.begin();
+	std::set<AbstractSlot<std::string>*>::const_iterator it=image.begin();
 	Slot* sl=(Slot*)(*it);
 	OutputSlotIntf* out=dynamic_cast<OutputSlotIntf*>(sl);
 	if(!out) {
-		raise(
-				this->getClassName() + " : " + this->getName()
-					+ " : cast of cimg_library::CImgList failed! ");
+		raise("cast of image failed! ");
 	}
-	const OutputSlot<std::vector<double> >* temp =
-		dynamic_cast<const OutputSlot<std::vector<double> >*>(out->getDataSlot());
+	const OutputSlot<std::string>* temp =
+		dynamic_cast<const OutputSlot<std::string>*>(out->getDataSlot());
 
-	std::vector<double> im2=temp->operator ()();
-	if(im2.size()!=1000000)
+	std::string im2=temp->operator()();
+	if(im2 != "image") {
 		raise("Image has incorrect dimensions!");
-
-
-	for(int i=0;i<1000000;i++)
-	{
-		if(im2[i]!=i+0.5f)
-			raise("Image has incorrect dimensions!");
 	}
-
-
-
-
 }
 
 // the following functions are needed
