@@ -62,8 +62,7 @@ void SlotBundle::setNumberOfVirtualSlots(int num)
 	}
 
 	//Remove slots if _virtualOutputSlots.size()> num
-	for(int i=num;i<_virtualOutputSlots.size();i++)
-	{
+	for(size_t i=num;i<_virtualOutputSlots.size();i++) {
 		_removeSlot(i);
 		((VirtualOutputSlot*)_virtualOutputSlots[i])->disconnect();
 		((VirtualInputSlot*)_virtualInputSlots[i])->disconnect();

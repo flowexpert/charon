@@ -51,7 +51,7 @@ void createWorkflows()
 	in->saveParameters(pf);
 	in->prepareDynamicInterface(pf);
 
-	ParameteredObject* intreader=man.createInstance("VirtualSlotTestReader","reader");
+	//ParameteredObject* intreader=man.createInstance("VirtualSlotTestReader","reader");
 	man.connect("inputs.VirtualSlot-out0","reader.integer");
 	man.connect("inputs.VirtualSlot-out1","reader.image");
 	std::stringstream childworkflow;

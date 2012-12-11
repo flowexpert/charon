@@ -68,7 +68,7 @@ void WhileGroupTestReader::execute() {
 	{
 
 		//0th iter values of extoutgen, else   (intreader,intreader2).in1=intoutgen.out1 and (intreader,intreader2).in2=extoutgen.out2
-		if((_iter>0)&&(in1!=20||in2!=5.5f)||(_iter==0&&(in1!=10||in2!=5.5f)))
+		if(((_iter>0)&&(in1!=20||in2!=5.5f))||(_iter==0&&(in1!=10||in2!=5.5f)))
 		{
 			std::stringstream msg;
 			msg<<"Incorrect Values in Loopmode! in1 "<<in1()<<" in2 "<<in2()<<" iter "<<_iter;

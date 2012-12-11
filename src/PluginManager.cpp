@@ -784,46 +784,36 @@ void PluginManager::insertInstance(ParameteredObject *instance)
     objects[instance->getName()]=instance;
 }
 
-bool PluginManager::isInternal(ParameteredObject *obj)
-{
+bool PluginManager::isInternal(ParameteredObject* /*obj*/) {
 	//if(dynamic_cast<SlotBundle*>(obj))
 	//return true;
- //   else if(dynamic_cast<ParameteredGroupObject*>(obj))
-//	return true;
-    return false;
-
+	//   else if(dynamic_cast<ParameteredGroupObject*>(obj))
+	//	return true;
+	return false;
 }
 
-void PluginManager::resetExecuted()
-{
+void PluginManager::resetExecuted() {
 
-    std::map<std::string, ParameteredObject *>::const_iterator iter;
+	std::map<std::string, ParameteredObject *>::const_iterator iter;
 
+	if (objects.empty()) {
+		throw AbstractPluginLoader::PluginException(
+			"Could not reset executed flags in workflow:\n\t"
+			"No valid target point found.\n\t"
+			"Please check if all required plugins could be loaded,\n\t"
+			"then check if this is a valid parameter file.", "unknown",
+			AbstractPluginLoader::PluginException::OTHER);
+	}
 
-    if (objects.empty()) {
-            throw AbstractPluginLoader::PluginException(
-                    "Could not reset executed flags in workflow:\n\t"
-                    "No valid target point found.\n\tPlease check if "
-                    "all required plugins could be loaded,\n\tthen check if this is "
-                    "a valid parameter file.", "unknown",
-                    AbstractPluginLoader::PluginException::OTHER);
-    }
-
-    for (iter = objects.begin(); iter != objects.end(); iter++) {
+	for (iter = objects.begin(); iter != objects.end(); iter++) {
 //            if(isGroup((*iter)))
 //            {
 //                AbstractBaseGroupIntf* grpIntf=dynamic_cast<AbstractBaseGroupIntf*>((*iter));
 //                grpIntf->loadWorkflow(AbstractPluginLoader::pluginPaths);
 //            }
-	(*iter).second->setExecuted(false);
-    }
+		(*iter).second->setExecuted(false);
+	}
 }
-
-
-
-
-
-
 
 void PluginManager::createDynamicMetadata(const ParameterFile& paramFile,
 	const std::string& filePrefix) {

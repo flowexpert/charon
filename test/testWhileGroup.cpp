@@ -31,11 +31,8 @@ void test()
 
 	//Create TestWhileGroup-child.wrp
 	ParameteredObject* in=man.createInstance("InputSlotBundle","inbundle");
-
 	ParameteredObject* out=man.createInstance("OutputSlotBundle","outbundle");
-
-	ParameteredObject* internReader=man.createInstance("WhileGroupTestReader","InternReader");
-
+	//ParameteredObject* internReader=man.createInstance("WhileGroupTestReader","InternReader");
 	ParameteredObject* internWriter=man.createInstance("WhileGroupTestWriter","InternWriter");
 
 	man.createInstance("WhileGroupTestStatement","statement");
@@ -122,9 +119,8 @@ void test()
 
 	group->initialize();
 
-	ParameteredObject* externReader=man.createInstance("WhileGroupTestReader","ExternReader");
-
-	ParameteredObject* externWriter=man.createInstance("WhileGroupTestWriter","ExternWriter");
+	//ParameteredObject* externReader=man.createInstance("WhileGroupTestReader","ExternReader");
+	//ParameteredObject* externWriter=man.createInstance("WhileGroupTestWriter","ExternWriter");
 
 	man.connect("TestGroup.VirtualSlot-out0","ExternReader.in1");
 	man.connect("TestGroup.VirtualSlot-out1","ExternReader.in2");
@@ -156,9 +152,8 @@ void test()
 	grouploop->saveParameters(pf);
 	grouploop->onLoad(pf,&man);
 
-	ParameteredObject* externReaderloop=man.createInstance("WhileGroupTestReader","ExternReaderLoop");
-
-	ParameteredObject* externWriterloop=man.createInstance("WhileGroupTestWriter","ExternWriterLoop");
+	//ParameteredObject* externReaderloop=man.createInstance("WhileGroupTestReader","ExternReaderLoop");
+	//ParameteredObject* externWriterloop=man.createInstance("WhileGroupTestWriter","ExternWriterLoop");
 
 	man.connect("TestGroupLoop.VirtualSlot-out0","ExternReaderLoop.in1");
 	man.connect("TestGroupLoop.VirtualSlot-out1","ExternReaderLoop.in2");

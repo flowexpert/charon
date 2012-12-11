@@ -32,8 +32,8 @@
  *	right names, displaynames and types
  */
 
-int numins=10;
-int numouts=20;
+size_t numins=10;
+size_t numouts=20;
 
 int testLoadInputSlots()
 {
@@ -56,7 +56,7 @@ int testLoadInputSlots()
 		std::cerr<<"Incorrect number of inputs in TestGroup"<<std::endl;
 		return EXIT_FAILURE;
 	}
-	for(int i=0;i<numins;i++)
+	for(size_t i=0;i<numins;i++)
 	{
 		std::stringstream name;
 		name<<"VirtualSlot-in"<<i;
@@ -127,7 +127,7 @@ int testLoadOutputSlots()
 		return EXIT_FAILURE;
 	}
 
-	for(int i=0;i<numouts;i++)
+	for(size_t i=0;i<numouts;i++)
 	{
 		std::stringstream name;
 		name<<"VirtualSlot-out"<<i;
