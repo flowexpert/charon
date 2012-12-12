@@ -720,20 +720,24 @@ std::list<ParameteredObject*> PluginManager::_determineTargetPoints() {
 	std::list<ParameteredObject*> targetPoints;
 	std::map<std::string, ParameteredObject *>::const_iterator it;
 	for (it = objects.begin(); it != objects.end(); it++) {
-		bool connected = false;
-		std::map<std::string, Slot *> outputslots =
-				it->second->getOutputSlots();
-		std::map<std::string, Slot *>::const_iterator slotIter;
-		for (slotIter = outputslots.begin(); !connected && slotIter
-				!= outputslots.end(); slotIter++) {
-			connected = slotIter->second->connected();
-		}
-		if (!connected) {
-			sout << "(DD) Found target point \"" << it->second->getName()
-					<< "\"" << std::endl;
-			targetPoints.push_back(it->second);
-		}
-	}
+       if (it->second->_ActiveInactive){ // checks whether the plugin is activated
+           bool connected = false;
+           std::map<std::string, Slot *> outputslots =
+                it->second->getOutputSlots();
+           std::map<std::string, Slot *>::const_iterator slotIter;
+           for (slotIter = outputslots.begin(); !connected && slotIter
+                    != outputslots.end(); slotIter++) {
+               connected = slotIter->second->connected();
+           }
+           ParameteredObject * test = it->second; // additional variable to store the value of the iterator
+           test++; // needs to point to the coming object
+           if (!connected || !(test->_ActiveInactive)) { // verifies whether the next plugin is active
+               sout << "(DD) Found target point \"" << it->second->getName()
+                    << "\"" << std::endl;
+               targetPoints.push_back(it->second);
+           }
+       }
+    }
 	return targetPoints;
 }
 
