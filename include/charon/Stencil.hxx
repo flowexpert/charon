@@ -32,7 +32,7 @@
 
 #include "Stencil.h"
 #include "Substencil.hxx"
-#include <ParameteredObject.hxx>
+#include <charon-core/ParameteredObject.hxx>
 
 template <typename T>
 Stencil::Base<T>::Base(

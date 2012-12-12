@@ -70,19 +70,19 @@ ADD_LIBRARY(energybcc SHARED
 	EnergyBCC.cpp
 )
 ADD_LIBRARY(energyclassic SHARED
-        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyClassic.h
-        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyClassic.hxx
-        EnergyClassic.cpp
+	${charon_INCLUDE_DIR}/EnergyStencils/EnergyClassic.h
+	${charon_INCLUDE_DIR}/EnergyStencils/EnergyClassic.hxx
+	EnergyClassic.cpp
 )
 ADD_LIBRARY(energycoupling SHARED
-        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyCoupling.h
-        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyCoupling.hxx
-        EnergyCoupling.cpp
+	${charon_INCLUDE_DIR}/EnergyStencils/EnergyCoupling.h
+	${charon_INCLUDE_DIR}/EnergyStencils/EnergyCoupling.hxx
+	EnergyCoupling.cpp
 )
 ADD_LIBRARY(energynonlocal SHARED
-        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyNonLocal.h
-        ${charon_INCLUDE_DIR}/EnergyStencils/EnergyNonLocal.hxx
-        EnergyNonLocal.cpp
+	${charon_INCLUDE_DIR}/EnergyStencils/EnergyNonLocal.h
+	${charon_INCLUDE_DIR}/EnergyStencils/EnergyNonLocal.hxx
+	EnergyNonLocal.cpp
 )
 LIST(APPEND Plugins
 	energybcc
@@ -121,9 +121,9 @@ LIST(APPEND Plugins
 
 # Clique Weights
 ADD_LIBRARY(cliqueweightuniform SHARED
-        ${charon_INCLUDE_DIR}/CliqueWeights/CliqueWeightUniform.h
-        ${charon_INCLUDE_DIR}/CliqueWeights/CliqueWeightUniform.hxx
-        CliqueWeightUniform.cpp
+	${charon_INCLUDE_DIR}/CliqueWeights/CliqueWeightUniform.h
+	${charon_INCLUDE_DIR}/CliqueWeights/CliqueWeightUniform.hxx
+	CliqueWeightUniform.cpp
 )
 ADD_LIBRARY(cliqueweightnonlocal SHARED
 	${charon_INCLUDE_DIR}/CliqueWeights/CliqueWeightNonLocal.h
@@ -154,6 +154,7 @@ IF(USE_PETSC)
 	ENDIF()
 	TARGET_LINK_LIBRARIES(petscsolver
 		${PETSC_LIBRARIES}
+		debug gbcce # only needed in debug mode (why?)
 	)
 	LIST(APPEND Plugins
 		petscsolver
@@ -162,9 +163,9 @@ ENDIF(USE_PETSC)
 
 # Conjugate gradient method
 ADD_LIBRARY(cgsolverhelper SHARED
-        ${charon_INCLUDE_DIR}/CGSolverHelper.h
-        ${charon_INCLUDE_DIR}/CGSolverHelper.hxx
-        CGSolverHelper.cpp
+	${charon_INCLUDE_DIR}/CGSolverHelper.h
+	${charon_INCLUDE_DIR}/CGSolverHelper.hxx
+	CGSolverHelper.cpp
 )
 ADD_LIBRARY(cgsolver SHARED
 	CGSolver.cpp
@@ -298,24 +299,32 @@ ELSE(QT4_FOUND)
 		SimpleIterator.cpp
 	)
 ENDIF(QT4_FOUND)
+TARGET_LINK_LIBRARIES(simpleiterator # also only needed in debug mode
+	debug roi
+	debug iteratorhelper
+)
 IF(QT4_FOUND)
-        SET(simpleiteratorremotecontrol_HEADERS_TOMOC ${charon_INCLUDE_DIR}/SimpleIteratorRemoteControl.h)
-        QT4_WRAP_CPP(simpleiteratorremotecontrol_HEADERS_MOCKED ${simpleiteratorremotecontrol_HEADERS_TOMOC})
-        ADD_LIBRARY(relaxingiterator SHARED
-                ${charon_INCLUDE_DIR}/RelaxingIterator.h
-                ${charon_INCLUDE_DIR}/RelaxingIterator.hxx
-                ${simpleiteratorremotecontrol_HEADERS_MOCKED}
-                SimpleIteratorRemoteControl.cpp
-                RelaxingIterator.cpp
-        )
-        TARGET_LINK_LIBRARIES(relaxingiterator ${QT_LIBRARIES})
+	SET(simpleiteratorremotecontrol_HEADERS_TOMOC ${charon_INCLUDE_DIR}/SimpleIteratorRemoteControl.h)
+	QT4_WRAP_CPP(simpleiteratorremotecontrol_HEADERS_MOCKED ${simpleiteratorremotecontrol_HEADERS_TOMOC})
+	ADD_LIBRARY(relaxingiterator SHARED
+		${charon_INCLUDE_DIR}/RelaxingIterator.h
+		${charon_INCLUDE_DIR}/RelaxingIterator.hxx
+		${simpleiteratorremotecontrol_HEADERS_MOCKED}
+		SimpleIteratorRemoteControl.cpp
+		RelaxingIterator.cpp
+	)
+	TARGET_LINK_LIBRARIES(relaxingiterator ${QT_LIBRARIES})
 ELSE(QT4_FOUND)
-        ADD_LIBRARY(relaxingiterator SHARED
-                ${charon_INCLUDE_DIR}/RelaxingIterator.h
-                ${charon_INCLUDE_DIR}/RelaxingIterator.hxx
-                RelaxingIterator.cpp
-        )
+	ADD_LIBRARY(relaxingiterator SHARED
+		${charon_INCLUDE_DIR}/RelaxingIterator.h
+		${charon_INCLUDE_DIR}/RelaxingIterator.hxx
+		RelaxingIterator.cpp
+	)
 ENDIF(QT4_FOUND)
+TARGET_LINK_LIBRARIES(relaxingiterator # also only needed in debug mode
+	debug roi
+	debug iteratorhelper
+)
 LIST(APPEND Plugins
 	value
 	iteratorhelper
