@@ -9,5 +9,5 @@ Terminal=false
 Type=Application
 Icon=tuchulcha
 NoDisplay=false
-Categories=Qt;Development;ImageProcessing;
+Categories=Qt;Development;ImageProcessing;Science;
 MimeType=text/plain;
