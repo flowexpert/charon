@@ -59,6 +59,9 @@ public:
 	/// derivative wrt t 
 	OutputSlot < cimg_library::CImgList<T> > dt;
 
+	/// asymmetrisk filter behöver, if needed ;-)
+	Parameter < bool > bicubic;
+
 	/// create a new SimpleDiff object
 	/// \param name          Instance name
 	SimpleDiff(const std::string& name = "");
