@@ -23,6 +23,11 @@
 ///Class name of the plugin
 #define TYPE Resize
 
+#if defined(MSVC) && defined (resize_EXPORTS) 
+	#define roi_EXPORTS
+#endif
+
+
 #include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Resize.hxx>
 

@@ -24,6 +24,7 @@
 
 /// Class name of the plugin
 #define TYPE FileReaderHDF5
+#define roi_EXPORTS
 
 #include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-core/ParameteredObject.hxx>

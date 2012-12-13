@@ -23,6 +23,7 @@
 
 /// Class name of the plugin
 #define TYPE Subarray
+#define roi_EXPORTS
 
 #include <charon-utils/DataManagerVigraArray.hxx>
 #include <charon-utils/Subarray.hxx>

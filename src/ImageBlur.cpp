@@ -23,6 +23,10 @@
 /// Class name of the plugin
 #define TYPE ImageBlur
 
+#if defined(MSVC) && defined (imageblur_EXPORTS) 
+	#define roi_EXPORTS
+#endif
+
 #include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/ImageBlur.hxx>
 

@@ -23,6 +23,10 @@
 /// Class name of the plugin
 #define TYPE Crop
 
+#if defined(MSVC) && defined (crop_EXPORTS) 
+	#define roi_EXPORTS
+#endif
+
 #include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/Crop.hxx>
 
