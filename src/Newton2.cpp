@@ -26,6 +26,7 @@
 
 #if defined(MSVC) && defined (newton2_EXPORTS) 
 #define solver_EXPORTS
+#define roi_EXPORTS
 #endif
 #include <charon/Solvers/Newton2.hxx>
 

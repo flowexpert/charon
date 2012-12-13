@@ -23,6 +23,11 @@
 
 #define TYPE CdFitter
 
+#if defined(MSVC) && defined (cdfitter_EXPORTS) 
+	#define roi_EXPORTS
+#endif
+
+
 #include <charon/CdFitter.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>
 

@@ -24,7 +24,12 @@
 /// Class name of the plugin
 #define TYPE RelaxingIterator
 
-#define simpleiterator_EXPORTS
+#if defined(MSVC) && defined (relaxingiterator_EXPORTS) 
+	#define iteratorhelper_EXPORTS
+	#define stencil_EXPORTS
+	#define simpleiterator_EXPORTS
+#endif
+
 #include <charon/SimpleIterator.hxx>
 #include <charon/RelaxingIterator.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>

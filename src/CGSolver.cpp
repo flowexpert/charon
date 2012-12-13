@@ -24,6 +24,8 @@
 
 #if defined(MSVC) && defined (cgsolver_EXPORTS) 
 #define solver_EXPORTS
+#define roi_EXPORTS
+#define cgsolverhelper_EXPORTS
 #endif
 #include <charon/Solvers/CGSolver.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>

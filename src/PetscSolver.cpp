@@ -25,7 +25,9 @@
 #define TYPE PetscSolver
 
 #if defined(MSVC) && defined (petscsolver_EXPORTS) 
-#define solver_EXPORTS
+	#define solver_EXPORTS
+	#define roi_EXPORTS
+	#define stencil_EXPORTS
 #endif
 #include <charon/Solvers/PetscSolver.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>

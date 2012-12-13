@@ -19,6 +19,11 @@
  *      Jens-Malte Gottfried</a>
  *  \date 17.11.2010
  */
+#if defined(MSVC) && defined (samplegenerator_EXPORTS) 
+	#define roi_EXPORTS
+#endif
+
+
 #include <charon-core/ParameteredObject.hxx>
 #include <charon/SampleGenerator.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>

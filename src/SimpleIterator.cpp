@@ -24,6 +24,11 @@
 /// Class name of the plugin
 #define TYPE SimpleIterator
 
+#if defined(MSVC) && defined (simpleiterator_EXPORTS) 
+#define iteratorhelper_EXPORTS
+#endif
+
+
 #include <charon/SimpleIterator.hxx>
 #include <charon-utils/DataManagerCImgList.hxx>
 
