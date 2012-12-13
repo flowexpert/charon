@@ -9,5 +9,5 @@ Terminal=false
 Type=Application
 Icon=paraminspector
 NoDisplay=false
-Categories=Qt;Development;TextEditor
-MimeType=text/plain
+Categories=Qt;Development;TextEditor;
+MimeType=text/plain;
