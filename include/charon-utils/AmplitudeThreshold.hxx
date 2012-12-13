@@ -29,7 +29,7 @@
 template <typename T>
 AmplitudeThreshold<T>::AmplitudeThreshold(const std::string& name) :
 	TemplatedParameteredObject<T>("amplitudethreshold", name,
-		"Cut off flow vectors whose amplitude are strict higher (ore lower) "
+		"Cut off flow vectors whose amplitude are strict higher (or lower) "
 		"than a given threshold.<br>"
 		"The Amplitude is defined as the square-root of the sum of all pixel values"
 		" along the first Dimension of the input CImgList (usually 2 for classical"

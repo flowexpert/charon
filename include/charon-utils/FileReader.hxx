@@ -47,12 +47,14 @@ FileReader<T>::FileReader(const std::string& name) :
 	ParameteredObject::_setTags("charon-utils;CImg;DiskIO") ;
 
 	ParameteredObject::_addParameter (filename, "filename",
-		"Filename to read image from", "fileopen");
+		"Filename to read image from.<br>"
+		"Use this parameter if you want to read a single image", "fileopen");
 
 	ParameteredObject::_addParameter (watchable, "watchable",
 		"if set, files are monitored for changes", false);
 
 	ParameteredObject::_addParameter (fileList, "fileList",
+		"Read multiple files with paths as ; separated list.<br>"
 		"If this is not empty, the list will be added to the CImgList "
 		"according to the paramter value of frameDimension.<br>"
 		"Mixes with filename.", "fileopen");

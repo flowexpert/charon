@@ -34,7 +34,9 @@
 template<typename T>
 LengthError<T>::LengthError(const std::string& name) :
 		TemplatedParameteredObject<T>("LengthError", name,
-				"Compute Angular Error between two-dimensional flow fields")
+			"Compute Length Error between two-dimensional flow fields<br>"
+			"The Length Error is defined as the absolute difference between the "
+			"lengths of two flow vectors, independent of the angle between them.")
 {
 	ParameteredObject::_setTags("charon-utils;CImg;Evaluation") ;
 
@@ -45,7 +47,7 @@ LengthError<T>::LengthError(const std::string& name) :
 			groundTruth, "groundTruth",
 	                "ground truth input", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
-			out, "out", "angular error output",
+			out, "out", "length error output",
 			"CImgList<T>");
 }
 

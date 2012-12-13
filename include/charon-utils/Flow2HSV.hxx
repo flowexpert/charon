@@ -39,7 +39,7 @@ Flow2HSV<T>::Flow2HSV(const std::string& name) :
 		TemplatedParameteredObject<T>("Flow2HSV", name,
 				"Convert Flow into HSV Color Representation")
 {
-	ParameteredObject::_setTags("charon-utils;CImg") ;
+	ParameteredObject::_setTags("charon-utils;CImg;Visualization") ;
 
 	ParameteredObject::_addParameter(
 			scaleChannel, "scaleChannel",
