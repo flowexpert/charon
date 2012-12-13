@@ -42,7 +42,9 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 	ParameteredObject::_setTags("charon-utils;CImg") ;
 
 	ParameteredObject::_addInputSlot(_in1, "in1", "input image 1", "CImgList<T>"); 
-	ParameteredObject::_addInputSlot(_in2, "in2", "input image 2", "CImgList<T>"); 
+	ParameteredObject::_addInputSlot(_in2, "in2", 
+		"input image 2<br>"
+		"must be of the same dimension as in1", "CImgList<T>"); 
 	ParameteredObject::_addParameter(_opType, "opType",
 		"operation type<br>"
 		"Available operations are:<ul>"
@@ -60,6 +62,15 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 		"<li>Right Bit Shift</li>"
 		"<li>Mask (Input is set to zero where mask(in2) is zero "
 		"and kept otherwise, acts as passtrough when withValue is true)</li>"
+		"<li>Natural logarithm (in2 or withValue is ignored)</li>"
+		"<li>Exponential (in2 or withValue is ignored)</li>"
+		"<li>Sine </li>"
+		"<li>Cosine </li>"
+		"<li>Tangent </li>"
+		"<li>Arc Sine </li>"
+		"<li>Arc Cosine </li>"
+		"<li>Arc Tangent </li>"
+		"<li>Arc Tangent2 (2 argument function)</li>"
 		"<li>Flow Magnitude</li>"
 		"<li>Limit Magnitude (set vector value to m*(v/|v|) "
 		"if magnitude is larger than m)</li>"
@@ -85,7 +96,7 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 	ParameteredObject::_addParameter(_value, "value",
 				"Second operand if withValue is true", T(0) ) ;
 	ParameteredObject::_addOutputSlot(_out, "out",
-				"output image", "CImgList<T>");
+				"output image (will have the same dimension as in1)", "CImgList<T>");
 }
 
 template <typename T>

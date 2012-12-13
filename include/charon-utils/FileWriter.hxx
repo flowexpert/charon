@@ -30,7 +30,19 @@
 template<typename T>
 FileWriter<T>::FileWriter(const std::string& name) :
 	TemplatedParameteredObject<T>("filewriter", name,
-			"write image file from image using cimg") {
+			"write image file from image using cimg.<br>"
+			"Native supported file types:<ul>"
+			"<li>BMP</li>"
+			"<li>HDR (Radiance)</li>"
+			"<li>TXT/ASC (comma separated, one line per scanline)</li>"
+			"<li>PPM/PGM</li>"
+			"<li>CIMG</li>"
+			"</ul><br>To support the following formats, additional libaries need to be linked:<ul>"
+			"<li>PNG (libpng)</li>"
+			"<li>TIFF (libtiff)</li>"
+			"<li>JPEG/JPG(libjpeg)</li>"
+			"</ul>"
+			) {
 	ParameteredObject::_setTags("charon-utils;CImg;DiskIO") ;
 
 	this->_addParameter(
