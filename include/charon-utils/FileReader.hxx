@@ -87,6 +87,13 @@ FileReader<T>::FileReader(const std::string& name) :
 		"Pattern parameter end (using 'i < end' rather than 'i <=end')",
 		1u);
 
+	ParameteredObject::_addParameter(
+		cropPngChannels, "cropPngChannels",
+		"Due to an CImg error, png files are always read as 3-channel RGB image, "
+		"even if they are grayscale<br>"
+		"set this parameter to true to use only the red channel of png files",
+		false);
+
 	ParameteredObject::_addOutputSlot(out, "out",
 		"image output", "CImgList<T>");
 }
@@ -423,7 +430,10 @@ void FileReader<T>::execute() {
 			if(cur.endsWith("hdr", Qt::CaseInsensitive))
 				tmp = _readHDR(cur.toStdString());
 			else
-				tmp.load(cur.toLocal8Bit().constData());
+			{	tmp.load(cur.toLocal8Bit().constData());
+				if(cropPngChannels() && cur.endsWith("png", Qt::CaseInsensitive))
+				{	tmp[0].channel(0) ;	}
+			}
 			_append(tmp);
 			_mem();
 		}

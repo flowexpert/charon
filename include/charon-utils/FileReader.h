@@ -94,6 +94,8 @@ public:
 	/// pattern parameter end (i < end)
 	Parameter<unsigned int> end;
 
+	Parameter<bool> cropPngChannels ;
+
 	/// image data as output slot
 	OutputSlot<cimg_library::CImgList<T> > out;
 
