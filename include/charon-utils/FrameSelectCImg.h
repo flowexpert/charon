@@ -36,9 +36,9 @@
 #define frameselectcimg_DECLDIR
 #endif
 
+#include <FrameSelectWidget.hpp>
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
-#include <FrameSelectWidget.hpp>
 #include <charon-utils/Roi.h>
 
 /// Select frames to be displayed (GUI-capable version of Crop)
