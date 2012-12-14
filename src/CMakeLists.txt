@@ -484,6 +484,11 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.h
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.hxx
 		)
+		ADD_LIBRARY(frameselectcimg SHARED
+			FrameSelectCImg.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/FrameSelectCImg.h
+			${CHARON_UTILS_INCLUDE_DIR}/FrameSelectCImg.hxx
+		)
 		
 		QT4_WRAP_CPP(ScriptorCimg_MOC
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h)
@@ -506,10 +511,12 @@ IF(USE_VIGRA)
 			argosdisplay
 			frameselect
 			scriptorcimg
+			frameselectcimg
 		)
 		LIST(APPEND Plugins_CImg
 			argosdisplay
 			scriptorcimg
+			frameselectcimg
 		)
 		LIST(APPEND Plugins_Vigra
 			argosdisplay
