@@ -460,7 +460,7 @@ RGBChannels CImgPixelInspector<T>::isRGB() const
 {
 	if(_mArray.width() >= 3)
 		return RGB4 ;
-	if(_mArray.width() >= 0 && _mArray(0).spectrum() >= 3)
+	if(_mArray.width() > 0 && _mArray(0).spectrum() >= 3)
 		return RGB3 ;
 	return NONE ;
 }
