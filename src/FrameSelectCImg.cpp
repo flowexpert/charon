@@ -26,8 +26,8 @@
 
 #define roi_EXPORTS
 
-#include <charon-utils/DataManagerCImgList.hxx>
 #include <charon-utils/FrameSelectCImg.hxx>
+#include <charon-utils/DataManagerCImgList.hxx>
 
 /// Creates an instance of the plugin
 extern "C" frameselectcimg_DECLDIR ParameteredObject* create(
