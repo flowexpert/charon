@@ -94,6 +94,12 @@ public:
 	/// pattern parameter end (i < end)
 	Parameter<unsigned int> end;
 
+	/// use only the red channel of png files
+	/** Due to an CImg error, png files are always read as 3-channel RGB image,
+	 *  even if they are grayscale.
+	 *  Since all channels of gray images are filled with the same value,
+	 *  arbitrarily selecting the red channel yields the wanted grayscale image.
+	 */
 	Parameter<bool> cropPngChannels ;
 
 	/// image data as output slot
