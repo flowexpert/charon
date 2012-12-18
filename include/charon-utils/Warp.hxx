@@ -65,6 +65,7 @@ Warp<T>::Warp(const std::string& name) :
 			"Warped Images", "CImgList<T>");
 
 	ParameteredObject::_addParameter(weight, "weight", "Flow weight", 1.f);
+	ParameteredObject::_addParameter(warpToNan, "warpToNan", "warps to NaN, if motion exceeds boundaries", false);
 }
 
 template<typename T>
@@ -110,9 +111,10 @@ void Warp<T>::execute() {
 				if(is3D) {
 					zn += l*flow[2].atXYZC(x,y,z,tf);
 				}
-				if ((xn>=0.0) && (xn<=(double)dx-1.0) &&
-				    (yn>=0.0) && (yn<=(double)dy-1.0) &&
-				    (zn>=0.0) && (zn<=(double)dz-1.0)) {
+				if (!warpToNan ||
+				    ((xn>=0.0) && (xn<=(double)dx-1.0) &&
+				     (yn>=0.0) && (yn<=(double)dy-1.0) &&
+				     (zn>=0.0) && (zn<=(double)dz-1.0))) {
 					res = interp.interpolate(seq[i], xn, yn, zn, t);
 				} else {
 					res = NAN;

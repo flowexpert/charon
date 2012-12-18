@@ -82,6 +82,8 @@ public:
 	OutputSlot < cimg_library::CImgList<T> > out;
 	/// Flow weight
 	Parameter< float > weight;
+	/// warp to NaN
+	Parameter< bool > warpToNan;
 
 	/// create a new Warp object
 	/// \param name          Instance name
