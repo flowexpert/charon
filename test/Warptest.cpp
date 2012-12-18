@@ -82,8 +82,14 @@ void test() {
 	cimg_library::CImg<double> tmp = res[0];
 	tmp.shift(1, -2);
 	tmp -= seq[0];
+	//(orig,store,tmp).display();
 	tmp.crop(5, 5, dx-6, dy-6);
-	assert(tmp.abs().sum() <= std::numeric_limits<double>::min());
+	double diffsum = tmp.abs().sum();
+	if (diffsum > std::numeric_limits<double>::min()) {
+		std::cerr << __FILE__ << ":" << __LINE__ << ":\n\t"
+		<< "Simple Warping failed: diff=" << diffsum << std::endl;
+		exit(EXIT_FAILURE);
+	}
 	tmp.clear();
 
 	// check influence of weight

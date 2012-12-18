@@ -27,6 +27,7 @@
 #define _WARP_HXX_
 
 #include "Warp.h"
+#include <limits>
 
 template<typename T>
 Warp<T>::Warp(const std::string& name) :
@@ -70,14 +71,17 @@ Warp<T>::Warp(const std::string& name) :
 
 template<typename T>
 void Warp<T>::execute() {
+	// check sizes
 	const cimg_library::CImgList<T>& seq = seqInput();
 	const cimg_library::CImgList<T>& flow = flowInput();
+	cimg_library::CImgList<T>& warped = out();
 	Interpolator<T>& interp = *interpolator();
 
-	unsigned int dn = seq.size();
+	//unsigned int dn = seq.size();
 	unsigned int dx = seq[0].width();
 	unsigned int dy = seq[0].height();
 	unsigned int dz = seq[0].depth();
+	unsigned int dt = seq[0].spectrum();
 
 	const bool is3D = (dz > 1);
 	const double l = weight();
@@ -89,37 +93,45 @@ void Warp<T>::execute() {
 				"or at least 3 images (uvw for 3D sequences).");
 	}
 
-	out().assign( seq );
+	warped.assign(seq);
 
-	int ignore = dn;
-	sout << "\tignoring first " << ignore << " image(s) of sequence "
-	     << "(leaving them untouched)" << std::endl;
+	int ignore = dt - flow[0].spectrum();
+	if (ignore < 0) {
+		sout << "\tgiven flow has more time steps than sequence. "
+			<< "Ignoring last ones." << std::endl;
+		ignore = 0;
+	}
+	if (ignore > 0) {
+		sout << "\tignoring first " << ignore << " image(s) of sequence "
+			<< "(leaving them untouched)" << std::endl;
+	}
 
-	T xn, yn, zn ;
+	// continuous coordinates for interpolation (interpolator uses float)
+	float xn, yn, zn ;
 	T res ;
 	int tf;
-	cimglist_for(out(), i) { // for each color channel
-		cimg_forC(out()[i], t) { // for each image in sequence
+	cimglist_for(warped, i) { // for each color channel
+		cimg_forC(warped[i], t) { // for each image in sequence
 			tf = t - ignore;
 			if(tf < 0)
 				continue;
 
-			cimg_forXYZ(out()[i],x,y,z) { // for each position within volume
-				xn = (T)x+l*flow[0].atXYZC(x,y,z,tf);
-				yn = (T)y+l*flow[1].atXYZC(x,y,z,tf);
-				zn = (T)z;
+			cimg_forXYZ(warped[i],x,y,z) { // for each position within volume
+				xn = (float)x+l*flow[0].atXYZC(x,y,z,tf);
+				yn = (float)y+l*flow[1].atXYZC(x,y,z,tf);
+				zn = (float)z;
 				if(is3D) {
 					zn += l*flow[2].atXYZC(x,y,z,tf);
 				}
 				if (!warpToNan ||
-				    ((xn>=0.0) && (xn<=(double)dx-1.0) &&
-				     (yn>=0.0) && (yn<=(double)dy-1.0) &&
-				     (zn>=0.0) && (zn<=(double)dz-1.0))) {
+					((xn>=0.f) && (xn<=(float)dx-1.f) &&
+						(yn>=0.f) && (yn<=(float)dy-1.f) &&
+						(zn>=0.f) && (zn<=(float)dz-1.f))) {
 					res = interp.interpolate(seq[i], xn, yn, zn, t);
 				} else {
-					res = NAN;
+					res = std::numeric_limits<T>::quiet_NaN();
 				}
-				out().atNXYZC(i,x,y,z,t) = res;
+				warped.atNXYZC(i,x,y,z,t) = res;
 			}
 		}
 	}
