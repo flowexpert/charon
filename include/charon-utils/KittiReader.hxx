@@ -118,13 +118,15 @@ void KittiReader<T>::execute() {
 		seq().push_back(ciFirst.get_append(ciSecond, 'c'));
 	}
 	catch (const cimg_library::CImgException& e) {
-		sout << "(WW) failed to load sequence:\n(WW) \t" << e.what();
+		sout << "(WW) failed to load sequence:\n(WW) \t" << e.what()
+			<< std::endl;
 		seq().clear();
 	}
 
 	if (kind() == "flow") {
 		try {
 			FlowImage kitF(imGT1);
+			sout << "(DD) \tloaded flow 1: " << imGT1 << std::endl;
 			flow1().assign(2,kitF.width(),kitF.height(),1,1);
 			valid1().assign(1,kitF.width(),kitF.height(),1,1);
 			cil::CImg<T>&u=flow1()[0], &v=flow1()[1], & o=valid1()[0];
@@ -140,11 +142,12 @@ void KittiReader<T>::execute() {
 			}
 		}
 		catch(...) {
-			sout << "(WW) failed to load flow 1" << std::endl;
+			sout << "(WW) failed to load flow 1: " << imGT1 << std::endl;
 			flow1().clear();
 		}
 		try {
 			FlowImage kitF(imGT2);
+			sout << "(DD) \tloaded flow 2: " << imGT2 << std::endl;
 			flow2().assign(2,kitF.width(),kitF.height(),1,1);
 			valid2().assign(1,kitF.width(),kitF.height(),1,1);
 			cil::CImg<T>&u=flow2()[0], &v=flow2()[1], & o=valid2()[0];
@@ -160,7 +163,7 @@ void KittiReader<T>::execute() {
 			}
 		}
 		catch(...) {
-			sout << "(WW) failed to load flow 2" << std::endl;
+			sout << "(WW) failed to load flow 2: " << imGT2 << std::endl;
 			flow2().clear();
 		}
 	}
