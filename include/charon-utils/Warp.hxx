@@ -124,29 +124,12 @@ void Warp<T>::execute() {
 					zn += l*flow[2].atXYZC(x,y,z,tf);
 				}
 				if (!warpToNan) {
+					warped.atNXYZC(i,x,y,z,t) = interp.interpolate(seq[i], xn, yn, zn, t);
+					continue;
+				}
+
+				if ((xn>=0) && (xn<=dx-1) && (yn>=0) && (yn<=dy-1)) {
 					res = interp.interpolate(seq[i], xn, yn, zn, t);
-
-				} else if ((xn>=-2.f)         && (xn<0.f)             &&  (yn>=-2.f) && (yn<0.f)) {
-					res = interp.interpolate(seq[i], -xn-1.f,     -yn-1.f, zn, t);
-				} else if ((xn>=0.f)          && (xn<=(float)dx-1.f)  &&  (yn>=-2.f) && (yn<0.f)) {
-					res = interp.interpolate(seq[i], xn,          -yn-1.f, zn, t);
-				} else if ((xn>(float)dx-1.f) && (xn<=(float)dx+1.f)  &&  (yn>=-2.f) && (yn<0.f)) {
-					res = interp.interpolate(seq[i], 2*dx-xn-1.f, -yn-1.f, zn, t);
-
-				} else if ((xn>=-2.f)         && (xn<0.f)             &&  (yn>=0.f)  && (yn<=(float)dy-1.f)) {
-					res = interp.interpolate(seq[i], -xn-1.f,      yn, zn, t);
-				} else if ((xn>=0.f)          && (xn<=(float)dx-1.f)  &&  (yn>=0.f)  && (yn<=(float)dy-1.f)) {
-					res = interp.interpolate(seq[i], xn,           yn, zn, t);
-				} else if ((xn>(float)dx-1.f) && (xn<=(float)dx+1.f)  &&  (yn>=0.f)  && (yn<=(float)dy-1.f)) {
-					res = interp.interpolate(seq[i], 2*dx-xn-1.f,  yn, zn, t);
-
-				} else if ((xn>=-2.f)         && (xn<0.f)             &&  (yn>(float)dy-1.f)  && (yn<=(float)dy+1.f)) {
-					res = interp.interpolate(seq[i], -xn-1.f,      2*dy-yn-1.f, zn, t);
-				} else if ((xn>=0.f)          && (xn<=(float)dx-1.f)  &&  (yn>(float)dy-1.f)  && (yn<=(float)dy+1.f)) {
-					res = interp.interpolate(seq[i], xn,           2*dy-yn-1.f, zn, t);
-				} else if ((xn>(float)dx-1.f) && (xn<=(float)dx+1.f)  &&  (yn>(float)dy-1.f)  && (yn<=(float)dy+1.f)) {
-					res = interp.interpolate(seq[i], 2*dx-xn-1.f,  2*dy-yn-1.f, zn, t);
-
 				} else {
 					res = std::numeric_limits<T>::quiet_NaN();
 				}
