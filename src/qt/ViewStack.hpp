@@ -141,7 +141,7 @@ namespace ArgosDisplay {
 
 		void _alignAndZoom() ;
 
-		void _currentChanged(int index) ;
+		void _emitDimensionMessage() ;
 
 	signals:
 		/// export status messages as signal

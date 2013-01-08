@@ -31,11 +31,18 @@ using namespace ArgosDisplay ;
 MainWindow::MainWindow(const std::string& title) : _viewStack(0),
 	_updatePending(false)
 {
+	setContentsMargins(4,4,4,4) ;
+
 	_viewStack = new ViewStack(this);
+
+	QDesktopWidget* desktop = QApplication::desktop() ;
+	QRect rect = desktop->availableGeometry(desktop->primaryScreen()) ;
+	_viewStack->setMaximumSize(rect.size()- QSize(30,50)) ;
+
 	this->setCentralWidget(_viewStack);
 	this->setWindowTitle("ArgosDisplay : " + QString::fromStdString(title));
 	QLabel* dimBar = new QLabel(this) ;
-	dimBar->setText("0 x 0 x 0 x 0 x 0") ;
+	dimBar->setText("0 x 0 x 0 x 0 x 0 | 100%") ;
 	this->statusBar()->addPermanentWidget(dimBar, 0 ) ;
 	QObject::connect(
 			_viewStack, SIGNAL(exportStatusMessage(QString)),
