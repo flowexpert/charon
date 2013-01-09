@@ -31,6 +31,8 @@
 #include "Warper.h"
 #include <ParameteredObject.hxx>
 
+#define ONLY_CHECK_BOUNDS -1
+
 template <typename T>
 Warper<T>::Warper(const std::string& name) :
 	TemplatedParameteredObject<T>("Warper",name,
@@ -75,19 +77,25 @@ T Warper<T>::getX( T c, T x, T, T xMotion, T yMotion )
 	if (mirror())
 	{
 		if (x < 0) {
+			if (c == ONLY_CHECK_BOUNDS) return 0;
 			return -x -1 ;
 		} else if (x >= _dimX) {
+			if (c == ONLY_CHECK_BOUNDS) return 0;
 			return 2*_dimX -x -1 ;
 		}
+		if (c == ONLY_CHECK_BOUNDS) return 1;
 		return x;
 	}
 
 	// radial extrapolation, if new x is out of bounds
 	if (x < 0) {
+		if (c == ONLY_CHECK_BOUNDS) return 0;
 		return 0;
 	} else if (x >= _dimX) {
+		if (c == ONLY_CHECK_BOUNDS) return 0;
 		return _dimX-1;
 	}
+	if (c == ONLY_CHECK_BOUNDS) return 1;
 	return x;
 }
 
@@ -103,19 +111,25 @@ T Warper<T>::getY( T c, T, T y, T xMotion, T yMotion )
 	if (mirror())
 	{
 		if (y < 0) {
+			if (c == ONLY_CHECK_BOUNDS) return 0;
 			return -y -1 ;
 		} else if (y >= _dimY) {
+			if (c == ONLY_CHECK_BOUNDS) return 0;
 			return 2*_dimY -y -1 ;
 		}
+		if (c == ONLY_CHECK_BOUNDS) return 1;
 		return y;
 	}
 
 	// boundary handling (radial)
 	if (y < 0) {
+		if (c == ONLY_CHECK_BOUNDS) return 0;
 		return 0;
 	} else if (y >= _dimY) {
+		if (c == ONLY_CHECK_BOUNDS) return 0;
 		return _dimY-1;
 	}
+	if (c == ONLY_CHECK_BOUNDS) return 1;
 	return y;
 }
 

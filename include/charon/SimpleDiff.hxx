@@ -27,8 +27,9 @@
 #define _SIMPLEDIFF_HXX_
 
 #include "SimpleDiff.h"
-
 #include <charon/Warper.hxx>
+
+#define ONLY_CHECK_BOUNDS -1
 
 template <typename T>
 SimpleDiff<T>::SimpleDiff(const std::string& name) :
@@ -64,10 +65,14 @@ void SimpleDiff<T>::execute() {
 		dx().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(c,x-2,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
-			                          - 8*img().atNXYZC(0, _warper->getX(c,x-1,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
-			                          + 8*img().atNXYZC(0, _warper->getX(c,x+1,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
-			                          -   img().atNXYZC(0, _warper->getX(c,x+2,y,x,y), _warper->getY(c,x,y,x,y), 0,c) ) / T(12.0);
+			if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
+				dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(c,x-2,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
+				                          - 8*img().atNXYZC(0, _warper->getX(c,x-1,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
+				                          + 8*img().atNXYZC(0, _warper->getX(c,x+1,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
+				                          -   img().atNXYZC(0, _warper->getX(c,x+2,y,x,y), _warper->getY(c,x,y,x,y), 0,c) ) / T(12.0);
+			} else {
+				dx().atNXYZC(0,x,y,0,c) = T(0);
+			}
 		}
 		cimg_forXY( img()[0], x, y )
 		{
@@ -81,10 +86,14 @@ void SimpleDiff<T>::execute() {
 		dy().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-2,x,y), 0,c)
-			                          - 8*img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-1,x,y), 0,c)
-			                          + 8*img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+1,x,y), 0,c)
-			                          -   img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+2,x,y), 0,c) ) / T(12.0);
+			if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
+				dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-2,x,y), 0,c)
+				                          - 8*img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-1,x,y), 0,c)
+				                          + 8*img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+1,x,y), 0,c)
+			        	                  -   img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+2,x,y), 0,c) ) / T(12.0);
+			} else {
+				dy().atNXYZC(0,x,y,0,c) = T(0);
+			}
 		}
 		cimg_forXY( img()[0], x, y )
 		{
@@ -98,8 +107,12 @@ void SimpleDiff<T>::execute() {
 		dt().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0, _warper->getX(1,x,y,x,y), _warper->getY(1,x,y,x,y), 0,1)
-			                        - img().atNXYZC(0, _warper->getX(0,x,y,x,y), _warper->getY(0,x,y,x,y), 0,0);
+			if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
+				dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0, _warper->getX(1,x,y,x,y), _warper->getY(1,x,y,x,y), 0,1)
+			        	                - img().atNXYZC(0, _warper->getX(0,x,y,x,y), _warper->getY(0,x,y,x,y), 0,0);
+			} else {
+				dt().atNXYZC(0,x,y,0,c) = T(0);
+			}
 		}
 	}
 }
