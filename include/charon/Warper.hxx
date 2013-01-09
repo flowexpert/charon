@@ -52,66 +52,47 @@ void Warper<T>::execute()
 
 	_motion = motion();
 
-	_dimN = _motion.size();
 	_dimX = _motion[0].width();
 	_dimY = _motion[0].height();
-	_dimZ = _motion[0].depth();
-	_dimC = _motion[0].spectrum();
 }
 
 template <typename T>
-unsigned int Warper<T>::getN( int N )
+T Warper<T>::getX( T c, T x, T, T xMotion, T yMotion )
 {
-	if (N < 0) {
-		return 0;
-	} else if (N >= _dimN) {
-		return _dimN-1;
+	// warp x position with horizontal motion
+	// obtained at xMotion,yMotion
+	// (which always should be the center of mask
+	//  and thus in bounds within the calling function)
+	//
+	// do not warp the first image (c==0)
+	if (c) {
+		x += _motion[0].atXYZC(xMotion,yMotion,0,0);
 	}
-	return N;
-}
 
-template <typename T>
-unsigned int Warper<T>::getX( int X )
-{
-	if (X < 0) {
+	// radial extrapolation, if new x is out of bounds
+	if (x < 0) {
 		return 0;
-	} else if (X >= _dimX) {
+	} else if (x >= _dimX) {
 		return _dimX-1;
 	}
-	return X;
+	return x;
 }
 
 template <typename T>
-unsigned int Warper<T>::getY( int Y )
+T Warper<T>::getY( T c, T, T y, T xMotion, T yMotion )
 {
-	if (Y < 0) {
+	// add vertical motion
+	if (c) {
+		y += _motion[1].atXYZC(xMotion,yMotion,0,0);
+	}
+
+	// boundary handling
+	if (y < 0) {
 		return 0;
-	} else if (Y >= _dimY) {
+	} else if (y >= _dimY) {
 		return _dimY-1;
 	}
-	return Y;
-}
-
-template <typename T>
-unsigned int Warper<T>::getZ( int Z )
-{
-	if (Z < 0) {
-		return 0;
-	} else if (Z >= _dimZ) {
-		return _dimZ-1;
-	}
-	return Z;
-}
-
-template <typename T>
-unsigned int Warper<T>::getC( int C )
-{
-	if (C < 0) {
-		return 0;
-	} else if (C >= _dimC) {
-		return _dimC-1;
-	}
-	return C;
+	return y;
 }
 
 #endif

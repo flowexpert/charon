@@ -65,11 +65,8 @@ public:
 
 	/// functions yielding effective N, X, Y, Z, and C values
 	//\{
-	unsigned int getN( int N );
-	unsigned int getX( int X );
-	unsigned int getY( int Y );
-	unsigned int getZ( int Z );
-	unsigned int getC( int C );
+	T getX( T c, T x, T y, T xMotion, T yMotion );
+	T getY( T c, T x, T y, T xMotion, T yMotion );
 	//\}
 
 protected:
@@ -78,11 +75,8 @@ protected:
 
 	/// cache members
 	//\{
-	int _dimN;
 	int _dimX;
 	int _dimY;
-	int _dimZ;
-	int _dimC;
 
 	cimg_library::CImgList<T> _motion;
 	//\}

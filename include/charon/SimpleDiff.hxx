@@ -64,10 +64,10 @@ void SimpleDiff<T>::execute() {
 		dx().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(x-2), _warper->getY(y), 0,c)
-			                          - 8*img().atNXYZC(0, _warper->getX(x-1), _warper->getY(y), 0,c)
-			                          + 8*img().atNXYZC(0, _warper->getX(x+1), _warper->getY(y), 0,c)
-			                          -   img().atNXYZC(0, _warper->getX(x+2), _warper->getY(y), 0,c) ) / T(12.0);
+			dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(c,x-2,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
+			                          - 8*img().atNXYZC(0, _warper->getX(c,x-1,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
+			                          + 8*img().atNXYZC(0, _warper->getX(c,x+1,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
+			                          -   img().atNXYZC(0, _warper->getX(c,x+2,y,x,y), _warper->getY(c,x,y,x,y), 0,c) ) / T(12.0);
 		}
 		cimg_forXY( img()[0], x, y )
 		{
@@ -81,10 +81,10 @@ void SimpleDiff<T>::execute() {
 		dy().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(x), _warper->getY(y-2), 0,c)
-			                          - 8*img().atNXYZC(0, _warper->getX(x), _warper->getY(y-1), 0,c)
-			                          + 8*img().atNXYZC(0, _warper->getX(x), _warper->getY(y+1), 0,c)
-			                          -   img().atNXYZC(0, _warper->getX(x), _warper->getY(y+2), 0,c) ) / T(12.0);
+			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-2,x,y), 0,c)
+			                          - 8*img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-1,x,y), 0,c)
+			                          + 8*img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+1,x,y), 0,c)
+			                          -   img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+2,x,y), 0,c) ) / T(12.0);
 		}
 		cimg_forXY( img()[0], x, y )
 		{
@@ -98,8 +98,8 @@ void SimpleDiff<T>::execute() {
 		dt().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0, _warper->getX(x), _warper->getY(y), 0,1)
-			                        - img().atNXYZC(0, _warper->getX(x), _warper->getY(y), 0,0);
+			dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y,x,y), 0,1)
+			                        - img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y,x,y), 0,0);
 		}
 	}
 }
