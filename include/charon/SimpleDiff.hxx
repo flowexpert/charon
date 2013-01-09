@@ -98,8 +98,8 @@ void SimpleDiff<T>::execute() {
 		dt().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y,x,y), 0,1)
-			                        - img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y,x,y), 0,0);
+			dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0, _warper->getX(1,x,y,x,y), _warper->getY(1,x,y,x,y), 0,1)
+			                        - img().atNXYZC(0, _warper->getX(0,x,y,x,y), _warper->getY(0,x,y,x,y), 0,0);
 		}
 	}
 }
