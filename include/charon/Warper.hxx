@@ -75,7 +75,7 @@ T Warper<T>::getX( T c, T x, T, T xMotion, T yMotion )
 
 	// asymmetric behavior needed to emulate DS_s implementation  // (!!)
 	if (c == ONLY_CHECK_BOUNDS) {                                 // (!!)
-		if (x == _dimX-1) return 0;                           // (!!)
+		if (x >= _dimX-1) return 0;                           // (!!)
 	}                                                             // (!!)
 
 	// mirroring at image boundaries, if new x is out of bounds
@@ -114,7 +114,7 @@ T Warper<T>::getY( T c, T, T y, T xMotion, T yMotion )
 
 	// asymmetric behavior needed to emulate DS_s implementation  // (!!)
 	if (c == ONLY_CHECK_BOUNDS) {                                 // (!!)
-		if (y == _dimY-1) return 0;                           // (!!)
+		if (y >= _dimY-1) return 0;                           // (!!)
 	}                                                             // (!!)
 
 	// boundary handling (mirror)
