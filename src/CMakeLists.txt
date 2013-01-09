@@ -402,6 +402,16 @@ LIST(APPEND Plugins
 	cdfitter
 )
 
+# Warpers
+ADD_LIBRARY(warper SHARED
+	Warper.cpp
+	${charon_INCLUDE_DIR}/Warper.h
+	${charon_INCLUDE_DIR}/Warper.hxx
+)
+LIST(APPEND Plugins
+	warper
+)
+
 # Misc plugins
 ADD_LIBRARY(gnc SHARED
 	Gnc.cpp
