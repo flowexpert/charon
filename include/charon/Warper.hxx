@@ -75,9 +75,9 @@ T Warper<T>::getX( T c, T x, T, T xMotion, T yMotion )
 	if (mirror())
 	{
 		if (x < 0) {
-			return -x ;
+			return -x -1 ;
 		} else if (x >= _dimX) {
-			return 2*_dimX -x -2 ;
+			return 2*_dimX -x -1 ;
 		}
 		return x;
 	}
@@ -103,9 +103,9 @@ T Warper<T>::getY( T c, T, T y, T xMotion, T yMotion )
 	if (mirror())
 	{
 		if (y < 0) {
-			return -y ;
+			return -y -1 ;
 		} else if (y >= _dimY) {
-			return 2*_dimY -y -2 ;
+			return 2*_dimY -y -1 ;
 		}
 		return y;
 	}
