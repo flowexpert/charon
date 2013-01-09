@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 University of Heidelberg (IWR/HCI)
+/*  Copyright (C) 2012, 2013
+                  University of Heidelberg (IWR/HCI)
 
     This file is part of Charon.
 
@@ -15,10 +16,11 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 /** \file SimpleDiff.h
  *  Declaration of the parameter class SimpleDiff.
  *  \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">Michael Baron</a>
- *  \date 09.10.2012
+ *  \date 09.10.2012 - 09.01.2013
  */
 
 #ifndef _SIMPLEDIFF_H_
@@ -39,6 +41,8 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
 
+#include <charon/Warper.h>
+
 /// Calculate 2D derivatives.
 /** This plugin calculates two dimensional derivatives.
  *
@@ -52,15 +56,15 @@ class simplediff_DECLDIR SimpleDiff :
 public:
 	/// image input 
 	InputSlot < cimg_library::CImgList<T> > img;
+	/// warper input
+	InputSlot < Warper<T>* > warper;
+
 	/// derivative wrt x 
 	OutputSlot < cimg_library::CImgList<T> > dx;
 	/// derivative wrt y 
 	OutputSlot < cimg_library::CImgList<T> > dy;
 	/// derivative wrt t 
 	OutputSlot < cimg_library::CImgList<T> > dt;
-
-	/// asymmetrisk filter behöver, if needed ;-)
-	Parameter < bool > bicubic;
 
 	/// create a new SimpleDiff object
 	/// \param name          Instance name

@@ -78,11 +78,11 @@ protected:
 
 	/// cache members
 	//\{
-	unsigned int _dimN;
-	unsigned int _dimX;
-	unsigned int _dimY;
-	unsigned int _dimZ;
-	unsigned int _dimC;
+	int _dimN;
+	int _dimX;
+	int _dimY;
+	int _dimZ;
+	int _dimC;
 
 	cimg_library::CImgList<T> _motion;
 	//\}

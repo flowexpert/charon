@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 University of Heidelberg (IWR/HCI)
+/*  Copyright (C) 2012, 2013
+                  University of Heidelberg (IWR/HCI)
 
     This file is part of Charon.
 
@@ -15,16 +16,19 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 /** \file SimpleDiff.hxx
  *  Implementation of the parameter class SimpleDiff.
  *  \author Michael Baron
- *  \date 09.10.2012
+ *  \date 09.10.2012 - 09.01.2013
  */
 
 #ifndef _SIMPLEDIFF_HXX_
 #define _SIMPLEDIFF_HXX_
 
 #include "SimpleDiff.h"
+
+#include <charon/Warper.hxx>
 
 template <typename T>
 SimpleDiff<T>::SimpleDiff(const std::string& name) :
@@ -35,14 +39,17 @@ SimpleDiff<T>::SimpleDiff(const std::string& name) :
 	ParameteredObject::_addInputSlot(
 			img, "img",
 			"image input", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+			warper, "warper",
+			"warper input", "Warper<T>*");
+
 	ParameteredObject::_addOutputSlot(
 			dx, "dx", "derivative wrt x", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 			dy, "dy", "derivative wrt y", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 			dt, "dt", "derivative wrt t", "CImgList<T>");
-	ParameteredObject::_addParameter(
-			bicubic, "bicubic", "asymmetric filter behavior, if bicubic is set.", false);
+
 	ParameteredObject::_setTags("charon-flow;Differentiators;CImg");
 }
 
@@ -50,35 +57,17 @@ template <typename T>
 void SimpleDiff<T>::execute() {
 	sout << "\tcalculating derivatives:" << std::endl;
 
-	int _width = img()[0].width();
-	int _height = img()[0].height();
+	Warper<T> *_warper = warper();
 
 	if(dx.connected()) {
 		sout << "\t\twrt. dx" << std::endl;
 		dx().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dx().atNXYZC(0,x,y,0,c) = T(0);
-
-                        if (x == 0)
-			dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x+1,y,0,c)
-                                                  - 8*img().atNXYZC(0,x,  y,0,c)
-                                                  + 8*img().atNXYZC(0,x+1,y,0,c)
-                                                  -   img().atNXYZC(0,x+2,y,0,c) ) / T(12.0);
-			if ((x > 0) && (x < _width-1))
-			dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x-2,y,0,c)
-			                          - 8*img().atNXYZC(0,x-1,y,0,c)
-			                          + 8*img().atNXYZC(0,x+1,y,0,c)
-			                          -   img().atNXYZC(0,x+2,y,0,c) ) / T(12.0);
-			if (x == _width-1)
-			dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x-2,y,0,c)
-			                          - 8*img().atNXYZC(0,x-1,y,0,c)
-			                          + 8*img().atNXYZC(0,x,  y,0,c)
-			                          -   img().atNXYZC(0,x-1,y,0,c) ) / T(12.0);
-
-			// asymmetrisk filter behöver, if needed ;-)
-			if (bicubic && ((x == _width-1) || (y == _height-1)))
-				dx().atNXYZC(0,x,y,0,c) = T(0.0);
+			dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(x-2), _warper->getY(y), 0,c)
+			                          - 8*img().atNXYZC(0, _warper->getX(x-1), _warper->getY(y), 0,c)
+			                          + 8*img().atNXYZC(0, _warper->getX(x+1), _warper->getY(y), 0,c)
+			                          -   img().atNXYZC(0, _warper->getX(x+2), _warper->getY(y), 0,c) ) / T(12.0);
 		}
 		cimg_forXY( img()[0], x, y )
 		{
@@ -92,27 +81,10 @@ void SimpleDiff<T>::execute() {
 		dy().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dy().atNXYZC(0,x,y,0,c) = T(0);
-
-			if (y == 0)
-			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x,y+1,0,c)
-                                                  - 8*img().atNXYZC(0,x,y,  0,c)
-                                                  + 8*img().atNXYZC(0,x,y+1,0,c)
-                                                  -   img().atNXYZC(0,x,y+2,0,c) ) / T(12.0);
-			if ((y > 0) && (y < _height-1))
-			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x,y-2,0,c)
-			                          - 8*img().atNXYZC(0,x,y-1,0,c)
-			                          + 8*img().atNXYZC(0,x,y+1,0,c)
-			                          -   img().atNXYZC(0,x,y+2,0,c) ) / T(12.0);
-			if (y == _height-1)
-			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0,x,y-2,0,c)
-			                          - 8*img().atNXYZC(0,x,y-1,0,c)
-			                          + 8*img().atNXYZC(0,x,y,  0,c)
-			                          -   img().atNXYZC(0,x,y-1,0,c) ) / T(12.0);
-
-			// asymmetrisk filter behöver, if needed ;-)
-			if (bicubic && ((x == _width-1) || (y == _height-1)))
-				dy().atNXYZC(0,x,y,0,c) = T(0.0);
+			dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(x), _warper->getY(y-2), 0,c)
+			                          - 8*img().atNXYZC(0, _warper->getX(x), _warper->getY(y-1), 0,c)
+			                          + 8*img().atNXYZC(0, _warper->getX(x), _warper->getY(y+1), 0,c)
+			                          -   img().atNXYZC(0, _warper->getX(x), _warper->getY(y+2), 0,c) ) / T(12.0);
 		}
 		cimg_forXY( img()[0], x, y )
 		{
@@ -126,11 +98,8 @@ void SimpleDiff<T>::execute() {
 		dt().assign(img());
 		cimg_forXYZC( img()[0], x, y, z, c )
 		{
-			dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0,x,y,0,1) - img().atNXYZC(0,x,y,0,0);
-
-			// asymmetrisk filter behöver, if needed ;-)
-			if (bicubic && ((x == _width-1) || (y == _height-1)))
-				dt().atNXYZC(0,x,y,0,c) = T(0.0);
+			dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0, _warper->getX(x), _warper->getY(y), 0,1)
+			                        - img().atNXYZC(0, _warper->getX(x), _warper->getY(y), 0,0);
 		}
 	}
 }
