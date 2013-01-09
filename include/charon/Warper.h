@@ -60,6 +60,9 @@ public:
 	/// Output slot containing the this-pointer of the object
 	OutputSlot<Warper<T>*> out;
 
+	/// mirroring boundary behavior, if set
+	Parameter< bool > mirror;
+
 	/// default constructor
 	Warper(const std::string& name = "");
 

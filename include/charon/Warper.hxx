@@ -43,6 +43,8 @@ Warper<T>::Warper(const std::string& name) :
 {
 	this->_addInputSlot(motion,"motion","motion used to warp", "CImgList<T>");
 	this->_addOutputSlot(out,"this","Pointer to itself", "Warper<T>*");
+
+	this->_addParameter(mirror, "mirror", "mirroring boundary behavior, if set", false);
 }
 
 template <typename T>
@@ -69,6 +71,17 @@ T Warper<T>::getX( T c, T x, T, T xMotion, T yMotion )
 		x += _motion[0].atXYZC(xMotion,yMotion,0,0);
 	}
 
+	// mirroring at image boundaries, if new x is out of bounds
+	if (mirror())
+	{
+		if (x < 0) {
+			return -x ;
+		} else if (x >= _dimX) {
+			return 2*_dimX -x -2 ;
+		}
+		return x;
+	}
+
 	// radial extrapolation, if new x is out of bounds
 	if (x < 0) {
 		return 0;
@@ -86,7 +99,18 @@ T Warper<T>::getY( T c, T, T y, T xMotion, T yMotion )
 		y += _motion[1].atXYZC(xMotion,yMotion,0,0);
 	}
 
-	// boundary handling
+	// boundary handling (mirror)
+	if (mirror())
+	{
+		if (y < 0) {
+			return -y ;
+		} else if (y >= _dimY) {
+			return 2*_dimY -y -2 ;
+		}
+		return y;
+	}
+
+	// boundary handling (radial)
 	if (y < 0) {
 		return 0;
 	} else if (y >= _dimY) {
