@@ -438,6 +438,7 @@ ADD_LIBRARY(simplediff SHARED
 	${charon_INCLUDE_DIR}/SimpleDiff.h
 	${charon_INCLUDE_DIR}/SimpleDiff.hxx
 )
+TARGET_LINK_LIBRARIES(simplediff debug warper)
 ADD_LIBRARY(lucas_kanade_smoothing SHARED
 	LucasKanadeSmoothing.cpp
 	${charon_INCLUDE_DIR}/LucasKanadeSmoothing.h

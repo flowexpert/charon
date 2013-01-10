@@ -29,7 +29,7 @@
 #define _WARPER_HXX_
 
 #include "Warper.h"
-#include <ParameteredObject.hxx>
+#include <charon-core/ParameteredObject.hxx>
 
 #define ONLY_CHECK_BOUNDS -1
 
@@ -52,7 +52,7 @@ Warper<T>::Warper(const std::string& name) :
 template <typename T>
 void Warper<T>::execute()
 {
-        out = this;
+	out() = this;
 
 	_motion = motion();
 
