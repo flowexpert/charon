@@ -325,6 +325,12 @@ void ObjectInspector::on_resetFilterButton_clicked() {
 	}
 }
 
+void ObjectInspector::on_resetParamButton_clicked() {
+	if (_model && _model->onlyParams()) {
+		on_deleteButton_clicked();
+	}
+}
+
 void ObjectInspector::on_comment_textChanged() {
 	if (_model && isEnabled() && _commentFieldMutex->tryLock()) {
 		QString comment = _ui->comment->toPlainText();

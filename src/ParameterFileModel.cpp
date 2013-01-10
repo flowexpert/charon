@@ -796,7 +796,7 @@ bool ParameterFileModel::isSet(QString parName) const {
 }
 
 void ParameterFileModel::setValue(QString parName, QString value) {
-	if (getValue(parName) == value) {
+	if (isSet(parName) && getValue(parName) == value) {
 		return;
 	}
 

@@ -39,6 +39,7 @@ ParamInspectorWindow::ParamInspectorWindow(QWidget *pp, Qt::WindowFlags ff) :
 	_inspector = new ObjectInspector(this);
 	ParameterFileModel* model = new ParameterFileModel(
 			QString(),_inspector, FileManager::instance().classesFile());
+	model->setOnlyParams(false);
 	_inspector->setModel(model);
 	_inspector->setEdit(true);
 

@@ -129,6 +129,9 @@ private slots:
 	/// reset filter
 	void on_resetFilterButton_clicked();
 
+	/// reset parameter
+	void on_resetParamButton_clicked();
+
 	/// handle comment changes
 	void on_comment_textChanged();
 

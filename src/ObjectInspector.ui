@@ -333,7 +333,24 @@ This deletes the parameter(s) from the parameter file.</string>
  <resources>
   <include location="../resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>resetPrefixButton</sender>
+   <signal>clicked()</signal>
+   <receiver>prefix</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>558</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>503</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
  <slots>
   <slot>on_deleteButton_clicked()</slot>
  </slots>
