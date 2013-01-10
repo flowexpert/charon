@@ -40,16 +40,13 @@
 #include "ui_ObjectInspector.h"
 
 ObjectInspector::ObjectInspector(
-			QWidget* myParent, ParameterFileModel* newModel) :
+			QWidget* myParent, ParameterFileModel* newModel, bool hideTools) :
 	QWidget(myParent), _model(0)
 {
 	_ui = new Ui::ObjectInspector;
 	_ui->setupUi(this);
 
 	_commentFieldMutex = new QMutex(QMutex::NonRecursive);
-
-	// init model
-	//_model = new ParameterFileModel("", this);
 
 	// use temporary model to set up view
 	ParameterFileModel tempModel;
@@ -73,6 +70,10 @@ ObjectInspector::ObjectInspector(
 
 	// disable prefix editing and hide buttonFrame
 	setEdit(false);
+
+	if (hideTools) {
+		_ui->tools->hide();
+	}
 }
 
 ObjectInspector::~ObjectInspector() {
@@ -350,13 +351,17 @@ void ObjectInspector::on_prefix_textChanged(QString text) {
 	}
 }
 
-void ObjectInspector::on_useMetadata_clicked(bool state) {
+void ObjectInspector::on_useMetadata_toggled(bool state) {
+	if (!state) {
+		_ui->onlyParams->setChecked(false);
+	}
 	if (_model) {
 		_model->setUseMetaInfo(state);
 	}
+	_ui->onlyParams->setEnabled(state);
 }
 
-void ObjectInspector::on_onlyParams_clicked(bool state) {
+void ObjectInspector::on_onlyParams_toggled(bool state) {
 	if (_model) {
 		_model->setOnlyParams(state);
 	}

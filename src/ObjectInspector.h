@@ -50,10 +50,14 @@ class ObjectInspector : public QWidget {
 
 public:
 	/// Default constructor, setting parent widget.
-	/** @param  parent  parent widget
-	 *  @param  model   model to use in ObjectInspector
+	/** \param  parent     parent widget
+	 *  \param  model      model to use in ObjectInspector
+	 *  \param  hideTools  hide tools widget
 	 */
-	ObjectInspector(QWidget* parent = 0, ParameterFileModel* model = 0);
+	ObjectInspector(
+		QWidget* parent = 0,
+		ParameterFileModel* model = 0,
+		bool hideTools = false);
 
 	/// default destructor
 	virtual ~ObjectInspector();
@@ -132,10 +136,10 @@ private slots:
 	void on_prefix_textChanged(QString text);
 
 	/// handle useMetadata checkbox changes
-	void on_useMetadata_clicked(bool state);
+	void on_useMetadata_toggled(bool state);
 
 	/// handle onlyParams checkbox changes
-	void on_onlyParams_clicked(bool state);
+	void on_onlyParams_toggled(bool state);
 	// \}
 
 	/// \name handle model events
