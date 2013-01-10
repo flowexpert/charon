@@ -73,6 +73,15 @@ public:
 protected:
 	/// Update object.
 	virtual void execute();
+
+	/// cubic interpolation with mirroring at image borders
+	T __cubic_atXY(cimg_library::CImg<T> img, const float fx, const float fy);
+
+	/// image dimensions
+	//\{
+	int _width;
+	int _height;
+	//\}
 };
 
 #endif // _SIMPLEDIFF_H_

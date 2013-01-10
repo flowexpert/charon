@@ -31,6 +31,38 @@
 
 #define ONLY_CHECK_BOUNDS -1
 
+// cubic interpolation with mirroring at image borders
+// derived from _cubic_atXY from CImg.h
+template <typename T>
+T SimpleDiff<T>::__cubic_atXY(cimg_library::CImg<T> img, const float fx, const float fy)
+{
+      const float
+	nfx = fx<0?0:(fx>_width-1?_width-1:fx),
+	nfy = fy<0?0:(fy>_height-1?_height-1:fy);
+      const int x = (int)nfx, y = (int)nfy;
+      const float dx = nfx - x, dy = nfy - y;
+//    const int
+//	px = x-1<0?0:x-1, nx = dx>0?x+1:x, ax = x+2>=_width?_width-1:x+2,
+//	py = y-1<0?0:y-1, ny = dy>0?y+1:y, ay = y+2>=_height?_height-1:y+2;
+      const int
+	px = (x >= 1)          ? x-1 : 0,
+	py = (y >= 1)          ? y-1 : 0,
+	nx = (x <= _width-2)   ? x+1 : _width-1,
+	ny = (y <= _height-2)  ? y+1 : _height-1,
+	ax = (x <= _width-3)   ? x+2 : (x == _width-2)  ? _width-1  : _width-2,
+	ay = (y <= _height-3)  ? y+2 : (y == _height-2) ? _height-1 : _height-2;
+      const T
+	Ipp = (T)img(px,py), Icp = (T)img(x,py), Inp = (T)img(nx,py), Iap = (T)img(ax,py),
+	Ip = Icp + 0.5f*(dx*(-Ipp+Inp) + dx*dx*(2*Ipp-5*Icp+4*Inp-Iap) + dx*dx*dx*(-Ipp+3*Icp-3*Inp+Iap)),
+	Ipc = (T)img(px,y),  Icc = (T)img(x, y), Inc = (T)img(nx,y),  Iac = (T)img(ax,y),
+	Ic = Icc + 0.5f*(dx*(-Ipc+Inc) + dx*dx*(2*Ipc-5*Icc+4*Inc-Iac) + dx*dx*dx*(-Ipc+3*Icc-3*Inc+Iac)),
+	Ipn = (T)img(px,ny), Icn = (T)img(x,ny), Inn = (T)img(nx,ny), Ian = (T)img(ax,ny),
+	In = Icn + 0.5f*(dx*(-Ipn+Inn) + dx*dx*(2*Ipn-5*Icn+4*Inn-Ian) + dx*dx*dx*(-Ipn+3*Icn-3*Inn+Ian)),
+	Ipa = (T)img(px,ay), Ica = (T)img(x,ay), Ina = (T)img(nx,ay), Iaa = (T)img(ax,ay),
+	Ia = Ica + 0.5f*(dx*(-Ipa+Ina) + dx*dx*(2*Ipa-5*Ica+4*Ina-Iaa) + dx*dx*dx*(-Ipa+3*Ica-3*Ina+Iaa));
+      return Ic + 0.5f*(dy*(-Ip+In) + dy*dy*(2*Ip-5*Ic+4*In-Ia) + dy*dy*dy*(-Ip+3*Ic-3*In+Ia));
+}
+
 template <typename T>
 SimpleDiff<T>::SimpleDiff(const std::string& name) :
 		TemplatedParameteredObject<T>("SimpleDiff", name,
@@ -52,6 +84,9 @@ SimpleDiff<T>::SimpleDiff(const std::string& name) :
 			dt, "dt", "derivative wrt t", "CImgList<T>");
 
 	ParameteredObject::_setTags("charon-flow;Differentiators;CImg");
+
+	_width = 0;
+	_height = 0;
 }
 
 template <typename T>
@@ -60,8 +95,8 @@ void SimpleDiff<T>::execute() {
 
 	Warper<T> *_warper = warper();
 
-	int _width = img()[0].width();
-	int _height = img()[0].height();
+	_width = img()[0].width();
+	_height = img()[0].height();
 	cimg_library::CImg<T> tmp( _width, _height );
 	cimg_library::CImg<T> tmp1( _width, _height );
 
@@ -76,10 +111,10 @@ void SimpleDiff<T>::execute() {
 			cimg_forXY( tmp, x, y )
 			{
 				if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
-					dx().atNXYZC(0,x,y,0,c) = (   tmp.cubic_atXY( _warper->getX(c,x-2,y,x,y), _warper->getY(c,x,y,x,y) )
-					                          - 8*tmp.cubic_atXY( _warper->getX(c,x-1,y,x,y), _warper->getY(c,x,y,x,y) )
-				        	                  + 8*tmp.cubic_atXY( _warper->getX(c,x+1,y,x,y), _warper->getY(c,x,y,x,y) )
-				                	          -   tmp.cubic_atXY( _warper->getX(c,x+2,y,x,y), _warper->getY(c,x,y,x,y) ) ) / T(12.0);
+					dx().atNXYZC(0,x,y,0,c) = (   __cubic_atXY( tmp, _warper->getX(c,x-2,y,x,y), _warper->getY(c,x,y,x,y) )
+					                          - 8*__cubic_atXY( tmp, _warper->getX(c,x-1,y,x,y), _warper->getY(c,x,y,x,y) )
+				        	                  + 8*__cubic_atXY( tmp, _warper->getX(c,x+1,y,x,y), _warper->getY(c,x,y,x,y) )
+				                	          -   __cubic_atXY( tmp, _warper->getX(c,x+2,y,x,y), _warper->getY(c,x,y,x,y) ) ) / T(12.0);
 				} else {
 					dx().atNXYZC(0,x,y,0,c) = T(0);
 				}
@@ -103,10 +138,10 @@ void SimpleDiff<T>::execute() {
 			cimg_forXY( tmp, x, y )
 			{
 				if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
-					dy().atNXYZC(0,x,y,0,c) = (   tmp.cubic_atXY( _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-2,x,y) )
-					                          - 8*tmp.cubic_atXY( _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-1,x,y) )
-					                          + 8*tmp.cubic_atXY( _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+1,x,y) )
-				        	                  -   tmp.cubic_atXY( _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+2,x,y) ) ) / T(12.0);
+					dy().atNXYZC(0,x,y,0,c) = (   __cubic_atXY( tmp, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-2,x,y) )
+					                          - 8*__cubic_atXY( tmp, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-1,x,y) )
+					                          + 8*__cubic_atXY( tmp, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+1,x,y) )
+				        	                  -   __cubic_atXY( tmp, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+2,x,y) ) ) / T(12.0);
 				} else {
 					dy().atNXYZC(0,x,y,0,c) = T(0);
 				}
@@ -131,8 +166,8 @@ void SimpleDiff<T>::execute() {
 			cimg_forXY( img()[0], x, y )
 			{
 				if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
-					dt().atNXYZC(0,x,y,0,c) = tmp1.cubic_atXY( _warper->getX(1,x,y,x,y), _warper->getY(1,x,y,x,y) )
-				        	                - tmp.cubic_atXY( _warper->getX(0,x,y,x,y), _warper->getY(0,x,y,x,y) );
+					dt().atNXYZC(0,x,y,0,c) = __cubic_atXY( tmp1, _warper->getX(1,x,y,x,y), _warper->getY(1,x,y,x,y) )
+				        	                - __cubic_atXY( tmp,  _warper->getX(0,x,y,x,y), _warper->getY(0,x,y,x,y) );
 				} else {
 					dt().atNXYZC(0,x,y,0,c) = T(0);
 				}
