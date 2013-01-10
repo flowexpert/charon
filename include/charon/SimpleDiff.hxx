@@ -60,18 +60,29 @@ void SimpleDiff<T>::execute() {
 
 	Warper<T> *_warper = warper();
 
+	int _width = img()[0].width();
+	int _height = img()[0].height();
+	cimg_library::CImg<T> tmp( _width, _height );
+	cimg_library::CImg<T> tmp1( _width, _height );
+
 	if(dx.connected()) {
 		sout << "\t\twrt. dx" << std::endl;
 		dx().assign(img());
-		cimg_forXYZC( img()[0], x, y, z, c )
-		{
-			if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
-				dx().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(c,x-2,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
-				                          - 8*img().atNXYZC(0, _warper->getX(c,x-1,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
-				                          + 8*img().atNXYZC(0, _warper->getX(c,x+1,y,x,y), _warper->getY(c,x,y,x,y), 0,c)
-				                          -   img().atNXYZC(0, _warper->getX(c,x+2,y,x,y), _warper->getY(c,x,y,x,y), 0,c) ) / T(12.0);
-			} else {
-				dx().atNXYZC(0,x,y,0,c) = T(0);
+		cimglist_for( img(), kk )
+		cimg_forC( img()[kk], c ) {
+			cimg_forXYZ( img()[kk], x, y, z ) {
+				tmp.atXYZC(x,y,z,c) = img()[kk].atXYZC(x,y,z,c);
+			}
+			cimg_forXY( tmp, x, y )
+			{
+				if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
+					dx().atNXYZC(0,x,y,0,c) = (   tmp.cubic_atXY( _warper->getX(c,x-2,y,x,y), _warper->getY(c,x,y,x,y) )
+					                          - 8*tmp.cubic_atXY( _warper->getX(c,x-1,y,x,y), _warper->getY(c,x,y,x,y) )
+				        	                  + 8*tmp.cubic_atXY( _warper->getX(c,x+1,y,x,y), _warper->getY(c,x,y,x,y) )
+				                	          -   tmp.cubic_atXY( _warper->getX(c,x+2,y,x,y), _warper->getY(c,x,y,x,y) ) ) / T(12.0);
+				} else {
+					dx().atNXYZC(0,x,y,0,c) = T(0);
+				}
 			}
 		}
 		cimg_forXY( img()[0], x, y )
@@ -84,15 +95,21 @@ void SimpleDiff<T>::execute() {
 	if(dy.connected()) {
 		sout << "\t\twrt. dy" << std::endl;
 		dy().assign(img());
-		cimg_forXYZC( img()[0], x, y, z, c )
-		{
-			if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
-				dy().atNXYZC(0,x,y,0,c) = (   img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-2,x,y), 0,c)
-				                          - 8*img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-1,x,y), 0,c)
-				                          + 8*img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+1,x,y), 0,c)
-			        	                  -   img().atNXYZC(0, _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+2,x,y), 0,c) ) / T(12.0);
-			} else {
-				dy().atNXYZC(0,x,y,0,c) = T(0);
+		cimglist_for( img(), kk )
+		cimg_forC( img()[kk], c ) {
+			cimg_forXYZ( img()[kk], x, y, z ) {
+				tmp.atXYZC(x,y,z,c) = img()[kk].atXYZC(x,y,z,c);
+			}
+			cimg_forXY( tmp, x, y )
+			{
+				if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
+					dy().atNXYZC(0,x,y,0,c) = (   tmp.cubic_atXY( _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-2,x,y) )
+					                          - 8*tmp.cubic_atXY( _warper->getX(c,x,y,x,y), _warper->getY(c,x,y-1,x,y) )
+					                          + 8*tmp.cubic_atXY( _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+1,x,y) )
+				        	                  -   tmp.cubic_atXY( _warper->getX(c,x,y,x,y), _warper->getY(c,x,y+2,x,y) ) ) / T(12.0);
+				} else {
+					dy().atNXYZC(0,x,y,0,c) = T(0);
+				}
 			}
 		}
 		cimg_forXY( img()[0], x, y )
@@ -105,13 +122,20 @@ void SimpleDiff<T>::execute() {
 	if(dt.connected()) {
 		sout << "\t\twrt. dt" << std::endl;
 		dt().assign(img());
-		cimg_forXYZC( img()[0], x, y, z, c )
-		{
-			if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
-				dt().atNXYZC(0,x,y,0,c) = img().atNXYZC(0, _warper->getX(1,x,y,x,y), _warper->getY(1,x,y,x,y), 0,1)
-			        	                - img().atNXYZC(0, _warper->getX(0,x,y,x,y), _warper->getY(0,x,y,x,y), 0,0);
-			} else {
-				dt().atNXYZC(0,x,y,0,c) = T(0);
+		cimglist_for( img(), kk )
+		cimg_forC( img()[kk], c ) {
+			cimg_forXYZ( img()[kk], x, y, z ) {
+				tmp1.atXYZC(x,y,z,c) = img()[kk].atXYZC(x,y,z,1);
+				tmp.atXYZC(x,y,z,c) = img()[kk].atXYZC(x,y,z,0);
+			}
+			cimg_forXY( img()[0], x, y )
+			{
+				if ( _warper->getX(ONLY_CHECK_BOUNDS,x,y,x,y) && _warper->getY(ONLY_CHECK_BOUNDS,x,y,x,y) ) {
+					dt().atNXYZC(0,x,y,0,c) = tmp1.cubic_atXY( _warper->getX(1,x,y,x,y), _warper->getY(1,x,y,x,y) )
+				        	                - tmp.cubic_atXY( _warper->getX(0,x,y,x,y), _warper->getY(0,x,y,x,y) );
+				} else {
+					dt().atNXYZC(0,x,y,0,c) = T(0);
+				}
 			}
 		}
 	}
