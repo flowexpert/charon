@@ -111,7 +111,7 @@ T Warper<T>::getY( T c, T, T y, T xMotion, T yMotion )
 
 	// check, if x is within image bounds
 	if (c == ONLY_CHECK_BOUNDS) {
-		if ((y >= 0) && (y <= _dimX-1)) return 1;
+		if ((y >= 0) && (y <= _dimY-1)) return 1;
 		return 0;
 	}
 
