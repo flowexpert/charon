@@ -72,6 +72,9 @@ public:
 	/// Input slot for region of interest
 	InputSlot< Roi<int>* > roi;
 
+	/// Input slot for regularization mask
+	InputSlot< cimg_library::CImgList<T> > mask;
+
 	/// default constructor
 	/// \param name          Instance name
 	EnergyClassic(const std::string& name = "");

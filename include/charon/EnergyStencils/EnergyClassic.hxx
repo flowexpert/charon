@@ -42,7 +42,8 @@ template <class T>
 EnergyClassic<T>::EnergyClassic(const std::string& name) :
 	Stencil::Base<T>("EnergyClassic", name,
 			"<h2>Energy stencil for classic regularization."),
-	motionUV(true,false)
+	motionUV(true,false),
+	mask(true,false)
 {
 	this->_addInputSlot(penaltyFunction,
 	                    "penaltyFunction",
@@ -55,6 +56,7 @@ EnergyClassic<T>::EnergyClassic(const std::string& name) :
 	                    "CImgList<T>");
 
 	this->_addInputSlot(roi, "roi", "region of interest", "Roi<int>*");
+	this->_addInputSlot(mask, "mask", "regularization mask ", "CImgList<T>");
 
 	ParameteredObject::_addParameter(
 			pUnknowns, "unknowns", "List of unknowns");
@@ -210,6 +212,23 @@ void EnergyClassic<T>::updateStencil(
 
 	int motionConnected = motionUV.connected();
 
+	// fill mask
+	bool maskC = true, maskN = true, maskE = true, maskS = true, maskW = true;
+	if (p.y == _yBegin) maskN = false;
+	if (p.x == _xEnd-1) maskE = false;
+	if (p.y == _yEnd-1) maskS = false;
+	if (p.x == _xBegin) maskW = false;
+	if ((p.x < _xBegin) || (p.x > _xEnd-1) || (p.y < _yBegin) || (p.y > _yEnd-1)) {
+		maskC = false; maskN = false; maskE = false; maskS = false; maskW = false;
+	}
+	if (mask.connected()) {
+		maskC &= (bool)mask()[0].atXY(p.x,   p.y);
+		maskN &= (bool)mask()[0].atXY(p.x,   p.y-1);
+		maskE &= (bool)mask()[0].atXY(p.x+1, p.y);
+		maskS &= (bool)mask()[0].atXY(p.x,   p.y+1);
+		maskW &= (bool)mask()[0].atXY(p.x-1, p.y);
+	}
+
 	// fill stencil with masks
 	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
 		SubStencil<T> entry;
@@ -236,7 +255,7 @@ void EnergyClassic<T>::updateStencil(
 		_dataMask.fill(    0, 0, 0,     0, 0, 0,     0, 0, 0 );
 		_patternMask.fill( 0, 0, 0,     0, 0, 0,     0, 0, 0 );
 
-		if ((p.x == _xBegin) && (p.y == _yBegin)   && (pUnknowns[i] == unknown))
+		if (maskC && !maskW && !maskN   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCE + pCS;
 			_dataMask.fill(    0,    0, 0,        0, pSum, -pCE,     0, -pCS,  0 );
@@ -248,7 +267,7 @@ void EnergyClassic<T>::updateStencil(
 			}
 		}
 
-		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y == _yBegin)   && (pUnknowns[i] == unknown))
+		if (maskC && maskW && maskE && !maskN   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCE + pCS + pCW;
 			_dataMask.fill(    0,    0, 0,     -pCW, pSum, -pCE,     0, -pCS,  0 );
@@ -260,7 +279,7 @@ void EnergyClassic<T>::updateStencil(
 			}
 		}
 
-		if ((p.x == _xEnd-1) && (p.y == _yBegin)   && (pUnknowns[i] == unknown))
+		if (maskC && !maskE && !maskN   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCS + pCW;
 			_dataMask.fill(    0,    0, 0,     -pCW, pSum,    0,     0, -pCS,  0 );
@@ -272,7 +291,7 @@ void EnergyClassic<T>::updateStencil(
 			}
 		}
 
-		if ((p.x == _xBegin) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
+		if (maskC && !maskW && maskN && maskS   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCN + pCE + pCS;
 			_dataMask.fill(    0, -pCN, 0,        0, pSum, -pCE,     0, -pCS,  0 );
@@ -284,7 +303,7 @@ void EnergyClassic<T>::updateStencil(
 			}
 		}
 
-		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
+		if (maskC && maskW && maskE && maskN && maskS   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCN + pCE + pCS + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum, -pCE,     0, -pCS,  0 );
@@ -296,7 +315,7 @@ void EnergyClassic<T>::updateStencil(
 			}
 		}
 
-		if ((p.x == _xEnd-1) && (p.y > _yBegin) && (p.y < _yEnd-1)   && (pUnknowns[i] == unknown))
+		if (maskC && !maskE && maskN && maskS   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCN + pCS + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum,    0,     0, -pCS,  0 );
@@ -308,7 +327,7 @@ void EnergyClassic<T>::updateStencil(
 			}
 		}
 
-		if ((p.x == _xBegin) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
+		if (maskC && !maskW && !maskS   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCN + pCE;
 			_dataMask.fill(    0, -pCN, 0,        0, pSum, -pCE,     0,    0,  0 );
@@ -320,7 +339,7 @@ void EnergyClassic<T>::updateStencil(
 			}
 		}
 
-		if ((p.x > _xBegin) && (p.x < _xEnd-1) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
+		if (maskC && maskW && maskE && !maskS   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCN + pCE + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum, -pCE,     0,    0,  0 );
@@ -332,7 +351,7 @@ void EnergyClassic<T>::updateStencil(
 			}
 		}
 
-		if ((p.x == _xEnd-1) && (p.y == _yEnd-1)   && (pUnknowns[i] == unknown))
+		if (maskC && !maskE && !maskS   && (pUnknowns[i] == unknown))
 		{
 			pSum = pCN + pCW;
 			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum,    0,     0,    0,  0 );
