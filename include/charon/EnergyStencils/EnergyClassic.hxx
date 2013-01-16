@@ -253,7 +253,11 @@ void EnergyClassic<T>::updateStencil(
 		_patternMask.assign(3,3,1,1);
 		_center = Point4D<int>(1,1,0,0);
 		_dataMask.fill(    0, 0, 0,     0, 0, 0,     0, 0, 0 );
-		_patternMask.fill( 0, 0, 0,     0, 0, 0,     0, 0, 0 );
+		if (pUnknowns[i] == unknown) {
+			_patternMask.fill( 0, 1, 0,     1, 1, 1,     0, 1, 0 );
+		} else {
+			_patternMask.fill( 0, 0, 0,     0, 0, 0,     0, 0, 0 );
+		}
 		this->_rhs = T(0.0);
 
 		if (maskC && (pUnknowns[i] == unknown))
@@ -267,7 +271,6 @@ void EnergyClassic<T>::updateStencil(
 			_dataMask.fill( T(0.0),                  (maskN ? -pCN : T(0.0)), T(0.0),
 			                (maskW ? -pCW : T(0.0)), pSum,                    (maskE ? -pCE : T(0.0)),
 			                T(0.0),                  (maskS ? -pCS : T(0.0)), T(0.0) );
-			_patternMask.fill( 0, 1, 0,     1, 1, 1,     0, 1, 0 );
 
 			if (motionConnected) {
 				motionSum =  T(0.0);
