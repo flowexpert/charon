@@ -389,7 +389,7 @@ public:
 		return _executed;
 	}
     // active inactive button
-    Parameter < bool > _ActiveInactive;
+    Parameter < bool > _Active;
 
 	/// deprecated macro
 #define PARAMETEREDOBJECT_AVOID_REEXECUTION \
