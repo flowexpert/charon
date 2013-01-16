@@ -252,6 +252,7 @@ void EnergyClassic<T>::updateStencil(
 		_center = Point4D<int>(1,1,0,0);
 		_dataMask.fill(    0, 0, 0,     0, 0, 0,     0, 0, 0 );
 		_patternMask.fill( 0, 0, 0,     0, 0, 0,     0, 0, 0 );
+		this->_rhs = T(0.0);
 
 		if (maskC && !maskW && !maskN   && (pUnknowns[i] == unknown))
 		{
@@ -260,8 +261,6 @@ void EnergyClassic<T>::updateStencil(
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 			if (motionConnected) {
 				this->_rhs = motionE + motionS - 2*motionC;
-			} else {
-				this->_rhs = T(0.0);
 			}
 		}
 
@@ -272,8 +271,6 @@ void EnergyClassic<T>::updateStencil(
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 			if (motionConnected) {
 				this->_rhs = motionE + motionS + motionW - 3*motionC;
-			} else {
-				this->_rhs = T(0.0);
 			}
 		}
 
@@ -284,8 +281,6 @@ void EnergyClassic<T>::updateStencil(
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 			if (motionConnected) {
 				this->_rhs = motionS + motionW - 2*motionC;
-			} else {
-				this->_rhs = T(0.0);
 			}
 		}
 
@@ -296,8 +291,6 @@ void EnergyClassic<T>::updateStencil(
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 			if (motionConnected) {
 				this->_rhs = motionN + motionE + motionS - 3*motionC;
-			} else {
-				this->_rhs = T(0.0);
 			}
 		}
 
@@ -308,8 +301,6 @@ void EnergyClassic<T>::updateStencil(
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 			if (motionConnected) {
 				this->_rhs = motionN + motionE + motionS + motionW - 4*motionC;
-			} else {
-				this->_rhs = T(0.0);
 			}
 		}
 
@@ -320,8 +311,6 @@ void EnergyClassic<T>::updateStencil(
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 			if (motionConnected) {
 				this->_rhs = motionN + motionS + motionW - 3*motionC;
-			} else {
-				this->_rhs = T(0.0);
 			}
 		}
 
@@ -332,8 +321,6 @@ void EnergyClassic<T>::updateStencil(
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 			if (motionConnected) {
 				this->_rhs = motionN + motionE - 2*motionC;
-			} else {
-				this->_rhs = T(0.0);
 			}
 		}
 
@@ -344,8 +331,6 @@ void EnergyClassic<T>::updateStencil(
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 			if (motionConnected) {
 				this->_rhs = motionN + motionE + motionW - 3*motionC;
-			} else {
-				this->_rhs = T(0.0);
 			}
 		}
 
@@ -356,8 +341,6 @@ void EnergyClassic<T>::updateStencil(
 			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 			if (motionConnected) {
 				this->_rhs = motionN + motionW - 2*motionC;
-			} else {
-				this->_rhs = T(0.0);
 			}
 		}
 
