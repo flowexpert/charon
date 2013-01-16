@@ -1,5 +1,5 @@
-/*  Copyright (C) 2011, 2012
-    University of Heidelberg (IWR/HCI)
+/*  Copyright (C) 2011, 2012, 2013
+                  University of Heidelberg (IWR/HCI)
 
     This file is part of Charon.
 
@@ -213,20 +213,18 @@ void EnergyClassic<T>::updateStencil(
 	int motionConnected = motionUV.connected();
 
 	// fill mask
-	bool maskC = true, maskN = true, maskE = true, maskS = true, maskW = true;
-	if (p.y == _yBegin) maskN = false;
-	if (p.x == _xEnd-1) maskE = false;
-	if (p.y == _yEnd-1) maskS = false;
-	if (p.x == _xBegin) maskW = false;
-	if ((p.x < _xBegin) || (p.x > _xEnd-1) || (p.y < _yBegin) || (p.y > _yEnd-1)) {
-		maskC = false; maskN = false; maskE = false; maskS = false; maskW = false;
-	}
+	bool maskC = false, maskN = false, maskE = false, maskS = false, maskW = false;
+	if ((_xBegin   <= p.x) && (p.x < _xEnd)   && (_yBegin   <= p.y) && (p.y < _yEnd))   maskC = true;
+	if ((_xBegin   <= p.x) && (p.x < _xEnd)   && (_yBegin+1 <= p.y) && (p.y < _yEnd))   maskN = true;
+	if ((_xBegin   <= p.x) && (p.x < _xEnd-1) && (_yBegin   <= p.y) && (p.y < _yEnd))   maskE = true;
+	if ((_xBegin   <= p.x) && (p.x < _xEnd)   && (_yBegin   <= p.y) && (p.y < _yEnd-1)) maskS = true;
+	if ((_xBegin+1 <= p.x) && (p.x < _xEnd)   && (_yBegin   <= p.y) && (p.y < _yEnd))   maskW = true;
 	if (mask.connected()) {
-		maskC &= (bool)mask()[0].atXY(p.x,   p.y);
-		maskN &= (bool)mask()[0].atXY(p.x,   p.y-1);
-		maskE &= (bool)mask()[0].atXY(p.x+1, p.y);
-		maskS &= (bool)mask()[0].atXY(p.x,   p.y+1);
-		maskW &= (bool)mask()[0].atXY(p.x-1, p.y);
+		maskC = maskC && (bool)mask()[0].atXY(p.x,   p.y);
+		maskN = maskN && (bool)mask()[0].atXY(p.x,   p.y-1);
+		maskE = maskE && (bool)mask()[0].atXY(p.x+1, p.y);
+		maskS = maskS && (bool)mask()[0].atXY(p.x,   p.y+1);
+		maskW = maskW && (bool)mask()[0].atXY(p.x-1, p.y);
 	}
 
 	// fill stencil with masks
