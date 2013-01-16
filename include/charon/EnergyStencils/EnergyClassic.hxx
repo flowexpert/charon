@@ -209,6 +209,8 @@ void EnergyClassic<T>::updateStencil(
 	// penalty in neighborhood
 	T pCN, pCE, pCS, pCW;
 	T pSum = T(0.0);
+	T motionSum = T(0.0);
+	T motionCenterSum = T(0.0);
 
 	int motionConnected = motionUV.connected();
 
@@ -254,93 +256,31 @@ void EnergyClassic<T>::updateStencil(
 		_patternMask.fill( 0, 0, 0,     0, 0, 0,     0, 0, 0 );
 		this->_rhs = T(0.0);
 
-		if (maskC && !maskW && !maskN   && (pUnknowns[i] == unknown))
+		if (maskC && (pUnknowns[i] == unknown))
 		{
-			pSum = pCE + pCS;
-			_dataMask.fill(    0,    0, 0,        0, pSum, -pCE,     0, -pCS,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
-			if (motionConnected) {
-				this->_rhs = motionE + motionS - 2*motionC;
-			}
-		}
+			pSum =  T(0.0);
+			pSum += (maskN ? pCN : T(0.0));
+			pSum += (maskE ? pCE : T(0.0));
+			pSum += (maskS ? pCS : T(0.0));
+			pSum += (maskW ? pCW : T(0.0));
 
-		if (maskC && maskW && maskE && !maskN   && (pUnknowns[i] == unknown))
-		{
-			pSum = pCE + pCS + pCW;
-			_dataMask.fill(    0,    0, 0,     -pCW, pSum, -pCE,     0, -pCS,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
-			if (motionConnected) {
-				this->_rhs = motionE + motionS + motionW - 3*motionC;
-			}
-		}
+			_dataMask.fill( T(0.0),                  (maskN ? -pCN : T(0.0)), T(0.0),
+			                (maskW ? -pCW : T(0.0)), pSum,                    (maskE ? -pCE : T(0.0)),
+			                T(0.0),                  (maskS ? -pCS : T(0.0)), T(0.0) );
+			_patternMask.fill( 0, 1, 0,     1, 1, 1,     0, 1, 0 );
 
-		if (maskC && !maskE && !maskN   && (pUnknowns[i] == unknown))
-		{
-			pSum = pCS + pCW;
-			_dataMask.fill(    0,    0, 0,     -pCW, pSum,    0,     0, -pCS,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
 			if (motionConnected) {
-				this->_rhs = motionS + motionW - 2*motionC;
-			}
-		}
-
-		if (maskC && !maskW && maskN && maskS   && (pUnknowns[i] == unknown))
-		{
-			pSum = pCN + pCE + pCS;
-			_dataMask.fill(    0, -pCN, 0,        0, pSum, -pCE,     0, -pCS,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
-			if (motionConnected) {
-				this->_rhs = motionN + motionE + motionS - 3*motionC;
-			}
-		}
-
-		if (maskC && maskW && maskE && maskN && maskS   && (pUnknowns[i] == unknown))
-		{
-			pSum = pCN + pCE + pCS + pCW;
-			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum, -pCE,     0, -pCS,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
-			if (motionConnected) {
-				this->_rhs = motionN + motionE + motionS + motionW - 4*motionC;
-			}
-		}
-
-		if (maskC && !maskE && maskN && maskS   && (pUnknowns[i] == unknown))
-		{
-			pSum = pCN + pCS + pCW;
-			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum,    0,     0, -pCS,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
-			if (motionConnected) {
-				this->_rhs = motionN + motionS + motionW - 3*motionC;
-			}
-		}
-
-		if (maskC && !maskW && !maskS   && (pUnknowns[i] == unknown))
-		{
-			pSum = pCN + pCE;
-			_dataMask.fill(    0, -pCN, 0,        0, pSum, -pCE,     0,    0,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
-			if (motionConnected) {
-				this->_rhs = motionN + motionE - 2*motionC;
-			}
-		}
-
-		if (maskC && maskW && maskE && !maskS   && (pUnknowns[i] == unknown))
-		{
-			pSum = pCN + pCE + pCW;
-			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum, -pCE,     0,    0,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
-			if (motionConnected) {
-				this->_rhs = motionN + motionE + motionW - 3*motionC;
-			}
-		}
-
-		if (maskC && !maskE && !maskS   && (pUnknowns[i] == unknown))
-		{
-			pSum = pCN + pCW;
-			_dataMask.fill(    0, -pCN, 0,     -pCW, pSum,    0,     0,    0,  0 );
-			_patternMask.fill( 0,    1, 0,        1,    1,    1,     0,    1,  0 );
-			if (motionConnected) {
-				this->_rhs = motionN + motionW - 2*motionC;
+				motionSum =  T(0.0);
+				motionSum += (maskN ? motionN : T(0.0));
+				motionSum += (maskE ? motionE : T(0.0));
+				motionSum += (maskS ? motionS : T(0.0));
+				motionSum += (maskW ? motionW : T(0.0));
+				motionCenterSum =  T(0.0);
+				motionCenterSum += (maskN ? motionC : T(0.0));
+				motionCenterSum += (maskE ? motionC : T(0.0));
+				motionCenterSum += (maskS ? motionC : T(0.0));
+				motionCenterSum += (maskW ? motionC : T(0.0));
+				this->_rhs = motionSum - motionCenterSum;
 			}
 		}
 
