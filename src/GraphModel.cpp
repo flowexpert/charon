@@ -180,13 +180,13 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 		return;
 
 	// identify input and output slot
-	if(!isInputSlot(source)) {
+    if(!isInputSlot(source)) {
 		// swap source and target
 		qSwap(source,target);
 	}
 
 	// disconnect input slot, if assigned and not multi slot
-	if (!isMultiSlot(source)) {
+    if (!isMultiSlot(source)) {
 		QString val = getValue(source);
 		if (!val.isEmpty())
 			disconnectSlot(source, val, false);

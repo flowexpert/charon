@@ -271,10 +271,31 @@ bool ParameterFileModel::setData(
 			bool checked (value.toBool());
 			setValue (_keys[ind.row()], checked ? "true" : "false");
 			emit dataChanged(index(ind.row(),0),ind);
+            // additional check whether the changed Parameter is the ActiveInactive
+            if (ind.row() == 0 && checked == false){
+                Deactivate(ind);
+            }
+
 		}
 		break;
 	}
 	return false;
+}
+
+// Deactivate following Plugins
+void ParameterFileModel::Deactivate(const QModelIndex& index){
+    for (int i = 0; i < _prefix.size(); i++){
+        if (_prefix.at(i) == '.'){
+            _prefix.truncate(i);
+        }
+    }
+    QString tmpPrefix = _prefix;
+    for (int i = 0; i < getOutputs(tmpPrefix).size(); i++){
+        setPrefix(getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)));
+        setValue(_keys[index.row()], "false");
+        Deactivate(index);
+    }
+    _prefix = tmpPrefix;
 }
 
 Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
