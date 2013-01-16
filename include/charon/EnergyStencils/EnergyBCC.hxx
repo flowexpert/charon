@@ -40,7 +40,8 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 	     "EnergyBCC", name,
 	     "<h2>Implementation of the brightness constancy constraint."
 	     ),
-	motionUV(true,false)
+	motionUV(true,false),
+	mask(true,false)
 {
 	this->_addInputSlot(penaltyFunction,
 	                    "penaltyFunction",
@@ -64,6 +65,9 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
                             "current motion components",
 	                    "CImgList<T>");
 
+	this->_addInputSlot(roi, "roi", "region of interest", "Roi<int>*");
+	this->_addInputSlot(mask, "mask", "regularization mask ", "CImgList<T>");
+
         ParameteredObject::_addParameter(
                         pUnknowns, "unknowns", "List of unknowns");
 
@@ -75,6 +79,12 @@ void EnergyBCC<T>::execute() {
 	Stencil::Base<T>::execute();
 	_lamb = this->lambda();
 	_penaltyFunction = penaltyFunction();
+
+	const Roi<int>& _roi = *(this->roi());
+	_xBegin = _roi.xBegin();
+	_xEnd = _roi.xEnd();
+	_yBegin = _roi.yBegin();
+	_yEnd = _roi.yEnd();
 
         // Copy the unknowns from the Parameter list into the set, which was
         // inherited from the Stencil class
@@ -177,6 +187,17 @@ void EnergyBCC<T>::updateStencil(
         const unsigned int x = p.x;
         const unsigned int y = p.y;
         const unsigned int z = p.z;
+
+	bool _mask = true;
+	if (mask.connected()) _mask =  mask()[0].atXY(x,y);
+
+	if (  (_xBegin > p.x) || (p.x >= _xEnd) || (_yBegin > p.y) || (p.y >= _yEnd)
+	   || !_mask ) {
+		this->_subStencils["a1"].data(0,0) = T(0.0);
+		this->_subStencils["a2"].data(0,0) = T(0.0);
+		this->_rhs = T(0.0);
+		return;
+	}
 
         // current values of ix,iy,it
         const T cix = img_dx()(0,x,y,z,1);

@@ -41,6 +41,7 @@
 #include <charon/PenaltyFunction.h>
 #include <charon-utils/CImg.h>
 #include <vector>
+#include <charon-utils/Roi.h>
 
 /// EnergyStencil for Brightness Constancy Constraint
 /** EnergyStencil for Brightness Constancy Constraint.
@@ -70,6 +71,11 @@ public:
 	InputSlot< cimg_library::CImgList<T> > img_dt;  //  I_t
 	/// Input slot for current motion components
 	InputSlot< cimg_library::CImgList<T> > motionUV;
+
+	/// Input slot for region of interest
+	InputSlot< Roi<int>* > roi;
+	/// Input slot for regularization mask
+	InputSlot< cimg_library::CImgList<T> > mask;
 
 	/// default constructor
 	/// \param name          Instance name
@@ -106,6 +112,10 @@ private:
 	//\{
 	T _lamb;
 	PenaltyFunction<T>* _penaltyFunction;
+	int _xBegin;
+	int _xEnd;
+	int _yBegin;
+	int _yEnd;
 	//\}
 
         /// \name precalculate substencil data
