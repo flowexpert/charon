@@ -35,9 +35,10 @@ MainWindow::MainWindow(const std::string& title) : _viewStack(0),
 
 	_viewStack = new ViewStack(this);
 
+	//limit the MainWindow size to approximatly the size of the desktop
 	QDesktopWidget* desktop = QApplication::desktop() ;
 	QRect rect = desktop->availableGeometry(desktop->primaryScreen()) ;
-	_viewStack->setMaximumSize(rect.size()- QSize(30,50)) ;
+	_viewStack->setMaximumSize(rect.size()- QSize(40,60)) ;
 
 	this->setCentralWidget(_viewStack);
 	this->setWindowTitle("ArgosDisplay : " + QString::fromStdString(title));

@@ -110,7 +110,12 @@ void ArgosDisplayPlugin<T>::execute() {
 		return ;
 	}
 	if(!_mainWindow)
-		_mainWindow = new MainWindow(this->getName());
+	{	_mainWindow = new MainWindow(this->getName());
+		//move window to top left corner so that the maximize/minimize buttons
+		//are not hidden for big images
+		_mainWindow->move(10,10) ;
+	}
+
 	if(!_displayReloader)
 		_displayReloader = new ArgosDisplayReloader(this);
 
