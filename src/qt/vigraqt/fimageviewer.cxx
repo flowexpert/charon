@@ -22,6 +22,7 @@ FImageViewer::FImageViewer(QWidget* parent)
   markingMode_(false)
 {
 	QLayout *imageLayout= new QVBoxLayout(this);
+	imageLayout->setContentsMargins(0,0,0,0) ;
 	imageLayout->addWidget(qimageviewer_);
 }
 

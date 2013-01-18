@@ -48,16 +48,18 @@ ViewStack::ViewStack(QWidget* p) : QWidget(p),
 		_tabWidget->setMovable(true) ;
 		_tabWidget->setUsesScrollButtons(true) ;
 		_tabWidget->setFocusPolicy(Qt::StrongFocus) ;
+		_tabWidget->setContentsMargins(2,2,2,2) ;
 
 	QVBoxLayout* layout = new QVBoxLayout ;
 		layout->addWidget(_tabWidget) ;
+		layout->setContentsMargins(2,2,2,2) ;
 	this->setLayout(layout) ;
 	this->setSizePolicy(
 			QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 
 	connect(this, SIGNAL(imageLinked()), this, SLOT(_linkImages()), Qt::QueuedConnection) ;
 
-	connect(_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(_currentChanged(int))) ;
+	connect(_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(_emitDimensionMessage())) ;
 
 	_createActions() ;
 	
@@ -134,7 +136,8 @@ void ViewStack::setCurrentIndex(int index) {
 	}
 }
 
-void ViewStack::_currentChanged(int index) {
+void ViewStack::_emitDimensionMessage() {
+	int index = _tabWidget->currentIndex() ;
 	if(index < 0 || index >= (int)_views.size()) {
 		// fix bug on selection change
 		return;
@@ -142,6 +145,7 @@ void ViewStack::_currentChanged(int index) {
 	if(_views[index].inspector == 0) {
 		return;
 	}
+
 	const std::vector<int>& dims = _views[index].inspector->dim();
 	QString message = QString("%1 x %2 x %3 x %4 x %5")
 			.arg(dims[0]).arg(dims[1]).arg(dims[2]).arg(dims[3]).arg(dims[4]);
@@ -159,6 +163,13 @@ void ViewStack::_currentChanged(int index) {
 			break ;
 		}
 	}
+	int level = getZoomLevel() ;
+	int zoom = 100 ;
+	if(level < 0)
+		zoom = 100 / (-level +1) ;
+	else
+		zoom = 100 * (level + 1) ;
+	message += QString(" | Zoom %1%").arg(zoom) ;
 
 	emit exportDimensionsMessage(message) ;
 }
@@ -188,6 +199,9 @@ void ViewStack::_linkImages()
 					viewer, SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int))) ;
 			viewer->setZoomLevel(_zoomLevel);
+			connect(
+					viewer, SIGNAL(zoomLevelChanged(int)),
+					this, SLOT(_emitDimensionMessage())) ;
 		}
 		else
 		{
@@ -205,6 +219,9 @@ void ViewStack::_linkImages()
 					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int)));
 			viewer->imageViewer()->setZoomLevel(_zoomLevel);
+			connect(
+					viewer->imageViewer(), SIGNAL(zoomLevelChanged(int)),
+					this, SLOT(_emitDimensionMessage())) ;
 		}
 	}
 	_tabWidget->setCurrentIndex(_index) ;
@@ -375,6 +392,7 @@ void ViewStack::_centerAndResetZoom()
 	catch(std::exception&) {
 		return ;
 	}
+	_emitDimensionMessage() ;
 }
 
 void ViewStack::_alignAndZoom()
