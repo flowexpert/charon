@@ -720,18 +720,24 @@ std::list<ParameteredObject*> PluginManager::_determineTargetPoints() {
 	std::list<ParameteredObject*> targetPoints;
 	std::map<std::string, ParameteredObject *>::const_iterator it;
 	for (it = objects.begin(); it != objects.end(); it++) {
-       if (it->second->_Active){ // checks whether the plugin is activated
+       if (it->second->_Active){ // checks whether the plugin is active
            bool connected = false;
+           bool activeTest = false;
            std::map<std::string, Slot *> outputslots =
                 it->second->getOutputSlots();
            std::map<std::string, Slot *>::const_iterator slotIter;
            for (slotIter = outputslots.begin(); !connected && slotIter
                     != outputslots.end(); slotIter++) {
                connected = slotIter->second->connected();
+               const std::set<Slot*>& listOfTargets = slotIter->second->getTargets();
+               std::set<Slot*>::const_iterator tmp = listOfTargets.begin();
+               for (; tmp!=listOfTargets.end();tmp++) {
+                    if ((*tmp)->getParent(). _Active){
+                        activeTest = true;
+                    }
+               }
            }
-           ParameteredObject * test = it->second; // additional variable to store the value of the iterator
-           test++; // needs to point to the coming object
-           if (!connected || !(test->_Active)) { // verifies whether the next plugin is active
+           if (!connected || !(activeTest)) { // verifies whether the next plugin is active
                sout << "(DD) Found target point \"" << it->second->getName()
                     << "\"" << std::endl;
                targetPoints.push_back(it->second);
