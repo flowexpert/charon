@@ -82,8 +82,9 @@ void PyramidRescaleMask<T>::execute() {
 	{
 		lowerX =  int( double(x) * _shrinkInv );
 		lowerY =  int( double(y) * _shrinkInv );
-		higherX = int( double(x) * _shrinkInv ) + 1;
-		higherY = int( double(y) * _shrinkInv ) + 1;
+		higherX = int( double(x+1) * _shrinkInv );
+		higherY = int( double(y+1) * _shrinkInv );
+
 
 		value = T(1.0);
 		for (int j=lowerX; j<higherX; j++)
@@ -92,7 +93,7 @@ void PyramidRescaleMask<T>::execute() {
 			value *= si[kk].atXYZC( j, i, z, c );
 		}
 
-		so[kk].atXYZC( x, y, z, c ) = value;
+		so[kk].atXYZC( x, y, z, c ) = value ? 255 : 0;
 	}
 }
 
