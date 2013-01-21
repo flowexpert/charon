@@ -49,10 +49,10 @@ class value_DECLDIR Value :
 		public TemplatedParameteredObject<T> {
 public:
 	/// output value
-	OutputSlot < T > out;
+	OutputSlot < unsigned int > out;
 
 	/// parameter value
-	Parameter< T > value;
+	Parameter< unsigned int > value;
 
 	/// default constructor
 	Value(const std::string& name = "" /** [in] Instance name*/);

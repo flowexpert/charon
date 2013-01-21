@@ -465,6 +465,11 @@ ADD_LIBRARY(pyramidlowpass SHARED
 	${charon_INCLUDE_DIR}/PyramidLowpass.h
 	${charon_INCLUDE_DIR}/PyramidLowpass.hxx
 )
+ADD_LIBRARY(pyramidrescalemask SHARED
+	PyramidRescaleMask.cpp
+	${charon_INCLUDE_DIR}/PyramidRescaleMask.h
+	${charon_INCLUDE_DIR}/PyramidRescaleMask.hxx
+)
 ADD_LIBRARY(flowcomparator SHARED
 	FlowComparator.cpp
 	${charon_INCLUDE_DIR}/FlowComparator.h
@@ -479,6 +484,7 @@ LIST(APPEND Plugins
 	lucas_kanade_smoothing
 	pyramidrescale
 	pyramidrescalematlab
+	pyramidrescalemask
 	pyramidlowpass
 	flowcomparator
 )

@@ -34,7 +34,7 @@ Value<T>::Value(const std::string& name) :
 {
 	ParameteredObject::_addOutputSlot(out, "out",
 		"output slot for value");
-	ParameteredObject::_addParameter(value, "value", "value to be returned by output slot");
+	ParameteredObject::_addParameter(value, "value", "value to be returned by output slot", "uint");
 }
 
 template <typename T>
