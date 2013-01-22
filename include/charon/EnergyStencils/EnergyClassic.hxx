@@ -286,9 +286,9 @@ void EnergyClassic<T>::updateStencil(
 				this->_rhs = motionSum - motionCenterSum;
 			}
 		} else if (!maskC && (pUnknowns[i] == unknown)) {
-			_dataMask.fill( T(0.0), T(0.0), T(0.0),
-			                T(0.0), T(1.0), T(0.0),
-			                T(0.0), T(0.0), T(0.0) );
+			_dataMask.fill( T(0.0),  T(1.0), T(0.0),
+			                T(1.0), T(-4.0), T(1.0),
+			                T(0.0),  T(1.0), T(0.0) );
 		}
 
 		entry.data = _dataMask;
