@@ -285,10 +285,11 @@ void EnergyClassic<T>::updateStencil(
 				motionCenterSum += (maskW ? motionC : T(0.0));
 				this->_rhs = motionSum - motionCenterSum;
 			}
-		} else if (!maskC && (pUnknowns[i] == unknown)) {
-			_dataMask.fill( T(0.0),  T(1.0), T(0.0),
-			                T(1.0), T(-4.0), T(1.0),
-			                T(0.0),  T(1.0), T(0.0) );
+		} else if (!maskC && (pUnknowns[i] == unknown)) {  //  inpainting of mask
+			pSum = pCN + pCE + pCS + pCW;
+			_dataMask.fill( T(0.0), -pCN, T(0.0),
+			                -pCW,   pSum, -pCE,
+			                T(0.0), -pCS, T(0.0) );
 		}
 
 		entry.data = _dataMask;
