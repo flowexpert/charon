@@ -261,7 +261,7 @@ void EnergyClassic<T>::updateStencil(
 		} else {
 			_patternMask.fill( 0, 0, 0,     0, 0, 0,     0, 0, 0 );
 		}
-		this->_rhs = T(0.0);  // (??) what, if motion connected ?
+		this->_rhs = T(0.0);
 
 		if (pUnknowns[i] == unknown)
 		{
@@ -287,7 +287,7 @@ void EnergyClassic<T>::updateStencil(
 				                T(0.0),                   (bordS ? -pCS : T(0.0)), T(0.0) );
 			}
 
-			if (motionConnected && pSum) {
+			if (motionConnected) {
 				if (pSum) {
 					motionSum =  T(0.0);
 					motionSum += (maskN ? motionN : T(0.0));
