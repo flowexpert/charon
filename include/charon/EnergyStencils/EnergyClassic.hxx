@@ -209,6 +209,7 @@ void EnergyClassic<T>::updateStencil(
 	// penalty in neighborhood
 	T pCN, pCE, pCS, pCW;
 	T pSum = T(0.0);
+	T pSumMask = T(0.0);
 	T motionSum = T(0.0);
 	T motionCenterSum = T(0.0);
 
@@ -270,8 +271,9 @@ void EnergyClassic<T>::updateStencil(
 			pSum += (maskE ? pCE : T(0.0));
 			pSum += (maskS ? pCS : T(0.0));
 			pSum += (maskW ? pCW : T(0.0));
+			pSumMask = pSum;
 
-			if (pSum) {
+			if (pSumMask) {
 				_dataMask.fill( T(0.0),                  (maskN ? -pCN : T(0.0)), T(0.0),
 				                (maskW ? -pCW : T(0.0)), pSum,                    (maskE ? -pCE : T(0.0)),
 				                T(0.0),                  (maskS ? -pCS : T(0.0)), T(0.0) );
@@ -288,7 +290,7 @@ void EnergyClassic<T>::updateStencil(
 			}
 
 			if (motionConnected) {
-				if (pSum) {
+				if (pSumMask) {
 					motionSum =  T(0.0);
 					motionSum += (maskN ? motionN : T(0.0));
 					motionSum += (maskE ? motionE : T(0.0));
