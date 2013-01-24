@@ -214,19 +214,22 @@ void EnergyClassic<T>::updateStencil(
 
 	int motionConnected = motionUV.connected();
 
-	// fill mask
-	bool maskC = false, maskN = false, maskE = false, maskS = false, maskW = false;
-	if ((_xBegin   <= p.x) && (p.x < _xEnd)   && (_yBegin   <= p.y) && (p.y < _yEnd))   maskC = true;
-	if ((_xBegin   <= p.x) && (p.x < _xEnd)   && (_yBegin+1 <= p.y) && (p.y < _yEnd))   maskN = true;
-	if ((_xBegin   <= p.x) && (p.x < _xEnd-1) && (_yBegin   <= p.y) && (p.y < _yEnd))   maskE = true;
-	if ((_xBegin   <= p.x) && (p.x < _xEnd)   && (_yBegin   <= p.y) && (p.y < _yEnd-1)) maskS = true;
-	if ((_xBegin+1 <= p.x) && (p.x < _xEnd)   && (_yBegin   <= p.y) && (p.y < _yEnd))   maskW = true;
+	// fill regularization mask according to boundary conditions
+	bool bordC = true;
+	bool bordN = false, bordE = false, bordS = false, bordW = false;
+	if ((_xBegin   <= p.x) && (p.x < _xEnd)   && (_yBegin+1 <= p.y) && (p.y < _yEnd))   bordN = true;
+	if ((_xBegin   <= p.x) && (p.x < _xEnd-1) && (_yBegin   <= p.y) && (p.y < _yEnd))   bordE = true;
+	if ((_xBegin   <= p.x) && (p.x < _xEnd)   && (_yBegin   <= p.y) && (p.y < _yEnd-1)) bordS = true;
+	if ((_xBegin+1 <= p.x) && (p.x < _xEnd)   && (_yBegin   <= p.y) && (p.y < _yEnd))   bordW = true;
+
+	// fill regularization mask with given regularization mask
+	bool maskC = bordC, maskN = bordN, maskE = bordE, maskS = bordS, maskW = bordW;
 	if (mask.connected()) {
-		maskC = maskC && (bool)mask()[0].atXY(p.x,   p.y);
-		maskN = maskN && (bool)mask()[0].atXY(p.x,   p.y-1);
-		maskE = maskE && (bool)mask()[0].atXY(p.x+1, p.y);
-		maskS = maskS && (bool)mask()[0].atXY(p.x,   p.y+1);
-		maskW = maskW && (bool)mask()[0].atXY(p.x-1, p.y);
+		maskC &= (bool)mask()[0].atXY(p.x,   p.y);
+		maskN &= (bool)mask()[0].atXY(p.x,   p.y-1);
+		maskE &= (bool)mask()[0].atXY(p.x+1, p.y);
+		maskS &= (bool)mask()[0].atXY(p.x,   p.y+1);
+		maskW &= (bool)mask()[0].atXY(p.x-1, p.y);
 	}
 
 	// fill stencil with masks
@@ -258,9 +261,9 @@ void EnergyClassic<T>::updateStencil(
 		} else {
 			_patternMask.fill( 0, 0, 0,     0, 0, 0,     0, 0, 0 );
 		}
-		this->_rhs = T(0.0);
+		this->_rhs = T(0.0);  // (??) what, if motion connected ?
 
-		if (maskC && (pUnknowns[i] == unknown))
+		if (pUnknowns[i] == unknown)
 		{
 			pSum =  T(0.0);
 			pSum += (maskN ? pCN : T(0.0));
@@ -268,28 +271,48 @@ void EnergyClassic<T>::updateStencil(
 			pSum += (maskS ? pCS : T(0.0));
 			pSum += (maskW ? pCW : T(0.0));
 
-			_dataMask.fill( T(0.0),                  (maskN ? -pCN : T(0.0)), T(0.0),
-			                (maskW ? -pCW : T(0.0)), (pSum ? pSum : T(1.0)),  (maskE ? -pCE : T(0.0)),
-			                T(0.0),                  (maskS ? -pCS : T(0.0)), T(0.0) );
+			if (pSum) {
+				_dataMask.fill( T(0.0),                  (maskN ? -pCN : T(0.0)), T(0.0),
+				                (maskW ? -pCW : T(0.0)), pSum,                    (maskE ? -pCE : T(0.0)),
+				                T(0.0),                  (maskS ? -pCS : T(0.0)), T(0.0) );
+			} else {  //  if all neighbors are out masked then inpainting
+				pSum = T(0.0);
+				pSum += (bordN ? pCN : T(0.0));
+				pSum += (bordE ? pCE : T(0.0));
+				pSum += (bordS ? pCS : T(0.0));
+				pSum += (bordW ? pCW : T(0.0));
+
+				_dataMask.fill( T(0.0),                   (bordN ? -pCN : T(0.0)), T(0.0),
+				                (bordW ? -pCW : T(0.0)),  pSum,                    (bordE ? -pCE : T(0.0)),
+				                T(0.0),                   (bordS ? -pCS : T(0.0)), T(0.0) );
+			}
 
 			if (motionConnected && pSum) {
-				motionSum =  T(0.0);
-				motionSum += (maskN ? motionN : T(0.0));
-				motionSum += (maskE ? motionE : T(0.0));
-				motionSum += (maskS ? motionS : T(0.0));
-				motionSum += (maskW ? motionW : T(0.0));
-				motionCenterSum =  T(0.0);
-				motionCenterSum += (maskN ? motionC : T(0.0));
-				motionCenterSum += (maskE ? motionC : T(0.0));
-				motionCenterSum += (maskS ? motionC : T(0.0));
-				motionCenterSum += (maskW ? motionC : T(0.0));
+				if (pSum) {
+					motionSum =  T(0.0);
+					motionSum += (maskN ? motionN : T(0.0));
+					motionSum += (maskE ? motionE : T(0.0));
+					motionSum += (maskS ? motionS : T(0.0));
+					motionSum += (maskW ? motionW : T(0.0));
+					motionCenterSum =  T(0.0);
+					motionCenterSum += (maskN ? motionC : T(0.0));
+					motionCenterSum += (maskE ? motionC : T(0.0));
+					motionCenterSum += (maskS ? motionC : T(0.0));
+					motionCenterSum += (maskW ? motionC : T(0.0));
+				} else {
+                                        motionSum =  T(0.0);
+                                        motionSum += (bordN ? motionN : T(0.0));
+                                        motionSum += (bordE ? motionE : T(0.0));
+                                        motionSum += (bordS ? motionS : T(0.0));
+                                        motionSum += (bordW ? motionW : T(0.0));
+                                        motionCenterSum =  T(0.0);
+                                        motionCenterSum += (bordN ? motionC : T(0.0));
+                                        motionCenterSum += (bordE ? motionC : T(0.0));
+                                        motionCenterSum += (bordS ? motionC : T(0.0));
+                                        motionCenterSum += (bordW ? motionC : T(0.0));
+				}
 				this->_rhs = motionSum - motionCenterSum;
 			}
-		} else if (!maskC && (pUnknowns[i] == unknown)) {  //  inpainting of mask
-			pSum = pCN + pCE + pCS + pCW;
-			_dataMask.fill( T(0.0), -pCN, T(0.0),
-			                -pCW,   pSum, -pCE,
-			                T(0.0), -pCS, T(0.0) );
 		}
 
 		entry.data = _dataMask;
