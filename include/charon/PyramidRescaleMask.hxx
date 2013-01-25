@@ -27,6 +27,8 @@
 
 #include "PyramidRescaleMask.h"
 
+#include <math.h>
+
 template <typename T>
 PyramidRescaleMask<T>::PyramidRescaleMask(const std::string& name) :
 		TemplatedParameteredObject<T>("PyramidRescaleMask", name,
@@ -91,10 +93,15 @@ void PyramidRescaleMask<T>::execute() {
 	cimglist_for( _currentMask, kk )
 	cimg_forXYZC( _currentMask[kk], x, y, z, c )
 	{
-		lowerX =  int( double(x) * _shrinkInv );
-		lowerY =  int( double(y) * _shrinkInv );
-		higherX = int( double(x+1) * _shrinkInv );
-		higherY = int( double(y+1) * _shrinkInv );
+		lowerX =  floor( double(x) * _shrinkInv );
+		lowerY =  floor( double(y) * _shrinkInv );
+		higherX = ceil( double(x+1) * _shrinkInv );
+		higherY = ceil( double(y+1) * _shrinkInv );
+
+		lowerX = (lowerX < 0) ? 0 : lowerX;
+		lowerY = (lowerY < 0) ? 0 : lowerY;
+		higherX = (higherX > _width) ? _width : higherX;
+		higherY = (higherY > _height) ? _height : higherY;
 
 		value = T(1.0);
 		for (int j=lowerX; j<higherX; j++)
@@ -115,10 +122,15 @@ void PyramidRescaleMask<T>::execute() {
 	cimglist_for( tmpMask, kk )
 	cimg_forXYZC( tmpMask[kk], x, y, z, c )
 	{
-		lowerX =  int( double(x) * _shrinkOnceMoreInv );
-		lowerY =  int( double(y) * _shrinkOnceMoreInv );
-		higherX = int( double(x+1) * _shrinkOnceMoreInv );
-		higherY = int( double(y+1) * _shrinkOnceMoreInv );
+		lowerX =  floor( double(x) * _shrinkOnceMoreInv );
+		lowerY =  floor( double(y) * _shrinkOnceMoreInv );
+		higherX = ceil( double(x+1) * _shrinkOnceMoreInv );
+		higherY = ceil( double(y+1) * _shrinkOnceMoreInv );
+
+		lowerX = (lowerX < 0) ? 0 : lowerX;
+		lowerY = (lowerY < 0) ? 0 : lowerY;
+		higherX = (higherX > _width) ? _width : higherX;
+		higherY = (higherY > _height) ? _height : higherY;
 
 		value = T(1.0);
 		for (int j=lowerX; j<higherX; j++)
