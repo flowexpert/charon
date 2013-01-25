@@ -50,12 +50,14 @@ template <typename T>
 class pyramidrescalemask_DECLDIR PyramidRescaleMask :
 		public TemplatedParameteredObject<T> {
 public:
-	/// sequence input
-	InputSlot < cimg_library::CImgList<T> > maskIn;
+	/// mask input
+	InputSlot < cimg_library::CImgList<T> > mask;
 	/// level select (from small to larger scales)
 	InputSlot < unsigned int > level;
-	/// sequence output
-	OutputSlot < cimg_library::CImgList<T> > maskOut;
+	/// current mask output
+	OutputSlot < cimg_library::CImgList<T> > currentMask;
+	/// previous mask output
+	OutputSlot < cimg_library::CImgList<T> > previousMask;
 
 	/// scale factor
 	Parameter < double > scaleFactor;

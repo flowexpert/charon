@@ -33,11 +33,13 @@ PyramidRescaleMask<T>::PyramidRescaleMask(const std::string& name) :
 			"Pyramid Rescaling for binary masks.")
 {
 	ParameteredObject::_addInputSlot(
-			maskIn, "maskIn", "mask input", "CImgList<T>");
+			mask, "mask", "input mask", "CImgList<T>");
 	ParameteredObject::_addInputSlot(
 			level, "level", "level select (from small to larger scales)");
 	ParameteredObject::_addOutputSlot(
-			maskOut, "maskOut", "mask output", "CImgList<T>");
+			currentMask, "currentMask", "output current mask", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(
+			previousMask, "previousMask", "output previous mask", "CImgList<T>");
 	ParameteredObject::_addParameter (
 			scaleFactor, "scaleFactor", "scale factor", 0.5);
 	ParameteredObject::_addParameter (
@@ -48,8 +50,9 @@ PyramidRescaleMask<T>::PyramidRescaleMask(const std::string& name) :
 
 template <typename T>
 void PyramidRescaleMask<T>::execute() {
-	const cimg_library::CImgList<T>& si = maskIn();
-	cimg_library::CImgList<T>& so = maskOut();
+	const cimg_library::CImgList<T>& _mask = mask();
+	cimg_library::CImgList<T>& _currentMask = currentMask();
+	cimg_library::CImgList<T>& _previousMask = previousMask();
 
 	const unsigned int curL = level();
 	const unsigned int endL = levels();
@@ -65,35 +68,76 @@ void PyramidRescaleMask<T>::execute() {
 	// target sizes
 	const double _scaleFactor = scaleFactor();
 	const double _shrink = std::pow(_scaleFactor,(double)stepsDown);
+	const double _shrinkOnceMore = std::pow(_scaleFactor,(double)(stepsDown+1));
 	const double _shrinkInv = 1.0 / _shrink;
+	const double _shrinkOnceMoreInv = 1.0 / _shrinkOnceMore;
 
 	int lowerX, lowerY, higherX, higherY;
 	double value;
 
-	// rescale sequence
-	const int _width = si[0].width();
-	const int _height = si[0].height();
-	so = cimg_library::CImgList<T>( si.size(),
-	                                _width * _shrink, _height * _shrink,
-	                                si[0].depth(), si[0].spectrum() );
+	// rescale mask (this yields the current mask)
+	const int _size = _mask.size();
+	const int _width = _mask[0].width();
+	const int _height = _mask[0].height();
+	const int _depth = _mask[0].depth();
+	const int _spectrum = _mask[0].spectrum();
+	_currentMask = cimg_library::CImgList<T>( _size,
+	                                          _width * _shrink, _height * _shrink,
+	                                          _depth, _spectrum );
 
-	cimglist_for( so, kk )
-	cimg_forXYZC( so[kk], x, y, z, c )
+	cimglist_for( _currentMask, kk )
+	cimg_forXYZC( _currentMask[kk], x, y, z, c )
 	{
 		lowerX =  int( double(x) * _shrinkInv );
 		lowerY =  int( double(y) * _shrinkInv );
 		higherX = int( double(x+1) * _shrinkInv );
 		higherY = int( double(y+1) * _shrinkInv );
 
+		value = T(1.0);
+		for (int j=lowerX; j<higherX; j++)
+		for (int i=lowerY; i<higherY; i++)
+		{
+			value *= _mask[kk].atXYZC( j, i, z, c );
+		}
+
+		_currentMask[kk].atXYZC( x, y, z, c ) = value ? 255 : 0;
+	}
+
+	// rescale mask once more (this yields a temporary mask)
+	cimg_library::CImgList<T> tmpMask;
+	tmpMask = cimg_library::CImgList<T>( _size,
+	                                     _width * _shrinkOnceMore, _height * _shrinkOnceMore,
+	                                     _depth, _spectrum );
+
+	cimglist_for( tmpMask, kk )
+	cimg_forXYZC( tmpMask[kk], x, y, z, c )
+	{
+		lowerX =  int( double(x) * _shrinkOnceMoreInv );
+		lowerY =  int( double(y) * _shrinkOnceMoreInv );
+		higherX = int( double(x+1) * _shrinkOnceMoreInv );
+		higherY = int( double(y+1) * _shrinkOnceMoreInv );
 
 		value = T(1.0);
 		for (int j=lowerX; j<higherX; j++)
 		for (int i=lowerY; i<higherY; i++)
 		{
-			value *= si[kk].atXYZC( j, i, z, c );
+			value *= _mask[kk].atXYZC( j, i, z, c );
 		}
 
-		so[kk].atXYZC( x, y, z, c ) = value ? 255 : 0;
+		tmpMask[kk].atXYZC( x, y, z, c ) = value ? 255 : 0;
+	}
+
+	// upscale temporary mask to previous mask
+	int newX, newY;
+	cimglist_for( _previousMask, kk )
+	cimg_forXYZC( _previousMask[kk], x, y, z, c )
+	{
+		newX = int( double(x) * _scaleFactor );
+		newY = int( double(y) * _scaleFactor );
+
+		value = tmpMask[kk].atXYZC( newX, newY, z, c );
+
+		_previousMask[kk].atXYZC( x, y, z, c ) = value ? 255 : 0;
 	}
 }
 
