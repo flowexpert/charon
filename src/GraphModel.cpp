@@ -180,13 +180,13 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 		return;
 
 	// identify input and output slot
-	if(!isInputSlot(source)) {
+    if(!isInputSlot(source)) {
 		// swap source and target
 		qSwap(source,target);
 	}
 
 	// disconnect input slot, if assigned and not multi slot
-	if (!isMultiSlot(source)) {
+    if (!isMultiSlot(source)) {
 		QString val = getValue(source);
 		if (!val.isEmpty())
 			disconnectSlot(source, val, false);
@@ -281,30 +281,36 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 		setPrefix("");
 		setOnlyParams(false);
 		// sweep through all parameters
-		for(int i = 0; i < rowCount(); i++) {
-			// rename node
-			QString curPar = data(index(i,0)).toString();
-			if (curPar.startsWith(nodename+".",Qt::CaseInsensitive)) {
-				QStringList parName = curPar.split(".");
-				Q_ASSERT(parName.size() > 0);
-				parName[0] = newName;
-				setData(index(i, 0), parName.join("."));
-				continue;
-			}
-			// rename target slots of other nodes
-			else if (isInputSlot(curPar) || isOutputSlot(curPar)) {
-				QStringList parVals =
-					getValue(curPar).split(";",QString::SkipEmptyParts);
-				for (int i = 0; i < parVals.size(); i++) {
-					QStringList target = parVals.at(i).split(".");
-					Q_ASSERT(target.size() > 0);
-					if (QString::compare(target[0],nodename,
-							Qt::CaseInsensitive)==0) {
-						target[0] = newName;
-						parVals[i] = target.join(".");
-					}
+		//renaming a parameter changes the list of keys and invalidates the indices
+		//the easiest method is to restart iterating over the parameters every time
+		//a match has been found
+		int count = rowCount() ;
+		for(int j = 0 ; j < count ; j++)
+		{
+			for(int i = 0 ; i < count ; i++) {
+				// rename node
+				QString curPar = data(index(i,0)).toString();
+				if (curPar.startsWith(nodename+".",Qt::CaseInsensitive)) {
+					QStringList parName = curPar.split(".");
+					Q_ASSERT(parName.size() > 0);
+					parName[0] = newName;
+					setData(index(i, 0), parName.join("."));
 				}
-				setValue(curPar, parVals.join(";"));
+				// rename target slots of other nodes
+				else if (isInputSlot(curPar) || isOutputSlot(curPar)) {
+					QStringList parVals =
+						getValue(curPar).split(";",QString::SkipEmptyParts);
+					for (int i = 0; i < parVals.size(); i++) {
+						QStringList target = parVals.at(i).split(".");
+						Q_ASSERT(target.size() > 0);
+						if (QString::compare(target[0],nodename,
+								Qt::CaseInsensitive)==0) {
+							target[0] = newName;
+							parVals[i] = target.join(".");
+						}
+					}
+					setValue(curPar, parVals.join(";"));
+				}
 			}
 		}
 		setOnlyParams(true);
