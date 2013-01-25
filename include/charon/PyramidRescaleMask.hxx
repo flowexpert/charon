@@ -84,6 +84,9 @@ void PyramidRescaleMask<T>::execute() {
 	_currentMask = cimg_library::CImgList<T>( _size,
 	                                          _width * _shrink, _height * _shrink,
 	                                          _depth, _spectrum );
+	_previousMask = cimg_library::CImgList<T>( _size,
+	                                           _width * _shrink, _height * _shrink,
+	                                           _depth, _spectrum );
 
 	cimglist_for( _currentMask, kk )
 	cimg_forXYZC( _currentMask[kk], x, y, z, c )
