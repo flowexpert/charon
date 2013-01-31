@@ -116,6 +116,4 @@ class ScriptorCimg_DECLDIR ScriptorCimg : public ScriptorBase<T>
 		OutputSlot< cimg_library::CImgList<T> > cimgOut;
 };
 
-#include "ScriptorCimg.hxx"
-
 #endif // _SCRIPTOR_CIMG_H_

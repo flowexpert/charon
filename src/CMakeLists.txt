@@ -489,12 +489,11 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelectCImg.h
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelectCImg.hxx
 		)
-		
-		QT4_WRAP_CPP(ScriptorCimg_MOC
+
+		QT4_WRAP_CPP(Scriptor_MOC
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h)
-			
 		ADD_LIBRARY(scriptorcimg SHARED
-			${ScriptorCimg_MOC}
+			${Scriptor_MOC}
 			ScriptorCimgPlugin.cpp
 			ScriptorExecuter.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorBase.h
@@ -505,12 +504,25 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorCimgPlugin.hxx
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h
 		)
-		
-		
+		ADD_LIBRARY(scriptorvigra SHARED
+			${Scriptor_MOC}
+			ScriptorVigraPlugin.cpp
+			ScriptorExecuter.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorBase.h
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorBase.hxx
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorVigra.h
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorVigra.hxx
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorVigraPlugin.h
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorVigraPlugin.hxx
+			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h
+		)
+		TARGET_LINK_LIBRARIES(scriptorvigra filereaderhdf5 filewriterhdf5)
+
 		LIST(APPEND Plugins_Qt
 			argosdisplay
 			frameselect
 			scriptorcimg
+			scriptorvigra
 			frameselectcimg
 		)
 		LIST(APPEND Plugins_CImg
@@ -520,6 +532,7 @@ IF(USE_VIGRA)
 		)
 		LIST(APPEND Plugins_Vigra
 			argosdisplay
+			scriptorvigra
 			frameselect
 		)
 

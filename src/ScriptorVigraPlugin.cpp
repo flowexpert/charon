@@ -15,26 +15,26 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file ScriptorCimgPlugin.cpp
- *  This file is needed for class ScriptorCimgPlugin to work as a charon plugin.
+/** \file Scriptor_vigra1.cpp
+ *  This file is needed for class Scriptor_vigra1 to work as a charon plugin.
  *  \author <a href="mailto:de_mox@zoho.com">
  *      mox</a>
  *  \date 29.02.2012
  */
 
 /// Class name of the plugin
-#define TYPE ScriptorCimgPlugin
+#define TYPE ScriptorVigraPlugin
 
 #define ScriptorBase_EXPORTS
-#define ScriptorCimg_EXPORTS
+#define ScriptorVigra_EXPORTS
 
+#include <charon-utils/Scriptor/ScriptorVigra.hxx>
 #include <charon-utils/Scriptor/ScriptorBase.hxx>
-#include <charon-utils/Scriptor/ScriptorCimg.hxx>
-#include <charon-utils/Scriptor/ScriptorCimgPlugin.hxx>
+#include <charon-utils/Scriptor/ScriptorVigraPlugin.hxx>
 
 /// Creates an instance of the plugin
-extern "C" ScriptorCimg_DECLDIR ParameteredObject* create(
-		const std::string & name, ParameteredObject::template_type t) {
+extern "C" ScriptorVigra_DECLDIR ParameteredObject*
+		create(const std::string & name, ParameteredObject::template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
 		return new TYPE<double>(name);
@@ -52,12 +52,12 @@ extern "C" ScriptorCimg_DECLDIR ParameteredObject* create(
 }
 
 /// Deletes an instance of the plugin
-extern "C" ScriptorCimg_DECLDIR void destroy(ParameteredObject * b) {
+extern "C" ScriptorVigra_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
 
 /// Report build configuration to prevent linking of incompatibel runtime libs
-extern "C" ScriptorCimg_DECLDIR ParameteredObject::build_type getBuildType() {
+extern "C" ScriptorVigra_DECLDIR ParameteredObject::build_type getBuildType() {
 #ifdef _DEBUG
 	return ParameteredObject::DEBUG_BUILD;
 #else
