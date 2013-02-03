@@ -138,6 +138,9 @@ public:
 
 	// \} // model/view interface
 
+    // Deactivate other Plugins
+    void Deactivate();
+
 	/// Get property _fileName
 	QString fileName() const;
 

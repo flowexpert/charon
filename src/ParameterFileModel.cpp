@@ -39,7 +39,6 @@
 #include <QTimer>
 #include <QApplication>
 #include <QMutex>
-
 #include "ParameterFileModel.moc"
 
 ParameterFileModel::ParameterFileModel(
@@ -302,10 +301,48 @@ bool ParameterFileModel::setData(
 			bool checked (value.toBool());
 			setValue (_keys[ind.row()], checked ? "true" : "false");
 			emit dataChanged(index(ind.row(),0),ind);
+            // additional check whether the changed Parameter is the ActiveInactive
+            if (_keys[ind.row()].contains("Active") && checked == false){
+                Deactivate();
+            }
+
 		}
 		break;
 	}
 	return false;
+}
+
+// Deactivate following Plugins
+void ParameterFileModel::Deactivate(){
+    QString tmpPrefix = _prefix;
+    QStringList outputsOfOneSlot;
+    int parameterIndex;
+    for (int p = 0; p < _keys.size(); p++){
+        if (_keys[p].contains("Active")){
+            parameterIndex = p;
+            break;
+        }
+    }
+    for (int i = 0; i < tmpPrefix.size(); i++){
+        if (tmpPrefix.at(i) == '.'){
+            tmpPrefix.truncate(i);
+        }
+    }
+    for (int i = 0; i < getOutputs(tmpPrefix).size(); i++){
+        if (getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)).contains(";")){
+            outputsOfOneSlot = getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)).split(";");
+            for (int o = 0; o < outputsOfOneSlot.size(); o++){
+                setPrefix(outputsOfOneSlot.at(o));
+                setValue(_keys[parameterIndex], "false");
+                Deactivate();
+            }
+        }
+        else{
+            setPrefix(getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)));
+            setValue(_keys[parameterIndex], "false");
+            Deactivate();
+        }
+    }
 }
 
 Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
