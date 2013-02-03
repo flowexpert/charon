@@ -60,6 +60,7 @@ void ScriptorVigra<T>::prepare()
 	{
 		sout<<"(WW) No filename for temporary image file set" << std::endl;
 		_tempImageFilenameVigra = ("vigratempfile_" + this->getName() + ".hdf5");
+		sout<<"(WW) using " << _tempImageFilenameVigra << " instead." << std::endl;
 	}
 
 	// make sure the temp image gets a type externsion
@@ -73,38 +74,25 @@ void ScriptorVigra<T>::prepare()
 	QDir tempdir(QFileInfo(QString::fromStdString(_tempImageFilenameVigra)).absoluteDir());
 
 	// check if directory for temporary image exists
-	if(!tempdir.exists())
-	{
-		ParameteredObject::raise("Cannot run script because temporay directory "
-								"does not exist");
+	if (!tempdir.exists()) {
+		ParameteredObject::raise(
+			"Cannot run script because temporay directory does not exist");
 	}
-	else if(!tempdir.isReadable())
-	{
-		ParameteredObject::raise("Cannot run script because temporay directory "
-								"is not readable");
+	else if (!tempdir.isReadable()) {
+		ParameteredObject::raise(
+			"Cannot run script because temporay directory is not readable");
 	}
 
 	// set the command line arguments
 	this->_cmdlineArgs << _mangleCmdlineArgs();
 
-	if(vigraIn.connected())
-	{
-		//If temp file already exists && _useFileInsteadOfInput,
-		//don't save the file, else save
-		if((! QFile(QString(_tempImageFilenameVigra.c_str())).exists()) ||
-				(! _useFileInsteadOfInput))
-		{
-			// save input file
-			FileWriterHDF5<T>::writeToFile(vigraIn(),
-										   _tempImageFilenameVigra,
-										   _vigraPathInFile,
-										   _vigraNoSingletonDimensions);
-		}
-		else
-		{
-			sout << _tempImageFilenameVigra <<
-				 " already exists, using file on disk instead" << std::endl;
-		}
+	if (vigraIn.connected()) {
+		// save input file
+		// do not abort if file exists to allow
+		// appending of datasets to existing file
+		FileWriterHDF5<T>::writeToFile(
+			vigraIn(), _tempImageFilenameVigra,
+			_vigraPathInFile, _vigraNoSingletonDimensions);
 	}
 }
 
@@ -112,14 +100,9 @@ template <typename T>
 void ScriptorVigra<T>::tidy()
 {
 	// load output
-	FileReaderHDF5<T>::readHdf5(vigraOut(),
-								_tempImageFilenameVigra,
-								_vigraPathInFile);
-	// remove temporary file
-	if(std::remove(_tempImageFilenameVigra.c_str()) != 0)
-	{
-		ParameteredObject::raise("Error deleting file " + _tempImageFilenameVigra);
-	}
+	FileReaderHDF5<T>::readHdf5(
+		vigraOut(), _tempImageFilenameVigra, _vigraPathInFileAfter);
+	// keep to not accidentially remove file with other datasets
 }
 
 template <typename T>
@@ -129,13 +112,11 @@ QStringList ScriptorVigra<T>::_mangleCmdlineArgs()
 
 	bool vigraImageExists = QFile(QString::fromStdString(_tempImageFilenameVigra)).exists();
 
-	if(_cmdlineArgsString.contains("\%vigraFilename"))
-	{
+	if (_cmdlineArgsString.contains("\%vigraFilename")) {
 		QFileInfo vigraFile(QString::fromStdString(_tempImageFilenameVigra));
 		QString _vigraFilename = vigraFile.absoluteFilePath();
 
-		if((vigraIn.connected()) || (vigraImageExists))
-		{
+		if((vigraIn.connected()) || (vigraImageExists)) {
 			args.replaceInStrings("\%vigraFilename", _vigraFilename);
 		}
 		else

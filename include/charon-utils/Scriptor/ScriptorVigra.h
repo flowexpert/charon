@@ -47,10 +47,7 @@
  *
  * Ususally, You should only need to overwrite  _setupVariables() and add the
  * parameters You need.
- * Scriptor_vigra1 is an example of this
- *
- * THIS CLASS IN CURRENTLY UNTESTED, BUT IT'S CODE IS SIMILAR TO THAT OF
- * SCRIPTOR_CIMG SO IT SHOULD WORK AS EXPECTED
+ * ScriptorVigraPlugin is an example of this
  */
 template <typename T>
 class ScriptorVigra_DECLDIR ScriptorVigra : public ScriptorBase<T>
@@ -79,19 +76,17 @@ class ScriptorVigra_DECLDIR ScriptorVigra : public ScriptorBase<T>
 		/// Each argument is handed over as an individual string
 		QString _cmdlineArgsString;
 
-		/// If there is a file on disk that is named like the temp file
-		/// should it be used instead of the input image
-		bool _useFileInsteadOfInput;
-
 		/// path to the image data within the hdf5 file
+		/** this is the dataset the input slot data is written to */
 		std::string _vigraPathInFile;
+
+		/// path to the image data within the hdf5 file after modification
+		/** this is the dataset that is read back after script execution */
+		std::string _vigraPathInFileAfter;
 
 		/// Do not write singleton dimensions
 		/** This will reduce the dimensions of the output array
 		 *  skipping singleton dimensions (i.e. such dimensions with size 1).
-		 *  \warning: This will (currently) make the result array unreadable by
-		 *  FileReaderHDF5 (which expects 5D), but may be needed for
-		 *  postprocessing e.g. with vigranumpy.
 		 */
 		bool _vigraNoSingletonDimensions;
 
@@ -108,8 +103,8 @@ class ScriptorVigra_DECLDIR ScriptorVigra : public ScriptorBase<T>
 		 * <li>bool _exitOnScriptError</li>
 		 * <li>bool _searchPathForScript</li>
 		 * <li>std::string _tempImageFilenameVigra</li>
-		 * <li>bool _useFileInsteadOfInput</li>
 		 * <li>std::string _vigraPathInFile</li>
+		 * <li>std::string _vigraPathInFileAfter</li>
 		 * <li>bool _vigraNoSingletonDimensions</li>
 		 * </ul>
 		 * */

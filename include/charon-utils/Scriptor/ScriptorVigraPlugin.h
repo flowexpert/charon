@@ -46,53 +46,35 @@
 template <typename T>
 class ScriptorVigra_DECLDIR ScriptorVigraPlugin : public ScriptorVigra<T>
 {
-	private:
-		/// Set up all variables needed to run the script
-		/**
-		 * These variables have to be set:
-		 * <ul>
-		 * <li>QString _interpreter</li>
-		 * <li>bool _prependInterpreter</li>
-		 * <li>QString _script</li>
-		 * <li>QString _cmdlineArgsString</li>
-		 * <li>QString _workDir</li>
-		 * <li>bool _exitOnGeneralError</li>
-		 * <li>bool _exitOnScriptError</li>
-		 * <li>bool _searchPathForScript</li>
-		 * <li>std::string _tempImageFilenameVigra</li>
-		 * <li>bool _useFileInsteadOfInput</li>
-		 * <li>std::string _vigraPathInFile</li>
-		 * <li>bool _vigraNoSingletonDimensions</li>
-		 * </ul>
-		 * */
+	protected:
 		virtual void _setupVariables();
+
 	public:
 
-		///constructor
-		/**
-		 * \param name instance name of the plugin
-		 * */
+		/// constructor
+		/** \param name instance name of the plugin */
 		ScriptorVigraPlugin(const std::string& name);
 
-		///If an input is connected and the temporary file already exists,
-		///use file on disk instead of input
-		Parameter<bool> useFileInsteadOfInput;
-
-		///should the plugin continue or throw an exception when the script crashes
+		/// should the plugin continue or throw an exception when the script crashes
 		Parameter<bool> exitOnScriptError;
 
-		///should the plugin continue or throw an exception when an error occurs
+		/// should the plugin continue or throw an exception when an error occurs
 		Parameter<bool> exitOnGeneralError;
 
-		///Call the script like <interpreter> <scriptname> <args>
-		///instead of <scriptname> <ars>
+		/// Call the script like <interpreter> <scriptname> <args>
+		/// instead of <scriptname> <ars>
 		Parameter<bool> prependInterpreter;
 
 		/// path to the script to run
 		Parameter< std::string > scriptpath;
 
-		/// path to the image data in the file
+		/// path to the image data within the hdf5 file
+		/** this is the dataset the input slot data is written to */
 		Parameter< std::string > vigraPathInFile;
+
+		/// path to the image data within the hdf5 file after modification
+		/** this is the dataset that is read back after script execution */
+		Parameter< std::string > vigraPathInFileAfter;
 
 		/// command to invoke the interpreter
 		Parameter< std::string > interpreter;
@@ -109,9 +91,6 @@ class ScriptorVigra_DECLDIR ScriptorVigraPlugin : public ScriptorVigra<T>
 		/// Should singleton dimensions be skipped on writing
 		/** This will reduce the dimensions of the output array
 		 *  skipping singleton dimensions (i.e. such dimensions with size 1).
-		 *  \warning: This will (currently) make the result array unreadable by
-		 *  FileReaderHDF5 (which expects 5D), but may be needed for
-		 *  postprocessing e.g. with vigranumpy.
 		 */
 		Parameter<bool> vigraNoSingletonDimensions;
 };
