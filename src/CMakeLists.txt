@@ -84,11 +84,18 @@ ADD_LIBRARY(energynonlocal SHARED
 	${charon_INCLUDE_DIR}/EnergyStencils/EnergyNonLocal.hxx
 	EnergyNonLocal.cpp
 )
+# Stencils for over-parameterized motion estimation
+ADD_LIBRARY(affinebcc SHARED
+	${charon_INCLUDE_DIR}/Stencils/AffineBCC.h
+	${charon_INCLUDE_DIR}/Stencils/AffineBCC.hxx
+	AffineBCC.cpp
+)
 LIST(APPEND Plugins
 	energybcc
 	energyclassic
 	energycoupling
 	energynonlocal
+	affinebcc
 )
 
 # Penalty Functions
