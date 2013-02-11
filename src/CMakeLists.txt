@@ -90,12 +90,18 @@ ADD_LIBRARY(affinebcc SHARED
 	${charon_INCLUDE_DIR}/Stencils/AffineBCC.hxx
 	AffineBCC.cpp
 )
+ADD_LIBRARY(affine2translation SHARED
+	${charon_INCLUDE_DIR}/Affine2Translation.h
+	${charon_INCLUDE_DIR}/Affine2Translation.hxx
+	Affine2Translation.cpp
+)
 LIST(APPEND Plugins
 	energybcc
 	energyclassic
 	energycoupling
 	energynonlocal
 	affinebcc
+	affine2translation
 )
 
 # Penalty Functions
