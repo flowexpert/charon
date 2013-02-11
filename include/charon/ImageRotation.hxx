@@ -28,6 +28,9 @@
 #include <charon-core/ParameteredObject.hxx>
 #include "ImageRotation.h"
 
+#include <math.h>  //  for sin and cos
+#define M_PI 3.14159265
+
 template<typename T>
 ImageRotation<T>::ImageRotation(const std::string& name) :
 		TemplatedParameteredObject<T>("ImageRotation", name,
@@ -39,6 +42,8 @@ ImageRotation<T>::ImageRotation(const std::string& name) :
 			in, "in", "image input", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 			out, "out", "image output", "CImgList<T>");
+	ParameteredObject::_addOutputSlot(
+			groundTruth, "groundTruth", "ground truth", "CImgList<T>");
 
 	ParameteredObject::_addParameter< T >(
 			angle, "angle", "rotation angle", 0.0 );
@@ -53,15 +58,30 @@ void ImageRotation<T>::execute()
 {
 	const cimg_library::CImgList<T> &_in = in();
 	cimg_library::CImgList<T> &_out = out();
+	cimg_library::CImgList<T> &_groundTruth = groundTruth();
 
 	_out = _in;
 
 	int _width = _in[0].width();
 	int _height = _in[0].height();
 
+	int _rotationCenterX = _width/2;
+	int _rotationCenterY = _height/2;
+
+	_groundTruth = cimg_library::CImgList<T>( 2, _width, _height, 1, 1 );
+
 	cimglist_for( _out, kk )
 	{
-		_out[kk].rotate( angle(), _width/2, _height/2, 1.0, boundaryCondition(), interpolationType() );
+		_out[kk].rotate( angle(), _rotationCenterX, _rotationCenterY, 1.0, boundaryCondition(), interpolationType() );
+	}
+
+	T _angleRad = (T(angle()) / 180.0) * M_PI;
+	cimg_forXY( _groundTruth[0], x, y )
+	{
+		_groundTruth[0].atXY( x, y ) = (cos(_angleRad)-1.0) * (x - _rotationCenterX)
+		                             -  sin(_angleRad)      * (y - _rotationCenterY);
+		_groundTruth[1].atXY( x, y ) =  sin(_angleRad)      * (x - _rotationCenterX)
+		                             + (cos(_angleRad)-1.0) * (y - _rotationCenterY);
 	}
 }
 

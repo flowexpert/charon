@@ -57,6 +57,9 @@ public:
 	/// image output
 	OutputSlot<cimg_library::CImgList<T> > out;
 
+	/// ground truth output
+	OutputSlot<cimg_library::CImgList<T> > groundTruth;
+
 	/// rotation angle
 	Parameter< T > angle;
 
