@@ -95,6 +95,11 @@ ADD_LIBRARY(affine2translation SHARED
 	${charon_INCLUDE_DIR}/Affine2Translation.hxx
 	Affine2Translation.cpp
 )
+ADD_LIBRARY(imagerotation SHARED
+	${charon_INCLUDE_DIR}/ImageRotation.h
+	${charon_INCLUDE_DIR}/ImageRotation.hxx
+	ImageRotation.cpp
+)
 LIST(APPEND Plugins
 	energybcc
 	energyclassic
@@ -102,6 +107,7 @@ LIST(APPEND Plugins
 	energynonlocal
 	affinebcc
 	affine2translation
+	imagerotation
 )
 
 # Penalty Functions
