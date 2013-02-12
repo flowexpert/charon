@@ -29,7 +29,6 @@
 #include "ImageRotation.h"
 
 #include <math.h>  //  for sin and cos
-#define M_PI 3.14159265
 
 template<typename T>
 ImageRotation<T>::ImageRotation(const std::string& name) :
@@ -65,8 +64,8 @@ void ImageRotation<T>::execute()
 	int _width = _in[0].width();
 	int _height = _in[0].height();
 
-	int _rotationCenterX = _width/2;
-	int _rotationCenterY = _height/2;
+	double _rotationCenterX = (_width-1)/2;
+	double _rotationCenterY = (_height-1)/2;
 
 	_groundTruth = cimg_library::CImgList<T>( 2, _width, _height, 1, 1 );
 
