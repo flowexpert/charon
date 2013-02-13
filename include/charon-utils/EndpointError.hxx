@@ -43,12 +43,13 @@ EndpointError<T>::EndpointError(const std::string& name) :
 	ParameteredObject::_addInputSlot(
 			groundTruth, "groundTruth",
 	                "ground truth input", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+			mask, "mask",
+			"mask (if mask == 0 then error is ignored)",  "CImgList<T>");
+
 	ParameteredObject::_addOutputSlot(
 			out, "out", "hsv representation output [t](x,y,z,c)",
 			"CImgList<T>");
-	ParameteredObject::_addParameter(
-			threshold, "threshold",
-			"threshold to cut off", "T");
 }
 
 template<typename T>
@@ -59,12 +60,11 @@ void EndpointError<T>::execute() {
 	// copy input image for manipulations
 	const cimg_library::CImgList<T>& i1 = flow();
 	const cimg_library::CImgList<T>& i2 = groundTruth();
+	const cimg_library::CImgList<T>& _mask = mask();
 	cimg_library::CImgList<T>& o = out();
 
 	cimg_library::CImg<T> tmp( i1[0].width(), i1[0].height(), i1[0].depth(),
 	                           i1[0].spectrum() );
-
-	T _threshold = threshold();
 
 	T sum;
 	T delta;
@@ -73,9 +73,12 @@ void EndpointError<T>::execute() {
 	cimg_forXYZC(tmp,x,y,z,t) {
 		sum = T(0);
 		for (unsigned int n=0; n<i1.size(); ++n) {
-			delta = fabs( double(i1(n,x,y,z,t) - i2(n,x,y,z,t)) );
-			if (delta > _threshold) delta = 0;
-			sum += pow( double(delta), 2 );
+			if (!_mask.atNXYZC(0,x,y,z,t)) {
+				delta = 0;
+			} else {
+				delta = fabs( double(i1(n,x,y,z,t) - i2(n,x,y,z,t)) );
+			}
+			sum += pow( double(delta), 2.0 );
 		}
 		tmp(x,y,z,t) = pow( double(sum), double(1.0/2) );
 		sumsum += tmp(x,y,z,t);

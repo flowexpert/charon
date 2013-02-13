@@ -61,11 +61,11 @@ public:
 	/// ground truth input
 	InputSlot<cimg_library::CImgList<T> > groundTruth;
 
+	/// mask input
+	InputSlot<cimg_library::CImgList<T> > mask;
+
 	/// endpoint error output
 	OutputSlot<cimg_library::CImgList<T> > out;
-
-	/// threshold
-	Parameter<T> threshold;
 };
 
 #endif
