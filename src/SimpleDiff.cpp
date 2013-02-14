@@ -24,6 +24,7 @@
 ///Class name of the plugin
 #define TYPE SimpleDiff
 
+#define warper_EXPORTS
 #include <charon/SimpleDiff.hxx>
 // #include <charon-utils/DataManagerCImgList.hxx>
 

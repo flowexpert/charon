@@ -74,13 +74,13 @@ void ImageRotation<T>::execute()
 		_out[kk].rotate( angle(), _rotationCenterX, _rotationCenterY, 1.0, boundaryCondition(), interpolationType() );
 	}
 
-	T _angleRad = (T(angle()) / 180.0) * M_PI;
+	double _angleRad = (T(angle()) / 180.0) * M_PI;
 	cimg_forXY( _groundTruth[0], x, y )
 	{
-		_groundTruth[0].atXY( x, y ) = (cos(_angleRad)-1.0) * (x - _rotationCenterX)
-		                             -  sin(_angleRad)      * (y - _rotationCenterY);
-		_groundTruth[1].atXY( x, y ) =  sin(_angleRad)      * (x - _rotationCenterX)
-		                             + (cos(_angleRad)-1.0) * (y - _rotationCenterY);
+		_groundTruth[0].atXY( x, y ) = T((cos(_angleRad)-1.0) * (x - _rotationCenterX)
+		                             -  sin(_angleRad)      * (y - _rotationCenterY));
+		_groundTruth[1].atXY( x, y ) =  T(sin(_angleRad)      * (x - _rotationCenterX)
+		                             + (cos(_angleRad)-1.0) * (y - _rotationCenterY));
 	}
 }
 
