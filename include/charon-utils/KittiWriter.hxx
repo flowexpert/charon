@@ -46,6 +46,9 @@ KittiWriter<T>::KittiWriter(const std::string& name) :
 			"False color representations are written into the same folder "
 			"named like fcol000123.png<br>"
 			"Delete these files before creating the zip file for submission."
+			"<br><br>"
+			"This plugin uses png++ by Alexander Shulgin<br>"
+			"see include/png++/COPYING for copyright and license information."
 		),
 		valid(true,false), // optional
 		gt_occ(true,false),

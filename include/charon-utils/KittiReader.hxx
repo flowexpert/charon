@@ -53,6 +53,9 @@ KittiReader<T>::KittiReader(const std::string& name) :
 			"corresponding ground truth data.<br>"
 			"It's possible to select between the stereo or optical flow pairs, "
 			"as well as between occluded and non-occluded ground truth."
+			"<br><br>"
+			"This plugin uses png++ by Alexander Shulgin<br>"
+			"see include/png++/COPYING for copyright and license information."
 		)
 {
 	ParameteredObject::_setTags("charon-utils;CImg;DiskIO") ;
