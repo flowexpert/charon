@@ -427,8 +427,14 @@ ADD_LIBRARY(warper SHARED
 	${charon_INCLUDE_DIR}/Warper.h
 	${charon_INCLUDE_DIR}/Warper.hxx
 )
+ADD_LIBRARY(simplewarp SHARED
+	SimpleWarp.cpp
+	${charon_INCLUDE_DIR}/SimpleWarp.h
+	${charon_INCLUDE_DIR}/SimpleWarp.hxx
+)
 LIST(APPEND Plugins
 	warper
+	simplewarp
 )
 
 # Misc plugins
