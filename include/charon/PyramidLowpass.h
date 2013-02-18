@@ -51,6 +51,8 @@ class pyramidlowpass_DECLDIR PyramidLowpass :
 public:
 	/// sequence input
 	InputSlot < cimg_library::CImgList<T> > seqIn;
+	/// mask for bilateral blur (optional)
+	InputSlot < cimg_library::CImgList<T> > blurMask;
 	/// level select (from small to larger blur factors)
 	InputSlot < unsigned int > level;
 
@@ -60,6 +62,12 @@ public:
 	/// blur levels
 	ParameterList < T > sigmas;
 
+	/// bilateral blur, if checked
+	Parameter< bool > bilateralBlur;
+
+	/// radius for bilateral blur window
+	Parameter< unsigned int > blurRadius;
+
 	/// create a new PyramidLowpass object
 	/// \param name          Instance name
 	PyramidLowpass(const std::string& name = "");
@@ -67,6 +75,12 @@ public:
 protected:
 	/// Update object.
 	virtual void execute();
+
+	/// bi-lateral blur function
+	cimg_library::CImg<T> _blur( int kk, T sigma, int radius );
+
+	/// normal distribution function
+	inline T _gauss( T x, T mu, T sigma );
 };
 
 #endif // _PYRAMID_LOWPASS_H_
