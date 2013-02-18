@@ -149,7 +149,7 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			probabilitySum += probabilities.atXYZC( radius + cx -x, radius + cy - y, 0, 0 );
 
 			if (!visited.atXYZC(  radius + cx - x, radius + cy-1 - y, 0, 0 ) && 
-			    _blurMask[0].atXYZC( radius + cx - x, radius + cy-1 - y, 0, 0 ) && 
+			    _blurMask[0].atXYZC( cx, cy-1, 0, 0 ) && 
 			    ((cx   - x) * (cx   - x) <= radius*radius) &&
 			    ((cy-1 - y) * (cy-1 - y) <= radius*radius) ) {
 				// push back north neighbor
@@ -160,7 +160,7 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			}
 
 			if (!visited.atXYZC(  radius + cx+1 - x, radius + cy - y, 0, 0 ) &&
-			    _blurMask[0].atXYZC( radius + cx+1 - x, radius + cy - y, 0, 0 ) &&
+			    _blurMask[0].atXYZC( cx+1, cy, 0, 0 ) &&
 			    ((cx+1 - x) * (cx+1 - x) <= radius*radius) &&
 			    ((cy   - y) * (cy   - y) <= radius*radius) ) {
 				// push back east neighbor
@@ -171,7 +171,7 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			}
 
 			if (!visited.atXYZC(  radius + cx - x, radius + cy+1 - y, 0, 0 ) &&
-			    _blurMask[0].atXYZC( radius + cx - x, radius + cy+1 - y, 0, 0 ) &&
+			    _blurMask[0].atXYZC( cx, cy+1, 0, 0 ) &&
 			    ((cx   - x) * (cx   - x) <= radius*radius) &&
 			    ((cy+1 - y) * (cy+1 - y) <= radius*radius) ) {
 				// push back south neighbor
@@ -182,7 +182,7 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			}
 
 			if (!visited.atXYZC(  radius + cx-1 - x, radius + cy - y, 0, 0 ) &&
-			    _blurMask[0].atXYZC( radius + cx-1 - x, radius + cy - y, 0, 0 ) &&
+			    _blurMask[0].atXYZC( cx-1, cy, 0, 0 ) &&
 			    ((cx-1 - x) * (cx-1 - x) <= radius*radius) &&
 			    ((cy   - y) * (cy   - y) <= radius*radius) ) {
 				// push back west neighbor
