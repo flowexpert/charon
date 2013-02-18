@@ -312,7 +312,7 @@ bool ParameterFileModel::setData(
 	return false;
 }
 
-// Deactivate following Plugins
+// Deactivates following Plugins
 void ParameterFileModel::Deactivate(){
     QString tmpPrefix = _prefix;
     QStringList outputsOfOneSlot;
@@ -337,13 +337,65 @@ void ParameterFileModel::Deactivate(){
                 Deactivate();
             }
         }
-        else{
+        else if (getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)) != ""){
             setPrefix(getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)));
             setValue(_keys[parameterIndex], "false");
             Deactivate();
         }
     }
 }
+
+// Reactivates all following Plugins
+void ParameterFileModel::Reactivate(){
+    QString tmpPrefix = _prefix;
+    QStringList outputsOfOneSlot;
+    int parameterIndex;
+    for (int p = 0; p < _keys.size(); p++){
+        if (_keys[p].contains("Active")){
+            parameterIndex = p;
+            break;
+        }
+    }
+    if (getValue(_keys[parameterIndex]) == "false"){
+        setValue(_keys[parameterIndex], "true");
+        for (int i = 0; i < tmpPrefix.size(); i++){
+            if (tmpPrefix.at(i) == '.'){
+                tmpPrefix.truncate(i);
+            }
+        }
+        for (int i = 0; i < getOutputs(tmpPrefix).size(); i++){
+            if (getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)).contains(";")){
+                outputsOfOneSlot = getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)).split(";");
+                for (int o = 0; o < outputsOfOneSlot.size(); o++){
+                    setPrefix(outputsOfOneSlot.at(o));
+                    Reactivate();
+                }
+            }
+            else if (getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)) != ""){
+                setPrefix(getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)));
+                Reactivate();
+            }
+        }
+
+    }
+}
+bool ParameterFileModel::Active(){
+    int parameterIndex;
+    for (int p = 0; p < _keys.size(); p++){
+        if (_keys[p].contains("Active")){
+            parameterIndex = p;
+            break;
+        }
+    }
+    if (getValue(_keys[parameterIndex]) == "true"){
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
 
 Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 	if (!prefixValid() || ind.row() < 0 || ind.row() >= _keys.size()) {

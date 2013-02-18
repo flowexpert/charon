@@ -115,10 +115,11 @@ void Node::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 }
 
 void Node::paint(
-		QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
-	painter->setPen(QPen(Qt::black,1.f));
-	painter->setOpacity(1);
-	painter->setBrush(_selectedNode ? Qt::blue : Qt::gray);
+        QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
+
+    painter->setPen(QPen(Qt::black,1.f));
+    painter->setOpacity(1);
+    painter->setBrush(_selectedNode ? Qt::blue : Qt::gray);
 	painter->drawRoundedRect(0,0,_width,_height,10,10);
 	painter->setBrush(_selectedNode ? QColor("#AAF") : QColor("#BBC"));
 	painter->drawRoundedRect(0,0,_width,22,10,10);

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>584</width>
-    <height>347</height>
+    <height>348</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -163,6 +163,13 @@ This deletes the parameter(s) from the parameter file.</string>
              <property name="icon">
               <iconset resource="../resources.qrc">
                <normaloff>:/icons/prioritySignalLights.png</normaloff>:/icons/prioritySignalLights.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="ActivateAllButton">
+             <property name="text">
+              <string>Activate Plugintree</string>
              </property>
             </widget>
            </item>
