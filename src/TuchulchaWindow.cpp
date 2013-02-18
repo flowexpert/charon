@@ -51,7 +51,7 @@
 const int TuchulchaWindow::_saveStateVersion = 1;
 
 TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
-	QMainWindow(myParent), _flow(0) {
+	QMainWindow(myParent), _flow(0),_docGen(0) {
 
 	if (OptionsDialog::check()) {
 		options();
@@ -84,9 +84,9 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	helpWidget->setObjectName("helpwidget");
 	QTextBrowser* helpBrowser = new QTextBrowser(helpWidget);
 	helpWidget->setWidget(helpBrowser);
-	DocGenerator* docGen = new DocGenerator(helpBrowser, this);
-	docGen->showIntro();
-	connect(this, SIGNAL(metaDataUpdated()), docGen, SLOT(updateMetaData()));
+	_docGen = new DocGenerator(helpBrowser, this);
+	_docGen->showIntro();
+	connect(this, SIGNAL(metaDataUpdated()), _docGen, SLOT(updateMetaData()));
 
 	// workflow comments
 	QDockWidget* commentBox = new QDockWidget(tr("Workflow Comments"), this);
@@ -103,7 +103,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	connect(this, SIGNAL(metaDataUpdated()), _selector, SLOT(reload()));
 
 	// help browser connections
-	connect(_selector, SIGNAL(showClassDoc(QString)), docGen, SLOT(
+	connect(_selector, SIGNAL(showClassDoc(QString)), _docGen, SLOT(
 			showClassDoc(QString)));
 
 	// object inspector connections
@@ -193,11 +193,11 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 
 	toolbar->addSeparator();
 	action = toolbar->addAction(QIcon(":/icons/intro.png"),
-		tr("introduction to tuchulcha"), docGen, SLOT(showIntro()));
+		tr("introduction to tuchulcha"), _docGen, SLOT(showIntro()));
 	action->setToolTip(tr("show introductin page"));
 
 	action = toolbar->addAction(QIcon(":/icons/help.png"),
-		tr("tuchulcha help"), docGen, SLOT(showHelp()));
+		tr("tuchulcha help"), _docGen, SLOT(showHelp()));
 	action->setToolTip(tr("show help page"));
 
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
@@ -256,10 +256,10 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 
 	// help menu
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
-	helpMenu->addAction(QIcon(":/icons/help.png"), tr("&Help"), docGen, SLOT(
+	helpMenu->addAction(QIcon(":/icons/help.png"), tr("&Help"), _docGen, SLOT(
 			showHelp()), QKeySequence(tr("F1")));
 	helpMenu->addAction(QIcon(":/icons/intro.png"), tr("&Introduction"),
-			docGen, SLOT(showIntro()), QKeySequence(tr("Shift+F1")));
+			_docGen, SLOT(showIntro()), QKeySequence(tr("Shift+F1")));
 	helpMenu->addAction(appicon, tr("&About Tuchulcha"), this, SLOT(
 			_showAbout()));
 	helpMenu->addAction(QIcon(":/icons/qt.png"), tr("About &Qt"), this, SLOT(
@@ -276,7 +276,8 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 			settings.value("MainWindow/windowState").toByteArray(),
 			_saveStateVersion);
 
-	updateMetadata();
+	if(settings.value("reloadOnStartup",true).toBool())
+		updateMetadata();
 }
 
 TuchulchaWindow::~TuchulchaWindow() {
@@ -405,6 +406,8 @@ void TuchulchaWindow::openNew() {
 			SLOT(showMessage(QString)));
 	connect(flowWidget, SIGNAL(statusMessage(QString)),
 			SLOT(showMessage(QString)));
+	connect(flowWidget, SIGNAL(nodeTypeSelected(QString)),
+			_docGen, SLOT(showClassDoc(QString)));
 	flowWidget->showMaximized();
 }
 

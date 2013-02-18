@@ -95,6 +95,7 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 		}
 		if (np) {
 			_model->setPrefix(np->getInstanceName());
+			emit nodeTypeSelected(np->getClassName()) ;
 		}
 		NodeProperty* prop = dynamic_cast<NodeProperty*>(itm);
 		if (prop != 0) {

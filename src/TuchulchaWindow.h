@@ -35,6 +35,7 @@ class ParameterFileModel;
 class NodeTreeView;
 class QAction;
 class RecentFileHandler;
+class DocGenerator;
 
 ///	Management of the application's main window.
 class TuchulchaWindow : public QMainWindow {
@@ -122,6 +123,8 @@ private:
 	ObjectInspector* _inspector;
 	/// selector widget
 	NodeTreeView* _selector;
+	/// Documentation Generator
+	DocGenerator* _docGen;
 	/// window state version identifier
 	static const int _saveStateVersion;
 };

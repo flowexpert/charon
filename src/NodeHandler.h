@@ -142,6 +142,8 @@ private:
 signals:
 	/// message to display on status bar
 	void statusMessage(QString msg) const;
+
+	void nodeTypeSelected(QString type) const ;
 };
 
 #endif /* NODEHANDLER_H_ */

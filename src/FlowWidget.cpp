@@ -49,6 +49,8 @@ FlowWidget::FlowWidget(GraphModel* modelIn, QWidget* myParent) :
 		this, SLOT(updateFileName(QString)));
 	connect(_nodehandler, SIGNAL(statusMessage(QString)),
 		SIGNAL(statusMessage(QString)));
+	connect(_nodehandler, SIGNAL(nodeTypeSelected(QString)),
+		this,SIGNAL(nodeTypeSelected(QString)));
 	connect(model(), SIGNAL(modified(bool)),
 		this, SLOT(modify(bool)));
 	connect(model(), SIGNAL(commentChanged(QString)), _nodehandler,
