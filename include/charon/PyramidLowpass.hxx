@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2012, 2013
+                  University of Heidelberg (IWR/HCI)
 
     This file is part of Charon.
 
@@ -60,6 +61,11 @@ void PyramidLowpass<T>::execute() {
 	cimg_library::CImgList<T>& so = seqOut();
 	so = si;
 
+	_width    = si[0].width();
+	_height   = si[0].height();
+	_depth    = si[0].depth();
+	_spectrum = si[0].spectrum();
+
 	bool _bilateralBlur = bilateralBlur();
 	unsigned int _blurRadius = blurRadius();
 
@@ -110,40 +116,36 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 	const cimg_library::CImgList<T>& si = seqIn();
 	const cimg_library::CImgList<T>& _blurMask = blurMask();
 
-	int _width = si[kk].width();
-	int _height = si[kk].height();
-	int _depth = si[kk].depth();
-	int _spectrum = si[kk].spectrum();
-
 	cimg_library::CImg<T> ret( _width, _height, _depth, _spectrum );
 
 	int cx = 0, cy = 0;
 	T retVal = T(0);
 
-	std::vector< int > position;
-	std::vector< std::vector< int > > queue;
-	cimg_forXYZC( ret, x, y, z, c )
+	std::vector< int > queueX;
+	std::vector< int > queueY;
+	cimg_forXY( ret, x, y )
 	{
 		cimg_library::CImg<bool> visited( 2*radius+1, 2*radius+1, 1, 1, false );
 		cimg_library::CImg<T> probabilities( 2*radius+1, 2*radius+1, 1, 1, T(0) );
-		cimg_library::CImg<T> imgVals( 2*radius+1, 2*radius+1, 1, 1, T(0) );
+		cimg_library::CImg<T> imgVals( 2*radius+1, 2*radius+1, _depth, _spectrum, T(0) );
 		T probabilitySum = T(0);
 
-		queue.clear();
-		position.clear();
-		position.push_back( x );
-		position.push_back( y );
-		queue.push_back( position );
-		while (!queue.empty()) {
-			position = queue.back();
-			queue.pop_back();
-			cy = position.back();
-			position.pop_back();
-			cx = position.back();
-			position.pop_back();
+		queueX.clear();
+		queueY.clear();
+		queueX.push_back( x );
+		queueY.push_back( y );
+		while (!queueX.empty()) {
+			cx = queueX.back();
+			queueX.pop_back();
+			cy = queueY.back();
+			queueY.pop_back();
 
 			visited.atXYZC( radius + cx - x, radius + cy - y, 0, 0 ) = true;
-			imgVals.atXYZC( radius + cx - x, radius + cy - y, 0, 0 ) = si[kk].atXYZC( cx, cy, z, c );
+			for (int z=0; z<_depth; z++)
+			for (int c=0; c<_spectrum; c++)
+			{
+				imgVals.atXYZC( radius + cx - x, radius + cy - y, z, c ) = si[kk].atXYZC( cx, cy, z, c );
+			}
 			probabilities.atXYZC( radius + cx - x, radius + cy - y, 0, 0 ) =
 			  _gauss( pow( pow(double(cx-x), 2.0) + pow(double(cy-y), 2.0), 0.5 ), T(0.0), sigma ) ;
 			probabilitySum += probabilities.atXYZC( radius + cx -x, radius + cy - y, 0, 0 );
@@ -153,10 +155,8 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			    ((cx   - x) * (cx   - x) <= radius*radius) &&
 			    ((cy-1 - y) * (cy-1 - y) <= radius*radius) ) {
 				// push back north neighbor
-				position.clear();
-				position.push_back( cx );
-				position.push_back( cy-1 );
-				queue.push_back( position );
+				queueX.push_back( cx );
+				queueY.push_back( cy-1 );
 			}
 
 			if (!visited.atXYZC(  radius + cx+1 - x, radius + cy - y, 0, 0 ) &&
@@ -164,10 +164,8 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			    ((cx+1 - x) * (cx+1 - x) <= radius*radius) &&
 			    ((cy   - y) * (cy   - y) <= radius*radius) ) {
 				// push back east neighbor
-				position.clear();
-				position.push_back( cx+1 );
-				position.push_back( cy );
-				queue.push_back( position );
+				queueX.push_back( cx+1 );
+				queueY.push_back( cy );
 			}
 
 			if (!visited.atXYZC(  radius + cx - x, radius + cy+1 - y, 0, 0 ) &&
@@ -175,10 +173,8 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			    ((cx   - x) * (cx   - x) <= radius*radius) &&
 			    ((cy+1 - y) * (cy+1 - y) <= radius*radius) ) {
 				// push back south neighbor
-				position.clear();
-				position.push_back( cx );
-				position.push_back( cy+1 );
-				queue.push_back( position );
+				queueX.push_back( cx );
+				queueY.push_back( cy+1 );
 			}
 
 			if (!visited.atXYZC(  radius + cx-1 - x, radius + cy - y, 0, 0 ) &&
@@ -186,27 +182,27 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			    ((cx-1 - x) * (cx-1 - x) <= radius*radius) &&
 			    ((cy   - y) * (cy   - y) <= radius*radius) ) {
 				// push back west neighbor
-				position.clear();
-				position.push_back( cx-1 );
-				position.push_back( cy );
-				queue.push_back( position );
+				queueX.push_back( cx-1 );
+				queueY.push_back( cy );
 			}
 		}
 
-		retVal = T(0);
-		cimg_forXY( visited, nx, ny )
+		for (int z=0; z<_depth; z++)
+		for (int c=0; c<_spectrum; c++)
 		{
-			retVal += imgVals.atXYZC( nx, ny, 0, 0 )
-			        * probabilities.atXYZC( nx, ny, 0, 0 );
-		}
-		
-		if (probabilitySum) {
-			retVal /= probabilitySum;
-		} else {
 			retVal = T(0);
+			cimg_forXY( imgVals, nx, ny )
+			{
+				retVal += imgVals.atXYZC( nx, ny, z, c )
+				        * probabilities.atXYZC( nx, ny, 0, 0 );
+			}	
+			if (probabilitySum) {
+				retVal /= probabilitySum;
+			} else {
+				retVal = T(0);
+			}
+			ret.atXYZC( x, y, z, c ) = retVal;
 		}
-
-		ret.atXYZC( x, y, z, c ) = retVal;
 	}
 
 	return ret;
@@ -215,8 +211,8 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 template <typename T>
 inline T PyramidLowpass<T>::_gauss( T x, T mu, T sigma )
 {
-  return 1/(sqrt(2*M_PI*sigma*sigma))
-    * exp(double(-(x - mu)*(x - mu)/(2*sigma*sigma))) ;
+  return // 1/(sqrt(2*M_PI*sigma*sigma)) *
+         exp(double(-(x - mu)*(x - mu)/(2*sigma*sigma))) ;
 }
 
 #endif /* _PYRAMID_LOWPASS_HXX_ */

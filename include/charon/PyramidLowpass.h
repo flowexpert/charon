@@ -81,6 +81,14 @@ protected:
 
 	/// normal distribution function
 	inline T _gauss( T x, T mu, T sigma );
+
+	/// cache members
+	//\{
+	int _width;
+	int _height;
+	int _depth;
+	int _spectrum;
+	//\}
 };
 
 #endif // _PYRAMID_LOWPASS_H_
