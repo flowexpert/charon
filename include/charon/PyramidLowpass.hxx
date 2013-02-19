@@ -76,9 +76,9 @@ void PyramidLowpass<T>::execute() {
 		blurFactor2 = sigmas()[level()];
 		cimglist_for(so,kk)
 		{
-			if (_bilateralBlur) {
+			if (_bilateralBlur && blurFactor2) {
 				so.at(kk) = _blur(kk, blurFactor2, _blurRadius);
-			} else {
+			} else if (blurFactor2) {
 				so.at(kk).blur(blurFactor2);
 			}
 		}
@@ -88,18 +88,18 @@ void PyramidLowpass<T>::execute() {
 		blurFactor1 = sigmas()[level()-1];
 		cimglist_for(tmp1,kk)
 		{
-			if (_bilateralBlur) {
+			if (_bilateralBlur && blurFactor1) {
 				tmp1.at(kk) = _blur(kk, blurFactor1, _blurRadius);
-			} else {
+			} else if (blurFactor1) {
 				tmp1.at(kk).blur(blurFactor1);
 			}
 		}
 		blurFactor2 = sigmas()[level()];
 		cimglist_for(tmp2,kk)
 		{
-			if (_bilateralBlur) {
+			if (_bilateralBlur && blurFactor2) {
 				tmp2.at(kk) = _blur(kk, blurFactor2, _blurRadius);
-			} else {
+			} else if (blurFactor2) {
 				tmp2.at(kk).blur(blurFactor2);
 			}
 		}
