@@ -123,12 +123,12 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 
 	std::vector< int > queueX;
 	std::vector< int > queueY;
-	cimg_forXY( ret, x, y )
+	for (int x=0; x<_width; x++)
+	for (int y=0; y<_height; y++)
 	{
 		cimg_library::CImg<bool> visited( 2*radius+1, 2*radius+1, 1, 1, false );
 		cimg_library::CImg<T> probabilities( 2*radius+1, 2*radius+1, 1, 1, T(0) );
 		cimg_library::CImg<T> imgVals( 2*radius+1, 2*radius+1, _depth, _spectrum, T(0) );
-		T probabilitySum = T(0);
 
 		queueX.clear();
 		queueY.clear();
@@ -148,7 +148,6 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			}
 			probabilities.atXYZC( radius + cx - x, radius + cy - y, 0, 0 ) =
 			  _gauss( pow( pow(double(cx-x), 2.0) + pow(double(cy-y), 2.0), 0.5 ), T(0.0), sigma ) ;
-			probabilitySum += probabilities.atXYZC( radius + cx -x, radius + cy - y, 0, 0 );
 
 			if (!visited.atXYZC(  radius + cx - x, radius + cy-1 - y, 0, 0 ) && 
 			    _blurMask[0].atXYZC( cx, cy-1, 0, 0 ) && 
@@ -187,15 +186,22 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			}
 		}
 
+		T probabilitySum = T(0);
+		for (int nx=0; nx<2*radius+1; nx++)
+		for (int ny=0; ny<2*radius+1; ny++)
+		{
+			probabilitySum += probabilities.atXYZC( nx, ny, 0, 0 );
+		}
 		for (int z=0; z<_depth; z++)
 		for (int c=0; c<_spectrum; c++)
 		{
 			retVal = T(0);
-			cimg_forXY( imgVals, nx, ny )
+			for (int nx=0; nx<2*radius+1; nx++)
+			for (int ny=0; ny<2*radius+1; ny++)
 			{
 				retVal += imgVals.atXYZC( nx, ny, z, c )
 				        * probabilities.atXYZC( nx, ny, 0, 0 );
-			}	
+			}
 			if (probabilitySum) {
 				retVal /= probabilitySum;
 			} else {
