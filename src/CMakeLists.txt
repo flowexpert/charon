@@ -95,6 +95,11 @@ ADD_LIBRARY(affine2translation SHARED
 	${charon_INCLUDE_DIR}/Affine2Translation.hxx
 	Affine2Translation.cpp
 )
+ADD_LIBRARY(trigonometricbcc SHARED
+	${charon_INCLUDE_DIR}/Stencils/TrigonometricBCC.h
+	${charon_INCLUDE_DIR}/Stencils/TrigonometricBCC.hxx
+	TrigonometricBCC.cpp
+)
 ADD_LIBRARY(imagerotation SHARED
 	${charon_INCLUDE_DIR}/ImageRotation.h
 	${charon_INCLUDE_DIR}/ImageRotation.hxx
@@ -107,6 +112,7 @@ LIST(APPEND Plugins
 	energynonlocal
 	affinebcc
 	affine2translation
+	trigonometricbcc
 	imagerotation
 )
 
