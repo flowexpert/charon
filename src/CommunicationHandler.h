@@ -61,6 +61,8 @@ private:
 	bool _quiet;
 	/// cmd line argument cache
 	QStringList _args;
+	/// message to display when --help argument was provided
+	QString _helpMsg ;
 };
 
 #endif // COMM_HANDLER_H

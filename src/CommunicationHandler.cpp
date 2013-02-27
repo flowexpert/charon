@@ -30,6 +30,28 @@
 CommunicationHandler::CommunicationHandler(
 	const QStringList& args, QObject* pp) :
 		QThread(pp), _interactive(true), _quiet(false), _args(args) {
+	_helpMsg = QString(
+		"Tuchulcha Workflow Executor version %1\n"
+		"This executable is part of Charon-Suite\n"
+		"Heidelberg Collaboratory for Image Processing, University of Heidelberg, 2009-2013\n" 
+		"http://sourceforge.net/projects/charon-suite/\n\n"
+		"PURPOSE\n"
+		"\tThis program will execute charon workflow files\n"
+		"SYNTAX\n"
+		"\ttuchlucha-run <options> command <workflow>\n"
+		"COMMANDS\n"
+		"\t run                   : run the workflow file defined in <workflow>\n"
+		"\t update                : update the plugin cache\n"
+		"\t update-dynamics       : something\n"
+		"\t help, --help, -h , /? : display this help text\n"
+		"OPTIONS\n"
+		"\t --non-interactive     : exit directly after workflow execution or update is finished,"
+		"\t\t                     otherwise program will only exit after \"quit\" has been send via stdin\n"
+		"\t --quiet               : suppress banner message at startup\n"
+		"\n"
+	).arg(TUCHULCHA_VERSION) ;
+	
+
 }
 
 void CommunicationHandler::run() {
@@ -38,7 +60,13 @@ void CommunicationHandler::run() {
 	argIter.next(); // skip first item (command name)
 	while (argIter.hasNext()) {
 		QString s = argIter.next();
-		if (s == "--non-interactive") {
+		if(s == "help" || s == "--help" || s == "-h" || s == "-?" || s == "/?") {
+			QTextStream qout(stdout,QIODevice::WriteOnly);
+			qout << _helpMsg << endl;
+			QApplication::exit(0);
+			return ;
+		}
+		else if(s == "--non-interactive") {
 			_interactive = false;
 		}
 		else if (s == "--quiet") {
@@ -47,16 +75,33 @@ void CommunicationHandler::run() {
 		else if (s == "update") {
 			emit updatePlugins();
 		}
-		else if (s == "run" && argIter.hasNext()) {
-			emit runWorkflow(argIter.next());
+		else if (s == "run" ) {
+			if(!argIter.hasNext())
+			{
+				QTextStream qerr(stderr,QIODevice::WriteOnly);
+				qerr << tr("No workflow file provided for run command") << endl;
+				QApplication::exit(-1);
+				return ;
+			}
+			else
+				emit runWorkflow(argIter.next());
 		}
-		else if (s == "update-dynamics" && argIter.hasNext()) {
-			emit updateDynamics(argIter.next());
+		else if (s == "update-dynamics") { 
+			if(!argIter.hasNext())
+			{
+				QTextStream qerr(stderr,QIODevice::WriteOnly);
+				qerr << tr("No workflow file provided for update-dynamics command") << endl;
+				QApplication::exit(-1);
+				return ;
+			}
+			else
+				emit updateDynamics(argIter.next());
 		}
 		else {
 			QTextStream qerr(stderr,QIODevice::WriteOnly);
 			qerr << tr("Argument \"%1\" not recognized.").arg(s) << endl;
 			QApplication::exit(-1);
+			return ;
 		}
 	}
 

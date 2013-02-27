@@ -23,6 +23,7 @@
  */
 
 #include <QApplication>
+#include <QTimer>
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QLocale>
@@ -66,8 +67,10 @@ int main(int argc, char *argv[]) {
 		SLOT(updateDynamics(QString)));
 	run.connect(&comm,SIGNAL(started()),SLOT(lock()));
 	run.connect(&comm,SIGNAL(finished()),SLOT(unlock()));
-
-	comm.start();
+	
+	//prevent possible race condition, start Communications Handler when QApplication has started completly
+	QTimer::singleShot(0,&comm,SLOT(start())) ;
+	//comm.start();
 	int ret = app.exec();
 	comm.wait();
 
