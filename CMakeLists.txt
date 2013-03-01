@@ -17,7 +17,7 @@ IF(NOT EXPORT_NAME)
 ENDIF()
 
 INCLUDE(InitFlags)
-
+INCLUDE(PluginMakros)
 # set up documentation generation
 FIND_PACKAGE(Doxygen QUIET)
 INCLUDE(Documentation)

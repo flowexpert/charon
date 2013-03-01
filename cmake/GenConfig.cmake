@@ -32,10 +32,23 @@ CONFIGURE_FILE(
 	${PROJECT_NAME}-config-version.cmake
 	@ONLY
 )
+CONFIGURE_FILE(
+	${CMAKE_MODULE_PATH}/PluginMakros.cmake
+	cmake/${PROJECT_NAME}-use.cmake
+	@ONLY
+)
+CONFIGURE_FILE(
+	${CMAKE_MODULE_PATH}/version.rc.in
+	cmake/version.rc.in
+	COPYONLY
+)
+
 
 INSTALL(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}-config.cmake
 	${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}-config-version.cmake
+	${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}-use.cmake
+	${CMAKE_CURRENT_BINARY_DIR}/cmake/version.rc.in
 	DESTINATION ${PROJECT_CONFIG_INSTALL}
 	COMPONENT libraries
 )
