@@ -141,20 +141,20 @@ void TrigonometricBCC<T>::updateStencil(
         // fill calculated data into stencil members
 	const T c = _lamb * d_psi;
 	if (unknown == "r") {
-	        this->_subStencils["r"].data(0,0)   = c ;
+	        this->_subStencils["r"].data(0,0)   = c * (Ix * cos + Iy * sin) ;
 	        this->_subStencils["cos"].data(0,0) = T(0.0) ;
 	        this->_subStencils["sin"].data(0,0) = T(0.0) ;
-		this->_rhs = c * ((-It) / (Ix * cos + Iy * sin)) ;
+		this->_rhs = c * (-It) ;
 	} else if (unknown == "cos") {
 		this->_subStencils["r"].data(0,0)   = T(0.0) ;
-		this->_subStencils["cos"].data(0,0) = c ;
+		this->_subStencils["cos"].data(0,0) = c * (Ix * r) ;
 		this->_subStencils["sin"].data(0,0) = T(0.0) ;
-	        this->_rhs = c * ((-It - Iy * r * sin) / (Ix * r)) ;
+	        this->_rhs = c * (-It - Iy * r * sin) ;
 	} else if (unknown == "sin") {
 		this->_subStencils["r"].data(0,0)   = T(0.0) ;
 		this->_subStencils["cos"].data(0,0) = T(0.0) ;
-		this->_subStencils["sin"].data(0,0) = c ;
-		this->_rhs = c * ((-It - Ix * r * cos) / (Iy * r)) ;
+		this->_subStencils["sin"].data(0,0) = c * (Iy * r) ;
+		this->_rhs = c * (-It - Ix * r * cos) ;
 	}
 }
 
