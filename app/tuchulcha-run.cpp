@@ -65,12 +65,13 @@ int main(int argc, char *argv[]) {
 	run.connect(&comm,SIGNAL(runWorkflow(QString)),SLOT(runWorkflow(QString)));
 	run.connect(&comm,SIGNAL(updateDynamics(QString)),
 		SLOT(updateDynamics(QString)));
-	run.connect(&comm,SIGNAL(started()),SLOT(lock()));
-	run.connect(&comm,SIGNAL(finished()),SLOT(unlock()));
+	run.connect(&comm,SIGNAL(finished()),SLOT(exitWhenFinished()));
+	comm.connect(&run,SIGNAL(ready()),SLOT(taskFinished()));
 	
-	//prevent possible race condition, start Communications Handler when QApplication has started completly
+	// prevent possible race condition,
+	// start Communications Handler when QApplication has started completly
 	QTimer::singleShot(0,&comm,SLOT(start())) ;
-	//comm.start();
+
 	int ret = app.exec();
 	comm.wait();
 

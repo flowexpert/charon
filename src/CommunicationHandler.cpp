@@ -29,7 +29,10 @@
 
 CommunicationHandler::CommunicationHandler(
 	const QStringList& args, QObject* pp) :
-		QThread(pp), _interactive(true), _quiet(false), _args(args) {
+		QThread(pp),
+		_interactive(true), _quiet(false),
+		_taskCount(0), _args(args)
+{
 	_helpMsg = QString(
 		"Tuchulcha Workflow Executor version %1\n"
 		"This executable is part of Charon-Suite\n"
@@ -50,8 +53,28 @@ CommunicationHandler::CommunicationHandler(
 		"\t --quiet               : suppress banner message at startup\n"
 		"\n"
 	).arg(TUCHULCHA_VERSION) ;
-	
 
+	_helpMsgI = QString(
+		"COMMANDS\n\t"
+		"help\n\t\tshow this help message\n\t"
+		"update\n\t\tupdate plugin information cache\n\t"
+		"update-dynamics <workflow>\n\t\tupdate plugin information cache\n\t"
+		"\tfor dynamic modules in workflow file\n\t"
+		"run <workflow>\n\t\trun the given workflow file\n\t"
+		"quit\n\t\tquit interactive mode and exit\n\t\t"
+		"(running commands will be finished before exit)"
+	);
+
+	// increase task counter if sending task to task queue
+	connect(this,
+		SIGNAL(updatePlugins()), SLOT(_startTask()),
+		Qt::DirectConnection);
+	connect(this,
+		SIGNAL(updateDynamics(QString)), SLOT(_startTask()),
+		Qt::DirectConnection);
+	connect(this,
+		SIGNAL(runWorkflow(QString)), SLOT(_startTask()),
+		Qt::DirectConnection);
 }
 
 void CommunicationHandler::run() {
@@ -83,8 +106,9 @@ void CommunicationHandler::run() {
 				QApplication::exit(-1);
 				return ;
 			}
-			else
+			else {
 				emit runWorkflow(argIter.next());
+			}
 		}
 		else if (s == "update-dynamics") { 
 			if(!argIter.hasNext())
@@ -94,8 +118,9 @@ void CommunicationHandler::run() {
 				QApplication::exit(-1);
 				return ;
 			}
-			else
+			else {
 				emit updateDynamics(argIter.next());
+			}
 		}
 		else {
 			QTextStream qerr(stderr,QIODevice::WriteOnly);
@@ -114,18 +139,24 @@ void CommunicationHandler::run() {
 		QTextStream qout(stdout,QIODevice::WriteOnly);
 		qout << tr("Tuchulcha Workflow Executor version %1")
 				.arg(TUCHULCHA_VERSION) << "\n"
-			 << tr("Type \"quit\" to exit this application.") << endl;
+			 << tr("Type \"quit\" to exit this application.") << "\n"
+			 << tr("Type \"help\" for command summary.") << endl;
 	}
 
 	// interactive command handling
 	QTextStream qin(stdin,QIODevice::ReadOnly);
+	QTextStream qout(stdout, QIODevice::WriteOnly);
 	QString line;
 	QRegExp runRgx("run\\s+(\\S.*)");
 	QRegExp updRgx("update-dynamics\\s+(\\S.*)");
 	do {
+		_printPrompt();
 		line = qin.readLine();
 		if(line == "quit") {
 			break;
+		}
+		else if (line == "help") {
+			qout << _helpMsgI << endl;
 		}
 		else if (line == "update") {
 			emit updatePlugins();
@@ -141,4 +172,32 @@ void CommunicationHandler::run() {
 			qerr << tr("Command \"%1\" not recognized.").arg(line) << endl;
 		}
 	} while (!line.isNull());
+	if (line.isNull()) {
+		qout << endl; // newline e.g. if terminated by CTRL-D, i.e. EOF
+	}
+	if (!_quiet) {
+		qout << tr("bye") << endl;
+	}
+}
+
+void CommunicationHandler::_startTask() {
+	_taskCount++;
+}
+
+void CommunicationHandler::taskFinished() {
+	if (_taskCount == 0) {
+		qDebug("%s", "Trying to decrease zero task counter");
+	}
+	else {
+		_taskCount--;
+	}
+	_printPrompt();
+}
+
+void CommunicationHandler::_printPrompt() {
+	if (_taskCount > 0 || _quiet || !_interactive) {
+		return;
+	}
+	QTextStream qout(stdout, QIODevice::WriteOnly);
+	qout << "TC-Run > " << flush; // input prompt (hidden if quiet)
 }

@@ -48,14 +48,16 @@ public slots:
 	/** \param fName  workflow filename */
 	void updateDynamics(QString fName);
 
-	/// lock exiting, register task
-	void lock();
 	/// unlock exiting, quit application if all tasks are completed
-	void unlock();
+	void exitWhenFinished();
+
+signals:
+	/// signal to avoid new command prompt
+	void busy();
+	/// show that running tasks are complete
+	void ready();
 
 private:
-	/// lock counter (mutex-like)
-	uint _lockCount;
 	/// plugin manager
 	PluginManager* _man;
 	/// logger
@@ -64,6 +66,12 @@ private:
 	void _setupMan(QString logFileName);
 	/// release plugin manager
 	void _freeMan();
+
+private slots:
+	/// increase task counter
+	void _taskStart();
+	/// decrease task counter
+	void _taskFinished();
 };
 
 #endif // CHARONRUN_H

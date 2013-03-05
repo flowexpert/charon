@@ -40,7 +40,7 @@
 #endif // __GNUG__
 
 CharonRun::CharonRun(QObject* pp) :
-	QObject(pp), _lockCount(0), _man(0), _log(0)
+	QObject(pp), _man(0), _log(0)
 {
 }
 
@@ -158,7 +158,7 @@ void CharonRun::_freeMan() {
 }
 
 void CharonRun::updatePlugins() {
-	lock();
+	_taskStart();
 
 	// delete old wrp files
 	const FileManager& fm = FileManager::instance();
@@ -202,11 +202,11 @@ void CharonRun::updatePlugins() {
 		cStream << content << endl;
 	}
 	cFile.close();
-	unlock();
+	_taskFinished();
 }
 
 void CharonRun::runWorkflow(QString fName) {
-	lock();
+	_taskStart();
 	QTextStream qout(stdout);
 	_setupMan("executeLog.txt");
 
@@ -265,22 +265,23 @@ void CharonRun::runWorkflow(QString fName) {
 	//(e.g. FileReaderWatcher or ArgosDisplayReloader)
 	//QDir::setCurrent(pathBak);
 
-	unlock();
+	_taskFinished();
 }
 
-void CharonRun::lock() {
-	_lockCount++;
+void CharonRun::_taskStart() {
+	emit busy();
 }
 
-void CharonRun::unlock() {
-	_lockCount--;
-	if (_lockCount == 0) {
-		QApplication::exit();
-	}
+void CharonRun::_taskFinished() {
+	emit ready();
+}
+
+void CharonRun::exitWhenFinished() {
+	QApplication::exit();
 }
 
 void CharonRun::updateDynamics(QString fName) {
-	lock();
+	_taskStart();
 
 	QString baseN = QFileInfo(fName).baseName();
 
@@ -307,5 +308,5 @@ void CharonRun::updateDynamics(QString fName) {
 		dynamPath.absoluteFilePath(baseN).toStdString());
 	_freeMan();
 
-	unlock();
+	_taskFinished();
 }

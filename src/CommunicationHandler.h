@@ -40,6 +40,16 @@ public:
 	explicit CommunicationHandler(
 		const QStringList& args, QObject* parent = 0);
 
+public slots:
+	/// handle task finishing
+	void taskFinished();
+
+private slots:
+	/// handle task starting
+	void _startTask();
+	/// print command line prompt for interactive session
+	void _printPrompt();
+
 signals:
 	/// update module metadata
 	void updatePlugins();
@@ -59,10 +69,14 @@ private:
 	bool _interactive;
 	/// avoid info output
 	bool _quiet;
+	/// task counter
+	uint _taskCount;
 	/// cmd line argument cache
 	QStringList _args;
 	/// message to display when --help argument was provided
-	QString _helpMsg ;
+	QString _helpMsg;
+	/// help message for interactive session
+	QString _helpMsgI;
 };
 
 #endif // COMM_HANDLER_H
