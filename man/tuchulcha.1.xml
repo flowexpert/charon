@@ -22,23 +22,27 @@
 				<firstname>Stephan</firstname>
 				<surname>Meister</surname>
 				<contrib>moved workflow execution to separate thread</contrib>
-				<address>
-					<email>Stephan.Meister@iwr.uni-heidelberg.de</email>
-				</address>
+				<address><email>Stephan.Meister@iwr.uni-heidelberg.de</email></address>
 			</author>
 			<author>
 				<firstname>Jonathan</firstname>
 				<surname>Wüst</surname>
 				<contrib>reworked node editor using qt graphics items</contrib>
-				<address>
-					<email>wuest.jonathan@gmail.com</email>
-				</address>
+				<address><email>wuest.jonathan@gmail.com</email></address>
+			</author>
+			<author>
+				<firstname>David</firstname>
+				<surname>Stronczek</surname>
+				<contrib>added support for dynamic modules</contrib>
+				<address><email>stronczek@stud.uni-heidelberg.de</email></address>
 			</author>
 		</authorgroup>
 		<copyright>
 			<year>2009</year>
 			<year>2010</year>
 			<year>2011</year>
+			<year>2012</year>
+			<year>2013</year>
 			<holder>Heidelberg Collaboratory for Image Processing</holder>
 		</copyright>
 		<legalnotice>
