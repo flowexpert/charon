@@ -100,6 +100,11 @@ ADD_LIBRARY(trigonometricbcc SHARED
 	${charon_INCLUDE_DIR}/Stencils/TrigonometricBCC.hxx
 	TrigonometricBCC.cpp
 )
+ADD_LIBRARY(magnituderegularization SHARED
+	${charon_INCLUDE_DIR}/Stencils/MagnitudeRegularization.h
+	${charon_INCLUDE_DIR}/Stencils/MagnitudeRegularization.hxx
+	MagnitudeRegularization.cpp
+)
 ADD_LIBRARY(imagerotation SHARED
 	${charon_INCLUDE_DIR}/ImageRotation.h
 	${charon_INCLUDE_DIR}/ImageRotation.hxx
@@ -113,6 +118,7 @@ LIST(APPEND Plugins
 	affinebcc
 	affine2translation
 	trigonometricbcc
+	magnituderegularization
 	imagerotation
 )
 
