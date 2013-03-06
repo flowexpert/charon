@@ -67,6 +67,8 @@ protected:
 	/// Lib suffix e.g. <tt>_d</tt> for debug builds
 	std::string &libSuffix;
 
+	bool _ignoreVersion ;
+
 public:
 
 
@@ -134,6 +136,16 @@ public:
 		static const error_code INCOMPATIBLE_BUILD_TYPE = 8 ;
 
 		/**
+		 * Version information for the plugin is missing while explicit version check was requested
+		 */
+		static const error_code VERSION_INFORMATION_MISSING = 9 ;
+
+		/**
+		 * there is a missmatch between the current charon-core version and the version the plugin was compiled with
+		 */
+		static const error_code VERSION_MISSMATCH = 10 ;
+
+		/**
 		 * Other reason
 		 */
 		static const error_code OTHER = 0;
@@ -173,8 +185,9 @@ public:
 	 * @param plpaths list of paths which are searched for the plugin
 	 * @param lSuffix suffix which will be appended to the plugin name before search operations.
 	 *        This is typically used to append _d for searching debug libraries.
+	 * @param ignoreVersion disable additional version check for plugins
 	 */
-	AbstractPluginLoader(const std::string& name,std::vector<std::string> &plpaths,std::string &lSuffix);
+	AbstractPluginLoader(const std::string& name,std::vector<std::string> &plpaths,std::string &lSuffix, bool ignoreVersion = true);
 
 	/**
 	 * Loads the plugin.
