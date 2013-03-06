@@ -6,6 +6,15 @@ MACRO(CDR var junk)
   SET(${var} ${ARGN})
 ENDMACRO(CDR)
 
+# The ADD_CHARON_PLUGIN Makro can be used in the following way:
+# ADD_CHARON_PLUGIN(<pluginname>
+#	<source files>
+#	[COMPANY <company name>] #only used in VisualStudio, this string will be compiled into the dll.
+#	[LINK_LIBRARIES <libraries>] #additional libraries to link the plugin against. Same syntax as TARGET_LINK_LIBRARIES
+#	[PLUGIN_LISTS] <lists>] #names of existing cmake variables. The created library target will be added to each list. 
+#							#Usefull if you wan't to make additional settings to multiple plugins.
+# )
+
 MACRO(ADD_CHARON_PLUGIN)
 	CMAKE_PARSE_ARGUMENTS(PLUGIN
 	""
@@ -16,8 +25,8 @@ MACRO(ADD_CHARON_PLUGIN)
 	CAR(PLUGIN_NAME ${PLUGIN_UNPARSED_ARGUMENTS})
 	CDR(PLUGIN_SOURCES ${PLUGIN_UNPARSED_ARGUMENTS})
 
-	MESSAGE(STATUS "PLUGIN_NAME : ${PLUGIN_NAME}")
-	MESSAGE(STATUS "PLUGIN_SOURCES : ${PLUGIN_SOURCES}")
+	#MESSAGE(STATUS "PLUGIN_NAME : ${PLUGIN_NAME}")
+	#MESSAGE(STATUS "PLUGIN_SOURCES : ${PLUGIN_SOURCES}")
 	
 	IF(MSVC)
 		SET(DllRcCompanyName ${PLUGIN_COMPANY})
