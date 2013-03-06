@@ -40,6 +40,12 @@
 std::map<std::string, unsigned int> ParameteredObject::_genericClassNameCount;
 bool ParameteredObject::_createMetadata = false;
 
+#ifdef CHARON_CORE_VERSION
+	std::string ParameteredObject::charon_core_version = CHARON_CORE_VERSION ;
+#else
+	std::string ParameteredObject::charon_core_version = "0.0.0" ;
+#endif
+
 std::string ParameteredObject::_genericName() {
 	ParameteredObject::_genericClassNameCount[_className]++;
 	std::stringstream str;
