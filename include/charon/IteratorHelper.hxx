@@ -85,19 +85,19 @@ void IteratorHelper<T>::reset() {
 	// copy input flow if present, otherwise create dummy flow with zeros
 	const unsigned int df = flowDimensions();
 	if(initFlow.connected()) {
-		if(initFlow().size() != df) {
-			sout << "(WW) Dimensions of initial flow ("
-					<< initFlow().size()
-					<< ") do not match given flow dimensions ("
-					<< flowDimensions() << ")" << std::endl;
-		}
-		if (initFlow().size() <= 0 ||
-				!initFlow()[0].is_sameXYZ(seqIn[0]) ||
-				(initFlow()[0].spectrum() != seqIn[0].spectrum() - 1) ) {
-			ParameteredObject::raise(
-				"initial flow is empty or does not match the "
-				"dimensions of the input image");
-		}
+//		if(initFlow().size() != df) {
+//			sout << "(WW) Dimensions of initial flow ("
+//					<< initFlow().size()
+//					<< ") do not match given flow dimensions ("
+//					<< flowDimensions() << ")" << std::endl;
+//		}
+//		if (initFlow().size() <= 0 ||
+//				!initFlow()[0].is_sameXYZ(seqIn[0]) ||
+//				(initFlow()[0].spectrum() != seqIn[0].spectrum() - 1) ) {
+//			ParameteredObject::raise(
+//				"initial flow is empty or does not match the "
+//				"dimensions of the input image");
+//		}
 		flow().assign(initFlow());
 	}
 	else {
