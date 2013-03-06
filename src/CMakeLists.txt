@@ -105,6 +105,11 @@ ADD_LIBRARY(magnituderegularization SHARED
 	${charon_INCLUDE_DIR}/Stencils/MagnitudeRegularization.hxx
 	MagnitudeRegularization.cpp
 )
+ADD_LIBRARY(matchconstraint SHARED
+	${charon_INCLUDE_DIR}/Stencils/MatchConstraint.h
+	${charon_INCLUDE_DIR}/Stencils/MatchConstraint.hxx
+	MatchConstraint.cpp
+)
 ADD_LIBRARY(imagerotation SHARED
 	${charon_INCLUDE_DIR}/ImageRotation.h
 	${charon_INCLUDE_DIR}/ImageRotation.hxx
@@ -119,6 +124,7 @@ LIST(APPEND Plugins
 	affine2translation
 	trigonometricbcc
 	magnituderegularization
+	matchconstraint
 	imagerotation
 )
 
