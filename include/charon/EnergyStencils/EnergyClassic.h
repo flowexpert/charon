@@ -73,7 +73,15 @@ public:
 	InputSlot< Roi<int>* > roi;
 
 	/// Input slot for regularization mask
-	InputSlot< cimg_library::CImgList<T> > mask;
+	InputSlot< cimg_library::CImgList<T> > regionMask;
+	//  do NOT use masked pixels for regularization
+	//  perform regularization _at_ these pixels as usually
+	//  (effect: no regularization over masked pixels)
+
+	/// Input slot for mask of matches
+	InputSlot< cimg_library::CImgList<T> > matchMask;
+	//  do not regularize masked pixels
+	//  instead, use current pixel value
 
 	/// default constructor
 	/// \param name          Instance name
