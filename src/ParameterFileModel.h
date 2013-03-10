@@ -145,7 +145,7 @@ public:
     void Reactivate();
 
     /// Returns the bool value of the Active Parameter
-    bool Active();
+    bool Active() const;
 
 	/// Get property _fileName
     QString fileName() const;

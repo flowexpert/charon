@@ -117,6 +117,7 @@ private:
 	/// state of node selection
 	bool _selectedNode;
 
+
 	///  id of the node
 	unsigned int _id;
 
@@ -124,7 +125,7 @@ private:
 	static unsigned int _idCount;
 
 	/// link to parameter file
-	const ParameterFileModel* _pFile;
+    const ParameterFileModel* _pFile;
 };
 
 #endif /* NODE_H_ */

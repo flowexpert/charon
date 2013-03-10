@@ -68,7 +68,7 @@ void NodeHandler::_deselectAllNodes() {
 
 void NodeHandler::selectNode(QString name) {
 	if(_selectedNode) {
-		if (_selectedNode->getInstanceName() == name) {
+        if (_selectedNode->getInstanceName() == name) {
 			return;
 		}
 		_selectedNode->setSelectedNode(false);

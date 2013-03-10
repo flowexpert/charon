@@ -379,7 +379,7 @@ void ParameterFileModel::Reactivate(){
 
     }
 }
-bool ParameterFileModel::Active(){
+bool ParameterFileModel::Active() const {
     int parameterIndex;
     for (int p = 0; p < _keys.size(); p++){
         if (_keys[p].contains("Active")){

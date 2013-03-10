@@ -176,7 +176,7 @@ void NodeProperty::changeConnectionLineColor(QColor lineColor, bool isHover){
 		if(!isHover && (
 				connectedLine->getStartProp()->_node->isSelectedNode() ||
 				connectedLine->getEndProp()->_node->isSelectedNode())) {
-			connectedLine->setLineColor(Qt::blue);
+            connectedLine->setLineColor(Qt::blue);
 		}
 		// else use given color (i.e. black/green)
 		else{
