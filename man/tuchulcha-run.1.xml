@@ -6,18 +6,26 @@
 	<refentryinfo>
 		<title>Tuchulcha workflow executor</title>
 		<productname>tuchulcha</productname>
-		<releaseinfo role="version">0.9.4</releaseinfo>
+		<releaseinfo role="version">0.9.8</releaseinfo>
 		<authorgroup>
 			<author>
-				<firstname>Jens-Malte</firstname>
+				<firstname>Jens Malte</firstname>
 				<surname>Gottfried</surname>
 				<contrib>wrote this application and this manpage</contrib>
 				<address><email>jmgottfried@web.de</email></address>
 			</author>
+			<author>
+				<firstname>David</firstname>
+				<surname>Stronczek</surname>
+				<contrib>added support for dynamic modules</contrib>
+				<address><email>stronczek@stud.uni-heidelberg.de</email></address>
+			</author>
 		</authorgroup>
 		<copyright>
 			<year>2011</year>
-			<holder>Jens-Malte Gottfried</holder>
+			<year>2012</year>
+			<year>2013</year>
+			<holder>Heidelberg Collaboratory for Image Processing</holder>
 		</copyright>
 		<legalnotice>
 			<simpara>This application is part of Charon.</simpara>
@@ -55,7 +63,17 @@
 			<arg choice="opt"><option>--non-interactive</option></arg>
 			<arg choice="opt"><option>--quiet</option></arg>
 			<arg choice="opt"><option>update</option></arg>
+			<arg choice="opt"><option>update-dynamics <replaceable>parameterFile</replaceable></option></arg>
 			<arg choice="opt"><option>run <replaceable>parameterFile</replaceable></option></arg>
+		</cmdsynopsis>
+		<cmdsynopsis>
+			<command>tuchulcha-run</command>
+			<group>
+				<arg choice="plain"><option>help</option></arg>
+				<arg choice="plain"><option>--help</option></arg>
+				<arg choice="plain"><option>-h</option></arg>
+				<arg choice="plain"><option>-?</option></arg>
+			</group>
 		</cmdsynopsis>
 	</refsynopsisdiv>
 	<refsection id="tuchulcha-run-desc">
@@ -93,18 +111,40 @@
 					This is useful for script usage.
 					If this option is not specified, an interactive session is started
 					after handling the command line arguments.
+					See <xref linkend="tuchulcha-run-interactive"/> for more information.
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>
 				<term><option>--quiet</option></term>
 				<listitem><simpara>
-					supress greeter and version information
+					Supress greeter and version information.
+					Also hides command prompt to avoid showing up in
+					<application>tuchulcha</application> logs.
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>help</option></term>
+				<listitem><simpara>
+					display short help text and quit immediately
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>
 				<term><option>update</option></term>
 				<listitem><simpara>
 					update modules information used by <application>tuchulcha</application>
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>update-dynamics 
+					<replaceable class="parameter">parameterFile</replaceable>
+				</option></term>
+				<listitem><simpara>
+					Update dynamic module information used by
+					<application>tuchulcha</application>.
+					This scans the given workflow for dynamic modules and
+					generates their metadata information using the configuration from the
+					workflow file which is passed to the module's
+					<function>prepareDynamicInterface</function> function.
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>
@@ -146,9 +186,28 @@
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>
+				<term><option>help</option></term>
+				<listitem><simpara>
+					print short command summary
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
 				<term><option>update</option></term>
 				<listitem><simpara>
 					update modules information used by <application>tuchulcha</application>
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>update-dynamics 
+					<replaceable class="parameter">parameterFile</replaceable>
+				</option></term>
+				<listitem><simpara>
+					Update dynamic module information used by
+					<application>tuchulcha</application>.
+					This scans the given workflow for dynamic modules and
+					generates their metadata information using the configuration from the
+					workflow file which is passed to the module's
+					<function>prepareDynamicInterface</function> function.
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>

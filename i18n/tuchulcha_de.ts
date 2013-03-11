@@ -34,17 +34,17 @@
         <translation>ausgeschlossene Dateien:</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="183"/>
+        <location filename="../src/CharonRun.cpp" line="184"/>
         <source>error updating meta data</source>
         <translation>Fehler beim aktualisieren der Metadaten</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="184"/>
+        <location filename="../src/CharonRun.cpp" line="185"/>
         <source>could not open classes file for writing</source>
         <translation>Klassendatei konnte nicht zum Schreiben geöffnet werden</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="200"/>
+        <location filename="../src/CharonRun.cpp" line="201"/>
         <source>
 # from file &quot;%1&quot;:
 </source>
@@ -53,38 +53,38 @@
 </translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="217"/>
+        <location filename="../src/CharonRun.cpp" line="218"/>
         <source>Loading parameter file &quot;%1&quot;</source>
         <translation>Lade Parameter Datei &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="220"/>
+        <location filename="../src/CharonRun.cpp" line="221"/>
         <source>== Executing Workflow ==</source>
         <translation>== Starte Ausführung ==</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="222"/>
+        <location filename="../src/CharonRun.cpp" line="223"/>
         <source>start time: %1</source>
         <translation>Start-Zeit: %1</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="228"/>
-        <location filename="../src/LogDialog.cpp" line="547"/>
+        <location filename="../src/CharonRun.cpp" line="229"/>
+        <location filename="../src/LogDialog.cpp" line="551"/>
         <source>Execution finished.</source>
         <translation>Ausführung beendet.</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="229"/>
+        <location filename="../src/CharonRun.cpp" line="230"/>
         <source>end time : %1</source>
         <translation>End-Zeit: %1</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="230"/>
+        <location filename="../src/CharonRun.cpp" line="231"/>
         <source>runtime  : %1</source>
         <translation>Zeitdauer: %1</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="235"/>
+        <location filename="../src/CharonRun.cpp" line="236"/>
         <source>Caught exception of type &quot;std::string&quot;.</source>
         <oldsource>Caught exception of type &quot;std::string&quot;.
 
@@ -93,14 +93,14 @@ Message:
         <translation>Exception vom Typ &quot;std::string&quot; gefangen.</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="236"/>
-        <location filename="../src/CharonRun.cpp" line="245"/>
-        <location filename="../src/CharonRun.cpp" line="250"/>
+        <location filename="../src/CharonRun.cpp" line="237"/>
+        <location filename="../src/CharonRun.cpp" line="246"/>
+        <location filename="../src/CharonRun.cpp" line="251"/>
         <source>Message:</source>
         <translation>Nachricht:</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="244"/>
+        <location filename="../src/CharonRun.cpp" line="245"/>
         <source>Caught exception of type &quot;%1&quot;.</source>
         <oldsource>Caught exception of type &quot;%1&quot;.
 
@@ -109,7 +109,7 @@ Message:
         <translation>Exception vom Typ &quot;%1&quot; gefangen.</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="249"/>
+        <location filename="../src/CharonRun.cpp" line="250"/>
         <source>Caught exception of type &quot;char*&quot;.</source>
         <oldsource>Caught exception of type &quot;char*&quot;.
 
@@ -118,13 +118,14 @@ Message:
         <translation>Exception vom Typ &quot;char*&quot; gefangen.</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="253"/>
+        <location filename="../src/CharonRun.cpp" line="254"/>
         <source>Caught exception of unknown type.</source>
         <oldsource>Caught exception of unknown type</oldsource>
         <translation>Unbekannte Exception gefangen.</translation>
     </message>
     <message>
-        <location filename="../src/CharonRun.cpp" line="257"/>
+        <location filename="../src/CharonRun.cpp" line="259"/>
+        <location filename="../src/LogDialog.cpp" line="553"/>
         <source>Error during execution:</source>
         <translation>Fehler während der Ausführung:</translation>
     </message>
@@ -132,25 +133,45 @@ Message:
 <context>
     <name>CommunicationHandler</name>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="58"/>
+        <location filename="../src/CommunicationHandler.cpp" line="105"/>
+        <source>No workflow file provided for run command</source>
+        <translation>keine Datei für das Kommando &quot;run&quot; angegeben</translation>
+    </message>
+    <message>
+        <location filename="../src/CommunicationHandler.cpp" line="117"/>
+        <source>No workflow file provided for update-dynamics command</source>
+        <translation>keine Datei für das Kommando &quot;update-dynamics&quot; angegeben</translation>
+    </message>
+    <message>
+        <location filename="../src/CommunicationHandler.cpp" line="127"/>
         <source>Argument &quot;%1&quot; not recognized.</source>
         <translation>Argument &quot;%1&quot; nicht erkannt.</translation>
     </message>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="70"/>
+        <location filename="../src/CommunicationHandler.cpp" line="140"/>
         <source>Tuchulcha Workflow Executor version %1</source>
         <translation>Tuchulcha Workflow Executor Version %1</translation>
     </message>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="72"/>
+        <location filename="../src/CommunicationHandler.cpp" line="142"/>
         <source>Type &quot;quit&quot; to exit this application.</source>
         <oldsource>type &quot;quit&quot; to exit this application.</oldsource>
         <translation>Bitte &quot;quit&quot; eingeben, um das Programm zu beenden.</translation>
     </message>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="96"/>
+        <location filename="../src/CommunicationHandler.cpp" line="143"/>
+        <source>Type &quot;help&quot; for command summary.</source>
+        <translation>Bitte &quot;help&quot; eingeben, um eine kurze Befehlsreferenz anzuzeigen.</translation>
+    </message>
+    <message>
+        <location filename="../src/CommunicationHandler.cpp" line="172"/>
         <source>Command &quot;%1&quot; not recognized.</source>
         <translation>Kommando &quot;%1&quot; nicht erkannt.</translation>
+    </message>
+    <message>
+        <location filename="../src/CommunicationHandler.cpp" line="179"/>
+        <source>bye</source>
+        <translation>auf Wiedersehen</translation>
     </message>
 </context>
 <context>
@@ -235,18 +256,18 @@ Message:
 <context>
     <name>FlowWidget</name>
     <message>
-        <location filename="../src/FlowWidget.cpp" line="63"/>
+        <location filename="../src/FlowWidget.cpp" line="65"/>
         <source>New file</source>
         <oldsource>New file [*]</oldsource>
         <translation>Neue Datei</translation>
     </message>
     <message>
-        <location filename="../src/FlowWidget.cpp" line="114"/>
+        <location filename="../src/FlowWidget.cpp" line="116"/>
         <source>Save modified content?</source>
         <translation>Geänderten Inhalt speichern?</translation>
     </message>
     <message>
-        <location filename="../src/FlowWidget.cpp" line="115"/>
+        <location filename="../src/FlowWidget.cpp" line="117"/>
         <source>Content has been modified.Do you want to save to %1 before closing?</source>
         <translation>Der Inhalt wurde verändert. Möchten Sie &quot;%1&quot; vor dem Schließen speichern?</translation>
     </message>
@@ -289,77 +310,77 @@ Message:
         <translation>Knoten %1 fehlt in der Liste %2!</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="225"/>
+        <location filename="../src/GraphModel.cpp" line="220"/>
         <source>connect slot %1 with %2</source>
         <translation>verbinde %1 mit %2</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="254"/>
+        <location filename="../src/GraphModel.cpp" line="246"/>
         <source>disconnected slot %1 from all targets</source>
         <translation>entferne alle Verbindungen von %1</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="255"/>
+        <location filename="../src/GraphModel.cpp" line="247"/>
         <source>disconnected slot %1 from %2</source>
         <translation>entferne Verbindung von %1 zu %2</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="270"/>
+        <location filename="../src/GraphModel.cpp" line="262"/>
         <source>disconnected all slots of node %1</source>
         <translation>trenne alle Verbindungen mit Knoten %1</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="277"/>
+        <location filename="../src/GraphModel.cpp" line="269"/>
         <source>rename node</source>
         <translation>Knoten umbenennen</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="278"/>
+        <location filename="../src/GraphModel.cpp" line="270"/>
         <source>Enter new name for node &quot;%1&quot;:</source>
         <translation>Bitte geben Sie einen neuen Namen für Knoten &quot;%1&quot; ein:</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="286"/>
+        <location filename="../src/GraphModel.cpp" line="276"/>
         <source>node exists</source>
         <translation>Knoten existiert</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="287"/>
+        <location filename="../src/GraphModel.cpp" line="277"/>
         <source>A node named &lt;i&gt;%1&lt;/i&gt; does already exist.&lt;br/&gt;Please choose another name.</source>
         <translation>Ein Knoten Namens &lt;i&gt;%1&lt;/i&gt; existiert bereits.&lt;br/&gt;Bitte geben Sie einen anderen Namen ein.</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="326"/>
+        <location filename="../src/GraphModel.cpp" line="323"/>
         <source>renamed node %1 to %2</source>
         <translation>benenne Knoten %1 in %2 um</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="332"/>
+        <location filename="../src/GraphModel.cpp" line="329"/>
         <source>confirm delete</source>
         <translation>Löschen bestätigen</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="333"/>
+        <location filename="../src/GraphModel.cpp" line="330"/>
         <source>Do you really want to delete node &quot;%1&quot;?</source>
         <translation>Möchten sie den Knoten &quot;%1&quot; wirklich entfernen?</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="365"/>
+        <location filename="../src/GraphModel.cpp" line="362"/>
         <source>delete node %1</source>
         <translation>lösche Knoten %1</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="434"/>
+        <location filename="../src/GraphModel.cpp" line="431"/>
         <source>add new node</source>
         <translation>Knoten hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="435"/>
+        <location filename="../src/GraphModel.cpp" line="432"/>
         <source>Enter a name for the new node:</source>
         <translation>Geben Sie einen Namen für den neuen Knoten ein:</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="448"/>
+        <location filename="../src/GraphModel.cpp" line="445"/>
         <source>This name is already in use.</source>
         <oldsource>This name is already in use.
 Please use another name.
@@ -367,12 +388,12 @@ Please use another name.
         <translation>Dieser Name ist bereits vergeben.</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="449"/>
+        <location filename="../src/GraphModel.cpp" line="446"/>
         <source>Please use another name.</source>
         <translation>Bitte benutzen Sie einen anderen Namen.</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="453"/>
+        <location filename="../src/GraphModel.cpp" line="450"/>
         <source>Whitespace and dots in names are not allowed.</source>
         <oldsource>Whitespace and dots in names are not allowed.
 Please use a valid name.
@@ -380,12 +401,12 @@ Please use a valid name.
         <translation>Leerzeichen und Punkte in Namen sind nicht erlaubt.</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="454"/>
+        <location filename="../src/GraphModel.cpp" line="451"/>
         <source>Please use a valid name.</source>
         <translation>Bitte einen gültigen Namen benutzen.</translation>
     </message>
     <message>
-        <location filename="../src/GraphModel.cpp" line="462"/>
+        <location filename="../src/GraphModel.cpp" line="459"/>
         <source>add node %1 of class %2</source>
         <translation>Knoten %1 vom Typ %2 hinzugefügt</translation>
     </message>
@@ -393,32 +414,32 @@ Please use a valid name.
 <context>
     <name>LogDecorators::RunWorkflow</name>
     <message>
-        <location filename="../src/LogDialog.cpp" line="499"/>
+        <location filename="../src/LogDialog.cpp" line="503"/>
         <source>missing workflow file</source>
         <translation>keine Datei angegeben</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="500"/>
+        <location filename="../src/LogDialog.cpp" line="504"/>
         <source>The workflow cannot be started because it has not been saved to disk (empty filename given). Please save it and retry execution.</source>
         <translation>Die Ausführung konnte nicht gestartet werden, da das Dokument nicht gespeichert wurde. Bitte speichern und erneut ausführen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="525"/>
+        <location filename="../src/LogDialog.cpp" line="529"/>
         <source>wait before workflow execution</source>
         <translation>vor der Ausführung warten</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="526"/>
+        <location filename="../src/LogDialog.cpp" line="530"/>
         <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the run process. Workflow will be started, when you close this message box.</source>
         <translation>Warte mit dem Start der Ausführung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Ausführungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="552"/>
+        <location filename="../src/LogDialog.cpp" line="558"/>
         <source>Workflow execution finished.</source>
         <translation>Ausführung wurde beendet.</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="553"/>
+        <location filename="../src/LogDialog.cpp" line="559"/>
         <source>Plugins stay loaded until you close this dialog.</source>
         <translation>Die Plugins bleiben geladen, bis dieser Dialog geschlossen wird.</translation>
     </message>
@@ -426,22 +447,22 @@ Please use a valid name.
 <context>
     <name>LogDecorators::Update</name>
     <message>
-        <location filename="../src/LogDialog.cpp" line="441"/>
+        <location filename="../src/LogDialog.cpp" line="445"/>
         <source>Plugin Information Update</source>
         <translation>Plugin Informationen aktualisieren</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="446"/>
+        <location filename="../src/LogDialog.cpp" line="450"/>
         <source>Output of update process:</source>
         <translation>Ausgabe der Aktualisierung:</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="465"/>
+        <location filename="../src/LogDialog.cpp" line="469"/>
         <source>wait before plugin update</source>
         <translation>vor der Aktualisierung warten</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="467"/>
+        <location filename="../src/LogDialog.cpp" line="471"/>
         <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the update process. Update will be started, when you close this message box.</source>
         <translation>Warte mit dem Start der Aktualisierung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Aktualisierungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
@@ -543,47 +564,47 @@ speichern</translation>
         <translation>Der Ausführungsprozess hat nicht reagiert.&lt;br&gt;Prozess töten?</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="328"/>
+        <location filename="../src/LogDialog.cpp" line="332"/>
         <source>process failed to start</source>
         <translation>der Prozess konnte nicht gestartet werden</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="331"/>
+        <location filename="../src/LogDialog.cpp" line="335"/>
         <source>process crashed after start</source>
         <translation>der Prozess ist nach dem Start abgestürzt</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="334"/>
+        <location filename="../src/LogDialog.cpp" line="338"/>
         <source>process timeout</source>
         <translation>Zeit abgelaufen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="337"/>
+        <location filename="../src/LogDialog.cpp" line="341"/>
         <source>write error</source>
         <translation>Fehler beim Schreiben</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="340"/>
+        <location filename="../src/LogDialog.cpp" line="344"/>
         <source>read error</source>
         <translation>Fehler beim Lesen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="343"/>
+        <location filename="../src/LogDialog.cpp" line="347"/>
         <source>unknown error</source>
         <translation>sonstiger Fehler</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="348"/>
+        <location filename="../src/LogDialog.cpp" line="352"/>
         <source>Error during process execution:</source>
         <translation>Fehler währen des Ausführens:</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="364"/>
+        <location filename="../src/LogDialog.cpp" line="368"/>
         <source>Save Log File</source>
         <translation>Protokoll speichern</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="365"/>
+        <location filename="../src/LogDialog.cpp" line="369"/>
         <source>Text File (*.txt *.log)</source>
         <translation>Textdatei (*.txt *.log)</translation>
     </message>
@@ -630,53 +651,53 @@ node</oldsource>
 <context>
     <name>NodeHandler</name>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="185"/>
-        <location filename="../src/NodeHandler.cpp" line="458"/>
+        <location filename="../src/NodeHandler.cpp" line="186"/>
+        <location filename="../src/NodeHandler.cpp" line="462"/>
         <source>Comment:</source>
         <translation>Kommentar:</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="267"/>
+        <location filename="../src/NodeHandler.cpp" line="271"/>
         <source>Select File to Write</source>
         <translation>Datei zum Schreiben auswählen</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="268"/>
+        <location filename="../src/NodeHandler.cpp" line="272"/>
         <source>Images (*.png *.jpg *.bmp *.gif);;PDF/Postscript (*.pdf *.ps)</source>
         <translation>Bilder (*.png *.jpg *.bmp *.gif);;PDF/Postscript (*.pdf *.ps)</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="288"/>
+        <location filename="../src/NodeHandler.cpp" line="292"/>
         <source>error writing file</source>
         <translation>Fehler beim Schreiben der Datei</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="289"/>
+        <location filename="../src/NodeHandler.cpp" line="293"/>
         <source>failed to save the workflow visualization to&lt;br&gt;&lt;tt&gt;%1&lt;/tt&gt;Perhaps the image file format is not supported.</source>
         <translation>Die Darstellung konnte nicht in der Datei &lt;tt&gt;%1&lt;/tt&gt; gespeichert werden.&lt;br&gt;Eventuell wird das Format nicht unterstützt.</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="408"/>
+        <location filename="../src/NodeHandler.cpp" line="412"/>
         <source>disconnect %1</source>
         <translation>Verbindungen von &quot;%1&quot; entfernen</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="414"/>
+        <location filename="../src/NodeHandler.cpp" line="418"/>
         <source>delete</source>
         <translation>löschen</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="415"/>
+        <location filename="../src/NodeHandler.cpp" line="419"/>
         <source>rename</source>
         <translation>umbenennen</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="416"/>
+        <location filename="../src/NodeHandler.cpp" line="420"/>
         <source>disconnect all slots</source>
         <translation>alle Verbindungen entfernen</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="423"/>
+        <location filename="../src/NodeHandler.cpp" line="427"/>
         <source>disconnect slot</source>
         <translation>Verbindungen entfernen</translation>
     </message>
@@ -685,11 +706,16 @@ node</oldsource>
     <name>NodeTreeView</name>
     <message>
         <location filename="../src/NodeTreeView.cpp" line="69"/>
-        <source>Modules</source>
-        <translation>Module</translation>
+        <source>All Modules</source>
+        <translation>Alle Module</translation>
     </message>
     <message>
-        <location filename="../src/NodeTreeView.cpp" line="75"/>
+        <location filename="../src/NodeTreeView.cpp" line="76"/>
+        <source>Untagged</source>
+        <translation>Module ohne Kategorie</translation>
+    </message>
+    <message>
+        <location filename="../src/NodeTreeView.cpp" line="83"/>
         <source>Names</source>
         <translation>Module</translation>
     </message>
@@ -702,47 +728,47 @@ node</oldsource>
 <context>
     <name>ObjectInspector</name>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="109"/>
+        <location filename="../src/ObjectInspector.cpp" line="110"/>
         <source>Save File</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="110"/>
+        <location filename="../src/ObjectInspector.cpp" line="111"/>
         <source>ParameterFile (*.wrp)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="214"/>
+        <location filename="../src/ObjectInspector.cpp" line="215"/>
         <source>Open File</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="216"/>
+        <location filename="../src/ObjectInspector.cpp" line="217"/>
         <source>ParameterFile (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="244"/>
+        <location filename="../src/ObjectInspector.cpp" line="245"/>
         <source>delete failed</source>
         <translation>Löschen fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="244"/>
+        <location filename="../src/ObjectInspector.cpp" line="245"/>
         <source>Please select an item to delete first.</source>
         <translation>Bitte wählen Sie zuerst ein Element zum Löschen aus.</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="259"/>
+        <location filename="../src/ObjectInspector.cpp" line="260"/>
         <source>confirm delete</source>
         <translation>Löschen bestätigen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="259"/>
+        <location filename="../src/ObjectInspector.cpp" line="260"/>
         <source>Do you really want to delete the model content?</source>
         <translation>Möchten Sie wirklich alle Einträge löschen?</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="268"/>
+        <location filename="../src/ObjectInspector.cpp" line="269"/>
         <source>cleared model content</source>
         <translation>Model-Einträge gelöscht</translation>
     </message>
@@ -752,114 +778,114 @@ node</oldsource>
         <translation>Rahmen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="74"/>
+        <location filename="../src/ObjectInspector.ui" line="75"/>
         <source>Selected Node</source>
         <translation>Gewählter Knoten</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="87"/>
+        <location filename="../src/ObjectInspector.ui" line="88"/>
         <source>reset prefix filters</source>
         <translation>Präfix-Filter zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="90"/>
+        <location filename="../src/ObjectInspector.ui" line="91"/>
         <source>clear prefix</source>
         <translation>Präfix leeren</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="110"/>
+        <location filename="../src/ObjectInspector.ui" line="111"/>
         <source>Node-Comment</source>
         <translation>Knoten-Kommentar</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="127"/>
+        <location filename="../src/ObjectInspector.ui" line="128"/>
         <source>Tools</source>
         <translation>Werkzeuge</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="145"/>
+        <location filename="../src/ObjectInspector.ui" line="146"/>
         <source>reset selected parameter(s) to their defaults
 This deletes the parameter(s) from the parameter file.</source>
         <translation>setzt die gewählten Parameter auf ihren Standardwert zurück.
 Dies löscht die Parameter aus der Parameterdatei.</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="149"/>
+        <location filename="../src/ObjectInspector.ui" line="150"/>
         <source>reset selected</source>
         <translation>Parameter zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="160"/>
+        <location filename="../src/ObjectInspector.ui" line="161"/>
         <source>Change priority of selected parameters</source>
         <translation>Priorität der gewählten Parameter anpassen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="174"/>
+        <location filename="../src/ObjectInspector.ui" line="175"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="192"/>
+        <location filename="../src/ObjectInspector.ui" line="193"/>
         <source>Priority</source>
         <translation>Priorität</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="205"/>
+        <location filename="../src/ObjectInspector.ui" line="206"/>
         <source>Filter by priority</source>
         <translation>nach Priorität filtern</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="212"/>
+        <location filename="../src/ObjectInspector.ui" line="213"/>
         <source>reset applied filters</source>
         <translation>setzt die angewandten Filter zurück</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="215"/>
+        <location filename="../src/ObjectInspector.ui" line="216"/>
         <source>reset filters</source>
         <translation>Filter zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="237"/>
+        <location filename="../src/ObjectInspector.ui" line="238"/>
         <source>Editing</source>
         <translation>Bearbeitung</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="252"/>
+        <location filename="../src/ObjectInspector.ui" line="253"/>
         <source>Add new parameter</source>
         <translation>neuen Parameter hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="255"/>
+        <location filename="../src/ObjectInspector.ui" line="256"/>
         <source>&amp;Add</source>
         <translation>&amp;Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="262"/>
+        <location filename="../src/ObjectInspector.ui" line="263"/>
         <source>Delete selected parameter</source>
         <translation>gewählte Parameter löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="265"/>
+        <location filename="../src/ObjectInspector.ui" line="266"/>
         <source>&amp;Delete</source>
         <translation>&amp;Entfernen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="272"/>
+        <location filename="../src/ObjectInspector.ui" line="273"/>
         <source>Delete all parameters</source>
         <translation>alle Parameter Löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="275"/>
+        <location filename="../src/ObjectInspector.ui" line="276"/>
         <source>&amp;Clear</source>
         <translation>Alle &amp;Löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="288"/>
+        <location filename="../src/ObjectInspector.ui" line="289"/>
         <source>use metadata</source>
         <translation>benutze Metainformationen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="298"/>
+        <location filename="../src/ObjectInspector.ui" line="299"/>
         <source>show editable parameters only</source>
         <translation>nur Parameter anzeigen</translation>
     </message>
@@ -962,17 +988,22 @@ Set this to the directory where the plugins you are currently working on are gen
 als Ausweichnamen den Namen ohne Endung verwenden</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="177"/>
+        <location filename="../src/OptionsDialog.ui" line="174"/>
+        <source>reload all plugins on startup</source>
+        <translation>Module beim Start neu laden</translation>
+    </message>
+    <message>
+        <location filename="../src/OptionsDialog.ui" line="184"/>
         <source>Workflow Execution</source>
         <translation>Ausführung</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="194"/>
+        <location filename="../src/OptionsDialog.ui" line="201"/>
         <source>Exludes</source>
         <translation>Ausschließen</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="200"/>
+        <location filename="../src/OptionsDialog.ui" line="207"/>
         <source>Enter dynamic lib names that should be excluded from module search.&lt;br&gt;
 You may use wildcard expressions.&lt;br&gt;
 Enter the names withoud &quot;lib&quot; prefix, debug suffix (_d) or file extension (.so/.dll/...)</source>
@@ -983,22 +1014,22 @@ Bitte die Namen ohne &quot;lib&quot;-Präfix oder die Debug-Endung (_d)&lt;br&gt
 oder Dateierweiterung (.so/.dll/...) angeben</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="239"/>
+        <location filename="../src/OptionsDialog.ui" line="246"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="183"/>
+        <location filename="../src/OptionsDialog.ui" line="190"/>
         <source>delay execution of Workflow (usefull for attaching a debugger)</source>
         <translation>vor der Ausführung warten (für Debugging)</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.cpp" line="173"/>
+        <location filename="../src/OptionsDialog.cpp" line="177"/>
         <source>path not found</source>
         <translation>Pfad nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.cpp" line="174"/>
+        <location filename="../src/OptionsDialog.cpp" line="178"/>
         <source>path &lt;tt&gt;%1&lt;/tt&gt; has not been found.&lt;/br&gt;Remove it from &lt;em&gt;%2&lt;/em&gt;?</source>
         <translation>Der Pfad &lt;tt&gt;%1&lt;/tt&gt; wurde nicht gefunden.&lt;br&gt;Soll er aus &lt;em&gt;%2&lt;/em&gt; entfernt werden?</translation>
     </message>
@@ -1011,69 +1042,69 @@ oder Dateierweiterung (.so/.dll/...) angeben</translation>
         <translation>&amp;Datei</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="46"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="47"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="55"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="56"/>
         <source>Ctrl+M</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="56"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="57"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="57"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="58"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="45"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="46"/>
         <source>&amp;Open</source>
         <translation>Ö&amp;ffnen</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="54"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="55"/>
         <source>Open &amp;Metadata</source>
         <translation>&amp;Metadaten öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="58"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="59"/>
         <source>Save &amp;as...</source>
         <translation>Speichern &amp;unter …</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="59"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="60"/>
         <source>Ctrl+Alt+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="60"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="61"/>
         <source>E&amp;xit</source>
         <translation>&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="61"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="62"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="64"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="65"/>
         <source>Tools</source>
         <translation>Werkzeuge</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="72"/>
-        <location filename="../src/ParamInspectorWindow.cpp" line="105"/>
-        <location filename="../src/ParamInspectorWindow.cpp" line="109"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="73"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="106"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="110"/>
         <source>Object Inspector</source>
         <translation>ObjektInspektor</translation>
     </message>
     <message>
-        <location filename="../src/ParamInspectorWindow.cpp" line="102"/>
+        <location filename="../src/ParamInspectorWindow.cpp" line="103"/>
         <source>Error opening file</source>
         <translation>Fehler beim Laden der Datei</translation>
     </message>
@@ -1081,38 +1112,48 @@ oder Dateierweiterung (.so/.dll/...) angeben</translation>
 <context>
     <name>ParameterFileModel</name>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="467"/>
+        <location filename="../src/ParameterFileModel.cpp" line="126"/>
+        <source>[invalid reference to %1]</source>
+        <translation>[ungültige Verknüpfung mit %1]</translation>
+    </message>
+    <message>
+        <location filename="../src/ParameterFileModel.cpp" line="190"/>
+        <source>link to: %1</source>
+        <translation>Verknüpfung mit: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/ParameterFileModel.cpp" line="499"/>
         <source>File %1 loaded.</source>
         <translation>Datei %1 geladen.</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="520"/>
+        <location filename="../src/ParameterFileModel.cpp" line="552"/>
         <source>Open File</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="521"/>
+        <location filename="../src/ParameterFileModel.cpp" line="553"/>
         <source>ParameterFiles (*.wrp);;All Files (*.*)</source>
         <translation>ParameterDateien (*.wrp);;All Files (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="524"/>
+        <location filename="../src/ParameterFileModel.cpp" line="556"/>
         <source>no file selected</source>
         <translation>keine Datei ausgewählt</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="527"/>
-        <location filename="../src/ParameterFileModel.cpp" line="532"/>
+        <location filename="../src/ParameterFileModel.cpp" line="559"/>
+        <location filename="../src/ParameterFileModel.cpp" line="564"/>
         <source>Error loading file</source>
         <translation>Fehler beim Laden der Datei</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="528"/>
+        <location filename="../src/ParameterFileModel.cpp" line="560"/>
         <source>File &lt;em&gt;%1&lt;/em&gt; does not exist or is no file!</source>
         <translation>Datei &lt;em&gt;%1&lt;/em&gt; existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="533"/>
+        <location filename="../src/ParameterFileModel.cpp" line="565"/>
         <source>File &lt;em&gt;%1&lt;/em&gt; is not readable!</source>
         <translation>Datei &lt;em&gt;%1&lt;/em&gt; ist nicht lesbar!</translation>
     </message>
@@ -1487,86 +1528,86 @@ help</oldsource>
         <translation>Über &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="301"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="302"/>
         <source>About Tuchulcha</source>
         <translation>Über Tuchulcha</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="307"/>
-        <location filename="../src/TuchulchaWindow.cpp" line="310"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="308"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="311"/>
         <source>%1 (%2bit, %3)</source>
         <oldsource>GCC %1.%2.%3 (%4bit, %5)</oldsource>
         <translation>%1 (%2bit, %3)</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="307"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="308"/>
         <source>MSVC</source>
         <translation>MSVC</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="310"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="311"/>
         <source>GCC</source>
         <translation>GCC</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="322"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="323"/>
         <source>unknown compiler (%1bit)</source>
         <oldsource>unknown compiler (%1bit)
 </oldsource>
         <translation>unbekannter Compiler (%1bit)</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="326"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="327"/>
         <source>This is &lt;b&gt;Tuchulcha %1&lt;/b&gt;&lt;br /&gt;written by %2</source>
         <translation>Dies ist &lt;b&gt;Tuchulcha %1&lt;/b&gt;&lt;br /&gt;geschrieben von %2</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="330"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="331"/>
         <source>Copyright &amp;copy; %1 Heidelberg Collaboratory for Image Processing</source>
         <translation>Copyright &amp;copy; %1 Heidelberg Collaboratory for Image Processing</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="333"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="334"/>
         <source>Built %1 %2&lt;br /&gt;with %3</source>
         <translation>Erstellt %1 %2&lt;br /&gt;mit %3</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="337"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="338"/>
         <source>VCS Info: %1</source>
         <translation>VCS Info: %1</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="341"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="342"/>
         <source>Built against libraries:</source>
         <translation>Gelinkt gegen folgende Bibliotheken:</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="346"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="347"/>
         <source>Build info: %1</source>
         <translation>Erstellungsinformation: %1</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="349"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="350"/>
         <source>This program is part of tuchulcha.</source>
         <translation>Dieses Programm ist Tuchulcha.</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="351"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="352"/>
         <source>tuchulcha is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.</source>
         <translation>Tuchulcha ist freie Software. Sie können sie zu den Bedingungen der GNU Lesser General Public License der Free Software Stiftung weitergeben und/oder verändern. Dabei kann Version 3 der Lizenz oder (optional) jeder späteren Version verwendet werden.</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="356"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="357"/>
         <source>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.</source>
         <translation>Dieses Programm wurde weitergegeben in der Hoffnung, dass es nützlich ist, allerdings &lt;em&gt;ohne jegliche Gewährleistung&lt;/em&gt;. Weitere Informationen in der GNU Lesser General Public Lizenz.</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="361"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="362"/>
         <source>A copy of the GNU Lesser General Public License can be found at &lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;www.gnu.org/licenses/&lt;/a&gt;.</source>
         <translation>Eine Kopie der GNU Lesser General Public Lizenz ist unter &lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;www.gnu.org/licenses/&lt;/a&gt; verfügbar.</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="369"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="370"/>
         <source>About Qt</source>
         <translation>Über Qt</translation>
     </message>
