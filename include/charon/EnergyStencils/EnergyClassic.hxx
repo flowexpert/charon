@@ -279,7 +279,9 @@ void EnergyClassic<T>::updateStencil(
 		{
 			// if true pixel value, e.g. from sparse match, then do not regularize
 			if (motionConnected && matchMaskConnected && matchMaskC) {
-				_dataMask.fill(    0, 0, 0,     0, _lamb, 0,     0, 0, 0 );
+				_dataMask.fill( 0, 0, 0,
+				                0, _lamb*_penaltyFunction->getPenaltyGradient( 0.0 ), 0,
+				                0, 0, 0 );
 				this->_rhs = _lamb * motionC;
 			} else {
 				pSum =  T(0.0);
@@ -308,26 +310,26 @@ void EnergyClassic<T>::updateStencil(
 				if (motionConnected) {
 					if (pSumMask) {
 						motionSum =  T(0.0);
-						motionSum += (regionMaskN ? motionN : T(0.0));
-						motionSum += (regionMaskE ? motionE : T(0.0));
-						motionSum += (regionMaskS ? motionS : T(0.0));
-						motionSum += (regionMaskW ? motionW : T(0.0));
+						motionSum += (regionMaskN ? motionN * pCN : T(0.0));
+						motionSum += (regionMaskE ? motionE * pCE : T(0.0));
+						motionSum += (regionMaskS ? motionS * pCS : T(0.0));
+						motionSum += (regionMaskW ? motionW * pCW : T(0.0));
 						motionCenterSum =  T(0.0);
-						motionCenterSum += (regionMaskN ? motionC : T(0.0));
-						motionCenterSum += (regionMaskE ? motionC : T(0.0));
-						motionCenterSum += (regionMaskS ? motionC : T(0.0));
-						motionCenterSum += (regionMaskW ? motionC : T(0.0));
+						motionCenterSum += (regionMaskN ? motionC * pCN : T(0.0));
+						motionCenterSum += (regionMaskE ? motionC * pCE : T(0.0));
+						motionCenterSum += (regionMaskS ? motionC * pCS : T(0.0));
+						motionCenterSum += (regionMaskW ? motionC * pCW : T(0.0));
 					} else {
 	                                        motionSum =  T(0.0);
-	                                        motionSum += (bordN ? motionN : T(0.0));
-	                                        motionSum += (bordE ? motionE : T(0.0));
-	                                        motionSum += (bordS ? motionS : T(0.0));
-	                                        motionSum += (bordW ? motionW : T(0.0));
+	                                        motionSum += (bordN ? motionN * pCN : T(0.0));
+	                                        motionSum += (bordE ? motionE * pCE : T(0.0));
+	                                        motionSum += (bordS ? motionS * pCS : T(0.0));
+	                                        motionSum += (bordW ? motionW * pCW : T(0.0));
 	                                        motionCenterSum =  T(0.0);
-	                                        motionCenterSum += (bordN ? motionC : T(0.0));
-	                                        motionCenterSum += (bordE ? motionC : T(0.0));
-	                                        motionCenterSum += (bordS ? motionC : T(0.0));
-                                	        motionCenterSum += (bordW ? motionC : T(0.0));
+	                                        motionCenterSum += (bordN ? motionC * pCN : T(0.0));
+	                                        motionCenterSum += (bordE ? motionC * pCE : T(0.0));
+	                                        motionCenterSum += (bordS ? motionC * pCS : T(0.0));
+                                	        motionCenterSum += (bordW ? motionC * pCW : T(0.0));
 					}
 					this->_rhs = motionSum - motionCenterSum;
 				}
