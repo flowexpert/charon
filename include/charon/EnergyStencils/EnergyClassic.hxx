@@ -220,16 +220,8 @@ void EnergyClassic<T>::updateStencil(
 	int regionMaskConnected = regionMask.connected();
 	int matchMaskConnected = matchMask.connected();
 
-	// fill region mask according to boundary conditions
-	bool bordC = true;
-	bool bordN = false, bordE = false, bordS = false, bordW = false;
-	if ((_xBegin   <= p.x) && (p.x < _xEnd)   && (_yBegin+1 <= p.y) && (p.y < _yEnd))   bordN = true;
-	if ((_xBegin   <= p.x) && (p.x < _xEnd-1) && (_yBegin   <= p.y) && (p.y < _yEnd))   bordE = true;
-	if ((_xBegin   <= p.x) && (p.x < _xEnd)   && (_yBegin   <= p.y) && (p.y < _yEnd-1)) bordS = true;
-	if ((_xBegin+1 <= p.x) && (p.x < _xEnd)   && (_yBegin   <= p.y) && (p.y < _yEnd))   bordW = true;
-
 	// fill region mask with given regularization mask
-	bool regionMaskC = bordC, regionMaskN = bordN, regionMaskE = bordE, regionMaskS = bordS, regionMaskW = bordW;
+	bool regionMaskC = true, regionMaskN = true, regionMaskE = true, regionMaskS = true, regionMaskW = true;
 	if (regionMaskConnected) {
 		regionMaskC &= (bool)regionMask()[0].atXY(p.x,   p.y);
 		regionMaskN &= (bool)regionMask()[0].atXY(p.x,   p.y-1);
@@ -296,15 +288,11 @@ void EnergyClassic<T>::updateStencil(
 					                (regionMaskW ? -pCW : T(0.0)), pSum,                                  (regionMaskE ? -pCE : T(0.0)),
 					                T(0.0),                        (regionMaskS ? -pCS : T(0.0)), T(0.0) );
 				} else {  //  if all neighbors are out masked then inpainting
-					pSum = T(0.0);
-					pSum += (bordN ? pCN : T(0.0));
-					pSum += (bordE ? pCE : T(0.0));
-					pSum += (bordS ? pCS : T(0.0));
-					pSum += (bordW ? pCW : T(0.0));
+					pSum = pCN + pCE + pCS + pCW;
 
-					_dataMask.fill( T(0.0),                   (bordN ? -pCN : T(0.0)), T(0.0),
-					                (bordW ? -pCW : T(0.0)),  pSum,                    (bordE ? -pCE : T(0.0)),
-					                T(0.0),                   (bordS ? -pCS : T(0.0)), T(0.0) );
+					_dataMask.fill( T(0.0), -pCN, T(0.0),
+					                -pCW,   pSum, -pCE,
+					                T(0.0), -pCS, T(0.0) );
 				}
 
 				if (motionConnected) {
@@ -321,15 +309,15 @@ void EnergyClassic<T>::updateStencil(
 						motionCenterSum += (regionMaskW ? motionC * pCW : T(0.0));
 					} else {
 	                                        motionSum =  T(0.0);
-	                                        motionSum += (bordN ? motionN * pCN : T(0.0));
-	                                        motionSum += (bordE ? motionE * pCE : T(0.0));
-	                                        motionSum += (bordS ? motionS * pCS : T(0.0));
-	                                        motionSum += (bordW ? motionW * pCW : T(0.0));
+	                                        motionSum += motionN * pCN;
+	                                        motionSum += motionE * pCE;
+	                                        motionSum += motionS * pCS;
+	                                        motionSum += motionW * pCW;
 	                                        motionCenterSum =  T(0.0);
-	                                        motionCenterSum += (bordN ? motionC * pCN : T(0.0));
-	                                        motionCenterSum += (bordE ? motionC * pCE : T(0.0));
-	                                        motionCenterSum += (bordS ? motionC * pCS : T(0.0));
-                                	        motionCenterSum += (bordW ? motionC * pCW : T(0.0));
+	                                        motionCenterSum += motionC * pCN;
+	                                        motionCenterSum += motionC * pCE;
+	                                        motionCenterSum += motionC * pCS;
+                                	        motionCenterSum += motionC * pCW;
 					}
 					this->_rhs = motionSum - motionCenterSum;
 				}
