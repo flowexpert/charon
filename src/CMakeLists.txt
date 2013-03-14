@@ -89,6 +89,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Resize.h
 		${CHARON_UTILS_INCLUDE_DIR}/Resize.hxx
 	)
+	ADD_LIBRARY(min SHARED
+		Min.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Min.h
+		${CHARON_UTILS_INCLUDE_DIR}/Min.hxx
+	)
 	IF(USE_QT)
 		SET(filereaderwatcher_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/FileReaderWatcher.h)
 		QT4_WRAP_CPP(filereaderwatcher_HEADERS_MOCKED ${filereaderwatcher_HEADERS_TOMOC})
@@ -291,6 +296,7 @@ IF(USE_CIMG)
 		channelconverter
 		crop
 		resize
+		min
 		filereader
 		filewriter
 		floreader
