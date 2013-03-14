@@ -36,13 +36,13 @@
 #define simpleiterator_DECLDIR
 #endif
 
-#include <charon-core/ParameteredObject.hxx>
-#include <charon-utils/CImg.h>
-#include <charon/IteratorHelper.h>
-
 #ifdef QT_GUI_LIB
 #include <charon/SimpleIteratorRemoteControl.h>
 #endif
+
+#include <charon-core/ParameteredObject.hxx>
+#include <charon-utils/CImg.h>
+#include <charon/IteratorHelper.h>
 
 /// Iterate parts of the processing pipeline.
 /** This iterator executes the processing toolchain until the flow

@@ -25,12 +25,12 @@
 #define _SIMPLEITERATOR_HXX_
 
 
-#include "SimpleIterator.h"
-#include "IteratorHelper.hxx"
-#include <limits>
 #ifdef QT_GUI_LIB
 #include <QApplication>
 #endif
+#include "SimpleIterator.h"
+#include "IteratorHelper.hxx"
+#include <limits>
 
 template <typename T>
 SimpleIterator<T>::SimpleIterator(const std::string& name) :

@@ -51,9 +51,9 @@
 #include <charon-core/ParameteredObject.h>
 #include <charon-core/FileTool.h>
 #include <charon-core/ExceptionHandler.h>
-#include <charon/FlowComparator.h>
-#include <charon/IteratorHelper.h>
 #include <charon/SimpleIterator.h>
+#include <charon/IteratorHelper.h>
+#include <charon/FlowComparator.h>
 #include <charon/PyramidRescale.h>
 #include <charon-utils/FileReader.h>
 #include <charon-utils/Flow2HSV.h>

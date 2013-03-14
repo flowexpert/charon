@@ -48,9 +48,9 @@
 #include <charon-core/ParameteredObject.h>
 #include <charon-core/FileTool.h>
 #include <charon-core/ExceptionHandler.h>
+#include <charon/SimpleIterator.h>
 #include <charon/FlowComparator.h>
 #include <charon/IteratorHelper.h>
-#include <charon/SimpleIterator.h>
 
 /// unit tests
 int test() {

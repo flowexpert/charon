@@ -50,9 +50,9 @@
 #include <charon-core/FileTool.h>
 #include <charon-core/ExceptionHandler.h>
 
-#include <charon/Stencil.h>
-#include <charon/IteratorHelper.h>
 #include <charon/RelaxingIterator.h>
+#include <charon/IteratorHelper.h>
+#include <charon/Stencil.h>
 
 /// unit tests
 int test() {

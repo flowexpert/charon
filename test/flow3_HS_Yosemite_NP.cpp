@@ -34,10 +34,14 @@
 #ifdef NDEBUG
 #undef NDEBUG
 #endif
-#include <charon/Solvers/PetscSolver.hxx>
 #include <cassert>
-#include <charon-utils/Roi.hxx>
+
+#ifdef QT_GUI_LIB
+#include <qdatastream.h>  // avoid macro crap with STATUS redefinition
+#endif
+#include <charon/Solvers/PetscSolver.hxx> // must be before CImg (macros!)
 #include <charon-utils/FileReader.hxx>
+#include <charon-utils/Roi.hxx>
 #include <charon-utils/Crop.hxx>
 #include <charon-utils/Convolution.hxx>
 #include <charon/BrightnessModels/Constant.hxx>

@@ -50,9 +50,9 @@
 #include <charon-core/FileTool.h>
 #include <charon-core/ExceptionHandler.h>
 
-#include <charon/FlowComparator.h>
 #include <charon/RelaxingIterator.h>
 #include <charon/IteratorHelper.h>
+#include <charon/FlowComparator.h>
 #include <charon/Stencils/SpatialPW.h>
 
 /// prefix for output files
