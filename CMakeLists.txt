@@ -19,7 +19,6 @@ ENDIF()
 FIND_PACKAGE(charon-core REQUIRED HINTS $ENV{CHARON_DIR})
 FIND_PACKAGE(charon-utils REQUIRED HINTS $ENV{CHARON_DIR})
 INCLUDE(InitFlags)
-INCLUDE(CImgConfig)
 
 # set up documentation generation
 FIND_PACKAGE(Doxygen QUIET)
