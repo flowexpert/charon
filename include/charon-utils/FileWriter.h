@@ -61,6 +61,9 @@ public:
 	/// image data as input slot
 	InputSlot<cimg_library::CImgList<T> > in;
 
+	/// list of optional names
+	InputSlot< std::vector<std::string> > names;
+
 	/// create a new sample object
 	/// @param name             Object name
 	FileWriter(const std::string& name = "");
