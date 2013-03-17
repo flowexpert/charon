@@ -84,6 +84,11 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Crop.h
 		${CHARON_UTILS_INCLUDE_DIR}/Crop.hxx
 	)
+	ADD_LIBRARY(discretizebythreshold SHARED
+		DiscretizeByThreshold.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/DiscretizeByThreshold.h
+		${CHARON_UTILS_INCLUDE_DIR}/DiscretizeByThreshold.hxx
+	)
 	ADD_LIBRARY(resize SHARED
 		Resize.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Resize.h
@@ -150,6 +155,11 @@ IF(USE_CIMG)
 		LayeredMedianFilter.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/LayeredMedianFilter.h
 		${CHARON_UTILS_INCLUDE_DIR}/LayeredMedianFilter.hxx
+	)
+	ADD_LIBRARY(quantize SHARED
+		Quantize.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Quantize.h
+		${CHARON_UTILS_INCLUDE_DIR}/Quantize.hxx
 	)
 	ADD_LIBRARY(rgb2hsv SHARED
 		Rgb2Hsv.cpp
@@ -295,6 +305,7 @@ IF(USE_CIMG)
 	SET(Plugins_CImg
 		channelconverter
 		crop
+		discretizebythreshold
 		resize
 		min
 		filereader
@@ -331,6 +342,7 @@ IF(USE_CIMG)
 		amplitudethreshold
 		binoperatorcimg
 		maskedblur
+		quantize
 		erodedilate
 		strictresizexy
 		size

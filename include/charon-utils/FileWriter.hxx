@@ -42,7 +42,7 @@ FileWriter<T>::FileWriter(const std::string& name) :
 			"<li>TIFF (libtiff)</li>"
 			"<li>JPEG/JPG(libjpeg)</li>"
 			"</ul>"
-			) {
+			), names(true,false) {
 	ParameteredObject::_setTags("charon-utils;CImg;DiskIO") ;
 
 	this->_addParameter(
@@ -51,12 +51,32 @@ FileWriter<T>::FileWriter(const std::string& name) :
 		"Should the plugin raise an exception and stop the workflow "
 		"if an write error occurs?", true);
 	this->_addInputSlot(in, "in", "image input", "CImgList<T>");
+	this->_addInputSlot(names, "names", "image input names", "vector<string>");
 }
 
 template<typename T>
 void FileWriter<T>::execute() {
 	try {
-		in().save(filename().c_str());
+
+		if(!this->names.connected())
+		{
+			in().save(filename().c_str());
+		}
+		else if(this->names().size() != this->in().size() )
+		{
+			sout << "Number of given names != number of images" << std::endl;
+			in().save(filename().c_str());
+		}
+		else
+		{
+			std::string base = filename();
+			std::string ext =  filename().substr( filename().find_last_of('.'),  filename().length());
+			for(size_t i = 0; i < this->in().size(); i++)
+			{
+				in()[i].save( (filename()+this->names()[i]+ext).c_str() );
+			}
+		}
+
 	}
 	catch (const cimg_library::CImgException& err) {
 		std::string error = "\tCould not write file \""
