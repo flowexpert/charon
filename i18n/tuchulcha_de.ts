@@ -724,6 +724,16 @@ node</oldsource>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
+    <message>
+        <location filename="../src/NodeTreeView.ui" line="46"/>
+        <source>reset filter string</source>
+        <translation>Filter zurücksetzen</translation>
+    </message>
+    <message>
+        <location filename="../src/NodeTreeView.ui" line="49"/>
+        <source>clear filter</source>
+        <translation>Filter leeren</translation>
+    </message>
 </context>
 <context>
     <name>ObjectInspector</name>
