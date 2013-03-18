@@ -39,10 +39,10 @@
 #include "QParameterFile.h"
 #include <stdexcept>
 
-NodeHandler::NodeHandler(GraphModel* model, QObject* pp) :
+NodeHandler::NodeHandler(GraphModel* mm, QObject* pp) :
 		QGraphicsScene(pp),
 		_cline(0),
-		_model(model),
+		_model(mm),
 		_addLine(false)
 {
 	Q_ASSERT(_model);

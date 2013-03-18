@@ -95,28 +95,25 @@ void NodeTreeView::reload() {
 		node->setDragEnabled(true);
 		root->appendRow(node);
 		
-		//get list of tags for this module
+		// get list of tags for this module
 		QStringList tags = md.getTags(cur) ;
 
 		//put module in the untagged list if it has no tags
-		if(tags.isEmpty())
-		{
-			QStandardItem* node = new QStandardItem(cur);
-			node->setEditable(false);
-			node->setDragEnabled(true);
-			untaggedRoot->appendRow(node);
+		if (tags.isEmpty()) {
+			QStandardItem* cnode = new QStandardItem(cur);
+			cnode->setEditable(false);
+			cnode->setDragEnabled(true);
+			untaggedRoot->appendRow(cnode);
 		}
 		
 		foreach (const QString& tag, tags) {
-			
-			int subIndex = 0 ; //index of current "/"
+			int subIndex = 0 ; // index of current "/"
 			QString parentTag = "" ;
-			//split tag at each "/" and create subnodes 
-			do
-			{
-				QStandardItem* node = new QStandardItem(cur);
-				node->setEditable(false);
-				node->setDragEnabled(true);
+			// split tag at each "/" and create subnodes
+			do {
+				QStandardItem* cnode = new QStandardItem(cur);
+				cnode->setEditable(false);
+				cnode->setDragEnabled(true);
 
 				subIndex = tag.indexOf("/",subIndex+1) ;
 				QString subtag = tag.mid(0,subIndex) ; 
@@ -136,11 +133,9 @@ void NodeTreeView::reload() {
 					allTags.insert(subtag,newRoot) ;
 				}
 				parentTag = subtag ;
-				allTags[subtag]->appendRow(node) ;
-			}while(subIndex != -1) ;
-			
+				allTags[subtag]->appendRow(cnode) ;
+			} while(subIndex != -1) ;
 		}
-
 	}
 
 	// update view

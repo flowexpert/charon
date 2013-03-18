@@ -300,13 +300,13 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 				else if (isInputSlot(curPar) || isOutputSlot(curPar)) {
 					QStringList parVals =
 						getValue(curPar).split(";",QString::SkipEmptyParts);
-					for (int i = 0; i < parVals.size(); i++) {
-						QStringList target = parVals.at(i).split(".");
+					for (int k = 0; k < parVals.size(); k++) {
+						QStringList target = parVals.at(k).split(".");
 						Q_ASSERT(target.size() > 0);
 						if (QString::compare(target[0],nodename,
 								Qt::CaseInsensitive)==0) {
 							target[0] = newName;
-							parVals[i] = target.join(".");
+							parVals[k] = target.join(".");
 						}
 					}
 					setValue(curPar, parVals.join(";"));
