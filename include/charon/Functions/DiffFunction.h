@@ -17,7 +17,7 @@
 */
 /** \file DiffFunction.h
  *  Declaration of the abstract interface class DiffFunction.
- *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
  *      Jens-Malte Gottfried </a>
  *  \date 16.11.2010
  */

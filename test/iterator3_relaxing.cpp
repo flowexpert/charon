@@ -17,8 +17,13 @@
 */
 /** \file iterator3_relaxing.cpp
  *  Unit tests for relaxing iterations
- *  \author Jens-Malte Gottfried <jmgottfried@web.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
  *  \date 02.02.2010
+ *
+ *  \test
+ *  Tests using RelaxingIterator and IteratorHelper:
+ *  - check increasing and decreasing of the stencil lambdas
  */
 
 #ifdef NDEBUG

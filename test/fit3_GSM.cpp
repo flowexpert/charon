@@ -16,10 +16,10 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file fit3_GSM.cpp
- *  Check MixtureOfGaussian properties
- *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
  *      Jens-Malte Gottfried </a>
  *  \date 19.11.2010
+ *  \test Check MixtureOfGaussian properties
  */
 
 #ifdef NDEBUG

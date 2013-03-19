@@ -54,7 +54,6 @@ IF (DOXYGEN_FOUND)
 		ADD_CUSTOM_TARGET(doc)
 	ENDIF()
 
-	SET(DOXY_DOC_PATTERN        "*.h *_doc.txt *.cpp")
 	SET(DOXY_DOC_PATHS          "doc include/${PROJECT_NAME} test")
 	SET(DOXY_GENERATE_HTML      YES)
 	SET(DOXY_GENERATE_LATEX     NO )

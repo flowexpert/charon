@@ -16,9 +16,12 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file flowIterated4_SpatialPW.cpp
- *  Unit tests for class DataBC
- *  \author Jens-Malte Gottfried <jmgottfried@web.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
  *  \date 02.02.2010
+ *  \test
+ *  using pairwise spatial term part (i.e. SpatialPW)
+ *  of Sun's Learning Flow algorithm on generated test sequence
  */
 
 #ifdef NDEBUG

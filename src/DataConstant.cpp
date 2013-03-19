@@ -17,7 +17,7 @@
 */
 /** \file Diff2Function.h
  *  Declaration of the abstract interface class Diff2Function.
- *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
  *      Jens-Malte Gottfried </a>
  *  \date 18.01.2010
  */

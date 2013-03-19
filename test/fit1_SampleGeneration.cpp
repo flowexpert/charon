@@ -16,10 +16,10 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file fit1_SampleGeneration.cpp
- *  Generate MixtureOfGaussian Sample using MCMC Sampler
- *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
  *      Jens-Malte Gottfried </a>
  *  \date 19.11.2010
+ *  \test Generate MixtureOfGaussian Sample using MCMC Sampler
  */
 
 #ifdef NDEBUG

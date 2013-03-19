@@ -16,9 +16,9 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file flowIterated1_HS_Sinus.cpp
- *  Iterated Horn&Schunck algo
  *  \author Jens-Malte Gottfried <jmgottfried@web.de>
  *  \date 02.02.2010
+ *  \test Iterated variant of Horn&Schunck algorithm on sinus test sequence
  */
 
 #ifdef NDEBUG

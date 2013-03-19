@@ -16,9 +16,10 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file flow2_HS_Yosemite.cpp
- *  Horn&Schunck algo on Yosemite seq
- *  \author Jens-Malte Gottfried <jmgottfried@web.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
  *  \date 02.02.2010
+ *  \test Horn&Schunck algo on Yosemite seq
  */
 
 #ifdef NDEBUG

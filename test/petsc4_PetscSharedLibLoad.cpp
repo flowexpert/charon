@@ -13,10 +13,20 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file petsc4_PetscSharedLibLoad.cpp
+/** \file petsc4_PetscSharedLibLoad.cpp
  *  Load generated library with dlopen and execute the run function.
- *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
- *  @date 25.10.2010
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
+ *  \date 25.10.2010
+ *
+ *  \test
+ *  Check for some possible problems on ubuntu with built-in
+ *  petsc implementation (hopefully not longer present with current versions):
+ *  - loading and unloading libmpi.so.0 and using it's MPI_Init and MPI_Finalize
+ *  - loading/unloading and using a self-compiled libpetsc4_lib.so which
+ *    uses simple petsc calls, similar to petsc1_Init.cpp.
+ *  \note
+ *  This Unix-specific, so not available on Win platforms.
  */
 
 #include <dlfcn.h>
@@ -25,12 +35,7 @@
 #include <cstdlib>
 
 /// test run
-/** Check for errors on loading and unloading libmpi.so.0 and
- *  the self-compiled libpetsc4_lib.so.
- *  There are some errors on ubuntu with built-in petsc implementation,
- *  this test checks for this problem.
- *  This Unix-specific, so not available on Win platforms.
- *  \param argc,argv Command line options passed to MPI and PETSc
+/** \param argc,argv Command line options passed to MPI and PETSc
  *  \returns zero in case of success
  */
 int main(int argc, char** argv) {

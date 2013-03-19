@@ -17,8 +17,14 @@
 */
 /** \file iterator1_simple.cpp
  *  Unit tests for class SimpleIterator
- *  \author Jens-Malte Gottfried <jmgottfried@web.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
  *  \date 02.02.2010
+ *
+ *  \test
+ *  Simple iteration tests using SimpleIterator and IteratorHelper:
+ *  - check number of iterations
+ *  - check behaviour on re-running
  */
 
 #ifdef NDEBUG

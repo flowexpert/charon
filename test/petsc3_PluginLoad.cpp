@@ -13,13 +13,13 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file petsc3_PluginLoad.cpp
- *  Check PetscSolver shared lib (module).
- *  @see PetscSolver.h
- *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
+/** \file petsc3_PluginLoad.cpp
+ *  \author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
+ *  \date 8.09.2009
  *
- *  @date 8.09.2009
+ *  \test
+ *  check PetscSolver shared lib (module) using the PluginManager
  */
 
 #include <charon-core/PluginManager.h>

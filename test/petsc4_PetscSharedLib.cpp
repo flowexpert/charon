@@ -13,10 +13,11 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file petsc4_PetscSharedLib.cpp
+/** \file petsc4_PetscSharedLib.cpp
  *  Library to perform simple calls to petsc.
- *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
- *  @date 25.10.2010
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
+ *  \date 25.10.2010
  */
 
 #include <petscksp.h>

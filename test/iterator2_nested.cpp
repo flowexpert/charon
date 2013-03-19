@@ -17,8 +17,14 @@
 */
 /** \file iterator2_nested.cpp
  *  Unit tests for nested iterations
- *  \author Jens-Malte Gottfried <jmgottfried@web.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
  *  \date 02.02.2010
+ *
+ *  \test
+ *  Nested iteration tests using SimpleIterator and IteratorHelper:
+ *  - outer and inner pair of helper and iterator
+ *  - number of inner iterations is \f$n_o\cdot n_i\f$
  */
 
 #ifdef NDEBUG

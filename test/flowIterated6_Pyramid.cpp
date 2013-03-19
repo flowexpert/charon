@@ -16,9 +16,10 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file flowIterated6_Pyramid.cpp
- *  Iterated Horn&Schunck algo
- *  \author Jens-Malte Gottfried <jmgottfried@web.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
  *  \date 02.02.2010
+ *  \test Iterated Horn&Schunck algo with PyramidRescale
  */
 
 #ifdef NDEBUG

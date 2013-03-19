@@ -15,9 +15,14 @@
 */
 /** \file petsc1_Init.cpp
  *  Petsc installation tests.
- *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
- *
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
  *  \date 16.11.2009
+ *
+ *  \test
+ *  Check loading and using the PETSc library
+ *  - init/finalize of PETSc and MPI (possibly mpiuni if MPI deactivated)
+ *  - creation/descrution of PETSc Vector and KSP objects
  */
 
 #include <petscksp.h>

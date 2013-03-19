@@ -17,8 +17,12 @@
 */
 /** \file flowIterated5_Papenberg.cpp
  *  Unit tests for class DataBC and SpatialPW as well as Psi functions
- *  \author Jens-Malte Gottfried <jmgottfried@web.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
  *  \date 13.01.2011
+ *  \test
+ *  using data and spatial term from Sun's Learning Flow algorithm
+ *  with Charbonnier psi-functions on Yosemite sequence
  */
 
 #ifdef NDEBUG

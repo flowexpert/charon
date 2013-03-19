@@ -17,7 +17,7 @@
 */
 /** \file DataConstant.hxx
  *  Implementation of class DataConstant.
- *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
  *      Jens-Malte Gottfried </a>
  *  \date 2010-01-18
  */

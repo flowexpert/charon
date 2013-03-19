@@ -13,13 +13,19 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file petsc2_Plugins.cpp
+/** \file petsc2_Plugins.cpp
  *  Check flow plugins.
- *  @see PetscSolver.h
- *  @author <a href="mailto:stengele@stud.uni-heidelberg.de">
+ *  \see PetscSolver.h
+ *  \author <a href="mailto:stengele@stud.uni-heidelberg.de">
  *      Oliver Stengele</a>
  *
- *  @date 8.09.2009
+ *  \date 8.09.2009
+ *
+ *  \test
+ *  Try loading and unloading of some flow plugins.
+ *  Some of them use PETSc (PetscSolver).
+ *  This is not done via the PluginManager but via direct linking to
+ *  the shared libs.
  */
 
 #include <charon/Solvers/PetscSolver.h>

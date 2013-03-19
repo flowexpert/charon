@@ -17,7 +17,7 @@
 */
 /** \file Diff2LinFunction.h
  *  Declaration of the abstract interface class Diff2LinFunction.
- *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
  *      Jens-Malte Gottfried </a>
  *  \date 17.11.2010
  */

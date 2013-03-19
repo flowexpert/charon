@@ -16,9 +16,9 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file cgflow_HS.cpp
- *  Iterated Horn&Schunck algo
  *  \author Michael Baron <michael.baron@iwr.uni-heidelberg.de>
  *  \date 01.02.2012
+ *  \test Iterated Horn&Schunck algo using CGSolver
  */
 
 #ifdef NDEBUG

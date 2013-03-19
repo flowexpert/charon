@@ -16,13 +16,15 @@
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file flow3_HS_Yosemite_NP.cpp
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
+ *      Jens-Malte Gottfried </a>
+ *  \date 08.10.2010
+ *  \test
  *  Horn&Schunck algo on Yosemite seq without shared libs.
- *  Test file performing the same as HornSchunckYosemite.cpp
+ *  Test file performing the same as flow2_HS_Yosemite.cpp
  *  but without using the plugin mechanism. All needed modules are
  *  compiled-in using their .hxx implementations.
  *  This should simplify profiling to speed up the PetscSolver.
- *  \author Jens-Malte Gottfried <jmgottfried@web.de>
- *  \date 08.10.2010
  */
 
 #ifndef TESTDIR

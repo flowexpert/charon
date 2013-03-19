@@ -16,11 +16,12 @@
     along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file fit2_CdFitter.cpp
- *  Run Contrastive Divergence fitter on known distribution to recover
- *  its parameters.
- *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de>
+ *  \author <a href="Jens-Malte.Gottfried@iwr.uni-heidelberg.de">
  *      Jens-Malte Gottfried </a>
  *  \date 19.11.2010
+ *  \test
+ *  Run Contrastive Divergence fitter on known distribution to recover
+ *  its parameters.
  */
 
 #ifdef NDEBUG
