@@ -24,6 +24,7 @@ Node::Node(const ParameterFileModel* pFile, QString title,
 		_height(50),
 		_nProps(0),
 		_selectedNode(false),
+        _active(true),
 		_id(_idCount++),
         _pFile(pFile)
 {
@@ -36,6 +37,10 @@ void Node::setId(unsigned int id) {
 	if (id >= Node::_idCount)
 		Node::_idCount = id+1;
 	_id = id;
+}
+
+void Node::setActive(bool activeStatus){
+    _active = activeStatus;
 }
 
 void Node::setName(QString name) {
@@ -120,7 +125,7 @@ void Node::paint(
     painter->setPen(QPen(Qt::black,1.f));
     painter->setOpacity(1);
     painter->setBrush(_selectedNode ? Qt::blue : Qt::gray);
-    if (!(_pFile->Active())){
+    if (!(_active)){
         painter->setBrush(Qt::red);
     }
 	painter->drawRoundedRect(0,0,_width,_height,10,10);

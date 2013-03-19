@@ -79,11 +79,21 @@ void NodeHandler::selectNode(QString name) {
 	}
 	update();
 }
-
+void NodeHandler::setNodeActive(){
+    QString oldPrefix = _model->prefix();
+    QMapIterator<QString,Node*> iter(_nodeMap);
+    while(iter.hasNext()) {
+        Node* m = iter.next().value();
+        if (m){
+            _model->setPrefix(m->getInstanceName());
+            m->setActive(_model->Active());
+        }
+    }
+    _model->setPrefix(oldPrefix);
+}
 
 void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 	QGraphicsScene::mousePressEvent(ev);
-
 	if (ev->button() == Qt::LeftButton) {
 		QGraphicsItem* itm = itemAt(ev->scenePos());
 		if (!itm) {
@@ -110,6 +120,7 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 			update(_cline->boundingRect());
 		}
 	}
+    setNodeActive();
 }
 
 void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
@@ -166,7 +177,7 @@ void NodeHandler::loadFromModel() {
 		QString name = nodes[ii];
 		QString cname = _model->getClass(nodes[ii], true);
 
-		Node* node = new Node(_model,name,10*ii,10*ii,this);
+        Node* node = new Node(_model,name,10*ii,10*ii,this);
 		node->setClassName(cname);
 		_nodeMap.insert(name,node);
 
@@ -234,6 +245,7 @@ void NodeHandler::loadFromModel() {
 	}
 	update();
 	selectNode(_model->prefix());
+    setNodeActive();
 }
 
 void NodeHandler::connectNodes(
