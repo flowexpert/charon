@@ -27,6 +27,37 @@
 
 namespace DataManagers {
 	/// parameter file based implementation of a data manager
+	/** This secialized data manager is able to handle all types
+	 *  that may be represented as a std::string which is written
+	 *  to a parameter file. For data retrieval, this string is
+	 *  transformed back to the original data type.
+	 *
+	 *  Currently, this data manager is registered to the
+	 *  Slot::DataManagerFactory for the following types:
+	 *  - \c int
+	 *  - \c float
+	 *  - \c double
+	 *  - \c std::string
+	 *
+	 *  The parameter file for data exchange is saved
+	 *  as \c lastRunParameterCache.wrp in the current working dir.
+	 *  The config string is the used parameter name within that file.
+	 *
+	 *  The config string here is currently kind of redundant
+	 *  because directly infered from the output slot
+	 *  (which is passed to the constructor):
+	 *  \code
+	 *  [ObjectName].[SlotName]
+	 *  \endcode
+	 *
+	 *  \warning
+	 *  If there are e.g. nested workflows with objects with the
+	 *  same name and output slots, the naming scheme may cause
+	 *  conflicts. Perhaps in a future version this may be fixed
+	 *  by adding an increasing number to the config string (used
+	 *  as parameter name) if an entry with the same name already
+	 *  exists.
+	 */
 	template <typename T>
 	class charon_core_LOCAL DataManagerParameterFile :
 			public Slot::DataManager<T> {
@@ -39,7 +70,7 @@ namespace DataManagers {
 		std::string paramName;
 	public:
 		/// create manager
-		/** \param slot   slot generate manager for
+		/** \param slot   slot to generate manager for
 		 *  \param config config string
 		 */
 		DataManagerParameterFile(
