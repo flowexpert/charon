@@ -6,7 +6,7 @@ It is designed to simplify the configuration of flow estimation algorithms in
 the Charon project. Easy handling and prevention of errors which could occur
 on paremeterfile creation by hand are the main goals.
 
-\section intro Introduction
+\section into Introduction to Tuchulcha
 The interaction between objects, algorithms etc. can often be visualized
 using flowchart diagrams (similar to UML collaboration diagrams).
 The main application of this project is able to create, show and to edit such
@@ -25,7 +25,7 @@ documentation is shown.
 \image html screenshot.png "Tuchulcha screenshot"
 \image latex screenshot.png "Tuchulcha screenshot" width=0.95\textwidth
 
-\section features Features
+\section features Main Features
 -   look and feel similar to other graphical IDEs (LabView, QT Designer, ...)
 -   the graphical flowchart, which is easier to understand than the plain
     config file, gives an overview of the data interaction
@@ -124,7 +124,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 \image html  lgplv3-147x51.png "LGPL logo"
 \image latex lgplv3-147x51.png "LGPL logo" width=4cm
 
-\section infos Further information
+\section infos Further Information
 - \subpage tuchulcha-build
 - \subpage tuchulcha-usage
 - \subpage paramgraph
