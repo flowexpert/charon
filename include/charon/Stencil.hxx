@@ -41,8 +41,11 @@ Stencil::Base<T>::Base(
 		TemplatedParameteredObject<T>(classname,name,doc +
 				"<br><br>This class is derived from class Stencil::Base.<br>"
 				"An base stencil is a universal stencil that can be"
-				"enhanced by adding interfaces to it.")
+				"enhanced by adding interfaces to it."),
+		lambdaMask(true,false)
 {
+	ParameteredObject::_addInputSlot(
+				lambdaMask, "lambdaMask", "lambda coefficient mask", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
 				out,"this","Pointer to itself","Stencil<T>*");
 	ParameteredObject::_addParameter(
@@ -98,3 +101,4 @@ const std::set<std::string>& Stencil::Mask<T>::getUnknowns() const {
 }
 
 #endif //_stencil_HXX_
+

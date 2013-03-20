@@ -60,6 +60,9 @@ namespace Stencil {
 		/// Lambda coefficient of the stencil.
 		Parameter<T> lambda;
 
+		/// Lambda coefficient mask of the stencil
+		InputSlot< cimg_library::CImgList<T> > lambdaMask;
+
 		/// Output slot containing the this-pointer of the object
 		OutputSlot< Base<T>* > out;
 
