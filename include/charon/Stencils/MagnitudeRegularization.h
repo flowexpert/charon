@@ -91,6 +91,7 @@ private:
 	/// \name cache members
 	//\{
 	T _lamb;
+	cimg_library::CImgList<T> _lambdaMask;
 	PenaltyFunction<T>* _penaltyFunction;
 	int _xBegin;
 	int _xEnd;

@@ -77,7 +77,12 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 template <class T>
 void EnergyBCC<T>::execute() {
 	Stencil::Base<T>::execute();
-	_lamb = this->lambda();
+	if (!this->lambdaMask.connected()) {
+		_lamb = this->lambda();
+	} else {
+		_lambdaMask = this->lambdaMask();
+		_lamb = T(1.0);
+	}
 	_penaltyFunction = penaltyFunction();
 
 	const Roi<int>& _roi = *(this->roi());
@@ -110,6 +115,9 @@ void EnergyBCC<T>::execute() {
 template <class T>
 T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
 {
+	if (this->lambdaMask.connected())
+		_lamb = _lambdaMask.atNXYZC( 0, xI, yI, zI, 0 );
+
 	T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 1 );
 	T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 1 );
 	T It = img_dt().atNXYZC( 0, xI, yI, zI, 0 ); // (!!) works for temporal _difference_ [+1,-1] only
@@ -125,6 +133,9 @@ T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
 template <class T>
 std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int )
 {
+	if (this->lambdaMask.connected())
+		_lamb = _lambdaMask.atNXYZC( 0, xI, yI, zI, 0 );
+
         T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 1 );
         T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 1 );
         T It = img_dt().atNXYZC( 0, xI, yI, zI, 0 ); // (!!) works for temporal _difference_ [+1,-1] only
@@ -149,6 +160,9 @@ std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int
 template <class T>
 std::vector<T> EnergyBCC<T>::getEnergyHessian( int, int xI, int yI, int zI, int )
 {
+	if (this->lambdaMask.connected())
+		_lamb = _lambdaMask.atNXYZC( 0, xI, yI, zI, 0 );
+
 	T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 1 );
 	T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 1 );
 	T It = img_dt().atNXYZC( 0, xI, yI, zI, 0 ); // (!!) works for temporal _difference_ [+1,-1] only
@@ -188,6 +202,13 @@ void EnergyBCC<T>::updateStencil(
         const unsigned int y = p.y;
         const unsigned int z = p.z;
 
+	T l;
+	if (this->lambdaMask.connected()) {
+		l = _lambdaMask.atNXYZC( 0, x, y, z, 0 );
+	} else {
+		l  = this->lambda();
+	}
+
 	bool _mask = true;
 	if (mask.connected()) _mask =  mask()[0].atXY(x,y);
 
@@ -225,7 +246,6 @@ void EnergyBCC<T>::updateStencil(
 	}
 
         // fill calculated data into stencil members, applying lambda
-        const T      l  = this->lambda();
         this->_subStencils["a1"].data(0,0) = l * d_psi * T(dataU);
         this->_subStencils["a2"].data(0,0) = l * d_psi * T(dataV);
         this->_rhs  = l * d_psi * T(rhs);

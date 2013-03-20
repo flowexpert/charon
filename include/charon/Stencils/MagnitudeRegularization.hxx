@@ -62,7 +62,12 @@ MagnitudeRegularization<T>::MagnitudeRegularization(const std::string& name) :
 template <class T>
 void MagnitudeRegularization<T>::execute() {
 	Stencil::Base<T>::execute();
-	_lamb = this->lambda();
+	if (!this->lambdaMask.connected()) {
+		_lamb = this->lambda();
+	} else {
+		_lambdaMask = this->lambdaMask();
+		_lamb = T(1.0);
+	}
 	_penaltyFunction = penaltyFunction();
 
 	const Roi<int>& _roi = *(this->roi());
@@ -85,6 +90,9 @@ void MagnitudeRegularization<T>::updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p, const int&)
 {
+	if (this->lambdaMask.connected())
+		_lamb = _lambdaMask.atNXYZC( 0, p.x, p.y, p.z, 0 );
+
 	// motion component in neighborhood
 	T rN, rE, rS, rW;
 	T rC = T(0);

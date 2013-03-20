@@ -75,7 +75,12 @@ AffineBCC<T>::AffineBCC(const std::string& name) :
 template <class T>
 void AffineBCC<T>::execute() {
 	Stencil::Base<T>::execute();
-	_lamb = this->lambda();
+	if (!this->lambdaMask.connected()) {
+		_lamb = this->lambda();
+	} else {
+		_lambdaMask = this->lambdaMask();
+		_lamb = T(1.0);
+	}
 	_penaltyFunction = penaltyFunction();
 
 	const Roi<int>& _roi = *(this->roi());
@@ -110,6 +115,9 @@ void AffineBCC<T>::updateStencil(
                 const std::string& unknown,
                 const Point4D<int>& p, const int&)
 {
+	if (this->lambdaMask.connected())
+		_lamb = _lambdaMask.atNXYZC( 0, p.x, p.y, p.z, 0 );
+
 	bool _mask = true;
 	if (mask.connected()) _mask =  mask()[0].atXY(p.x,p.y);
 

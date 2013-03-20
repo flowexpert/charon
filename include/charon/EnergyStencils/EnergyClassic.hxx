@@ -70,7 +70,12 @@ EnergyClassic<T>::EnergyClassic(const std::string& name) :
 template <class T>
 void EnergyClassic<T>::execute() {
 	Stencil::Base<T>::execute();
-	_lamb = this->lambda();
+	if (!this->lambdaMask.connected()) {
+		_lamb = this->lambda();
+	} else {
+		_lambdaMask = this->lambdaMask();
+		_lamb = T(1.0);
+	}
 	_penaltyFunction = penaltyFunction();
 
 	const Roi<int>& _roi = *(this->roi());
@@ -110,6 +115,9 @@ T EnergyClassic<T>::_energyHessian( T x, T xo )
 template <class T>
 T EnergyClassic<T>::getEnergy( int, int x, int y, int z, int )
 {
+	if (this->lambdaMask.connected())
+		_lamb = _lambdaMask.atNXYZC( 0, x, y, z, 0 );
+
 	T motionUC = motionUV().atNXYZC( 0, x,   y,   z, 0 );
 	T motionUN = motionUV().atNXYZC( 0, x,   y-1, z, 0 );
 	T motionUE = motionUV().atNXYZC( 0, x+1, y,   z, 0 );
@@ -137,6 +145,9 @@ template <class T>
 std::vector<T> EnergyClassic<T>::getEnergyGradient(
   int, int x, int y, int z, int )
 {
+	if (this->lambdaMask.connected())
+		_lamb = _lambdaMask.atNXYZC( 0, x, y, z, 0 );
+
         T motionUC = motionUV().atNXYZC( 0, x,   y,   z, 0 );
         T motionUN = motionUV().atNXYZC( 0, x,   y-1, z, 0 );
         T motionUE = motionUV().atNXYZC( 0, x+1, y,   z, 0 );
@@ -167,6 +178,9 @@ template <class T>
 std::vector<T> EnergyClassic<T>::getEnergyHessian(
   int, int x, int y, int z, int )
 {
+	if (this->lambdaMask.connected())
+		_lamb = _lambdaMask.atNXYZC( 0, x, y, z, 0 );
+
 	T motionUC = motionUV().atNXYZC( 0, x,   y,   z, 0 );
 	T motionUN = motionUV().atNXYZC( 0, x,   y-1, z, 0 );
 	T motionUE = motionUV().atNXYZC( 0, x+1, y,   z, 0 );
@@ -205,6 +219,9 @@ void EnergyClassic<T>::updateStencil(
 		const std::string& unknown,
 		const Point4D<int>& p, const int&)
 {
+	if (this->lambdaMask.connected())
+		_lamb = _lambdaMask.atNXYZC( 0, p.x, p.y, p.z, 0 );
+
 	// motion component in neighborhood
 	T motionN, motionE, motionS, motionW;
 	T motionC = T(0);
