@@ -172,6 +172,16 @@ LIST(APPEND Plugins
 	cliqueweightnonlocal
 )
 
+# Bootstrapping weights
+ADD_LIBRARY(bootstrappingweights SHARED
+	${charon_INCLUDE_DIR}/BootstrappingWeights.h
+	${charon_INCLUDE_DIR}/BootstrappingWeights.hxx
+	BootstrappingWeights.cpp
+)
+LIST(APPEND Plugins
+	bootstrappingweights
+)
+
 # Solvers
 # PetSc Solver
 IF(USE_PETSC)
