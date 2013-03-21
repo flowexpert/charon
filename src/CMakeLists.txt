@@ -542,6 +542,16 @@ LIST(APPEND Plugins
 	flowcomparator
 )
 
+# unclassified plugins
+ADD_LIBRARY(selectimagefromimagelist SHARED
+	${charon_INCLUDE_DIR}/SelectImageFromImageList.h
+	${charon_INCLUDE_DIR}/SelectImageFromImageList.hxx
+	SelectImageFromImageList.cpp
+)
+LIST(APPEND Plugins
+	selectimagefromimagelist
+)
+
 # Plugin configuration (linking, common libraries)
 SET(GLOBAL_RPATH "${charon-utils_ROOT_DIR}/lib${LIB_SUFFIX}/charon-plugins")
 FOREACH (X ${Plugins})
