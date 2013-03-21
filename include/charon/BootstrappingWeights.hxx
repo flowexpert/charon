@@ -86,21 +86,30 @@ void BootstrappingWeights<T>::execute()
 	cimg_library::CImgList<T> &_weights = weights();
 	_weights = cimg_library::CImgList<T>( _iterations, _width, _height, _depth, 1, T(0.0) );
 
-	double rand_x = 0.0, rand_y = 0.0, rand_z = 0.0;
+	unsigned int rand_x = 0, rand_y = 0, rand_z = 0;
 	srand(time(NULL));
 
+	cimg_library::CImgList<bool> visited( 1, _width, _height, _depth, 1, false );
 	for (unsigned int i=0; i<_iterations; i++ ) {
+		// reset visited array
+		cimg_forXYZC( visited[0], x, y, z, c ) {
+			visited.atNXYZC(0,x,y,z,0) = false;
+		}
+
 		if (i>0) {
-			_weights.atN(i) = _weights.atN(i-1);
+			cimg_forXYZC( _weights[i], x, y, z, c ) {
+				_weights.atNXYZC(i,x,y,z,c) = _weights.atNXYZC(i-1,x,y,z,c);
+			}
 		}
 
 		for (unsigned int s=0; s<_samples; ) {
-			rand_x = floor( ((double)rand() / (double)RAND_MAX) * (_width-1));
-			rand_y = floor( ((double)rand() / (double)RAND_MAX) * (_height-1));
-			rand_z = floor( ((double)rand() / (double)RAND_MAX) * (_depth-1));
+			rand_x = round( ((double)rand() / (double)RAND_MAX) * (_width-1));
+			rand_y = round( ((double)rand() / (double)RAND_MAX) * (_height-1));
+			rand_z = round( ((double)rand() / (double)RAND_MAX) * (_depth-1));
 
-			if (_weights.atNXYZC( i, rand_x, rand_y, rand_z, 0 ) < T(i+1) ) {
-				_weights.atNXYZC( i, rand_x, rand_y, rand_z, 0 )++;
+			if (!visited.atNXYZC( 0, rand_x, rand_y, rand_z, 0 )) {
+				visited.atNXYZC( 0, rand_x, rand_y, rand_z, 0 ) = true;
+				_weights.atNXYZC( i, rand_x, rand_y, rand_z, 0 ) += T(1.0);
 				s++;
 			}
 		}
