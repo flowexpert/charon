@@ -548,8 +548,14 @@ ADD_LIBRARY(selectimagefromimagelist SHARED
 	${charon_INCLUDE_DIR}/SelectImageFromImageList.hxx
 	SelectImageFromImageList.cpp
 )
+ADD_LIBRARY(confidencemeasures SHARED
+	${charon_INCLUDE_DIR}/ConfidenceMeasures.h
+	${charon_INCLUDE_DIR}/ConfidenceMeasures.hxx
+	ConfidenceMeasures.cpp
+)
 LIST(APPEND Plugins
 	selectimagefromimagelist
+	confidencemeasures
 )
 
 # Plugin configuration (linking, common libraries)
