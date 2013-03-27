@@ -700,7 +700,17 @@ void PluginManager::_generateMetadataForPlugin(
 				<< e.what() << std::endl;
 			break;
 		}
-	}
+	} catch(const std::exception& e) {
+		sout << "(EE) Could not generate metadata for plugin \""
+			<< pluginName << "\":\n(EE) \t"
+			<< "Possible execption in plugin constructor:\n(EE)\t"
+			<< e.what() << std::endl ;
+	} catch(...) {
+		sout << "(EE) Could not generate metadata for plugin \""
+			<< pluginName << "\":\n(EE) \t"
+			<< "Possible non-standard execption in plugin constructor!"
+			<< std::endl ;
+	}	
 }
 
 void PluginManager::reset() {
