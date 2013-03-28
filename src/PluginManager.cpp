@@ -609,7 +609,7 @@ bool PluginManager::disconnect(const std::string& slot1,
 
 void PluginManager::createMetadata(const std::string& targetPath) {
 #ifndef MSVC
-	int start = 3;
+	int start = 3; //on non-dll platforms the plugin library name will start with "lib"
 #else
 	int start = 0;
 #endif
@@ -631,7 +631,7 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 		for (pIterW=plugins.begin(); pIterW != plugins.end(); pIterW++) {
 			// extract plugin name
 			std::string& pName = *pIterW;
-			pName = pName.substr(start, pName.find_last_of(PLUGIN_EXTENSION)-start);
+			pName = pName.substr(start, pName.rfind(PLUGIN_EXTENSION)-start);
 			// strip debug extension, if any
 			if (pName.substr(pName.size()-2) == "_d") {
 				pName = pName.substr(0, pName.size()-2);

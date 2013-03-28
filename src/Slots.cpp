@@ -36,7 +36,7 @@ void Slot::init(ParameteredObject* parent, std::string name,
 		std::string type) {
 
 	if(_parent)
-		throw std::runtime_error("Parameter already assigned");
+		throw std::runtime_error(std::string("Parameter \"") + name + "\" already assigned");
 	if(!parent)
 		throw std::runtime_error("Setting invalid parent object!");
 	if(!name.length())
