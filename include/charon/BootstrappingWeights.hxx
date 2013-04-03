@@ -103,9 +103,9 @@ void BootstrappingWeights<T>::execute()
 		}
 
 		for (unsigned int s=0; s<_samples; ) {
-			rand_x = round( ((double)rand() / (double)RAND_MAX) * _width - T(0.5));
-			rand_y = round( ((double)rand() / (double)RAND_MAX) * _height - T(0.5));
-			rand_z = round( ((double)rand() / (double)RAND_MAX) * _depth - T(0.5));
+			rand_x = floor( ((double)rand() / (double)RAND_MAX) * _width);
+			rand_y = floor( ((double)rand() / (double)RAND_MAX) * _height);
+			rand_z = floor( ((double)rand() / (double)RAND_MAX) * _depth);
 
 			if (!visited.atNXYZC( 0, rand_x, rand_y, rand_z, 0 )) {
 				visited.atNXYZC( 0, rand_x, rand_y, rand_z, 0 ) = true;
