@@ -87,7 +87,7 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 		"{Passthrough;Addition;Difference;Multiplication;Division;Power of;"
 		"Absolute;Bitwise And;Bitwise Or;Bitwise Xor;Bitwise Not;"
 		"Left Shift;Right Shift;Mask;Log;Exp;Sin;Cos;Tan;Asin;Acos;Atan;Atan2;"
-		"Flow Magnitude;Limit Magnitude;to Gray;to RGB}") ;
+		"Flow Magnitude;Limit Magnitude;to Gray;to RGB;Normal Distribution}") ;
 
 	ParameteredObject::_addParameter(
 			_withValue, "withValue",
@@ -113,8 +113,17 @@ void BinOperatorCImg<T>::execute() {
 	const T& val = _value() ;
 
 	bool withValue = (!_in2.connected() ||_withValue()) ;
-	
-	if (op == "Passthrough") {
+
+	T diff = T(0);
+	if (op == "Normal Distribution") {
+		out.assign(1u, in1[0].width(), in1[0].height(), in1[0].depth(), in1[0].spectrum(), T(0));
+		cimg_forXYZC( out[0], x, y, z, c )
+		{
+			diff = in1.atNXYZC( 0, x, y, z, c ) - in2.atNXYZC( 0, x, y, z, c ) ;
+			out.atNXYZC( 0, x, y, z, c ) = exp(double(-diff*diff/(2*val*val))) ;
+		}
+	}
+	else if (op == "Passthrough") {
 		out.assign(in1);
 	}
 	else if(op == "Flow Magnitude") {
