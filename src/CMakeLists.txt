@@ -460,9 +460,15 @@ ADD_LIBRARY(simplewarp SHARED
 	${charon_INCLUDE_DIR}/SimpleWarp.h
 	${charon_INCLUDE_DIR}/SimpleWarp.hxx
 )
+ADD_LIBRARY(warpforward SHARED
+	WarpForward.cpp
+	${charon_INCLUDE_DIR}/WarpForward.h
+	${charon_INCLUDE_DIR}/WarpForward.hxx
+)
 LIST(APPEND Plugins
 	warper
 	simplewarp
+	warpforward
 )
 
 # Misc plugins
