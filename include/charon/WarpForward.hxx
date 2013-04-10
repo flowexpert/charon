@@ -76,7 +76,7 @@ void WarpForward<T>::execute()
 		v = _motion[1].atXYZC( xx, yy, zz, cc );
 		dxx = xx+u;
 		dyy = yy+v;
-		if ((0 <= dxx) && (dxx <= _width-1) && (0 <= dyy) && (dyy <= _height-1))
+		if ((0 <= dxx) && (dxx <= _width-1) && (0 <= dyy) && (dyy <= _height-1) && !isnan(dxx) && !isnan(dyy))
 		{
 			cimglist_for( _data, nn )
 			{
