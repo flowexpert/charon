@@ -49,10 +49,13 @@ INCLUDE(FindQwt5)
 # MathGL for quiver plots
 INCLUDE(FindMathGL)
 
+INCLUDE(CMakeDependentOption)
 MESSAGE(STATUS "Charon-utils library configuration:")
 OPTION(USE_VIGRA "enable plugins using Vigra library" ${Vigra_FOUND})
 OPTION(USE_HDF5 "enable plugins using HDF5 library" ${HDF5_FOUND})
-OPTION(USE_MPI "enable plugins using MPI" ${MPI_FOUND})
+CMAKE_DEPENDENT_OPTION( # need MPI for parallel hdf5
+	USE_MPI "enable plugins using MPI" ${MPI_FOUND}
+	"NOT USE_HDF5 OR NOT HDF5_IS_PARALLEL" ON)
 OPTION(USE_QT "enable plugins using QT (needs Vigra)" ${QT_FOUND})
 OPTION(USE_Boost "enable plugins using QT" ${Boost_FOUND})
 OPTION(USE_MathGL "enable plugins using MathGL" ${MathGL_FOUND})
