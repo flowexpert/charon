@@ -26,32 +26,43 @@
 
 #include <QTextStream>
 #include <QApplication>
+#include <QFileInfo>
 
 CommunicationHandler::CommunicationHandler(
 	const QStringList& args, QObject* pp) :
 		QThread(pp),
 		_interactive(true), _quiet(false),
-		_taskCount(0), _args(args)
+		_taskCount(0), _args(args), _errorCode(EXIT_SUCCESS)
 {
 	_helpMsg = QString(
 		"Tuchulcha Workflow Executor version %1\n"
 		"This executable is part of Charon-Suite\n"
-		"Heidelberg Collaboratory for Image Processing, University of Heidelberg, 2009-2013\n" 
+		"Heidelberg Collaboratory for Image Processing,\n"
+		"University of Heidelberg, 2009-2013\n"
 		"http://sourceforge.net/projects/charon-suite/\n\n"
 		"PURPOSE\n"
 		"\tThis program will execute charon workflow files\n"
 		"SYNTAX\n"
 		"\ttuchlucha-run <options> command <workflow>\n"
 		"COMMANDS\n"
-		"\t run                   : run the workflow file defined in <workflow>\n"
-		"\t update                : update the plugin cache\n"
-		"\t update-dynamics       : something\n"
-		"\t help, --help, -h , /? : display this help text\n"
+		"\trun,               -f : run the workflow file defined in <workflow>\n"
+		"\tupdate,            -u : update the plugin cache\n"
+		"\tupdate-dynamics,   -d : update dynamic plugin metadata\n"
+		"\thelp, --help, -? , -h : display this help text\n"
 		"OPTIONS\n"
-		"\t --non-interactive     : exit directly after workflow execution or update is finished,"
-		"\t\t                     otherwise program will only exit after \"quit\" has been send via stdin\n"
-		"\t --quiet               : suppress banner message at startup\n"
-		"\n"
+		"\t--non-interactive, -n : exit directly after processing of all "
+			"given commands.\n\t                        "
+			"Otherwise program will only exit after sending "
+			"\"quit\"\n\t                        "
+			"via stdin or on EOF (aka Ctrl+D)\n"
+		"\t--quiet,           -q : suppress banner message at startup\n"
+		"NOTE\n\t"
+		"It is possible to combine the short options and commands\n\t"
+		"e.g. like \"tuchulcha-run -nqf <workflow>\", but please note \n\t"
+		"that the -d or -f argument have to be the last\n\t"
+		"before the file argument and that -d and -f cannot be used\n\t"
+		"together in one concatenation\n\t"
+		"(but e.g. \"tuchulcha-run -nq -d <wflow1> -f <wflow2>\" works)\n\n"
 	).arg(TUCHULCHA_VERSION) ;
 
 	_helpMsgI = QString(
@@ -77,55 +88,83 @@ CommunicationHandler::CommunicationHandler(
 		Qt::DirectConnection);
 }
 
+bool CommunicationHandler::_checkForFileArg(
+				QStringListIterator& iter, QString cmd) {
+	if(!iter.hasNext()) {
+		QTextStream qerr(stderr,QIODevice::WriteOnly);
+		qerr << tr("No workflow file provided for command \"%1\"").arg(cmd)
+			<< endl;
+		_errorCode=EXIT_FAILURE;
+		return false;
+	}
+	if (!QFileInfo(iter.peekNext()).exists()) {
+		QTextStream qerr(stderr,QIODevice::WriteOnly);
+		qerr << tr("File provided for command \"%1\" does not exist: %2")
+					.arg(cmd).arg(iter.peekNext())
+			<< endl;
+		_errorCode=EXIT_FAILURE;
+		return false;
+	}
+	return true;
+}
+
+int CommunicationHandler::errorCode() const {
+	return _errorCode;
+}
+
 void CommunicationHandler::run() {
 	// commandline argument parsing
 	QStringListIterator argIter(_args);
+	QRegExp runShortRgx("-[qnu]*(?:f|d)?");
 	argIter.next(); // skip first item (command name)
 	while (argIter.hasNext()) {
 		QString s = argIter.next();
 		if(s == "help" || s == "--help" || s == "-h" || s == "-?" || s == "/?") {
 			QTextStream qout(stdout,QIODevice::WriteOnly);
 			qout << _helpMsg << endl;
-			QApplication::exit(0);
 			return ;
 		}
-		else if(s == "--non-interactive") {
+		else if(s == "--non-interactive" || s == "-n") {
 			_interactive = false;
 		}
-		else if (s == "--quiet") {
+		else if (s == "--quiet" || s == "-q") {
 			_quiet = true;
 		}
-		else if (s == "update") {
+		else if (s == "update" || s == "-u") {
 			emit updatePlugins();
 		}
-		else if (s == "run" ) {
-			if(!argIter.hasNext())
-			{
-				QTextStream qerr(stderr,QIODevice::WriteOnly);
-				qerr << tr("No workflow file provided for run command") << endl;
-				QApplication::exit(-1);
-				return ;
+		else if (s == "run" || s == "-f") {
+			if (!_checkForFileArg(argIter, s)) return;
+			emit runWorkflow(argIter.next());
+		}
+		else if (s == "update-dynamics" || s == "-d") {
+			if (!_checkForFileArg(argIter, s)) return;
+			emit updateDynamics(argIter.next());
+		}
+		// concatenated form of -q -n -u -f -d, f/d must be last !
+		else if (runShortRgx.exactMatch(s)) {
+			if (s.contains("q")) {
+				_quiet = true;
 			}
-			else {
+			if (s.contains("n")) {
+				_interactive = false;
+			}
+			if (s.contains("u")) {
+				emit updatePlugins();
+			}
+			if (s.contains("f")) {
+				if (!_checkForFileArg(argIter, s)) return;
 				emit runWorkflow(argIter.next());
 			}
-		}
-		else if (s == "update-dynamics") { 
-			if(!argIter.hasNext())
-			{
-				QTextStream qerr(stderr,QIODevice::WriteOnly);
-				qerr << tr("No workflow file provided for update-dynamics command") << endl;
-				QApplication::exit(-1);
-				return ;
-			}
-			else {
+			else if (s.contains("d")) {
+				if (!_checkForFileArg(argIter, s)) return;
 				emit updateDynamics(argIter.next());
 			}
 		}
 		else {
 			QTextStream qerr(stderr,QIODevice::WriteOnly);
 			qerr << tr("Argument \"%1\" not recognized.").arg(s) << endl;
-			QApplication::exit(-1);
+			QThread::exit(-1);
 			return ;
 		}
 	}

@@ -75,5 +75,5 @@ int main(int argc, char *argv[]) {
 	int ret = app.exec();
 	comm.wait();
 
-	return ret;
+	return ret + comm.errorCode();
 }

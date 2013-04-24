@@ -39,6 +39,8 @@ public:
 	 */
 	explicit CommunicationHandler(
 		const QStringList& args, QObject* parent = 0);
+	/// get CommunicatonHandler return code, zero means no error
+	int errorCode() const;
 
 public slots:
 	/// handle task finishing
@@ -77,6 +79,10 @@ private:
 	QString _helpMsg;
 	/// help message for interactive session
 	QString _helpMsgI;
+	/// check for file argument during command line processing
+	bool _checkForFileArg(QStringListIterator& iter, QString cmd);
+	/// error code cache, zero means no error
+	int _errorCode;
 };
 
 #endif // COMM_HANDLER_H

@@ -133,43 +133,43 @@ Message:
 <context>
     <name>CommunicationHandler</name>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="105"/>
-        <source>No workflow file provided for run command</source>
-        <translation>keine Datei für das Kommando &quot;run&quot; angegeben</translation>
+        <location filename="../src/CommunicationHandler.cpp" line="95"/>
+        <source>No workflow file provided for command &quot;%1&quot;</source>
+        <translation>Keine Datei für das Kommando &quot;%1&quot; angegeben</translation>
     </message>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="117"/>
-        <source>No workflow file provided for update-dynamics command</source>
-        <translation>keine Datei für das Kommando &quot;update-dynamics&quot; angegeben</translation>
+        <location filename="../src/CommunicationHandler.cpp" line="102"/>
+        <source>File provided for command &quot;%1&quot; does not exist: %2</source>
+        <translation>Die Datei für das Kommando &quot;%1&quot; existiert nicht: %2</translation>
     </message>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="127"/>
+        <location filename="../src/CommunicationHandler.cpp" line="166"/>
         <source>Argument &quot;%1&quot; not recognized.</source>
         <translation>Argument &quot;%1&quot; nicht erkannt.</translation>
     </message>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="140"/>
+        <location filename="../src/CommunicationHandler.cpp" line="179"/>
         <source>Tuchulcha Workflow Executor version %1</source>
         <translation>Tuchulcha Workflow Executor Version %1</translation>
     </message>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="142"/>
+        <location filename="../src/CommunicationHandler.cpp" line="181"/>
         <source>Type &quot;quit&quot; to exit this application.</source>
         <oldsource>type &quot;quit&quot; to exit this application.</oldsource>
         <translation>Bitte &quot;quit&quot; eingeben, um das Programm zu beenden.</translation>
     </message>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="143"/>
+        <location filename="../src/CommunicationHandler.cpp" line="182"/>
         <source>Type &quot;help&quot; for command summary.</source>
         <translation>Bitte &quot;help&quot; eingeben, um eine kurze Befehlsreferenz anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="172"/>
+        <location filename="../src/CommunicationHandler.cpp" line="211"/>
         <source>Command &quot;%1&quot; not recognized.</source>
         <translation>Kommando &quot;%1&quot; nicht erkannt.</translation>
     </message>
     <message>
-        <location filename="../src/CommunicationHandler.cpp" line="179"/>
+        <location filename="../src/CommunicationHandler.cpp" line="218"/>
         <source>bye</source>
         <translation>auf Wiedersehen</translation>
     </message>
