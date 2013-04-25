@@ -442,6 +442,13 @@ void FileReader<T>::execute() {
 		ParameteredObject::raise(
 			std::string("Could not read file\n\t") + err.what());
 	}
+	if(out().width())
+		sout	<< "Final output image dimensions:\n\t"
+				<< out()[0].width() << " x " << out()[0].height()
+				<< " x " << out()[0].depth() << " x " << out()[0].spectrum()
+				<< " x " << out().width() << std::endl ;
+	else
+		sout	<< "Output has size 0!" << std::endl ;
 }
 
 #endif /* _FILEREADER_HXX_ */
