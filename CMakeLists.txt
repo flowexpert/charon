@@ -32,6 +32,9 @@ FIND_PACKAGE(HDF5 COMPONENTS C HL)
 IF(NOT DEFINED USE_MPI OR USE_MPI)
 	# find script fails if fortran not available
 	FIND_PACKAGE(MPI)
+ELSE()
+	# avoid empty expansion for macros below
+	SET(MPI_FOUND FALSE)
 ENDIF()
 FIND_PACKAGE(Qt4 4.6.0 COMPONENTS QtCore QtGui QtOpenGL QtXml)
 INCLUDE(${QT_USE_FILE})
