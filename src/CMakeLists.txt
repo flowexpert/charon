@@ -171,6 +171,7 @@ TARGET_LINK_LIBRARIES(outputslotbundle charon-core charon-plugins)
 # install library
 SET_TARGET_PROPERTIES(charon-core charon-plugins PROPERTIES
 	VERSION ${${PROJECT_NAME}_VERSION}
+	SOVERSION ${${PROJECT_NAME}_VERSION_SHORT}
 	FOLDER "charon-core"
 )
 INSTALL(

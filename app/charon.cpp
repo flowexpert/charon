@@ -27,6 +27,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include "../include/charon-core/configVersion.h"
 #include "../include/charon-core/FileTool.h"
 #include "../include/charon-core/SplitStream.h"
 #include "../include/charon-core/ExceptionHandler.h"
@@ -89,7 +90,7 @@ void printInfo() {
 void printVersion() {
 	std::cout << "This is charon workflow executor "
 		<< "from charon-core version " << CHARON_CORE_VERSION << "\n\n"
-		<< "Copyright (C) 2009-2011\n"
+		<< "Copyright (C) 2009-2013 Heidelberg Collaboratory for Image Processing\n"
 		<< "This is free software; see the source for copying conditions. "
 		<< "There is NO\nwarranty; not even for MERCHANTABILITY or "
 		<< "FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
