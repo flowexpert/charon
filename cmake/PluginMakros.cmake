@@ -14,7 +14,7 @@ ENDMACRO(CDR)
 #	[PLUGIN_LISTS] <lists>] #names of existing cmake variables. The created library target will be added to each list. 
 #							#Usefull if you wan't to make additional settings to multiple plugins.
 # )
-
+INCLUDE(CMakeParseArguments)
 MACRO(ADD_CHARON_PLUGIN)
 	CMAKE_PARSE_ARGUMENTS(PLUGIN
 	""
