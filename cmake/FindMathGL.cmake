@@ -29,25 +29,21 @@ FIND_LIBRARY(MathGL_MGL_LIB NAMES mgl
 	/usr/lib
 )
 
-FIND_LIBRARY(MathGL_MGL-WND_LIB NAMES mgl-wnd
+FIND_LIBRARY(MathGL_MGL-QT_LIB NAMES mgl-qt
 	PATHS
 	/usr/local/lib
 	/usr/lib
 )
 
-IF(MathGL_MGL_LIB)
-	SET(MathGL_LIBS ${MathGL_MGL_LIB})
-ENDIF(MathGL_MGL_LIB)
-
-IF(MathGL_MGL_WND_LIB)
-	LIST(APPEND MathGL_LIBS ${MathGL_MGL_WND_LIB})
-ENDIF(MathGL_MGL_WND_LIB)
+IF(MathGL_MGL_LIB AND MathGL_MGL-QT_LIB)
+	SET(MathGL_LIBS ${MathGL_MGL_LIB} ${MathGL_MGL-QT_LIB})
+ENDIF(MathGL_MGL_LIB AND MathGL_MGL-QT_LIB)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
 		MathGL 
-		REQUIRED_VARS MathGL_MGL_LIB MathGL_INCLUDE_DIR
+		REQUIRED_VARS MathGL_MGL_LIB MathGL_MGL-QT_LIB MathGL_INCLUDE_DIR
 		VERSION_VAR MathGL_VERSION
 )
 
-mark_as_advanced(MathGL_MGL_LIB MathGL_MGL-WND_LIB MathGL_INCLUDE_DIR MathGL_VERSION)
+mark_as_advanced(MathGL_MGL_LIB MathGL_MGL-QT_LIB MathGL_INCLUDE_DIR MathGL_VERSION)
