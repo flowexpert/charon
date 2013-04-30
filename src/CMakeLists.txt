@@ -3,9 +3,9 @@ INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 SET(CHARON_UTILS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/charon-utils)
 
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIRECTORIES})
-IF(Qwt5_Qt4_FOUND)
-	INCLUDE_DIRECTORIES(${Qwt5_INCLUDE_DIR})
-ENDIF(Qwt5_Qt4_FOUND)
+#IF(Qwt5_Qt4_FOUND)
+#	INCLUDE_DIRECTORIES(${Qwt5_INCLUDE_DIR})
+#ENDIF(Qwt5_Qt4_FOUND)
 
 IF(USE_MathGL)
 	INCLUDE_DIRECTORIES(${MathGL_INCLUDE_DIR})
@@ -570,19 +570,19 @@ IF(USE_VIGRA)
 			LIST(APPEND Plugins_CImg quiver)
 		ENDIF(USE_MathGL)
 
-		IF(USE_Qwt5)
-			ADD_LIBRARY(residualplot SHARED
-				ResidualPlot.cpp
-				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.h
-				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.hxx
-			)
-			LIST(APPEND Plugins_Qt
-				residualplot
-			)
-			LIST(APPEND Plugins_CImg
-				residualplot
-			)
-		ENDIF(USE_Qwt5)
+		# IF(USE_Qwt5)
+			# ADD_LIBRARY(residualplot SHARED
+				# ResidualPlot.cpp
+				# ${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.h
+				# ${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.hxx
+			# )
+			# LIST(APPEND Plugins_Qt
+				# residualplot
+			# )
+			# LIST(APPEND Plugins_CImg
+				# residualplot
+			# )
+		# ENDIF(USE_Qwt5)
 
 		IF(USE_Boost)
 			INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})

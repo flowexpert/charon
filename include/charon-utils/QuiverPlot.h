@@ -25,9 +25,12 @@
 #ifndef QUIVERPLOT_H_
 #define QUIVERPLOT_H_
 
-#include <mgl2/window.h>
+#include <mgl2/wnd.h>
+#include <mgl2/qmathgl.h>
 #include <mgl2/qt.h>
+#include <mgl2/qmathgl.h>
 #include <mgl2/data.h>
+
 
 #include <QtGui>
 
