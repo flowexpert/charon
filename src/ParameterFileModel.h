@@ -138,8 +138,20 @@ public:
 
 	// \} // model/view interface
 
+    /// Reactivates all previous plugins
+    void reactivatePreviousPlugins();
+
+    /// Deactivate all following plugins
+    void deactivate();
+
+    /// Reactivate all following plugins
+    void reactivate();
+
+    /// Returns the bool value of the Active Parameter
+    bool active() const;
+
 	/// Get property _fileName
-	QString fileName() const;
+    QString fileName() const;
 
 	/// Get property _prefix
 	QString prefix() const;

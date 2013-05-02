@@ -108,7 +108,7 @@ void ObjectInspector::saveFileAs() const {
 	if (oldPath.isEmpty())
 		oldPath = QDir::currentPath();
 	QString fileName = QFileDialog::getSaveFileName(0, tr("Save File"),
-			oldPath, tr("ParameterFile (*.wrp)"));
+            oldPath, tr("ParameterFile (*.wrp)"));
 	if (!fileName.isEmpty())
 		_model->save(fileName);
 }
@@ -228,6 +228,9 @@ void ObjectInspector::on_addButton_clicked() {
 	if (_model) {
 		_model->insertRow(model()->rowCount(QModelIndex()), QModelIndex());
 	}
+}
+void ObjectInspector::on_ActivateAllButton_clicked(){
+    _model->reactivate();
 }
 
 void ObjectInspector::on_deleteButton_clicked() {
