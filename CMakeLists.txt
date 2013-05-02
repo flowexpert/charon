@@ -48,9 +48,12 @@ IF(USE_CIMG)
 ENDIF()
 
 # Qwt5 for plotting widgets
-INCLUDE(FindQwt5)
+#INCLUDE(FindQwt5)
+
 # MathGL for quiver plots
-INCLUDE(FindMathGL)
+# MathGL changed some include file names after 2.0
+# the mayor version is ommitted from the version string (so we need at last 2.1.0)
+FIND_PACKAGE(MathGL 1.0)
 
 INCLUDE(CMakeDependentOption)
 MESSAGE(STATUS "Charon-utils library configuration:")
@@ -62,7 +65,7 @@ CMAKE_DEPENDENT_OPTION( # need MPI for parallel hdf5
 OPTION(USE_QT "enable plugins using QT (needs Vigra)" ${QT_FOUND})
 OPTION(USE_Boost "enable plugins using QT" ${Boost_FOUND})
 OPTION(USE_MathGL "enable plugins using MathGL" ${MathGL_FOUND})
-OPTION(USE_Qwt5 "enable plugins using MathGL" ${Qwt5_Qt4_FOUND})
+#OPTION(USE_Qwt5 "enable plugins using MathGL" ${Qwt5_Qt4_FOUND})
 MESSAGE(STATUS "    CImg         : ${USE_CIMG}")
 MESSAGE(STATUS "    Vigra        : ${USE_VIGRA}")
 MESSAGE(STATUS "    HDF5         : ${USE_HDF5}")
@@ -70,7 +73,7 @@ MESSAGE(STATUS "    MPI          : ${USE_MPI}")
 MESSAGE(STATUS "    QT           : ${USE_QT}")
 MESSAGE(STATUS "    Boost        : ${USE_Boost}")
 MESSAGE(STATUS "    MathGL       : ${USE_MathGL}")
-MESSAGE(STATUS "    Qwt5         : ${USE_Qwt5}")
+#MESSAGE(STATUS "    Qwt5         : ${USE_Qwt5}")
 
 IF(USE_CIMG)
 	CImgLibInfo()
