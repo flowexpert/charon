@@ -95,12 +95,25 @@ IF(USE_CIMG)
 		${CHARON_UTILS_INCLUDE_DIR}/Crop.hxx
 		PLUGIN_LISTS Plugins Plugins_CImg
 	)
+	ADD_CHARON_PLUGIN(discretizebythreshold
+		DiscretizeByThreshold.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/DiscretizeByThreshold.h
+		${CHARON_UTILS_INCLUDE_DIR}/DiscretizeByThreshold.hxx
+		PLUGIN_LISTS Plugins Plugins_CImg
+	)
 	ADD_CHARON_PLUGIN(resize
 		Resize.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Resize.h
 		${CHARON_UTILS_INCLUDE_DIR}/Resize.hxx
 		PLUGIN_LISTS Plugins Plugins_CImg
 	)
+	ADD_CHARON_PLUGIN(min
+		Min.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Min.h
+		${CHARON_UTILS_INCLUDE_DIR}/Min.hxx
+		PLUGIN_LISTS Plugins Plugins_CImg
+	)
+
 	ADD_CHARON_PLUGIN(floreader
 		FloReader.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/FloReader.h
@@ -146,6 +159,12 @@ IF(USE_CIMG)
 		LayeredMedianFilter.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/LayeredMedianFilter.h
 		${CHARON_UTILS_INCLUDE_DIR}/LayeredMedianFilter.hxx
+		PLUGIN_LISTS Plugins Plugins_CImg
+	)
+	ADD_CHARON_PLUGIN(quantize
+		Quantize.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Quantize.h
+		${CHARON_UTILS_INCLUDE_DIR}/Quantize.hxx
 		PLUGIN_LISTS Plugins Plugins_CImg
 	)
 	ADD_CHARON_PLUGIN(rgb2hsv
@@ -338,6 +357,17 @@ IF(USE_CIMG)
 	ENDIF(USE_PNG)
 
 	IF(USE_QT)
+		SET(toggletimeout_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ToggleTimeout.h)
+		QT4_WRAP_CPP(toggletimeout_HEADERS_MOCKED ${toggletimeout_HEADERS_TOMOC})
+		ADD_CHARON_PLUGIN(toggle
+			${toggletimeout_HEADERS_MOCKED}
+			ToggleTimeout.cpp
+			${CHARON_UTILS_INCLUDE_DIR}/Toggle.h
+			${CHARON_UTILS_INCLUDE_DIR}/Toggle.hxx
+			Toggle.cpp
+			LINK_LIBRARIES ${QT_LIBRARIES}
+		)
+
 		SET(filereaderwatcher_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/FileReaderWatcher.h)
 		QT4_WRAP_CPP(filereaderwatcher_HEADERS_MOCKED ${filereaderwatcher_HEADERS_TOMOC})
 		ADD_CHARON_PLUGIN(filereader
@@ -350,27 +380,14 @@ IF(USE_CIMG)
 			LINK_LIBRARIES ${QT_LIBRARIES}
 		)
 
-		ADD_CHARON_PLUGIN(filereader
-			FileReader.cpp
-			${CHARON_UTILS_INCLUDE_DIR}/FileReader.h
-			${CHARON_UTILS_INCLUDE_DIR}/FileReader.hxx
-			PLUGIN_LISTS Plugins Plugins_CImg
-			LINK_LIBRARIES ${QT_LIBRARIES}
-		)
+		#ADD_CHARON_PLUGIN(filereader
+		#	FileReader.cpp
+		#	${CHARON_UTILS_INCLUDE_DIR}/FileReader.h
+		#	${CHARON_UTILS_INCLUDE_DIR}/FileReader.hxx
+		#	PLUGIN_LISTS Plugins Plugins_CImg
+		#	LINK_LIBRARIES ${QT_LIBRARIES}
+		#)
 	
-		
-		SET(toggletimeout_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ToggleTimeout.h)
-		QT4_WRAP_CPP(toggletimeout_HEADERS_MOCKED ${toggletimeout_HEADERS_TOMOC})
-		ADD_CHARON_PLUGIN(toggle
-			${toggletimeout_HEADERS_MOCKED}
-			ToggleTimeout.cpp
-			${CHARON_UTILS_INCLUDE_DIR}/Toggle.h
-			${CHARON_UTILS_INCLUDE_DIR}/Toggle.hxx
-			Toggle.cpp
-			PLUGIN_LISTS Plugins Plugins_CImg
-			LINK_LIBRARIES ${QT_LIBRARIES}
-			
-		)
 		QT4_WRAP_CPP(Scriptor_MOC
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h)
 		ADD_CHARON_PLUGIN(scriptorcimg
@@ -469,7 +486,7 @@ IF(USE_VIGRA)
 	ENDIF(USE_HDF5)
 
 	IF(USE_QT)
-		SET(Plugins_Qt)
+		#SET(Plugins_Qt)
 		SET(QT_USE_QTOPENGL 1)
 		INCLUDE(${QT_USE_FILE})
 		INCLUDE_DIRECTORIES(qt)
@@ -484,20 +501,20 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/ArgosDisplayReloader.h
 			ArgosDisplayReloader.cpp
 			${argosdisplayreloader_MOC}
-			PLUGIN_LISTS Plugins Plugins_CImg Plugins_Vigra Plugins_QT
+			PLUGIN_LISTS Plugins Plugins_CImg Plugins_Vigra Plugins_Qt
 		)
 
 		ADD_CHARON_PLUGIN(frameselect
 			FrameSelect.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.h
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelect.hxx
-			PLUGIN_LISTS Plugins Plugins_Vigra Plugins_QT
+			PLUGIN_LISTS Plugins Plugins_Vigra Plugins_Qt
 		)
 		ADD_CHARON_PLUGIN(frameselectcimg
 			FrameSelectCImg.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelectCImg.h
 			${CHARON_UTILS_INCLUDE_DIR}/FrameSelectCImg.hxx
-			PLUGIN_LISTS Plugins Plugins_CImg Plugins_QT
+			PLUGIN_LISTS Plugins Plugins_CImg Plugins_Qt
 		)
 
 		ADD_CHARON_PLUGIN(scriptorvigra
@@ -511,8 +528,8 @@ IF(USE_VIGRA)
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorVigraPlugin.h
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorVigraPlugin.hxx
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h
-			PLUGIN_LISTS Plugins Plugins_Vigra Plugins_QT
 			LINK_LIBRARIES filereaderhdf5 filewriterhdf5
+			PLUGIN_LISTS Plugins Plugins_Qt Plugins_Vigra
 		)
 
 		IF(USE_MathGL)
@@ -526,7 +543,7 @@ IF(USE_VIGRA)
 				QuiverPlot.cpp
 				${quiverplot_MOC}
 				LINK_LIBRARIES ${MathGL_LIBS}
-				PLUGINS_LISTS Plugins Plugins_Qt Plugins_CImg
+				PLUGIN_LISTS Plugins Plugins_Qt Plugins_CImg
 			)
 		ENDIF(USE_MathGL)
 
@@ -536,7 +553,7 @@ IF(USE_VIGRA)
 				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.h
 				${CHARON_UTILS_INCLUDE_DIR}/ResidualPlot.hxx
 				LINK_LIBRARIES ${Qwt5_LIBRARIES}
-				PLUGINS_LISTS Plugins Plugins_Qt Plugins_CImg
+				PLUGIN_LISTS Plugins Plugins_Qt Plugins_CImg
 			)
 		ENDIF(USE_Qwt5)
 
@@ -548,14 +565,14 @@ IF(USE_VIGRA)
 				StatisticsDisplay.cpp
 				${CHARON_UTILS_INCLUDE_DIR}/StatisticsDisplay.h
 				${CHARON_UTILS_INCLUDE_DIR}/StatisticsDisplay.hxx
-				PLUGINS_LISTS Plugins Plugins_Qt Plugins_CImg Plugins_Vigra
+				PLUGIN_LISTS Plugins Plugins_Qt Plugins_CImg Plugins_Vigra
 			)
 
 			ADD_CHARON_PLUGIN(customcolormask
 				CustomColorMask.cpp
 				${CHARON_UTILS_INCLUDE_DIR}/CustomColorMask.hxx
 				${CHARON_UTILS_INCLUDE_DIR}/CustomColorMask.h
-				PLUGINS_LISTS Plugins Plugins_Qt Plugins_CImg
+				PLUGIN_LISTS Plugins Plugins_Qt Plugins_CImg
 			)
 		ENDIF(USE_Boost)
 
