@@ -1,6 +1,9 @@
 PROJECT(charon-core C CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
+
+SET(${PROJECT_NAME}_ROOT_DIR ${PROJECT_SOURCE_DIR})
+
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
@@ -22,7 +25,7 @@ IF(NOT EXPORT_NAME)
 ENDIF()
 
 INCLUDE(InitFlags)
-
+INCLUDE(PluginMakros)
 # set up documentation generation
 FIND_PACKAGE(Doxygen QUIET)
 INCLUDE(Documentation)

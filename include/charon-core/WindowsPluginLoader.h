@@ -52,6 +52,7 @@ private:
 	 *       Must be reimplemented for the MinGW compiler
 	 */
 	LPCTSTR lastError(LPTSTR) const;
+
 #endif
 public:
 	/**
@@ -60,7 +61,7 @@ public:
 	 * @param plpaths List of plugin search paths
 	 * @param lSuffix suffix which gets appended to the plugin name before a search
 	 */
-	WindowsPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix);
+	WindowsPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix,bool ignoreVersion= true);
 	virtual void load() throw (PluginException);
 	virtual void unload() throw (PluginException);
 

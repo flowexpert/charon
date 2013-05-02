@@ -45,6 +45,8 @@
 #include "Slots.h"
 #include "DllEx.h"
 
+
+
 class PluginManagerInterface;
 
 /// Base class for serializable objects
@@ -567,6 +569,8 @@ public:
 
 	bool isDynamic();
 	//  \}
+
+	static std::string charon_core_version ;
 };
 
 /// for transition to ParameteredObject::template_type

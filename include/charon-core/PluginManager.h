@@ -151,6 +151,11 @@ private:
 	ParameteredObject::template_type _defaultTemplateType;
 
 	/**
+	 * load plugin regardless of version information in the library file
+	 */
+	bool _ignoreVersion ;
+
+	/**
 	 * Deletes all instances of a loaded plugin.
 	 * @param p Plugin loader which has created the instances
 	 */
@@ -236,7 +241,8 @@ public:
 	PluginManager(
 			const std::vector<std::string>& pluginPaths,
 			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
-			bool initializeOnLoad=false
+			bool initializeOnLoad=false,
+			bool ignoreVersion = true
 	);
 
 	/// default constructor
@@ -254,7 +260,8 @@ public:
 			const std::string& globalPath,
 			const std::string& localPath = "",
 			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
-			bool initializeOnLoad=false
+			bool initializeOnLoad=false,
+			bool ignoreVersion=true
 	);
 
 	/**

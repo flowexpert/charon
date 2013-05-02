@@ -29,8 +29,9 @@
 #include <sstream>
 
 PluginManager::PluginManager(
-			const std::vector<std::string>& paths, bool dbg,bool initializeOnLoad):
-		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
+			const std::vector<std::string>& paths, bool dbg,bool initializeOnLoad, bool ignoreVersion):
+		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE),
+		_ignoreVersion(ignoreVersion)
 {
 	if(paths.size() == 0) {
 		throw std::invalid_argument("PluginLoader: Empty paths list given!");
@@ -41,8 +42,9 @@ PluginManager::PluginManager(
 }
 
 PluginManager::PluginManager(
-			const std::string& path1, const std::string& path2, bool dbg,bool initializeOnLoad) :
-		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE)
+			const std::string& path1, const std::string& path2, bool dbg,bool initializeOnLoad, bool ignoreVersion) :
+		_defaultTemplateType(ParameteredObject::TYPE_DOUBLE),
+		_ignoreVersion(ignoreVersion)
 {
 	if (path2.size() > 0) {
 		// put local path (if any) in front of global path
@@ -108,7 +110,7 @@ void PluginManager::loadPlugin(std::string name)
 		throw (AbstractPluginLoader::PluginException) {
 	name = StringTool::toLowerCase(name);
 	if (!isLoaded(name)) {
-		PLUGIN_LOADER * newPlugin = new PLUGIN_LOADER(name,pluginPaths,libSuffix);
+		PLUGIN_LOADER * newPlugin = new PLUGIN_LOADER(name,pluginPaths,libSuffix, _ignoreVersion);
 
 		try {
 			newPlugin->load();

@@ -55,6 +55,8 @@ ENDIF(UNIX)
 
 LIST(APPEND CHARON_FILES ${PLUGIN_FILES})
 
+ADD_DEFINITIONS(-DCHARON_CORE_VERSION=\"${charon-core_VERSION}\")
+
 # create libraries
 ADD_LIBRARY(charon-core SHARED ${CHARON_FILES})
 
@@ -64,6 +66,10 @@ IF(UNIX)
 	TARGET_LINK_LIBRARIES(charon-plugins dl)
 	TARGET_LINK_LIBRARIES(charon-core dl)
 ENDIF(UNIX)
+IF(MSVC)
+	TARGET_LINK_LIBRARIES(charon-plugins version)
+	TARGET_LINK_LIBRARIES(charon-core version)
+ENDIF(MSVC)
 
 # create plugins
 
@@ -77,96 +83,73 @@ ENDIF("${isSystemDir}" STREQUAL "-1")
 UNSET(LIB_INSTALL_PATH)
 UNSET(isSystemDir)
 
-ADD_LIBRARY(ifgroup SHARED
+SET(charon-core-modules)
+
+ADD_CHARON_PLUGIN(ifgroup
 	IfGroup.cpp
 	${CHARON_CORE_INCLUDE_DIR}/IfGroup.h
-)
-TARGET_LINK_LIBRARIES(ifgroup
-	charon-core
-)
-SET_TARGET_PROPERTIES(ifgroup PROPERTIES
-	INSTALL_RPATH "${PLUGIN_RPATH}"
-	FOLDER "charon-core-modules"
+	PLUGIN_LISTS charon-core-modules
 )
 
-ADD_LIBRARY(whilegroup SHARED
+ADD_CHARON_PLUGIN(whilegroup
 	WhileGroup.cpp
 	${CHARON_CORE_INCLUDE_DIR}/WhileGroup.h
 	${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
-)
-TARGET_LINK_LIBRARIES(whilegroup
-	charon-core charon-plugins
-)
-SET_TARGET_PROPERTIES(whilegroup PROPERTIES
-	INSTALL_RPATH "${PLUGIN_RPATH}"
-	FOLDER "charon-core-modules"
+	LINK_LIBRARIES charon-plugins
+	PLUGIN_LISTS charon-core-modules
 )
 
-ADD_LIBRARY(statement SHARED
+ADD_CHARON_PLUGIN(statement
 	Statement.cpp
 	${CHARON_CORE_INCLUDE_DIR}/Statement.h
 	${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
-)
-TARGET_LINK_LIBRARIES(statement
-	charon-core
-)
-SET_TARGET_PROPERTIES(statement PROPERTIES
-	INSTALL_RPATH "${PLUGIN_RPATH}"
-	FOLDER "charon-core-modules"
+	PLUGIN_LISTS charon-core-modules
 )
 
-ADD_LIBRARY(forstatement SHARED
+ADD_CHARON_PLUGIN(forstatement
 	ForStatement.cpp
 	${CHARON_CORE_INCLUDE_DIR}/ForStatement.h
 	${CHARON_CORE_INCLUDE_DIR}/StatementIntf.h
-)
-TARGET_LINK_LIBRARIES(forstatement
-	charon-core
-)
-SET_TARGET_PROPERTIES(forstatement PROPERTIES
-	INSTALL_RPATH "${PLUGIN_RPATH}"
-	FOLDER "charon-core-modules"
+	PLUGIN_LISTS charon-core-modules
 )
 
-ADD_LIBRARY(groupobject SHARED
+ADD_CHARON_PLUGIN(groupobject
 	GroupObject.cpp
 	${CHARON_CORE_INCLUDE_DIR}/GroupObject.h
-)
-TARGET_LINK_LIBRARIES(groupobject
-	charon-core
-)
-SET_TARGET_PROPERTIES(groupobject PROPERTIES
-	INSTALL_RPATH "${PLUGIN_RPATH}"
-	FOLDER "charon-core-modules"
+	PLUGIN_LISTS charon-core-modules
 )
 
-ADD_LIBRARY(inputslotbundle SHARED
+ADD_CHARON_PLUGIN(inputslotbundle
 	InputSlotBundle.cpp
 	SlotBundle.cpp
 	${CHARON_CORE_INCLUDE_DIR}/InputSlotBundle.h
 	${CHARON_CORE_INCLUDE_DIR}/SlotBundle.h
 	${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
+	LINK_LIBRARIES charon-plugins
+	PLUGIN_LISTS charon-core-modules
 )
+
 SET_TARGET_PROPERTIES(inputslotbundle PROPERTIES
 	COMPILE_DEFINITIONS slotbundle_EXPORTS
-	INSTALL_RPATH "${PLUGIN_RPATH}"
-	FOLDER "charon-core-modules"
 )
-TARGET_LINK_LIBRARIES(inputslotbundle charon-core charon-plugins)
 
-ADD_LIBRARY(outputslotbundle SHARED
+ADD_CHARON_PLUGIN(outputslotbundle
 	OutputSlotBundle.cpp
 	SlotBundle.cpp
 	${CHARON_CORE_INCLUDE_DIR}/OutputSlotBundle.h
 	${CHARON_CORE_INCLUDE_DIR}/SlotBundle.h
 	${CHARON_CORE_INCLUDE_DIR}/SlotBundleInterfaces.h
+	LINK_LIBRARIES charon-plugins
+	PLUGIN_LISTS charon-core-modules
 )
 SET_TARGET_PROPERTIES(outputslotbundle PROPERTIES
 	COMPILE_DEFINITIONS slotbundle_EXPORTS
-	INSTALL_RPATH "${PLUGIN_RPATH}"
+)
+
+SET_TARGET_PROPERTIES(${charon-core-modules} PROPERTIES
 	FOLDER "charon-core-modules"
 )
-TARGET_LINK_LIBRARIES(outputslotbundle charon-core charon-plugins)
+
 
 # install library
 SET_TARGET_PROPERTIES(charon-core charon-plugins PROPERTIES
@@ -181,18 +164,6 @@ INSTALL(
 	LIBRARY      DESTINATION lib${LIB_SUFFIX}
 	ARCHIVE      DESTINATION lib${LIB_SUFFIX}
 	COMPONENT    libraries
-)
-
-# install charon-core modules
-INSTALL(
-	TARGETS          inputslotbundle outputslotbundle
-	                 ifgroup whilegroup groupobject
-	                 statement forstatement
-	EXPORT           ${EXPORT_NAME}
-	RUNTIME          DESTINATION bin${BIN_SUFFIX}
-	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-	COMPONENT        libraries
 )
 
 IF(NOT SKIP_EXPORT_INSTALL)

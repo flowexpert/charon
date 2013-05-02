@@ -31,8 +31,8 @@
 #include <charon-core/WindowsPluginLoader.h>
 #include <charon-core/ParameterFile.h>
 
-WindowsPluginLoader::WindowsPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix) :
-	AbstractPluginLoader(n,plpaths,lSuffix) {
+WindowsPluginLoader::WindowsPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix, bool ignoreVersion) :
+	AbstractPluginLoader(n,plpaths,lSuffix,ignoreVersion) {
 	hInstLibrary = NULL;
 }
 
@@ -75,6 +75,121 @@ void WindowsPluginLoader::load() throw (PluginException) {
 		if (FileTool::exists(path)) {
 			std::string oldDir = FileTool::getCurrentDir();
 			FileTool::changeDir(*cur);
+			
+			if(!_ignoreVersion)
+			{
+				DWORD handle = 0; //dummy value
+				DWORD size = GetFileVersionInfoSize(path.c_str(), &handle);
+				if(!size)
+				{
+					throw PluginException(
+					"The plugin contains no valid charon-core version information.", pluginName,
+					PluginException::VERSION_INFORMATION_MISSING);
+				}
+				BYTE* versionInfo = new BYTE[size];
+				if (!GetFileVersionInfo(path.c_str(), handle, size, versionInfo))
+				{
+					delete[] versionInfo;
+#ifdef MSVC
+					std::string addInfo = "The plugin contains no valid charon-core version information: ";
+					if (GetLastError() == 0) {
+						addInfo += lastError("load()");
+					}
+					throw PluginException(
+							"Failed to load the plugin \"" + pluginName
+							+ "\".\n(EE)\t" + addInfo,
+							pluginName, PluginException::VERSION_INFORMATION_MISSING);
+#else
+					throw PluginException(
+							"Failed to load the plugin \"" + pluginName
+							+ "\". The plugin contains no valid charon-core version information.", 
+							pluginName, PluginException::VERSION_INFORMATION_MISSING);
+#endif
+				}
+
+				struct LANGANDCODEPAGE {
+					WORD wLanguage;
+					WORD wCodePage;
+				} *lpTranslate;
+
+				UINT	dwBytes; //size of contained code tables
+				
+				BOOL res = VerQueryValue(versionInfo, 
+					TEXT("\\VarFileInfo\\Translation"),
+					(LPVOID*)&lpTranslate,
+					&dwBytes);
+				if(res == 0 || dwBytes == 0)
+				{
+					delete[] versionInfo;
+					throw PluginException("Failed to load the plugin \"" + pluginName
+						+ "\". The plugin contains no valid charon-core version information.", pluginName,
+					PluginException::VERSION_INFORMATION_MISSING);
+				}
+
+				for(int i=0; i < (dwBytes/sizeof(struct LANGANDCODEPAGE)); i++ )
+				{
+					LPTSTR subBlock ;
+					subBlock = new char[50] ;
+					BOOL hr = StringCchPrintf(subBlock, 50,
+								TEXT("\\StringFileInfo\\%04x%04x\\ProductName"),
+								lpTranslate[i].wLanguage,
+								lpTranslate[i].wCodePage);
+					if (FAILED(hr))
+					{
+						delete[] versionInfo;
+						delete[] subBlock ;
+						throw PluginException("Failed to load the plugin \"" + pluginName
+							+ "\". The plugin contains no valid charon-core version information.", pluginName,
+						PluginException::VERSION_INFORMATION_MISSING);
+					}
+					LPCTSTR infoBuffer ;
+					UINT bufferLen = 0;
+					// Retrieve file description for language and code page "i". 
+					BOOL res = VerQueryValue(versionInfo, 
+									subBlock, 
+									(LPVOID*)&infoBuffer, 
+									&bufferLen); 
+					if(res == 0 && bufferLen == 0 && std::string("Charon-Suite") != infoBuffer) {
+						delete[] versionInfo;
+						delete[] subBlock;
+						throw PluginException("Did not load \"" + pluginName
+							+ "\". The plugin contains no valid charon-core version information.", pluginName,
+						PluginException::INVALID_PLUGIN_FORMAT);
+					}
+
+					hr = StringCchPrintf(subBlock, 50,
+								TEXT("\\StringFileInfo\\%04x%04x\\ProductVersion"),
+								lpTranslate[i].wLanguage,
+								lpTranslate[i].wCodePage);
+					if (FAILED(hr))
+					{
+					// TODO: write error handler.
+					}
+					bufferLen = 0;
+					res = VerQueryValue(versionInfo, 
+									subBlock, 
+									(LPVOID*)&infoBuffer, 
+									&bufferLen); 
+					if(res && bufferLen) {
+						//parse the version string, assume it has the following form
+						//major.minor.patch
+						std::string version(infoBuffer) ;
+						if(ParameteredObject::charon_core_version != version) {
+							delete[] versionInfo;
+							delete[] subBlock;
+							throw PluginException("Plugin \"" + pluginName
+								+ "\" was linked against charon-core version " + version
+								+ "\n(EE)\tbut we are using charon-core version " 
+								+ ParameteredObject::charon_core_version
+								, pluginName,
+								PluginException::VERSION_MISSMATCH);
+						}
+					}
+					delete[] subBlock;
+				}
+				delete[] versionInfo;
+			} //if(!_ignoreVersion)
+			
 			hInstLibrary = LoadLibrary(path.c_str());
 			FileTool::changeDir(oldDir);
 			break;
@@ -93,7 +208,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 #ifdef MSVC
 		std::string addInfo;
 		if (GetLastError() == 0) {
-			addInfo += "This is usually caused by missing dll dependencies.";
+			addInfo += "(EE)\tThis is usually caused by missing dll dependencies.";
 		}
 		else {
 			addInfo += "Maybe the file is damaged.\n";
@@ -196,7 +311,6 @@ void WindowsPluginLoader::load() throw (PluginException) {
 		}
 	}
 }
-
 void WindowsPluginLoader::unload() throw (PluginException) {
 	if (hInstLibrary) {
 		FreeLibrary(hInstLibrary);
