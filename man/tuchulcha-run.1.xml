@@ -60,6 +60,15 @@
 	<refsynopsisdiv>
 		<cmdsynopsis>
 			<command>tuchulcha-run</command>
+			<group>
+				<arg choice="plain"><option>help</option></arg>
+				<arg choice="plain"><option>--help</option></arg>
+				<arg choice="plain"><option>-h</option></arg>
+				<arg choice="plain"><option>-?</option></arg>
+			</group>
+		</cmdsynopsis>
+		<cmdsynopsis>
+			<command>tuchulcha-run</command>
 			<arg choice="opt"><option>--non-interactive</option></arg>
 			<arg choice="opt"><option>--quiet</option></arg>
 			<arg choice="opt"><option>update</option></arg>
@@ -68,13 +77,11 @@
 		</cmdsynopsis>
 		<cmdsynopsis>
 			<command>tuchulcha-run</command>
-			<group>
-				<arg choice="plain"><option>help</option></arg>
-				<arg choice="plain"><option>--help</option></arg>
-				<arg choice="plain"><option>-h</option></arg>
-				<arg choice="plain"><option>-?</option></arg>
-			</group>
+			<arg choice="opt"><option>-nqudf</option></arg><arg choice="opt"><replaceable>parameterFile</replaceable></arg>
 		</cmdsynopsis>
+		<simpara>
+			See <xref linkend="tuchulcha-run-short-opts"/> for more information about options/commands abbreviations.
+		</simpara>
 	</refsynopsisdiv>
 	<refsection id="tuchulcha-run-desc">
 		<title>Description</title>
@@ -106,6 +113,7 @@
 		<variablelist>
 			<varlistentry>
 				<term><option>--non-interactive</option></term>
+				<term><option>-n</option></term>
 				<listitem><simpara>
 					Do not enter interactive loop after execution of update/run commands.
 					This is useful for script usage.
@@ -116,6 +124,7 @@
 			</varlistentry>
 			<varlistentry>
 				<term><option>--quiet</option></term>
+				<term><option>-q</option></term>
 				<listitem><simpara>
 					Supress greeter and version information.
 					Also hides command prompt to avoid showing up in
@@ -124,20 +133,24 @@
 			</varlistentry>
 			<varlistentry>
 				<term><option>help</option></term>
+				<term><option>--help</option></term>
+				<term><option>-h</option></term>
+				<term><option>-?</option></term>
+				<term><option>/?</option></term>
 				<listitem><simpara>
 					display short help text and quit immediately
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>
 				<term><option>update</option></term>
+				<term><option>-u</option></term>
 				<listitem><simpara>
 					update modules information used by <application>tuchulcha</application>
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>
-				<term><option>update-dynamics 
-					<replaceable class="parameter">parameterFile</replaceable>
-				</option></term>
+				<term><option>update-dynamics <replaceable class="parameter">parameterFile</replaceable></option></term>
+				<term><option>-d <replaceable class="parameter">parameterFile</replaceable></option></term>
 				<listitem><simpara>
 					Update dynamic module information used by
 					<application>tuchulcha</application>.
@@ -148,14 +161,26 @@
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>
-				<term><option>run 
-					<replaceable class="parameter">parameterFile</replaceable>
-				</option></term>
+				<term><option>run <replaceable class="parameter">parameterFile</replaceable></option></term>
+				<term><option>-f <replaceable class="parameter">parameterFile</replaceable></option></term>
 				<listitem><simpara>
 					execute the given workflow
 				</simpara></listitem>
 			</varlistentry>
 		</variablelist>
+	</refsection>
+	<refsection id="tuchulcha-run-short-opts">
+		<title>Short Options</title>
+		<simpara>
+			It is possible to combine the short options and commands e.g. like
+			<command>tuchulcha-run</command> <option>-nqf <replaceable class="parameter">parameterFile</replaceable></option>,
+			but please note that the <option>-d</option> or <option>-f</option> option have to be the last
+			before the <replaceable class="parameter">parameterFile</replaceable> argument and that <option>-d</option>
+			and <option>-f</option> cannot be used together in one concatenation. (but e.g.
+			<command>tuchulcha-run</command>
+			<option>-nqd <replaceable class="parameter">file1</replaceable> -f <replaceable class="parameter">file2</replaceable></option>
+			works)
+		</simpara>
 	</refsection>
 	<refsection id="tuchulcha-run-interactive">
 		<title>Interactive Session</title>

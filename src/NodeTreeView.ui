@@ -21,19 +21,6 @@
    <item row="1" column="1">
     <widget class="QLineEdit" name="editFilter"/>
    </item>
-   <item row="1" column="2">
-    <widget class="QToolButton" name="toolButton">
-     <property name="iconSize">
-      <size>
-       <width>16</width>
-       <height>16</height>
-      </size>
-     </property>
-     <property name="arrowType">
-      <enum>Qt::LeftArrow</enum>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0" colspan="3">
     <widget class="QTreeView" name="treeView">
      <property name="editTriggers">
@@ -53,9 +40,25 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="2">
+    <widget class="QToolButton" name="toolButton">
+     <property name="toolTip">
+      <string>reset filter string</string>
+     </property>
+     <property name="text">
+      <string>clear filter</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../resources.qrc">
+       <normaloff>:/icons/edit-clear.png</normaloff>:/icons/edit-clear.png</iconset>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>toolButton</sender>
@@ -64,12 +67,12 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>381</x>
-     <y>16</y>
+     <x>372</x>
+     <y>272</y>
     </hint>
     <hint type="destinationlabel">
-     <x>325</x>
-     <y>21</y>
+     <x>336</x>
+     <y>275</y>
     </hint>
    </hints>
   </connection>
