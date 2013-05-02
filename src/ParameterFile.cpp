@@ -26,6 +26,7 @@
  */
 
 #include <charon-core/ParameterFile.hxx>
+#include <set>
 
 ParameterFile::IoError::IoError(const std::string& msg) :
 		std::runtime_error(msg.c_str()) {
@@ -191,6 +192,7 @@ void ParameterFile::toStream(std::ostream& strm) const {
 }
 
 void ParameterFile::fromStream(std::istream& strm) {
+	std::set<std::string> processedKeys;
 	while (strm.good()) {
 		std::string key, line, value;
 		if (strm.peek() == '\n')
@@ -221,7 +223,13 @@ void ParameterFile::fromStream(std::istream& strm) {
 						value += line;
 					}
 				}
+				if (processedKeys.find(key) != processedKeys.end()) {
+					sout << "(WW) fromStream: "
+						<< "Duplicate Key in Parameter File: "
+						<< key << std::endl;
+				}
 				_set(key,value);
+				processedKeys.insert(key);
 			} else {
 				//ignore whole line (when comment line)
 				getline(strm, line);

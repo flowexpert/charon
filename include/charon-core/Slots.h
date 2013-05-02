@@ -210,7 +210,9 @@ public:
 	};
 
 	/// interface of data management classes
-	/** This part of the interface provides the data I/O functions
+	/** This part of the interface provides the data I/O functions.
+	 *  Derived classes of this abstract interface are located
+	 *  in the DataManagers namespace.
 	 */
 	template<typename T>
 	class DataManager {

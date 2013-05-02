@@ -14,6 +14,11 @@ to other libraries if needed.
 
 \section features Features
 - Serializable object framework (classes ParameteredObject et al)
+	- Plugin mechanism via .dll/.so/.dylib files (called Modules)
+	- Managed data interchange between modules
+	  (via Slot::DataManager, see \ref slot-data-exchange)
+	- Super Nodes (nested workflows, via GroupObject module)
+	- Conditional and repeated workflows (IfGroup, WhileGroup)
 - configurable output stream with possibility to log to (multiple) files
   and to console (like tee)
 - platform independent file manipulation (rename, etc)
@@ -41,6 +46,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 -   \subpage usage
 -   \subpage plugins
 -   \subpage parameterfiles
+-   \subpage slot-data-exchange
 
 \latexonly
 The API documentation is only avaiable in the HTML version of this

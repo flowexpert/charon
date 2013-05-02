@@ -32,11 +32,11 @@ AbstractParameter::AbstractParameter() :
 void AbstractParameter::init(ParameteredObject* parent,
 		const std::string& name) {
 	if(_parent)
-		throw std::string("Parameter already assigned");
+		throw std::runtime_error(std::string("Parameter \"") + name + "\" already assigned");
 	if(!parent)
-		throw std::string("Setting invalid parent object!");
+		throw std::runtime_error("Setting invalid parent object!");
 	if(!name.length())
-		throw std::string("Invalid name: length 0");
+		throw std::runtime_error("Invalid name: length 0");
 
 	_parent = parent;
 	_name   = name;

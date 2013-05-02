@@ -62,7 +62,6 @@ IF (DOXYGEN_FOUND)
 		ADD_CUSTOM_TARGET(doc)
 	ENDIF()
 
-	SET(DOXY_DOC_PATTERN        "*.cpp *.h *.hxx *.hpp *_doc.txt")
 	SET(DOXY_DOC_PATHS          "doc src include/charon-core")
 	SET(DOXY_GENERATE_HTML      YES)
 	SET(DOXY_GENERATE_LATEX     NO )

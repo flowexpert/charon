@@ -6,7 +6,7 @@
 	<refentryinfo>
 		<title>Charon workflow executor</title>
 		<productname>charon</productname>
-		<releaseinfo role="version">0.1.6</releaseinfo>
+		<releaseinfo role="version">0.2.2</releaseinfo>
 		<authorgroup>
 			<author>
 				<firstname>Jens-Malte</firstname>

@@ -35,7 +35,13 @@ Slot::Slot() :
 void Slot::init(ParameteredObject* parent, std::string name,
 		std::string type) {
 
-	assert(parent); // parent valid
+	if(_parent)
+		throw std::runtime_error(std::string("Parameter \"") + name + "\" already assigned");
+	if(!parent)
+		throw std::runtime_error("Setting invalid parent object!");
+	if(!name.length())
+		throw std::runtime_error("Invalid name: length 0");
+
 	_parent = parent;
 
 	_type = StringTool::toLowerCase(type);
@@ -49,16 +55,7 @@ void Slot::init(ParameteredObject* parent, std::string name,
 
 void Slot::init(ParameteredObject* parent, std::string name,std::string displayname,
 		std::string type) {
-
-	assert(parent); // parent valid
-	_parent = parent;
-
-	_type = StringTool::toLowerCase(type);
-	if(_type!="virtual")
-	{
-		_name = name;
-
-	}
+	Slot::init(parent,name,type);
 	_displayName=displayname;
 }
 

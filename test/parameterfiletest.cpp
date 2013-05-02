@@ -34,58 +34,58 @@ int test() {
 	paramtest->set("param2", 10);
 	std::string	val1 = paramtest->get<std::string>("param1");
 	int			val2 = paramtest->get<int>("param2");
-	sout << "val1 = " << val1 << std::endl;
-	sout << "val2 = " << val2 << std::endl;
+	std::cout << "val1 = " << val1 << std::endl;
+	std::cout << "val2 = " << val2 << std::endl;
 	if((val1 != "value1 test") || (val2 != 10))
 		throw "Values do not match!";
 
 	// modification
 	paramtest->set("param2", 15);
 	val2 = paramtest->get<int>("param2");
-	sout << "val2 = " << val2 << std::endl;
+	std::cout << "val2 = " << val2 << std::endl;
 	if (val2 != 15)
 		throw "Failure loading modified value!";
 
 	// information about set/modified parameters
-	sout << "Output from showSetParams():" << std::endl;
+	std::cout << "Output from showSetParams():" << std::endl;
 	paramtest->showSetParams ();
-	sout << "Size: " << paramtest->getKeyList().size() << std::endl;
+	std::cout << "Size: " << paramtest->getKeyList().size() << std::endl;
 	if(paramtest->getKeyList().size() != 2)
 		throw "Failure loading KeyList!";
 
 	// test save and reload
-	sout << "Saving to file \"test.txt\"." << std::endl;
+	std::cout << "Saving to file \"test.txt\"." << std::endl;
 	paramtest->save("test.txt");
 	delete paramtest;
 
-	sout << "Reloading file" << std::endl;
+	std::cout << "Reloading file" << std::endl;
 	paramtest = new ParameterFile("test.txt");
 
-	sout << "Checking values..." << std::flush;
+	std::cout << "Checking values..." << std::flush;
 	val1 = paramtest->get<std::string>("param1");
 	val2 = paramtest->get<int>("param2");
 	if((val1 != "value1 test") || (val2 != 15))
 		throw "reloaded values do not match!";
-	sout << "ok" << std::endl;
+	std::cout << "ok" << std::endl;
 
 	// test value deletion
-	sout << "deleting param1..." << std::flush;
+	std::cout << "deleting param1..." << std::flush;
 	paramtest->erase("param1");
 	if(paramtest->isSet("param1"))
 		throw "deleted value still set!";
 	if(paramtest->getKeyList().size() != 1)
 		throw "length is not 1!";
-	sout << "ok" << std::endl;
+	std::cout << "ok" << std::endl;
 
-	sout << "deleting param2..." << std::flush;
+	std::cout << "deleting param2..." << std::flush;
 	paramtest->erase("param2");
 	if(paramtest->isSet("param2"))
 		throw "deleted value still set!";
 	if(paramtest->getKeyList().size() != 0)
 		throw "length is not 0!";
-	sout << "ok" << std::endl;
+	std::cout << "ok" << std::endl;
 
-	sout << "checking mixedCase..." << std::flush;
+	std::cout << "checking mixedCase..." << std::flush;
 	paramtest->set<std::string>("parMix","blah");
 	if (paramtest->get<std::string>("pArMiX") != "blah") {
 		throw "failed to get parameter case insensitive";
@@ -97,11 +97,11 @@ int test() {
 	paramtest->erase("PaRmIx");
 	if(paramtest->getKeyList().size() != 0)
 		throw "length is not 0!";
-	sout << "ok" << std::endl;
-	sout << "Output from showSetParams():" << std::endl;
+	std::cout << "ok" << std::endl;
+	std::cout << "Output from showSetParams():" << std::endl;
 	paramtest->showSetParams ();
 
-	sout << "checking exceptions..." << std::flush;
+	std::cout << "checking exceptions..." << std::flush;
 	bool fail = true;
 	try {
 		val1 = paramtest->get<std::string>("param1");
@@ -132,19 +132,22 @@ int test() {
 	if (fail)
 		throw "no exception from getList caught!";
 
-	sout << "ok" << std::endl;
+	std::cout << "ok" << std::endl;
 	delete paramtest;
 
-	sout << "loading prepared parameter file..." << std::flush;
+	std::ostringstream tmp;
+	sout.assign(tmp);
+	std::cout << "loading prepared parameter file..." << std::flush;
 	paramtest = new ParameterFile(TEST_WRP_FILE);
-	if (paramtest->getKeyList().size() != 8) {
+	sout.assign(std::cout);
+	if (paramtest->getKeyList().size() != 9) {
 		throw "lenght mismatch in loaded file";
 	}
-	sout << "ok" << std::endl;
-	sout << "Output from showSetParams():" << std::endl;
+	std::cout << "ok" << std::endl;
+	std::cout << "Output from showSetParams():" << std::endl;
 	paramtest->showSetParams ();
 
-	sout << "checking content..." << std::flush;
+	std::cout << "checking content..." << std::flush;
 	if (paramtest->get<std::string>("param1") != "test") {
 		throw "param1 failed";
 	}
@@ -169,7 +172,17 @@ int test() {
 	if (paramtest->get<std::string>("paramEmpty") != "") {
 		throw "paramEmpty failed";
 	}
-	sout << "ok" << std::endl;
+	std::cout << "ok" << std::endl;
+	std::cout << "check for duplicate warning..." << std::flush;
+	std::string loadOutput = tmp.str();
+	if (loadOutput.find("(WW)") != std::string::npos &&
+		loadOutput.find("Duplicate Key") != std::string::npos) {
+		std::cout << "ok" << std::endl;
+	}
+	else {
+		std::cout << "failed" << std::endl;
+		throw "duplicate parameter not detected correctly";
+	}
 
 	return 0;
 }
