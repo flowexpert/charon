@@ -35,7 +35,7 @@ SET(@PROJECT_NAME@_VERSION_RC_FILE
 	CACHE FILEPATH "resource template file for dll version information"
 )
 
-INCLUDE(charon-core_USE_FILE)
+INCLUDE(${charon-core_USE_FILE})
 MARK_AS_ADVANCED(
 	@PROJECT_NAME@_DIR
 	@PROJECT_NAME@_HTMLDOC_DIR
