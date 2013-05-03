@@ -320,6 +320,7 @@ protected:
 	void _commitSlots();
 
 public:
+
 	/// Integer which represents a template type.
 	enum template_type {
 		TYPE_DOUBLE = 0, ///< The template type of the instance is double
@@ -389,6 +390,8 @@ public:
 	bool executed() const {
 		return _executed;
 	}
+    // active inactive button
+    Parameter < bool > active;
 
 	/// deprecated macro
 #define PARAMETEREDOBJECT_AVOID_REEXECUTION \
