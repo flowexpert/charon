@@ -102,7 +102,7 @@ CustomColorMaskWidget::CustomColorMaskWidget(
 	connect(_maxSlider, SIGNAL(sliderReleased()), this, SLOT(dispMax()));
 	connect(_minDisp, SIGNAL(textEdited(const QString&)), this, SLOT(click()));
 	connect(_maxDisp, SIGNAL(textEdited(const QString&)), this, SLOT(click()));
-	connect(_maskSelect, SIGNAL(currentIndexChanged(int)), this, SLOT(changeMask(int)));
+	connect(_maskSelect, SIGNAL(currentIndexChanged(int)), this, SLOT(changeMask()));
 	connect(_mapBox, SIGNAL(clicked()), this, SLOT(click()));
 
 	//central frame
@@ -203,8 +203,7 @@ void CustomColorMaskWidget::setMinMax(double min, double max)
 	_maxSlider->setValue((_end() - _currentMin) / _step);
 }
 
-void CustomColorMaskWidget::changeMask(int mask)
-{
+void CustomColorMaskWidget::changeMask() {
 	_maskType() = _maskSelect->currentText().toStdString();
 	click();
 }

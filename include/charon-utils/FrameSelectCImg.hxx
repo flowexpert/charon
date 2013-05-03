@@ -113,7 +113,7 @@ void FrameSelectCImg<T>::execute() {
 		
 		int w = i[lv].width() ;
 		int h = i[lv].height() ;
-		int d = i[lv].depth() ;
+		//int d = i[lv].depth() ;
 
 		o.assign(cV?1:3,w, h,1,1) ;
 

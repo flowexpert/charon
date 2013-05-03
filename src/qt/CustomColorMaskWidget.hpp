@@ -96,9 +96,8 @@ public:
 private slots:
 	void dispMin();
 	void dispMax();
-	void changeMask(int);
+	void changeMask();
 	void click();
-
 };
 
 #endif
