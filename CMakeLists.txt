@@ -1,7 +1,6 @@
 PROJECT(charon-utils C CXX)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.5)
-# HDF5 components interface and debug/release library handling
-# is available/fixed since CMake 2.8.5 (broken in 2.8.4 and ealier)
+# CMake 2.8.9 is required for the CMakePackageConfigHelpers module
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.9)
 SET(charon-utils_VERSION 0.2.1)
 
 # use own cmake files
