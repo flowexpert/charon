@@ -544,13 +544,4 @@ INSTALL(
 	DIRECTORY       ${charon_INCLUDE_DIR}
 	DESTINATION     include
 	COMPONENT       headers
-	PATTERN         ".svn" EXCLUDE
 )
-
-IF(NOT SKIP_EXPORT_INSTALL)
-	INSTALL(
-		EXPORT          ${EXPORT_NAME}
-		DESTINATION     ${CONFIG_INSTALL}
-		COMPONENT       libraries
-	)
-ENDIF()
