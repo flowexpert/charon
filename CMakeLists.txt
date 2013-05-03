@@ -1,6 +1,6 @@
 PROJECT(charon-core C CXX)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.9)
+# 2.8.9 is required for the CMakePackageConfigHelpers module
 
 SET(${PROJECT_NAME}_ROOT_DIR ${PROJECT_SOURCE_DIR})
 
