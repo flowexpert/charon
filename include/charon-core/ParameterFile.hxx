@@ -151,6 +151,7 @@ inline void ParameterFile::_toLower(std::string& input) const {
 
 // specialized versions
 
+/// specialization for return type std::string
 template<>
 inline std::string ParameterFile::get(std::string parameter) const {
 	_toLower(parameter);
@@ -163,6 +164,7 @@ inline std::string ParameterFile::get(std::string parameter) const {
 	return found->second;
 }
 
+/// specialization for return type bool
 template<>
 inline bool ParameterFile::get(std::string parameter) const {
 	_toLower(parameter);
@@ -185,6 +187,7 @@ inline bool ParameterFile::get(std::string parameter) const {
 	return v;
 }
 
+/// specialization for return type std::vector<std::string>
 template<>
 inline std::vector<std::string> ParameterFile::getList(
 		std::string parameter) const {

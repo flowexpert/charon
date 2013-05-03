@@ -67,6 +67,7 @@ protected:
 	/// Lib suffix e.g. <tt>_d</tt> for debug builds
 	std::string &libSuffix;
 
+	/// should the Loader ignore embedded charon-core version strings?
 	bool _ignoreVersion ;
 
 public:

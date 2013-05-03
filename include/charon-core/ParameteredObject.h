@@ -570,6 +570,7 @@ public:
 	bool isDynamic();
 	//  \}
 
+	/// charon-core version string this plugin was compiled against
 	static std::string charon_core_version ;
 };
 

@@ -237,6 +237,9 @@ public:
 	 *                    Search order as given.
 	 * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
 	 *                    fallback to libs without suffix.
+	 * \param initializeOnLoad ask Gerald
+	 * \param ignoreVersion if false, only plugins with matching
+	 *                      charon-core version information are loaded
 	 */
 	PluginManager(
 			const std::vector<std::string>& pluginPaths,
@@ -255,6 +258,9 @@ public:
 	 *                    localPath is searched first.
 	 * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
 	 *                    fallback to libs without suffix.
+	 * \param initializeOnLoad ask Gerald
+	 * \param ignoreVersion if false, only plugins with matching
+	 *                      charon-core version information are loaded
 	 */
 	PluginManager(
 			const std::string& globalPath,
