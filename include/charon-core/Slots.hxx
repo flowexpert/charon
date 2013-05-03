@@ -201,7 +201,7 @@ InputSlot<T>::operator T() const {
 	if (!AbstractSlot<T>::_targets.size()) {
 		Slot::raise("access to unconnected input slot (cast operator)");
 	}
-	return _getDataFromOutputSlot(*(AbstractSlot<T>::_targets.begin()));
+	return getDataFromOutputSlot(*(AbstractSlot<T>::_targets.begin()));
 }
 
 template<class T>
@@ -209,7 +209,7 @@ const T& InputSlot<T>::operator()() const {
 	if (!AbstractSlot<T>::_targets.size()) {
 		Slot::raise("access to unconnected input slot (operator())");
 	}
-	return _getDataFromOutputSlot(*(AbstractSlot<T>::_targets.begin()));
+	return getDataFromOutputSlot(*(AbstractSlot<T>::_targets.begin()));
 }
 
 template<class T>
@@ -225,7 +225,7 @@ const T& InputSlot<T>::operator[](std::size_t pos) const {
 	item = AbstractSlot<T>::_targets.begin();
 	for (unsigned int i = 0; i < pos; i++)
 		item++;
-	return _getDataFromOutputSlot(*item);
+	return getDataFromOutputSlot(*item);
 }
 
 template<typename T>
@@ -234,16 +234,16 @@ std::size_t InputSlot<T>::size() const {
 }
 
 template <typename T>
-const T& InputSlot<T>::_getDataFromOutputSlot(const Slot* slot) const {
+const T& InputSlot<T>::getDataFromOutputSlot(const Slot* slot) const {
 	const OutputSlotIntf* outsl=dynamic_cast<const OutputSlotIntf*>(slot);
 	if(!outsl) {
 		Slot::raise("Invalid slot for data retrieval!!");
 	}
-	return _getDataFromOutputSlot(outsl);
+	return getDataFromOutputSlot(outsl);
 }
 
 template <typename T>
-const T& InputSlot<T>::_getDataFromOutputSlot(
+const T& InputSlot<T>::getDataFromOutputSlot(
 			const OutputSlotIntf* slot) const {
 
 	// c-style cast can produce weird errors, so use dynamic cast to make sure

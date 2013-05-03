@@ -353,18 +353,19 @@ public:
 	    return AbstractSlot<T>::getType();
 	}
 
-
-
-private:
 	/// handle data extraction from output slot
-	/** \warning make sure that the given slot is really an output slot,
-	 *           this will be c-casted to OutputSlot<T>
-	 *  \param slot         output slot to extract data from
+	/** \param slot         output slot to extract data from
 	 *  \returns            extracted data
 	 */
-	const T& _getDataFromOutputSlot(const OutputSlotIntf* slot) const;
-	const T& _getDataFromOutputSlot(const Slot* slot) const;
+	const T& getDataFromOutputSlot(const OutputSlotIntf* slot) const;
 
+	/// handle data extraction from output slot
+	/** \param slot         output slot to extract data from
+	 *  \returns            extracted data
+	 */
+	const T& getDataFromOutputSlot(const Slot* slot) const;
+
+private:
 	/// data cache for managed output slots
 	std::map<std::string, T> _dataCache;
 };
