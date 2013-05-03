@@ -38,7 +38,6 @@
 #endif
 
 #include <charon-core/ParameteredObject.h>
-#include <vigra/multi_array.hxx>
 #include <charon-utils/CImg.h>
 
 /// Reads KITTI flow data
