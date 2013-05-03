@@ -66,6 +66,9 @@ public:
 	/// @param id      ID to set
 	void setId(unsigned int id);
 
+    /// sets the active parameter active or inactive
+    void setActive(bool);
+
 	/// resets the name of the node
 	/// @param name    name to set
 	void setName(QString name);
@@ -133,6 +136,9 @@ private:
 	/// state of node selection
 	bool _selectedNode;
 
+    /// state of activeness
+    bool _active;
+
 	///  id of the node
 	unsigned int _id;
 
@@ -140,7 +146,7 @@ private:
 	static unsigned int _idCount;
 
 	/// link to parameter file
-	const ParameterFileModel* _pFile;
+    const ParameterFileModel* _pFile;
 };
 
 #endif /* NODE_H_ */
