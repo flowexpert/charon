@@ -320,7 +320,7 @@ IF(QT4_FOUND)
 		SimpleIteratorRemoteControl.cpp
 		SimpleIterator.cpp
 		PLUGIN_LISTS Plugins
-		LINK_LIBRARIES ${QT_LIBRARIES}
+		LINK_LIBRARIES ${QT_LIBRARIES} debug iteratorhelper
 	)
 
 	SET(simpleiteratorremotecontrol_HEADERS_TOMOC ${charon_INCLUDE_DIR}/SimpleIteratorRemoteControl.h)
@@ -332,7 +332,7 @@ IF(QT4_FOUND)
 		SimpleIteratorRemoteControl.cpp
 		RelaxingIterator.cpp
 		PLUGIN_LISTS Plugins
-		LINK_LIBRARIES ${QT_LIBRARIES}
+		LINK_LIBRARIES ${QT_LIBRARIES} debug iteratorhelper debug gbcce
 	)
 	
 ELSE(QT4_FOUND)
