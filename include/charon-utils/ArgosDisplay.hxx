@@ -145,35 +145,13 @@ void ArgosDisplayPlugin<T>::execute() {
 	_inspectors.clear() ;
 
 	//register connected vigra images
-	for( ; it != end ; it++)
-	{
+	for( ; it != end ; it++) {
 		std::string name = (*it)->getParent().getName() + "." + (*it)->getName() ;
-		// dynamic_cast fails for unknown reasons, therefore this
-		// horrible piece of code
-#ifdef SUPERNODES_BRANCH
-		Slot* sl=(Slot*)(*it);
-		OutputSlotIntf* out=dynamic_cast<OutputSlotIntf*>(sl);
-
-		if(!out)
-			vigra_fail(
-					"cast of vigra::MultiArrayView failed! "
-					"In/Output slot may be invalid!");
-		const OutputSlot<vigra::MultiArray<5,T> >* temp =
-			dynamic_cast<const OutputSlot<vigra::MultiArray<5, T> >*>(out->getDataSlot());
-#else
-		const OutputSlot<vigra::MultiArray<5,T> >* temp =
-			dynamic_cast<const OutputSlot<vigra::MultiArray<5, T> >*>(*it);
-#endif
-
-		if(!temp)
-			vigra_fail(
-					"cast of vigra::MultiArrayView failed! "
-					"In/Output slot may be invalid!");
-
 		// register all Arrays with the ViewStack
-		AbstractPixelInspector* inspector = new VigraPixelInspector<T>(temp->operator()(), name) ;
-		if(inspector)
-		{	viewStack.linkImage(inspector) ;
+		AbstractPixelInspector* inspector = new VigraPixelInspector<T>(
+					_vigraIn.getDataFromOutputSlot(*it), name);
+		if(inspector) {
+			viewStack.linkImage(inspector) ;
 			_inspectors.push_back(inspector) ;
 		}
 	}
@@ -187,30 +165,8 @@ void ArgosDisplayPlugin<T>::execute() {
 	for(cit = _cimgIn.begin(); cit != cend ; cit++) {
 		std::string name = (*cit)->getParent().getName() + "."
 				+ (*cit)->getName() ;
-
-#ifdef SUPERNODES_BRANCH
-		Slot* sl=(Slot*)(*cit);
-		OutputSlotIntf* out=dynamic_cast<OutputSlotIntf*>(sl);
-		if(!out) {
-			throw std::runtime_error(
-					this->getClassName() + " : " + this->getName()
-						+ " : cast of cimg_library::CImgList failed! "
-					"In/Output slot \"" + name + "\" may be invalid!");
-		}
-		const OutputSlot<cimg_library::CImgList<T> >* temp =
-			dynamic_cast<const OutputSlot<cimg_library::CImgList<T> >*>(out->getDataSlot());
-#else
-		const OutputSlot<cimg_library::CImgList<T> >* temp =
-			dynamic_cast<const OutputSlot<cimg_library::CImgList<T> >*>(*cit);
-#endif
-
-		if(!temp) {
-			throw std::runtime_error(
-					this->getClassName() + " : " + this->getName()
-						+ " : cast of cimg_library::CImgList failed! "
-					"In/Output slot \"" + name + "\" may be invalid!");
-		}
-		AbstractPixelInspector* inspector = new CImgPixelInspector<T>(temp->operator()(), name) ;
+		AbstractPixelInspector* inspector = new CImgPixelInspector<T>(
+				_cimgIn.getDataFromOutputSlot(*cit), name) ;
 		if(inspector)
 		{	viewStack.linkImage(inspector) ;
 			_inspectors.push_back(inspector) ;

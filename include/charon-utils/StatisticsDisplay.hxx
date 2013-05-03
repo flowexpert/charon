@@ -258,12 +258,11 @@ void StatisticsDisplayPlugin<T>::execute() {
 	typename std::set<AbstractSlot<Array>*>::const_iterator it = _vigraIn.begin() ;
 	typename std::set<AbstractSlot<Array>*>::const_iterator end = _vigraIn.end() ;
 
-	for(std::size_t ii = 0 ; (ii < _vigraIn.size()) && (it != end) ; ii++, it++)
-	{
+	for (;it != end ; it++) {
 		std::string name = (*it)->getParent().getName() + "." + (*it)->getName();
 		sout << "Calculating statistics for " << name << std::endl ;
 		
-		const Array& img = _vigraIn[ii] ;
+		const Array& img = _vigraIn.getDataFromOutputSlot(*it) ;
 		
 		Array* sortedImg = 0 ;
 		if(_calcQuantiles)
@@ -393,41 +392,36 @@ void StatisticsDisplayPlugin<T>::execute() {
 	typename std::set<AbstractSlot<cimg_library::CImgList<T> >*>
 			::const_iterator cend = _cimgIn.end() ;
 	
-	for(std::size_t ii = 0 ; (ii < _cimgIn.size()) && (cit != cend) ; ii++, cit++)
-	{
+	for (; cit != cend; cit++) {
 		std::string name = (*cit)->getParent().getName() + "." + (*cit)->getName();
 		sout << "Calculating statistics for " << name << std::endl ;
 		//create accumulators for each image, add tags as needed
-		const cimg_library::CImgList<T>& cimg = _cimgIn[ii] ;
+		const cimg_library::CImgList<T>& cimg =
+				_cimgIn.getDataFromOutputSlot(*cit);
 
 		size_t pixCount  = 0 ;
-		cimglist_for(cimg,l)
-		{
+		cimglist_for(cimg,l) {
 			pixCount += cimg(l).size() ;
 		}
 		
 		std::vector<T> sortedImg ;
-		if(_calcQuantiles)
-		{
+		if(_calcQuantiles) {
 			sortedImg.reserve(pixCount) ;
 		}
 
 		//accumulator which can track infinities and NaN
 		accumulator_set<double, stats<
-			tag::min, tag::max, tag::count, tag::density
-		> > acc(tag::density::num_bins = _numBins(),tag::density::cache_size = pixCount) ;
-
-		
+			tag::min, tag::max, tag::count, tag::density > >
+				acc(tag::density::num_bins = _numBins(),
+						tag::density::cache_size = pixCount) ;
 
 		//accumulator for calculations where inf and NaN lead to errors
 		accumulator_set<double, stats<
 			tag::sum, tag::mean, tag::variance
 		> > stable_acc;
 
-		if(!_cimgMask.connected())
-		{
-			cimglist_for(cimg,l)
-			{
+		if(!_cimgMask.connected()) {
+			cimglist_for(cimg,l) {
 				const cimg_library::CImg<T>& img = cimg(l) ;
 				cimg_forXYZC(img, x,y,z,c)
 				{
