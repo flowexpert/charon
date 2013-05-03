@@ -166,14 +166,6 @@ INSTALL(
 	COMPONENT    libraries
 )
 
-IF(NOT SKIP_EXPORT_INSTALL)
-	INSTALL(
-		EXPORT       ${EXPORT_NAME}
-		DESTINATION  ${CONFIG_INSTALL}
-		COMPONENT    libraries
-	)
-ENDIF()
-
 # install header files to include directory
 INSTALL(
 	DIRECTORY   ${CHARON_CORE_INCLUDE_DIR}
