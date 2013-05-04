@@ -360,11 +360,12 @@ IF(USE_CIMG)
 		SET(toggletimeout_HEADERS_TOMOC ${CHARON_UTILS_INCLUDE_DIR}/ToggleTimeout.h)
 		QT4_WRAP_CPP(toggletimeout_HEADERS_MOCKED ${toggletimeout_HEADERS_TOMOC})
 		ADD_CHARON_PLUGIN(toggle
-			${toggletimeout_HEADERS_MOCKED}
+			Toggle.cpp
 			ToggleTimeout.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/Toggle.h
 			${CHARON_UTILS_INCLUDE_DIR}/Toggle.hxx
-			Toggle.cpp
+			${toggletimeout_HEADERS_MOCKED}
+			PLUGIN_LISTS Plugins Plugins_CImg
 			LINK_LIBRARIES ${QT_LIBRARIES}
 		)
 
@@ -387,7 +388,7 @@ IF(USE_CIMG)
 		#	PLUGIN_LISTS Plugins Plugins_CImg
 		#	LINK_LIBRARIES ${QT_LIBRARIES}
 		#)
-	
+
 		QT4_WRAP_CPP(Scriptor_MOC
 			${CHARON_UTILS_INCLUDE_DIR}/Scriptor/ScriptorExecuter.h)
 		ADD_CHARON_PLUGIN(scriptorcimg
@@ -481,7 +482,7 @@ IF(USE_VIGRA)
 			FileReaderHDF5.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.h
 			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.hxx
-			PLUGIN_LISTS Plugins Plugins_Vigra		
+			PLUGIN_LISTS Plugins Plugins_Vigra
 		)
 	ENDIF(USE_HDF5)
 
