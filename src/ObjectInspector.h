@@ -114,6 +114,9 @@ private slots:
 	/// Add new Parameter
 	void on_addButton_clicked();
 
+    /// Reactivate all consecutive plugins
+    void on_ActivateAllButton_clicked();
+
 	/// Delete selected parameter
 	void on_deleteButton_clicked();
 

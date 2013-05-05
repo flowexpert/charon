@@ -121,6 +121,9 @@ private:
 	/// deselects all nodes
 	void _deselectAllNodes();
 
+    /// sets the nodes active or inactive
+    void setNodeActive();
+
 	/// buffered connection line for slot connection drawing
 	ConnectionLine* _cline;
 
