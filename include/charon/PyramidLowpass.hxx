@@ -49,8 +49,6 @@ PyramidLowpass<T>::PyramidLowpass(const std::string& name) :
 			sigmas, "sigmas", "list of std. deviations in decreasing order", "T_list");
 	ParameteredObject::_addParameter(
 			bilateralBlur, "bilateralBlur", "if true, blurring will stop at region borders", "bool");
-	ParameteredObject::_addParameter(
-			blurRadius, "blurRadius", "radius for bilateral blur window", "unsigned int" );
 
 	ParameteredObject::_setTags("charon-flow;MultiscaleApproaches;CImg");
 }
@@ -66,14 +64,15 @@ void PyramidLowpass<T>::execute() {
 	_depth    = si[0].depth();
 	_spectrum = si[0].spectrum();
 
+	unsigned int _blurRadius = 0;
 	bool _bilateralBlur = bilateralBlur();
-	unsigned int _blurRadius = blurRadius();
 
 	float blurFactor1 = 0.0;
 	float blurFactor2 = 0.0;
 
 	if (level() == 0) {
 		blurFactor2 = sigmas()[level()];
+		_blurRadius = floor(blurFactor2 * 1.5 + 0.5);
 		cimglist_for(so,kk)
 		{
 			if (_bilateralBlur && blurFactor2) {
@@ -86,6 +85,7 @@ void PyramidLowpass<T>::execute() {
 		cimg_library::CImgList<T> tmp1 = si;
 		cimg_library::CImgList<T> tmp2 = si;
 		blurFactor1 = sigmas()[level()-1];
+		_blurRadius = floor(blurFactor1 * 1.5 + 0.5);
 		cimglist_for(tmp1,kk)
 		{
 			if (_bilateralBlur && blurFactor1) {
@@ -95,6 +95,7 @@ void PyramidLowpass<T>::execute() {
 			}
 		}
 		blurFactor2 = sigmas()[level()];
+		_blurRadius = floor(blurFactor2 * 1.5 + 0.5);
 		cimglist_for(tmp2,kk)
 		{
 			if (_bilateralBlur && blurFactor2) {

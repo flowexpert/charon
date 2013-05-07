@@ -65,9 +65,6 @@ public:
 	/// bilateral blur, if checked
 	Parameter< bool > bilateralBlur;
 
-	/// radius for bilateral blur window
-	Parameter< unsigned int > blurRadius;
-
 	/// create a new PyramidLowpass object
 	/// \param name          Instance name
 	PyramidLowpass(const std::string& name = "");
