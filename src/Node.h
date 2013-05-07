@@ -66,6 +66,9 @@ public:
 	/// @param id      ID to set
 	void setId(unsigned int id);
 
+    /// changes the nodes activity
+    void setActive(bool activeStatus);
+
 	/// resets the name of the node
 	/// @param name    name to set
 	void setName(QString name);
@@ -132,6 +135,9 @@ private:
 
 	/// state of node selection
 	bool _selectedNode;
+
+    /// state of activity
+    bool _active;
 
 	///  id of the node
 	unsigned int _id;
