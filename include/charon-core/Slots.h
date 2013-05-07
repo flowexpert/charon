@@ -1,17 +1,17 @@
 /*  This file is part of Charon.
 
-    Charon is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	Charon is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    Charon is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	Charon is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with Charon.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** @file Slots.h
  *  Declaration of the abstract class
@@ -38,8 +38,6 @@
 #include "AbstractData.hxx"
 #include <set>
 #include "DllEx.h"
-
-#define SUPERNODES_BRANCH 1//Allow ArgosDisplay to compile with charon-core in main and charon-core in supernodes. REMOVE AFTER MERGING supernodes with main
 
 class ParameteredObject;
 class PluginManagerInterface;
@@ -297,11 +295,11 @@ class charon_core_PUBLIC InputSlotIntf
 public:
 
 
-    /// get the name
-    virtual std::string getName() const=0;
+	/// get the name
+	virtual std::string getName() const=0;
 
-    /// get the type
-    virtual std::string getType() const =0;
+	/// get the type
+	virtual std::string getType() const =0;
 
 };
 
@@ -345,12 +343,12 @@ public:
 
 	virtual std::string getName() const
 	{
-	    return AbstractSlot<T>::getName();
+		return AbstractSlot<T>::getName();
 	}
 
 	virtual std::string getType() const
 	{
-	    return AbstractSlot<T>::getType();
+		return AbstractSlot<T>::getType();
 	}
 
 	/// handle data extraction from output slot
@@ -375,25 +373,25 @@ private:
 class charon_core_PUBLIC OutputSlotIntf
 {
 public:
-    /// set manager configuration string
-    virtual void setConfig(std::string conf)=0;
-    /// get manager configuration string
-    virtual const std::string& getConfig() const=0;
+	/// set manager configuration string
+	virtual void setConfig(std::string conf)=0;
+	/// get manager configuration string
+	virtual const std::string& getConfig() const=0;
 
-    /// change data cache type
-    virtual void setCacheType(Slot::CacheType type)=0;
+	/// change data cache type
+	virtual void setCacheType(Slot::CacheType type)=0;
 
-    /// get the name
-    virtual std::string getName() const =0;
+	/// get the name
+	virtual std::string getName() const =0;
 
-    /// get the type
-    virtual std::string getType() const =0;
+	/// get the type
+	virtual std::string getType() const =0;
 
-    /// query data cache type
-    virtual Slot::CacheType getCacheType() const=0;
+	/// query data cache type
+	virtual Slot::CacheType getCacheType() const=0;
 
 
-    /// Return a pointer to a real slot
+	/// Return a pointer to a real slot
 	virtual const OutputSlotIntf* getDataSlot() const=0;
 
 };
@@ -451,22 +449,22 @@ public:
 	/// Return a pointer to a real slot
 	const OutputSlotIntf* getDataSlot() const
 	{
-	    return this;
+		return this;
 	}
 
 	virtual std::string getName() const
 	{
-	    return AbstractSlot<T>::getName();
+		return AbstractSlot<T>::getName();
 	}
 
 	virtual std::string getType() const
 	{
-	    return AbstractSlot<T>::getType();
+		return AbstractSlot<T>::getType();
 	}
 	/// set manager configuration string
 	virtual void setConfig(std::string conf)
 	{
-	    _managerConfig=conf;
+		_managerConfig=conf;
 	}
 
 
@@ -481,41 +479,41 @@ class  charon_core_DLL_PUBLIC VirtualSlot
 	:public Slot
 {
 public:
-    friend class VirtualInputSlot;
-    friend class VirtualOutputSlot;
-    VirtualSlot(std::string virtType,int num=0);
-    /// overload Slot functions. Load and save the config string
-    virtual void load(
-		    const ParameterFile& pf, const PluginManagerInterface* man);
-    virtual void save(ParameterFile& pf) const;
+	friend class VirtualInputSlot;
+	friend class VirtualOutputSlot;
+	VirtualSlot(std::string virtType,int num=0);
+	/// overload Slot functions. Load and save the config string
+	virtual void load(
+			const ParameterFile& pf, const PluginManagerInterface* man);
+	virtual void save(ParameterFile& pf) const;
 
-    /// set _slot to Casted target
-    bool _addTarget(Slot *target);
+	/// set _slot to Casted target
+	bool _addTarget(Slot *target);
 
-    /// remove target
-    bool _removeTarget(Slot *target);
-
-
+	/// remove target
+	bool _removeTarget(Slot *target);
 
 
-    virtual void prepare();
 
-    virtual void finalize();
 
-    std::string guessType() const;
+	virtual void prepare();
 
-    std::string getName() const;
+	virtual void finalize();
 
-    std::string getType() const;
+	std::string guessType() const;
 
-    /// Get pointers to the connected targets.
-    virtual std::set<Slot*> getTargets() const;
+	std::string getName() const;
 
-    /// Set corresponding partner VirtualSlot
-    void setVirtualPartnerSlot(VirtualSlot* insl);
+	std::string getType() const;
+
+	/// Get pointers to the connected targets.
+	virtual std::set<Slot*> getTargets() const;
+
+	/// Set corresponding partner VirtualSlot
+	void setVirtualPartnerSlot(VirtualSlot* insl);
 protected:
-    virtual bool isValidPartner(VirtualSlot* insl)=0;
-    virtual bool isValidTarget(Slot* target)=0;
+	virtual bool isValidPartner(VirtualSlot* insl)=0;
+	virtual bool isValidTarget(Slot* target)=0;
 
 	void setDisplayNameAndType(std::string name,std::string type);
 
@@ -525,8 +523,8 @@ protected:
 	virtual bool onAddTarget(Slot* target);
 	virtual bool onRemoveTarget(Slot* target);
 
-    VirtualSlot* _partner;
-    std::set<Slot*> _target;
+	VirtualSlot* _partner;
+	std::set<Slot*> _target;
 
 
 
@@ -538,44 +536,44 @@ class charon_core_DLL_PUBLIC VirtualOutputSlot
 	:public VirtualSlot,public OutputSlotIntf
 {
 public:
-    friend class VirtualInputSlot;
-    VirtualOutputSlot(int num=0);
-    /// set the cache type of _slot
-    void setCacheType(Slot::CacheType type);
+	friend class VirtualInputSlot;
+	VirtualOutputSlot(int num=0);
+	/// set the cache type of _slot
+	void setCacheType(Slot::CacheType type);
 
-    /// get the cache type from _slot
-    Slot::CacheType getCacheType() const;
+	/// get the cache type from _slot
+	Slot::CacheType getCacheType() const;
 
-    /// overloaded getType
-    std::string getType() const;
+	/// overloaded getType
+	std::string getType() const;
 
-    /// get the Name
-    std::string getName() const ;
+	/// get the Name
+	std::string getName() const ;
 
-    /// get the manager config
-    const std::string& getConfig() const;
+	/// get the manager config
+	const std::string& getConfig() const;
 
-    /// Return a pointer to a real slot
+	/// Return a pointer to a real slot
 	const OutputSlotIntf* getDataSlot() const;
 
-    /// set manager configuration string
-    virtual void setConfig(std::string conf);
+	/// set manager configuration string
+	virtual void setConfig(std::string conf);
 
-    void setLoopPartner(VirtualInputSlot* loopPartner);
-    void setLoop(bool loop);
+	void setLoopPartner(VirtualInputSlot* loopPartner);
+	void setLoop(bool loop);
 protected:
-    virtual bool isValidPartner(VirtualSlot *insl);
-    virtual bool isValidTarget(Slot *target);
-    void onLoad(const ParameterFile &pf, const PluginManagerInterface *man);
-    void onSave(ParameterFile &pf) const;
-    virtual bool onAddTarget(Slot *target);
-    virtual bool onRemoveTarget(Slot *target);
+	virtual bool isValidPartner(VirtualSlot *insl);
+	virtual bool isValidTarget(Slot *target);
+	void onLoad(const ParameterFile &pf, const PluginManagerInterface *man);
+	void onSave(ParameterFile &pf) const;
+	virtual bool onAddTarget(Slot *target);
+	virtual bool onRemoveTarget(Slot *target);
 
 private:
-    std::string _managerconfig;
-    Slot::CacheType _cacheType;
-    VirtualInputSlot* _loopPartner;
-    bool _loop;
+	std::string _managerconfig;
+	Slot::CacheType _cacheType;
+	VirtualInputSlot* _loopPartner;
+	bool _loop;
 
 
 };
@@ -586,24 +584,24 @@ class charon_core_DLL_PUBLIC VirtualInputSlot
 	:public VirtualSlot,public InputSlotIntf
 {
 public:
-    friend class VirtualOutputSlot;
-    VirtualInputSlot(int num=0);
+	friend class VirtualOutputSlot;
+	VirtualInputSlot(int num=0);
 
 
 
 
 
-    /// overloaded getType
-    std::string getType() const;
+	/// overloaded getType
+	std::string getType() const;
 
-    /// get the Name
-    std::string getName() const ;
+	/// get the Name
+	std::string getName() const ;
 
 protected:
-    virtual bool isValidPartner(VirtualSlot *insl);
-    virtual bool onAddTarget(Slot *target);
-    virtual bool onRemoveTarget(Slot *target);
-    virtual bool isValidTarget(Slot *target);
+	virtual bool isValidPartner(VirtualSlot *insl);
+	virtual bool onAddTarget(Slot *target);
+	virtual bool onRemoveTarget(Slot *target);
+	virtual bool isValidTarget(Slot *target);
 
 
 

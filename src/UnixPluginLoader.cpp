@@ -27,9 +27,20 @@
 #endif /*APPLE*/
 
 #include <dlfcn.h>
-#include <charon-core/UnixPluginLoader.h>
+#include "../include/charon-core/UnixPluginLoader.h"
 
-UnixPluginLoader::UnixPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix, bool ignoreVersion) :
+#ifdef USE_LIBELF
+#include "../include/charon-core/configVersion.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <libelf.h>
+#include <gelf.h>
+#endif
+
+UnixPluginLoader::UnixPluginLoader(
+		const std::string & n, std::vector<std::string>& plpaths,
+		std::string &lSuffix, bool ignoreVersion) :
 	AbstractPluginLoader(n,plpaths,lSuffix,ignoreVersion) {
 	libHandle = NULL;
 }
@@ -37,6 +48,7 @@ UnixPluginLoader::UnixPluginLoader(const std::string & n,std::vector<std::string
 void UnixPluginLoader::load() throw (PluginException) {
 	std::string path, pathS;
 
+	// find plugin file
 	for(std::vector<std::string>::const_iterator  cur = pluginPaths.begin();
 			cur != pluginPaths.end(); cur++) {
 		path = *cur + "/lib" + pluginName + LIBRARY_EXTENSION;
@@ -49,25 +61,138 @@ void UnixPluginLoader::load() throw (PluginException) {
 		}
 		if (FileTool::exists(path)) {
 			sout << "(DD) File: " << path << std::endl;
-			libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 			break;
 		}
 	}
-	if (!libHandle) {
-		if (!FileTool::exists(path)) {
-			throw PluginException("Failed to load the plugin \"" + pluginName
-					+ "\". The file lib" + pluginName + LIBRARY_EXTENSION +
-					+ " could not be found."
-					+ (libSuffix.size() > 0 ?
-							" (Possible suffix: " + libSuffix + ")" :
-							" (suffix disabled)"),
-					pluginName, PluginException::FILE_NOT_FOUND);
-		} else {
-			throw PluginException("Failed to load the plugin \"" + pluginName
-					+ "\". Maybe the file is damaged."
-					+ "\n Description of the error:\n" + dlerror(),
-					pluginName, PluginException::FILE_DAMAGED);
+	if (!FileTool::exists(path)) {
+		throw PluginException("Failed to find the plugin \"" + pluginName
+				+ "\". The file" + pluginName + LIBRARY_EXTENSION +
+				+ " could not be found."
+				+ (libSuffix.size() > 0 ?
+						" (Possible suffix: " + libSuffix + ")" :
+						" (suffix disabled)"),
+				pluginName, PluginException::FILE_NOT_FOUND);
+	}
+
+#ifdef USE_LIBELF
+	// try to determine charon-core version from plugin before dlopening
+	// to avoid version mismatch crashes, this can be disabled in the
+	// plugin manager configuration (_ignoreVersion)
+#if defined(__x86_64__)
+	typedef Elf64_Ehdr Elf_Ehdr;
+	const unsigned char elfClass = ELFCLASS64;
+	const std::string elfClassDesc = "64 bit";
+#else
+	typedef Elf32_Ehdr Elf_Ehdr;
+	const unsigned char elfClass = ELFCLASS32;
+	const std::string elfClassDesc = "32 bit";
+#endif
+	if (!_ignoreVersion) {
+		int fd = open(path.c_str(),O_RDWR);
+		if (fd < 0) {
+			throw PluginException("Failed to open the plugin \"" + pluginName
+				+ "\". Maybe you do not have read permissions.",
+				pluginName, PluginException::FILE_DAMAGED);
 		}
+		struct stat fStats;
+		if (fstat(fd, &fStats)) {
+			close(fd);
+			throw PluginException("Failed to fstat the plugin \"" + pluginName
+				+ "\".", pluginName, PluginException::FILE_DAMAGED);
+		}
+		char* buf = new char[fStats.st_size];
+		if (read(fd, buf, fStats.st_size) < fStats.st_size) {
+			delete[] buf;
+			close(fd);
+			throw PluginException("Failed to read the plugin \"" + pluginName
+				+ "\".", pluginName, PluginException::FILE_DAMAGED);
+		}
+		if (elf_version(EV_CURRENT) == EV_NONE) {
+			sout << "(WW) Elf Library is out of date!" << std::endl;
+		}
+		Elf_Ehdr* eHeader = (Elf_Ehdr*) buf;
+		// check ELF magic bytes
+		if (
+				eHeader->e_ident[EI_MAG0]!=ELFMAG0 ||
+				eHeader->e_ident[EI_MAG1]!=ELFMAG1 ||
+				eHeader->e_ident[EI_MAG2]!=ELFMAG2 ||
+				eHeader->e_ident[EI_MAG3]!=ELFMAG3) {
+			delete[] buf;
+			close(fd);
+			throw PluginException("ELF check failed (magic bytes): File "
+				+ path + " is no ELF file.",
+				pluginName, PluginException::FILE_DAMAGED);
+		}
+		// check for possible 32/64 bit mismatch
+		if (eHeader->e_ident[EI_CLASS] != elfClass) {
+			delete[] buf;
+			close(fd);
+			throw PluginException("ELF check failed (architecture): File "
+				+ path + " is no " +  elfClassDesc + " ELF file.",
+				pluginName, PluginException::FILE_DAMAGED);
+		}
+		// ELF version check
+		if (eHeader->e_ident[EI_VERSION] != EV_CURRENT) {
+			delete[] buf;
+			close(fd);
+			throw PluginException("ELF check failed (version): File "
+				+ path + " was compiled with another ELF version.",
+				pluginName, PluginException::FILE_DAMAGED);
+		}
+		Elf* elf = elf_begin(fd,ELF_C_READ,NULL);
+		Elf_Scn* scn = 0;
+		// iterate through elf sections and look for .charon-plugin
+		while ((scn=elf_nextscn(elf,scn))!=0) {
+			GElf_Shdr shdr;
+			gelf_getshdr(scn,&shdr);
+			std::string sName = elf_strptr(elf,eHeader->e_shstrndx,shdr.sh_name);
+			if (sName == ".charon-plugin") {
+				break;
+			}
+		}
+		if (!scn) {
+			sout << "(WW) No Plugin Section found in ELF file!" << std::endl;
+		}
+		else {
+			Elf_Data* eData = 0;
+			eData = elf_getdata(scn, eData);
+			// check data type and size
+			if (eData->d_type != ELF_T_BYTE) {
+				sout << "(WW) Wrong Plugin Section Data Type!" << std::endl;
+			}
+			else if (eData->d_size < 3) {
+				sout << "(WW) Wrong Plugin Section Data Size!" << std::endl;
+			}
+			else {
+				const unsigned char* content =
+						(const unsigned char*) eData->d_buf;
+				// check version
+				if (content[0] != CHARON_CORE_VERSION_MAJOR) {
+					sout << "(WW) plugin major version mismatch" << std::endl;
+				}
+				else if (content[1] != CHARON_CORE_VERSION_MINOR) {
+					sout << "(WW) plugin minor version mismatch" << std::endl;
+				}
+				else if (content[2] != CHARON_CORE_VERSION_PATCH) {
+					sout << "(WW) plugin patch version mismatch" << std::endl;
+				}
+				else {
+					sout << "(DD) plugin ELF check successful" << std::endl;
+				}
+			}
+		}
+		delete[] buf;
+		close(fd);
+	}
+#endif
+
+	// try to dlopen the shared library
+	libHandle = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+	if (!libHandle) {
+		throw PluginException("Failed to load the plugin \"" + pluginName
+				+ "\". Maybe the file is damaged."
+				+ "\n Description of the error:\n" + dlerror(),
+				pluginName, PluginException::FILE_DAMAGED);
 	}
 
 	// get function pointers from shared library

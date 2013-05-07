@@ -24,6 +24,10 @@ IF(NOT EXPORT_NAME)
 	SET(EXPORT_NAME ${PROJECT_NAME}-export)
 ENDIF()
 
+IF(UNIX)
+	OPTION(USE_LIBELF "Use libelf or elfutils for version check on plugin loading" OFF)
+ENDIF()
+
 INCLUDE(InitFlags)
 INCLUDE(PluginMakros)
 # set up documentation generation
