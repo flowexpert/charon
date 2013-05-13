@@ -435,11 +435,7 @@ void SimpleIterator<T>::finishIterations() {
 
 	// post execution code
 	ParameteredObject::_commitSlots();
-#ifdef SUPERNODES_BRANCH
 	ParameteredObject::setExecuted(true);
-#else
-	ParameteredObject::_setExecuted(true);
-#endif
 }
 
 #endif /* _SIMPLEITERATOR_HXX_ */
