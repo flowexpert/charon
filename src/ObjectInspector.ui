@@ -166,6 +166,13 @@ This deletes the parameter(s) from the parameter file.</string>
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="ActivateAllButton">
+             <property name="text">
+              <string>Activate Plugintree</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>

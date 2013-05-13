@@ -39,7 +39,6 @@
 #include <QTimer>
 #include <QApplication>
 #include <QMutex>
-
 #include "ParameterFileModel.moc"
 
 ParameterFileModel::ParameterFileModel(
@@ -301,12 +300,162 @@ bool ParameterFileModel::setData(
 			Q_ASSERT(getType(_keys[ind.row()]) == "bool");
 			bool checked (value.toBool());
 			setValue (_keys[ind.row()], checked ? "true" : "false");
-			emit dataChanged(index(ind.row(),0),ind);
-		}
+            emit dataChanged(index(ind.row(),0),ind);
+            if (_keys[ind.row()].contains("active") && checked == true){
+                reactivatePreviousPlugins();
+            }
+            // additional check whether the changed Parameter is the ActiveInactive
+            if (_keys[ind.row()].contains("active") && checked == false){
+                deactivate();
+            }
+        }
 		break;
 	}
 	return false;
 }
+
+void ParameterFileModel::reactivatePreviousPlugins(){
+    QString tmpPrefix = _prefix;
+    QStringList inputsOfOneSlot;
+    int parameterIndex;
+    for (int p = 0; p < _keys.size(); p++){
+        if (_keys[p].contains("active")){
+            parameterIndex = p;
+            break;
+        }
+    }
+    for (int i = 0; i < tmpPrefix.size(); i++){
+        if (tmpPrefix.at(i) == '.'){
+            tmpPrefix.truncate(i);
+        }
+    }
+    for (int i = 0; i < getInputs(tmpPrefix).size(); i++){
+        if (getValue(tmpPrefix + "."+ getInputs(tmpPrefix).at(i)).contains(";")){
+            inputsOfOneSlot = getValue(tmpPrefix + "."+ getInputs(tmpPrefix).at(i)).split(";");
+            for (int o = 0; o < inputsOfOneSlot.size(); o++){
+                setPrefix(inputsOfOneSlot.at(o));
+                for (int p = 0; p < _keys.size(); p++){
+                    if (_keys[p].contains("active")){
+                        parameterIndex = p;
+                        break;
+                    }
+                }
+                setValue(_keys[parameterIndex], "true");
+                reactivatePreviousPlugins();
+            }
+        }
+        else if (getValue(tmpPrefix + "."+ getInputs(tmpPrefix).at(i)) != ""){
+            setPrefix(getValue(tmpPrefix + "."+ getInputs(tmpPrefix).at(i)));
+            for (int p = 0; p < _keys.size(); p++){
+                if (_keys[p].contains("active")){
+                    parameterIndex = p;
+                    break;
+                }
+            }
+            setValue(_keys[parameterIndex], "true");
+            reactivatePreviousPlugins();
+        }
+    }
+
+}
+
+// Deactivates following Plugins
+void ParameterFileModel::deactivate(){
+    QString tmpPrefix = _prefix;
+    QStringList outputsOfOneSlot;
+    int parameterIndex;
+    for (int p = 0; p < _keys.size(); p++){
+        if (_keys[p].contains("active")){
+            parameterIndex = p;
+            break;
+        }
+    }
+    for (int i = 0; i < tmpPrefix.size(); i++){
+        if (tmpPrefix.at(i) == '.'){
+            tmpPrefix.truncate(i);
+        }
+    }
+    for (int i = 0; i < getOutputs(tmpPrefix).size(); i++){
+        if (getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)).contains(";")){
+            outputsOfOneSlot = getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)).split(";");
+            for (int o = 0; o < outputsOfOneSlot.size(); o++){
+                setPrefix(outputsOfOneSlot.at(o));
+                for (int p = 0; p < _keys.size(); p++){
+                    if (_keys[p].contains("active")){
+                        parameterIndex = p;
+                        break;
+                    }
+                }
+                setValue(_keys[parameterIndex], "false");
+                deactivate();
+            }
+        }
+        else if (getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)) != ""){
+            setPrefix(getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)));
+            for (int p = 0; p < _keys.size(); p++){
+                if (_keys[p].contains("active")){
+                    parameterIndex = p;
+                    break;
+                }
+            }
+            setValue(_keys[parameterIndex], "false");
+            deactivate();
+        }
+    }
+}
+
+// Reactivates all following Plugins
+void ParameterFileModel::reactivate(){
+    QString tmpPrefix = _prefix;
+    QStringList outputsOfOneSlot;
+    int parameterIndex;
+    for (int p = 0; p < _keys.size(); p++){
+        if (_keys[p].contains("active")){
+            parameterIndex = p;
+            break;
+        }
+    }
+    if (getValue(_keys[parameterIndex]) == "false"){
+        setValue(_keys[parameterIndex], "true");
+        for (int i = 0; i < tmpPrefix.size(); i++){
+            if (tmpPrefix.at(i) == '.'){
+                tmpPrefix.truncate(i);
+            }
+        }
+        for (int i = 0; i < getOutputs(tmpPrefix).size(); i++){
+            if (getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)).contains(";")){
+                outputsOfOneSlot = getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)).split(";");
+                for (int o = 0; o < outputsOfOneSlot.size(); o++){
+                    setPrefix(outputsOfOneSlot.at(o));
+                    reactivate();
+                }
+            }
+            else if (getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)) != ""){
+                setPrefix(getValue(tmpPrefix + "."+ getOutputs(tmpPrefix).at(i)));
+                reactivate();
+            }
+        }
+
+    }
+}
+
+bool ParameterFileModel::active() const {
+    int parameterIndex;
+    for (int p = 0; p < _keys.size(); p++){
+        if (_keys[p].contains("active")){
+            parameterIndex = p;
+            break;
+        }
+    }
+    if (getValue(_keys[parameterIndex]) == "false"){
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+
 
 Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 	if (!prefixValid() || ind.row() < 0 || ind.row() >= _keys.size()) {
