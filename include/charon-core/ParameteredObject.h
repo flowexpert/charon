@@ -388,7 +388,10 @@ public:
 	/// get execution status
 	bool executed() const {
 		return _executed;
-	}
+    }
+    // active inactive button
+    Parameter < bool > _active;
+
 
 	/// deprecated macro
 #define PARAMETEREDOBJECT_AVOID_REEXECUTION \

@@ -67,6 +67,11 @@ ParameteredObject::ParameteredObject(const std::string& className,
         _initialized=false;
 
 	_setDynamic(false);
+    // additional Active
+    _addParameter(_active, "active", 
+		"If this is set to false,"
+		"the plugin and all following ones are not executed",
+		true, "bool");
 }
 
 ParameteredObject::~ParameteredObject() {
