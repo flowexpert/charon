@@ -114,6 +114,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 
 				UINT	dwBytes; //size of contained code tables
 				
+				//get language and code page block from file version information
 				BOOL res = VerQueryValue(versionInfo, 
 					TEXT("\\VarFileInfo\\Translation"),
 					(LPVOID*)&lpTranslate,
@@ -126,6 +127,8 @@ void WindowsPluginLoader::load() throw (PluginException) {
 					PluginException::VERSION_INFORMATION_MISSING);
 				}
 
+				//usualy we should have only one block of version information per file
+				//but theoretically there could be more
 				for(int i=0; i < (dwBytes/sizeof(struct LANGANDCODEPAGE)); i++ )
 				{
 					LPTSTR subBlock ;
@@ -149,6 +152,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 									subBlock, 
 									(LPVOID*)&infoBuffer, 
 									&bufferLen); 
+					//check that the "ProductName" field is set to "Charon-Suite"
 					if(res == 0 && bufferLen == 0 && std::string("Charon-Suite") != infoBuffer) {
 						delete[] versionInfo;
 						delete[] subBlock;
@@ -163,7 +167,11 @@ void WindowsPluginLoader::load() throw (PluginException) {
 								lpTranslate[i].wCodePage);
 					if (FAILED(hr))
 					{
-					// TODO: write error handler.
+						delete[] versionInfo;
+						delete[] subBlock ;
+						throw PluginException("Failed to load the plugin \"" + pluginName
+							+ "\". The plugin contains no valid charon-core version information.", pluginName,
+						PluginException::VERSION_INFORMATION_MISSING);
 					}
 					bufferLen = 0;
 					res = VerQueryValue(versionInfo, 
@@ -173,6 +181,8 @@ void WindowsPluginLoader::load() throw (PluginException) {
 					if(res && bufferLen) {
 						//parse the version string, assume it has the following form
 						//major.minor.patch
+						//we do a simple string comparison, as there is currently no plan for
+						//upward/backward compatibility
 						std::string version(infoBuffer) ;
 						if(ParameteredObject::charon_core_version != version) {
 							delete[] versionInfo;
@@ -293,7 +303,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 		throw PluginException(
 			"This Plugin is build in DEBUG "
 			"configuration while charon-core is in RELEASE Mode.\n"
-			"Plugin will not be used as runtime libraries are incompatible",
+			"(EE) Plugin will not be used as runtime libraries are incompatible",
 			pluginName, PluginException::INCOMPATIBLE_BUILD_TYPE) ;
 #endif 
 		}
