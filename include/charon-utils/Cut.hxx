@@ -41,6 +41,10 @@ Cut<T>::Cut(const std::string& name) :
 	ParameteredObject::_addParameter (
 				_lowerCut, "lowerCut", "lower cutoff value", 0.0) ;
 
+	ParameteredObject::_addParameter (
+				_normalize, "normalize",
+				"normalize, if set (overwrites first two values with cutoff values)", false) ;
+
 	ParameteredObject::_addInputSlot(
 				_in, "in", "input image", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(
@@ -55,10 +59,13 @@ void Cut<T>::execute() {
 	cimglist_for(in, l)
 	{
 		out(l) = in(l).get_cut(T(_lowerCut()),T(_upperCut())) ;
+		if (_normalize())
+		{
+			out(l).atXYZC(0,0,0,0) = _upperCut();
+			out(l).atXYZC(1,0,0,0) = _lowerCut();
+		}
 	}
 }
 
 #endif /* _DIST2DEPTH_HXX_ */
-
-
 

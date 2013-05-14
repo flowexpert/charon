@@ -49,6 +49,9 @@ public:
 	/// upper cutoff value
 	Parameter < double > _upperCut ;
 
+	/// normalize
+	Parameter < bool > _normalize ;
+
 	/// input image
 	InputSlot < cil::CImgList<T> > _in;
 	/// cut output
