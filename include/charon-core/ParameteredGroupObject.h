@@ -54,8 +54,7 @@ public:
 
 	/// plugin search paths which are used when executing this loop
 	ParameterList<std::string> pluginPaths;
-	
-	/// work flow file which will be executed in this loop
+    Parameter< bool > debugSuffix;
 	Parameter<std::string> workFlowFile;
 
 	/// Default deconstructor

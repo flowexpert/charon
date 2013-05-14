@@ -21,22 +21,27 @@ ParameteredGroupObject::ParameteredGroupObject(const std::string &className, con
 	:ParameteredObject(className,name,doc)
 {
 	_addParameter(pluginPaths,"pluginPaths","The paths where the plugins are stored.","string");
-	_addParameter(workFlowFile,"workflowfile","The workflow contained in this group","FileOpen");
+    _addParameter<bool>(debugSuffix,"debugSuffix","Load debug plugins suffixed with '_d'",1);
+    _addParameter(workFlowFile,"workflowfile","The workflow contained in this group","FileOpen");
 	_pluginMan=0;
 	_inputs=0;
 	_outputs=0;
 	_setDynamic(true);
 }
 
-ParameteredGroupObject::~ParameteredGroupObject() {
+ParameteredGroupObject::~ParameteredGroupObject()
+{
 }
 
-void ParameteredGroupObject::initialize() {
+void ParameteredGroupObject::initialize()
+{
 	ParameteredObject::initialize();
 
-	if(_inputs) {
+	if(_inputs)
+	{
 		std::vector<VirtualInputSlot*> vinput=_inputs->getSlotVector();
-		for (size_t i=0; i<vinput.size(); i++) {
+		for(int i=0;i<vinput.size();i++)
+		{
 			VirtualInputSlot* in=vinput[i];
 			_removeInputSlot(in->getName());
 			Parameter<int> *par=_loopOutputNumber[i];
@@ -47,9 +52,11 @@ void ParameteredGroupObject::initialize() {
 	}
 	_loopOutputNumber.clear();
 
-	if(_outputs) {
+	if(_outputs)
+	{
 		std::vector<VirtualOutputSlot*> voutput=_outputs->getSlotVector();
-		for (size_t i=0;i<voutput.size();i++) {
+		for(int i=0;i<voutput.size();i++)
+		{
 			VirtualOutputSlot* out=voutput[i];
 			_removeOutputSlot(out->getName());
 		}
@@ -63,13 +70,17 @@ void ParameteredGroupObject::initialize() {
 	delete _pluginMan;
 
 	}
-	_pluginMan=new PluginManager(pluginPaths(),true);
+    _pluginMan=new PluginManager(pluginPaths(),debugSuffix());
+
+
+
 	_pluginMan->loadParameterFile(workFlowFile());
 
 	std::map<std::string, ParameteredObject *> objs=_pluginMan->getObjectList();
 
-	std::map<std::string, ParameteredObject *>::iterator it;
-	for (it=objs.begin(); it!=objs.end(); it++) {
+	std::map<std::string, ParameteredObject *>::iterator it=objs.begin();
+	for(;it!=objs.end();it++)
+	{
 		ParameteredObject* obj=it->second;
 		InputSlotBundleIntf* tinputs=dynamic_cast<InputSlotBundleIntf*>(obj);
 		OutputSlotBundleIntf* toutputs=dynamic_cast<OutputSlotBundleIntf*>(obj);
@@ -79,9 +90,11 @@ void ParameteredGroupObject::initialize() {
 			_outputs=toutputs;
 	}
 
-	if(_inputs) {
+	if(_inputs)
+	{
 		std::vector<VirtualInputSlot*> vinput=_inputs->getSlotVector();
-		for (size_t i=0; i<vinput.size(); i++) {
+		for(int i=0;i<vinput.size();i++)
+		{
 			VirtualInputSlot* in=vinput[i];
 			_addInputSlot(*in,in->getName(),in->getDisplayName(),"",in->getType());
 			Parameter<int> *par=new Parameter<int>(-1);
@@ -93,9 +106,11 @@ void ParameteredGroupObject::initialize() {
 			_loopOutputNumber.push_back(par);
 		}
 	}
-	if (_outputs) {
+	if(_outputs)
+	{
 		std::vector<VirtualOutputSlot*> voutput=_outputs->getSlotVector();
-		for (size_t i=0; i<voutput.size(); i++) {
+		for(int i=0;i<voutput.size();i++)
+		{
 			VirtualOutputSlot* out=voutput[i];
 			_addOutputSlot(*out,out->getName(),out->getDisplayName(),"",out->getType());
 		}
@@ -103,7 +118,7 @@ void ParameteredGroupObject::initialize() {
 
 	initializeGroup();
 
-	#ifndef MSVC
+	#ifndef MSVC	
 		#warning need to load slotbundle connections
 	#endif
 	//_inputs->loadConnection(ParameterFile(workFlowFile),_pluginMan);
@@ -120,7 +135,9 @@ void ParameteredGroupObject::execute()
 	executeGroup();
 }
 
-void ParameteredGroupObject::finalize() {
+void ParameteredGroupObject::finalize()
+{
+
 	finalizeGroup();
 	if (_pluginMan) {
 		_pluginMan->reset();
@@ -130,12 +147,13 @@ void ParameteredGroupObject::finalize() {
 	ParameteredObject::finalize();
 }
 
-void ParameteredGroupObject::finalizeGroup() {
+void ParameteredGroupObject::finalizeGroup()
+{
 	// Does nothing!
 }
 
 void ParameteredGroupObject::executeGroup() {
-	if (_pluginMan) {
+	if(_pluginMan!=0) {
 		_pluginMan->runWorkflow();
 	}
 }
@@ -216,7 +234,8 @@ void ParameteredGroupObject::onLoad(
 	for(size_t i=0; i<_loopOutputNumber.size(); i++) {
 		Parameter<int> *par=_loopOutputNumber[i];
 		par->load(pf);
-		if ((*par)()>=0) {
+		if((*par)()>=0)
+		{
 			loopInputToOutput(i,(*par)());
 		}
 	}

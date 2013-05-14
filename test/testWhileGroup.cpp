@@ -116,7 +116,7 @@ void test()
 	man.createInstance("WhileGroupTestReader","ExternReader");
 	man.createInstance("WhileGroupTestWriter","ExternWriter");
 
-	man.connect("TestGroup.VirtualSlot-out0","ExternReader.in1");
+    man.connect("TestGroup.VirtualSlot-out0","ExternReader.in1");
 	man.connect("TestGroup.VirtualSlot-out1","ExternReader.in2");
 	man.connect("TestGroup.VirtualSlot-in0","ExternWriter.out1");
 	man.connect("TestGroup.VirtualSlot-in1","ExternWriter.out2");
@@ -148,7 +148,7 @@ void test()
 	man.connect("TestGroupLoop.VirtualSlot-in0","ExternWriterLoop.out1");
 	man.connect("TestGroupLoop.VirtualSlot-in1","ExternWriterLoop.out2");
 
-	man.saveParameterFile("/home/gmwangi/Test.wrp");
+    //man.saveParameterFile("/home/gmwangi/Test.wrp");
 
 	std::stringstream parentwrp;
 	parentwrp<<FileTool::getCurrentDir()<<FileTool::slash<<"TestWhileGroup-parent.wrp";
