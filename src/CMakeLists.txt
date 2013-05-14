@@ -43,6 +43,14 @@ ADD_CHARON_PLUGIN(greatersmallerthenpar
 	${CHARON_UTILS_INCLUDE_DIR}/GreaterSmallerThenPar.hxx
 	PLUGIN_LISTS Plugins
 )
+
+ADD_CHARON_PLUGIN(maskcreator 
+	MaskCreator.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/MaskCreator.h
+	${CHARON_UTILS_INCLUDE_DIR}/MaskCreator.hxx
+	PLUGIN_LISTS Plugins
+)
+
 ADD_CHARON_PLUGIN(valuebuffer
 	ValueBuffer.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/ValueBuffer.h
