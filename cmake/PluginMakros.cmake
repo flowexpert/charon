@@ -9,6 +9,7 @@ ENDMACRO(CDR)
 # The ADD_CHARON_PLUGIN Makro can be used in the following way:
 # ADD_CHARON_PLUGIN(<pluginname>
 #	<source files>
+#   [CUDA] #add this when the plugin depends on CUDA, CUDA_ADD_LIBRARY instead of the regular ADD_LIBRARY will be used
 #	[COMPANY <company name>] #only used in VisualStudio, this string will be compiled into the dll.
 #	[LINK_LIBRARIES <libraries>] #additional libraries to link the plugin against. Same syntax as TARGET_LINK_LIBRARIES
 #	[PLUGIN_LISTS] <lists>] #names of existing cmake variables. The created library target will be added to each list. 
@@ -17,7 +18,7 @@ ENDMACRO(CDR)
 INCLUDE(CMakeParseArguments)
 MACRO(ADD_CHARON_PLUGIN)
 	CMAKE_PARSE_ARGUMENTS(PLUGIN
-	""
+	"CUDA"
 	"COMPANY"
 	"LINK_LIBRARIES;PLUGIN_LISTS"
 	${ARGN}
@@ -40,8 +41,11 @@ MACRO(ADD_CHARON_PLUGIN)
 		@ONLY)
 		LIST(APPEND PLUGIN_SOURCES "${PLUGIN_NAME}.version.rc")
 	ENDIF(MSVC)
-	
-	ADD_LIBRARY(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
+	IF(PLUGIN_CUDA)
+		CUDA_ADD_LIBRARY(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
+	ELSE(PLUGIN_CUDA)
+		ADD_LIBRARY(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
+	ENDIF(PLUGIN_CUDA)
 	TARGET_LINK_LIBRARIES(${PLUGIN_NAME} charon-core ${PLUGIN_LINK_LIBRARIES} )
 	FOREACH(X ${PLUGIN_PLUGIN_LISTS})
 		LIST(APPEND ${X} ${PLUGIN_NAME})
