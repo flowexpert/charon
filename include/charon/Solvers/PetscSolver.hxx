@@ -278,6 +278,9 @@ PetscSolver<T>::PetscSolver(const std::string& name) :
 	ParameteredObject::_addParameter(
 			commandLine, "commandLine",
 			"petsc command line");
+    ParameteredObject::_addParameter(
+            monitorKsp, "monitorSolver",
+            "monitor the solver.");
 	ParameteredObject::_addParameter(
 			entriesPerRowHint, "entriesPerRowHint",
 			"add hint how many entries to allocate per row "
@@ -680,7 +683,8 @@ int PetscSolver<T>::petscExecute() {
 	ierr = KSPCreate(PETSC_COMM_WORLD, &ksp); CHKERRQ(ierr);
 	ierr = KSPSetFromOptions(ksp); CHKERRQ(ierr);
 	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN); CHKERRQ(ierr);
-	ierr = KSPMonitorSet(ksp,_myMonitor,PETSC_NULL,PETSC_NULL); CHKERRQ(ierr);
+    if(monitorKsp)
+        ierr = KSPMonitorSet(ksp,_myMonitor,PETSC_NULL,PETSC_NULL); CHKERRQ(ierr);
 	ierr = KSPSolve(ksp,b,x); CHKERRQ(ierr);
 
 	// temporary file for view info output
