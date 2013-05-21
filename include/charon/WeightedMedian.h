@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2012, 2013
+                  Heidelberg Collaboratory for Image Processing
 
 	This file is part of Charon.
 
@@ -59,6 +60,9 @@ template <typename T> class weightedmedian_DECLDIR WeightedMedian :
 public:
 	/// data input slot
 	InputSlot<cimg_library::CImgList<T> > in;
+
+	/// mask input slot
+	InputSlot<cimg_library::CImgList<T> > mask;
 
 	/// weight input slot
 	InputSlot<CliqueWeight<T>* > cliqueWeight;
