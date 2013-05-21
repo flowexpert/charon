@@ -129,10 +129,10 @@ void MagnitudeRegularization<T>::updateStencil(
 	rE = parameterGuess().atNXYZC( 0, p.x+1, p.y,   p.z, 0 );
 	rS = parameterGuess().atNXYZC( 0, p.x,   p.y+1, p.z, 0 );
 	rW = parameterGuess().atNXYZC( 0, p.x-1, p.y,   p.z, 0 );
-	pCN = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(rC - rN), 2.0) );
-	pCE = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(rC - rE), 2.0) );
-	pCS = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(rC - rS), 2.0) );
-	pCW = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(rC - rW), 2.0) );
+	pCN = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, pow(double(rC - rN), 2.0) );
+	pCE = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, pow(double(rC - rE), 2.0) );
+	pCS = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, pow(double(rC - rS), 2.0) );
+	pCW = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, pow(double(rC - rW), 2.0) );
 
 	_dataMask.assign(3,3,1,1);
 	_patternMask.assign(3,3,1,1);

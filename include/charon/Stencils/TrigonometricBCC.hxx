@@ -144,7 +144,8 @@ void TrigonometricBCC<T>::updateStencil(
 	const T sin = parameterGuess()[2](p.x,p.y,p.z);
 
 	// get first derivative of penalty function
-	const T d_psi = _penaltyFunction->getPenaltyGradient( pow( double(It + Ix * r * cos + Iy * r * sin), 2.0 ) );
+	const T d_psi = _penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+	                                                      pow( double(It + Ix * r * cos + Iy * r * sin), 2.0 ) );
 
         // fill calculated data into stencil members
 	const T c = _lamb * d_psi;

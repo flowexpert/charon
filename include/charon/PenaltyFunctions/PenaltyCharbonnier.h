@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2012, 2013
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -60,13 +61,13 @@ public:
 	Parameter< T > maxDiff;
 
 	/// penalty
-	T getPenalty( T );
+	T getPenalty( int, int, int, int, int, T );
 
 	/// penalty's 1st order derivative (gradient ;-)) wrt its argument
-	T getPenaltyGradient( T );
+	T getPenaltyGradient( int, int, int, int, int, T );
 
 	/// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
-	T getPenaltyHessian( T );
+	T getPenaltyHessian( int, int, int, int, int, T );
 
 	/// parameter a
 	Parameter< T > a;

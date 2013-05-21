@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2012, 2013
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -58,7 +59,7 @@ void PenaltyQuadratic<T>::execute() {
 }
 
 template <class T>
-T PenaltyQuadratic<T>::getPenalty( T sqrDiff )
+T PenaltyQuadratic<T>::getPenalty( int, int, int, int, int, T sqrDiff )
 {
 	double penalty;
 	if (sqrDiff < _maxDiff*_maxDiff)
@@ -69,7 +70,7 @@ T PenaltyQuadratic<T>::getPenalty( T sqrDiff )
 }
 
 template <class T>
-T PenaltyQuadratic<T>::getPenaltyGradient( T sqrDiff )
+T PenaltyQuadratic<T>::getPenaltyGradient( int, int, int, int, int, T sqrDiff )
 {
 	T penaltyGradient;
 	if (sqrDiff < _maxDiff*_maxDiff)
@@ -80,7 +81,7 @@ T PenaltyQuadratic<T>::getPenaltyGradient( T sqrDiff )
 }
 
 template <class T>
-T PenaltyQuadratic<T>::getPenaltyHessian( T )
+T PenaltyQuadratic<T>::getPenaltyHessian( int, int, int, int, int, T )
 {
 	return T(0.0);
 }

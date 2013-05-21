@@ -1,4 +1,4 @@
-/*  Copyright (C) 2011, 2012 
+/*  Copyright (C) 2011, 2012, 2013
                   Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
@@ -125,7 +125,7 @@ T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
 	T u = motionUV().atNXYZC( 0, xI, yI, zI, 0 );
 	T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-	T energy = _penaltyFunction->getPenalty( pow(double(It + Ix*u + Iy*v), 2.0) );
+	T energy = _penaltyFunction->getPenalty( -1, xI, yI, zI, -1, pow(double(It + Ix*u + Iy*v), 2.0) );
 
 	return T(this->_lamb * energy);
 }
@@ -144,7 +144,7 @@ std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int
         T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
 	T tmp  = It + Ix*u + Iy*v ;
-        T tmp2 = _penaltyFunction->getPenaltyGradient( pow(double(tmp), 2.0) );
+        T tmp2 = _penaltyFunction->getPenaltyGradient( -1, xI, yI, zI, -1, pow(double(tmp), 2.0) );
 	T tmp3 = tmp * tmp2;
 
 	T energyGradientU = Ix * tmp3;
@@ -171,8 +171,8 @@ std::vector<T> EnergyBCC<T>::getEnergyHessian( int, int xI, int yI, int zI, int 
 	T v = motionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
 	T tmp  = pow(double(It + Ix*u + Iy*v), 2.0) ;
-	T tmp2 = _penaltyFunction->getPenaltyGradient( tmp );
-	T tmp3 = _penaltyFunction->getPenaltyHessian( tmp );
+	T tmp2 = _penaltyFunction->getPenaltyGradient( -1, xI, yI, zI, -1, tmp );
+	T tmp3 = _penaltyFunction->getPenaltyHessian( -1, xI, yI, zI, -1, tmp );
 	T tmp4 = tmp2 + tmp * tmp3 ;
 
 	T energyHessianUU = Ix * Ix * tmp4;
@@ -239,10 +239,10 @@ void EnergyBCC<T>::updateStencil(
 	        const T u0 = motionUV()[0](x,y,z);
 	        const T v0 = motionUV()[1](x,y,z);
 
-		d_psi = _penaltyFunction->getPenaltyGradient( pow(double(cit + cix*u0 + ciy*v0), 2.0) );
+		d_psi = _penaltyFunction->getPenaltyGradient( -1, x, y, z, -1, pow(double(cit + cix*u0 + ciy*v0), 2.0) );
 		rhs -= (cik * cix * u0 + cik * ciy * v0);
 	} else {
-		d_psi = _penaltyFunction->getPenaltyGradient( pow(double(cit), 2.0) );
+		d_psi = _penaltyFunction->getPenaltyGradient( -1, x, y, z, -1, pow(double(cit), 2.0) );
 	}
 
         // fill calculated data into stencil members, applying lambda

@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2012, 2013
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -54,7 +55,7 @@ void PenaltyCharbonnier<T>::execute() {
 }
 
 template <class T>
-T PenaltyCharbonnier<T>::getPenalty( T sqrDiff )
+T PenaltyCharbonnier<T>::getPenalty( int, int, int, int, int, T sqrDiff )
 {
 	T penalty;
 	if (sqrDiff < _maxDiff*_maxDiff)
@@ -65,7 +66,7 @@ T PenaltyCharbonnier<T>::getPenalty( T sqrDiff )
 }
 
 template <class T>
-T PenaltyCharbonnier<T>::getPenaltyGradient( T sqrDiff )
+T PenaltyCharbonnier<T>::getPenaltyGradient( int, int, int, int, int, T sqrDiff )
 {
 	T penaltyGradient;
 	if (sqrDiff < _maxDiff*_maxDiff)
@@ -76,7 +77,7 @@ T PenaltyCharbonnier<T>::getPenaltyGradient( T sqrDiff )
 }
 
 template <class T>
-T PenaltyCharbonnier<T>::getPenaltyHessian( T sqrDiff )
+T PenaltyCharbonnier<T>::getPenaltyHessian( int, int, int, int, int, T sqrDiff )
 {
 	T penaltyHessian;
 	if (sqrDiff < _maxDiff*_maxDiff)

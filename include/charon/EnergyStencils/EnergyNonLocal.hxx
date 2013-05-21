@@ -1,4 +1,5 @@
-/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2011, 2013
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -145,11 +146,11 @@ T EnergyNonLocal<T>::getEnergy( int, int xI, int yI, int zI, int )
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      pixelEnergy += weight * _penaltyFunction->getPenalty( pow(double(du), 2) );
-      pixelEnergy += weight * _penaltyFunction->getPenalty( pow(double(dv), 2) );
+      pixelEnergy += weight * _penaltyFunction->getPenalty( -1, xI, yI, zI, -1, pow(double(du), 2) );
+      pixelEnergy += weight * _penaltyFunction->getPenalty( -1, xI, yI, zI, -1, pow(double(dv), 2) );
     } else {
-      pixelEnergy += _penaltyFunction->getPenalty( pow(double(du), 2) );
-      pixelEnergy += _penaltyFunction->getPenalty( pow(double(dv), 2) );
+      pixelEnergy += _penaltyFunction->getPenalty( -1, xI, yI, zI, -1, pow(double(du), 2) );
+      pixelEnergy += _penaltyFunction->getPenalty( -1, xI, yI, zI, -1, pow(double(dv), 2) );
       weight_sum += 1.0;
     }
   }
@@ -222,11 +223,11 @@ std::vector<T> EnergyNonLocal<T>::getEnergyGradient(
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      pixelGradientU += weight * _penaltyFunction->getPenaltyGradient( pow(double(du), 2) ) * signum(du);
-      pixelGradientV += weight * _penaltyFunction->getPenaltyGradient( pow(double(dv), 2) ) * signum(dv);
+      pixelGradientU += weight * _penaltyFunction->getPenaltyGradient( -1, xI, yI, zI, -1, pow(double(du), 2) ) * signum(du);
+      pixelGradientV += weight * _penaltyFunction->getPenaltyGradient( -1, xI, yI, zI, -1, pow(double(dv), 2) ) * signum(dv);
     } else {
-      pixelGradientU += _penaltyFunction->getPenaltyGradient( pow(double(du), 2) ) * signum(double(du));
-      pixelGradientV += _penaltyFunction->getPenaltyGradient( pow(double(dv), 2) ) * signum(double(dv));
+      pixelGradientU += _penaltyFunction->getPenaltyGradient( -1, xI, yI, zI, -1, pow(double(du), 2) ) * signum(double(du));
+      pixelGradientV += _penaltyFunction->getPenaltyGradient( -1, xI, yI, zI, -1, pow(double(dv), 2) ) * signum(double(dv));
       weight_sum += 1.0;
     }
   }
@@ -299,11 +300,11 @@ std::vector<T> EnergyNonLocal<T>::getEnergyHessian(
       weight = spatial_weight * color_weight * occlusion_weight;
       weight_sum += weight;
 
-      energyHessianUU += weight * _penaltyFunction->getPenaltyHessian(pow(double(du),2.0));
-      energyHessianVV += weight * _penaltyFunction->getPenaltyHessian(pow(double(dv),2.0));
+      energyHessianUU += weight * _penaltyFunction->getPenaltyHessian( -1, xI, yI, zI, -1, pow(double(du),2.0));
+      energyHessianVV += weight * _penaltyFunction->getPenaltyHessian( -1, xI, yI, zI, -1, pow(double(dv),2.0));
     } else {
-      energyHessianUU += _penaltyFunction->getPenaltyHessian(pow(double(du),2));
-      energyHessianVV += _penaltyFunction->getPenaltyHessian(pow(double(dv),2));
+      energyHessianUU += _penaltyFunction->getPenaltyHessian( -1, xI, yI, zI, -1, pow(double(du),2));
+      energyHessianVV += _penaltyFunction->getPenaltyHessian( -1, xI, yI, zI, -1, pow(double(dv),2));
       weight_sum += 1.0;
     }
   }

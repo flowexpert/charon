@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2012, 2013
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -50,21 +51,21 @@ void PenaltyLorentzian<T>::execute() {
 }
 
 template <class T>
-T PenaltyLorentzian<T>::getPenalty( T sqrDiff )
+T PenaltyLorentzian<T>::getPenalty( int, int, int, int, int, T sqrDiff )
 {
 	T penalty = log( double(1 + sqrDiff/(2*_sigma*_sigma)) ) ;
 	return T(this->_lamb * penalty);
 }
 
 template <class T>
-T PenaltyLorentzian<T>::getPenaltyGradient( T sqrDiff )
+T PenaltyLorentzian<T>::getPenaltyGradient( int, int, int, int, int, T sqrDiff )
 {
 	T penaltyGradient = T(1.0) / (2*_sigma*_sigma + sqrDiff);
 	return T(this->_lamb * penaltyGradient);
 }
 
 template <class T>
-T PenaltyLorentzian<T>::getPenaltyHessian( T sqrDiff )
+T PenaltyLorentzian<T>::getPenaltyHessian( int, int, int, int, int, T sqrDiff )
 {
 	T penaltyHessian = -pow(double(2.0*_sigma*_sigma + sqrDiff), -2.0);
 	return T(this->_lamb * penaltyHessian);

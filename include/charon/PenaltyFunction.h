@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2012, 2013
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -58,13 +59,13 @@ public:
 		const std::string& doc /**[in] stencil documentation*/);
 
 	/// function yielding penalty
-	virtual T getPenalty( T squaredDifference ) = 0;
+	virtual T getPenalty( int n, int x, int y, int z, int c, T squaredDifference ) = 0;
 
 	/// function yielding penalty gradient wrt its argument
-	virtual T getPenaltyGradient( T squaredDifference ) = 0;
+	virtual T getPenaltyGradient( int n, int x, int y, int z, int c, T squaredDifference ) = 0;
 
 	/// function yielding penalty Hessian wrt its argument
-	virtual T getPenaltyHessian( T squaredDifference ) = 0;
+	virtual T getPenaltyHessian( int n, int x, int y, int z, int c, T squaredDifference ) = 0;
 
 protected:
 	/// \implements ParameteredObject::execute()

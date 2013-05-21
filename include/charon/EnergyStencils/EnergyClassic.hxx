@@ -94,22 +94,22 @@ void EnergyClassic<T>::execute() {
 }
 
 template <class T>
-T EnergyClassic<T>::_energy( T x, T xo )
+T EnergyClassic<T>::_energy( int pn, int px, int py, int pz, int pc, T x, T xo )
 {
-	return _penaltyFunction->getPenalty( pow(double(x - xo), 2.0) );
+	return _penaltyFunction->getPenalty( pn, px, py, pz, pc, pow(double(x - xo), 2.0) );
 }
 
 template <class T>
-T EnergyClassic<T>::_energyGradient( T x, T xo )
+T EnergyClassic<T>::_energyGradient( int pn, int px, int py, int pz, int pc, T x, T xo )
 {
-	return _penaltyFunction->getPenaltyGradient( pow(double(x - xo), 2.0) ) * (x - xo);
+	return _penaltyFunction->getPenaltyGradient( pn, px, py, pz, pc, pow(double(x - xo), 2.0) ) * (x - xo);
 }
 
 template <class T>
-T EnergyClassic<T>::_energyHessian( T x, T xo )
+T EnergyClassic<T>::_energyHessian( int pn, int px, int py, int pz, int pc, T x, T xo )
 {
-	return _penaltyFunction->getPenaltyGradient( pow(double(x - xo), 2.0) )
-	     + pow(double(x - xo), 2.0) * _penaltyFunction->getPenaltyHessian( pow(double(x - xo), 2.0) );
+	return _penaltyFunction->getPenaltyGradient( pn, px, py, pz, pc, pow(double(x - xo), 2.0) )
+	     + pow(double(x - xo), 2.0) * _penaltyFunction->getPenaltyHessian( pn, px, py, pz, pc, pow(double(x - xo), 2.0) );
 }
 
 template <class T>
@@ -129,14 +129,14 @@ T EnergyClassic<T>::getEnergy( int, int x, int y, int z, int )
 	T motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
 	T motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
 
-	T energy =  _energy( motionUC, motionUN )
-	         +  _energy( motionUC, motionUE )
-	         +  _energy( motionUC, motionUS )
-	         +  _energy( motionUC, motionUW );
-        energy   += _energy( motionVC, motionVN )
-                 +  _energy( motionVC, motionVE )
-                 +  _energy( motionVC, motionVS )
-                 +  _energy( motionVC, motionVW );
+	T energy =  _energy( -1, x, y, z, -1, motionUC, motionUN )
+	         +  _energy( -1, x, y, z, -1, motionUC, motionUE )
+	         +  _energy( -1, x, y, z, -1, motionUC, motionUS )
+	         +  _energy( -1, x, y, z, -1, motionUC, motionUW );
+        energy   += _energy( -1, x, y, z, -1, motionVC, motionVN )
+                 +  _energy( -1, x, y, z, -1, motionVC, motionVE )
+                 +  _energy( -1, x, y, z, -1, motionVC, motionVS )
+                 +  _energy( -1, x, y, z, -1, motionVC, motionVW );
 
 	return T(this->_lamb * energy);
 }
@@ -159,14 +159,14 @@ std::vector<T> EnergyClassic<T>::getEnergyGradient(
         T motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
         T motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
 
-        T energyGradientU = _energyGradient( motionUC, motionUN )
-                          + _energyGradient( motionUC, motionUE )
-                          + _energyGradient( motionUC, motionUS )
-                          + _energyGradient( motionUC, motionUW );
-        T energyGradientV = _energyGradient( motionVC, motionVN )
-                          + _energyGradient( motionVC, motionVE )
-                          + _energyGradient( motionVC, motionVS )
-                          + _energyGradient( motionVC, motionVW );
+        T energyGradientU = _energyGradient( -1, x, y, z, -1, motionUC, motionUN )
+                          + _energyGradient( -1, x, y, z, -1, motionUC, motionUE )
+                          + _energyGradient( -1, x, y, z, -1, motionUC, motionUS )
+                          + _energyGradient( -1, x, y, z, -1, motionUC, motionUW );
+        T energyGradientV = _energyGradient( -1, x, y, z, -1, motionVC, motionVN )
+                          + _energyGradient( -1, x, y, z, -1, motionVC, motionVE )
+                          + _energyGradient( -1, x, y, z, -1, motionVC, motionVS )
+                          + _energyGradient( -1, x, y, z, -1, motionVC, motionVW );
 
 	std::vector<T> ret( 2, T(0.0) );
 	ret[0] = T(this->_lamb * energyGradientU);
@@ -192,15 +192,15 @@ std::vector<T> EnergyClassic<T>::getEnergyHessian(
 	T motionVS = motionUV().atNXYZC( 1, x,   y+1, z, 0 );
 	T motionVW = motionUV().atNXYZC( 1, x-1, y,   z, 0 );
 
-	T energyHessianUU = _energyHessian( motionUC, motionUN )
-	                  + _energyHessian( motionUC, motionUE )
-	                  + _energyHessian( motionUC, motionUS )
-	                  + _energyHessian( motionUC, motionUW );
+	T energyHessianUU = _energyHessian( -1, x, y, z, -1, motionUC, motionUN )
+	                  + _energyHessian( -1, x, y, z, -1, motionUC, motionUE )
+	                  + _energyHessian( -1, x, y, z, -1, motionUC, motionUS )
+	                  + _energyHessian( -1, x, y, z, -1, motionUC, motionUW );
 	T energyHessianUV = T(0.0);
-	T energyHessianVV = _energyHessian( motionVC, motionVN )
-	                  + _energyHessian( motionVC, motionVE )
-	                  + _energyHessian( motionVC, motionVS )
-	                  + _energyHessian( motionVC, motionVW );
+	T energyHessianVV = _energyHessian( -1, x, y, z, -1, motionVC, motionVN )
+	                  + _energyHessian( -1, x, y, z, -1, motionVC, motionVE )
+	                  + _energyHessian( -1, x, y, z, -1, motionVC, motionVS )
+	                  + _energyHessian( -1, x, y, z, -1, motionVC, motionVW );
 
 	std::vector<T> ret( 4, T(0.0) );
 	ret[0] = T(this->_lamb * energyHessianUU);
@@ -262,15 +262,19 @@ void EnergyClassic<T>::updateStencil(
 			motionE = motionUV().atNXYZC( i, p.x+1, p.y,   p.z, 0 );
 			motionS = motionUV().atNXYZC( i, p.x,   p.y+1, p.z, 0 );
 			motionW = motionUV().atNXYZC( i, p.x-1, p.y,   p.z, 0 );
-			pCN = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionN), 2.0) );
-			pCE = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionE), 2.0) );
-			pCS = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionS), 2.0) );
-			pCW = _lamb*_penaltyFunction->getPenaltyGradient( pow(double(motionC - motionW), 2.0) );
+			pCN = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                  pow(double(motionC - motionN), 2.0) );
+			pCE = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                  pow(double(motionC - motionE), 2.0) );
+			pCS = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                  pow(double(motionC - motionS), 2.0) );
+			pCW = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                  pow(double(motionC - motionW), 2.0) );
 		} else {
-			pCN = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
-			pCE = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
-			pCS = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
-			pCW = _lamb*_penaltyFunction->getPenaltyGradient( 0.0 );
+			pCN = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCE = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCS = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCW = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
 		}
 
 		_dataMask.assign(3,3,1,1);
@@ -289,7 +293,9 @@ void EnergyClassic<T>::updateStencil(
 			// if true pixel value, e.g. from sparse match, then do not regularize
 			if (motionConnected && matchMaskConnected && matchMaskC) {
 				_dataMask.fill( 0, 0, 0,
-				                0, _lamb*_penaltyFunction->getPenaltyGradient( 0.0 ), 0,
+				                0,
+				                _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 ),
+						0,
 				                0, 0, 0 );
 				this->_rhs = _lamb * motionC;
 			} else {

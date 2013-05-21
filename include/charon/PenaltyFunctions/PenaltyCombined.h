@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2012, 2013
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -56,11 +57,11 @@ public:
 	PenaltyCombined(const std::string& name = "");
 
 	/// penalty
-	T getPenalty( T );
+	T getPenalty( int n, int x, int y, int z, int c, T );
 	/// penalty's 1st order derivative (gradient ;-)) wrt its argument
-	T getPenaltyGradient( T );
+	T getPenaltyGradient( int n, int x, int y, int z, int c, T );
 	/// penalty's 2nd order derivative (Hessian ;-)) wrt its argument
-	T getPenaltyHessian( T );
+	T getPenaltyHessian( int n, int x, int y, int z, int c, T );
 
 	/// parameter list containing weights for 1st penalty function
 	/// wrt the current iteration number

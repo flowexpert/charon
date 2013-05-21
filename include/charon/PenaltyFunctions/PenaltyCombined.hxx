@@ -1,4 +1,5 @@
-/*  Copyright (C) 2012 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2012, 2013
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -57,29 +58,29 @@ void PenaltyCombined<T>::execute() {
 }
 
 template <class T>
-T PenaltyCombined<T>::getPenalty( T sqrDiff )
+T PenaltyCombined<T>::getPenalty( int n, int x, int y, int z, int c, T sqrDiff )
 {
 	T penalty;
-	penalty = _lambda1 * fstPenaltyFunction()->getPenalty( sqrDiff )
-	        + _lambda2 * sndPenaltyFunction()->getPenalty( sqrDiff );
+	penalty = _lambda1 * fstPenaltyFunction()->getPenalty( n, x, y, z, c, sqrDiff )
+	        + _lambda2 * sndPenaltyFunction()->getPenalty( n, x, y, z, c, sqrDiff );
 	return T(penalty);
 }
 
 template <class T>
-T PenaltyCombined<T>::getPenaltyGradient( T sqrDiff )
+T PenaltyCombined<T>::getPenaltyGradient( int n, int x, int y, int z, int c, T sqrDiff )
 {
 	T penaltyGradient;
-	penaltyGradient = _lambda1 * fstPenaltyFunction()->getPenaltyGradient( sqrDiff )
-	                + _lambda2 * sndPenaltyFunction()->getPenaltyGradient( sqrDiff );
+	penaltyGradient = _lambda1 * fstPenaltyFunction()->getPenaltyGradient( n, x, y, z, c, sqrDiff )
+	                + _lambda2 * sndPenaltyFunction()->getPenaltyGradient( n, x, y, z, c, sqrDiff );
 	return T(penaltyGradient);
 }
 
 template <class T>
-T PenaltyCombined<T>::getPenaltyHessian( T sqrDiff )
+T PenaltyCombined<T>::getPenaltyHessian( int n, int x, int y, int z, int c, T sqrDiff )
 {
 	T penaltyHessian;
-	penaltyHessian = _lambda1 * fstPenaltyFunction()->getPenaltyHessian( sqrDiff )
-	               + _lambda2 * sndPenaltyFunction()->getPenaltyHessian( sqrDiff );
+	penaltyHessian = _lambda1 * fstPenaltyFunction()->getPenaltyHessian( n, x, y, z, c, sqrDiff )
+	               + _lambda2 * sndPenaltyFunction()->getPenaltyHessian( n, x, y, z, c, sqrDiff );
 	return T(penaltyHessian);
 }
 

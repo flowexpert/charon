@@ -1,4 +1,5 @@
-/*  Copyright (C) 2011 Heidelberg Collaboratory for Image Processing
+/*  Copyright (C) 2011, 2013
+                  Heidelberg Collaboratory for Image Processing
 
     This file is part of Charon.
 
@@ -63,8 +64,8 @@ T EnergyCoupling<T>::getEnergy( int, int xI, int yI, int zI, int )
 	T u2 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
 	T v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-	T energy = _penaltyFunction->getPenalty( pow(double(u1 - u2), 2.0) )
-	         + _penaltyFunction->getPenalty( pow(double(v1 - v2), 2.0) );
+	T energy = _penaltyFunction->getPenalty( -1, xI, yI, zI, -1, pow(double(u1 - u2), 2.0) )
+	         + _penaltyFunction->getPenalty( -1, xI, yI, zI, -1, pow(double(v1 - v2), 2.0) );
 
 	return T(_lamb * energy);
 }
@@ -79,8 +80,8 @@ std::vector<T> EnergyCoupling<T>::getEnergyGradient(
 	T v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
 	// IMPORTANT! Gradients wrt u1 resp. v1 !
-	T energyGradientU1 = _penaltyFunction->getPenaltyGradient( pow(double(u1 - u2), 2.0) );
-	T energyGradientV1 = _penaltyFunction->getPenaltyGradient( pow(double(v1 - v2), 2.0) );
+	T energyGradientU1 = _penaltyFunction->getPenaltyGradient( -1, xI, yI, zI, -1, pow(double(u1 - u2), 2.0) );
+	T energyGradientV1 = _penaltyFunction->getPenaltyGradient( -1, xI, yI, zI, -1, pow(double(v1 - v2), 2.0) );
 
 	std::vector<T> ret( 2, T(0.0) );
 	ret[0] = T(_lamb * energyGradientU1);
@@ -98,9 +99,9 @@ std::vector<T> EnergyCoupling<T>::getEnergyHessian(
 	T u2 = secondMotionUV().atNXYZC( 0, xI, yI, zI, 0 );
 	T v2 = secondMotionUV().atNXYZC( 1, xI, yI, zI, 0 );
 
-	T energyHessianU1U1 = _penaltyFunction->getPenaltyHessian( pow(double(u1 - u2), 2.0) );
+	T energyHessianU1U1 = _penaltyFunction->getPenaltyHessian( -1, xI, yI, zI, -1, pow(double(u1 - u2), 2.0) );
 	T energyHessianU1V1 = T(0.0);
-	T energyHessianV1V1 = _penaltyFunction->getPenaltyHessian( pow(double(v1 - v2), 2.0) );
+	T energyHessianV1V1 = _penaltyFunction->getPenaltyHessian( -1, xI, yI, zI, -1, pow(double(v1 - v2), 2.0) );
 
 	std::vector<T> ret( 4, T(0.0) );
 	ret[0] = T(_lamb * energyHessianU1U1);

@@ -1,4 +1,4 @@
-/*  Copyright (C) 2011, 2012
+/*  Copyright (C) 2011, 2012, 2013
     University of Heidelberg (IWR/HCI)
 
     This file is part of Charon.
@@ -116,9 +116,9 @@ protected:
 private:
 	/// \name clique potentials
 	//\{
-	T _energy( T x, T xo );
-	T _energyGradient( T x, T xo );
-	T _energyHessian( T x, T xo );
+	T _energy( int pn, int px, int py, int pz, int pc, T x, T xo );
+	T _energyGradient( int pn, int px, int py, int pz, int pc, T x, T xo );
+	T _energyHessian( int pn, int px, int py, int pz, int pc, T x, T xo );
 	//\}
 
 	/// \name cache members

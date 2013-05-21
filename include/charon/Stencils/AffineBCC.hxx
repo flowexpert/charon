@@ -159,10 +159,11 @@ void AffineBCC<T>::updateStencil(
 	        b2  = parameterGuess()[5](p.x,p.y,p.z);
 
 		d_psi = _penaltyFunction->getPenaltyGradient(
+			-1, p.x, p.y, p.z, -1,
 		        pow(double(It + Ix * (a11*xn + a12*yn + b1)
 		                      + Iy * (a21*xn + a22*yn + b2)), 2.0) );
 	} else {
-		d_psi = _penaltyFunction->getPenaltyGradient( pow(double(It), 2.0) );
+		d_psi = _penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, pow(double(It), 2.0) );
 	}
 
         // fill calculated data into stencil members
