@@ -40,12 +40,18 @@ CONFIGURE_FILE(
 	cmake/version.rc.in
 	COPYONLY
 )
+CONFIGURE_FILE(
+	${CMAKE_MODULE_PATH}/version.cpp.in
+	cmake/version.cpp.in
+	COPYONLY
+)
 
 INSTALL(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}-config.cmake
 	${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}-config-version.cmake
 	${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}-use.cmake
 	${CMAKE_CURRENT_BINARY_DIR}/cmake/version.rc.in
+	${CMAKE_CURRENT_BINARY_DIR}/cmake/version.cpp.in
 	DESTINATION ${PROJECT_CONFIG_INSTALL}
 	COMPONENT libraries
 )
