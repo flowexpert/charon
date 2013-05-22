@@ -26,15 +26,16 @@ ADD_CHARON_PLUGIN(gbcce
 	${charon_INCLUDE_DIR}/Substencil.hxx
 	PLUGIN_LISTS Plugins
 )
-ADD_CHARON_PLUGIN(covariancemotionmodel 
-        CovarianceMotionModel.cpp
-        ${charon_INCLUDE_DIR}/Stencils/CovarianceMotionModel.h
-        ${charon_INCLUDE_DIR}/Stencils/CovarianceMotionModel.hxx
-        ${charon_INCLUDE_DIR}/Stencil.h
-        ${charon_INCLUDE_DIR}/Stencil.hxx
-        ${charon_INCLUDE_DIR}/Point4D.h
-        ${charon_INCLUDE_DIR}/Substencil.h
-        ${charon_INCLUDE_DIR}/Substencil.hxx
+ADD_CHARON_PLUGIN(covariancemotionmodel
+	CovarianceMotionModel.cpp
+	${charon_INCLUDE_DIR}/Stencils/CovarianceMotionModel.h
+	${charon_INCLUDE_DIR}/Stencils/CovarianceMotionModel.hxx
+	${charon_INCLUDE_DIR}/Stencil.h
+	${charon_INCLUDE_DIR}/Stencil.hxx
+	${charon_INCLUDE_DIR}/Point4D.h
+	${charon_INCLUDE_DIR}/Substencil.h
+	${charon_INCLUDE_DIR}/Substencil.hxx
+	PLUGIN_LISTS Plugins
 )
 ADD_CHARON_PLUGIN(rfmc
 	Rfmc.cpp
@@ -344,7 +345,7 @@ IF(QT4_FOUND)
 		PLUGIN_LISTS Plugins
 		LINK_LIBRARIES ${QT_LIBRARIES} debug iteratorhelper debug gbcce
 	)
-	
+
 ELSE(QT4_FOUND)
 	ADD_CHARON_PLUGIN(simpleiterator
 		${charon_INCLUDE_DIR}/SimpleIterator.h
@@ -361,7 +362,7 @@ ELSE(QT4_FOUND)
 		PLUGIN_LISTS Plugins
 		LINK_LIBRARIES debug roi debug iteratorhelper
 	)
-	
+
 ENDIF(QT4_FOUND)
 
 # Function plugins
