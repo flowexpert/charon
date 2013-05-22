@@ -17,9 +17,14 @@ ELSE()
 	# install to bin if not location specified
 	SET(${PROJECT_NAME}_TRANSLATIONS_DIR bin)
 ENDIF()
+
 SET(QM_FILES)
-FOREACH(LANG de) # enter available translations here
-	SET(TS_FILE ${PROJECT_SOURCE_DIR}/i18n/tuchulcha_${LANG}.ts)
+# generate translations for all ts-files in the i18n dir
+FILE(GLOB TS_FILES ${PROJECT_SOURCE_DIR}/i18n/*.ts)
+FOREACH(TS_FILE ${TS_FILES})
+	STRING(REGEX MATCH "${PROJECT_NAME}_(.*)\\.ts$" LANG "${TS_FILE}")
+	SET(LANG "${CMAKE_MATCH_1}")
+	#MESSAGE("${TS_FILE}: ${LANG}")
 	SET(QM_FILE ${PROJECT_NAME}_${LANG}.qm)
 	ADD_CUSTOM_COMMAND(
 		OUTPUT ${QM_FILE}
@@ -31,10 +36,10 @@ FOREACH(LANG de) # enter available translations here
 		OPTIONAL
 	)
 	LIST(APPEND QM_FILES ${QM_FILE})
-	UNSET(TS_FILE)
-	UNSET(QM_FILE)
-ENDFOREACH(LANG)
+ENDFOREACH(TS_FILE)
 UNSET(LANG)
+UNSET(QM_FILE)
+UNSET(TS_FILE)
 ADD_CUSTOM_TARGET(i18n DEPENDS ${QM_FILES})
 
 # standalone inspector application
