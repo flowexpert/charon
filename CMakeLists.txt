@@ -2,8 +2,6 @@ PROJECT(charon-core C CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.9)
 # 2.8.9 is required for the CMakePackageConfigHelpers module
 
-SET(${PROJECT_NAME}_ROOT_DIR ${PROJECT_SOURCE_DIR})
-
 # use own cmake files
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
@@ -29,7 +27,12 @@ IF(UNIX)
 ENDIF()
 
 INCLUDE(InitFlags)
+
+# plugin generation macros
+SET(${PROJECT_NAME}_VERSION_RC_FILE "${CMAKE_MODULE_PATH}/version.rc.in")
+SET(${PROJECT_NAME}_VERSION_CPP_FILE "${CMAKE_MODULE_PATH}/version.cpp.in")
 INCLUDE(PluginMakros)
+
 # set up documentation generation
 FIND_PACKAGE(Doxygen QUIET)
 INCLUDE(Documentation)

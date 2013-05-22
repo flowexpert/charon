@@ -4,7 +4,7 @@
 #	[CUDA] # add this when the plugin depends on CUDA, CUDA_ADD_LIBRARY instead of the regular ADD_LIBRARY will be used
 #	[COMPANY <company name>] #only used in VisualStudio, this string will be compiled into the dll.
 #	[LINK_LIBRARIES <libraries>] #additional libraries to link the plugin against. Same syntax as TARGET_LINK_LIBRARIES
-#	[PLUGIN_LISTS] <lists>] #names of existing cmake variables. The created library target will be added to each list. 
+#	[PLUGIN_LISTS] <lists>] #names of existing cmake variables. The created library target will be added to each list.
 #							#Usefull if you wan't to make additional settings to multiple plugins.
 # )
 INCLUDE(CMakeParseArguments)
@@ -22,23 +22,25 @@ MACRO(ADD_CHARON_PLUGIN)
 
 	#MESSAGE(STATUS "PLUGIN_NAME : ${PLUGIN_NAME}")
 	#MESSAGE(STATUS "PLUGIN_SOURCES : ${PLUGIN_SOURCES}")
-	
+
 	IF(MSVC)
 		SET(DllRcCompanyName ${PLUGIN_COMPANY})
 		SET(DllRcFileDescription "${PLUGIN_NAME} Charon Plugin")
 		SET(DllOriginalFilenameDebug "${PLUGIN_NAME}${CMAKE_DEBUG_POSTFIX}.dll")
 		SET(DllOriginalFilenameRelease "${PLUGIN_NAME}.dll")
 		SET(DllRcInternalName "${PLUGIN_NAME}")
-		
-		CONFIGURE_FILE(${charon-core_ROOT_DIR}/cmake/version.rc.in
-			${PLUGIN_NAME}.version.rc
-		@ONLY)
+
+		CONFIGURE_FILE(
+			"${charon-core_VERSION_RC_FILE}"
+			"${PLUGIN_NAME}.version.rc"
+			@ONLY)
 		LIST(APPEND PLUGIN_SOURCES "${PLUGIN_NAME}.version.rc")
 	ENDIF(MSVC)
 	IF(UNIX)
-		CONFIGURE_FILE(${charon-core_ROOT_DIR}/cmake/version.cpp.in
-			${PLUGIN_NAME}.version.cpp
-		@ONLY)
+		CONFIGURE_FILE(
+			"${charon-core_VERSION_CPP_FILE}"
+			"${PLUGIN_NAME}.version.cpp"
+			@ONLY)
 		LIST(APPEND PLUGIN_SOURCES "${PLUGIN_NAME}.version.cpp")
 	ENDIF(UNIX)
 	IF(PLUGIN_CUDA)
@@ -50,7 +52,7 @@ MACRO(ADD_CHARON_PLUGIN)
 	FOREACH(X ${PLUGIN_PLUGIN_LISTS})
 		LIST(APPEND ${X} ${PLUGIN_NAME})
 	ENDFOREACH(X)
-  
+
 	SET_TARGET_PROPERTIES(${PLUGIN_NAME} PROPERTIES
 		INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
 	)
@@ -62,5 +64,5 @@ MACRO(ADD_CHARON_PLUGIN)
 		LIBRARY         DESTINATION lib${LIB_SUFFIX}/charon-plugins
 		ARCHIVE         DESTINATION lib${LIB_SUFFIX}/charon-plugins
 		COMPONENT       libraries
-	) 
+	)
 ENDMACRO(ADD_CHARON_PLUGIN)
