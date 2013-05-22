@@ -78,14 +78,3 @@ extern "C" dummymodule_DLL_PUBLIC
 	return ParameteredObject::RELEASE_BUILD;
 #endif
 }
-
-#if defined(__GNUC__) && defined (__ELF__)
-#include <charon-core/configVersion.h>
-/// charon-core version information
-__attribute__ ((section (".charon-plugin"), used))
-const unsigned char charon_core_version[] = {
-	CHARON_CORE_VERSION_MAJOR,
-	CHARON_CORE_VERSION_MINOR,
-	CHARON_CORE_VERSION_PATCH};
-#endif
-

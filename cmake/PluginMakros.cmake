@@ -1,15 +1,7 @@
-MACRO(CAR var)
-  SET(${var} ${ARGV1})
-ENDMACRO(CAR)
-
-MACRO(CDR var junk)
-  SET(${var} ${ARGN})
-ENDMACRO(CDR)
-
 # The ADD_CHARON_PLUGIN Makro can be used in the following way:
 # ADD_CHARON_PLUGIN(<pluginname>
 #	<source files>
-#   [CUDA] #add this when the plugin depends on CUDA, CUDA_ADD_LIBRARY instead of the regular ADD_LIBRARY will be used
+#	[CUDA] # add this when the plugin depends on CUDA, CUDA_ADD_LIBRARY instead of the regular ADD_LIBRARY will be used
 #	[COMPANY <company name>] #only used in VisualStudio, this string will be compiled into the dll.
 #	[LINK_LIBRARIES <libraries>] #additional libraries to link the plugin against. Same syntax as TARGET_LINK_LIBRARIES
 #	[PLUGIN_LISTS] <lists>] #names of existing cmake variables. The created library target will be added to each list. 
@@ -23,8 +15,10 @@ MACRO(ADD_CHARON_PLUGIN)
 	"LINK_LIBRARIES;PLUGIN_LISTS"
 	${ARGN}
 	)
-	CAR(PLUGIN_NAME ${PLUGIN_UNPARSED_ARGUMENTS})
-	CDR(PLUGIN_SOURCES ${PLUGIN_UNPARSED_ARGUMENTS})
+	# get plugin name and sources from the first (unparsed) arguments
+	SET(PLUGIN_SOURCES ${PLUGIN_UNPARSED_ARGUMENTS})
+	LIST(GET PLUGIN_SOURCES 0 PLUGIN_NAME)
+	LIST(REMOVE_AT PLUGIN_SOURCES 0)
 
 	#MESSAGE(STATUS "PLUGIN_NAME : ${PLUGIN_NAME}")
 	#MESSAGE(STATUS "PLUGIN_SOURCES : ${PLUGIN_SOURCES}")
@@ -41,6 +35,12 @@ MACRO(ADD_CHARON_PLUGIN)
 		@ONLY)
 		LIST(APPEND PLUGIN_SOURCES "${PLUGIN_NAME}.version.rc")
 	ENDIF(MSVC)
+	IF(UNIX)
+		CONFIGURE_FILE(${charon-core_ROOT_DIR}/cmake/version.cpp.in
+			${PLUGIN_NAME}.version.cpp
+		@ONLY)
+		LIST(APPEND PLUGIN_SOURCES "${PLUGIN_NAME}.version.cpp")
+	ENDIF(UNIX)
 	IF(PLUGIN_CUDA)
 		CUDA_ADD_LIBRARY(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
 	ELSE(PLUGIN_CUDA)

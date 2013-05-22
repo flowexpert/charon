@@ -38,7 +38,7 @@ int test() {
 	sout.assign(std::cout);
 
 	// load dummy module
-	PluginManager man(MODULE_DIR,"",DEFAULT_DEBUG_SUFFIX,false,true);
+	PluginManager man(MODULE_DIR);
 	man.loadPlugin("DummyModule");
 	assert(man.getLoadedPluginsCount() == 1);
 	assert(man.getInstancesCount() == 0);
