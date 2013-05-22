@@ -40,7 +40,7 @@ void ParameteredGroupObject::initialize()
 	if(_inputs)
 	{
 		std::vector<VirtualInputSlot*> vinput=_inputs->getSlotVector();
-		for(int i=0;i<vinput.size();i++)
+		for(size_t i=0;i<vinput.size();i++)
 		{
 			VirtualInputSlot* in=vinput[i];
 			_removeInputSlot(in->getName());
@@ -55,7 +55,7 @@ void ParameteredGroupObject::initialize()
 	if(_outputs)
 	{
 		std::vector<VirtualOutputSlot*> voutput=_outputs->getSlotVector();
-		for(int i=0;i<voutput.size();i++)
+		for(size_t i=0;i<voutput.size();i++)
 		{
 			VirtualOutputSlot* out=voutput[i];
 			_removeOutputSlot(out->getName());
@@ -93,7 +93,7 @@ void ParameteredGroupObject::initialize()
 	if(_inputs)
 	{
 		std::vector<VirtualInputSlot*> vinput=_inputs->getSlotVector();
-		for(int i=0;i<vinput.size();i++)
+		for(size_t i=0;i<vinput.size();i++)
 		{
 			VirtualInputSlot* in=vinput[i];
 			_addInputSlot(*in,in->getName(),in->getDisplayName(),"",in->getType());
@@ -109,7 +109,7 @@ void ParameteredGroupObject::initialize()
 	if(_outputs)
 	{
 		std::vector<VirtualOutputSlot*> voutput=_outputs->getSlotVector();
-		for(int i=0;i<voutput.size();i++)
+		for(size_t i=0;i<voutput.size();i++)
 		{
 			VirtualOutputSlot* out=voutput[i];
 			_addOutputSlot(*out,out->getName(),out->getDisplayName(),"",out->getType());
