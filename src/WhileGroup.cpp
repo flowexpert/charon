@@ -60,13 +60,13 @@ void WhileGroup::executeGroup() {
 	disableLoopConnections();
 }
 
-// the following functions are needed
-// for class WhileGroup to work as a charon plugin.
+/// Creates an instance of the plugin
 extern "C" whilegroup_DECLDIR ParameteredObject*
 		create(const std::string& name, ParameteredObject::template_type) {
 	return new WhileGroup(name);
 }
 
+/// Deletes an instance of the plugin
 extern "C" whilegroup_DECLDIR void destroy(ParameteredObject* b) {
 	delete b;
 }

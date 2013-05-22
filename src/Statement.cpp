@@ -49,13 +49,13 @@ void Statement::execute() {
 	_statement=statement();
 }
 
-// the following functions are needed
-// for class Statement to work as a charon plugin.
+/// Creates an instance of the plugin
 extern "C" statement_DECLDIR ParameteredObject*
 		create(const std::string& name, ParameteredObject::template_type) {
 	return new Statement(name);
 }
 
+/// Deletes an instance of the plugin
 extern "C" statement_DECLDIR void destroy(ParameteredObject* b) {
 	delete b;
 }

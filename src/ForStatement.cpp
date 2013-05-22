@@ -65,13 +65,13 @@ void ForStatement::execute() {
 	currentValue() = _currentValue;
 }
 
-// the following functions are needed
-// for class ForStatement to work as a charon plugin.
+/// Creates an instance of the plugin
 extern "C" forstatement_DECLDIR ParameteredObject*
 		create(const std::string& name, ParameteredObject::template_type) {
 	return new ForStatement(name);
 }
 
+/// Deletes an instance of the plugin
 extern "C" forstatement_DECLDIR void destroy(ParameteredObject* b) {
 	delete b;
 }

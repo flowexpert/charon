@@ -39,13 +39,13 @@ void GroupObject::execute() {
 	ParameteredGroupObject::execute();
 }
 
-// the following functions are needed
-// for class GroupObject to work as a charon plugin.
+/// Creates an instance of the plugin
 extern "C" groupobject_DECLDIR ParameteredObject*
 		create(const std::string& name, ParameteredObject::template_type) {
 	return new GroupObject(name);
 }
 
+/// Deletes an instance of the plugin
 extern "C" groupobject_DECLDIR void destroy(ParameteredObject* b) {
 	delete b;
 }

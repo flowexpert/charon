@@ -44,39 +44,30 @@ InputSlotBundle::InputSlotBundle(const std::string& name) :
 
 }
 
-
-
-// the following functions are needed
-// for class InputSlotBundle to work as a charon plugin.
+/// Creates an instance of the plugin
 extern "C" inputslotbundle_DECLDIR ParameteredObject*
 		create(const std::string& name, ParameteredObject::template_type) {
 	return new InputSlotBundle(name);
 }
 
-void InputSlotBundle::_removeSlot(int i) {
-
-	_removeOutputSlot(_virtualOutputSlots[i]->getName());
-
+/// Deletes an instance of the plugin
+extern "C" inputslotbundle_DECLDIR void destroy(ParameteredObject* b) {
+	delete b;
 }
 
-std::vector<VirtualInputSlot*>& InputSlotBundle::getSlotVector()
-{
+void InputSlotBundle::_removeSlot(int i) {
+	_removeOutputSlot(_virtualOutputSlots[i]->getName());
+}
+
+std::vector<VirtualInputSlot*>& InputSlotBundle::getSlotVector() {
 	return _virtualInputSlots;
 }
 
-
-
 void InputSlotBundle::_addSlot(int i) {
-
 	_addOutputSlot(*((Slot*)_virtualOutputSlots[i]),
 		_virtualOutputSlots[i]->getName(),
 		"Virtual Slot",_virtualOutputSlots[i]->getType());
 
-}
-
-
-extern "C" inputslotbundle_DECLDIR void destroy(ParameteredObject* b) {
-	delete b;
 }
 
 /// Report build configuration to prevent linking of incompatibel runtime libs

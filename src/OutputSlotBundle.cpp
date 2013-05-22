@@ -43,15 +43,13 @@ OutputSlotBundle::OutputSlotBundle(const std::string& name) :
 	ParameteredObject::_setTags("charon-core") ;
 }
 
-
-
-// the following functions are needed
-// for class OutputSlotBundle to work as a charon plugin.
+/// Creates an instance of the plugin
 extern "C" outputslotbundle_DECLDIR ParameteredObject*
 		create(const std::string& name, ParameteredObject::template_type) {
 	return new OutputSlotBundle(name);
 }
 
+/// Deletes an instance of the plugin
 extern "C" outputslotbundle_DECLDIR void destroy(ParameteredObject* b) {
 	delete b;
 }
