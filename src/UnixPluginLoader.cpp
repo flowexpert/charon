@@ -156,9 +156,11 @@ void UnixPluginLoader::load() throw (PluginException) {
 		}
 
 		bool checkPassed = false;
+
 		std::string checkFailMsg;
 		PluginException::ErrorCode checkErrCode =
 			PluginException::VERSION_INFORMATION_MISSING;
+		std::ostringstream foundVersion;
 
 		if (!scn) {
 			checkFailMsg = "No Plugin Section found in ELF file";
@@ -177,6 +179,8 @@ void UnixPluginLoader::load() throw (PluginException) {
 				checkErrCode = PluginException::VERSION_MISSMATCH;
 				const unsigned char* content =
 						(const unsigned char*) eData->d_buf;
+				foundVersion << (int) content[0] << "."
+						<< (int) content[1] << "." << (int) content[2];
 				// check version
 				if (content[0] != CHARON_CORE_VERSION_MAJOR) {
 					checkFailMsg = "plugin major version mismatch";
@@ -199,9 +203,23 @@ void UnixPluginLoader::load() throw (PluginException) {
 		if (!checkPassed) {
 			switch (_versionCheck) {
 			case PluginManagerInterface::PluginVersionWarn:
+				if (checkErrCode == PluginException::VERSION_MISSMATCH) {
+					checkFailMsg = checkFailMsg
+						+ "\n(WW) \tcharon-core version: "
+						+ CHARON_CORE_VERSION
+						+ "\n(WW) \tplugin compiled with version: "
+						+ foundVersion.str();
+				}
 				sout << "(WW) ELF Check failed: " << checkFailMsg << std::endl;
 				break;
 			case PluginManagerInterface::PluginVersionDiscard:
+				if (checkErrCode == PluginException::VERSION_MISSMATCH) {
+					checkFailMsg = checkFailMsg
+						+ "\n\tcharon-core version: "
+						+ CHARON_CORE_VERSION
+						+ "\n\tplugin compiled with version: "
+						+ foundVersion.str();
+				}
 				throw PluginException("ELF check failed: " + checkFailMsg,
 					pluginName, checkErrCode);
 				break;
