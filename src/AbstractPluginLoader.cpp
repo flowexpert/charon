@@ -21,12 +21,17 @@
  */
 #include <charon-core/AbstractPluginLoader.h>
 
-AbstractPluginLoader::AbstractPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix, bool ignoreVersion) :
-	pluginName(StringTool::toLowerCase(n)),pluginPaths(plpaths),libSuffix(lSuffix) {
-	create = NULL;
-	destroy = NULL;
-	_ignoreVersion = ignoreVersion ;
-
+AbstractPluginLoader::AbstractPluginLoader(const std::string& n,
+			std::vector<std::string>& plpaths,
+			std::string& lSuffix,
+			PluginManagerInterface::PluginVersionCheckLevel versionCheck) :
+		pluginName(StringTool::toLowerCase(n)),
+		create(NULL),
+		destroy(NULL),
+		pluginPaths(plpaths),
+		libSuffix(lSuffix),
+		_versionCheck(versionCheck)
+{
 }
 
 const std::string& AbstractPluginLoader::getName() const {
@@ -60,16 +65,17 @@ AbstractPluginLoader::~AbstractPluginLoader() {
 }
 
 AbstractPluginLoader::PluginException::PluginException(const std::string & n,
-		const std::string & pl, error_code e) :
-	runtime_error(n), nameOfPlugin(pl), err(e) {
+		const std::string & pl, ErrorCode e) :
+	runtime_error(n), _nameOfPlugin(pl), _err(e) {
 }
 
 const std::string & AbstractPluginLoader::PluginException::getPluginName() const {
-	return nameOfPlugin;
+	return _nameOfPlugin;
 }
 
-error_code AbstractPluginLoader::PluginException::getErrorCode() const {
-	return err;
+AbstractPluginLoader::PluginException::ErrorCode
+AbstractPluginLoader::PluginException::getErrorCode() const {
+	return _err;
 }
 
 AbstractPluginLoader::PluginException::~PluginException() throw () {

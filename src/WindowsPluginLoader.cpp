@@ -31,8 +31,12 @@
 #include <charon-core/WindowsPluginLoader.h>
 #include <charon-core/ParameterFile.h>
 
-WindowsPluginLoader::WindowsPluginLoader(const std::string & n,std::vector<std::string> &plpaths,std::string &lSuffix, bool ignoreVersion) :
-	AbstractPluginLoader(n,plpaths,lSuffix,ignoreVersion) {
+WindowsPluginLoader::WindowsPluginLoader(
+			const std::string & n,
+			std::vector<std::string> &plpaths,
+			std::string &lSuffix,
+			PluginManagerInterface::VersionInfo versionInfo) :
+	AbstractPluginLoader(n,plpaths,lSuffix,versionInfo) {
 	hInstLibrary = NULL;
 }
 
@@ -76,8 +80,8 @@ void WindowsPluginLoader::load() throw (PluginException) {
 			std::string oldDir = FileTool::getCurrentDir();
 			FileTool::changeDir(*cur);
 			
-			if(!_ignoreVersion)
-			{
+			if (_versionInfo != PluginManagerInterface::VersionIgnore) {
+				// TODO: handle different version check levels (ignore,warn,discard)
 				DWORD handle = 0; //dummy value
 				DWORD size = GetFileVersionInfoSize(path.c_str(), &handle);
 				if(!size)
@@ -198,7 +202,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 					delete[] subBlock;
 				}
 				delete[] versionInfo;
-			} //if(!_ignoreVersion)
+			} // VersionCheck
 			
 			hInstLibrary = LoadLibrary(path.c_str());
 			FileTool::changeDir(oldDir);

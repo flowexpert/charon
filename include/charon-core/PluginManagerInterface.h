@@ -26,39 +26,27 @@
 
 #include "ParameteredObject.h"
 
-/**
- * Interface for a plugin manager.
- */
+/// Interface for a plugin manager.
 class PluginManagerInterface {
 protected:
-	/**
-	 * Saves currently existing instances
-	 */
+	/// Saves currently existing instances
 	std::map<std::string, ParameteredObject *> objects;
 
 	bool _initializePluginOnLoad;
-public:
-	/**
-	 * Default Constructor
-	 */
-	PluginManagerInterface() {
-	}
 
-	/**
-	 * Returns an existing instance of a loaded plugin.
-	 *
-	 * @param instanceName Name of the instance
-	 * @return Pointer to the requested instance
+public:
+	/// Default Constructor
+	PluginManagerInterface() {}
+
+	/// Get an existing instance of a loaded plugin.
+	/** \param instanceName Name of the instance
+	 *  \return Pointer to the requested instance
 	 */
 	virtual ParameteredObject*
 			getInstance(const std::string & instanceName) const = 0;
 
-	/**
-	 * Returns a map containing linking the instance name to the existing
-	 * instances.
-	 *
-	 * @return Map containing all existing instances
-	 */
+	/// Get names of existing instances
+	/** \return Map containing all existing instances */
 	virtual const std::map<std::string, ParameteredObject *>&
 			getObjectList() const {
 		return objects;
@@ -84,14 +72,21 @@ public:
 	/// Default destructor
 	virtual ~PluginManagerInterface() {
 	}
-	bool initializePluginOnLoad() const
-	{
-	    return _initializePluginOnLoad;
+
+	bool initializePluginOnLoad() const {
+		return _initializePluginOnLoad;
 	}
-	void setInitiailizePluginOnLoad(bool initOnLoad)
-	{
-	   _initializePluginOnLoad=initOnLoad;
+
+	void setInitiailizePluginOnLoad (bool initOnLoad) {
+		_initializePluginOnLoad = initOnLoad;
 	}
+
+	/// info how to handle version information
+	enum PluginVersionCheckLevel {
+		PluginVersionIgnore  = 0,
+		PluginVersionWarn    = 1,
+		PluginVersionDiscard = 2
+	};
 };
 
 #endif /* PLUGINMANAGERINTERFACE_H_ */

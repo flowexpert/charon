@@ -47,9 +47,16 @@ private:
 public:
 	/**
 	 * Default constructor.
-	 * @param name Name of the plugin
+	 * \copydetails AbstractPluginLoader::AbstractPluginLoader(
+	 *     const std::string&, std::vector<std::string>&,
+	 *     std::string&,PluginManagerInterface::VersionInfo)
 	 */
-	UnixPluginLoader(const std::string & name,std::vector<std::string> &plpaths,std::string &lSuffix, bool ignoreVersion = true);
+	UnixPluginLoader(
+			const std::string& name,
+			std::vector<std::string>& plpaths,
+			std::string& lSuffix,
+			PluginManagerInterface::PluginVersionCheckLevel versionCheck =
+					PluginManagerInterface::PluginVersionIgnore);
 	virtual void load() throw (PluginException);
 	virtual void unload() throw (PluginException);
 

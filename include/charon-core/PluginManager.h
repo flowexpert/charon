@@ -125,6 +125,8 @@
  * is useful only on unix builds where this mixture causes less or no problems.
  */
 class PluginManager: public PluginManagerInterface {
+public:
+
 private:
 	/**
 	 * Paths where the plugins are stored
@@ -153,7 +155,7 @@ private:
 	/**
 	 * load plugin regardless of version information in the library file
 	 */
-	bool _ignoreVersion ;
+	PluginVersionCheckLevel _versionInfo ;
 
 	/**
 	 * Deletes all instances of a loaded plugin.
@@ -238,14 +240,13 @@ public:
 	 * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
 	 *                    fallback to libs without suffix.
 	 * \param initializeOnLoad ask Gerald
-	 * \param ignoreVersion if false, only plugins with matching
-	 *                      charon-core version information are loaded
+	 * \param versionInfo en/disable additional version check for plugins
 	 */
 	PluginManager(
 			const std::vector<std::string>& pluginPaths,
 			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
 			bool initializeOnLoad=false,
-			bool ignoreVersion = true
+			PluginVersionCheckLevel versionInfo=PluginVersionIgnore
 	);
 
 	/// default constructor
@@ -267,7 +268,7 @@ public:
 			const std::string& localPath = "",
 			bool debugSuffix = DEFAULT_DEBUG_SUFFIX,
 			bool initializeOnLoad=false,
-			bool ignoreVersion=true
+			PluginVersionCheckLevel versionInfo=PluginVersionIgnore
 	);
 
 	/**

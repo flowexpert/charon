@@ -68,33 +68,31 @@ IF(BUILD_TESTING)
 	LIST(APPEND testTargets paramreftest)
 
 	# dummy test modules for PluginManager tests
-	ADD_LIBRARY(dummymodule SHARED DummyModule.cpp)
-	TARGET_LINK_LIBRARIES(dummymodule charon-core)
-
-	ADD_LIBRARY(dynamicdummymodule SHARED DynamicDummyModule.cpp)
-	TARGET_LINK_LIBRARIES(dynamicdummymodule charon-core)
-	ADD_LIBRARY(caseddummy SHARED CasedDummy.cpp)
-	TARGET_LINK_LIBRARIES(caseddummy charon-core)
-	ADD_LIBRARY(whilegrouptestreader SHARED WhileGroupTestReader.cpp)
-	TARGET_LINK_LIBRARIES(whilegrouptestreader charon-core)
-	ADD_LIBRARY(whilegrouptestwriter SHARED WhileGroupTestWriter.cpp)
-	TARGET_LINK_LIBRARIES(whilegrouptestwriter charon-core)
-	ADD_LIBRARY(whilegroupteststatement SHARED WhileGroupTestStatement.cpp)
-	TARGET_LINK_LIBRARIES(whilegroupteststatement charon-core)
-	ADD_LIBRARY(virtualslottestwriter SHARED VirtualSlotTestWriter.cpp)
-	TARGET_LINK_LIBRARIES(virtualslottestwriter charon-core)
-	ADD_LIBRARY(virtualslottestreader SHARED VirtualSlotTestReader.cpp)
-	TARGET_LINK_LIBRARIES(virtualslottestreader charon-core)
-	LIST(APPEND testTargets
-		dummymodule
-		dynamicdummymodule
-		caseddummy
-		whilegrouptestreader
-		whilegrouptestwriter
-		whilegroupteststatement
-		virtualslottestwriter
-		virtualslottestreader
-	)
+	ADD_CHARON_PLUGIN(dummymodule DummyModule.cpp
+		SKIP_INSTALL PLUGIN_LISTS testTargets)
+	ADD_LIBRARY(dummymodule2 SHARED DummyModule.cpp)
+	TARGET_LINK_LIBRARIES(dummymodule2 charon-core)
+	LIST(APPEND testTargets dummymodule2)
+	ADD_LIBRARY(dummymodule3 SHARED DummyModule.cpp versionInvalid1.cpp)
+	TARGET_LINK_LIBRARIES(dummymodule3 charon-core)
+	LIST(APPEND testTargets dummymodule3)
+	ADD_LIBRARY(dummymodule4 SHARED DummyModule.cpp versionInvalid2.cpp)
+	TARGET_LINK_LIBRARIES(dummymodule4 charon-core)
+	LIST(APPEND testTargets dummymodule4)
+	ADD_CHARON_PLUGIN(dynamicdummymodule DynamicDummyModule.cpp
+		SKIP_INSTALL PLUGIN_LISTS testTargets)
+	ADD_CHARON_PLUGIN(caseddummy CasedDummy.cpp
+		SKIP_INSTALL PLUGIN_LISTS testTargets)
+	ADD_CHARON_PLUGIN(whilegrouptestreader WhileGroupTestReader.cpp
+		SKIP_INSTALL PLUGIN_LISTS testTargets)
+	ADD_CHARON_PLUGIN(whilegrouptestwriter WhileGroupTestWriter.cpp
+		SKIP_INSTALL PLUGIN_LISTS testTargets)
+	ADD_CHARON_PLUGIN(whilegroupteststatement WhileGroupTestStatement.cpp
+		SKIP_INSTALL PLUGIN_LISTS testTargets)
+	ADD_CHARON_PLUGIN(virtualslottestwriter VirtualSlotTestWriter.cpp
+		SKIP_INSTALL PLUGIN_LISTS testTargets)
+	ADD_CHARON_PLUGIN(virtualslottestreader VirtualSlotTestReader.cpp
+		SKIP_INSTALL PLUGIN_LISTS testTargets)
 	
 	# locate module directories:
 	# MODULE_DIR: test module directory
@@ -115,6 +113,18 @@ IF(BUILD_TESTING)
 	)
 	LIST(APPEND tests ExecutionOrder_TopoSort)
 	LIST(APPEND testTargets toposorttest)
+
+	IF(USE_LIBELF)
+		# test for Plugin Version in ELF files
+		ADD_EXECUTABLE(versionInfoElf versionInfoElf.cpp)
+		TARGET_LINK_LIBRARIES(versionInfoElf charon-core charon-plugins)
+		ADD_TEST(
+			NAME Plugin_VersionELF
+			COMMAND versionInfoElf
+		)
+		LIST(APPEND tests Plugin_VersionELF)
+		LIST(APPEND testTargets versionInfoElf)
+	ENDIF()
 
 	# tests for DynamicModules
 	ADD_EXECUTABLE(dynamictest dynamictest.cpp)

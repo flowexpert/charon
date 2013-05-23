@@ -40,10 +40,13 @@
 #endif
 
 UnixPluginLoader::UnixPluginLoader(
-		const std::string & n, std::vector<std::string>& plpaths,
-		std::string &lSuffix, bool ignoreVersion) :
-	AbstractPluginLoader(n,plpaths,lSuffix,ignoreVersion) {
-	libHandle = NULL;
+		const std::string & n,
+		std::vector<std::string>& plpaths,
+		std::string &lSuffix,
+		PluginManagerInterface::PluginVersionCheckLevel versionCheck) :
+	AbstractPluginLoader(n,plpaths,lSuffix,versionCheck),
+	libHandle(NULL)
+{
 }
 
 void UnixPluginLoader::load() throw (PluginException) {
@@ -78,7 +81,7 @@ void UnixPluginLoader::load() throw (PluginException) {
 #ifdef USE_LIBELF
 	// try to determine charon-core version from plugin before dlopening
 	// to avoid version mismatch crashes, this can be disabled in the
-	// plugin manager configuration (_ignoreVersion)
+	// plugin manager configuration (PluginManager::_versionCheck)
 #if defined(__x86_64__)
 	typedef Elf64_Ehdr Elf_Ehdr;
 	const unsigned char elfClass = ELFCLASS64;
@@ -88,7 +91,7 @@ void UnixPluginLoader::load() throw (PluginException) {
 	const unsigned char elfClass = ELFCLASS32;
 	const std::string elfClassDesc = "32 bit";
 #endif
-	if (!_ignoreVersion) {
+	if (_versionCheck != PluginManagerInterface::PluginVersionIgnore) {
 		int fd = open(path.c_str(),O_RDWR);
 		if (fd < 0) {
 			throw PluginException("Failed to open the plugin \"" + pluginName
@@ -151,39 +154,61 @@ void UnixPluginLoader::load() throw (PluginException) {
 				break;
 			}
 		}
+
+		bool checkPassed = false;
+		std::string checkFailMsg;
+		PluginException::ErrorCode checkErrCode =
+			PluginException::VERSION_INFORMATION_MISSING;
+
 		if (!scn) {
-			sout << "(WW) No Plugin Section found in ELF file!" << std::endl;
+			checkFailMsg = "No Plugin Section found in ELF file";
 		}
 		else {
 			Elf_Data* eData = 0;
 			eData = elf_getdata(scn, eData);
 			// check data type and size
 			if (eData->d_type != ELF_T_BYTE) {
-				sout << "(WW) Wrong Plugin Section Data Type!" << std::endl;
+				checkFailMsg = "Wrong Plugin Section Data Type";
 			}
 			else if (eData->d_size < 3) {
-				sout << "(WW) Wrong Plugin Section Data Size!" << std::endl;
+				checkFailMsg = "Wrong Plugin Section Data Size";
 			}
 			else {
+				checkErrCode = PluginException::VERSION_MISSMATCH;
 				const unsigned char* content =
 						(const unsigned char*) eData->d_buf;
 				// check version
 				if (content[0] != CHARON_CORE_VERSION_MAJOR) {
-					sout << "(WW) plugin major version mismatch" << std::endl;
+					checkFailMsg = "plugin major version mismatch";
 				}
 				else if (content[1] != CHARON_CORE_VERSION_MINOR) {
-					sout << "(WW) plugin minor version mismatch" << std::endl;
+					checkFailMsg = "plugin minor version mismatch";
 				}
 				else if (content[2] != CHARON_CORE_VERSION_PATCH) {
-					sout << "(WW) plugin patch version mismatch" << std::endl;
+					checkFailMsg = "plugin patch version mismatch";
 				}
 				else {
+					checkPassed = true;
 					sout << "(DD) plugin ELF check successful" << std::endl;
 				}
 			}
 		}
 		delete[] buf;
 		close(fd);
+
+		if (!checkPassed) {
+			switch (_versionCheck) {
+			case PluginManagerInterface::PluginVersionWarn:
+				sout << "(WW) ELF Check failed: " << checkFailMsg << std::endl;
+				break;
+			case PluginManagerInterface::PluginVersionDiscard:
+				throw PluginException("ELF check failed: " + checkFailMsg,
+					pluginName, checkErrCode);
+				break;
+			default:
+				break;
+			};
+		}
 	}
 #endif
 
