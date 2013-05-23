@@ -213,12 +213,12 @@ ParameteredObject * PluginManager::createInstance(
 
 void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 		throw (AbstractPluginLoader::PluginException) {
-    if(isInternal(toDestroy))
-    {
+	if(isInternal(toDestroy))
+	{
 	sout<<"(II) Object "<<toDestroy->getName()<<" is an internal object"<<std::endl;
 	delete toDestroy;
 	return;
-    }
+	}
 	std::string cur = toDestroy->getName(), curPlugin;
 	if (_instances.find(toDestroy) != _instances.end()) {
 		objects.erase(toDestroy->getName());
@@ -226,17 +226,17 @@ void PluginManager::destroyInstance(ParameteredObject* toDestroy)
 		_instances[toDestroy]->destroyInstance(toDestroy);
 		_instances.erase(toDestroy);
 	} else {
-	    if(objects.find(toDestroy->getName())!=objects.end())
-	    {
+		if(objects.find(toDestroy->getName())!=objects.end())
+		{
 			objects.erase(toDestroy->getName());
 			delete toDestroy;
-	    }
-	    else
-	    {
+		}
+		else
+		{
 		throw(AbstractPluginLoader::PluginException(
 				"This instance does not exist.", "unknown",
 				AbstractPluginLoader::PluginException::NO_SUCH_INSTANCE));
-	    }
+		}
 	}
 	sout << "(DD) Deleted Instance \"" << cur << "\" of the plugin \""
 		<< curPlugin << "\"" << std::endl;
@@ -691,17 +691,26 @@ void PluginManager::_generateMetadataForPlugin(
 			unloadPlugin(pluginName);
 		}
 	} catch (const AbstractPluginLoader::PluginException& e) {
+		std::string errMsg = e.what();
 		switch(e.getErrorCode()) {
 		case AbstractPluginLoader::PluginException::INVALID_PLUGIN_FORMAT:
+			for (size_t pos = errMsg.find("\n"); pos != std::string::npos;
+				 pos=errMsg.find("\n",pos+1)) {
+				errMsg.replace(pos,1,"\n(WW) \t");
+			}
 			sout << "(WW) \"" << e.getPluginName()
-				<< "\" is no charon plugin:\n(WW) \t"
-				<< e.what() << std::endl;
+				 << "\" is no charon plugin:\n(WW) \t"
+				 << e.what() << std::endl;
 			break;
 		default:
+			for (size_t pos = errMsg.find("\n"); pos != std::string::npos;
+				 pos=errMsg.find("\n",pos+1)) {
+				errMsg.replace(pos,1,"\n(EE) \t");
+			}
 			sout << "(EE) Could not generate metadata for module \""
-				<< e.getPluginName()
-				<< "\":\n(EE) \t"
-				<< e.what() << std::endl;
+				 << e.getPluginName()
+				 << "\":\n(EE) \t"
+				 << errMsg << std::endl;
 			break;
 		}
 	} catch(const std::exception& e) {
@@ -714,7 +723,7 @@ void PluginManager::_generateMetadataForPlugin(
 			<< pluginName << "\":\n(EE) \t"
 			<< "Possible non-standard execption in plugin constructor!"
 			<< std::endl ;
-	}	
+	}
 }
 
 void PluginManager::reset() {
@@ -726,30 +735,30 @@ std::list<ParameteredObject*> PluginManager::_determineTargetPoints() {
 	std::list<ParameteredObject*> targetPoints;
 	std::map<std::string, ParameteredObject *>::const_iterator it;
 	for (it = objects.begin(); it != objects.end(); it++) {
-       if (it->second->_active){ // checks whether the plugin is active
-           bool connected = false;
-           bool activeTest = false;
-           std::map<std::string, Slot *> outputslots =
-                it->second->getOutputSlots();
-           std::map<std::string, Slot *>::const_iterator slotIter;
-           for (slotIter = outputslots.begin(); !connected && slotIter
-                    != outputslots.end(); slotIter++) {
-               connected = slotIter->second->connected();
-               const std::set<Slot*>& listOfTargets = slotIter->second->getTargets();
-               std::set<Slot*>::const_iterator tmp = listOfTargets.begin();
-               for (; tmp!=listOfTargets.end();tmp++) {
-                    if ((*tmp)->getParent()._active){
-                        activeTest = true;
-                    }
-               }
-           }
-           if (!connected || !(activeTest)) { // verifies whether the next plugin is active
-               sout << "(DD) Found target point \"" << it->second->getName()
-                    << "\"" << std::endl;
-               targetPoints.push_back(it->second);
-           }
-       }
-    }
+		if (it->second->_active){ // checks whether the plugin is active
+			bool connected = false;
+			bool activeTest = false;
+			std::map<std::string, Slot *> outputslots =
+					it->second->getOutputSlots();
+			std::map<std::string, Slot *>::const_iterator slotIter;
+			for (slotIter = outputslots.begin(); !connected && slotIter
+				 != outputslots.end(); slotIter++) {
+				connected = slotIter->second->connected();
+				const std::set<Slot*>& listOfTargets = slotIter->second->getTargets();
+				std::set<Slot*>::const_iterator tmp = listOfTargets.begin();
+				for (; tmp!=listOfTargets.end();tmp++) {
+					if ((*tmp)->getParent()._active){
+						activeTest = true;
+					}
+				}
+			}
+			if (!connected || !(activeTest)) { // verifies whether the next plugin is active
+				sout << "(DD) Found target point \"" << it->second->getName()
+					 << "\"" << std::endl;
+				targetPoints.push_back(it->second);
+			}
+		}
+	}
 	return targetPoints;
 }
 
@@ -804,8 +813,8 @@ const std::vector<std::string>& PluginManager::getPluginPaths() const {
 
 void PluginManager::insertInstance(ParameteredObject *instance)
 {
-    assert(instance);
-    objects[instance->getName()]=instance;
+	assert(instance);
+	objects[instance->getName()]=instance;
 }
 
 bool PluginManager::isInternal(ParameteredObject* /*obj*/) {
