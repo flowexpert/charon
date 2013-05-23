@@ -40,6 +40,7 @@
 #include "RecentFileHandler.h"
 
 #include "TuchulchaWindow.moc"
+#include <charon-core/configVersion.h>
 
 	/// DEFAULT_DEBUG_SUFFIX default lib suffix
 #ifdef NDEBUG
@@ -93,7 +94,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	commentBox -> setObjectName("RTFM Box");
 	WorkflowComments* commentWidget = new WorkflowComments(commentBox);
 	commentBox -> setWidget(commentWidget);
-	
+
 
 	// select widget
 	QDockWidget* selectWidget = new QDockWidget(tr("Module Collection"), this);

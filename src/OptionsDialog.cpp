@@ -60,9 +60,8 @@ void OptionsDialog::refresh() {
 		settings.value("delayExecution",false).toBool());
 	_ui->checkReload->setChecked(
 		settings.value("reloadOnStartup",true).toBool());
-	// check box state is inverted to make help text more clear!
-	_ui->checkIgnoreVersion->setChecked(
-		!settings.value("ignoreVersion",true).toBool());
+	_ui->comboCheckLevel->setCurrentIndex(
+		settings.value("versionCheckLevel",2).toInt());
 	_setExcludes(settings.value("excludeList").toStringList());
 }
 
@@ -77,8 +76,7 @@ void OptionsDialog::apply() {
 	settings.setValue("suffixedPlugins",_ui->checkDebug->isChecked());
 	settings.setValue("delayExecution", _ui->checkDelay->isChecked());
 	settings.setValue("reloadOnStartup",_ui->checkReload->isChecked());
-	// check box state is inverted to make help text more clear!
-	settings.setValue("ignoreVersion",!_ui->checkIgnoreVersion->isChecked());
+	settings.setValue("versionCheckLevel",_ui->comboCheckLevel->currentIndex());
 	settings.setValue("excludeList",_getExcludes());
 	if (check()) {
 		refresh();
@@ -101,7 +99,7 @@ void OptionsDialog::restore() {
 	_ui->checkRelease->setChecked(true);
 	_ui->checkDelay->setChecked(false);
 	_ui->checkReload->setChecked(true);
-	_ui->checkIgnoreVersion->setChecked(true) ;
+	_ui->comboCheckLevel->setCurrentIndex(2);
 	_setExcludes(defaults.value("excludeList").toStringList());
 }
 

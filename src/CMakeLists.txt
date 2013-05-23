@@ -10,7 +10,6 @@ ADD_DEFINITIONS(-DTUCHULCHA_VERSION="${tuchulcha_VERSION}")
 IF(tuchulcha_BUILD_INFO)
 	ADD_DEFINITIONS(-DBUILD_INFO="${tuchulcha_BUILD_INFO}")
 ENDIF()
-ADD_DEFINITIONS(-DCHARON_CORE_VERSION="${charon-core_VERSION}")
 
 # source files containing QObject derived classes
 QT4_WRAP_UI(UI_SRC

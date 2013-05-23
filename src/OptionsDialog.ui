@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>301</height>
+    <width>502</width>
+    <height>357</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,8 +21,111 @@
       <enum>QTabWidget::West</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
+     <widget class="QWidget" name="tabConfig">
+      <attribute name="title">
+       <string>Config</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QGroupBox" name="groupGeneral">
+         <property name="title">
+          <string>Startup and Workflow Execution</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QCheckBox" name="checkReload">
+            <property name="text">
+             <string>reload all plugins on startup</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkDelay">
+            <property name="text">
+             <string>delay execution of Workflow (usefull for attaching a debugger)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupSuffix">
+         <property name="title">
+          <string>Plugin Config</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="checkDebug">
+            <property name="text">
+             <string>Debug</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="checkRelease">
+            <property name="text">
+             <string>Release</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QLabel" name="lSuffix">
+            <property name="text">
+             <string>Debug: prefer modules with debug suffix ( _d),&lt;br&gt;
+use unsuffixed as fallback</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupCheckLevel">
+         <property name="title">
+          <string>Plugin Version Check</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QComboBox" name="comboCheckLevel">
+            <property name="currentIndex">
+             <number>2</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>Disable Checks</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Warnings</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Skip Plugins with failing Checks</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lCheckLevel">
+            <property name="text">
+             <string>Check charon-core version of plugin library before loading.&lt;br&gt;
+Select the behavior on failing checks or version mismatch here.</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabPaths">
       <property name="enabled">
        <bool>true</bool>
@@ -125,76 +228,6 @@ Set this to the directory where the plugins you are currently working on are gen
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>for each entry, multiple paths separated by semicolon (;) may be given</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabConfig">
-      <attribute name="title">
-       <string>Config</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QGroupBox" name="groupSuffix">
-         <property name="title">
-          <string>Plugin Config</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="checkDebug">
-            <property name="text">
-             <string>Debug</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QRadioButton" name="checkRelease">
-            <property name="text">
-             <string>Release</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="2">
-           <widget class="QLabel" name="lSuffix">
-            <property name="text">
-             <string>Debug: prefer modules with debug suffix ( _d), unsuffixed as fallback</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="checkReload">
-            <property name="text">
-             <string>reload all plugins on startup</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="checkIgnoreVersion">
-            <property name="text">
-             <string>check charon-core version of plugin library before loading</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Workflow Execution</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QCheckBox" name="checkDelay">
-            <property name="text">
-             <string>delay execution of Workflow (usefull for attaching a debugger)</string>
             </property>
            </widget>
           </item>

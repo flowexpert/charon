@@ -138,11 +138,12 @@ void CharonRun::_setupMan(QString logFileName) {
 	}
 	qout << "(DD) " << endl;
 
-	bool ignoreVersion = settings.value("ignoreVersion",true).toBool() ;
+	PluginManagerInterface::PluginVersionCheckLevel versionCheck =
+		static_cast<PluginManagerInterface::PluginVersionCheckLevel>(
+			settings.value("versionCheckLevel",2).toInt());
 
 	// initialize plugin manager with determined settings
-	//PluginManager::setExcludeList(exclS);
-	_man = new PluginManager(pathsS, debug, false, ignoreVersion);
+	_man = new PluginManager(pathsS, debug, false, versionCheck);
 	_man->setExcludeList(exclS);
 }
 
