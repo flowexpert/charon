@@ -92,7 +92,7 @@ void UnixPluginLoader::load() throw (PluginException) {
 	const std::string elfClassDesc = "32 bit";
 #endif
 	if (_versionCheck != PluginManagerInterface::PluginVersionIgnore) {
-		int fd = open(path.c_str(),O_RDWR);
+		int fd = open(path.c_str(),O_RDONLY);
 		if (fd < 0) {
 			throw PluginException("Failed to open the plugin \"" + pluginName
 				+ "\". Maybe you do not have read permissions.",
