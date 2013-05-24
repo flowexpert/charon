@@ -67,8 +67,8 @@ public:
 		const std::string & n,
 		std::vector<std::string> &plpaths,
 		std::string &lSuffix,
-		PluginManagerInterface::VersionInfo versionInfo =
-			PluginManagerInterface::VersionIgnore);
+		PluginManagerInterface::PluginVersionCheckLevel versionCheck =
+			PluginManagerInterface::PluginVersionIgnore);
 
 	virtual void load() throw (PluginException);
 	virtual void unload() throw (PluginException);
