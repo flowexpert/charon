@@ -24,6 +24,7 @@
 
 /// Class name of the plugin
 #define TYPE CovarianceMotionModel
+#define stencil_EXPORTS ;
 
 #include "../include/charon/Stencils/CovarianceMotionModel.hxx"
 

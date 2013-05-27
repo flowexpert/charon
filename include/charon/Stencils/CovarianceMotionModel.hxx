@@ -168,7 +168,7 @@ cimg_library::CImg<T> CovarianceMotionModel<T>::apply(
         const cimg_library::CImgList<T>& seq,
         const unsigned int frame) const
 {
-
+	return seq[0] ;
 }
 
 #endif /* _COVARIANCEMOTIONMODEL_HXX_ */
