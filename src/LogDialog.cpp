@@ -378,15 +378,32 @@ void LogDialog::on_checkDD_toggled(bool checked) {
 }
 
 void LogDialog::on_buttonSave_clicked() {
+	QString selFilter;
 	QString fName = QFileDialog::getSaveFileName(
 				this,tr("Save Log File"),_decorator->filenameHint(),
-				tr("Text File (*.txt *.log)"));
+				tr("Text File (*.txt *.log);;Html File (*.html *.htm)"),
+				&selFilter);
 	if (fName.isEmpty())
 		return;
 	QMutexLocker mLock(_logMutex);
-	_logFile->close();
-	_logFile->copy(fName);
-	_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
+	if (selFilter.contains(".txt")) {
+		_logFile->close();
+		_logFile->copy(fName);
+		_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
+	}
+	else if (selFilter.contains(".html")) {
+		bool savDD = _ui->checkDD->isChecked();
+		_ui->checkDD->setChecked(false);
+		QFile oFile(fName);
+		oFile.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
+		QTextStream ostr(&oFile);
+		ostr << _ui->logText->toHtml() << endl;
+		_ui->checkDD->setChecked(savDD);
+	}
+	else {
+		qDebug("Unhandled file selection filter: %s",
+			selFilter.toLocal8Bit().constData());
+	}
 	mLock.unlock();
 }
 
