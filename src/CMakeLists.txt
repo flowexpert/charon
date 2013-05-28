@@ -269,7 +269,6 @@ ADD_CHARON_PLUGIN(irlsnonlocal
 
 # Brightness models (currently only constant brightness available)
 # to-be-ported and yet untested (ask for work of René):
-# - BrightnessModelDiffusion
 # - BrightnessModelExponential
 # - BrightnessModelMovingIllumination
 ADD_CHARON_PLUGIN(brightnessmodels_constant
@@ -366,15 +365,14 @@ ELSE(QT4_FOUND)
 ENDIF(QT4_FOUND)
 
 # Function plugins
-ADD_CHARON_PLUGIN(cdfitfunction
+ADD_LIBRARY(cdfitfunction SHARED
 	CDFitFunction.cpp
 	${charon_INCLUDE_DIR}/CDFitFunction.h
 	${charon_INCLUDE_DIR}/Functions/Function.h
-		PLUGIN_LISTS Plugins
 )
-SET_TARGET_PROPERTIES(cdfitfunction PROPERTIES
-	SOVERSION ${charon_VERSION}
-)
+TARGET_LINK_LIBRARIES(cdfitfunction charon-core)
+LIST(APPEND Plugins cdfitfunction)
+SET_TARGET_PROPERTIES(cdfitfunction PROPERTIES SOVERSION ${charon_VERSION})
 
 ADD_CHARON_PLUGIN(mixtureofgaussians
 	MixtureOfGaussians.cpp
@@ -385,8 +383,9 @@ ADD_CHARON_PLUGIN(mixtureofgaussians
 	${charon_INCLUDE_DIR}/Functions/Diff2Function.h
 	${charon_INCLUDE_DIR}/Functions/Diff2LinFunction.h
 	PLUGIN_LISTS Plugins
+	LINK_LIBRARIES cdfitfunction
 )
-TARGET_LINK_LIBRARIES(mixtureofgaussians cdfitfunction)
+
 ADD_CHARON_PLUGIN(psifunction
 	PsiFunction.cpp
 	${charon_INCLUDE_DIR}/PsiFunction.h
@@ -398,22 +397,18 @@ ADD_CHARON_PLUGIN(psifunction
 )
 
 # sampling and CD fitter
-ADD_CHARON_PLUGIN(sampler
+ADD_LIBRARY(sampler SHARED
 	${charon_INCLUDE_DIR}/Sampler.h
 	Sampler.cpp
-	PLUGIN_LISTS Plugins
 )
-SET_TARGET_PROPERTIES(sampler PROPERTIES
-	SOVERSION ${charon_VERSION}
-)
+TARGET_LINK_LIBRARIES(sampler charon-core)
+LIST(APPEND Plugins sampler)
+SET_TARGET_PROPERTIES(sampler PROPERTIES SOVERSION ${charon_VERSION})
 ADD_CHARON_PLUGIN(mcmcsampler
 	${charon_INCLUDE_DIR}/McmcSampler.h
 	McmcSampler.cpp
 	PLUGIN_LISTS Plugins
 	LINK_LIBRARIES sampler
-)
-SET_TARGET_PROPERTIES(mcmcsampler PROPERTIES
-	SOVERSION ${charon_VERSION}
 )
 
 ADD_CHARON_PLUGIN(samplegenerator
@@ -430,6 +425,14 @@ ADD_CHARON_PLUGIN(cdfitter
 	CdFitter.cpp
 	PLUGIN_LISTS Plugins
 	LINK_LIBRARIES sampler mcmcsampler cdfitfunction
+)
+INSTALL(
+	TARGETS         sampler cdfitfunction
+	EXPORT          ${EXPORT_NAME}
+	RUNTIME         DESTINATION bin
+	LIBRARY         DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	ARCHIVE         DESTINATION lib${LIB_SUFFIX}/charon-plugins
+	COMPONENT       libraries
 )
 
 # Warpers
