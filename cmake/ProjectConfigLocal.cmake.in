@@ -22,10 +22,10 @@ SET(@PROJECT_NAME@_TAG_IMPORT
 	"\"${@PROJECT_NAME@_TAGFILE}=${@PROJECT_NAME@_HTMLDOC_DIR}\""
 )
 SET(@PROJECT_NAME@_VERSION_RC_FILE
-	"${CMAKE_CURRENT_LIST_DIR}/version.rc.in"
+	"${charon-core_SOURCE_DIR}/cmake/version.rc.in"
 )
 SET(@PROJECT_NAME@_VERSION_CPP_FILE
-	"${CMAKE_CURRENT_LIST_DIR}/version.cpp.in"
+	"${charon-core_SOURCE_DIR}/cmake/version.cpp.in"
 )
 MARK_AS_ADVANCED(
 	@PROJECT_NAME@_DIR
