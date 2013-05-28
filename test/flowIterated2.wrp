@@ -38,7 +38,6 @@ solver.type		petscsolver
 solver.stencil		dataterm.this;spatialterm.this
 solver.out		iterator.flow
 solver.roi		size.out
-solver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ksp_max_it 1000
 seqreader.type		filereader
 seqcrop.type		crop
 seqcrop.in		seqreader.out

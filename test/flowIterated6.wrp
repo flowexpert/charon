@@ -37,7 +37,6 @@ solver.type		petscsolver
 solver.stencil		dataterm.this;spatialterm.this
 solver.out		median.in
 solver.roi		pyramid.size
-solver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ksp_max_it 200
 spatialterm.flowguess		helper2.flow
 warper.type		warpsymmetric
 warper.interpolator		interpolator.out

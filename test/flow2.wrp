@@ -31,7 +31,6 @@ solver.type		petscsolver
 solver.stencil		l2norm.this;bcce.this
 solver.roi		solverroi.out
 solver.out		analysis.result
-solver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ksp_max_it 1000
 bcce.type		gbcce
 bcce.brightnessmodel		bm.this
 bcce.motionmodel		mm.this

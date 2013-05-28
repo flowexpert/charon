@@ -29,7 +29,6 @@ solver.type		petscsolver
 solver.stencil		dataterm_hs.this;spatialterm_hs.this;dataterm_learned.this
 solver.out		iterator.flow
 solver.roi		solverroi.out
-solver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ksp_max_it 1000
 seqcrop.type		crop
 seqcrop.in		seqreader.out
 seqcrop.out		relaxinghelper.in

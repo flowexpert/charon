@@ -47,7 +47,6 @@ solver.type		petscsolver
 solver.stencil		dataterm.this;spatialterm.this
 solver.out		iterator.flow
 solver.roi		blubb.out
-solver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ksp_max_it 1000
 spatialterm.flowguess		helper.flow
 warper.type		warp
 warper.interpolator		interpolator.out

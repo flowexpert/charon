@@ -275,12 +275,11 @@ template <typename T>
 PetscSolver<T>::PetscSolver(const std::string& name) : 
 		Solver<T>("PetscSolver", name)
 {
-	ParameteredObject::_addParameter(
-			commandLine, "commandLine",
-			"petsc command line");
-    ParameteredObject::_addParameter(
-            monitorKsp, "monitorSolver",
-            "monitor the solver.");
+	ParameteredObject::_addParameter<std::string>(
+			commandLine, "commandLine", "petsc command line "
+			"(e.g. -ksp_monitor enables KSP progress and residuals)",
+			"-pc_type sor -pc_sor_type forward -pc_sor_omega 1.99 -pc_sor_its 5"
+			" -ksp_max_it 1000 -ksp_view -ksp_monitor");
 	ParameteredObject::_addParameter(
 			entriesPerRowHint, "entriesPerRowHint",
 			"add hint how many entries to allocate per row "
@@ -330,12 +329,6 @@ bool PetscSolver<T>::isRankZero() {
 	int rank;
 	MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
 	return !rank;
-}
-
-PetscErrorCode _myMonitor(KSP,PetscInt it,PetscReal rnorm,void*) {
-	sout << "KSP Iteration" << std::setw(5) << it << " : Residual norm ";
-	sout << std::scientific << std::setprecision(12) << rnorm << std::endl;
-	return 0;
 }
 
 template <typename T>
@@ -683,8 +676,6 @@ int PetscSolver<T>::petscExecute() {
 	ierr = KSPCreate(PETSC_COMM_WORLD, &ksp); CHKERRQ(ierr);
 	ierr = KSPSetFromOptions(ksp); CHKERRQ(ierr);
 	ierr = KSPSetOperators(ksp,A,A,DIFFERENT_NONZERO_PATTERN); CHKERRQ(ierr);
-    if(monitorKsp)
-        ierr = KSPMonitorSet(ksp,_myMonitor,PETSC_NULL,PETSC_NULL); CHKERRQ(ierr);
 	ierr = KSPSolve(ksp,b,x); CHKERRQ(ierr);
 
 	// temporary file for view info output

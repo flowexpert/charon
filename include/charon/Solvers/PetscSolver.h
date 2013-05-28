@@ -189,8 +189,6 @@ public:
 	/// Petsc command line options
 	Parameter<std::string> commandLine;
 
-    Parameter< bool > monitorKsp;
-
 	/// check if process is rank 0
 	bool isRankZero();
 

@@ -29,7 +29,6 @@ solver.type		petscsolver
 solver.stencil		spatialterm_hs.this;dataterm_hs.this;spatialterm_learned.this
 solver.out		iterator.flow
 solver.roi		seqgen.size
-solver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ksp_max_it 1000
 relaxator.type		relaxingiterator
 relaxator.flow		iterator.result
 relaxator.result		analyzer.result

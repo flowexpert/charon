@@ -34,7 +34,6 @@ sequence.flow		origwriter.in
 origwriter.filename		flow1_HS_Sinus.cimg
 roi.xend		20
 roi.yend		20
-solver.commandline		-pc_type sor -pc_sor_omega 1.99 -pc_sor_its 5 -ksp_max_it 1000
 l2norm.type		l2norm
 l2norm.this		solver.stencil
 l2norm.unknowns		a1;a2
