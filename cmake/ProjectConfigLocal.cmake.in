@@ -5,6 +5,11 @@ IF(NOT @PROJECT_NAME@_SOURCE_DIR)
 		"Otherwise install @PROJECT_NAME@ first (e.g. by 'make install'). "
 	)
 ENDIF()
+
+IF(@USE_CIMG@)
+	INCLUDE("${charon-utils_SOURCE_DIR}/cmake/CImgConfig.cmake")
+ENDIF()
+
 SET(@PROJECT_NAME@_ROOT_DIR "@PROJECT_SOURCE_DIR@")
 SET(@PROJECT_NAME@_INCLUDE_DIRS
 	"@PROJECT_SOURCE_DIR@/include"
