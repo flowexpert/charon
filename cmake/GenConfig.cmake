@@ -40,14 +40,6 @@ CONFIGURE_FILE(
 	cmake/version.rc.in
 	COPYONLY
 )
-
-#core directory is different when building with charon-meta
-CONFIGURE_FILE(
-	${CMAKE_MODULE_PATH}/version.rc.in
-	version.rc.in
-	COPYONLY
-)
-
 CONFIGURE_FILE(
 	${CMAKE_MODULE_PATH}/version.cpp.in
 	cmake/version.cpp.in
