@@ -25,6 +25,7 @@
 #include "LogDialog.h"
 #include "ui_LogDialog.h"
 #include "LogDialog.moc"
+#include "FileManager.h"
 
 #include <QTextStream>
 #include <QScrollBar>
@@ -40,7 +41,8 @@
 #include <QSplashScreen>
 
 LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
-	QDialog(pp,wf), _decorator(dec), _proc(0), _logMutex(new QMutex())
+		QDialog(pp,wf), _decorator(dec), _proc(0),
+		_logFile(0), _logMutex(new QMutex())
 {
 	QSettings settings;
 	_proc = new QProcess(this);
@@ -63,6 +65,7 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 	}
 
 	resetLogWidget();
+	_ui->infoDisplay->setVisible(false);
 
 	// determine available run process executables
 	QStringList testArgs;
@@ -100,6 +103,13 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 		tr("Executable: ")
 			+QString(" <span style=\"color:blue\"><tt>%1</tt></span>")
 				.arg(QFileInfo(procName).baseName());
+
+	// open log file
+	_logFile = new QFile(_decorator->logFileName(), this);
+	_logFile->open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text);
+	procText = QString("%1 %2: <span style=\"color:blue\"><tt>%3</tt></span>")
+			.arg(procText).arg(tr("Log"))
+			.arg(QFileInfo(_logFile->fileName()).fileName());
 	_ui->lProcName->setText(procText);
 
 	if(_decorator->ready(this)) {
@@ -108,9 +118,10 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 			procName, _decorator->arguments(),
 			QIODevice::ReadWrite|QIODevice::Text);
 	#ifdef Q_OS_LINUX
-		_ui->lProcName->setText(
+		procText =
 			QString("%1 PID: <span style=\"color:blue\"><tt>%2</tt></span>")
-				.arg(procText).arg(_proc->pid()));
+				.arg(procText).arg(_proc->pid());
+		_ui->lProcName->setText(procText);
 	#endif
 	}
 	else {
@@ -125,8 +136,6 @@ LogDialog::~LogDialog() {
 	settings.setValue("showDebugOutput",_ui->checkDD->isChecked());
 	settings.setValue("autoScroll",_ui->checkScroll->isChecked());
 	settings.endGroup();
-	delete _curEnd;
-	delete _curRet;
 	delete _ui;
 	delete _decorator;
 	delete _logMutex;
@@ -134,7 +143,8 @@ LogDialog::~LogDialog() {
 
 void LogDialog::resetLogWidget() {
 	_ui->logText->clear();
-	_ui->logText->document()->setDefaultStyleSheet(
+	QTextDocument* logDoc = _ui->logText->document();
+	logDoc->setDefaultStyleSheet(
 		"*{white-space:pre;font-family:monospace;font-weight:normal}"
 		".error {color:red;font-weight:bold;}"
 		".success {color:green;font-weight:bold;font-family:sans-serif;}"
@@ -142,11 +152,8 @@ void LogDialog::resetLogWidget() {
 		".info {color:#444;}"
 		".debug {color:gray;}"
 	);
-	QTextFrameFormat f;
-	_curRet=new QTextCursor(_ui->logText->textCursor().insertFrame(f));
-	_ui->logText->moveCursor(QTextCursor::End);
-	f.setLeftMargin(10);
-	_curEnd=new QTextCursor(_ui->logText->textCursor().insertFrame(f));
+	_ui->infoDisplay->document()->setDefaultStyleSheet(
+			logDoc->defaultStyleSheet());
 }
 
 void LogDialog::done(int r) {
@@ -205,49 +212,54 @@ bool LogDialog::waitForFinished(int msecs) {
 
 void LogDialog::on_proc_readyReadStandardOutput() {
 	QMutexLocker mLock(_logMutex);
-	if (_proc) {
-		QString origS = QString::fromLocal8Bit(_proc->readAllStandardOutput());
-		QString formS, cur;
-		QTextStream orig(&origS,QIODevice::ReadOnly);
-		QTextStream form(&formS,QIODevice::WriteOnly);
-		QTextStream cache(&_logCache,QIODevice::WriteOnly);
+	QString origS = QString::fromLocal8Bit(_proc->readAllStandardOutput());
+	QString formS, cur;
+	QTextStream orig(&origS,QIODevice::ReadOnly);
+	QTextStream form(&formS,QIODevice::WriteOnly);
+	QTextStream log(_logFile);
 
-		forever {
-			cur = orig.readLine();
-			if (cur.isNull()) {
-				break;
-			}
-			cache << cur << endl;
-			if(_decorator->finishSignal(cur)) {
-				printStatus(_decorator->finishMessage());
-				on_proc_finished(0);
-			}
-			cur = _decorator->highlightLine(cur);
-			if (!cur.isNull()) {
-				form << cur << "<br>" << endl;
-			}
+	forever {
+		cur = orig.readLine();
+		if (cur.isNull()) {
+			break;
 		}
-		_curRet->insertHtml(formS);
-
-		// scroll down
-		if (_ui->checkScroll->isChecked()) {
-			QScrollBar* bar = _ui->logText->verticalScrollBar();
-			bar->setValue(bar->maximum());
+		log << cur << endl;
+		if(_decorator->finishSignal(cur)) {
+			printStatus(_decorator->finishMessage());
+			on_proc_finished(0);
+		}
+		cur = _decorator->highlightLine(cur);
+		if (!cur.isNull()) {
+			form << cur << "<br>" << endl;
 		}
 	}
+	_ui->logText->insertHtml(formS);
+
+	// scroll down
+	if (_ui->checkScroll->isChecked()) {
+		QScrollBar* bar = _ui->logText->verticalScrollBar();
+		bar->setValue(bar->maximum());
+	}
+
 	mLock.unlock();
 }
 
 void LogDialog::reprint() {
+	if (!_logFile || !_logFile->isOpen()) {
+		// reprint only useful after initialization
+		return;
+	}
 	QMutexLocker mLock(_logMutex);
-	QString formS, cur;
-	QTextStream cache(&_logCache,QIODevice::ReadOnly);
+	QString cur, formS;
+	_logFile->close();
+	_logFile->open(QIODevice::ReadOnly|QIODevice::Text);
+	QTextStream log(_logFile);
 	QTextStream form(&formS,QIODevice::WriteOnly);
 
 	resetLogWidget();
 
 	forever {
-		cur = cache.readLine();
+		cur = log.readLine();
 		if (cur.isNull()) {
 			break;
 		}
@@ -256,14 +268,16 @@ void LogDialog::reprint() {
 			form << cur << "<br>" << endl;
 		}
 	}
-	_curRet->insertHtml(formS);
-	_curEnd->insertHtml(_logEnd);
+	_ui->logText->insertHtml(formS);
 
 	// scroll down
 	if (_ui->checkScroll->isChecked()) {
 		QScrollBar* bar = _ui->logText->verticalScrollBar();
 		bar->setValue(bar->maximum());
 	}
+
+	_logFile->close();
+	_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
 
 	mLock.unlock();
 }
@@ -275,7 +289,7 @@ void LogDialog::on_proc_readyReadStandardError() {
 		QString formS, cur;
 		QTextStream orig(&origS,QIODevice::ReadOnly);
 		QTextStream form(&formS,QIODevice::WriteOnly);
-		QTextStream cache(&_logCache,QIODevice::WriteOnly);
+		QTextStream log(_logFile);
 
 		forever {
 			cur = orig.readLine();
@@ -288,15 +302,15 @@ void LogDialog::on_proc_readyReadStandardError() {
 			}
 			if (cur.contains(
 					QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
-				cache << cur << endl;
+				log << cur << endl;
 			}
 			else {
-				cache << "(EE) " << cur << endl;
+				log << "(EE) " << cur << endl;
 			}
 			cur = QString("<span class=\"error\">%1</span>").arg(cur);
 			form << cur << "<br>" << endl;
 		}
-		_curRet->insertHtml(formS);
+		_ui->logText->insertHtml(formS);
 
 		// scroll down
 		if (_ui->checkScroll->isChecked()) {
@@ -354,8 +368,8 @@ void LogDialog::on_proc_error(QProcess::ProcessError) {
 }
 
 void LogDialog::printStatus(QString msg) {
-	_logEnd = QString("%1\n%2").arg(_logEnd).arg(msg);
-	_curEnd->insertHtml(msg);
+	_ui->infoDisplay->setVisible(true);
+	_ui->infoDisplay->insertHtml(msg);
 }
 
 void LogDialog::on_checkDD_toggled(bool checked) {
@@ -369,11 +383,11 @@ void LogDialog::on_buttonSave_clicked() {
 				tr("Text File (*.txt *.log)"));
 	if (fName.isEmpty())
 		return;
-	QFile outputFile(fName);
-	if (outputFile.open(QFile::WriteOnly|QFile::Truncate)) {
-		QTextStream outStr(&outputFile);
-		outStr << _logCache << endl;
-	}
+	QMutexLocker mLock(_logMutex);
+	_logFile->close();
+	_logFile->copy(fName);
+	_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
+	mLock.unlock();
 }
 
 // ============================ Decorators ===============================
@@ -483,8 +497,18 @@ QString LogDecorators::Update::filenameHint() const {
 	return QDir::home().absoluteFilePath("update-modules.log");
 }
 
+QString LogDecorators::Update::logFileName() const {
+	return FileManager::instance().configDir()
+			.absoluteFilePath("updateLog.txt");
+}
+
 LogDecorators::UpdateDynamics::UpdateDynamics(QString fileName) :
 		_fileName(fileName) {
+}
+
+QString LogDecorators::UpdateDynamics::logFileName() const {
+	return FileManager::instance().configDir()
+			.absoluteFilePath("updateDynLog.txt");
 }
 
 QStringList LogDecorators::UpdateDynamics::arguments() const {
@@ -563,4 +587,9 @@ QString LogDecorators::RunWorkflow::filenameHint() const {
 	QFileInfo wrpFile(_fileName);
 	return QString("%1/%2.log")
 			.arg(wrpFile.absolutePath()).arg(wrpFile.baseName());
+}
+
+QString LogDecorators::RunWorkflow::logFileName() const {
+	return FileManager::instance().configDir()
+			.absoluteFilePath("executeLog.txt");
 }

@@ -40,32 +40,22 @@
 #endif // __GNUG__
 
 CharonRun::CharonRun(QObject* pp) :
-	QObject(pp), _man(0), _log(0)
+	QObject(pp), _man(0)
 {
 }
 
 CharonRun::~CharonRun() {
-	if (_man || _log) {
+	if (_man) {
 		_freeMan();
 	}
 }
 
-void CharonRun::_setupMan(QString logFileName) {
-	if (_man || _log) {
+void CharonRun::_setupMan() {
+	if (_man) {
 		_freeMan();
 	}
 
-	const FileManager& fm = FileManager::instance();
-	if (!logFileName.isEmpty()) {
-		QDir configDir = fm.configDir();
-		logFileName = configDir.absoluteFilePath(logFileName);
-		_log = new std::ofstream(
-					logFileName.toStdString().c_str(), std::ios::trunc);
-		Q_ASSERT(_log);
-		Q_ASSERT(!_log->fail());
-		Q_ASSERT(_log->good());
-		sout.assign(std::cout, *_log);
-	}
+	sout.assign(std::cout);
 
 	QSettings settings;
 #ifdef _MSC_VER
@@ -153,11 +143,6 @@ void CharonRun::_freeMan() {
 		_man = 0;
 	}
 	sout.assign(std::cout);
-	if (_log) {
-		_log->close();
-		delete _log;
-		_log = 0;
-	}
 }
 
 void CharonRun::updatePlugins() {
@@ -176,7 +161,7 @@ void CharonRun::updatePlugins() {
 		Q_ASSERT(!QFileInfo(wrpFiles[i]).exists());
 	}
 
-	_setupMan("updateLog.txt");
+	_setupMan();
 	_man->createMetadata(metaPath.absolutePath().toStdString());
 	_freeMan();
 
@@ -211,9 +196,9 @@ void CharonRun::updatePlugins() {
 void CharonRun::runWorkflow(QString fName) {
 	_taskStart();
 	QTextStream qout(stdout);
-	_setupMan("executeLog.txt");
+	_setupMan();
 
-	QString pathBak = QDir::currentPath();
+	//QString pathBak = QDir::currentPath();
 	fName = QFileInfo(fName).absoluteFilePath();
 	QDir::setCurrent(QFileInfo(fName).path());
 	QString errorMsg;
@@ -306,7 +291,7 @@ void CharonRun::updateDynamics(QString fName) {
 		Q_ASSERT(fm.configDir().mkdir("dynamics"));
 	}
 
-	_setupMan("updateLog.txt");
+	_setupMan();
 	_man->createDynamicMetadata(fName.toStdString(),
 		dynamPath.absoluteFilePath(baseN).toStdString());
 	_freeMan();

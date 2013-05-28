@@ -31,6 +31,7 @@
 namespace Ui {class LogDialog;}
 class QTextCursor;
 class QMutex;
+class QFile;
 
 /// class for logging display and communication with external processes
 /** This widget implements the decorator pattern to handle different
@@ -75,6 +76,8 @@ public:
 		virtual QString finishMessage() const;
 		/// hint for filename on save dialog
 		virtual QString filenameHint() const;
+		/// logfile name for output logging
+		virtual QString logFileName() const = 0;
 		/// debug output mode
 		bool debugOutput;
 	};
@@ -132,10 +135,7 @@ private:
 	Decorator* _decorator; ///< decorator implementation
 	Ui::LogDialog* _ui;    ///< designer ui
 	QProcess* _proc;       ///< tuchulcha-run process
-	QTextCursor* _curRet;  ///< proc output cursor
-	QTextCursor* _curEnd;  ///< other stuff cursor
-	QString _logCache;     ///< cache log content
-	QString _logEnd;       ///< cache end messages
+	QFile* _logFile;       ///< log content output
 	QMutex* _logMutex;     ///< avoid parallel writes to log window
 };
 
@@ -149,6 +149,7 @@ namespace LogDecorators {
 		virtual QString title() const;
 		virtual QString desc() const;
 		virtual QString filenameHint() const;
+		virtual QString logFileName() const;
 	};
 
 	/// decorator for update dynamics dialog
@@ -158,6 +159,7 @@ namespace LogDecorators {
 		/** \param fileName worflow file to analyze */
 		UpdateDynamics(QString fileName);
 		virtual QStringList arguments() const;
+		virtual QString logFileName() const;
 	private:
 		QString _fileName; ///< filename cache
 	};
@@ -176,6 +178,7 @@ namespace LogDecorators {
 		virtual QStringList postStartCommands(QWidget* parent) const;
 		virtual QString highlightLine(QString line) const;
 		virtual QString filenameHint() const;
+		virtual QString logFileName() const;
 	signals:
 		/// highlight the currently active object
 		/** \param objName  object name */

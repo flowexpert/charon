@@ -60,10 +60,8 @@ signals:
 private:
 	/// plugin manager
 	PluginManager* _man;
-	/// logger
-	std::ofstream* _log;
 	/// setup plugin manager
-	void _setupMan(QString logFileName);
+	void _setupMan();
 	/// release plugin manager
 	void _freeMan();
 
