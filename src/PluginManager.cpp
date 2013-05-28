@@ -694,12 +694,13 @@ void PluginManager::_generateMetadataForPlugin(
 		std::string errMsg = e.what();
 		switch(e.getErrorCode()) {
 		case AbstractPluginLoader::PluginException::INVALID_PLUGIN_FORMAT:
+		case AbstractPluginLoader::PluginException::VERSION_INFORMATION_MISSING:
 			for (size_t pos = errMsg.find("\n"); pos != std::string::npos;
 				 pos=errMsg.find("\n",pos+1)) {
-				errMsg.replace(pos,1,"\n(WW) \t");
+				errMsg.replace(pos,1,"\n(DD) \t");
 			}
-			sout << "(WW) \"" << e.getPluginName()
-				 << "\" is no charon plugin:\n(WW) \t"
+			sout << "(DD) \"" << e.getPluginName()
+				 << "\" is no charon plugin:\n(DD) \t"
 				 << e.what() << std::endl;
 			break;
 		default:
