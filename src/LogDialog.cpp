@@ -36,12 +36,13 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QMutexLocker>
+#include <QStringListModel>
 
 #include <QPainter>
 #include <QSplashScreen>
 
 LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
-		QDialog(pp,wf), _decorator(dec), _proc(0),
+		QDialog(pp,wf), _log(0), _decorator(dec), _proc(0),
 		_logFile(0), _logMutex(new QMutex())
 {
 	QSettings settings;
@@ -53,6 +54,8 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 	_ui->checkDD->setChecked(settings.value("showDebugOutput",true).toBool());
 	_ui->checkScroll->setChecked(settings.value("autoScroll",true).toBool());
 	settings.endGroup();
+	_log = new QStringListModel(this);
+	_ui->logView->setModel(_log);
 	_decorator->debugOutput = _ui->checkDD->isChecked();
 
 	QString title=_decorator->title();
@@ -142,9 +145,7 @@ LogDialog::~LogDialog() {
 }
 
 void LogDialog::resetLogWidget() {
-	_ui->logText->clear();
-	QTextDocument* logDoc = _ui->logText->document();
-	logDoc->setDefaultStyleSheet(
+	_ui->infoDisplay->document()->setDefaultStyleSheet(
 		"*{white-space:pre;font-family:monospace;font-weight:normal}"
 		".error {color:red;font-weight:bold;}"
 		".success {color:green;font-weight:bold;font-family:sans-serif;}"
@@ -152,8 +153,6 @@ void LogDialog::resetLogWidget() {
 		".info {color:#444;}"
 		".debug {color:gray;}"
 	);
-	_ui->infoDisplay->document()->setDefaultStyleSheet(
-			logDoc->defaultStyleSheet());
 }
 
 void LogDialog::done(int r) {
@@ -165,8 +164,6 @@ void LogDialog::done(int r) {
 				.arg(tr("waiting for process to quit..."))+
 			QString("<span class=\"warning\">%1</span><br>")
 				.arg(tr("asking for termination in 1 second")));
-		QScrollBar* bar = _ui->logText->verticalScrollBar();
-		bar->setValue(bar->maximum());
 		_proc->write("quit\n");
 		connect(_proc,SIGNAL(finished(int)),SLOT(close()));
 		QTimer::singleShot(1000,this,SLOT(terminate()));
@@ -213,32 +210,30 @@ bool LogDialog::waitForFinished(int msecs) {
 void LogDialog::on_proc_readyReadStandardOutput() {
 	QMutexLocker mLock(_logMutex);
 	QString origS = QString::fromLocal8Bit(_proc->readAllStandardOutput());
-	QString formS, cur;
+	QString cur;
 	QTextStream orig(&origS,QIODevice::ReadOnly);
-	QTextStream form(&formS,QIODevice::WriteOnly);
-	QTextStream log(_logFile);
+	QStringList logList = _log->stringList();
+	QTextStream logFile(_logFile);
 
 	forever {
 		cur = orig.readLine();
 		if (cur.isNull()) {
 			break;
 		}
-		log << cur << endl;
+		logFile << cur << endl;
 		if(_decorator->finishSignal(cur)) {
 			printStatus(_decorator->finishMessage());
 			on_proc_finished(0);
 		}
-		cur = _decorator->highlightLine(cur);
+		//cur = _decorator->highlightLine(cur);
 		if (!cur.isNull()) {
-			form << cur << "<br>" << endl;
+			logList << cur;
 		}
 	}
-	_ui->logText->insertHtml(formS);
+	_log->setStringList(logList);
 
-	// scroll down
 	if (_ui->checkScroll->isChecked()) {
-		QScrollBar* bar = _ui->logText->verticalScrollBar();
-		bar->setValue(bar->maximum());
+		_ui->logView->scrollToBottom();
 	}
 
 	mLock.unlock();
@@ -250,30 +245,26 @@ void LogDialog::reprint() {
 		return;
 	}
 	QMutexLocker mLock(_logMutex);
-	QString cur, formS;
+	QString cur;
 	_logFile->close();
 	_logFile->open(QIODevice::ReadOnly|QIODevice::Text);
 	QTextStream log(_logFile);
-	QTextStream form(&formS,QIODevice::WriteOnly);
-
-	resetLogWidget();
+	QStringList logList;
 
 	forever {
 		cur = log.readLine();
 		if (cur.isNull()) {
 			break;
 		}
-		cur = _decorator->highlightLine(cur);
+		//cur = _decorator->highlightLine(cur);
 		if (!cur.isNull()) {
-			form << cur << "<br>" << endl;
+			logList << cur;
 		}
 	}
-	_ui->logText->insertHtml(formS);
+	_log->setStringList(logList);
 
-	// scroll down
 	if (_ui->checkScroll->isChecked()) {
-		QScrollBar* bar = _ui->logText->verticalScrollBar();
-		bar->setValue(bar->maximum());
+		_ui->logView->scrollToBottom();
 	}
 
 	_logFile->close();
@@ -284,40 +275,38 @@ void LogDialog::reprint() {
 
 void LogDialog::on_proc_readyReadStandardError() {
 	QMutexLocker mLock(_logMutex);
-	if (_proc) {
-		QString origS = QString::fromLocal8Bit(_proc->readAllStandardError());
-		QString formS, cur;
-		QTextStream orig(&origS,QIODevice::ReadOnly);
-		QTextStream form(&formS,QIODevice::WriteOnly);
-		QTextStream log(_logFile);
+	QString origS = QString::fromLocal8Bit(_proc->readAllStandardError());
+	QString cur;
+	QTextStream orig(&origS,QIODevice::ReadOnly);
+	QStringList logList = _log->stringList();
+	QTextStream logFile(_logFile);
 
-		forever {
-			cur = orig.readLine();
-			if (cur.isNull()) {
-				break;
-			}
-			if(_decorator->finishSignal(cur)) {
-				printStatus(_decorator->finishMessage());
-				on_proc_finished(0);
-			}
-			if (cur.contains(
-					QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
-				log << cur << endl;
-			}
-			else {
-				log << "(EE) " << cur << endl;
-			}
-			cur = QString("<span class=\"error\">%1</span>").arg(cur);
-			form << cur << "<br>" << endl;
+	forever {
+		cur = orig.readLine();
+		if (cur.isNull()) {
+			break;
 		}
-		_ui->logText->insertHtml(formS);
-
-		// scroll down
-		if (_ui->checkScroll->isChecked()) {
-			QScrollBar* bar = _ui->logText->verticalScrollBar();
-			bar->setValue(bar->maximum());
+		if(_decorator->finishSignal(cur)) {
+			printStatus(_decorator->finishMessage());
+			on_proc_finished(0);
 		}
+		if (cur.contains(
+				QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
+			logFile << cur << endl;
+		}
+		else {
+			logFile << "(EE) " << cur << endl;
+		}
+		//cur = QString("<span class=\"error\">%1</span>").arg(cur);
+		logList << cur;
 	}
+
+	_log->setStringList(logList);
+
+	if (_ui->checkScroll->isChecked()) {
+		_ui->logView->scrollToBottom();
+	}
+
 	mLock.unlock();
 }
 
@@ -381,29 +370,14 @@ void LogDialog::on_buttonSave_clicked() {
 	QString selFilter;
 	QString fName = QFileDialog::getSaveFileName(
 				this,tr("Save Log File"),_decorator->filenameHint(),
-				tr("Text File (*.txt *.log);;Html File (*.html *.htm)"),
+				tr("Text File (*.txt *.log)"),
 				&selFilter);
 	if (fName.isEmpty())
 		return;
 	QMutexLocker mLock(_logMutex);
-	if (selFilter.contains(".txt")) {
-		_logFile->close();
-		_logFile->copy(fName);
-		_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
-	}
-	else if (selFilter.contains(".html")) {
-		bool savDD = _ui->checkDD->isChecked();
-		_ui->checkDD->setChecked(false);
-		QFile oFile(fName);
-		oFile.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
-		QTextStream ostr(&oFile);
-		ostr << _ui->logText->toHtml() << endl;
-		_ui->checkDD->setChecked(savDD);
-	}
-	else {
-		qDebug("Unhandled file selection filter: %s",
-			selFilter.toLocal8Bit().constData());
-	}
+	_logFile->close();
+	_logFile->copy(fName);
+	_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
 	mLock.unlock();
 }
 
