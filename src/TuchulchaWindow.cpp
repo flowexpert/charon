@@ -39,7 +39,6 @@
 #include "OptionsDialog.h"
 #include "RecentFileHandler.h"
 
-#include "TuchulchaWindow.moc"
 #include <charon-core/configVersion.h>
 
 	/// DEFAULT_DEBUG_SUFFIX default lib suffix

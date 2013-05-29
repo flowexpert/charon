@@ -24,8 +24,6 @@
 #include "PrefixValidator.h"
 #include "QParameterFile.h"
 
-#include "PrefixValidator.moc"
-
 PrefixValidator::PrefixValidator(const QParameterFile& data, QObject* pp) :
 		QValidator(pp),
 		_parameterFile(data)

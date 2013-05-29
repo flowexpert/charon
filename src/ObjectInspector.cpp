@@ -36,7 +36,6 @@
 #include "PriorityDialog.h"
 #include "PriorityBox.h"
 
-#include "ObjectInspector.moc"
 #include "ui_ObjectInspector.h"
 
 ObjectInspector::ObjectInspector(

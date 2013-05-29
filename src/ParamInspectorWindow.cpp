@@ -30,8 +30,6 @@
 #include "FileManager.h"
 #include "RecentFileHandler.h"
 
-#include "ParamInspectorWindow.moc"
-
 ParamInspectorWindow::ParamInspectorWindow(QWidget *pp, Qt::WindowFlags ff) :
 		QMainWindow(pp, ff)
 {

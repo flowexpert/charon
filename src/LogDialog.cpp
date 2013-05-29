@@ -24,7 +24,6 @@
 
 #include "LogDialog.h"
 #include "ui_LogDialog.h"
-#include "LogDialog.moc"
 #include "FileManager.h"
 
 #include <QTextStream>

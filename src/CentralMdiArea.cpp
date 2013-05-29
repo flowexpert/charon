@@ -22,7 +22,6 @@
  */
 
 #include "CentralMdiArea.h"
-#include "CentralMdiArea.moc"
 
 #include <QMdiArea>
 #include <QtGui>

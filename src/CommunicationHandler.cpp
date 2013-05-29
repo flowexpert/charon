@@ -22,7 +22,6 @@
  */
 
 #include "CommunicationHandler.h"
-#include "CommunicationHandler.moc"
 
 #include <QTextStream>
 #include <QApplication>

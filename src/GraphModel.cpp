@@ -34,8 +34,6 @@
 #include <QInputDialog>
 #include <stdexcept>
 
-#include "GraphModel.moc"
-
 /// transform std::string into lowercase
 /** \param[in] input  string to transform
  *  \returns          lowercase version

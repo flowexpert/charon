@@ -23,7 +23,6 @@
  */
 
 #include "CharonRun.h"
-#include "CharonRun.moc"
 
 #include "FileManager.h"
 #include <charon-core/SplitStream.h>

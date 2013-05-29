@@ -34,8 +34,6 @@
 #include "ParameterFileModel.h"
 #include "ObjectInspector.h"
 
-#include "WorkflowComments.moc"
-
 WorkflowComments :: WorkflowComments(QWidget* myParent) :
 	QTextEdit(myParent),
 	_model(0),

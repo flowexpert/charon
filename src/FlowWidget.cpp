@@ -32,8 +32,6 @@
 #include "GraphModel.h"
 #include "NodeHandler.h"
 
-#include "FlowWidget.moc"
-
 FlowWidget::FlowWidget(GraphModel* modelIn, QWidget* myParent) :
 		QMdiSubWindow(myParent) {
 	// init GUI

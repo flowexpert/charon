@@ -24,6 +24,7 @@
 #define NODEHANDLER_H_
 
 #include <QGraphicsScene>
+#include <QMap>
 
 class NodeProperty;
 class ConnectionLine;

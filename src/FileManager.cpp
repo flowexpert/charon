@@ -93,5 +93,3 @@ QString FileManager::classesFile() const {
 	}
 	return path;
 }
-
-#include "FileManager.moc"

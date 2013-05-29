@@ -22,7 +22,6 @@
  */
 
 #include "PriorityBox.h"
-#include "PriorityBox.moc"
 
 #include <QComboBox>
 

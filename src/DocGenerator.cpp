@@ -227,5 +227,3 @@ void DocGenerator::showClassDoc(const QString& className) {
 
 	showDocString(page);
 }
-
-#include "DocGenerator.moc"

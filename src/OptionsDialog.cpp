@@ -23,7 +23,6 @@
  */
 
 #include "OptionsDialog.h"
-#include "OptionsDialog.moc"
 #include "ui_OptionsDialog.h"
 
 #include <QSettings>

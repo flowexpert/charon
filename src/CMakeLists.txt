@@ -1,6 +1,6 @@
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}) # for including ui headers
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}) # for ui header includes
 
 # info definitions
 IF(tuchulcha_VCS_INFO)
@@ -20,81 +20,80 @@ QT4_WRAP_UI(UI_SRC
 	PriorityDialog.ui
 )
 
-SET(TUCHULCHA_SOURCES
-	Qtiostream.cpp
-	Qtiostream.h
-	FileManager.cpp
+QT4_WRAP_CPP(MOC_SRC
 	FileManager.h
-	RecentFileHandler.cpp
-	RecentFileHandler.h
-	ParameterFileModel.cpp
-	ParameterFileModel.h
-	PrefixValidator.cpp
 	PrefixValidator.h
-	InspectorDelegate.cpp
 	InspectorDelegate.h
-	ModelToolBar.cpp
+	RecentFileHandler.h
 	ModelToolBar.h
-	QParameterFile.h
-	QParameterFile.cpp
-	VarTypeMap.cpp
-	VarTypeMap.h
-	MetaData.cpp
-	MetaData.h
-	QDirEdit.cpp
+	ParameterFileModel.h
 	QDirEdit.h
-	GraphModel.cpp
 	GraphModel.h
-	FlowWidget.cpp
 	FlowWidget.h
-	ConnectionLine.cpp
-	ConnectionLine.h
-	Node.cpp
-	Node.h
-	NodeProperty.cpp
-	NodeProperty.h
-	NodeHandler.cpp
 	NodeHandler.h
-	TuchulchaWindow.cpp
-	TuchulchaWindow.h
-	DocGenerator.cpp
-	DocGenerator.h
-	LogDialog.cpp
-	LogDialog.h
-	OptionsDialog.cpp
 	OptionsDialog.h
-	NodeTreeView.cpp
+	DocGenerator.h
+	LogDialog.h
 	NodeTreeView.h
-	WorkflowComments.cpp
-	WorkflowComments.h
-	CentralMdiArea.cpp
+	TuchulchaWindow.h
 	CentralMdiArea.h
-	ObjectInspector.cpp
-	ObjectInspector.h
-	ParamInspectorWindow.cpp
-	ParamInspectorWindow.h
-	PriorityDialog.cpp
+	WorkflowComments.h
 	PriorityDialog.h
-	PriorityBox.cpp
 	PriorityBox.h
+	ParamInspectorWindow.h
+	ObjectInspector.h
 )
 
-SET(WF_RUNNER_SOURCES
-	CommunicationHandler.h
-	CommunicationHandler.cpp
+SET(TUCHULCHA_SOURCES
+	Qtiostream.h
+	Qtiostream.cpp
+	QParameterFile.h
+	QParameterFile.cpp
+	VarTypeMap.h
+	VarTypeMap.cpp
+	MetaData.h
+	MetaData.cpp
+	Node.h
+	Node.cpp
+	NodeProperty.h
+	NodeProperty.cpp
+	FileManager.cpp
+	RecentFileHandler.cpp
+	ParameterFileModel.cpp
+	PrefixValidator.cpp
+	InspectorDelegate.cpp
+	ModelToolBar.cpp
+	QDirEdit.cpp
+	GraphModel.cpp
+	FlowWidget.cpp
+	ConnectionLine.h
+	ConnectionLine.cpp
+	NodeHandler.cpp
+	TuchulchaWindow.cpp
+	DocGenerator.cpp
+	LogDialog.cpp
+	OptionsDialog.cpp
+	NodeTreeView.cpp
+	WorkflowComments.cpp
+	CentralMdiArea.cpp
+	ObjectInspector.cpp
+	ParamInspectorWindow.cpp
+	PriorityDialog.cpp
+	PriorityBox.cpp
+)
+
+QT4_WRAP_CPP(WF_RUNNER_MOC
 	CharonRun.h
+	CommunicationHandler.h
+)
+SET(WF_RUNNER_SOURCES
+	CommunicationHandler.cpp
 	CharonRun.cpp
 )
 
-# =============  generate moc files ====================
-
-# create moc files
-QT4_AUTOMOC(${TUCHULCHA_SOURCES})
-QT4_AUTOMOC(${WF_RUNNER_SOURCES})
-
 # create libraries
-ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC})
-ADD_LIBRARY(tc-run ${WF_RUNNER_SOURCES})
+ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC} ${MOC_SRC})
+ADD_LIBRARY(tc-run ${WF_RUNNER_SOURCES} ${WF_RUNNER_MOC})
 
 # add dependencies
 TARGET_LINK_LIBRARIES(tuchulcha-widgets ${QT_LIBRARIES})

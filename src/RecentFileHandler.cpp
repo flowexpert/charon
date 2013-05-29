@@ -29,8 +29,6 @@
 #include <QFileInfo>
 #include <QMenu>
 
-#include "RecentFileHandler.moc"
-
 RecentFileHandler::RecentFileHandler(QObject* pp) : QObject(pp) {
 }
 

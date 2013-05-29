@@ -22,7 +22,6 @@
  */
 
 #include "PriorityDialog.h"
-#include "PriorityDialog.moc"
 #include "ui_PriorityDialog.h"
 
 #include <QDialog>

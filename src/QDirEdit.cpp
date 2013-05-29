@@ -108,5 +108,3 @@ void QDirEdit::resizeEvent(QResizeEvent* e) {
 	_browseButton->resize(h, h);
 	_browseButton->move(width() - h, 0);
 }
-
-#include "QDirEdit.moc"

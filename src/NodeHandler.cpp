@@ -475,5 +475,3 @@ void NodeHandler::updateTooltip (QString comment) {
 		}
 	}
 }
-
-#include "NodeHandler.moc"

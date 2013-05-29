@@ -154,5 +154,3 @@ void NodeTreeView::on_treeView_clicked(const QModelIndex& cur) {
 void NodeTreeView::on_editFilter_textChanged(const QString& text) {
 	_filter->setFilterWildcard(text);
 }
-
-#include "NodeTreeView.moc"

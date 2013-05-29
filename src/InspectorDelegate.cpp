@@ -142,5 +142,3 @@ bool InspectorDelegate::eventFilter(QObject* object, QEvent* ev)
 		return false;
 	return QStyledItemDelegate::eventFilter(object, ev);
 }
-
-#include "InspectorDelegate.moc"

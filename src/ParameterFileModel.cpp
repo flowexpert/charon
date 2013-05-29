@@ -39,7 +39,6 @@
 #include <QTimer>
 #include <QApplication>
 #include <QMutex>
-#include "ParameterFileModel.moc"
 
 ParameterFileModel::ParameterFileModel(
 			QString fName, QObject* myParent, QString metaFile) :

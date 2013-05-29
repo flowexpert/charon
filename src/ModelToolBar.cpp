@@ -27,8 +27,6 @@
 #include "ModelToolBar.h"
 #include "GraphModel.h"
 
-#include "ModelToolBar.moc"
-
 ModelToolBar::ModelToolBar(const QString& title, QWidget* myParent) :
 		QToolBar(title, myParent),
 		_model(0) {

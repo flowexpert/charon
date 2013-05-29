@@ -164,6 +164,11 @@
        <verstretch>4</verstretch>
       </sizepolicy>
      </property>
+     <property name="font">
+      <font>
+       <family>Monospace</family>
+      </font>
+     </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
