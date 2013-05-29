@@ -317,7 +317,7 @@ bool ParameterFileModel::setData(
 void ParameterFileModel::reactivatePreviousPlugins(){
     QString tmpPrefix = _prefix;
     QStringList inputsOfOneSlot;
-    int parameterIndex;
+    int parameterIndex = 0;
     for (int p = 0; p < _keys.size(); p++){
         if (_keys[p].contains("active")){
             parameterIndex = p;
@@ -363,7 +363,7 @@ void ParameterFileModel::reactivatePreviousPlugins(){
 void ParameterFileModel::deactivate(){
     QString tmpPrefix = _prefix;
     QStringList outputsOfOneSlot;
-    int parameterIndex;
+    int parameterIndex = 0;
     for (int p = 0; p < _keys.size(); p++){
         if (_keys[p].contains("active")){
             parameterIndex = p;
@@ -408,7 +408,7 @@ void ParameterFileModel::deactivate(){
 void ParameterFileModel::reactivate(){
     QString tmpPrefix = _prefix;
     QStringList outputsOfOneSlot;
-    int parameterIndex;
+    int parameterIndex = 0;
     for (int p = 0; p < _keys.size(); p++){
         if (_keys[p].contains("active")){
             parameterIndex = p;
@@ -440,7 +440,7 @@ void ParameterFileModel::reactivate(){
 }
 
 bool ParameterFileModel::active() const {
-    int parameterIndex;
+    int parameterIndex=0;
     for (int p = 0; p < _keys.size(); p++){
         if (_keys[p].contains("active")){
             parameterIndex = p;
