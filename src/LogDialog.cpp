@@ -377,7 +377,7 @@ void LogDialog::on_checkDD_toggled(bool checked) {
 	}
 	else {
 		_logProx->setFilterRegExp(
-		QRegExp("^(\\(II\\)|\\(WW\\)|\\(EE\\))|^[\\s\\w]+|^\\s*$"));
+		QRegExp("^\\((?!DD)|^(?!\\()"));
 	}
 	if (_ui->checkScroll->isChecked()) {
 		_ui->logView->scrollToBottom();
