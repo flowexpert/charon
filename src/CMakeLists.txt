@@ -21,6 +21,7 @@ QT4_WRAP_UI(UI_SRC
 )
 
 QT4_WRAP_CPP(MOC_SRC
+	LogViewProxyModel.h
 	FileManager.h
 	PrefixValidator.h
 	InspectorDelegate.h
@@ -72,6 +73,7 @@ SET(TUCHULCHA_SOURCES
 	TuchulchaWindow.cpp
 	DocGenerator.cpp
 	LogDialog.cpp
+	LogViewProxyModel.cpp
 	OptionsDialog.cpp
 	NodeTreeView.cpp
 	WorkflowComments.cpp

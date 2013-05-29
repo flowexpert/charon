@@ -33,7 +33,7 @@ class QTextCursor;
 class QMutex;
 class QFile;
 class QStringListModel;
-class QSortFilterProxyModel;
+class LogViewProxyModel;
 
 /// class for logging display and communication with external processes
 /** This widget implements the decorator pattern to handle different
@@ -66,10 +66,6 @@ public:
 		/** \param parent  parent widget (for dialog/message boxes)
 		 *  \returns       list of (interactive) commands */
 		virtual QStringList postStartCommands(QWidget* parent) const;
-		/// add highlighting of current output line
-		/** \param line    current line
-		 *  \returns       current line with highlighting */
-		virtual QString highlightLine(QString line) const;
 		/// check if current line shows that running finished
 		/** \param line    current line
 		 *  \retval true   line shows that execution finished */
@@ -134,13 +130,13 @@ private slots:
 	void on_buttonSave_clicked();
 
 private:
-	QStringListModel* _log;          ///< log model
-	QSortFilterProxyModel* _logProx; ///< log model proxy
-	Decorator* _decorator;           ///< decorator implementation
-	Ui::LogDialog* _ui;              ///< designer ui
-	QProcess* _proc;                 ///< tuchulcha-run process
-	QFile* _logFile;                 ///< log content output
-	QMutex* _logMutex;               ///< avoid parallel writes to log window
+	QStringListModel* _log;       ///< log model
+	LogViewProxyModel* _logProx;  ///< log model proxy
+	Decorator* _decorator;        ///< decorator implementation
+	Ui::LogDialog* _ui;           ///< designer ui
+	QProcess* _proc;              ///< tuchulcha-run process
+	QFile* _logFile;              ///< log content output
+	QMutex* _logMutex;            ///< avoid parallel writes to log window
 };
 
 /// LogDialog decorator implementations
@@ -180,7 +176,6 @@ namespace LogDecorators {
 		virtual bool finishSignal(QString line) const;
 		virtual QString finishMessage() const;
 		virtual QStringList postStartCommands(QWidget* parent) const;
-		virtual QString highlightLine(QString line) const;
 		virtual QString filenameHint() const;
 		virtual QString logFileName() const;
 	signals:

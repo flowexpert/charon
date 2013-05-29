@@ -25,6 +25,7 @@
 #include "LogDialog.h"
 #include "ui_LogDialog.h"
 #include "FileManager.h"
+#include "LogViewProxyModel.h"
 
 #include <QTextStream>
 #include <QScrollBar>
@@ -36,7 +37,6 @@
 #include <QFileDialog>
 #include <QMutexLocker>
 #include <QStringListModel>
-#include <QSortFilterProxyModel>
 
 #include <QPainter>
 #include <QSplashScreen>
@@ -53,7 +53,7 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 
 	// set up log models
 	_log = new QStringListModel(this);
-	_logProx = new QSortFilterProxyModel(_log);
+	_logProx = new LogViewProxyModel(_log);
 	_logProx->setSourceModel(_log);
 	_ui->logView->setModel(_logProx);
 
@@ -231,7 +231,6 @@ void LogDialog::on_proc_readyReadStandardOutput() {
 			printStatus(_decorator->finishMessage());
 			on_proc_finished(0);
 		}
-		//cur = _decorator->highlightLine(cur);
 		if (!cur.isNull()) {
 			logList << cur;
 		}
@@ -299,7 +298,6 @@ void LogDialog::reprint() {
 		if (cur.isNull()) {
 			break;
 		}
-		//cur = _decorator->highlightLine(cur);
 		if (!cur.isNull()) {
 			logList << cur;
 		}
@@ -426,35 +424,6 @@ QString LogDialog::Decorator::filenameHint() const {
 	return QString::null;
 }
 
-QString LogDialog::Decorator::highlightLine(QString line) const {
-	// simple markup for higlighting
-	if (line.contains(
-			QRegExp("^\\(II\\)\\s+",Qt::CaseInsensitive))) {
-		line = QString("<span class=\"info\">%1</span>").arg(line);
-	}
-	else if (line.contains(
-			QRegExp("^\\(WW\\)\\s+",Qt::CaseInsensitive))) {
-		line = QString("<span class=\"warning\">%1</span>").arg(line);
-	}
-	else if (line.contains(
-			QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
-		line = QString("<span class=\"error\">%1</span>").arg(line);
-	}
-	else if (line.contains(
-			QRegExp("^\\(DD\\)\\s+",Qt::CaseInsensitive))) {
-		if (debugOutput) {
-			line = QString("<span class=\"debug\">%1</span>").arg(line);
-		}
-		else {
-			line = QString::null;
-		}
-	}
-	else {
-		line = QString("<span class=\"normal\">%1</span>").arg(line);
-	}
-	return line;
-}
-
 bool LogDialog::Decorator::ready(QWidget*) const {
 	return true;
 }
@@ -569,15 +538,12 @@ QStringList LogDecorators::RunWorkflow::postStartCommands(QWidget* pp) const {
 	return cmds;
 }
 
-QString LogDecorators::RunWorkflow::highlightLine(QString line) const {
-	QRegExp curObj("^\\(II\\) Executing\\s*\\w*\\s*\"(\\w*)\"\\s*$");
-	if (line.contains(curObj)) {
+bool LogDecorators::RunWorkflow::finishSignal(QString line) const {
+	// emit signal to highlight currently executed object
+	QRegExp curObj("\\(II\\) Executing\\s*\\w*\\s*\"(\\w*)\"\\s*");
+	if (curObj.exactMatch(line)) {
 		emit highlightObject(curObj.cap(1));
 	}
-	return LogDialog::Decorator::highlightLine(line);
-}
-
-bool LogDecorators::RunWorkflow::finishSignal(QString line) const {
 	// add status message if workflow execution finished
 	return (line.contains(
 		QCoreApplication::translate("CharonRun","Execution finished.")) ||
