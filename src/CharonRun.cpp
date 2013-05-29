@@ -42,6 +42,7 @@
 CharonRun::CharonRun(QObject* pp) :
 	QObject(pp), _man(0)
 {
+	sout.assign();
 }
 
 CharonRun::~CharonRun() {
@@ -54,8 +55,6 @@ void CharonRun::_setupMan() {
 	if (_man) {
 		_freeMan();
 	}
-
-	sout.assign(std::cout);
 
 	QSettings settings;
 #ifdef _MSC_VER
@@ -142,7 +141,6 @@ void CharonRun::_freeMan() {
 		delete _man;
 		_man = 0;
 	}
-	sout.assign(std::cout);
 }
 
 void CharonRun::updatePlugins() {
