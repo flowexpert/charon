@@ -128,6 +128,8 @@ private slots:
 	void on_checkDD_toggled(bool);
 	/// save logfile
 	void on_buttonSave_clicked();
+	/// handle buf size changes
+	void on_sBufSize_valueChanged(int);
 
 private:
 	QStringListModel* _log;       ///< log model

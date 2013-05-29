@@ -61,6 +61,7 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 	settings.beginGroup("LogDialog");
 	_ui->checkDD->setChecked(settings.value("showDebugOutput",true).toBool());
 	_ui->checkScroll->setChecked(settings.value("autoScroll",true).toBool());
+	_ui->sBufSize->setValue(settings.value("maxLines",0).toInt());
 	settings.endGroup();
 	_decorator->debugOutput = _ui->checkDD->isChecked();
 
@@ -144,6 +145,7 @@ LogDialog::~LogDialog() {
 	settings.beginGroup("LogDialog");
 	settings.setValue("showDebugOutput",_ui->checkDD->isChecked());
 	settings.setValue("autoScroll",_ui->checkScroll->isChecked());
+	settings.setValue("maxLines",_ui->sBufSize->value());
 	settings.endGroup();
 	delete _ui;
 	delete _decorator;
@@ -220,6 +222,7 @@ void LogDialog::on_proc_readyReadStandardOutput() {
 	QTextStream orig(&origS,QIODevice::ReadOnly);
 	QStringList logList = _log->stringList();
 	QTextStream logFile(_logFile);
+	const int maxBuf = _ui->sBufSize->value();
 
 	forever {
 		cur = orig.readLine();
@@ -231,8 +234,9 @@ void LogDialog::on_proc_readyReadStandardOutput() {
 			printStatus(_decorator->finishMessage());
 			on_proc_finished(0);
 		}
-		if (!cur.isNull()) {
-			logList << cur;
+		logList << cur;
+		if (maxBuf && logList.size() > maxBuf) {
+			logList.removeFirst();
 		}
 	}
 	_log->setStringList(logList);
@@ -251,6 +255,7 @@ void LogDialog::on_proc_readyReadStandardError() {
 	QTextStream orig(&origS,QIODevice::ReadOnly);
 	QStringList logList = _log->stringList();
 	QTextStream logFile(_logFile);
+	const int maxBuf = _ui->sBufSize->value();
 
 	forever {
 		cur = orig.readLine();
@@ -268,8 +273,10 @@ void LogDialog::on_proc_readyReadStandardError() {
 		else {
 			logFile << "(EE) " << cur << endl;
 		}
-		//cur = QString("<span class=\"error\">%1</span>").arg(cur);
 		logList << cur;
+		if (maxBuf && logList.size() > maxBuf) {
+			logList.removeFirst();
+		}
 	}
 
 	_log->setStringList(logList);
@@ -292,14 +299,16 @@ void LogDialog::reprint() {
 	_logFile->open(QIODevice::ReadOnly|QIODevice::Text);
 	QTextStream log(_logFile);
 	QStringList logList;
+	const int maxBuf = _ui->sBufSize->value();
 
 	forever {
 		cur = log.readLine();
 		if (cur.isNull()) {
 			break;
 		}
-		if (!cur.isNull()) {
-			logList << cur;
+		logList << cur;
+		if (maxBuf && logList.size() > maxBuf) {
+			logList.removeFirst();
 		}
 	}
 	_log->setStringList(logList);
@@ -394,6 +403,10 @@ void LogDialog::on_buttonSave_clicked() {
 	_logFile->copy(fName);
 	_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
 	mLock.unlock();
+}
+
+void LogDialog::on_sBufSize_valueChanged(int) {
+	reprint();
 }
 
 // ============================ Decorators ===============================

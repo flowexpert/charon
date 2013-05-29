@@ -39,7 +39,7 @@ QVariant LogViewProxyModel::data(const QModelIndex& idx, int rr) const {
 	switch(rr) {
 	case Qt::ForegroundRole:
 		if (logLevel.exactMatch(
-				sourceModel()->data(idx,Qt::DisplayRole).toString())) {
+				QSortFilterProxyModel::data(idx,Qt::DisplayRole).toString())) {
 			QString level = logLevel.cap(1);
 			if (level == "DD") {
 				return QBrush(Qt::gray);
