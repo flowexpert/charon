@@ -37,12 +37,13 @@
 #include <QFileDialog>
 #include <QMutexLocker>
 #include <QStringListModel>
+#include <QSortFilterProxyModel>
 
 #include <QPainter>
 #include <QSplashScreen>
 
 LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
-		QDialog(pp,wf), _log(0), _decorator(dec), _proc(0),
+		QDialog(pp,wf), _log(0), _logProx(0), _decorator(dec), _proc(0),
 		_logFile(0), _logMutex(new QMutex())
 {
 	QSettings settings;
@@ -50,12 +51,18 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 	_proc->setObjectName("proc");
 	_ui = new Ui::LogDialog;
 	_ui->setupUi(this);
+
+	// set up log models
+	_log = new QStringListModel(this);
+	_logProx = new QSortFilterProxyModel(_log);
+	_logProx->setSourceModel(_log);
+	_ui->logView->setModel(_logProx);
+
+	// apply saved settings
 	settings.beginGroup("LogDialog");
 	_ui->checkDD->setChecked(settings.value("showDebugOutput",true).toBool());
 	_ui->checkScroll->setChecked(settings.value("autoScroll",true).toBool());
 	settings.endGroup();
-	_log = new QStringListModel(this);
-	_ui->logView->setModel(_log);
 	_decorator->debugOutput = _ui->checkDD->isChecked();
 
 	QString title=_decorator->title();
@@ -239,40 +246,6 @@ void LogDialog::on_proc_readyReadStandardOutput() {
 	mLock.unlock();
 }
 
-void LogDialog::reprint() {
-	if (!_logFile || !_logFile->isOpen()) {
-		// reprint only useful after initialization
-		return;
-	}
-	QMutexLocker mLock(_logMutex);
-	QString cur;
-	_logFile->close();
-	_logFile->open(QIODevice::ReadOnly|QIODevice::Text);
-	QTextStream log(_logFile);
-	QStringList logList;
-
-	forever {
-		cur = log.readLine();
-		if (cur.isNull()) {
-			break;
-		}
-		//cur = _decorator->highlightLine(cur);
-		if (!cur.isNull()) {
-			logList << cur;
-		}
-	}
-	_log->setStringList(logList);
-
-	if (_ui->checkScroll->isChecked()) {
-		_ui->logView->scrollToBottom();
-	}
-
-	_logFile->close();
-	_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
-
-	mLock.unlock();
-}
-
 void LogDialog::on_proc_readyReadStandardError() {
 	QMutexLocker mLock(_logMutex);
 	QString origS = QString::fromLocal8Bit(_proc->readAllStandardError());
@@ -306,6 +279,40 @@ void LogDialog::on_proc_readyReadStandardError() {
 	if (_ui->checkScroll->isChecked()) {
 		_ui->logView->scrollToBottom();
 	}
+
+	mLock.unlock();
+}
+
+void LogDialog::reprint() {
+	if (!_logFile || !_logFile->isOpen()) {
+		// reprint only useful after initialization
+		return;
+	}
+	QMutexLocker mLock(_logMutex);
+	QString cur;
+	_logFile->close();
+	_logFile->open(QIODevice::ReadOnly|QIODevice::Text);
+	QTextStream log(_logFile);
+	QStringList logList;
+
+	forever {
+		cur = log.readLine();
+		if (cur.isNull()) {
+			break;
+		}
+		//cur = _decorator->highlightLine(cur);
+		if (!cur.isNull()) {
+			logList << cur;
+		}
+	}
+	_log->setStringList(logList);
+
+	if (_ui->checkScroll->isChecked()) {
+		_ui->logView->scrollToBottom();
+	}
+
+	_logFile->close();
+	_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
 
 	mLock.unlock();
 }
@@ -362,8 +369,19 @@ void LogDialog::printStatus(QString msg) {
 }
 
 void LogDialog::on_checkDD_toggled(bool checked) {
-	_decorator->debugOutput = checked;
-	reprint();
+	if (!_logProx) {
+		return;
+	}
+	if (checked) {
+		_logProx->setFilterRegExp(QString());
+	}
+	else {
+		_logProx->setFilterRegExp(
+		QRegExp("^(\\(II\\)|\\(WW\\)|\\(EE\\))|^[\\s\\w]+|^\\s*$"));
+	}
+	if (_ui->checkScroll->isChecked()) {
+		_ui->logView->scrollToBottom();
+	}
 }
 
 void LogDialog::on_buttonSave_clicked() {

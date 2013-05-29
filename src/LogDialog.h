@@ -33,6 +33,7 @@ class QTextCursor;
 class QMutex;
 class QFile;
 class QStringListModel;
+class QSortFilterProxyModel;
 
 /// class for logging display and communication with external processes
 /** This widget implements the decorator pattern to handle different
@@ -133,12 +134,13 @@ private slots:
 	void on_buttonSave_clicked();
 
 private:
-	QStringListModel* _log; ///< log model
-	Decorator* _decorator;  ///< decorator implementation
-	Ui::LogDialog* _ui;     ///< designer ui
-	QProcess* _proc;        ///< tuchulcha-run process
-	QFile* _logFile;        ///< log content output
-	QMutex* _logMutex;      ///< avoid parallel writes to log window
+	QStringListModel* _log;          ///< log model
+	QSortFilterProxyModel* _logProx; ///< log model proxy
+	Decorator* _decorator;           ///< decorator implementation
+	Ui::LogDialog* _ui;              ///< designer ui
+	QProcess* _proc;                 ///< tuchulcha-run process
+	QFile* _logFile;                 ///< log content output
+	QMutex* _logMutex;               ///< avoid parallel writes to log window
 };
 
 /// LogDialog decorator implementations
