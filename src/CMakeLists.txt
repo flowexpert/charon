@@ -43,6 +43,7 @@ QT4_WRAP_CPP(MOC_SRC
 	PriorityBox.h
 	ParamInspectorWindow.h
 	ObjectInspector.h
+	QCopyListView.h
 )
 
 SET(TUCHULCHA_SOURCES
@@ -82,6 +83,7 @@ SET(TUCHULCHA_SOURCES
 	ParamInspectorWindow.cpp
 	PriorityDialog.cpp
 	PriorityBox.cpp
+	QCopyListView.cpp
 )
 
 QT4_WRAP_CPP(WF_RUNNER_MOC
