@@ -91,7 +91,8 @@ QMimeData* QCopyListView::getSelectedContent() const {
 		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" "
 		"\"http://www.w3.org/TR/html4/loose.dtd\">\n"
 		"<html><head>\n<title>Tuchulcha Log</title>\n"
-		"<style>body{font-family:monospace;}</style></head>\n"
+		"<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
+		"<style type=\"text/css\">body{font-family:monospace;}</style></head>\n"
 		"<body>\n%1\n</body>\n</html>")
 		.arg(linesH.join("<br>\n"));
 	clipData->setHtml(htmlCont);
