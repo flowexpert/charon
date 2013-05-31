@@ -39,6 +39,9 @@ public:
 	/// default constructor
 	explicit QCopyListView(QWidget * parent = 0 /** [in] parent widget */);
 	virtual ~QCopyListView();
+	/// get mime-data representation of selected indices
+	/** \returns a plain text and a html representation*/
+	QMimeData* getSelectedContent() const;
 
 protected:
 	/// reworked key press event handler able to copy multipe lines

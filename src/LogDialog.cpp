@@ -37,15 +37,12 @@
 #include <QFileDialog>
 #include <QMutexLocker>
 #include <QStringListModel>
-
-#include <QPainter>
-#include <QSplashScreen>
+#include <QMimeData>
 
 LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 		QDialog(pp,wf), _log(0), _logProx(0), _decorator(dec), _proc(0),
 		_logFile(0), _logMutex(new QMutex())
 {
-	QSettings settings;
 	_proc = new QProcess(this);
 	_proc->setObjectName("proc");
 	_ui = new Ui::LogDialog;
@@ -57,12 +54,8 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 	_logProx->setSourceModel(_log);
 	_ui->logView->setModel(_logProx);
 
-	// apply saved settings
-	settings.beginGroup("LogDialog");
-	_ui->checkDD->setChecked(settings.value("showDebugOutput",true).toBool());
-	_ui->checkScroll->setChecked(settings.value("autoScroll",true).toBool());
-	_ui->sBufSize->setValue(settings.value("maxLines",0).toInt());
-	settings.endGroup();
+	loadSettings();
+
 	_decorator->debugOutput = _ui->checkDD->isChecked();
 
 	QString title=_decorator->title();
@@ -91,6 +84,7 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 
 	// select process executable
 	QString procName = tcRun;
+	QSettings settings;
 	if ((!tcRunD.isNull()
 				&& settings.value("suffixedPlugins", false).toBool())
 			|| tcRun.isNull()) {
@@ -141,15 +135,29 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 }
 
 LogDialog::~LogDialog() {
+	saveSettings();
+	delete _ui;
+	delete _decorator;
+	delete _logMutex;
+}
+
+void LogDialog::loadSettings() {
+	// apply saved settings
+	QSettings settings;
+	settings.beginGroup("LogDialog");
+	_ui->checkDD->setChecked(settings.value("showDebugOutput",true).toBool());
+	_ui->checkScroll->setChecked(settings.value("autoScroll",true).toBool());
+	_ui->sBufSize->setValue(settings.value("maxLines",0).toInt());
+	settings.endGroup();
+}
+
+void LogDialog::saveSettings() {
 	QSettings settings;
 	settings.beginGroup("LogDialog");
 	settings.setValue("showDebugOutput",_ui->checkDD->isChecked());
 	settings.setValue("autoScroll",_ui->checkScroll->isChecked());
 	settings.setValue("maxLines",_ui->sBufSize->value());
 	settings.endGroup();
-	delete _ui;
-	delete _decorator;
-	delete _logMutex;
 }
 
 void LogDialog::resetLogWidget() {
@@ -394,15 +402,39 @@ void LogDialog::on_buttonSave_clicked() {
 	QString selFilter;
 	QString fName = QFileDialog::getSaveFileName(
 				this,tr("Save Log File"),_decorator->filenameHint(),
-				tr("Text File (*.txt *.log)"),
+				tr("Text File (*.txt *.log);;Html File (*.html *.htm)"),
 				&selFilter);
 	if (fName.isEmpty())
 		return;
-	QMutexLocker mLock(_logMutex);
-	_logFile->close();
-	_logFile->copy(fName);
-	_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
-	mLock.unlock();
+	if (selFilter.contains(".txt")) {
+		QMutexLocker mLock(_logMutex);
+		_logFile->close();
+		_logFile->copy(fName);
+		_logFile->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text);
+		mLock.unlock();
+	}
+	else if (selFilter.contains(".html")) {
+		saveSettings();
+		_ui->checkDD->setChecked(true);
+		_ui->sBufSize->setValue(0);
+		_ui->logView->selectAll();
+		QMimeData* content = _ui->logView->getSelectedContent();
+		Q_ASSERT(content->hasHtml());
+		QFile out(fName);
+		if (out.open(
+				QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text)) {
+			QTextStream ostrm(&out);
+			ostrm << content->html() << endl;
+		}
+		out.close();
+		delete content;
+		_ui->logView->clearSelection();
+		loadSettings();
+	}
+	else {
+		qDebug("Invalid filter selected: %s",
+			selFilter.toLocal8Bit().constData());
+	}
 }
 
 void LogDialog::on_sBufSize_valueChanged(int) {

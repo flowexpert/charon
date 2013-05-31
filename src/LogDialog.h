@@ -112,6 +112,10 @@ public slots:
 	void reprint();
 	/// print status message
 	void printStatus(QString msg);
+	/// load config from settings
+	void loadSettings();
+	/// store config to settings
+	void saveSettings();
 
 private slots:
 	/// update content by querying process (stdout)
