@@ -88,7 +88,9 @@ void NodeTreeView::reload() {
 	// load modules
 	MetaData md(FileManager::instance().classesFile());
 	const QStringList& classes = md.getClasses();
-	foreach (const QString& cur, classes) {
+	QStringListIterator classIter(classes);
+	while (classIter.hasNext()) {
+		const QString cur = classIter.next();
 		// new node to be added
 		QStandardItem* node = new QStandardItem(cur);
 		node->setEditable(false);
@@ -105,8 +107,10 @@ void NodeTreeView::reload() {
 			cnode->setDragEnabled(true);
 			untaggedRoot->appendRow(cnode);
 		}
-		
-		foreach (const QString& tag, tags) {
+
+		QStringListIterator tagIter(tags);
+		while (tagIter.hasNext()) {
+			const QString tag = tagIter.next();
 			int subIndex = 0 ; // index of current "/"
 			QString parentTag = "" ;
 			// split tag at each "/" and create subnodes

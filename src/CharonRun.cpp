@@ -88,23 +88,27 @@ void CharonRun::_setupMan() {
 
 	qout << "(II) " << tr("Paths:") << endl;
 	std::vector<std::string> pathsS, exclS;
-	foreach (QString cur, paths) {
-		QDir curD(cur);
-		cur = curD.canonicalPath();
+	QStringListIterator pathsIter(paths);
+	while (pathsIter.hasNext()) {
+		QDir curD(pathsIter.next());
+		QString cur = curD.canonicalPath();
 
 		if (curD.exists()) {
 			qout << "(II) \t" << cur << endl;
 			pathsS.push_back(cur.toStdString());
 			// globbing for excludes
 			QStringList libs = curD.entryList(libFilter);
-			foreach (QString lib, libs) {
-				QFileInfo lin(lib);
-				lib = lin.completeBaseName();
+			QStringListIterator libsIter(libs);
+			while (libsIter.hasNext()) {
+				QFileInfo lin(libsIter.next());
+				QString lib = lin.completeBaseName();
 				lib.remove(QRegExp("_d$",Qt::CaseInsensitive));
 #ifndef _MSC_VER
 				lib.remove(QRegExp("^lib",Qt::CaseInsensitive));
 #endif
-				foreach (QString ex, excludeList) {
+				QStringListIterator excludeListIter(excludeList);
+				while (excludeListIter.hasNext()) {
+					const QString ex = excludeListIter.next();
 					QRegExp rex(ex,Qt::CaseInsensitive,QRegExp::WildcardUnix);
 					if (rex.exactMatch(lib)) {
 						exclExp << lib;
