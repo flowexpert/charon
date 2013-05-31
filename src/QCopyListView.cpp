@@ -76,17 +76,9 @@ QMimeData* QCopyListView::getSelectedContent() const {
 			}
 		}
 	}
-	/*
-	// analyze old conent
-	const QMimeData* oldContent = QApplication::clipboard()->mimeData();
-	qDebug("Formats: \n\t%s\n",
-		oldContent->formats().join("\n\t").toLocal8Bit().constData());
-	qDebug("Html content: %s\n",
-		oldContent->html().toLocal8Bit().constData());
-	//*/
 
 	QMimeData* clipData = new QMimeData;
-	clipData->setText(linesT.join("\n"));
+	clipData->setText(linesT.join("\n").toLocal8Bit());
 	QString htmlCont = QString(
 		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" "
 		"\"http://www.w3.org/TR/html4/loose.dtd\">\n"
@@ -96,6 +88,12 @@ QMimeData* QCopyListView::getSelectedContent() const {
 		"<body>\n%1\n</body>\n</html>")
 		.arg(linesH.join("<br>\n"));
 	clipData->setHtml(htmlCont);
+
+	// unsure which ones are really needed
+	clipData->setData("UTF8_STRING",linesT.join("\n").toUtf8());
+	//clipData->setData("STRING",linesT.join("\n").toUtf8());
+	//clipData->setData("COMPOUND_TEXT",linesT.join("\n").toUtf8());
+	//clipData->setData("TEXT",linesT.join("\n").toUtf8());
 	return clipData;
 }
 

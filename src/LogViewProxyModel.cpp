@@ -37,6 +37,27 @@ LogViewProxyModel::~LogViewProxyModel() {
 QVariant LogViewProxyModel::data(const QModelIndex& idx, int rr) const {
 	QRegExp logLevel("\\((\\w+)\\).*");
 	switch(rr) {
+	case Qt::UserRole:
+		if (logLevel.exactMatch(
+				QSortFilterProxyModel::data(idx,Qt::DisplayRole).toString())) {
+			QString level = logLevel.cap(1);
+			if (level == "DD") {
+				return QString("debug");
+			}
+			else if (level == "II") {
+				return QString("info");
+			}
+			else if (level == "WW") {
+				return QString("warning");
+			}
+			else if (level == "EE") {
+				return QString("error");
+			}
+			else {
+				return QString("normal");
+			}
+		}
+		break;
 	case Qt::ForegroundRole:
 		if (logLevel.exactMatch(
 				QSortFilterProxyModel::data(idx,Qt::DisplayRole).toString())) {
