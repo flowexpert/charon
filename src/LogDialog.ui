@@ -202,7 +202,7 @@
       <widget class="QProgressBar" name="progressBar">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>3</horstretch>
+         <horstretch>20</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>

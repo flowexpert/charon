@@ -68,14 +68,9 @@ QMimeData* QCopyListView::getSelectedContent() const {
 			curLine.replace("\"","&quot;");
 			curLine.replace("<","&lt;");
 			curLine.replace(">","&gt;");
-			if (colStyle.isEmpty()) {
-				linesH << curLine;
-			}
-			else {
-				linesH <<
-					QString("<span class=\"logLine\" style=\"%1\">%2</span>")
-						.arg(colStyle).arg(curLine);
-			}
+			linesH <<
+				QString("<span class=\"logLine\" style=\"%1\">%2</span>")
+					.arg(colStyle).arg(curLine);
 		}
 	}
 
@@ -88,7 +83,8 @@ QMimeData* QCopyListView::getSelectedContent() const {
 		"<meta http-equiv=\"content-type\" "
 			"content=\"text/html; charset=UTF-8\">\n"
 		"<style type=\"text/css\">"
-			"span.logLine{font-family:monospace;white-space:pre;}"
+			"span.logLine{font-family:monospace;white-space:pre-wrap;"
+				"-moz-tab-size:4;-o-tab-size:4;tab-size:4;}"
 		"</style>\n</head>\n"
 		"<body>\n<div>\n%1\n</div>\n</body>\n</html>")
 		.arg(linesH.join("<br>\n"));
