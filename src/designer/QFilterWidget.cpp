@@ -88,8 +88,6 @@ QFilterWidget::QFilterWidget(QWidget *pp)  :
 	QLineEdit(pp),
 	m_button(new QIconButton(this))
 {
-	setPlaceholderText(tr("Filter"));
-
 	// Let the style determine minimum height for our widget
 	QSize wsize(ICONBUTTON_SIZE + 6, ICONBUTTON_SIZE + 2);
 

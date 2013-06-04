@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>584</width>
-    <height>354</height>
+    <height>362</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -80,21 +80,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="prefix"/>
-         </item>
-         <item>
-          <widget class="QToolButton" name="resetPrefixButton">
-           <property name="toolTip">
-            <string>reset prefix filters</string>
-           </property>
-           <property name="text">
-            <string>clear prefix</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources.qrc">
-             <normaloff>:/icons/edit-clear.png</normaloff>:/icons/edit-clear.png</iconset>
-           </property>
-          </widget>
+          <widget class="QFilterWidget" name="prefix"/>
          </item>
         </layout>
        </widget>
@@ -317,6 +303,11 @@ This deletes the parameter(s) from the parameter file.</string>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>QFilterWidget</class>
+   <extends>QLineEdit</extends>
+   <header>designer/QFilterWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>PriorityBox</class>
    <extends>QComboBox</extends>
    <header>PriorityBox.h</header>
@@ -325,7 +316,6 @@ This deletes the parameter(s) from the parameter file.</string>
  <tabstops>
   <tabstop>view</tabstop>
   <tabstop>prefix</tabstop>
-  <tabstop>resetPrefixButton</tabstop>
   <tabstop>comment</tabstop>
   <tabstop>resetParamButton</tabstop>
   <tabstop>setPriorityButton</tabstop>
@@ -340,24 +330,7 @@ This deletes the parameter(s) from the parameter file.</string>
  <resources>
   <include location="../resources.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>resetPrefixButton</sender>
-   <signal>clicked()</signal>
-   <receiver>prefix</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>558</x>
-     <y>25</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>503</x>
-     <y>26</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>on_deleteButton_clicked()</slot>
  </slots>
