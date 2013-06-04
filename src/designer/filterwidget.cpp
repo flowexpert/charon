@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "filterwidget_p.h"
-#include "iconloader_p.h"
 
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
@@ -193,7 +192,7 @@ FilterWidget::FilterWidget(QWidget *pp, LayoutMode lm)  :
     QIcon icon = QIcon::fromTheme(layoutDirection() == Qt::LeftToRight ?
                      QLatin1String("edit-clear-locationbar-rtl") :
                      QLatin1String("edit-clear-locationbar-ltr"),
-                     QIcon::fromTheme("edit-clear", createIconSet(QLatin1String("cleartext.png"))));
+                     QIcon::fromTheme("edit-clear", QIcon(":/icons/edit-clear.png")));
 
     m_button->setIcon(icon);
     m_button->setToolTip(tr("Clear text"));

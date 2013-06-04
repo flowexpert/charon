@@ -4,8 +4,6 @@ QT4_WRAP_CPP(DESIG_MOC_SRC
 
 SET(DESIG_CPP_SRC
 	shared_global_p.h
-	iconloader_p.h
-	iconloader.cpp
 	filterwidget_p.h
 	filterwidget.cpp
 )
