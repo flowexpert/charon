@@ -95,12 +95,14 @@ SET(WF_RUNNER_SOURCES
 	CharonRun.cpp
 )
 
+ADD_SUBDIRECTORY(designer)
+
 # create libraries
 ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC} ${MOC_SRC})
 ADD_LIBRARY(tc-run ${WF_RUNNER_SOURCES} ${WF_RUNNER_MOC})
 
 # add dependencies
-TARGET_LINK_LIBRARIES(tuchulcha-widgets ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(tuchulcha-widgets designer-widgets ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(tc-run tuchulcha-widgets charon-plugins ${QT_LIBRARIES})
 SET_TARGET_PROPERTIES(
 	tuchulcha-widgets tc-run

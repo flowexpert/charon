@@ -69,7 +69,7 @@
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="218"/>
-        <location filename="../src/LogDialog.cpp" line="594"/>
+        <location filename="../src/LogDialog.cpp" line="639"/>
         <source>Execution finished.</source>
         <translation>Ausführung beendet.</translation>
     </message>
@@ -125,7 +125,7 @@ Message:
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="248"/>
-        <location filename="../src/LogDialog.cpp" line="596"/>
+        <location filename="../src/LogDialog.cpp" line="641"/>
         <source>Error during execution:</source>
         <translation>Fehler während der Ausführung:</translation>
     </message>
@@ -414,32 +414,32 @@ Please use a valid name.
 <context>
     <name>LogDecorators::RunWorkflow</name>
     <message>
-        <location filename="../src/LogDialog.cpp" line="549"/>
+        <location filename="../src/LogDialog.cpp" line="594"/>
         <source>missing workflow file</source>
         <translation>keine Datei angegeben</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="550"/>
+        <location filename="../src/LogDialog.cpp" line="595"/>
         <source>The workflow cannot be started because it has not been saved to disk (empty filename given). Please save it and retry execution.</source>
         <translation>Die Ausführung konnte nicht gestartet werden, da das Dokument nicht gespeichert wurde. Bitte speichern und erneut ausführen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="575"/>
+        <location filename="../src/LogDialog.cpp" line="620"/>
         <source>wait before workflow execution</source>
         <translation>vor der Ausführung warten</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="576"/>
+        <location filename="../src/LogDialog.cpp" line="621"/>
         <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the run process. Workflow will be started, when you close this message box.</source>
         <translation>Warte mit dem Start der Ausführung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Ausführungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="601"/>
+        <location filename="../src/LogDialog.cpp" line="646"/>
         <source>Workflow execution finished.</source>
         <translation>Ausführung wurde beendet.</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="602"/>
+        <location filename="../src/LogDialog.cpp" line="647"/>
         <source>Plugins stay loaded until you close this dialog.</source>
         <translation>Die Plugins bleiben geladen, bis dieser Dialog geschlossen wird.</translation>
     </message>
@@ -447,22 +447,22 @@ Please use a valid name.
 <context>
     <name>LogDecorators::Update</name>
     <message>
-        <location filename="../src/LogDialog.cpp" line="481"/>
+        <location filename="../src/LogDialog.cpp" line="526"/>
         <source>Plugin Information Update</source>
         <translation>Plugin Informationen aktualisieren</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="486"/>
+        <location filename="../src/LogDialog.cpp" line="531"/>
         <source>Output of update process:</source>
         <translation>Ausgabe der Aktualisierung:</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="505"/>
+        <location filename="../src/LogDialog.cpp" line="550"/>
         <source>wait before plugin update</source>
         <translation>vor der Aktualisierung warten</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="507"/>
+        <location filename="../src/LogDialog.cpp" line="552"/>
         <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the update process. Update will be started, when you close this message box.</source>
         <translation>Warte mit dem Start der Aktualisierung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Aktualisierungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
@@ -485,43 +485,71 @@ Please use a valid name.
         <translation>Prozess</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="96"/>
+        <location filename="../src/LogDialog.ui" line="111"/>
+        <source>Tools</source>
+        <translation>Werkzeuge</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.ui" line="123"/>
+        <source>Find
+Next</source>
+        <translation>nächste
+Fundstelle</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.ui" line="137"/>
+        <source>Search in Log:</source>
+        <translation>Log durchsuchen:</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.ui" line="210"/>
         <source>Options</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="111"/>
+        <location filename="../src/LogDialog.ui" line="222"/>
         <source>scroll down on new output</source>
-        <translation>bei neuen Ausgaben
-ans Ende springen</translation>
+        <translation>bei neuen Ausgaben ans Ende springen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="127"/>
-        <source>show debug output
-(lines with &quot;(DD)&quot; prefix)</source>
-        <translation>Debug-Hinweise anzeigen
-(Zeilen, die mit &quot;(DD)&quot; beginnen)</translation>
-    </message>
-    <message>
-        <location filename="../src/LogDialog.ui" line="144"/>
+        <location filename="../src/LogDialog.ui" line="260"/>
         <source>size of display buffer:</source>
         <translation>Anzeigepuffer:</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="163"/>
+        <location filename="../src/LogDialog.ui" line="238"/>
+        <location filename="../src/LogDialog.ui" line="241"/>
+        <source>lines with &quot;(DD)&quot; prefix</source>
+        <translation>Zeilen, die mit &quot;(DD)&quot; beginnen</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.ui" line="160"/>
+        <source>Save
+Logfile</source>
+        <translation>Protokoll
+speichern</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.ui" line="187"/>
+        <source>Find
+Previous</source>
+        <translation>vorherige
+Fundstelle</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.ui" line="244"/>
+        <source>show debug output</source>
+        <translation>Debug-Ausgaben anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.ui" line="276"/>
         <source>unlimited</source>
         <translation>unbegrenzt</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="166"/>
+        <location filename="../src/LogDialog.ui" line="279"/>
         <source> lines</source>
         <translation> Zeilen</translation>
-    </message>
-    <message>
-        <location filename="../src/LogDialog.ui" line="179"/>
-        <source>Save Log</source>
-        <translation>Protokoll
-speichern</translation>
     </message>
     <message>
         <location filename="../src/LogDialog.cpp" line="97"/>
@@ -549,88 +577,84 @@ speichern</translation>
         <translation>Log</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="180"/>
+        <location filename="../src/LogDialog.cpp" line="183"/>
         <source>waiting for process to quit...</source>
         <translation>warte auf Beenden des Ausführungsprozess...</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="182"/>
+        <location filename="../src/LogDialog.cpp" line="185"/>
         <source>asking for termination in 1 second</source>
         <translation>frage in einer Sekunde nach erzwungenem Beenden</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="196"/>
+        <location filename="../src/LogDialog.cpp" line="199"/>
         <source>confirm terminate</source>
         <translation>Schließen bestätigen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="197"/>
+        <location filename="../src/LogDialog.cpp" line="200"/>
         <source>Process still running.&lt;br&gt;Terminate running process?</source>
         <translation>Der Ausführungsprozess läuft noch.&lt;br&gt;Beenden erzwingen?</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="200"/>
+        <location filename="../src/LogDialog.cpp" line="203"/>
         <source>asking for kill in 3 seconds</source>
         <translation>frage in drei Sekunden, den Prozess zu töten</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="209"/>
+        <location filename="../src/LogDialog.cpp" line="212"/>
         <source>confirm kill</source>
         <translation>Töten bestätigen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="210"/>
+        <location filename="../src/LogDialog.cpp" line="213"/>
         <source>Process did not respond.&lt;br&gt;Kill running process?</source>
         <translation>Der Ausführungsprozess hat nicht reagiert.&lt;br&gt;Prozess töten?</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="356"/>
+        <location filename="../src/LogDialog.cpp" line="359"/>
         <source>process failed to start</source>
         <translation>der Prozess konnte nicht gestartet werden</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="359"/>
+        <location filename="../src/LogDialog.cpp" line="362"/>
         <source>process crashed after start</source>
         <translation>der Prozess ist nach dem Start abgestürzt</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="362"/>
+        <location filename="../src/LogDialog.cpp" line="365"/>
         <source>process timeout</source>
         <translation>Zeit abgelaufen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="365"/>
+        <location filename="../src/LogDialog.cpp" line="368"/>
         <source>write error</source>
         <translation>Fehler beim Schreiben</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="368"/>
+        <location filename="../src/LogDialog.cpp" line="371"/>
         <source>read error</source>
         <translation>Fehler beim Lesen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="371"/>
+        <location filename="../src/LogDialog.cpp" line="374"/>
         <source>unknown error</source>
         <translation>sonstiger Fehler</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="376"/>
+        <location filename="../src/LogDialog.cpp" line="379"/>
         <source>Error during process execution:</source>
         <translation>Fehler währen des Ausführens:</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="404"/>
+        <location filename="../src/LogDialog.cpp" line="407"/>
         <source>Save Log File</source>
         <translation>Protokoll speichern</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="405"/>
+        <location filename="../src/LogDialog.cpp" line="408"/>
         <source>Text File (*.txt *.log);;Html File (*.html *.htm)</source>
         <translation>Textdatei (*.txt *.log);;Html Datei (*.html *.htm)</translation>
-    </message>
-    <message>
-        <source>Text File (*.txt *.log)</source>
-        <translation type="obsolete">Textdatei (*.txt *.log)</translation>
     </message>
 </context>
 <context>
@@ -1059,18 +1083,9 @@ Set this to the directory where the plugins you are currently working on are gen
         <translation>Release</translation>
     </message>
     <message>
-        <source>Debug: prefer modules with debug suffix ( _d), unsuffixed as fallback</source>
-        <translation type="obsolete">Debug: Module mit Debug-Endung (_d) bevorzugen,
-als Ausweichnamen den Namen ohne Endung verwenden</translation>
-    </message>
-    <message>
         <location filename="../src/OptionsDialog.ui" line="40"/>
         <source>reload all plugins on startup</source>
         <translation>Module beim Start neu laden</translation>
-    </message>
-    <message>
-        <source>Workflow Execution</source>
-        <translation type="obsolete">Ausführung</translation>
     </message>
     <message>
         <location filename="../src/OptionsDialog.ui" line="241"/>
@@ -1685,6 +1700,19 @@ help</oldsource>
         <location filename="../src/TuchulchaWindow.cpp" line="370"/>
         <source>About Qt</source>
         <translation>Über Qt</translation>
+    </message>
+</context>
+<context>
+    <name>qdesigner_internal::FilterWidget</name>
+    <message>
+        <location filename="../src/designer/filterwidget.cpp" line="163"/>
+        <source>Filter</source>
+        <translation>Filter</translation>
+    </message>
+    <message>
+        <location filename="../src/designer/filterwidget.cpp" line="199"/>
+        <source>Clear text</source>
+        <translation>Text leeren</translation>
     </message>
 </context>
 </TS>

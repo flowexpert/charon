@@ -142,12 +142,15 @@ LogDialog::~LogDialog() {
 }
 
 void LogDialog::loadSettings() {
-	// apply saved settings
+	// apply saved settings, use values from UI as fallback
 	QSettings settings;
 	settings.beginGroup("LogDialog");
-	_ui->checkDD->setChecked(settings.value("showDebugOutput",true).toBool());
-	_ui->checkScroll->setChecked(settings.value("autoScroll",true).toBool());
-	_ui->sBufSize->setValue(settings.value("maxLines",0).toInt());
+	_ui->checkDD->setChecked(settings.value("showDebugOutput",
+			_ui->checkDD->isChecked()).toBool());
+	_ui->checkScroll->setChecked(settings.value("autoScroll",
+			_ui->checkScroll->isChecked()).toBool());
+	_ui->sBufSize->setValue(settings.value("maxLines",
+			_ui->sBufSize->value()).toInt());
 	settings.endGroup();
 }
 
@@ -398,7 +401,7 @@ void LogDialog::on_checkDD_toggled(bool checked) {
 	}
 }
 
-void LogDialog::on_buttonSave_clicked() {
+void LogDialog::on_bSaveLog_clicked() {
 	QString selFilter;
 	QString fName = QFileDialog::getSaveFileName(
 				this,tr("Save Log File"),_decorator->filenameHint(),
@@ -439,6 +442,48 @@ void LogDialog::on_buttonSave_clicked() {
 
 void LogDialog::on_sBufSize_valueChanged(int) {
 	reprint();
+}
+
+void LogDialog::searchLog(QString flt, int offset, bool up) {
+	if (flt.isEmpty()) {
+		return;
+	}
+	QRegExp sWildExp(flt,Qt::CaseInsensitive, QRegExp::WildcardUnix);
+	QItemSelectionModel* selection = _ui->logView->selectionModel();
+	const QAbstractItemModel* model = selection->model();
+	if (model->rowCount() <= 0) {
+		return;
+	}
+	int rowStart = up ? model->rowCount()-1 : 0;
+	if (selection->currentIndex().isValid()) {
+		rowStart = selection->currentIndex().row() + offset;
+		rowStart = qMin(rowStart,model->rowCount()-1);
+		rowStart = qMax(rowStart,0);
+	}
+	int row;
+	for (int ii=0; ii < model->rowCount(); ++ii) {
+		row = ((up?rowStart-ii:rowStart+ii)+model->rowCount())
+				% model->rowCount();
+		if (model->data(model->index(row,0),Qt::DisplayRole)
+				.toString().contains(sWildExp)) {
+			selection->setCurrentIndex(
+					model->index(row,0),QItemSelectionModel::SelectCurrent);
+			_ui->logView->setSelectionModel(selection);
+			break;
+		}
+	}
+}
+
+void LogDialog::on_eFilter_filterChanged(QString flt) {
+	searchLog(flt);
+}
+
+void LogDialog::on_bSearchDown_clicked() {
+	searchLog(_ui->eFilter->text(),1,false);
+}
+
+void LogDialog::on_bSearchUp_clicked() {
+	searchLog(_ui->eFilter->text(),-1,true);
 }
 
 // ============================ Decorators ===============================

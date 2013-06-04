@@ -131,9 +131,20 @@ private slots:
 	/// handle debug checkbox
 	void on_checkDD_toggled(bool);
 	/// save logfile
-	void on_buttonSave_clicked();
+	void on_bSaveLog_clicked();
 	/// handle buf size changes
 	void on_sBufSize_valueChanged(int);
+	/// search down
+	void on_bSearchDown_clicked();
+	/// search up
+	void on_bSearchUp_clicked();
+	/// search for given string
+	/** \param filter  search filter (unix wildcard)
+	 *  \param offset  serach offset (added to current row)
+	 *  \param up      search upward (reverse) */
+	void searchLog(QString filter, int offset=0, bool up=false);
+	/// handle search filter changes
+	void on_eFilter_filterChanged(QString);
 
 private:
 	QStringListModel* _log;       ///< log model
