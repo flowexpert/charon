@@ -63,6 +63,7 @@ QMimeData* QCopyListView::getSelectedContent() const {
 		if (curData.type() == QVariant::String) {
 			QString curLine = curData.toString();
 			linesT << curLine;
+			// replace non-compatible characters with html equivalents
 			curLine.replace("&","&amp;");
 			curLine.replace("\"","&quot;");
 			curLine.replace("<","&lt;");
@@ -71,8 +72,9 @@ QMimeData* QCopyListView::getSelectedContent() const {
 				linesH << curLine;
 			}
 			else {
-				linesH << QString("<span style=\"%1\">%2</span>")
-					.arg(colStyle).arg(curLine);
+				linesH <<
+					QString("<span class=\"logLine\" style=\"%1\">%2</span>")
+						.arg(colStyle).arg(curLine);
 			}
 		}
 	}
@@ -80,20 +82,17 @@ QMimeData* QCopyListView::getSelectedContent() const {
 	QMimeData* clipData = new QMimeData;
 	clipData->setText(linesT.join("\n").toLocal8Bit());
 	QString htmlCont = QString(
-		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" "
-		"\"http://www.w3.org/TR/html4/loose.dtd\">\n"
-		"<html><head>\n<title>Tuchulcha Log</title>\n"
-		"<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
-		"<style type=\"text/css\">body{font-family:monospace;}</style></head>\n"
-		"<body>\n%1\n</body>\n</html>")
+		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" "
+			"\"http://www.w3.org/TR/html4/strict.dtd\">\n"
+		"<html>\n<head>\n<title>Tuchulcha Log</title>\n"
+		"<meta http-equiv=\"content-type\" "
+			"content=\"text/html; charset=UTF-8\">\n"
+		"<style type=\"text/css\">"
+			"span.logLine{font-family:monospace;white-space:pre;}"
+		"</style>\n</head>\n"
+		"<body>\n<div>\n%1\n</div>\n</body>\n</html>")
 		.arg(linesH.join("<br>\n"));
 	clipData->setHtml(htmlCont);
-
-	// unsure which ones are really needed
-	clipData->setData("UTF8_STRING",linesT.join("\n").toUtf8());
-	//clipData->setData("STRING",linesT.join("\n").toUtf8());
-	//clipData->setData("COMPOUND_TEXT",linesT.join("\n").toUtf8());
-	//clipData->setData("TEXT",linesT.join("\n").toUtf8());
 	return clipData;
 }
 
