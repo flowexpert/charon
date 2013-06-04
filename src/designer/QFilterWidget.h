@@ -39,27 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef SHARED_GLOBAL_H
-#define SHARED_GLOBAL_H
+#ifndef FILTERWIDGET_H
+#define FILTERWIDGET_H
 
-#include <QtCore/qglobal.h>
+#include <QtGui/QLineEdit>
+#include <QtGui/QToolButton>
 
-#ifdef QT_DESIGNER_STATIC
-#define QDESIGNER_SHARED_EXTERN
-#define QDESIGNER_SHARED_IMPORT
-#else
-#define QDESIGNER_SHARED_EXTERN Q_DECL_EXPORT
-#define QDESIGNER_SHARED_IMPORT Q_DECL_IMPORT
+QT_BEGIN_NAMESPACE
+
+class QToolButton;
+
+#define ICONBUTTON_SIZE 16
+
+/// This is a simple helper class that represents clickable icons
+
+class QIconButton: public QToolButton
+{
+	Q_OBJECT
+	Q_PROPERTY(float fader READ fader WRITE setFader)
+public:
+	QIconButton(QWidget *parent);
+	void paintEvent(QPaintEvent *event);
+	float fader() { return m_fader; }
+	void setFader(float value) { m_fader = value; update(); }
+	void animateShow(bool visible);
+
+private:
+	float m_fader;
+};
+
+/// FilterWidget: For filtering item views, with reset button
+class  QFilterWidget : public QLineEdit
+{
+	Q_OBJECT
+public:
+	explicit QFilterWidget(QWidget *parent = 0);
+	void resizeEvent(QResizeEvent *);
+
+signals:
+	void filterChanged(const QString &);
+
+private slots:
+	void checkButton(const QString &text);
+
+private:
+	QIconButton *m_button;
+	QString m_oldText;
+};
+
+QT_END_NAMESPACE
+
 #endif
-
-#ifndef QT_NO_SHARED_EXPORT
-#  ifdef QDESIGNER_SHARED_LIBRARY
-#    define QDESIGNER_SHARED_EXPORT QDESIGNER_SHARED_EXTERN
-#  else
-#    define QDESIGNER_SHARED_EXPORT QDESIGNER_SHARED_IMPORT
-#  endif
-#else
-#  define QDESIGNER_SHARED_EXPORT
-#endif
-
-#endif // SHARED_GLOBAL_H

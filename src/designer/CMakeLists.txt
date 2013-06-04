@@ -1,11 +1,10 @@
 QT4_WRAP_CPP(DESIG_MOC_SRC
-	filterwidget_p.h
+	QFilterWidget.h
 )
 
 SET(DESIG_CPP_SRC
-	shared_global_p.h
-	filterwidget_p.h
-	filterwidget.cpp
+	QFilterWidget.h
+	QFilterWidget.cpp
 )
 
 ADD_LIBRARY(designer-widgets ${DESIG_CPP_SRC} ${DESIG_MOC_SRC})
