@@ -48,6 +48,14 @@ IF(BUILD_TESTING)
 	LIST(APPEND tests QParameterFile)
 	LIST(APPEND testTargets qparameterfiletest)
 
+	# test mapping of QVariant types
+	QT4_WRAP_CPP(QVarMapTest_MOC QVariantMappingTest.h)
+	ADD_EXECUTABLE(qvariantmapping QVariantMappingTest.cpp ${QVarMapTest_MOC})
+	TARGET_LINK_LIBRARIES(qvariantmapping ${QT_LIBRARIES})
+	ADD_TEST(NAME QVariant_Mapping COMMAND qvariantmapping)
+	LIST(APPEND tests QVariant_Mapping)
+	LIST(APPEND testTargets qvariantmapping)
+
 	IF(WIN32)
 		GET_TARGET_PROPERTY(test_loc qparameterfiletest LOCATION)
 		GET_FILENAME_COMPONENT(LOCAL_PLUGIN_DIR ${test_loc} PATH)
