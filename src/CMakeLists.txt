@@ -28,7 +28,6 @@ QT4_WRAP_CPP(MOC_SRC
 	RecentFileHandler.h
 	ModelToolBar.h
 	ParameterFileModel.h
-	QDirEdit.h
 	GraphModel.h
 	FlowWidget.h
 	NodeHandler.h
@@ -44,13 +43,11 @@ QT4_WRAP_CPP(MOC_SRC
 	ParamInspectorWindow.h
 	ObjectInspector.h
 	QCopyListView.h
+	QDirEdit.h
+	QFilterWidget.h
 )
 
 SET(TUCHULCHA_SOURCES
-	Qtiostream.h
-	Qtiostream.cpp
-	QParameterFile.h
-	QParameterFile.cpp
 	VarTypeMap.h
 	VarTypeMap.cpp
 	MetaData.h
@@ -65,7 +62,6 @@ SET(TUCHULCHA_SOURCES
 	PrefixValidator.cpp
 	InspectorDelegate.cpp
 	ModelToolBar.cpp
-	QDirEdit.cpp
 	GraphModel.cpp
 	FlowWidget.cpp
 	ConnectionLine.h
@@ -83,7 +79,13 @@ SET(TUCHULCHA_SOURCES
 	ParamInspectorWindow.cpp
 	PriorityDialog.cpp
 	PriorityBox.cpp
+	QDirEdit.cpp
 	QCopyListView.cpp
+	QFilterWidget.cpp
+	Qtiostream.h
+	Qtiostream.cpp
+	QParameterFile.h
+	QParameterFile.cpp
 )
 
 QT4_WRAP_CPP(WF_RUNNER_MOC
@@ -95,14 +97,12 @@ SET(WF_RUNNER_SOURCES
 	CharonRun.cpp
 )
 
-ADD_SUBDIRECTORY(designer)
-
 # create libraries
 ADD_LIBRARY(tuchulcha-widgets ${TUCHULCHA_SOURCES} ${UI_SRC} ${MOC_SRC})
 ADD_LIBRARY(tc-run ${WF_RUNNER_SOURCES} ${WF_RUNNER_MOC})
 
 # add dependencies
-TARGET_LINK_LIBRARIES(tuchulcha-widgets designer-widgets ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(tuchulcha-widgets ${QT_LIBRARIES})
 TARGET_LINK_LIBRARIES(tc-run tuchulcha-widgets charon-plugins ${QT_LIBRARIES})
 SET_TARGET_PROPERTIES(
 	tuchulcha-widgets tc-run

@@ -305,7 +305,7 @@ This deletes the parameter(s) from the parameter file.</string>
   <customwidget>
    <class>QFilterWidget</class>
    <extends>QLineEdit</extends>
-   <header>designer/QFilterWidget.h</header>
+   <header>QFilterWidget.h</header>
   </customwidget>
   <customwidget>
    <class>PriorityBox</class>

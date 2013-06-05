@@ -144,7 +144,7 @@ private slots:
 	 *  \param up      search upward (reverse) */
 	void searchLog(QString filter, int offset=0, bool up=false);
 	/// handle search filter changes
-	void on_eFilter_filterChanged(QString);
+	void on_eFilter_textEdited(QString);
 
 private:
 	QStringListModel* _log;       ///< log model

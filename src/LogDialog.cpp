@@ -474,7 +474,7 @@ void LogDialog::searchLog(QString flt, int offset, bool up) {
 	}
 }
 
-void LogDialog::on_eFilter_filterChanged(QString flt) {
+void LogDialog::on_eFilter_textEdited(QString flt) {
 	searchLog(flt);
 }
 

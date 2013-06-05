@@ -15,10 +15,10 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** @file   QDirEdit.h
- *  @brief  Declaration of class DirEdit.
- *  @date   15.04.2010
- *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
+/** \file   QDirEdit.h
+ *  \brief  Declaration of class DirEdit.
+ *  \date   15.04.2010
+ *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
 #ifndef QDIREDIT_H
