@@ -14,7 +14,8 @@ IF(BUILD_TESTING)
 	ADD_DEFINITIONS(-DQPARAMETERTESTFILE="${CMAKE_CURRENT_SOURCE_DIR}/qparametertestfile.wrp")
 
 	# test ParameterFileModel
-	ADD_EXECUTABLE(modeltest modeltest.cpp)
+	QT4_WRAP_CPP(MTest_MOC QParameterFileModelTest.h)
+	ADD_EXECUTABLE(modeltest QParameterFileModelTest.cpp ${MTest_MOC})
 	TARGET_LINK_LIBRARIES(modeltest tuchulcha-widgets)
 	ADD_TEST(
 		NAME ParameterFileModel

@@ -845,10 +845,10 @@ QStringList ParameterFileModel::_prefixFilter(QStringList list) const {
 		return list;
 	}
 	else if (prefixValid()) {
-		return list.filter(QRegExp("^\\s*"+_prefix+"\\."));
+		return list.filter(QRegExp("^\\s*"+_prefix+"\\.",Qt::CaseInsensitive));
 	}
 	else {
-		return list.filter(QRegExp("^\\s*"+_prefix));
+		return list.filter(QRegExp("^\\s*"+_prefix,Qt::CaseInsensitive));
 	}
 }
 
