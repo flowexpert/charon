@@ -23,4 +23,4 @@ param5 10.5;3.1;7 # parameter list
 param6 value1;\
 	value2;value3 # comment
 # test special chars
-ignore1		äöüßúôħ
+ignore1		äöüßúôħłą

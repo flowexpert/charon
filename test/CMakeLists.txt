@@ -39,7 +39,8 @@ IF(BUILD_TESTING)
 	ENDIF(WIN32)
 
 	# test QParameterFile
-	ADD_EXECUTABLE(qparameterfiletest qparameterfiletest.cpp)
+	QT4_WRAP_CPP(QPFileTest_MOC QParameterFileTest.h)
+	ADD_EXECUTABLE(qparameterfiletest QParameterFileTest.cpp ${QPFileTest_MOC})
 	TARGET_LINK_LIBRARIES(qparameterfiletest tuchulcha-widgets charon-core)
 	ADD_TEST(
 		NAME QParameterFile

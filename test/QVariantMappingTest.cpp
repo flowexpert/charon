@@ -44,11 +44,12 @@ void QVariantMappingTest::variantMapCheck() {
 	QCOMPARE(QVariant::nameToType("int"),QVariant::Int);
 	QCOMPARE(QVariant::nameToType("uint"),QVariant::UInt);
 	//QCOMPARE(QVariant::nameToType("char"),QVariant::Char);
-	//QCOMPARE(QVariant::nameToType("float"),QVariant::Double); // show stopper
+	QEXPECT_FAIL("","no QVariant::Float", Continue);
+	QCOMPARE(QVariant::nameToType("float"),QVariant::Double); // show stopper
 	QCOMPARE(QVariant::nameToType("double"),QVariant::Double);
 	//QCOMPARE(QVariant::nameToType("longlong"),QVariant::LongLong);
 	//QCOMPARE(QVariant::nameToType("ulonglong"),QVariant::ULongLong);
 	//QCOMPARE(QVariant::nameToType("string"),QVariant::String);
 }
 
-QTEST_MAIN(QVariantMappingTest)
+QTEST_APPLESS_MAIN(QVariantMappingTest)
