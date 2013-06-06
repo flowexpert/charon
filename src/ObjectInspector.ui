@@ -136,7 +136,7 @@ This deletes the parameter(s) from the parameter file.</string>
               <string>reset selected</string>
              </property>
              <property name="icon">
-              <iconset resource="../resources.qrc">
+              <iconset theme="document-revert" resource="../resources.qrc">
                <normaloff>:/icons/revert.png</normaloff>:/icons/revert.png</iconset>
              </property>
             </widget>
@@ -209,8 +209,8 @@ This deletes the parameter(s) from the parameter file.</string>
               <string>reset filters</string>
              </property>
              <property name="icon">
-              <iconset resource="../resources.qrc">
-               <normaloff>:/icons/disconnect.png</normaloff>:/icons/disconnect.png</iconset>
+              <iconset theme="edit-clear" resource="../resources.qrc">
+               <normaloff>:/icons/edit-clear-filter.png</normaloff>:/icons/edit-clear-filter.png</iconset>
              </property>
             </widget>
            </item>

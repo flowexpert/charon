@@ -142,61 +142,71 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	toolbar->setIconSize(QSize(32, 32));
 	QAction* action;
 
-	action = toolbar->addAction(QIcon(":/icons/new.png"), tr("new file"),
-			this, SLOT(openNew()));
+	action = toolbar->addAction(
+		QIcon::fromTheme("document-new",QIcon(":/icons/document-new.png")),
+		tr("new file"), this, SLOT(openNew()));
 	action->setToolTip(tr("create a new file"));
 
-	action = toolbar->addAction(QIcon(":/icons/open.png"), tr("open file"),
-			this, SLOT(open()));
+	action = toolbar->addAction(
+		QIcon::fromTheme("document-open",QIcon(":/icons/document-open.png")),
+		tr("open file"),this, SLOT(open()));
 	action->setToolTip(tr("open an existing file"));
 
-	action = toolbar->addAction(QIcon(":/icons/save.png"), tr("save file"),
-			_inspector, SLOT(saveFile()));
+	action = toolbar->addAction(
+		QIcon::fromTheme("document-save",QIcon(":/icons/document-save.png")),
+		tr("save file"), _inspector, SLOT(saveFile()));
 	action->setToolTip(tr("save current document"));
 
-	action = toolbar->addAction(QIcon(":/icons/save_as.png"),
+	action = toolbar->addAction(
+		QIcon::fromTheme("document-save-as",QIcon(":/icons/document-save-as.png")),
 		tr("save file as"), _inspector, SLOT(saveFileAs()));
 	action->setToolTip(tr("save current document to a new location"));
 
-	action = toolbar->addAction(QIcon(":/icons/export.png"),
+	action = toolbar->addAction(
+		QIcon::fromTheme("document-export",QIcon(":/icons/document-export.png")),
 		tr("export flowchart"), this, SLOT(saveFlowChart()));
 	action->setToolTip(tr("export flowchart to an image file"));
 	action->setShortcut(Qt::Key_F12);
 
 	toolbar->addSeparator();
 	action = toolbar->addAction(
-			QIcon(":/icons/refresh.png"),
+		QIcon::fromTheme("view-refresh",QIcon(":/icons/view-refresh.png")),
 		tr("&Update Plugins"), this, SLOT(updateMetadata()));
 	action->setToolTip(
-			tr("update classes informations reading all plugins"));
+		tr("update classes informations reading all plugins"));
 
 	action = toolbar->addAction(
-			QIcon(":/icons/execute.png"),
-			tr("Execute &Workflow"), this, SLOT(runWorkflow()));
+		QIcon::fromTheme("media-playback-start",QIcon(":/icons/execute.png")),
+		tr("Execute &Workflow"), this, SLOT(runWorkflow()));
 	action->setToolTip(
-			tr("execute workflow that is shown in the current window"));
+		tr("execute workflow that is shown in the current window"));
 
 	toolbar->addSeparator();
 	toolbar->addModelActions();
 	toolbar->addSeparator();
-	action = toolbar->addAction(QIcon(":/icons/zoomIn.png"), tr("zoom in"),
-			this, SLOT(zoomIn()));
+	action = toolbar->addAction(
+		QIcon::fromTheme("zoom-in",QIcon(":/icons/zoom-in.png")),
+		tr("zoom in"), this, SLOT(zoomIn()));
 	action->setToolTip(tr("enlarge flowchart items"));
 
-	action = toolbar->addAction(QIcon(":/icons/zoomOut.png"), tr("zoom out"),
-			this, SLOT(zoomOut()));
+	action = toolbar->addAction(
+		QIcon::fromTheme("zoom-out",QIcon(":/icons/zoom-out.png")),
+		tr("zoom out"), this, SLOT(zoomOut()));
 	action->setToolTip(tr("shrink flowchart items"));
 
-	action = toolbar->addAction(QIcon(":/icons/zoomFit.png"), tr("zoom fit"),
-			this, SLOT(zoomFit()));
+	action = toolbar->addAction(
+		QIcon::fromTheme("zoom-fit-best",QIcon(":/icons/zoom-fit.png")),
+		tr("zoom fit"), this, SLOT(zoomFit()));
 	action->setToolTip(tr("fit flowchart in view"));
 
 	toolbar->addSeparator();
-	action = toolbar->addAction(QIcon(":/icons/intro.png"),
+	action = toolbar->addAction(
+		QIcon::fromTheme("help-hint",QIcon(":/icons/help-info.png")),
 		tr("introduction to tuchulcha"), _docGen, SLOT(showIntro()));
 	action->setToolTip(tr("show introductin page"));
 
-	action = toolbar->addAction(QIcon(":/icons/help.png"),
+	action = toolbar->addAction(
+		QIcon::fromTheme("help-contents",QIcon(":/icons/help-contents.png")),
 		tr("tuchulcha help"), _docGen, SLOT(showHelp()));
 	action->setToolTip(tr("show help page"));
 
@@ -205,44 +215,57 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 
 	// file menu
 	QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
-	fileMenu->addAction(QIcon(":/icons/new.png"), tr("&New"), this,
-		SLOT(openNew()), QKeySequence(tr("Ctrl+N")));
-	fileMenu->addAction(QIcon(":/icons/open.png"), tr("&Open"), this,
-		SLOT(open()), QKeySequence(tr("Ctrl+O")));
-	fileMenu->addAction(QIcon(":/icons/save.png"), tr("&Save"), _inspector,
-		SLOT(saveFile()), QKeySequence(tr("Ctrl+S")));
-	fileMenu->addAction(QIcon(":/icons/save_as.png"), tr("Save &as..."),
-		_inspector, SLOT(saveFileAs()), QKeySequence(tr("Ctrl+Shift+S")));
+	fileMenu->addAction(
+		QIcon::fromTheme("document-new",QIcon(":/icons/document-new.png")),
+		tr("&New"), this, SLOT(openNew()), QKeySequence(tr("Ctrl+N")));
+	fileMenu->addAction(
+		QIcon::fromTheme("document-open",QIcon(":/icons/document-open.png")),
+ 		tr("&Open"), this, SLOT(open()), QKeySequence(tr("Ctrl+O")));
+	fileMenu->addAction(
+		QIcon::fromTheme("document-save",QIcon(":/icons/document-save.png")),
+		tr("&Save"), _inspector, SLOT(saveFile()), QKeySequence(tr("Ctrl+S")));
+	fileMenu->addAction(
+		QIcon::fromTheme("document-save-as",QIcon(":/icons/document-save-as.png")),
+		tr("Save &as..."), _inspector, SLOT(saveFileAs()),
+		QKeySequence(tr("Ctrl+Shift+S")));
 	_rfHandler = new RecentFileHandler(this);
 	_rfHandler->registerRecentFileEntries(fileMenu);
 	connect(_rfHandler,SIGNAL(openFile(QString)),SLOT(open(QString)));
 	fileMenu->addSeparator();
-	fileMenu->addAction(QIcon(":/icons/refresh.png"), tr("&Update Plugins"),
-			this, SLOT(updateMetadata()), QKeySequence("Ctrl+U"));
 	fileMenu->addAction(
-			QIcon(":/icons/execute.png"),tr("Execute &Workflow"),
-			this, SLOT(runWorkflow()),QKeySequence(tr("Ctrl+E")));
-	fileMenu->addAction(QIcon(":/icons/export.png"), tr("Export &flowchart"),
-			this, SLOT(saveFlowChart()), QKeySequence(tr("Ctrl+F")));
-	fileMenu->addAction(QIcon(":/icons/close.png"), tr("&Exit"), this,
-		SLOT(close()), QKeySequence(tr("Ctrl+Q")));
+		QIcon::fromTheme("view-refresh",QIcon(":/icons/view-refresh.png")),
+		tr("&Update Plugins"),this, SLOT(updateMetadata()),QKeySequence("Ctrl+U"));
+	fileMenu->addAction(
+		QIcon::fromTheme("media-playback-start",QIcon(":/icons/execute.png")),
+		tr("Execute &Workflow"),this, SLOT(runWorkflow()),QKeySequence(tr("Ctrl+E")));
+	fileMenu->addAction(
+		QIcon::fromTheme("document-export",QIcon(":/icons/document-export.png")),
+		tr("Export &flowchart"),this,SLOT(saveFlowChart()),QKeySequence(tr("Ctrl+F")));
+	fileMenu->addAction(
+		QIcon::fromTheme("document-close",QIcon(":/icons/document-close.png")),
+		tr("&Exit"), this, SLOT(close()), QKeySequence(tr("Ctrl+Q")));
 
 	// edit menu
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
-	editMenu->addAction(QIcon(":/icons/revert.png"), tr(
-			"&reset selected parameters"), _inspector, SLOT(delParam()),
-			QKeySequence(tr("Ctrl+R")));
-	editMenu->addAction(QIcon(":/icons/configure.png"),tr("&Options"),
-			this, SLOT(options()));
+	editMenu->addAction(
+		QIcon::fromTheme("document-revert",QIcon(":/icons/revert.png")),
+		tr("&reset selected parameters"), _inspector, SLOT(delParam()),
+		QKeySequence(tr("Ctrl+R")));
+	editMenu->addAction(
+		QIcon::fromTheme("configure",QIcon(":/icons/configure.png")),
+		tr("&Options"), this, SLOT(options()));
 
 	// view menu
 	QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
-	viewMenu->addAction(QIcon(":/icons/zoomIn.png"), tr("zoom &in"), this,
-		SLOT(zoomIn()), QKeySequence(tr("Ctrl++")));
-	viewMenu->addAction(QIcon(":/icons/zoomOut.png"), tr("zoom &out"), this,
-		SLOT(zoomOut()), QKeySequence(tr("Ctrl+-")));
-	viewMenu->addAction(QIcon(":/icons/zoomFit.png"), tr("zoom &fit"), this,
-		SLOT(zoomFit()), QKeySequence(tr("Ctrl+HOME")));
+	viewMenu->addAction(
+		QIcon::fromTheme("zoom-in",QIcon(":/icons/zoom-in.png")),
+		tr("zoom &in"), this, SLOT(zoomIn()), QKeySequence(tr("Ctrl++")));
+	viewMenu->addAction(
+		QIcon::fromTheme("zoom-out",QIcon(":/icons/zoom-out.png")),
+		tr("zoom &out"), this, SLOT(zoomOut()), QKeySequence(tr("Ctrl+-")));
+	viewMenu->addAction(
+		QIcon::fromTheme("zoom-fit-best",QIcon(":/icons/zoom-fit.png")),
+		tr("zoom &fit"), this, SLOT(zoomFit()), QKeySequence(tr("Ctrl+HOME")));
 
 	// window menu
 	QMenu* windowMenu = menuBar()->addMenu(tr("&Window"));
@@ -256,14 +279,19 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 
 	// help menu
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
-	helpMenu->addAction(QIcon(":/icons/help.png"), tr("&Help"), _docGen, SLOT(
-			showHelp()), QKeySequence(tr("F1")));
-	helpMenu->addAction(QIcon(":/icons/intro.png"), tr("&Introduction"),
-			_docGen, SLOT(showIntro()), QKeySequence(tr("Shift+F1")));
-	helpMenu->addAction(appicon, tr("&About Tuchulcha"), this, SLOT(
-			_showAbout()));
-	helpMenu->addAction(QIcon(":/icons/qt.png"), tr("About &Qt"), this, SLOT(
-			_showAboutQt()));
+	helpMenu->addAction(
+		QIcon::fromTheme("help-contents",QIcon(":/icons/help-contents.png")),
+		tr("&Help"), _docGen, SLOT(showHelp()), QKeySequence(tr("F1")));
+	helpMenu->addAction(
+		QIcon::fromTheme("help-hint",QIcon(":/icons/help-info.png")),
+		tr("&Introduction"), _docGen, SLOT(showIntro()),
+		QKeySequence(tr("Shift+F1")));
+	helpMenu->addAction(
+		QIcon::fromTheme("help-about",appicon),
+		tr("&About Tuchulcha"), this, SLOT(_showAbout()));
+	helpMenu->addAction(
+		QIcon(":/icons/qt.png"),
+		tr("About &Qt"), this, SLOT(_showAboutQt()));
 
 	// load window state config
 	QSettings settings;
