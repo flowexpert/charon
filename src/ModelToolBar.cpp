@@ -48,7 +48,7 @@ void ModelToolBar::addModelActions() {
 	act->setToolTip(tr("rename selected node"));
 	
 	act = addAction(
-		QIcon::fromTheme("edit-clear",QIcon(":/icons/edit-clear.png")),
+		QIcon::fromTheme("network-disconnect",QIcon(":/icons/network-disconnect.png")),
 		tr("disconnect node"), this, SLOT(_disconnect()));
 	act->setToolTip(tr("disconnect all slots of selected node"));
 }

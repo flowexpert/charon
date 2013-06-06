@@ -178,7 +178,7 @@ void NodeHandler::loadFromModel() {
 		QString name = nodes[ii];
 		QString cname = _model->getClass(nodes[ii], true);
 
-        Node* node = new Node(_model,name,10*ii,10*ii,this);
+		Node* node = new Node(_model,name,10*ii,10*ii,this);
 		node->setClassName(cname);
 		_nodeMap.insert(name,node);
 
@@ -202,7 +202,6 @@ void NodeHandler::loadFromModel() {
 		QStringList dins = _model->getInputDisplayNames(name);
 		QStringList douts = _model->getOutputDisplayNames(name);
 		for (int jj=0; jj < ins.size(); jj++) {
-
 			node->addProperty(ins[jj],dins[jj], true);
 		}
 		for (int jj=0; jj < outs.size(); jj++) {
@@ -246,7 +245,7 @@ void NodeHandler::loadFromModel() {
 	}
 	update();
 	selectNode(_model->prefix());
-    setNodeActive();
+	setNodeActive();
 }
 
 void NodeHandler::connectNodes(

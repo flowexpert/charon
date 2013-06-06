@@ -346,10 +346,16 @@ void ObjectInspector::handle_model_prefixChanged(const QString& prefix) {
 	// update comment text area
 	QMutexLocker locker (_commentFieldMutex);
 	_ui->prefix->setText(prefix);
-	QString comment = _model->getValue(prefix + ".editorcomment");
-	comment.replace(QRegExp("<br/?>"), "\n");
-	_ui->comment->setPlainText(comment);
-	_ui->commentBox->setEnabled(!prefix.isEmpty() && _model->prefixValid());
+	if (!prefix.isEmpty() && _model->prefixValid()) {
+		QString comment = _model->getValue(prefix + ".editorcomment");
+		comment.replace(QRegExp("<br/?>"), "\n");
+		_ui->comment->setPlainText(comment);
+		_ui->pageComment->setEnabled(true);
+	}
+	else {
+		_ui->comment->setPlainText(tr("no node selected"));
+		_ui->pageComment->setEnabled(false);
+	}
 	locker.unlock();
 }
 

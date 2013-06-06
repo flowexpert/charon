@@ -698,59 +698,59 @@ node</oldsource>
     <message>
         <location filename="../src/ModelToolBar.cpp" line="53"/>
         <source>disconnect all slots of selected node</source>
-        <translation>entfernt die Verbindungen von allen Ein- und Ausgängen</translation>
+        <translation>entfernt die Verbindungen von allen Ein- und Ausgängen des gerade ausgewählten Knotens</translation>
     </message>
 </context>
 <context>
     <name>NodeHandler</name>
     <message>
         <location filename="../src/NodeHandler.cpp" line="197"/>
-        <location filename="../src/NodeHandler.cpp" line="474"/>
+        <location filename="../src/NodeHandler.cpp" line="473"/>
         <source>Comment:</source>
         <translation>Kommentar:</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="283"/>
+        <location filename="../src/NodeHandler.cpp" line="282"/>
         <source>Select File to Write</source>
         <translation>Datei zum Schreiben auswählen</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="284"/>
+        <location filename="../src/NodeHandler.cpp" line="283"/>
         <source>Images (*.png *.jpg *.bmp *.gif);;PDF/Postscript (*.pdf *.ps)</source>
         <translation>Bilder (*.png *.jpg *.bmp *.gif);;PDF/Postscript (*.pdf *.ps)</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="304"/>
+        <location filename="../src/NodeHandler.cpp" line="303"/>
         <source>error writing file</source>
         <translation>Fehler beim Schreiben der Datei</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="305"/>
+        <location filename="../src/NodeHandler.cpp" line="304"/>
         <source>failed to save the workflow visualization to&lt;br&gt;&lt;tt&gt;%1&lt;/tt&gt;Perhaps the image file format is not supported.</source>
         <translation>Die Darstellung konnte nicht in der Datei &lt;tt&gt;%1&lt;/tt&gt; gespeichert werden.&lt;br&gt;Eventuell wird das Format nicht unterstützt.</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="424"/>
+        <location filename="../src/NodeHandler.cpp" line="423"/>
         <source>disconnect %1</source>
         <translation>Verbindungen von &quot;%1&quot; entfernen</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="430"/>
+        <location filename="../src/NodeHandler.cpp" line="429"/>
         <source>delete</source>
         <translation>löschen</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="431"/>
+        <location filename="../src/NodeHandler.cpp" line="430"/>
         <source>rename</source>
         <translation>umbenennen</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="432"/>
+        <location filename="../src/NodeHandler.cpp" line="431"/>
         <source>disconnect all slots</source>
         <translation>alle Verbindungen entfernen</translation>
     </message>
     <message>
-        <location filename="../src/NodeHandler.cpp" line="439"/>
+        <location filename="../src/NodeHandler.cpp" line="438"/>
         <source>disconnect slot</source>
         <translation>Verbindungen entfernen</translation>
     </message>
@@ -826,6 +826,11 @@ node</oldsource>
         <translation>Model-Einträge gelöscht</translation>
     </message>
     <message>
+        <location filename="../src/ObjectInspector.cpp" line="356"/>
+        <source>no node selected</source>
+        <translation>kein Knoten ausgewählt</translation>
+    </message>
+    <message>
         <location filename="../src/ObjectInspector.ui" line="14"/>
         <source>Frame</source>
         <translation>Rahmen</translation>
@@ -836,104 +841,143 @@ node</oldsource>
         <translation>Gewählter Knoten</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="97"/>
+        <location filename="../src/ObjectInspector.ui" line="124"/>
+        <source>set
+priorities</source>
+        <translation>Prioritäten
+setzen</translation>
+    </message>
+    <message>
+        <location filename="../src/ObjectInspector.ui" line="149"/>
+        <source>reset
+parameter</source>
+        <translation>Parameter
+zrücksetzen</translation>
+    </message>
+    <message>
+        <location filename="../src/ObjectInspector.ui" line="170"/>
+        <source>Deselect any currently selected node.&lt;br&gt;
+This causes all parameter from the workflow file
+to appear in the object inspector.&lt;br&gt;
+This might be useful e.g. in combination with a priority filter.</source>
+        <translation>Aktuell ausgewählten Knoten abwählen.
+Hierdurch erscheine alle Parameter aus der Datei im Objektinspektor.
+Das ist z.B. sinnvoll in Kombination mit einem Prioritätsfilter.</translation>
+    </message>
+    <message>
+        <location filename="../src/ObjectInspector.ui" line="176"/>
+        <source>deselect
+any node</source>
+        <translation>Knoten
+abwählen</translation>
+    </message>
+    <message>
+        <location filename="../src/ObjectInspector.ui" line="197"/>
+        <source>Activate all plugins starting with the selected one.
+If the selected plugin is already activated, this has no effect.
+If it was deactivated, the plugin itself and all connected
+plugins are activated (forward traversal).</source>
+        <translation>Alle Knoten vom aktuellen Knoten ausgehend aktivieren.
+Wenn der aktuelle Knoten aktiviert ist, passiert nichts.
+Falls er deaktiviert war, wird er aktiviert sowie alle Knoten,
+die (vorwärts) an ihm angeschlossen sind.</translation>
+    </message>
+    <message>
+        <location filename="../src/ObjectInspector.ui" line="203"/>
+        <source>activate
+plugin tree</source>
+        <translation>aktiviere
+Plugin Baum</translation>
+    </message>
+    <message>
+        <location filename="../src/ObjectInspector.ui" line="268"/>
         <source>Node-Comment</source>
         <translation>Knoten-Kommentar</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="114"/>
+        <location filename="../src/ObjectInspector.ui" line="109"/>
         <source>Tools</source>
         <translation>Werkzeuge</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="132"/>
+        <location filename="../src/ObjectInspector.ui" line="145"/>
         <source>reset selected parameter(s) to their defaults
 This deletes the parameter(s) from the parameter file.</source>
         <translation>setzt die gewählten Parameter auf ihren Standardwert zurück.
 Dies löscht die Parameter aus der Parameterdatei.</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="136"/>
-        <source>reset selected</source>
-        <translation>Parameter zurücksetzen</translation>
-    </message>
-    <message>
-        <location filename="../src/ObjectInspector.ui" line="147"/>
+        <location filename="../src/ObjectInspector.ui" line="121"/>
         <source>Change priority of selected parameters</source>
         <translation>Priorität der gewählten Parameter anpassen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="158"/>
-        <source>Activate Plugintree</source>
-        <translation type="unfinished">Aktiviere Baum vorwärts</translation>
-    </message>
-    <message>
-        <location filename="../src/ObjectInspector.ui" line="168"/>
+        <location filename="../src/ObjectInspector.ui" line="227"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="186"/>
+        <location filename="../src/ObjectInspector.ui" line="233"/>
         <source>Priority</source>
         <translation>Priorität</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="199"/>
+        <location filename="../src/ObjectInspector.ui" line="246"/>
         <source>Filter by priority</source>
         <translation>nach Priorität filtern</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="206"/>
+        <location filename="../src/ObjectInspector.ui" line="253"/>
         <source>reset applied filters</source>
         <translation>setzt die angewandten Filter zurück</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="209"/>
+        <location filename="../src/ObjectInspector.ui" line="256"/>
         <source>reset filters</source>
         <translation>Filter zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="231"/>
+        <location filename="../src/ObjectInspector.ui" line="294"/>
         <source>Editing</source>
         <translation>Bearbeitung</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="246"/>
+        <location filename="../src/ObjectInspector.ui" line="309"/>
         <source>Add new parameter</source>
         <translation>neuen Parameter hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="249"/>
+        <location filename="../src/ObjectInspector.ui" line="312"/>
         <source>&amp;Add</source>
         <translation>&amp;Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="256"/>
+        <location filename="../src/ObjectInspector.ui" line="319"/>
         <source>Delete selected parameter</source>
         <translation>gewählte Parameter löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="259"/>
+        <location filename="../src/ObjectInspector.ui" line="322"/>
         <source>&amp;Delete</source>
         <translation>&amp;Entfernen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="266"/>
+        <location filename="../src/ObjectInspector.ui" line="329"/>
         <source>Delete all parameters</source>
         <translation>alle Parameter Löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="269"/>
+        <location filename="../src/ObjectInspector.ui" line="332"/>
         <source>&amp;Clear</source>
         <translation>Alle &amp;Löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="282"/>
+        <location filename="../src/ObjectInspector.ui" line="345"/>
         <source>use metadata</source>
         <translation>benutze Metainformationen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="292"/>
+        <location filename="../src/ObjectInspector.ui" line="355"/>
         <source>show editable parameters only</source>
         <translation>nur Parameter anzeigen</translation>
     </message>

@@ -40,6 +40,10 @@
         <file alias="go-down.png">icons/oxygen/go-down.png</file>
         <file alias="go-up.png">icons/oxygen/go-up.png</file>
         <file alias="document-open-recent.png">icons/oxygen/document-open-recent.png</file>
+        <file alias="edit-clear-list.png">icons/oxygen/edit-clear-list.png</file>
+        <file alias="network-connect.png">icons/oxygen/network-connect.png</file>
+        <file alias="network-disconnect.png">icons/oxygen/network-disconnect.png</file>
+        <file alias="split.png">icons/oxygen/split.png</file>
     </qresource>
     <qresource prefix="/config">
         <file alias="default.ini">cfg/default.ini</file>
