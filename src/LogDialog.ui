@@ -104,7 +104,7 @@
         <x>0</x>
         <y>0</y>
         <width>888</width>
-        <height>87</height>
+        <height>85</height>
        </rect>
       </property>
       <attribute name="label">
@@ -123,11 +123,12 @@
           <string>Find
 Next</string>
          </property>
+         <property name="icon">
+          <iconset theme="go-down" resource="../resources.qrc">
+           <normaloff>:/icons/go-down.png</normaloff>:/icons/go-down.png</iconset>
+         </property>
          <property name="toolButtonStyle">
           <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-         <property name="arrowType">
-          <enum>Qt::DownArrow</enum>
          </property>
         </widget>
        </item>
@@ -177,11 +178,12 @@ Logfile</string>
           <string>Find
 Previous</string>
          </property>
+         <property name="icon">
+          <iconset theme="go-up" resource="../resources.qrc">
+           <normaloff>:/icons/go-up.png</normaloff>:/icons/go-up.png</iconset>
+         </property>
          <property name="toolButtonStyle">
           <enum>Qt::ToolButtonTextUnderIcon</enum>
-         </property>
-         <property name="arrowType">
-          <enum>Qt::UpArrow</enum>
          </property>
         </widget>
        </item>
@@ -206,7 +208,7 @@ Previous</string>
         <x>0</x>
         <y>0</y>
         <width>888</width>
-        <height>87</height>
+        <height>85</height>
        </rect>
       </property>
       <attribute name="label">

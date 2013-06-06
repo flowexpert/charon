@@ -37,6 +37,8 @@
         <file alias="priorityRed.png">icons/priorityRed.png</file>
         <file alias="prioritySignalLights.png">icons/signalLights.png</file>
         <file alias="edit-clear-filter.png">icons/oxygen/edit-clear-locationbar-rtl.png</file>
+        <file alias="go-down.png">icons/oxygen/go-down.png</file>
+        <file alias="go-up.png">icons/oxygen/go-up.png</file>
     </qresource>
     <qresource prefix="/config">
         <file alias="default.ini">cfg/default.ini</file>
