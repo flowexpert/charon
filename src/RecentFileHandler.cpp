@@ -43,6 +43,8 @@ void RecentFileHandler::registerRecentFileEntries(QMenu *menu) {
 	_separatorAct = menu->addSeparator();
 	for (int i = 0; i < _maxRecentFiles; ++i) {
 		_recentFileActs[i] = new QAction(this);
+		_recentFileActs[i]->setIcon(QIcon::fromTheme(
+			"document-open-recent",QIcon(":/icons/document-open-recent.png")));
 		_recentFileActs[i]->setVisible(false);
 		connect(_recentFileActs[i],
 				SIGNAL(triggered()), SLOT(_openRecentFile()));

@@ -99,7 +99,7 @@ QFilterWidget::QFilterWidget(QWidget *pp)  :
 							QIcon(":/icons/edit-clear-filter.png")));
 
 	_resetButton->setIcon(icon);
-	_resetButton->setToolTip(tr("Clear text"));
+	_resetButton->setToolTip(tr("clear text"));
 	connect(_resetButton, SIGNAL(clicked()), this, SLOT(clear()));
 	connect(this, SIGNAL(textChanged(QString)), this, SLOT(checkButton(QString)));
 }

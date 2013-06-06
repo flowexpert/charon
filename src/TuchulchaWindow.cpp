@@ -242,7 +242,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 		QIcon::fromTheme("document-export",QIcon(":/icons/document-export.png")),
 		tr("Export &flowchart"),this,SLOT(saveFlowChart()),QKeySequence(tr("Ctrl+F")));
 	fileMenu->addAction(
-		QIcon::fromTheme("document-close",QIcon(":/icons/document-close.png")),
+		QIcon::fromTheme("application-exit",QIcon(":/icons/application-exit.png")),
 		tr("&Exit"), this, SLOT(close()), QKeySequence(tr("Ctrl+Q")));
 
 	// edit menu
@@ -283,7 +283,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 		QIcon::fromTheme("help-contents",QIcon(":/icons/help-contents.png")),
 		tr("&Help"), _docGen, SLOT(showHelp()), QKeySequence(tr("F1")));
 	helpMenu->addAction(
-		QIcon::fromTheme("help-hint",QIcon(":/icons/help-info.png")),
+		QIcon::fromTheme("help-faq",QIcon(":/icons/help-info.png")),
 		tr("&Introduction"), _docGen, SLOT(showIntro()),
 		QKeySequence(tr("Shift+F1")));
 	helpMenu->addAction(

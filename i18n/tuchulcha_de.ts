@@ -497,57 +497,62 @@ Next</source>
 Fundstelle</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="137"/>
+        <location filename="../src/LogDialog.ui" line="138"/>
         <source>Search in Log:</source>
         <translation>Log durchsuchen:</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="210"/>
+        <location filename="../src/LogDialog.ui" line="199"/>
+        <source>Search String (Wildcard expression)</source>
+        <translation>Suchbegriff (mit Wildcards)</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDialog.ui" line="215"/>
         <source>Options</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="222"/>
+        <location filename="../src/LogDialog.ui" line="227"/>
         <source>scroll down on new output</source>
         <translation>bei neuen Ausgaben ans Ende springen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="260"/>
+        <location filename="../src/LogDialog.ui" line="265"/>
         <source>size of display buffer:</source>
         <translation>Anzeigepuffer:</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="238"/>
-        <location filename="../src/LogDialog.ui" line="241"/>
+        <location filename="../src/LogDialog.ui" line="243"/>
+        <location filename="../src/LogDialog.ui" line="246"/>
         <source>lines with &quot;(DD)&quot; prefix</source>
         <translation>Zeilen, die mit &quot;(DD)&quot; beginnen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="160"/>
+        <location filename="../src/LogDialog.ui" line="151"/>
         <source>Save
 Logfile</source>
         <translation>Protokoll
 speichern</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="187"/>
+        <location filename="../src/LogDialog.ui" line="178"/>
         <source>Find
 Previous</source>
         <translation>vorherige
 Fundstelle</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="244"/>
+        <location filename="../src/LogDialog.ui" line="249"/>
         <source>show debug output</source>
         <translation>Debug-Ausgaben anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="276"/>
+        <location filename="../src/LogDialog.ui" line="281"/>
         <source>unlimited</source>
         <translation>unbegrenzt</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.ui" line="279"/>
+        <location filename="../src/LogDialog.ui" line="284"/>
         <source> lines</source>
         <translation> Zeilen</translation>
     </message>
@@ -660,38 +665,38 @@ Fundstelle</translation>
 <context>
     <name>ModelToolBar</name>
     <message>
-        <location filename="../src/ModelToolBar.cpp" line="40"/>
+        <location filename="../src/ModelToolBar.cpp" line="42"/>
         <source>delete node</source>
         <oldsource>delete
 node</oldsource>
         <translation>Knoten löschen</translation>
     </message>
     <message>
-        <location filename="../src/ModelToolBar.cpp" line="42"/>
+        <location filename="../src/ModelToolBar.cpp" line="43"/>
         <source>delete selected node</source>
         <translation>ausgewählten Knoten entfernen</translation>
     </message>
     <message>
-        <location filename="../src/ModelToolBar.cpp" line="44"/>
+        <location filename="../src/ModelToolBar.cpp" line="47"/>
         <source>rename node</source>
         <oldsource>rename
 node</oldsource>
         <translation>Knoten umbenennen</translation>
     </message>
     <message>
-        <location filename="../src/ModelToolBar.cpp" line="46"/>
+        <location filename="../src/ModelToolBar.cpp" line="48"/>
         <source>rename selected node</source>
         <translation>ausgewählten Knoten umbenennen</translation>
     </message>
     <message>
-        <location filename="../src/ModelToolBar.cpp" line="48"/>
+        <location filename="../src/ModelToolBar.cpp" line="52"/>
         <source>disconnect node</source>
         <oldsource>disconnect
 node</oldsource>
         <translation>Verbindungen entfernen</translation>
     </message>
     <message>
-        <location filename="../src/ModelToolBar.cpp" line="50"/>
+        <location filename="../src/ModelToolBar.cpp" line="53"/>
         <source>disconnect all slots of selected node</source>
         <translation>entfernt die Verbindungen von allen Ein- und Ausgängen</translation>
     </message>
@@ -768,19 +773,9 @@ node</oldsource>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/NodeTreeView.ui" line="17"/>
+        <location filename="../src/NodeTreeView.ui" line="36"/>
         <source>Filter</source>
         <translation>Filter</translation>
-    </message>
-    <message>
-        <location filename="../src/NodeTreeView.ui" line="46"/>
-        <source>reset filter string</source>
-        <translation>Filter zurücksetzen</translation>
-    </message>
-    <message>
-        <location filename="../src/NodeTreeView.ui" line="49"/>
-        <source>clear filter</source>
-        <translation>Filter leeren</translation>
     </message>
 </context>
 <context>
@@ -841,114 +836,104 @@ node</oldsource>
         <translation>Gewählter Knoten</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="88"/>
-        <source>reset prefix filters</source>
-        <translation>Präfix-Filter zurücksetzen</translation>
-    </message>
-    <message>
-        <location filename="../src/ObjectInspector.ui" line="91"/>
-        <source>clear prefix</source>
-        <translation>Präfix leeren</translation>
-    </message>
-    <message>
-        <location filename="../src/ObjectInspector.ui" line="111"/>
+        <location filename="../src/ObjectInspector.ui" line="97"/>
         <source>Node-Comment</source>
         <translation>Knoten-Kommentar</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="128"/>
+        <location filename="../src/ObjectInspector.ui" line="114"/>
         <source>Tools</source>
         <translation>Werkzeuge</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="146"/>
+        <location filename="../src/ObjectInspector.ui" line="132"/>
         <source>reset selected parameter(s) to their defaults
 This deletes the parameter(s) from the parameter file.</source>
         <translation>setzt die gewählten Parameter auf ihren Standardwert zurück.
 Dies löscht die Parameter aus der Parameterdatei.</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="150"/>
+        <location filename="../src/ObjectInspector.ui" line="136"/>
         <source>reset selected</source>
         <translation>Parameter zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="161"/>
+        <location filename="../src/ObjectInspector.ui" line="147"/>
         <source>Change priority of selected parameters</source>
         <translation>Priorität der gewählten Parameter anpassen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="172"/>
+        <location filename="../src/ObjectInspector.ui" line="158"/>
         <source>Activate Plugintree</source>
         <translation>Aktiviere Baum forwärts</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="182"/>
+        <location filename="../src/ObjectInspector.ui" line="168"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="200"/>
+        <location filename="../src/ObjectInspector.ui" line="186"/>
         <source>Priority</source>
         <translation>Priorität</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="213"/>
+        <location filename="../src/ObjectInspector.ui" line="199"/>
         <source>Filter by priority</source>
         <translation>nach Priorität filtern</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="220"/>
+        <location filename="../src/ObjectInspector.ui" line="206"/>
         <source>reset applied filters</source>
         <translation>setzt die angewandten Filter zurück</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="223"/>
+        <location filename="../src/ObjectInspector.ui" line="209"/>
         <source>reset filters</source>
         <translation>Filter zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="245"/>
+        <location filename="../src/ObjectInspector.ui" line="231"/>
         <source>Editing</source>
         <translation>Bearbeitung</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="260"/>
+        <location filename="../src/ObjectInspector.ui" line="246"/>
         <source>Add new parameter</source>
         <translation>neuen Parameter hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="263"/>
+        <location filename="../src/ObjectInspector.ui" line="249"/>
         <source>&amp;Add</source>
         <translation>&amp;Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="270"/>
+        <location filename="../src/ObjectInspector.ui" line="256"/>
         <source>Delete selected parameter</source>
         <translation>gewählte Parameter löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="273"/>
+        <location filename="../src/ObjectInspector.ui" line="259"/>
         <source>&amp;Delete</source>
         <translation>&amp;Entfernen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="280"/>
+        <location filename="../src/ObjectInspector.ui" line="266"/>
         <source>Delete all parameters</source>
         <translation>alle Parameter Löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="283"/>
+        <location filename="../src/ObjectInspector.ui" line="269"/>
         <source>&amp;Clear</source>
         <translation>Alle &amp;Löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="296"/>
+        <location filename="../src/ObjectInspector.ui" line="282"/>
         <source>use metadata</source>
         <translation>benutze Metainformationen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="306"/>
+        <location filename="../src/ObjectInspector.ui" line="292"/>
         <source>show editable parameters only</source>
         <translation>nur Parameter anzeigen</translation>
     </message>
@@ -1285,9 +1270,17 @@ oder Dateierweiterung (.so/.dll/...) angeben</translation>
     </message>
 </context>
 <context>
+    <name>QFilterWidget</name>
+    <message>
+        <location filename="../src/QFilterWidget.cpp" line="102"/>
+        <source>clear text</source>
+        <translation>Text leeren</translation>
+    </message>
+</context>
+<context>
     <name>RecentFileHandler</name>
     <message>
-        <location filename="../src/RecentFileHandler.cpp" line="66"/>
+        <location filename="../src/RecentFileHandler.cpp" line="68"/>
         <source>Open recent file &quot;%1&quot;</source>
         <translation>Öffne zuletzt benutze Datei &quot;%1&quot;</translation>
     </message>
@@ -1310,184 +1303,184 @@ oder Dateierweiterung (.so/.dll/...) angeben</translation>
         <translation>Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="147"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="148"/>
         <source>create a new file</source>
         <translation>neue Datei anlegen</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="151"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="153"/>
         <source>open an existing file</source>
         <translation>vorhandene Datei laden</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="155"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="158"/>
         <source>save current document</source>
         <translation>aktuelles Dokument speichern</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="145"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="147"/>
         <source>new file</source>
         <translation>Neue Datei</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="149"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="152"/>
         <source>open file</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="153"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="157"/>
         <source>save file</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="158"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="162"/>
         <source>save file as</source>
         <translation>speichern als</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="159"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="163"/>
         <source>save current document to a new location</source>
         <translation>aktuelles Dokument unter einem anderen Namen speichern</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="162"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="167"/>
         <source>export flowchart</source>
         <translation>Darstellung exportieren</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="163"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="168"/>
         <source>export flowchart to an image file</source>
         <translation>speichert die aktuelle Darstellung als Bild oder PDF</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="169"/>
-        <location filename="../src/TuchulchaWindow.cpp" line="220"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="174"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="237"/>
         <source>&amp;Update Plugins</source>
         <translation>Plugins a&amp;ktualisieren</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="171"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="176"/>
         <source>update classes informations reading all plugins</source>
         <translation>aktualisiert die Informationen über vorhandene Module</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="175"/>
-        <location filename="../src/TuchulchaWindow.cpp" line="223"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="180"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="240"/>
         <source>Execute &amp;Workflow</source>
         <translation>&amp;Ausführen</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="177"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="182"/>
         <source>execute workflow that is shown in the current window</source>
         <translation>das aktuelle Dokument ausführen</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="182"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="189"/>
         <source>zoom in</source>
         <oldsource>zoom
 in</oldsource>
         <translation>vergrößern</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="184"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="190"/>
         <source>enlarge flowchart items</source>
         <translation>vergrößert die aktuelle Darstellung</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="186"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="194"/>
         <source>zoom out</source>
         <oldsource>zoom
 out</oldsource>
         <translation>verkleinern</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="188"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="195"/>
         <source>shrink flowchart items</source>
         <translation>verkleinert die aktuelle Darstellung</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="190"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="199"/>
         <source>zoom fit</source>
         <oldsource>zoom
 fit</oldsource>
         <translation>alles zeigen</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="192"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="200"/>
         <source>fit flowchart in view</source>
         <translation>ändert die Vergrößerung der Darstellung, sodass sie ins Fenster passt</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="196"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="205"/>
         <source>introduction to tuchulcha</source>
         <oldsource>introduction
 to tuchulcha</oldsource>
         <translation>Einführung</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="197"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="206"/>
         <source>show introductin page</source>
         <translation>zeigt die Einführungsseite an</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="200"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="210"/>
         <source>tuchulcha help</source>
         <oldsource>tuchulcha
 help</oldsource>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="201"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="211"/>
         <source>show help page</source>
         <translation>zeight die Hilfe-Seite an</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="207"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="217"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="208"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="220"/>
         <source>&amp;New</source>
         <translation>&amp;Neu</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="209"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="220"/>
         <source>Ctrl+N</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="210"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="223"/>
         <source>&amp;Open</source>
         <translation>Ö&amp;ffnen</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="211"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="223"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="212"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="226"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="213"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="226"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="214"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="229"/>
         <source>Save &amp;as...</source>
         <translation>Speichern &amp;unter …</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="235"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="256"/>
         <source>&amp;Options</source>
         <translation>&amp;Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="215"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="230"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
     </message>
@@ -1507,212 +1500,199 @@ help</oldsource>
         <translation>Modul-Sammlung</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="224"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="240"/>
         <source>Ctrl+E</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="225"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="243"/>
         <source>Export &amp;flowchart</source>
         <translation>Darstellung e&amp;xportieren</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="226"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="243"/>
         <source>Ctrl+F</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="227"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="246"/>
         <source>&amp;Exit</source>
         <translation>&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="228"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="246"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="231"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="249"/>
         <source>&amp;Edit</source>
         <translation>&amp;Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="232"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="252"/>
         <source>&amp;reset selected parameters</source>
         <translation>gewählen Parameter zu&amp;rücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="234"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="253"/>
         <source>Ctrl+R</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="239"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="259"/>
         <source>&amp;View</source>
         <translation>&amp;Ansicht</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="240"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="262"/>
         <source>zoom &amp;in</source>
         <translation>Ver&amp;größern</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="241"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="262"/>
         <source>Ctrl++</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="242"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="265"/>
         <source>zoom &amp;out</source>
         <translation>Ver&amp;kleinern</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="243"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="265"/>
         <source>Ctrl+-</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="244"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="268"/>
         <source>zoom &amp;fit</source>
         <translation>&amp;Alles zeigen</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="245"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="268"/>
         <source>Ctrl+HOME</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="248"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="271"/>
         <source>&amp;Window</source>
         <translation>&amp;Fenster</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="258"/>
-        <location filename="../src/TuchulchaWindow.cpp" line="259"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="281"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="284"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="260"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="284"/>
         <source>F1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="261"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="287"/>
         <source>&amp;Introduction</source>
         <translation>E&amp;inführung</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="262"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="288"/>
         <source>Shift+F1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="263"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="291"/>
         <source>&amp;About Tuchulcha</source>
         <translation>&amp;Über Tuchulcha</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="265"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="294"/>
         <source>About &amp;Qt</source>
         <translation>Über &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="302"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="330"/>
         <source>About Tuchulcha</source>
         <translation>Über Tuchulcha</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="308"/>
-        <location filename="../src/TuchulchaWindow.cpp" line="311"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="336"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="339"/>
         <source>%1 (%2bit, %3)</source>
         <oldsource>GCC %1.%2.%3 (%4bit, %5)</oldsource>
         <translation>%1 (%2bit, %3)</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="308"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="336"/>
         <source>MSVC</source>
         <translation>MSVC</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="311"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="339"/>
         <source>GCC</source>
         <translation>GCC</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="323"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="351"/>
         <source>unknown compiler (%1bit)</source>
         <oldsource>unknown compiler (%1bit)
 </oldsource>
         <translation>unbekannter Compiler (%1bit)</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="327"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="355"/>
         <source>This is &lt;b&gt;Tuchulcha %1&lt;/b&gt;&lt;br /&gt;written by %2</source>
         <translation>Dies ist &lt;b&gt;Tuchulcha %1&lt;/b&gt;&lt;br /&gt;geschrieben von %2</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="331"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="359"/>
         <source>Copyright &amp;copy; %1 Heidelberg Collaboratory for Image Processing</source>
         <translation>Copyright &amp;copy; %1 Heidelberg Collaboratory for Image Processing</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="334"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="362"/>
         <source>Built %1 %2&lt;br /&gt;with %3</source>
         <translation>Erstellt %1 %2&lt;br /&gt;mit %3</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="338"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="366"/>
         <source>VCS Info: %1</source>
         <translation>VCS Info: %1</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="342"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="370"/>
         <source>Built against libraries:</source>
         <translation>Gelinkt gegen folgende Bibliotheken:</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="347"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="375"/>
         <source>Build info: %1</source>
         <translation>Erstellungsinformation: %1</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="350"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="378"/>
         <source>This program is part of tuchulcha.</source>
         <translation>Dieses Programm ist Tuchulcha.</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="352"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="380"/>
         <source>tuchulcha is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.</source>
         <translation>Tuchulcha ist freie Software. Sie können sie zu den Bedingungen der GNU Lesser General Public License der Free Software Stiftung weitergeben und/oder verändern. Dabei kann Version 3 der Lizenz oder (optional) jeder späteren Version verwendet werden.</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="357"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="385"/>
         <source>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.</source>
         <translation>Dieses Programm wurde weitergegeben in der Hoffnung, dass es nützlich ist, allerdings &lt;em&gt;ohne jegliche Gewährleistung&lt;/em&gt;. Weitere Informationen in der GNU Lesser General Public Lizenz.</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="362"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="390"/>
         <source>A copy of the GNU Lesser General Public License can be found at &lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;www.gnu.org/licenses/&lt;/a&gt;.</source>
         <translation>Eine Kopie der GNU Lesser General Public Lizenz ist unter &lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;www.gnu.org/licenses/&lt;/a&gt; verfügbar.</translation>
     </message>
     <message>
-        <location filename="../src/TuchulchaWindow.cpp" line="370"/>
+        <location filename="../src/TuchulchaWindow.cpp" line="398"/>
         <source>About Qt</source>
         <translation>Über Qt</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::FilterWidget</name>
-    <message>
-        <location filename="../src/designer/filterwidget.cpp" line="163"/>
-        <source>Filter</source>
-        <translation>Filter</translation>
-    </message>
-    <message>
-        <location filename="../src/designer/filterwidget.cpp" line="199"/>
-        <source>Clear text</source>
-        <translation>Text leeren</translation>
     </message>
 </context>
 </TS>

@@ -18,7 +18,7 @@
         <file alias="help-contents.png">icons/oxygen/help_contents.png</file>
         <file alias="help-info.png">icons/oxygen/help_about.png</file>
         <file alias="document-export.png">icons/oxygen/file_export.png</file>
-        <file alias="document-close.png">icons/oxygen/application_exit.png</file>
+        <file alias="application-exit.png">icons/oxygen/application_exit.png</file>
         <file alias="revert.png">icons/oxygen/revert.png</file>
         <file alias="revert_all.png">icons/oxygen/document_revert.png</file>
         <file alias="qt.png">icons/qt/qt-logo.png</file>
@@ -39,6 +39,7 @@
         <file alias="edit-clear-filter.png">icons/oxygen/edit-clear-locationbar-rtl.png</file>
         <file alias="go-down.png">icons/oxygen/go-down.png</file>
         <file alias="go-up.png">icons/oxygen/go-up.png</file>
+        <file alias="document-open-recent.png">icons/oxygen/document-open-recent.png</file>
     </qresource>
     <qresource prefix="/config">
         <file alias="default.ini">cfg/default.ini</file>
