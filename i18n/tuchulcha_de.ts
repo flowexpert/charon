@@ -865,7 +865,7 @@ Dies löscht die Parameter aus der Parameterdatei.</translation>
     <message>
         <location filename="../src/ObjectInspector.ui" line="158"/>
         <source>Activate Plugintree</source>
-        <translation>Aktiviere Baum forwärts</translation>
+        <translation type="unfinished">Aktiviere Baum vorwärts</translation>
     </message>
     <message>
         <location filename="../src/ObjectInspector.ui" line="168"/>
