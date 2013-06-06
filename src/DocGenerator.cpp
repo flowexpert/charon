@@ -73,21 +73,21 @@ void DocGenerator::showIntro() {
 void DocGenerator::showDocPage(const QString& fileName) {
 	_helpDoc = "";
 
-	// to be able to load files from the resource system,
-	// we have to load it and pass to setHtml and not to use
-	// _viewer->load()
 	QFile docPage(fileName);
-	if (docPage.open(QIODevice::ReadOnly | QIODevice::Text))
+	if (docPage.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		_viewer->setHtml(QString(
 		"<html><head>"
 		"<meta name=\"qrichtext\" content=\"1\"/>"
 		"<style type=\"text/css\">%1</style>"
 		"</head><body>%2\n%3</body></html>")
 		.arg(_stylesheet)
-		.arg(QString(docPage.readAll())).arg(_footer));
-	else
+		.arg(QString::fromUtf8(docPage.readAll()))
+		.arg(_footer));
+	}
+	else {
 		qWarning() << tr("DocPage file %1 could not be loaded.")
 			.arg(fileName);
+	}
 	docPage.close();
 }
 

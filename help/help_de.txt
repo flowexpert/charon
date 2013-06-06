@@ -1,0 +1,86 @@
+<div>
+<h1>Tuchulcha Hilfe</h1>
+<h2>Erste Schritte</h2>
+<p>
+Am besten startet man in die Benutzung von Tuchulcha über die
+kurze Einführung, die man im Hilfe-Menü oder mit <tt>Umschalt+F1</tt>
+erreicht. Die wichtigsten Arbeitschritte werden dort erläutert.
+</p>
+
+<h2>Elemente des Tuchulcha-Fensters</h2>
+<p>
+Hier werden die einzelnen Fenster innerhalb des Tuchulcha Programmes
+beschrieben.
+</p>
+
+<h3>Flussdiagramm</h3>
+<p>
+Zu beginn ist meistens noch kein Dokument geladen.
+Daher wird auch kein Flussdiagramm angezeigt.
+Sobald ein Dokument geladen ist
+(z.B. ein neues, leeres Dokument mit <tt>Strg+N</tt> oder ein
+bestehendes über <tt>Strg+O</tt>) öffnet sich ein Fenster,
+das den Großteil der Arbeitsfläche einnimmt.
+</p><p>
+Die verschiedenen Dokumente sind in Tabs angeordnet
+(schließen mit <tt>Strg+W</tt> oder Tab-Kontextmenü),
+können aber auch in einen Schwebenden Modus versetzt werden
+(über das Kontextmenü der Tabs).
+</p><p>
+Ein solches Flussdiagramm-Fenster zeigt die Datenfluss-Repräsentation
+der Knotenstruktur, die im geöffneten ParameterFile gefunden wurde.
+Durch Klicken und Ziehen kann man dieses Diagramm bearbeiten.
+Die Position der einzelnden Knoten kann auf diese Weise angepasst werden,
+Verbindungen zwischen Knoten lassen sich erstellen
+und z.B. über das Kontextmenü auch wieder lösen.
+Mehr Infos dazu findet man in der Einführung.
+</p>
+
+<h3>Object-Inspektor</h3>
+<p>
+Der Objektinspektor zeigt die Parameter des gerade ausgewählten Knotens an.
+Dieser Knoten wird im Flussdiagramm blau hervorgehoben, sein Name
+wird auch oben in den Objektinspektor-Werkzeugen angezeigt.
+Die Parameter, die im ParameterFile explizit gesetzt sind, werden
+schwarz, die die nicht gesetzt sind, grau angezeigt.
+In letzterem Fall wird der Ausgangswert, der für diesen Parameter im
+Knoten festgelegt ist, benutzt.
+</p><p>
+In der Tabelle können die Parameter angepasst werden.
+Über Doppelklick auf den Wert oder mit <tt>F2</tt> kann man die
+Werte verändern, genau wie man es aus einem Tabelleneditor gewohnt ist.
+Das Setzen eines Wertes sorgt dafür, das er im ParameterFile beim nächsten
+Speichern eingetragen wird. Um einen Parameter wieder aus der Datei zu
+entfernen, damit der Ausgangswert benutzt wird, gibt es einen Knopf
+in der Werkzeugbox um den Parameter zurück zu setzen.
+</p><p>
+Als Hinweis-Tip wird die Dokumentation der Parameter angezeigt,
+wenn man mit der Maus auf eine Parameter zeigt.
+</p>
+
+<h3>Auswahlfenster</h3>
+<p>
+Im Auswahlfenster werden alle Typen von Knoten angezeigt, die
+Tuchulcha bekannt sind.
+Zieht man einen dieser Prototypen in das Flussdiagramm,
+erzeugt man eine neue Instanz dieses Knotentypens.
+Der Name des neuen Knotens wird dabei abgefragt.
+</p>
+<p>
+Im Auswahlfenster kann man die Liste der Knotentypen durchsuchen
+(Filter-Eingabefeld) und durch die Baumstruktur sind die Module
+nach Kategorien geordnet.
+</p>
+<p>
+Klickt man auf einen der angezeigten Knotentypen, erscheint die
+zugehörige Dokumentation im Hilfe-Fenster.
+</p>
+
+<h3>Hilfe-Fenster</h3>
+<p>
+Im Hilfe-Fenster werden die Hilfe-Texte sowie die Knotentyp-Dokumentationen
+angezeigt. Die Hilfetexte erreicht man im Hilfe-Menü oder der Werkzeugleiste.
+Die Dokumentation der Knotentypen erreicht man durch Klicken auf den
+entsprechenden Knotentyp im Auswahlfenster.
+</p>
+</div>

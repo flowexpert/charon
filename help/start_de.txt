@@ -1,0 +1,39 @@
+<div>
+<h1>Wilkommen bei Tuchulcha</h1>
+<p>Dieses Dokument erreicht man über "Einführung" im Hilfe-Menü.</p>
+
+<h2>Start</h2>
+<p>
+Eine neue (leere) Datei erstellt man über Datei-&gt;Neu oder
+mit der Kombination <tt>STRG+N</tt>.<br>
+Eine existierende Datei öffnet man mit Datei-&gt;Öffnen oder mit
+<tt>STRG+O</tt>.<br>
+</p>
+<h2>Dokumente bearbeiten</h2>
+<p>
+In einem geöffneten Dokument können neue Knoten erzeugt werden,
+indem man sie aus dem Auswahlfenster in die Dokumentenfläche zieht.
+In dem erscheinenden Dialog legt man den Namen des neuen Knotens fest.
+Durch Anklicken eines Knotentyps im Auswahlfenster zeigt man die
+zugehörige Dokumentation im Hilfe-Fenster an.
+</p>
+<p>
+Verbindungen zum Datenaustausch zwischen den Knoten erstellt man auch
+durch Klicken und Ziehen. Klickt man auf einen Ein- oder Ausgang und zieht
+die Maus, entsteht eine Verbindungslinie, die man auf dem Ein-/Ausgang,
+zu dem die Verbindung erstellt werden soll, fallen lassen kann.
+Ist ein Eingang schon verbunden und kann keine weiteren Verbindungen eingehen,
+so wird die besthende Verbindung durch die neue ersetzt.
+</p>
+<p>
+Knoten löscht man mit <tt>ENTF</tt> und benennt sie mit <tt>F2</tt> um.
+Alternativ gibt es dafür auch die entsprechenden Knöpfe in der
+Werkzeugleiste.
+</p>
+<p>
+Die Parameter der Knoten werden im Objektinspektor bearbeitet.
+Die Dokumentation der Parameter erscheint als Hinweis-Tip.
+Im Werkzeugfenster des Objektinspektors ist insbesondere ein Knopf,
+um einen Parameter auf seinen Ausgangswert zurückzusetzen.
+</p>
+</div>
