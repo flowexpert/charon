@@ -201,7 +201,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 
 	toolbar->addSeparator();
 	action = toolbar->addAction(
-		QIcon::fromTheme("help-hint",QIcon(":/icons/help-info.png")),
+		QIcon::fromTheme("help-faq",QIcon(":/icons/help-info.png")),
 		tr("introduction to tuchulcha"), _docGen, SLOT(showIntro()));
 	action->setToolTip(tr("show introductin page"));
 
