@@ -36,6 +36,7 @@
 #include <charon-core/PluginManagerInterface.h>
 #include <charon-core/DataManagerParameterFile.hxx>
 #include <charon-core/configVersion.h>
+#include <regex>
 
 // Instantiate static variables.
 std::map<std::string, unsigned int> ParameteredObject::_genericClassNameCount;
@@ -58,25 +59,29 @@ ParameteredObject::ParameteredObject(const std::string& className,
 	if (!name.length())
 		_instanceName = _genericName();
 
+	//sanitize description
+	std::regex e ("\\n");
+	std::string sdescription = std::regex_replace (description,e,std::string("<br>")) ;
+
 	if (_createMetadata) {
-		_metadata.set<std::string> (_className + ".doc", description);
+		_metadata.set<std::string> (_className + ".doc", sdescription);
 		_metadata.set<std::string> (_className + ".parameters");
 		_metadata.set<std::string> (_className + ".inputs");
 		_metadata.set<std::string> (_className + ".outputs");
 	}
-        _initialized=false;
+		_initialized=false;
 
 	_setDynamic(false);
-    // additional Active
-    _addParameter(_active, "active", 
+	// additional Active
+	_addParameter(_active, "active", 
 		"If this is set to false,"
 		"the plugin and all following ones are not executed",
 		true, "bool");
 }
 
 ParameteredObject::~ParameteredObject() {
-        if(_initialized)
-            finalize();
+		if(_initialized)
+			finalize();
 }
 
 const ParameterFile& ParameteredObject::getMetadata() {
@@ -93,6 +98,11 @@ bool ParameteredObject::_addSomething(const std::string& extension,
 	std::string nameL = name;
 	std::transform(
 		nameL.begin(), nameL.end(), nameL.begin(), (int(*)(int)) tolower);
+
+	//sanitize doc string
+	std::regex e ("\\n");
+	std::string sdoc = std::regex_replace (doc,e,std::string("<br>")) ;
+
 
 	// Check that param is not yet registered.
 	// Parameters can only be assigned once!
@@ -127,7 +137,7 @@ bool ParameteredObject::_addSomething(const std::string& extension,
 		someList.push_back(name);
 		_metadata.set<std::string>(_className+"."+extension, someList);
 		_metadata.set<std::string>(_className+"."+name + ".type", type);
-		_metadata.set<std::string>(_className+"."+name + ".doc", doc);
+		_metadata.set<std::string>(_className+"."+name + ".doc", sdoc);
 		if (defaultValue.length()) {
 			_metadata.set<std::string> (_className + "." + name, defaultValue);
 		}
