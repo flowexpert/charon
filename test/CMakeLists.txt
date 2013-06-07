@@ -9,9 +9,7 @@ IF(BUILD_TESTING)
 	SET(testTargets)
 
 	# common definitions
-	ADD_DEFINITIONS(-DDEFAULTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/sampleclasses.wrp")
-	ADD_DEFINITIONS(-DTESTCLASSFILE="${CMAKE_CURRENT_SOURCE_DIR}/testClasses.wrp")
-	ADD_DEFINITIONS(-DQPARAMETERTESTFILE="${CMAKE_CURRENT_SOURCE_DIR}/qparametertestfile.wrp")
+	ADD_DEFINITIONS(-DTEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 	# test ParameterFileModel
 	QT4_WRAP_CPP(MTest_MOC QParameterFileModelTest.h)
@@ -52,11 +50,19 @@ IF(BUILD_TESTING)
 
 	# test mapping of QVariant types
 	QT4_WRAP_CPP(QVarMapTest_MOC QVariantMappingTest.h)
-	ADD_EXECUTABLE(qvariantmapping QVariantMappingTest.cpp ${QVarMapTest_MOC})
-	TARGET_LINK_LIBRARIES(qvariantmapping ${QT_LIBRARIES})
-	ADD_TEST(NAME QVariant_Mapping COMMAND qvariantmapping)
+	ADD_EXECUTABLE(qvariantmappingtest QVariantMappingTest.cpp ${QVarMapTest_MOC})
+	TARGET_LINK_LIBRARIES(qvariantmappingtest ${QT_LIBRARIES})
+	ADD_TEST(NAME QVariant_Mapping COMMAND qvariantmappingtest)
 	LIST(APPEND tests QVariant_Mapping)
-	LIST(APPEND testTargets qvariantmapping)
+	LIST(APPEND testTargets qvariantmappingtest)
+
+	# test for log view widget
+	QT4_WRAP_CPP(LogViewTest_MOC LogViewTest.h)
+	ADD_EXECUTABLE(logviewtest LogViewTest.cpp ${LogViewTest_MOC})
+	TARGET_LINK_LIBRARIES(logviewtest tuchulcha-widgets ${QT_LIBRARIES})
+	ADD_TEST(NAME LogViewWidget COMMAND logviewtest)
+	LIST(APPEND tests LogViewWidget)
+	LIST(APPEND testTargets logviewtest)
 
 	IF(WIN32)
 		GET_TARGET_PROPERTY(test_loc qparameterfiletest LOCATION)

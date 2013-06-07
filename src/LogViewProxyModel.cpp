@@ -63,10 +63,10 @@ QVariant LogViewProxyModel::data(const QModelIndex& idx, int rr) const {
 				QSortFilterProxyModel::data(idx,Qt::DisplayRole).toString())) {
 			QString level = logLevel.cap(1);
 			if (level == "DD") {
-				return QBrush(Qt::gray);
+				return QBrush(QColor("#AAA")); // light gray
 			}
 			else if (level == "II") {
-				return QBrush(QColor("#444")); // very dark gray
+				return QBrush(QColor("#777")); // very dark gray
 			}
 			else if (level == "WW") {
 				return QBrush(QColor("#F70")); // orange
@@ -78,7 +78,7 @@ QVariant LogViewProxyModel::data(const QModelIndex& idx, int rr) const {
 				sourceModel()->data(idx,Qt::DisplayRole).toString())) {
 			QString level = logLevel.cap(1);
 			if (level == "EE") {
-				return QBrush(QColor("#F44")); // lighter red
+				return QBrush(QColor("#F87")); // lighter red
 			}
 		}
 		break;

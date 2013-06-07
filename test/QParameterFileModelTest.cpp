@@ -27,12 +27,13 @@
 #include <QtTest/QTest>
 #include <QtCore/QDebug>
 
-#ifndef DEFAULTCLASSFILE
-#error DEFAULTCLASSFILE not defined
+#ifndef TEST_DIR
+#error TEST_DIR not defined
+#define TEST_DIR
 #endif
 
 void QParameterFileModelTest::initTestCase() {
-	QString fileName = DEFAULTCLASSFILE;
+	QString fileName = TEST_DIR "/sampleclasses.wrp";
 	qDebug() << "Filename:" << fileName;
 
 	// content as QParameterFile

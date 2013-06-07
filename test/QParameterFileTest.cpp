@@ -26,8 +26,9 @@
 #include "QParameterFile.h"
 #include <charon-core/ParameterFile.hxx>
 
-#ifndef QPARAMETERTESTFILE
-#error QPARAMETERTESTFILE not defined
+#ifndef TEST_DIR
+#error TEST_DIR not defined
+#define TEST_DIR
 #endif
 
 QStringList fromStdStringList(const std::vector<std::string>& src) {
@@ -40,7 +41,7 @@ QStringList fromStdStringList(const std::vector<std::string>& src) {
 }
 
 void QParameterFileTest::initTestCase() {
-	QString fileName = QPARAMETERTESTFILE;
+	QString fileName = TEST_DIR "/qparametertestfile.wrp";
 	qDebug() << "File name:" << fileName;
 	qFile = new QParameterFile;
 	qFile->load(fileName, "latin1");
