@@ -237,12 +237,12 @@ void WindowsPluginLoader::load() throw (PluginException) {
 #ifdef MSVC
 		std::string addInfo;
 		if (lastErrorMsg.empty()) {
-			addInfo += "(EE)\tThis is usually caused by missing dll dependencies.";
+			addInfo += "This is usually caused by missing dll dependencies.";
 		}
 		else {
-			addInfo += "(EE)\t" + lastErrorMsg ;
+			addInfo += lastErrorMsg ;
 			if(lastErrorCode == ERROR_MOD_NOT_FOUND) {
-				addInfo += "(EE)\tThis is usually caused by missing dll dependencies." ;
+				addInfo += "This is usually caused by missing dll dependencies." ;
 			}
 		}
 		throw PluginException(
