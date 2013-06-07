@@ -36,7 +36,6 @@
 #include <charon-core/PluginManagerInterface.h>
 #include <charon-core/DataManagerParameterFile.hxx>
 #include <charon-core/configVersion.h>
-#include <regex>
 
 // Instantiate static variables.
 std::map<std::string, unsigned int> ParameteredObject::_genericClassNameCount;
@@ -59,12 +58,13 @@ ParameteredObject::ParameteredObject(const std::string& className,
 	if (!name.length())
 		_instanceName = _genericName();
 
-	//sanitize description
-	std::regex e ("\\n");
-	std::string sdescription = std::regex_replace (description,e,std::string("<br>")) ;
+	// forbid invalid descriptions
+	if (description.find("\n") != std::string::npos) {
+		raise("do not use newlines in descriptions! (replace e.g. by <br>)");
+	}
 
 	if (_createMetadata) {
-		_metadata.set<std::string> (_className + ".doc", sdescription);
+		_metadata.set<std::string> (_className + ".doc", description);
 		_metadata.set<std::string> (_className + ".parameters");
 		_metadata.set<std::string> (_className + ".inputs");
 		_metadata.set<std::string> (_className + ".outputs");
@@ -99,10 +99,10 @@ bool ParameteredObject::_addSomething(const std::string& extension,
 	std::transform(
 		nameL.begin(), nameL.end(), nameL.begin(), (int(*)(int)) tolower);
 
-	//sanitize doc string
-	std::regex e ("\\n");
-	std::string sdoc = std::regex_replace (doc,e,std::string("<br>")) ;
-
+	// forbid invalid docstrings
+	if (doc.find("\n") != std::string::npos) {
+		raise("do not use newlines in docstrings! (replace e.g. by <br>)");
+	}
 
 	// Check that param is not yet registered.
 	// Parameters can only be assigned once!
@@ -137,7 +137,7 @@ bool ParameteredObject::_addSomething(const std::string& extension,
 		someList.push_back(name);
 		_metadata.set<std::string>(_className+"."+extension, someList);
 		_metadata.set<std::string>(_className+"."+name + ".type", type);
-		_metadata.set<std::string>(_className+"."+name + ".doc", sdoc);
+		_metadata.set<std::string>(_className+"."+name + ".doc", doc);
 		if (defaultValue.length()) {
 			_metadata.set<std::string> (_className + "." + name, defaultValue);
 		}
