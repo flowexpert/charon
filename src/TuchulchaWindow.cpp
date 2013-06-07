@@ -352,12 +352,12 @@ void TuchulchaWindow::_showAbout() {
 #endif
 
 	aboutBox.setText(
-		tr("This is <b>Tuchulcha %1</b><br />written by %2")
+		tr("This is <b>Tuchulcha %1</b><br />written by %2 and others")
 		.arg(TUCHULCHA_VERSION)
 		.arg("<a href=\"mailto:jmgottfriedATweb.de\">Jens-Malte Gottfried</a>")
 		+QString("<br /><br />")
 		+tr("Copyright &copy; %1 Heidelberg Collaboratory for Image Processing")
-		.arg("2009-2010")
+		.arg("2009-2013")
 		+QString("<br /><br />")
 		+tr("Built %1 %2<br />with %3")
 		.arg(__DATE__).arg(__TIME__).arg(buildSystem)

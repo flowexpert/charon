@@ -177,7 +177,7 @@ Message:
 <context>
     <name>DocGenerator</name>
     <message>
-        <location filename="../src/DocGenerator.cpp" line="89"/>
+        <location filename="../src/DocGenerator.cpp" line="88"/>
         <source>DocPage file %1 could not be loaded.</source>
         <translation>Dokumentationsseite in Datei %1 konnte nicht geladen werden.</translation>
     </message>
@@ -1685,8 +1685,8 @@ help</oldsource>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="355"/>
-        <source>This is &lt;b&gt;Tuchulcha %1&lt;/b&gt;&lt;br /&gt;written by %2</source>
-        <translation>Dies ist &lt;b&gt;Tuchulcha %1&lt;/b&gt;&lt;br /&gt;geschrieben von %2</translation>
+        <source>This is &lt;b&gt;Tuchulcha %1&lt;/b&gt;&lt;br /&gt;written by %2 and others</source>
+        <translation>Dies ist &lt;b&gt;Tuchulcha %1&lt;/b&gt;&lt;br /&gt;geschrieben von %2 et. al.</translation>
     </message>
     <message>
         <location filename="../src/TuchulchaWindow.cpp" line="359"/>
