@@ -1521,7 +1521,6 @@ void ImgTool::nThFrame(const cimg_library::CImg<T> &src,
     int depth = (int)ceil((src.depth()-start)/(float)step);
     dst.assign(src.width(), src.height(), depth, src.spectrum());
 
-    int z = start;
     for(int z = 0; z < depth; ++z)
         cimg_forXYC(src, x, y, v)
         dst(x, y, z, v) = src(x, y, start+z*step, v);

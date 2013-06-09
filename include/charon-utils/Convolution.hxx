@@ -272,7 +272,7 @@ void Convolution::getLoG2D(float sigma, cimg_library::CImg<T>& mask) {
             twoss  = 2*sigma*sigma;
             g      = (T)exp(-n1sn2s/twoss);
             //mask[pos] =(n1sn2s-twoss)*g /
-                          (2*PI*sigma*sigma*sigma*sigma*sigma*sigma);
+			//            (2*PI*sigma*sigma*sigma*sigma*sigma*sigma);
             mask(x+w, y+w) = (T)(-1/(PI*sigma*sigma*sigma*sigma)
                                  * (1-n1sn2s/twoss)*g);
             sum += mask(x+w, y+w);

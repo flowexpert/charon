@@ -16407,8 +16407,8 @@ namespace cimg_library_suffixed {
       CImg<Tfloat> U, S, V;
       SVD(U,S,V);
       cimg_forX(V,x) {
-	const Tfloat s = S(x), invs = s!=0?1/s:(Tfloat)0;
-	cimg_forY(V,y) V(x,y)*=invs;
+        const Tfloat s = S(x), invs = s!=0?1/s:(Tfloat)0;
+        cimg_forY(V,y) V(x,y)*=invs;
       }
       return V*U.transpose();
     }
@@ -16425,7 +16425,7 @@ namespace cimg_library_suffixed {
       if (A._width==A._height) {
 #ifdef cimg_use_lapack
         char TRANS = 'N';
-        int INFO, N = _height, LWORK = 4*N, one = 1, *const IPIV = new int[N];
+        int INFO, N = _height, LWORK = 4*N, *const IPIV = new int[N];
         Ttfloat
           *const lapA = new Ttfloat[N*N],
           *const lapB = new Ttfloat[N],
