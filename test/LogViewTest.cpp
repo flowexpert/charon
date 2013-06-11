@@ -41,9 +41,9 @@
 void LogViewTest::initTestCase() {
 	_viewWidget = new QCopyListView;
 	_model = new QStringListModel(_viewWidget);
-	LogViewProxyModel* proxy = new LogViewProxyModel(_model);
-	proxy->setSourceModel(_model);
-	_viewWidget->setModel(proxy);
+	_filter = new LogViewProxyModel(_model);
+	_filter->setSourceModel(_model);
+	_viewWidget->setModel(_filter);
 	_viewWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	_viewWidget->setFont(QFont("monospace"));
 	_viewWidget->setSelectionMode(QAbstractItemView::ContiguousSelection);
@@ -57,28 +57,55 @@ void LogViewTest::initTestCase() {
 }
 
 void LogViewTest::cleanupTestCase() {
+	/*
+	// show the widget
+	_viewWidget->show();
+	QApplication::exec();
+	//*/
+
 	delete _viewWidget; _viewWidget = 0;
+}
+
+void LogViewTest::cleanup() {
+	_viewWidget->clearSelection();
+	_filter->setFilterRegExp(QString());
+	QApplication::clipboard()->setMimeData(new QMimeData());
 }
 
 void LogViewTest::checkData() {
 	QAbstractItemModel* model = _viewWidget->model();
 	// text line
-	QModelIndex idx = model->index(0,0);
 	QVERIFY(model->rowCount() > 0);
+	QModelIndex idx = model->index(0,0);
 	QCOMPARE(model->data(idx,Qt::DisplayRole).toString(),QString("line1"));
+
+	// debug line
+	idx = model->index(1,0);
+	QVERIFY(model->data(idx,Qt::DisplayRole).toString().startsWith("(DD)"));
+	QVERIFY(model->data(idx,Qt::UserRole).isValid());
+	QCOMPARE(model->data(idx,Qt::UserRole).toString(),QString("debug"));
+	QVERIFY(model->data(idx,Qt::ForegroundRole).isValid());
+	QBrush fg(model->data(idx,Qt::ForegroundRole).value<QBrush>());
+	QVERIFY(fg.color().red()   < 180); QVERIFY(fg.color().red()   > 150);
+	QVERIFY(fg.color().green() < 180); QVERIFY(fg.color().green() > 150);
+	QVERIFY(fg.color().blue()  < 180); QVERIFY(fg.color().blue()  > 150);
 
 	// test red background of error line
 	idx = model->index(4,0);
+	QVERIFY(model->data(idx,Qt::BackgroundRole).isValid());
 	QBrush bg(model->data(idx,Qt::BackgroundRole).value<QBrush>());
 	//qDebug() << "Background:" << bg.color().name() << "(should be red)";
+	QVERIFY(model->data(idx,Qt::UserRole).isValid());
 	QCOMPARE(model->data(idx,Qt::UserRole).toString(),QString("error"));
 	QCOMPARE(bg.color().red(),255);
 	QVERIFY(bg.color().green() < 255);
 	QVERIFY(bg.color().blue() < 255);
 
-	// same for strane error line
+	// same for strange error line
 	idx = model->index(5,0);
+	QVERIFY(model->data(idx,Qt::BackgroundRole).isValid());
 	bg = model->data(idx,Qt::BackgroundRole).value<QBrush>();
+	QVERIFY(model->data(idx,Qt::UserRole).isValid());
 	QCOMPARE(model->data(idx,Qt::UserRole).toString(),QString("error"));
 	QCOMPARE(bg.color().red(),255);
 	QVERIFY(bg.color().green() < 255);
@@ -92,7 +119,6 @@ void LogViewTest::checkCopy() {
 	sel->setCurrentIndex(model->index(4,0),QItemSelectionModel::SelectCurrent);
 	_viewWidget->setSelectionModel(sel);
 	QTest::keyClick(_viewWidget,Qt::Key_C,Qt::ControlModifier); // copy
-	_viewWidget->clearSelection();
 
 	// check clipboard content
 	QString html = QApplication::clipboard()->mimeData()->html();
@@ -107,12 +133,38 @@ void LogViewTest::checkCopy() {
 	QCOMPARE(bg.red(),255);
 	QVERIFY(bg.green() < 255);
 	QVERIFY(bg.blue() < 255);
+}
 
-	/*
-	// show the widget
-	_viewWidget->show();
-	QApplication::exec();
-	//*/
+void LogViewTest::checkFilter() {
+	_filter->setFilterRegExp(LogViewProxyModel::debugFilterRegex());
+
+	QAbstractItemModel* model = _viewWidget->model();
+	QVERIFY(model->rowCount() > 0);
+
+	// check filtered out debug line
+	QModelIndex idx = model->index(1,0);
+	QVERIFY(!model->data(idx,Qt::DisplayRole).toString().startsWith("(DD)"));
+
+	// test gray foreground of info line
+	idx = model->index(1,0);
+	QVERIFY(model->data(idx,Qt::UserRole).isValid());
+	QCOMPARE(model->data(idx,Qt::UserRole).toString(),QString("info"));
+	QVERIFY(model->data(idx,Qt::ForegroundRole).isValid());
+	QBrush fg(model->data(idx,Qt::ForegroundRole).value<QBrush>());
+	QVERIFY(fg.color().red()   < 150); QVERIFY(fg.color().red()   > 80);
+	QVERIFY(fg.color().green() < 150); QVERIFY(fg.color().green() > 80);
+	QVERIFY(fg.color().blue()  < 150); QVERIFY(fg.color().blue()  > 80);
+
+	// test red background of error line
+	idx = model->index(3,0);
+	QVERIFY(model->data(idx,Qt::UserRole).isValid());
+	QCOMPARE(model->data(idx,Qt::UserRole).toString(),QString("error"));
+	QVERIFY(model->data(idx,Qt::BackgroundRole).isValid());
+	QBrush bg(model->data(idx,Qt::BackgroundRole).value<QBrush>());
+	//qDebug() << "Background:" << bg.color().name() << "(should be red)";
+	QCOMPARE(bg.color().red(),255);
+	QVERIFY(bg.color().green() < 255);
+	QVERIFY(bg.color().blue() < 255);
 }
 
 QTEST_MAIN(LogViewTest)

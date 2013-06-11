@@ -24,22 +24,28 @@
 #include <QObject>
 class QListView;
 class QStringListModel;
+class QSortFilterProxyModel;
 
 /// test class for the log view widget QCopyListView with a LogViewProxyModel
 class LogViewTest: public QObject
 {
 	Q_OBJECT
-	QListView* _viewWidget;
-	QStringListModel* _model;
+	QListView*             _viewWidget; ///< list view
+	QStringListModel*      _model;      ///< log model
+	QSortFilterProxyModel* _filter;     ///< filtering and coloring
 
 private slots:
 	/// setup, load sample log file
 	void initTestCase();
-	/// cleanup
+	/// final cleanup
 	void cleanupTestCase();
+	/// cleanup for each test
+	void cleanup();
 	/// check model data
 	void checkData();
 	/// check copied content
 	void checkCopy();
+	/// void check filtering
+	void checkFilter();
 };
 

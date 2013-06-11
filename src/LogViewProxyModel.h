@@ -45,6 +45,9 @@ public:
 	 */
 	virtual QVariant data(
 		const QModelIndex& index, int role=Qt::DisplayRole) const;
+
+	/// regexp for filtering out debug lines
+	static QRegExp debugFilterRegex();
 };
 
 #endif // LOG_VIEW_PROXY_MODEL_H

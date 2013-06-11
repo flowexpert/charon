@@ -88,3 +88,7 @@ QVariant LogViewProxyModel::data(const QModelIndex& idx, int rr) const {
 
 	return QSortFilterProxyModel::data(idx,rr);
 }
+
+QRegExp LogViewProxyModel::debugFilterRegex() {
+	return QRegExp("^\\((?!DD)|^(?!\\()");
+}
