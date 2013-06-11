@@ -148,13 +148,17 @@ void NodeTreeView::reload() {
 }
 
 void NodeTreeView::on_treeView_clicked(const QModelIndex& cur) {
-	// check if a module is selected, if below, go up to module name
-	// show doc for selected module
 	if (cur.parent().isValid()) {
-		emit showClassDoc(_filter->data(cur).toString());
+		emit showClassDoc(cur.model()->data(cur).toString());
 	}
 }
 
 void NodeTreeView::on_editFilter_textChanged(const QString& text) {
 	_filter->setFilterWildcard(text);
+}
+
+void NodeTreeView::on_treeView_doubleClicked(const QModelIndex& idx) {
+	if (idx.parent().isValid()) {
+		emit addNode(idx.model()->data(idx).toString());
+	}
 }

@@ -71,3 +71,9 @@ void ModelToolBar::_disconnect() {
 	if (_model && !_model->prefix().isEmpty() && _model->prefixValid())
 		_model->disconnectAllSlots(_model->prefix());
 }
+
+void ModelToolBar::addNode(QString type) {
+	if (_model) {
+		_model->addNode(type);
+	}
+}

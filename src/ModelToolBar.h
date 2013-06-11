@@ -55,6 +55,10 @@ public slots:
 	/// @param model	new model to use for node addition
 	void setModel(ParameterFileModel* model);
 
+	/// add instance of given type
+	/** \param type     node type */
+	void addNode(QString type);
+
 private slots:
 	/// delete selected node
 	void _delete();

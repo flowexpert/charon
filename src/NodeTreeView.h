@@ -60,11 +60,15 @@ public slots:
 	 *  \param text         filter regexp
 	 */
 	void on_editFilter_textChanged(const QString& text);
+	/// handle double click events
+	void on_treeView_doubleClicked(const QModelIndex&);
 
 signals:
 	/// show documentation page
 	/// @param className    class to show doc for
 	void showClassDoc(const QString& className);
+	/// initiate adding a new instance
+	void addNode(QString type);
 
 private:
 	/// designer gui

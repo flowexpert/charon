@@ -143,6 +143,9 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	toolbar->setIconSize(QSize(32, 32));
 	QAction* action;
 
+	connect(_selector, SIGNAL(addNode(QString)), // handle double clicks
+			toolbar, SLOT(addNode(QString)));    // on selector widget
+
 	action = toolbar->addAction(
 		QIcon::fromTheme("document-new",QIcon(":/icons/document-new.png")),
 		tr("new file"), this, SLOT(openNew()));
