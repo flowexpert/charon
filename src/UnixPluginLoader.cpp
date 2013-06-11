@@ -159,11 +159,12 @@ void UnixPluginLoader::load() throw (PluginException) {
 
 		std::string checkFailMsg;
 		PluginException::ErrorCode checkErrCode =
-			PluginException::VERSION_INFORMATION_MISSING;
+			PluginException::VERSION_MISSMATCH;
 		std::ostringstream foundVersion;
 
 		if (!scn) {
 			checkFailMsg = "No Plugin Section found in ELF file";
+			checkErrCode = PluginException::VERSION_INFORMATION_MISSING;
 		}
 		else {
 			Elf_Data* eData = 0;
@@ -176,7 +177,6 @@ void UnixPluginLoader::load() throw (PluginException) {
 				checkFailMsg = "Wrong Plugin Section Data Size";
 			}
 			else {
-				checkErrCode = PluginException::VERSION_MISSMATCH;
 				const unsigned char* content =
 						(const unsigned char*) eData->d_buf;
 				foundVersion << (int) content[0] << "."
