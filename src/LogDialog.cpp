@@ -39,7 +39,9 @@
 #include <QStringListModel>
 #include <QMimeData>
 
-LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
+LogDialog::LogDialog(
+				LogDecorators::Decorator* dec,
+				QWidget* pp, Qt::WindowFlags wf) :
 		QDialog(pp,wf), _log(0), _logProx(0), _decorator(dec), _proc(0),
 		_logFile(0), _logMutex(new QMutex())
 {
@@ -56,7 +58,10 @@ LogDialog::LogDialog(Decorator* dec, QWidget* pp, Qt::WindowFlags wf) :
 
 	loadSettings();
 
+	// set up decorator and connections
 	_decorator->debugOutput = _ui->checkDD->isChecked();
+	connect(_decorator, SIGNAL(finish()), SLOT(on_proc_finished()));
+	connect(_decorator, SIGNAL(message(QString)), SLOT(printStatus(QString)));
 
 	QString title=_decorator->title();
 	QString desc=_decorator->desc();
@@ -241,10 +246,7 @@ void LogDialog::on_proc_readyReadStandardOutput() {
 			break;
 		}
 		logFile << cur << endl;
-		if(_decorator->finishSignal(cur)) {
-			printStatus(_decorator->finishMessage());
-			on_proc_finished(0);
-		}
+		_decorator->processLine(cur);
 		logList << cur;
 		if (maxBuf && logList.size() > maxBuf) {
 			logList.removeFirst();
@@ -273,10 +275,7 @@ void LogDialog::on_proc_readyReadStandardError() {
 		if (cur.isNull()) {
 			break;
 		}
-		if(_decorator->finishSignal(cur)) {
-			printStatus(_decorator->finishMessage());
-			on_proc_finished(0);
-		}
+		_decorator->processLine(cur);
 		if (cur.contains(
 				QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
 			logFile << cur << endl;
@@ -345,13 +344,13 @@ void LogDialog::on_proc_started() {
 	}
 }
 
-void LogDialog::on_proc_finished(int) {
+void LogDialog::on_proc_finished() {
 	_ui->progressBar->hide();
 	_ui->buttonBox->setStandardButtons(QDialogButtonBox::Close);
 }
 
 void LogDialog::on_proc_error(QProcess::ProcessError) {
-	on_proc_finished(-1);
+	on_proc_finished();
 
 	QString errorType;
 	switch(_proc->error()) {
@@ -486,38 +485,33 @@ void LogDialog::on_bSearchUp_clicked() {
 }
 
 // ============================ Decorators ===============================
-LogDialog::Decorator::Decorator() :
+LogDecorators::Decorator::Decorator() :
 		debugOutput(true) {
 }
 
-LogDialog::Decorator::~Decorator() {
+LogDecorators::Decorator::~Decorator() {
 }
 
-bool LogDialog::Decorator::finishSignal(QString) const {
-	return false;
+void LogDecorators::Decorator::processLine(QString) {
 }
 
-QString LogDialog::Decorator::finishMessage() const {
+QString LogDecorators::Decorator::title() const {
 	return QString::null;
 }
 
-QString LogDialog::Decorator::title() const {
+QString LogDecorators::Decorator::desc() const {
 	return QString::null;
 }
 
-QString LogDialog::Decorator::desc() const {
+QString LogDecorators::Decorator::filenameHint() const {
 	return QString::null;
 }
 
-QString LogDialog::Decorator::filenameHint() const {
-	return QString::null;
-}
-
-bool LogDialog::Decorator::ready(QWidget*) const {
+bool LogDecorators::Decorator::ready(QWidget*) const {
 	return true;
 }
 
-QStringList LogDialog::Decorator::postStartCommands(QWidget*) const {
+QStringList LogDecorators::Decorator::postStartCommands(QWidget*) const {
 	return QStringList();
 }
 
@@ -627,17 +621,20 @@ QStringList LogDecorators::RunWorkflow::postStartCommands(QWidget* pp) const {
 	return cmds;
 }
 
-bool LogDecorators::RunWorkflow::finishSignal(QString line) const {
+void LogDecorators::RunWorkflow::processLine(QString line) {
 	// emit signal to highlight currently executed object
 	QRegExp curObj("\\(II\\) Executing\\s*\\w*\\s*\"(\\w*)\"\\s*");
 	if (curObj.exactMatch(line)) {
 		emit highlightObject(curObj.cap(1));
 	}
 	// add status message if workflow execution finished
-	return (line.contains(
+	if (line.contains(
 		QCoreApplication::translate("CharonRun","Execution finished.")) ||
 		line.contains(
-		QCoreApplication::translate("CharonRun","Error during execution:")));
+		QCoreApplication::translate("CharonRun","Error during execution:"))) {
+		emit finish();
+		emit message(finishMessage());
+	}
 }
 
 QString LogDecorators::RunWorkflow::finishMessage() const {

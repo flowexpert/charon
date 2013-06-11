@@ -35,6 +35,8 @@ class QFile;
 class QStringListModel;
 class LogViewProxyModel;
 
+namespace LogDecorators{ class Decorator; }
+
 /// class for logging display and communication with external processes
 /** This widget implements the decorator pattern to handle different
  *  kinds of log dialogs like the one used during plugin update
@@ -47,40 +49,6 @@ class LogDialog : public QDialog
 	Q_OBJECT
 
 public:
-	/// decorator class to handle different kinds of log dialogs
-	class Decorator {
-	public:
-		Decorator();
-		virtual ~Decorator();
-		/// title string
-		virtual QString title() const;
-		/// description string
-		virtual QString desc() const;
-		/// check if process may be started
-		/** \param parent  parent widget (for dialog/message boxes)
-		 *  \retval false  process may not be started */
-		virtual bool ready(QWidget* parent) const;
-		/// determine command line arguments
-		virtual QStringList arguments() const = 0;
-		/// commands sent to the proccess after start
-		/** \param parent  parent widget (for dialog/message boxes)
-		 *  \returns       list of (interactive) commands */
-		virtual QStringList postStartCommands(QWidget* parent) const;
-		/// check if current line shows that running finished
-		/** \param line    current line
-		 *  \retval true   line shows that execution finished */
-		virtual bool finishSignal(QString line) const;
-		/// message shown if finished
-		virtual QString finishMessage() const;
-		/// hint for filename on save dialog
-		virtual QString filenameHint() const;
-		/// logfile name for output logging
-		virtual QString logFileName() const = 0;
-		/// debug output mode
-		bool debugOutput;
-	};
-
-public:
 	/// constructor
 	/** \param decorator dialog decorator providing further details,
 	 *                   it will be deleted in the destructor
@@ -88,7 +56,8 @@ public:
 	 *  \param f         window flags
 	 */
 	explicit LogDialog(
-		Decorator* decorator, QWidget* parent=0, Qt::WindowFlags f=0);
+		LogDecorators::Decorator* decorator,
+		QWidget* parent=0, Qt::WindowFlags f=0);
 	virtual ~LogDialog();
 	/// wait for process to finish
 	/** \param msecs     time to wait
@@ -125,7 +94,7 @@ private slots:
 	/// setup abort button and show progress bar
 	void on_proc_started();
 	/// setup close button and hide progress bar
-	void on_proc_finished(int);
+	void on_proc_finished();
 	/// handle errors running the process
 	void on_proc_error(QProcess::ProcessError);
 	/// handle debug checkbox
@@ -149,7 +118,8 @@ private slots:
 private:
 	QStringListModel* _log;       ///< log model
 	LogViewProxyModel* _logProx;  ///< log model proxy
-	Decorator* _decorator;        ///< decorator implementation
+	/// decorator implementation
+	LogDecorators::Decorator* _decorator;
 	Ui::LogDialog* _ui;           ///< designer ui
 	QProcess* _proc;              ///< tuchulcha-run process
 	QFile* _logFile;              ///< log content output
@@ -158,8 +128,45 @@ private:
 
 /// LogDialog decorator implementations
 namespace LogDecorators {
+	/// log decorator base class to handle different kinds of log dialogs
+	class Decorator : public QObject {
+	Q_OBJECT
+	public:
+		Decorator();
+		virtual ~Decorator();
+		/// title string
+		virtual QString title() const;
+		/// description string
+		virtual QString desc() const;
+		/// check if process may be started
+		/** \param parent  parent widget (for dialog/message boxes)
+		 *  \retval false  process may not be started */
+		virtual bool ready(QWidget* parent) const;
+		/// determine command line arguments
+		virtual QStringList arguments() const = 0;
+		/// commands sent to the proccess after start
+		/** \param parent  parent widget (for dialog/message boxes)
+		 *  \returns       list of (interactive) commands */
+		virtual QStringList postStartCommands(QWidget* parent) const;
+		/// check if current line shows that running finished
+		/** \param line    current line
+		 *  \retval true   line shows that execution finished */
+		virtual void processLine(QString line);
+		/// hint for filename on save dialog
+		virtual QString filenameHint() const;
+		/// logfile name for output logging
+		virtual QString logFileName() const = 0;
+		/// debug output mode
+		bool debugOutput;
+
+	signals:
+		void finish();         ///< finish signal
+		void message(QString); ///< status message
+
+	};
+
 	/// decorator for update dialog
-	class Update : public LogDialog::Decorator {
+	class Update : public Decorator {
 	public:
 		virtual QStringList arguments() const;
 		virtual QStringList postStartCommands(QWidget* parent) const;
@@ -170,7 +177,7 @@ namespace LogDecorators {
 	};
 
 	/// decorator for update dynamics dialog
-	class UpdateDynamics : public LogDialog::Decorator {
+	class UpdateDynamics : public Decorator {
 	public:
 		/// constructor
 		/** \param fileName worflow file to analyze */
@@ -182,7 +189,7 @@ namespace LogDecorators {
 	};
 
 	/// decorator for run workspace dialog
-	class RunWorkflow : public QObject, public LogDialog::Decorator {
+	class RunWorkflow : public Decorator {
 		Q_OBJECT
 	public:
 		/// constructor
@@ -190,7 +197,8 @@ namespace LogDecorators {
 		RunWorkflow(QString fileName);
 		virtual bool ready(QWidget* parent) const;
 		virtual QStringList arguments() const;
-		virtual bool finishSignal(QString line) const;
+		virtual void processLine(QString line);
+		/// finish message to display when workflow finished
 		virtual QString finishMessage() const;
 		virtual QStringList postStartCommands(QWidget* parent) const;
 		virtual QString filenameHint() const;
