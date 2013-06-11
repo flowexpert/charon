@@ -24,8 +24,8 @@
 
 #include "LogDialog.h"
 #include "ui_LogDialog.h"
-#include "FileManager.h"
 #include "LogViewProxyModel.h"
+#include "LogDecorators.h"
 
 #include <QTextStream>
 #include <QScrollBar>
@@ -33,12 +33,12 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QFileInfo>
-#include <QDir>
 #include <QFileDialog>
 #include <QMutexLocker>
 #include <QStringListModel>
 #include <QMimeData>
 #include <QStandardItemModel>
+#include <QListView>
 
 LogDialog::LogDialog(
 				LogDecorators::Decorator* dec,
@@ -63,6 +63,7 @@ LogDialog::LogDialog(
 	_decorator->debugOutput = _ui->checkDD->isChecked();
 	connect(_decorator, SIGNAL(finish()), SLOT(on_proc_finished()));
 	connect(_decorator, SIGNAL(message(QString)), SLOT(printStatus(QString)));
+	connect(_decorator, SIGNAL(filter(QString)), SLOT(searchLog(QString)));
 
 	QString title=_decorator->title();
 	QString desc=_decorator->desc();
@@ -71,6 +72,10 @@ LogDialog::LogDialog(
 	}
 	if (!desc.isEmpty()) {
 		_ui->lInfo->setText(desc);
+	}
+	QWidget* statWid = _decorator->statusWidget();
+	if (statWid) {
+		_ui->statusLayout->addWidget(statWid);
 	}
 
 	_ui->infoDisplay->setVisible(false);
@@ -461,15 +466,16 @@ void LogDialog::searchLog(QString flt, int offset, bool up) {
 		rowStart = qMin(rowStart,model->rowCount()-1);
 		rowStart = qMax(rowStart,0);
 	}
-	int row;
+	int row; QModelIndex ind;
 	for (int ii=0; ii < model->rowCount(); ++ii) {
 		row = ((up?rowStart-ii:rowStart+ii)+model->rowCount())
 				% model->rowCount();
-		if (model->data(model->index(row,0),Qt::DisplayRole)
-				.toString().contains(sWildExp)) {
+		ind = model->index(row,0);
+		if (model->data(ind,Qt::DisplayRole).toString().contains(sWildExp)) {
 			selection->setCurrentIndex(
-					model->index(row,0),QItemSelectionModel::SelectCurrent);
+					ind,QItemSelectionModel::SelectCurrent);
 			_ui->logView->setSelectionModel(selection);
+			_ui->logView->scrollTo(ind,QAbstractItemView::PositionAtCenter);
 			break;
 		}
 	}
@@ -485,230 +491,4 @@ void LogDialog::on_bSearchDown_clicked() {
 
 void LogDialog::on_bSearchUp_clicked() {
 	searchLog(_ui->eFilter->text(),-1,true);
-}
-
-// ============================ Decorators ===============================
-LogDecorators::Decorator::Decorator() :
-		debugOutput(true) {
-}
-
-LogDecorators::Decorator::~Decorator() {
-}
-
-void LogDecorators::Decorator::processLine(QString) {
-}
-
-QString LogDecorators::Decorator::title() const {
-	return QString::null;
-}
-
-QString LogDecorators::Decorator::desc() const {
-	return QString::null;
-}
-
-QString LogDecorators::Decorator::filenameHint() const {
-	return QString::null;
-}
-
-bool LogDecorators::Decorator::ready(QWidget*) const {
-	return true;
-}
-
-QStringList LogDecorators::Decorator::postStartCommands(QWidget*) const {
-	return QStringList();
-}
-
-void LogDecorators::Decorator::finishProcessing() {
-}
-
-// ---------------------------   update   ------------------------------------
-QString LogDecorators::Update::title() const {
-	return QCoreApplication::translate(
-		"LogDecorators::Update", "Plugin Information Update");
-}
-
-QString LogDecorators::Update::desc() const {
-	return QCoreApplication::translate(
-		"LogDecorators::Update", "Output of update process:");
-}
-
-QStringList LogDecorators::Update::arguments() const {
-	QSettings settings;
-	QStringList args;
-	args << "--quiet";
-	if (!settings.value("delayExecution",false).toBool()) {
-		args << "--non-interactive" << "update";
-	}
-	return args;
-}
-
-QStringList LogDecorators::Update::postStartCommands(QWidget* pp) const {
-	QSettings settings;
-	QStringList cmds;
-	if (settings.value("delayExecution",false).toBool()) {
-		QMessageBox::information(pp,
-			QCoreApplication::translate("LogDecorators::Update",
-				"wait before plugin update"),
-			QCoreApplication::translate("LogDecorators::Update",
-				"Waiting because <em>delayExecution</em> option set. "
-				"You can now attach your debugger to the update process. "
-				"Update will be started, when you close this message box."
-			)
-		);
-		cmds << "update" << "quit";
-	}
-	return cmds;
-}
-
-QString LogDecorators::Update::filenameHint() const {
-	return QDir::home().absoluteFilePath("update-modules.log");
-}
-
-QString LogDecorators::Update::logFileName() const {
-	return FileManager::instance().configDir()
-			.absoluteFilePath("updateLog.txt");
-}
-
-LogDecorators::Update::Update() :
-		_result(0)
-{
-	_fileRegex = QRegExp("\\(\\w+\\)\\s+File: (.*)");
-	_passRegex = QRegExp("\\(\\w+\\)\\s+Created Instance \"\\w+\" of the plugin \"(\\w+)\".*");
-	_noPluginRegex = QRegExp("\\(\\w+\\)\\s+\"(\\w+)\" is no charon plugin.*");
-	_result = new QStandardItemModel(0,2,this);
-	QStandardItem* head = new QStandardItem(tr("file"));
-	_result->setHorizontalHeaderItem(0,head);
-	head = new QStandardItem(tr("status"));
-	_result->setHorizontalHeaderItem(1,head);
-}
-
-void LogDecorators::Update::processLine(QString line) {
-	if (_fileRegex.exactMatch(line)) {
-		if (!_curStatus.isEmpty()) {
-			_summary +=
-				QString("<tr><td class=\"file\">%1</td><td>%2</td></tr>")
-					.arg(_curFile).arg(_curStatus);
-			QList<QStandardItem*> row;
-			row << new QStandardItem(_curFile);
-			QRegExp stat("<span class=\"(\\w+)\">(.*)</span>");
-			if (!stat.exactMatch(_curStatus)) {
-				qDebug("status string invalid: %s",
-					_curStatus.toLocal8Bit().constData());
-			}
-			row << new QStandardItem(stat.cap(2));
-			row[1]->setData(stat.cap(1),Qt::UserRole);
-			_result->appendRow(row);
-		}
-		_curFile = _fileRegex.cap(1);
-		_curStatus = QString("<span class=\"error\">%1</span>")
-				.arg(tr("failed"));
-	}
-	else if (_noPluginRegex.exactMatch(line)) {
-		_curStatus = QString("<span class=\"info\">%1</span>")
-				.arg(tr("no plugin"));
-	}
-	else if (_passRegex.exactMatch(line)) {
-		_curStatus = QString("<span class=\"success\">%1</span>")
-				.arg(tr("passed"));
-	}
-}
-
-void LogDecorators::Update::finishProcessing() {
-	QString msg = QString("<h3>%1</h3>\n<table>%2</table>")
-			.arg(tr("Summary")).arg(_summary);
-	emit message(msg);
-}
-
-// -------------------------   update dynamics   ------------------------------
-LogDecorators::UpdateDynamics::UpdateDynamics(QString fileName) :
-		_fileName(fileName) {
-}
-
-QString LogDecorators::UpdateDynamics::logFileName() const {
-	return FileManager::instance().configDir()
-			.absoluteFilePath("updateDynLog.txt");
-}
-
-QStringList LogDecorators::UpdateDynamics::arguments() const {
-	QStringList args;
-	args << "--non-interactive" << "update-dynamics" << _fileName;
-	return args;
-}
-
-// --------------------------   run workflow    -------------------------------
-LogDecorators::RunWorkflow::RunWorkflow(QString fileName) :
-		_fileName(fileName) {
-}
-
-bool LogDecorators::RunWorkflow::ready(QWidget* pp) const {
-	if(_fileName.isEmpty()) {
-		QMessageBox::warning(pp,
-			tr("missing workflow file"),
-			tr("The workflow cannot be started because it has not "
-				"been saved to disk (empty filename given). "
-				"Please save it and retry execution."
-			)
-		);
-		return false;
-	}
-	return true;
-}
-
-QStringList LogDecorators::RunWorkflow::arguments() const {
-	QSettings settings;
-	QStringList args;
-	args << "--quiet";
-	if (!settings.value("delayExecution",false).toBool()) {
-		args << "run" << _fileName;
-	}
-	return args;
-}
-
-QStringList LogDecorators::RunWorkflow::postStartCommands(QWidget* pp) const {
-	QSettings settings;
-	QStringList cmds;
-	if (settings.value("delayExecution",false).toBool()) {
-		QMessageBox::information(pp,
-			tr("wait before workflow execution"),
-			tr("Waiting because <em>delayExecution</em> option set. "
-				"You can now attach your debugger to the run process. "
-				"Workflow will be started, when you close this message box."
-			)
-		);
-		cmds << QString("run %1").arg(_fileName);
-	}
-	return cmds;
-}
-
-void LogDecorators::RunWorkflow::processLine(QString line) {
-	// emit signal to highlight currently executed object
-	QRegExp curObj("\\(II\\) Executing\\s*\\w*\\s*\"(\\w*)\"\\s*");
-	if (curObj.exactMatch(line)) {
-		emit highlightObject(curObj.cap(1));
-	}
-	// add status message if workflow execution finished
-	if (line.contains(
-		QCoreApplication::translate("CharonRun","Execution finished.")) ||
-		line.contains(
-		QCoreApplication::translate("CharonRun","Error during execution:"))) {
-		emit finish();
-		emit message(finishMessage());
-	}
-}
-
-QString LogDecorators::RunWorkflow::finishMessage() const {
-	return QString("<br><span class=\"success\">%1</span><br>%2<br>")
-		.arg(tr("Workflow execution finished."))
-		.arg(tr("Plugins stay loaded until you close this dialog."));
-}
-
-QString LogDecorators::RunWorkflow::filenameHint() const {
-	QFileInfo wrpFile(_fileName);
-	return QString("%1/%2.log")
-			.arg(wrpFile.absolutePath()).arg(wrpFile.baseName());
-}
-
-QString LogDecorators::RunWorkflow::logFileName() const {
-	return FileManager::instance().configDir()
-			.absoluteFilePath("executeLog.txt");
 }

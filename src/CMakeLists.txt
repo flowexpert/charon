@@ -34,6 +34,7 @@ QT4_WRAP_CPP(MOC_SRC
 	OptionsDialog.h
 	DocGenerator.h
 	LogDialog.h
+	LogDecorators.h
 	NodeTreeView.h
 	TuchulchaWindow.h
 	CentralMdiArea.h
@@ -70,6 +71,7 @@ SET(TUCHULCHA_SOURCES
 	TuchulchaWindow.cpp
 	DocGenerator.cpp
 	LogDialog.cpp
+	LogDecorators.cpp
 	LogViewProxyModel.cpp
 	OptionsDialog.cpp
 	NodeTreeView.cpp

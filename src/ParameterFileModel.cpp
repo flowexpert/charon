@@ -28,6 +28,7 @@
 #include "MetaData.h"
 #include "FileManager.h"
 #include "LogDialog.h"
+#include "LogDecorators.h"
 #include <QFileDialog>
 #include <QDir>
 #include <QSet>

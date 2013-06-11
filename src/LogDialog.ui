@@ -91,6 +91,9 @@
     </widget>
    </item>
    <item>
+    <layout class="QVBoxLayout" name="statusLayout"/>
+   </item>
+   <item>
     <widget class="QToolBox" name="toolBox">
      <property name="minimumSize">
       <size>
@@ -104,7 +107,7 @@
         <x>0</x>
         <y>0</y>
         <width>888</width>
-        <height>85</height>
+        <height>89</height>
        </rect>
       </property>
       <attribute name="label">
@@ -208,7 +211,7 @@ Previous</string>
         <x>0</x>
         <y>0</y>
         <width>888</width>
-        <height>85</height>
+        <height>79</height>
        </rect>
       </property>
       <attribute name="label">

@@ -36,6 +36,7 @@
 #include "ModelToolBar.h"
 #include "FileManager.h"
 #include "LogDialog.h"
+#include "LogDecorators.h"
 #include "OptionsDialog.h"
 #include "RecentFileHandler.h"
 
