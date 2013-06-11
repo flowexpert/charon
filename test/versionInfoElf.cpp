@@ -99,7 +99,7 @@ void testInValid3() {
 	}
 	catch (const AbstractPluginLoader::PluginException& exp) {
 		if (exp.getErrorCode() == AbstractPluginLoader::PluginException::
-				VERSION_INFORMATION_MISSING) {
+				VERSION_MISSMATCH) {
 			std::cout << "(WW) " << exp.what() << std::endl;
 		}
 		else {
