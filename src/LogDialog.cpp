@@ -72,7 +72,6 @@ LogDialog::LogDialog(
 		_ui->lInfo->setText(desc);
 	}
 
-	resetLogWidget();
 	_ui->infoDisplay->setVisible(false);
 
 	// determine available run process executables
@@ -137,6 +136,19 @@ LogDialog::LogDialog(
 		// close dialog
 		QTimer::singleShot(0,this,SLOT(reject()));
 	}
+
+	// set up status widget
+	_ui->infoDisplay->document()->setDefaultStyleSheet(
+		"*{white-space:pre;font-weight:normal}\n"
+		"h3{font-weight:bold;font-variant:small-caps}\n"
+		".file {font-family:monospace;}\n"
+		"td {padding: 0 4px;}\n"
+		".error {color:red;font-weight:bold;}\n"
+		".success {color:green;}\n"
+		".warning {color:orange;}\n"
+		".info {color:#444;}\n"
+		".debug {color:gray;}\n"
+	);
 }
 
 LogDialog::~LogDialog() {
@@ -166,17 +178,6 @@ void LogDialog::saveSettings() {
 	settings.setValue("autoScroll",_ui->checkScroll->isChecked());
 	settings.setValue("maxLines",_ui->sBufSize->value());
 	settings.endGroup();
-}
-
-void LogDialog::resetLogWidget() {
-	_ui->infoDisplay->document()->setDefaultStyleSheet(
-		"*{white-space:pre;font-family:monospace;font-weight:normal}"
-		".error {color:red;font-weight:bold;}"
-		".success {color:green;font-weight:bold;font-family:sans-serif;}"
-		".warning {color:orange;font-weight:normal;}"
-		".info {color:#444;}"
-		".debug {color:gray;}"
-	);
 }
 
 void LogDialog::done(int r) {
@@ -345,6 +346,7 @@ void LogDialog::on_proc_started() {
 }
 
 void LogDialog::on_proc_finished() {
+	_decorator->finishProcessing();
 	_ui->progressBar->hide();
 	_ui->buttonBox->setStandardButtons(QDialogButtonBox::Close);
 }
@@ -515,6 +517,10 @@ QStringList LogDecorators::Decorator::postStartCommands(QWidget*) const {
 	return QStringList();
 }
 
+void LogDecorators::Decorator::finishProcessing() {
+}
+
+// ---------------------------   update   ------------------------------------
 QString LogDecorators::Update::title() const {
 	return QCoreApplication::translate(
 		"LogDecorators::Update", "Plugin Information Update");
@@ -562,6 +568,40 @@ QString LogDecorators::Update::logFileName() const {
 			.absoluteFilePath("updateLog.txt");
 }
 
+LogDecorators::Update::Update() {
+	_fileRegex = QRegExp("\\(\\w+\\)\\s+File: (.*)");
+	_passRegex = QRegExp("\\(\\w+\\)\\s+Created Instance \"\\w+\" of the plugin \"(\\w+)\".*");
+	_noPluginRegex = QRegExp("\\(\\w+\\)\\s+\"(\\w+)\" is no charon plugin.*");
+}
+
+void LogDecorators::Update::processLine(QString line) {
+	if (_fileRegex.exactMatch(line)) {
+		if (!_curStatus.isEmpty()) {
+			_summary +=
+				QString("<tr><td class=\"file\">%1</td><td>%2</td></tr>")
+					.arg(_curFile).arg(_curStatus);
+		}
+		_curFile = _fileRegex.cap(1);
+		_curStatus = QString("<span class=\"error\">%1</span>")
+				.arg(tr("failed"));
+	}
+	else if (_noPluginRegex.exactMatch(line)) {
+		_curStatus = QString("<span class=\"info\">%1</span>")
+				.arg(tr("no plugin"));
+	}
+	else if (_passRegex.exactMatch(line)) {
+		_curStatus = QString("<span class=\"success\">%1</span>")
+				.arg(tr("passed"));
+	}
+}
+
+void LogDecorators::Update::finishProcessing() {
+	QString msg = QString("<h3>%1</h3>\n<table>%2</table>")
+			.arg(tr("Summary")).arg(_summary);
+	emit message(msg);
+}
+
+// -------------------------   update dynamics   ------------------------------
 LogDecorators::UpdateDynamics::UpdateDynamics(QString fileName) :
 		_fileName(fileName) {
 }
@@ -577,6 +617,7 @@ QStringList LogDecorators::UpdateDynamics::arguments() const {
 	return args;
 }
 
+// --------------------------   run workflow    -------------------------------
 LogDecorators::RunWorkflow::RunWorkflow(QString fileName) :
 		_fileName(fileName) {
 }

@@ -75,8 +75,6 @@ public slots:
 	/// kill process
 	/** \param force   do not ask before terminating */
 	void kill(bool force=false);
-	/// initialize log output widget
-	void resetLogWidget();
 	/// reparse log output
 	void reprint();
 	/// print status message
@@ -130,7 +128,7 @@ private:
 namespace LogDecorators {
 	/// log decorator base class to handle different kinds of log dialogs
 	class Decorator : public QObject {
-	Q_OBJECT
+		Q_OBJECT
 	public:
 		Decorator();
 		virtual ~Decorator();
@@ -148,16 +146,18 @@ namespace LogDecorators {
 		/** \param parent  parent widget (for dialog/message boxes)
 		 *  \returns       list of (interactive) commands */
 		virtual QStringList postStartCommands(QWidget* parent) const;
-		/// check if current line shows that running finished
-		/** \param line    current line
-		 *  \retval true   line shows that execution finished */
-		virtual void processLine(QString line);
 		/// hint for filename on save dialog
 		virtual QString filenameHint() const;
 		/// logfile name for output logging
 		virtual QString logFileName() const = 0;
 		/// debug output mode
 		bool debugOutput;
+		/// check if current line shows that running finished
+		/** \param line    current line
+		 *  \retval true   line shows that execution finished */
+		virtual void processLine(QString line);
+		/// inform about finished processing
+		virtual void finishProcessing();
 
 	signals:
 		void finish();         ///< finish signal
@@ -168,12 +168,22 @@ namespace LogDecorators {
 	/// decorator for update dialog
 	class Update : public Decorator {
 	public:
+		Update();
 		virtual QStringList arguments() const;
 		virtual QStringList postStartCommands(QWidget* parent) const;
 		virtual QString title() const;
 		virtual QString desc() const;
 		virtual QString filenameHint() const;
 		virtual QString logFileName() const;
+		virtual void processLine(QString line);
+		virtual void finishProcessing();
+	private:
+		QString _summary;       ///< update summary
+		QString _curFile;       ///< file name cache
+		QString _curStatus;     ///< status cache
+		QRegExp _fileRegex;     ///< file name regexp
+		QRegExp _noPluginRegex; ///< no plugin info
+		QRegExp _passRegex;     ///< plugin passed regexp
 	};
 
 	/// decorator for update dynamics dialog
@@ -197,12 +207,12 @@ namespace LogDecorators {
 		RunWorkflow(QString fileName);
 		virtual bool ready(QWidget* parent) const;
 		virtual QStringList arguments() const;
-		virtual void processLine(QString line);
 		/// finish message to display when workflow finished
 		virtual QString finishMessage() const;
 		virtual QStringList postStartCommands(QWidget* parent) const;
 		virtual QString filenameHint() const;
 		virtual QString logFileName() const;
+		virtual void processLine(QString line);
 	signals:
 		/// highlight the currently active object
 		/** \param objName  object name */
