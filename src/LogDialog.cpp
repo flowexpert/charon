@@ -38,6 +38,7 @@
 #include <QMutexLocker>
 #include <QStringListModel>
 #include <QMimeData>
+#include <QStandardItemModel>
 
 LogDialog::LogDialog(
 				LogDecorators::Decorator* dec,
@@ -568,10 +569,17 @@ QString LogDecorators::Update::logFileName() const {
 			.absoluteFilePath("updateLog.txt");
 }
 
-LogDecorators::Update::Update() {
+LogDecorators::Update::Update() :
+		_result(0)
+{
 	_fileRegex = QRegExp("\\(\\w+\\)\\s+File: (.*)");
 	_passRegex = QRegExp("\\(\\w+\\)\\s+Created Instance \"\\w+\" of the plugin \"(\\w+)\".*");
 	_noPluginRegex = QRegExp("\\(\\w+\\)\\s+\"(\\w+)\" is no charon plugin.*");
+	_result = new QStandardItemModel(0,2,this);
+	QStandardItem* head = new QStandardItem(tr("file"));
+	_result->setHorizontalHeaderItem(0,head);
+	head = new QStandardItem(tr("status"));
+	_result->setHorizontalHeaderItem(1,head);
 }
 
 void LogDecorators::Update::processLine(QString line) {
@@ -580,6 +588,16 @@ void LogDecorators::Update::processLine(QString line) {
 			_summary +=
 				QString("<tr><td class=\"file\">%1</td><td>%2</td></tr>")
 					.arg(_curFile).arg(_curStatus);
+			QList<QStandardItem*> row;
+			row << new QStandardItem(_curFile);
+			QRegExp stat("<span class=\"(\\w+)\">(.*)</span>");
+			if (!stat.exactMatch(_curStatus)) {
+				qDebug("status string invalid: %s",
+					_curStatus.toLocal8Bit().constData());
+			}
+			row << new QStandardItem(stat.cap(2));
+			row[1]->setData(stat.cap(1),Qt::UserRole);
+			_result->appendRow(row);
 		}
 		_curFile = _fileRegex.cap(1);
 		_curStatus = QString("<span class=\"error\">%1</span>")

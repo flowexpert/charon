@@ -34,6 +34,7 @@ class QMutex;
 class QFile;
 class QStringListModel;
 class LogViewProxyModel;
+class QStandardItemModel;
 
 namespace LogDecorators{ class Decorator; }
 
@@ -184,6 +185,7 @@ namespace LogDecorators {
 		QRegExp _fileRegex;     ///< file name regexp
 		QRegExp _noPluginRegex; ///< no plugin info
 		QRegExp _passRegex;     ///< plugin passed regexp
+		QStandardItemModel* _result; ///< update summary
 	};
 
 	/// decorator for update dynamics dialog
