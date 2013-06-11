@@ -25,6 +25,7 @@
 /// Class name of the plugin
 #define TYPE MaskCreator
 
+#define roi_EXPORTS
 #include "../include/charon-utils/MaskCreator.hxx"
 
 /// Creates an instance of the plugin

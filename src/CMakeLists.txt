@@ -44,13 +44,6 @@ ADD_CHARON_PLUGIN(greatersmallerthenpar
 	PLUGIN_LISTS Plugins
 )
 
-ADD_CHARON_PLUGIN(maskcreator 
-	MaskCreator.cpp
-	${CHARON_UTILS_INCLUDE_DIR}/MaskCreator.h
-	${CHARON_UTILS_INCLUDE_DIR}/MaskCreator.hxx
-	PLUGIN_LISTS Plugins
-)
-
 ADD_CHARON_PLUGIN(valuebuffer
 	ValueBuffer.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/ValueBuffer.h
@@ -423,6 +416,13 @@ IF(USE_VIGRA)
 	#additional vigra modules
 	INCLUDE_DIRECTORIES(${Vigra_INCLUDE_DIRS})
 	SET(Plugins_Vigra)
+	ADD_CHARON_PLUGIN(maskcreator 
+		MaskCreator.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/MaskCreator.h
+		${CHARON_UTILS_INCLUDE_DIR}/MaskCreator.hxx
+		PLUGIN_LISTS Plugins Plugins_Vigra
+	)
+
 	ADD_CHARON_PLUGIN(splineresize
 		SplineResize.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/SplineResize.h
