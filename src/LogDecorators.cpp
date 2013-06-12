@@ -117,13 +117,14 @@ QString LogDecorators::Update::logFileName() const {
 }
 
 LogDecorators::Update::Update() :
-		_result(0), _view(new QTableView)
+		_curStatus(Invalid), _result(0), _view(new QTableView)
 {
 	QString p = "\\(\\w+\\)\\s+"; // prefix
-	_fileRegex =     QRegExp(p+"File: (.*)");
-	_passRegex =     QRegExp(p+"Created Instance \"\\w+\" of the plugin \"(\\w+)\".*");
+	_fileRegex     = QRegExp(p+"File: (.*)");
+	_passRegex     = QRegExp(p+"Created Instance \"\\w+\" of the plugin \"(\\w+)\".*");
 	_noPluginRegex = QRegExp(p+"\"(\\w+)\" is no charon plugin.*");
-	_failRegex =     QRegExp(p+"Could not generate metadata for module \"(\\w+)\".*");
+	_failRegex     = QRegExp(p+"Could not generate metadata for module \"(\\w+)\".*");
+	_warnRegex     = QRegExp("\\(WW\\)\\s+.*");
 	_result = new QStandardItemModel(0,2,this);
 	QStandardItem* head = new QStandardItem(tr("file"));
 	_result->setHorizontalHeaderItem(0,head);
@@ -148,7 +149,7 @@ LogDecorators::Update::Update() :
 
 void LogDecorators::Update::processLine(QString line) {
 	if (_fileRegex.exactMatch(line)) {
-		if (!_curStatus.isEmpty()) {
+		if (_curStatus) {
 			QList<QStandardItem*> row;
 			QStandardItem* curItem(0);
 
@@ -163,15 +164,24 @@ void LogDecorators::Update::processLine(QString line) {
 			curItem = new QStandardItem(_curMsg);
 			curItem->setData(_curStatus,Qt::UserRole);
 			curItem->setData(QFont("sans-serif",9),Qt::FontRole);
-			if (_curStatus == "success") {
+			switch (_curStatus) {
+			case Passed:
 				curItem->setData(QBrush(QColor("#0A2")),Qt::ForegroundRole);
-			}
-			else if (_curStatus == "error") {
-				curItem->setData(QBrush(QColor("#F20")),Qt::ForegroundRole);
-				curItem->setData(QFont("monospace",9,QFont::Bold),Qt::FontRole);
-			}
-			else if (_curStatus == "info") {
+				break;
+			case NoPlugin:
 				curItem->setData(QBrush(QColor("#777")),Qt::ForegroundRole);
+				break;
+			case Warnings:
+				curItem->setData(QBrush(QColor("#F84")),Qt::ForegroundRole);
+				curItem->setData(QFont("sans-serif",9,QFont::DemiBold),Qt::FontRole);
+				break;
+			case Failed:
+				curItem->setData(QBrush(QColor("#F20")),Qt::ForegroundRole);
+				curItem->setData(QFont("sans-serif",9,QFont::Bold),Qt::FontRole);
+				break;
+			default:
+				qDebug("unhandled status code: %d", _curStatus);
+				break;
 			}
 			row << curItem;
 
@@ -181,27 +191,33 @@ void LogDecorators::Update::processLine(QString line) {
 			_view->setColumnWidth(1,_view->width()/4);
 		}
 		_curFile   = _fileRegex.cap(1);
-		_curStatus = "error";
+		_curStatus = Failed;
 		_curMsg    = tr("failed");
 		_curPlugin = QString();
 	}
 	else if (_noPluginRegex.exactMatch(line)) {
-		_curStatus = "info";
+		_curStatus = NoPlugin;
 		_curMsg    = tr("no plugin");
 		_curPlugin = _noPluginRegex.cap(1);
 	}
 	else if (_failRegex.exactMatch(line)) {
 		_curPlugin = _failRegex.cap(1);
 	}
+	else if (_warnRegex.exactMatch(line)) {
+		_curStatus = Warnings;
+		_curMsg    = tr("warnings");
+	}
 	else if (_passRegex.exactMatch(line)) {
-		_curStatus = "success";
-		_curMsg    = tr("passed");
 		_curPlugin = _passRegex.cap(1);
+		if (_curStatus != Warnings) {
+			_curStatus = Passed;
+			_curMsg    = tr("passed");
+		}
 	}
 }
 
 void LogDecorators::Update::finishProcessing() {
-	_view->sortByColumn(2,Qt::AscendingOrder);
+	_view->sortByColumn(2,Qt::DescendingOrder);
 	_view->resizeColumnToContents(0);
 }
 

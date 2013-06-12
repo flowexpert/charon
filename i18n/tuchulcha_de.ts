@@ -69,7 +69,7 @@
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="218"/>
-        <location filename="../src/LogDecorators.cpp" line="286"/>
+        <location filename="../src/LogDecorators.cpp" line="302"/>
         <source>Execution finished.</source>
         <translation>Ausführung beendet.</translation>
     </message>
@@ -125,7 +125,7 @@ Message:
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="248"/>
-        <location filename="../src/LogDecorators.cpp" line="288"/>
+        <location filename="../src/LogDecorators.cpp" line="304"/>
         <source>Error during execution:</source>
         <translation>Fehler während der Ausführung:</translation>
     </message>
@@ -414,32 +414,32 @@ Please use a valid name.
 <context>
     <name>LogDecorators::RunWorkflow</name>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="241"/>
+        <location filename="../src/LogDecorators.cpp" line="257"/>
         <source>missing workflow file</source>
         <translation>keine Datei angegeben</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="242"/>
+        <location filename="../src/LogDecorators.cpp" line="258"/>
         <source>The workflow cannot be started because it has not been saved to disk (empty filename given). Please save it and retry execution.</source>
         <translation>Die Ausführung konnte nicht gestartet werden, da das Dokument nicht gespeichert wurde. Bitte speichern und erneut ausführen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="267"/>
+        <location filename="../src/LogDecorators.cpp" line="283"/>
         <source>wait before workflow execution</source>
         <translation>vor der Ausführung warten</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="268"/>
+        <location filename="../src/LogDecorators.cpp" line="284"/>
         <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the run process. Workflow will be started, when you close this message box.</source>
         <translation>Warte mit dem Start der Ausführung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Ausführungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="296"/>
+        <location filename="../src/LogDecorators.cpp" line="312"/>
         <source>Workflow execution finished.</source>
         <translation>Ausführung wurde beendet.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="297"/>
+        <location filename="../src/LogDecorators.cpp" line="313"/>
         <source>Plugins stay loaded until you close this dialog.</source>
         <translation>Die Plugins bleiben geladen, bis dieser Dialog geschlossen wird.</translation>
     </message>
@@ -467,32 +467,37 @@ Please use a valid name.
         <translation>Warte mit dem Start der Aktualisierung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Aktualisierungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="128"/>
+        <location filename="../src/LogDecorators.cpp" line="129"/>
         <source>file</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="130"/>
+        <location filename="../src/LogDecorators.cpp" line="131"/>
         <source>module</source>
         <translation>Modul</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="132"/>
+        <location filename="../src/LogDecorators.cpp" line="133"/>
         <source>status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="185"/>
+        <location filename="../src/LogDecorators.cpp" line="195"/>
         <source>failed</source>
-        <translation>fehlgeschlagen</translation>
+        <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="190"/>
+        <location filename="../src/LogDecorators.cpp" line="200"/>
         <source>no plugin</source>
         <translation>kein Plugin</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="198"/>
+        <location filename="../src/LogDecorators.cpp" line="208"/>
+        <source>warnings</source>
+        <translation>Warnungen</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDecorators.cpp" line="214"/>
         <source>passed</source>
         <translation>Erfolg</translation>
     </message>
@@ -1044,7 +1049,7 @@ als Ausweichnamen den Namen ohne Endung verwenden</translation>
     <message>
         <location filename="../src/OptionsDialog.ui" line="106"/>
         <source>Warnings</source>
-        <translation>nur Warnungen</translation>
+        <translation>Warnungen anzeigen, dann trotzdem benutzen</translation>
     </message>
     <message>
         <location filename="../src/OptionsDialog.ui" line="111"/>

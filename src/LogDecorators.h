@@ -90,18 +90,28 @@ namespace LogDecorators {
 		virtual void processLine(QString line);
 		virtual void finishProcessing();
 		virtual QWidget* statusWidget();
+
+		/// status code used in log parsing
+		enum StatusCode {
+			Invalid  = 0, ///< should not occur, initial value
+			Passed   = 1, ///< success
+			NoPlugin = 2, ///< info message: no plugin
+			Warnings = 4, ///< warnings occurred
+			Failed   = 6  ///< Plugin failed
+		};
 	private:
-		QString _summary;       ///< update summary
-		QString _curFile;       ///< file name cache
-		QString _curStatus;     ///< status cache
-		QString _curPlugin;     ///< plugin name cache
-		QString _curMsg;        ///< status message cache
-		QRegExp _fileRegex;     ///< file name regexp
-		QRegExp _noPluginRegex; ///< no plugin info
-		QRegExp _failRegex;     ///< fail regex
-		QRegExp _passRegex;     ///< plugin passed regexp
+		QString     _summary;        ///< update summary
+		QString     _curFile;        ///< file name cache
+		StatusCode  _curStatus;      ///< status cache
+		QString     _curPlugin;      ///< plugin name cache
+		QString     _curMsg;         ///< status message cache
+		QRegExp     _fileRegex;      ///< file name regexp
+		QRegExp     _noPluginRegex;  ///< no plugin info
+		QRegExp     _warnRegex;      ///< no plugin info
+		QRegExp     _failRegex;      ///< fail regex
+		QRegExp     _passRegex;      ///< plugin passed regexp
 		QStandardItemModel* _result; ///< update summary
-		QTableView* _view;       ///< summary list
+		QTableView* _view;           ///< summary list
 	private slots:
 		/// show corresponding log line on selection
 		void _searchOutput(const QModelIndex&);
