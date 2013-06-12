@@ -47,6 +47,16 @@ ObjectInspector::ObjectInspector(
 
 	_commentFieldMutex = new QMutex(QMutex::NonRecursive);
 
+	// handle header context menu
+	_ui->view->horizontalHeader()->setContextMenuPolicy(Qt::ActionsContextMenu);
+	_hidePrio = new QAction(tr("hide priority column"), this);
+	//_hidePrio->setIcon(QIcon::fromTheme("edit-table-delete-column",
+	//	QIcon(":/icons/edit-table-delete-column.png")));
+	_hidePrio->setCheckable(true);
+	_hidePrio->setChecked(false);
+	_ui->view->horizontalHeader()->insertAction(0,_hidePrio);
+	connect(_hidePrio,SIGNAL(triggered(bool)),SLOT(setPrioColumnHidden(bool)));
+
 	// use temporary model to set up view
 	ParameterFileModel tempModel;
 	setModel(&tempModel);
@@ -122,6 +132,9 @@ void ObjectInspector::_storeViewSettings() const {
 		settings.setValue("column1", _ui->view->columnWidth(1));
 		settings.setValue("column2", _ui->view->columnWidth(2));
 
+		// store column visibility
+		settings.setValue("column2hidden", _hidePrio->isChecked());
+
 		settings.endGroup();
 	}
 }
@@ -131,6 +144,8 @@ void ObjectInspector::_loadViewSettings() {
 		QSettings settings;
 		settings.beginGroup("ObjectInspector");
 
+		_hidePrio->setChecked(settings.value("column2hidden",false).toBool());
+		setPrioColumnHidden(_hidePrio->isChecked());
 		_ui->view->setColumnWidth(0, settings.value("column0", 250).toInt());
 		_ui->view->setColumnWidth(1, settings.value("column1", 250).toInt());
 		_ui->view->setColumnWidth(2, settings.value("column2", 90).toInt());
@@ -339,6 +354,15 @@ void ObjectInspector::on_comment_textChanged() {
 		comment.replace(QRegExp("\n"), "<br/>");
 		_model->setValue(_model->prefix()+".editorcomment",comment);
 		_commentFieldMutex->unlock();
+	}
+}
+
+void ObjectInspector::setPrioColumnHidden(const bool& h) {
+	_ui->view->setColumnHidden(2,h);
+	if (!h) {
+		_ui->view->resizeColumnsToContents();
+		_ui->view->setColumnWidth(0,_ui->view->width()/2.5);
+		_ui->view->setColumnWidth(1,_ui->view->width()/2.5);
 	}
 }
 

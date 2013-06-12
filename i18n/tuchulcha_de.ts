@@ -816,52 +816,57 @@ node</oldsource>
 <context>
     <name>ObjectInspector</name>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="109"/>
+        <location filename="../src/ObjectInspector.cpp" line="52"/>
+        <source>hide priority column</source>
+        <translation>Spalte Priorität ausblenden</translation>
+    </message>
+    <message>
+        <location filename="../src/ObjectInspector.cpp" line="119"/>
         <source>Save File</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="110"/>
+        <location filename="../src/ObjectInspector.cpp" line="120"/>
         <source>ParameterFile (*.wrp)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="214"/>
+        <location filename="../src/ObjectInspector.cpp" line="229"/>
         <source>Open File</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="216"/>
+        <location filename="../src/ObjectInspector.cpp" line="231"/>
         <source>ParameterFile (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="247"/>
+        <location filename="../src/ObjectInspector.cpp" line="262"/>
         <source>delete failed</source>
         <translation>Löschen fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="247"/>
+        <location filename="../src/ObjectInspector.cpp" line="262"/>
         <source>Please select an item to delete first.</source>
         <translation>Bitte wählen Sie zuerst ein Element zum Löschen aus.</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="262"/>
+        <location filename="../src/ObjectInspector.cpp" line="277"/>
         <source>confirm delete</source>
         <translation>Löschen bestätigen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="262"/>
+        <location filename="../src/ObjectInspector.cpp" line="277"/>
         <source>Do you really want to delete the model content?</source>
         <translation>Möchten Sie wirklich alle Einträge löschen?</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="271"/>
+        <location filename="../src/ObjectInspector.cpp" line="286"/>
         <source>cleared model content</source>
         <translation>Model-Einträge gelöscht</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.cpp" line="356"/>
+        <location filename="../src/ObjectInspector.cpp" line="380"/>
         <source>no node selected</source>
         <translation>kein Knoten ausgewählt</translation>
     </message>
@@ -871,26 +876,26 @@ node</oldsource>
         <translation>Rahmen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="75"/>
+        <location filename="../src/ObjectInspector.ui" line="72"/>
         <source>Selected Node</source>
         <translation>Gewählter Knoten</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="124"/>
+        <location filename="../src/ObjectInspector.ui" line="121"/>
         <source>set
 priorities</source>
         <translation>Prioritäten
 setzen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="149"/>
+        <location filename="../src/ObjectInspector.ui" line="146"/>
         <source>reset
 parameter</source>
         <translation>Parameter
 zrücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="170"/>
+        <location filename="../src/ObjectInspector.ui" line="167"/>
         <source>Deselect any currently selected node.&lt;br&gt;
 This causes all parameter from the workflow file
 to appear in the object inspector.&lt;br&gt;
@@ -900,14 +905,14 @@ Hierdurch erscheine alle Parameter aus der Datei im Objektinspektor.
 Das ist z.B. sinnvoll in Kombination mit einem Prioritätsfilter.</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="176"/>
+        <location filename="../src/ObjectInspector.ui" line="173"/>
         <source>deselect
 any node</source>
         <translation>Knoten
 abwählen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="197"/>
+        <location filename="../src/ObjectInspector.ui" line="194"/>
         <source>Activate all plugins starting with the selected one.
 If the selected plugin is already activated, this has no effect.
 If it was deactivated, the plugin itself and all connected
@@ -918,101 +923,101 @@ Falls er deaktiviert war, wird er aktiviert sowie alle Knoten,
 die (vorwärts) an ihm angeschlossen sind.</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="203"/>
+        <location filename="../src/ObjectInspector.ui" line="200"/>
         <source>activate
 plugin tree</source>
         <translation>aktiviere
 Plugin Baum</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="268"/>
+        <location filename="../src/ObjectInspector.ui" line="273"/>
         <source>Node-Comment</source>
         <translation>Knoten-Kommentar</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="109"/>
+        <location filename="../src/ObjectInspector.ui" line="106"/>
         <source>Tools</source>
         <translation>Werkzeuge</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="145"/>
+        <location filename="../src/ObjectInspector.ui" line="142"/>
         <source>reset selected parameter(s) to their defaults
 This deletes the parameter(s) from the parameter file.</source>
         <translation>setzt die gewählten Parameter auf ihren Standardwert zurück.
 Dies löscht die Parameter aus der Parameterdatei.</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="121"/>
+        <location filename="../src/ObjectInspector.ui" line="118"/>
         <source>Change priority of selected parameters</source>
         <translation>Priorität der gewählten Parameter anpassen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="227"/>
+        <location filename="../src/ObjectInspector.ui" line="224"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="233"/>
+        <location filename="../src/ObjectInspector.ui" line="230"/>
         <source>Priority</source>
         <translation>Priorität</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="246"/>
+        <location filename="../src/ObjectInspector.ui" line="243"/>
         <source>Filter by priority</source>
         <translation>nach Priorität filtern</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="253"/>
+        <location filename="../src/ObjectInspector.ui" line="250"/>
         <source>reset applied filters</source>
         <translation>setzt die angewandten Filter zurück</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="256"/>
+        <location filename="../src/ObjectInspector.ui" line="253"/>
         <source>reset filters</source>
         <translation>Filter zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="294"/>
+        <location filename="../src/ObjectInspector.ui" line="299"/>
         <source>Editing</source>
         <translation>Bearbeitung</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="309"/>
+        <location filename="../src/ObjectInspector.ui" line="314"/>
         <source>Add new parameter</source>
         <translation>neuen Parameter hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="312"/>
+        <location filename="../src/ObjectInspector.ui" line="317"/>
         <source>&amp;Add</source>
         <translation>&amp;Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="319"/>
+        <location filename="../src/ObjectInspector.ui" line="324"/>
         <source>Delete selected parameter</source>
         <translation>gewählte Parameter löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="322"/>
+        <location filename="../src/ObjectInspector.ui" line="327"/>
         <source>&amp;Delete</source>
         <translation>&amp;Entfernen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="329"/>
+        <location filename="../src/ObjectInspector.ui" line="334"/>
         <source>Delete all parameters</source>
         <translation>alle Parameter Löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="332"/>
+        <location filename="../src/ObjectInspector.ui" line="337"/>
         <source>&amp;Clear</source>
         <translation>Alle &amp;Löschen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="345"/>
+        <location filename="../src/ObjectInspector.ui" line="350"/>
         <source>use metadata</source>
         <translation>benutze Metainformationen</translation>
     </message>
     <message>
-        <location filename="../src/ObjectInspector.ui" line="355"/>
+        <location filename="../src/ObjectInspector.ui" line="360"/>
         <source>show editable parameters only</source>
         <translation>nur Parameter anzeigen</translation>
     </message>
@@ -1276,38 +1281,53 @@ oder Dateierweiterung (.so/.dll/...) angeben</translation>
         <translation>Verknüpfung mit: %1</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="648"/>
+        <location filename="../src/ParameterFileModel.cpp" line="520"/>
+        <source>Parameter</source>
+        <translation>Parameter</translation>
+    </message>
+    <message>
+        <location filename="../src/ParameterFileModel.cpp" line="522"/>
+        <source>Value</source>
+        <translation>Wert</translation>
+    </message>
+    <message>
+        <location filename="../src/ParameterFileModel.cpp" line="524"/>
+        <source>Priority</source>
+        <translation>Priorität</translation>
+    </message>
+    <message>
+        <location filename="../src/ParameterFileModel.cpp" line="643"/>
         <source>File %1 loaded.</source>
         <translation>Datei %1 geladen.</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="701"/>
+        <location filename="../src/ParameterFileModel.cpp" line="696"/>
         <source>Open File</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="702"/>
+        <location filename="../src/ParameterFileModel.cpp" line="697"/>
         <source>ParameterFiles (*.wrp);;All Files (*.*)</source>
         <translation>ParameterDateien (*.wrp);;All Files (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="705"/>
+        <location filename="../src/ParameterFileModel.cpp" line="700"/>
         <source>no file selected</source>
         <translation>keine Datei ausgewählt</translation>
     </message>
     <message>
+        <location filename="../src/ParameterFileModel.cpp" line="703"/>
         <location filename="../src/ParameterFileModel.cpp" line="708"/>
-        <location filename="../src/ParameterFileModel.cpp" line="713"/>
         <source>Error loading file</source>
         <translation>Fehler beim Laden der Datei</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="709"/>
+        <location filename="../src/ParameterFileModel.cpp" line="704"/>
         <source>File &lt;em&gt;%1&lt;/em&gt; does not exist or is no file!</source>
         <translation>Datei &lt;em&gt;%1&lt;/em&gt; existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="714"/>
+        <location filename="../src/ParameterFileModel.cpp" line="709"/>
         <source>File &lt;em&gt;%1&lt;/em&gt; is not readable!</source>
         <translation>Datei &lt;em&gt;%1&lt;/em&gt; ist nicht lesbar!</translation>
     </message>

@@ -25,9 +25,6 @@
        <verstretch>5</verstretch>
       </sizepolicy>
      </property>
-     <property name="mouseTracking">
-      <bool>true</bool>
-     </property>
      <property name="acceptDrops">
       <bool>true</bool>
      </property>
@@ -102,7 +99,7 @@
            <x>0</x>
            <y>0</y>
            <width>410</width>
-           <height>87</height>
+           <height>90</height>
           </rect>
          </property>
          <attribute name="label">
@@ -220,7 +217,7 @@ plugin tree</string>
            <x>0</x>
            <y>0</y>
            <width>410</width>
-           <height>79</height>
+           <height>90</height>
           </rect>
          </property>
          <attribute name="label">
@@ -264,6 +261,14 @@ plugin tree</string>
          </layout>
         </widget>
         <widget class="QWidget" name="pageComment">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>410</width>
+           <height>195</height>
+          </rect>
+         </property>
          <attribute name="label">
           <string>Node-Comment</string>
          </attribute>

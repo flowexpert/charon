@@ -146,6 +146,9 @@ private slots:
 
 	/// handle onlyParams checkbox changes
 	void on_onlyParams_toggled(bool state);
+
+	/// handle context menu of horizontal header
+	void setPrioColumnHidden(const bool& hide);
 	// \}
 
 	/// \name handle model events
@@ -174,6 +177,7 @@ private:
 
 	ParameterFileModel* _model;             ///< Used model to display
 	QMutex*             _commentFieldMutex; ///< lock for changes of comments
+	QAction*            _hidePrio;          ///< hide priority column
 };
 
 #endif /* OBJECTINSPECTOR_H_ */

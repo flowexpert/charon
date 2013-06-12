@@ -514,22 +514,17 @@ Qt::ItemFlags ParameterFileModel::flags(const QModelIndex& ind) const {
 QVariant ParameterFileModel::headerData(int section,
 		Qt::Orientation orientation, int role) const {
 
-	if (role == Qt::DisplayRole) {
-		if (orientation == Qt::Horizontal) {
-			switch (section) {
-			case 0:
-				return "Parameter";
-			case 1:
-				return "Value";
-			case 2:
-				return "Priority";
-			}
-		} else {
-			if ((section >= 0) && (section < _keys.size()))
-				return section;
+	if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
+		switch (section) {
+		case 0:
+			return tr("Parameter");
+		case 1:
+			return tr("Value");
+		case 2:
+			return tr("Priority");
 		}
 	}
-	return QVariant();
+	return QAbstractTableModel::headerData(section,orientation,role);
 }
 
 bool ParameterFileModel::insertRows(int row, int count,

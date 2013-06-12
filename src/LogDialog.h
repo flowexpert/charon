@@ -63,7 +63,7 @@ public:
 	/** \param msecs     time to wait
 	 *  \retval false    process still running (timeout)
 	 */
-	bool waitForFinished(int msecs=500);
+	bool waitForFinished(int msecs=1500);
 
 public slots:
 	/// handle process termination
