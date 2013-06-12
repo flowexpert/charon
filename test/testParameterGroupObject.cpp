@@ -37,11 +37,7 @@ size_t numouts=20;
 
 int testLoadInputSlots()
 {
-#ifdef CMAKE_INTDIR
-	PluginManager man(CHARON_PLUGINS "/" CMAKE_INTDIR);
-#else
 	PluginManager man(CHARON_PLUGINS, MODULE_DIR);
-#endif
 
 	man.loadParameterFile("TestParameteredGroupObject-parent.wrp");
 	ParameteredGroupObject* group=dynamic_cast<ParameteredGroupObject*>(man.getInstance("TestGroup"));
@@ -107,11 +103,7 @@ int testLoadInputSlots()
 
 int testLoadOutputSlots()
 {
-#ifdef CMAKE_INTDIR
-	PluginManager man(CHARON_PLUGINS "/" CMAKE_INTDIR);
-#else
 	PluginManager man(CHARON_PLUGINS, MODULE_DIR);
-#endif
 
 	man.loadParameterFile("TestParameteredGroupObject-parent.wrp");
 	ParameteredGroupObject* group=dynamic_cast<ParameteredGroupObject*>(man.getInstance("TestGroup"));
@@ -177,11 +169,7 @@ int testLoadOutputSlots()
 
 void createWorkFlowWithBundleAndDummyModule()
 {
-#ifdef CMAKE_INTDIR
-	PluginManager man(CHARON_PLUGINS "/" CMAKE_INTDIR);
-#else
 	PluginManager man(CHARON_PLUGINS, MODULE_DIR);
-#endif
 
 	ParameteredObject* in=man.createInstance("InputSlotBundle","inbundle");
 
