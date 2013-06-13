@@ -422,7 +422,12 @@ IF(USE_VIGRA)
 		${CHARON_UTILS_INCLUDE_DIR}/MaskCreator.hxx
 		PLUGIN_LISTS Plugins Plugins_Vigra
 	)
-
+        ADD_CHARON_PLUGIN(structuretexturedecomposition
+                StructureTextureDecomposition.cpp
+                ${CHARON_UTILS_INCLUDE_DIR}/StructureTextureDecomposition.h
+                ${CHARON_UTILS_INCLUDE_DIR}/StructureTextureDecomposition.hxx
+                PLUGIN_LISTS Plugins Plugins_Vigra
+        )
 	ADD_CHARON_PLUGIN(splineresize
 		SplineResize.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/SplineResize.h
