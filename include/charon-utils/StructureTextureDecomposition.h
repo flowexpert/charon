@@ -95,6 +95,10 @@ private:
    vigra::MultiArray<2, T > mdualvar_x,mdualvar_y;
    vigra::MultiArray<2,T> mIiter;
    vigra::MultiArray<2,T> mdiv_dualvar;
+   vigra::MultiArray<2, T > Ix,Iy;
+   vigra::MultiArray<2, T > locIiter;
+   vigra::MultiArray<2,T> divergence;
+   vigra::MultiArray<2, T > reprojection;
 };
 
 #endif // _STRUCTURETEXTUREDECOMPOSITION_H_

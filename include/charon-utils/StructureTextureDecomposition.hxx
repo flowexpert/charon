@@ -104,6 +104,13 @@ void StructureTextureDecomposition<T>::execute() {
     mdualvar_y.init(0);
     mdata_image2D=MultiArray<2,T>(new_shape,data_image().data());
     mIiter=mdata_image2D;
+
+
+    divergence.reshape(new_shape);
+    reprojection.reshape(new_shape);
+    Ix.reshape(new_shape);
+    Iy.reshape(new_shape);
+    locIiter.reshape(new_shape);
     if(!conditional_image.connected())
         computeDualVarDiv();
     else
@@ -189,10 +196,9 @@ template <typename T>
 void StructureTextureDecomposition<T>::computeDualVarDiv()
 {
     using namespace vigra::multi_math;
-    MultiArray<2, T > Ix(mIiter.shape()),Iy(mIiter.shape());
-    MultiArray<2, T > locIiter(mIiter.shape());
+
     double delta = 1.0/(4.0*theta());
-    MultiArray<2,T> divergence(mIiter.shape());
+
 
     double std_dev=0.5;
 
@@ -204,7 +210,7 @@ void StructureTextureDecomposition<T>::computeDualVarDiv()
     xderiv_k.push_back(smooth);
     yderiv_k.push_back(smooth);
     yderiv_k.push_back(deriv);
-    MultiArray<2, T > reprojection(mIiter.shape());
+
     for(int diter=0;diter<dual_iters();diter++)
     {
         sout<<"Dual iteration: "<<diter<<std::endl;
