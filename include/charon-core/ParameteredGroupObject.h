@@ -33,7 +33,7 @@
 //	void _removeAllSlots();
 //};
 
-class  charon_core_DLL_PUBLIC ParameteredGroupObject : public ParameteredObject
+class  charon_groups_DLL_PUBLIC ParameteredGroupObject : public ParameteredObject
 {
 public:
 	/// Default constructor.

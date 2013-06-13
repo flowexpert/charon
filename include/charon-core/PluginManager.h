@@ -124,7 +124,7 @@
  * builds and to false on release builds. Specifying this parameter manually
  * is useful only on unix builds where this mixture causes less or no problems.
  */
-class PluginManager: public PluginManagerInterface {
+class charon_plugins_DLL_PUBLIC PluginManager: public PluginManagerInterface {
 public:
 
 private:

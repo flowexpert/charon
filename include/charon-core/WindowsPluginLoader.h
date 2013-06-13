@@ -37,7 +37,7 @@
  * @see UnixPluginLoader
  * @see PluginManager
  */
-class WindowsPluginLoader: public AbstractPluginLoader {
+class charon_plugins_DLL_PUBLIC WindowsPluginLoader: public AbstractPluginLoader {
 private:
 	/**
 	 * Points to the loaded library

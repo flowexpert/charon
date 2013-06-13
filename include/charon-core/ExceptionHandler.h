@@ -22,6 +22,8 @@
 #ifndef EXCEPTIONHANDLER_H
 #define EXCEPTIONHANDLER_H
 
+#include <charon-core/DllEx.h>
+
 /// Routine to simplify exception handling during workflow executions.
 namespace ExceptionHandler {
 	/// Execute given function and catch exceptions.
@@ -32,7 +34,7 @@ namespace ExceptionHandler {
 	 *  \param[in] method   execution routine
 	 *  \returns return value of the given function
 	 */
-	int run(int (&method)());
+	charon_plugins_DLL_PUBLIC int run(int (&method)());
 
 	/// Execute given function and catch exceptions.
 	/** Exceptions are caught, error messages are printed to std::cerr.
@@ -42,14 +44,14 @@ namespace ExceptionHandler {
 	 *  \param[in] method   execution routine
 	 *  \return success if no exceptions, fail otherwise
 	 */
-	int run(void (&method)());
+	charon_plugins_DLL_PUBLIC int run(void (&method)());
 
 	/// execute given function and return EXIT_SUCCESS on exception catch
 	/** Exceptions are caught, error message is printed to sout.
 	 *  \param[in] method   execution routine
 	 *  \return success on exception catch, fail otherwise
 	 */
-	int checkRaise(void (&method)());
+	charon_plugins_DLL_PUBLIC int checkRaise(void (&method)());
 }
 
 #endif // EXCEPTIONHANDLER_H

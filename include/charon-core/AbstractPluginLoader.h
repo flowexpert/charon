@@ -37,7 +37,7 @@
  * Abstract base class for a plugin loader. If you want to develop an own
  * plugin loader, implement this class.
  */
-class AbstractPluginLoader {
+class charon_plugins_DLL_PUBLIC AbstractPluginLoader {
 protected:
 	/// The name of the Plugin (without prefix "lib" and without extension)
 	std::string pluginName;
