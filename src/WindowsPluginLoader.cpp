@@ -31,6 +31,7 @@
 
 #include <charon-core/WindowsPluginLoader.h>
 #include <charon-core/ParameterFile.h>
+#include <charon-core/configVersion.h>
 
 
 WindowsPluginLoader::WindowsPluginLoader(
@@ -95,6 +96,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 			
 			if (_versionCheck != PluginManagerInterface::PluginVersionIgnore) {
 				try {
+					std::string charonCoreVersion (CHARON_CORE_VERSION) ;
 					std::string noVersionMsg =  "The plugin contains no valid charon-core version information." ;
 				
 					// TODO: handle different version check levels (ignore,warn,discard)
@@ -157,7 +159,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 										(LPVOID*)&infoBuffer, 
 										&bufferLen); 
 						//check that the "ProductName" field is set to "Charon-Suite"
-						if(res == 0 && bufferLen == 0 && std::string("Charon-Suite") != infoBuffer) {
+						if(res == 0 || bufferLen == 0 || std::string("Charon-Suite") != infoBuffer) {
 							delete[] versionInfo;
 							delete[] subBlock;
 							throw PluginException( noVersionMsg, pluginName,
@@ -186,13 +188,13 @@ void WindowsPluginLoader::load() throw (PluginException) {
 							//we do a simple string comparison, as there is currently no plan for
 							//upward/backward compatibility
 							std::string version(infoBuffer) ;
-							if(ParameteredObject::charon_core_version != version) {
+							if(charonCoreVersion != version) {
 								delete[] versionInfo;
 								delete[] subBlock;
 								throw PluginException("Plugin \"" + pluginName
 									+ "\" was linked against charon-core version " + version
-									+ "\n(EE)\tbut we are using charon-core version " 
-									+ ParameteredObject::charon_core_version
+									+ "\n\tbut we are using charon-core version " 
+									+ charonCoreVersion
 									, pluginName,
 									PluginException::VERSION_MISSMATCH);
 							}
@@ -270,7 +272,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 			errorMsg += "function \"create\" missing in dll file";
 		}
 		else {
-			errorMsg += "Invalid plugin format.\n(EE) Description of the error:\n";
+			errorMsg += "Invalid plugin format.\nDescription of the error:\n";
 			errorMsg += lastErrorMsg;
 		}
 		throw PluginException(
@@ -298,7 +300,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 			errorMsg += "function \"create\" missing in dll file";
 		}
 		else {
-			errorMsg += "Invalid plugin format.\n(EE) Description of the error:\n";
+			errorMsg += "Invalid plugin format.\nDescription of the error:\n";
 			errorMsg += lastErrorMsg;
 		}
 		throw PluginException(
@@ -329,7 +331,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 		throw PluginException(
 			"This Plugin is build in DEBUG "
 			"configuration while charon-core is in RELEASE Mode.\n"
-			"(EE) Plugin will not be used as runtime libraries are incompatible",
+			"Plugin will not be used as runtime libraries are incompatible",
 			pluginName, PluginException::INCOMPATIBLE_BUILD_TYPE) ;
 #endif 
 		}
@@ -341,7 +343,7 @@ void WindowsPluginLoader::load() throw (PluginException) {
 		throw PluginException(
 			"This Plugin is build in RELEASE "
 			"configuration while charon-core is in DEBUG Mode.\n"
-			"(EE) Plugin will not be used as runtime libraries are incompatible",
+			"Plugin will not be used as runtime libraries are incompatible",
 			pluginName, PluginException::INCOMPATIBLE_BUILD_TYPE) ;
 #endif
 		}

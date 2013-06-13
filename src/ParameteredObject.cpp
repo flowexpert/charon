@@ -35,13 +35,10 @@
 #include <charon-core/StringTool.h>
 #include <charon-core/PluginManagerInterface.h>
 #include <charon-core/DataManagerParameterFile.hxx>
-#include <charon-core/configVersion.h>
 
 // Instantiate static variables.
 std::map<std::string, unsigned int> ParameteredObject::_genericClassNameCount;
 bool ParameteredObject::_createMetadata = false;
-
-std::string ParameteredObject::charon_core_version = CHARON_CORE_VERSION ;
 
 std::string ParameteredObject::_genericName() {
 	ParameteredObject::_genericClassNameCount[_className]++;
