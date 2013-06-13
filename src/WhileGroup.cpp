@@ -92,11 +92,10 @@ void WhileGroup::initializeGroup() {
 	for(;it!=objs.end();it++)
 	{
 		ParameteredObject* obj=it->second;
-		StatementIntf* statement=dynamic_cast<StatementIntf*>(obj);
+		StatementIntf* curStatement=dynamic_cast<StatementIntf*>(obj);
 
-		if(statement)
-		{
-			_innerWhilestatement=statement;
+		if (curStatement) {
+			_innerWhilestatement=curStatement;
 			break;
 		}
 
