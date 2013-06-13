@@ -373,10 +373,9 @@ bool VirtualInputSlot::onAddTarget(Slot *target) {
 	//target->_addTarget(dynamic_cast<Slot*>(this));
 	OutputSlotIntf* sl=dynamic_cast<OutputSlotIntf*>(target);
 	VirtualOutputSlot* partner=dynamic_cast<VirtualOutputSlot*>(_partner);
+#pragma message ("This is ugly, OutputSlot should not have to deal \
+with DataManager. Maybe put DataManager into VirtualSlot??")
 	if(sl) {
-		#ifndef MSVC
-			#warning This is ugly, OutputSlot should not have to deal with DataManager. Maybe put DataManager into VirtualSlot??
-		#endif
 		sl->setConfig(_parent->getName()+"."+_name);
 		partner->_managerconfig=sl->getConfig();
 		partner->_cacheType=sl->getCacheType();

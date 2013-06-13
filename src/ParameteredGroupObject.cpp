@@ -118,9 +118,7 @@ void ParameteredGroupObject::initialize()
 
 	initializeGroup();
 
-	#ifndef MSVC	
-		#warning need to load slotbundle connections
-	#endif
+	#pragma message ("need to load slotbundle connections")
 	//_inputs->loadConnection(ParameterFile(workFlowFile),_pluginMan);
 	//_outputs->loadConnection(ParameterFile(workFlowFile),_pluginMan);
 }
