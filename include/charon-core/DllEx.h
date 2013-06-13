@@ -47,16 +47,30 @@
 	#else
 		#define charon_core_DLL_PUBLIC __declspec(dllimport)
 	#endif
+	#ifdef charon_plugins_EXPORTS
+		#define charon_plugins_DLL_PUBLIC __declspec(dllexport)
+	#else
+		#define charon_plugins_DLL_PUBLIC __declspec(dllimport)
+	#endif
+	#ifdef charon_groups_EXPORTS
+		#define charon_groups_DLL_PUBLIC __declspec(dllexport)
+	#else
+		#define charon_groups_DLL_PUBLIC __declspec(dllimport)
+	#endif
 	#define charon_core_LOCAL
 	#define charon_DEPRECATED __declspec(deprecated)
 #else // UNIX
 	#if __GNUC__ >= 4
 		#define charon_core_PUBLIC __attribute__ ((visibility ("default")))
 		#define charon_core_DLL_PUBLIC __attribute__ ((visibility ("default")))
+		#define charon_plugins_DLL_PUBLIC __attribute__ ((visibility ("default")))
+		#define charon_groups_DLL_PUBLIC __attribute__ ((visibility ("default")))
 		#define charon_core_LOCAL __attribute__ ((visibility ("hidden")))
 	#else
 		#define charon_core_PUBLIC
 		#define charon_core_DLL_PUBLIC
+		#define charon_plugins_DLL_PUBLIC
+		#define charon_groups_DLL_PUBLIC
 		#define charon_core_LOCAL
 	#endif
 	#define charon_DEPRECATED __attribute__((deprecated))

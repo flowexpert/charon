@@ -102,17 +102,16 @@ protected:
 };
 
 class  ExceptSample : public ParameteredObject {
-
 public:
 	ExceptSample(const std::string& name = "") :
 		ParameteredObject("exceptsample", name,
 			"sample class which throws") {
 	}
-
+protected:
 	virtual void execute() {
 		raise(std::string("error"));
 	}
-} ;
+};
 
 
 /// Main test application.
@@ -216,15 +215,15 @@ int test() {
 
 	ExceptSample* exceptSample = new ExceptSample(std::string("instance")) ;
 	bool hasThrown = false ;
-	try
-	{
-		exceptSample->execute() ;
+	try {
+		exceptSample->run();
 	}
-	catch(std::runtime_error &)
-	{	hasThrown = true ;	}
-	catch(std::exception &)
-	{	;	}
-	assert(hasThrown) ;
+	catch(std::runtime_error &) {
+		hasThrown = true ;
+	}
+	if (!hasThrown) {
+		throw std::string("except sample has not thrown an runtime_error");
+	}
 
 	sample->getMetadata().save("sample.wrp") ;
 	outgen->getMetadata().save("outputgen.wrp") ;

@@ -131,7 +131,7 @@ IF(BUILD_TESTING)
 
 	# tests for DynamicModules
 	ADD_EXECUTABLE(dynamictest dynamictest.cpp)
-	TARGET_LINK_LIBRARIES(dynamictest charon-core charon-plugins)
+	TARGET_LINK_LIBRARIES(dynamictest charon-plugins)
 	ADD_TEST(
 		NAME DynamicModuleTest
 		COMMAND dynamictest
@@ -141,7 +141,7 @@ IF(BUILD_TESTING)
 
 	# tests for virtual slot data passing
 	ADD_EXECUTABLE(groupVirtualSlot groupVirtualSlot.cpp)
-	TARGET_LINK_LIBRARIES(groupVirtualSlot charon-core charon-plugins)
+	TARGET_LINK_LIBRARIES(groupVirtualSlot charon-groups)
 	ADD_TEST(
 		NAME groupVirtualSlot
 		COMMAND groupVirtualSlot
@@ -150,7 +150,7 @@ IF(BUILD_TESTING)
 	LIST(APPEND testTargets groupVirtualSlot)
 
 	ADD_EXECUTABLE(whilegrouptest testWhileGroup.cpp)
-	TARGET_LINK_LIBRARIES(whilegrouptest charon-core charon-plugins whilegroup)
+	TARGET_LINK_LIBRARIES(whilegrouptest whilegroup)
 	ADD_TEST(
 		NAME WhileGroupTest
 		COMMAND whilegrouptest
@@ -161,7 +161,7 @@ IF(BUILD_TESTING)
 
 	ADD_EXECUTABLE(testparametergroupobject testParameterGroupObject.cpp)
 
-	TARGET_LINK_LIBRARIES(testparametergroupobject charon-core charon-plugins)
+	TARGET_LINK_LIBRARIES(testparametergroupobject charon-groups)
 	ADD_TEST(
 		NAME ParameterGroupObjectTest
 		COMMAND testparametergroupobject

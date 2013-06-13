@@ -60,8 +60,7 @@ public:
 	 * @param n Name of the plugin
 	 * @param plpaths List of plugin search paths
 	 * @param lSuffix suffix which gets appended to the plugin name before a search
-	 * @param ignoreVersion if false, only plugins with matching
-	 *                      charon-core version information are loaded
+	 * @param versionCheck set how to handle version check on plugin load
 	 */
 	WindowsPluginLoader(
 		const std::string & n,

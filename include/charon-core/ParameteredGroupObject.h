@@ -20,12 +20,6 @@
 #include "PluginManager.h"
 #include "SlotBundleInterfaces.h"
 
-
-
-
-
-
-
 ///// The function getSlotVector exposes _outputSlots to the parent group.
 //class OutputSlotBundle: public SlotBundle
 //{
@@ -54,7 +48,7 @@ public:
 
 	/// plugin search paths which are used when executing this loop
 	ParameterList<std::string> pluginPaths;
-    Parameter< bool > debugSuffix;
+	Parameter< bool > debugSuffix;
 	Parameter<std::string> workFlowFile;
 
 	/// Default deconstructor
@@ -89,9 +83,6 @@ public:
 	/// Finalization
 	/** Does nothing. Can be used in derived classes. */
 	virtual void finalizeGroup();
-
-
-
 
 	/// LoopOutToInput
 	/** Loop the given output to an input.

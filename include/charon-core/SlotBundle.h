@@ -5,22 +5,10 @@
 /// Represents slot interface of group
 /** Loadable into a nested group workflow to expose slots to a global group.
  */
-#ifdef _MSC_VER
-#ifdef slotbundle_EXPORTS
-/// Visual C++ specific code
-#define slotbundle_DECLDIR __declspec(dllexport)
-#else
-#define slotbundle_DECLDIR __declspec(dllimport)
-#endif /*Export or import*/
-#else
-/// Not needed without MSVC
-#define slotbundle_DECLDIR
-#endif
-
 class VirtualOutputSlot ;
 class VirtualInputSlot ;
 
-class slotbundle_DECLDIR SlotBundle: public ParameteredObject,public SlotBundleIntf
+class charon_groups_DLL_PUBLIC SlotBundle: public ParameteredObject,public SlotBundleIntf
 {
 public:
 	/// Default constructor.

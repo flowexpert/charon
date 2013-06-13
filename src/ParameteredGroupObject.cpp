@@ -21,8 +21,8 @@ ParameteredGroupObject::ParameteredGroupObject(const std::string &className, con
 	:ParameteredObject(className,name,doc)
 {
 	_addParameter(pluginPaths,"pluginPaths","The paths where the plugins are stored.","string");
-    _addParameter<bool>(debugSuffix,"debugSuffix","Load debug plugins suffixed with '_d'",1);
-    _addParameter(workFlowFile,"workflowfile","The workflow contained in this group","FileOpen");
+	_addParameter<bool>(debugSuffix,"debugSuffix","Load debug plugins suffixed with '_d'",1);
+	_addParameter(workFlowFile,"workflowfile","The workflow contained in this group","FileOpen");
 	_pluginMan=0;
 	_inputs=0;
 	_outputs=0;
@@ -61,24 +61,20 @@ void ParameteredGroupObject::initialize()
 			_removeOutputSlot(out->getName());
 		}
 	}
+
 	_inputs=0;
-
 	_outputs=0;
-	if(_pluginMan!=0)
-	{
-	_pluginMan->reset();
-	delete _pluginMan;
-
+	if (_pluginMan!=0) {
+		_pluginMan->reset();
+		delete _pluginMan;
+		_pluginMan = 0;
 	}
-    _pluginMan=new PluginManager(pluginPaths(),debugSuffix());
 
-
-
+	_pluginMan = new PluginManager(pluginPaths(),debugSuffix());
 	_pluginMan->loadParameterFile(workFlowFile());
+	const std::map<std::string, ParameteredObject*>& objs=_pluginMan->getObjectList();
 
-	std::map<std::string, ParameteredObject *> objs=_pluginMan->getObjectList();
-
-	std::map<std::string, ParameteredObject *>::iterator it=objs.begin();
+	std::map<std::string, ParameteredObject *>::const_iterator it=objs.begin();
 	for(;it!=objs.end();it++)
 	{
 		ParameteredObject* obj=it->second;

@@ -27,30 +27,14 @@
 #include "ParameteredObject.h"
 
 /// Interface for a plugin manager.
-class PluginManagerInterface {
-protected:
-	/// Saves currently existing instances
-	std::map<std::string, ParameteredObject *> objects;
-
-	bool _initializePluginOnLoad;
-
+class charon_core_PUBLIC PluginManagerInterface {
 public:
-	/// Default Constructor
-	PluginManagerInterface() {}
-
 	/// Get an existing instance of a loaded plugin.
 	/** \param instanceName Name of the instance
 	 *  \return Pointer to the requested instance
 	 */
 	virtual ParameteredObject*
 			getInstance(const std::string & instanceName) const = 0;
-
-	/// Get names of existing instances
-	/** \return Map containing all existing instances */
-	virtual const std::map<std::string, ParameteredObject *>&
-			getObjectList() const {
-		return objects;
-	}
 
 	/// Recurse into object list and find connected objects.
 	/** This is based on the content of the given ParameterFile,
@@ -65,21 +49,15 @@ public:
 	 *  \param pf           ParameterFile to read connections from.
 	 *  \returns            set of connected object names
 	 */
-	virtual std::set<std::string> getConnected(
+	virtual std::set<std::string> getConnected (
 			const std::string & root,
 			const ParameterFile & pf) const = 0;
 
 	/// Default destructor
-	virtual ~PluginManagerInterface() {
-	}
+	virtual ~PluginManagerInterface() {}
 
-	bool initializePluginOnLoad() const {
-		return _initializePluginOnLoad;
-	}
-
-	void setInitiailizePluginOnLoad (bool initOnLoad) {
-		_initializePluginOnLoad = initOnLoad;
-	}
+	virtual bool initializePluginOnLoad() const = 0;
+	virtual void setInitiailizePluginOnLoad (bool initOnLoad) = 0;
 
 	/// info how to handle version information
 	enum PluginVersionCheckLevel {
@@ -87,6 +65,12 @@ public:
 		PluginVersionWarn    = 1,
 		PluginVersionDiscard = 2
 	};
+
+	/// Converts template_type to std::string
+	/** \param t            template type to convert
+	 *  \returns            string representation of t */
+	virtual std::string templateTypeToString(
+			ParameteredObject::template_type t) const = 0;
 };
 
 #endif /* PLUGINMANAGERINTERFACE_H_ */

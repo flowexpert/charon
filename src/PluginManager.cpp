@@ -173,9 +173,19 @@ ParameteredObject * PluginManager::getInstance(
 
 ParameteredObject* PluginManager::createInstance(
 		std::string pluginName, ParameteredObject::template_type t,
-		const std::string& instanceName)
+		std::string instanceName)
 		throw (AbstractPluginLoader::PluginException) {
 	pluginName = StringTool::toLowerCase(pluginName);
+	if (instanceName == "") {
+		// generate generic name
+		instanceName = pluginName + "1";
+		int instNumber = 1;
+		while (objects.find(instanceName) != objects.end()) {
+			std::ostringstream nameGen;
+			nameGen << pluginName << ++instNumber;
+			instanceName = nameGen.str();
+		}
+	}
 	if (instanceName == "" || objects.find(instanceName) == objects.end()) {
 		if (_loadedPlugins.find(pluginName) == _loadedPlugins.end()) {
 			try {
@@ -204,11 +214,7 @@ ParameteredObject* PluginManager::createInstance(
 ParameteredObject * PluginManager::createInstance(
 		const std::string & pluginName, const std::string & instanceName)
 		throw (AbstractPluginLoader::PluginException) {
-	try {
-		return createInstance(pluginName, _defaultTemplateType, instanceName);
-	} catch (AbstractPluginLoader::PluginException e) {
-		throw e;
-	}
+	return createInstance(pluginName, _defaultTemplateType, instanceName);
 }
 
 void PluginManager::destroyInstance(ParameteredObject* toDestroy)
@@ -312,7 +318,7 @@ void PluginManager::loadParameterFile(const std::string & path) {
 
 void PluginManager::saveParameterFile(ParameterFile & pf) const {
 	pf.set<std::string> ("global.templatetype",
-			ParameteredObject::templateTypeToString(_defaultTemplateType));
+			templateTypeToString(_defaultTemplateType));
 
 	// load list of all connected objects
 	if (objects.size() > 0) {
@@ -322,8 +328,7 @@ void PluginManager::saveParameterFile(ParameterFile & pf) const {
 		for (objIter = objects.begin(); objIter != objects.end(); objIter++) {
 			//Save template type parameter if unqeual to _defaultTemplateType
 			if (objIter->second->getTemplateType()
-					!= ParameteredObject::templateTypeToString(
-							_defaultTemplateType)) {
+					!= templateTypeToString(_defaultTemplateType)) {
 				pf.set<std::string> (objIter->second->getName()
 						+ ".templatetype", objIter->second->getTemplateType());
 			}
@@ -812,10 +817,17 @@ const std::vector<std::string>& PluginManager::getPluginPaths() const {
 	return pluginPaths;
 }
 
-void PluginManager::insertInstance(ParameteredObject *instance)
-{
+void PluginManager::insertInstance(ParameteredObject *instance) {
 	assert(instance);
-	objects[instance->getName()]=instance;
+	if (objects.find(instance->getName()) != objects.end()) {
+		throw std::runtime_error(
+			std::string("attempt to insert an instance named ")
+				+ instance->getName()
+				+ "to a PluginManager that already handles "
+				"an instance with the same name!");
+	}
+	objects.insert(std::pair<std::string,ParameteredObject*>(
+			instance->getName(),instance));
 }
 
 bool PluginManager::isInternal(ParameteredObject* /*obj*/) {
@@ -957,3 +969,26 @@ void PluginManager::createDynamicMetadata(const std::string& pluginName,
 	}
 	sout << std::endl;
 }
+
+bool PluginManager::initializePluginOnLoad() const {
+	return _initializePluginOnLoad;
+}
+
+void PluginManager::setInitiailizePluginOnLoad(bool initOnLoad) {
+	_initializePluginOnLoad = initOnLoad;
+}
+
+std::string PluginManager::templateTypeToString(
+							ParameteredObject::template_type t) const {
+	switch (t) {
+	case ParameteredObject::TYPE_DOUBLE:
+		return "double";
+	case ParameteredObject::TYPE_FLOAT:
+		return "float";
+	case ParameteredObject::TYPE_INT:
+		return "int";
+	default:
+		return "double";
+	}
+}
+

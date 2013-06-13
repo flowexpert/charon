@@ -45,8 +45,6 @@
 #include "Slots.h"
 #include "DllEx.h"
 
-
-
 class PluginManagerInterface;
 
 /// Base class for serializable objects
@@ -64,29 +62,14 @@ class PluginManagerInterface;
 
 class charon_core_DLL_PUBLIC ParameteredObject {
 private:
-
-	/// status of initialization
-	bool _initialized;
-
-	/// Count number of parametered objects with different class names.
-	static std::map<std::string, unsigned int> _genericClassNameCount;
-
 	/// Specifies if the ParameteredObject should create metadata information
 	static bool _createMetadata;
 
 	/// Class tracking.
 	/** This parameterfile is used for metadata generation
-	 *  and stores the class names with their parameters
-	 *  and slots.
+	 *  and stores the name of this class with its parameters and slots.
 	 */
 	ParameterFile _metadata;
-
-	/// Create unique name.
-	/** The name consists of the class name and a number.
-	 *  The number is increased on every function call.
-	 *  \returns unique name
-	 */
-	std::string charon_core_LOCAL _genericName();
 
 	/// Class name.
 	std::string _className;
@@ -102,6 +85,9 @@ private:
 
 	/// Output slots.
 	std::map<std::string, Slot*> _outputs;
+
+	/// status of initialization
+	bool _initialized;
 
 	/// status of execution (set to true during ParameteredObject::execute())
 	bool _executed;
@@ -274,10 +260,12 @@ protected:
 
 	/// Default constructor.
 	/** Init class name with given string.
-	 *  Also generates a unique instance name if necessary.
+	 *  If no instance name is given, a dummy name "[className]0" is assumed.
+	 *  This name is not guaranteed to be unique.
+	 *  For auto-generation of unique names, use a PluginManager.
 	 *  \param className    Initialization value for className property.
 	 *  \param name         Instance name (auto generation if empty)
-	 *  \param doc  Class docstring (for metadata)
+	 *  \param doc          Class docstring (for metadata)
 	 */
 	ParameteredObject(const std::string& className,
 		const std::string& name = "", const std::string& doc = "");
@@ -327,7 +315,7 @@ public:
 		TYPE_INT = 2     ///< The template type of the instance is integer
 	};
 
-	/// defined build type, see static members for options
+	/// defined build type
 	enum build_type {
 		/// The build type was not defined explicitly,
 		/// make no assumptions about the release/debug configuration
@@ -335,12 +323,6 @@ public:
 		DEBUG_BUILD = 1,     ///< the object was compiled in debug mode
 		RELEASE_BUILD = 2    ///< the object was compiled in release mode
 	};
-
-	/// Converts template_type to std::string
-	/** \param t            template type to convert
-	 *  \returns            string representation of t
-	 */
-	static std::string templateTypeToString(template_type t);
 
 	/// Delete parametered object.
 	/** Updates the parametered object list (_objectList)
@@ -388,9 +370,12 @@ public:
 	/// get execution status
 	bool executed() const {
 		return _executed;
-    }
-    // active inactive button
-    Parameter < bool > _active;
+	}
+
+	/// ParameteredObject activation state
+	/** If this is set to false, the Plugin will not be executed.
+	 */
+	Parameter < bool > _active;
 
 
 	/// deprecated macro
@@ -572,7 +557,6 @@ public:
 
 	bool isDynamic();
 	//  \}
-
 };
 
 /// for transition to ParameteredObject::template_type
@@ -598,7 +582,7 @@ public:
 
 	virtual const std::string getTemplateType() const;
 
-        virtual ~TemplatedParameteredObject();
+	virtual ~TemplatedParameteredObject();
 };
 
 

@@ -2,13 +2,17 @@
 #define SLOTBUNDLEINTERFACES_H
 #include <vector>
 
+#include <charon-core/DllEx.h>
+
 class VirtualInputSlot;
 class VirtualOutputSlot;
+
 /// Interface for SlotBundle
-class SlotBundleIntf
-{
+class charon_core_PUBLIC SlotBundleIntf {
 public:
-	virtual ~SlotBundleIntf(){};
+	virtual ~SlotBundleIntf(){
+	}
+
 	/// Size of bundle
 	virtual int size()=0;
 };
@@ -17,7 +21,9 @@ public:
 class InputSlotBundleIntf
 {
 public:
-	virtual ~InputSlotBundleIntf(){};
+	virtual ~InputSlotBundleIntf() {
+	}
+
 	/// get virtual inputs to be exposed in parent workflow.
 	virtual std::vector<VirtualInputSlot*>& getSlotVector()=0;
 
@@ -29,7 +35,9 @@ public:
 class OutputSlotBundleIntf
 {
 public:
-	virtual ~OutputSlotBundleIntf(){};
+	virtual ~OutputSlotBundleIntf(){
+	}
+
 	/// get virtual inputs to be exposed in parent workflow.
 	virtual std::vector<VirtualOutputSlot*>& getSlotVector()=0;
 	/// get virtual inputs to be exposed in group workflow.

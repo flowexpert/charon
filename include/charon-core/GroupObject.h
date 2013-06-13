@@ -16,8 +16,7 @@
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file GroupObject.h
- *  \author <a href="mailto:gerald.mwangi@gmx.de">
- *      Gerald Mwangi</a>
+ *  \author <a href="mailto:gerald.mwangi@gmx.de">Gerald Mwangi</a>
  *  \date 15.10.2012
  *  Declaraion of parameter class GroupObject.
  */

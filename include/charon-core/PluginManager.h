@@ -223,6 +223,11 @@ private:
 	/// exclude list for metadata generation
 	std::vector<std::string> _excludeList;
 
+	/// Saves currently existing instances
+	std::map<std::string, ParameteredObject *> objects;
+
+	bool _initializePluginOnLoad;
+
 public:
 	/// default lib suffix
 #ifdef NDEBUG
@@ -260,8 +265,7 @@ public:
 	 * \param debugSuffix Look for libraries with debug suffix (<tt>_d</tt>),
 	 *                    fallback to libs without suffix.
 	 * \param initializeOnLoad ask Gerald
-	 * \param ignoreVersion if false, only plugins with matching
-	 *                      charon-core version information are loaded
+	 * \param versionInfo set how to handle version check on plugin load
 	 */
 	PluginManager(
 			const std::string& globalPath,
@@ -329,6 +333,13 @@ public:
 	ParameteredObject* getInstance(const std::string & instanceName) const
 			throw (AbstractPluginLoader::PluginException);
 
+	/// Get names of existing instances
+	/** \return Map containing all existing instances */
+	const std::map<std::string, ParameteredObject *>&
+			getObjectList() const {
+		return objects;
+	}
+
 	/**
 	 * Creates a new instance of a plugin.
 	 * If the requested plugin isn't loaded yet, PluginManager will try to load
@@ -353,13 +364,16 @@ public:
 	ParameteredObject* createInstance(
 		std::string pluginName,
 		ParameteredObject::template_type t,
-		const std::string& instanceName = "")
+		std::string instanceName = "")
 			throw (AbstractPluginLoader::PluginException);
 
-	/**
-	  * Insert an existing parametered object instance.
-	  * @warning instance will be managed by pluginmanager.
-	  */
+	/// Insert an existing parametered object instance.
+	/** \warning Inserted instance will be managed by pluginmanager.
+	 *      E. g. it will be deleted on PluginManager::reset().
+	 *      The instance name must be unique within the PluginManager scope.
+	 *      On name conflicts, a runtime_error will be thrown.
+	 *  \param instance Instance to insert.
+	 */
 	void insertInstance(ParameteredObject* instance);
 
 	/**
@@ -630,6 +644,11 @@ public:
 	 *  \returns list of executed objects
 	 */
 	std::list<ParameteredObject*> determineExecutionOrder();
+
+	virtual bool initializePluginOnLoad() const;
+	virtual void setInitiailizePluginOnLoad (bool initOnLoad);
+	virtual std::string templateTypeToString(
+			ParameteredObject::template_type t) const;
 };
 
 #endif /* PLUGINMANAGER_H_ */
