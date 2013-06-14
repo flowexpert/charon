@@ -39,7 +39,7 @@ int testLoadInputSlots()
 {
 	PluginManager man(CHARON_PLUGINS, MODULE_DIR);
 
-	man.loadParameterFile("TestParameteredGroupObject-parent.wrp");
+	man.loadParameterFile(std::string("TestParameteredGroupObject-parent.wrp"));
 	ParameteredGroupObject* group=dynamic_cast<ParameteredGroupObject*>(man.getInstance("TestGroup"));
 	if(!group)
 	{
@@ -105,7 +105,7 @@ int testLoadOutputSlots()
 {
 	PluginManager man(CHARON_PLUGINS, MODULE_DIR);
 
-	man.loadParameterFile("TestParameteredGroupObject-parent.wrp");
+	man.loadParameterFile(std::string("TestParameteredGroupObject-parent.wrp"));
 	ParameteredGroupObject* group=dynamic_cast<ParameteredGroupObject*>(man.getInstance("TestGroup"));
 	if(!group)
 	{

@@ -30,35 +30,21 @@
 /// String representation generation.
 /// This class gives a string representation for simple types as
 /// int, uint, double, float etc.
-class charon_core_DLL_PUBLIC TypeDetector
-{
-private:
-	/// Map that stores the type dictionary.
-	std::map<std::string, std::string> _typemap;
-
-	/// Forbid instanciation.
-	charon_core_LOCAL TypeDetector();
-
-	/// Instance pointer.
-	static TypeDetector* _instance;
-
-public:
-	/// Get a TypeDetector instance.
-	/** If no instance exists, this creates one.
-	 *  \returns sigleton instance
-	 */
-	static const TypeDetector& instance();
-
-	/// Cleanup, free memory
-	static void destroy();
-
+namespace TypeDetector {
 	/// Get type representation.
 	/** Known types will result the proper representation,
 	 *  unknown types will cause the original string to be returned.
 	 *  \param typeInfo     result of typeid(bla).name()
 	 *  \returns            string representation
 	 */
-	std::string type(const std::string& typeInfo) const;
-};
+	charon_core_DLL_PUBLIC
+	std::string type(const std::string& typeInfo);
+
+	/// deprecated, for compatibility, does nothing.
+	/** Has been used in tests sometimes.
+	 *  Please remove calls to this function. */
+	charon_core_DLL_PUBLIC charon_DEPRECATED
+	void destroy();
+}
 
 #endif /*TYPEDETECTOR_H_*/

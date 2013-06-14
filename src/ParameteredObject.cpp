@@ -36,14 +36,13 @@
 #include <charon-core/PluginManagerInterface.h>
 #include <charon-core/DataManagerParameterFile.hxx>
 
-// Instantiate static variables.
-bool ParameteredObject::_createMetadata = false;
-
 ParameteredObject::ParameteredObject(const std::string& className,
 		const std::string& name, const std::string& description) :
+	_createMetadata(true),
 	_className(className), _instanceName(name),
 	_initialized(false), _executed(false) {
 
+	// avoid empty instance name, use dummy value if needed
 	if (_instanceName == "") {
 		_instanceName = _className + "0";
 	}
@@ -70,14 +69,14 @@ ParameteredObject::ParameteredObject(const std::string& className,
 }
 
 ParameteredObject::~ParameteredObject() {
-		if(_initialized)
-			finalize();
+	if(_initialized)
+		finalize();
 }
 
 const ParameterFile& ParameteredObject::getMetadata() {
 	if (!_createMetadata) {
 		sout << "(WW) requesting metadata, "
-				"but metadata generation was disabled." << std::endl;
+			"but metadata cache has been cleared." << std::endl;
 	}
 	return _metadata;
 }
@@ -565,12 +564,9 @@ const std::map<std::string, AbstractParameter*>&
 	return _parameters;
 }
 
-void ParameteredObject::setCreateMetadata(bool c) {
-	_createMetadata = c;
-}
-
-bool ParameteredObject::getCreateMetadata() {
-	return _createMetadata;
+void ParameteredObject::clearMetadata() {
+	_createMetadata = false;
+	_metadata.clear();
 }
 
 void ParameteredObject::raise(const std::string& message) const

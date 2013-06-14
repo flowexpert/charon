@@ -294,6 +294,7 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 				ParameteredObject* obj = createInstance(
 					pluginName, templateType, instanceName);
 				obj->prepareDynamicInterface(paramFile);
+				obj->clearMetadata();
 			}
 		}
 	} catch (AbstractPluginLoader::PluginException e) {
@@ -312,6 +313,7 @@ void PluginManager::loadParameterFile(const ParameterFile & paramFile) {
 		objIter->second->loadSlots(paramFile, this);
 	}
 }
+
 void PluginManager::loadParameterFile(const std::string & path) {
 	loadParameterFile(ParameterFile(path));
 }
@@ -686,11 +688,9 @@ void PluginManager::_generateMetadataForPlugin(
 		if (!alreadyLoaded) {
 			loadPlugin(pluginName);
 		}
-		ParameteredObject::setCreateMetadata(true);
 		ParameteredObject* curInst = createInstance(pluginName);
 		curInst->getMetadata().save(filename);
 		destroyInstance(curInst);
-		ParameteredObject::setCreateMetadata(false);
 
 		if (!alreadyLoaded) {
 			unloadPlugin(pluginName);
@@ -879,7 +879,6 @@ void PluginManager::createDynamicMetadata(const ParameterFile& paramFile,
 
 	std::vector<std::string> keys = paramFile.getKeyList();
 
-	ParameteredObject::setCreateMetadata(true);
 	try {
 		// Load Plugins and create _instances
 		for (unsigned int i = 0; i < keys.size(); i++) {
@@ -917,14 +916,6 @@ void PluginManager::createDynamicMetadata(const ParameterFile& paramFile,
 		sout << "(EE) caught unknown exception during load" << std::endl;
 	}
 	sout << std::endl;
-
-	ParameteredObject::setCreateMetadata(false);
-}
-
-void PluginManager::createDynamicMetadata(const std::string& paramFile,
-	const std::string& filePrefix) {
-
-		createDynamicMetadata(ParameterFile(paramFile), filePrefix);
 }
 
 void PluginManager::createDynamicMetadata(const std::string& pluginName,
@@ -942,12 +933,10 @@ void PluginManager::createDynamicMetadata(const std::string& pluginName,
 			loadPlugin(pluginName);
 		}
 
-		ParameteredObject::setCreateMetadata(true);
 		ParameteredObject* obj = createInstance(pluginName);
 		obj->prepareDynamicInterface(paramFile);
 		obj->getMetadata().save(fileName);
 		destroyInstance(obj);
-		ParameteredObject::setCreateMetadata(false);
 
 		if (!alreadyLoaded) {
 			unloadPlugin(pluginName);

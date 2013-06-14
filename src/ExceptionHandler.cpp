@@ -53,7 +53,6 @@ int ExceptionHandler::run(int (&method)()) {
 	catch (...) {
 		std::cerr << "\n(EE) Caught unknown exception." << std::endl;
 	}
-	TypeDetector::destroy();
 	return ret;
 }
 
@@ -85,7 +84,6 @@ int ExceptionHandler::run(void (&method)()) {
 		std::cerr << "\n(EE) Caught unknown exception." << std::endl;
 		excpt = true;
 	}
-	TypeDetector::destroy();
 	return excpt ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
@@ -117,7 +115,6 @@ int ExceptionHandler::checkRaise(void (&method)()) {
 		sout << "(II) Caught unknown exception." << std::endl;
 		excpt = true;
 	}
-	TypeDetector::destroy();
 	if (excpt) {
 		return EXIT_SUCCESS;
 	}

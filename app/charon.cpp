@@ -255,7 +255,6 @@ void cleanup() {
 	if (Config::log.is_open()) {
 		Config::log.close();
 	}
-	TypeDetector::destroy();
 	if (Config::verbose) {
 		std::cout << "Cleanup finished. Bye" << std::endl;
 	}

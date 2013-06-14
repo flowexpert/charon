@@ -63,11 +63,11 @@ namespace DataManagers {
 			public Slot::DataManager<T> {
 	private:
 		/// parameter file to store parameter
-		ParameterFile pf;
+		ParameterFile _pf;
 		/// paraneter file name
-		static const std::string filename;
+		const std::string _filename;
 		/// parameter name in the file
-		std::string paramName;
+		std::string _paramName;
 	public:
 		/// create manager
 		/** \param slot   slot to generate manager for
@@ -82,41 +82,40 @@ namespace DataManagers {
 }
 
 template<typename T>
-const std::string DataManagers::DataManagerParameterFile<T>::filename
-	= "lastRunParameterCache.wrp";
-
-template<typename T>
 DataManagers::DataManagerParameterFile<T>::DataManagerParameterFile(
-	const Slot& slot, const std::string& config) {
-	if (!FileTool::exists(filename)) {
-		pf.save(filename);
+	const Slot& slot, const std::string& config) :
+		_filename("lastRunParameterCache.wrp")
+{
+	if (!FileTool::exists(_filename)) {
+		_pf.save(_filename);
 	}
 	if (config.size()) {
-		paramName = config;
+		_paramName = config;
 	}
 	else {
-		paramName = slot.getParent().getName() + "." + slot.getName();
+		_paramName = slot.getParent().getName() + "." + slot.getName();
 	}
 }
 
 template<typename T>
 void DataManagers::DataManagerParameterFile<T>::setData(const T& data) {
-	pf.load(filename);
-	pf.set<T>(paramName, data);
-	pf.save(filename);
-	pf.clear();
+	_pf.load  (_filename);
+	_pf.set<T>(_paramName, data);
+	_pf.save  (_filename);
+	_pf.clear ();
 }
 
 template<typename T>
 T DataManagers::DataManagerParameterFile<T>::getData() {
-	pf.load(filename);
-	return pf.get<T>(paramName);
-	pf.clear();
+	_pf.load(_filename);
+	T val = _pf.get<T>(_paramName);
+	_pf.clear();
+	return val;
 }
 
 template<typename T>
 std::string DataManagers::DataManagerParameterFile<T>::getConfig() const {
-	return paramName;
+	return _paramName;
 }
 
 /// \name factory specializations using the DataManagerParameterFile

@@ -27,7 +27,18 @@
  */
 /** \def charon_core_DLL_PUBLIC
  *  Preprocessor macro to define this class/function as public visible,
- *  i.e. to be exported to the dll import library and to the ELF dynamic section
+ *  i.e. to be exported to the charon-core dll import library
+ *  and to the ELF dynamic section
+ */
+/** \def charon_plugins_DLL_PUBLIC
+ *  Preprocessor macro to define this class/function as public visible,
+ *  i.e. to be exported to the charon-plugins dll import library
+ *  and to the ELF dynamic section
+ */
+/** \def charon_groups_DLL_PUBLIC
+ *  Preprocessor macro to define this class/function as public visible,
+ *  i.e. to be exported to the charon-groups dll import library
+ *  and to the ELF dynamic section
  */
 /** \def charon_core_LOCAL
  *  Preprocessor macro to define this class/function as hidden,

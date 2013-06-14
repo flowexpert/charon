@@ -76,7 +76,7 @@ Parameter<T>::operator T() const {
 
 template <typename T>
 std::string Parameter<T>::guessType() const {
-	return TypeDetector::instance().type(typeid(T).name());
+	return TypeDetector::type(typeid(T).name());
 }
 
 template <typename T>
@@ -168,7 +168,7 @@ const std::vector<T>& ParameterList<T>::operator()() const {
 
 template <typename T>
 std::string ParameterList<T>::guessType() const {
-	return TypeDetector::instance().type(typeid(T).name()) + " list";
+	return TypeDetector::type(typeid(T).name()) + " list";
 }
 
 template <typename T>

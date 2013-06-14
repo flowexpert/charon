@@ -120,8 +120,6 @@ int test() {
 	sout.assign(std::cout);
 
 	ParameterFile testfile;
-	ParameteredObject::setCreateMetadata(true);
-
 	Sample* sample = new Sample(     "sample");
 	assert(sample->par1 == 20);
 	assert(sample->getName()      == "sample");
@@ -232,7 +230,6 @@ int test() {
 	delete sample;
 	delete outgen;
 	delete outgen2;
-	TypeDetector::destroy();
 
 	// check metadata generation
 

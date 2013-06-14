@@ -91,7 +91,7 @@ bool AbstractSlot<T>::_removeTarget(Slot* target) {
 
 template<class T>
 std::string AbstractSlot<T>::guessType() const {
-	return TypeDetector::instance().type(typeid(T).name());
+	return TypeDetector::type(typeid(T).name());
 }
 
 template<class T>

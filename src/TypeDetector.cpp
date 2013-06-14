@@ -21,44 +21,24 @@
  */
 #include <charon-core/TypeDetector.h>
 
-// init static pointer
-TypeDetector* TypeDetector::_instance = 0;
-
-TypeDetector::TypeDetector()
-{
-    _typemap[typeid(bool).name()]                     = "bool";
-    _typemap[typeid(int).name()]                      = "int";
-    _typemap[typeid(unsigned int).name()]             = "uint";
-    _typemap[typeid(char).name()]                     = "char";
-    _typemap[typeid(float).name()]                    = "float";
-    _typemap[typeid(double).name()]                   = "double";
-    _typemap[typeid(long int).name()]                 = "long";
-    _typemap[typeid(unsigned long int).name()]        = "ulong";
-    // long long int not in ISO C++ 1998
-    //_typemap[typeid(long long int).name()]          = "longlong";
-    //_typemap[typeid(unsigned long long int).name()] = "ulonglong";
-    _typemap[typeid(std::string).name()]              = "string";
-}
-
-const TypeDetector& TypeDetector::instance() {
-    if(!_instance)
-        _instance = new TypeDetector();
-    return *_instance;
-}
-
-std::string TypeDetector::type(const std::string& info) const {
-    std::map<std::string, std::string>::const_iterator entry;
-    entry = _typemap.find(info);
-    if(entry == _typemap.end())
-        return info;
-    else
-        return entry->second;
+std::string TypeDetector::type(const std::string& info) {
+	if (info == typeid(           double).name())  { return "double"; }
+	if (info == typeid(            float).name())  { return "float";  }
+	if (info == typeid(              int).name())  { return "int";    }
+	if (info == typeid(      std::string).name())  { return "string"; }
+	if (info == typeid(             bool).name())  { return "bool";   }
+	if (info == typeid(     unsigned int).name())  { return "uint";   }
+	if (info == typeid(             char).name())  { return "char";   }
+	if (info == typeid(         long int).name())  { return "long";   }
+	if (info == typeid(unsigned long int).name())  { return "ulong";  }
+	// long long int not in ISO C++ 1998
+	/*
+	if (info == typeid(         long long int).name()) { return "longlong"; }
+	if (info == typeid(unsigned long long int).name()) { return "ulonglong"; }
+	*/
+	// else
+	return info;
 }
 
 void TypeDetector::destroy() {
-	if (_instance) {
-		delete _instance;
-		_instance = 0;
-	}
 }
-

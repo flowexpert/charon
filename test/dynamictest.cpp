@@ -103,8 +103,6 @@ protected:
 };
 
 void manualTest() {
-	ParameteredObject::setCreateMetadata(true);
-
 	sout << "### Manual Test ###" << std::endl << std::endl;
 
 	DummyDynamicInputModule modIn("input");

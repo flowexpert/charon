@@ -56,14 +56,20 @@ class PluginManagerInterface;
  *  \remarks
  *  -   Object names cannot be changed after instantiation because this
  *      could mess up the parameter file store.
- *  -   Objects know of each other, pointers to all existing objects
- *      can be retrieved out of the ParameteredObject::_objectList.
+ *
+ * <h3>Metadata Generation</h3>
+ * Per default, all generated plugins are created with their metadata
+ * description stored within the ParameteredObject.
+ * It can be retrieved via getMetadata().
+ * Calling clearMetadata(), the metadata cache is cleared e.g. to save space.
+ * Usually, you do not have to care about this, since metadata generation
+ * is handled by the PluginManager.
  */
 
 class charon_core_DLL_PUBLIC ParameteredObject {
 private:
 	/// Specifies if the ParameteredObject should create metadata information
-	static bool _createMetadata;
+	bool _createMetadata;
 
 	/// Class tracking.
 	/** This parameterfile is used for metadata generation
@@ -340,6 +346,12 @@ public:
 	/// get metadata
 	const ParameterFile& getMetadata();
 
+	/// delete metadata cache to save some space
+	/** deletes the content of _metadata, sets _createMetadata to false
+	 *  to prevent _metadata to be written after this call.
+	 */
+	void clearMetadata();
+
 	/// restore parameter/slot name casing
 	std::string fixCase(const std::string& parOrSlotName) const;
 
@@ -551,9 +563,6 @@ public:
 	AbstractParameter& getParameter(const std::string & name) const;
 	template <typename T>
 	void setParameter(std::string name, T value);
-
-	static void setCreateMetadata(bool c);
-	static bool getCreateMetadata();
 
 	bool isDynamic();
 	//  \}

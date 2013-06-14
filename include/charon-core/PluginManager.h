@@ -61,11 +61,12 @@
  * - create and destroy instances of plugins
  * - load parameter files and execute the discribed workflow
  * - write parameter files
+ * - generation of metadata descriptions, for usual and dynamic modules
  *
  * Also, some methods which were previously members of the ParameteredObject
  * class are now members of this class.
  *
- * \section pluginPaths Plugin Manager Paths
+ * <h3>Plugin Manager Paths</h3>
  * There may be multiple paths where Plugins are located.
  * These paths have to be given to the PluginManager constructor.
  * For compatibility reasons, there are constructors taking two paths
@@ -80,7 +81,7 @@
  * If using the stringlist version of the constructor,
  * the paths are searched in the order as given.
  *
- * \section debugSuffix Plugins with Debug suffix
+ * <h3>Plugins with Debug suffix</h3>
  * To be able to use plugins in their debug and release build configuration
  * side by side, it is possible to name the debug library with the suffix
  * <tt>_d</tt>. Regarding a plugin called <tt>example</tt>, the libraries
@@ -123,61 +124,54 @@
  * The default value for the debugSuffix parameter is set to true on debug
  * builds and to false on release builds. Specifying this parameter manually
  * is useful only on unix builds where this mixture causes less or no problems.
+ *
+ * <h3>Metadata Generation</h3>
+ * Per default, all generated plugins are created with their metadata
+ * description stored within the ParameteredObject.
+ * It can be retrieved via ParameteredObject::getMetadata().
+ * Calling ParameteredObject::clearMetadata(), the metadata cache is cleared
+ * e.g. to save space.
+ * In the PluginManager, all created plugins are shipped with their metadata.
+ * The only exception is on loading a whole workflow file.
+ * I.e. loadParameterFile(const ParameterFile&) and
+ * loadParameterFile(const std::string&) delete the metadata
+ * information, because they are usually called just before running
+ * a workflow.
  */
 class charon_plugins_DLL_PUBLIC PluginManager: public PluginManagerInterface {
-public:
-
 private:
-	/**
-	 * Paths where the plugins are stored
-	 */
+	/// Paths where the plugins are stored
 	std::vector<std::string> pluginPaths;
-
 
 	/// Lib suffix e.g. <tt>_d</tt> for debug builds
 	std::string libSuffix;
-	/**
-	 * Saves the currently loaded plugins
-	 */
+
+	/// Saves the currently loaded plugins
 	std::map<std::string, PLUGIN_LOADER*> _loadedPlugins;
 
-	/**
-	 * Links the instances to their PluginLoader, so the PluginManager can
-	 * determine of which type the instance is
-	 */
+	/// Links the instances to their PluginLoader
+	/** so the PluginManager can determine of which type the instance is */
 	std::map<ParameteredObject*, PLUGIN_LOADER*> _instances;
 
-	/**
-	 * Saves the current default template type.
-	 */
+	/// current default template type.
 	ParameteredObject::template_type _defaultTemplateType;
 
-	/**
-	 * load plugin regardless of version information in the library file
-	 */
+	/// load plugin regardless of version information in the library file
 	PluginVersionCheckLevel _versionInfo ;
 
-	/**
-	 * Deletes all instances of a loaded plugin.
-	 * @param p Plugin loader which has created the instances
-	 */
+	/// Deletes all instances of a loaded plugin.
+	/** @param p Plugin loader which has created the instances */
 	void _destroyAllInstances(PLUGIN_LOADER * p);
 
-	/**
-	 * Unloads all Plugins and destroys all instances.
-	 */
+	/// Unloads all Plugins and destroys all instances.
 	void _unloadAllPlugins();
 
-	/**
-	  * Check if parametered object is an internal object
-	  */
+	/// Check if parametered object is an internal object
 	bool isInternal(ParameteredObject* obj);
 
-	/**
-	 * Unloads a plugin and destroys instances
-	 * @param p Plugin zo unload
-	 * @param erase If true, erases the plugin from map
-	 */
+	/// Unloads a plugin and destroys instances
+	/** @param p Plugin zo unload
+	 *  @param erase If true, erases the plugin from map */
 	void _unloadPlugin(PLUGIN_LOADER * p, bool erase = true);
 
 	/// Creates metadata information for a specific plugin.
@@ -223,7 +217,7 @@ private:
 	/// exclude list for metadata generation
 	std::vector<std::string> _excludeList;
 
-	/// Saves currently existing instances
+	/// currently existing instances that are handled by this PluginManager
 	std::map<std::string, ParameteredObject *> objects;
 
 	bool _initializePluginOnLoad;
@@ -275,8 +269,8 @@ public:
 			PluginVersionCheckLevel versionInfo=PluginVersionIgnore
 	);
 
+	/// Loads a plugin stored in the previously declared folder.
 	/**
-	 * Loads a plugin stored in the previously declared folder.
 	 * @warning Do NOT call delete on an instance of a loaded plugin, use the
 	 *          given method destroyInstance(ParameteredObject *) instead.
 	 *
@@ -289,8 +283,8 @@ public:
 	void loadPlugin(std::string name)
 			throw (AbstractPluginLoader::PluginException);
 
+	/// Unloads a plugin.
 	/**
-	 * Unloads a plugin.
 	 * @warning All instances of the plugin become obsolete and will be deleted
 	 * therefore.
 	 *
@@ -303,33 +297,23 @@ public:
 	void unloadPlugin(const std::string & name)
 			throw (AbstractPluginLoader::PluginException);
 
-	/**
-	 * Checks if a plugin is loaded
-	 *
-	 * @param name name of the plugin
-	 * @return true if the plugin is loaded
-	 */
+	/// Checks if a plugin is loaded
+	/** @param name name of the plugin
+	 *  @return true if the plugin is loaded */
 	bool isLoaded(const std::string & name) const;
 
 	/// Gets the plugin paths
 	const std::vector<std::string>& getPluginPaths() const;
 
-	/**
-	 * @return number of currently loaded plugins.
-	 */
+	/// number of loaded plugins
 	size_t getLoadedPluginsCount() const;
 
-	/**
-	 * @return number of existing instances of loaded plugins.
-	 */
+	/// number of handled instances
 	size_t getInstancesCount() const;
 
-	/**
-	 * Returns an existing instance of a loaded plugin.
-	 *
-	 * @param instanceName Name of the instance
-	 * @return Pointer to the requested instance
-	 */
+	/// get an existing instance of a loaded plugin.
+	/** @param instanceName Name of the instance
+	 *  @return Pointer to the requested instance */
 	ParameteredObject* getInstance(const std::string & instanceName) const
 			throw (AbstractPluginLoader::PluginException);
 
@@ -340,14 +324,15 @@ public:
 		return objects;
 	}
 
+	/// Create a new instance of a plugin.
 	/**
-	 * Creates a new instance of a plugin.
 	 * If the requested plugin isn't loaded yet, PluginManager will try to load
 	 * it. If the instance name is an empty string, a unique name will be
 	 * generated.
 	 * @warning: Do NOT call delete on an instance of a loaded plugin, use the
 	 * given method destroyInstance() instead.
 	 *
+	 * The generated instance is shipped with it's metdata information.
 	 *
 	 * @see destroyInstance(ParameteredObject *)
 	 * @see AbstractPluginLoader::createInstance()
@@ -367,18 +352,10 @@ public:
 		std::string instanceName = "")
 			throw (AbstractPluginLoader::PluginException);
 
-	/// Insert an existing parametered object instance.
-	/** \warning Inserted instance will be managed by pluginmanager.
-	 *      E. g. it will be deleted on PluginManager::reset().
-	 *      The instance name must be unique within the PluginManager scope.
-	 *      On name conflicts, a runtime_error will be thrown.
-	 *  \param instance Instance to insert.
-	 */
-	void insertInstance(ParameteredObject* instance);
-
+	/// Create a new instance of a plugin.
 	/**
-	 * Same Method, but allowing to leave the template type out. Current
-	 * default template type will be used (initially, it's
+	 * Same Method as above but allowing to leave the template type out.
+	 * Current default template type will be used (initially, it's
 	 * ParameteredObject::TYPE_DOUBLE).
 	 *
 	 * @see createInstance(const std::string &, const std::string &, const
@@ -391,8 +368,17 @@ public:
 			const std::string & instanceName = "")
 			throw (AbstractPluginLoader::PluginException);
 
+	/// Insert an existing parametered object instance.
+	/** \warning Inserted instance will be managed by pluginmanager.
+	 *      E. g. it will be deleted on PluginManager::reset().
+	 *      The instance name must be unique within the PluginManager scope.
+	 *      On name conflicts, a runtime_error will be thrown.
+	 *  \param instance Instance to insert.
+	 */
+	void insertInstance(ParameteredObject* instance);
+
+	/// Delete an instance of a loaded plugin.
 	/**
-	 * Deletes an instance of a loaded plugin.
 	 * Calls the Destructor the instance.
 	 *
 	 * @warning Do NOT call delete on an instance of a loaded plugin, use this
@@ -407,28 +393,31 @@ public:
 	void destroyInstance(ParameteredObject * toDestroy)
 			throw (AbstractPluginLoader::PluginException);
 
+	/// Reads a parameter file.
 	/**
-	 * Reads a parameter file.
 	 * - reads out the default template type property (if given)
 	 * - loads the required plugins
 	 * - creates the requested instances
+	 * - clears their metadata cache to save space
 	 * - connects the slots
 	 * - reads out the target points (if existing)
-	 *
 	 *
 	 * @param pf ParameterFile to load from
 	 * @return Map linking the instance names to the created instances
 	 */
-	void loadParameterFile(const ParameterFile & pf);
+	void loadParameterFile(const ParameterFile& pf);
 
+	/// Reads a parameter file.
 	/**
-	 * Same method, but loads a ParameterFile from the given path.
+	 * Same method as above, but loads a ParameterFile from the given path.
 	 *
+	 * @see loadParameterFile(const ParameterFile&)
 	 * @param path Path to the parameter file
 	 * @return Map linking the instance names to the created instances
 	 */
-	void loadParameterFile(const std::string & path);
+	void loadParameterFile(const std::string& path);
 
+	/// save parameters and connections of all managed plugins
 	/**
 	 * Save content of all currently loaded instances to the given
 	 * ParameterFile. All registered parameters and slot connections are saved.
@@ -438,6 +427,7 @@ public:
 	 */
 	void saveParameterFile(ParameterFile& paramFile) const;
 
+	/// save parameters and connections of all managed plugins
 	/**
 	 * Same method, but writes the file to the given path.
 	 * @warning This deletes the content of the given ParameterFile.
@@ -445,8 +435,8 @@ public:
 	 */
 	void saveParameterFile(const std::string & path) const;
 
+	/// Set the default template type property
 	/**
-	 * Sets the default template type property.
 	 * New instances created without explicitly specifying another tempate type
 	 * are created using this template type. Initially, the value is set to
 	 * ParameteredObject::TYPE_DOUBLE.
@@ -459,6 +449,7 @@ public:
 	 */
 	void setDefaultTemplateType(ParameteredObject::template_type t);
 
+	/// Get the default template type property
 	/**
 	 * Returns the current default template type property. Initially, it is set
 	 * to ParameteredObject::TYPE_DOUBLE.
@@ -485,11 +476,11 @@ public:
 	/// set exclude list
 	void setExcludeList(const std::vector<std::string>& list);
 
-
 	/// Set the executed flags of the objects to false.
 	/** This function leaves the objects otherwise untouched */
 	void resetExecuted();
 
+	/// generate plugin metadata and store to given path
 	/**
 	 * Iterates through the plugins available inside the plugin path and
 	 * creates metadata information for them.
@@ -499,11 +490,18 @@ public:
 	 */
 	void createMetadata(const std::string & targetPath = "");
 
+	/// generate plugin metadata for dynamic plugins and store to given path
 	/**
 	 * Creates metadata of all dynamic plugins in given parameter file.
 	 * FilePrefix should be some/file_prefix instead of some/file_prefix.wrp
 	 * since this method writes the metadata into
 	 * some/file_prefix_instance_name.wrp
+	 *
+	 * The given parameter file is passed to the dynamic modules'
+	 * prepareDynamicInterface function to add metadata for the
+	 * parameter/slots in the scope of a dynamic plugin instance.
+	 *
+	 * @see ParameteredObject::prepareDynamicInterface(const ParameterFile&)
 	 *
 	 * @param paramFile   ParameterFile containing parameters for plugin
 	 * @param filePrefix  File prefix to determine save file names
@@ -511,15 +509,8 @@ public:
 	void createDynamicMetadata(const ParameterFile& paramFile,
 		const std::string& filePrefix);
 
-	/**
-	 *  Same method, but loads a ParameterFile from the given path.
-	 *
-	 *  @param paramFile   path to ParameterFile
-	 *  @param filePrefix  File prefix to determine save file names
-	 */
-	void createDynamicMetadata(const std::string& paramFile,
-		const std::string& filePrefix);
-
+	/// generate plugin metadata for a single dynamic plugin and
+	/// store to given file name
 	/**
 	 * Creates metadata of dynamic plugin based on parameter file
 	 *
@@ -530,6 +521,7 @@ public:
 	void createDynamicMetadata(const std::string& pluginName,
 		const ParameterFile& paramFile, const std::string& fileName);
 
+	/// reset plugin manager
 	/**
 	 * Resets this PluginManager instance to its initial state.
 	 * Unloads all plugins, resets defaultTemplateType parameter and deletes
@@ -537,6 +529,7 @@ public:
 	 */
 	void reset();
 
+	/// default destructor
 	/**
 	 * Deletes all existing instances of any loaded plugin and then unloads all
 	 * plugins. Frees the memory.
@@ -576,9 +569,6 @@ public:
 	virtual std::set<std::string> getConnected(const std::string& root,
 			const ParameterFile& pf) const;
 
-	std::set<std::string> getConnected(ParameterFile & pf,
-			ParameteredObject * obj) const;
-
 	/// Recurse into object list and find connected objects.
 	/** This is based on the "real" slot connections,
 	 *  i.e. independend of some parameter file content.
@@ -587,6 +577,10 @@ public:
 	 *  \returns            set of connected object names
 	 */
 	std::set<std::string> getConnected(const std::string& root) const;
+
+	/// parameterFile version of getConnected(const std::string&) const
+	std::set<std::string> getConnected(ParameterFile & pf,
+			ParameteredObject * obj) const;
 
 	/// Connect slots.
 	/** Both slots are connected with each other.
