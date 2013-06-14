@@ -655,8 +655,9 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 
 	// Now generate metadata for all (unique) plugin names
 	// skipping the names from the exclude list.
-	// Which dll file to use is now handled by the plugin loader.
+	// Which dll file to use is then handled by the plugin loader.
 	std::set<std::string>::const_iterator pIterU;
+	std::list<std::string> skipped;
 	for (pIterU=pluginsU.begin(); pIterU != pluginsU.end(); pIterU++) {
 		if (std::find(_excludeList.begin(),_excludeList.end(),*pIterU)
 				== _excludeList.end()) {
@@ -665,10 +666,24 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 			sout << "(DD) " << std::endl;
 		}
 		else {
-			sout << "(DD) Discarding non-plugin file: "
-				 << *pIterU << "\n(DD) " << std::endl;
+			skipped.push_back(*pIterU);
 		}
 	}
+#ifndef NDEBUG
+	// only displayed in debug mode to check
+	// if the exclude list works as expected.
+	// identical output will be shown by tuchulcha-run
+	// during generation of the exclude list from
+	// tuchulcha's list with wildcards
+	if (skipped.size() > 0) {
+		sout << "(DD) The following libraries matched the exclude list:"
+			<< std::endl;
+	}
+	std::list<std::string>::const_iterator skipIter;
+	for (skipIter=skipped.begin();skipIter!=skipped.end();skipIter++) {
+		sout << "(DD) \t" << *skipIter << std::endl;
+	}
+#endif
 }
 
 void PluginManager::setExcludeList(const std::vector<std::string>& list) {

@@ -72,12 +72,15 @@ LPCTSTR WindowsPluginLoader::lastError(LPTSTR func) const {
 #endif
 
 void WindowsPluginLoader::load() throw (PluginException) {
-	std::string path, pathS;
+	std::string path, pathS, pathDir;
 	//error code must be retrieved immediately after the failure, 
 	DWORD lastErrorCode = 0;
-	std::string lastErrorMsg ;
-	for (std::vector<std::string>::const_iterator cur = pluginPaths.begin();
+	std::string lastErrorMsg;
+
+	// find plugin file
+	for(std::vector<std::string>::const_iterator  cur = pluginPaths.begin();
 			cur != pluginPaths.end(); cur++) {
+		pathDir = *cur;
 #ifdef MSVC
 		path = *cur + "\\" + pluginName + ".dll";
 		pathS = *cur + "\\" + pluginName + libSuffix + ".dll";
@@ -85,144 +88,14 @@ void WindowsPluginLoader::load() throw (PluginException) {
 		path = *cur + "\\lib" + pluginName + ".dll";
 		pathS = *cur + "\\lib" + pluginName + libSuffix + ".dll";
 #endif
-		// prefer suffixed version if available
-		// load unsuffixed library as fallback
-		if (FileTool::exists(pathS)) {
-			path = pathS;
+		if(libSuffix.size() > 0) {
+			if (FileTool::exists(pathS)) {
+				// prefer suffixed over plain version
+				path = pathS;
+				break;
+			}
 		}
 		if (FileTool::exists(path)) {
-			std::string oldDir = FileTool::getCurrentDir();
-			FileTool::changeDir(*cur);
-			
-			if (_versionCheck != PluginManagerInterface::PluginVersionIgnore) {
-				try {
-					std::string charonCoreVersion (CHARON_CORE_VERSION) ;
-					std::string noVersionMsg =  "The plugin contains no valid charon-core version information." ;
-				
-					// TODO: handle different version check levels (ignore,warn,discard)
-					DWORD handle = 0; //dummy value
-					DWORD size = GetFileVersionInfoSize(path.c_str(), &handle);
-					if(!size)
-					{
-						throw PluginException( noVersionMsg, pluginName,
-							PluginException::VERSION_INFORMATION_MISSING);
-					}
-					BYTE* versionInfo = new BYTE[size];
-					if (!GetFileVersionInfo(path.c_str(), handle, size, versionInfo))
-					{
-						delete[] versionInfo;
-						throw PluginException( noVersionMsg, pluginName,
-							PluginException::VERSION_INFORMATION_MISSING);
-					}
-
-					struct LANGANDCODEPAGE {
-						WORD wLanguage;
-						WORD wCodePage;
-					} *lpTranslate;
-
-					UINT	dwBytes; //size of contained code tables
-				
-					//get language and code page block from file version information
-					BOOL res = VerQueryValue(versionInfo, 
-						TEXT("\\VarFileInfo\\Translation"),
-						(LPVOID*)&lpTranslate,
-						&dwBytes);
-					if(res == 0 || dwBytes == 0)
-					{
-						delete[] versionInfo;
-						throw PluginException( noVersionMsg, pluginName,
-							PluginException::VERSION_INFORMATION_MISSING);
-					}
-
-					//usualy we should have only one block of version information per file
-					//but theoretically there could be more
-					for(int i=0; i < (dwBytes/sizeof(struct LANGANDCODEPAGE)); i++ )
-					{
-						LPTSTR subBlock ;
-						subBlock = new char[50] ;
-						BOOL hr = StringCchPrintf(subBlock, 50,
-									TEXT("\\StringFileInfo\\%04x%04x\\ProductName"),
-									lpTranslate[i].wLanguage,
-									lpTranslate[i].wCodePage);
-						if (FAILED(hr))
-						{
-							delete[] versionInfo;
-							delete[] subBlock ;
-							throw PluginException( noVersionMsg, pluginName,
-								PluginException::VERSION_INFORMATION_MISSING);
-						}
-						LPCTSTR infoBuffer ;
-						UINT bufferLen = 0;
-						// Retrieve file description for language and code page "i". 
-						BOOL res = VerQueryValue(versionInfo, 
-										subBlock, 
-										(LPVOID*)&infoBuffer, 
-										&bufferLen); 
-						//check that the "ProductName" field is set to "Charon-Suite"
-						if(res == 0 || bufferLen == 0 || std::string("Charon-Suite") != infoBuffer) {
-							delete[] versionInfo;
-							delete[] subBlock;
-							throw PluginException( noVersionMsg, pluginName,
-								PluginException::VERSION_INFORMATION_MISSING);
-						}
-
-						hr = StringCchPrintf(subBlock, 50,
-									TEXT("\\StringFileInfo\\%04x%04x\\ProductVersion"),
-									lpTranslate[i].wLanguage,
-									lpTranslate[i].wCodePage);
-						if (FAILED(hr))
-						{
-							delete[] versionInfo;
-							delete[] subBlock ;
-							throw PluginException( noVersionMsg, pluginName,
-								PluginException::VERSION_INFORMATION_MISSING);
-						}
-						bufferLen = 0;
-						res = VerQueryValue(versionInfo, 
-										subBlock, 
-										(LPVOID*)&infoBuffer, 
-										&bufferLen); 
-						if(res && bufferLen) {
-							//parse the version string, assume it has the following form
-							//major.minor.patch
-							//we do a simple string comparison, as there is currently no plan for
-							//upward/backward compatibility
-							std::string version(infoBuffer) ;
-							if(charonCoreVersion != version) {
-								delete[] versionInfo;
-								delete[] subBlock;
-								throw PluginException("Plugin \"" + pluginName
-									+ "\" was linked against charon-core version " + version
-									+ "\n\tbut we are using charon-core version " 
-									+ charonCoreVersion
-									, pluginName,
-									PluginException::VERSION_MISSMATCH);
-							}
-						}
-						delete[] subBlock;
-					}
-					delete[] versionInfo;
-				}
-				catch(PluginException& excpt)
-				{
-					if(_versionCheck < PluginManagerInterface::PluginVersionDiscard)
-					{	//show errors as warnings
-						std::regex e ("\\(EE\\)");
-						std::string msg = excpt.what() ;
-						sout << "(WW) " << std::regex_replace (msg,e,std::string("(WW)")) << std::endl ;
-					}
-					else
-						throw ;
-				}
-			} // VersionCheck
-			hInstLibrary = LoadLibrary(path.c_str());
-#ifdef MSVC
-			if(!hInstLibrary) {
-				lastErrorCode = GetLastError() ;
-				lastErrorMsg = lastError("LoadLibrary") ;
-			}
-#endif
-			FileTool::changeDir(oldDir);
 			break;
 		}
 	}
@@ -233,6 +106,134 @@ void WindowsPluginLoader::load() throw (PluginException) {
 			pluginName, PluginException::FILE_NOT_FOUND);
 	}
 	sout << "(DD) File: " << path << std::endl;
+
+	std::string oldDir = FileTool::getCurrentDir();
+	FileTool::changeDir(pathDir);
+			
+	if (_versionCheck != PluginManagerInterface::PluginVersionIgnore) {
+		try {
+			std::string charonCoreVersion (CHARON_CORE_VERSION) ;
+			std::string noVersionMsg =  "The plugin contains no valid charon-core version information." ;
+
+			DWORD handle = 0; //dummy value
+			DWORD size = GetFileVersionInfoSize(path.c_str(), &handle);
+			if(!size) {
+				throw PluginException( noVersionMsg, pluginName,
+					PluginException::VERSION_INFORMATION_MISSING);
+			}
+			BYTE* versionInfo = new BYTE[size];
+			if (!GetFileVersionInfo(path.c_str(), handle, size, versionInfo)) {
+				delete[] versionInfo;
+				throw PluginException( noVersionMsg, pluginName,
+					PluginException::VERSION_INFORMATION_MISSING);
+			}
+
+			struct LANGANDCODEPAGE {
+				WORD wLanguage;
+				WORD wCodePage;
+			} *lpTranslate;
+
+			UINT	dwBytes; //size of contained code tables
+
+			// get language and code page block from file version information
+			BOOL res = VerQueryValue(versionInfo, 
+				TEXT("\\VarFileInfo\\Translation"),
+				(LPVOID*)&lpTranslate,
+				&dwBytes);
+			if (res == 0 || dwBytes == 0) {
+				delete[] versionInfo;
+				throw PluginException( noVersionMsg, pluginName,
+					PluginException::VERSION_INFORMATION_MISSING);
+			}
+
+			// usualy we should have only one block of version information per file
+			// but theoretically there could be more
+			for(int i=0; i < (dwBytes/sizeof(struct LANGANDCODEPAGE)); i++ ) {
+				LPTSTR subBlock ;
+				subBlock = new char[50] ;
+				BOOL hr = StringCchPrintf(subBlock, 50,
+							TEXT("\\StringFileInfo\\%04x%04x\\ProductName"),
+							lpTranslate[i].wLanguage,
+							lpTranslate[i].wCodePage);
+				if (FAILED(hr)) {
+					delete[] versionInfo;
+					delete[] subBlock ;
+					throw PluginException( noVersionMsg, pluginName,
+						PluginException::VERSION_INFORMATION_MISSING);
+				}
+				LPCTSTR infoBuffer ;
+				UINT bufferLen = 0;
+				// Retrieve file description for language and code page "i". 
+				BOOL res = VerQueryValue(versionInfo, 
+								subBlock, 
+								(LPVOID*)&infoBuffer, 
+								&bufferLen); 
+				// check that the "ProductName" field is set to "Charon-Suite"
+				if(res == 0 || bufferLen == 0 || std::string("Charon-Suite") != infoBuffer) {
+					delete[] versionInfo;
+					delete[] subBlock;
+					throw PluginException( noVersionMsg, pluginName,
+						PluginException::VERSION_INFORMATION_MISSING);
+				}
+
+				hr = StringCchPrintf(subBlock, 50,
+							TEXT("\\StringFileInfo\\%04x%04x\\ProductVersion"),
+							lpTranslate[i].wLanguage,
+							lpTranslate[i].wCodePage);
+				if (FAILED(hr)) {
+					delete[] versionInfo;
+					delete[] subBlock ;
+					throw PluginException( noVersionMsg, pluginName,
+						PluginException::VERSION_INFORMATION_MISSING);
+				}
+				bufferLen = 0;
+				res = VerQueryValue(versionInfo, 
+								subBlock, 
+								(LPVOID*)&infoBuffer, 
+								&bufferLen); 
+				if (res && bufferLen) {
+					// parse the version string, assume it has the following form
+					// major.minor.patch
+					// we do a simple string comparison, as there is currently no plan for
+					// upward/backward compatibility
+					std::string version(infoBuffer) ;
+					if(charonCoreVersion != version) {
+						delete[] versionInfo;
+						delete[] subBlock;
+						throw PluginException("Plugin \"" + pluginName
+							+ "\" was linked against charon-core version " + version
+							+ "\n\tbut we are using charon-core version " 
+							+ charonCoreVersion
+							, pluginName,
+							PluginException::VERSION_MISSMATCH);
+					}
+				}
+				delete[] subBlock;
+			}
+			delete[] versionInfo;
+		}
+		catch(PluginException& excpt)
+		{
+			if(_versionCheck < PluginManagerInterface::PluginVersionDiscard)
+			{	//show errors as warnings
+				std::regex e ("\\(EE\\)");
+				std::string msg = excpt.what() ;
+				sout << "(WW) " << std::regex_replace (msg,e,std::string("(WW)")) << std::endl ;
+			}
+			else
+				throw ;
+		}
+	} // VersionCheck
+
+	// load the library
+	hInstLibrary = LoadLibrary(path.c_str());
+#ifdef MSVC
+	if(!hInstLibrary) {
+		lastErrorCode = GetLastError() ;
+		lastErrorMsg = lastError("LoadLibrary") ;
+	}
+#endif
+	FileTool::changeDir(oldDir);
 
 	if (!hInstLibrary) {
 		// error loading dll file

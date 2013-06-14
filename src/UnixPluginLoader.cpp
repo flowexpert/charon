@@ -61,10 +61,10 @@ void UnixPluginLoader::load() throw (PluginException) {
 			if (FileTool::exists(pathS)) {
 				// prefer suffixed over plain version
 				path = pathS;
+				break;
 			}
 		}
 		if (FileTool::exists(path)) {
-			sout << "(DD) File: " << path << std::endl;
 			break;
 		}
 	}
@@ -77,6 +77,8 @@ void UnixPluginLoader::load() throw (PluginException) {
 						" (suffix disabled)"),
 				pluginName, PluginException::FILE_NOT_FOUND);
 	}
+	
+	sout << "(DD) File: " << path << std::endl;
 
 #ifdef USE_LIBELF
 	// try to determine charon-core version from plugin before dlopening
