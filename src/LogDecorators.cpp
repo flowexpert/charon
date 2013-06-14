@@ -122,7 +122,7 @@ LogDecorators::Update::Update() :
 	QString p = "\\(\\w+\\)\\s+"; // prefix
 	_fileRegex     = QRegExp(p+"File: (.*)");
 	_passRegex     = QRegExp(p+"Created Instance \"\\w+\" of the plugin \"(\\w+)\".*");
-	_noPluginRegex = QRegExp(p+"\"(\\w+)\" is no charon plugin.*");
+	_noPluginRegex = QRegExp(p+"\"(.+)\" is no charon plugin.*");
 	_failRegex     = QRegExp(p+"Could not generate metadata for module \"(\\w+)\".*");
 	_warnRegex     = QRegExp("\\(WW\\)\\s+.*");
 	_result = new QStandardItemModel(0,2,this);
