@@ -89,7 +89,6 @@ StructureTextureDecomposition<T>::StructureTextureDecomposition(const std::strin
 		dual_iters, "dual_iters",
 		"dual variable iterations",
 		10, "double");
-
 }
 
 template <typename T>
@@ -136,7 +135,7 @@ void StructureTextureDecomposition<T>::execute() {
         double factor=noisevar/((cond+noisevar)*(cond+noisevar))*corrRatio;
 
         MultiArray<2,T> smSqIiter(mIiter.shape());
-        gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*sqrt(2));
+        gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*sqrt(2.));
         smSqIiter=smSqIiter-Iitermean;
 
         MultiArray<2,T> corrFuncDeriv=factor*(corrRatio*smSqIiter-smCondIm);
@@ -153,7 +152,7 @@ void StructureTextureDecomposition<T>::execute() {
             corrRatio=IsmCondImCov/IsmVar;
             cond=condImCov-noisevar-corrRatio*IsmCondImCov;
             factor=noisevar/((cond+noisevar)*(cond+noisevar))*corrRatio;
-            gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*sqrt(2));
+            gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*sqrt(2.));
             smSqIiter=smSqIiter-Iitermean;
             corrFuncDeriv=factor*(corrRatio*smSqIiter-smCondIm);
             mIiter=mIiter-lambda()*theta()*corrFuncDeriv;
@@ -169,8 +168,8 @@ void StructureTextureDecomposition<T>::execute() {
 
 }
 
-template<typename T, int N, class A = std::allocator<T> >
-void computeDivergence(std::vector<MultiArray<N,T,A>* > &vectorField,MultiArray<N,T,A> &divergence,double std_dev)
+template<typename T, int N>
+void computeDivergence(std::vector<MultiArray<N,T>* >& vectorField,MultiArray<N,T>& divergence,double std_dev)
 {
     assert(vectorField.size()==N);
     assert((*(vectorField[0])).shape()==divergence.shape());
@@ -179,7 +178,7 @@ void computeDivergence(std::vector<MultiArray<N,T,A>* > &vectorField,MultiArray<
     smooth.initGaussian(std_dev);
     deriv.initGaussianDerivative(std_dev,1);
     std::vector<Kernel1D<T> > kernels;
-    MultiArray<N,T,A> tmpDeriv(divergence.shape());
+    MultiArray<N,T> tmpDeriv(divergence.shape());
 
     for(int k=0;k<N;k++)
         kernels.push_back(smooth);
@@ -215,7 +214,7 @@ void StructureTextureDecomposition<T>::computeDualVarDiv()
     {
         sout<<"Dual iteration: "<<diter<<std::endl;
         std::vector<MultiArray<2,T>* > vectorField;
-        vectorField.push_back(&mdualvar_x);
+        vectorField.push_back(&mdualvar_x);  
         vectorField.push_back(&mdualvar_y);
         computeDivergence<T,2>(vectorField,divergence,std_dev);
         locIiter=mdata_image2D+theta()*divergence;
@@ -225,7 +224,7 @@ void StructureTextureDecomposition<T>::computeDualVarDiv()
 
         mdualvar_x=mdualvar_x+delta*Ix;
         mdualvar_y=mdualvar_y+delta*Iy;
-        reprojection=max(1.0,sqrt(pow(mdualvar_x,2)+pow(mdualvar_y,2)));
+        reprojection=max(1.0,sqrt(pow(mdualvar_x,2.)+pow(mdualvar_y,2.)));
         mdualvar_x=mdualvar_x/reprojection;
         mdualvar_y=mdualvar_y/reprojection;
 

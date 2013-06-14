@@ -112,12 +112,12 @@ QStringList ScriptorVigra<T>::_mangleCmdlineArgs()
 
 	bool vigraImageExists = QFile(QString::fromStdString(_tempImageFilenameVigra)).exists();
 
-	if (_cmdlineArgsString.contains("\%vigraFilename")) {
+	if (_cmdlineArgsString.contains("%vigraFilename")) {
 		QFileInfo vigraFile(QString::fromStdString(_tempImageFilenameVigra));
 		QString _vigraFilename = vigraFile.absoluteFilePath();
 
 		if((vigraIn.connected()) || (vigraImageExists)) {
-			args.replaceInStrings("\%vigraFilename", _vigraFilename);
+			args.replaceInStrings("%vigraFilename", _vigraFilename);
 		}
 		else
 			ParameteredObject::raise("Cannot expand %vigraFilename because "

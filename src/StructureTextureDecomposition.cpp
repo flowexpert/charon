@@ -38,10 +38,12 @@ extern "C" structuretexturedecomposition_DECLDIR ParameteredObject*
 		return new TYPE<float>(name);
 		break;
 	case ParameteredObject::TYPE_INT:
-		return new TYPE<int>(name);
+		throw std::invalid_argument(
+			"StructureTextureDecomposition not available for TYPE_INT");
+		return 0;
 		break;
 	default:
-		return new TYPE<int>(name);
+		return new TYPE<double>(name);
 		break;
 	}
 }
