@@ -531,10 +531,10 @@ ADD_CHARON_PLUGIN(flowcomparator
 )
 
 # unclassified plugins
-ADD_CHARON_PLUGIN(selectimagefromimagelist
-	${charon_INCLUDE_DIR}/SelectImageFromImageList.h
-	${charon_INCLUDE_DIR}/SelectImageFromImageList.hxx
-	SelectImageFromImageList.cpp
+ADD_CHARON_PLUGIN(selectfromlist
+	${charon_INCLUDE_DIR}/SelectFromList.h
+	${charon_INCLUDE_DIR}/SelectFromList.hxx
+	SelectFromList.cpp
 	PLUGIN_LISTS Plugins
 )
 ADD_CHARON_PLUGIN(confidencemeasures

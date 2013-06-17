@@ -16,26 +16,26 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file SelectImageFromImageList.h
- *  Declaration of the parameter class SelectImageFromImageList.
+/** \file SelectFromList.h
+ *  Declaration of the parameter class SelectFromList.
  *  \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
  *      Michael Baron</a>
  *  \date 21.03.2013
  */
 
-#ifndef _SELECTIMAGEFROMIMAGELIST_H_
-#define _SELECTIMAGEFROMIMAGELIST_H_
+#ifndef _SELECTFROMLIST_H_
+#define _SELECTFROMLIST_H_
 
 #ifdef _MSC_VER
-#ifdef selectimagefromimagelist_EXPORTS
+#ifdef selectfromlist_EXPORTS
 /// Visual C++ specific code
-#define selectimagefromimagelist_DECLDIR __declspec(dllexport)
+#define selectfromlist_DECLDIR __declspec(dllexport)
 #else
-#define selectimagefromimagelist_DECLDIR __declspec(dllimport)
+#define selectfromlist_DECLDIR __declspec(dllimport)
 #endif /*Export or import*/
 #else
 /// Not needed without MSVC
-#define selectimagefromimagelist_DECLDIR
+#define selectfromlist_DECLDIR
 #endif
 
 #include <charon-core/ParameteredObject.h>
@@ -45,26 +45,29 @@
 /** Select an image from an image list.
  */
 template <typename T>
-class selectimagefromimagelist_DECLDIR SelectImageFromImageList :
+class selectfromlist_DECLDIR SelectFromList :
 		public TemplatedParameteredObject<T> {
 public:
 	/// default constructor
 	/// \param name          Instance name
-	SelectImageFromImageList(const std::string& name = "");
+	SelectFromList(const std::string& name = "");
 
 	/// image list input
-	InputSlot< cimg_library::CImgList<T> > in;
+	InputSlot< cimg_library::CImgList<T> > list;
 
 	/// image output
 	OutputSlot< cimg_library::CImgList<T> > out;
 
-	/// frame number
-	Parameter< unsigned int > frameNumber;
+	/// index of first frame
+	InputSlot< unsigned int > first;
+
+	/// count of frames to return
+	Parameter< unsigned int > count;
 
 protected:
 	/// Update object.
 	virtual void execute();
 };
 
-#endif // _SELECTIMAGEFROMIMAGELIST_H_
+#endif // _SELECTFROMLIST_H_
 

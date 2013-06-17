@@ -16,20 +16,20 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
-/** \file SelectImageFromImageList.cpp
- *  This file is needed for class SelectImageFromImageList to work as a charon plugin.
+/** \file SelectFromList.cpp
+ *  This file is needed for class SelectFromList to work as a charon plugin.
  *  \author <a href="mailto:michael.baron@iwr.uni-heidelberg.de">
  *      Michael Baron</a>
  *  \date 21.03.2013
  */
 
 /// Class name of the plugin
-#define TYPE SelectImageFromImageList
+#define TYPE SelectFromList
 
-#include <charon/SelectImageFromImageList.hxx>
+#include <charon/SelectFromList.hxx>
 
 /// Creates an instance of the plugin
-extern "C" selectimagefromimagelist_DECLDIR ParameteredObject*
+extern "C" selectfromlist_DECLDIR ParameteredObject*
 		create(const std::string & name, ParameteredObject::template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
@@ -48,12 +48,12 @@ extern "C" selectimagefromimagelist_DECLDIR ParameteredObject*
 }
 
 /// Deletes an instance of the plugin
-extern "C" selectimagefromimagelist_DECLDIR void destroy(ParameteredObject * b) {
+extern "C" selectfromlist_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
 
 /// Report build configuration to prevent linking of incompatibel runtime libs
-extern "C" selectimagefromimagelist_DECLDIR ParameteredObject::build_type getBuildType() {
+extern "C" selectfromlist_DECLDIR ParameteredObject::build_type getBuildType() {
 #ifdef _DEBUG
 	return ParameteredObject::DEBUG_BUILD;
 #else
