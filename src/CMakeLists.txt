@@ -94,6 +94,7 @@ IF(USE_CIMG)
 		Crop.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Crop.h
 		${CHARON_UTILS_INCLUDE_DIR}/Crop.hxx
+		LINK_LIBRARIES debug roi
 		PLUGIN_LISTS Plugins Plugins_CImg
 	)
 	ADD_CHARON_PLUGIN(discretizebythreshold
@@ -136,6 +137,7 @@ IF(USE_CIMG)
 		ImageBlur.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/ImageBlur.h
 		${CHARON_UTILS_INCLUDE_DIR}/ImageBlur.hxx
+		LINK_LIBRARIES debug roi
 		PLUGIN_LISTS Plugins Plugins_CImg
 	)
 	ADD_CHARON_PLUGIN(imagedisplay
@@ -456,6 +458,7 @@ IF(USE_VIGRA)
 		Subarray.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Subarray.h
 		${CHARON_UTILS_INCLUDE_DIR}/Subarray.hxx
+		LINK_LIBRARIES debug roi
 		PLUGIN_LISTS Plugins Plugins_Vigra
 	)
 	ADD_CHARON_PLUGIN(mirror
@@ -495,6 +498,7 @@ IF(USE_VIGRA)
 			FileReaderHDF5.cpp
 			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.h
 			${CHARON_UTILS_INCLUDE_DIR}/FileReaderHDF5.hxx
+			LINK_LIBRARIES debug roi
 			PLUGIN_LISTS Plugins Plugins_Vigra
 		)
 	ENDIF(USE_HDF5)
