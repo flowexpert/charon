@@ -108,6 +108,7 @@ ADD_CHARON_PLUGIN(affine2translation
 	${charon_INCLUDE_DIR}/Affine2Translation.h
 	${charon_INCLUDE_DIR}/Affine2Translation.hxx
 	Affine2Translation.cpp
+	LINK_LIBRARIES debug roi
 	PLUGIN_LISTS Plugins
 )
 ADD_CHARON_PLUGIN(trigonometricbcc
@@ -224,6 +225,7 @@ ADD_CHARON_PLUGIN(newton2
 	${charon_INCLUDE_DIR}/Solvers/Newton2.h
 	${charon_INCLUDE_DIR}/Solvers/Newton2.hxx
 	Newton2.cpp
+	LINK_LIBRARIES debug roi
 	PLUGIN_LISTS Plugins
 )
 
@@ -416,7 +418,7 @@ ADD_CHARON_PLUGIN(samplegenerator
 	${charon_INCLUDE_DIR}/SampleGenerator.hxx
 	SampleGenerator.cpp
 	PLUGIN_LISTS Plugins
-	LINK_LIBRARIES sampler
+	LINK_LIBRARIES sampler debug roi
 )
 
 ADD_CHARON_PLUGIN(cdfitter
@@ -424,7 +426,7 @@ ADD_CHARON_PLUGIN(cdfitter
 	${charon_INCLUDE_DIR}/CdFitter.hxx
 	CdFitter.cpp
 	PLUGIN_LISTS Plugins
-	LINK_LIBRARIES sampler mcmcsampler cdfitfunction
+	LINK_LIBRARIES sampler mcmcsampler cdfitfunction debug roi
 )
 INSTALL(
 	TARGETS         sampler cdfitfunction

@@ -51,7 +51,8 @@ int main(int argc, char** argv) {
 		std::cerr << dlerror() << std::endl;
 		return EXIT_FAILURE;
 	}
-	int (&MPI_Init)(int*, char***) = *((int (*)(int*, char***)) func);
+	int (*MPI_Init)(int*, char***);
+	*reinterpret_cast<void**>(&MPI_Init) = func;
 	MPI_Init(&argc,&argv);
 	std::cout << "calling MPI_Finalize" << std::endl;
 	func = dlsym(handle, "MPI_Finalize");
@@ -59,7 +60,8 @@ int main(int argc, char** argv) {
 		std::cerr << dlerror() << std::endl;
 		return EXIT_FAILURE;
 	}
-	int (&MPI_Finalize)(void) = *((int (*)(void))func);
+	int (*MPI_Finalize)(void);
+	*reinterpret_cast<void**>(&MPI_Finalize) = func;
 	MPI_Finalize();
 	std::cout << "closing libmpi.so.0" << std::endl;
 	dlclose(handle);
@@ -82,7 +84,8 @@ int main(int argc, char** argv) {
 		std::cerr << dlerror() << std::endl;
 		return EXIT_FAILURE;
 	}
-	int (&run)(int&, char**&) = *((int (*)(int&, char**&)) func);
+	int (*run)(int&, char**&);
+	*reinterpret_cast<void**>(&run) = func;
 	run(argc, argv);
 	std::cout << "closing PetscTestDLL" << std::endl;
 

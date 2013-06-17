@@ -54,9 +54,6 @@ Newton2<T>::Newton2(const std::string& name) :
 
 template <typename T>
 void Newton2<T>::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
 	const Roi<int>& _roi = *(this->roi());
 
 	cimg_library::CImgList<T> _result(2,
