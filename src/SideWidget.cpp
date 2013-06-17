@@ -11,6 +11,7 @@ SideWidget::SideWidget(QWidget* pp) :
 	_list->setEnabled(false);
 	ll->addWidget(_status = new QStatusBar());
 	_status->setSizeGripEnabled(false);
+	setMinimumWidth(180);
 }
 
 void SideWidget::addItem(QString text) {
