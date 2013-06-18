@@ -39,7 +39,7 @@ SelectFromList<T>::SelectFromList(const std::string& name) :
 {
 	ParameteredObject::_addInputSlot(
 		list, "list",
-		"image list input",
+		"image list input, field dimension is n, index dimension is c, so use ChannelConverter",
 		"CImgList<T>");
 
 	ParameteredObject::_addInputSlot(
@@ -63,22 +63,25 @@ template <typename T>
 void SelectFromList<T>::execute()
 {
 	const cimg_library::CImgList<T> &_in = list();
-	unsigned int width = _in[0].width();
-	unsigned int height = _in[0].height();
-	unsigned int depth = _in[0].depth();
-	unsigned int spectrum = _in[0].spectrum();
+	int _size = _in.size();
+	int _width = _in[0].width();
+	int _height = _in[0].height();
+	int _depth = _in[0].depth();
 
 	int _first = first();
 	int _count = count();
 	int _last = _first + _count;
 
 	cimg_library::CImgList<T> &_out = out();
-	_out = cimg_library::CImgList<T>( _count, width, height, depth, spectrum );
+	_out = cimg_library::CImgList<T>( _size, _width, _height, _depth, _count );
 
-	for ( int pos=_first, retpos=0; pos<_last; pos++, retpos++ )
-	cimg_forXYZC( _out[0], x, y, z, c )
+	for (int nn=0; nn<_size; nn++)
+	for (int xx=0; xx<_width; xx++)
+	for (int yy=0; yy<_height; yy++)
+	for (int zz=0; zz<_depth; zz++)
+	for (int pos=_first, retpos=0; pos<_last; pos++, retpos++)
 	{
-		_out.atNXYZC( retpos, x, y, z, c ) = _in.atNXYZC( pos, x, y, z, c );
+		_out.atNXYZC( nn, xx, yy, zz, retpos ) = _in.atNXYZC( nn, xx, yy, zz, pos );
 	}
 }
 
