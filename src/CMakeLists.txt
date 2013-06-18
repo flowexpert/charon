@@ -537,6 +537,12 @@ ADD_CHARON_PLUGIN(selectfromlist
 	SelectFromList.cpp
 	PLUGIN_LISTS Plugins
 )
+ADD_CHARON_PLUGIN(writeintolist
+	${charon_INCLUDE_DIR}/WriteIntoList.h
+	${charon_INCLUDE_DIR}/WriteIntoList.hxx
+	WriteIntoList.cpp
+	PLUGIN_LISTS Plugins
+)
 ADD_CHARON_PLUGIN(confidencemeasures
 	${charon_INCLUDE_DIR}/ConfidenceMeasures.h
 	${charon_INCLUDE_DIR}/ConfidenceMeasures.hxx
