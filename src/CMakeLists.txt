@@ -228,7 +228,12 @@ ADD_CHARON_PLUGIN(newton2
 	LINK_LIBRARIES debug roi
 	PLUGIN_LISTS Plugins
 )
-
+ADD_CHARON_PLUGIN(tvfiltervigra
+        ${charon_INCLUDE_DIR}/Solvers/TVFilterVigra.h
+        ${charon_INCLUDE_DIR}/Solvers/TVFilterVigra.hxx
+        TVFilterVigra.cpp
+        PLUGIN_LISTS Plugins
+)
 # Iteratively reweighted least squares
 ADD_CHARON_PLUGIN(irls
 	${charon_INCLUDE_DIR}/Irls.h
@@ -236,6 +241,7 @@ ADD_CHARON_PLUGIN(irls
 	Irls.cpp
 	PLUGIN_LISTS Plugins
 )
+
 
 # weighted median filtering, as proposed by Li and Osher (2010, eq. 3.13)
 ADD_CHARON_PLUGIN(weightedmedian
