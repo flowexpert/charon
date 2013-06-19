@@ -64,6 +64,9 @@ public:
 	/// count of frames to return
 	Parameter< unsigned int > count;
 
+	/// offset parameter
+	Parameter< int > offset;
+
 protected:
 	/// Update object.
 	virtual void execute();

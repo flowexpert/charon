@@ -55,8 +55,12 @@ SelectFromList<T>::SelectFromList(const std::string& name) :
 	ParameteredObject::_addParameter< unsigned int >(
 		count, "count",
 		"count of frames to return",
-		0, "uint");
+		1, "uint");
 
+	ParameteredObject::_addParameter< int >(
+		offset, "offset",
+		"offset",
+		0, "int");
 }
 
 template <typename T>
@@ -68,7 +72,7 @@ void SelectFromList<T>::execute()
 	int _height = _in[0].height();
 	int _depth = _in[0].depth();
 
-	int _first = first();
+	int _first = first() + offset();
 	int _count = count();
 	int _last = _first + _count;
 
