@@ -104,17 +104,19 @@ namespace LogDecorators {
 		QString     _curFile;        ///< file name cache
 		StatusCode  _curStatus;      ///< status cache
 		QString     _curPlugin;      ///< plugin name cache
-		QString     _curMsg;         ///< status message cache
 		QRegExp     _fileRegex;      ///< file name regexp
 		QRegExp     _noPluginRegex;  ///< no plugin info
 		QRegExp     _warnRegex;      ///< no plugin info
 		QRegExp     _failRegex;      ///< fail regex
 		QRegExp     _passRegex;      ///< plugin passed regexp
+		QRegExp     _finishRegex;    ///< plugin unloaded
 		QStandardItemModel* _result; ///< update summary
 		QTableView* _view;           ///< summary list
 	private slots:
 		/// show corresponding log line on selection
 		void _searchOutput(const QModelIndex&);
+		/// append log row with current information
+		void _appendSummaryRow();
 	};
 
 	/// decorator for update dynamics dialog

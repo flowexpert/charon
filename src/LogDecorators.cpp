@@ -33,6 +33,8 @@
 #include <QTableView>
 #include <QHeaderView>
 
+#include <QDebug>
+
 // --------------------------   Decorator   ----------------------------------
 LogDecorators::Decorator::Decorator() :
 		debugOutput(true) {
@@ -121,9 +123,10 @@ LogDecorators::Update::Update() :
 {
 	QString p = "\\(\\w+\\)\\s+"; // prefix
 	_fileRegex     = QRegExp(p+"File: (.*)");
-	_passRegex     = QRegExp(p+"Created Instance \"\\w+\" of the plugin \"(\\w+)\".*");
+	_passRegex     = QRegExp(p+"Created Instance \"\\w+\" of the plugin \"(.+)\".*");
+	_finishRegex   = QRegExp(p+"Successfully unloaded plugin \"(.+)\".*");
 	_noPluginRegex = QRegExp(p+"\"(.+)\" is no charon plugin.*");
-	_failRegex     = QRegExp(p+"Could not generate metadata for module \"(\\w+)\".*");
+	_failRegex     = QRegExp(p+"Could not generate metadata for module \"(.+)\".*");
 	_warnRegex     = QRegExp("\\(WW\\)\\s+.*");
 	_result = new QStandardItemModel(0,2,this);
 	QStandardItem* head = new QStandardItem(tr("file"));
@@ -147,78 +150,125 @@ LogDecorators::Update::Update() :
 		SLOT(_searchOutput(QModelIndex)));
 }
 
+
+void LogDecorators::Update::_appendSummaryRow() {
+	if (_curStatus == Invalid) {
+		return;
+	}
+	QList<QStandardItem*> row;
+	QStandardItem* curItem = 0;
+
+	curItem = new QStandardItem();
+	if (_curFile.isEmpty()) {
+		_curFile = tr("[no file available]");
+		curItem->setData(_curFile,             Qt::DisplayRole);
+		curItem->setData(QFont("monospace",9,-1,true), Qt::FontRole);
+		curItem->setData(Qt::gray, Qt::ForegroundRole);
+		curItem->setData(QString(),            Qt::UserRole);
+	}
+	else {
+		curItem->setData(_curFile,             Qt::DisplayRole);
+		curItem->setData(_curFile,             Qt::UserRole);
+		curItem->setData(QFont("monospace",9), Qt::FontRole);
+	}
+	row << curItem;
+
+	curItem = new QStandardItem();
+	curItem->setData(_curPlugin,           Qt::DisplayRole);
+	curItem->setData(_curPlugin,           Qt::UserRole);
+	curItem->setData(QFont("monospace",9), Qt::FontRole);
+	row << curItem;
+
+	curItem = new QStandardItem();
+	curItem->setData(_curStatus,           Qt::UserRole);
+	curItem->setData(QFont("sans-serif",9),Qt::FontRole);
+	switch (_curStatus) {
+	case Passed:
+		curItem->setData(tr("passed"),          Qt::DisplayRole);
+		curItem->setData(QBrush(QColor("#0A2")),Qt::ForegroundRole);
+		break;
+	case NoPlugin:
+		curItem->setData(tr("no plugin"),       Qt::DisplayRole);
+		curItem->setData(QBrush(QColor("#777")),Qt::ForegroundRole);
+		break;
+	case Warnings:
+		curItem->setData(tr("warnings"),        Qt::DisplayRole);
+		curItem->setData(QBrush(QColor("#F84")),Qt::ForegroundRole);
+		curItem->setData(QFont("sans-serif",9,QFont::DemiBold),Qt::FontRole);
+		break;
+	case Failed:
+		curItem->setData(tr("failed"),          Qt::DisplayRole);
+		curItem->setData(QBrush(QColor("#F20")),Qt::ForegroundRole);
+		curItem->setData(QFont("sans-serif",9,QFont::Bold),Qt::FontRole);
+		break;
+	default:
+		qDebug() << "unhandled status code:" << _curStatus;
+		break;
+	}
+	row << curItem;
+
+	_result->appendRow(row);
+	_view->setRowHeight(_result->rowCount()-1,20);
+	_view->setColumnWidth(0,_view->width()/2);
+	_view->setColumnWidth(1,_view->width()/4);
+
+	// reset status
+	_curStatus = Invalid;
+	_curFile   = QString();
+	_curPlugin = QString();
+}
+
 void LogDecorators::Update::processLine(QString line) {
 	if (_fileRegex.exactMatch(line)) {
-		if (_curStatus) {
-			QList<QStandardItem*> row;
-			QStandardItem* curItem(0);
-
-			curItem = new QStandardItem(_curFile);
-			curItem->setData(QFont("monospace",9),Qt::FontRole);
-			row << curItem;
-
-			curItem = new QStandardItem(_curPlugin);
-			curItem->setData(QFont("monospace",9),Qt::FontRole);
-			row << curItem;
-
-			curItem = new QStandardItem(_curMsg);
-			curItem->setData(_curStatus,Qt::UserRole);
-			curItem->setData(QFont("sans-serif",9),Qt::FontRole);
-			switch (_curStatus) {
-			case Passed:
-				curItem->setData(QBrush(QColor("#0A2")),Qt::ForegroundRole);
-				break;
-			case NoPlugin:
-				curItem->setData(QBrush(QColor("#777")),Qt::ForegroundRole);
-				break;
-			case Warnings:
-				curItem->setData(QBrush(QColor("#F84")),Qt::ForegroundRole);
-				curItem->setData(QFont("sans-serif",9,QFont::DemiBold),Qt::FontRole);
-				break;
-			case Failed:
-				curItem->setData(QBrush(QColor("#F20")),Qt::ForegroundRole);
-				curItem->setData(QFont("sans-serif",9,QFont::Bold),Qt::FontRole);
-				break;
-			default:
-				qDebug("unhandled status code: %d", _curStatus);
-				break;
-			}
-			row << curItem;
-
-			_result->appendRow(row);
-			_view->setRowHeight(_result->rowCount()-1,20);
-			_view->setColumnWidth(0,_view->width()/2);
-			_view->setColumnWidth(1,_view->width()/4);
-		}
+		_appendSummaryRow();
 		_curFile   = _fileRegex.cap(1);
 		_curStatus = Failed;
-		_curMsg    = tr("failed");
-		_curPlugin = QString();
 	}
 	else if (_noPluginRegex.exactMatch(line)) {
 		_curStatus = NoPlugin;
-		_curMsg    = tr("no plugin");
+		if (!_curPlugin.isEmpty() && _curPlugin != _noPluginRegex.cap(1)) {
+			qDebug() << "Plugin Mismatch (noPlugin):"
+				<< _curPlugin << _noPluginRegex.cap(1);
+		}
 		_curPlugin = _noPluginRegex.cap(1);
 	}
 	else if (_failRegex.exactMatch(line)) {
+		if (!_curPlugin.isEmpty() && _curPlugin != _failRegex.cap(1)) {
+			qDebug() << "Plugin Mismatch (fail):"
+				<< _curPlugin << _failRegex.cap(1);
+		}
+		_curStatus = Failed;
 		_curPlugin = _failRegex.cap(1);
+		_appendSummaryRow();
 	}
 	else if (_warnRegex.exactMatch(line)) {
 		_curStatus = Warnings;
-		_curMsg    = tr("warnings");
 	}
 	else if (_passRegex.exactMatch(line)) {
+		if (!_curPlugin.isEmpty() && _curPlugin != _passRegex.cap(1)) {
+			qDebug() << "Plugin Mismatch (pass):"
+				<< _curPlugin << _passRegex.cap(1);
+		}
 		_curPlugin = _passRegex.cap(1);
 		if (_curStatus != Warnings) {
 			_curStatus = Passed;
-			_curMsg    = tr("passed");
 		}
+	}
+	else if (_finishRegex.exactMatch(line)) {
+		if (!_curPlugin.isEmpty() && _curPlugin != _finishRegex.cap(1)) {
+			qDebug() << "Plugin Mismatch (finish):"
+				<< _curPlugin << _finishRegex.cap(1);
+		}
+		if (_curStatus != Passed && _curStatus != Warnings) {
+			qDebug() << "Strange Plugin Status (finish):" << _curStatus;
+		}
+		_curPlugin = _finishRegex.cap(1);
+		_appendSummaryRow();
 	}
 }
 
 void LogDecorators::Update::finishProcessing() {
 	_view->sortByColumn(2,Qt::DescendingOrder);
-	_view->resizeColumnToContents(0);
 }
 
 QWidget* LogDecorators::Update::statusWidget() {
@@ -226,8 +276,8 @@ QWidget* LogDecorators::Update::statusWidget() {
 }
 
 void LogDecorators::Update::_searchOutput(const QModelIndex& idx) {
-	emit filter(_result->data(_result->index(idx.row(),0),
-			Qt::DisplayRole).toString());
+	emit filter(QString("\"%1\"").arg(
+		_result->data(_result->index(idx.row(),1),Qt::DisplayRole).toString()));
 }
 
 // -------------------------   update dynamics   ------------------------------
