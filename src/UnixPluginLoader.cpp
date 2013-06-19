@@ -212,7 +212,8 @@ void UnixPluginLoader::load() throw (PluginException) {
 						+ "\n(WW) \tplugin compiled with version: "
 						+ foundVersion.str();
 				}
-				sout << "(WW) ELF Check failed: " << checkFailMsg << std::endl;
+				sout << "(WW) ELF Check of plugin \"" << pluginName
+					<< "\" failed: " << checkFailMsg << std::endl;
 				break;
 			case PluginManagerInterface::PluginVersionDiscard:
 				if (checkErrCode == PluginException::VERSION_MISSMATCH) {
