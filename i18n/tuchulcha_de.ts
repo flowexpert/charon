@@ -69,7 +69,7 @@
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="218"/>
-        <location filename="../src/LogDecorators.cpp" line="302"/>
+        <location filename="../src/LogDecorators.cpp" line="352"/>
         <source>Execution finished.</source>
         <translation>Ausführung beendet.</translation>
     </message>
@@ -125,7 +125,7 @@ Message:
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="248"/>
-        <location filename="../src/LogDecorators.cpp" line="304"/>
+        <location filename="../src/LogDecorators.cpp" line="354"/>
         <source>Error during execution:</source>
         <translation>Fehler während der Ausführung:</translation>
     </message>
@@ -414,32 +414,32 @@ Please use a valid name.
 <context>
     <name>LogDecorators::RunWorkflow</name>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="257"/>
+        <location filename="../src/LogDecorators.cpp" line="307"/>
         <source>missing workflow file</source>
         <translation>keine Datei angegeben</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="258"/>
+        <location filename="../src/LogDecorators.cpp" line="308"/>
         <source>The workflow cannot be started because it has not been saved to disk (empty filename given). Please save it and retry execution.</source>
         <translation>Die Ausführung konnte nicht gestartet werden, da das Dokument nicht gespeichert wurde. Bitte speichern und erneut ausführen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="283"/>
+        <location filename="../src/LogDecorators.cpp" line="333"/>
         <source>wait before workflow execution</source>
         <translation>vor der Ausführung warten</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="284"/>
+        <location filename="../src/LogDecorators.cpp" line="334"/>
         <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the run process. Workflow will be started, when you close this message box.</source>
         <translation>Warte mit dem Start der Ausführung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Ausführungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="312"/>
+        <location filename="../src/LogDecorators.cpp" line="362"/>
         <source>Workflow execution finished.</source>
         <translation>Ausführung wurde beendet.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="313"/>
+        <location filename="../src/LogDecorators.cpp" line="363"/>
         <source>Plugins stay loaded until you close this dialog.</source>
         <translation>Die Plugins bleiben geladen, bis dieser Dialog geschlossen wird.</translation>
     </message>
@@ -447,57 +447,62 @@ Please use a valid name.
 <context>
     <name>LogDecorators::Update</name>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="76"/>
+        <location filename="../src/LogDecorators.cpp" line="78"/>
         <source>Plugin Information Update</source>
         <translation>Plugin Informationen aktualisieren</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="80"/>
+        <location filename="../src/LogDecorators.cpp" line="82"/>
         <source>Output of update process:</source>
         <translation>Ausgabe der Aktualisierung:</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="98"/>
+        <location filename="../src/LogDecorators.cpp" line="100"/>
         <source>wait before plugin update</source>
         <translation>vor der Aktualisierung warten</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="99"/>
+        <location filename="../src/LogDecorators.cpp" line="101"/>
         <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the update process. Update will be started, when you close this message box.</source>
         <translation>Warte mit dem Start der Aktualisierung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Aktualisierungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="129"/>
+        <location filename="../src/LogDecorators.cpp" line="132"/>
         <source>file</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="131"/>
+        <location filename="../src/LogDecorators.cpp" line="134"/>
         <source>module</source>
         <translation>Modul</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="133"/>
+        <location filename="../src/LogDecorators.cpp" line="136"/>
         <source>status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="195"/>
+        <location filename="../src/LogDecorators.cpp" line="163"/>
+        <source>[no file available]</source>
+        <translation>[keine Datei verfügbar]</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDecorators.cpp" line="200"/>
         <source>failed</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="200"/>
+        <location filename="../src/LogDecorators.cpp" line="191"/>
         <source>no plugin</source>
         <translation>kein Plugin</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="208"/>
+        <location filename="../src/LogDecorators.cpp" line="195"/>
         <source>warnings</source>
         <translation>Warnungen</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="214"/>
+        <location filename="../src/LogDecorators.cpp" line="187"/>
         <source>passed</source>
         <translation>Erfolg</translation>
     </message>
