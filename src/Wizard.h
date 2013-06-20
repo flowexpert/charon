@@ -22,6 +22,14 @@ public:
 	 */
 	static QString breakLines(
 		QString src, QString delim = "\n", QString nl = "", uint ll=80);
+
+	/// escape characters for cpp strings
+	/** currently handles the following:
+	 *  - quotes (replace " by \")
+	 *  \returns escaped version of the argument
+	 */
+	static QString escapeCPP(QString);
+
 protected:
 	/// generate module
 	virtual void done(int result);

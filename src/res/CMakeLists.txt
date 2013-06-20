@@ -23,7 +23,6 @@ FIND_PACKAGE(charon-core REQUIRED HINTS $ENV{CHARON_DIR})
 INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 IF(USE_CIMG)
 	FIND_PACKAGE(charon-utils REQUIRED HINTS $ENV{CHARON_DIR})
-	INCLUDE(CImgConfig)
 	INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
 ENDIF(USE_CIMG)
 IF(USE_VIGRA)
@@ -37,30 +36,12 @@ INCLUDE(InitFlags)
 SET(Plugins) # this list contains all plugin targets
 
 # module generation
-ADD_LIBRARY(@modulename@ SHARED
+ADD_CHARON_PLUGIN(@modulename@
 	@ModuleName@.cpp
 	@ModuleName@.h
-@ModHxx@)
-LIST(APPEND Plugins @modulename@)
+@ModHxx@	PLUGIN_LISTS Plugins
+	LINK_LIBRARIES ${CIMG_LINK_LIBRARIES} ${Vigra_LIBRARIES}
+	)
+)
 
 # add additional modules here
-
-
-# common linking and install target
-LIST(REMOVE_DUPLICATES Plugins)
-FOREACH(Pl ${Plugins})
-	TARGET_LINK_LIBRARIES(${Pl}
-		charon-core
-		${CIMG_LINK_LIBRARIES}
-		${Vigra_LIBRARIES}
-	)
-ENDFOREACH(Pl)
-SET_TARGET_PROPERTIES(${Plugins} PROPERTIES
-	INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/charon-plugins
-)
-INSTALL(
-	TARGETS          ${Plugins}
-	RUNTIME          DESTINATION bin${BIN_SUFFIX}
-	LIBRARY          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-	ARCHIVE          DESTINATION lib${LIB_SUFFIX}/charon-plugins
-)

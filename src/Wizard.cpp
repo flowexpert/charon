@@ -222,7 +222,6 @@ bool Wizard::_writeFiles() {
 					cMakeOut);
 			QStringList ll;
 			ll << "InitFlags.cmake";
-			ll << "CImgConfig.cmake";
 			for (int ii=0; ii < ll.size(); ii++){
 				QFile fin(QString(":/templates/%1").arg(ll[ii]));
 				QFile fout(QString("%1/%2")
@@ -357,8 +356,8 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 	QString pluginDoc = c.value("pluginDoc").toString()
 			.arg(field("briefDesc").toString().trimmed())
 			.arg(field("description").toString().trimmed());
-	pluginDoc = breakLines(
-			pluginDoc,
+	pluginDoc = escapeCPP(pluginDoc);
+	pluginDoc = breakLines(pluginDoc,
 			c.value("pluginDocSep").toString(),
 			c.value("pluginDocDlm").toString());
 	QString addHeaders;
@@ -396,13 +395,15 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 			paramSlots.append(c.value("inputSlotDecl").toString()
 					.arg(slotNames[ii])
 					.arg(breakLines(
-							slotDocs[ii],c.value("memDocSep").toString()))
+							slotDocs[ii],
+							c.value("memDocSep").toString()))
 					.arg(cppType)
 			);
 			ctorCont.append(c.value("inputSlotReg").toString()
 				.arg(slotNames[ii])
 				.arg(breakLines(
-						slotDocs[ii],c.value("regDocSep").toString()))
+						escapeCPP(slotDocs[ii]),
+						c.value("regDocSep").toString()))
 				.arg(slotTypes[ii])
 			);
 			if (slotOptional[ii] || slotMulti[ii]) {
@@ -433,13 +434,15 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 			paramSlots.append(c.value("outputSlotDecl").toString()
 					.arg(slotNames[ii])
 					.arg(breakLines(
-							slotDocs[ii],c.value("memDocSep").toString()))
+							slotDocs[ii],
+							c.value("memDocSep").toString()))
 					.arg(cppType)
 			);
 			ctorCont.append(c.value("outputSlotReg").toString()
 				.arg(slotNames[ii])
 				.arg(breakLines(
-						slotDocs[ii],c.value("regDocSep").toString()))
+						escapeCPP(slotDocs[ii]),
+						c.value("regDocSep").toString()))
 				.arg(slotTypes[ii])
 			);
 		}
@@ -471,7 +474,8 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 				c.value("parameterDecl").toString()
 					.arg(paramNames[ii])
 					.arg(breakLines(
-							paramDocs[ii],c.value("memDocSep").toString()))
+							paramDocs[ii],
+							c.value("memDocSep").toString()))
 					.arg(cppType)
 					.arg(paramLists[ii]?"ParameterList":"Parameter")
 			);
@@ -497,7 +501,8 @@ bool Wizard::_replacePlaceholders(QString src, QString dst) {
 			ctorCont.append(c.value("parameterReg").toString()
 				.arg(paramNames[ii])
 				.arg(breakLines(
-						paramDocs[ii], c.value("regDocSep").toString()))
+						escapeCPP(paramDocs[ii]),
+						c.value("regDocSep").toString()))
 				.arg(tempTypeSpec)
 				.arg(devVal)
 				.arg(paramTypes[ii])
@@ -593,4 +598,9 @@ QString Wizard::breakLines(QString src, QString dlm, QString nl, uint ll) {
 	dst.replace(QRegExp("@nl@ *"), nl);
 
 	return dst;
+}
+
+QString Wizard::escapeCPP(QString src) {
+	src.replace("\"", "\\\""); // escape quotes
+	return src;
 }
