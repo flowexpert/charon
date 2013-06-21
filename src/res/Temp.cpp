@@ -21,9 +21,6 @@
  *  \date @Date@
  */
 
-/// Class name of the plugin
-#define TYPE @ModuleName@
-
 #include "@ModuleName@.hxx"
 
 /// Creates an instance of the plugin
@@ -31,16 +28,16 @@ extern "C" @modulename@_DECLDIR ParameteredObject*
 		create(const std::string & name, ParameteredObject::template_type t) {
 	switch(t) {
 	case ParameteredObject::TYPE_DOUBLE:
-		return new TYPE<double>(name);
+		return new @ModuleName@<double>(name);
 		break;
 	case ParameteredObject::TYPE_FLOAT:
-		return new TYPE<float>(name);
+		return new @ModuleName@<float>(name);
 		break;
 	case ParameteredObject::TYPE_INT:
-		return new TYPE<int>(name);
+		return new @ModuleName@<int>(name);
 		break;
 	default:
-		return new TYPE<int>(name);
+		return 0;
 		break;
 	}
 }
