@@ -64,7 +64,7 @@ protected:
 public:
 	/// Plugin Exception class
 	/** Provides information about the reason of the error */
-	class PluginException: public std::runtime_error {
+	class charon_plugins_DLL_PUBLIC PluginException: public std::runtime_error {
 	public:
 		/// Error Reason Enum
 		enum ErrorCode {
