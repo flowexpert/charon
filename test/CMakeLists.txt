@@ -71,15 +71,18 @@ IF(BUILD_TESTING)
 	ADD_CHARON_PLUGIN(dummymodule DummyModule.cpp
 		SKIP_INSTALL PLUGIN_LISTS testTargets)
 	ADD_LIBRARY(dummymodule2 SHARED DummyModule.cpp)
-	SET_TARGET_PROPERTIES(dummymodule2 PROPERTIES COMPILE_DEFINITIONS "dummymodule_EXPORTS")
 	TARGET_LINK_LIBRARIES(dummymodule2 charon-core)
 	LIST(APPEND testTargets dummymodule2)
-	ADD_LIBRARY(dummymodule3 SHARED DummyModule.cpp versionInvalid1.cpp)
-	SET_TARGET_PROPERTIES(dummymodule3 PROPERTIES COMPILE_DEFINITIONS "dummymodule_EXPORTS")
+	IF(MSVC)
+		ADD_LIBRARY(dummymodule3 SHARED DummyModule.cpp versionInvalid1.rc)
+		ADD_LIBRARY(dummymodule4 SHARED DummyModule.cpp versionInvalid2.rc)
+	ELSE(MSVC)
+		ADD_LIBRARY(dummymodule3 SHARED DummyModule.cpp versionInvalid1.cpp)
+		ADD_LIBRARY(dummymodule4 SHARED DummyModule.cpp versionInvalid2.cpp)
+	ENDIF(MSVC)
+
 	TARGET_LINK_LIBRARIES(dummymodule3 charon-core)
 	LIST(APPEND testTargets dummymodule3)
-	ADD_LIBRARY(dummymodule4 SHARED DummyModule.cpp versionInvalid2.cpp)
-	SET_TARGET_PROPERTIES(dummymodule4 PROPERTIES COMPILE_DEFINITIONS "dummymodule_EXPORTS")
 	TARGET_LINK_LIBRARIES(dummymodule4 charon-core)
 	LIST(APPEND testTargets dummymodule4)
 	ADD_CHARON_PLUGIN(dynamicdummymodule DynamicDummyModule.cpp
@@ -129,6 +132,18 @@ IF(BUILD_TESTING)
 		LIST(APPEND testTargets versionInfoElf)
 	ENDIF()
 
+	IF (MSVC)
+		# test for Plugin Version in DLL files
+		ADD_EXECUTABLE(versionInfoDll versionInfoDll.cpp)
+		TARGET_LINK_LIBRARIES(versionInfoDll charon-core charon-plugins)
+		ADD_TEST(
+			NAME Plugin_VersionDll
+			COMMAND versionInfoDll
+		)
+		LIST(APPEND tests Plugin_VersionDll)
+		LIST(APPEND testTargets versionInfoDll)
+	ENDIF (MSVC)
+	
 	# tests for DynamicModules
 	ADD_EXECUTABLE(dynamictest dynamictest.cpp)
 	TARGET_LINK_LIBRARIES(dynamictest charon-plugins)

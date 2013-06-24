@@ -23,11 +23,7 @@
 
 /** \def dummymodule_DLL_PUBLIC dll import/export flags */
 #ifdef _MSC_VER
-	#ifdef dummymodule_EXPORTS
-		#define dummymodule_DLL_PUBLIC __declspec(dllexport)
-	#else
-		#define dummymodule_DLL_PUBLIC __declspec(dllimport)
-	#endif
+	#define dummymodule_DLL_PUBLIC __declspec(dllexport)
 #else
 	#define dummymodule_DLL_PUBLIC
 #endif
