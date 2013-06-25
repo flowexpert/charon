@@ -407,12 +407,12 @@ void TuchulchaWindow::_showHelp() {
 	static QString collectionPath;
 	if (collectionPath.isNull()) {
 		// look for collection file
-		QStringList hpaths;
-		hpaths << QCoreApplication::applicationDirPath();
+		QStringList hPaths;
+		hPaths << QCoreApplication::applicationDirPath();
 #ifdef TUCHULCHA_QHC_DIR
 		hPaths << TUCHULCHA_QHC_DIR;
 #endif
-		foreach (QString path, hpaths) {
+		foreach (QString path, hPaths) {
 			if (QDir(path).exists("tuchulcha.qhc")) {
 				collectionPath = path;
 				break;
