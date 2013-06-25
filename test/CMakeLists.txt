@@ -5,6 +5,9 @@ INCLUDE_DIRECTORIES(${charon-core_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CHARON_UTILS_INCLUDE_DIRS})
 
 IF(BUILD_TESTING)
+	IF(NOT QT_QTTEST_FOUND)
+		MESSAGE(FATAL_ERROR "BUILD_TESTING needs QtTest, but QtTest not found.")
+	ENDIF()
 	SET(tests)
 	SET(testTargets)
 
@@ -63,6 +66,11 @@ IF(BUILD_TESTING)
 	ADD_TEST(NAME LogViewWidget COMMAND logviewtest)
 	LIST(APPEND tests LogViewWidget)
 	LIST(APPEND testTargets logviewtest)
+
+	# link tests against QtTest
+	FOREACH(X ${testTargets})
+		TARGET_LINK_LIBRARIES(${X} ${QT_QTTEST_LIBRARY})
+	ENDFOREACH(X)
 
 	IF(WIN32)
 		GET_TARGET_PROPERTY(test_loc qparameterfiletest LOCATION)

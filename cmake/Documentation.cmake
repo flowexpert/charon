@@ -1,16 +1,16 @@
 # Use information from FindDoxygen and set up documentation creation
 
 FIND_PACKAGE(Doxygen)
-SET_PACKAGE_PROPERTIES(Doxygen PROPERTIES
-	URL www.doxygen.org
-	DESCRIPTION "tool for generating documentation from annotated C++ sources"
-	TYPE RECOMMENDED
-	PURPOSE "- generate html, qhelp documentation"
-)
+SET_PACKAGE_PROPERTIES(Doxygen PROPERTIES TYPE RECOMMENDED URL www.doxygen.org
+	DESCRIPTION "tool for generating documentation from annotated C++ sources")
+SET_PACKAGE_PROPERTIES(Doxygen PROPERTIES PURPOSE
+	"- generate html and qhelp documentation")
+SET_PACKAGE_PROPERTIES(Doxygen PROPERTIES PURPOSE
+	"- generate pdf documentation and formulae using latex")
 
 IF (DOXYGEN_FOUND)
 	# Possibility to enable/disable documentation creation
-	OPTION(USE_LATEX "activate pdfdoc generation" ${PDFLATEX_COMPILER})
+	OPTION(USE_LATEX "activate pdfdoc generation" ON)
 	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
 	SET(${PROJECT_NAME}_INSTALL_DOC doc/${PROJECT_NAME}
 		CACHE PATH "${PROJECT_NAME} documentation install prefix")
