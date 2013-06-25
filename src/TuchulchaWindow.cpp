@@ -404,12 +404,36 @@ void TuchulchaWindow::_showAboutQt() {
 
 void TuchulchaWindow::_showHelp() {
 #ifdef USE_ASSISTANT
+	static QString collectionPath;
+	if (collectionPath.isNull()) {
+		// look for collection file
+		QStringList hpaths;
+		hpaths << QCoreApplication::applicationDirPath();
+#ifdef TUCHULCHA_QHC_DIR
+		hPaths << TUCHULCHA_QHC_DIR;
+#endif
+		foreach (QString path, hpaths) {
+			if (QDir(path).exists("tuchulcha.qhc")) {
+				collectionPath = path;
+				break;
+			}
+		}
+		if (collectionPath.isEmpty()) {
+			// fallback
+			_docGen->showHelp();
+			return;
+		}
+	}
 	QProcess *process = new QProcess;
 	QStringList args;
-	args << QLatin1String("-collectionFile") << QLatin1String("tuchulcha.qhc")
+	args << QLatin1String("-collectionFile")
+		<< QLatin1String("tuchulcha.qhc")
 		<< QLatin1String("-enableRemoteControl");
+	process->setWorkingDirectory(collectionPath);
 	process->start(QLatin1String("assistant"), args);
 	if (!process->waitForStarted()) {
+		// fallback
+		_docGen->showHelp();
 		return;
 	}
 	QByteArray ba;

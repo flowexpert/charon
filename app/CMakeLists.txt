@@ -88,7 +88,7 @@ ELSE(APPLE)
 	IF(UNIX)
 		# application icons
 		INSTALL(FILES
-			${ICON_DIR}/tc.png
+			${ICON_DIR}/tc48.png
 			DESTINATION share/icons/hicolor/48x48/apps
 			RENAME      tuchulcha.png
 			COMPONENT   applications
