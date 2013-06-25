@@ -11,6 +11,10 @@ IF(tuchulcha_BUILD_INFO)
 	ADD_DEFINITIONS(-DBUILD_INFO="${tuchulcha_BUILD_INFO}")
 ENDIF()
 
+IF(USE_ASSISTANT)
+	ADD_DEFINITIONS(-DUSE_ASSISTANT)
+ENDIF()
+
 # source files containing QObject derived classes
 QT4_WRAP_UI(UI_SRC
 	LogDialog.ui

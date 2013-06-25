@@ -105,6 +105,9 @@ private slots:
 	/// show about dialog
 	void _showAbout();
 
+	/// show help browser
+	void _showHelp();
+
 	/// show about Qt dialog
 	void _showAboutQt();
 

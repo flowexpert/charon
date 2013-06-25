@@ -15,8 +15,8 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with Tuchulcha.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file LogDialog.cpp
- *  \brief Implementation of class LogDialog
+/** \file LogDecorators.cpp
+ *  \brief Implementation  of classes in the LogDecorators namespace
  *
  *  \date 13.11.2011
  *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>

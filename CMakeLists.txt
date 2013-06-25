@@ -12,11 +12,15 @@ OPTION(USE_PROJECT_FOLDERS "Organize build targets in Folders (Only supported in
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ${USE_PROJECT_FOLDERS})
 SET(CMAKE_DEBUG_POSTFIX _d)
 
-FIND_PACKAGE(Qt4 4.4.0 COMPONENTS QtCore QtGui QtTest REQUIRED)
+FIND_PACKAGE(Qt4 4.4.0 COMPONENTS QtCore QtGui QtTest QtHelp REQUIRED)
 IF(APPLE)
 	ADD_DEFINITIONS(-DQ_WS_MAC32)
 ENDIF(APPLE)
 INCLUDE(${QT_USE_FILE})
+
+INCLUDE(FeatureSummary)
+OPTION(USE_ASSISTANT "Use Qt Assistant for Tuchulcha help display" OFF)
+ADD_FEATURE_INFO(USE_ASSISTANT USE_ASSISTANT "Qt Assistant based Help Viewer")
 
 FIND_PACKAGE(charon-core 0.2.6 REQUIRED HINTS $ENV{CHARON_DIR})
 INCLUDE(InitFlags)
@@ -26,10 +30,6 @@ IF(WIN32)
 	OPTION(INSTALL_DLLS "install/package needed (third-party) dlls" OFF)
 	INCLUDE(appicon)
 ENDIF(WIN32)
-
-# set up documentation generation
-FIND_PACKAGE(Doxygen)
-INCLUDE(Documentation)
 
 # Test suite
 INCLUDE(CTest)
@@ -50,4 +50,8 @@ ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(test)
 ADD_SUBDIRECTORY(app)
 
+# set up documentation generation
+INCLUDE(Documentation)
 INCLUDE(InstallDlls)
+
+FEATURE_SUMMARY(WHAT ALL)

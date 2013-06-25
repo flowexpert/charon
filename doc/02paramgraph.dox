@@ -1,5 +1,5 @@
 /**
-\page paramgraph Graph representation in the parameter file
+\page paramgraph Parameter Files
 To represent a node, you need its name and its type.
 So the following example shows a valid parameter file:
 

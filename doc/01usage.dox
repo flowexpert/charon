@@ -1,9 +1,5 @@
 /**
-\page tuchulcha-usage Application usage
-This short usage guide is similar to the documents displayed in the
-help browser. To show the introduction or help documents select
-\c introduction or \c help from the help menu.
-
+\page tuchulcha-usage Introduction
 \section start Getting started
 To create a new (empty) file, select file->new or type
 CTRL+N.<br>
@@ -34,6 +30,7 @@ widget. Tooltips show a short documentation for each parameter.
 Here you find some information about the elements in the application window.
 
 \subsection flowwidget Flowchart window
+\addindex FlowWidget
 On application start, there is no flowchart window avaiable.
 You can open an arbitrary numer of flowchart windows via opening
 existing documents or creating new ones.

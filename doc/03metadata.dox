@@ -1,5 +1,5 @@
 /**
-\page metadata Metadata file format
+\page metadata Module Metadata
 The metadata are standard parameter files which can be opened by
 the class ParameterFile. You can edit these files via text editor or,
 more confortable with the object inspector \c paraminspektor(.exe) .

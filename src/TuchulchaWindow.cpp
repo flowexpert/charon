@@ -211,7 +211,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 
 	action = toolbar->addAction(
 		QIcon::fromTheme("help-contents",QIcon(":/icons/help-contents.png")),
-		tr("tuchulcha help"), _docGen, SLOT(showHelp()));
+		tr("tuchulcha help"), this, SLOT(_showHelp()));
 	action->setToolTip(tr("show help page"));
 
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
@@ -285,7 +285,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(
 		QIcon::fromTheme("help-contents",QIcon(":/icons/help-contents.png")),
-		tr("&Help"), _docGen, SLOT(showHelp()), QKeySequence(tr("F1")));
+		tr("&Help"), this, SLOT(_showHelp()), QKeySequence(tr("F1")));
 	helpMenu->addAction(
 		QIcon::fromTheme("help-faq",QIcon(":/icons/help-info.png")),
 		tr("&Introduction"), _docGen, SLOT(showIntro()),
@@ -400,6 +400,26 @@ void TuchulchaWindow::_showAbout() {
 
 void TuchulchaWindow::_showAboutQt() {
 	QMessageBox::aboutQt(this, tr("About Qt"));
+}
+
+void TuchulchaWindow::_showHelp() {
+#ifdef USE_ASSISTANT
+	QProcess *process = new QProcess;
+	QStringList args;
+	args << QLatin1String("-collectionFile") << QLatin1String("tuchulcha.qhc")
+		<< QLatin1String("-enableRemoteControl");
+	process->start(QLatin1String("assistant"), args);
+	if (!process->waitForStarted()) {
+		return;
+	}
+	QByteArray ba;
+	ba.append("expandToc 1;");
+	ba.append("setSource qthelp://org.doxygen.tuchulcha/doc/tuchulcha-usage.html;");
+	ba.append("\n");
+	process->write(ba);
+#else
+	_docGen->showHelp();
+#endif
 }
 
 void TuchulchaWindow::open(const QString& fileName, bool maximized) {
