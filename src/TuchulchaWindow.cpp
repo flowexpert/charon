@@ -129,6 +129,10 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	_centralArea = new CentralMdiArea(this);
 	_centralArea->setViewMode(QMdiArea::TabbedView);
 	_centralArea->setDocumentMode(true);
+	_centralArea->setTabsMovable(true);
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 8, 0))
+	_centralArea->setTabsClosable(true);
+#endif
 	setCentralWidget(_centralArea);
 
 	connect(_centralArea, SIGNAL(subWindowActivated (QMdiSubWindow*)),
