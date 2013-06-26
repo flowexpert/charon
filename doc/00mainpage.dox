@@ -1,5 +1,5 @@
-/**
-\mainpage Overview
+/** \mainpage Overview
+
 This project serves to provide an interface to edit workflow configuration
 files to be used within the charon-suite framework.
 With such files, it is possible to configure parameters of objects,

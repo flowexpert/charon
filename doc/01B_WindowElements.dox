@@ -1,23 +1,27 @@
-/**
-\page widgets Window elements
-Here you find some information about the elements in the application window.
+/** \page widgets Window elements
+
+Here you find a description the elements in the tuchulcha application window.
 
 \section toolbar Tool Bar
 \addindex Tool Bar
-\image html toolbar.png
-\image latex toolbar.png "Tool Bar" width=0.7\textwidth
+\image html toolbar.png "Tool Bar Screenshot"
+\image latex toolbar.png "Tool Bar Screenshot" width=0.7\textwidth
 
-\section flowwidget Flowchart window
-\addindex Flow Widget
-\image html flowWidget.png
-\image latex flowWidget.png "Tool Bar" width=0.7\textwidth
+\section flowwidget Worflow Widget
+\addindex Workflow Widget
+\image html flowWidget.png "Workflow Widget Screenshot"
+\image latex flowWidget.png "Workflow Widget Screenshot" width=0.7\textwidth
+
 On application start, there is no flowchart window avaiable.
 You can open an arbitrary numer of flowchart windows via opening
 existing documents or creating new ones.
 
+The Workflow Widgets are arranged in Tabs in the Main Window
+(in a so called MDI area)
+
 The flow window shows the flowchart representation of the object
 structures found in the associated parameterfile document.
-This structure can be edited by drag&drop (see above).
+This structure can be edited by drag&drop (see \ref editing).
 The parameterfile content can be saved and reloaded.
 
 \section inspector Object inspector
