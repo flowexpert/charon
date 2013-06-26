@@ -228,12 +228,16 @@ ADD_CHARON_PLUGIN(newton2
 	LINK_LIBRARIES debug roi
 	PLUGIN_LISTS Plugins
 )
-ADD_CHARON_PLUGIN(tvfiltervigra
-        ${charon_INCLUDE_DIR}/Solvers/TVFilterVigra.h
-        ${charon_INCLUDE_DIR}/Solvers/TVFilterVigra.hxx
-        TVFilterVigra.cpp
-        PLUGIN_LISTS Plugins
-)
+
+IF(USE_VIGRA)
+	INCLUDE_DIRECTORIES(${Vigra_INCLUDE_DIRS})
+	ADD_CHARON_PLUGIN(tvfiltervigra
+			${charon_INCLUDE_DIR}/Solvers/TVFilterVigra.h
+			${charon_INCLUDE_DIR}/Solvers/TVFilterVigra.hxx
+			TVFilterVigra.cpp
+			PLUGIN_LISTS Plugins
+	)
+ENDIF(USE_VIGRA)
 # Iteratively reweighted least squares
 ADD_CHARON_PLUGIN(irls
 	${charon_INCLUDE_DIR}/Irls.h

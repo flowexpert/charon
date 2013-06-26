@@ -24,6 +24,13 @@ INCLUDE(InitFlags)
 FIND_PACKAGE(Doxygen QUIET)
 INCLUDE(Documentation)
 
+IF(NOT DEFINED USE_VIGRA OR USE_VIGRA)
+	FIND_PACKAGE(Vigra 1.7.1)
+	IF(NOT Vigra_FOUND)
+		MESSAGE(STATUS "Set Vigra_DIR to point to the vigra lib directory")
+	ENDIF(NOT Vigra_FOUND)
+ENDIF()
+
 # CPack descriptions for package generation
 INCLUDE(ReleaseSys)
 
