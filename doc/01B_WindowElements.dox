@@ -1,36 +1,16 @@
 /**
-\page tuchulcha-usage Introduction
-\section start Getting started
-To create a new (empty) file, select file->new or type
-CTRL+N.<br>
-To open an existing file, select file->open or type
-CTRL+O.<br>
-
-\subsection editing Editing a Document
-If you have an open document, you can add new items by
-drag&drop (choose one from the selector widget and drag it onto
-the document) or by double-click on the item to add.
-You will be asked for a valid object name.
-If you click at an item in the selector widget,
-the corresponding class documentation will appear in the help browser.
-
-Connections between objects can also be established by
-drag&drop, simply drag the source slot onto the target slot.
-If an input slot is already connected, it will be disconnected
-before establishing the new connection.
-
-Objects can be deleted pressing DEL and renamed using
-F2 or by double-click. In both cases, a dialog will ask for
-your confirmation.
-
-Object parameters can be changed using the objectInspector
-widget. Tooltips show a short documentation for each parameter.
-
-\section widgets Window elements
+\page widgets Window elements
 Here you find some information about the elements in the application window.
 
-\subsection flowwidget Flowchart window
-\addindex FlowWidget
+\section toolbar Tool Bar
+\addindex Tool Bar
+\image html toolbar.png
+\image latex toolbar.png "Tool Bar" width=0.7\textwidth
+
+\section flowwidget Flowchart window
+\addindex Flow Widget
+\image html flowWidget.png
+\image latex flowWidget.png "Tool Bar" width=0.7\textwidth
 On application start, there is no flowchart window avaiable.
 You can open an arbitrary numer of flowchart windows via opening
 existing documents or creating new ones.
@@ -40,7 +20,7 @@ structures found in the associated parameterfile document.
 This structure can be edited by drag&drop (see above).
 The parameterfile content can be saved and reloaded.
 
-\subsection inspector Object inspector
+\section inspector Object inspector
 The object inspector shows parameters for the currently selected
 object (select objects in the flowchart window).
 Unset parameters are shown in gray, their value is the default value
@@ -53,7 +33,7 @@ its status to "set". To reset parameters to their default value, select
 To get a short documentation for a parameter, point at it with the
 mouse. A tooltip containing its short description will appear.
 
-\subsection selector Selector widget
+\section selector Selector widget
 The selector widget provides template instances of all avaiable classes.
 You can instanciate them by double click or by dragging them onto the
 flowchart window. (Double click will add a new instance to the currently
@@ -72,7 +52,7 @@ filter.
 Clicking on a class in the selector widget will show the corresponding
 class documentation in the help browser.
 
-\subsection helpbrowser Help browser
+\section helpbrowser Help browser
 The help browser serves to show help documents and class documentation.
 The help browser content can be changed selecting "Help" or
 "Introduction" from the help menu (or the corresponding shortcuts or
