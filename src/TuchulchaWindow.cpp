@@ -201,7 +201,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	action->setToolTip(tr("shrink flowchart items"));
 
 	action = _toolBar->addAction(
-		QIcon::fromTheme("zoom-fit-best",QIcon(":/icons/zoom-fit.png")),
+		QIcon::fromTheme("zoom-fit-best",QIcon(":/icons/zoom-fit-best.png")),
 		tr("zoom\nfit"), this, SLOT(zoomFit()));
 	action->setToolTip(tr("fit flowchart in view"));
 
