@@ -69,7 +69,7 @@ IF(BUILD_TESTING)
 
 	# link tests against QtTest
 	FOREACH(X ${testTargets})
-		TARGET_LINK_LIBRARIES(${X} ${QT_QTTEST_LIBRARY})
+		QT4_USE_MODULES(${X} Test)
 	ENDFOREACH(X)
 
 	IF(WIN32)

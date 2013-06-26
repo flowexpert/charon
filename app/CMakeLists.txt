@@ -112,34 +112,26 @@ ELSE(APPLE)
 	ENDIF()
 ENDIF(APPLE)
 
-SET(QM_FILES)
 # generate translations for all ts-files in the i18n dir,
 # put them beside the tuchulcha executable in the build tree
 # and install them to tuchulcha_TRANSLATIONS_DIR which defaults to
-# the bin directory where tuchulcha will be installed
+# the bin directory where tuchulcha will be installed (see above)
 FILE(GLOB TS_FILES ${PROJECT_SOURCE_DIR}/i18n/*.ts)
 GET_TARGET_PROPERTY(TLOC tuchulcha LOCATION)
 GET_FILENAME_COMPONENT(TLOC "${TLOC}" PATH)
 #MESSAGE("TLOC: ${TLOC}")
-FOREACH(TS_FILE ${TS_FILES})
-	STRING(REGEX MATCH "${PROJECT_NAME}_(.*)\\.ts$" LANG "${TS_FILE}")
-	SET(LANG "${CMAKE_MATCH_1}")
-	#MESSAGE("${TS_FILE}: ${LANG}")
-	SET(QM_FILE ${PROJECT_NAME}_${LANG}.qm)
-	ADD_CUSTOM_COMMAND(
-		OUTPUT "${QM_FILE}"
-		COMMAND "${QT_LRELEASE_EXECUTABLE}" -qm "${QM_FILE}" "${TS_FILE}"
-		COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${QM_FILE}" "${TLOC}/${QM_FILE}"
-		DEPENDS "${TS_FILE}"
-	)
-	INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/${QM_FILE}"
-		DESTINATION "${${PROJECT_NAME}_TRANSLATIONS_DIR}"
-		OPTIONAL
-	)
-	LIST(APPEND QM_FILES "${QM_FILE}")
-ENDFOREACH(TS_FILE)
-UNSET(LANG)
-UNSET(QM_FILE)
-UNSET(TS_FILE)
-UNSET(TLOC)
+QT4_ADD_TRANSLATION(QM_FILES ${TS_FILES})
+#MESSAGE("${QM_FILES}")
 ADD_CUSTOM_TARGET(i18n DEPENDS ${QM_FILES})
+INSTALL(FILES "${QM_FILES}"
+	DESTINATION "${${PROJECT_NAME}_TRANSLATIONS_DIR}"
+	OPTIONAL
+)
+FOREACH(X ${QM_FILES})
+	# copy to build tree
+	ADD_CUSTOM_COMMAND(TARGET i18n POST_BUILD
+		COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${X}" "${TLOC}/"
+	)
+ENDFOREACH(X)
+UNSET(QM_FILE)
+UNSET(TLOC)

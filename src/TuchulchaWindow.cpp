@@ -436,11 +436,12 @@ void TuchulchaWindow::_showHelp() {
 		_docGen->showHelp();
 		return;
 	}
-	QByteArray ba;
-	ba.append("expandToc 1;");
-	ba.append("setSource qthelp://org.doxygen.tuchulcha/doc/tuchulcha-usage.html;");
-	ba.append("\n");
-	process->write(ba);
+	QByteArray pout;
+	pout.append("setSource qthelp://org.doxygen.tuchulcha/doc/tuchulcha-usage.html;");
+	pout.append("show contents;");
+	pout.append("expandToc 1;");
+	pout.append("\n");
+	process->write(pout);
 #else
 	_docGen->showHelp();
 #endif
