@@ -116,6 +116,8 @@ private slots:
 	void _windowActivated(QMdiSubWindow* window);
 
 private:
+	/// tool bar
+	QToolBar* _toolBar;
 	/// Central widget to manage multiple windows
 	CentralMdiArea* _centralArea;
 	/// recent file handler

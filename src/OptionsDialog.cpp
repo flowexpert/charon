@@ -62,6 +62,8 @@ void OptionsDialog::refresh() {
 	_ui->comboCheckLevel->setCurrentIndex(
 		settings.value("versionCheckLevel",2).toInt());
 	_setExcludes(settings.value("excludeList").toStringList());
+	_ui->bButtonStyle->setCurrentIndex(
+		settings.value("toolButtonStyle",Qt::ToolButtonFollowStyle).toInt());
 }
 
 void OptionsDialog::apply() {
@@ -77,6 +79,7 @@ void OptionsDialog::apply() {
 	settings.setValue("reloadOnStartup",_ui->checkReload->isChecked());
 	settings.setValue("versionCheckLevel",_ui->comboCheckLevel->currentIndex());
 	settings.setValue("excludeList",_getExcludes());
+	settings.setValue("toolButtonStyle",_ui->bButtonStyle->currentIndex());
 	if (check()) {
 		refresh();
 	}
@@ -100,6 +103,7 @@ void OptionsDialog::restore() {
 	_ui->checkReload->setChecked(true);
 	_ui->comboCheckLevel->setCurrentIndex(2);
 	_setExcludes(defaults.value("excludeList").toStringList());
+	_ui->bButtonStyle->setCurrentIndex(Qt::ToolButtonFollowStyle);
 }
 
 void OptionsDialog::on_bBox_clicked(QAbstractButton* button) {

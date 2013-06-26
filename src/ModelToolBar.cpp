@@ -39,17 +39,17 @@ void ModelToolBar::addModelActions() {
 	QAction* act;
 	act = addAction(
 		QIcon::fromTheme("edit-delete",QIcon(":/icons/edit-delete.png")),
-		tr("delete node"), this, SLOT(_delete()));
+		tr("delete\nnode"), this, SLOT(_delete()));
 	act->setToolTip(tr("delete selected node"));
 	
 	act = addAction(
 		QIcon::fromTheme("edit-rename",QIcon(":/icons/edit-rename.png")),
-		tr("rename node"), this, SLOT(_rename()));
+		tr("rename\nnode"), this, SLOT(_rename()));
 	act->setToolTip(tr("rename selected node"));
 	
 	act = addAction(
 		QIcon::fromTheme("network-disconnect",QIcon(":/icons/network-disconnect.png")),
-		tr("disconnect node"), this, SLOT(_disconnect()));
+		tr("disconnect\nnode"), this, SLOT(_disconnect()));
 	act->setToolTip(tr("disconnect all slots of selected node"));
 }
 

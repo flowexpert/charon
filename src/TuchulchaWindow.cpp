@@ -52,11 +52,13 @@
 const int TuchulchaWindow::_saveStateVersion = 1;
 
 TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
-	QMainWindow(myParent), _flow(0),_docGen(0) {
+	QMainWindow(myParent), _toolBar(0), _flow(0),_docGen(0) {
 
 	if (OptionsDialog::check()) {
 		options();
 	}
+
+	QSettings settings;
 
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
@@ -94,7 +96,6 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	commentBox -> setObjectName("RTFM Box");
 	WorkflowComments* commentWidget = new WorkflowComments(commentBox);
 	commentBox -> setWidget(commentWidget);
-
 
 	// select widget
 	QDockWidget* selectWidget = new QDockWidget(tr("Module Collection"), this);
@@ -136,86 +137,87 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 			this, SLOT(open(QStringList)));
 
 	// toolbar
-	ModelToolBar* toolbar = new ModelToolBar(tr("toolbar"));
-	toolbar->setObjectName("toolbar");
-	addToolBar(toolbar);
-	toolbar->setToolButtonStyle(Qt::ToolButtonIconOnly);
-	toolbar->setIconSize(QSize(32, 32));
+	_toolBar = new ModelToolBar(tr("toolbar"));
+	_toolBar->setObjectName("toolbar");
+	addToolBar(_toolBar);
+	_toolBar->setToolButtonStyle((Qt::ToolButtonStyle)
+		settings.value("toolButtonStyle",Qt::ToolButtonFollowStyle).toInt());
+	_toolBar->setIconSize(QSize(32, 32));
 	QAction* action;
 
 	connect(_selector, SIGNAL(addNode(QString)), // handle double clicks
-			toolbar, SLOT(addNode(QString)));    // on selector widget
+		_toolBar, SLOT(addNode(QString)));    // on selector widget
 
-	action = toolbar->addAction(
+	action = _toolBar->addAction(
 		QIcon::fromTheme("document-new",QIcon(":/icons/document-new.png")),
-		tr("new file"), this, SLOT(openNew()));
+		tr("new\nfile"), this, SLOT(openNew()));
 	action->setToolTip(tr("create a new file"));
 
-	action = toolbar->addAction(
+	action = _toolBar->addAction(
 		QIcon::fromTheme("document-open",QIcon(":/icons/document-open.png")),
-		tr("open file"),this, SLOT(open()));
+		tr("open\nfile"),this, SLOT(open()));
 	action->setToolTip(tr("open an existing file"));
 
-	action = toolbar->addAction(
+	action = _toolBar->addAction(
 		QIcon::fromTheme("document-save",QIcon(":/icons/document-save.png")),
-		tr("save file"), _inspector, SLOT(saveFile()));
+		tr("save\nfile"), _inspector, SLOT(saveFile()));
 	action->setToolTip(tr("save current document"));
 
-	action = toolbar->addAction(
+	action = _toolBar->addAction(
 		QIcon::fromTheme("document-save-as",QIcon(":/icons/document-save-as.png")),
-		tr("save file as"), _inspector, SLOT(saveFileAs()));
+		tr("save\nfile as"), _inspector, SLOT(saveFileAs()));
 	action->setToolTip(tr("save current document to a new location"));
 
-	action = toolbar->addAction(
+	action = _toolBar->addAction(
 		QIcon::fromTheme("document-export",QIcon(":/icons/document-export.png")),
-		tr("export flowchart"), this, SLOT(saveFlowChart()));
+		tr("export\nflowchart"), this, SLOT(saveFlowChart()));
 	action->setToolTip(tr("export flowchart to an image file"));
 	action->setShortcut(Qt::Key_F12);
 
-	toolbar->addSeparator();
-	action = toolbar->addAction(
+	_toolBar->addSeparator();
+	action = _toolBar->addAction(
 		QIcon::fromTheme("view-refresh",QIcon(":/icons/view-refresh.png")),
-		tr("&Update Plugins"), this, SLOT(updateMetadata()));
+		tr("&Update\nPlugins"), this, SLOT(updateMetadata()));
 	action->setToolTip(
 		tr("update classes informations reading all plugins"));
 
-	action = toolbar->addAction(
+	action = _toolBar->addAction(
 		QIcon::fromTheme("media-playback-start",QIcon(":/icons/execute.png")),
-		tr("Execute &Workflow"), this, SLOT(runWorkflow()));
+		tr("Execute\n&Workflow"), this, SLOT(runWorkflow()));
 	action->setToolTip(
 		tr("execute workflow that is shown in the current window"));
 
-	toolbar->addSeparator();
-	toolbar->addModelActions();
-	toolbar->addSeparator();
-	action = toolbar->addAction(
+	_toolBar->addSeparator();
+	qobject_cast<ModelToolBar*>(_toolBar)->addModelActions();
+	_toolBar->addSeparator();
+	action = _toolBar->addAction(
 		QIcon::fromTheme("zoom-in",QIcon(":/icons/zoom-in.png")),
-		tr("zoom in"), this, SLOT(zoomIn()));
+		tr("zoom\nin"), this, SLOT(zoomIn()));
 	action->setToolTip(tr("enlarge flowchart items"));
 
-	action = toolbar->addAction(
+	action = _toolBar->addAction(
 		QIcon::fromTheme("zoom-out",QIcon(":/icons/zoom-out.png")),
-		tr("zoom out"), this, SLOT(zoomOut()));
+		tr("zoom\nout"), this, SLOT(zoomOut()));
 	action->setToolTip(tr("shrink flowchart items"));
 
-	action = toolbar->addAction(
+	action = _toolBar->addAction(
 		QIcon::fromTheme("zoom-fit-best",QIcon(":/icons/zoom-fit.png")),
-		tr("zoom fit"), this, SLOT(zoomFit()));
+		tr("zoom\nfit"), this, SLOT(zoomFit()));
 	action->setToolTip(tr("fit flowchart in view"));
 
-	toolbar->addSeparator();
-	action = toolbar->addAction(
+	_toolBar->addSeparator();
+	action = _toolBar->addAction(
 		QIcon::fromTheme("help-faq",QIcon(":/icons/help-info.png")),
-		tr("introduction to tuchulcha"), _docGen, SLOT(showIntro()));
+		tr("intro"), _docGen, SLOT(showIntro()));
 	action->setToolTip(tr("show introductin page"));
 
-	action = toolbar->addAction(
+	action = _toolBar->addAction(
 		QIcon::fromTheme("help-contents",QIcon(":/icons/help-contents.png")),
-		tr("tuchulcha help"), this, SLOT(_showHelp()));
+		tr("help"), this, SLOT(_showHelp()));
 	action->setToolTip(tr("show help page"));
 
 	connect(this, SIGNAL(activeGraphModelChanged(ParameterFileModel*)),
-			toolbar, SLOT(setModel(ParameterFileModel*)));
+			_toolBar, SLOT(setModel(ParameterFileModel*)));
 
 	// file menu
 	QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
@@ -279,7 +281,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	windowMenu->addAction(selectWidget->toggleViewAction());
 	windowMenu->addAction(commentBox->toggleViewAction());
 	windowMenu->addSeparator();
-	windowMenu->addAction(toolbar->toggleViewAction());
+	windowMenu->addAction(_toolBar->toggleViewAction());
 
 	// help menu
 	QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
@@ -298,7 +300,6 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 		tr("About &Qt"), this, SLOT(_showAboutQt()));
 
 	// load window state config
-	QSettings settings;
 	QSettings defaultS(":/config/default.ini",QSettings::IniFormat);
 	restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
 	restoreState(
@@ -572,6 +573,9 @@ void TuchulchaWindow::runWorkflow() {
 void TuchulchaWindow::options() {
 	OptionsDialog dialog(isVisible()?this:0);
 	dialog.exec();
+	QSettings settings;
+	_toolBar->setToolButtonStyle((Qt::ToolButtonStyle)
+		settings.value("toolButtonStyle",Qt::ToolButtonFollowStyle).toInt());
 }
 
 void TuchulchaWindow::open(const QStringList& files) {
