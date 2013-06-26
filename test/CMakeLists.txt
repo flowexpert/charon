@@ -218,7 +218,7 @@ IF(BUILD_TESTING)
 	LIST(APPEND tests FlowIterated1:_HornSchunck_Sinus)
 	LIST(APPEND testTargets flowIterated1_HS_Sinus)
 
-	# CG solver HS flow estimation
+	#CG solver HS flow estimation
 	ADD_EXECUTABLE(cgflow_HS cgflow_HS.cpp)
 	TARGET_LINK_LIBRARIES(cgflow_HS
 		flowcomparator
