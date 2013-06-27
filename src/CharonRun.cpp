@@ -157,9 +157,12 @@ void CharonRun::updatePlugins() {
 	for (int i=0; i < wrpFiles.size(); i++) {
 		Q_ASSERT(QFileInfo(metaPath.absoluteFilePath(wrpFiles[i])).exists());
 		Q_ASSERT(QFileInfo(metaPath.absoluteFilePath(wrpFiles[i])).isFile());
-		Q_ASSERT(wrpFiles[i].indexOf(".wrp") > 0);
+		Q_ASSERT(wrpFiles[i].contains(QRegExp(".*\\.wrp$")));
+#ifndef QT_NO_DEBUG
+		bool success =
+#endif
 		metaPath.remove(wrpFiles[i]);
-		Q_ASSERT(!QFileInfo(wrpFiles[i]).exists());
+		Q_ASSERT(success);
 	}
 
 	_setupMan();
