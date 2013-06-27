@@ -1,0 +1,15 @@
+/** \page update-run Interaction with Charon-Suite Plugins
+
+\section update-metadata Updating Plugin Metadata
+Updating the plugin information
+means querying the plugin library files
+(.dll, .so or .dylib files depending on the system platform)
+and to load the information about plugin names,
+input/output slots, parameters and their documentation.
+The paths, where the plugins are located may be specified in the
+\ref options.
+Updating is needed when new plugins have been added/removed
+or the paths have been changed.
+
+\section run-workflow Running Workflows
+*/

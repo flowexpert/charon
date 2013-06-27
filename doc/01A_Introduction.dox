@@ -2,9 +2,9 @@
 
 \section start Getting started
 To create a new (empty) file, select file->new or use the shortcut
-<tt>CTRL+N</tt>.<br>
+\c CTRL+N. \n
 To open an existing file, select file->open or use
-<tt>CTRL+O</tt>.<br>
+\c CTRL+O. \n
 
 \subsection editing Editing a Document
 If you have an open document, you can add new items by
@@ -30,15 +30,15 @@ To disconnect slots, use the disconnect button from the tool bar
 or for more control, use the context menu which offers options
 to disconnect individual slots.
 
-Objects can be deleted pressing the <tt>DEL</tt> key and renamed
-using <tt>F2</tt>. In either case, a dialog will ask for
-your confirmation.
+Objects can be deleted pressing the \c DEL key and renamed
+using \c F2. In either case, a dialog will ask for your confirmation.
 These options are also available in the context menu.
 
 Object parameters can be changed using the objectInspector
 widget. Tooltips show a short documentation for each parameter.
 
-<h3>Further Information</h3>
+<h1>Further Information</h1>
 - \subpage widgets
+- \subpage update-run
 - \subpage options
 */

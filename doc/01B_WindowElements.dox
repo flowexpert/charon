@@ -6,18 +6,50 @@ Here you find a description the elements in the tuchulcha application window.
 \addindex Tool Bar
 \image html toolbar.png "Tool Bar Screenshot"
 \image latex toolbar.png "Tool Bar Screenshot" width=0.7\textwidth
+The tool bar provides the most common actions to use tuchulcha.
+The first section should be known from other document based applications
+like new, load and save.
+
+The export function offers the possibility to export the displayed workflow
+to an image file. Currently, all pixel types that QImage can handle
+are supported (including png,jpeg,tiff,bmp).
+Additionally the vector formats ps and pdf are supported too,
+just select the desired output format from the format filter
+(usually at the bottom right of the save-file dialog).
+
+The next section offers the options to update the plugin metadata
+and to execute the active workflow.
+This is described in detail in \ref update-run.
+
+The next three buttons are used for editing the currently active workflow.
+They work as described in \ref editing. Their functionality is also
+available via the context menu (e.g. right-click on a module in the workflow).
+Not that these buttons have no effect if no module is selected or
+if there is no opwn workflow widget.
+
+The zoom buttons adjust the magnification of the workflow widget content.
+Alternatively it's possible to zoom using the mouse wheel combined with
+the \c CTRL key.
+
+The last section provides access to the tuchulcha help.
+The short introduction is equivalent to \ref tuchulcha-usage
+and is displayed in the \ref helpbrowser.
+The help button should open a new window showing
+the documentation you are now reading.
+If this documentation display based on the Qt Assistant is not available,
+a help page is also displayed in the \ref helpbrowser.
 
 \section flowwidget Worflow Widget
 \addindex Workflow Widget
 \image html flowWidget.png "Workflow Widget Screenshot"
-\image latex flowWidget.png "Workflow Widget Screenshot" width=0.7\textwidth
+\image latex flowWidget.png "Workflow Widget Screenshot" width=0.8\textwidth
 
-On application start, there is no flowchart window avaiable.
-You can open an arbitrary numer of flowchart windows via opening
+On application start, there is no Workflow window available.
+You can open an arbitrary numer of workflows via opening
 existing documents or creating new ones.
 
 The Workflow Widgets are arranged in Tabs in the Main Window
-(in a so called MDI area)
+(in a so called MDI area).
 
 The flow window shows the flowchart representation of the object
 structures found in the associated parameterfile document.
@@ -25,6 +57,9 @@ This structure can be edited by drag&drop (see \ref editing).
 The parameterfile content can be saved and reloaded.
 
 \section inspector Object inspector
+\addindex Object Inspector
+\image html objectInspector.png "Object Inspector Screenshot"
+\image latex objectInspector.png "Object Inspector Screenshot" width=0.7\textwidth
 The object inspector shows parameters for the currently selected
 object (select objects in the flowchart window).
 Unset parameters are shown in gray, their value is the default value
@@ -38,6 +73,9 @@ To get a short documentation for a parameter, point at it with the
 mouse. A tooltip containing its short description will appear.
 
 \section selector Selector widget
+\addindex Module Selector
+\image html selector.png "Module Selector Screenshot"
+\image latex selector.png "Module Selector Screenshot" width=0.4\textwidth
 The selector widget provides template instances of all avaiable classes.
 You can instanciate them by double click or by dragging them onto the
 flowchart window. (Double click will add a new instance to the currently
@@ -57,10 +95,11 @@ Clicking on a class in the selector widget will show the corresponding
 class documentation in the help browser.
 
 \section helpbrowser Help browser
+\addindex Help Browser
+\image html helpBrowser.png "Help Browser Screenshot"
+\image latex helpBrowser.png "Help Browser Screenshot" width=0.5\textwidth
 The help browser serves to show help documents and class documentation.
 The help browser content can be changed selecting "Help" or
 "Introduction" from the help menu (or the corresponding shortcuts or
-toolbar buttons) or by clicking on a class in the selector widget
-(this only works if there is an opened parameterfile document).
-
+toolbar buttons) or by clicking on a class in the selector widget.
 */
