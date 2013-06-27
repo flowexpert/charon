@@ -4,8 +4,6 @@
         <file alias="start.txt">help/start.txt</file>
         <file alias="styles.css">help/styles.css</file>
         <file alias="footer.txt">help/footer.txt</file>
-    </qresource>
-    <qresource lang="de" prefix="/help">
         <file alias="help.txt">help/help_de.txt</file>
         <file alias="start.txt">help/start_de.txt</file>
     </qresource>
@@ -48,6 +46,9 @@
         <file alias="network-connect.png">icons/oxygen/network-connect.png</file>
         <file alias="network-disconnect.png">icons/oxygen/network-disconnect.png</file>
         <file alias="split.png">icons/oxygen/split.png</file>
+        <file alias="view-split-left-right.png">icons/oxygen/view-split-left-right.png</file>
+        <file alias="view-split-top-bottom.png">icons/oxygen/view-split-top-bottom.png</file>
+        <file alias="window-duplicate.png">icons/oxygen/window-duplicate.png</file>
     </qresource>
     <qresource prefix="/config">
         <file alias="default.ini">cfg/default.ini</file>
