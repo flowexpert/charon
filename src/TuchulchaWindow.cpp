@@ -176,7 +176,6 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 		QIcon::fromTheme("document-export",QIcon(":/icons/document-export.png")),
 		tr("export\nflowchart"), this, SLOT(saveFlowChart()));
 	action->setToolTip(tr("export flowchart to an image file"));
-	action->setShortcut(Qt::Key_F12);
 
 	_toolBar->addSeparator();
 	action = _toolBar->addAction(
@@ -227,32 +226,40 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QMenu* fileMenu = menuBar()->addMenu(tr("&File"));
 	fileMenu->addAction(
 		QIcon::fromTheme("document-new",QIcon(":/icons/document-new.png")),
-		tr("&New"), this, SLOT(openNew()), QKeySequence::New);
+		tr("&New"), this, SLOT(openNew()),
+		QKeySequence::New);
 	fileMenu->addAction(
 		QIcon::fromTheme("document-open",QIcon(":/icons/document-open.png")),
- 		tr("&Open"), this, SLOT(open()), QKeySequence::Open);
+ 		tr("&Open"), this, SLOT(open()),
+		QKeySequence::Open);
 	fileMenu->addAction(
 		QIcon::fromTheme("document-save",QIcon(":/icons/document-save.png")),
-		tr("&Save"), _inspector, SLOT(saveFile()), QKeySequence::Save);
+		tr("&Save"), _inspector, SLOT(saveFile()),
+		QKeySequence::Save);
 	fileMenu->addAction(
 		QIcon::fromTheme("document-save-as",QIcon(":/icons/document-save-as.png")),
-		tr("Save &as..."), _inspector, SLOT(saveFileAs()), QKeySequence::SaveAs);
+		tr("Save &as..."), _inspector, SLOT(saveFileAs()),
+		QKeySequence::SaveAs);
 	_rfHandler = new RecentFileHandler(this);
 	_rfHandler->registerRecentFileEntries(fileMenu);
 	connect(_rfHandler,SIGNAL(openFile(QString)),SLOT(open(QString)));
 	fileMenu->addSeparator();
 	fileMenu->addAction(
 		QIcon::fromTheme("view-refresh",QIcon(":/icons/view-refresh.png")),
-		tr("&Update Plugins"),this, SLOT(updateMetadata()), QKeySequence::Refresh);
+		tr("&Update Plugins"),this, SLOT(updateMetadata()),
+		QKeySequence::Refresh);
 	fileMenu->addAction(
 		QIcon::fromTheme("media-playback-start",QIcon(":/icons/execute.png")),
-		tr("Execute &Workflow"),this, SLOT(runWorkflow()),QKeySequence(tr("Ctrl+E")));
+		tr("Execute &Workflow"),this, SLOT(runWorkflow()),
+		QKeySequence::FindNext);
 	fileMenu->addAction(
 		QIcon::fromTheme("document-export",QIcon(":/icons/document-export.png")),
-		tr("Export &flowchart"),this,SLOT(saveFlowChart()),QKeySequence(tr("Ctrl+F")));
+		tr("Export &flowchart"),this,SLOT(saveFlowChart()),
+		QKeySequence::Find);
 	fileMenu->addAction(
 		QIcon::fromTheme("application-exit",QIcon(":/icons/application-exit.png")),
-		tr("&Exit"), this, SLOT(close()), QKeySequence::Quit);
+		tr("&Exit"), this, SLOT(close()),
+		QKeySequence::Quit);
 
 	// edit menu
 	QMenu* editMenu = menuBar()->addMenu(tr("&Edit"));
@@ -262,29 +269,33 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 		QKeySequence::Replace);
 	editMenu->addAction(
 		QIcon::fromTheme("configure",QIcon(":/icons/configure.png")),
-		tr("&Options"), this, SLOT(options()), QKeySequence::Preferences);
+		tr("&Options"), this, SLOT(options()),
+		QKeySequence::Preferences);
 
 	// view menu
 	QMenu* viewMenu = menuBar()->addMenu(tr("&View"));
 	viewMenu->addAction(
 		QIcon::fromTheme("zoom-in",QIcon(":/icons/zoom-in.png")),
-		tr("zoom &in"), this, SLOT(zoomIn()), QKeySequence::ZoomIn);
+		tr("zoom &in"), this, SLOT(zoomIn()),
+		QKeySequence::ZoomIn);
 	viewMenu->addAction(
 		QIcon::fromTheme("zoom-out",QIcon(":/icons/zoom-out.png")),
-		tr("zoom &out"), this, SLOT(zoomOut()), QKeySequence::ZoomOut);
+		tr("zoom &out"), this, SLOT(zoomOut()),
+		QKeySequence::ZoomOut);
 	viewMenu->addAction(
 		QIcon::fromTheme("zoom-fit-best",QIcon(":/icons/zoom-fit.png")),
-		tr("zoom &fit"), this, SLOT(zoomFit()), QKeySequence(tr("Ctrl+0")));
+		tr("zoom &fit"), this, SLOT(zoomFit()),
+		QKeySequence(tr("Ctrl+0")));
 	viewMenu->addAction(
 		QIcon::fromTheme("view-split-left-right",
 			QIcon(":/icons/view-split-left-right.png")),
 		tr("&tile windows"), _centralArea, SLOT(tileSubWindows()),
-		QKeySequence(tr("Ctrl+T")));
+		QKeySequence::Undo);
 	viewMenu->addAction(
 		QIcon::fromTheme("window-duplicate",
 			QIcon(":/icons/window-duplicate.png")),
 		tr("&cascade windows"), _centralArea, SLOT(cascadeSubWindows()),
-		QKeySequence(tr("Ctrl+Z")));
+		QKeySequence::Redo);
 
 	// window menu
 	QMenu* windowMenu = menuBar()->addMenu(tr("&Window"));
@@ -304,7 +315,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	helpMenu->addAction(
 		QIcon::fromTheme("help-faq",QIcon(":/icons/help-info.png")),
 		tr("&Introduction"), _docGen, SLOT(showIntro()),
-		QKeySequence(tr("Shift+F1")));
+		QKeySequence::WhatsThis);
 	helpMenu->addAction(
 		QIcon::fromTheme("help-about",appicon),
 		tr("&About Tuchulcha"), this, SLOT(_showAbout()));
