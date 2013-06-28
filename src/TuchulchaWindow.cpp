@@ -244,14 +244,14 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	_rfHandler->registerRecentFileEntries(fileMenu);
 	connect(_rfHandler,SIGNAL(openFile(QString)),SLOT(open(QString)));
 	fileMenu->addSeparator();
-	fileMenu->addAction(
+	action = fileMenu->addAction(
 		QIcon::fromTheme("view-refresh",QIcon(":/icons/view-refresh.png")),
-		tr("&Update Plugins"),this, SLOT(updateMetadata()),
-		QKeySequence::Refresh);
-	fileMenu->addAction(
+		tr("&Update Plugins"),this, SLOT(updateMetadata()));
+	action->setShortcuts(QKeySequence::Refresh);
+	action = fileMenu->addAction(
 		QIcon::fromTheme("media-playback-start",QIcon(":/icons/execute.png")),
-		tr("Execute &Workflow"),this, SLOT(runWorkflow()),
-		QKeySequence::FindNext);
+		tr("Execute &Workflow"),this, SLOT(runWorkflow()));
+	action->setShortcuts(QKeySequence::FindNext);
 	fileMenu->addAction(
 		QIcon::fromTheme("document-export",QIcon(":/icons/document-export.png")),
 		tr("Export &flowchart"),this,SLOT(saveFlowChart()),
