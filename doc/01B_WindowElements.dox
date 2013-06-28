@@ -190,5 +190,4 @@ The help browser serves to show help documents and class documentation.
 The help browser content can be changed selecting "Help" or
 "Introduction" from the help menu (or the corresponding shortcuts or
 toolbar buttons) or by clicking on a class in the selector widget.
-\addindex Module Selector
 */

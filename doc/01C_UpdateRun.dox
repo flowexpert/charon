@@ -1,5 +1,22 @@
 /** \page update-run Interaction with Charon-Suite Plugins
+The interaction with the charon-suite plugins is completely
+separated from the main tuchulcha application.
+The modules are invoked by an application named \c tuchulcha-run.
+This application is called as a background process by tuchulcha
+when updating metadata (general or dynamic) or executing a workflow.
 
+\section log-dialong Dialog Window
+Before starting do describe the processes in detail, the common properties
+of the so called log dialog are discussed.
+This dialog widget is responsible for communication with the
+\c tuchulcha-run process.
+
+At top, for debuggin purposes, the name of the used executable for the
+background process is shown, the used log file and (on unix systems)
+the process ID.
+The log display widget shows the output of the background process.
+
+\addindex Update Metadata
 \section update-metadata Updating Plugin Metadata
 Updating the plugin information
 means querying the plugin library files
@@ -14,7 +31,14 @@ or the paths have been changed.
 Update Plugins may be invoked from the tool bar, the menu bar or
 via the shortcut \c F5.
 
+\subsection update-dialog Update Dialog
+\image html update-dialog.png "Update Dialog Screenshot"
+\image latex update-dialog.png "Update Dialog Screenshot" width=0.75\textwidth
+
+\addindex Run Workflows
 \section run-workflow Running Workflows
+\image html run-dialog.png "Execute Dialog Screenshot"
+\image latex run-dialog.png "Execite Dialog Screenshot" width=0.75\textwidth
 
 Workflow execution may be invoked from the tool bar, the menu bar
 or via the shortcut \c F3.
