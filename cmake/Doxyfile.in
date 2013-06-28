@@ -1113,7 +1113,7 @@ QHP_CUST_FILTER_ATTRS  =
 # <a href="http://doc.trolltech.com/qthelpproject.html#filter-attributes">
 # Qt Help Project / Filter Attributes</a>.
 
-QHP_SECT_FILTER_ATTRS  =
+QHP_SECT_FILTER_ATTRS  = "@DOXY_QHP_SECT_ATTRS@"
 
 # If the GENERATE_QHP tag is set to YES, the QHG_LOCATION tag can
 # be used to specify the location of Qt's qhelpgenerator.

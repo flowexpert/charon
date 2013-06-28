@@ -11,5 +11,11 @@ The paths, where the plugins are located may be specified in the
 Updating is needed when new plugins have been added/removed
 or the paths have been changed.
 
+Update Plugins may be invoked from the tool bar, the menu bar or
+via the shortcut \c F5.
+
 \section run-workflow Running Workflows
+
+Workflow execution may be invoked from the tool bar, the menu bar
+or via the shortcut \c F3.
 */

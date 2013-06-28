@@ -266,7 +266,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	editMenu->addAction(
 		QIcon::fromTheme("document-revert",QIcon(":/icons/revert.png")),
 		tr("&reset selected parameters"), _inspector, SLOT(delParam()),
-		QKeySequence::Replace);
+		QKeySequence::DeleteStartOfWord);
 	editMenu->addAction(
 		QIcon::fromTheme("configure",QIcon(":/icons/configure.png")),
 		tr("&Options"), this, SLOT(options()),
