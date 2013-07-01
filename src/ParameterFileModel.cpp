@@ -224,7 +224,7 @@ bool ParameterFileModel::setData(
 					return false;
 
 				if (value.canConvert(QVariant::String)) {
-					QString& oldName = _keys[ind.row()];
+					QString oldName = _keys[ind.row()];
 					QString newName;
 					// do not forget the prefix at the beginning of the name
 					if (!_prefix.isEmpty())
@@ -239,7 +239,6 @@ bool ParameterFileModel::setData(
 					QString val = getValue(oldName);
 					erase(oldName);
 					setValue(newName, val);
-					oldName = newName; // save new name in name cache
 					emit dataChanged(ind, ind);
 					return true;
 				}
