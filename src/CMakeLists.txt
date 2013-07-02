@@ -68,6 +68,14 @@ ADD_CHARON_PLUGIN(printvalue
 IF(USE_CIMG)
 	SET(Plugins_CImg)
 	INCLUDE_DIRECTORIES(${CIMG_INCLUDE_DIRS})
+	ADD_CHARON_PLUGIN(interpolatordiscrete
+		InterpolatorDiscrete.cpp
+		${CHARON_UTILS_INCLUDE_DIR}/Interpolator.h
+		${CHARON_UTILS_INCLUDE_DIR}/Interpolator.hxx
+		${CHARON_UTILS_INCLUDE_DIR}/InterpolatorDiscrete.h
+		${CHARON_UTILS_INCLUDE_DIR}/InterpolatorDiscrete.hxx
+		PLUGIN_LISTS Plugins Plugins_CImg
+	)
 	ADD_CHARON_PLUGIN(interpolatorcubic
 		InterpolatorCubic.cpp
 		${CHARON_UTILS_INCLUDE_DIR}/Interpolator.h
