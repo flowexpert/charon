@@ -37,6 +37,10 @@ OptionsDialog::OptionsDialog(QWidget* pp, Qt::WindowFlags f) :
 {
 	_ui = new Ui::OptionsDialog;
 	_ui->setupUi(this);
+#ifdef USE_ASSISTANT
+	_ui->bBox->setStandardButtons(
+			_ui->bBox->standardButtons() | QDialogButtonBox::Help);
+#endif
 	refresh();
 }
 
@@ -115,6 +119,11 @@ void OptionsDialog::on_bBox_clicked(QAbstractButton* button) {
 		case QDialogButtonBox::AcceptRole:
 			apply();
 			break;
+#ifdef USE_ASSISTANT
+		case QDialogButtonBox::HelpRole:
+#pragma message ("implement options help display")
+			break;
+#endif
 		default:
 			break;
 	}
