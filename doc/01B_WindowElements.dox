@@ -25,7 +25,7 @@ just select the desired output format from the format filter
 
 The next section offers the options to update the plugin metadata
 and to execute the active workflow.
-This is described in detail in \ref update-run.
+This is described in detail in \ref tuchulcha-run.
 
 The next three buttons are used for editing the currently active workflow.
 They work as described in \ref editing. Their functionality is also
@@ -178,8 +178,8 @@ The object inspector widget is organized as a tree view.
 The first parent item shows all available modules.
 The following parent items show only subsets of all modules, grouped by
 the package they are from (like charon-core, charon-utils etc.)
-or by purpose (DiskIO,Differentiators,...)
-or by used data types (CImg,vigra,...).
+or by purpose (DiskIO, Differentiators,...)
+or by used data types (CImg, vigra,...).
 These groups should simplify to find the right plugin for your needs.
 
 \addindex Help Browser
@@ -190,4 +190,24 @@ The help browser serves to show help documents and class documentation.
 The help browser content can be changed selecting "Help" or
 "Introduction" from the help menu (or the corresponding shortcuts or
 toolbar buttons) or by clicking on a class in the selector widget.
+
+The class documentation of the available modules contains a general
+module description and documentation of all parameters and input/output
+slots. It shows their types and default values (if available).
+
+\note The non-static part of dynamic modules will not show up
+	in the help browser since the dynamic interface cannot
+	be determined in a general (workspace-independend) way and so is
+	instance-specific and not class-specific.
+	The documentation of parameters will be displayed
+	in the \ref inspector as tool tips,
+	slot documentation shows up as tool tip
+	hovering over the considered slot in the \ref flowwidget.
+	These tool tips refer to the considered node instance
+	and so also has access to the dynamic parameters and slots.
+
+If support for html help or qt help is available, the Tuchulcha help
+is not displayed in the help browser but in a standalone help viewer.
+The content displayed in this viewer is exactly the documentation you
+are currently reading.
 */

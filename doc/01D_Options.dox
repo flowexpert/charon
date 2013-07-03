@@ -1,2 +1,71 @@
-/** \page options Options Dialog
+/** \page tuchulcha-options Options Dialog
+\tableofcontents
+The tuchulcha options are stored using the QSettings mechanism.
+
+On Windows systems, this causes the settings to be stored in the
+Windows registry. On Unix systems, settings are stored in the
+users <code>.config</code> directory.
+
+\section options-config General Configuration
+\image html options-config.png "options config page"
+\image latex options-config.png "options config page" width=0.45\textwidth
+\subsection options-config-startup Startup and Workflow Execution
+The first option causes an \ref update-metadata run at each start of
+tuchulcha. This makes sure that the latest plugin information is
+available before loading any workflow file.
+
+This option is useful if plugins are added/changed frequently.
+If this is not the case, deactivating this option may save some time
+at startup.
+
+The second option causes a message box to show up after creation of
+the background process used on \ref tuchulcha-run but before this
+process is started. This is the right moment to attach a debugger,
+e.g. to catch exception messages or failing assertions.
+This may be neccessary if the crash message does not provide eanough
+information or if you want to trace plugin functions during execution.
+
+\subsection options-config-plugin Plugin Config
+Switch between debug and release configuration of the plugins.
+
+When compiling a plugin in debug mode, it is recommended to append
+a \c _d postfix to the generated shared library file.
+Using CMake, this is done by setting \p CMAKE_DEBUG_POSTFIX to \c _d.
+This way it is possible to have both configurations of a plugin
+in the same directory.
+
+If both variants exist, this switch controls which one is used.
+When the Debug variant is selected,
+the unsuffixed library name is used as fallback.
+
+\warning
+If only the debug variant (with \c _d postfix) is available but
+the release configuration is selected, the plugin won't be found.
+
+\subsection options-config-version Plugin Version Check
+On plugin load, the version of charon-core used to compile the plugin
+and used by tuchulcha may be compared.
+
+Here it is possible to change the behavior of handling plugins
+with a version mismatch.
+It is also possible to disable this check completely.
+
+Possible values:
+- disable version check
+- print warning if check failed, plugin will be used nevertheless
+- discard failing plugins, version mismatch is treated as error
+
+\see \ref update-version-mismatch
+
+\section options-paths Paths Settings
+\image html options-paths.png "options paths page"
+\image latex options-paths.png "options paths page" width=0.45\textwidth
+
+\section options-excludes Exclude List
+\image html options-excludes.png "options excludes page"
+\image latex options-excludes.png "options excludes page" width=0.45\textwidth
+
+\section options-appearance Appearance Settings
+\image html options-appearance.png "options appearance page"
+\image latex options-appearance.png "options appearance page" width=0.45\textwidth
 */

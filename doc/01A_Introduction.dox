@@ -39,6 +39,6 @@ widget. Tooltips show a short documentation for each parameter.
 
 <h1>Further Information</h1>
 - \subpage widgets
-- \subpage update-run
-- \subpage options
+- \subpage tuchulcha-run
+- \subpage tuchulcha-options
 */

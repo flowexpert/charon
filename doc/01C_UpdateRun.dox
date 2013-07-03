@@ -1,4 +1,6 @@
-/** \page update-run Interaction with Charon-Suite Plugins
+/** \page tuchulcha-run Interaction with Charon-Suite Plugins
+\tableofcontents
+
 The interaction with the charon-suite plugins is completely
 separated from the main tuchulcha application.
 The modules are invoked by an application named \c tuchulcha-run.
@@ -11,10 +13,42 @@ of the so called log dialog are discussed.
 This dialog widget is responsible for communication with the
 \c tuchulcha-run process.
 
-At top, for debuggin purposes, the name of the used executable for the
-background process is shown, the used log file and (on unix systems)
-the process ID.
+The info line at top shows the name of the executable used as
+background process (useful to attach a debugger),
+the used log file and (on unix systems) the process ID.
+
 The log display widget shows the output of the background process.
+The log output is highlighted with a simple markup, interpreting the
+prefixes <code>(DD),(II),(WW),(EE)</code> as debug, info, warning and
+error lines.
+Debug lines may be suppressed from beeing displayed
+in the options tool box.
+
+The content below the log window depends on the dialog purpose,
+e.g. on \ref update-metadata, a summary widget is shown.
+
+At the bottom, there is a tool box providing a search bar
+to find specific lines in the log output and an options tool box.
+\image html log-view-options.png
+\image latex log-view-options.png "Log Viewer Options" width=0.5\textwidth
+
+In this options section it is possible to enable/disable display
+of debug log lines (starting with <code>(DD)</code>) and to
+set the size of the display buffer.
+Setting this to unlimited (\p 0) may slow down execution and
+displaying when working with workflows producing large amounts of output.
+
+At the very bottom of the dialog, there are the close/abort buttons.
+If the execution of the process finished, the abort button
+changes into a close button. Additionally, the progress bar
+at the left ob the buttons is hidden.
+In this case, it should be safe to close the dialog which also terminates
+the background process.
+
+If the process is still running, it is possible to enforce termination
+of this process using the abort button. In this case, a terminate signal
+is sent to the process. If this does not work, it is terminated the
+hard way (using SIGKILL) after confirmation by the user.
 
 \addindex Update Metadata
 \section update-metadata Updating Plugin Metadata
@@ -24,7 +58,7 @@ means querying the plugin library files
 and to load the information about plugin names,
 input/output slots, parameters and their documentation.
 The paths, where the plugins are located may be specified in the
-\ref options.
+\ref tuchulcha-options.
 Updating is needed when new plugins have been added/removed
 or the paths have been changed.
 
@@ -35,11 +69,79 @@ via the shortcut \c F5.
 \image html update-dialog.png "Update Dialog Screenshot"
 \image latex update-dialog.png "Update Dialog Screenshot" width=0.75\textwidth
 
+In addition to the general log-view content, a summary table
+shows the status of each of the scanned module files.
+The first column shows the file name, the second the module name
+and the third one the module status.
+<table>
+<caption>Possible status values</caption>
+<tr><th>status</th><th>meaning</th></tr>
+<tr><td>passed</td><td>plugin usable</td></tr>
+<tr><td>warnings</td><td>plugin usable but warnings occurred</td></tr>
+<tr><td>no plugin</td><td>no plugin file</td></tr>
+<tr><td>failed</td><td>plugin file not usable</td></tr>
+</table>
+
+If warnings/errors occurred, it is useful to read the corresponding log
+output. Clicking on a line in the summary widget automatically
+scrolls to the corresponding log lines.
+
+\note
+	Jumping to the corresponding log line only works it that log line
+	is actually visible.
+	If this is not the case, enable the display of debug log lines.
+
+\subsection update-errors Common Reasons for Errors or Warnings during Updating
+\subsubsection update-missing-dependencies Missing Dependencies
+The most frequent reason that a plugin file crashes is because of missing
+dependencies, i.e. used shared libraries that are not where they should be.
+
+On unix systems, this may be resolved by adjusting the library search paths,
+either by recompiling the failing plugin with different \c RPATH settings
+or by adjusting the \c LD_LIBRARY_PATH environmental variable.
+The non-found shared library is usually displayed in the crash message.
+
+On Windows systems, there is a tool called
+<em><a href="http://www.dependencywalker.com/">Dependency Walker</a></em>
+which is able to display which dll files could not be found.
+Make sure that you use the 32bit verion on 32bit plugins
+and the 64bit version on 64bit plugins.
+By copying the missing dll files in the same folder as the plugin dll,
+this problem may be resolved.
+
+\subsection update-version-mismatch Version Check
+If enabled in the \ref tuchulcha-options, the version of charon-core
+that has been used to compile the plugin file is compared with the
+version of charon-core that is used by tuchulcha.
+If these versions differ, it is very likely that the plugins
+show strange behavior or do not work at all.
+
+In this case it is recommended to recompile the plugin with the latest
+version of charon-core and use the latest version of tuchulcha as well.
+
+Setting the version check level to "warnings only", the modules
+with failing version check are not discarded and may so be used
+even on version mismatch. Do this at your own risk.
+
 \addindex Run Workflows
 \section run-workflow Running Workflows
-\image html run-dialog.png "Execute Dialog Screenshot"
-\image latex run-dialog.png "Execite Dialog Screenshot" width=0.75\textwidth
-
 Workflow execution may be invoked from the tool bar, the menu bar
 or via the shortcut \c F3.
+
+\subsection run-dialog Execution Dialog
+\image html run-dialog.png "Execute Dialog Screenshot"
+\image latex run-dialog.png "Execite Dialog Screenshot" width=0.75\textwidth
+During the execution of the workflow, the log widget shows the current
+output of the execution process.
+To keep track of the execution, it is useful to activate the option
+"scroll down on new output" from the options tool box.
+To search the log, while output is still generated, this option should
+be disabled.
+
+The currently executed node is highlighted in the \ref flowwidget.
+
+When the execution finished, a info box shows up below the log widget.
+All module files stay loaded and all module instances stay in memory
+until the run dialog is closed. This way, e.g. display widgets
+stay on screen and keep responsible.
 */
