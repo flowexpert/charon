@@ -73,11 +73,37 @@ ViewStack::~ViewStack() {
 
 void ViewStack::_createActions()
 {
+	/*
 	_switchColorModeAct = new QAction(QString("switch color mode"), this) ;
 	_switchColorModeAct->setStatusTip(QString("switch between RGB and grayscale display")) ;
 	connect(_switchColorModeAct, SIGNAL(triggered()), this, SLOT(_switchColorMode())) ;
 	this->addAction(_switchColorModeAct) ;
-	
+	*/
+	_switchViewModeActs = new QActionGroup(this) ;
+	_switchViewModeMapper = new QSignalMapper(this) ;
+
+		QAction* tableModeAct = new QAction(QString("Table View"), _switchViewModeActs) ;
+			connect(tableModeAct, SIGNAL(triggered()), _switchViewModeMapper, SLOT(map())) ;
+			_switchViewModeMapper->setMapping(tableModeAct, static_cast<int>(ViewStack::Table)) ;
+		QAction* greyModeAct = new QAction(QString("Greyscale"), _switchViewModeActs) ;
+			connect(greyModeAct, SIGNAL(triggered()), _switchViewModeMapper, SLOT(map())) ;
+			_switchViewModeMapper->setMapping(greyModeAct, static_cast<int>(ViewStack::Grey)) ;
+		QAction* rgb3ModeAct = new QAction(QString("3.Dim as RGB Channels"), _switchViewModeActs) ;
+			connect(rgb3ModeAct, SIGNAL(triggered()), _switchViewModeMapper, SLOT(map())) ;
+			_switchViewModeMapper->setMapping(rgb3ModeAct, static_cast<int>(ViewStack::Rgb3)) ;
+		QAction* rgb4ModeAct = new QAction(QString("4. Dim as RGB Channels"), _switchViewModeActs) ;
+			connect(rgb4ModeAct, SIGNAL(triggered()), _switchViewModeMapper, SLOT(map())) ;
+			_switchViewModeMapper->setMapping(rgb4ModeAct, static_cast<int>(ViewStack::Rgb4)) ;
+
+	connect(_switchViewModeMapper, SIGNAL(mapped(int)), this, SLOT(_switchColorMode(int))) ;
+	_switchViewModeActs->setExclusive(false) ;
+	this->addActions(_switchViewModeActs->actions()) ;
+
+	QAction* separator = new QAction(_switchViewModeMapper) ;
+		separator->setSeparator(true) ;
+	this->addAction(separator) ;
+
+
 	_saveCurrentViewAct = new QAction(QString("save current view"), this) ;
 	_saveCurrentViewAct->setStatusTip(QString("save current view to image file")) ;
 	connect(_saveCurrentViewAct, SIGNAL(triggered()), this, SLOT(_saveCurrentView())) ;
@@ -184,6 +210,12 @@ void ViewStack::_linkImages()
 			continue ;
 		view.channelMode = view.inspector->isRGB() ;
 		
+		if(view.inspector->dim()[0] < 8 && view.inspector->dim()[1] < 8)
+		{
+			_tabWidget->addTab(_createImageTableView(view.inspector),QString::fromStdString(view.inspector->name)) ;
+			continue ;
+		}
+
 		if(view.channelMode == RGB4 || view.channelMode == RGB3) //default: register image as RGB image
 		{
 			QImageViewer* viewer = new QImageViewer(0) ;
@@ -230,16 +262,24 @@ void ViewStack::_linkImages()
 	this->parentWidget()->show() ;
 }
 
-void ViewStack::_switchColorMode()
+void ViewStack::_switchColorMode(int mode)
 {
 	int index = _tabWidget->currentIndex() ;
 	View& view = _views[index] ;
 	if(index < 0 || view.inspector ==0)
 	{	return ;	}
-	QString className = _tabWidget->currentWidget()->metaObject()->className() ;
-	if(view.channelMode == NONE && className == "FImageViewer")
+	ViewMode viewMode = static_cast<ViewMode>(mode) ;
+	if(viewMode == ViewStack::Table && 
+		(view.inspector->dim()[0] * view.inspector->dim()[1] > 1e5))
 	{
-		_tabWidget->removeTab(index) ;
+		QMessageBox::warning(this, "ArgosDisplay", 
+			"Table view mode is limited to images with less than 10.000 pixels") ;
+		return ;
+	}
+
+	_tabWidget->removeTab(index) ;
+	if(viewMode == ViewStack::Rgb4)
+	{
 		QImageViewer* viewer = new QImageViewer(0) ;
 		_tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
 		viewer->setImage(view.inspector->getRGBImage(RGB4).qImage()) ;
@@ -248,9 +288,8 @@ void ViewStack::_switchColorMode()
 					this, SLOT(_processMouseMovement(int, int))) ;
 		view.channelMode = RGB4 ;
 	}
-	else if(view.channelMode == RGB4 && className == "QImageViewer")
+	else if(viewMode == ViewStack::Rgb3)
 	{
-		_tabWidget->removeTab(index) ;
 		QImageViewer* viewer = new QImageViewer(0) ;
 		_tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
 		viewer->setImage(view.inspector->getRGBImage(RGB3).qImage()) ;
@@ -259,9 +298,13 @@ void ViewStack::_switchColorMode()
 					this, SLOT(_processMouseMovement(int, int))) ;
 		view.channelMode = RGB3 ;
 	}
-	else if(view.channelMode == RGB3 && className == "QImageViewer")
+	else if(viewMode == ViewStack::Table)
 	{
-		_tabWidget->removeTab(index) ;
+		_tabWidget->insertTab(index,_createImageTableView(view.inspector),
+							QString::fromStdString(view.inspector->name)) ;
+	}
+	else if(viewMode == ViewStack::Grey)
+	{
 		FImageViewer* viewer = new FImageViewer(0) ;
 		_tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
 		viewer->setImage(view.inspector->getFImage()) ;
@@ -335,6 +378,7 @@ QImageViewer& ViewStack::_currentViewer() const
 	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
 	{	throw std::runtime_error("No active Viewer instance available!") ;	}
 	
+
 	QString className = _tabWidget->currentWidget()->metaObject()->className() ;
 	if(className == "FImageViewer")
 	{
@@ -389,7 +433,7 @@ void ViewStack::_centerAndResetZoom()
 		viewer.centerOn(QPoint(
 				viewer.originalWidth()/2, viewer.originalHeight()/2));
 	}
-	catch(std::exception&) {
+	catch(std::runtime_error& err) {
 		return ;
 	}
 	_emitDimensionMessage() ;
@@ -401,7 +445,10 @@ void ViewStack::_alignAndZoom()
 		return ;
 	//rember the index of the active tab
 	int index = _tabWidget->currentIndex() ;
-	
+	try
+	{	_currentViewer() ;	}
+	catch(std::runtime_error& err) //implies TableWidget view; do nothing
+	{	return ;	}
 	int zoom = _currentViewer().zoomLevel() ;
 	QPoint upperLeft = _currentViewer().upperLeft() ;
 	int h = _currentViewer().originalHeight() ;
@@ -470,5 +517,38 @@ QWidget* ViewStack::getCurrentViewer()
 		return viewer ;
 	}
 	throw std::runtime_error("Unknown Tab Widget!") ;
+}
+
+QWidget* ViewStack::_createImageTableView(AbstractPixelInspector* inspector)
+{
+	const AbstractPixelInspector& in = *inspector ;
+	int width = in.dim()[0] ;
+	int height = in.dim()[1] ;
+	QTableWidget* table = new QTableWidget(	height,width,0) ;
+		table->setSortingEnabled(false) ;
+		table->setCornerButtonEnabled(false) ;
+	QTableWidgetItem* prototype = new QTableWidgetItem ;
+		prototype->setTextAlignment(Qt::AlignLeft) ;
+		prototype->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled) ;
+	table->setItemPrototype(prototype) ;
+	QStringList vHeaders, hHeaders ;
+	for(int yy = 0 ; yy < height ; yy++)
+	{	
+		vHeaders.append(QString("%1").arg(yy)) ;
+		for(int xx = 0 ; xx <width ; xx++)
+		{
+			prototype->setText(QString("%1").arg(in(xx,yy)[0])) ;
+			table->setItem(yy,xx, prototype->clone()) ;
+		}
+	}
+	for(int xx = 0 ; xx <width ; xx++)
+	{	hHeaders.append(QString("%1").arg(xx)) ;	}
+	table->setHorizontalHeaderLabels(hHeaders) ;
+	table->setVerticalHeaderLabels(vHeaders) ;
+
+
+	table->resizeColumnsToContents() ;
+	table->resizeRowsToContents() ;
+	return table ;
 }
 

@@ -36,6 +36,8 @@
 
 class QTabWidget ;
 class QStatusBar ;
+class QActionGroup ;
+class QSignalMapper ;
 
 namespace ArgosDisplay {
 
@@ -53,6 +55,8 @@ namespace ArgosDisplay {
 		Q_OBJECT
 	
 	public :
+		enum ViewMode {Table = 0, Grey, Rgb3, Rgb4} ;
+		
 		/// default constructor
 		ViewStack(QWidget* parent = 0) ;
 		
@@ -94,6 +98,9 @@ namespace ArgosDisplay {
 		/// image stack
 		QTabWidget* _tabWidget ;
 
+		QActionGroup* _switchViewModeActs ;
+		QSignalMapper* _switchViewModeMapper ;
+
 		/// switch the display of the current view between RGB and grayscale float
 		QAction* _switchColorModeAct ;
 
@@ -128,7 +135,7 @@ namespace ArgosDisplay {
 		void _linkImages() ;
 
 		///switch the display of the current view between RGB and grayscale float
-		void _switchColorMode() ;
+		void _switchColorMode(int mode) ;
 
 		/// 
 		void _switchLogMode() ;
@@ -142,6 +149,8 @@ namespace ArgosDisplay {
 		void _alignAndZoom() ;
 
 		void _emitDimensionMessage() ;
+
+		QWidget* _createImageTableView(AbstractPixelInspector* inspector) ;
 
 	signals:
 		/// export status messages as signal
