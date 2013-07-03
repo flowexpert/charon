@@ -85,6 +85,9 @@ public:
 	/// warp to NaN
 	Parameter< bool > warpToNan;
 
+	/// warp all images in sequence with the same flow field
+	Parameter < bool > uniformWarp ;
+
 	/// create a new Warp object
 	/// \param name          Instance name
 	Warp(const std::string& name = "");
