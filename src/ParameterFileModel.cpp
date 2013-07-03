@@ -1135,6 +1135,19 @@ bool ParameterFileModel::isMultiSlot(QString slotName) const {
 	return _metaInfos->isMultiSlot(slotName,className);
 }
 
+QString ParameterFileModel::getDoc(QString parName) const {
+	QString className = getClass(parName);
+	QString objName = parName.section(".",0,0);
+	if (_metaInfos->isDynamic(className)) {
+		QFileInfo fileInfo(_getDynamicMetaFile(objName));
+		if (fileInfo.exists()) {
+			MetaData tmp(fileInfo.absoluteFilePath());
+			return tmp.getDocString(parName,className);
+		}
+	}
+	return _metaInfos->getDocString(parName,className);
+}
+
 QStringList ParameterFileModel::getClasses() const {
 	return _metaInfos->getClasses();
 }

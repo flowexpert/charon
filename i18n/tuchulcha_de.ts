@@ -796,6 +796,34 @@ entfernen</translation>
     </message>
 </context>
 <context>
+    <name>NodeProperty</name>
+    <message>
+        <location filename="../src/NodeProperty.cpp" line="153"/>
+        <source>no connections</source>
+        <translation>keine Verbindungen</translation>
+    </message>
+    <message>
+        <location filename="../src/NodeProperty.cpp" line="165"/>
+        <source>slot</source>
+        <translation>Slot</translation>
+    </message>
+    <message>
+        <location filename="../src/NodeProperty.cpp" line="166"/>
+        <source>type</source>
+        <translation>Typ</translation>
+    </message>
+    <message>
+        <location filename="../src/NodeProperty.cpp" line="167"/>
+        <source>documentation</source>
+        <translation>Dokumentation</translation>
+    </message>
+    <message>
+        <location filename="../src/NodeProperty.cpp" line="168"/>
+        <source>connected to</source>
+        <translation>verbunden mit</translation>
+    </message>
+</context>
+<context>
     <name>NodeTreeView</name>
     <message>
         <location filename="../src/NodeTreeView.cpp" line="69"/>
@@ -1326,53 +1354,53 @@ oder Dateierweiterung (.so/.dll/...) angeben</translation>
         <translation>Verknüpfung mit: %1</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="520"/>
+        <location filename="../src/ParameterFileModel.cpp" line="519"/>
         <source>Parameter</source>
         <translation>Parameter</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="522"/>
+        <location filename="../src/ParameterFileModel.cpp" line="521"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="524"/>
+        <location filename="../src/ParameterFileModel.cpp" line="523"/>
         <source>Priority</source>
         <translation>Priorität</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="643"/>
+        <location filename="../src/ParameterFileModel.cpp" line="642"/>
         <source>File %1 loaded.</source>
         <translation>Datei %1 geladen.</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="696"/>
+        <location filename="../src/ParameterFileModel.cpp" line="695"/>
         <source>Open File</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="697"/>
+        <location filename="../src/ParameterFileModel.cpp" line="696"/>
         <source>ParameterFiles (*.wrp);;All Files (*.*)</source>
         <translation>ParameterDateien (*.wrp);;All Files (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="700"/>
+        <location filename="../src/ParameterFileModel.cpp" line="699"/>
         <source>no file selected</source>
         <translation>keine Datei ausgewählt</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="703"/>
-        <location filename="../src/ParameterFileModel.cpp" line="708"/>
+        <location filename="../src/ParameterFileModel.cpp" line="702"/>
+        <location filename="../src/ParameterFileModel.cpp" line="707"/>
         <source>Error loading file</source>
         <translation>Fehler beim Laden der Datei</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="704"/>
+        <location filename="../src/ParameterFileModel.cpp" line="703"/>
         <source>File &lt;em&gt;%1&lt;/em&gt; does not exist or is no file!</source>
         <translation>Datei &lt;em&gt;%1&lt;/em&gt; existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="709"/>
+        <location filename="../src/ParameterFileModel.cpp" line="708"/>
         <source>File &lt;em&gt;%1&lt;/em&gt; is not readable!</source>
         <translation>Datei &lt;em&gt;%1&lt;/em&gt; ist nicht lesbar!</translation>
     </message>

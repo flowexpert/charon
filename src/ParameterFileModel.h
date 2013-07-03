@@ -197,6 +197,9 @@ public:
 	/// pass to metaInfo, use dynamic metadata if needed
 	QString getDefault(QString parName) const;
 
+	/// pass to metaInfo, use dynamic metadata if needed
+	QString getDoc(QString parName) const;
+
 	/// Get input slots of object
 	/** \param  objName         name of the object
 	 *  \returns                name of input slots

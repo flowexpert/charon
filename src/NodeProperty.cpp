@@ -24,6 +24,7 @@
 #include "NodeProperty.h"
 #include <QPainter>
 #include <QHelpEvent>
+#include <QCoreApplication>
 #include "ConnectionLine.h"
 #include "GraphModel.h"
 #include "NodeHandler.h"
@@ -135,25 +136,36 @@ bool NodeProperty::isInput() const {
 }
 
 void NodeProperty::hoverEnterEvent(QGraphicsSceneHoverEvent* ev) {
-    QListIterator<ConnectionLine *> cl(_connectionList);
-    ConnectionLine* connectedLine;
-    QString connectedNodes;
-    int nodenum=0;
-    while(cl.hasNext())
-    {
-	connectedLine=cl.next();
-	connectedNodes+=QString("%1: ").arg(nodenum);
-	NodeProperty* prop=connectedLine->getEndProp();
-	if(prop==this)
-	    prop=connectedLine->getStartProp();
-
-	connectedNodes+=prop->getFullName();
-	connectedNodes+="<br>";
-	nodenum++;
-    }
+	QListIterator<ConnectionLine *> cl(_connectionList);
+	ConnectionLine* connectedLine;
+	QStringList cNodes;
+	while (cl.hasNext()) {
+		connectedLine=cl.next();
+		NodeProperty* prop=connectedLine->getEndProp();
+		if (prop==this) {
+			prop=connectedLine->getStartProp();
+		}
+		cNodes << QString("%1: <code>%2</code>")
+						.arg(cNodes.size()).arg(prop->getFullName());
+	}
+	if (cNodes.isEmpty()) {
+		cNodes << QString("<i>%1</i>").arg(
+			QCoreApplication::translate("NodeProperty","no connections"));
+	}
 	setToolTip(QString(
-			"<p style='white-space:pre'><b>Slot: <i>%1</i><br>"
-			"Type:</b><br>%2<br>""<b>Connected To:</b><br>%3</p>").arg(_displayname).arg(getType()).arg(connectedNodes));
+			"<p style='white-space:pre'>"
+			"<b>%11: <i>%1</i></b><br>"
+			"<b>%12:</b><br><code>%2</code><br>"
+			"<b>%13:</b><br>%3<br>"
+			"<b>%14:</b><br>%4</p>")
+				.arg(_displayname)
+				.arg(getType())
+				.arg(_pFile?_pFile->getDoc(_node->getInstanceName()+"."+_name):QString())
+				.arg(cNodes.join("<br>"))
+				.arg(QCoreApplication::translate("NodeProperty","slot"))
+				.arg(QCoreApplication::translate("NodeProperty","type"))
+				.arg(QCoreApplication::translate("NodeProperty","documentation"))
+				.arg(QCoreApplication::translate("NodeProperty","connected to")));
 
 	_color=Qt::green;
 	changeConnectionLineColor(Qt::green);
