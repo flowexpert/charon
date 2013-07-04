@@ -57,6 +57,7 @@ QT4_WRAP_CPP(MOC_SRC
 	QCopyListView.h
 	QDirEdit.h
 	QFilterWidget.h
+	QTextInputDialog.h
 )
 
 SET(TUCHULCHA_SOURCES
@@ -99,6 +100,7 @@ SET(TUCHULCHA_SOURCES
 	Qtiostream.cpp
 	QParameterFile.h
 	QParameterFile.cpp
+	QTextInputDialog.cpp
 )
 
 QT4_WRAP_CPP(WF_RUNNER_MOC

@@ -31,8 +31,9 @@
 #include <sstream>
 #include <set>
 #include <algorithm>
-#include <QInputDialog>
+#include "QTextInputDialog.h"
 #include <stdexcept>
+#include <QRegExpValidator>
 
 /// transform std::string into lowercase
 /** \param[in] input  string to transform
@@ -178,13 +179,13 @@ void GraphModel::connectSlot(QString source, QString target, bool draw) {
 		return;
 
 	// identify input and output slot
-    if(!isInputSlot(source)) {
+	if(!isInputSlot(source)) {
 		// swap source and target
 		qSwap(source,target);
 	}
 
 	// disconnect input slot, if assigned and not multi slot
-    if (!isMultiSlot(source)) {
+	if (!isMultiSlot(source)) {
 		QString val = getValue(source);
 		if (!val.isEmpty())
 			disconnectSlot(source, val, false);
@@ -260,13 +261,17 @@ void GraphModel::disconnectAllSlots(QString node, bool draw) {
 	emit statusMessage(tr("disconnected all slots of node %1").arg(node));
 }
 
+const QRegExp GraphModel::instanceNameCheck("[a-z][a-zA-Z0-9_\\-]*");
+
 void GraphModel::renameNode(QString nodename, bool draw) {
 	nodename = nodename.section(".",0,0).toLower();
 	bool ok;
-	QString newName = QInputDialog::getText(
+	QRegExpValidator validator(instanceNameCheck);
+	QString newName = QTextInputDialog::getText(
 			0, tr("rename node"),
 			tr("Enter new name for node \"%1\":").arg(nodename),
-			QLineEdit::Normal, nodename, &ok);
+			QLineEdit::Normal, nodename, &ok,0,Qt::ImhNone,
+			&validator);
 	newName = newName.toLower() ;
 	if (ok) {
 		if(nodeValid(newName)) {
@@ -408,12 +413,15 @@ void GraphModel::selectNext(bool back) {
 
 QString GraphModel::addNode(QString className, bool draw) {
 	QString info, newName, baseName = className.toLower();
+	// cNameCheck matches input with dots and/or spaces (invalid)
+	// the captured part (cap(1)) is the valid part before the spaces/dots
 	QRegExp cNameCheck("([\\w]+)[\\s\\.]+.*");
 	if (cNameCheck.exactMatch(baseName)) {
 		baseName = cNameCheck.cap(1).toLower();
 		Q_ASSERT(!baseName.isEmpty());
 	}
 	bool retry = false;
+	QRegExpValidator validator(instanceNameCheck);
 
 	// loop until a valid name is found or add node canceled
 	do {
@@ -425,10 +433,11 @@ QString GraphModel::addNode(QString className, bool draw) {
 		} while (nodeValid(newName));
 
 		// ask user
-		newName = QInputDialog::getText(
+		newName = QTextInputDialog::getText(
 				0, tr("add new node"),
 				info + tr("Enter a name for the new node:"),
-				QLineEdit::Normal, newName).trimmed();
+				QLineEdit::Normal, newName,
+				0,0,Qt::ImhNone,&validator).trimmed();
 
 		if (newName.isEmpty()) {
 			return QString();  // cancel adding node

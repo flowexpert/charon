@@ -78,6 +78,9 @@ public:
 			int row, int count,
 			const QModelIndex& parent = QModelIndex());
 
+	/// instance name check regex
+	static const QRegExp instanceNameCheck;
+
 public slots:
 	/// select next item
 	/** \param back         select previous item, if back is true
