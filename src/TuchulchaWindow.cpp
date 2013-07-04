@@ -52,8 +52,9 @@
 const int TuchulchaWindow::_saveStateVersion = 1;
 
 TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
-	QMainWindow(myParent), _toolBar(0), _flow(0),_docGen(0) {
-
+	QMainWindow(myParent),
+	_toolBar(0), _flow(0),_docGen(0),_helpDisp(0)
+{
 	if (OptionsDialog::check()) {
 		options();
 	}
@@ -427,7 +428,7 @@ void TuchulchaWindow::_showAboutQt() {
 	QMessageBox::aboutQt(this, tr("About Qt"));
 }
 
-void TuchulchaWindow::_showHelp() {
+void TuchulchaWindow::_showHelp(QString page) {
 #ifdef USE_ASSISTANT
 	static QString collectionPath;
 	if (collectionPath.isNull()) {
@@ -449,24 +450,38 @@ void TuchulchaWindow::_showHelp() {
 			return;
 		}
 	}
-	QProcess *process = new QProcess;
-	QStringList args;
-	args << QLatin1String("-collectionFile")
-		<< QLatin1String("tuchulcha.qhc")
-		<< QLatin1String("-enableRemoteControl");
-	process->setWorkingDirectory(collectionPath);
-	process->start(QLatin1String("assistant"), args);
-	if (!process->waitForStarted()) {
-		// fallback
-		_docGen->showHelp();
-		return;
+	if (_helpDisp && _helpDisp->state() != QProcess::Running) {
+		delete _helpDisp;
+	}
+	if (_helpDisp.isNull()) {
+		_helpDisp = new QProcess(this);
+		_helpDisp->connect(_helpDisp,
+				SIGNAL(finished(int,QProcess::ExitStatus)),
+				SLOT(deleteLater()));
+		_helpDisp->connect(_helpDisp,
+				SIGNAL(error(QProcess::ProcessError)),
+				SLOT(deleteLater()));
+		QStringList args;
+		args << QLatin1String("-collectionFile")
+			<< QLatin1String("tuchulcha.qhc")
+			<< QLatin1String("-enableRemoteControl");
+		_helpDisp->setWorkingDirectory(collectionPath);
+		_helpDisp->start(QLatin1String("assistant"), args);
+		if (!_helpDisp->waitForStarted()) {
+			// fallback
+			_docGen->showHelp();
+			return;
+		}
+	}
+	if (page.isEmpty()) {
+		page = "tuchulcha-usage.html";
 	}
 	QByteArray pout;
-	pout.append("setSource qthelp://org.doxygen.tuchulcha/doc/tuchulcha-usage.html;");
+	pout.append(QString("setSource qthelp://org.doxygen.tuchulcha/doc/%1;").arg(page));
 	pout.append("show contents;");
 	pout.append("expandToc 1;");
 	pout.append("\n");
-	process->write(pout);
+	_helpDisp->write(pout);
 #else
 	_docGen->showHelp();
 #endif
@@ -596,6 +611,8 @@ void TuchulchaWindow::runWorkflow() {
 
 void TuchulchaWindow::options() {
 	OptionsDialog dialog(isVisible()?this:0);
+	connect(&dialog,SIGNAL(helpRequested(QString)),
+			SLOT(_showHelp(QString)));
 	dialog.exec();
 	QSettings settings;
 	_toolBar->setToolButtonStyle((Qt::ToolButtonStyle)

@@ -119,11 +119,28 @@ void OptionsDialog::on_bBox_clicked(QAbstractButton* button) {
 		case QDialogButtonBox::AcceptRole:
 			apply();
 			break;
-#ifdef USE_ASSISTANT
-		case QDialogButtonBox::HelpRole:
-#pragma message ("implement options help display")
+		case QDialogButtonBox::HelpRole: {
+			QString page;
+			switch (_ui->tabOptions->currentIndex()) {
+				case 0:
+					page="options-config";
+					break;
+				case 1:
+					page="options-paths";
+					break;
+				case 2:
+					page="options-exclude";
+					break;
+				case 3:
+					page="options-appearance";
+					break;
+				default:
+					break;
+			}
+			emit helpRequested(
+					QString("tuchulcha-options.html#%1").arg(page));
 			break;
-#endif
+		}
 		default:
 			break;
 	}

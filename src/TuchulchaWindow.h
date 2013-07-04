@@ -26,6 +26,7 @@
 #define MAINWINDOW_H_
 
 #include <QMainWindow>
+#include <QPointer>
 #include "CentralMdiArea.h"
 
 class QMdiSubWindow;
@@ -36,6 +37,7 @@ class NodeTreeView;
 class QAction;
 class RecentFileHandler;
 class DocGenerator;
+class QProcess;
 
 ///	Management of the application's main window.
 class TuchulchaWindow : public QMainWindow {
@@ -89,7 +91,7 @@ public slots:
 
 signals:
 	/// inform about changed graph to edit
-	/// \param model	new model to edit, 0 if no model exists
+	/// \param model    new model to edit, 0 if no model exists
 	void activeGraphModelChanged(ParameterFileModel* model);
 
 	/// meta data has been updated, plugins reloaded
@@ -98,7 +100,7 @@ signals:
 protected:
 	/// Close event handler.
 	/// Save window state and close the window.
-	/// \param event	close event
+	/// \param event    close event
 	virtual void closeEvent(QCloseEvent* event);
 
 private slots:
@@ -106,7 +108,8 @@ private slots:
 	void _showAbout();
 
 	/// show help browser
-	void _showHelp();
+	/** \param page     requested help page */
+	void _showHelp(QString page = QString());
 
 	/// show about Qt dialog
 	void _showAboutQt();
@@ -132,6 +135,8 @@ private:
 	DocGenerator* _docGen;
 	/// window state version identifier
 	static const int _saveStateVersion;
+	/// help display process
+	QPointer<QProcess> _helpDisp;
 };
 
 #endif /* MAINWINDOW_H_ */

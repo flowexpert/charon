@@ -47,6 +47,8 @@ public:
 	static bool check();
 
 signals:
+	/// request help on specified page
+	void helpRequested(QString);
 
 public slots:
 	/// refresh from saved settings
