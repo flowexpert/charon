@@ -7,7 +7,7 @@ The modules are invoked by an application named \c tuchulcha-run.
 This application is called as a background process by tuchulcha
 when updating metadata (general or dynamic) or executing a workflow.
 
-\section log-dialong Dialog Window
+\section log-dialog Dialog Window
 Before starting do describe the processes in detail, the common properties
 of the so called log dialog are discussed.
 This dialog widget is responsible for communication with the
@@ -24,11 +24,25 @@ error lines.
 Debug lines may be suppressed from beeing displayed
 in the options tool box.
 
+It is possible to copy some content of the log view into the clipboard
+by selecting some rows and pressing <code>CTRL+C</code>.
+Both, plain text and highlighted html will be copied,
+if the editor you paste it supports it (e.g. libre office, thunderbird),
+it will be pasted with highlighting.
+
 The content below the log window depends on the dialog purpose,
 e.g. on \ref update-metadata, a summary widget is shown.
 
 At the bottom, there is a tool box providing a search bar
 to find specific lines in the log output and an options tool box.
+
+Additionally, it is possible to save the displayed log file to disk,
+either in plain-text format (just copy the buffered logfile to the
+given location) or in highlighted html format.
+Highlighting is done the same way as displayed in the log view.
+In both formats, the full log file is written, ignoring the max view buffer
+and ignore debug output settings described below.
+
 \image html log-view-options.png
 \image latex log-view-options.png "Log Viewer Options" width=0.5\textwidth
 
