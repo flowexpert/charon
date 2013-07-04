@@ -477,16 +477,17 @@ void TuchulchaWindow::_showHelp(QString page) {
 			_docGen->showHelp();
 			return;
 		}
+		_helpDisp->waitForReadyRead(150); // no output, equivalent to sleep(150)
 		QByteArray pout;
 		pout.append("show contents;expandToc 1;\n");
 		_helpDisp->write(pout);
-		_helpDisp->waitForBytesWritten(1e3);
+		_helpDisp->waitForReadyRead(150);
 	}
 	if (page.isEmpty()) {
 		page = "tuchulcha-usage.html";
 	}
 	QByteArray pout;
-	pout.append(QString("setSource qthelp://org.doxygen.tuchulcha/doc/%1;\n").arg(page));
+	pout.append(QString("setSource qthelp://org.doxygen.tuchulcha/doc/%1;syncContents;\n").arg(page));
 	_helpDisp->write(pout);
 #else
 	_docGen->showHelp();
