@@ -119,31 +119,31 @@ void OptionsDialog::on_bBox_clicked(QAbstractButton* button) {
 		case QDialogButtonBox::AcceptRole:
 			apply();
 			break;
-		case QDialogButtonBox::HelpRole: {
-			QString page;
-			switch (_ui->tabOptions->currentIndex()) {
-				case 0:
-					page="options-config";
-					break;
-				case 1:
-					page="options-paths";
-					break;
-				case 2:
-					page="options-excludes";
-					break;
-				case 3:
-					page="options-appearance";
-					break;
-				default:
-					break;
-			}
-			emit helpRequested(
-					QString("tuchulcha-options.html#%1").arg(page));
-			break;
-		}
 		default:
 			break;
 	}
+}
+
+void OptionsDialog::on_bBox_helpRequested() {
+	QString page;
+	switch (_ui->tabOptions->currentIndex()) {
+		case 0:
+			page="#options-config";
+			break;
+		case 1:
+			page="#options-paths";
+			break;
+		case 2:
+			page="#options-excludes";
+			break;
+		case 3:
+			page="#options-appearance";
+			break;
+		default:
+			break;
+	}
+	emit helpRequested(
+			QString("tuchulcha-options.html%1").arg(page));
 }
 
 void OptionsDialog::_setExcludes(QStringList list) const {

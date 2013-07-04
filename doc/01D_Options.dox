@@ -9,6 +9,7 @@ users <code>.config</code> directory.
 \section options-config General Configuration
 \image html options-config.png "options config page"
 \image latex options-config.png "options config page" width=0.45\textwidth
+
 \subsection options-config-startup Startup and Workflow Execution
 The first option causes an \ref update-metadata run at each start of
 tuchulcha. This makes sure that the latest plugin information is

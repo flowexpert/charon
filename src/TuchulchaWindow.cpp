@@ -590,6 +590,7 @@ void TuchulchaWindow::updateMetadata() {
 	// close first, window will ask for saving if needed
 	_centralArea->closeAllSubWindows();
 	LogDialog dialog(new LogDecorators::Update);
+	connect(&dialog, SIGNAL(helpRequested(QString)), SLOT(_showHelp(QString)));
 	dialog.exec();
 	emit metaDataUpdated();
 
@@ -612,6 +613,7 @@ void TuchulchaWindow::runWorkflow() {
 		dec,SIGNAL(highlightObject(QString)),
 		model,SLOT(setPrefix(QString)));
 	LogDialog dialog(dec);
+	connect(&dialog, SIGNAL(helpRequested(QString)), SLOT(_showHelp(QString)));
 	dialog.exec();
 	model->setPrefix(oldPref);
 }

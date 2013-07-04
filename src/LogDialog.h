@@ -84,6 +84,10 @@ public slots:
 	/// store config to settings
 	void saveSettings();
 
+signals:
+	/// request help on specified page
+	void helpRequested(QString);
+
 private slots:
 	/// update content by querying process (stdout)
 	void on_proc_readyReadStandardOutput();
@@ -112,6 +116,8 @@ private slots:
 	void searchLog(QString filter, int offset=0, bool up=false);
 	/// handle search filter changes
 	void on_eFilter_textEdited(QString);
+	/// handle help request
+	void on_buttonBox_helpRequested();
 
 private:
 	QStringListModel* _log;       ///< log model

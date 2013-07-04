@@ -50,6 +50,10 @@ LogDialog::LogDialog(
 	_proc->setObjectName("proc");
 	_ui = new Ui::LogDialog;
 	_ui->setupUi(this);
+#ifdef USE_ASSISTANT
+	_ui->buttonBox->setStandardButtons(
+			_ui->buttonBox->standardButtons() | QDialogButtonBox::Help);
+#endif
 
 	// set up log models
 	_log = new QStringListModel(this);
@@ -342,7 +346,12 @@ void LogDialog::reprint() {
 
 void LogDialog::on_proc_started() {
 	_ui->progressBar->show();
+#ifdef USE_ASSISTANT
+	_ui->buttonBox->setStandardButtons(
+			QDialogButtonBox::Abort|QDialogButtonBox::Help);
+#else
 	_ui->buttonBox->setStandardButtons(QDialogButtonBox::Abort);
+#endif
 
 	QStringList postStart = _decorator->postStartCommands(this);
 	QTextStream pout(_proc);
@@ -354,7 +363,12 @@ void LogDialog::on_proc_started() {
 void LogDialog::on_proc_finished() {
 	_decorator->finishProcessing();
 	_ui->progressBar->hide();
+#ifdef USE_ASSISTANT
+	_ui->buttonBox->setStandardButtons(
+			QDialogButtonBox::Close|QDialogButtonBox::Help);
+#else
 	_ui->buttonBox->setStandardButtons(QDialogButtonBox::Close);
+#endif
 }
 
 void LogDialog::on_proc_error(QProcess::ProcessError) {
@@ -491,4 +505,9 @@ void LogDialog::on_bSearchDown_clicked() {
 
 void LogDialog::on_bSearchUp_clicked() {
 	searchLog(_ui->eFilter->text(),-1,true);
+}
+
+void LogDialog::on_buttonBox_helpRequested() {
+	emit helpRequested(QString("tuchulcha-run.html%1")
+			.arg(_decorator->helpAnchor()));
 }

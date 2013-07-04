@@ -61,6 +61,8 @@ public slots:
 private slots:
 	/// handle button click events
 	void on_bBox_clicked(QAbstractButton* button);
+	/// handle help request
+	void on_bBox_helpRequested();
 	/// handle exclude list changes
 	void on_tableExclude_itemChanged(QTableWidgetItem* item) const;
 	/// set exclude list

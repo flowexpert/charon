@@ -69,6 +69,8 @@ namespace LogDecorators {
 		virtual void finishProcessing();
 		/// custom status widget
 		virtual QWidget* statusWidget();
+		/// html anchor on help page
+		virtual QString helpAnchor();
 
 	signals:
 		void finish();         ///< finish signal
@@ -90,6 +92,7 @@ namespace LogDecorators {
 		virtual void processLine(QString line);
 		virtual void finishProcessing();
 		virtual QWidget* statusWidget();
+		virtual QString helpAnchor();
 
 		/// status code used in log parsing
 		enum StatusCode {
@@ -146,6 +149,7 @@ namespace LogDecorators {
 		virtual QString filenameHint() const;
 		virtual QString logFileName() const;
 		virtual void processLine(QString line);
+		virtual QString helpAnchor();
 	signals:
 		/// highlight the currently active object
 		/** \param objName  object name */

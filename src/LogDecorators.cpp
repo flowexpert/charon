@@ -73,6 +73,10 @@ QWidget* LogDecorators::Decorator::statusWidget() {
 	return 0;
 }
 
+QString LogDecorators::Decorator::helpAnchor() {
+	return QString();
+}
+
 // ---------------------------   update   ------------------------------------
 QString LogDecorators::Update::title() const {
 	return tr("Plugin Information Update");
@@ -280,6 +284,10 @@ void LogDecorators::Update::_searchOutput(const QModelIndex& idx) {
 		_result->data(_result->index(idx.row(),1),Qt::DisplayRole).toString()));
 }
 
+QString LogDecorators::Update::helpAnchor() {
+	return QString("#update-dialog");
+}
+
 // -------------------------   update dynamics   ------------------------------
 LogDecorators::UpdateDynamics::UpdateDynamics(QString fileName) :
 		_fileName(fileName) {
@@ -372,4 +380,8 @@ QString LogDecorators::RunWorkflow::filenameHint() const {
 QString LogDecorators::RunWorkflow::logFileName() const {
 	return FileManager::instance().configDir()
 			.absoluteFilePath("executeLog.txt");
+}
+
+QString LogDecorators::RunWorkflow::helpAnchor() {
+	return QString("#run-dialog");
 }
