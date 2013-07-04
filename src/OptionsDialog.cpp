@@ -129,7 +129,7 @@ void OptionsDialog::on_bBox_clicked(QAbstractButton* button) {
 					page="options-paths";
 					break;
 				case 2:
-					page="options-exclude";
+					page="options-excludes";
 					break;
 				case 3:
 					page="options-appearance";

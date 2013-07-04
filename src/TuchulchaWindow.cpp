@@ -339,6 +339,10 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 }
 
 TuchulchaWindow::~TuchulchaWindow() {
+	if (_helpDisp) {
+		_helpDisp->terminate();
+		_helpDisp->waitForFinished(1e3);
+	}
 }
 
 void TuchulchaWindow::closeEvent(QCloseEvent *cEvent) {
@@ -455,6 +459,7 @@ void TuchulchaWindow::_showHelp(QString page) {
 	}
 	if (_helpDisp.isNull()) {
 		_helpDisp = new QProcess(this);
+		_helpDisp->setProcessChannelMode(QProcess::ForwardedChannels);
 		_helpDisp->connect(_helpDisp,
 				SIGNAL(finished(int,QProcess::ExitStatus)),
 				SLOT(deleteLater()));
@@ -472,15 +477,16 @@ void TuchulchaWindow::_showHelp(QString page) {
 			_docGen->showHelp();
 			return;
 		}
+		QByteArray pout;
+		pout.append("show contents;expandToc 1;\n");
+		_helpDisp->write(pout);
+		_helpDisp->waitForBytesWritten(1e3);
 	}
 	if (page.isEmpty()) {
 		page = "tuchulcha-usage.html";
 	}
 	QByteArray pout;
-	pout.append(QString("setSource qthelp://org.doxygen.tuchulcha/doc/%1;").arg(page));
-	pout.append("show contents;");
-	pout.append("expandToc 1;");
-	pout.append("\n");
+	pout.append(QString("setSource qthelp://org.doxygen.tuchulcha/doc/%1;\n").arg(page));
 	_helpDisp->write(pout);
 #else
 	_docGen->showHelp();
