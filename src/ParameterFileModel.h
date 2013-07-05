@@ -272,10 +272,14 @@ public:
 	/// pass to QParameterFile::isSet
 	bool isSet(QString parName) const;
 
-	///	Delete a parameter from the the underlying parameter file
-	/**	\param parName          name of the parameter
+	/// Delete a parameter from the the underlying parameter file
+	/** \param parName          name of the parameter
 	 */
 	void erase(QString parName);
+
+	/// rename prefix
+	/** \copydetails QParameterFile::rename(QString,QString) */
+	bool rename(QString oldPrefix, QString newPrefix);
 	// \}
 
 signals:

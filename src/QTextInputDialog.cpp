@@ -98,6 +98,7 @@ void QTextInputDialog::setLabelText(const QString& text) {
 
 void QTextInputDialog::setTextValue(const QString& value) {
 	eText->setText(value);
+	eText->selectAll();
 }
 
 QString QTextInputDialog::textValue() const {

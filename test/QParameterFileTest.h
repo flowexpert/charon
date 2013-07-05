@@ -46,6 +46,10 @@ private slots:
 	void checkExplicit();
 	/// check special characters
 	void checkUnicode();
+	/// check QRegExp behavior
+	void checkQRegExp();
+	/// check renaming
+	void checkRenaming();
 	/// finalize
 	void cleanupTestCase();
 };

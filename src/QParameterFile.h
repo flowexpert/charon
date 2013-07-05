@@ -49,6 +49,8 @@ public:
 	void load(QString fileName, QString encoding=QString());
 	/// save to given plain text file
 	void save(QString fileName) const;
+	/// get StringList representation, like file content after save()
+	QStringList toStringList() const;
 
 	/// check if a given parameter has been set
 	bool isSet(QString parameter) const;
@@ -72,6 +74,26 @@ public:
 
 	/// clear content
 	void clear();
+
+	/// rename prefix
+	/** renames all keys starting with oldPrefix to ones with the given
+	 *  new prefix and also renames occurrences of the oldPrefix in
+	 *  values of other parameters (like slot connections)
+	 *  \param oldPrefix    old prefix (should not contain ".")
+	 *  \param newPrefix    new prefix (dito)
+	 *  \retval true        renaming successful
+	 *  \retval false       some error occured, nothing changed at all
+	 */
+	bool rename(QString oldPrefix, QString newPrefix);
+
+	/// instance name or prefix check regex
+	static const QRegExp prefixCheck;
+	/// postfix check, everything that may follow a prefix (starting with ".")
+	static const QRegExp postfixCheck;
+	/// full parameter name check
+	static const QRegExp paramCheck;
+	/// full parameter name check (sloppy version, may handle buggy lines)
+	static const QRegExp paramCheckSloppy;
 
 private:
 	/// key array, stored in mixed case

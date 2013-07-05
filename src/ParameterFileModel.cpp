@@ -982,6 +982,24 @@ void ParameterFileModel::erase(QString parName) {
 	}
 }
 
+bool ParameterFileModel::rename(QString oldPrefix, QString newPrefix) {
+	bool lock = _resetMutex->tryLock();
+	if (lock) {
+		beginResetModel();
+	}
+	setPrefix("");
+	bool res = _parameterFile->rename(oldPrefix,newPrefix);
+	if (lock) {
+		endResetModel();
+		_resetMutex->unlock();
+	}
+	if (res) {
+		setPrefix(newPrefix);
+		emit modified(true);
+	}
+	return res;
+}
+
 void ParameterFileModel::setMinPriority(int value) {
 	if (value < 0 || value > 3) {
 		return;

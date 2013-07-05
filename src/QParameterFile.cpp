@@ -103,12 +103,18 @@ void QParameterFile::save(QString fileName) const {
 	}
 	if (outFile.open(QFile::WriteOnly|QIODevice::Truncate|QIODevice::Text)) {
 		QTextStream strm(&outFile);
-		QStringListIterator kIter(_keys);
-		while (kIter.hasNext()) {
-			QString cur = kIter.next();
-			strm << cur << "\t\t" << _content.value(cur.toLower()) << endl;
-		}
+		strm << toStringList().join("\n") << endl;
 	}
+}
+
+QStringList QParameterFile::toStringList() const {
+	QStringList res;
+	for (QStringList::const_iterator kIter=_keys.constBegin();
+			kIter!=_keys.constEnd(); kIter++) {
+		res << QString("%1\t\t%2")
+			.arg(*kIter).arg(_content.value(kIter->toLower()));
+	}
+	return res;
 }
 
 bool QParameterFile::isSet(QString parameter) const {
@@ -172,4 +178,91 @@ QStringList QParameterFile::getKeyList(QString beginsWith) const {
 
 void QParameterFile::clear() {
 	_content.clear();
+}
+
+const QRegExp QParameterFile::prefixCheck("[a-z_][a-zA-Z0-9_\\-]*",Qt::CaseSensitive);
+const QRegExp QParameterFile::postfixCheck("(?:\\.[a-zA-Z0-9_\\-]+)*",Qt::CaseSensitive);
+const QRegExp QParameterFile::paramCheck("[a-z_][a-zA-Z0-9_\\-\\.]*",Qt::CaseSensitive);
+const QRegExp QParameterFile::paramCheckSloppy("[\\w_\\-\\.@]*",Qt::CaseInsensitive);
+
+bool QParameterFile::rename(QString oldPrefix, QString newPrefix) {
+	// some sanity checks on the given parameters
+	if (oldPrefix.isEmpty() || newPrefix.isEmpty() || oldPrefix == newPrefix) {
+		return false;
+	}
+	QRegExp check(prefixCheck);
+	if (!check.exactMatch(oldPrefix)) {
+		qDebug("QParameterFile::rename: old prefix is no valid prefix: %s",
+			oldPrefix.toLocal8Bit().constData());
+		return false;
+	}
+	if (!check.exactMatch(newPrefix)) {
+		qDebug("QParameterFile::rename: new prefix is no valid prefix: %s",
+			newPrefix.toLocal8Bit().constData());
+		return false;
+	}
+	// collect keys to rename
+	QStringList keysToRename;
+	QRegExp hasPrefix(oldPrefix+"(\\.[\\w\\.\\-_]+)?",Qt::CaseInsensitive);
+	for (QStringList::const_iterator kIter = _keys.constBegin();
+					kIter!=_keys.constEnd(); kIter++) {
+		if (hasPrefix.exactMatch(*kIter)) {
+			keysToRename << *kIter;
+			QString newKey = newPrefix+hasPrefix.cap(1);
+			if (_keys.contains(newKey,Qt::CaseInsensitive)
+				|| _content.contains(newKey.toLower())) {
+				qDebug("new Key \"%s\" already exists! abort",
+					newKey.toLocal8Bit().constData());
+				return false;
+			}
+		}
+	}
+	// rename the keys, this modifies _keys and _content,
+	// so it is done after iterating over it
+	for (QStringList::const_iterator rIter = keysToRename.constBegin();
+					rIter!=keysToRename.constEnd(); rIter++) {
+		QString cur = *rIter;
+		hasPrefix.exactMatch(cur);
+		Q_ASSERT(hasPrefix.matchedLength() >= 0);
+		int pos = _keys.indexOf(QRegExp(cur,Qt::CaseInsensitive));
+		Q_ASSERT(pos >= 0);
+		Q_ASSERT(_content.contains(cur.toLower()));
+		QString val = _content.value(cur.toLower());
+		_keys.removeAt(pos); // remove old key
+		Q_ASSERT(!_keys.contains(cur,Qt::CaseInsensitive));
+		_content.remove(cur.toLower());
+		Q_ASSERT(!_content.contains(cur.toLower()));
+		QString newKey = newPrefix+hasPrefix.cap(1);
+		_keys << newKey; // insert renamed one
+		_content.insert(newKey.toLower(),val);
+	}
+	// rename the parameters containing the old prefix,
+	// this keeps _keys and the keys of _content unchanged, so
+	// renaming can be done while iterating over _content
+	QRegExp paramMatch(
+			QString("((?:%1;)*)(%3)(%2)?((?:;%1)*)")
+				.arg(paramCheckSloppy.pattern())
+				.arg(postfixCheck.pattern())
+				.arg(oldPrefix),Qt::CaseInsensitive);
+	for (QHash<QString,QString>::iterator cIter=_content.begin();
+			cIter!=_content.end();cIter++) {
+		while (paramMatch.exactMatch(cIter.value())) {
+			QStringList mod = paramMatch.capturedTexts();
+			mod.removeFirst(); // full capture
+			Q_ASSERT(mod.length() == 4);
+			Q_ASSERT(oldPrefix.compare(mod[1],Qt::CaseInsensitive)==0);
+			Q_ASSERT(mod.join("") == cIter.value());
+			mod.replace(1,newPrefix);
+			cIter.value() = mod.join(QString());
+		}
+		if (cIter.value().contains(QRegExp(QString("^([^\\s]*;)?%1([\\.;][^\\s]*)?$")
+					.arg(oldPrefix),Qt::CaseInsensitive))) {
+			qWarning("line still contains old prefix (%s): %s",
+					oldPrefix.toLocal8Bit().constData(),
+					cIter.value().toLocal8Bit().constData());
+			qWarning("it does not match the pattern: %s",
+					paramMatch.pattern().toLocal8Bit().constData());
+		}
+	}
+	return true;
 }

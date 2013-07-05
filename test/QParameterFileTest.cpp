@@ -96,7 +96,7 @@ void QParameterFileTest::checkUnicode() {
 	QString ref = QString::fromRawData(unicode,18);
 	QString value = qFile->get("ignore1");
 
-	//*
+	/*
 	// unicode content raw output
 	QString out;
 	QTextStream qout(&out, QIODevice::WriteOnly);
@@ -108,6 +108,60 @@ void QParameterFileTest::checkUnicode() {
 	//*/
 
 	QCOMPARE(ref,value);
+}
+
+void QParameterFileTest::checkQRegExp() {
+	QRegExp rgx("blah(\\.\\w+)?");
+	QVERIFY(rgx.exactMatch("blah"));
+	QCOMPARE(rgx.cap(1),QString());
+	QCOMPARE(rgx.cap(2),QString());
+	QVERIFY(!rgx.exactMatch("blahblubb"));
+	QVERIFY(!rgx.exactMatch("blubb"));
+	QVERIFY(rgx.exactMatch("blah.blubb"));
+	//qDebug() << rgx.capturedTexts() << rgx.cap(1) << rgx.cap(2);
+	QCOMPARE(rgx.cap(1),QString(".blubb"));
+}
+
+void QParameterFileTest::checkRenaming() {
+	QParameterFile test;
+
+	// simple connection
+	/* inst1.out <-> inst2.in */
+	test.set("inst1.type","type");
+	test.set("inst2.type","type");
+	test.set("inSt1.out","iNsT2.in");
+	test.set("insT2.in","iNst1.out");
+	// inst1 => inst3
+	test.rename("inst1","inst3");
+	QVERIFY(!test.getKeyList().contains("inst1.type"));
+	QVERIFY(!test.getKeyList().contains("inst1.out"));
+	QCOMPARE(test.get("inst3.type"),QString("type"));
+	QCOMPARE(test.get("inst3.out"),QString("iNsT2.in"));
+	QCOMPARE(test.get("inst2.in"),QString("inst3.out"));
+
+	// more complex, double connection
+	/* inst3.out  <-> inst2.in
+	 *             \
+	 * inst3.out2 <-> inst2.in2 */
+	test.set("inst3.out","inst2.in;inst2.in2");
+	test.set("inst3.out2","inst2.in2");
+	test.set("inst2.in2","inst3.out;inst3.out2");
+	// inst3 => inst1
+	test.rename("inst3","insT1");
+	QCOMPARE(test.get("inst1.out"),QString("inst2.in;inst2.in2"));
+	QCOMPARE(test.get("inst1.out2"),QString("inst2.in2"));
+	QCOMPARE(test.get("inst2.in"),QString("insT1.out"));
+	QCOMPARE(test.get("inst2.in2"),QString("insT1.out;insT1.out2"));
+	/*
+	QStringList dump = test.toStringList();
+	dump.sort(); dump.push_front(QString());
+	qDebug() << dump.join("\n\t");
+	//*/
+
+	// check invalid connection lines
+	test.set("inst2.in2","insT1.out;insT1.out2;@blah");
+	test.set("inst2.comment","blah inst1.blubb; whatever");
+	test.rename("inst1","inst4");
 }
 
 QTEST_APPLESS_MAIN(QParameterFileTest)

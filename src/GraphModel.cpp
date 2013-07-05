@@ -261,12 +261,10 @@ void GraphModel::disconnectAllSlots(QString node, bool draw) {
 	emit statusMessage(tr("disconnected all slots of node %1").arg(node));
 }
 
-const QRegExp GraphModel::instanceNameCheck("[a-z][a-zA-Z0-9_\\-]*");
-
 void GraphModel::renameNode(QString nodename, bool draw) {
 	nodename = nodename.section(".",0,0).toLower();
 	bool ok;
-	QRegExpValidator validator(instanceNameCheck);
+	QRegExpValidator validator(QParameterFile::prefixCheck);
 	QString newName = QTextInputDialog::getText(
 			0, tr("rename node"),
 			tr("Enter new name for node \"%1\":").arg(nodename),
@@ -274,6 +272,10 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 			&validator);
 	newName = newName.toLower() ;
 	if (ok) {
+		if (newName.compare(nodename,Qt::CaseInsensitive)==0) {
+			// nothing to do
+			return;
+		}
 		if(nodeValid(newName)) {
 			QMessageBox::warning(
 					0, tr("node exists"),
@@ -281,49 +283,18 @@ void GraphModel::renameNode(QString nodename, bool draw) {
 					   "Please choose another name.").arg(newName));
 			return;
 		}
-		setPrefix("");
-		setOnlyParams(false);
-		// sweep through all parameters
-		//renaming a parameter changes the list of keys and invalidates the indices
-		//the easiest method is to restart iterating over the parameters every time
-		//a match has been found
-		int count = rowCount() ;
-		for(int j = 0 ; j < count ; j++)
-		{
-			for(int i = 0 ; i < count ; i++) {
-				// rename node
-				QString curPar = data(index(i,0)).toString();
-				if (curPar.startsWith(nodename+".",Qt::CaseInsensitive)) {
-					QStringList parName = curPar.split(".");
-					Q_ASSERT(parName.size() > 0);
-					parName[0] = newName;
-					setData(index(i, 0), parName.join("."));
-				}
-				// rename target slots of other nodes
-				else if (isInputSlot(curPar) || isOutputSlot(curPar)) {
-					QStringList parVals =
-						getValue(curPar).split(";",QString::SkipEmptyParts);
-					for (int k = 0; k < parVals.size(); k++) {
-						QStringList target = parVals.at(k).split(".");
-						Q_ASSERT(target.size() > 0);
-						if (QString::compare(target[0],nodename,
-								Qt::CaseInsensitive)==0) {
-							target[0] = newName;
-							parVals[k] = target.join(".");
-						}
-					}
-					setValue(curPar, parVals.join(";"));
-				}
+		if (rename(nodename,newName)) {
+			if(draw) {
+				emit graphChanged();
 			}
+			emit statusMessage(
+					tr("renamed node %1 to %2").arg(nodename).arg(newName));
 		}
-		setOnlyParams(true);
-		setPrefix(newName);
-
-		if(draw)
-			emit graphChanged();
-
-		emit statusMessage(
-				tr("renamed node %1 to %2").arg(nodename).arg(newName));
+		else {
+			qWarning("%s",
+				tr("renaming failed! (%1 to %2)").arg(nodename).arg(newName)
+					.toLocal8Bit().constData());
+		}
 	}
 }
 
@@ -421,7 +392,7 @@ QString GraphModel::addNode(QString className, bool draw) {
 		Q_ASSERT(!baseName.isEmpty());
 	}
 	bool retry = false;
-	QRegExpValidator validator(instanceNameCheck);
+	QRegExpValidator validator(QParameterFile::prefixCheck);
 
 	// loop until a valid name is found or add node canceled
 	do {
