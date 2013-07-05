@@ -55,7 +55,7 @@ ObjectInspector::ObjectInspector(
 	_hidePrio->setCheckable(true);
 	_hidePrio->setChecked(false);
 	_ui->view->horizontalHeader()->insertAction(0,_hidePrio);
-	connect(_hidePrio,SIGNAL(triggered(bool)),SLOT(setPrioColumnHidden(bool)));
+	connect(_hidePrio,SIGNAL(triggered(bool)),this,SLOT(setPrioColumnHidden(bool)));
 
 	// use temporary model to set up view
 	ParameterFileModel tempModel;
@@ -357,7 +357,7 @@ void ObjectInspector::on_comment_textChanged() {
 	}
 }
 
-void ObjectInspector::setPrioColumnHidden(const bool& h) {
+void ObjectInspector::setPrioColumnHidden(bool h) {
 	_ui->view->setColumnHidden(2,h);
 	if (!h) {
 		_ui->view->resizeColumnsToContents();

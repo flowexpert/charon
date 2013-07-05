@@ -148,7 +148,7 @@ private slots:
 	void on_onlyParams_toggled(bool state);
 
 	/// handle context menu of horizontal header
-	void setPrioColumnHidden(const bool& hide);
+	void setPrioColumnHidden(bool hide);
 	// \}
 
 	/// \name handle model events
