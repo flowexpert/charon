@@ -285,7 +285,7 @@ void LogDecorators::Update::_searchOutput(const QModelIndex& idx) {
 }
 
 QString LogDecorators::Update::helpAnchor() {
-	return QString("#update-dialog");
+	return QString("#update-metadata");
 }
 
 // -------------------------   update dynamics   ------------------------------
@@ -383,5 +383,5 @@ QString LogDecorators::RunWorkflow::logFileName() const {
 }
 
 QString LogDecorators::RunWorkflow::helpAnchor() {
-	return QString("#run-dialog");
+	return QString("#run-workflow");
 }
