@@ -75,6 +75,12 @@ void MainWindow::_createMenus()
 	QMenuBar* menu = menuBar() ;
 	QMenu* viewMenu = menu->addMenu(QString("View")) ;
 	viewMenu->addActions(_viewStack->actions()) ;
+	QMenu* layoutMenu = menu->addMenu(QString("Layout")) ;
+
+	QAction* lAction = new QAction("2x1 Layout", this) ;
+		connect(lAction, SIGNAL(triggered()), _viewStack,SLOT(set2x1Layout())) ;
+	layoutMenu->addActions(_viewStack->layoutActions()) ;
+
 }
 
 ViewStack& MainWindow::viewStack()

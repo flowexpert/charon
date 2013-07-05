@@ -33,8 +33,12 @@
 #include <charon-utils/ArgosDisplay.h>
 
 #include <QMessageBox>
+#include <QVector>
+#include <QActionGroup>
+#include <QTabWidget>
+#include <QPoint>
+#include <QTabBar>
 
-class QTabWidget ;
 class QStatusBar ;
 class QActionGroup ;
 class QSignalMapper ;
@@ -47,6 +51,47 @@ namespace ArgosDisplay {
 
 		RGBChannels channelMode ;
 		AbstractPixelInspector* inspector ;
+	} ;
+
+	class DropTabBar : public QTabBar {
+		Q_OBJECT ;
+
+	public:	
+		DropTabBar(QWidget* parent = 0) ;
+
+		QPoint _dragStartPos ;
+
+	protected:
+
+		virtual void dropEvent(QDropEvent* event) ;
+
+		virtual void mousePressEvent(QMouseEvent* event) ;
+
+		virtual void mouseMoveEvent(QMouseEvent* event) ;
+
+		virtual void dragEnterEvent(QDragEnterEvent* event) ;
+
+	private:
+
+	signals:
+		void tabMoved(DropTabBar* source, int sourceIndex, DropTabBar* dest, int destIndex) ;
+	} ;
+
+	class DropTabWidget : public QTabWidget {
+		Q_OBJECT ;
+
+	public:
+		DropTabWidget(QWidget* parent = 0) ; 
+		
+		virtual void dropEvent(QDropEvent* event) ;
+
+		virtual void dragEnterEvent(QDragEnterEvent* event) ;
+
+	private slots:
+		void moveTabs(DropTabBar* source, int sourceIndex, DropTabBar* dest, int destIndex) ;
+
+	signals:
+
 	} ;
 
 	
@@ -84,6 +129,12 @@ namespace ArgosDisplay {
 		/// get current viewer
 		QWidget *getCurrentViewer();
 
+		const QList<QAction*> layoutActions() const ;
+
+	public slots:
+
+		void switchLayout(int rows, int columns) ;
+
 	protected:
 		/// set active tab widget by keypress
 		virtual void keyPressEvent(QKeyEvent * event ) ;
@@ -96,10 +147,12 @@ namespace ArgosDisplay {
 		QImageViewer& _currentViewer() const ;
 
 		/// image stack
-		QTabWidget* _tabWidget ;
+		QVector<DropTabWidget*> _tabWidgets ;
 
 		QActionGroup* _switchViewModeActs ;
 		QSignalMapper* _switchViewModeMapper ;
+
+		QActionGroup _layoutActions ;
 
 		/// switch the display of the current view between RGB and grayscale float
 		QAction* _switchColorModeAct ;
@@ -128,6 +181,9 @@ namespace ArgosDisplay {
 		int _zoomLevel;
 
 	private slots:
+		
+		void _switchToNamedLayout(const QString& layout) ;
+		
 		/// handle mouse movement in ImageDisplays
 		void _processMouseMovement(int x, int y) ;
 

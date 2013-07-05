@@ -29,29 +29,127 @@
 
 using namespace ArgosDisplay ;
 
+DropTabBar::DropTabBar(QWidget* parent) : QTabBar(parent)
+{
+	setAcceptDrops(true) ;
+}
+
+void DropTabBar::dropEvent(QDropEvent* event)
+{
+	if(event->source())
+	{	DropTabBar* src = qobject_cast<DropTabBar*>(event->source()) ;
+		int srcIndex = src->tabAt(src->_dragStartPos) ;
+		int dstIndex = tabAt(event->pos()) ;
+		emit tabMoved(src,srcIndex,this,dstIndex) ;
+	}
+}
+
+void DropTabBar::mousePressEvent(QMouseEvent* event)
+{
+	if (event->button() == Qt::LeftButton)
+	{	_dragStartPos = event->pos() ;}
+	QTabBar::mousePressEvent(event) ;
+}
+
+void DropTabBar::mouseMoveEvent(QMouseEvent* event)
+{
+	if(!(event->buttons() == Qt::LeftButton))
+	{	QTabBar::mouseMoveEvent(event) ;	}
+
+	if((event->pos() - _dragStartPos).manhattanLength() < QApplication::startDragDistance())
+	{	QTabBar::mouseMoveEvent(event) ;	}
+
+	QDrag* drag = new QDrag(this) ;
+	QMimeData* mime = new QMimeData ;
+	mime->setData("action","tab-move") ;
+	drag->setMimeData(mime) ;
+	drag->exec() ;
+}
+
+
+void DropTabBar::dragEnterEvent(QDragEnterEvent* event)
+{
+	const QMimeData* m = event->mimeData() ;
+	QStringList formats = m->formats() ;
+	if (formats.contains("action") && (m->data("action") == "tab-move"))
+	{	event->acceptProposedAction() ;	}
+}
+
+
+
+//-----------------------------------------------------------------------------
+
+DropTabWidget::DropTabWidget(QWidget* parent) : QTabWidget(parent)
+{
+	DropTabBar* tabBar = new DropTabBar(this) ;
+	setTabBar(tabBar) ;
+	connect(tabBar, SIGNAL(tabMoved(DropTabBar*, int, DropTabBar*, int)),this,SLOT(moveTabs(DropTabBar*, int, DropTabBar*, int))) ;
+	
+	setAcceptDrops(true) ;
+} 
+
+void DropTabWidget::moveTabs(DropTabBar* source, int sourceIndex, DropTabBar* dest, int destIndex)
+{
+	DropTabWidget* srcTab = qobject_cast<DropTabWidget*>(source->parentWidget()) ;
+	DropTabWidget* dstTab = qobject_cast<DropTabWidget*>(dest->parentWidget()) ;
+	if(!srcTab || !dstTab)
+		return ;
+	if(sourceIndex < srcTab->count())
+	{
+		QWidget* widget = srcTab->widget(sourceIndex) ;
+		QString text = srcTab->tabText(sourceIndex) ;
+		srcTab->removeTab(sourceIndex) ;
+		dstTab->insertTab(destIndex,widget,text) ;
+	}
+}
+
+void DropTabWidget::dragEnterEvent(QDragEnterEvent* event)
+{
+	const QMimeData* m = event->mimeData() ;
+	QStringList formats = m->formats() ;
+	if (formats.contains("action") && (m->data("action") == "tab-move"))
+	{	event->acceptProposedAction() ;	}
+}
+
+
+void DropTabWidget::dropEvent(QDropEvent *event)
+{
+	if(event->source())
+	{	DropTabBar* src = qobject_cast<DropTabBar*>(event->source()) ;
+		int srcIndex = src->tabAt(src->_dragStartPos) ;
+		int dstIndex = src->tabAt(event->pos()) ;
+		moveTabs(src,srcIndex,qobject_cast<DropTabBar*>(tabBar()),0) ;
+	}
+
+}
+
 View::View(AbstractPixelInspector* i, RGBChannels mode) :
 	channelMode(mode), inspector(i) {
 }
 
+//-----------------------------------------------------------------------------
+
 ViewStack::ViewStack(QWidget* p) : QWidget(p),
-	_tabWidget(0),
 	_switchColorModeAct(0),
 	_saveCurrentViewAct(0),
 	_centerAndResetZoomAct(0),
 	_alignAndZoomAct(0),
 	_updatePending(false),
 	_index(0),
-	_zoomLevel(0)
-
+	_zoomLevel(0),
+	_layoutActions(this)
 {
-	_tabWidget = new QTabWidget(this) ;
+	
+	DropTabWidget* _tabWidget = new DropTabWidget(this) ;
 		_tabWidget->setMovable(true) ;
 		_tabWidget->setUsesScrollButtons(true) ;
 		_tabWidget->setFocusPolicy(Qt::StrongFocus) ;
 		_tabWidget->setContentsMargins(2,2,2,2) ;
+	
+	_tabWidgets.push_back(_tabWidget) ;
 
-	QVBoxLayout* layout = new QVBoxLayout ;
-		layout->addWidget(_tabWidget) ;
+	QGridLayout* layout = new QGridLayout(this) ;
+		layout->addWidget(_tabWidget,0,0) ;
 		layout->setContentsMargins(2,2,2,2) ;
 	this->setLayout(layout) ;
 	this->setSizePolicy(
@@ -124,14 +222,59 @@ void ViewStack::_createActions()
 	connect(_alignAndZoomAct, SIGNAL(triggered()), this, SLOT(_alignAndZoom()));
 	this->addAction(_alignAndZoomAct) ;
 	
+	QSignalMapper* layoutMapper = new QSignalMapper(this) ;
+	QAction* lA = new QAction("1 x 1", this) ;
+		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
+		layoutMapper->setMapping(lA,"1x1") ;
+		_layoutActions.addAction(lA) ;
+	lA = new QAction("1 x 2", this) ;
+		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
+		layoutMapper->setMapping(lA,"1x2") ;
+		_layoutActions.addAction(lA) ;
+	lA = new QAction("1 x 3", this) ;
+		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
+		layoutMapper->setMapping(lA,"1x3") ;
+		_layoutActions.addAction(lA) ;
+	lA = new QAction("1 x 4", this) ;
+		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
+		layoutMapper->setMapping(lA,"1x4") ;
+		_layoutActions.addAction(lA) ;
+	lA = new QAction("2 x 1", this) ;
+		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
+		layoutMapper->setMapping(lA,"2x1") ;
+		_layoutActions.addAction(lA) ;
+	lA = new QAction("3 x 1", this) ;
+		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
+		layoutMapper->setMapping(lA,"3x1") ;
+		_layoutActions.addAction(lA) ;
+	lA = new QAction("2 x 2", this) ;
+		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
+		layoutMapper->setMapping(lA,"2x2") ;
+		_layoutActions.addAction(lA) ;
+	lA = new QAction("2 x 3", this) ;
+		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
+		layoutMapper->setMapping(lA,"2x3") ;
+		_layoutActions.addAction(lA) ;
+	lA = new QAction("2 x 4", this) ;
+		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
+		layoutMapper->setMapping(lA,"2x4") ;
+		_layoutActions.addAction(lA) ;
+	lA = new QAction("3 x 3", this) ;
+		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
+		layoutMapper->setMapping(lA,"3x3") ;
+		_layoutActions.addAction(lA) ;
+	connect(layoutMapper, SIGNAL(mapped(QString)),this,SLOT(_switchToNamedLayout(QString))) ;
 }
 
 void ViewStack::clear() {
-	while(_tabWidget->count() > 0) {
-		int c = _tabWidget->count() - 1;
-		QWidget* cur = _tabWidget->widget(c);
-		_tabWidget->removeTab(c);
-		delete cur;
+	for(int ii = 0 ; ii < _tabWidgets.size() ; ii++)
+	{
+		while(_tabWidgets[ii]->count() > 0) {
+			int c = _tabWidgets[ii]->count() - 1;
+			QWidget* cur = _tabWidgets[ii]->widget(c);
+			_tabWidgets[ii]->removeTab(c);
+			delete cur;
+		}
 	}
 	_views.clear() ;
 }
@@ -151,7 +294,7 @@ void ViewStack:: linkImage(AbstractPixelInspector* inspector)
 
 
 int ViewStack::currentIndex() const {
-	return _tabWidget->currentIndex() ;
+	return _tabWidgets[0]->currentIndex() ;
 }
 
 void ViewStack::setCurrentIndex(int index) {
@@ -163,6 +306,7 @@ void ViewStack::setCurrentIndex(int index) {
 }
 
 void ViewStack::_emitDimensionMessage() {
+	/*
 	int index = _tabWidget->currentIndex() ;
 	if(index < 0 || index >= (int)_views.size()) {
 		// fix bug on selection change
@@ -196,12 +340,14 @@ void ViewStack::_emitDimensionMessage() {
 	else
 		zoom = 100 * (level + 1) ;
 	message += QString(" | Zoom %1%").arg(zoom) ;
-
+	*/
+	QString message = "Fix me" ;
 	emit exportDimensionsMessage(message) ;
 }
 
 void ViewStack::_linkImages()
 {
+	DropTabWidget* tabWidget = _tabWidgets[0] ;
 	//this->clear() ;
 	for(size_t ii = 0 ; ii < _views.size() ; ii++)
 	{
@@ -209,17 +355,17 @@ void ViewStack::_linkImages()
 		if(view.inspector == 0)
 			continue ;
 		view.channelMode = view.inspector->isRGB() ;
-		
+		DropTabWidget* tabWidget = _tabWidgets[0] ;
 		if(view.inspector->dim()[0] < 8 && view.inspector->dim()[1] < 8)
 		{
-			_tabWidget->addTab(_createImageTableView(view.inspector),QString::fromStdString(view.inspector->name)) ;
+			tabWidget->addTab(_createImageTableView(view.inspector),QString::fromStdString(view.inspector->name)) ;
 			continue ;
 		}
 
 		if(view.channelMode == RGB4 || view.channelMode == RGB3) //default: register image as RGB image
 		{
 			QImageViewer* viewer = new QImageViewer(0) ;
-			_tabWidget->addTab(viewer, QString::fromStdString(_views[ii].inspector->name)) ;
+			tabWidget->addTab(viewer, QString::fromStdString(_views[ii].inspector->name)) ;
 			if(!_views[ii].inspector->isEmpty())
 			{	try{
 					viewer->setImage(_views[ii].inspector->getRGBImage(view.channelMode).qImage()) ;
@@ -238,7 +384,7 @@ void ViewStack::_linkImages()
 		else
 		{
 			FImageViewer* viewer = new FImageViewer(0) ;
-			_tabWidget->addTab(viewer, QString::fromStdString(_views[ii].inspector->name)) ;
+			tabWidget->addTab(viewer, QString::fromStdString(_views[ii].inspector->name)) ;
 			_views[ii].channelMode = NONE ;
 			if(!_views[ii].inspector->isEmpty())
 			{	try{
@@ -256,7 +402,7 @@ void ViewStack::_linkImages()
 					this, SLOT(_emitDimensionMessage())) ;
 		}
 	}
-	_tabWidget->setCurrentIndex(_index) ;
+	tabWidget->setCurrentIndex(_index) ;
 	_updatePending = false ;
 	_alignAndZoom() ;
 	this->parentWidget()->show() ;
@@ -264,7 +410,8 @@ void ViewStack::_linkImages()
 
 void ViewStack::_switchColorMode(int mode)
 {
-	int index = _tabWidget->currentIndex() ;
+	DropTabWidget* tabWidget = _tabWidgets[0] ;
+	int index = tabWidget->currentIndex() ;
 	View& view = _views[index] ;
 	if(index < 0 || view.inspector ==0)
 	{	return ;	}
@@ -277,11 +424,11 @@ void ViewStack::_switchColorMode(int mode)
 		return ;
 	}
 
-	_tabWidget->removeTab(index) ;
+	tabWidget->removeTab(index) ;
 	if(viewMode == ViewStack::Rgb4)
 	{
 		QImageViewer* viewer = new QImageViewer(0) ;
-		_tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
+		tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
 		viewer->setImage(view.inspector->getRGBImage(RGB4).qImage()) ;
 		connect(
 					viewer, SIGNAL(mouseOver(int, int)),
@@ -291,7 +438,7 @@ void ViewStack::_switchColorMode(int mode)
 	else if(viewMode == ViewStack::Rgb3)
 	{
 		QImageViewer* viewer = new QImageViewer(0) ;
-		_tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
+		tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
 		viewer->setImage(view.inspector->getRGBImage(RGB3).qImage()) ;
 		connect(
 					viewer, SIGNAL(mouseOver(int, int)),
@@ -300,13 +447,13 @@ void ViewStack::_switchColorMode(int mode)
 	}
 	else if(viewMode == ViewStack::Table)
 	{
-		_tabWidget->insertTab(index,_createImageTableView(view.inspector),
+		tabWidget->insertTab(index,_createImageTableView(view.inspector),
 							QString::fromStdString(view.inspector->name)) ;
 	}
 	else if(viewMode == ViewStack::Grey)
 	{
 		FImageViewer* viewer = new FImageViewer(0) ;
-		_tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
+		tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
 		viewer->setImage(view.inspector->getFImage()) ;
 		connect(
 					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
@@ -318,14 +465,16 @@ void ViewStack::_switchColorMode(int mode)
 		//maybe use later when we implement OpenGL displays
 		;
 	}
-	_tabWidget->setCurrentIndex(index) ;
+	tabWidget->setCurrentIndex(index) ;
 }
 
 void ViewStack::_switchLogMode() {
-	int index = _tabWidget->currentIndex() ;
+	DropTabWidget* tabWidget = _tabWidgets[0] ;
+
+	int index = tabWidget->currentIndex() ;
 	if(index < 0 || _views[index].inspector ==0)
 	{	return ;	}
-	FImageViewer* viewer = qobject_cast<FImageViewer*>(_tabWidget->currentWidget()) ;
+	FImageViewer* viewer = qobject_cast<FImageViewer*>(tabWidget->currentWidget()) ;
 	if(!viewer)
 		return ;
 	viewer->setLogarithmicMode(!viewer->logarithmicMode()) ;
@@ -351,21 +500,22 @@ void ViewStack::_processMouseMovement(int x, int y) {
 
 void ViewStack::keyPressEvent(QKeyEvent* event) {
 	int key = event->key() ;
-	
+	DropTabWidget* tabWidget = _tabWidgets[0] ;
+
 	// assume the int values of Key_1 to Key_9 are in ascending order
 	if(key >= Qt::Key_1 && key <= Qt::Key_9)
 		// this will give 0 for Key_1, 1 for Key_2 ...
-		_tabWidget->setCurrentIndex(key % Qt::Key_1) ;
-	// QTabWidget will check if the range is valid (at least in Qt 4.6 it did)
+		tabWidget->setCurrentIndex(key % Qt::Key_1) ;
+	// DropTabWidget will check if the range is valid (at least in Qt 4.6 it did)
 	else if(key == Qt::Key_Left)
 	{
-		int index = _tabWidget->currentIndex() ;
-		_tabWidget->setCurrentIndex((index - 1) % _tabWidget->count()) ;
+		int index = tabWidget->currentIndex() ;
+		tabWidget->setCurrentIndex((index - 1) % tabWidget->count()) ;
 	}
 	else if(key == Qt::Key_Right)
 	{
-		int index = _tabWidget->currentIndex() ;
-		_tabWidget->setCurrentIndex((index + 1) % _tabWidget->count()) ;
+		int index = tabWidget->currentIndex() ;
+		tabWidget->setCurrentIndex((index + 1) % tabWidget->count()) ;
 	}
 	else
 		// pass event to base class
@@ -374,22 +524,24 @@ void ViewStack::keyPressEvent(QKeyEvent* event) {
 
 QImageViewer& ViewStack::_currentViewer() const
 {
-	int index = _tabWidget->currentIndex() ;
+	DropTabWidget* tabWidget = _tabWidgets[0] ;
+
+	int index = tabWidget->currentIndex() ;
 	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
 	{	throw std::runtime_error("No active Viewer instance available!") ;	}
 	
 
-	QString className = _tabWidget->currentWidget()->metaObject()->className() ;
+	QString className = tabWidget->currentWidget()->metaObject()->className() ;
 	if(className == "FImageViewer")
 	{
-		FImageViewer* fViewer = qobject_cast<FImageViewer*>(_tabWidget->currentWidget()) ;
+		FImageViewer* fViewer = qobject_cast<FImageViewer*>(tabWidget->currentWidget()) ;
 		if(!fViewer)
 		{	throw std::runtime_error("Unknown Tab Widget!") ;	}
 		return *(fViewer->imageViewer()) ;
 	}
 	else if(className == "QImageViewer")
 	{
-		QImageViewer* viewer = qobject_cast<QImageViewer*>(_tabWidget->currentWidget()) ;
+		QImageViewer* viewer = qobject_cast<QImageViewer*>(tabWidget->currentWidget()) ;
 		if(!viewer)
 		{	throw std::runtime_error("Unknown Tab Widget!") ;	}
 		return *viewer ;
@@ -400,8 +552,10 @@ QImageViewer& ViewStack::_currentViewer() const
 
 void ViewStack::_saveCurrentView()
 {
+	
+	DropTabWidget* tabWidget = _tabWidgets[0] ;
 	static QString workingDir = QString() ;
-	int index = _tabWidget->currentIndex() ;
+	int index = tabWidget->currentIndex() ;
 	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
 	{	return ;	}
 	try
@@ -441,10 +595,11 @@ void ViewStack::_centerAndResetZoom()
 
 void ViewStack::_alignAndZoom()
 {
-	if(this->_tabWidget->count() == 0)
+	DropTabWidget* tabWidget = _tabWidgets[0] ;
+	if(tabWidget->count() == 0)
 		return ;
 	//rember the index of the active tab
-	int index = _tabWidget->currentIndex() ;
+	int index = tabWidget->currentIndex() ;
 	try
 	{	_currentViewer() ;	}
 	catch(std::runtime_error& err) //implies TableWidget view; do nothing
@@ -453,21 +608,21 @@ void ViewStack::_alignAndZoom()
 	QPoint upperLeft = _currentViewer().upperLeft() ;
 	int h = _currentViewer().originalHeight() ;
 	int w = _currentViewer().originalWidth() ;
-	for(int ii = 0 ; ii < _tabWidget->count() ; ii++)
+	for(int ii = 0 ; ii < tabWidget->count() ; ii++)
 	{
-		if(ii == _tabWidget->currentIndex())
+		if(ii == tabWidget->currentIndex())
 			continue ;
 		QImageViewer* viewer = 0 ;
-		QString className = _tabWidget->widget(ii)->metaObject()->className() ;
+		QString className = tabWidget->widget(ii)->metaObject()->className() ;
 		if(className == "FImageViewer")
 		{
-			FImageViewer* fViewer = qobject_cast<FImageViewer*>(_tabWidget->widget(ii)) ;
+			FImageViewer* fViewer = qobject_cast<FImageViewer*>(tabWidget->widget(ii)) ;
 			if(fViewer)
 				viewer = fViewer->imageViewer() ;
 		}
 		else if(className == "QImageViewer")
 		{
-			QImageViewer* qviewer = qobject_cast<QImageViewer*>(_tabWidget->widget(ii)) ;
+			QImageViewer* qviewer = qobject_cast<QImageViewer*>(tabWidget->widget(ii)) ;
 			viewer = qviewer ;
 		}
 
@@ -475,11 +630,11 @@ void ViewStack::_alignAndZoom()
 			continue ;
 		//zooming and slide does not work correctly when the viewer tab is in the background
 		//bring it to the front and reset the active index afterwards
-		_tabWidget->setCurrentIndex(ii) ;
+		tabWidget->setCurrentIndex(ii) ;
 		viewer->setZoomLevel(zoom) ;
 		viewer->slideBy(upperLeft - viewer->upperLeft()) ;
 	}
-	_tabWidget->setCurrentIndex(index) ;
+	tabWidget->setCurrentIndex(index) ;
 }
 
 void ViewStack::setZoomLevel(int level) {
@@ -497,21 +652,23 @@ int ViewStack::getZoomLevel() const {
 
 QWidget* ViewStack::getCurrentViewer()
 {
-	int index = _tabWidget->currentIndex() ;
+	DropTabWidget* tabWidget = _tabWidgets[0] ;
+
+	int index = tabWidget->currentIndex() ;
 	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
 	{       throw std::runtime_error("No active Viewer instance available!") ;      }
 
-	QString className = _tabWidget->currentWidget()->metaObject()->className() ;
+	QString className = tabWidget->currentWidget()->metaObject()->className() ;
 	if(className == "FImageViewer")
 	{
-		FImageViewer* fViewer = qobject_cast<FImageViewer*>(_tabWidget->currentWidget()) ;
+		FImageViewer* fViewer = qobject_cast<FImageViewer*>(tabWidget->currentWidget()) ;
 		if(!fViewer)
 		{       throw std::runtime_error("Unknown Tab Widget!") ;       }
 		return fViewer->imageViewer() ;
 	}
 	else if(className == "QImageViewer")
 	{
-		QImageViewer* viewer = qobject_cast<QImageViewer*>(_tabWidget->currentWidget()) ;
+		QImageViewer* viewer = qobject_cast<QImageViewer*>(tabWidget->currentWidget()) ;
 		if(!viewer)
 		{       throw std::runtime_error("Unknown Tab Widget!") ;       }
 		return viewer ;
@@ -552,3 +709,97 @@ QWidget* ViewStack::_createImageTableView(AbstractPixelInspector* inspector)
 	return table ;
 }
 
+void ViewStack::switchLayout(int rows, int columns)
+{
+	QGridLayout* l = qobject_cast<QGridLayout*>(this->layout()) ;
+	if((rows * columns <= 0) ||
+		(rows * columns == _tabWidgets.size() &&
+		rows == l->rowCount() &&
+		columns == l->columnCount()))
+	{
+		//do nothing if we get illegal values or the status quo
+		return ;
+	}
+	if(rows * columns > _tabWidgets.size())
+	{
+		DropTabWidget* firstTab = _tabWidgets[0] ;
+		for(int ii = _tabWidgets.size() ; ii < rows * columns ; ii++)
+		{
+			DropTabWidget* tabWidget = new DropTabWidget(this) ;
+			tabWidget->setMovable(true) ;
+			tabWidget->setUsesScrollButtons(true) ;
+			tabWidget->setContentsMargins(2,2,2,2);
+			//tabWidget->setFocusPolicy(Qt::StrongFocus) ;
+			tabWidget->setContentsMargins(2,2,2,2) ;
+			_tabWidgets.push_back(tabWidget) ;
+
+			//move tabs from first tabWidget to new tabWidgets
+			if(firstTab->count() > 1)
+			{	QWidget* last = firstTab->widget(firstTab->count() -1) ;
+				QString text = firstTab->tabText(firstTab->count() -1) ;
+				firstTab->removeTab(firstTab->count() -1) ;
+				_tabWidgets.last()->addTab(last,text) ;
+			}
+		}
+	}
+	else if(rows * columns < _tabWidgets.size())
+	{
+		DropTabWidget* firstTab = _tabWidgets[0] ;
+		//move all tabs from the to-be deleted tabWidgets to the first
+		while(_tabWidgets.size() > rows * columns)
+		{
+			DropTabWidget* tW = _tabWidgets.last() ;
+			while(tW->count() > 0)
+			{	QWidget* last = tW->widget(0) ;
+				QString text = tW->tabText(0) ;
+				tW->removeTab(0) ;
+				firstTab->addTab(last, text) ;
+			}
+			delete tW ;
+			_tabWidgets.pop_back() ;
+		}
+	}
+	//set new arrangement
+	int index = 0 ;
+	delete l ;
+	l = new QGridLayout(this) ;
+	l->setContentsMargins(2,2,2,2) ;
+	this->setSizePolicy(
+			QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
+	for(int row = 0 ; row < rows ; row++)
+		for(int column = 0 ; column < columns ; column++,index++)
+		{
+			l->addWidget(_tabWidgets[index],row,column) ;
+		}
+
+}
+
+void ViewStack::_switchToNamedLayout(const QString& layout)
+{
+	//i'm innocent! They forced me to do it!
+	if(layout == "1x1")
+		switchLayout(1,1) ;
+	else if(layout == "1x2")
+		switchLayout(1,2) ;
+	else if(layout == "1x3")
+		switchLayout(1,3) ;
+	else if(layout == "1x4")
+		switchLayout(1,4) ;
+	else if(layout == "2x1")
+		switchLayout(2,1) ;
+	else if(layout == "3x1")
+		switchLayout(3,1) ;
+	else if(layout == "2x2")
+		switchLayout(2,2) ;
+	else if(layout == "2x3")
+		switchLayout(2,3) ;
+	else if(layout == "2x4")
+		switchLayout(2,4) ;
+	else if(layout == "3x3")
+		switchLayout(3,3) ;
+}
+
+const QList<QAction*> ViewStack::layoutActions() const
+{
+	return _layoutActions.actions() ;
+}
