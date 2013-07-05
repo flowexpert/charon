@@ -187,15 +187,11 @@ const QRegExp QParameterFile::paramCheckSloppy("[\\w_\\-\\.@]*",Qt::CaseInsensit
 
 bool QParameterFile::rename(QString oldPrefix, QString newPrefix) {
 	// some sanity checks on the given parameters
+	oldPrefix=oldPrefix.section(".",0,0);
 	if (oldPrefix.isEmpty() || newPrefix.isEmpty() || oldPrefix == newPrefix) {
 		return false;
 	}
 	QRegExp check(prefixCheck);
-	if (!check.exactMatch(oldPrefix)) {
-		qDebug("QParameterFile::rename: old prefix is no valid prefix: %s",
-			oldPrefix.toLocal8Bit().constData());
-		return false;
-	}
 	if (!check.exactMatch(newPrefix)) {
 		qDebug("QParameterFile::rename: new prefix is no valid prefix: %s",
 			newPrefix.toLocal8Bit().constData());
@@ -216,6 +212,12 @@ bool QParameterFile::rename(QString oldPrefix, QString newPrefix) {
 				return false;
 			}
 		}
+	}
+	if (keysToRename.isEmpty()) {
+		// nothing to do
+		qDebug("no keys found starting with prefix \"%s\"",
+			oldPrefix.toLocal8Bit().constData());
+		return false;
 	}
 	// rename the keys, this modifies _keys and _content,
 	// so it is done after iterating over it

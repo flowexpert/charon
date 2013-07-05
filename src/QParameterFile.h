@@ -59,7 +59,14 @@ public:
 	 *  If parameter is unset, the getters return a null string.
 	 */
 	// \{
+	/// set parameter value
+	/** \param parameter    parameter (key), will be added if unset
+	 *  \param value        value to set
+	 */
 	void set(QString parameter, QString value = "");
+	/// get parameter value
+	/** \param parameter    parameter name (key)
+	 *  \returns            null string if unset */
 	QString get(QString parameter) const;
 
 	/// Look for parameters beginning with a given string.
@@ -79,8 +86,16 @@ public:
 	/** renames all keys starting with oldPrefix to ones with the given
 	 *  new prefix and also renames occurrences of the oldPrefix in
 	 *  values of other parameters (like slot connections)
-	 *  \param oldPrefix    old prefix (should not contain ".")
-	 *  \param newPrefix    new prefix (dito)
+	 *
+	 *  The new prefix must match the rules for parameter file prefixes
+	 *  (as specified in QParameterFile::prefixCheck ).
+	 *  The old prefix is not checked, if there are dots, the part
+	 *  before the dots is used. In the worst case, there are no occurrences
+	 *  of an invalid keys which causes the function to return and skip
+	 *  the parameter renaming.
+	 *
+	 *  \param oldPrefix    old prefix
+	 *  \param newPrefix    new prefix (checks for valid prefix)
 	 *  \retval true        renaming successful
 	 *  \retval false       some error occured, nothing changed at all
 	 */

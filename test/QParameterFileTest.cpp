@@ -145,7 +145,7 @@ void QParameterFileTest::checkRenaming() {
 	 * inst3.out2 <-> inst2.in2 */
 	test.set("inst3.out","inst2.in;inst2.in2");
 	test.set("inst3.out2","inst2.in2");
-	test.set("inst2.in2","inst3.out;inst3.out2");
+	test.set("inst2.in2","InsT3.out;inst3.out2");
 	// inst3 => inst1
 	test.rename("inst3","insT1");
 	QCOMPARE(test.get("inst1.out"),QString("inst2.in;inst2.in2"));
@@ -158,8 +158,13 @@ void QParameterFileTest::checkRenaming() {
 	qDebug() << dump.join("\n\t");
 	//*/
 
+	// check invalid renamings
+	QVERIFY(!test.rename("inst1","In@st4"));
+	QVERIFY(!test.rename("nobody","blah"));
+	QVERIFY(!test.rename("@blubb#","blah"));
+
 	// check invalid connection lines
-	test.set("inst2.in2","insT1.out;insT1.out2;@blah");
+	test.set("inst2.in2","insT1.out;InsT1.out2;@blah");
 	test.set("inst2.comment","blah inst1.blubb; whatever");
 	test.rename("inst1","inst4");
 }
