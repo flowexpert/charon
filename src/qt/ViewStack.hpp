@@ -53,6 +53,7 @@ namespace ArgosDisplay {
 		AbstractPixelInspector* inspector ;
 	} ;
 
+	/// Helper Widget to allow drap&drop op Tabs between multiple TabBars
 	class DropTabBar : public QTabBar {
 		Q_OBJECT ;
 
@@ -77,6 +78,7 @@ namespace ArgosDisplay {
 		void tabMoved(DropTabBar* source, int sourceIndex, DropTabBar* dest, int destIndex) ;
 	} ;
 
+	/// Helper Widget which allows moving of tabbed Widgets between TabWidgets
 	class DropTabWidget : public QTabWidget {
 		Q_OBJECT ;
 
@@ -87,10 +89,14 @@ namespace ArgosDisplay {
 
 		virtual void dragEnterEvent(QDragEnterEvent* event) ;
 
+		virtual void enterEvent(QEvent* event) ;
+
 	private slots:
 		void moveTabs(DropTabBar* source, int sourceIndex, DropTabBar* dest, int destIndex) ;
 
+
 	signals:
+		void mouseEntered(DropTabWidget* src) ;
 
 	} ;
 
@@ -146,16 +152,17 @@ namespace ArgosDisplay {
 		/// get reference to currently active viewer
 		QImageViewer& _currentViewer() const ;
 
-		/// image stack
+		/// pointer to TabWidget the mouse is currently hovering or the first if none
+		DropTabWidget* _currentTabWidget() const ;
+
+		/// image stacks
 		QVector<DropTabWidget*> _tabWidgets ;
 
+		/// switches between view modes
 		QActionGroup* _switchViewModeActs ;
-		QSignalMapper* _switchViewModeMapper ;
 
-		QActionGroup _layoutActions ;
-
-		/// switch the display of the current view between RGB and grayscale float
-		QAction* _switchColorModeAct ;
+		/// switches between layouts
+		QActionGroup* _layoutActions ;
 
 		/// save current view as image file
 		QAction* _saveCurrentViewAct ;
@@ -163,6 +170,7 @@ namespace ArgosDisplay {
 		/// move current view to center and reset zoom level
 		QAction* _centerAndResetZoomAct ;
 
+		/// switch greyscale view to log mode and vice versa
 		QAction* _switchLogModeAct ;
 
 		/// set center pixel and zoom level of all views to the same as the current view
@@ -180,8 +188,14 @@ namespace ArgosDisplay {
 		/// saved zoom level
 		int _zoomLevel;
 
+		DropTabWidget* __currentTabWidget ;
+
 	private slots:
 		
+		///select on which TabWidget Actions will be performed
+		void _changeCurrentTabWidget(DropTabWidget* widget) ;
+
+		///select current layout by name
 		void _switchToNamedLayout(const QString& layout) ;
 		
 		/// handle mouse movement in ImageDisplays
@@ -202,10 +216,13 @@ namespace ArgosDisplay {
 		/// move current view to center and reset zoom level
 		void _centerAndResetZoom() ;
 
+		/// perform pixel exact alignment for current tabwidget
 		void _alignAndZoom() ;
 
+		/// send string to be displayed in the status bar
 		void _emitDimensionMessage() ;
 
+		/// create a QTableWidget with pixel values of inspector as entries
 		QWidget* _createImageTableView(AbstractPixelInspector* inspector) ;
 
 	signals:

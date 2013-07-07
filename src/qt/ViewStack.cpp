@@ -123,6 +123,11 @@ void DropTabWidget::dropEvent(QDropEvent *event)
 
 }
 
+void DropTabWidget::enterEvent(QEvent* event)
+{
+	emit mouseEntered(this) ;
+}
+
 View::View(AbstractPixelInspector* i, RGBChannels mode) :
 	channelMode(mode), inspector(i) {
 }
@@ -130,26 +135,32 @@ View::View(AbstractPixelInspector* i, RGBChannels mode) :
 //-----------------------------------------------------------------------------
 
 ViewStack::ViewStack(QWidget* p) : QWidget(p),
-	_switchColorModeAct(0),
+	_switchViewModeActs(0),
+	_layoutActions(0),
 	_saveCurrentViewAct(0),
 	_centerAndResetZoomAct(0),
 	_alignAndZoomAct(0),
 	_updatePending(false),
 	_index(0),
 	_zoomLevel(0),
-	_layoutActions(this)
+	__currentTabWidget(0)
 {
 	
-	DropTabWidget* _tabWidget = new DropTabWidget(this) ;
-		_tabWidget->setMovable(true) ;
-		_tabWidget->setUsesScrollButtons(true) ;
-		_tabWidget->setFocusPolicy(Qt::StrongFocus) ;
-		_tabWidget->setContentsMargins(2,2,2,2) ;
+	DropTabWidget* tabWidget = new DropTabWidget(this) ;
+		tabWidget->setMovable(true) ;
+		tabWidget->setUsesScrollButtons(true) ;
+		tabWidget->setFocusPolicy(Qt::StrongFocus) ;
+		tabWidget->setContentsMargins(2,2,2,2) ;
 	
-	_tabWidgets.push_back(_tabWidget) ;
+			connect(tabWidget, SIGNAL(mouseEntered(DropTabWidget* )),
+				this, SLOT(_changeCurrentTabWidget(DropTabWidget*))) ;
+
+
+	_tabWidgets.push_back(tabWidget) ;
+	__currentTabWidget = tabWidget ;
 
 	QGridLayout* layout = new QGridLayout(this) ;
-		layout->addWidget(_tabWidget,0,0) ;
+		layout->addWidget(tabWidget,0,0) ;
 		layout->setContentsMargins(2,2,2,2) ;
 	this->setLayout(layout) ;
 	this->setSizePolicy(
@@ -157,7 +168,7 @@ ViewStack::ViewStack(QWidget* p) : QWidget(p),
 
 	connect(this, SIGNAL(imageLinked()), this, SLOT(_linkImages()), Qt::QueuedConnection) ;
 
-	connect(_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(_emitDimensionMessage())) ;
+	connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(_emitDimensionMessage())) ;
 
 	_createActions() ;
 	
@@ -171,98 +182,102 @@ ViewStack::~ViewStack() {
 
 void ViewStack::_createActions()
 {
-	/*
-	_switchColorModeAct = new QAction(QString("switch color mode"), this) ;
-	_switchColorModeAct->setStatusTip(QString("switch between RGB and grayscale display")) ;
-	connect(_switchColorModeAct, SIGNAL(triggered()), this, SLOT(_switchColorMode())) ;
-	this->addAction(_switchColorModeAct) ;
-	*/
+	QSignalMapper* switchViewModeMapper = new QSignalMapper(this) ;
 	_switchViewModeActs = new QActionGroup(this) ;
-	_switchViewModeMapper = new QSignalMapper(this) ;
 
 		QAction* tableModeAct = new QAction(QString("Table View"), _switchViewModeActs) ;
-			connect(tableModeAct, SIGNAL(triggered()), _switchViewModeMapper, SLOT(map())) ;
-			_switchViewModeMapper->setMapping(tableModeAct, static_cast<int>(ViewStack::Table)) ;
+			tableModeAct->setShortcut(QKeySequence(Qt::Key_T)) ;
+			connect(tableModeAct, SIGNAL(triggered()), switchViewModeMapper, SLOT(map())) ;
+			switchViewModeMapper->setMapping(tableModeAct, static_cast<int>(ViewStack::Table)) ;
 		QAction* greyModeAct = new QAction(QString("Greyscale"), _switchViewModeActs) ;
-			connect(greyModeAct, SIGNAL(triggered()), _switchViewModeMapper, SLOT(map())) ;
-			_switchViewModeMapper->setMapping(greyModeAct, static_cast<int>(ViewStack::Grey)) ;
-		QAction* rgb3ModeAct = new QAction(QString("3.Dim as RGB Channels"), _switchViewModeActs) ;
-			connect(rgb3ModeAct, SIGNAL(triggered()), _switchViewModeMapper, SLOT(map())) ;
-			_switchViewModeMapper->setMapping(rgb3ModeAct, static_cast<int>(ViewStack::Rgb3)) ;
-		QAction* rgb4ModeAct = new QAction(QString("4. Dim as RGB Channels"), _switchViewModeActs) ;
-			connect(rgb4ModeAct, SIGNAL(triggered()), _switchViewModeMapper, SLOT(map())) ;
-			_switchViewModeMapper->setMapping(rgb4ModeAct, static_cast<int>(ViewStack::Rgb4)) ;
+			greyModeAct->setShortcut(QKeySequence(Qt::Key_G)) ;
+			connect(greyModeAct, SIGNAL(triggered()), switchViewModeMapper, SLOT(map())) ;
+			switchViewModeMapper->setMapping(greyModeAct, static_cast<int>(ViewStack::Grey)) ;
+		QAction* rgb3ModeAct = new QAction(QString("4.Dim as RGB Channels"), _switchViewModeActs) ;
+			rgb3ModeAct->setShortcut(QKeySequence(Qt::Key_C)) ;
+			connect(rgb3ModeAct, SIGNAL(triggered()), switchViewModeMapper, SLOT(map())) ;
+			switchViewModeMapper->setMapping(rgb3ModeAct, static_cast<int>(ViewStack::Rgb3)) ;
+		QAction* rgb4ModeAct = new QAction(QString("5. Dim as RGB Channels"), _switchViewModeActs) ;
+			rgb4ModeAct->setShortcut(QKeySequence(Qt::Key_V)) ;
+			connect(rgb4ModeAct, SIGNAL(triggered()), switchViewModeMapper, SLOT(map())) ;
+			switchViewModeMapper->setMapping(rgb4ModeAct, static_cast<int>(ViewStack::Rgb4)) ;
 
-	connect(_switchViewModeMapper, SIGNAL(mapped(int)), this, SLOT(_switchColorMode(int))) ;
+	connect(switchViewModeMapper, SIGNAL(mapped(int)), this, SLOT(_switchColorMode(int))) ;
 	_switchViewModeActs->setExclusive(false) ;
 	this->addActions(_switchViewModeActs->actions()) ;
 
-	QAction* separator = new QAction(_switchViewModeMapper) ;
+	QAction* separator = new QAction(switchViewModeMapper) ;
 		separator->setSeparator(true) ;
 	this->addAction(separator) ;
 
 
-	_saveCurrentViewAct = new QAction(QString("save current view"), this) ;
-	_saveCurrentViewAct->setStatusTip(QString("save current view to image file")) ;
+	_saveCurrentViewAct = new QAction(QString("Save current view"), this) ;
+	_saveCurrentViewAct->setStatusTip(QString("Save current view to image file")) ;
+	_saveCurrentViewAct->setShortcut(QKeySequence::Save) ;
 	connect(_saveCurrentViewAct, SIGNAL(triggered()), this, SLOT(_saveCurrentView())) ;
 	this->addAction(_saveCurrentViewAct) ;
 
-	_centerAndResetZoomAct = new QAction(QString("reset view"), this) ;
-	_centerAndResetZoomAct->setStatusTip(QString("set zoom level to 0 and move view to center of window")) ;
+	_centerAndResetZoomAct = new QAction(QString("Reset view"), this) ;
+	_centerAndResetZoomAct->setStatusTip(QString("Set zoom level to 0 and move view to center of window")) ;
+	_centerAndResetZoomAct->setShortcut(QKeySequence(Qt::Key_R)) ;
 	connect(_centerAndResetZoomAct, SIGNAL(triggered()), this, SLOT(_centerAndResetZoom())) ;
 	this->addAction(_centerAndResetZoomAct) ;
 
-	_switchLogModeAct = new QAction(QString("switch log mode"), this) ;
+	_switchLogModeAct = new QAction(QString("Switch log mode"), this) ;
 	_switchLogModeAct->setStatusTip(QString("switch floating-point display to logarithmic scaling")) ;
+	_switchLogModeAct->setShortcut(QKeySequence(Qt::Key_L)) ;
 	connect(_switchLogModeAct, SIGNAL(triggered()), this, SLOT(_switchLogMode())) ;
 	this->addAction(_switchLogModeAct) ;
 	
-	_alignAndZoomAct = new QAction(QString("align other views"), this);
+	_alignAndZoomAct = new QAction(QString("Align other views"), this);
 	_alignAndZoomAct->setStatusTip(QString("align all other views of same size to this one")) ;
+	_alignAndZoomAct->setShortcut(QKeySequence(Qt::Key_Space)) ;
 	connect(_alignAndZoomAct, SIGNAL(triggered()), this, SLOT(_alignAndZoom()));
 	this->addAction(_alignAndZoomAct) ;
 	
+	_layoutActions = new QActionGroup(this) ;
+
 	QSignalMapper* layoutMapper = new QSignalMapper(this) ;
 	QAction* lA = new QAction("1 x 1", this) ;
 		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
 		layoutMapper->setMapping(lA,"1x1") ;
-		_layoutActions.addAction(lA) ;
+		_layoutActions->addAction(lA) ;
 	lA = new QAction("1 x 2", this) ;
 		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
 		layoutMapper->setMapping(lA,"1x2") ;
-		_layoutActions.addAction(lA) ;
+		_layoutActions->addAction(lA) ;
 	lA = new QAction("1 x 3", this) ;
 		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
 		layoutMapper->setMapping(lA,"1x3") ;
-		_layoutActions.addAction(lA) ;
+		_layoutActions->addAction(lA) ;
 	lA = new QAction("1 x 4", this) ;
 		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
 		layoutMapper->setMapping(lA,"1x4") ;
-		_layoutActions.addAction(lA) ;
+		_layoutActions->addAction(lA) ;
 	lA = new QAction("2 x 1", this) ;
 		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
 		layoutMapper->setMapping(lA,"2x1") ;
-		_layoutActions.addAction(lA) ;
+		_layoutActions->addAction(lA) ;
 	lA = new QAction("3 x 1", this) ;
 		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
 		layoutMapper->setMapping(lA,"3x1") ;
-		_layoutActions.addAction(lA) ;
+		_layoutActions->addAction(lA) ;
 	lA = new QAction("2 x 2", this) ;
 		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
 		layoutMapper->setMapping(lA,"2x2") ;
-		_layoutActions.addAction(lA) ;
+		_layoutActions->addAction(lA) ;
 	lA = new QAction("2 x 3", this) ;
 		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
 		layoutMapper->setMapping(lA,"2x3") ;
-		_layoutActions.addAction(lA) ;
+		_layoutActions->addAction(lA) ;
 	lA = new QAction("2 x 4", this) ;
 		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
 		layoutMapper->setMapping(lA,"2x4") ;
-		_layoutActions.addAction(lA) ;
+		_layoutActions->addAction(lA) ;
 	lA = new QAction("3 x 3", this) ;
 		connect(lA,SIGNAL(triggered()), layoutMapper, SLOT(map())) ;
 		layoutMapper->setMapping(lA,"3x3") ;
-		_layoutActions.addAction(lA) ;
+		_layoutActions->addAction(lA) ;
 	connect(layoutMapper, SIGNAL(mapped(QString)),this,SLOT(_switchToNamedLayout(QString))) ;
 }
 
@@ -294,7 +309,7 @@ void ViewStack:: linkImage(AbstractPixelInspector* inspector)
 
 
 int ViewStack::currentIndex() const {
-	return _tabWidgets[0]->currentIndex() ;
+	return _currentTabWidget()->currentIndex() ;
 }
 
 void ViewStack::setCurrentIndex(int index) {
@@ -306,8 +321,8 @@ void ViewStack::setCurrentIndex(int index) {
 }
 
 void ViewStack::_emitDimensionMessage() {
-	/*
-	int index = _tabWidget->currentIndex() ;
+	DropTabWidget* tabWidget = _currentTabWidget() ;
+	int index = tabWidget->currentIndex() ;
 	if(index < 0 || index >= (int)_views.size()) {
 		// fix bug on selection change
 		return;
@@ -325,11 +340,11 @@ void ViewStack::_emitDimensionMessage() {
 			break ;
 		 }
 		case(RGB4) : {
-			message += " [RGB 4. dimension]" ;
+			message += " [RGB 5. dimension]" ;
 			break ;
 		}
 		case(RGB3) : {
-			message += " [RGB 3. dimension]" ;
+			message += " [RGB 4. dimension]" ;
 			break ;
 		}
 	}
@@ -340,14 +355,12 @@ void ViewStack::_emitDimensionMessage() {
 	else
 		zoom = 100 * (level + 1) ;
 	message += QString(" | Zoom %1%").arg(zoom) ;
-	*/
-	QString message = "Fix me" ;
 	emit exportDimensionsMessage(message) ;
 }
 
 void ViewStack::_linkImages()
 {
-	DropTabWidget* tabWidget = _tabWidgets[0] ;
+	DropTabWidget* tabWidget = _currentTabWidget() ;
 	//this->clear() ;
 	for(size_t ii = 0 ; ii < _views.size() ; ii++)
 	{
@@ -410,7 +423,8 @@ void ViewStack::_linkImages()
 
 void ViewStack::_switchColorMode(int mode)
 {
-	DropTabWidget* tabWidget = _tabWidgets[0] ;
+	DropTabWidget* tabWidget = _currentTabWidget() ;
+		
 	int index = tabWidget->currentIndex() ;
 	View& view = _views[index] ;
 	if(index < 0 || view.inspector ==0)
@@ -469,7 +483,7 @@ void ViewStack::_switchColorMode(int mode)
 }
 
 void ViewStack::_switchLogMode() {
-	DropTabWidget* tabWidget = _tabWidgets[0] ;
+	DropTabWidget* tabWidget = _currentTabWidget() ;
 
 	int index = tabWidget->currentIndex() ;
 	if(index < 0 || _views[index].inspector ==0)
@@ -500,7 +514,7 @@ void ViewStack::_processMouseMovement(int x, int y) {
 
 void ViewStack::keyPressEvent(QKeyEvent* event) {
 	int key = event->key() ;
-	DropTabWidget* tabWidget = _tabWidgets[0] ;
+	DropTabWidget* tabWidget = _currentTabWidget() ;
 
 	// assume the int values of Key_1 to Key_9 are in ascending order
 	if(key >= Qt::Key_1 && key <= Qt::Key_9)
@@ -524,7 +538,7 @@ void ViewStack::keyPressEvent(QKeyEvent* event) {
 
 QImageViewer& ViewStack::_currentViewer() const
 {
-	DropTabWidget* tabWidget = _tabWidgets[0] ;
+	DropTabWidget* tabWidget = _currentTabWidget() ;
 
 	int index = tabWidget->currentIndex() ;
 	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
@@ -553,7 +567,7 @@ QImageViewer& ViewStack::_currentViewer() const
 void ViewStack::_saveCurrentView()
 {
 	
-	DropTabWidget* tabWidget = _tabWidgets[0] ;
+	DropTabWidget* tabWidget = _currentTabWidget() ;
 	static QString workingDir = QString() ;
 	int index = tabWidget->currentIndex() ;
 	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
@@ -595,7 +609,7 @@ void ViewStack::_centerAndResetZoom()
 
 void ViewStack::_alignAndZoom()
 {
-	DropTabWidget* tabWidget = _tabWidgets[0] ;
+	DropTabWidget* tabWidget = _currentTabWidget() ;
 	if(tabWidget->count() == 0)
 		return ;
 	//rember the index of the active tab
@@ -652,7 +666,7 @@ int ViewStack::getZoomLevel() const {
 
 QWidget* ViewStack::getCurrentViewer()
 {
-	DropTabWidget* tabWidget = _tabWidgets[0] ;
+	DropTabWidget* tabWidget = _currentTabWidget() ;
 
 	int index = tabWidget->currentIndex() ;
 	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
@@ -731,6 +745,8 @@ void ViewStack::switchLayout(int rows, int columns)
 			tabWidget->setContentsMargins(2,2,2,2);
 			//tabWidget->setFocusPolicy(Qt::StrongFocus) ;
 			tabWidget->setContentsMargins(2,2,2,2) ;
+			connect(tabWidget, SIGNAL(mouseEntered(DropTabWidget*)),
+				this, SLOT(_changeCurrentTabWidget(DropTabWidget*))) ;
 			_tabWidgets.push_back(tabWidget) ;
 
 			//move tabs from first tabWidget to new tabWidgets
@@ -801,5 +817,19 @@ void ViewStack::_switchToNamedLayout(const QString& layout)
 
 const QList<QAction*> ViewStack::layoutActions() const
 {
-	return _layoutActions.actions() ;
+	return _layoutActions->actions() ;
+}
+
+DropTabWidget* ViewStack::_currentTabWidget() const
+{
+	return __currentTabWidget ;
+}
+
+void ViewStack::_changeCurrentTabWidget(DropTabWidget* widget)
+{
+	if(widget)
+		__currentTabWidget = widget ;
+	else
+		__currentTabWidget = _tabWidgets[0] ;
+	_emitDimensionMessage() ;
 }
