@@ -39,13 +39,27 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"Advanced Display Plugin<br>Allows inspection and display of "
 			"vigra and cimg images as well as the use "
 			"of connected QWidget instances<br><br>"
+			"The window layout can be changed via the \"Layout\" menu. If multiple tabs are open, image views can moved between them by dragging and dropping them FROM the tab bar."
+			"Context menu actions and key shortcuts always act upon the view the mouse is currently hovering over.<br><br>"
+			"The following commands are available:<br><ul>"
+			"<li><strong>Greyscale</strong>: Normalize and display image as greyscale. If the image has multiple dimensions/channels, only the first will be shown.</li>." 
+			"<li><strong>Table</strong>: Display all values as a table."
+			"If the image has multiple dimensions/channels, only the first will be shown."
+			"This can be slow for images with more than 10000 pixels.</li>"
 			"Images with a size greater than 2 in the last dimension "
-			"(CImgList.size() or vigra::MultiArray.size(0)) "
-			"will be interpreted as RGB images<br>"
-			"(can be switched via the context menu)<br><br>"
-			"It's safe to use this plugin in a non-gui workflow "
-			"(e.g. for use with command-line charon)<br>"
-			"Although it's execution will just be omitted"),
+			"<li><strong>4. Dim as RGB channels</strong>: If the t (4.) dimension of the image has at least size 3 "
+			"interpret individual slices as RGB channels. Values must be between 0-255. Use the \"normalize\" or other visualization plugins such as \"CustomColorMask\" if not so.</li>"
+			"<li><strong>5. Dim as RGB channels</strong>: If the v (5.) dimension of the image has at least size 3 "
+			"interpret individual slices as RGB channels. Values must be between 0-255. Use the \"normalize\" or other visualization plugins such as \"CustomColorMask\" if not so.</li>"
+			"</ul><ul>"
+			"<li><strong>Save current view</strong>: Save the current view as seen on screen to image file. Supported formats are jpg, png and bmp.</li>"
+			"<li><strong>Reset view</strong>: If not in Table mode, set the zoom level to 1 and center the image.</li>"
+			"<li><strong>Switch log mode</strong>: If in greyscale mode, take logarithm of values before performing normalization. This is usefull to reduce the dynamic range of the display.</li>"
+			"<li><strong>Align other views</strong>: Set the zoom level and image position of all images in the current view to to same values as the active image."
+			"This performs a pixel exakt alignment of images, given they have the same width and height.</li>"
+			"</ul>"
+			"Additionaly, the current top image can be switched using the number keys."
+			),
 			_vigraIn(true, true),
 			_cimgIn(true, true),
 			_dockWidgets(true, true),

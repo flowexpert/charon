@@ -75,6 +75,10 @@ void MainWindow::_createMenus()
 	QMenuBar* menu = menuBar() ;
 	QMenu* viewMenu = menu->addMenu(QString("View")) ;
 	viewMenu->addActions(_viewStack->actions()) ;
+	QMenu* layoutMenu = menu->addMenu(QString("Layout")) ;
+
+	layoutMenu->addActions(_viewStack->layoutActions()) ;
+
 }
 
 ViewStack& MainWindow::viewStack()

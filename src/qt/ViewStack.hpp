@@ -33,8 +33,12 @@
 #include <charon-utils/ArgosDisplay.h>
 
 #include <QMessageBox>
+#include <QVector>
+#include <QActionGroup>
+#include <QTabWidget>
+#include <QPoint>
+#include <QTabBar>
 
-class QTabWidget ;
 class QStatusBar ;
 class QActionGroup ;
 class QSignalMapper ;
@@ -47,6 +51,53 @@ namespace ArgosDisplay {
 
 		RGBChannels channelMode ;
 		AbstractPixelInspector* inspector ;
+	} ;
+
+	/// Helper Widget to allow drap&drop op Tabs between multiple TabBars
+	class DropTabBar : public QTabBar {
+		Q_OBJECT ;
+
+	public:	
+		DropTabBar(QWidget* parent = 0) ;
+
+		QPoint _dragStartPos ;
+
+	protected:
+
+		virtual void dropEvent(QDropEvent* event) ;
+
+		virtual void mousePressEvent(QMouseEvent* event) ;
+
+		virtual void mouseMoveEvent(QMouseEvent* event) ;
+
+		virtual void dragEnterEvent(QDragEnterEvent* event) ;
+
+	private:
+
+	signals:
+		void tabMoved(DropTabBar* source, int sourceIndex, DropTabBar* dest, int destIndex) ;
+	} ;
+
+	/// Helper Widget which allows moving of tabbed Widgets between TabWidgets
+	class DropTabWidget : public QTabWidget {
+		Q_OBJECT ;
+
+	public:
+		DropTabWidget(QWidget* parent = 0) ; 
+		
+		virtual void dropEvent(QDropEvent* event) ;
+
+		virtual void dragEnterEvent(QDragEnterEvent* event) ;
+
+		virtual void enterEvent(QEvent* event) ;
+
+	private slots:
+		void moveTabs(DropTabBar* source, int sourceIndex, DropTabBar* dest, int destIndex) ;
+
+
+	signals:
+		void mouseEntered(DropTabWidget* src) ;
+
 	} ;
 
 	
@@ -84,6 +135,12 @@ namespace ArgosDisplay {
 		/// get current viewer
 		QWidget *getCurrentViewer();
 
+		const QList<QAction*> layoutActions() const ;
+
+	public slots:
+
+		void switchLayout(int rows, int columns) ;
+
 	protected:
 		/// set active tab widget by keypress
 		virtual void keyPressEvent(QKeyEvent * event ) ;
@@ -95,14 +152,17 @@ namespace ArgosDisplay {
 		/// get reference to currently active viewer
 		QImageViewer& _currentViewer() const ;
 
-		/// image stack
-		QTabWidget* _tabWidget ;
+		/// pointer to TabWidget the mouse is currently hovering or the first if none
+		DropTabWidget* _currentTabWidget() const ;
 
+		/// image stacks
+		QVector<DropTabWidget*> _tabWidgets ;
+
+		/// switches between view modes
 		QActionGroup* _switchViewModeActs ;
-		QSignalMapper* _switchViewModeMapper ;
 
-		/// switch the display of the current view between RGB and grayscale float
-		QAction* _switchColorModeAct ;
+		/// switches between layouts
+		QActionGroup* _layoutActions ;
 
 		/// save current view as image file
 		QAction* _saveCurrentViewAct ;
@@ -110,6 +170,7 @@ namespace ArgosDisplay {
 		/// move current view to center and reset zoom level
 		QAction* _centerAndResetZoomAct ;
 
+		/// switch greyscale view to log mode and vice versa
 		QAction* _switchLogModeAct ;
 
 		/// set center pixel and zoom level of all views to the same as the current view
@@ -127,7 +188,16 @@ namespace ArgosDisplay {
 		/// saved zoom level
 		int _zoomLevel;
 
+		DropTabWidget* __currentTabWidget ;
+
 	private slots:
+		
+		///select on which TabWidget Actions will be performed
+		void _changeCurrentTabWidget(DropTabWidget* widget) ;
+
+		///select current layout by name
+		void _switchToNamedLayout(const QString& layout) ;
+		
 		/// handle mouse movement in ImageDisplays
 		void _processMouseMovement(int x, int y) ;
 
@@ -146,10 +216,13 @@ namespace ArgosDisplay {
 		/// move current view to center and reset zoom level
 		void _centerAndResetZoom() ;
 
+		/// perform pixel exact alignment for current tabwidget
 		void _alignAndZoom() ;
 
+		/// send string to be displayed in the status bar
 		void _emitDimensionMessage() ;
 
+		/// create a QTableWidget with pixel values of inspector as entries
 		QWidget* _createImageTableView(AbstractPixelInspector* inspector) ;
 
 	signals:
