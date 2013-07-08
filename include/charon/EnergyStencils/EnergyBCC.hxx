@@ -77,11 +77,10 @@ EnergyBCC<T>::EnergyBCC(const std::string& name) :
 template <class T>
 void EnergyBCC<T>::execute() {
 	Stencil::Base<T>::execute();
-	if (!this->lambdaMask.connected()) {
-		_lamb = this->lambda();
-	} else {
+
+	_lamb = this->lambda();
+	if (this->lambdaMask.connected()) {
 		_lambdaMask = this->lambdaMask();
-		_lamb = T(1.0);
 	}
 	_penaltyFunction = penaltyFunction();
 
@@ -108,15 +107,13 @@ void EnergyBCC<T>::execute() {
         _patternMask.fill( 1 );
         _dataMask.fill( 1 );
         _center = Point4D<int>(0,0,0,0);
-
-        _dataMask *= this->_lamb;
 }
 
 template <class T>
 T EnergyBCC<T>::getEnergy( int, int xI, int yI, int zI, int )
 {
 	if (this->lambdaMask.connected())
-		_lamb = _lambdaMask.atNXYZC( 0, xI, yI, zI, 0 );
+		_lamb *= _lambdaMask.atNXYZC( 0, xI, yI, zI, 0 );
 
 	T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 1 );
 	T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 1 );
@@ -134,7 +131,7 @@ template <class T>
 std::vector<T> EnergyBCC<T>::getEnergyGradient( int, int xI, int yI, int zI, int )
 {
 	if (this->lambdaMask.connected())
-		_lamb = _lambdaMask.atNXYZC( 0, xI, yI, zI, 0 );
+		_lamb *= _lambdaMask.atNXYZC( 0, xI, yI, zI, 0 );
 
         T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 1 );
         T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 1 );
@@ -161,7 +158,7 @@ template <class T>
 std::vector<T> EnergyBCC<T>::getEnergyHessian( int, int xI, int yI, int zI, int )
 {
 	if (this->lambdaMask.connected())
-		_lamb = _lambdaMask.atNXYZC( 0, xI, yI, zI, 0 );
+		_lamb *= _lambdaMask.atNXYZC( 0, xI, yI, zI, 0 );
 
 	T Ix = img_dx().atNXYZC( 0, xI, yI, zI, 1 );
 	T Iy = img_dy().atNXYZC( 0, xI, yI, zI, 1 );
@@ -204,9 +201,9 @@ void EnergyBCC<T>::updateStencil(
 
 	T l;
 	if (this->lambdaMask.connected()) {
-		l = _lambdaMask.atNXYZC( 0, x, y, z, 0 );
+		l = this->lambda() * _lambdaMask.atNXYZC( 0, x, y, z, 0 );
 	} else {
-		l  = this->lambda();
+		l = this->lambda();
 	}
 
 	bool _mask = true;

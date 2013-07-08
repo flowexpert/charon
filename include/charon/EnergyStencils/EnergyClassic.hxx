@@ -240,11 +240,11 @@ void EnergyClassic<T>::updateStencil(
 	// fill region mask with given regularization mask
 	bool regionMaskC = true, regionMaskN = true, regionMaskE = true, regionMaskS = true, regionMaskW = true;
 	if (regionMaskConnected) {
-		regionMaskC &= (bool)regionMask()[0].atXY(p.x,   p.y);
-		regionMaskN &= (bool)regionMask()[0].atXY(p.x,   p.y-1);
-		regionMaskE &= (bool)regionMask()[0].atXY(p.x+1, p.y);
-		regionMaskS &= (bool)regionMask()[0].atXY(p.x,   p.y+1);
-		regionMaskW &= (bool)regionMask()[0].atXY(p.x-1, p.y);
+		regionMaskC &= (bool)regionMask()[0].atXYZC(p.x,   p.y,   0, 0);
+		regionMaskN &= (bool)regionMask()[0].atXYZC(p.x,   p.y-1, 0, 0);
+		regionMaskE &= (bool)regionMask()[0].atXYZC(p.x+1, p.y,   0, 0);
+		regionMaskS &= (bool)regionMask()[0].atXYZC(p.x,   p.y+1, 0, 0);
+		regionMaskW &= (bool)regionMask()[0].atXYZC(p.x-1, p.y,   0, 0);
 	}
 
 	// get match mask
