@@ -6,7 +6,7 @@
 # mark where the TemplateGenerator inserts new module
 # code if requested, so please do not edit this line.
 # new module code is inserted just above this mark.
-PROJECT(@ModuleName@)
+PROJECT(@ModuleName@ CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 

@@ -3,26 +3,18 @@ IF(NOT CMAKE_FLAGS_INIT)
 	# initial compiler flags can be set here, this is only
 	# executed once in the first configure run.
 	IF(CMAKE_COMPILER_IS_GNUCXX)
-		IF(NOT CMAKE_C_FLAGS)
-			SET(CMAKE_C_FLAGS "-W -Wall -Wextra")
-		ENDIF()
 		IF(NOT CMAKE_CXX_FLAGS)
-			SET(CMAKE_CXX_FLAGS "-W -Wall -Wextra")
-		ENDIF()
+			SET(CMAKE_CXX_FLAGS "-W -Wall -Wextra -pedantic -std=c++0x")
+		ENDIF(NOT CMAKE_CXX_FLAGS)
 		IF(CMAKE_SHARED_LINKER_FLAGS MATCHES "^ *$")
 			SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--as-needed,--no-undefined")
 		ENDIF()
 	ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 	IF(MSVC)
-		SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4251 /wd4275 /wd4290")
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251 /wd4275 /wd4290")
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251 /wd4275 /wd4290 /wd4244 /Zc:wchar_t-")
 	ENDIF(MSVC)
 
 	# commit changed flags
-	SET(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} CACHE STRING
-		"Flags used by the compiler during all build types."
-		FORCE
-	)
 	SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} CACHE STRING
 		"Flags used by the compiler during all build types."
 		FORCE
@@ -34,7 +26,7 @@ IF(NOT CMAKE_FLAGS_INIT)
 
 	# set postfix to append to debug library names
 	SET(CMAKE_DEBUG_POSTFIX _d)
-	
+
 	# default to debug builds
 	IF(DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "")
 		SET(CMAKE_BUILD_TYPE "Debug"
@@ -60,6 +52,8 @@ IF(WIN32)
 		# Tell MSVC not to use the unholy min and max macros
 		ADD_DEFINITIONS(-DNOMINMAX)
 		ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
+		# MATH DEFINES like M_PI are standard for GCC, use them in any case
+		ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
 	ENDIF(MSVC)
 	IF(MINGW)
 		ADD_DEFINITIONS(-DMINGW)

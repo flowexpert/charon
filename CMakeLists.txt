@@ -1,4 +1,4 @@
-PROJECT(templategenerator)
+PROJECT(templategenerator CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 SET(templategenerator_VERSION 0.1.8)
 
