@@ -33,6 +33,15 @@
 
 using namespace ArgosDisplay ;
 
+namespace ArgosDisplay {
+	/// compare object to sort _inspectors
+	class charon_core_LOCAL InspectorSort {
+	public:
+		/// comparison based on inspector name
+		inline bool operator()(const AbstractPixelInspector*, const AbstractPixelInspector*) const;
+	};
+}
+
 template <typename T>
 ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 		TemplatedParameteredObject<T>("ArgosDisplay", name,
@@ -116,6 +125,11 @@ ArgosDisplayPlugin<T>::~ArgosDisplayPlugin()
 	_inspectors.clear() ;
 }
 
+bool ArgosDisplay::InspectorSort::operator ()(
+		const AbstractPixelInspector* i1, const AbstractPixelInspector* i2) const {
+	return (i1->name.compare(i2->name) < 0);
+}
+
 template <typename T>
 void ArgosDisplayPlugin<T>::execute() {
 	// exit if QApplication is not running
@@ -158,14 +172,13 @@ void ArgosDisplayPlugin<T>::execute() {
 	}
 	_inspectors.clear() ;
 
-	//register connected vigra images
+	// register connected vigra images
 	for( ; it != end ; it++) {
 		std::string name = (*it)->getParent().getName() + "." + (*it)->getName() ;
 		// register all Arrays with the ViewStack
 		AbstractPixelInspector* inspector = new VigraPixelInspector<T>(
 					_vigraIn.getDataFromOutputSlot(*it), name);
-		if(inspector) {
-			viewStack.linkImage(inspector) ;
+		if (inspector) {
 			_inspectors.push_back(inspector) ;
 		}
 	}
@@ -175,16 +188,22 @@ void ArgosDisplayPlugin<T>::execute() {
 	typename std::set<AbstractSlot<cimg_library::CImgList<T> >*>
 			::const_iterator cend = _cimgIn.end() ;
 	
-	//register connected cimg images
+	// register connected cimg images
 	for(cit = _cimgIn.begin(); cit != cend ; cit++) {
 		std::string name = (*cit)->getParent().getName() + "."
 				+ (*cit)->getName() ;
 		AbstractPixelInspector* inspector = new CImgPixelInspector<T>(
 				_cimgIn.getDataFromOutputSlot(*cit), name) ;
-		if(inspector)
-		{	viewStack.linkImage(inspector) ;
+		if(inspector) {
 			_inspectors.push_back(inspector) ;
 		}
+	}
+
+	// sort connected images by their slot name
+	std::sort(_inspectors.begin(), _inspectors.end(), InspectorSort());
+	for (std::vector<AbstractPixelInspector*>::const_iterator iIter =_inspectors.begin();
+				iIter != _inspectors.end(); iIter++) {
+		viewStack.linkImage(*iIter);
 	}
 
 	viewStack.setCurrentIndex(index) ;
