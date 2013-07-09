@@ -33,14 +33,11 @@ ENDIF(USE_VIGRA)
 
 INCLUDE(InitFlags)
 
-SET(Plugins) # this list contains all plugin targets
-
 # module generation
 ADD_CHARON_PLUGIN(@modulename@
 	@ModuleName@.cpp
 	@ModuleName@.h
-@ModHxx@	PLUGIN_LISTS Plugins
-	LINK_LIBRARIES ${CIMG_LINK_LIBRARIES} ${Vigra_LIBRARIES}
+@ModHxx@	LINK_LIBRARIES ${CIMG_LINK_LIBRARIES} ${Vigra_LIBRARIES}
 	)
 )
 

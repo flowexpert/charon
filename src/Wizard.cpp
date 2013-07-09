@@ -212,7 +212,7 @@ bool Wizard::_writeFiles() {
 		QString cMakeOut(field("cmakeFileOut").toString());
 		if (QFile::exists(cMakeOut)) {
 			// modify existing CMakeLists.txt to append the new module
-			_updateCMakeFile();
+			res = _updateCMakeFile();
 		}
 		else {
 			// generate new CMakeLists.txt and copy needed files
@@ -235,7 +235,7 @@ bool Wizard::_writeFiles() {
 	return res;
 }
 
-void Wizard::_updateCMakeFile() {
+bool Wizard::_updateCMakeFile() {
 	QFile cMakeOut(field("cmakeFileOut").toString());
 	QString modName = field("name").toString().trimmed();
 	QSettings c(":/config/config.ini", QSettings::IniFormat);
@@ -262,7 +262,7 @@ void Wizard::_updateCMakeFile() {
 					this, tr("I/O error"),
 					tr("Error reading <tt>%1</tt>")
 						.arg(cMakeOut.fileName()));
-			return;
+			return false;
 		}
 		int pp = coStr.indexOf("# add additional modules here");
 		if (pp < 0) {
@@ -271,7 +271,7 @@ void Wizard::_updateCMakeFile() {
 					tr("Placeholder for new module data "
 						"not found.<br>"
 						"Skipping add."));
-			return;
+			return false;
 		}
 		if (coStr.indexOf(QRegExp(
 				c.value("findModRgx").toString().arg(modName))) >= 0) {
@@ -280,7 +280,7 @@ void Wizard::_updateCMakeFile() {
 					tr("Some CMake object called <em>%1</em> "
 						"has been found.<br>"
 						"Skipping add.").arg(modName));
-			return;
+			return false;
 		}
 		QString newMod = c.value("newModStr").toString()
 				.arg(modName)
@@ -295,15 +295,17 @@ void Wizard::_updateCMakeFile() {
 			QTextStream coStrm(&cMakeOut);
 			coStrm << coStr;
 			cMakeOut.close();
+			return true;
 		}
 		else {
 			QMessageBox::warning(
 					this, tr("I/O error"),
 					tr("Error writing <tt>%1</tt>")
 						.arg(cMakeOut.fileName()));
-			return;
+			return false;
 		}
 	}
+	return false;
 }
 
 QString Wizard::_cppTypeLookup(QString type, QString prefix) {

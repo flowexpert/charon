@@ -40,7 +40,7 @@ private:
 	/// write files using resource templates
 	bool _writeFiles();
 	/// update existing CMake file adding the new module
-	void _updateCMakeFile();
+	bool _updateCMakeFile();
 
 	/// replace patterns using the field values
 	/** \param src     source filename
