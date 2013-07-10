@@ -49,6 +49,8 @@ PyramidLowpass<T>::PyramidLowpass(const std::string& name) :
 			sigmas, "sigmas", "list of std. deviations in decreasing order", "T_list");
 	ParameteredObject::_addParameter(
 			bilateralBlur, "bilateralBlur", "if true, blurring will stop at region borders", "bool");
+	ParameteredObject::_addParameter(
+			bilateralBlurCount, "bilateralBlurCount", "count of bilateral blur filtering steps", 1u);
 
 	ParameteredObject::_setTags("charon-flow;MultiscaleApproaches;CImg");
 }
@@ -59,6 +61,8 @@ void PyramidLowpass<T>::execute() {
 	cimg_library::CImgList<T>& so = seqOut();
 	so = si;
 
+	cimg_library::CImg<T> tmp = si[0];
+
 	_width    = si[0].width();
 	_height   = si[0].height();
 	_depth    = si[0].depth();
@@ -66,6 +70,7 @@ void PyramidLowpass<T>::execute() {
 
 	unsigned int _blurRadius = 0;
 	bool _bilateralBlur = bilateralBlur();
+	int _bilateralBlurCount = bilateralBlurCount();
 
 	float blurFactor1 = 0.0;
 	float blurFactor2 = 0.0;
@@ -76,7 +81,11 @@ void PyramidLowpass<T>::execute() {
 		cimglist_for(so,kk)
 		{
 			if (_bilateralBlur && blurFactor2) {
-				so.at(kk) = _blur(kk, blurFactor2, _blurRadius);
+				tmp = si[kk];
+				for (int i=0; i<_bilateralBlurCount; i++) {
+					tmp = _blur(tmp, blurFactor2, _blurRadius);
+				}
+				so.at(kk) = tmp;
 			} else if (blurFactor2) {
 				so.at(kk).blur(blurFactor2);
 			}
@@ -89,7 +98,11 @@ void PyramidLowpass<T>::execute() {
 		cimglist_for(tmp1,kk)
 		{
 			if (_bilateralBlur && blurFactor1) {
-				tmp1.at(kk) = _blur(kk, blurFactor1, _blurRadius);
+				tmp = si[kk];
+				for (int i=0; i<_bilateralBlurCount; i++) {
+					tmp = _blur(tmp, blurFactor1, _blurRadius);
+				}
+				tmp1.at(kk) = tmp;
 			} else if (blurFactor1) {
 				tmp1.at(kk).blur(blurFactor1);
 			}
@@ -99,7 +112,11 @@ void PyramidLowpass<T>::execute() {
 		cimglist_for(tmp2,kk)
 		{
 			if (_bilateralBlur && blurFactor2) {
-				tmp2.at(kk) = _blur(kk, blurFactor2, _blurRadius);
+				tmp = si[kk];
+				for (int i=0; i<_bilateralBlurCount; i++) {
+					tmp = _blur(tmp, blurFactor2, _blurRadius);
+				}
+				tmp2.at(kk) = tmp;
 			} else if (blurFactor2) {
 				tmp2.at(kk).blur(blurFactor2);
 			}
@@ -112,9 +129,8 @@ void PyramidLowpass<T>::execute() {
 }
 
 template <typename T>
-cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
+cimg_library::CImg<T> PyramidLowpass<T>::_blur( const cimg_library::CImg<T> si, T sigma, int radius )
 {
-	const cimg_library::CImgList<T>& si = seqIn();
 	const cimg_library::CImgList<T>& _blurMask = blurMask();
 
 	cimg_library::CImg<T> ret( _width, _height, _depth, _spectrum );
@@ -144,7 +160,7 @@ cimg_library::CImg<T> PyramidLowpass<T>::_blur( int kk, T sigma, int radius )
 			queueY.pop_back();
 
 			visited.atXYZC( radius + cx - x, radius + cy - y, 0, 0 ) = true;
-			imgVals.atXYZC( radius + cx - x, radius + cy - y, 0, 0 ) = si[kk].atXYZC( cx, cy, z, c );
+			imgVals.atXYZC( radius + cx - x, radius + cy - y, 0, 0 ) = si.atXYZC( cx, cy, z, c );
 			probabilities.atXYZC( radius + cx - x, radius + cy - y, 0, 0 ) =
 			  _gauss( pow( pow(double(cx-x), 2.0) + pow(double(cy-y), 2.0), 0.5 ), T(0.0), sigma ) ;
 
