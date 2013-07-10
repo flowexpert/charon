@@ -38,20 +38,14 @@
 #include <QTabWidget>
 #include <QPoint>
 #include <QTabBar>
+#include <QMap>
 
 class QStatusBar ;
 class QActionGroup ;
 class QSignalMapper ;
+class QTableWidget ;
 
 namespace ArgosDisplay {
-
-
-	struct View {
-		View(AbstractPixelInspector* i = 0, RGBChannels mode = NONE) ;
-
-		RGBChannels channelMode ;
-		AbstractPixelInspector* inspector ;
-	} ;
 
 	/// Helper Widget to allow drap&drop op Tabs between multiple TabBars
 	class DropTabBar : public QTabBar {
@@ -107,7 +101,16 @@ namespace ArgosDisplay {
 	
 	public :
 		enum ViewMode {Table = 0, Grey, Rgb3, Rgb4} ;
-		
+
+		struct View {
+			View(AbstractPixelInspector* i = 0) ;
+
+			AbstractPixelInspector* inspector ;
+			ViewMode viewMode ;
+			QWidget* widget ;
+		} ;
+
+
 		/// default constructor
 		ViewStack(QWidget* parent = 0) ;
 		
@@ -116,12 +119,6 @@ namespace ArgosDisplay {
 
 		/// removes all tab widgets
 		void clear();
-
-		/// get index of current tab widget
-		int currentIndex() const;
-
-		/// set active tab widget (does check for valid index)
-		void setCurrentIndex(int index);
 
 		/// get active zoom level
 		int getZoomLevel() const;
@@ -177,7 +174,7 @@ namespace ArgosDisplay {
 		QAction* _alignAndZoomAct ;
 
 		/// objects to access pixel data
-		std::vector<View> _views ;
+		QMap<QString, View> _views ;
 
 		/// was update signal issued to event queue ?
 		bool _updatePending ;
@@ -222,8 +219,8 @@ namespace ArgosDisplay {
 		/// send string to be displayed in the status bar
 		void _emitDimensionMessage() ;
 
-		/// create a QTableWidget with pixel values of inspector as entries
-		QWidget* _createImageTableView(AbstractPixelInspector* inspector) ;
+		/// create a QTableWidget with pixel values of inspector as entries or update an existing one
+		QWidget* _createImageTableView(AbstractPixelInspector* inspector, QWidget* widget= 0) ;
 
 	signals:
 		/// export status messages as signal

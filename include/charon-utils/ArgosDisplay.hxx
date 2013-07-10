@@ -160,11 +160,8 @@ void ArgosDisplayPlugin<T>::execute() {
 
 	ViewStack& viewStack = _mainWindow->viewStack() ;
 	
-	// save current top view to reset it in case of reexecution
-	int index = viewStack.currentIndex();
 	// save current zoom level to restore it on reload
 	viewStack.setZoomLevel(viewStack.getZoomLevel());
-	viewStack.clear() ;
 
 	for(size_t ii = 0 ; ii < _inspectors.size() ; ii++)
 	{
@@ -206,9 +203,6 @@ void ArgosDisplayPlugin<T>::execute() {
 		viewStack.linkImage(*iIter);
 	}
 
-	viewStack.setCurrentIndex(index) ;
-
-	
 	for (std::size_t ii = 0 ; ii < _dockWidgets.size() ; ii++) {
 		_mainWindow->addDockWidget(_dockWidgets[ii]) ;
 	}

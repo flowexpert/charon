@@ -128,8 +128,8 @@ void DropTabWidget::enterEvent(QEvent* event)
 	emit mouseEntered(this) ;
 }
 
-View::View(AbstractPixelInspector* i, RGBChannels mode) :
-	channelMode(mode), inspector(i) {
+ViewStack::View::View(AbstractPixelInspector* i) :
+	inspector(i), viewMode(Grey),widget(0) {
 }
 
 //-----------------------------------------------------------------------------
@@ -286,6 +286,8 @@ void ViewStack::clear() {
 	{
 		while(_tabWidgets[ii]->count() > 0) {
 			int c = _tabWidgets[ii]->count() - 1;
+			QString text = _tabWidgets[ii]->tabText(c) ;
+			_views.remove(text) ;
 			QWidget* cur = _tabWidgets[ii]->widget(c);
 			_tabWidgets[ii]->removeTab(c);
 			delete cur;
@@ -298,7 +300,16 @@ void ViewStack:: linkImage(AbstractPixelInspector* inspector)
 {
 	if(inspector == 0)
 	{	return ;	}
-	_views.push_back(View(inspector,NONE)) ;
+	QString name = QString::fromStdString(inspector->name) ;
+	if(_views.contains(name))
+	{
+		View& view = _views[name] ;
+		view.inspector = inspector ;
+	}
+	else
+	{	
+		_views.insert(name, View(inspector)) ;
+	}
 	
 	//TODO: make this thread safe?
 	if(!_updatePending)
@@ -308,42 +319,29 @@ void ViewStack:: linkImage(AbstractPixelInspector* inspector)
 }
 
 
-int ViewStack::currentIndex() const {
-	return _currentTabWidget()->currentIndex() ;
-}
-
-void ViewStack::setCurrentIndex(int index) {
-	_index = index ;
-	if(!_updatePending)
-	{	_updatePending = true ;
-		//emit imageLinked() ;
-	}
-}
-
 void ViewStack::_emitDimensionMessage() {
 	DropTabWidget* tabWidget = _currentTabWidget() ;
 	int index = tabWidget->currentIndex() ;
+	QString text = tabWidget->tabText(index) ;
 	if(index < 0 || index >= (int)_views.size()) {
 		// fix bug on selection change
 		return;
 	}
-	if(_views[index].inspector == 0) {
-		return;
-	}
 
-	const std::vector<int>& dims = _views[index].inspector->dim();
+	const std::vector<int>& dims = _views[text].inspector->dim();
 	QString message = QString("%1 x %2 x %3 x %4 x %5")
 			.arg(dims[0]).arg(dims[1]).arg(dims[2]).arg(dims[3]).arg(dims[4]);
-	switch(_views[index].channelMode) {
-		case(NONE) : {
+	switch(_views[text].viewMode) {
+		case(Table) : ; //fall through
+		case(Grey) : {
 			message += " [GRAY 1. channel]" ;
 			break ;
 		 }
-		case(RGB4) : {
+		case(Rgb4) : {
 			message += " [RGB 5. dimension]" ;
 			break ;
 		}
-		case(RGB3) : {
+		case(Rgb3) : {
 			message += " [RGB 4. dimension]" ;
 			break ;
 		}
@@ -362,60 +360,103 @@ void ViewStack::_linkImages()
 {
 	DropTabWidget* tabWidget = _currentTabWidget() ;
 	//this->clear() ;
-	for(size_t ii = 0 ; ii < _views.size() ; ii++)
+	QMap<QString,View>::iterator it = _views.begin() ;
+	
+	for( ; it != _views.end() ; it++)
 	{
-		View& view = _views[ii] ;
+		View& view = *it ;
 		if(view.inspector == 0)
 			continue ;
-		view.channelMode = view.inspector->isRGB() ;
-		DropTabWidget* tabWidget = _tabWidgets[0] ;
-		if(view.inspector->dim()[0] < 8 && view.inspector->dim()[1] < 8)
+		if(view.widget) //seems we are reexecuting
 		{
-			tabWidget->addTab(_createImageTableView(view.inspector),QString::fromStdString(view.inspector->name)) ;
-			continue ;
-		}
-
-		if(view.channelMode == RGB4 || view.channelMode == RGB3) //default: register image as RGB image
-		{
-			QImageViewer* viewer = new QImageViewer(0) ;
-			tabWidget->addTab(viewer, QString::fromStdString(_views[ii].inspector->name)) ;
-			if(!_views[ii].inspector->isEmpty())
-			{	try{
-					viewer->setImage(_views[ii].inspector->getRGBImage(view.channelMode).qImage()) ;
+			if(view.viewMode == Table)
+			{
+				_createImageTableView(view.inspector,view.widget) ;
+			}
+			else if(view.viewMode == Grey)
+			{
+				FImageViewer* viewer = qobject_cast<FImageViewer*>(view.widget) ;
+				try{
+					viewer->setImage(view.inspector->getFImage()) ;
 				}
 				catch(std::exception&)
 				{	;/*occurs if image has size zero*/	}
 			}
-			connect(
-					viewer, SIGNAL(mouseOver(int, int)),
-					this, SLOT(_processMouseMovement(int, int))) ;
-			viewer->setZoomLevel(_zoomLevel);
-			connect(
-					viewer, SIGNAL(zoomLevelChanged(int)),
-					this, SLOT(_emitDimensionMessage())) ;
+			else if(view.viewMode == Rgb3)
+			{
+				QImageViewer* viewer = qobject_cast<QImageViewer*>(view.widget) ;
+				viewer->setImage(view.inspector->getRGBImage(RGB3).qImage()) ;
+			}
+			else if(view.viewMode == Rgb4)
+			{
+				QImageViewer* viewer = qobject_cast<QImageViewer*>(view.widget) ;
+				try{
+					viewer->setImage(view.inspector->getRGBImage(RGB4).qImage()) ;
+				}
+				catch(std::exception&)
+				{	;/*occurs if image has size zero*/	}
+			}
+			else
+			{
+				throw std::runtime_error("ViewStack::_linkImages() : unknown view mode") ;
+			}
 		}
 		else
 		{
-			FImageViewer* viewer = new FImageViewer(0) ;
-			tabWidget->addTab(viewer, QString::fromStdString(_views[ii].inspector->name)) ;
-			_views[ii].channelMode = NONE ;
-			if(!_views[ii].inspector->isEmpty())
-			{	try{
-					viewer->setImage(_views[ii].inspector->getFImage()) ;
+			DropTabWidget* tabWidget = _tabWidgets[0] ;
+			RGBChannels channels = view.inspector->isRGB() ;
+			if(view.inspector->dim()[0] < 8 && view.inspector->dim()[1] < 8)
+			{
+				view.widget = _createImageTableView(view.inspector) ;
+				view.viewMode = Table ;
+			}
+			else if(channels == RGB4 || channels == RGB3)
+			{
+				QImageViewer* viewer = new QImageViewer(this) ;
+				try {
+					viewer->setImage(view.inspector->getRGBImage(channels).qImage()) ;
 				}
 				catch(std::exception&)
 				{	;/*occurs if image has size zero*/	}
+
+				view.widget = viewer;
+				if(channels == RGB4)
+					view.viewMode = Rgb4 ;
+				else
+					view.viewMode = Rgb3 ;
+				connect(
+						viewer, SIGNAL(mouseOver(int, int)),
+						this, SLOT(_processMouseMovement(int, int))) ;
+				viewer->setZoomLevel(_zoomLevel);
+				connect(
+						viewer, SIGNAL(zoomLevelChanged(int)),
+						this, SLOT(_emitDimensionMessage())) ;
 			}
-			connect(
-					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
-					this, SLOT(_processMouseMovement(int, int)));
-			viewer->imageViewer()->setZoomLevel(_zoomLevel);
-			connect(
-					viewer->imageViewer(), SIGNAL(zoomLevelChanged(int)),
-					this, SLOT(_emitDimensionMessage())) ;
+			else
+			{
+				FImageViewer* viewer = new FImageViewer(this) ;
+				try {
+					viewer->setImage(view.inspector->getFImage()) ;
+				}
+				catch(std::exception&)
+				{	;/*occurs if image has size zero*/	}
+
+				view.widget = viewer ;
+				view.viewMode = Grey ;
+				connect(
+						viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
+						this, SLOT(_processMouseMovement(int, int))) ;
+				viewer->imageViewer()->setZoomLevel(_zoomLevel);
+				connect(
+						viewer->imageViewer(), SIGNAL(zoomLevelChanged(int)),
+						this, SLOT(_emitDimensionMessage())) ;
+
+			}
+			tabWidget->addTab(view.widget,QString::fromStdString(view.inspector->name)) ;
+			
+
 		}
 	}
-	tabWidget->setCurrentIndex(_index) ;
 	_updatePending = false ;
 	_alignAndZoom() ;
 	this->parentWidget()->show() ;
@@ -424,10 +465,10 @@ void ViewStack::_linkImages()
 void ViewStack::_switchColorMode(int mode)
 {
 	DropTabWidget* tabWidget = _currentTabWidget() ;
-		
 	int index = tabWidget->currentIndex() ;
-	View& view = _views[index] ;
-	if(index < 0 || view.inspector ==0)
+	QString name = tabWidget->tabText(index) ;
+	View& view = _views[name] ;
+	if(view.inspector == 0)
 	{	return ;	}
 	ViewMode viewMode = static_cast<ViewMode>(mode) ;
 	if(viewMode == ViewStack::Table && 
@@ -437,7 +478,9 @@ void ViewStack::_switchColorMode(int mode)
 			"Table view mode is limited to images with less than 10.000 pixels") ;
 		return ;
 	}
+	view.viewMode = viewMode ;
 
+	delete view.widget ;
 	tabWidget->removeTab(index) ;
 	if(viewMode == ViewStack::Rgb4)
 	{
@@ -447,7 +490,7 @@ void ViewStack::_switchColorMode(int mode)
 		connect(
 					viewer, SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int))) ;
-		view.channelMode = RGB4 ;
+		view.widget = viewer ;
 	}
 	else if(viewMode == ViewStack::Rgb3)
 	{
@@ -457,11 +500,12 @@ void ViewStack::_switchColorMode(int mode)
 		connect(
 					viewer, SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int))) ;
-		view.channelMode = RGB3 ;
+		view.widget = viewer ;
 	}
 	else if(viewMode == ViewStack::Table)
 	{
-		tabWidget->insertTab(index,_createImageTableView(view.inspector),
+		view.widget = _createImageTableView(view.inspector) ;
+		tabWidget->insertTab(index,view.widget,
 							QString::fromStdString(view.inspector->name)) ;
 	}
 	else if(viewMode == ViewStack::Grey)
@@ -472,21 +516,20 @@ void ViewStack::_switchColorMode(int mode)
 		connect(
 					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
 					this, SLOT(_processMouseMovement(int, int))) ;
-		view.channelMode = NONE ;
+		view.widget = viewer ;
 	}
 	else //unknown tab type
 	{
 		//maybe use later when we implement OpenGL displays
 		;
 	}
-	tabWidget->setCurrentIndex(index) ;
 }
 
 void ViewStack::_switchLogMode() {
 	DropTabWidget* tabWidget = _currentTabWidget() ;
 
 	int index = tabWidget->currentIndex() ;
-	if(index < 0 || _views[index].inspector ==0)
+	if(index < 0)
 	{	return ;	}
 	FImageViewer* viewer = qobject_cast<FImageViewer*>(tabWidget->currentWidget()) ;
 	if(!viewer)
@@ -498,10 +541,10 @@ void ViewStack::_switchLogMode() {
 void ViewStack::_processMouseMovement(int x, int y) {
 	QString message = QString("x : %1 y : %2  ").arg(x).arg(y) ;
 
-	for(size_t ii = 0 ; ii < _views.size() ; ii++)
+	for(QMap<QString,View>::iterator it = _views.begin() ; it != _views.end() ; it++)
 	{
-		message += QString::fromStdString(_views[ii].inspector->name) + QString(" {") ;
-		std::vector<double> vals = _views[ii].inspector->operator()(x,y) ;
+		message += QString::fromStdString(it->inspector->name) + QString(" {") ;
+		std::vector<double> vals = it->inspector->operator()(x,y) ;
 		for(size_t jj = 0 ; jj < vals.size() ; jj++)
 		{
 			message += QString("%1 ").arg(vals[jj]) ;
@@ -541,7 +584,8 @@ QImageViewer& ViewStack::_currentViewer() const
 	DropTabWidget* tabWidget = _currentTabWidget() ;
 
 	int index = tabWidget->currentIndex() ;
-	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
+	QString name = tabWidget->tabText(index) ;
+	if(index < 0 || _views[name].inspector ==0)
 	{	throw std::runtime_error("No active Viewer instance available!") ;	}
 	
 
@@ -570,7 +614,8 @@ void ViewStack::_saveCurrentView()
 	DropTabWidget* tabWidget = _currentTabWidget() ;
 	static QString workingDir = QString() ;
 	int index = tabWidget->currentIndex() ;
-	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
+	QString text = tabWidget->tabText(index) ;
+	if(index < 0 || _views.size() <= index || !_views.contains(text) || _views[text].inspector == 0)
 	{	return ;	}
 	try
 	{	const QImageViewer& viewer = _currentViewer() ;
@@ -669,7 +714,8 @@ QWidget* ViewStack::getCurrentViewer()
 	DropTabWidget* tabWidget = _currentTabWidget() ;
 
 	int index = tabWidget->currentIndex() ;
-	if(index < 0 || _views.size() <= size_t(index) || _views[index].inspector ==0)
+	QString text = tabWidget->tabText(index) ;
+	if(index < 0 || _views.size() <= index || !_views.contains(text) || _views[text].inspector == 0)
 	{       throw std::runtime_error("No active Viewer instance available!") ;      }
 
 	QString className = tabWidget->currentWidget()->metaObject()->className() ;
@@ -690,14 +736,30 @@ QWidget* ViewStack::getCurrentViewer()
 	throw std::runtime_error("Unknown Tab Widget!") ;
 }
 
-QWidget* ViewStack::_createImageTableView(AbstractPixelInspector* inspector)
+QWidget* ViewStack::_createImageTableView(AbstractPixelInspector* inspector, QWidget* widget)
 {
 	const AbstractPixelInspector& in = *inspector ;
 	int width = in.dim()[0] ;
 	int height = in.dim()[1] ;
-	QTableWidget* table = new QTableWidget(	height,width,0) ;
-		table->setSortingEnabled(false) ;
-		table->setCornerButtonEnabled(false) ;
+
+	QTableWidget* table = 0 ;
+	
+	if(widget != 0 )
+	{	
+		table = qobject_cast<QTableWidget*>(widget) ;
+	}
+	if(table == 0)
+	{
+		table = new QTableWidget(	0,0,this) ;
+	}
+	table->clear() ;	
+	table->setRowCount(height) ;
+	table->setColumnCount(width) ;
+
+	table->setSortingEnabled(false) ;
+	table->setCornerButtonEnabled(false) ;
+
+
 	QTableWidgetItem* prototype = new QTableWidgetItem ;
 		prototype->setTextAlignment(Qt::AlignLeft) ;
 		prototype->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled) ;
@@ -755,6 +817,7 @@ void ViewStack::switchLayout(int rows, int columns)
 				QString text = firstTab->tabText(firstTab->count() -1) ;
 				firstTab->removeTab(firstTab->count() -1) ;
 				_tabWidgets.last()->addTab(last,text) ;
+				View& view = _views[text] ;
 			}
 		}
 	}
@@ -770,6 +833,7 @@ void ViewStack::switchLayout(int rows, int columns)
 				QString text = tW->tabText(0) ;
 				tW->removeTab(0) ;
 				firstTab->addTab(last, text) ;
+				View& view = _views[text] ;
 			}
 			delete tW ;
 			_tabWidgets.pop_back() ;
