@@ -65,6 +65,9 @@ public:
 	/// bilateral blur, if checked
 	Parameter< bool > bilateralBlur;
 
+	/// bilateral blur is executed separable, if checked
+	Parameter< bool > bilateralBlurSeparable;
+
 	/// count of bilateral blur filtering steps
 	Parameter< unsigned int > bilateralBlurCount;
 
@@ -78,6 +81,9 @@ protected:
 
 	/// bi-lateral blur function
 	cimg_library::CImg<T> _blur( cimg_library::CImg<T> si, T sigma, int radius );
+
+	/// separable bi-lateral blur approximation function
+	cimg_library::CImg<T> _blurSeparable( int dir, cimg_library::CImg<T> si, T sigma, int radius );
 
 	/// normal distribution function
 	inline T _gauss( T x, T mu, T sigma );
