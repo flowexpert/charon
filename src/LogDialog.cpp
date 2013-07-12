@@ -286,14 +286,12 @@ void LogDialog::on_proc_readyReadStandardError() {
 		if (cur.isNull()) {
 			break;
 		}
+		if (!cur.contains(
+				QRegExp("^\\(\\w+\\)\\s+",Qt::CaseInsensitive))) {
+			cur = QString("(EE) %1").arg(cur);
+		}
+		logFile << cur << endl;
 		_decorator->processLine(cur);
-		if (cur.contains(
-				QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
-			logFile << cur << endl;
-		}
-		else {
-			logFile << "(EE) " << cur << endl;
-		}
 		logList << cur;
 		if (maxBuf && logList.size() > maxBuf) {
 			logList.removeFirst();
