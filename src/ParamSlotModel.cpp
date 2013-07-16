@@ -9,7 +9,7 @@ ParamSlotModel::ParamSlotModel() {
 		for (int ii=0; ii<keys.size(); ii++) {
 			const QString& kk = keys[ii];
 			const QString& ll = s.value(kk).toString();
-			const QVariant::Type& tt = QVariant::nameToType(ll.toAscii());
+			const QVariant::Type& tt = QVariant::nameToType(ll.toLocal8Bit());
 			_typeMap.insert(kk,tt);
 		}
 	}
