@@ -490,6 +490,7 @@ void TuchulchaWindow::_showHelp(QString page) {
 	pout.append(QString("setSource qthelp://org.doxygen.tuchulcha/doc/%1;syncContents;\n").arg(page));
 	_helpDisp->write(pout);
 #else
+	Q_UNUSED(page);
 	_docGen->showHelp();
 #endif
 }

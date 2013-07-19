@@ -3,23 +3,15 @@ IF(NOT CMAKE_FLAGS_INIT)
 	# initial compiler flags can be set here, this is only
 	# executed once in the first configure run.
 	IF(CMAKE_COMPILER_IS_GNUCXX)
-		IF(NOT CMAKE_C_FLAGS)
-			SET(CMAKE_C_FLAGS "-W -Wall -Wextra")
-		ENDIF(NOT CMAKE_C_FLAGS)
 		IF(NOT CMAKE_CXX_FLAGS)
-			SET(CMAKE_CXX_FLAGS	"-W -Wall -Wextra")
+			SET(CMAKE_CXX_FLAGS	"-W -Wall -Wextra -Wshadow -pedantic -std=c++0x")
 		ENDIF(NOT CMAKE_CXX_FLAGS)
 	ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 	IF(MSVC)
-		SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4244 /wd4251 /wd4275 /wd4290")
 		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244 /wd4251 /wd4275 /wd4290")
 	ENDIF(MSVC)
 
 	# commit changed flags
-	SET(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} CACHE STRING
-		"Flags used by the compiler during all build types."
-		FORCE
-	)
 	SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} CACHE STRING
 		"Flags used by the compiler during all build types."
 		FORCE

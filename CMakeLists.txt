@@ -1,4 +1,4 @@
-PROJECT(tuchulcha C CXX)
+PROJECT(tuchulcha CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 SET(tuchulcha_VERSION 0.10.0)
