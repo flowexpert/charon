@@ -475,8 +475,8 @@ void ViewStack::_switchColorMode(int mode)
 		(view.inspector->dim()[0] * view.inspector->dim()[1] > 1e5))
 	{
 		QMessageBox::warning(this, "ArgosDisplay", 
-			"Table view mode is limited to images with less than 10.000 pixels") ;
-		return ;
+            "Table view mode is slow for images with more than approximately 10.000 pixels") ;
+        //return ;
 	}
 	view.viewMode = viewMode ;
 
