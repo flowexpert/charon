@@ -86,6 +86,8 @@ protected:
 	/// Update object.
 	virtual void execute();
     void computeDualVarDiv();
+    void computeDualVarDiv2();
+    vigra::MultiArray<2,T> computeFuncDeriv();
     T computeCovariance(vigra::MultiArray<2 ,T> left, vigra::MultiArray<2 ,T> right,T* leftmean=0,T* rightmean=0);
     double computeNoiseVariance(vigra::MultiArray<2 ,T> in);
 private:

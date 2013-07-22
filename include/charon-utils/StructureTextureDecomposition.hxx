@@ -30,6 +30,8 @@
 #include <vigra/multi_math.hxx>
 #include <vigra/multi_convolution.hxx>
 #include <vigra/accumulator.hxx>
+#include <time.h>
+#include <sys/timeb.h>
 using namespace vigra;
 
 template <typename T>
@@ -114,51 +116,77 @@ void StructureTextureDecomposition<T>::execute() {
         computeDualVarDiv();
     else
     {
-        using namespace vigra::multi_math;
-        double sc=(scale()-1)/4;
-        MultiArray<2,T> condIm2d(new_shape,conditional_image().data());
-        double noisevar=computeNoiseVariance(condIm2d);
-        T condImMean=0;
-        double condImCov=computeCovariance(condIm2d,condIm2d,&condImMean);
-        MultiArray<2,T> smCondIm(condIm2d.shape());
-        gaussianSmoothMultiArray(srcMultiArrayRange(condIm2d),destMultiArray(smCondIm),sc);
-        MultiArray<2,T> smIiter(mIiter.shape());
+        computeDualVarDiv2();
+//        using namespace vigra::multi_math;
+//        double sc=(scale()-1)/4;
+//        Kernel1D<T> smooth;
+//        smooth.initGaussian(sc);
+//        smooth.setBorderTreatment(BORDER_TREATMENT_REPEAT);
 
-        gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smIiter),sc);
-        T Iitermean=0;
-        double IsmCondImCov=computeCovariance(smIiter,condIm2d,&Iitermean);
-        double IsmVar=computeCovariance(smIiter,smIiter);
-        double corrRatio=IsmCondImCov/IsmVar;
+//        std::vector<Kernel1D<T> > smooth2d;
+//        smooth2d.push_back(smooth);
+//        smooth2d.push_back(smooth);
 
-        double cond=condImCov-noisevar-corrRatio*IsmCondImCov;
+//        Kernel1D<T> smoothsq;
+//        smoothsq.initGaussian(sc*std::sqrt(2));
+//        smoothsq.setBorderTreatment(BORDER_TREATMENT_REPEAT);
 
-        double factor=noisevar/((cond+noisevar)*(cond+noisevar))*corrRatio;
+//        std::vector<Kernel1D<T> > smooth2dsq;
+//        smooth2dsq.push_back(smoothsq);
+//        smooth2dsq.push_back(smoothsq);
 
-        MultiArray<2,T> smSqIiter(mIiter.shape());
-        gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*sqrt(2.));
-        smSqIiter=smSqIiter-Iitermean;
+//        MultiArray<2,T> condIm2d(new_shape,conditional_image().data());
 
-        MultiArray<2,T> corrFuncDeriv=factor*(corrRatio*smSqIiter-smCondIm);
-        mIiter=mdata_image2D-lambda()*theta()*corrFuncDeriv;
+//        T condImMean=0;
+//        double condImCov=computeCovariance(condIm2d,condIm2d,&condImMean);
+//        condIm2d=condIm2d-condImMean;
+//        MultiArray<2,T> smCondIm(condIm2d.shape());
+//        //gaussianSmoothMultiArray(srcMultiArrayRange(condIm2d),destMultiArray(smCondIm),sc);
+//        separableConvolveMultiArray(srcMultiArrayRange(condIm2d),destMultiArray(smCondIm),smooth2d.begin());
+//        //smCondIm=smCondIm-condImMean;
+//        MultiArray<2,T> smIiter(mIiter.shape());
 
-        for(int ii=0;ii<primal_iters();ii++)
-        {
-            sout<<"+++++Primal iteration: "<<ii<<std::endl;
-            computeDualVarDiv();
-            gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smIiter),sc);
-            Iitermean=0;
-            IsmCondImCov=computeCovariance(smIiter,condIm2d,&Iitermean);
-            IsmVar=computeCovariance(smIiter,smIiter);
-            corrRatio=IsmCondImCov/IsmVar;
-            cond=condImCov-noisevar-corrRatio*IsmCondImCov;
-            factor=noisevar/((cond+noisevar)*(cond+noisevar))*corrRatio;
-            gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*sqrt(2.));
-            smSqIiter=smSqIiter-Iitermean;
-            corrFuncDeriv=factor*(corrRatio*smSqIiter-smCondIm);
-            mIiter=mIiter-lambda()*theta()*corrFuncDeriv;
+//        //gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smIiter),sc);
+//        separableConvolveMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smIiter),smooth2d.begin());
+//        T Iitermean=0;
+//        double IsmCondImCov=computeCovariance(smIiter,condIm2d,&Iitermean);
+//        smIiter=smIiter-Iitermean;
+//        double IsmVar=computeCovariance(smIiter,smIiter);
+//        double corrRatio=IsmCondImCov/IsmVar;
+//        double noisevar=computeNoiseVariance(condIm2d);
+//        double cond=condImCov-noisevar-corrRatio*IsmCondImCov;
+
+//        double factor=noisevar/((cond+noisevar)*(cond+noisevar))*corrRatio;
+
+//        MultiArray<2,T> smSqIiter(mIiter.shape());
+//        //gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*std::sqrt(2));
+//        separableConvolveMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),smooth2dsq.begin());
+//        smSqIiter=smSqIiter-Iitermean;
+
+//        MultiArray<2,T> corrFuncDeriv=(smSqIiter*corrRatio-smCondIm)*factor;
+//        mIiter=mdata_image2D-lambda()*theta()*corrFuncDeriv;
+
+//        for(int ii=0;ii<primal_iters();ii++)
+//        {
+//            sout<<"+++++Primal iteration: "<<ii<<std::endl;
+//            computeDualVarDiv();
+//            //gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smIiter),sc);
+//            separableConvolveMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smIiter),smooth2d.begin());
+//            Iitermean=0;
+//            IsmCondImCov=computeCovariance(smIiter,condIm2d,&Iitermean);
+//            smIiter=smIiter-Iitermean;
+//            IsmVar=computeCovariance(smIiter,smIiter);
+//            corrRatio=IsmCondImCov/IsmVar;
+//            cond=condImCov-noisevar-corrRatio*IsmCondImCov;
+//            factor=noisevar/((cond+noisevar)*(cond+noisevar))*corrRatio;
+//            //gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*std::sqrt(2));
+//            separableConvolveMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),smooth2dsq.begin());
+//            smSqIiter=smSqIiter-Iitermean;
+//            corrFuncDeriv=(smSqIiter*corrRatio-smCondIm)*factor;
+//            mIiter=mIiter-lambda()*theta()*corrFuncDeriv;
 
 
-        }
+//        }
 
 
 
@@ -167,9 +195,15 @@ void StructureTextureDecomposition<T>::execute() {
     structure_image()=MultiArray<5,T>(data_image().shape(),mIiter.data());
 
 }
+UInt64 ClockGetTime()
+{
+    timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return (UInt64)ts.tv_sec * 1000000LL + (UInt64)ts.tv_nsec / 1000LL;
+}
 
-template<typename T, int N>
-void computeDivergence(std::vector<MultiArray<N,T>* >& vectorField,MultiArray<N,T>& divergence,double std_dev)
+template<typename T, int N, class A = std::allocator<T> >
+void computeDivergence(std::vector<MultiArray<N,T,A>* > &vectorField,MultiArray<N,T,A> &divergence,double std_dev)
 {
     assert(vectorField.size()==N);
     assert((*(vectorField[0])).shape()==divergence.shape());
@@ -178,7 +212,7 @@ void computeDivergence(std::vector<MultiArray<N,T>* >& vectorField,MultiArray<N,
     smooth.initGaussian(std_dev);
     deriv.initGaussianDerivative(std_dev,1);
     std::vector<Kernel1D<T> > kernels;
-    MultiArray<N,T> tmpDeriv(divergence.shape());
+    static MultiArray<N,T,A> tmpDeriv(divergence.shape());
 
     for(int k=0;k<N;k++)
         kernels.push_back(smooth);
@@ -187,6 +221,7 @@ void computeDivergence(std::vector<MultiArray<N,T>* >& vectorField,MultiArray<N,
         kernels[k]=deriv;
         separableConvolveMultiArray(srcMultiArrayRange(*(vectorField[k])),destMultiArray(tmpDeriv),kernels.begin());
         kernels[k]=smooth;
+       // convolveMultiArrayOneDimension(srcMultiArrayRange(*(vectorField[k])),destMultiArray(tmpDeriv),k,deriv);
         divergence=divergence+tmpDeriv;
     }
 }
@@ -196,10 +231,11 @@ void StructureTextureDecomposition<T>::computeDualVarDiv()
 {
     using namespace vigra::multi_math;
 
+//    long long begin_t=0,end_t=0;
     double delta = 1.0/(4.0*theta());
 
 
-    double std_dev=0.5;
+    double std_dev=0.05;
 
     Kernel1D<T> smooth,deriv;
     smooth.initGaussian(std_dev);
@@ -214,17 +250,31 @@ void StructureTextureDecomposition<T>::computeDualVarDiv()
     {
         sout<<"Dual iteration: "<<diter<<std::endl;
         std::vector<MultiArray<2,T>* > vectorField;
-        vectorField.push_back(&mdualvar_x);  
+        vectorField.push_back(&mdualvar_x);
         vectorField.push_back(&mdualvar_y);
+        //begin_t=ClockGetTime();
         computeDivergence<T,2>(vectorField,divergence,std_dev);
-        locIiter=mdata_image2D+theta()*divergence;
+//        end_t=ClockGetTime();
+//        sout<<"computeDivergence: "<<end_t-begin_t<<std::endl;
 
+//        begin_t=ClockGetTime();
+        locIiter=mIiter+theta()*divergence;
+
+//        end_t=ClockGetTime();
+//        sout<<"locIiter=mdata_image2D+theta()*divergence;: "<<end_t-begin_t<<std::endl;
+
+//        begin_t=ClockGetTime();
         separableConvolveMultiArray(srcMultiArrayRange(locIiter),destMultiArray(Ix),xderiv_k.begin());
+//        end_t=ClockGetTime();
+//        sout<<"separableConvolveMultiArray(srcMultiArrayRange(locIiter),destMultiArray(Ix),xderiv_k.begin());: "<<end_t-begin_t<<std::endl;
+//        begin_t=ClockGetTime();
         separableConvolveMultiArray(srcMultiArrayRange(locIiter),destMultiArray(Iy),yderiv_k.begin());
+//        end_t=ClockGetTime();
+//        sout<<"separableConvolveMultiArray(srcMultiArrayRange(locIiter),destMultiArray(Iy),yderiv_k.begin());: "<<end_t-begin_t<<std::endl;
 
         mdualvar_x=mdualvar_x+delta*Ix;
         mdualvar_y=mdualvar_y+delta*Iy;
-        reprojection=max(1.0,sqrt(pow(mdualvar_x,2.)+pow(mdualvar_y,2.)));
+        reprojection=max(1.0,sqrt(pow(mdualvar_x,2)+pow(mdualvar_y,2)));
         mdualvar_x=mdualvar_x/reprojection;
         mdualvar_y=mdualvar_y/reprojection;
 
@@ -304,6 +354,126 @@ double StructureTextureDecomposition<T>::computeNoiseVariance(MultiArray<2 ,T> i
 
     return median/0.6745;
 
+
+}
+
+template <class T>
+MultiArray<2,T> StructureTextureDecomposition<T>::computeFuncDeriv()
+{
+    vigra::MultiArrayShape<2>::type new_shape;
+
+    new_shape[0]=data_image().shape()[0];
+    new_shape[1]=data_image().shape()[1];
+    double sc=(scale()-1)/4;
+    Kernel1D<T> smooth;
+    smooth.initGaussian(sc);
+    smooth.setBorderTreatment(BORDER_TREATMENT_REPEAT);
+
+    std::vector<Kernel1D<T> > smooth2d;
+    smooth2d.push_back(smooth);
+    smooth2d.push_back(smooth);
+
+    Kernel1D<T> smoothsq;
+    smoothsq.initGaussian(sc*std::sqrt(2));
+    smoothsq.setBorderTreatment(BORDER_TREATMENT_REPEAT);
+
+    std::vector<Kernel1D<T> > smooth2dsq;
+    smooth2dsq.push_back(smoothsq);
+    smooth2dsq.push_back(smoothsq);
+    using namespace vigra::multi_math;
+
+    ConvolutionOptions<2> opt;
+
+    MultiArray<2,T> condIm2d(new_shape,conditional_image().data());
+    double noisevar=computeNoiseVariance(condIm2d);
+    T condImMean=0;
+    double condImCov=computeCovariance(condIm2d,condIm2d,&condImMean);
+    MultiArray<2,T> smCondIm(condIm2d.shape());
+    condIm2d=condIm2d-condImMean;
+    gaussianSmoothMultiArray(srcMultiArrayRange(condIm2d),destMultiArray(smCondIm),sc);
+
+    MultiArray<2,T> smIiter(mIiter.shape());
+
+    gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smIiter),sc);
+    T Iitermean=0;
+    double IsmCondImCov=computeCovariance(smIiter,condIm2d,&Iitermean);
+    double IsmVar=computeCovariance(smIiter,smIiter);
+    double corrRatio=IsmCondImCov/IsmVar;
+
+    double cond=condImCov-noisevar-corrRatio*IsmCondImCov;
+
+    double factor=noisevar/((cond+noisevar)*(cond+noisevar))*corrRatio;
+
+    MultiArray<2,T> smSqIiter(mIiter.shape());
+    gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*std::sqrt(2));
+    smSqIiter=smSqIiter-Iitermean;
+
+    return factor*(corrRatio*smSqIiter-smCondIm);
+}
+
+template <class T>
+void StructureTextureDecomposition<T>::computeDualVarDiv2()
+{
+    using namespace vigra::multi_math;
+
+//    long long begin_t=0,end_t=0;
+    double delta = 1.0/(4.0*theta());
+
+
+    double std_dev=0.05;
+
+    Kernel1D<T> smooth,deriv;
+    smooth.initGaussian(std_dev);
+    deriv.initGaussianDerivative(std_dev,1);
+    std::vector<Kernel1D<T> > xderiv_k,yderiv_k;
+    xderiv_k.push_back(deriv);
+    xderiv_k.push_back(smooth);
+    yderiv_k.push_back(smooth);
+    yderiv_k.push_back(deriv);
+
+    for(int diter=0;diter<dual_iters();diter++)
+    {
+        sout<<"Dual iteration: "<<diter<<std::endl;
+        std::vector<MultiArray<2,T>* > vectorField;
+        vectorField.push_back(&mdualvar_x);
+        vectorField.push_back(&mdualvar_y);
+        //begin_t=ClockGetTime();
+        computeDivergence<T,2>(vectorField,divergence,std_dev);
+//        end_t=ClockGetTime();
+//        sout<<"computeDivergence: "<<end_t-begin_t<<std::endl;
+
+//        begin_t=ClockGetTime();
+        MultiArray<2,T> funcderiv=computeFuncDeriv();
+        locIiter=mdata_image2D+theta()*divergence-funcderiv*theta()*lambda();
+
+//        end_t=ClockGetTime();
+//        sout<<"locIiter=mdata_image2D+theta()*divergence;: "<<end_t-begin_t<<std::endl;
+
+//        begin_t=ClockGetTime();
+        separableConvolveMultiArray(srcMultiArrayRange(locIiter),destMultiArray(Ix),xderiv_k.begin());
+//        end_t=ClockGetTime();
+//        sout<<"separableConvolveMultiArray(srcMultiArrayRange(locIiter),destMultiArray(Ix),xderiv_k.begin());: "<<end_t-begin_t<<std::endl;
+//        begin_t=ClockGetTime();
+        separableConvolveMultiArray(srcMultiArrayRange(locIiter),destMultiArray(Iy),yderiv_k.begin());
+//        end_t=ClockGetTime();
+//        sout<<"separableConvolveMultiArray(srcMultiArrayRange(locIiter),destMultiArray(Iy),yderiv_k.begin());: "<<end_t-begin_t<<std::endl;
+
+        mdualvar_x=mdualvar_x+delta*Ix;
+        mdualvar_y=mdualvar_y+delta*Iy;
+        reprojection=max(1.0,sqrt(pow(mdualvar_x,2)+pow(mdualvar_y,2)));
+        mdualvar_x=mdualvar_x/reprojection;
+        mdualvar_y=mdualvar_y/reprojection;
+
+        std::vector<MultiArray<2,T>* > vectorField2;
+        vectorField2.push_back(&mdualvar_x);
+        vectorField2.push_back(&mdualvar_y);
+        //begin_t=ClockGetTime();
+        computeDivergence<T,2>(vectorField2,divergence,std_dev);
+        mIiter=mdata_image2D+theta()*divergence-funcderiv*theta()*lambda();
+
+
+
+    }
 
 }
 
