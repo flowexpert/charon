@@ -46,7 +46,8 @@ QImageViewerBase::QImageViewerBase(QWidget *parent)
   upperLeft_(0, 0),
   zoomLevel_(0),
   inSlideState_(false),
-  pendingAutoZoom_(false)
+  pendingAutoZoom_(false),
+  _drawHighline(false)
 {
     setMouseTracking(true);
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
@@ -457,7 +458,7 @@ void QImageViewerBase::mouseMoveEvent(QMouseEvent *e)
     {
         QPoint p(imageCoordinate(e->pos()));
         if(p != imageCoordinate(lastMousePosition_))
-            emit mouseOver(p.x(), p.y());
+            emit mouseOver(p.x(), p.y(), e->buttons());
     }
     lastMousePosition_ = e->pos();
 }
@@ -487,13 +488,15 @@ void QImageViewerBase::mousePressEvent(QMouseEvent *e)
 /*                                                              */
 /****************************************************************/
 
-void QImageViewerBase::mouseReleaseEvent(QMouseEvent * /* e */)
+void QImageViewerBase::mouseReleaseEvent(QMouseEvent * e )
 {
     if(!isEnabled())
         return;
 
     if(inSlideState_)
         inSlideState_ = false;
+	if(e->button() == Qt::MiddleButton)
+	{	emit mouseReleased() ;	}
 }
 
 /****************************************************************/
@@ -601,6 +604,13 @@ void QImageViewerBase::showEvent(QShowEvent *e)
         pendingAutoZoom_ = false;
     }
     return QFrame::showEvent(e);
+}
+
+void QImageViewerBase::drawHighline(const QPoint& pos, bool draw)
+{
+	_drawHighline = draw ;
+	_highlinePos = windowCoordinate(pos) ;
+	this->repaint() ;
 }
 
 /********************************************************************/
@@ -804,7 +814,14 @@ void QImageViewer::paintEvent(QPaintEvent *e)
     p.fillRect(r & clearRect, palette().brush(backgroundRole()));
     paintImage(p, r);
     drawFrame(&p);
-    p.end();
+    if(_drawHighline)
+	{
+		p.setPen(Qt::green) ;
+		p.drawLine(r.left(),_highlinePos.y(),r.right(),_highlinePos.y()) ;
+		p.drawLine(_highlinePos.x(),r.top(),_highlinePos.x(),r.bottom()) ;
+		_drawHighline = false ;
+	}
+	p.end();
 }
 
 
@@ -850,3 +867,4 @@ void QImageViewer::resizeEvent(QResizeEvent *e)
         // TODO: re-use existing part!?
         createDrawingPixmap();
 }
+

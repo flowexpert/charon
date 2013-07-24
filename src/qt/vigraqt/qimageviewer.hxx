@@ -239,8 +239,11 @@ public slots:
          */
     virtual void slideBy(QPoint const &diff);
 
+	virtual void drawHighline(const QPoint &pos,bool draw = false) ;
+
 signals:
-    void mouseOver(int x, int y);
+    void mouseOver(int x, int y,Qt::MouseButtons buttons);
+	void mouseReleased() ;
 
     void imageChanged(); // FIXME: add ROI param
     void zoomLevelChanged(int zoomLevel);
@@ -268,6 +271,9 @@ protected:
     QPointF centerPixel_;
     int     zoomLevel_;
 
+	bool _drawHighline ;
+	QPoint _highlinePos ;
+
   private:
     inline void computeUpperLeft()
     {
@@ -280,6 +286,7 @@ protected:
     bool    pendingAutoZoom_;
     int     minAutoZoom_, maxAutoZoom_;
     QPoint  lastMousePosition_;
+
 };
 
 QPoint QImageViewerBase::windowCoordinate(QPointF const & imagePoint) const

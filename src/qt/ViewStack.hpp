@@ -196,7 +196,9 @@ namespace ArgosDisplay {
 		void _switchToNamedLayout(const QString& layout) ;
 		
 		/// handle mouse movement in ImageDisplays
-		void _processMouseMovement(int x, int y) ;
+		void _processMouseMovement(int x, int y, Qt::MouseButtons buttons) ;
+
+		void _mouseReleased() ;
 
 		/// create tab widgets for each instance in _inspectors
 		void _linkImages() ;

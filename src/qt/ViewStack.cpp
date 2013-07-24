@@ -425,12 +425,13 @@ void ViewStack::_linkImages()
 				else
 					view.viewMode = Rgb3 ;
 				connect(
-						viewer, SIGNAL(mouseOver(int, int)),
-						this, SLOT(_processMouseMovement(int, int))) ;
+						viewer, SIGNAL(mouseOver(int, int, Qt::MouseButtons)),
+						this, SLOT(_processMouseMovement(int, int, Qt::MouseButtons))) ;
 				viewer->setZoomLevel(_zoomLevel);
 				connect(
 						viewer, SIGNAL(zoomLevelChanged(int)),
 						this, SLOT(_emitDimensionMessage())) ;
+				connect(viewer, SIGNAL(mouseReleased()),this, SLOT(_mouseReleased())) ;
 			}
 			else
 			{
@@ -444,12 +445,13 @@ void ViewStack::_linkImages()
 				view.widget = viewer ;
 				view.viewMode = Grey ;
 				connect(
-						viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
-						this, SLOT(_processMouseMovement(int, int))) ;
+						viewer->imageViewer(), SIGNAL(mouseOver(int, int, Qt::MouseButtons)),
+						this, SLOT(_processMouseMovement(int, int, Qt::MouseButtons))) ;
 				viewer->imageViewer()->setZoomLevel(_zoomLevel);
 				connect(
 						viewer->imageViewer(), SIGNAL(zoomLevelChanged(int)),
 						this, SLOT(_emitDimensionMessage())) ;
+				connect(viewer->imageViewer(), SIGNAL(mouseReleased()),this, SLOT(_mouseReleased())) ;
 
 			}
 			tabWidget->addTab(view.widget,QString::fromStdString(view.inspector->name)) ;
@@ -488,8 +490,9 @@ void ViewStack::_switchColorMode(int mode)
 		tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
 		viewer->setImage(view.inspector->getRGBImage(RGB4).qImage()) ;
 		connect(
-					viewer, SIGNAL(mouseOver(int, int)),
-					this, SLOT(_processMouseMovement(int, int))) ;
+					viewer, SIGNAL(mouseOver(int, int, Qt::MouseButtons)),
+					this, SLOT(_processMouseMovement(int, int, Qt::MouseButtons))) ;
+		connect(viewer, SIGNAL(mouseReleased()),this, SLOT(_mouseReleased())) ;
 		view.widget = viewer ;
 	}
 	else if(viewMode == ViewStack::Rgb3)
@@ -498,8 +501,9 @@ void ViewStack::_switchColorMode(int mode)
 		tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
 		viewer->setImage(view.inspector->getRGBImage(RGB3).qImage()) ;
 		connect(
-					viewer, SIGNAL(mouseOver(int, int)),
-					this, SLOT(_processMouseMovement(int, int))) ;
+					viewer, SIGNAL(mouseOver(int, int, Qt::MouseButtons)),
+					this, SLOT(_processMouseMovement(int, int, Qt::MouseButtons))) ;
+		connect(viewer, SIGNAL(mouseReleased()),this, SLOT(_mouseReleased())) ;
 		view.widget = viewer ;
 	}
 	else if(viewMode == ViewStack::Table)
@@ -514,8 +518,9 @@ void ViewStack::_switchColorMode(int mode)
 		tabWidget->insertTab(index, viewer, QString::fromStdString(view.inspector->name)) ;
 		viewer->setImage(view.inspector->getFImage()) ;
 		connect(
-					viewer->imageViewer(), SIGNAL(mouseOver(int, int)),
-					this, SLOT(_processMouseMovement(int, int))) ;
+					viewer->imageViewer(), SIGNAL(mouseOver(int, int, Qt::MouseButtons)),
+					this, SLOT(_processMouseMovement(int, int, Qt::MouseButtons))) ;	
+		connect(viewer->imageViewer(), SIGNAL(mouseReleased()),this, SLOT(_mouseReleased())) ;
 		view.widget = viewer ;
 	}
 	else //unknown tab type
@@ -538,7 +543,7 @@ void ViewStack::_switchLogMode() {
 }
 
 
-void ViewStack::_processMouseMovement(int x, int y) {
+void ViewStack::_processMouseMovement(int x, int y, Qt::MouseButtons buttons) {
 	QString message = QString("x : %1 y : %2  ").arg(x).arg(y) ;
 
 	for(QMap<QString,View>::iterator it = _views.begin() ; it != _views.end() ; it++)
@@ -552,7 +557,39 @@ void ViewStack::_processMouseMovement(int x, int y) {
 		message += QString("} ") ;
 	}
 
+	if(buttons & Qt::MiddleButton)
+	{
+		for(QMap<QString,View>::iterator it = _views.begin() ; it != _views.end() ; it++)
+		{
+			QImageViewer* viewer = 0 ;
+			if(it->viewMode == ViewStack::Grey)
+				viewer = qobject_cast<FImageViewer*>(it->widget)->imageViewer() ;
+			else if(it->viewMode == ViewStack::Rgb3 || it->viewMode == ViewStack::Rgb4)
+				viewer = qobject_cast<QImageViewer*>(it->widget) ;
+			if(viewer != 0)
+			{
+				viewer->drawHighline(QPoint(x,y),true) ;
+			}
+		}
+	}
+
 	emit exportStatusMessage(message) ;
+}
+
+void ViewStack::_mouseReleased()
+{
+	for(QMap<QString,View>::iterator it = _views.begin() ; it != _views.end() ; it++)
+	{
+		QImageViewer* viewer = 0 ;
+		if(it->viewMode == ViewStack::Grey)
+			viewer = qobject_cast<FImageViewer*>(it->widget)->imageViewer() ;
+		else if(it->viewMode == ViewStack::Rgb3 || it->viewMode == ViewStack::Rgb4)
+			viewer = qobject_cast<QImageViewer*>(it->widget) ;
+		if(viewer != 0)
+		{
+			viewer->drawHighline(QPoint(0,0),false) ;
+		}
+	}
 }
 
 void ViewStack::keyPressEvent(QKeyEvent* event) {
