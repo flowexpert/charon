@@ -358,7 +358,7 @@ void LogDialog::on_proc_started() {
 	}
 }
 
-void LogDialog::on_proc_finished() {
+void LogDialog::on_proc_finished(int) {
 	_decorator->finishProcessing();
 	_ui->progressBar->hide();
 #ifdef USE_ASSISTANT

@@ -21,9 +21,12 @@
  *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
-#include <QtGui>
 #include <QDir>
 #include <QMessageBox>
+#include <QMenuBar>
+#include <QDockWidget>
+#include <QStatusBar>
+#include <QSettings>
 #include "ParamInspectorWindow.h"
 #include "ObjectInspector.h"
 #include "ParameterFileModel.h"

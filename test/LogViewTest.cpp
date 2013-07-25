@@ -25,13 +25,13 @@
 #include "LogViewProxyModel.h"
 
 #include "QCopyListView.h"
-#include <QtCore/QFile>
-#include <QtCore/QDebug>
-#include <QtCore/QMimeData>
-#include <QtGui/QApplication>
-#include <QtGui/QClipboard>
-#include <QtGui/QStringListModel>
-#include <QtTest/QTest>
+#include <QFile>
+#include <QDebug>
+#include <QMimeData>
+#include <QApplication>
+#include <QClipboard>
+#include <QStringListModel>
+#include <QTest>
 
 #ifndef TEST_DIR
 #error TEST_DIR not defined

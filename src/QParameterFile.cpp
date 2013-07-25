@@ -43,7 +43,7 @@ void QParameterFile::load(QString fileName, QString encoding) {
 			fileContent = QString::fromLocal8Bit(inFile.readAll());
 		}
 		else {
-			QTextCodec* decoder = QTextCodec::codecForName(encoding.toAscii());
+			QTextCodec* decoder = QTextCodec::codecForName(encoding.toLatin1());
 			if (!decoder) {
 				decoder = QTextCodec::codecForLocale();
 				QTextStream qerr(stderr,QIODevice::WriteOnly);
@@ -88,7 +88,7 @@ void QParameterFile::load(QString fileName, QString encoding) {
 				set(par,val);
 			}
 			else {
-				qDebug("%s:%d: malformed line",fileName.toAscii().constData(),lc);
+				qDebug("%s:%d: malformed line",fileName.toLocal8Bit().constData(),lc);
 			}
 		}
 	}

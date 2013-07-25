@@ -33,8 +33,8 @@
 unsigned int Node::_idCount = 0;
 
 Node::Node(const ParameterFileModel* pFile, QString title,
-			int xpos, int ypos,QGraphicsScene *parent) :
-		QGraphicsItem(0,parent),
+			int xpos, int ypos) :
+		QGraphicsItem(),
 		_instanceName(title),
 		_width(100),
 		_height(50),
@@ -119,8 +119,8 @@ void Node::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 
 	qreal dx = (ev->scenePos()-ev->lastScenePos()).x();
 	qreal dy = (ev->scenePos()-ev->lastScenePos()).y();
-	for (int i=0; i<children().size(); i++) {
-		NodeProperty *np = dynamic_cast<NodeProperty*>(children()[i]);
+	foreach (QGraphicsItem* cur, childItems()) {
+		NodeProperty *np = dynamic_cast<NodeProperty*>(cur);
 		if(np != 0) {
 			np->moveBy(dx,dy);
 		}

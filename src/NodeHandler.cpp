@@ -30,6 +30,7 @@
 #include <QKeyEvent>
 #include <QPrinter>
 #include <QMenu>
+#include <QMimeData>
 
 #include "ConnectionLine.h"
 #include "NodeHandler.h"
@@ -95,7 +96,7 @@ void NodeHandler::setNodeActive(){
 void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 	QGraphicsScene::mousePressEvent(ev);
 	if (ev->button() == Qt::LeftButton) {
-		QGraphicsItem* itm = itemAt(ev->scenePos());
+		QGraphicsItem* itm = itemAt(ev->scenePos(),QTransform());
 		if (!itm) {
 			return;
 		}
@@ -111,7 +112,8 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 		if (prop != 0) {
 			_startProp = prop;
 			delete _cline ; _cline = 0 ;
-			_cline = new ConnectionLine(this);
+			_cline = new ConnectionLine();
+			addItem(_cline);
 			QPointF sckPos(prop->pos()+prop->getSocketCenter());
 			QPointF curPos(ev->scenePos().x(),ev->scenePos().y());
 			const bool isIn = prop->isInput();
@@ -121,7 +123,7 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 			update(_cline->boundingRect());
 		}
 	}
-    setNodeActive();
+	setNodeActive();
 }
 
 void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
@@ -140,7 +142,7 @@ void NodeHandler::mouseMoveEvent(QGraphicsSceneMouseEvent* ev) {
 
 void NodeHandler::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev) {
 	QGraphicsScene::mouseReleaseEvent(ev);
-	NodeProperty* prop = dynamic_cast<NodeProperty*>(itemAt(ev->scenePos()));
+	NodeProperty* prop = dynamic_cast<NodeProperty*>(itemAt(ev->scenePos(),QTransform()));
 
 	delete _cline;
 	_cline = 0;
@@ -178,8 +180,9 @@ void NodeHandler::loadFromModel() {
 		QString name = nodes[ii];
 		QString cname = _model->getClass(nodes[ii], true);
 
-		Node* node = new Node(_model,name,10*ii,10*ii,this);
+		Node* node = new Node(_model,name,10*ii,10*ii);
 		node->setClassName(cname);
+		addItem(node);
 		_nodeMap.insert(name,node);
 
 		QStringList pdata = _model->getValue(name+".editorinfo").split(" ");
@@ -269,12 +272,13 @@ void NodeHandler::connectNodes(
 
 	Q_ASSERT(outp && inp) ;
 
-	ConnectionLine* l = new ConnectionLine(this);
+	ConnectionLine* l = new ConnectionLine;
 	l->setStartEndProp(outp,inp);
 	outp->addConnection(l);
 	inp->addConnection(l);
 	outp->moveBy(0,0);
 	inp->moveBy(0,0);
+	addItem(l);
 }
 
 void NodeHandler::saveFlowchart() {
@@ -388,7 +392,7 @@ void NodeHandler::contextMenuEvent(QGraphicsSceneContextMenuEvent* ev) {
 	QString nodeName, propName;
 
 	// try to determine node and/or slot name
-	QGraphicsItem* item = itemAt(ev->scenePos());
+	QGraphicsItem* item = itemAt(ev->scenePos(),QTransform());
 	if (item) {
 		Node* node = dynamic_cast<Node*>(item);
 		NodeProperty* prop = dynamic_cast<NodeProperty*>(item);

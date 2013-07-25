@@ -47,14 +47,14 @@ FileManager::FileManager() {
 				(tr("Tuchulcha configuration directory \"%1\" "
 					"could not be created. Are permissions set correctly?")
 				.arg(configPath))
-				.toAscii().constData());
+				.toLocal8Bit().constData());
 	if (!configPathInfo.isDir())
 		qFatal("%s",
 				(tr("Tuchulcha configuration directory \"%1\" "
 					"exists, but is not a directory. Please delete "
 					"\"%1\".")
 				.arg(configPath))
-				.toAscii().constData());
+				.toLocal8Bit().constData());
 }
 
 FileManager::~FileManager() {
@@ -73,7 +73,7 @@ QDir FileManager::configDir() const {
 	if (!ok)
 		qFatal("%s", (tr("Failed to change to directory \"%1\".")
 				.arg(QDir::homePath() + "/" + TUCHULCHA_DIR))
-				.toAscii().constData());
+				.toLocal8Bit().constData());
 	return ret;
 }
 

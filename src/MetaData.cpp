@@ -39,7 +39,7 @@ MetaData::MetaData(QString fileName) :
 		int pos = keyIter->indexOf(".");
 		if (pos < 0)
 			qFatal("Invalid key (separator missing): %s",
-					keyIter->toAscii().constData());
+					keyIter->toLocal8Bit().constData());
 		classes.insert(keyIter->left(pos));
 	}
 

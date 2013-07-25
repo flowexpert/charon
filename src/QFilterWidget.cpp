@@ -27,9 +27,9 @@
 
 #include "QFilterWidget.h"
 
-#include <QtGui/QPainter>
-#include <QtGui/QStyle>
-#include <QtCore/QPropertyAnimation>
+#include <QPainter>
+#include <QStyle>
+#include <QPropertyAnimation>
 
 QT_BEGIN_NAMESPACE
 

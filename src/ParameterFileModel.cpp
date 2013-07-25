@@ -154,7 +154,7 @@ QVariant ParameterFileModel::data(const QModelIndex& ind, int role) const {
 
 	case Qt::ForegroundRole:
 		if (_onlyParams && !isSet(key)) {
-			return Qt::lightGray;
+			return QColor(Qt::lightGray);
 		}
 		break;
 

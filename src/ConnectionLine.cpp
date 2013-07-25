@@ -28,8 +28,8 @@
 #include "NodeProperty.h"
 #include "Node.h"
 
-ConnectionLine::ConnectionLine(QGraphicsScene* sc) :
-		QGraphicsItem(0,sc),
+ConnectionLine::ConnectionLine() :
+		QGraphicsItem(),
 		_startProp(0),
 		_endProp(0)
 {

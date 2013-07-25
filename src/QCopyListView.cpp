@@ -27,6 +27,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QTextCodec>
+#include <QMimeData>
 
 QCopyListView::QCopyListView(QWidget* pp) :
 	QListView(pp)

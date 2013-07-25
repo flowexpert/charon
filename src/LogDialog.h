@@ -96,7 +96,7 @@ private slots:
 	/// setup abort button and show progress bar
 	void on_proc_started();
 	/// setup close button and hide progress bar
-	void on_proc_finished();
+	void on_proc_finished(int=0);
 	/// handle errors running the process
 	void on_proc_error(QProcess::ProcessError);
 	/// handle debug checkbox

@@ -167,7 +167,7 @@ void LogDecorators::Update::_appendSummaryRow() {
 		_curFile = tr("[no file available]");
 		curItem->setData(_curFile,             Qt::DisplayRole);
 		curItem->setData(QFont("monospace",9,-1,true), Qt::FontRole);
-		curItem->setData(Qt::gray, Qt::ForegroundRole);
+		curItem->setData(QColor(Qt::gray),     Qt::ForegroundRole);
 		curItem->setData(QString(),            Qt::UserRole);
 	}
 	else {

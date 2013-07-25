@@ -21,9 +21,13 @@
  *  @author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
-#include <QtGui>
 #include <QDir>
 #include <QFile>
+#include <QItemEditorCreator>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QMutex>
+#include <QSettings>
 #include <set>
 #include <stack>
 #include "ObjectInspector.h"

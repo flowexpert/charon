@@ -28,8 +28,8 @@
 #ifndef QFILTERWIDGET_H
 #define QFILTERWIDGET_H
 
-#include <QtGui/QLineEdit>
-#include <QtGui/QToolButton>
+#include <QLineEdit>
+#include <QToolButton>
 
 QT_BEGIN_NAMESPACE
 

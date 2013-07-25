@@ -39,11 +39,10 @@ public:
 	/** \param title    name of the node
 	 *  \param xpos     x coordinate of upper left corner of the node
 	 *  \param ypos     y coordinate of upper left corner of the node
-	 *  \param parent   parent graphics scene
 	 *  \param pFile    link to parameter file
 	 */
 	Node(const ParameterFileModel* pFile, QString title,
-			int xpos, int ypos, QGraphicsScene* parent);
+			int xpos, int ypos);
 
 	/// area where node is clickable
 	QRectF boundingRect() const;

@@ -22,8 +22,14 @@
  *  \author <a href="mailto:jmgottfried@web.de">Jens-Malte Gottfried</a>
  */
 
-#include <QtGui>
+#include <QDockWidget>
 #include <QTextBrowser>
+#include <QSettings>
+#include <QStatusBar>
+#include <QAction>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QApplication>
 #include "DocGenerator.h"
 
 #include "WorkflowComments.h"

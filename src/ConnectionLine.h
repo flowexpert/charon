@@ -38,8 +38,7 @@ class ConnectionLine : public QGraphicsItem {
 
 public:
 	/// Default constructor
-	/// @param scene parent scene to use
-	ConnectionLine(QGraphicsScene *scene);
+	ConnectionLine();
 
 	/// bounding Rect, always 0 to be not selectable
 	QRectF boundingRect() const;
