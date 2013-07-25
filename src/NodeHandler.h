@@ -148,8 +148,8 @@ signals:
 	void statusMessage(QString msg) const;
 
 	/// Send type of currently selected node
-	/// @param type         type
-	void nodeTypeSelected(QString type) const ;
+	/// \param type         type
+	void nodeTypeSelected(QString type) const;
 };
 
 #endif /* NODEHANDLER_H_ */

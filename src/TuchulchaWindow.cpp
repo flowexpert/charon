@@ -30,6 +30,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QApplication>
+#include <QTimer>
 #include "DocGenerator.h"
 
 #include "WorkflowComments.h"
@@ -143,9 +144,9 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	setCentralWidget(_centralArea);
 
 	connect(_centralArea, SIGNAL(subWindowActivated (QMdiSubWindow*)),
-			this, SLOT(_windowActivated(QMdiSubWindow*)));
+			SLOT(_updateFlowLinks()));
 	connect(_centralArea, SIGNAL(filesDropped(QStringList)),
-			this, SLOT(open(QStringList)));
+			SLOT(open(QStringList)));
 
 	// toolbar
 	_toolBar = new ModelToolBar(tr("toolbar"));
@@ -157,7 +158,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QAction* action;
 
 	connect(_selector, SIGNAL(addNode(QString)), // handle double clicks
-		_toolBar, SLOT(addNode(QString)));    // on selector widget
+		_toolBar, SLOT(addNode(QString)));       // on selector widget
 
 	action = _toolBar->addAction(
 		QIcon::fromTheme("document-new",QIcon(":/icons/document-new.png")),
@@ -504,24 +505,33 @@ void TuchulchaWindow::_showHelp(QString page) {
 void TuchulchaWindow::open(const QString& fileName, bool maximized) {
 	GraphModel* model = new GraphModel(
 				QString(), this, FileManager::instance().classesFile());
-	connect(model, SIGNAL(fileNameChanged (QString)),
-		_rfHandler, SLOT(setCurrentFile(QString)));
-	connect(model, SIGNAL(statusMessage(QString)),
-			SLOT(showMessage(QString)));
 	if (model->load(fileName)) {
 		FlowWidget* flowWidget = new FlowWidget(model, _centralArea);
 		_centralArea->addSubWindow(flowWidget);
-		connect(flowWidget, SIGNAL(statusMessage(QString)),
-				SLOT(showMessage(QString)));
-		connect(flowWidget,SIGNAL(destroyed()), model, SLOT(deleteLater()));
+		_setupConnections(model, flowWidget);
 		if (maximized) {
-			flowWidget->showMaximized();
+			QTimer::singleShot(0,flowWidget,SLOT(showMaximized()));
 		} else {
-			flowWidget->showNormal();
+			QTimer::singleShot(0,flowWidget,SLOT(showNormal()));
 		}
+		QTimer::singleShot(0,this,SLOT(_updateFlowLinks()));
 	}
 	else {
 		model->deleteLater();
+	}
+}
+
+void TuchulchaWindow::open(const QStringList& files) {
+	if (files.isEmpty()) {
+		return;
+	}
+	if (files.size() == 1) {
+		open(files.at(0));
+	}
+	else {
+		for (int a = 0; a < files.size(); a++) {
+			open(files.at(a), false);
+		}
 	}
 }
 
@@ -530,16 +540,20 @@ void TuchulchaWindow::openNew() {
 				QString(), this, FileManager::instance().classesFile());
 	FlowWidget* flowWidget = new FlowWidget(model, _centralArea);
 	_centralArea->addSubWindow(flowWidget);
-	connect(flowWidget,SIGNAL(destroyed()), model, SLOT(deleteLater()));
-	connect(model, SIGNAL(fileNameChanged (QString)),
-			_rfHandler, SLOT(setCurrentFile(QString)));
-	connect(model, SIGNAL(statusMessage(QString)),
-			SLOT(showMessage(QString)));
-	connect(flowWidget, SIGNAL(statusMessage(QString)),
-			SLOT(showMessage(QString)));
-	connect(flowWidget, SIGNAL(nodeTypeSelected(QString)),
-			_docGen, SLOT(showClassDoc(QString)));
+	_setupConnections(model, flowWidget);
 	flowWidget->showMaximized();
+}
+
+void TuchulchaWindow::_setupConnections(GraphModel* mm, FlowWidget* fw) {
+	connect(fw,SIGNAL(destroyed()), mm, SLOT(deleteLater()));
+	connect(mm, SIGNAL(fileNameChanged (QString)),
+			_rfHandler, SLOT(setCurrentFile(QString)));
+	connect(mm, SIGNAL(statusMessage(QString)),
+			SLOT(showMessage(QString)));
+	connect(fw, SIGNAL(statusMessage(QString)),
+			SLOT(showMessage(QString)));
+	connect(fw, SIGNAL(nodeTypeSelected(QString)),
+			_docGen, SLOT(showClassDoc(QString)));
 }
 
 void TuchulchaWindow::showMessage(QString msg) const {
@@ -553,7 +567,7 @@ void TuchulchaWindow::saveFlowChart() const {
 		active->saveFlowChart();
 }
 
-void TuchulchaWindow::_windowActivated(QMdiSubWindow* /*window*/) {
+void TuchulchaWindow::_updateFlowLinks() {
 	FlowWidget* flow = qobject_cast<FlowWidget*> (
 			_centralArea->currentSubWindow());
 
@@ -633,18 +647,4 @@ void TuchulchaWindow::options() {
 	QSettings settings;
 	_toolBar->setToolButtonStyle((Qt::ToolButtonStyle)
 		settings.value("toolButtonStyle",Qt::ToolButtonFollowStyle).toInt());
-}
-
-void TuchulchaWindow::open(const QStringList& files) {
-	if (files.isEmpty()) {
-		return;
-	}
-	if (files.size() == 1) {
-		open(files.at(0));
-	}
-	else {
-		for (int a = 0; a < files.size(); a++) {
-			open(files.at(a), false);
-		}
-	}
 }

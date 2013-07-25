@@ -82,7 +82,7 @@ signals:
 
 	/// Send type of currently selected node
 	/// @param type         type
-	void nodeTypeSelected(QString type) const ;
+	void nodeTypeSelected(QString type) const;
 
 protected:
 	/// viewer

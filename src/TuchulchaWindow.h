@@ -38,14 +38,15 @@ class QAction;
 class RecentFileHandler;
 class DocGenerator;
 class QProcess;
+class GraphModel;
 
-///	Management of the application's main window.
+/// Management of the application's main window.
 class TuchulchaWindow : public QMainWindow {
 	Q_OBJECT
 
 public:
-	/**	Default constructor.
-	 *	\param parent	pointer to parent widget
+	/// Default constructor.
+	/** \param parent	pointer to parent widget
 	 */
 	TuchulchaWindow(QWidget* parent = 0);
 	virtual ~TuchulchaWindow();
@@ -114,9 +115,14 @@ private slots:
 	/// show about Qt dialog
 	void _showAboutQt();
 
-	/// update windows when new flowchart has been selected
-	/// \param window   activated window
-	void _windowActivated(QMdiSubWindow* window);
+	/// update links when new flowchart has been selected
+	/** this sets the _flow pointer to the currently selected widget,
+	 *  which is needed to get the zoom and model buttons working
+	 *
+	 *  this also emits the activeGraphModeChanged signal which
+	 *  sets up the connections of the object inspector and the model tool bar
+	 */
+	void _updateFlowLinks();
 
 private:
 	/// tool bar
@@ -137,6 +143,11 @@ private:
 	static const int _saveStateVersion;
 	/// help display process
 	QPointer<QProcess> _helpDisp;
+	/// setup model and view connections (for open and new)
+	/** \param model    workflow model
+	 *  \param fWidget  flow widget
+	 */
+	void _setupConnections(GraphModel* model, FlowWidget* fWidget);
 };
 
 #endif /* MAINWINDOW_H_ */

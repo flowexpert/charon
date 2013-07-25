@@ -69,13 +69,13 @@ void NodeHandler::_deselectAllNodes() {
 
 void NodeHandler::selectNode(QString name) {
 	if(_selectedNode) {
-        if (_selectedNode->getInstanceName() == name) {
+		if (_selectedNode->getInstanceName() == name) {
 			return;
 		}
 		_selectedNode->setSelectedNode(false);
 	}
-	_selectedNode = _nodeMap[name];
-	if (_selectedNode) {
+	if (_nodeMap.contains(name)) {
+		_selectedNode = _nodeMap.value(name);
 		_selectedNode->setSelectedNode(true);
 	}
 	update();
@@ -102,6 +102,7 @@ void NodeHandler::mousePressEvent(QGraphicsSceneMouseEvent* ev) {
 		}
 		Node* np = dynamic_cast<Node*>(itm);
 		if (!np) {
+			// if a node property was clicked, use it's parent (node)
 			np = dynamic_cast<Node*>(itm->parentItem());
 		}
 		if (np) {

@@ -28,6 +28,7 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QLocale>
+#include <QTimer>
 
 #include "TuchulchaWindow.h"
 #include "FileManager.h"
@@ -84,8 +85,9 @@ int main(int argc, char *argv[]) {
 	QStringList args = app.arguments();
 	QFileInfo lastArgInfo(args.last());
 	if (lastArgInfo.exists() && (lastArgInfo.absoluteFilePath()
-			!= QFileInfo(app.applicationFilePath()).absoluteFilePath()))
+			!= QFileInfo(app.applicationFilePath()).absoluteFilePath())) {
 		window.open(lastArgInfo.absoluteFilePath());
+	}
 	window.show();
 	return app.exec();
 }

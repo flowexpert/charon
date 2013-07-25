@@ -44,17 +44,16 @@ FlowWidget::FlowWidget(GraphModel* modelIn, QWidget* myParent) :
 	setWidget(_viewer);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 	connect(model(), SIGNAL(fileNameChanged (QString)),
-		this, SLOT(updateFileName(QString)));
+		SLOT(updateFileName(QString)));
 	connect(_nodehandler, SIGNAL(statusMessage(QString)),
 		SIGNAL(statusMessage(QString)));
 	connect(_nodehandler, SIGNAL(nodeTypeSelected(QString)),
-		this,SIGNAL(nodeTypeSelected(QString)));
-	connect(model(), SIGNAL(modified(bool)),
-		this, SLOT(modify(bool)));
+		SIGNAL(nodeTypeSelected(QString)));
+	connect(model(), SIGNAL(modified(bool)), SLOT(modify(bool)));
 	connect(model(), SIGNAL(commentChanged(QString)), _nodehandler,
 		SLOT(updateTooltip(QString)));
 	connect(this, SIGNAL(windowStateChanged(Qt::WindowStates, Qt::WindowStates)),
-		this, SLOT(zoomFit(Qt::WindowStates, Qt::WindowStates)));
+		SLOT(zoomFit(Qt::WindowStates, Qt::WindowStates)));
 	updateFileName(model()->fileName());
 }
 
