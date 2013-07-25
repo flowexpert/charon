@@ -195,12 +195,12 @@ void StructureTextureDecomposition<T>::execute() {
     structure_image()=MultiArray<5,T>(data_image().shape(),mIiter.data());
 
 }
-UInt64 ClockGetTime()
-{
-    timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    return (UInt64)ts.tv_sec * 1000000LL + (UInt64)ts.tv_nsec / 1000LL;
-}
+//UInt64 ClockGetTime()
+//{
+//    timespec ts;
+//    clock_gettime(CLOCK_REALTIME, &ts);
+//    return (UInt64)ts.tv_sec * 1000000LL + (UInt64)ts.tv_nsec / 1000LL;
+//}
 
 template<typename T, int N, class A = std::allocator<T> >
 void computeDivergence(std::vector<MultiArray<N,T,A>* > &vectorField,MultiArray<N,T,A> &divergence,double std_dev)
