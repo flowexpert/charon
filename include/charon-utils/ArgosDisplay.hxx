@@ -67,7 +67,8 @@ ArgosDisplayPlugin<T>::ArgosDisplayPlugin(const std::string& name) :
 			"<li><strong>Align other views</strong>: Set the zoom level and image position of all images in the current view to to same values as the active image."
 			"This performs a pixel exakt alignment of images, given they have the same width and height.</li>"
 			"</ul>"
-			"Additionaly, the current top image can be switched using the number keys."
+			"Additionaly, the current top image can be switched using the number keys.<br>"
+			"Holding the middle mouse button will highlight the corresponding scan and heightline in all views. This is usefull for e.g. checking the epipolar rectification in stereo image pairs."
 			),
 			_vigraIn(true, true),
 			_cimgIn(true, true),

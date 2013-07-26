@@ -202,8 +202,8 @@ void StructureTextureDecomposition<T>::execute() {
 //    return (UInt64)ts.tv_sec * 1000000LL + (UInt64)ts.tv_nsec / 1000LL;
 //}
 
-template<typename T, int N, class A = std::allocator<T> >
-void computeDivergence(std::vector<MultiArray<N,T,A>* > &vectorField,MultiArray<N,T,A> &divergence,double std_dev)
+template<typename T, int N>
+void computeDivergence(std::vector<MultiArray<N,T>* > &vectorField,MultiArray<N,T> &divergence,double std_dev)
 {
     assert(vectorField.size()==N);
     assert((*(vectorField[0])).shape()==divergence.shape());
@@ -212,7 +212,7 @@ void computeDivergence(std::vector<MultiArray<N,T,A>* > &vectorField,MultiArray<
     smooth.initGaussian(std_dev);
     deriv.initGaussianDerivative(std_dev,1);
     std::vector<Kernel1D<T> > kernels;
-    static MultiArray<N,T,A> tmpDeriv(divergence.shape());
+    static MultiArray<N,T> tmpDeriv(divergence.shape());
 
     for(int k=0;k<N;k++)
         kernels.push_back(smooth);
@@ -374,7 +374,7 @@ MultiArray<2,T> StructureTextureDecomposition<T>::computeFuncDeriv()
     smooth2d.push_back(smooth);
 
     Kernel1D<T> smoothsq;
-    smoothsq.initGaussian(sc*std::sqrt(2));
+    smoothsq.initGaussian(sc*std::sqrt(2.0));
     smoothsq.setBorderTreatment(BORDER_TREATMENT_REPEAT);
 
     std::vector<Kernel1D<T> > smooth2dsq;
@@ -405,7 +405,7 @@ MultiArray<2,T> StructureTextureDecomposition<T>::computeFuncDeriv()
     double factor=noisevar/((cond+noisevar)*(cond+noisevar))*corrRatio;
 
     MultiArray<2,T> smSqIiter(mIiter.shape());
-    gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*std::sqrt(2));
+    gaussianSmoothMultiArray(srcMultiArrayRange(mIiter),destMultiArray(smSqIiter),sc*std::sqrt(2.0));
     smSqIiter=smSqIiter-Iitermean;
 
     return factor*(corrRatio*smSqIiter-smCondIm);
