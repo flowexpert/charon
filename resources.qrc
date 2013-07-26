@@ -10,6 +10,7 @@
         <file alias="start.txt">help/start_de.txt</file>
     </qresource>
     <qresource prefix="/icons">
+        <file alias="splash.png">icons/splash.png</file>
         <file alias="appicon.png">icons/tc.png</file>
         <file alias="document-new.png">icons/oxygen/document_new.png</file>
         <file alias="document-open.png">icons/oxygen/document_open.png</file>

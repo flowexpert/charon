@@ -53,11 +53,9 @@ public:
 
 public slots:
 	/// open parameterfile and display flowchart content
-	/// \param fileName   File to open.
-	///                   Shows file open dialog if empty.
-	/// \param maximized  if file should be opened maximized
-	///                   (false, when more than one file is added at a time)
-	void open(const QString& fileName = "", bool maximized = true);
+	/** \param fileName   File to open.
+	 *                    Shows file open dialog if empty. */
+	void open(const QString& fileName = QString());
 
 	/// open parameterfiles
 	/// \param files      Files to open
@@ -96,7 +94,10 @@ signals:
 	void activeGraphModelChanged(ParameterFileModel* model);
 
 	/// meta data has been updated, plugins reloaded
-	void metaDataUpdated() ;
+	void metaDataUpdated();
+
+	/// status message
+	void statusMessage(const QString&) const;
 
 protected:
 	/// Close event handler.

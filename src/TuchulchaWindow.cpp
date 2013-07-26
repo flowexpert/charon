@@ -502,18 +502,15 @@ void TuchulchaWindow::_showHelp(QString page) {
 #endif
 }
 
-void TuchulchaWindow::open(const QString& fileName, bool maximized) {
+void TuchulchaWindow::open(const QString& fileName) {
 	GraphModel* model = new GraphModel(
 				QString(), this, FileManager::instance().classesFile());
+	_setupConnections(model,0);
 	if (model->load(fileName)) {
 		FlowWidget* flowWidget = new FlowWidget(model, _centralArea);
 		_centralArea->addSubWindow(flowWidget);
 		_setupConnections(model, flowWidget);
-		if (maximized) {
-			QTimer::singleShot(0,flowWidget,SLOT(showMaximized()));
-		} else {
-			QTimer::singleShot(0,flowWidget,SLOT(showNormal()));
-		}
+		QTimer::singleShot(0,flowWidget,SLOT(showMaximized()));
 		QTimer::singleShot(0,this,SLOT(_updateFlowLinks()));
 	}
 	else {
@@ -522,16 +519,8 @@ void TuchulchaWindow::open(const QString& fileName, bool maximized) {
 }
 
 void TuchulchaWindow::open(const QStringList& files) {
-	if (files.isEmpty()) {
-		return;
-	}
-	if (files.size() == 1) {
-		open(files.at(0));
-	}
-	else {
-		for (int a = 0; a < files.size(); a++) {
-			open(files.at(a), false);
-		}
+	foreach (const QString& cur, files) {
+		open(cur);
 	}
 }
 
@@ -545,18 +534,25 @@ void TuchulchaWindow::openNew() {
 }
 
 void TuchulchaWindow::_setupConnections(GraphModel* mm, FlowWidget* fw) {
-	connect(fw,SIGNAL(destroyed()), mm, SLOT(deleteLater()));
-	connect(mm, SIGNAL(fileNameChanged (QString)),
-			_rfHandler, SLOT(setCurrentFile(QString)));
-	connect(mm, SIGNAL(statusMessage(QString)),
-			SLOT(showMessage(QString)));
-	connect(fw, SIGNAL(statusMessage(QString)),
-			SLOT(showMessage(QString)));
-	connect(fw, SIGNAL(nodeTypeSelected(QString)),
-			_docGen, SLOT(showClassDoc(QString)));
+	if (mm) {
+		connect(mm, SIGNAL(fileNameChanged (QString)),
+				_rfHandler, SLOT(setCurrentFile(QString)));
+		connect(mm, SIGNAL(statusMessage(QString)),
+				SLOT(showMessage(QString)));
+	}
+	if (fw) {
+		if (mm) {
+			connect(fw,SIGNAL(destroyed()), mm, SLOT(deleteLater()));
+		}
+		connect(fw, SIGNAL(statusMessage(QString)),
+				SLOT(showMessage(QString)));
+		connect(fw, SIGNAL(nodeTypeSelected(QString)),
+				_docGen, SLOT(showClassDoc(QString)));
+	}
 }
 
 void TuchulchaWindow::showMessage(QString msg) const {
+	emit statusMessage(msg);
 	statusBar()->showMessage(msg, 5000);
 }
 

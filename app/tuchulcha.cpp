@@ -29,6 +29,8 @@
 #include <QLibraryInfo>
 #include <QLocale>
 #include <QTimer>
+#include <QSplashScreen>
+#include <QPainter>
 
 #include "TuchulchaWindow.h"
 #include "FileManager.h"
@@ -81,13 +83,26 @@ int main(int argc, char *argv[]) {
 	handler->setModal(true);
 #endif
 
+	QImage sImage(":/icons/splash.png");
+	QPainter sPainter(&sImage);
+	sPainter.setFont(QFont("sans-serif",14,QFont::DemiBold));
+	sPainter.drawText(QRectF(0.f,160.f,320.f,80.f),Qt::AlignCenter,TUCHULCHA_VERSION);
+	QSplashScreen splash(QPixmap::fromImage(sImage));
+	splash.setFont(QFont("sans-serif",12,QFont::DemiBold));
+	splash.show();
+	splash.showMessage(QApplication::translate("tuchulcha","starting Tuchulcha"));
+	splash.connect(&window,SIGNAL(statusMessage(QString)),SLOT(showMessage(QString)));
+	app.processEvents();
+
 	// handle command line arguments
 	QStringList args = app.arguments();
-	QFileInfo lastArgInfo(args.last());
-	if (lastArgInfo.exists() && (lastArgInfo.absoluteFilePath()
-			!= QFileInfo(app.applicationFilePath()).absoluteFilePath())) {
-		window.open(lastArgInfo.absoluteFilePath());
+	if (QFileInfo(args.first()).absoluteFilePath() ==
+			QFileInfo(app.applicationFilePath()).absoluteFilePath()) {
+		// avoid tuchulcha command interpreted as file to open
+		args.pop_front();
 	}
+	window.open(args);
 	window.show();
+	splash.finish(&window);
 	return app.exec();
 }
