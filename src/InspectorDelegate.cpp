@@ -41,18 +41,31 @@
 #include <QComboBox>
 #include <QResizeEvent>
 #include <QDoubleSpinBox>
+#include <QSettings>
+#include <QDir>
 #include "QDirEdit.h"
 
 InspectorDelegate::InspectorDelegate(QObject* p) :
 	QStyledItemDelegate(p), _fileDialogFlag(false) {
+	connect(this,
+		SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)),
+		SLOT(_handleCloseEditor(QWidget*,QAbstractItemDelegate::EndEditHint)));
 }
 
 QWidget* InspectorDelegate::createEditor(QWidget* p,
 		const QStyleOptionViewItem& opt, const QModelIndex& ind) const {
 
-	// detect parameter type
 	const ParameterFileModel* model =
 			qobject_cast<const ParameterFileModel*>(ind.model());
+	if (model && QFileInfo(model->fileName()).exists()) {
+		*const_cast<QString*>(&_workingDir) = QDir::currentPath();
+		QDir::setCurrent(QFileInfo(model->fileName()).path());
+	}
+	else {
+		qDebug("InspectorDelegate::setModelData: no parameter file model");
+	}
+
+	// detect parameter type
 	if (model && model->onlyParams()) {
 		QString param = model->data(ind.sibling(ind.row(),0)).toString();
 		if (!model->prefix().isEmpty())
@@ -118,7 +131,7 @@ QWidget* InspectorDelegate::createEditor(QWidget* p,
 
 void InspectorDelegate::setModelData (QWidget* editor,
 	QAbstractItemModel* model, const QModelIndex & index ) const {
-	
+	QDirEdit* dirEdit = 0;
 	if(editor && (editor->objectName() == "selectBox")) {
 		QComboBox* box = qobject_cast<QComboBox*>(editor);
 		model->setData(index,box->currentText());
@@ -129,6 +142,24 @@ void InspectorDelegate::setModelData (QWidget* editor,
 		model->setData(index,line->text().toDouble());
 		return;
 	}
+	else if ( (dirEdit = qobject_cast<QDirEdit*>(editor)) ) {
+		QSettings s;
+		ParameterFileModel* pmodel = qobject_cast<ParameterFileModel*>(model);
+		if (pmodel) {
+			if (s.value("relativePaths",true).toBool()) {
+				QStringList eData = dirEdit->text().split(";"), rData;
+				QDir wDir = QFileInfo(pmodel->fileName()).dir();
+				foreach(QString cur, eData) {
+					rData << wDir.relativeFilePath(cur);
+				}
+				model->setData(index,rData.join(";"));
+				return;
+			}
+		}
+		else {
+			qDebug("InspectorDelegate::setModelData: no parameter file model");
+		}
+	}
 	QStyledItemDelegate::setModelData(editor, model, index);
 }
 
@@ -136,9 +167,15 @@ void InspectorDelegate::_setFileDialogFlag(bool f) {
 	_fileDialogFlag = f;
 }
 
-bool InspectorDelegate::eventFilter(QObject* object, QEvent* ev)
-{
+bool InspectorDelegate::eventFilter(QObject* object, QEvent* ev) {
 	if(ev->type() == QEvent::FocusOut && _fileDialogFlag)
 		return false;
 	return QStyledItemDelegate::eventFilter(object, ev);
+}
+
+void InspectorDelegate::_handleCloseEditor(QWidget*, QAbstractItemDelegate::EndEditHint) {
+	if (!_workingDir.isEmpty()) {
+		QDir::setCurrent(_workingDir);
+		_workingDir = QString();
+	}
 }

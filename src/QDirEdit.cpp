@@ -71,10 +71,7 @@ void QDirEdit::fileDialog() {
 			QStringList list = QFileDialog::getOpenFileNames(
 				this, tr("select one or more file(s) to open"), text());
 			if (list.size() > 0) {
-				newVal = list.at(0);
-			}
-			for (int ii = 1; ii < list.size(); ii += 1) {
-				newVal += ";" + list.at(ii);
+				newVal = list.join(";");
 			}
 		}
 	}

@@ -68,6 +68,8 @@ void OptionsDialog::refresh() {
 	_setExcludes(settings.value("excludeList").toStringList());
 	_ui->bButtonStyle->setCurrentIndex(
 		settings.value("toolButtonStyle",Qt::ToolButtonFollowStyle).toInt());
+	_ui->checkRelativePaths->setChecked(
+		settings.value("relativePaths",true).toBool());
 }
 
 void OptionsDialog::apply() {
@@ -84,6 +86,7 @@ void OptionsDialog::apply() {
 	settings.setValue("versionCheckLevel",_ui->comboCheckLevel->currentIndex());
 	settings.setValue("excludeList",_getExcludes());
 	settings.setValue("toolButtonStyle",_ui->bButtonStyle->currentIndex());
+	settings.setValue("relativePaths",_ui->checkRelativePaths->isChecked());
 	if (check()) {
 		refresh();
 	}
@@ -108,6 +111,7 @@ void OptionsDialog::restore() {
 	_ui->comboCheckLevel->setCurrentIndex(2);
 	_setExcludes(defaults.value("excludeList").toStringList());
 	_ui->bButtonStyle->setCurrentIndex(Qt::ToolButtonFollowStyle);
+	_ui->checkRelativePaths->setChecked(true);
 }
 
 void OptionsDialog::on_bBox_clicked(QAbstractButton* button) {

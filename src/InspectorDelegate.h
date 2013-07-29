@@ -98,10 +98,13 @@ public:
 protected slots:
 	/// set _fileDialogFlag
 	void _setFileDialogFlag(bool flag);
+	/// reset working dir
+	void _handleCloseEditor(QWidget*,QAbstractItemDelegate::EndEditHint);
 protected:
+	/// cache
+	QString _workingDir;
 	/// file dialog opened
 	bool _fileDialogFlag;
-
 };
 
 #endif // INSPECTORDELEGATE_H
