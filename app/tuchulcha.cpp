@@ -96,7 +96,8 @@ int main(int argc, char *argv[]) {
 
 	// handle command line arguments
 	QStringList args = app.arguments();
-	if (QFileInfo(args.first()).absoluteFilePath() ==
+	if (args.first().compare(app.applicationName(),Qt::CaseInsensitive)==0
+			|| QFileInfo(args.first()).absoluteFilePath() ==
 			QFileInfo(app.applicationFilePath()).absoluteFilePath()) {
 		// avoid tuchulcha command interpreted as file to open
 		args.pop_front();
