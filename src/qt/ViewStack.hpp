@@ -49,9 +49,9 @@ namespace ArgosDisplay {
 
 	/// Helper Widget to allow drap&drop op Tabs between multiple TabBars
 	class DropTabBar : public QTabBar {
-		Q_OBJECT ;
+		Q_OBJECT
 
-	public:	
+	public:
 		DropTabBar(QWidget* parent = 0) ;
 
 		QPoint _dragStartPos ;
@@ -74,7 +74,7 @@ namespace ArgosDisplay {
 
 	/// Helper Widget which allows moving of tabbed Widgets between TabWidgets
 	class DropTabWidget : public QTabWidget {
-		Q_OBJECT ;
+		Q_OBJECT
 
 	public:
 		DropTabWidget(QWidget* parent = 0) ; 
