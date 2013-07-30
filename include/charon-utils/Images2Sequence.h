@@ -61,6 +61,9 @@ public:
 	/// \param name          Instance name
 	Images2Sequence(const std::string& name = "");
 
+	/// select dimension for appending
+ 	Parameter<std::string> appendDimension;
+
 protected:
 	/// Update object.
 	virtual void execute();

@@ -39,18 +39,28 @@ Images2Sequence<T>::Images2Sequence(const std::string& name) :
 			"One or more images", "CImgList<T>");
 	ParameteredObject::_addOutputSlot(image_sequence, "image_sequence",
 			"image sequence containing every input image", "CImgList<T>");
+	ParameteredObject::_addParameter<std::string>(appendDimension,"appendDimension",
+			"select dimension for appending","list","{z;t;list}");
 }
 
 template<typename T>
 void Images2Sequence<T>::execute() {
+	// check number of inputs
+	if (images.size() <= 1) {
+		sout << "(WW) need more than one connected input "
+			<< "to concatenate them, fallback to passthrough" << std::endl;
+		image_sequence().assign(images(),true);
+		return;
+	}
 	// Dimensions of the first input image
-	int width = this->images()[0].width();
-	int height = this->images()[0].height();
-	int depth = this->images()[0].depth();
-	int spectrum = this->images()[0].spectrum();
-
-	// Initialize image sequence
-	image_sequence().assign(0, width, height, depth, spectrum);
+	unsigned int listSize = images().size();
+	if (listSize <= 0) {
+		ParameteredObject::raise("empty input list");
+	}
+	int width    = images()[0].width();
+	int height   = images()[0].height();
+	int depth    = images()[0].depth();
+	int spectrum = images()[0].spectrum();
 
 	// assert that images are orderd in lexicographically ascending
 	// order of their instance name
@@ -72,24 +82,55 @@ void Images2Sequence<T>::execute() {
 			order[i] = tNum[i].second;
 	}
 
+	// Initialize image sequence
+	if (appendDimension() == "list") {
+		image_sequence().assign(0, width, height, depth, spectrum);
+	}
+	else if (appendDimension() == "t") {
+		image_sequence().assign(listSize, width, height, depth, 0);
+	}
+	else if (appendDimension() == "z") {
+		image_sequence().assign(listSize, width, height, 0, spectrum);
+	}
+
 	// iterate over the images in multi input slot
 	for (std::size_t i=0; i < images.size(); i++) {
 		// Create reference to the CImgList in the current input slot
 		const cimg_library::CImgList<T>& imgList = images[order[i]];
 
 		// check dimensions of the current image
-		if (imgList.size() > 0 &&
-				imgList[0].width()    == width &&
-				imgList[0].height()   == height &&
-				imgList[0].depth()    == depth &&
-				imgList[0].spectrum() == spectrum) {
+		if (
+			imgList[0].width()    != width ||
+			imgList[0].height()   != height)
+		{
+			ParameteredObject::raise("image XY dimension mismatch");
+		}
+		// (dimension mismatch allowed for appending dimension)
+		if (
+			(appendDimension() == "list" || imgList.size() == listSize) &&
+			(appendDimension() == "z" || imgList[0].depth() == depth) &&
+			(appendDimension() == "t" || imgList[0].spectrum() == spectrum))
+		{
 			// append image(s) to the end of the image sequence
-			for(unsigned int i = 0; i < imgList.size(); i++) {
-				this->image_sequence().push_back(imgList[i]);
+			if (appendDimension() == "list") {
+				cimglist_for(imgList, i) {
+					image_sequence().push_back(imgList[i]);
+				}
+			}
+			else if (appendDimension() == "t") {
+				cimglist_for(imgList, i) {
+					image_sequence()[i].append(imgList[i],'c');
+				}
+			}
+			else if (appendDimension() == "z") {
+				cimglist_for(imgList, i) {
+					image_sequence()[i].append(imgList[i],'z');
+				}
 			}
 		}
-		else
-			sout << "Error: Image has wrong dimensions" << std::endl;
+		else {
+			ParameteredObject::raise("Image has wrong dimensions");
+		}
 	}
 }
 
