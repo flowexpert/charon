@@ -1073,50 +1073,55 @@ Dies löscht die Parameter aus der Parameterdatei.</translation>
         <translation>Start und Ausführung</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="80"/>
+        <location filename="../src/OptionsDialog.ui" line="40"/>
+        <source>splash screen on startup</source>
+        <translation>Begrüßungsbildschirm beim Start anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../src/OptionsDialog.ui" line="90"/>
         <source>Debug: prefer modules with debug suffix ( _d),&lt;br&gt;
 use unsuffixed as fallback</source>
         <translation>Debug: Module mit Debug-Endung (_d) bevorzugen,&lt;br&gt;
 als Ausweichnamen den Namen ohne Endung verwenden</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="91"/>
+        <location filename="../src/OptionsDialog.ui" line="101"/>
         <source>Plugin Version Check</source>
         <translation>Versions-Überprüfung</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="101"/>
+        <location filename="../src/OptionsDialog.ui" line="111"/>
         <source>Disable Checks</source>
         <translation>Tests deaktivieren</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="106"/>
+        <location filename="../src/OptionsDialog.ui" line="116"/>
         <source>Warnings</source>
         <translation>Warnungen anzeigen, dann trotzdem benutzen</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="111"/>
+        <location filename="../src/OptionsDialog.ui" line="121"/>
         <source>Skip Plugins with failing Checks</source>
         <translation>Plugins überspringen, die den Test nicht bestehen</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="119"/>
+        <location filename="../src/OptionsDialog.ui" line="129"/>
         <source>Check charon-core version of plugin library before loading.&lt;br&gt;
 Select the behavior on failing checks or version mismatch here.</source>
         <translation>charon-core Version der Module vor dem Laden überprüfen.&lt;br&gt;Hier kann man auswählen, was mit Modulen geschieht, die Tests nicht bestehen.</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="134"/>
+        <location filename="../src/OptionsDialog.ui" line="144"/>
         <source>Paths</source>
         <translation>Pfade</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="149"/>
+        <location filename="../src/OptionsDialog.ui" line="159"/>
         <source>global plugin path</source>
         <translation>globaler Plugin-Pfad</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="159"/>
+        <location filename="../src/OptionsDialog.ui" line="169"/>
         <source>&lt;h3&gt;Module installation directory:&lt;/h3&gt;
 Enter the paths, where your charon Modules are located.&lt;br&gt;&lt;br&gt;
 You may enter multiple paths here, separated by semicolon (;)</source>
@@ -1125,7 +1130,7 @@ Hier bitte die Pfade eingeben, in denen die Module gespeichert sind.&lt;br&gt;&l
 Mehrere Pfade können getrennt durch Semikolon (;) hintereinander eingegeben werden</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="168"/>
+        <location filename="../src/OptionsDialog.ui" line="178"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1139,78 +1144,78 @@ Set this to the directory where the plugins you are currently working on are gen
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="187"/>
+        <location filename="../src/OptionsDialog.ui" line="197"/>
         <source>debug plugin path</source>
         <translation>debug Plugin-Pfad</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="197"/>
+        <location filename="../src/OptionsDialog.ui" line="207"/>
         <source>release plugin path</source>
         <translation>release Plugin-Pfad</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="210"/>
+        <location filename="../src/OptionsDialog.ui" line="220"/>
         <source>General:</source>
         <translation>Allgemein:</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="223"/>
+        <location filename="../src/OptionsDialog.ui" line="233"/>
         <source>Addidional:</source>
         <translation>Zusätzlich:</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="230"/>
+        <location filename="../src/OptionsDialog.ui" line="240"/>
         <source>for each entry, multiple paths separated by semicolon (;) may be given</source>
         <translation>für die Einträge können jeweils mehrere Pfade
 - durch Semikolon getrennt - angegeben werden</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="240"/>
+        <location filename="../src/OptionsDialog.ui" line="250"/>
         <source>Workflow Files</source>
         <translation>Datenfluss Dateien</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="246"/>
+        <location filename="../src/OptionsDialog.ui" line="256"/>
         <source>use relative paths (file/path browsing in object inspector)</source>
         <translation>relative Pfade benutzen (im Objectinspektor)</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="314"/>
+        <location filename="../src/OptionsDialog.ui" line="324"/>
         <source>Appearance</source>
         <translation>Aussehen</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="320"/>
+        <location filename="../src/OptionsDialog.ui" line="330"/>
         <source>ToolBar</source>
         <translation>Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="326"/>
+        <location filename="../src/OptionsDialog.ui" line="336"/>
         <source>ToolButton Style</source>
         <translation>Stil der Knöpfe</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="337"/>
+        <location filename="../src/OptionsDialog.ui" line="347"/>
         <source>Icon Only</source>
         <translation>Nur Symbole</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="342"/>
+        <location filename="../src/OptionsDialog.ui" line="352"/>
         <source>Text Only</source>
         <translation>Nur Text</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="347"/>
+        <location filename="../src/OptionsDialog.ui" line="357"/>
         <source>Text beside Icon</source>
         <translation>Text neben Symbolen</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="352"/>
+        <location filename="../src/OptionsDialog.ui" line="362"/>
         <source>Text under Icon</source>
         <translation>Text unter Symbolen</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="357"/>
+        <location filename="../src/OptionsDialog.ui" line="367"/>
         <source>Follow System Style</source>
         <translation>System-Stil benutzen</translation>
     </message>
@@ -1220,37 +1225,37 @@ Set this to the directory where the plugins you are currently working on are gen
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="57"/>
+        <location filename="../src/OptionsDialog.ui" line="67"/>
         <source>Plugin Config</source>
         <translation>Modul-Konfiguration</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="63"/>
+        <location filename="../src/OptionsDialog.ui" line="73"/>
         <source>Debug</source>
         <translation>Debug</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="70"/>
+        <location filename="../src/OptionsDialog.ui" line="80"/>
         <source>Release</source>
         <translation>Release</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="40"/>
+        <location filename="../src/OptionsDialog.ui" line="50"/>
         <source>reload all plugins on startup</source>
         <translation>Module beim Start neu laden</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="140"/>
+        <location filename="../src/OptionsDialog.ui" line="150"/>
         <source>Module Paths</source>
         <translation>Modul-Pfade</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="260"/>
+        <location filename="../src/OptionsDialog.ui" line="270"/>
         <source>Exludes</source>
         <translation>Ausschließen</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="266"/>
+        <location filename="../src/OptionsDialog.ui" line="276"/>
         <source>Enter dynamic lib names that should be excluded from module search.&lt;br&gt;
 You may use wildcard expressions.&lt;br&gt;
 Enter the names withoud &quot;lib&quot; prefix, debug suffix (_d) or file extension (.so/.dll/...)</source>
@@ -1261,22 +1266,22 @@ Bitte die Namen ohne &quot;lib&quot;-Präfix oder die Debug-Endung (_d)&lt;br&gt
 oder Dateierweiterung (.so/.dll/...) angeben</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="305"/>
+        <location filename="../src/OptionsDialog.ui" line="315"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.ui" line="47"/>
+        <location filename="../src/OptionsDialog.ui" line="57"/>
         <source>delay execution of Workflow (usefull for attaching a debugger)</source>
         <translation>vor der Ausführung warten (für Debugging)</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.cpp" line="214"/>
+        <location filename="../src/OptionsDialog.cpp" line="218"/>
         <source>path not found</source>
         <translation>Pfad nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../src/OptionsDialog.cpp" line="215"/>
+        <location filename="../src/OptionsDialog.cpp" line="219"/>
         <source>path &lt;tt&gt;%1&lt;/tt&gt; has not been found.&lt;/br&gt;Remove it from &lt;em&gt;%2&lt;/em&gt;?</source>
         <translation>Der Pfad &lt;tt&gt;%1&lt;/tt&gt; wurde nicht gefunden.&lt;br&gt;Soll er aus &lt;em&gt;%2&lt;/em&gt; entfernt werden?</translation>
     </message>
@@ -1855,7 +1860,7 @@ anzeigen</translation>
 <context>
     <name>tuchulcha</name>
     <message>
-        <location filename="../app/tuchulcha.cpp" line="93"/>
+        <location filename="../app/tuchulcha.cpp" line="96"/>
         <source>starting Tuchulcha</source>
         <translation>starte Tuchulcha</translation>
     </message>

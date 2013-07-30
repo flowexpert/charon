@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>561</width>
-    <height>358</height>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,6 +34,16 @@
           <string>Startup and Workflow Execution</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QCheckBox" name="checkSplash">
+            <property name="text">
+             <string>splash screen on startup</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QCheckBox" name="checkReload">
             <property name="text">

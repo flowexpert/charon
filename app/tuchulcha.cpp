@@ -31,6 +31,7 @@
 #include <QTimer>
 #include <QSplashScreen>
 #include <QPainter>
+#include <QSettings>
 
 #include "TuchulchaWindow.h"
 #include "FileManager.h"
@@ -83,16 +84,19 @@ int main(int argc, char *argv[]) {
 	handler->setModal(true);
 #endif
 
+	QSettings settings;
 	QImage sImage(":/icons/splash.png");
 	QPainter sPainter(&sImage);
 	sPainter.setFont(QFont("sans-serif",14,QFont::DemiBold));
 	sPainter.drawText(QRectF(0.f,160.f,320.f,80.f),Qt::AlignCenter,TUCHULCHA_VERSION);
 	QSplashScreen splash(QPixmap::fromImage(sImage));
 	splash.setFont(QFont("sans-serif",12,QFont::DemiBold));
-	splash.show();
-	splash.showMessage(QApplication::translate("tuchulcha","starting Tuchulcha"));
-	splash.connect(&window,SIGNAL(statusMessage(QString)),SLOT(showMessage(QString)));
-	app.processEvents();
+	if (settings.value("splashScreen",true).toBool()) {
+		splash.show();
+		splash.showMessage(QApplication::translate("tuchulcha","starting Tuchulcha"));
+		splash.connect(&window,SIGNAL(statusMessage(QString)),SLOT(showMessage(QString)));
+		app.processEvents();
+	}
 
 	// handle command line arguments
 	QStringList args = app.arguments();

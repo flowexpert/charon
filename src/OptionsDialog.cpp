@@ -59,6 +59,8 @@ void OptionsDialog::refresh() {
 		settings.value("privatePluginPathD").toStringList().join("; "));
 	_ui->checkDebug->setChecked(
 		settings.value("suffixedPlugins", false).toBool());
+	_ui->checkSplash->setChecked(
+		settings.value("splashScreen",true).toBool());
 	_ui->checkDelay->setChecked(
 		settings.value("delayExecution",false).toBool());
 	_ui->checkReload->setChecked(
@@ -81,6 +83,7 @@ void OptionsDialog::apply() {
 	settings.setValue("privatePluginPathD",_ui->ePrivPathD->text()
 		.split(QRegExp("\\s*;\\s*"),QString::SkipEmptyParts));
 	settings.setValue("suffixedPlugins",_ui->checkDebug->isChecked());
+	settings.setValue("splashScreen",_ui->checkSplash->isChecked());
 	settings.setValue("delayExecution", _ui->checkDelay->isChecked());
 	settings.setValue("reloadOnStartup",_ui->checkReload->isChecked());
 	settings.setValue("versionCheckLevel",_ui->comboCheckLevel->currentIndex());
@@ -102,6 +105,7 @@ void OptionsDialog::restore() {
 	// where the tuchulcha.exe is located
 	QString globalPath = QCoreApplication::applicationDirPath();
 #endif
+	_ui->checkSplash->setChecked(true);
 	_ui->eGlobPath->setText(globalPath);
 	_ui->ePrivPath->setText(QString());
 	_ui->ePrivPathD->setText(QString());
