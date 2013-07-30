@@ -397,9 +397,20 @@ Enter the names withoud &quot;lib&quot; prefix, debug suffix (_d) or file extens
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>bBox</tabstop>
+  <tabstop>checkSplash</tabstop>
+  <tabstop>checkReload</tabstop>
+  <tabstop>checkDelay</tabstop>
+  <tabstop>checkRelease</tabstop>
+  <tabstop>checkDebug</tabstop>
+  <tabstop>comboCheckLevel</tabstop>
   <tabstop>eGlobPath</tabstop>
   <tabstop>ePrivPath</tabstop>
+  <tabstop>ePrivPathD</tabstop>
+  <tabstop>checkRelativePaths</tabstop>
+  <tabstop>tableExclude</tabstop>
+  <tabstop>bButtonStyle</tabstop>
+  <tabstop>bBox</tabstop>
+  <tabstop>tabOptions</tabstop>
  </tabstops>
  <resources/>
  <connections>
