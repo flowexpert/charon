@@ -38,7 +38,6 @@ ADD_CHARON_PLUGIN(@modulename@
 	@ModuleName@.cpp
 	@ModuleName@.h
 @ModHxx@	LINK_LIBRARIES ${CIMG_LINK_LIBRARIES} ${Vigra_LIBRARIES}
-	)
 )
 
 # add additional modules here
