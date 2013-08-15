@@ -57,7 +57,7 @@ public:
     /// ParameterList containing all unknowns of the Stencil.
     ParameterList<std::string> pUnknowns;
 
-    Parameter< double > blurfactorImg2;
+    Parameter< double > Scale_difference;
     virtual void updateStencil(
         const std::string& unknown,
         const Point4D<int>& p=Point4D<int>(), const int& v=0);
@@ -73,6 +73,7 @@ protected:
 
 
     void computeCovariances();
+    T estimateOptimalSmoothing(CImg<T> &img1,CImg<T> &img2,T mean1,T mean2, T var1, T noise);
     CImg<T> rhsx;
     CImg<T> rhsy;
 
