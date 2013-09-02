@@ -69,6 +69,8 @@ public:
 	Parameter < bool > scaleData;
 	/// scale levels
 	Parameter < unsigned int > levels;
+	/// level offset
+	Parameter < int > levelOffset;
 
 	/// create a new ReSample object
 	/// \param name          Instance name

@@ -50,6 +50,8 @@ ReSample<T>::ReSample(const std::string& name) :
 			scaleData, "scaleData", "scale data values, if set", false);
 	ParameteredObject::_addParameter (
 			levels, "levels", "scale levels", 5u);
+	ParameteredObject::_addParameter (
+			levelOffset, "levelOffset", "level offset", 0);
 
 	ParameteredObject::_setTags("charon-flow;MultiscaleApproaches;CImg");
 }
@@ -71,7 +73,7 @@ void ReSample<T>::execute()
 	cimg_library::CImgList<T>& _out = out();
 
 	// compute target size (width, height)
-	const unsigned int stepsDown = _levels-1-_level;
+	const unsigned int stepsDown = _levels-1-_level-levelOffset();
 	const double shrink = std::pow(scaleFactor(),(double)stepsDown);
 	unsigned int _twidth = _width * shrink;
 	unsigned int _theight = _height * shrink;
