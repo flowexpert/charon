@@ -533,6 +533,12 @@ ADD_CHARON_PLUGIN(pyramidrescalemask
 	${charon_INCLUDE_DIR}/PyramidRescaleMask.hxx
 	PLUGIN_LISTS Plugins
 )
+ADD_CHARON_PLUGIN(resample
+	ReSample.cpp
+	${charon_INCLUDE_DIR}/ReSample.h
+	${charon_INCLUDE_DIR}/ReSample.hxx
+	PLUGIN_LISTS Plugins
+)
 ADD_CHARON_PLUGIN(flowcomparator
 	FlowComparator.cpp
 	${charon_INCLUDE_DIR}/FlowComparator.h
