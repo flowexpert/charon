@@ -47,6 +47,8 @@ ReSample<T>::ReSample(const std::string& name) :
 	ParameteredObject::_addParameter (
 			scaleFactor, "scaleFactor", "scale factor", 0.5);
 	ParameteredObject::_addParameter (
+			scaleData, "scaleData", "scale data values, if set", false);
+	ParameteredObject::_addParameter (
 			levels, "levels", "scale levels", 5u);
 
 	ParameteredObject::_setTags("charon-flow;MultiscaleApproaches;CImg");
@@ -79,10 +81,11 @@ void ReSample<T>::execute()
 	_size.yEnd = _theight;
 	size() = &_size;
 
+	const double _scaling = scaleData() ? shrink : 1.0;
 	cimglist_for( _out, nn )
 	cimg_forXYZC( _out[nn], xx, yy, zz, cc )
 	{
-		_out[nn].atXYZC(xx, yy, zz, cc) = _interpolator->interpolate(_in[nn], xx/shrink, yy/shrink, zz, cc);
+		_out[nn].atXYZC(xx, yy, zz, cc) = _scaling * _interpolator->interpolate(_in[nn], xx/shrink, yy/shrink, zz, cc);
 	}
 	
 }

@@ -65,6 +65,8 @@ public:
 
 	/// scale factor
 	Parameter < double > scaleFactor;
+	/// scale data, if set
+	Parameter < bool > scaleData;
 	/// scale levels
 	Parameter < unsigned int > levels;
 
