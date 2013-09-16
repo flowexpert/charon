@@ -126,7 +126,7 @@ void PyramidRescaleMatlab<T>::execute() {
 #endif
 		fo = cimg_library::CImgList<T>( flowN, tx, ty, flowZ, flowC );
 		cimglist_for(fo,kk) {
-			assert(fo.at(kk).is_sameXY(sx,sy));
+//			assert(fo.at(kk).is_sameXY(sx,sy));
 			fi.at(kk).correlate(filterMask);
 			cimg_forXYZC( so.at(kk), x, y, z, c )
 			{
