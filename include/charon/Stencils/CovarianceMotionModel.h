@@ -54,6 +54,9 @@ public:
 
 	/// images
 	InputSlot< cimg_library::CImgList<T> > images;
+    OutputSlot< cimg_library::CImgList<T> > rhs_out;
+    /// images
+    InputSlot< cimg_library::CImgList<T> > flow;
     /// ParameterList containing all unknowns of the Stencil.
     ParameterList<std::string> pUnknowns;
 
@@ -65,15 +68,31 @@ public:
     virtual cimg_library::CImg<T> apply(
             const cimg_library::CImgList<T>& seq,
             const unsigned int frame) const;
+    unsigned int count;
+    Parameter<int> update_on_nth_iter;
+    Parameter<int> windowsize;
+    Parameter<bool> local;
+
 
 
 protected:
 	/// Update object.
 	virtual void execute();
 
-
+    void warpIm2(CImg<T> &img2);
     void computeCovariances();
+    void computeLocalCovariances();
+    void computeLocalCovariancesHist();
+    CImg<T> computeGaussianWindow(int size, float sd_in);
+    void computeLocalHistogram(CImg<T> im1w,CImg<T> im2w,CImg<T>& window, CImg<T>& hist_xy,CImg<T>& hist_deriv_xy,CImg<float>& hist,CImg<float>& hist_deriv);
+    void computeLocalGaussianProb(CImg<T> im1w,CImg<T> im2w,CImg<T>& window, CImg<T>& hist_xy,CImg<T>& hist_deriv_xy,CImg<float>& hist,CImg<float>& hist_deriv);
+    void getImagePatches(int x,int y, CImg<T>& window, CImg<T>& im1,CImg<T>& im2_warp,CImg<T> &im2window_warp,CImgList<T>& grad_im2_warp,CImgList<T>& grad_im2window_warp);
     T estimateOptimalSmoothing(CImg<T> &img1,CImg<T> &img2,T mean1,T mean2, T var1, T noise);
+    T getLocalMeanHist(const CImg<T>& window,const CImg<T> im);
+
+    cimg_library::CImg<T> img1ZeroMean,img2ZeroMean;
+    cimg_library::CImgList<T> img2grad;
+    cimg_library::CImg<T> flowx,flowy;
     CImg<T> rhsx;
     CImg<T> rhsy;
 
