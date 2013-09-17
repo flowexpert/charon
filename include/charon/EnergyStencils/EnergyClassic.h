@@ -99,6 +99,9 @@ public:
 	/// stencil's count of gradient components
 	int getEnergyGradientDimensions();
 
+	/// if set, also diagonal cliques are considered for regularization
+	Parameter<bool> diagonalRegularization;
+
 	/// ParameterList containing all unknowns of the Stencil.
 	ParameterList<std::string> pUnknowns;
 

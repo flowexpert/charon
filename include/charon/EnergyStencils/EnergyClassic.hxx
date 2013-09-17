@@ -62,6 +62,8 @@ EnergyClassic<T>::EnergyClassic(const std::string& name) :
 	this->_addInputSlot(matchMask, "matchMask", "mask indicating true (e.g. matched) positions", "CImgList<T>");
 
 	ParameteredObject::_addParameter(
+			diagonalRegularization, "diagonalRegularization", "if set, perform additional diagonal regularization");
+	ParameteredObject::_addParameter(
 			pUnknowns, "unknowns", "List of unknowns");
 
 	ParameteredObject::_setTags("charon-flow;Stencils;CImg");
@@ -224,10 +226,12 @@ void EnergyClassic<T>::updateStencil(
 
 	// motion component in neighborhood
 	T motionN, motionE, motionS, motionW;
+	T motionNE, motionSE, motionSW, motionNW;
 	T motionC = T(0);
 
 	// penalty in neighborhood
 	T pCN, pCE, pCS, pCW;
+	T pCNE, pCSE, pCSW, pCNW;
 	T pSum = T(0.0);
 	T pSumMask = T(0.0);
 	T motionSum = T(0.0);
@@ -239,12 +243,17 @@ void EnergyClassic<T>::updateStencil(
 
 	// fill region mask with given regularization mask
 	bool regionMaskC = true, regionMaskN = true, regionMaskE = true, regionMaskS = true, regionMaskW = true;
+	bool regionMaskNE = true, regionMaskSE = true, regionMaskSW = true, regionMaskNW = true;
 	if (regionMaskConnected) {
-		regionMaskC &= (bool)regionMask()[0].atXYZC(p.x,   p.y,   0, 0);
-		regionMaskN &= (bool)regionMask()[0].atXYZC(p.x,   p.y-1, 0, 0);
-		regionMaskE &= (bool)regionMask()[0].atXYZC(p.x+1, p.y,   0, 0);
-		regionMaskS &= (bool)regionMask()[0].atXYZC(p.x,   p.y+1, 0, 0);
-		regionMaskW &= (bool)regionMask()[0].atXYZC(p.x-1, p.y,   0, 0);
+		regionMaskC  &= (bool)regionMask()[0].atXYZC(p.x,   p.y,   0, 0);
+		regionMaskN  &= (bool)regionMask()[0].atXYZC(p.x,   p.y-1, 0, 0);
+		regionMaskNE &= (bool)regionMask()[0].atXYZC(p.x+1, p.y-1, 0, 0);
+		regionMaskE  &= (bool)regionMask()[0].atXYZC(p.x+1, p.y,   0, 0);
+		regionMaskSE &= (bool)regionMask()[0].atXYZC(p.x+1, p.y+1, 0, 0);
+		regionMaskS  &= (bool)regionMask()[0].atXYZC(p.x,   p.y+1, 0, 0);
+		regionMaskSW &= (bool)regionMask()[0].atXYZC(p.x-1, p.y+1, 0, 0);
+		regionMaskW  &= (bool)regionMask()[0].atXYZC(p.x-1, p.y,   0, 0);
+		regionMaskNW &= (bool)regionMask()[0].atXYZC(p.x-1, p.y-1, 0, 0);
 	}
 
 	// get match mask
@@ -257,24 +266,53 @@ void EnergyClassic<T>::updateStencil(
 	for(unsigned int i=0; i< this->pUnknowns.size() ; i++) {
 		SubStencil<T> entry;
 		if (motionConnected) {
-			motionC = motionUV().atNXYZC( i, p.x,   p.y,   p.z, 0 );
-			motionN = motionUV().atNXYZC( i, p.x,   p.y-1, p.z, 0 );
-			motionE = motionUV().atNXYZC( i, p.x+1, p.y,   p.z, 0 );
-			motionS = motionUV().atNXYZC( i, p.x,   p.y+1, p.z, 0 );
-			motionW = motionUV().atNXYZC( i, p.x-1, p.y,   p.z, 0 );
-			pCN = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
-			                                                  pow(double(motionC - motionN), 2.0) );
-			pCE = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
-			                                                  pow(double(motionC - motionE), 2.0) );
-			pCS = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
-			                                                  pow(double(motionC - motionS), 2.0) );
-			pCW = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
-			                                                  pow(double(motionC - motionW), 2.0) );
+			motionC  = motionUV().atNXYZC( i, p.x,   p.y,   p.z, 0 );
+			motionN  = motionUV().atNXYZC( i, p.x,   p.y-1, p.z, 0 );
+			motionNE = motionUV().atNXYZC( i, p.x+1, p.y-1, p.z, 0 );
+			motionE  = motionUV().atNXYZC( i, p.x+1, p.y,   p.z, 0 );
+			motionSE = motionUV().atNXYZC( i, p.x+1, p.y+1, p.z, 0 );
+			motionS  = motionUV().atNXYZC( i, p.x,   p.y+1, p.z, 0 );
+			motionSW = motionUV().atNXYZC( i, p.x-1, p.y+1, p.z, 0 );
+			motionW  = motionUV().atNXYZC( i, p.x-1, p.y,   p.z, 0 );
+			motionNW = motionUV().atNXYZC( i, p.x-1, p.y-1, p.z, 0 );
+			pCN  = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                   pow(double(motionC - motionN), 2.0) );
+			pCNE = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                   pow(double(motionC - motionNE), 2.0) );
+			pCE  = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                   pow(double(motionC - motionE), 2.0) );
+			pCSE = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                   pow(double(motionC - motionSE), 2.0) );
+			pCS  = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                   pow(double(motionC - motionS), 2.0) );
+			pCSW = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                   pow(double(motionC - motionSW), 2.0) );
+			pCW  = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                   pow(double(motionC - motionW), 2.0) );
+			pCNW = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1,
+			                                                   pow(double(motionC - motionNW), 2.0) );
 		} else {
-			pCN = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
-			pCE = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
-			pCS = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
-			pCW = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCN  = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCNE = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCE  = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCSE = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCS  = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCSW = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCW  = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+			pCNW = _lamb*_penaltyFunction->getPenaltyGradient( -1, p.x, p.y, p.z, -1, 0.0 );
+		}
+		// weighting of diagonal cliques
+		if (diagonalRegularization()) {
+			T w = pow(double(2.0), -0.5);
+			pCNE *= w;
+			pCSE *= w;
+			pCSW *= w;
+			pCNW *= w;
+		} else {
+			pCNE = T(0.0);
+			pCSE = T(0.0);
+			pCSW = T(0.0);
+			pCNW = T(0.0);
 		}
 
 		_dataMask.assign(3,3,1,1);
@@ -282,7 +320,7 @@ void EnergyClassic<T>::updateStencil(
 		_center = Point4D<int>(1,1,0,0);
 		_dataMask.fill(    0, 0, 0,     0, 0, 0,     0, 0, 0 );
 		if (pUnknowns[i] == unknown) {
-			_patternMask.fill( 0, 1, 0,     1, 1, 1,     0, 1, 0 );
+			_patternMask.fill( 1, 1, 1,     1, 1, 1,     1, 1, 1 );
 		} else {
 			_patternMask.fill( 0, 0, 0,     0, 0, 0,     0, 0, 0 );
 		}
@@ -300,47 +338,67 @@ void EnergyClassic<T>::updateStencil(
 				this->_rhs = _lamb * motionC;
 			} else {
 				pSum =  T(0.0);
-				pSum += (regionMaskN ? pCN : T(0.0));
-				pSum += (regionMaskE ? pCE : T(0.0));
-				pSum += (regionMaskS ? pCS : T(0.0));
-				pSum += (regionMaskW ? pCW : T(0.0));
+				pSum += (regionMaskN  ? pCN  : T(0.0));
+				pSum += (regionMaskNE ? pCNE : T(0.0));
+				pSum += (regionMaskE  ? pCE  : T(0.0));
+				pSum += (regionMaskSE ? pCSE : T(0.0));
+				pSum += (regionMaskS  ? pCS  : T(0.0));
+				pSum += (regionMaskSW ? pCSW : T(0.0));
+				pSum += (regionMaskW  ? pCW  : T(0.0));
+				pSum += (regionMaskNW ? pCNW : T(0.0));
 				pSumMask = pSum;
 
 				if (pSumMask) {
-					_dataMask.fill( T(0.0),                        (regionMaskN ? -pCN : T(0.0)), T(0.0),
-					                (regionMaskW ? -pCW : T(0.0)), pSum,                                  (regionMaskE ? -pCE : T(0.0)),
-					                T(0.0),                        (regionMaskS ? -pCS : T(0.0)), T(0.0) );
+					_dataMask.fill( (regionMaskNW ? -pCNW : T(0.0)), (regionMaskN ? -pCN : T(0.0)), (regionMaskNE ? -pCNE : T(0.0)),
+					                (regionMaskW  ? -pCW  : T(0.0)), pSum,                          (regionMaskE  ? -pCE  : T(0.0)),
+					                (regionMaskSW ? -pCSW : T(0.0)), (regionMaskS ? -pCS : T(0.0)), (regionMaskSE ? -pCSE : T(0.0))  );
 				} else {  //  if all neighbors are out masked then inpainting
-					pSum = pCN + pCE + pCS + pCW;
+					pSum =  pCN + pCNE + pCE + pCSE + pCS + pCSW + pCW + pCNW;
 
-					_dataMask.fill( T(0.0), -pCN, T(0.0),
+					_dataMask.fill( -pCNW, -pCN,  -pCNE,
 					                -pCW,   pSum, -pCE,
-					                T(0.0), -pCS, T(0.0) );
+					                -pCSW, -pCS,  -pCSE );
 				}
 
 				if (motionConnected) {
 					if (pSumMask) {
 						motionSum =  T(0.0);
-						motionSum += (regionMaskN ? motionN * pCN : T(0.0));
-						motionSum += (regionMaskE ? motionE * pCE : T(0.0));
-						motionSum += (regionMaskS ? motionS * pCS : T(0.0));
-						motionSum += (regionMaskW ? motionW * pCW : T(0.0));
+						motionSum += (regionMaskN  ? motionN  * pCN  : T(0.0));
+						motionSum += (regionMaskNE ? motionNE * pCNE : T(0.0));
+						motionSum += (regionMaskE  ? motionE  * pCE  : T(0.0));
+						motionSum += (regionMaskSE ? motionSE * pCSE : T(0.0));
+						motionSum += (regionMaskS  ? motionS  * pCS  : T(0.0));
+						motionSum += (regionMaskSW ? motionSW * pCSW : T(0.0));
+						motionSum += (regionMaskW  ? motionW  * pCW  : T(0.0));
+						motionSum += (regionMaskNW ? motionNW * pCNW : T(0.0));
 						motionCenterSum =  T(0.0);
-						motionCenterSum += (regionMaskN ? motionC * pCN : T(0.0));
-						motionCenterSum += (regionMaskE ? motionC * pCE : T(0.0));
-						motionCenterSum += (regionMaskS ? motionC * pCS : T(0.0));
-						motionCenterSum += (regionMaskW ? motionC * pCW : T(0.0));
+						motionCenterSum += (regionMaskN  ? motionC * pCN  : T(0.0));
+						motionCenterSum += (regionMaskNE ? motionC * pCNE : T(0.0));
+						motionCenterSum += (regionMaskE  ? motionC * pCE  : T(0.0));
+						motionCenterSum += (regionMaskSE ? motionC * pCSE : T(0.0));
+						motionCenterSum += (regionMaskS  ? motionC * pCS  : T(0.0));
+						motionCenterSum += (regionMaskSW ? motionC * pCSW : T(0.0));
+						motionCenterSum += (regionMaskW  ? motionC * pCW  : T(0.0));
+						motionCenterSum += (regionMaskNW ? motionC * pCNW : T(0.0));
 					} else {
 	                                        motionSum =  T(0.0);
-	                                        motionSum += motionN * pCN;
-	                                        motionSum += motionE * pCE;
-	                                        motionSum += motionS * pCS;
-	                                        motionSum += motionW * pCW;
+	                                        motionSum += motionN  * pCN;
+						motionSum += motionNE * pCNE;
+	                                        motionSum += motionE  * pCE;
+						motionSum += motionSE * pCSE;
+	                                        motionSum += motionS  * pCS;
+						motionSum += motionSW * pCSW;
+	                                        motionSum += motionW  * pCW;
+						motionSum += motionNW * pCNW;
 	                                        motionCenterSum =  T(0.0);
 	                                        motionCenterSum += motionC * pCN;
+						motionCenterSum += motionC * pCNE;
 	                                        motionCenterSum += motionC * pCE;
+						motionCenterSum += motionC * pCSE;
 	                                        motionCenterSum += motionC * pCS;
+						motionCenterSum += motionC * pCSW;
                                 	        motionCenterSum += motionC * pCW;
+						motionCenterSum += motionC * pCNW;
 					}
 					this->_rhs = motionSum - motionCenterSum;
 				}
