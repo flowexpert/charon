@@ -121,6 +121,12 @@ ADD_CHARON_PLUGIN(forstatement
 	PLUGIN_LISTS charon-core-modules
 )
 
+ADD_CHARON_PLUGIN(virtualslotswitch
+        VirtualSlotSwitch.cpp
+        ${CHARON_CORE_INCLUDE_DIR}/VirtualSlotSwitch.h
+        PLUGIN_LISTS charon-core-modules
+)
+
 ADD_CHARON_PLUGIN(groupobject
 	GroupObject.cpp
 	${CHARON_CORE_INCLUDE_DIR}/GroupObject.h
