@@ -293,6 +293,14 @@ LogDecorators::UpdateDynamics::UpdateDynamics(QString fileName) :
 		_fileName(fileName) {
 }
 
+QString LogDecorators::UpdateDynamics::title() const {
+	return tr("Plugin Information Update of Dynamic Modules");
+}
+
+QString LogDecorators::UpdateDynamics::desc() const {
+	return tr("Output of update-dynamics process:");
+}
+
 QString LogDecorators::UpdateDynamics::logFileName() const {
 	return FileManager::instance().configDir()
 			.absoluteFilePath("updateDynLog.txt");

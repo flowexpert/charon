@@ -69,7 +69,7 @@
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="221"/>
-        <location filename="../src/LogDecorators.cpp" line="360"/>
+        <location filename="../src/LogDecorators.cpp" line="368"/>
         <source>Execution finished.</source>
         <translation>Ausführung beendet.</translation>
     </message>
@@ -125,7 +125,7 @@ Message:
     </message>
     <message>
         <location filename="../src/CharonRun.cpp" line="251"/>
-        <location filename="../src/LogDecorators.cpp" line="362"/>
+        <location filename="../src/LogDecorators.cpp" line="370"/>
         <source>Error during execution:</source>
         <translation>Fehler während der Ausführung:</translation>
     </message>
@@ -419,32 +419,32 @@ Please use a valid name.
 <context>
     <name>LogDecorators::RunWorkflow</name>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="315"/>
+        <location filename="../src/LogDecorators.cpp" line="323"/>
         <source>missing workflow file</source>
         <translation>keine Datei angegeben</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="316"/>
+        <location filename="../src/LogDecorators.cpp" line="324"/>
         <source>The workflow cannot be started because it has not been saved to disk (empty filename given). Please save it and retry execution.</source>
         <translation>Die Ausführung konnte nicht gestartet werden, da das Dokument nicht gespeichert wurde. Bitte speichern und erneut ausführen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="341"/>
+        <location filename="../src/LogDecorators.cpp" line="349"/>
         <source>wait before workflow execution</source>
         <translation>vor der Ausführung warten</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="342"/>
+        <location filename="../src/LogDecorators.cpp" line="350"/>
         <source>Waiting because &lt;em&gt;delayExecution&lt;/em&gt; option set. You can now attach your debugger to the run process. Workflow will be started, when you close this message box.</source>
         <translation>Warte mit dem Start der Ausführung, da die entsprechende Option gesetzt ist. Sie können jetzt den Debugger an den Ausführungsprozess anhängen. Die Ausführung beginnt, wenn sie diese Nachricht schließen.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="370"/>
+        <location filename="../src/LogDecorators.cpp" line="378"/>
         <source>Workflow execution finished.</source>
         <translation>Ausführung wurde beendet.</translation>
     </message>
     <message>
-        <location filename="../src/LogDecorators.cpp" line="371"/>
+        <location filename="../src/LogDecorators.cpp" line="379"/>
         <source>Plugins stay loaded until you close this dialog.</source>
         <translation>Die Plugins bleiben geladen, bis dieser Dialog geschlossen wird.</translation>
     </message>
@@ -510,6 +510,19 @@ Please use a valid name.
         <location filename="../src/LogDecorators.cpp" line="191"/>
         <source>passed</source>
         <translation>Erfolg</translation>
+    </message>
+</context>
+<context>
+    <name>LogDecorators::UpdateDynamics</name>
+    <message>
+        <location filename="../src/LogDecorators.cpp" line="297"/>
+        <source>Plugin Information Update of Dynamic Modules</source>
+        <translation>Informationen über dynamische Plugins aktualisieren</translation>
+    </message>
+    <message>
+        <location filename="../src/LogDecorators.cpp" line="301"/>
+        <source>Output of update-dynamics process:</source>
+        <translation>Ausgabe der Aktualisierung:</translation>
     </message>
 </context>
 <context>
@@ -662,47 +675,47 @@ Fundstelle</translation>
         <translation>Der Ausführungsprozess hat nicht reagiert.&lt;br&gt;Prozess töten?</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="378"/>
+        <location filename="../src/LogDialog.cpp" line="387"/>
         <source>process failed to start</source>
         <translation>der Prozess konnte nicht gestartet werden</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="381"/>
+        <location filename="../src/LogDialog.cpp" line="390"/>
         <source>process crashed after start</source>
         <translation>der Prozess ist nach dem Start abgestürzt</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="384"/>
+        <location filename="../src/LogDialog.cpp" line="393"/>
         <source>process timeout</source>
         <translation>Zeit abgelaufen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="387"/>
+        <location filename="../src/LogDialog.cpp" line="396"/>
         <source>write error</source>
         <translation>Fehler beim Schreiben</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="390"/>
+        <location filename="../src/LogDialog.cpp" line="399"/>
         <source>read error</source>
         <translation>Fehler beim Lesen</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="393"/>
+        <location filename="../src/LogDialog.cpp" line="402"/>
         <source>unknown error</source>
         <translation>sonstiger Fehler</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="398"/>
+        <location filename="../src/LogDialog.cpp" line="407"/>
         <source>Error during process execution:</source>
         <translation>Fehler währen des Ausführens:</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="425"/>
+        <location filename="../src/LogDialog.cpp" line="434"/>
         <source>Save Log File</source>
         <translation>Protokoll speichern</translation>
     </message>
     <message>
-        <location filename="../src/LogDialog.cpp" line="426"/>
+        <location filename="../src/LogDialog.cpp" line="435"/>
         <source>Text File (*.txt *.log);;Html File (*.html *.htm)</source>
         <translation>Textdatei (*.txt *.log);;Html Datei (*.html *.htm)</translation>
     </message>
@@ -1389,38 +1402,38 @@ oder Dateierweiterung (.so/.dll/...) angeben</translation>
         <translation>Priorität</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="642"/>
+        <location filename="../src/ParameterFileModel.cpp" line="646"/>
         <source>File %1 loaded.</source>
         <translation>Datei %1 geladen.</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="695"/>
+        <location filename="../src/ParameterFileModel.cpp" line="699"/>
         <source>Open File</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="696"/>
+        <location filename="../src/ParameterFileModel.cpp" line="700"/>
         <source>ParameterFiles (*.wrp);;All Files (*.*)</source>
         <translation>ParameterDateien (*.wrp);;All Files (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="699"/>
+        <location filename="../src/ParameterFileModel.cpp" line="703"/>
         <source>no file selected</source>
         <translation>keine Datei ausgewählt</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="702"/>
-        <location filename="../src/ParameterFileModel.cpp" line="707"/>
+        <location filename="../src/ParameterFileModel.cpp" line="706"/>
+        <location filename="../src/ParameterFileModel.cpp" line="711"/>
         <source>Error loading file</source>
         <translation>Fehler beim Laden der Datei</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="703"/>
+        <location filename="../src/ParameterFileModel.cpp" line="707"/>
         <source>File &lt;em&gt;%1&lt;/em&gt; does not exist or is no file!</source>
         <translation>Datei &lt;em&gt;%1&lt;/em&gt; existiert nicht!</translation>
     </message>
     <message>
-        <location filename="../src/ParameterFileModel.cpp" line="708"/>
+        <location filename="../src/ParameterFileModel.cpp" line="712"/>
         <source>File &lt;em&gt;%1&lt;/em&gt; is not readable!</source>
         <translation>Datei &lt;em&gt;%1&lt;/em&gt; ist nicht lesbar!</translation>
     </message>

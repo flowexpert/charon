@@ -65,6 +65,9 @@ public:
 	 */
 	bool waitForFinished(int msecs=1500);
 
+	/// query for possible error lines in logfile
+	bool hasErrorLines();
+
 public slots:
 	/// handle process termination
 	/** \param r       return value */
@@ -128,6 +131,7 @@ private:
 	QProcess* _proc;              ///< tuchulcha-run process
 	QFile* _logFile;              ///< log content output
 	QMutex* _logMutex;            ///< avoid parallel writes to log window
+	bool _errorLinesDetected;     ///< true if log contains error lines
 };
 
 #endif // LOGDIALOG_H

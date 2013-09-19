@@ -44,7 +44,7 @@ LogDialog::LogDialog(
 				LogDecorators::Decorator* dec,
 				QWidget* pp, Qt::WindowFlags wf) :
 		QDialog(pp,wf), _log(0), _logProx(0), _decorator(dec), _proc(0),
-		_logFile(0), _logMutex(new QMutex())
+		_logFile(0), _logMutex(new QMutex()), _errorLinesDetected(false)
 {
 	_proc = new QProcess(this);
 	_proc->setObjectName("proc");
@@ -258,6 +258,10 @@ void LogDialog::on_proc_readyReadStandardOutput() {
 		}
 		logFile << cur << endl;
 		_decorator->processLine(cur);
+		if (cur.contains(
+				QRegExp("^\\(EE\\)\\s+",Qt::CaseInsensitive))) {
+			_errorLinesDetected = true;
+		}
 		logList << cur;
 		if (maxBuf && logList.size() > maxBuf) {
 			logList.removeFirst();
@@ -273,6 +277,7 @@ void LogDialog::on_proc_readyReadStandardOutput() {
 }
 
 void LogDialog::on_proc_readyReadStandardError() {
+	_errorLinesDetected = true;
 	QMutexLocker mLock(_logMutex);
 	QString origS = QString::fromLocal8Bit(_proc->readAllStandardError());
 	QString cur;
@@ -305,6 +310,10 @@ void LogDialog::on_proc_readyReadStandardError() {
 	}
 
 	mLock.unlock();
+}
+
+bool LogDialog::hasErrorLines() {
+	return _errorLinesDetected;
 }
 
 void LogDialog::reprint() {

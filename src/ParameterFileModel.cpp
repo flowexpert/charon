@@ -623,7 +623,11 @@ void ParameterFileModel::_updateDynamics() {
 	if (QApplication::instance()) {
 		LogDialog dialog(
 			new LogDecorators::UpdateDynamics(_fileName));
-		dialog.waitForFinished(1000);
+		bool finished = dialog.waitForFinished(500);
+		if (!finished || dialog.hasErrorLines()) {
+			dialog.show();
+			dialog.exec();
+		}
 	}
 	else {
 		qDebug("(WW) no qapplication, skipping dynamic loading");

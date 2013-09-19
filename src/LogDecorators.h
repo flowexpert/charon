@@ -61,9 +61,9 @@ namespace LogDecorators {
 		virtual QString logFileName() const = 0;
 		/// debug output mode
 		bool debugOutput;
-		/// check if current line shows that running finished
-		/** \param line    current line
-		 *  \retval true   line shows that execution finished */
+		/// decorator hook to allow log line parsing
+		/** e.g. to detect finishing (to emit the corresponding signal)
+		 *  \param line    current line */
 		virtual void processLine(QString line);
 		/// inform about finished processing
 		virtual void finishProcessing();
@@ -128,6 +128,8 @@ namespace LogDecorators {
 		/// constructor
 		/** \param fileName worflow file to analyze */
 		UpdateDynamics(QString fileName);
+		virtual QString title() const;
+		virtual QString desc() const;
 		virtual QStringList arguments() const;
 		virtual QString logFileName() const;
 	private:
