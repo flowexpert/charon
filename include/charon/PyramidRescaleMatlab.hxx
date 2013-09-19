@@ -91,8 +91,8 @@ void PyramidRescaleMatlab<T>::execute() {
 	const double _scaleFactor = scaleFactor();
 	const double _scaleInverse = T(1.0) / _scaleFactor;
 	const double shrink = std::pow(scaleFactor(),(double)stepsDown);
-	const int tx = _size.xEnd = sx * shrink;
-	const int ty = _size.yEnd = sy * shrink;
+	const int tx = _size.xEnd = std::round( sx * shrink );
+	const int ty = _size.yEnd = std::round( sy * shrink );
 
 	// compute filter mask for blurring
 	cimg_library::CImg<T> filterMask = _computeFilterMask( T(sigma()) );
@@ -102,15 +102,15 @@ void PyramidRescaleMatlab<T>::execute() {
 	tmp = si;
 	for (unsigned int i=0; i<stepsDown; i++) {
 		tmp2 = cimg_library::CImgList<T>( tmp.size(),
-		                                  tmp[0].width()*_scaleFactor, tmp[0].height()*_scaleFactor,
+		                                  std::round( tmp[0].width()*_scaleFactor ), std::round( tmp[0].height()*_scaleFactor ),
 		                                  tmp[0].depth(), tmp[0].spectrum() );
 		cimglist_for(tmp,kk) {
 			tmp.at(kk).correlate(filterMask);
 			cimg_forXYZC( tmp2.at(kk), x, y, z, c )
 			{
 				tmp2[kk].atXYZC( x, y, z, c )
-				= tmp[kk].atXYZC( int((double(x+0.5))*_scaleInverse),
-				                  int((double(y+0.5))*_scaleInverse), z, c );
+				= tmp[kk].atXYZC( int((double(x+0.5))*_scaleInverse),          // pixel center
+				                  int((double(y+0.5))*_scaleInverse), z, c );  // pixel center
 			}
 		}
 		tmp = tmp2;
@@ -122,7 +122,7 @@ void PyramidRescaleMatlab<T>::execute() {
 	if(fo.is_sameXY(si)) {
 		// scale down (initial guess)
 #ifndef NDEBUG
-		sout << "\t" << "scaling down to " << tx << "x" << ty << std::endl;
+		sout << "\t" << "scaling down flow to " << tx << "x" << ty << std::endl;
 #endif
 		fo = cimg_library::CImgList<T>( flowN, tx, ty, flowZ, flowC );
 		cimglist_for(fo,kk) {
@@ -139,7 +139,7 @@ void PyramidRescaleMatlab<T>::execute() {
 	else {
 		// scale up last result
 #ifndef NDEBUG
-		sout << "\t" << "scaling up to "
+		sout << "\t" << "scaling up flow to "
 				<< tx << "x" << ty << ": got "
 				<< fo[0].width() << "x" << fo[0].height()
 				<< " expected: "
@@ -172,9 +172,6 @@ cimg_library::CImg<T> PyramidRescaleMatlab<T>::_computeFilterMask( T smooth_sigm
 		mask.atXY(x,y) /= sum;
 	}
 
-	mask = cimg_library::CImg<T>( 1, 1, 1, 1 );
-	mask(0,0,0,0) = T(1.0);
-	mask.save("mask.cimg");
 	return mask;
 }
 
