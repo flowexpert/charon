@@ -56,6 +56,7 @@ VirtualSlotSwitch::VirtualSlotSwitch(const std::string& name) :
 		"number_of_inputs",
 		2, "int");
     _setDynamic(true);
+    oldselection=0;
 
 
 
@@ -82,7 +83,13 @@ void VirtualSlotSwitch::execute() {
         raise(msg.str());
 
     }
-    output.setVirtualPartnerSlot(_virtualInputSlots[selected_in]);
+    if(oldselection!=selected_in)
+    {
+        output.setVirtualPartnerSlot(_virtualInputSlots[selected_in]);
+
+        _virtualInputSlots[oldselection]->setVirtualPartnerSlot(_virtualOutputSlots[oldselection]);
+        oldselection=selected_in;
+    }
 
 
 }

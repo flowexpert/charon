@@ -67,6 +67,7 @@ protected:
     virtual void prepareDynamicInterface(const ParameterFile &file);
     std::vector< VirtualInputSlot* > _virtualInputSlots;
     std::vector<VirtualOutputSlot*> _virtualOutputSlots;
+    int oldselection;
 
     void setNumberOfVirtualSlots(int num);
 };
