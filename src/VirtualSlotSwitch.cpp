@@ -55,6 +55,10 @@ VirtualSlotSwitch::VirtualSlotSwitch(const std::string& name) :
 		number_of_inputs, "number_of_inputs",
 		"number_of_inputs",
 		2, "int");
+    ParameteredObject::_addParameter< bool >(
+        boolean_inputnumber, "boolean_inputnumber",
+        "cast inputnumber to bool",
+        0, "bool");
     _setDynamic(true);
     oldselection=0;
 
@@ -75,7 +79,13 @@ void VirtualSlotSwitch::execute() {
     if(statement.connected())
         selected_in=statement();
     if(inputnumber.connected())
+    {
+
         selected_in=inputnumber();
+        if(boolean_inputnumber())
+            if(selected_in)
+                selected_in=1;
+    }
     if(selected_in>=_virtualInputSlots.size()||selected_in<0)
     {
         std::stringstream msg;
@@ -102,6 +112,7 @@ void VirtualSlotSwitch::prepareDynamicInterface(const ParameterFile &file)
         raise("Number of inputs must be at least 2");
     setNumberOfVirtualSlots(number_of_inputs);
     output.setVirtualPartnerSlot(_virtualInputSlots[0]);
+
 }
 
 void VirtualSlotSwitch::setNumberOfVirtualSlots(int num)

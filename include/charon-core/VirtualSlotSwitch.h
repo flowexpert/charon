@@ -60,7 +60,7 @@ public:
 	/// number_of_inputs
 	Parameter< int > number_of_inputs;
 
-
+    Parameter< bool > boolean_inputnumber;
 protected:
 	/// Update object.
 	virtual void execute();
