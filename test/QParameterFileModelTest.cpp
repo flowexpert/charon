@@ -42,6 +42,7 @@ void QParameterFileModelTest::initTestCase() {
 
 	// same content as ParameterFileModel
 	model = new ParameterFileModel;
+	model->setHandleDynamics(false);
 	model->load(fileName);
 }
 

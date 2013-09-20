@@ -51,7 +51,8 @@ ParameterFileModel::ParameterFileModel(
 		_metaInfos(0),
 		_useMetaInfo(false),
 		_onlyParams(false),
-		_minPriority(0)
+		_minPriority(0),
+		_handleDynamics(true)
 {
 	// this ParameterFile stores the description of classes.
 	if (!metaFile.isEmpty()) {
@@ -619,8 +620,16 @@ void ParameterFileModel::clear() {
 	}
 }
 
+void ParameterFileModel::setHandleDynamics(bool val) {
+	_handleDynamics = val;
+}
+
 void ParameterFileModel::_updateDynamics() {
-	if (QApplication::instance()) {
+	if (!_handleDynamics) {
+		qDebug("(DD) disabled dynamic-update");
+		return;
+	}
+	else if (QApplication::instance()) {
 		LogDialog dialog(
 			new LogDecorators::UpdateDynamics(_fileName));
 		bool finished = dialog.waitForFinished(500);

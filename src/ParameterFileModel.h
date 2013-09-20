@@ -331,6 +331,9 @@ public slots:
 	 */
 	virtual QString setPrefix(const QString& prefix);
 
+	/// set _handleDynamics
+	void setHandleDynamics(bool);
+
 	/// load metaFile
 	/** \param  fileName        filename to load from */
 	virtual void loadMetaInfo(const QString& fileName);
@@ -407,6 +410,9 @@ private:
 
 	/// minimum priority to be listed
 	int _minPriority;
+
+	/// handle dynamics by calling update-dynamics process
+	bool _handleDynamics;
 
 	/// update dynamic objects
 	void _updateDynamics();
