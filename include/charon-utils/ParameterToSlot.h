@@ -1,4 +1,4 @@
-/*  Copyright (C) 2012 Gerald Mwangi
+/*  Copyright (C) 2013 Gerald Mwangi
 
 	This file is part of Charon.
 
@@ -16,11 +16,12 @@
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file ParameterToSlot.h
+ *  Declaration of the parameter class ParameterToSlot.
  *  \author <a href="mailto:gerald.mwangi@gmx.de">
  *      Gerald Mwangi</a>
- *  \date 20.02.2012
- *  Declaraion of parameter class ParameterToSlot.
+ *  \date 20.09.2013
  */
+
 #ifndef _PARAMETERTOSLOT_H_
 #define _PARAMETERTOSLOT_H_
 
@@ -41,20 +42,24 @@
 /// Copies a parameter to a slot
 /** Copies a parameter to a slot
  */
-class parametertoslot_DECLDIR ParameterToSlot : public ParameteredObject {
+template <typename T>
+class parametertoslot_DECLDIR ParameterToSlot :
+		public TemplatedParameteredObject<T> {
 public:
 	/// default constructor
-	/// \param name             instance name
+	/// \param name          Instance name
 	ParameterToSlot(const std::string& name = "");
 
 	/// value from parameter
-	OutputSlot< double > value;
+	OutputSlot< T > value;
 
 	/// param_val to be copied to slot
-	Parameter< double > param_val;
+	Parameter< T > param_val;
 
+
+protected:
 	/// Update object.
 	virtual void execute();
 };
 
-#endif /* _PARAMETERTOSLOT_H_ */
+#endif // _PARAMETERTOSLOT_H_

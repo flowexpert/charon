@@ -55,7 +55,7 @@ BinOperatorValue<T>::BinOperatorValue(const std::string& name) :
 			operation, "operation",
 			"Operation selector ("
 			"Possible values: add,sub,mul,div,or,and,more,less,eq)",
-			"add", "{add;sub;mul;div;or;and;more;less;eq}");
+            "add", "{add;sub;mul;div;or;and;more;less;eq;mod}");
 
 //	ParameteredObject::_addParameter(
 //		operation, "operation",
@@ -92,6 +92,8 @@ void BinOperatorValue<T>::execute() {
 	    res=value1<value2;
 	else if(op=="eq")
 	    res=value1==value2;
+    else if(op=="mod")
+        res=((int)value1())%((int)value2());
 
 }
 

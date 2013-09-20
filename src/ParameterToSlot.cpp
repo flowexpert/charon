@@ -1,4 +1,4 @@
-/*  Copyright (C) 2012 Gerald Mwangi
+/*  Copyright (C) 2013 Gerald Mwangi
 
 	This file is part of Charon.
 
@@ -16,52 +16,35 @@
 	along with Charon.  If not, see <http://www.gnu.org/licenses/>.
 */
 /** \file ParameterToSlot.cpp
- *  Implementation of parameter class ParameterToSlot.
+ *  This file is needed for class ParameterToSlot to work as a charon plugin.
  *  \author <a href="mailto:gerald.mwangi@gmx.de">
  *      Gerald Mwangi</a>
- *  \date 20.02.2012
+ *  \date 20.09.2013
  */
 
-#include <charon-core/ParameteredObject.hxx>
-#include "../include/charon-utils/ParameterToSlot.h"
+#include <charon-utils/ParameterToSlot.hxx>
 
-ParameterToSlot::ParameterToSlot(const std::string& name) :
-		ParameteredObject(
-			"ParameterToSlot", name,
-			"<h2>Copies a parameter to a slot</h2><br>"
-			"Copies a parameter to a slot"
-		)
-{
-	ParameteredObject::_setTags("charon-utils") ;
-
-
-	ParameteredObject::_addOutputSlot(
-		value, "value",
-		"value from parameter",
-		"double");
-
-	ParameteredObject::_addParameter< double >(
-		param_val, "param_val",
-		"param_val to be copied to slot",
-		0, "double");
-
+/// Creates an instance of the plugin
+extern "C" parametertoslot_DECLDIR ParameteredObject*
+		create(const std::string & name, ParameteredObject::template_type t) {
+	switch(t) {
+	case ParameteredObject::TYPE_DOUBLE:
+		return new ParameterToSlot<double>(name);
+		break;
+	case ParameteredObject::TYPE_FLOAT:
+		return new ParameterToSlot<float>(name);
+		break;
+	case ParameteredObject::TYPE_INT:
+		return new ParameterToSlot<int>(name);
+		break;
+	default:
+		return 0;
+		break;
+	}
 }
 
-void ParameterToSlot::execute() {
-	PARAMETEREDOBJECT_AVOID_REEXECUTION;
-	ParameteredObject::execute();
-
-	value=param_val;
-}
-
-// the following functions are needed
-// for class ParameterToSlot to work as a charon plugin.
-extern "C" parametertoslot_DECLDIR ParameteredObject* create(
-		const std::string& name, ParameteredObject::template_type) {
-	return new ParameterToSlot(name);
-}
-
-extern "C" parametertoslot_DECLDIR void destroy(ParameteredObject* b) {
+/// Deletes an instance of the plugin
+extern "C" parametertoslot_DECLDIR void destroy(ParameteredObject * b) {
 	delete b;
 }
 
