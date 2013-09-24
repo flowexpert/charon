@@ -103,6 +103,9 @@ double FlowComparator<T>::getMeanEndpointError()  {
 			ParameteredObject::raise("emty mask list");
 		}
 		const cimg_library::CImg<T> &m = mask()[0];
+		if (!m.is_sameXYZC(epe)) {
+			ParameteredObject::raise("mask and flow dimensions do not match");
+		}
 		epe.mul(m);
 		return (epe.sum() / m.sum());
 	}
