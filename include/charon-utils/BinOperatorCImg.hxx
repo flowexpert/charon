@@ -60,6 +60,7 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 		"<li>Bitwise Not (in2 or withValue is ignored)</li>"
 		"<li>Left Bit Shift</li>"
 		"<li>Right Bit Shift</li>"
+		"<li>Max</li>"
 		"<li>Mask (Input is set to zero where mask(in2) is zero "
 		"and kept otherwise, acts as passtrough when withValue is true)</li>"
 		"<li>Natural logarithm (in2 or withValue is ignored)</li>"
@@ -86,7 +87,7 @@ BinOperatorCImg<T>::BinOperatorCImg(const std::string& name) :
 		"</ul>",
 		"{Passthrough;Addition;Difference;Multiplication;Division;Power of;"
 		"Absolute;Bitwise And;Bitwise Or;Bitwise Xor;Bitwise Not;"
-		"Left Shift;Right Shift;Mask;Log;Exp;Sin;Cos;Tan;Asin;Acos;Atan;Atan2;"
+		"Left Shift;Right Shift;Max;Mask;Log;Exp;Sin;Cos;Tan;Asin;Acos;Atan;Atan2;"
 		"Flow Magnitude;Limit Magnitude;to Gray;to RGB;Normal Distribution;Is Equal}") ;
 
 	ParameteredObject::_addParameter(
@@ -131,6 +132,20 @@ void BinOperatorCImg<T>::execute() {
 	}
 	else if (op == "Passthrough") {
 		out.assign(in1);
+	}
+	else if (op == "Max") {
+		if( !this->_withValue() && this->_in1().size() == this->_in2().size() )
+			for(size_t i = 0; i < this->_in1().size(); i++ )
+			{
+				out.push_back( in1[i].get_max( in2[i] ) );
+			}
+		else if( this->_withValue() )
+			for(size_t i = 0; i < this->_in1().size(); i++ )
+			{
+				out.push_back( in1[i].get_max( val ) );
+			}
+		else
+			throw( std::range_error("BinOperatorCImg<T>::execute(): _in1().size() != _in2().size()"));
 	}
 	else if(op == "Flow Magnitude") {
 		if (in1.size() < 2) {
