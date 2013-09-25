@@ -54,7 +54,7 @@ PyramidRescaleMatlab<T>::PyramidRescaleMatlab(const std::string& name) :
 			sigma, "sigma", "sigma used to blur before downsampling", 0.7);
 	ParameteredObject::_addParameter (
 			interpolation, "interpolation",
-			"interpolation type (see CImg::resize() documentation)", 3);
+			"interpolation type (used for flow only! See CImg::resize() documentation)", 3);
 
 	ParameteredObject::_setTags("charon-flow;MultiscaleApproaches;CImg");
 }
@@ -109,8 +109,7 @@ void PyramidRescaleMatlab<T>::execute() {
 			cimg_forXYZC( tmp2.at(kk), x, y, z, c )
 			{
 				tmp2[kk].atXYZC( x, y, z, c )
-				= tmp[kk].atXYZC( int((double(x+0.5))*_scaleInverse),          // pixel center
-				                  int((double(y+0.5))*_scaleInverse), z, c );  // pixel center
+				= _bilinearInterpolation( tmp[kk], x*_scaleInverse, y*_scaleInverse ) ;
 			}
 		}
 		tmp = tmp2;
@@ -180,6 +179,30 @@ T PyramidRescaleMatlab<T>::_gauss( T x, T mu, T sigma )
 {
 	return T(1.0/(sqrt(2.0*M_PI*sigma*sigma))
 	  * exp(double(-(x - mu)*(x - mu)/(2.0*sigma*sigma)))) ;
+}
+
+template<typename T>
+T PyramidRescaleMatlab<T>::_bilinearInterpolation( cimg_library::CImg<T> data, T x, T y )
+{
+	unsigned int x0 = floor(x);
+	unsigned int x1 = ceil(x);
+	unsigned int y0 = floor(y);
+	unsigned int y1 = ceil(y);
+
+	if (x0 == x1) x1++;
+	if (y0 == y1) y1++;
+
+	T Q_00 = data.atXY(x0,y0);
+	T Q_01 = data.atXY(x0,y1);
+	T Q_10 = data.atXY(x1,y0);
+	T Q_11 = data.atXY(x1,y1);
+
+	T q = Q_00 * (x1-x)*(y1-y)
+	    + Q_01 * (x1-x)*(y-y0)
+	    + Q_10 * (x-x0)*(y1-y)
+	    + Q_11 * (x-x0)*(y-y0) ;
+
+	return q;
 }
 
 #endif /* _PYRAMID_RESCALE_MATLAB_HXX_ */

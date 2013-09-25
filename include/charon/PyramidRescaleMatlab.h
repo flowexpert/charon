@@ -90,6 +90,9 @@ private:
 
 	/// normal distribution
 	T _gauss( T x, T mu, T sigma );
+
+	/// bilinear interpolation function
+	T _bilinearInterpolation( cimg_library::CImg<T> data, T x, T y );
 };
 
 #endif // _PYRAMID_RESCALE_MATLAB_H_
