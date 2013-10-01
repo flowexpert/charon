@@ -25,6 +25,7 @@
 ///Class name of the plugin
 #define TYPE ReSample
 
+#define interpolator_EXPORTS
 #define roi_EXPORTS
 
 #include <charon/ReSample.hxx>

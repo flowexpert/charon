@@ -91,8 +91,8 @@ void PyramidRescaleMatlab<T>::execute() {
 	const double _scaleFactor = scaleFactor();
 	const double _scaleInverse = T(1.0) / _scaleFactor;
 	const double shrink = std::pow(scaleFactor(),(double)stepsDown);
-	const int tx = _size.xEnd = std::round( sx * shrink );
-	const int ty = _size.yEnd = std::round( sy * shrink );
+	const int tx = _size.xEnd = std::floor( sx * shrink + 0.5);
+	const int ty = _size.yEnd = std::floor( sy * shrink +0.5);
 
 	// compute filter mask for blurring
 	cimg_library::CImg<T> filterMask = _computeFilterMask( T(sigma()) );
@@ -102,7 +102,7 @@ void PyramidRescaleMatlab<T>::execute() {
 	tmp = si;
 	for (unsigned int i=0; i<stepsDown; i++) {
 		tmp2 = cimg_library::CImgList<T>( tmp.size(),
-		                                  std::round( tmp[0].width()*_scaleFactor ), std::round( tmp[0].height()*_scaleFactor ),
+		                                  std::floor( tmp[0].width()*_scaleFactor +0.5), std::floor( tmp[0].height()*_scaleFactor + 0.5),
 		                                  tmp[0].depth(), tmp[0].spectrum() );
 		cimglist_for(tmp,kk) {
 			tmp.at(kk).correlate(filterMask);
@@ -184,10 +184,10 @@ T PyramidRescaleMatlab<T>::_gauss( T x, T mu, T sigma )
 template<typename T>
 T PyramidRescaleMatlab<T>::_bilinearInterpolation( cimg_library::CImg<T> data, T x, T y )
 {
-	unsigned int x0 = floor(x);
-	unsigned int x1 = ceil(x);
-	unsigned int y0 = floor(y);
-	unsigned int y1 = ceil(y);
+	unsigned int x0 = floor(double(x));
+	unsigned int x1 = ceil(double(x));
+	unsigned int y0 = floor(double(y));
+	unsigned int y1 = ceil(double(y));
 
 	if (x0 == x1) x1++;
 	if (y0 == y1) y1++;

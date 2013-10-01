@@ -29,6 +29,12 @@
 #include "../Stencil.hxx"
 #include "CovarianceMotionModel.h"
 
+template<typename T>
+bool isnan(T x) { return x != x ;	}
+
+template<typename T>
+bool isinf(T x) { return (x == x) && (x - x) != (x - x) ; }
+
 template <typename T>
 CovarianceMotionModel<T>::CovarianceMotionModel(const std::string& name) :
         Stencil::Base<T>(
@@ -156,8 +162,8 @@ void CovarianceMotionModel<T>::computeCovariances()
      if(Scale_difference>0)
         cond1on2=(var1-noise-fd*cov12);
      //T factor=noise/((noise+cond1on2)*(noise+cond1on2))*(this->lambda());//...<-stepsize!!(updateRate in simpleiterator);
-     T factor=1.0f/this->lambda()*((2.0f*cond1on2+noise)*pow((cond1on2/this->lambda()+noise),2.0f)-cond1on2*(cond1on2+noise)*2.0f/this->lambda()*(cond1on2/this->lambda()+noise));
-     factor=factor/pow((cond1on2/this->lambda()+noise),4.0f);
+     T factor=1.0f/this->lambda()*((2.0f*cond1on2+noise)*pow(double(cond1on2/this->lambda()+noise),2.0)-cond1on2*(cond1on2+noise)*2.0f/this->lambda()*(cond1on2/this->lambda()+noise));
+     factor=factor/pow(double(cond1on2/this->lambda()+noise),4.0);
      //T factor=-1/(cond1on2+noise);
      rhsx=(img1ZeroMean-img2ZeroMean*fd).get_mul((img2ZeroMean.get_gradient("x")[0])*factor*fd);
      rhsy=(img1ZeroMean-img2ZeroMean*fd).get_mul((img2ZeroMean.get_gradient("y")[0])*factor*fd);
@@ -308,17 +314,17 @@ void CovarianceMotionModel<T>::computeLocalCovariancesHist()
                     cout<<"im1"<<endl;
                 if(im2_warp.is_nan())
                     cout<<"im2_warp"<<endl;
-                if(std::isnan(cov22))
+                if(isnan(cov22))
                     cout<<"cov22"<<endl;
-                if(std::isnan(cov12))
+                if(isnan(cov12))
                     cout<<"cov12"<<endl;
-                if(std::isnan(integral1x))
+                if(isnan(integral1x))
                     cout<<"integral1x"<<endl;
-                if(std::isnan(integral1y))
+                if(isnan(integral1y))
                     cout<<"integral1y"<<endl;
-                if(std::isnan(integral2x))
+                if(isnan(integral2x))
                     cout<<"integral2x"<<endl;
-                if(std::isnan(integral2x))
+                if(isnan(integral2x))
                     cout<<"integral2x"<<endl;
 
                 if(hist12.is_inf())
@@ -329,17 +335,17 @@ void CovarianceMotionModel<T>::computeLocalCovariancesHist()
                     cout<<"im1 isinf"<<endl;
                 if(im2_warp.is_inf())
                     cout<<"im2_warp isinf"<<endl;
-                if(std::isinf(cov22))
+                if(isinf(cov22))
                     cout<<"cov22 isinf"<<endl;
-                if(std::isinf(cov12))
+                if(isinf(cov12))
                     cout<<"cov12 isinf"<<endl;
-                if(std::isinf(integral1x))
+                if(isinf(integral1x))
                     cout<<"integral1x isinf"<<endl;
-                if(std::isinf(integral1y))
+                if(isinf(integral1y))
                     cout<<"integral1y isinf"<<endl;
-                if(std::isinf(integral2x))
+                if(isinf(integral2x))
                     cout<<"integral2x isinf"<<endl;
-                if(std::isinf(integral2x))
+                if(isinf(integral2x))
                     cout<<"integral2x isinf"<<endl;
 
 
@@ -391,7 +397,7 @@ template <typename T>
 void CovarianceMotionModel<T>::computeLocalCovariances()
 {
 
-    CImg<T> window=computeGaussianWindow(windowsize);
+    CImg<T> window=computeGaussianWindow(windowsize,0.0);
     CImg<T> img1=((CImg<T>&)images()[0]).get_channel(0);//thermo
     CImg<T> img2=((CImg<T>&)images()[0]).get_channel(1);//gray
     //img1=(img1-img1.min())/((img1.max()-img1.min()))*1000;
@@ -487,8 +493,8 @@ void CovarianceMotionModel<T>::computeLocalCovariances()
                 cov2_grad2y/=(windowsize*windowsize-1);
                 T cond_var=cov22-cov12*cov12/cov11;
 
-                if((cond_var==0)||cov11==0||std::isnan(a1_loc)||std::isnan(a2_loc)||std::isinf(a1_loc)||std::isinf(a2_loc)
-                        ||std::isnan(-a1_loc)||std::isnan(-a2_loc)||std::isinf(-a1_loc)||std::isinf(-a2_loc))
+                if((cond_var==0)||cov11==0||isnan(a1_loc)||isnan(a2_loc)||isinf(a1_loc)||isinf(a2_loc)
+                        ||isnan(-a1_loc)||isnan(-a2_loc)||isinf(-a1_loc)||isinf(-a2_loc))
                 {
                     rhsx(x,y)=0;
                     rhsy(x,y)=0;
@@ -532,8 +538,8 @@ void CovarianceMotionModel<T>::computeLocalCovariances()
 
 
                     im2_warp_im(x,y)=(im2_warp((windowsize-1)/2,(windowsize-1)/2)-im2min)*a2_loc+b2_loc;
-                    if(std::isinf(rhsx(x,y))||std::isnan(rhsx(x,y))||std::isinf(rhsy(x,y))||std::isnan(rhsy(x,y))
-                            ||std::isinf(-rhsx(x,y))||std::isnan(-rhsx(x,y))||std::isinf(-rhsy(x,y))||std::isnan(-rhsy(x,y)))
+                    if(isinf(rhsx(x,y))||isnan(rhsx(x,y))||isinf(rhsy(x,y))||isnan(rhsy(x,y))
+                            ||isinf(-rhsx(x,y))||isnan(-rhsx(x,y))||isinf(-rhsy(x,y))||isnan(-rhsy(x,y)))
                     {
                         rhsx(x,y)=0;
                         rhsy(x,y)=0;
@@ -550,17 +556,17 @@ void CovarianceMotionModel<T>::computeLocalCovariances()
                     cout<<"im1"<<endl;
                 if(im2_warp.is_nan())
                     cout<<"im2_warp"<<endl;
-                if(std::isnan(cov22))
+                if(isnan(cov22))
                     cout<<"cov22"<<endl;
-                if(std::isnan(cov12))
+                if(isnan(cov12))
                     cout<<"cov12"<<endl;
-                if(std::isnan(cov1_grad2x))
+                if(isnan(cov1_grad2x))
                     cout<<"integral1x"<<endl;
-                if(std::isnan(cov1_grad2y))
+                if(isnan(cov1_grad2y))
                     cout<<"integral1y"<<endl;
-                if(std::isnan(cov2_grad2x))
+                if(isnan(cov2_grad2x))
                     cout<<"integral2x"<<endl;
-                if(std::isnan(cov2_grad2x))
+                if(isnan(cov2_grad2x))
                     cout<<"integral2x"<<endl;
 
 
@@ -568,17 +574,17 @@ void CovarianceMotionModel<T>::computeLocalCovariances()
                     cout<<"im1 isinf"<<endl;
                 if(im2_warp.is_inf())
                     cout<<"im2_warp isinf"<<endl;
-                if(std::isinf(cov22))
+                if(isinf(cov22))
                     cout<<"cov22 isinf"<<endl;
-                if(std::isinf(cov12))
+                if(isinf(cov12))
                     cout<<"cov12 isinf"<<endl;
-                if(std::isinf(cov1_grad2x))
+                if(isinf(cov1_grad2x))
                     cout<<"integral1x isinf"<<endl;
-                if(std::isinf(cov1_grad2y))
+                if(isinf(cov1_grad2y))
                     cout<<"integral1y isinf"<<endl;
-                if(std::isinf(cov2_grad2x))
+                if(isinf(cov2_grad2x))
                     cout<<"integral2x isinf"<<endl;
-                if(std::isinf(cov2_grad2x))
+                if(isinf(cov2_grad2x))
                     cout<<"integral2x isinf"<<endl;
 
 
@@ -789,7 +795,7 @@ T CovarianceMotionModel<T>::estimateOptimalSmoothing(CImg<T> &img1,CImg<T> &img2
     CImg<T> im2_sm;
     int size=img2.width()*img2.height();
   //  #pragma omp parallel num_threads (4)
-    for(int i=3;i<sqrt(size)/2;i++)
+    for(int i=3;i<sqrt(double(size))/2;i++)
     {
         double sd=(i-1)/4;
         im2_sm=img2.get_blur(sd);
@@ -829,7 +835,7 @@ T CovarianceMotionModel<T>::estimateOptimalSmoothing(CImg<T> &img1,CImg<T> &img2
             res_sd=sd;
         }
     }
-    sout<<"Optimal Sigma: "<<res_sd<<" in interval [0.5,"<<sqrt(size)/2.0f<<"]. Cond1on2: "<<cond1on2<<endl;
+    sout<<"Optimal Sigma: "<<res_sd<<" in interval [0.5,"<<sqrt(double(size))/2.0f<<"]. Cond1on2: "<<cond1on2<<endl;
     img2.blur(res_sd);
     return cond1on2;
 
