@@ -29,11 +29,16 @@
 #include "../Stencil.hxx"
 #include "CovarianceMotionModel.h"
 
+#ifdef _MSC_VER
+// isinf and isnan not available on MSVC,
+// but ambiguous overload if self-defined on unix systems
+// because of functions with same name in <bits/mathcalls.h>
 template<typename T>
 bool isnan(T x) { return x != x ;	}
 
 template<typename T>
 bool isinf(T x) { return (x == x) && (x - x) != (x - x) ; }
+#endif // _MSC_VER
 
 template <typename T>
 CovarianceMotionModel<T>::CovarianceMotionModel(const std::string& name) :
