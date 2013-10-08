@@ -33,7 +33,8 @@ template <class T>
 CliqueWeightUniform<T>::CliqueWeightUniform(const std::string& name) :
 	CliqueWeight<T>(
 		"CliqueWeightUniform", name,
-		"<h2>Implementation of the uniform clique weight."
+		"This module can be connected to a WeightedMedian filter. "
+		"It yields a uniform (=1) weight for each element within the filtering window. "
 	)
 {
 	ParameteredObject::_setTags("charon-flow;MedianFilters;CImg");

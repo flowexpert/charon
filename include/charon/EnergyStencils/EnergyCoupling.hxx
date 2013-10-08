@@ -33,7 +33,11 @@
 template <class T>
 EnergyCoupling<T>::EnergyCoupling(const std::string& name) :
 	Stencil::Base<T>(
-		"EnergyCoupling", name, "<h2>Coupling of two motion fields</h2>."
+		"EnergyCoupling", name,
+		"This stencil ensures matching of the first motion field "
+		"against the second motion field. "
+		"Here, the weighting of each position depends on the "
+		"previous discrepancy between both motion fields. "
 	)
 {
 	this->_addInputSlot(penaltyFunction,

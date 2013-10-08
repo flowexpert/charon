@@ -36,13 +36,20 @@ template <typename T>
 BootstrappingWeights<T>::BootstrappingWeights(const std::string& name) :
 		TemplatedParameteredObject<T>(
 			"BootstrappingWeights", name,
-			"<h2>This module computes so called bootstrapping "
-			"weights</h2><br>"
 			"This module computes so called bootstrapping weights.<br>"
-			"<br>"
 			"Detailed documentation can be found within the paper<br>"
 			"<b>Bootstrap Optical Flow Confidence and Uncertainty Measure</b><br>"
-			"by <i>Jan Kybic</i> and <i>Claudia Nieuwenhuis</i> (2011)."
+			"by <i>Jan Kybic</i> and <i>Claudia Nieuwenhuis</i> (2011).<br>"
+			"This module expects the image volume dimensions (width, heigth and depth). "
+			"It returns a CImgList<T> of weighting images (weighting masks) whereas N=iterations. "
+			"The idea behind bootstrapping is to start with a weighting image that is zero "
+			"everywhere and then add a weight of 1.0 and at most 1.0 to randomly sampled positions within "
+			"each iteration. Here, the parameter samples corresponds to the number of randomly chosen "
+			"samples, whereas iterations denotes the total bootstrapping iterations being performed. "
+			"After each iteration, its corresponding weighting mask is being stored in the returned CImgList<T>. "
+			"Typically, this module is used in connection with the SelectFromList module "
+			"and appropriate ChannelConverter_s, such that individual masks can be used as "
+			"inputs for the lambdaMask input slots within the stencils."
 		)
 {
 	ParameteredObject::_addOutputSlot(

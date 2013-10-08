@@ -33,7 +33,15 @@ template <class T>
 CliqueWeightNonLocal<T>::CliqueWeightNonLocal(const std::string& name) :
 	CliqueWeight<T>(
 		"CliqueWeightNonLocal", name,
-		"<h2>Implementation of the uniform clique weight."
+		"This module can be connected to a WeightedMedian filter. "
+		"It yields a <i>non-local</i> weight for each element within "
+		"the filter window, depending on the properties of the "
+		"clique consisting of the window center position and the "
+		"considered element position. "
+		"The clique-weights are computed as described within the paper "
+		"<b>Secrets of Optical Flow Estimation and Their Principles</b> "
+		"by <i>D. Sun</i>, <i>S. Roth</i> and <i>M. Black</i> (2010), "
+		"see eq. 9 for details."
 	)
 {
 	this->_addInputSlot(data,    "data",   "data input",   "CImgList<T>");

@@ -33,14 +33,13 @@ template <typename T>
 ConfidenceMeasures<T>::ConfidenceMeasures(const std::string& name) :
 		TemplatedParameteredObject<T>(
 			"ConfidenceMeasures", name,
-			"<h2>This module calculates some confidence measures</h2><br>"
-			"This module calculates some confidence measures.<br>"
-			"<br>"
-			"These measures are Psi_BOOTG, Psi_BOOTGM and "
-			"Psi_BOOTA<br>"
-			"as proposed by <i>Jan Kybic</i> and <i>Claudia Nieuwenhuis</i> "
+			"This module calculates the confidence measures Psi_BOOTG, Psi_BOOTGM and "
+			"Psi_BOOTA, as proposed by <i>Jan Kybic</i> and <i>Claudia Nieuwenhuis</i> "
 			"within their 2011 paper <b>Bootstrap Optical Flow Confidence "
-			"and Uncertainty Measure</b>."
+			"and Uncertainty Measure</b>.<br>"
+			"Here, an arbitrary count of (multi-dimensional) optical flow fields can be "
+			"connected via the motions multi-input slot. "
+			"Additionally, this module yields the mean and variance motion fields. "
 		),
 		motions(false,true)
 {

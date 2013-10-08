@@ -43,7 +43,10 @@ template <class T>
 EnergyNonLocal<T>::EnergyNonLocal(const std::string& name) :
 	Stencil::Base<T>(
 		"EnergyNonLocal", name,
-		"<h2>Example for an EnergyStencil.")
+		"<h2>deprecated</h2><br>"
+		"Stencil to perform direct non-local regularization within a one-step solver approach. "
+		"This is inefficient, compared to a two-step solution (solver + non-local median filter). "
+		)
 {
 	ParameteredObject::_addParameter< bool >(useWeight,
 			"useWeight",

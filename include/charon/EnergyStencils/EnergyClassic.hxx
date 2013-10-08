@@ -41,7 +41,20 @@
 template <class T>
 EnergyClassic<T>::EnergyClassic(const std::string& name) :
 	Stencil::Base<T>("EnergyClassic", name,
-			"<h2>Energy stencil for classic regularization."),
+			"This stencil implements so-called classic regularization. "
+			"It can be used directly in connection with a linear solver, "
+			"yielding the Euler-Lagrange equations or for energy optimization. "
+			"Figurative, the motion at the central position "
+			"is being adjusted to the motions within its neighborhood "
+			"accordingly to the utilized penalty function.<br>"
+			"Currently, a hard-coded 4- or 8-neighborhood can be selected using "
+			"the diagonalRegularization switch. "
+			"If the optional right-hand-side motionUV is <i>not</i> connected, "
+			"the stencil implies a uniform averaging over the whole neighborhood.<br>"
+			"An outstanding feature is the support for regularization masks. "
+			"If such a mask (indicating borders via 0 and regions via non-0) is connected, "
+			"regularization is being performed bilaterally utilizing a flood-fill approach. "
+			),
 	motionUV(true,false),
 	regionMask(true,false),
 	matchMask(true,false)

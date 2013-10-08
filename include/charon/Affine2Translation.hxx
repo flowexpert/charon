@@ -31,7 +31,18 @@
 template<typename T>
 Affine2Translation<T>::Affine2Translation(const std::string& name) :
 		TemplatedParameteredObject<T>("Affine2Translation", name,
-				"Convert affine parameters to translation")
+				"This module converts the six affine motion parameters "
+				"(four rotation parameters a11, ..., a22 and two translation "
+				"parameters b1, b2) to two translation parameters u and v. "
+				"Here, the computation is performed as described in the "
+				"paper Over-Parameterized Variational Optical Flow (Tal Nir, 2007). "
+				"Especially, this means, that all rotations are being carried "
+				"out w.r.t. to the image center. "
+				"This module expects a CImgList<T> with N=6 in the order "
+				"a11, a12, a21, a22, b1, b2 and produces a CImgList with N=2 "
+				"in the order u, v. "
+				"The module is mainly used in order to obtain a parameter set "
+				"suitable for the warping step, which relies on a pure translation.")
 {
 	ParameteredObject::_setTags("charon;CImg") ;
 
@@ -73,7 +84,7 @@ void Affine2Translation<T>::execute()
 		yn = rho * (double(y) - y0) / y0;
 		// u = a11 * xn + a12 * yn + b1
 		_flow[0].atXY( x, y ) = _params[0].atXY(x,y) * xn + _params[1].atXY(x,y) * yn + _params[4].atXY(x,y);
-		// u = a11 * xn + a12 * yn + b1
+		// v = a21 * xn + a22 * yn + b2
 		_flow[1].atXY( x, y ) = _params[2].atXY(x,y) * xn + _params[3].atXY(x,y) * yn + _params[5].atXY(x,y);
 	}
 }

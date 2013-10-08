@@ -37,8 +37,24 @@
 template <class T>
 EnergyBCC<T>::EnergyBCC(const std::string& name) :
 	Stencil::Base<T>(
-	     "EnergyBCC", name,
-	     "<h2>Implementation of the brightness constancy constraint."
+		"EnergyBCC", name,
+		"Stencil implementing the brightness constancy constraint. "
+		"It can be connected either to linear system solvers, "
+		"where it acts in building up the individual Euler-Lagrange equations "
+		"for each considered position or used in the context of energy optimizers, "
+		"where it yields the residual energy, its gradient and Hessian matrix at each "
+		"position. "
+		"The necessary image gradients have to be connected via their respective input slots "
+		"img_dx, img_dy and img_dt. "
+		"Additionally, a so-called penalty-function, which corresponds to the psi-function "
+		"has to be connected via the penaltyFunction input slot. "
+		"In order to use this stencil for <i>gradient constancy</i>, we can also connect "
+		"derivatives of the image </i>derivatives</i> to it. "
+		"The optional input slot represents a right-hand-side motion, which has to be "
+		"conncected, if the stencil is being used in the context of warping. "
+		"In order to weight constancy individually at each position, e.g. "
+		"in the context of bootstrapping, "
+		"an optional lambdaMask can be connected. "
 	     ),
 	motionUV(true,false),
 	mask(true,false)

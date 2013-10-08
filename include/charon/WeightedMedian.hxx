@@ -35,11 +35,31 @@ template<typename T>
 WeightedMedian<T>::WeightedMedian(const std::string& name) :
 	TemplatedParameteredObject<T>(
 			"WeightedMedian", name,
-			"calculates weighted median of image windows<br><br>"
-			"Use image windows of given size, calculate weighted median within this "
-			"window and use the result as new value for the window center "
-			"pixel. This eliminates outliers and makes "
-			"e.g. flow estimation more robust. " ),
+			"This module performs weighted median filtering of images. "
+			"It calculates the weighted median for each image window "
+			"and writes its result into the window's center position. "
+			"Median filtering in general is an approach to L1-optimization "
+			"(see e.g. <b>Numerical Methods in Scientific Computing</b>, "
+			"vol. 2, by &Aring;ke Bj&ouml;rck, section 8.7.5. "
+			"<b>Solving Overdetermined Systems in the lp Sense</b>).<br>"
+			"Here, the filtering windows lie within the X and Y dimensions, that is "
+			"the filter is being applied <i>separate</i> for each "
+			"N, Z, and C dimension to the input data in. "
+			"Optionally, a mask (with 0 borders and non-0 regions) can be connected "
+			"in order to perform <i>bilateral</i> median filtering. "
+			"The parameter list windowRadiusList specifies the window radius to be used "
+			"at each level, if the level (which roughly corresponds to a pyramid level) "
+			"is connected, otherwise, the first element of this list is being used as "
+			"the window radius. "
+			"In order to specify the element weights, a clique weight module "
+			"(e.g. CliqueWeightUniform to perform uniform median filtering) "
+			"has to be connected via its input slot. "
+			"The filtering process itself closely resembles the approach proposed "
+			"by <i>Li</i> and <i>Osher</i> within their paper <b>A new median formula with applications "
+			"to pde-based denoising</b>. "
+			"In order to iterate bilaterally over the image window, a flood-fill-like "
+			"implementation is being utilized. "
+			),
 	mask(true,false),
 	level(true,false),
 	windowRadiusList("7")
