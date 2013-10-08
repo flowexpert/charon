@@ -32,12 +32,9 @@ template<typename T>
 IrlsNonLocal<T>::IrlsNonLocal(const std::string& name) :
 	TemplatedParameteredObject<T>(
 			"IrlsNonLocal", name,
-			"calculate median of image windows<br><br>"
-			"Use image windows of given size, calculate median within this "
-			"window and use the result as new value for the window center "
-			"pixel. This eliminates outliers and makes "
-			"e.g. flow estimation more robust. "
-			"This uses the IRLSNONLOCAL approach.")
+			"<h2>deprecated</h2><br>"
+			"see Irls documentation for more details."
+			)
 {
 	this->_addInputSlot(img,    "img",    "image input",  "CImgList<T>");
 	this->_addInputSlot(motionUV, "motionUV", "motion input", "CImgList<T>");

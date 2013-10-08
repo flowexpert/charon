@@ -33,7 +33,14 @@
 template<typename T>
 ImageRotation<T>::ImageRotation(const std::string& name) :
 		TemplatedParameteredObject<T>("ImageRotation", name,
-				"Image rotation and GT generation")
+			"This module rotates the input image list within the X-Y plane "
+			"and yields the corresponding two-dimensional ground-truth "
+			"motion field. "
+			"Here, the rotation's angle can be specified by the angle parameter, "
+			"whereas boundaryCondition denotes the extrapolation behavior "
+			"within the undefined regions and interpolationType the "
+			"corresponding interpolation type. "
+			)
 {
 	ParameteredObject::_setTags("charon;CImg") ;
 

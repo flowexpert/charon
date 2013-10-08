@@ -29,7 +29,17 @@
 template <typename T>
 Gnc<T>::Gnc(const std::string& name) :
 	TemplatedParameteredObject<T>("gnc", name,
-		"this implements the GNC iteration scheme.<br><br>")
+		"This module implements the GNC iteration scheme.<br><br>"
+		"It takes two (multi-dimensional) motion fields initial and final "
+		"and computes a linear combination "
+		"(step*ratio)*final + (1-step*ratio)*initial of them. "
+		"This module is generally used in connection with an Iterator, "
+		"whereas the IteratorHelper's count slot is being connected to "
+		"the step input slot. "
+		"As there are no boundary checks within this module, "
+		"you have to choose the number of iterations of your iterator and "
+		"this module's ratio parameter accordingly. "
+		)
 {
 	ParameteredObject::_addParameter< T >(ratio, "ratio", "gnc mixture ratio", T(0.2));
 	ParameteredObject::_addInputSlot (

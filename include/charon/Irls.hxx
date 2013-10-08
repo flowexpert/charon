@@ -30,12 +30,19 @@ template<typename T>
 Irls<T>::Irls(const std::string& name) :
 	TemplatedParameteredObject<T>(
 			"Irls", name,
-			"calculate median of image windows<br><br>"
-			"Use image windows of given size, calculate median within this "
-			"window and use the result as new value for the window center "
-			"pixel. This eliminates outliers and makes "
-			"e.g. flow estimation more robust. "
-			"This uses the IRLS approach.")
+			"This module performs the (i)teratively (r)eweighted (l)east "
+			"(s)quares approach in order to obtain a resonable (multi-dimensional) "
+			"median approximation, motivated by the fact that the median is "
+			"non-existant for data of dimension 2 or higher. "
+			"Starting with a mean approximation, the algorithm refines that mean iteratively "
+			"by reweighting the datapoints, whereas weights depend upon the datapoint's "
+			"distances to the current mean approximation, "
+			"eventually yielding a median approximation. "
+			"Here, the weights result from a normal distribution, parameterized with "
+			"sigma_dist. "
+			"Additionally, they are multiplied with individual clique weights, "
+			"depending on the connected cliqueWeight function. "
+			)
 {
 	this->_addInputSlot(in,    "in",    "image input",  "CImgList<T>");
 	this->_addInputSlot(cliqueWeight, "cliqueWeight", "clique weight function input", "CliqueWeight<T>*");

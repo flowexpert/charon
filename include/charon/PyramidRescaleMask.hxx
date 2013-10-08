@@ -32,7 +32,9 @@
 template <typename T>
 PyramidRescaleMask<T>::PyramidRescaleMask(const std::string& name) :
 		TemplatedParameteredObject<T>("PyramidRescaleMask", name,
-			"Pyramid Rescaling for binary masks.")
+			"Pyramid Rescaling for binary masks.<br>"
+			"<h2>deprecated</h2>"
+		)
 {
 	ParameteredObject::_addInputSlot(
 			mask, "mask", "input mask", "CImgList<T>");

@@ -66,8 +66,16 @@ T SimpleDiff<T>::__cubic_atXY(cimg_library::CImg<T> img, const float fx, const f
 template <typename T>
 SimpleDiff<T>::SimpleDiff(const std::string& name) :
 		TemplatedParameteredObject<T>("SimpleDiff", name,
-			"Calculate 2D derivatives.<br><br>"
-			"This plugin calculates two dimensional derivatives.")
+			"This module performs differentiation like proposed by D. Sun within his "
+			"Classic+NL algorithm<br>"
+			"The differentiation process itself utilizes the 5 point filter mask, "
+			"that optimally approximates the transfer function of an ideal differentiator, "
+			"proposed by J&auml;hne in LNCS751. "
+			"The process is additionally enhanced by some not straightforward boundary "
+			"handling, <i>before</i> the warping step ist being performed. "
+			"Therefore, this makes use of a so-called Warper module, in order to be able "
+			"to process the original image data. "
+		)
 {
 	ParameteredObject::_addInputSlot(
 			img, "img",

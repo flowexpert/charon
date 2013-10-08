@@ -35,7 +35,7 @@ Residual<T>::Residual(const std::string& name) :
 			"calculates residual<br><br>"
 			"Takes two input images and both motion components "
 			"and computes the motion-compensated intensity "
-			"difference.")
+			"difference (which is called residual).")
 {
 	this->_addInputSlot(img1, "img1", "image 1 input", "CImgList<T>");
 	this->_addInputSlot(img2, "img2", "image 2 input", "CImgList<T>");

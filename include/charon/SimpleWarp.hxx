@@ -31,7 +31,8 @@ template<typename T>
 SimpleWarp<T>::SimpleWarp(const std::string& name) :
 	TemplatedParameteredObject<T> (
 			"SimpleWarp", name,
-			"This module performs simple warping of image sequences."
+			"This module performs simple warping of image sequences.<br>"
+			"<h2>deprecated</h2>"
 			) {
 	ParameteredObject::_setTags("charon-utils;CImg") ;
 

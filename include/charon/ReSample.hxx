@@ -32,7 +32,14 @@
 template <typename T>
 ReSample<T>::ReSample(const std::string& name) :
 		TemplatedParameteredObject<T>("ReSample", name,
-			"Pyramidal resampling of data.")
+			"Module for resampling of data.<br>"
+			"Input data in is being resampled by pow(scaleFactor(), level()) "
+			"utilizing the connected interpolator module. "
+			"If scaleData == true, the data is being rescaled "
+			"accordingly (which is desirable for flow fields). "
+			"Additionally, a levelOffset can be specified, which "
+			"can be usful within multiscale approaches. "
+		)
 {
 	ParameteredObject::_addInputSlot(
 			in, "in", "data input", "CImgList<T>");

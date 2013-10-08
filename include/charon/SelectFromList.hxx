@@ -33,8 +33,12 @@ template <typename T>
 SelectFromList<T>::SelectFromList(const std::string& name) :
 		TemplatedParameteredObject<T>(
 			"SelectFromList", name,
-			"<h2>Select an image from an image list</h2><br>"
-			"Select an image from an image list."
+			"Selects data from a list</h2><br>"
+			"The input slot first can be connected to a Value module or a Count output slot "
+			"of an IteratorHelper, such that first+offset denotes the first position in list. "
+			"The parameter count defaults to 1 and denotes the count of frames. "
+			"Attention: All list indexes are w.r.t. the C or T dimension of that list, "
+			"and NOT the N dimension, which is here reserved for the vector field components! "
 		)
 {
 	ParameteredObject::_addInputSlot(

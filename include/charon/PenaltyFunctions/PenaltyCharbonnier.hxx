@@ -35,7 +35,9 @@ template <class T>
 PenaltyCharbonnier<T>::PenaltyCharbonnier(const std::string& name) :
 	PenaltyFunction<T>(
 		"PenaltyCharbonnier", name,
-		"<h2>Implementation of the Charbonnier penalty function."
+		"Implementation of the Charbonnier penalty function.<br>"
+		"It yields (Delta^2 + eps^2)^a back as its energy and "
+		"respective 1st and 2nd order derivatives w.r.t. Delta^2. "
 	)
 {
 	this->_addParameter(maxDiff, "maxDiff", "truncation, if abs(diff) > maxDiff", T(127.0));

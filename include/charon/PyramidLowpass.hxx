@@ -34,7 +34,17 @@
 template <typename T>
 PyramidLowpass<T>::PyramidLowpass(const std::string& name) :
 		TemplatedParameteredObject<T>("PyramidLowpass", name,
-			"Lowpass filtering for pyramid-based flow-estimation algorithms."),
+			"Module providing a <b>scale-space</b> approach for motion estimation.<br> "
+			"It performs Gaussian <i>band-pass</i> filtering utilizing the band-pass "
+			"within "
+			"sigmas[level()] and sigmas[level()-1] or resp. 0, if level() = 0 . <br>"
+			"Optionally, bilateral Gaussian blur can be performed, by connecting a "
+			"blurMask (whereas 0 denotes borders and non-0 regions) and setting "
+			"bilateralBlur = true . "
+			"Additionally, bilateralBlurCount denotes the count of consecutive bilateral "
+			"blur iterations, whereas bilateralBlurSeparable selects a separable "
+			"and thus much more efficient blur <i>approximation</i>. "
+		),
 		blurMask( true, false )
 {
 	ParameteredObject::_addInputSlot(

@@ -35,7 +35,11 @@ template <class T>
 PenaltyQuadratic<T>::PenaltyQuadratic(const std::string& name) :
 	PenaltyFunction<T>(
 		"PenaltyQuadratic", name,
-		"<h2>Implementation of the quadratic penalty function."
+		"Implementation of the quadratic penalty function.<br>"
+		"Attention: It takes a squared difference (generally the residual) "
+		"as an argument within its callbacks!<br> "
+		"It is parameterized with a scaling parameter sigma, and truncated "
+		"by the maxDiff parameter."
 	)
 {
 	this->_addParameter(

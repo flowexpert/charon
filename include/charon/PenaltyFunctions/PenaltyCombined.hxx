@@ -35,7 +35,7 @@ template <class T>
 PenaltyCombined<T>::PenaltyCombined(const std::string& name) :
 	PenaltyFunction<T>(
 		"PenaltyCombined", name,
-		"<h2>Implementation of the Charbonnier penalty function."
+		"Implementation of a linear combination of two penalty functions."
 	)
 {
 	this->_addParameter(lambdaFst, "lambdaFst", "weights for 1st penalty function","ParameterList<T>");

@@ -32,7 +32,14 @@
 template <typename T>
 PyramidRescaleMatlab<T>::PyramidRescaleMatlab(const std::string& name) :
 		TemplatedParameteredObject<T>("PyramidRescaleMatlab", name,
-			"MATLAB (imresize)-like Rescaling for pyramid-based flow-estimation algorithms.")
+			"MATLAB (imresize)-like Rescaling for pyramid-based flow-estimation algorithms. "
+			"The idea is to offer a module, which works _exactly_ as the pyramid rescaling "
+			"approach proposed by D. Sun within his Classic+NL optical flow method. "
+			"It utilizes a sequence of successive Gaussian smoothing and sampling steps, "
+			"whereas sampling furthermore utilizes the concept of bilinear interpolation. "
+			"Still existing problems are a wrong border-handling within the smoothing step, "
+			"and a still wrong bilinear interpolation."
+		)
 {
 	ParameteredObject::_addInputSlot(
 			seqIn, "seqIn", "sequence input", "CImgList<T>");
