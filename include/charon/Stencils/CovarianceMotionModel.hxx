@@ -28,16 +28,23 @@
 //#include <charon-core/ParameteredObject.hxx>
 #include "../Stencil.hxx"
 #include "CovarianceMotionModel.h"
+#include <cmath>
 
 #ifdef _MSC_VER
-// isinf and isnan not available on MSVC,
-// but ambiguous overload if self-defined on unix systems
-// because of functions with same name in <bits/mathcalls.h>
-template<typename T>
-bool isnan(T x) { return x != x ;	}
-
-template<typename T>
-bool isinf(T x) { return (x == x) && (x - x) != (x - x) ; }
+// std::isinf and std::isnan not present in MSVC but _isnan and _finite
+// see http://msdn.microsoft.com/en-us/library/sb8es7a8.aspx
+// and http://msdn.microsoft.com/en-us/library/tzthab44.aspx
+// isinf/isnan are part of c++11, causing name-conflict with non-namespaced
+// versions on gcc with enabled c++11 support (so use std::isinf/isnan)
+#include <float.h>
+namespace std {
+	bool isnan(double x) {
+		return _isnan(x);
+	}
+	bool isinf(double x) {
+		return (!_finite(x) && !_isnan(x));
+	}
+}
 #endif // _MSC_VER
 
 template <typename T>
@@ -498,8 +505,8 @@ void CovarianceMotionModel<T>::computeLocalCovariances()
                 cov2_grad2y/=(windowsize*windowsize-1);
                 T cond_var=cov22-cov12*cov12/cov11;
 
-                if((cond_var==0)||cov11==0||isnan(a1_loc)||isnan(a2_loc)||isinf(a1_loc)||isinf(a2_loc)
-                        ||isnan(-a1_loc)||isnan(-a2_loc)||isinf(-a1_loc)||isinf(-a2_loc))
+                if((cond_var==0)||cov11==0||std::isnan(a1_loc)||std::isnan(a2_loc)||std::isinf(a1_loc)||std::isinf(a2_loc)
+                        ||std::isnan(-a1_loc)||std::isnan(-a2_loc)||std::isinf(-a1_loc)||std::isinf(-a2_loc))
                 {
                     rhsx(x,y)=0;
                     rhsy(x,y)=0;
@@ -543,8 +550,8 @@ void CovarianceMotionModel<T>::computeLocalCovariances()
 
 
                     im2_warp_im(x,y)=(im2_warp((windowsize-1)/2,(windowsize-1)/2)-im2min)*a2_loc+b2_loc;
-                    if(isinf(rhsx(x,y))||isnan(rhsx(x,y))||isinf(rhsy(x,y))||isnan(rhsy(x,y))
-                            ||isinf(-rhsx(x,y))||isnan(-rhsx(x,y))||isinf(-rhsy(x,y))||isnan(-rhsy(x,y)))
+                    if(std::isinf(rhsx(x,y))||std::isnan(rhsx(x,y))||std::isinf(rhsy(x,y))||std::isnan(rhsy(x,y))
+                            ||std::isinf(-rhsx(x,y))||std::isnan(-rhsx(x,y))||std::isinf(-rhsy(x,y))||std::isnan(-rhsy(x,y)))
                     {
                         rhsx(x,y)=0;
                         rhsy(x,y)=0;
@@ -561,17 +568,17 @@ void CovarianceMotionModel<T>::computeLocalCovariances()
                     cout<<"im1"<<endl;
                 if(im2_warp.is_nan())
                     cout<<"im2_warp"<<endl;
-                if(isnan(cov22))
+                if(std::isnan(cov22))
                     cout<<"cov22"<<endl;
-                if(isnan(cov12))
+                if(std::isnan(cov12))
                     cout<<"cov12"<<endl;
-                if(isnan(cov1_grad2x))
+                if(std::isnan(cov1_grad2x))
                     cout<<"integral1x"<<endl;
-                if(isnan(cov1_grad2y))
+                if(std::isnan(cov1_grad2y))
                     cout<<"integral1y"<<endl;
-                if(isnan(cov2_grad2x))
+                if(std::isnan(cov2_grad2x))
                     cout<<"integral2x"<<endl;
-                if(isnan(cov2_grad2x))
+                if(std::isnan(cov2_grad2x))
                     cout<<"integral2x"<<endl;
 
 
@@ -579,17 +586,17 @@ void CovarianceMotionModel<T>::computeLocalCovariances()
                     cout<<"im1 isinf"<<endl;
                 if(im2_warp.is_inf())
                     cout<<"im2_warp isinf"<<endl;
-                if(isinf(cov22))
+                if(std::isinf(cov22))
                     cout<<"cov22 isinf"<<endl;
-                if(isinf(cov12))
+                if(std::isinf(cov12))
                     cout<<"cov12 isinf"<<endl;
-                if(isinf(cov1_grad2x))
+                if(std::isinf(cov1_grad2x))
                     cout<<"integral1x isinf"<<endl;
-                if(isinf(cov1_grad2y))
+                if(std::isinf(cov1_grad2y))
                     cout<<"integral1y isinf"<<endl;
-                if(isinf(cov2_grad2x))
+                if(std::isinf(cov2_grad2x))
                     cout<<"integral2x isinf"<<endl;
-                if(isinf(cov2_grad2x))
+                if(std::isinf(cov2_grad2x))
                     cout<<"integral2x isinf"<<endl;
 
 
