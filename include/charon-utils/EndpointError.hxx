@@ -33,7 +33,7 @@
 template<typename T>
 EndpointError<T>::EndpointError(const std::string& name) :
 		TemplatedParameteredObject<T>("EndpointError", name,
-				"Compute Endpoint Error between flow fields")
+				"Compute Endpoint Error between two flow fields.")
 {
 	ParameteredObject::_setTags("charon-utils;CImg;Evaluation") ;
 

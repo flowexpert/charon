@@ -32,7 +32,12 @@
 template<typename T>
 Quiver<T>::Quiver(const std::string& name) :
 	TemplatedParameteredObject<T>("Quiver", name,
-		"Plot flow quiver"),
+		"Module for plotting a vector field (e.g. flow field) as a quiver "
+		"Attention: This module utilizes the MathGL library, which is licensed "
+		"under the <b>GNU General Public License<b>, version 3 or higher! "
+		"The Quiver component can be either connected to an ArgosDisplay via "
+		"its display slot, or provide a quiverImage directly via an CImgList<T>. "
+	),
 	_display(0),
 	quiverPlot(0)
 {

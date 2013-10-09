@@ -30,7 +30,10 @@
 template<typename T>
 Toggle<T>::Toggle(const std::string& name) :
 	TemplatedParameteredObject<T>("Toggle", name,
-		"Toggle two inputs wrt a given timeout"),
+		"Module for alternating visualization of two input images.<br>"
+		"This is used in connection with an ArgosDisplay, where both "
+		"timeouts have to be set synchronized. "
+	),
 	toggleTimeout(0)
 {
 	ParameteredObject::_setTags("charon-utils;CImg;Visualization;Qt") ;

@@ -30,7 +30,7 @@
 template<typename T>
 Mux2<T>::Mux2(const std::string& name) :
 	TemplatedParameteredObject<T> ("Mux2", name,
-			"Generates an image sequence out of multiple images")
+			"Combine two CImgList<T>s w.r.t. their N dimensions into one list. ")
 {
 	ParameteredObject::_setTags("charon-utils;CImg") ;
 

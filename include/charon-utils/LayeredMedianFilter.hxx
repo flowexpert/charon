@@ -30,11 +30,8 @@ template<typename T>
 LayeredMedianFilter<T>::LayeredMedianFilter(const std::string& name) :
 	TemplatedParameteredObject<T>(
 			"LayeredMedianFilter", name,
-			"calculate median of image windows<br><br>"
-			"Use image windows of given size, calculate median within this "
-			"window and use the result as new value for the window center "
-			"pixel. This eliminates outliers and makes "
-			"e.g. flow estimation more robust."),
+			"A median filter with level (layer) dependent window radius. <b>deprecated</b>"
+	),
 	windowRadiusList("0;0;1;1;2;2")
 {
 	ParameteredObject::_setTags("charon-utils;CImg;deprecated") ;

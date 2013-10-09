@@ -29,7 +29,11 @@
 template <typename T>
 FloWriter<T>::FloWriter(const std::string& name) :
 		TemplatedParameteredObject<T>("flowriter", name,
-			"write motion to motion file using cimg") {
+			"write motion to motion (*.flo) file using CImg. "
+			"See http://vision.middlebury.edu/flow/submit/ for "
+			"reference implementations of this format. "
+		)
+{
 	ParameteredObject::_setTags("charon-utils;CImg;DiskIO") ;
 
 	this->_addParameter (filename, "filename",

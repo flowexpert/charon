@@ -27,7 +27,11 @@
 template <typename T>
 FloReader<T>::FloReader(const std::string& name) :
 		TemplatedParameteredObject<T>("floreader", name,
-			"read motion from motion file using cimg") {
+			"read motion from motion files (*.flo files) using CImg.<br>"
+			"A reference implementation of this file format can be found at "
+			"http://vision.middlebury.edu/flow/submit/ ."
+		)
+{
 	ParameteredObject::_setTags("charon-utils;CImg;DiskIO") ;
 
 	ParameteredObject::_addParameter (filename, "filename",

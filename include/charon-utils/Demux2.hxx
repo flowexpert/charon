@@ -29,7 +29,9 @@
 template<typename T>
 Demux2<T>::Demux2(const std::string& name) :
 	TemplatedParameteredObject<T> ("Demux2", name,
-			"Generates an image sequence out of multiple images")
+			"Split a CImgList<T> N=n w.r.t. N into two CImgList<T>s, "
+			"the first of them having the size N=floor(n/2). "
+	)
 {
 	ParameteredObject::_setTags("charon-utils;CImg") ;
 
