@@ -33,7 +33,7 @@
 
 template <typename T>
 Newton2<T>::Newton2(const std::string& name) : 
-	TemplatedParameteredObject<T>("Newton2", name
+	TemplatedParameteredObject<T>("Newton2", name,
 	"Implementation of a second order Newton method.<br>"
 	"Compatible with Stencils yielding EnergyGradient "
 	"and EnergyHessian."
