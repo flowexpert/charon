@@ -36,11 +36,16 @@
 template <typename T>
 Warper<T>::Warper(const std::string& name) :
 	TemplatedParameteredObject<T>("Warper",name,
-	"Warper<br><br>"
-	"A Warper translates simple positions (e.g. out-of-bounds positions) "
-	"into effective (within-bounds) positions, that is it performs "
-	"boundary handling. "
-	"The base class Warper performs radial interpolation."
+	"Module implementing the concept of a Warper<br>"
+	"A Warper is currently used in conjunction with the differentiator SimpleDiff "
+	"in order to perform appropriate differentiation mask boundary-handling <i>before</i> "
+	"the warping step has actually occured. "
+	"Roughly speaking, the Warper warps the differentiation mask to its effective position "
+	"within the <i>original</i> data, whereas the opposite (and much more commonly applied) approach "
+	"is to first warp the image data w.r.t. the current optical flow guess and then perform differentiation. "
+	"However, Warper and SimpleDiff involve many more function calls and are therefore much less efficient. "
+	"If the mirror parameter is set, image data is being mirrored, if the differentiation masks exceeds "
+	"boundaries, otherwise, radial interpolation occurs. "
 	)
 {
 	this->_addInputSlot(motion,"motion","motion used to warp", "CImgList<T>");

@@ -37,7 +37,9 @@
 template <class T>
 MagnitudeRegularization<T>::MagnitudeRegularization(const std::string& name) :
 	Stencil::Base<T>("MagnitudeRegularization", name,
-			"<h2>Stencil for regularization of the magnitude r."),
+			"Stencil for regularization of the magnitude r.<br>"
+			"Used in conjunction with the Trigonometric BCC. "
+	),
 	mask(true,false)
 {
 	this->_addInputSlot(penaltyFunction,

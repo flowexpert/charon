@@ -33,8 +33,15 @@
 
 template <typename T>
 Newton2<T>::Newton2(const std::string& name) : 
-		TemplatedParameteredObject<T>("Newton2", name),
-                stencils(false,true)
+	TemplatedParameteredObject<T>("Newton2", name
+	"Implementation of a second order Newton method.<br>"
+	"Compatible with Stencils yielding EnergyGradient "
+	"and EnergyHessian."
+	"This solves one iteration for x = - inverse(Hessian(E)) * Gradient(E) . "
+	"Therefore, this should be used with an Iterator and its IteratorHelper. "
+	"Additionally, the current residual is being output. "
+	),
+	stencils(false,true)
 {
 	this->_addInputSlot(stencils,
 	                    "stencils",

@@ -36,8 +36,12 @@ template <class T>
 TrigonometricBCC<T>::TrigonometricBCC(const std::string& name) :
 	Stencil::Base<T>(
 		"TrigonometricBCC", name,
-		"<h2>Implementation of the trigonometric brightness constancy constraint. "
-		"This is parameterized with r, cos, and sin."
+		"Implementation of the trigonometric brightness constancy constraint.<br>"
+		"Motion components u and v are modelled as r*cos(phi) and r*sin(phi), "
+		"respectively."
+		"Parameters sought for are r, cos, and sin. "
+		"Unfourtunately, there is no regularizer for phi, resp. cos(phi) and sin(phi) "
+		"available at the moment. "
 	     ),
 	mask(true,false)
 {

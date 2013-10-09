@@ -33,8 +33,14 @@ template <typename T>
 WarpForward<T>::WarpForward(const std::string& name) :
 		TemplatedParameteredObject<T>(
 			"WarpForward", name,
-			"<h2>Module for forward warping</h2><br>"
-			"Module for forward warping."
+			"Module implementing so-called forward warping<br>"
+			"Forward warping iterates over the warping <i>domain</i> "
+			"and <i>pushes</i> actual image data w.r.t. the displacement vector. "
+			"Attention: There is no rounding (or interpolation within the warping "
+			"<i>range</i>) involved, that <i>spreads</i> the warped value to "
+			"its range positions, for non integer displacements. "
+			"Additionally, there may be some black (0) 'holes' within the WarpingResult, "
+			"since we do not necessarily map to the whole warping <i>range</i>. "
 		)
 {
 	ParameteredObject::_addInputSlot(

@@ -32,7 +32,9 @@ template<typename T>
 WeightsNonLocal<T>::WeightsNonLocal(const std::string& name) :
 	TemplatedParameteredObject<T>(
 			"WeightsNonLocal", name,
-			"calculates non-local weights.<br><br>")
+			"calculates non-local weights.<br><br>"
+			"This is <b>very deprecated</b>. "
+	)
 {
 	this->_addInputSlot(img,    "img",    "image input",  "CImgList<T>");
 	this->_addInputSlot(motionUV, "motionUV", "motion input", "CImgList<T>");

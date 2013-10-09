@@ -57,7 +57,7 @@ WeightedMedian<T>::WeightedMedian(const std::string& name) :
 			"The filtering process itself closely resembles the approach proposed "
 			"by <i>Li</i> and <i>Osher</i> within their paper <b>A new median formula with applications "
 			"to pde-based denoising</b>. "
-			"In order to iterate bilaterally over the image window, a flood-fill-like "
+			"In order to iterate bilaterally over the filter window, a flood-fill-like "
 			"implementation is being utilized. "
 			),
 	mask(true,false),

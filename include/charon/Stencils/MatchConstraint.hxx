@@ -41,7 +41,10 @@
 template <class T>
 MatchConstraint<T>::MatchConstraint(const std::string& name) :
 	Stencil::Base<T>("MatchConstraint", name,
-			"<h2>Stencil for matching constraint."),
+		"Stencil implementing the matching constraint.<br>"
+		"The parameters sought for is matched against "
+		"a given parameter guess w.r.t. a given PenaltyFunction. "
+	),
 	mask(true,false)
 {
 	this->_addInputSlot(penaltyFunction,

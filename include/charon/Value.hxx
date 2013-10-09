@@ -30,7 +30,10 @@ template <typename T>
 Value<T>::Value(const std::string& name) :
 		TemplatedParameteredObject<T>("Value", name,
 			"Module returning a value. <br>"
-			"This module returns the value set by its parameter. ")
+			"This module returns the value set by its parameter. "
+			"This can be useful, to extract a single pyramid or "
+			"scale-space level. "
+		)
 {
 	ParameteredObject::_addOutputSlot(out, "out",
 		"output slot for value");

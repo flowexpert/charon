@@ -33,8 +33,20 @@ template <typename T>
 WriteIntoList<T>::WriteIntoList(const std::string& name) :
 		TemplatedParameteredObject<T>(
 			"WriteIntoList", name,
-			"<h2>Select an image from an image list</h2><br>"
-			"Select an image from an image list."
+			"Module for (over-)writing (sub-)sequences of existing CImgList<T>s<br>"
+			"Takes an input list of C dimension c and writes it either whole, or "
+			"partially into the target list of C dimension c1, offset by the "
+			"value of first. "
+			"If first+c exceeds c1, the resulting list will be cut at c1-1, and "
+			"the last element of out will be the last element of input. "
+			"This can be usful to perform optical flow estimations successively, "
+			"and write their results into a single list, which has to be allocated "
+			"a-priori, by using the emptycimg module. "
+			"Another application lies in estimation algorithms, which make use of "
+			"the temporal consitency of the flow. "
+			"Attention: The (temporal) index dimension is C or T, and NOT N, which "
+			"is here reserved for the vector field dimension, e.g. in order to write "
+			"multidimensional data, like resulting flow fields, into a result list."
 		)
 {
 	ParameteredObject::_addInputSlot(

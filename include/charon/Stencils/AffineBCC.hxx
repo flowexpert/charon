@@ -34,10 +34,14 @@
 
 template <class T>
 AffineBCC<T>::AffineBCC(const std::string& name) :
-	Stencil::Base<T>(
-	     "AffineBCC", name,
-	     "<h2>Implementation of the overparameterized affine 6D brightness constancy constraint."
-	     ),
+	Stencil::Base<T>("AffineBCC", name,
+	"Implementation of the overparameterized affine 6D brightness constancy constraint.<br>"
+	"Implementation was done accordingly to <i>Tal Nir</i>'s paper <b>Over-Parameterized "
+	"Variational Optical Flow</b> (2007). "
+	"Unfourtunately, there is no appropriate regularization available at the moment, so this "
+	"has to be used with one (or more) EnergyClassic regularizer(s), regularizing (subsets of) "
+	"the parameters a11, a12, a21, a22, b1, b2 . "
+	),
 	parameterGuess(true,false),
 	mask(true,false)
 {
