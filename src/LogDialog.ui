@@ -49,11 +49,6 @@
        <verstretch>4</verstretch>
       </sizepolicy>
      </property>
-     <property name="font">
-      <font>
-       <family>Monospace</family>
-      </font>
-     </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
@@ -107,7 +102,7 @@
         <x>0</x>
         <y>0</y>
         <width>888</width>
-        <height>89</height>
+        <height>87</height>
        </rect>
       </property>
       <attribute name="label">
@@ -210,8 +205,8 @@ Previous</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>888</width>
-        <height>79</height>
+        <width>373</width>
+        <height>73</height>
        </rect>
       </property>
       <attribute name="label">

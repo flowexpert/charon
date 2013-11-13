@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include <QRegExp>
+#include <QFont>
 
 class QStandardItemModel;
 class QWidget;
@@ -115,6 +116,8 @@ namespace LogDecorators {
 		QRegExp     _finishRegex;    ///< plugin unloaded
 		QStandardItemModel* _result; ///< update summary
 		QTableView* _view;           ///< summary list
+		QFont       _ttFont;         ///< typewriter font
+		QFont       _sfFont;         ///< sans-serif font
 	private slots:
 		/// show corresponding log line on selection
 		void _searchOutput(const QModelIndex&);

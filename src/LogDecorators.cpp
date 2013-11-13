@@ -123,7 +123,8 @@ QString LogDecorators::Update::logFileName() const {
 }
 
 LogDecorators::Update::Update() :
-		_curStatus(Invalid), _result(0), _view(new QTableView)
+	_curStatus(Invalid), _result(0), _view(new QTableView),
+	_ttFont(QFont("fixed")), _sfFont(QFont("sans"))
 {
 	QString p = "\\(\\w+\\)\\s+"; // prefix
 	_fileRegex     = QRegExp(p+"File: (.*)");
@@ -132,6 +133,8 @@ LogDecorators::Update::Update() :
 	_noPluginRegex = QRegExp(p+"\"(.+)\" is no charon plugin.*");
 	_failRegex     = QRegExp(p+"Could not generate metadata for module \"(.+)\".*");
 	_warnRegex     = QRegExp("\\(WW\\)\\s+.*");
+	_ttFont.setStyleHint(QFont::TypeWriter);
+	_sfFont.setStyleHint(QFont::SansSerif);
 	_result = new QStandardItemModel(0,2,this);
 	QStandardItem* head = new QStandardItem(tr("file"));
 	_result->setHorizontalHeaderItem(0,head);
@@ -161,31 +164,33 @@ void LogDecorators::Update::_appendSummaryRow() {
 	}
 	QList<QStandardItem*> row;
 	QStandardItem* curItem = 0;
+	QFont curFont;
 
 	curItem = new QStandardItem();
+	curFont = _ttFont;
 	if (_curFile.isEmpty()) {
 		_curFile = tr("[no file available]");
-		curItem->setData(_curFile,             Qt::DisplayRole);
-		curItem->setData(QFont("monospace",9,-1,true), Qt::FontRole);
-		curItem->setData(QColor(Qt::gray),     Qt::ForegroundRole);
-		curItem->setData(QString(),            Qt::UserRole);
+		curFont.setItalic(true);
+		curItem->setData(_curFile,              Qt::DisplayRole);
+		curItem->setData(QColor(Qt::gray),      Qt::ForegroundRole);
+		curItem->setData(QString(),             Qt::UserRole);
 	}
 	else {
-		curItem->setData(_curFile,             Qt::DisplayRole);
-		curItem->setData(_curFile,             Qt::UserRole);
-		curItem->setData(QFont("monospace",9), Qt::FontRole);
+		curItem->setData(_curFile,              Qt::DisplayRole);
+		curItem->setData(_curFile,              Qt::UserRole);
 	}
+	curItem->setData(curFont, Qt::FontRole);
 	row << curItem;
 
 	curItem = new QStandardItem();
-	curItem->setData(_curPlugin,           Qt::DisplayRole);
-	curItem->setData(_curPlugin,           Qt::UserRole);
-	curItem->setData(QFont("monospace",9), Qt::FontRole);
+	curItem->setData(_curPlugin,                Qt::DisplayRole);
+	curItem->setData(_curPlugin,                Qt::UserRole);
+	curItem->setData(_ttFont,                   Qt::FontRole);
 	row << curItem;
 
 	curItem = new QStandardItem();
-	curItem->setData(_curStatus,           Qt::UserRole);
-	curItem->setData(QFont("sans-serif",9),Qt::FontRole);
+	curItem->setData(_curStatus,                Qt::UserRole);
+	curFont = _sfFont;
 	switch (_curStatus) {
 	case Passed:
 		curItem->setData(tr("passed"),          Qt::DisplayRole);
@@ -198,17 +203,18 @@ void LogDecorators::Update::_appendSummaryRow() {
 	case Warnings:
 		curItem->setData(tr("warnings"),        Qt::DisplayRole);
 		curItem->setData(QBrush(QColor("#F84")),Qt::ForegroundRole);
-		curItem->setData(QFont("sans-serif",9,QFont::DemiBold),Qt::FontRole);
+		curFont.setWeight(QFont::DemiBold);
 		break;
 	case Failed:
 		curItem->setData(tr("failed"),          Qt::DisplayRole);
 		curItem->setData(QBrush(QColor("#F20")),Qt::ForegroundRole);
-		curItem->setData(QFont("sans-serif",9,QFont::Bold),Qt::FontRole);
+		curFont.setWeight(QFont::DemiBold);
 		break;
 	default:
 		qDebug() << "unhandled status code:" << _curStatus;
 		break;
 	}
+	curItem->setData(curFont,                   Qt::FontRole);
 	row << curItem;
 
 	_result->appendRow(row);

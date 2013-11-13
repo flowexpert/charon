@@ -59,6 +59,8 @@ LogDialog::LogDialog(
 	_log = new QStringListModel(this);
 	_logProx = new LogViewProxyModel(_log);
 	_logProx->setSourceModel(_log);
+	QFont ttFont("fixed"); ttFont.setStyleHint(QFont::TypeWriter);
+	_ui->logView->setFont(ttFont);
 	_ui->logView->setModel(_logProx);
 
 	loadSettings();
