@@ -110,7 +110,7 @@ protected:
 	/// Specifies if the ParameteredObject is dynamic
 	void _setDynamic(bool v);
 
-	/// Remove an input slot
+    /// Remove an input slot
 	void _removeInputSlot(std::string name);
 
 	/// Remove an output slot
@@ -372,12 +372,13 @@ public:
 	 */
 	virtual void initialize();
 
-	/// set property _executed
+    /// set property _executed
 	/** \param value        New value of _executed
 	 */
-	void setExecuted(bool value) {
-		_executed = value;
-	}
+    virtual void setExecuted(bool value) {
+        _executed = value;
+
+    }
 
 	/// get execution status
 	bool executed() const {

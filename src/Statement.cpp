@@ -39,14 +39,14 @@ Statement::Statement(const std::string& name) :
 	ParameteredObject::_addInputSlot(
 		statement, "statement",
 		"Statement to interface to the external loop",
-		"bool");
+        "bool");
 
 	_statement=true;
 }
 
 void Statement::execute() {
 	// your code goes here :-)
-	_statement=statement();
+    _statement=statement();
 }
 
 /// Creates an instance of the plugin

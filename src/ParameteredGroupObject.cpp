@@ -92,7 +92,7 @@ void ParameteredGroupObject::initialize()
 		for(size_t i=0;i<vinput.size();i++)
 		{
 			VirtualInputSlot* in=vinput[i];
-			_addInputSlot(*in,in->getName(),in->getDisplayName(),"",in->getType());
+            onAddInputSlot(in);
 			Parameter<int> *par=new Parameter<int>(-1);
 			std::stringstream pname;
 			pname<<"loop_input_"<<i<<"_to_output";
@@ -108,7 +108,7 @@ void ParameteredGroupObject::initialize()
 		for(size_t i=0;i<voutput.size();i++)
 		{
 			VirtualOutputSlot* out=voutput[i];
-			_addOutputSlot(*out,out->getName(),out->getDisplayName(),"",out->getType());
+            onAddOutputSlot(out);
 		}
 	}
 
@@ -232,7 +232,45 @@ void ParameteredGroupObject::onLoad(
 		{
 			loopInputToOutput(i,(*par)());
 		}
-	}
+    }
+}
+
+void ParameteredGroupObject::setExecuted(bool value)
+{
+    ParameteredObject::setExecuted(value);
+    if(_pluginMan)
+    {
+        std::map<std::string, ParameteredObject *>::const_iterator iter;
+
+        if (_pluginMan->getObjectList().empty()) {
+            throw AbstractPluginLoader::PluginException(
+                "Could not reset executed flags in workflow:\n\t"
+                "No valid target point found.\n\t"
+                "Please check if all required plugins could be loaded,\n\t"
+                "then check if this is a valid parameter file.", "unknown",
+                AbstractPluginLoader::PluginException::OTHER);
+        }
+
+        for (iter = _pluginMan->getObjectList().begin(); iter != _pluginMan->getObjectList().end(); iter++) {
+    //            if(isGroup((*iter)))
+    //            {
+    //                AbstractBaseGroupIntf* grpIntf=dynamic_cast<AbstractBaseGroupIntf*>((*iter));
+    //                grpIntf->loadWorkflow(AbstractPluginLoader::pluginPaths);
+    //            }
+            (*iter).second->setExecuted(value);
+        }
+    }
+
+}
+
+void ParameteredGroupObject::onAddInputSlot(VirtualInputSlot *in)
+{
+    _addInputSlot(*in,in->getName(),in->getDisplayName(),"",in->getType());
+}
+
+void ParameteredGroupObject::onAddOutputSlot(VirtualOutputSlot *out)
+{
+    _addOutputSlot(*out,out->getName(),out->getDisplayName(),"",out->getType());
 }
 
 

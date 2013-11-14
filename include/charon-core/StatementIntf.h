@@ -9,6 +9,10 @@ public:
 	{
 		return this->operator ()();
 	}
+    virtual void reset()
+    {
+        return;
+    }
 };
 
 #endif // STATEMENTINTF_H

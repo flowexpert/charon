@@ -57,6 +57,7 @@ void WhileGroup::executeGroup() {
 		enableLoopConnections();
 		_pluginMan->resetExecuted();
 	}
+    _innerWhilestatement->reset();
 	disableLoopConnections();
 }
 

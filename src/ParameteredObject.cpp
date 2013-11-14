@@ -324,7 +324,7 @@ void ParameteredObject::resetExecuted(bool propagate) {
 		sout << "(II) resetting execution state of " << getClassName()
 			 << " \"" << getName() << "\"" << std::endl;
 	}
-	_executed = false;
+    setExecuted(false);
 	if (propagate) {
 		for (std::map<std::string, Slot*>::iterator it = _outputs.begin();
 				it != _outputs.end(); it++) {
@@ -334,6 +334,7 @@ void ParameteredObject::resetExecuted(bool propagate) {
 				(*tIt)->getParent().resetExecuted(propagate);
 		}
 	}
+
 }
 
 std::set<ParameteredObject*> ParameteredObject::_getTargetNodes() {
@@ -604,7 +605,7 @@ void ParameteredObject::prepareDynamicInterface(const ParameterFile&) {
 void ParameteredObject::_setDynamic(bool v) {
 	if (_createMetadata) {
 		_metadata.set(_className + ".isDynamicModule", v);
-	}
+    }
 }
 
 bool ParameteredObject::isDynamic() {

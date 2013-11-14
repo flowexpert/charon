@@ -34,7 +34,7 @@ VirtualSlotSwitch::VirtualSlotSwitch(const std::string& name) :
 			"statement or inputnumber."
 		),
 		statement(true,false),
-		inputnumber(true,false)
+    inputnumber(true,false),output(0)
 {
 
 	ParameteredObject::_addInputSlot(
@@ -47,9 +47,9 @@ VirtualSlotSwitch::VirtualSlotSwitch(const std::string& name) :
 		"int");
 
 	ParameteredObject::_addOutputSlot(
-		output, "output",
+        output, output.getName(),
 		"output connected to one of the inputs",
-		"virtual");
+        output.getType());
 
 	ParameteredObject::_addParameter< int >(
 		number_of_inputs, "number_of_inputs",
@@ -95,6 +95,7 @@ void VirtualSlotSwitch::execute() {
     }
     if(oldselection!=selected_in)
     {
+        sout<<"Switching to slot "<<selected_in<<std::endl;
         output.setVirtualPartnerSlot(_virtualInputSlots[selected_in]);
 
         _virtualInputSlots[oldselection]->setVirtualPartnerSlot(_virtualOutputSlots[oldselection]);

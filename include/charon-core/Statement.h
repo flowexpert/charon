@@ -51,7 +51,7 @@ public:
 	Statement(const std::string& name = "");
 
 	/// Statement to interface to the external loop
-	InputSlot< bool > statement;
+    InputSlot< bool > statement;
 
 	virtual bool operator ()() const;
 

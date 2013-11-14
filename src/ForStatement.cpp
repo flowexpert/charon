@@ -62,7 +62,12 @@ void ForStatement::execute() {
 
 	if (_currentValue == INVALID_VALUE) _currentValue = _initialValue;
 	else _currentValue += _incrementValue;
-	currentValue() = _currentValue;
+    currentValue() = _currentValue;
+}
+
+void ForStatement::reset()
+{
+    _currentValue = int(INVALID_VALUE);
 }
 
 /// Creates an instance of the plugin

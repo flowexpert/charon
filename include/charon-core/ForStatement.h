@@ -40,7 +40,7 @@
 #endif
 
 #include <charon-core/ParameteredObject.h>
-#include "../include/charon-core/StatementIntf.h"
+#include "StatementIntf.h"
 
 /// ForStatement module to be used in counting loops
 /** ForStatement module to be used in loops. This plugin is intended for loops
@@ -68,6 +68,7 @@ public:
 protected:
 	/// Update object.
 	virtual void execute();
+    virtual void reset();
 private:
 	int _initialValue;
 	int _incrementValue;

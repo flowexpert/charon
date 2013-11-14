@@ -111,7 +111,11 @@ public:
 	/** Load the loop connections*/
 	virtual void onLoad(const ParameterFile &pf, const PluginManagerInterface *man);
 
+    virtual void setExecuted(bool value);
+
 protected:
+    virtual void onAddInputSlot(VirtualInputSlot* in);
+    virtual void onAddOutputSlot(VirtualOutputSlot* out);
 	PluginManager* _pluginMan;
 	InputSlotBundleIntf* _inputs;
 	OutputSlotBundleIntf* _outputs;
