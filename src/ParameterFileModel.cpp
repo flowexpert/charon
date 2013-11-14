@@ -632,7 +632,7 @@ void ParameterFileModel::_updateDynamics() {
 	else if (QApplication::instance()) {
 		LogDialog dialog(
 			new LogDecorators::UpdateDynamics(_fileName));
-        bool finished = dialog.waitForFinished(-1);
+		bool finished = dialog.waitForFinished(500);
 		if (!finished || dialog.hasErrorLines()) {
 			dialog.show();
 			dialog.exec();
