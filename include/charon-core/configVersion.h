@@ -27,8 +27,8 @@
 	///charon-core minor version
 	#define CHARON_CORE_VERSION_MINOR 3
 	///charon-core patch version
-	#define CHARON_CORE_VERSION_PATCH 0
+	#define CHARON_CORE_VERSION_PATCH 1
 	///charon-core version string
-	#define CHARON_CORE_VERSION "0.3.0"
+	#define CHARON_CORE_VERSION "0.3.1"
 
 #endif // CHARON_CORE_VERSION_H
