@@ -641,6 +641,7 @@ void TuchulchaWindow::options() {
 			SLOT(_showHelp(QString)));
 	dialog.exec();
 	QSettings settings;
-	_toolBar->setToolButtonStyle((Qt::ToolButtonStyle)
-		settings.value("toolButtonStyle",Qt::ToolButtonFollowStyle).toInt());
+    if(_toolBar)
+        _toolBar->setToolButtonStyle((Qt::ToolButtonStyle)
+            settings.value("toolButtonStyle",Qt::ToolButtonFollowStyle).toInt());
 }
