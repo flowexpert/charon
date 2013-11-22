@@ -182,8 +182,9 @@ private:
 	 *  called "${targetPath}/${pluginName}.wrp"
 	 *  \param pluginName Name of the plugin (without prefix or extension)
 	 *  \param filename   Path to a file to store the metadata info
+	 *  \return true if the plugin was loaded successfully, false otherwise
 	 */
-	void _generateMetadataForPlugin(
+	bool _generateMetadataForPlugin(
 		const std::string& pluginName,
 		const std::string& filename);
 

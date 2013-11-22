@@ -653,6 +653,7 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 	}
 	FileTool::changeDir(pathBackup);
 
+	int pluginCount = 0 ;
 	// Now generate metadata for all (unique) plugin names
 	// skipping the names from the exclude list.
 	// Which dll file to use is then handled by the plugin loader.
@@ -662,7 +663,8 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 		if (std::find(_excludeList.begin(),_excludeList.end(),*pIterU)
 				== _excludeList.end()) {
 			// not in exclude list
-			_generateMetadataForPlugin(*pIterU,targetPath+"/"+*pIterU+".wrp");
+			if(_generateMetadataForPlugin(*pIterU,targetPath+"/"+*pIterU+".wrp"))
+				pluginCount ++ ;
 			sout << "(DD) " << std::endl;
 		}
 		else {
@@ -684,18 +686,21 @@ void PluginManager::createMetadata(const std::string& targetPath) {
 		sout << "(DD) \t" << *skipIter << std::endl;
 	}
 #endif
+
+	sout << "(II) Finished generating metadata\n"
+		 << "(II) Loaded " << pluginCount << " plugins" << std::endl ;
 }
 
 void PluginManager::setExcludeList(const std::vector<std::string>& list) {
 	_excludeList = list;
 }
 
-void PluginManager::_generateMetadataForPlugin(
+bool PluginManager::_generateMetadataForPlugin(
 		const std::string& pluginName, const std::string& filename) {
 	if (!pluginName.size()) {
 		sout << "(EE) " << __FILE__ << ":" << __LINE__ << "\t"
 			<< "emtpy pluginName given (metadata generation)!\n" << std::endl;
-		return;
+		return false;
 	}
 	try {
 		bool alreadyLoaded = isLoaded(pluginName);
@@ -710,6 +715,7 @@ void PluginManager::_generateMetadataForPlugin(
 		if (!alreadyLoaded) {
 			unloadPlugin(pluginName);
 		}
+		return true ;
 	} catch (const AbstractPluginLoader::PluginException& e) {
 		std::string errMsg = e.what();
 		switch(e.getErrorCode()) {
@@ -745,6 +751,7 @@ void PluginManager::_generateMetadataForPlugin(
 			<< "Possible non-standard execption in plugin constructor!"
 			<< std::endl ;
 	}
+	return false ;
 }
 
 void PluginManager::reset() {
