@@ -148,6 +148,7 @@ void CharonRun::_freeMan() {
 
 void CharonRun::updatePlugins() {
 	_taskStart();
+	QTextStream qout(stdout);
 
 	// delete old wrp files
 	const FileManager& fm = FileManager::instance();
@@ -164,8 +165,16 @@ void CharonRun::updatePlugins() {
 		metaPath.remove(wrpFiles[i]);
 		Q_ASSERT(success);
 	}
-
-	_setupMan();
+	try {
+		_setupMan();
+	}
+	catch(std::exception& err)
+	{
+		qout << "(EE) Could not set up PluginManager: " << err.what() << "\n"
+			 << "(EE) Please check that your local and global plugin paths "
+			 << "are set correctly in the options menu." << endl ;
+		return;
+	}
 	_man->createMetadata(metaPath.absolutePath().toStdString());
 	_freeMan();
 
