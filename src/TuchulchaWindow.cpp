@@ -63,7 +63,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	_toolBar(0), _flow(0),_docGen(0),_helpDisp(0)
 {
 	if (OptionsDialog::check()) {
-		options();
+		options(1); // show path settings tab
 	}
 
 	QSettings settings;
@@ -635,13 +635,16 @@ void TuchulchaWindow::runWorkflow() {
 	model->setPrefix(oldPref);
 }
 
-void TuchulchaWindow::options() {
+void TuchulchaWindow::options(int tab) {
 	OptionsDialog dialog(isVisible()?this:0);
+	dialog.setTab(tab);
 	connect(&dialog,SIGNAL(helpRequested(QString)),
 			SLOT(_showHelp(QString)));
 	dialog.exec();
-	QSettings settings;
-    if(_toolBar)
-        _toolBar->setToolButtonStyle((Qt::ToolButtonStyle)
-            settings.value("toolButtonStyle",Qt::ToolButtonFollowStyle).toInt());
+	if(_toolBar) {
+		QSettings settings;
+		_toolBar->setToolButtonStyle(
+				(Qt::ToolButtonStyle) settings.value(
+						"toolButtonStyle",Qt::ToolButtonFollowStyle).toInt());
+	}
 }

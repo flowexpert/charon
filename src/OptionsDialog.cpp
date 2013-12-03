@@ -41,11 +41,25 @@ OptionsDialog::OptionsDialog(QWidget* pp, Qt::WindowFlags f) :
 	_ui->bBox->setStandardButtons(
 			_ui->bBox->standardButtons() | QDialogButtonBox::Help);
 #endif
-	refresh();
+	QSettings settings;
+	if (settings.allKeys().isEmpty()) {
+		// use default values if settings environment empty
+		restore();
+		apply();
+	}
+	else {
+		refresh();
+	}
 }
 
 OptionsDialog::~OptionsDialog() {
 	delete _ui;
+}
+
+void OptionsDialog::setTab(int tab) {
+	if (tab >= 0 && tab < _ui->tabOptions->count()) {
+		_ui->tabOptions->setCurrentIndex(tab);
+	}
 }
 
 void OptionsDialog::refresh() {
@@ -194,6 +208,10 @@ void OptionsDialog::on_tableExclude_itemChanged(QTableWidgetItem* item) const {
 
 bool OptionsDialog::check() {
 	QSettings settings;
+	if (settings.allKeys().isEmpty()) {
+		// first start (or config deleted)
+		return true;
+	}
 	bool errors = false;
 
 	// make sure, that the exclude list is populated
@@ -204,7 +222,7 @@ bool OptionsDialog::check() {
 	}
 
 	// check current path values
-	QStringList pVars;
+	QStringList pVars, allPaths;
 	pVars<<"globalPluginPath"<<"privatePluginPath"<<"privatePluginPathD";
 
 	foreach (const QString& pVar, pVars) {
@@ -225,9 +243,10 @@ bool OptionsDialog::check() {
 			}
 		}
 		settings.setValue(pVar,paths);
+		allPaths << paths;
 	}
-	if (settings.value("globalPluginPath").toStringList().isEmpty()) {
-		errors = true;
+	if (allPaths.isEmpty()) {
+		return true; // something went wrong if all paths vanished
 	}
 
 	return errors;

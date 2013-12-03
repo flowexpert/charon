@@ -82,8 +82,9 @@ public slots:
 	/// runn current workflow
 	void runWorkflow();
 
-	/// edit options
-	void options();
+	/// edit options dialog
+ 	/** \param tab      number of options tab to show (default if invalid) */
+	void options(int tab=-1);
 
 	/// print status message
 	void showMessage(QString msg) const;

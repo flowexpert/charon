@@ -57,6 +57,11 @@ public slots:
 	void apply();
 	/// restore default values
 	void restore();
+	/// set shown tab
+ 	/** default tab is shown, if given number invalid (too low or high)
+ 	 *  \param tab      set tab number
+ 	 */
+	void setTab(int tab=-1);
 
 private slots:
 	/// handle button click events
