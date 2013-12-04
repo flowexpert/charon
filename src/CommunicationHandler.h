@@ -53,6 +53,8 @@ private slots:
 	void _printPrompt();
 
 signals:
+	/// setup settings
+	void setupSettings();
 	/// update module metadata
 	void updatePlugins();
 	/// run given workflow file

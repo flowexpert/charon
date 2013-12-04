@@ -61,6 +61,7 @@ int main(int argc, char *argv[]) {
 
 	CommunicationHandler comm(app.arguments());
 	CharonRun run;
+	run.connect(&comm,SIGNAL(setupSettings()),SLOT(setupSettings()));
 	run.connect(&comm,SIGNAL(updatePlugins()),SLOT(updatePlugins()));
 	run.connect(&comm,SIGNAL(runWorkflow(QString)),SLOT(runWorkflow(QString)));
 	run.connect(&comm,SIGNAL(updateDynamics(QString)),

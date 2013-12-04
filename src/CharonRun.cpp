@@ -33,6 +33,7 @@
 #include <QTextStream>
 #include <QApplication>
 #include <QDateTime>
+#include "OptionsDialog.h"
 
 #ifdef __GNUG__
 #include <cxxabi.h>
@@ -308,6 +309,33 @@ void CharonRun::updateDynamics(QString fName) {
 	_man->createDynamicMetadata(fName.toStdString(),
 		dynamPath.absoluteFilePath(baseN).toStdString());
 	_freeMan();
+
+	_taskFinished();
+}
+
+void CharonRun::setupSettings() {
+	if (!OptionsDialog::check()) {
+		// nothing to do
+		QTextStream qout(stdout,QIODevice::WriteOnly);
+		qout << "(DD) " << tr("path settings seem to be ok, keeping them")
+			 << endl;
+		return;
+	}
+	_taskStart();
+
+#ifdef UNIX
+	// standard install path on linux systems
+	QString globalPath = "/usr/lib/charon-plugins";
+#else
+	// Assume global plugin dir to be the same directory
+	// where the tuchulcha.exe is located
+	QString globalPath = QCoreApplication::applicationDirPath();
+#endif
+
+	QSettings settings;
+	settings.setValue("globalPluginPath", globalPath);
+	settings.setValue("privatePluginPath",QString());
+	settings.setValue("privatePluginPathD",QString());
 
 	_taskFinished();
 }

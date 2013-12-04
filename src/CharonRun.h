@@ -47,6 +47,12 @@ public slots:
 	/// update dynamic plugins of given workflow file
 	/** \param fName  workflow filename */
 	void updateDynamics(QString fName);
+	/// setup settings
+	/** this applies default path settings
+	 *  (similar to tuchulcha's options dialog)
+	 *  if current path settings are empty
+	 */
+	void setupSettings();
 
 	/// unlock exiting, quit application if all tasks are completed
 	void exitWhenFinished();

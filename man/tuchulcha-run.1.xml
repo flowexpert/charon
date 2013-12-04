@@ -71,13 +71,14 @@
 			<command>tuchulcha-run</command>
 			<arg choice="opt"><option>--non-interactive</option></arg>
 			<arg choice="opt"><option>--quiet</option></arg>
+			<arg choice="opt"><option>setup-settings</option></arg>
 			<arg choice="opt"><option>update</option></arg>
 			<arg choice="opt"><option>update-dynamics <replaceable>parameterFile</replaceable></option></arg>
 			<arg choice="opt"><option>run <replaceable>parameterFile</replaceable></option></arg>
 		</cmdsynopsis>
 		<cmdsynopsis>
 			<command>tuchulcha-run</command>
-			<arg choice="opt"><option>-nqudf</option></arg><arg choice="opt"><replaceable>parameterFile</replaceable></arg>
+			<arg choice="opt"><option>-nqsudf</option></arg><arg choice="opt"><replaceable>parameterFile</replaceable></arg>
 		</cmdsynopsis>
 		<simpara>
 			See <xref linkend="tuchulcha-run-short-opts"/> for more information about options/commands abbreviations.
@@ -99,6 +100,10 @@
 			It provides similar functionality as the charon workflow executor
 			but needs less command line options since it has access to the
 			settings of <application>tuchulcha</application>.
+			If <application>tuchulcha</application> has never been run before,
+			it is also capable to set up default path settings as
+			<application>tuchulcha</application> would
+			(using the <option>setup-settings</option> option).
 		</simpara>
 		<simpara>
 			<command>tuchulcha-run</command> does provide a Qt Gui event loop,
@@ -139,6 +144,15 @@
 				<term><option>/?</option></term>
 				<listitem><simpara>
 					display short help text and quit immediately
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>setup-settings</option></term>
+				<term><option>-s</option></term>
+				<listitem><simpara>
+					if no or invalid path settings are detected,
+					apply default path settings like
+					<application>tuchulcha</application> would do
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>
@@ -214,6 +228,14 @@
 				<term><option>help</option></term>
 				<listitem><simpara>
 					print short command summary
+				</simpara></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>setup-settings</option></term>
+				<listitem><simpara>
+					if no or invalid path settings are detected,
+					apply default path settings like
+					<application>tuchulcha</application> would do
 				</simpara></listitem>
 			</varlistentry>
 			<varlistentry>

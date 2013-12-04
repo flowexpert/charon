@@ -44,6 +44,7 @@ CommunicationHandler::CommunicationHandler(
 		"SYNTAX\n"
 		"\ttuchlucha-run <options> command <workflow>\n"
 		"COMMANDS\n"
+		"\tsetup-settings,    -s : setup default path settings if unset\n"
 		"\trun,               -f : run the workflow file defined in <workflow>\n"
 		"\tupdate,            -u : update the plugin cache\n"
 		"\tupdate-dynamics,   -d : update dynamic plugin metadata\n"
@@ -67,6 +68,7 @@ CommunicationHandler::CommunicationHandler(
 	_helpMsgI = QString(
 		"COMMANDS\n\t"
 		"help\n\t\tshow this help message\n\t"
+		"setup-settings\n\t\tsetup default path settings if unset\n\t"
 		"update\n\t\tupdate plugin information cache\n\t"
 		"update-dynamics <workflow>\n\t\tupdate plugin information cache\n\t"
 		"\tfor dynamic modules in workflow file\n\t"
@@ -76,6 +78,9 @@ CommunicationHandler::CommunicationHandler(
 	);
 
 	// increase task counter if sending task to task queue
+	connect(this,
+		SIGNAL(setupSettings()), SLOT(_startTask()),
+		Qt::DirectConnection);
 	connect(this,
 		SIGNAL(updatePlugins()), SLOT(_startTask()),
 		Qt::DirectConnection);
@@ -114,7 +119,7 @@ int CommunicationHandler::errorCode() const {
 void CommunicationHandler::run() {
 	// commandline argument parsing
 	QStringListIterator argIter(_args);
-	QRegExp runShortRgx("-[qnu]*(?:f|d)?");
+	QRegExp runShortRgx("-[qnus]*(?:f|d)?");
 	argIter.next(); // skip first item (command name)
 	while (argIter.hasNext()) {
 		QString s = argIter.next();
@@ -129,6 +134,9 @@ void CommunicationHandler::run() {
 		else if (s == "--quiet" || s == "-q") {
 			_quiet = true;
 		}
+		else if (s == "setup-settings") {
+			emit setupSettings();
+		}
 		else if (s == "update" || s == "-u") {
 			emit updatePlugins();
 		}
@@ -140,13 +148,16 @@ void CommunicationHandler::run() {
 			if (!_checkForFileArg(argIter, s)) return;
 			emit updateDynamics(argIter.next());
 		}
-		// concatenated form of -q -n -u -f -d, f/d must be last !
+		// concatenated form of -q -n -s -u -f -d, f/d must be last !
 		else if (runShortRgx.exactMatch(s)) {
 			if (s.contains("q")) {
 				_quiet = true;
 			}
 			if (s.contains("n")) {
 				_interactive = false;
+			}
+			if (s.contains("s")) {
+				emit setupSettings();
 			}
 			if (s.contains("u")) {
 				emit updatePlugins();
@@ -195,6 +206,9 @@ void CommunicationHandler::run() {
 		}
 		else if (line == "help") {
 			qout << _helpMsgI << endl;
+		}
+		else if (line == "setup-settings") {
+			emit setupSettings();
 		}
 		else if (line == "update") {
 			emit updatePlugins();

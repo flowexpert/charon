@@ -127,6 +127,7 @@ namespace LogDecorators {
 
 	/// decorator for update dynamics dialog
 	class UpdateDynamics : public Decorator {
+		Q_OBJECT
 	public:
 		/// constructor
 		/** \param fileName worflow file to analyze */
