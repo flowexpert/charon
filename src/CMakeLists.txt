@@ -27,6 +27,12 @@ ADD_CHARON_PLUGIN(roi
 	${CHARON_UTILS_INCLUDE_DIR}/Roi.hxx
 	PLUGIN_LISTS Plugins
 )
+ADD_CHARON_PLUGIN(roioffset
+	RoiOffset.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/RoiOffset.h
+	${CHARON_UTILS_INCLUDE_DIR}/RoiOffset.hxx
+	PLUGIN_LISTS Plugins
+)
 ADD_CHARON_PLUGIN(statementgenerator
 	StatementGenerator.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/StatementGenerator.h
