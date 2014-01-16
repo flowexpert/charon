@@ -41,7 +41,17 @@ ADD_CHARON_PLUGIN(statementgenerator
 ADD_CHARON_PLUGIN(parametertoslot
 	ParameterToSlot.cpp
 	${CHARON_UTILS_INCLUDE_DIR}/ParameterToSlot.h
-        ${CHARON_UTILS_INCLUDE_DIR}/ParameterToSlot.hxx
+	${CHARON_UTILS_INCLUDE_DIR}/ParameterToSlot.hxx
+	PLUGIN_LISTS Plugins
+)
+ADD_CHARON_PLUGIN(int2uint
+	Int2Uint.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/Int2Uint.h
+	PLUGIN_LISTS Plugins
+)
+ADD_CHARON_PLUGIN(uint2int
+	Uint2Int.cpp
+	${CHARON_UTILS_INCLUDE_DIR}/Uint2Int.h
 	PLUGIN_LISTS Plugins
 )
 ADD_CHARON_PLUGIN(greatersmallerthenpar

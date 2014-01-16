@@ -45,12 +45,11 @@ ParameterToSlot<T>::ParameterToSlot(const std::string& name) :
 		param_val, "param_val",
 		"param_val to be copied to slot",
 		0, "T");
-
 }
 
 template <typename T>
 void ParameterToSlot<T>::execute() {
-    value=param_val;
+	value=param_val;
 }
 
 #endif /* _PARAMETERTOSLOT_HXX_ */
