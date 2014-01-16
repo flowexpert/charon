@@ -75,8 +75,10 @@ private:
 	Ui::NodeTreeView* _ui;
 	/// the model of the view
 	QStandardItemModel* _model;
-	/// sort and filter proxy
+	/// filter wildcard proxy
 	QSortFilterProxyModel* _filter;
+	/// hide emtpy groups proxy
+	QSortFilterProxyModel* _hideEmtptyGroups;
 };
 
 #endif	/* NODETREEVIEW_H */

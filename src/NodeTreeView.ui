@@ -32,6 +32,14 @@
    </item>
    <item row="0" column="0">
     <widget class="QFilterWidget" name="editFilter">
+     <property name="styleSheet">
+      <string notr="true">:no-frame{
+	background-color:red;
+	padding:4 2;
+	border: 1px groove gray;
+    border-radius: 2px;
+}</string>
+     </property>
      <property name="placeholderText">
       <string>Filter</string>
      </property>

@@ -29,6 +29,7 @@
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 #include <QVBoxLayout>
+#include <QDebug>
 
 /// filter proxy subclass keeping all top-level entities
 class MySortFilterProxy : public QSortFilterProxyModel {
@@ -40,22 +41,37 @@ protected:
 	/// include top-level entities in the model
 	virtual bool filterAcceptsRow(
 		int source_row, const QModelIndex& source_parent) const {
-		return source_parent.isValid() ?
-			QSortFilterProxyModel::filterAcceptsRow(source_row,source_parent) :
-			true;
+		return !source_parent.isValid() ||
+			QSortFilterProxyModel::filterAcceptsRow(source_row,source_parent);
+	}
+};
+
+/// filer proxy to hide top-level entities without children
+class NoEmptyGroupsProxy : public QSortFilterProxyModel {
+public:
+	/// default constructor
+	NoEmptyGroupsProxy(QObject* pp=0) : QSortFilterProxyModel(pp) {}
+
+protected:
+	/// hide top-level entities without valid children
+	virtual bool filterAcceptsRow(
+		int source_row, const QModelIndex& source_parent) const {
+		QModelIndex cur = sourceModel()->index(source_row,0,source_parent);
+		return source_parent.isValid() || sourceModel()->hasChildren(cur);
 	}
 };
 
 NodeTreeView::NodeTreeView(QWidget* pp) : QWidget(pp) {
 	_ui = new Ui::NodeTreeView;
 	_ui->setupUi(this);
-	_filter = new MySortFilterProxy(_ui->treeView);
-	_model = new QStandardItemModel(1,1,_filter);
+	_model = new QStandardItemModel(1,1,this);
+	_filter = new MySortFilterProxy(this);
+	_hideEmtptyGroups = new NoEmptyGroupsProxy(this);
 	_filter->setSourceModel(_model);
+	_hideEmtptyGroups->setSourceModel(_filter);
 	_filter->setFilterCaseSensitivity(Qt::CaseInsensitive);
 	_filter->setSortCaseSensitivity(Qt::CaseInsensitive);
-	_filter->setDynamicSortFilter(true);
-	_ui->treeView->setModel(_filter);
+	_ui->treeView->setModel(_hideEmtptyGroups);
 	reload();
 }
 
@@ -141,10 +157,13 @@ void NodeTreeView::reload() {
 			} while(subIndex != -1) ;
 		}
 	}
+	_model->sort(0,Qt::AscendingOrder);
+	_filter->invalidate();
+	_hideEmtptyGroups->invalidate();
 
 	// update view
-	_ui->treeView->setExpanded(_filter->mapFromSource(root->index()), true);
 	_ui->treeView->sortByColumn(0,Qt::AscendingOrder);
+	_ui->treeView->setExpanded(_ui->treeView->model()->index(0,0), true);
 }
 
 void NodeTreeView::on_treeView_clicked(const QModelIndex& cur) {
@@ -155,6 +174,11 @@ void NodeTreeView::on_treeView_clicked(const QModelIndex& cur) {
 
 void NodeTreeView::on_editFilter_textChanged(const QString& text) {
 	_filter->setFilterWildcard(text);
+	_hideEmtptyGroups->invalidate();
+	_ui->treeView->sortByColumn(0,Qt::AscendingOrder);
+	_ui->treeView->setExpanded(_ui->treeView->model()->index(0,0), true);
+	_ui->treeView->scrollToTop();
+	_ui->editFilter->setFrame(_ui->treeView->model()->rowCount());
 }
 
 void NodeTreeView::on_treeView_doubleClicked(const QModelIndex& idx) {
