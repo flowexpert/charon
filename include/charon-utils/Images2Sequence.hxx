@@ -52,15 +52,30 @@ void Images2Sequence<T>::execute() {
 		image_sequence().assign(images(),true);
 		return;
 	}
-	// Dimensions of the first input image
-	unsigned int listSize = images().size();
-	if (listSize <= 0) {
-		ParameteredObject::raise("empty input list");
+	// Dimensions of the first non-emtpy input image
+	cil::CImgList<T> temp;
+	temp.assign(images(),true);
+	for (unsigned int ii=0; ii < images.size(); ii++) {
+		// use first non-emtpy input
+		if (temp.size()) {
+			if (ii > 0) {
+				sout << "(II) skipped " << ii << " empty inputs" << std::endl;
+			}
+			break;
+		}
+		temp.assign(images[ii],true);
 	}
-	int width    = images()[0].width();
-	int height   = images()[0].height();
-	int depth    = images()[0].depth();
-	int spectrum = images()[0].spectrum();
+	if (!temp.size()) {
+		sout << "(WW) ALL inputs emtpy" << std::endl;
+		image_sequence().assign();
+		return;
+	}
+	unsigned int listSize = temp.size();
+	int width    = temp[0].width();
+	int height   = temp[0].height();
+	int depth    = temp[0].depth();
+	int spectrum = temp[0].spectrum();
+	temp.assign(); // clear
 
 	// assert that images are orderd in lexicographically ascending
 	// order of their instance name
@@ -97,6 +112,11 @@ void Images2Sequence<T>::execute() {
 	for (std::size_t i=0; i < images.size(); i++) {
 		// Create reference to the CImgList in the current input slot
 		const cimg_library::CImgList<T>& imgList = images[order[i]];
+
+		// skip empty images
+		if (!imgList.size()) {
+			continue;
+		}
 
 		// check dimensions of the current image
 		if (
