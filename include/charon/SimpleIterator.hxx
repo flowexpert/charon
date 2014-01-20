@@ -303,13 +303,18 @@ bool SimpleIterator<T>::finishStep() {
 		helpResidual.save(writeResidualInit().c_str());
 	}
 
-	sout << "\t\told flow size: "
-			<< oldFlow[0].width() << "x"
-			<< oldFlow[0].height() << "\n\t\tq";
+	if (oldFlow.size() > 0) {
+		sout << "\t\told flow size: "
+				<< oldFlow[0].width() << "x"
+				<< oldFlow[0].height() << "\n\t\tq";
 
-	sout << "old flow mean: (";
-	cimglist_for(oldFlow,kk)
-		sout << oldFlow[kk].mean() << "; ";
+		sout << "old flow mean: (";
+		cimglist_for(oldFlow,kk)
+			sout << oldFlow[kk].mean() << "; ";
+	}
+	else {
+		sout << "\t\told flow empty. (zero elements";
+	}
 
 	sout << ")\n\t\titeration flow size: "
 			<< curFlow[0].width() << "x"

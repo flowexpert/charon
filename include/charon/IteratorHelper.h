@@ -42,6 +42,13 @@
 /// Helper for iterative image processing algorithms.
 /** This provides current values/initial values for further processing.
  *
+ *  If an inital flow is provided via the optional initFlow input slot,
+ *  it is copied to the flow output in the first iteration.
+ *  If left unconnected, an initial zero flow is generated matching the
+ *  input sequence x/y/z dimensions and using the flowFrames (as t) and
+ *  flowDimensions (as v). Auto detection of flowFrames means one frame
+ *  less than the input sequence.
+ *
  *  \ingroup charon-modules
  *  \ingroup charon-flow
  *  \ingroup charon-iterators
@@ -56,6 +63,8 @@ public:
 	InputSlot < cimg_library::CImgList<T> > initFlow;
 	/// number of flow components for initialization
 	Parameter < unsigned int > flowDimensions;
+	/// number of frames for initial flow ( use -1 for auto detection )
+	Parameter < int > flowFrames;
 	/// original sequence output
 	OutputSlot < cimg_library::CImgList<T> > sequence;
 	/// current flow solution
