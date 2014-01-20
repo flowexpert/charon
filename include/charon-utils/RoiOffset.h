@@ -46,6 +46,10 @@
  *  Unconnected slots are treated as zero, leaving this dimension
  *  unchanged.
  *  The offset is applied as well to the lower and the upper ROI border.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup charon-helpers
  */
 template <typename T>
 class roioffset_DECLDIR RoiOffset :

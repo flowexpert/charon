@@ -39,7 +39,19 @@
 #include <charon-core/ParameteredObject.hxx>
 #include <charon-utils/CImg.h>
 
-/// plugin does nothing
+/// Cut off flow vectors whose amplitude are strict higher (or lower)
+/// than a given threshold.
+/** The Amplitude is defined as the square-root of the sum of all pixel values
+ *  along the first Dimension of the input CImgList (usually 2 for classical
+ *  optical flow fields).
+ *
+ *  This Plugin is mostly usefull for visualizing flow fields
+ *  with some outliers.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ */
 template <typename T>
 class amplitudethreshold_DECLDIR AmplitudeThreshold :
 		public TemplatedParameteredObject<T> {

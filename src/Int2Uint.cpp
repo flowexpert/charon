@@ -31,6 +31,7 @@ Int2Uint::Int2Uint(const std::string& name) :
 			"<h2>Slot Converter</h2><br>converts slots from Int to Uint"
 		)
 {
+	ParameteredObject::_setTags("charon-utils") ;
 
 	ParameteredObject::_addInputSlot(
 		in, "in",
@@ -41,7 +42,6 @@ Int2Uint::Int2Uint(const std::string& name) :
 		out, "out",
 		"uint output",
 		"uint");
-
 }
 
 void Int2Uint::execute() {

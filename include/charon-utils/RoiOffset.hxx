@@ -50,6 +50,8 @@ RoiOffset<T>::RoiOffset(const std::string& name) :
 		dv(true,false),
 		out(0)
 {
+	ParameteredObject::_setTags("charon-utils") ;
+
 	ParameteredObject::_addInputSlot(
 		in, "in",
 		"ROI input",

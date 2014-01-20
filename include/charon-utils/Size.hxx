@@ -32,10 +32,10 @@ template <typename T>
 Size<T>::Size(const std::string& name) :
 		TemplatedParameteredObject<T>(
 			"Size", name,
-			"<h2>Size</h2><br>"
-			"get Size of input object and export is as an ROI instance (e.g. "
-			"for further use in the crop or resize plugins)<br><br>"
-			"Usage example:<br>If you want to double the size of an image, "
+			"Get Size of input object and export is as an ROI instance "
+			"(e.g. for further use in the crop or resize plugins)"
+			"<h4>Usage example:</h4>"
+			"If you want to double the size of an image, "
 			"connect it to the \"image input slot of this plugin\" "
 			"and to the input of an \"resize plugin\".<br>"
 			"Leave the offset slot unconnected,set resize factor to 2.0 "
@@ -54,13 +54,15 @@ Size<T>::Size(const std::string& name) :
 	ParameteredObject::_addInputSlot(
 		offset, "offset",
 		"offset ROI<br>"
-		"If connected all starting values in this ROI will be added to the resulting ROI and<br>"
-		"all end values will be subtraced from the resulting ROI.<br>"
-		"The \"resize factor\" parameter is ignored when this slot is connected<br>"
+		"If connected all starting values in this ROI will be added to the "
+		"resulting ROI and all end values will be subtraced from "
+		"the resulting ROI.<br>"
+		"The \"resize factor\" parameter is ignored when this slot "
+		"is connected<br>"
 		"Usefull in combination with the cut plugin: <br>"
-		"To remove a fixed with border around an image set the values in offset to positive,<br>"
-		"or to add a black border around an image set the values to negative.<br>"
-		"BUG :Currently all borders must have the same size!",
+		"To remove a fixed with border around an image set the values "
+		"in offset to positive, or to add a black border around an image "
+		"set the values to negative.",
 		"Roi<int>*");
 
 	ParameteredObject::_addOutputSlot(
@@ -80,46 +82,43 @@ template <typename T>
 void Size<T>::execute() {
 	roi() = &_roi ;
 
-	const cimg_library::CImgList<T>& in = image ;
+	const cimg_library::CImgList<T>& in = image();
 
-	_roi.xBegin() = _roi.yBegin() = 0 ;
-	_roi.zBegin() = _roi.tBegin() = _roi.vBegin() = 0 ;
-	_roi.xEnd() = _roi.yEnd() = _roi.zEnd() = _roi.tEnd() = _roi.vEnd() = 0 ;
-	if(!offset.connected())
-	{
-		if(in.width())
-		{	_roi.vEnd() = floor(in.width() * resizeFactor() + .5) ;
+	_roi.assign(0,0,0,0,0,0,0,0,0,0);
+	if (!offset.connected()) {
+		if (in.width()) {
+			_roi.vEnd() = floor(in.width() * resizeFactor() + .5) ;
 			_roi.xEnd() = floor(in[0].width() * resizeFactor() + .5) ;
 			_roi.yEnd() = floor(in[0].height() * resizeFactor() + .5) ;
 			_roi.zEnd() = floor(in[0].depth() * resizeFactor() + .5) ;
 			_roi.tEnd() = floor(in[0].spectrum() * resizeFactor() + .5) ;
 		}
-		else
-		{	sout << "Input has zero-width!" << std::endl ; }
+		else {
+			sout << "Input has zero-width!" << std::endl;
+		}
 	}
-	else
-	{
+	else {
 		if(offset() == 0)
 			ParameteredObject::raise("Pointer to \"offset\" ROI is zero!"
 				"Connect a valid object!") ;
 		const Roi<int>& of = *offset() ;
-		if(in.width())
-		{	
+		if (in.width()) {
 			_roi.xBegin() = of.xBegin() ;
 			_roi.yBegin() = of.yBegin() ;
 			_roi.zBegin() = of.zBegin() ;
 			_roi.tBegin() = of.tBegin() ;
 			_roi.vBegin() = of.vBegin() ;
-			_roi.xEnd() = in[0].width() - of.xEnd() ;
-			_roi.yEnd() = in[0].height() - of.yEnd() ;
-			_roi.zEnd() = in[0].depth() - of.zEnd() ;
+			_roi.xEnd() = in[0].width()    - of.xEnd() ;
+			_roi.yEnd() = in[0].height()   - of.yEnd() ;
+			_roi.zEnd() = in[0].depth()    - of.zEnd() ;
 			_roi.tEnd() = in[0].spectrum() - of.tEnd() ;
-			_roi.vEnd() = in.width() - of.vEnd() ;
+			_roi.vEnd() = in.width()       - of.vEnd() ;
 		}
-		else
-		{	sout << "Input has zero-width!" << std::endl ; }
+		else {
+			sout << "Input has zero-width!" << std::endl ;
+		}
 	}
-	sout << "Using ROI: " << _roi << std::endl ;
+	sout << "\tUsing ROI: " << _roi << std::endl ;
 }
 
 #endif /* _SIZE_HXX_ */

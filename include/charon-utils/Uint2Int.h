@@ -40,6 +40,10 @@
 
 /// Slot Converter
 /** converts from uint to int
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup charon-helpers
  */
 class uint2int_DECLDIR Uint2Int : public ParameteredObject {
 public:

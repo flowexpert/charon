@@ -42,9 +42,29 @@
 #include <charon-utils/Roi.h>
 #include <charon-utils/CImg.h>
 
-/// Size
-/** get Size of input object and export is as an ROI instance (e.g. for
- *  further use in the crop or resize plugins)
+/// Image %Size
+/** Get size of input object and export is as an ROI instance
+ *  (e.g. for further use in the crop or resize plugins).
+ *
+ *  <h4>Usage example:</h4>
+ *  If you want to double the size of an image,
+ *  connect it to the image input slot of this plugin
+ *  and to the input of an resize plugin.
+ *  Leave the offset slot unconnected,set resize factor to 2.0
+ *  and connect the roi output to the roi input of the resize plugin.
+ *
+ *  <h4>Using with PetscSolver</h4>
+ *  This module may also be used to determine the image sequence
+ *  dimensions to be passed to the PetscSolver in optical flow algorithms.
+ *  Typically, the input sequence consists of (at least) two consecutive
+ *  frames (i.e. the <tt>t</tt> dimension is of size two) to calculate one
+ *  flow frame. So you have to subtract one frame from the <tt>t</tt>
+ *  dimension, e.g. passing an offset roi with just zeros but
+ *  one as <tt>tEnd</tt>.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup charon-helpers
  */
 template <typename T>
 class size_DECLDIR Size :
@@ -57,12 +77,27 @@ public:
 	/// input image
 	InputSlot< cimg_library::CImgList<T> > image;
 	/// offset ROI
+	/** If connected all starting values in this ROI will be added to the
+	 *  resulting ROI and all end values will be subtraced
+	 *  from the resulting ROI.
+	 *  The "resize factor" parameter is ignored when this slot is connected.
+	 *
+	 *  Usefull in combination with the cut plugin:
+	 *  To remove a fixed with border around an image set the values in
+	 *  offset to positive,"
+	 *  or to add a black border around an image set the values to negative.
+	 */
 	InputSlot< Roi<int>* > offset;
 
 	/// ROI(Region of Interest)
 	OutputSlot< Roi<int>* > roi;
 
 	/// resize Factor
+	/** The Size of the resulting ROI will be multiplied with this factor
+	 *  (when offset is not connected).
+	 *
+	 *  Usefull if you want to resize an image by a fixed factor.
+	 */
 	Parameter< double > resizeFactor;
 
 	/// Update object.
@@ -70,7 +105,7 @@ public:
 
 private:
 
-	///ROI instance to export via roi OutputSlot
+	/// ROI instance to export via roi OutputSlot
 	Roi<int> _roi ;
 };
 
