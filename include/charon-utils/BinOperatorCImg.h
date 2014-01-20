@@ -40,7 +40,17 @@
 #include <charon-utils/CImg.h>
 
 
-///Class to apply binary operation to CImgs
+/// Perform binary operations on input image
+/** If an operation takes two operands you can either input a single value
+ *  or provide them via the second input.
+ *
+ *  Available operands are described in the opType parameter.
+ *
+ *  \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup image-manipulators
+ *  \ingroup charon-cimg
+ */
 template <typename T>
 class binoperatorcimg_DECLDIR BinOperatorCImg :
 		public TemplatedParameteredObject<T> {

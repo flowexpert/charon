@@ -17,8 +17,7 @@
 */
 /** \file BinOperatorValue.h
  *  Declaration of the parameter class BinOperatorValue.
- *  \author <a href="mailto:gerald.mwangi@gmx.de">
- *      Gerald Mwangi</a>
+ *  \author <a href="mailto:gerald.mwangi@gmx.de">Gerald Mwangi</a>
  *  \date 27.03.2012
  */
 
@@ -40,7 +39,9 @@
 #include <charon-core/ParameteredObject.hxx>
 
 /// Binary operators for numbers
-/** Binary operators for numbers
+/** \ingroup charon-modules
+ *  \ingroup charon-utils
+ *  \ingroup charon-helpers
  */
 template <typename T>
 class binoperatorvalue_DECLDIR BinOperatorValue :

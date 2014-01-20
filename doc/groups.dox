@@ -31,3 +31,11 @@
 /** \defgroup charon-helpers Helper Modules
 	Helper Modules, ranging from ROI selection to simple masks.
  */
+
+/** \defgroup charon-cimg CImg Modules
+	Modules using the CImg library
+*/
+
+/** \defgroup charon-vigra Vigra Modules
+	Modules using the Vigra library
+*/

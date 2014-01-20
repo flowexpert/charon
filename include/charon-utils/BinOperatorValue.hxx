@@ -32,7 +32,6 @@ template <typename T>
 BinOperatorValue<T>::BinOperatorValue(const std::string& name) :
 		TemplatedParameteredObject<T>(
 			"BinOperatorValue", name,
-			"<h2>Binary operators for numbers</h2><br>"
 			"Binary operators for numbers"
 		)
 {
