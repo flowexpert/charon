@@ -61,7 +61,21 @@ public:
 	/// image data as input slot
 	InputSlot<cimg_library::CImgList<T> > in;
 
+	/// optional frame number to append to the filename
+	/** This positive number is appended just before the file extension
+	 *  (i.e. before last dot in filename) and formatted with a fixed
+	 *  width of six digits.
+	 */
+	InputSlot<unsigned int> frameNumber;
+
 	/// list of optional names
+ 	/** If the input is a CImgList with multiple images (list dimension),
+ 	 *  names may be used to store them into different file names.
+ 	 *  The number of names has to match the number of list elements.
+ 	 *  If names and frameNumber are given, fist the frame number and then
+ 	 *  the given name string are appended just before the file extension
+ 	 *  (see frameNumber).
+ 	 */
 	InputSlot< std::vector<std::string> > names;
 
 	/// create a new sample object

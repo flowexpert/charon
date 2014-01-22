@@ -26,6 +26,7 @@
 
 #include "FileWriter.h"
 #include <string>
+#include <iomanip>
 
 template<typename T>
 FileWriter<T>::FileWriter(const std::string& name) :
@@ -41,51 +42,82 @@ FileWriter<T>::FileWriter(const std::string& name) :
 			"<li>PNG (libpng)</li>"
 			"<li>TIFF (libtiff)</li>"
 			"<li>JPEG/JPG(libjpeg)</li>"
-			"</ul>"
-			), names(true,false) {
+			"</ul>"),
+			// optional slots
+			frameNumber(true,false),
+			names(true,false)
+{
 	ParameteredObject::_setTags("charon-utils;CImg;DiskIO") ;
 
-	this->_addParameter(
-			filename, "filename", "filename to write image to", "filewrite");
-	this->_addParameter(exitOnError, "exitOnError",
+	ParameteredObject::_addParameter(
+		filename, "filename", "filename to write image to", "filewrite");
+	ParameteredObject::_addParameter(
+		exitOnError, "exitOnError",
 		"Should the plugin raise an exception and stop the workflow "
 		"if an write error occurs?", true);
-	this->_addInputSlot(in, "in", "image input", "CImgList<T>");
-	this->_addInputSlot(names, "names", "image input names", "vector<string>");
+
+	ParameteredObject::_addInputSlot(
+		in, "in", "image input", "CImgList<T>");
+	ParameteredObject::_addInputSlot(
+		frameNumber, "frameNumber",
+		"optional frame number to append to the filename<br><br>"
+		"This positive number is appended just before the file extension "
+		"(i.e. before last dot in filename) and formatted with a fixed "
+		"width of six digits.");
+	ParameteredObject::_addInputSlot(
+		names, "names",
+		"image input names<br><br>"
+		"If the input is a CImgList with multiple images (list dimension), "
+		"names may be used to store them into different file names.<br>"
+ 	 	"The number of names has to match the number of list elements.<br>"
+		"If names and frameNumber are given, fist the frame number and then "
+		"the given name string are appended just before the file extension "
+		"(see frameNumber).",
+		"vector<string>");
 }
 
 template<typename T>
 void FileWriter<T>::execute() {
-	try {
-
-		if(!this->names.connected())
-		{
-			in().save(filename().c_str());
-		}
-		else if(this->names().size() != this->in().size() )
-		{
-			sout << "Number of given names != number of images" << std::endl;
-			in().save(filename().c_str());
-		}
-		else
-		{
-			std::string base = filename();
-			std::string ext =  filename().substr( filename().find_last_of('.'),  filename().length());
-			for(size_t i = 0; i < this->in().size(); i++)
-			{
-				in()[i].save( (filename()+this->names()[i]+ext).c_str() );
-			}
-		}
-
+	std::string fName = filename();
+	// file extension starts with last occuring dot
+	size_t extPos = fName.find_last_of('.');
+	if (extPos == std::string::npos) {
+		sout << "(WW) file no extension detected" << std::endl;
 	}
-	catch (const cimg_library::CImgException& err) {
-		std::string error = "\tCould not write file \""
-			+ filename() + "\":\n\t" + err.what();
-		if (exitOnError()) {
-			throw std::runtime_error(error);
+	std::string fNameBase = fName.substr(0,extPos);
+	std::string fNameExt  = fName.substr(extPos,std::string::npos);
+	if (frameNumber.connected()) {
+		// append given frame number to the file name base
+		std::ostringstream fBaseStr;
+		fBaseStr << fNameBase
+				<< std::setw(6) << std::setfill('0') << frameNumber();
+		fNameBase = fBaseStr.str();
+		// use the new base to construct the file name
+		fName = fNameBase + fNameExt;
+	}
+	try {
+		if(!names.connected()) {
+			in().save(fName.c_str());
+		}
+		else if(names().size() != in().size() ) {
+			sout << "Number of given names != number of images" << std::endl;
+			in().save(fName.c_str());
 		}
 		else {
-			sout << error << std::endl;
+			for(size_t i = 0; i < in().size(); i++) {
+				in()[i].save((fNameBase+names()[i]+fNameExt).c_str() );
+			}
+		}
+	}
+	catch (const cimg_library::CImgException& err) {
+		if (exitOnError()) {
+			throw;
+		}
+		else {
+			sout << "\tCould not write file \""
+				<< filename() + "\":\n\t"
+				<< err.what()
+				<< std::endl;
 		}
 	}
 }
