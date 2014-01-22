@@ -22,6 +22,7 @@
  *  \date 16.01.2014
  */
 
+#define roi_EXPORTS
 #include "../include/charon-utils/RoiOffset.hxx"
 
 /// Creates an instance of the plugin
