@@ -1,11 +1,14 @@
 <div>
-<h1>Wilkommen bei Tuchulcha</h1>
+<h1>Willkommen bei Tuchulcha</h1>
 <p>Dieses Dokument erreicht man über "Einführung" im Hilfe-Menü.</p>
 
 <h2>Start</h2>
 <p>
-Eine neue (leere) Datei erstellt man über Datei-&gt;Neu oder mit der Kombination <code>STRG+N</code>.<br>
-Eine existierende Datei öffnet man mit Datei-&gt;Öffnen oder mit <code>STRG+O</code>.
+Um Tuchulcha auszuprobieren, empfiehlt es sich, Beispiele von unserer <a href="http://charon-suite.sourceforge.net/doc/examples/">Beispiel-Website</a> herunterzuladen. Es gibt dort zahlreiche zip-Dateien, die sowohl Algorithmen wie auch die benötigen Datendateien enthalten. Auf der Website wird detailliert beschrieben, wie die Algorithmen funktionieren und welchen Zweck die einzelnen Module in den Beispieldateien haben.
+</p>
+<p>
+Eine existierende Datei (z.B. nach dem Auspacken eines zip-Archivs von der Beispiel-Seite) öffnet man mit Datei-&gt;Öffnen oder mit <code>STRG+O</code>.<br />
+Eine neue (leere) Datei erstellt man über Datei-&gt;Neu oder mit der Kombination <code>STRG+N</code>. Auf diese Weise kann man völlig neue Algorithmen unter Verwendung der vorhanden Module erstellen.
 </p>
 <h2>Dokumente bearbeiten</h2>
 <p>

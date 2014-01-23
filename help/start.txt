@@ -6,8 +6,11 @@ You can always open this document selecting "Introduction" in the Help menu.
 
 <h2>Start</h2>
 <p>
-To create a new (empty) file, select file-&gt;new or use the shortcut <code>CTRL+N</code>.<br />
-To open an existing file, select file-&gt;open or use <code>CTRL+O</code>.
+To try out tuchulcha, download example workflows from our <a href="http://charon-suite.sourceforge.net/doc/examples/">Examples Webpage</a>. There, you find zip archives containing workflow files and data they work on. Additionally, the workflows are described in details there including the purpose of each of the used modules.
+</p>
+<p>
+To open an existing workflow file (e.g. after unpacking such an example zip file), select file-&gt;open or use <code>CTRL+O</code>.<br />
+To create a new (empty) file, select file-&gt;new or use the shortcut <code>CTRL+N</code>. This way, it is possible to create new algorithms using the provided modules.
 </p>
 <h2>Editing a Document</h2>
 <p>

@@ -94,6 +94,7 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QDockWidget* helpWidget = new QDockWidget(tr("Help Browser"), this);
 	helpWidget->setObjectName("helpwidget");
 	QTextBrowser* helpBrowser = new QTextBrowser(helpWidget);
+	helpBrowser->setOpenExternalLinks(true);
 	helpWidget->setWidget(helpBrowser);
 	_docGen = new DocGenerator(helpBrowser, this);
 	_docGen->showIntro();
