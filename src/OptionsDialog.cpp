@@ -75,10 +75,12 @@ void OptionsDialog::refresh() {
 		settings.value("suffixedPlugins", false).toBool());
 	_ui->checkSplash->setChecked(
 		settings.value("splashScreen",true).toBool());
+	_ui->checkPathPopup->setChecked(
+		settings.value("pathDialogPopup", false).toBool());
 	_ui->checkDelay->setChecked(
 		settings.value("delayExecution",false).toBool());
 	_ui->checkReload->setChecked(
-		settings.value("reloadOnStartup",true).toBool());
+		settings.value("reloadOnStartup",false).toBool());
 	_ui->comboCheckLevel->setCurrentIndex(
 		settings.value("versionCheckLevel",2).toInt());
 	_setExcludes(settings.value("excludeList").toStringList());
@@ -100,6 +102,7 @@ void OptionsDialog::apply() {
 	settings.setValue("splashScreen",_ui->checkSplash->isChecked());
 	settings.setValue("delayExecution", _ui->checkDelay->isChecked());
 	settings.setValue("reloadOnStartup",_ui->checkReload->isChecked());
+	settings.setValue("pathDialogPopup",_ui->checkPathPopup->isChecked());
 	settings.setValue("versionCheckLevel",_ui->comboCheckLevel->currentIndex());
 	settings.setValue("excludeList",_getExcludes());
 	settings.setValue("toolButtonStyle",_ui->bButtonStyle->currentIndex());
@@ -125,7 +128,8 @@ void OptionsDialog::restore() {
 	_ui->ePrivPathD->setText(QString());
 	_ui->checkRelease->setChecked(true);
 	_ui->checkDelay->setChecked(false);
-	_ui->checkReload->setChecked(true);
+	_ui->checkReload->setChecked(false);
+	_ui->checkPathPopup->setChecked(false);
 	_ui->comboCheckLevel->setCurrentIndex(2);
 	_setExcludes(defaults.value("excludeList").toStringList());
 	_ui->bButtonStyle->setCurrentIndex(Qt::ToolButtonFollowStyle);

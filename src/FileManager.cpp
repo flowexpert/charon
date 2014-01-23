@@ -38,23 +38,30 @@ FileManager* FileManager::_inst = 0;
 QWidget* FileManager::dialogParent = 0;
 
 FileManager::FileManager() {
-	if (!QDir::home().exists(TUCHULCHA_DIR))
+	// set up tuchulcha dir and path structure
+	if (!QDir::home().exists(TUCHULCHA_DIR)) {
 		QDir::home().mkdir(TUCHULCHA_DIR);
+	}
 	QString configPath = QDir::homePath() + "/" + TUCHULCHA_DIR;
 	QFileInfo configPathInfo(configPath);
-	if (!configPathInfo.exists())
+	if (!configPathInfo.exists()) {
 		qFatal("%s",
 				(tr("Tuchulcha configuration directory \"%1\" "
 					"could not be created. Are permissions set correctly?")
 				.arg(configPath))
 				.toLocal8Bit().constData());
-	if (!configPathInfo.isDir())
+	}
+	else if (!configPathInfo.isDir()) {
 		qFatal("%s",
 				(tr("Tuchulcha configuration directory \"%1\" "
 					"exists, but is not a directory. Please delete "
 					"\"%1\".")
 				.arg(configPath))
 				.toLocal8Bit().constData());
+	}
+	else if (!QFileInfo(configPath+"/metadata").exists()) {
+		QDir::home().mkpath(TUCHULCHA_DIR "/metadata");
+	}
 }
 
 FileManager::~FileManager() {
@@ -78,18 +85,5 @@ QDir FileManager::configDir() const {
 }
 
 QString FileManager::classesFile() const {
-	QString path = QDir::homePath() + "/" + TUCHULCHA_DIR + "/classes.wrp";
-	if (!QFile(QDir::homePath()+"/"+TUCHULCHA_DIR+"/metadata").exists()) {
-		QDir::home().mkpath(TUCHULCHA_DIR "/metadata");
-	}
-	QFile newFile(path);
-	if (!newFile.exists()) {
-		// write empty classes file
-		if (newFile.open(QFile::WriteOnly | QFile::Truncate)) {
-			QTextStream qout(&newFile);
-			qout << "# " << tr("empty classes file") << endl;
-		}
-		newFile.close();
-	}
-	return path;
+	return QDir::homePath() + "/" + TUCHULCHA_DIR + "/classes.wrp";
 }

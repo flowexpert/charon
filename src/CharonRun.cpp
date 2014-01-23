@@ -180,7 +180,19 @@ void CharonRun::updatePlugins() {
 	_freeMan();
 
 	// update metadata file
+	wrpFiles = metaPath.entryList(QStringList("*.wrp"), QDir::Files);
 	QFile cFile(fm.classesFile());
+	if (wrpFiles.isEmpty()) {
+		// skip writing metadata file if no metadata available,
+		// remove the file instead to enforce reloading metadata
+		// at next tuchulcha startup
+		qout << "(EE) No Plugins found!\n"
+			 << "(EE) Please check that your local and global plugin paths "
+			 << "are set correctly in the options menu." << endl ;
+		cFile.remove();
+		return;
+	}
+
 	if (!cFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
 		QMessageBox::warning(
 			fm.dialogParent, tr("error updating meta data"),
@@ -194,7 +206,6 @@ void CharonRun::updatePlugins() {
 	cStream << "# This is generated during update plugins,\n";
 	cStream << "# do not edit by hand!" << endl;
 
-	wrpFiles = metaPath.entryList(QStringList("*.wrp"), QDir::Files);
 	for(int i=0; i<wrpFiles.size(); i++) {
 		QFile cur(metaPath.absoluteFilePath(wrpFiles[i]));
 		cur.open(QIODevice::ReadOnly | QIODevice::Text);

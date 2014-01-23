@@ -52,6 +52,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="checkPathPopup">
+            <property name="text">
+             <string>show path options dialog if path settings changed during check at startup</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="checkDelay">
             <property name="text">
              <string>delay execution of Workflow (usefull for attaching a debugger)</string>

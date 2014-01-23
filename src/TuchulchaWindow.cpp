@@ -62,11 +62,17 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 	QMainWindow(myParent),
 	_toolBar(0), _flow(0),_docGen(0),_helpDisp(0)
 {
-	if (OptionsDialog::check()) {
-		options(1); // show path settings tab
-	}
-
 	QSettings settings;
+	if (OptionsDialog::check()) {
+		if (settings.value("pathDialogPopup",false).toBool()) {
+			options(1); // show path settings tab
+		}
+		else {
+			// apply default options if empty
+			OptionsDialog dialog;
+			dialog.hide();
+		}
+	}
 
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
@@ -342,8 +348,11 @@ TuchulchaWindow::TuchulchaWindow(QWidget* myParent) :
 			settings.value("MainWindow/windowState").toByteArray(),
 			_saveStateVersion);
 
-	if(settings.value("reloadOnStartup",true).toBool())
+	// rescan plugin metadata if needed
+	if (settings.value("reloadOnStartup",false).toBool() ||
+			!QFileInfo(FileManager::instance().classesFile()).exists()) {
 		updateMetadata();
+	}
 }
 
 TuchulchaWindow::~TuchulchaWindow() {
