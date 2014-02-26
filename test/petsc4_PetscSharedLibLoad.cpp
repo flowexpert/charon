@@ -39,8 +39,8 @@
  *  \returns zero in case of success
  */
 int main(int argc, char** argv) {
-	std::cout << "opening libmpi.so.0" << std::endl;
-	void* handle = dlopen("libmpi.so.0", RTLD_LAZY | RTLD_GLOBAL);
+	std::cout << "opening libmpi.so" << std::endl;
+	void* handle = dlopen("libmpi.so", RTLD_LAZY | RTLD_GLOBAL);
 	if (!handle) {
 		std::cerr << dlerror() << std::endl;
 		return EXIT_FAILURE;
@@ -89,8 +89,6 @@ int main(int argc, char** argv) {
 	run(argc, argv);
 	std::cout << "closing PetscTestDLL" << std::endl;
 
-	// some error occurs here (using ubuntu lucid)
-	// fixed in petsc 3.1 used in maverick -> upstream
 	dlclose(handle);
 
 	return EXIT_SUCCESS;
