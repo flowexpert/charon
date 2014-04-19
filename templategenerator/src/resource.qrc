@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/templates">
+        <file alias="NonTemp.cpp">res/NonTemp.cpp</file>
+        <file alias="NonTemp.h">res/NonTemp.h</file>
+        <file alias="Temp.cpp">res/Temp.cpp</file>
+        <file alias="Temp.h">res/Temp.h</file>
+        <file alias="Temp.hxx">res/Temp.hxx</file>
+        <file alias="CMakeLists.txt">res/CMakeLists.txt</file>
+        <file alias="InitFlags.cmake">res/InitFlags.cmake</file>
+    </qresource>
+    <qresource prefix="/look">
+        <file alias="Style.css">res/Style.css</file>
+        <file alias="arrow.png">res/go-next.png</file>
+        <file alias="complete.png">res/task-complete.png</file>
+        <file alias="reject.png">res/task-reject.png</file>
+    </qresource>
+    <qresource prefix="/config">
+        <file alias="config.ini">res/config.ini</file>
+        <file alias="cppTypeMap.ini">res/cppTypeMap.ini</file>
+        <file alias="variantTypeMap.ini">res/variantTypeMap.ini</file>
+    </qresource>
+    <qresource prefix="/text">
+        <file alias="welcome.html">res/welcome-en.html</file>
+    </qresource>
+</RCC>

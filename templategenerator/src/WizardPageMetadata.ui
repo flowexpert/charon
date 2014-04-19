@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WizardPageMetadata</class>
+ <widget class="QWizardPage" name="WizardPageMetadata">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>459</width>
+    <height>378</height>
+   </rect>
+  </property>
+  <property name="title">
+   <string>Description</string>
+  </property>
+  <property name="subTitle">
+   <string>Set up plugin name, output directory and metadata information.</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="boxNameDir">
+     <property name="title">
+      <string>Name and Directory</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelAuthor">
+        <property name="text">
+         <string>Author Name:</string>
+        </property>
+        <property name="buddy">
+         <cstring>editAuthor</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="editAuthor">
+        <property name="whatsThis">
+         <string>author name used in doxygen author field and lgpl license information</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelEmail">
+        <property name="text">
+         <string>Author Email:</string>
+        </property>
+        <property name="buddy">
+         <cstring>editEmail</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="editEmail">
+        <property name="toolTip">
+         <string>Has to be a valid &lt;em&gt;email&lt;/em&gt; address</string>
+        </property>
+        <property name="whatsThis">
+         <string>used as hyperlink in doxygen author field</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="labelModName">
+        <property name="text">
+         <string>Module name:</string>
+        </property>
+        <property name="buddy">
+         <cstring>editModName</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="editModName">
+        <property name="toolTip">
+         <string>Module name has to start with an &lt;em&gt;uppercase&lt;/em&gt; letter</string>
+        </property>
+        <property name="statusTip">
+         <string>Start Uppercase!</string>
+        </property>
+        <property name="whatsThis">
+         <string>Class name of the new module. Coding conventions to start class names with uppercase letters are enforced here.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QToolButton" name="buttonValid3">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="icon">
+         <iconset>
+          <disabledon>:/look/reject.png</disabledon>
+          <activeoff>:/look/complete.png</activeoff>
+          <activeon>:/look/reject.png</activeon>
+         </iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QToolButton" name="buttonValid2">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <disabledon>:/look/reject.png</disabledon>
+          <activeoff>:/look/complete.png</activeoff>
+          <activeon>:/look/reject.png</activeon>
+         </iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QToolButton" name="buttonValid1">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <disabledon>:/look/reject.png</disabledon>
+          <activeoff>:/look/complete.png</activeoff>
+          <activeon>:/look/reject.png</activeon>
+         </iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="boxDesc">
+     <property name="title">
+      <string>Module metadata information</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="3" column="0">
+       <widget class="QLabel" name="labelModDesc">
+        <property name="text">
+         <string>Detailed Documentation (simple html markup possible):</string>
+        </property>
+        <property name="buddy">
+         <cstring>editModDesc</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QPlainTextEdit" name="editModDesc">
+        <property name="whatsThis">
+         <string>detailed documentation for doxygen and module documentation</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelBriefDesc">
+        <property name="text">
+         <string>Brief description (one sentence, do not use &quot;.&quot;):</string>
+        </property>
+        <property name="buddy">
+         <cstring>editBriefDesc</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLineEdit" name="editBriefDesc">
+        <property name="whatsThis">
+         <string>brief docstring for doxygen and module documentation</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QToolButton" name="buttonValid4">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="icon">
+         <iconset>
+          <disabledon>:/look/reject.png</disabledon>
+          <activeoff>:/look/complete.png</activeoff>
+          <activeon>:/look/reject.png</activeon>
+         </iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QToolButton" name="buttonValid5">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="icon">
+         <iconset>
+          <disabledon>:/look/reject.png</disabledon>
+          <activeoff>:/look/complete.png</activeoff>
+          <activeon>:/look/reject.png</activeon>
+         </iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>editAuthor</tabstop>
+  <tabstop>editEmail</tabstop>
+  <tabstop>editModName</tabstop>
+  <tabstop>editBriefDesc</tabstop>
+  <tabstop>editModDesc</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

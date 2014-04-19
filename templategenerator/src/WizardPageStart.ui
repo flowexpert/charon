@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WizardPageStart</class>
+ <widget class="QWizardPage" name="WizardPageStart">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>504</width>
+    <height>438</height>
+   </rect>
+  </property>
+  <property name="title">
+   <string>Start</string>
+  </property>
+  <property name="subTitle">
+   <string>This setup wizard belongs to charon and helps you to create simple plugins with common code parts.</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTextBrowser" name="textWelcome">
+     <property name="source">
+      <url>
+       <string>qrc:/text/welcome.html</string>
+      </url>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="boxStart">
+     <property name="title">
+      <string>Start</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QRadioButton" name="selNewMod">
+        <property name="text">
+         <string>create new plugin</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="selLoadMod">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>load existing plugin</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="boxLoad">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Load</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelLoadMod">
+        <property name="text">
+         <string>Path of module to load:</string>
+        </property>
+        <property name="buddy">
+         <cstring>editLoadMod</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDirEdit" name="editLoadMod"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Info about TemplateGenerator</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="lVersInf">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Version</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="lVersion">
+        <property name="text">
+         <string>0.0.0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lBuildInf">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Build Date</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="lBuild">
+        <property name="text">
+         <string>99.99.99</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="lBuildSysInf">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Build System</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="lBuildSys">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QDirEdit</class>
+   <extends>QLineEdit</extends>
+   <header>QDirEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>selLoadMod</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>boxLoad</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>185</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selLoadMod</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>WizardPageStart</receiver>
+   <slot>checkComplete()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>224</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>223</x>
+     <y>74</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editLoadMod</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>WizardPageStart</receiver>
+   <slot>checkComplete()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>157</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>166</x>
+     <y>106</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>checkComplete()</slot>
+ </slots>
+</ui>

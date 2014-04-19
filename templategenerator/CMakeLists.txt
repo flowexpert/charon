@@ -1,0 +1,28 @@
+PROJECT(templategenerator CXX)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+SET(templategenerator_VERSION 0.1.8)
+
+# use own cmake files
+SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+IF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+ENDIF()
+OPTION(USE_PROJECT_FOLDERS "Organize build targets in Folders (Only supported in MSVC Professional)" OFF)
+SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ${USE_PROJECT_FOLDERS})
+INCLUDE(InitFlags)
+FIND_PACKAGE(Doxygen)
+INCLUDE(Documentation)
+
+FIND_PACKAGE(Qt4 4.7.0
+	COMPONENTS QtCore QtGui
+	REQUIRED
+)
+INCLUDE(${QT_USE_FILE})
+INCLUDE(InstallDlls)
+
+# try to query VCS revision information
+INCLUDE(CTest)
+INCLUDE(RevInfo)
+
+# recurse into subdirectories
+ADD_SUBDIRECTORY (src)

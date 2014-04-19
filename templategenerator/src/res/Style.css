@@ -1,0 +1,52 @@
+/* Style sheet to tune appearance of the side widget
+ * and the parameter/slot tables
+ */
+
+QStatusBar {
+	font-size: 10pt;
+	font-weight: bold;
+	color: red;
+	border: 1px solid rgb(0,0,0,20);
+}
+
+QListView#sideWidget {
+	font-size: 11pt;
+	min-width: 115px;
+	border-style: solid;
+	border-color: rgb(0,0,0,30);
+	border-width: 0px 1px 0px 0px;
+	padding: 0px 15px 0px 0px;
+}
+
+QListView#sideWidget:!active {
+	color: black;
+	background: transparent;
+}
+
+QListView#sideWidget::item:!active {
+	border: 0px solid transparent;
+	border-left-width: 16px;
+	margin: 6px 0px 6px 0px;
+	padding: 0px 0px 0px 3px;
+	color: gray;
+}
+
+QListView#sideWidget::item:selected:!active {
+	color: black;
+	border-image: url(:/look/arrow.png) 0 0 0 16
+}
+
+QListView#sideWidget::item:hover:!active {
+	background: transparent;
+}
+
+QTableView {
+	selection-background-color: #89F;
+	alternate-background-color: #EEF;
+}
+
+QLineEdit:read-only {
+	background: lightblue;
+	border: 1px inset palette(dark);
+	border-radius: 3px;
+}

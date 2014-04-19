@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WizardPageSummary</class>
+ <widget class="QWizardPage" name="WizardPageSummary">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>563</width>
+    <height>556</height>
+   </rect>
+  </property>
+  <property name="title">
+   <string>Summary</string>
+  </property>
+  <property name="subTitle">
+   <string>Overview of what is to be written.</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="boxModConfig">
+     <property name="title">
+      <string>Module Configuration</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="checkTemplated">
+        <property name="text">
+         <string>Templated</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="checkNonTemplated">
+        <property name="text">
+         <string>Non-Templated</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkGenCMake">
+        <property name="text">
+         <string>generate CMake project file (in source directory)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkHeaderSep">
+        <property name="text">
+         <string>save header and source files in separate directories</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="boxHeaders">
+     <property name="title">
+      <string>Header includes</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkCImg">
+        <property name="text">
+         <string>use CImg.h</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkVigra">
+        <property name="text">
+         <string>use vigra MultiArrays</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="boxOutConfig">
+     <property name="title">
+      <string>Output Configuration</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelSourceOut">
+        <property name="text">
+         <string>Source Output Path:</string>
+        </property>
+        <property name="buddy">
+         <cstring>editSourceOut</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDirEdit" name="editSourceOut"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelHeaderOut">
+        <property name="text">
+         <string>Header Output Path:</string>
+        </property>
+        <property name="buddy">
+         <cstring>editHeaderOut</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDirEdit" name="editHeaderOut"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelOut">
+        <property name="text">
+         <string>Output Path:</string>
+        </property>
+        <property name="buddy">
+         <cstring>editOutPath</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDirEdit" name="editOutPath"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="boxOutSummary">
+     <property name="title">
+      <string>Output File Summary</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelHOut">
+        <property name="text">
+         <string>Header File (.h):</string>
+        </property>
+        <property name="buddy">
+         <cstring>editHOut</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="editHOut">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelHxxOut">
+        <property name="text">
+         <string>Template Implamentation (.hxx):</string>
+        </property>
+        <property name="buddy">
+         <cstring>editHxxOut</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="editHxxOut">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelCppOut">
+        <property name="text">
+         <string>C++ Source File (.cpp):</string>
+        </property>
+        <property name="buddy">
+         <cstring>editCppOut</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="editCppOut">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="labelCMakeOut">
+        <property name="text">
+         <string>CMake project file:</string>
+        </property>
+        <property name="buddy">
+         <cstring>editCMakeOut</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="editCMakeOut">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QDirEdit</class>
+   <extends>QLineEdit</extends>
+   <header>QDirEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>checkGenCMake</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editCMakeOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>238</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>238</x>
+     <y>495</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editOutPath</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>162</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>152</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editHeaderOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>173</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editSourceOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>191</x>
+     <y>272</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelOut</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>59</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>59</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelHeaderOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>75</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelSourceOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>92</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>92</x>
+     <y>272</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkGenCMake</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelCMakeOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>124</x>
+     <y>485</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkTemplated</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelHxxOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>110</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>110</x>
+     <y>443</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkTemplated</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editHxxOut</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>215</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>215</x>
+     <y>442</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editOutPath</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>WizardPageSummary</receiver>
+   <slot>_updateOut()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>423</x>
+     <y>229</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>463</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editHeaderOut</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>WizardPageSummary</receiver>
+   <slot>_updateOut()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>424</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>466</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editSourceOut</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>WizardPageSummary</receiver>
+   <slot>_updateOut()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>425</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>465</x>
+     <y>283</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkHeaderSep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>WizardPageSummary</receiver>
+   <slot>_updateOut()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>26</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>44</x>
+     <y>370</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>_updateOut()</slot>
+ </slots>
+</ui>
