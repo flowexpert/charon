@@ -1,0 +1,138 @@
+/**
+\page parameterfiles Parameter files and workflows
+This page describes how to create workflows using parameter files.
+Please refer to the \ref usage and \ref plugins pages for more details about
+plug-ins and their usage.
+
+On the previous documentation pages, the creation and the functionality of
+plug-ins was described in-depth.
+You also learned how to create, configure and connect plugin instances using
+the PluginManager.
+But if you want to create and test complex workflows, there is an easier way
+than hard coding it.
+You can write parameter files, which contain all the information about your
+workflow.
+
+\section write Writing a parameter file
+
+In the following example, we will create a simple workflow, which
+- loads an image file
+- cuts out a specific region of the image
+- displays the cut out area and
+- writes the cut out area to a new image file.
+
+\dontinclude cropsample.wrp
+
+\until double
+Most of the plugins of charon-utils are templated.
+Therefore, you have to specify the template type when creating an instance
+of a plugin. The global.templatetype property lets you set a default template
+type which is used if the templatetype property of a specific instance isn't
+specified. Initially, this value is set to "double",
+so we could leave this line out in this case.
+
+\until filereader
+This line creates an instance of the plugin "filereader".
+The name of the instance is "rd".
+The type property indicates that the instance should be a "filereader".
+
+\until Inimage.xxx
+"filename" is a parameter of the "filereader" plugin.
+It specifies the path to the image file.
+This path may also be specified as relative path to the parameter file.
+
+\until 44
+We have to create a "roi" instance, which means "region of interest".
+It will later specify the area to cut out of the image.
+Here, we have to override the default template type, because the plugin which
+cuts the image requires a roi instance of type int.
+We will name the instance "roi". top, left, bottom and right define the region
+of interest.
+
+\until rd.image
+"crop" ist the plugin which can cut an image.
+Comprehensibly, it needs to know two things:
+- the image to cut
+- the region of interest
+
+These data are delivered by two input slots: "roi" and "inimage".
+In the second line, we connect the "roi" input slot to "roi.out",
+refering to the "out" output slot of the "roi" instance.
+In line three, we connect the inimage slot to the "image" output slot of the
+filereader "rd".
+
+\until 250
+Now, we want to display the image. We do this using the "imagedisplay" plugin.
+The image we want to display is provided by the "outimage" output slot of the
+crop plugin.
+We connect it to the "image" input slot of the imagedisplay instance.
+The following lines set some parameters:
+- wait: The duration the displayed window stays on the screen (in milliseconds)
+- width, height: The size of the displayed window
+
+\until crop.outimage
+We also want to write the cut out region to a new image file.
+The "filewriter" can do this.
+Again, "filename" specifies the path to write the image file and "image" is
+the input slot providing the image data.
+Since output slots can always be connected to multiple input slots,
+we can connect "crop.outimage" to this input slot, too.
+
+\section reference Using references in parameter files
+
+References are saved as Parameter values and instruct charon-core to load
+the values of the referenced Parameter instead of containing any information
+themselves.
+A reference is indicated by a leading "@" and followed by the referenced
+Parameter's name, like "@someclass.someparameter".
+Following  ParameterFile snippet is an example of referencing Parameters.
+
+\dontinclude referencesample.wrp
+
+\until @rect.color
+
+This is what charon-core actually loads from the file.
+
+\until circle.color
+
+Important to note is that references should always point to Parameters of the
+same data type &mdash; whether its a ParameterList or a single value Parameter
+&mdash; referencing a string to a Parameter that would normally be processed as
+int does not lead to foreseeable results and should therefore be avoided at
+all times.
+References to references will also not work &mdash; all references should
+point to a value.
+As indicated at the start &mdash; charon-core does not save the references but
+gets all the values instead &mdash; throwing exceptions if it tries to
+overwrite a reference during the saving process, keeping the references in
+their previous state inside the file.
+
+\section useparamfile Using parameter files with the PluginManager class
+Our parameter file now contains all the information about our desired workflow.
+Now we can tell our PluginManager to open the file and read out the information.
+
+\dontinclude cropsample.cpp
+\skip #include
+\until man(".");
+We create an instance of the PluginManager class.
+Please remember to specify the path to the plugins.
+
+\until ");
+We tell the PluginManager to open the parameter file.
+PluginManager creates all required instances,
+loads parameters and slots and saves the information about the target points. 
+
+\until ();
+As the entire workflow is loaded, we can execute it. The PluginManager then
+determines where the workflow ends and calls execute() on these instances. In
+our case, these are fw (the file writer) and disp (the image display).
+
+\until }
+PluginManager can also write parameter files.
+The resulting file "cropsample2.wrp" looks like this:
+\include cropsample2.wrp
+As you can see, the file contains nearly the same information as our
+hand-written parameter file.
+Only the order has changed and the output slot connections are stored as well.
+This is not required, the loadParameterFile() method ignores these lines.
+*/

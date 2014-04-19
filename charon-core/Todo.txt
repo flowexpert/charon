@@ -1,0 +1,6 @@
+--HIGH IMPORTANCE
+--MEDIUM IMPORTANCE
+Improve error handling when using MinGW (WindowsPluginLoader)
+Compile and load routines should be able to build debug versions of the plugins
+
+--LOW IMPORTANCE

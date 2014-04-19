@@ -1,0 +1,44 @@
+#include <verrsrc.h>
+
+#define VER_FILEVERSION 1,0,0,0
+#define VER_FILEVERSION_STR "1.0.0.0"
+#define VER_PRODUCTVERSION 0,0,0,0
+#define VER_PRODUCTVERSION_STR "0.0.0"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION		VER_FILEVERSION
+PRODUCTVERSION	VER_PRODUCTVERSION
+
+#ifdef _DEBUG
+FILEFLAGS 		VS_FF_DEBUG
+FILEFLAGSMASK	VS_FF_DEBUG
+#define 		DLLFILENAME	"dummymodule_d.dll"
+FILEFLAGS 		0x0Ls
+#else
+FILEFLAGSMASK	0x0L
+#define			DLLFILENAME	"dummymodule.dll"
+#endif
+
+FILEOS 			VOS_NT
+FILETYPE 		VFT_DLL
+FILESUBTYPE 	VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName" , ""
+			VALUE "FileDescription", "dummymodule Charon Plugin"
+            VALUE "FileVersion", VER_FILEVERSION_STR
+            VALUE "InternalName", "dummymodule"
+            VALUE "OriginalFilename", DLLFILENAME
+            VALUE "ProductName", "Not Charon-Suite!"
+            VALUE "ProductVersion", VER_PRODUCTVERSION_STR
+			VALUE "LegalCopyright", ""
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

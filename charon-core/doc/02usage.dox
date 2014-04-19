@@ -1,0 +1,108 @@
+/**
+\page usage Using charon-core
+Charon-core is a library, so don't look for some kind of main executable.
+You can use charon-core in your own projects, use the classes and frameworks
+that are offered here. A sample data-processing framework that uses the
+ParameteredObject class can be found in the \c imgmanip directory. The file
+<tt>test/parametertest.cpp</tt> and <tt>test/imgmaniptest.cpp</tt> show how to
+use it.
+
+\section parobj Implementing a parametered Object
+Here, we discuss the content of the source file <tt>paramObjSample.cpp</tt>
+in the examples directory.
+
+\dontinclude paramObjSample.cpp
+\skip #include
+\until {
+Obviously, the new class needs to inherit from ParameteredObject to get all
+the features defined there. 
+
+\until in2
+Here we define the parameters that we want to use to store the
+object properties. These properties can be stored by
+ParameteredObject::saveParameters(), which only saves the parameters and
+ParameteredObject::save() which also stored the slot connections.
+The parameters can be loaded by ParameteredObject::loadParameters(). Like
+ParameteredObject::saveParameters(), this doesn't touch the slots.
+We also define input and output slots that can be used for data exchange between
+objects.
+
+\until };
+In the constructor, we have to call the inherited constructor of
+ParameteredObject. There, we have to specify an unique class name and
+pass the instance name. Then we have to initialize the parameters and
+output slots. Input slot <em>in2</em> is initialized as optional multislot.
+The effects are described below. Within the constructor, we have to add
+all parameters and slots to the corresponding management lists. This is done
+by calls of the following functions:
+- ParameteredObject::_addInputSlot
+- ParameteredObject::_addOutputSlot
+- ParameteredObject::_addParameter
+
+This can also be delegated to some init() function if there are more
+than one constructor.
+The parameters of the _addXX functions are described in the API documentation.
+
+\until };
+The second example class is declared similarly.
+
+\skip main
+\until is now 5
+Object creation and access of the parameters is quite easy. The save/load
+routines handle all registered parameters.
+
+\until and outgen2
+Here you can see how objects can be connected with each other.
+
+\until outgen2->save(testfile);
+The object connections are also saved by the ParameteredObject::save() routine.
+The slot data will <em>not</em> be stored.
+
+\until delete outgen2;
+We do the cleanup and make sure that the destructor automatically disconnects
+existing slot connections.
+
+\until }
+At the end, we save the ParameterFile to the disk.
+
+\section dynamic-modules Dynamic Modules
+It is possible to write Modules where the number or kind of
+Parameters and Slots is not fix in any configuration.
+Such modules, where this parameter/slot interface depends on its
+configuration (i.e., in the most general case, it depends on the
+workflow configuration parameter file) are called <em>dynamic Modules</em>.
+
+For writing such dynamic modules, you have to call the function
+ParameteredObject::_setDynamic() within the constructor to set
+up the module metadata such that other tools know, that the module
+interface has to be queried providing the current configuration.
+
+The next step is to reimplement the virtual function
+ParameteredObject::prepareDynamicInterface(const ParameterFile&)
+where the current configuration is provided as a parameter file.
+Within this function, the information from the parameter file may
+be used to determine, which parameters and slots to set up.
+Definition/registration of these parameter/slots is done there
+as usual.
+Do not forget to call the following routines for registration:
+- ParameteredObject::_addParameter
+- ParameteredObject::_addInputSlot
+- ParameteredObject::_addOutputSlot
+
+\section tools  Other tools and frameworks in charon-core
+The most important framework in charon-core is the ParameteredObject
+framework mentioned above. But there are even more nice features.
+These features are easy to understand so the API documentation should be
+sufficient:
+-   class FileTool:<br>
+    platform independent file manipulations
+-   class ParameterFile:<br>
+    parameter file handling used by parametered objects etc.
+-   class SplitStream:<br>
+    highly customizable output stream class with possibility to
+    stream into different targets etc.
+-   class StringTool:<br>
+    string manipulations
+-   class TypeDetector:<br>
+    guessing of basic data types
+ */

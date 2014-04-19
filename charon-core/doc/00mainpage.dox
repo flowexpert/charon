@@ -1,0 +1,56 @@
+/**
+\mainpage Charon Core libraries
+
+\section intro Overview
+Charon-core is a collection of routines and classes used in the charon
+project and tuchulcha. There a framework of serializable objects which can
+collaborate in a signal/slot style.
+A sample collection of serializable classes is able in the charon-utils project.
+
+\section libs Used libraries
+Charon-core itself does only depend on any external libraries.
+Modules that are developed using charon-core may include dependencies
+to other libraries if needed.
+
+\section features Features
+- Serializable object framework (classes ParameteredObject et al)
+	- Plugin mechanism via .dll/.so/.dylib files (called Modules)
+	- Managed data interchange between modules
+	  (via Slot::DataManager, see \ref slot-data-exchange)
+	- Super Nodes (nested workflows, via GroupObject module)
+	- Conditional and repeated workflows (IfGroup, WhileGroup)
+- configurable output stream with possibility to log to (multiple) files
+  and to console (like tee)
+- platform independent file manipulation (rename, etc)
+
+\section license License
+Copyright (C) 2009-2011 Jens-Malte Gottfried, Daniel Kondermann
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see http://www.gnu.org/licenses/.
+
+\image html  lgplv3-147x51.png "LGPL logo"
+\image latex lgplv3-147x51.png "LGPL logo" width=4cm
+
+\section infos Further information
+-   \subpage build
+-   \subpage usage
+-   \subpage plugins
+-   \subpage parameterfiles
+-   \subpage slot-data-exchange
+
+\latexonly
+The API documentation is only avaiable in the HTML version of this
+documentation.
+\pagebreak
+\endlatexonly
+*/

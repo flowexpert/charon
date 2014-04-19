@@ -1,0 +1,25 @@
+global.templatetype		double
+
+rd.type		filereader
+rd.filename	Inimage.xxx
+
+roi.type	roi
+roi.templatetype	int
+roi.top		0
+roi.left	29
+roi.bottom	18
+roi.right	44
+
+crop.type	crop
+crop.roi	roi.out
+crop.inimage	rd.image
+
+disp.type	imagedisplay
+disp.image	crop.outimage
+disp.wait	1000
+disp.width	200
+disp.height	250
+
+fw.type		filewriter
+fw.filename	Outimage.xxx
+fw.image	crop.outimage

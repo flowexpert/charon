@@ -1,0 +1,34 @@
+IF(NOT @PROJECT_NAME@_SOURCE_DIR)
+	MESSAGE(FATAL_ERROR
+		"To use the @PROJECT_NAME@ libraries directly from the build tree, "
+		"it has to be included into your project by ADD_SUBDIRECTORY. "
+		"Otherwise install @PROJECT_NAME@ first (e.g. by 'make install'). "
+	)
+ENDIF()
+SET(@PROJECT_NAME@_ROOT_DIR "@PROJECT_SOURCE_DIR@")
+SET(@PROJECT_NAME@_INCLUDE_DIRS
+	"@PROJECT_SOURCE_DIR@/include"
+	"@PROJECT_SOURCE_DIR@/include/@PROJECT_NAME@"
+)
+SET(@PROJECT_NAME@_HTMLDOC_DIR
+	"@CMAKE_INSTALL_PREFIX@/@PROJECT_INSTALL_DOC@/html"
+	CACHE PATH "path to doxygen generated html documentation (may be URL)"
+)
+SET(@PROJECT_NAME@_TAGFILE
+	"@PROJECT_BINARY_DIR@/doc/@PROJECT_NAME@.tag"
+	CACHE FILEPATH "doxygen tag import file" FORCE
+)
+SET(@PROJECT_NAME@_TAG_IMPORT
+	"\"${@PROJECT_NAME@_TAGFILE}=${@PROJECT_NAME@_HTMLDOC_DIR}\""
+)
+SET(@PROJECT_NAME@_VERSION_RC_FILE
+	"${charon-core_SOURCE_DIR}/cmake/version.rc.in"
+)
+SET(@PROJECT_NAME@_VERSION_CPP_FILE
+	"${charon-core_SOURCE_DIR}/cmake/version.cpp.in"
+)
+MARK_AS_ADVANCED(
+	@PROJECT_NAME@_DIR
+	@PROJECT_NAME@_HTMLDOC_DIR
+	@PROJECT_NAME@_TAGFILE
+)

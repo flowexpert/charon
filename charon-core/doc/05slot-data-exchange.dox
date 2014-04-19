@@ -1,0 +1,91 @@
+/**
+\namespace DataManagers
+\brief Specialized classes derived from Slot::DataManager
+*/
+
+/** \page slot-data-exchange Data Exchange between Modules
+Data exchange between modules is realized by connecting some output slot of a
+module that generates some data with an input slot of the module that should
+use it.
+By default, the data is stored, where the data is generated, i.e. within
+the output slot. So if connected to more than one (consuming) modules,
+no unneeded data copy takes place.
+
+On unmanaged mode (see below), the data space is allocated during execution
+of the data-generating module and freed when the whole workflow is
+finished and the modules are unloaded.
+Especially on large workflows, this may consume a lot of memory,
+e.g. if many modules in a row are manipulating a large piece of data
+(since in each output slot of them, there is a manipulated copy of the data).
+
+\section slot-cache-type Data Exchange Modes
+Since the default behavior, as described above, has some drawbacks
+(especially memory consumption), there is a slot property called
+Slot::CacheType to control the data exchange mechanism.
+Currently, there are two modes:
+- Slot::CACHE_MEM
+- Slot::CACHE_MANAGED
+
+\subsection slot-cache-type-mem Memory Data Exchange
+The default behaviour as mentioned above.
+Data is stored in memory (within the data-generating object,
+i.e. within the output slot).
+Data is passed to the connected input slots by reference
+(by forwarding the data retrieval calls to the output slot functions).
+
+\subsection slot-cache-type-managed Managed Data Exchange
+Data is managed via an instance of the Slot::DataManager class.
+There must be a specialization of this class able to handle
+the slot data type.
+The Slot::DataManagerFactory handles generating such
+specialized manager instances.
+
+Such a data manager handles writing the slot data content to
+disk and re-read, e.g. in connected input slots.
+Before execution of the data-generating plugin, the prepare step
+is responsible for (empty) slot space generation.
+After execution, the finalize step of the plugin calls the
+data manager to write the data to disk and will then free the space
+allocated within the data-generating module.
+The only thing kept in memory (within the output slot) is a configuration
+string with information how to read back the saved data.
+
+Within the connected modules, that use the data, within the prepare step,
+the input slots will call a data manager of the same type to fetch
+the data from disk (using the config string passed by the output slot),
+cache them during execution and free the data space in the finalize step.
+
+This mechanism reduces the data kept in memory by freeing data space
+in the finalize step but needs an additional string variable to keep
+the manager configuration
+(wich is usually much smaller than the data).
+
+\note
+The data written to disk is not deleted after workflow execution.
+It is kept to leave the option to re-execute parts of the workflow
+and may be used e.g. to manually inspect the data after execution.
+Read the documentation of the various DataManager specializations
+to get information about the file naming scheme to delete them
+if low on disk space or for cleanup.
+
+\section sloc-cache-type-select Selecting Slot Cache Type
+These modes may be selected within the parameter file by adding an
+additional option to the output slot in the workflow file:
+\code
+[objectName].[ouputSlotName].caching		[cacheType]
+\endcode
+
+where \c cacheType type has to be one of:
+<table>
+	<tr><th>caching parameter</th><th>%Slot::CacheType</th></tr>
+	<tr><td>\c memory</td><td>Slot::CACHE_MEM</td></tr>
+	<tr><td>\c managed</td><td>Slot::CACHE_MANAGED</td></tr>
+</table>
+
+One line in the workflow file could look like:
+\code
+filereader1.out.caching		managed
+\endcode
+Please note that this extra parameter has to be added to the output slot,
+not the possibly connected input slot(s).
+*/

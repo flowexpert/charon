@@ -1,0 +1,211 @@
+/**
+\page plugins Working with Plug-ins
+This page describes how to develop and use Plug-ins based on the
+ParameteredObject base class.
+The PluginManager will be introduced to handle the Plug-ins.
+Please refer to the \ref usage page for more details on creating a class
+derived from ParameteredObject.
+
+This example will do mainly the same as the example of the \ref usage page.
+But I will use plugins and the PluginManager class to realize is.
+
+\section dev Developing non-templated plug-ins
+
+Of course, we need to develop the plugins first.
+But, fortunately, there is not much developing to do.
+In the example on the \ref usage page, there were two classes:
+Sample and Outputgen.
+Out of these two classes we will make two plugins.
+First, we will need to create two separate header files, because later on,
+we want to have two separare binaries for the plugins,
+each one containing only the code of the plugin itself.
+
+<b><tt>Sample.h</tt></b>
+\dontinclude Sample.h
+\skip #ifndef
+\until #define SAMPLE_H_
+Of course, we need to use include guards.
+
+\until #endif
+\until #endif
+This code is needed to compile the plugin using the Visual C++ compiler. It
+handles the export and import of symbols in/from DLLs.
+If you either use the GNU compiler or don't specify the
+<tt>HANDLE_DLL</tt> compiler flag, no symbols will be exported/imported.
+You may want to include the file directly into your application,
+then you must not specify the HANDLE_DLL flag.
+Only if you want create a shared library (as we will do in this example) and
+use the Visual C++ compiler (ensure the MSVC compiler flag is set), you have to
+handle symbol exporting/importing.
+It then depends on the <tt>sample_EXPORTS</tt>
+flag whether symbols will be exported (<tt>__declspec(dllexport)</tt>) or
+imported (<tt>__declspec(dllimport)</tt>).
+Generally, the compiler flag is named "classname_EXPORTS",
+the class name in lowercase letters. We have to store the
+information in the <tt>sample_DECLDIR</tt> compiler directive.
+
+\until #endif
+The rest of the code hasn't changed except for the sample_DECLDIR directive
+which stands before the class name in the declaration. 
+
+To use this class as a plugin, we will need to create a source file
+which contains some special code. 
+
+<b><tt>Sample.cpp</tt></b>
+\dontinclude Sample.cpp
+\skip #include
+\until .h"
+Of course, we have to include our plugin code.
+
+\until #endif
+Same thing as in the file <tt>Sample.h</tt>. Only we will never import symbols
+out of this file, so we don't have to handle this.
+
+\until }
+This function just calls the cunstructor of the plugin class. The function
+takes a template_type argument which we can ignore in this case. I will
+discribe templated plugins later.
+
+\until }
+This function just calls the destructor of the plugin.
+
+If you are developing an own non-templated plugin, you can simply copy this
+code (<tt>Sample.cpp</tt>). Of course, you have to replace the include directive,
+the <tt>$classname$_EXPORTS</tt> compiler directive and the class name inside
+the create function. Everything else stays the same.
+
+I won't explain how to procede with the Outputgen class, because it's all the
+same.
+
+\section compile Compiling a Plug-in
+
+If you want to compile your plugin using the GNU Compiler Collection, you can
+do this manually.
+- Set the compiler flag UNIX (<tt>-DUNIX</tt>)
+- If you are using Mac OS X, you may also specify the APPLE flag
+  (<tt>-DAPPLE</tt>)
+- Make the binaries position independent (<tt>-fPIC</tt>)
+- Specify charon-utils include dir path as include path
+  (<tt>-I "$charon-core$/include"</tt>)
+- Specify the charon-core installation path as library path
+  (<tt>-L "$install$"</tt>)
+- On Linux systems, set the -shared compiler flag,
+  on Mac OS X the <tt>-dynamiclib</tt> flag
+- Link the plugin to the charon-core library (<tt>-lcharon-core</tt>)
+
+That's all.
+
+If you want to compile your plugin with the VC++ compiler,
+I recommend to use Visual Studio.
+Please refer to
+<a href="http://www.codeguru.com/cpp/cpp/cpp_mfc/tutorials/article.php/c9855">
+this page</a> for more details.
+You have to set the <tt>MSVC</tt>, the <tt>HANDLE_DLL</tt>
+and the <tt>$classname$_EXPORT</tt> flags manually.
+<tt>$classname$</tt> stands for the class name in lowercase letters.
+
+\section use Using the Plug-ins
+
+Now, we want to use these plugins in a main function, like it was done in the
+\ref usage page.
+
+<strong><tt>Main.cpp</tt></strong>
+\dontinclude Main.cpp
+\skip #include
+\until .h"
+We will use the PluginManager class to handle the plugins.
+
+\until man;
+Create an instance of the PluginManager.
+
+\until ");
+Instances are created by calling the PluginManager::createInstance()
+method. You have to specify the name of the plugin (first argument) and you can
+specify the name of the instance (second argument). If you don't specify the
+instance name, a unique name will be generated automatically.
+
+\until ::endl
+Since we can no longer access the parameters and slots directly, we have to use
+the get- and set-methods offered by the ParameteredObject class.
+
+\until outputgen and outgen2
+Slot connections can be established using the PluginManager::connect() method.
+You can of course sill use the Slot::connect method directly.
+
+\until ");
+The current configuration can be saved into a parameter file by using the
+PluginManager::saveParameterFile() method.
+
+\until }
+We do not have to delete the instances manually, because the PluginManager
+does this for us. But if you at any time want to do this, do NOT simply call
+delete on the instance, use the PluginManager::destroyInstance() method instead.
+
+\section templated Templated Plug-ins
+
+Creating a templated Plug-in is very similar to creating a non-templated Plugin.
+
+<strong><tt>TemplatedSample.h</tt></strong>
+\dontinclude TemplatedSample.h
+\skip #ifndef
+\until .hxx"
+Until here, nothing has changed compared to the non-templated plugin code.
+
+\until {
+Templated Plug-ins have to be derived from the TemplatedParameteredObject class
+instead of ParameteredObject.
+
+\until {
+Of course, you have to call the inherited constructor of the
+TemplatedParameteredObject instead of the ParameteredObject constructor.
+
+\until ;
+You have to use the this-pointer to call methods of ParameteredObject. If an
+input slot or an output slot depends on yout template type T, you have to
+specify this in the _addInputSlot() or _addOutputSlot()-call. For example, if
+your Plugin has an imput slot of type CImg<T>, the last parameter of the
+_addInputSlot()-call would be "CImg<T>". This is important because when
+connecting two slots, these types will be compared.
+If you have, like in this example, an input or output slot which just contains
+T, just specify "T" in the function call.
+
+\until ;
+Same thing, use the this-pointer to call _addParameter(). But there is one more
+thing. The method we call here is a member template of ParameteredObject. Unlike
+the non-templated addParameter() method it adds a default value to the
+parameter (here: 1.5). For any reason, the GNU compiler won't let us pass the
+template type (in our case, double) to the function call. So just leave it out.
+
+\until /
+That's all the difference in the plugin class.
+
+Now, let's see what's different in the "plugin-special" code:
+
+<strong><tt>TemplatedSample.cpp</tt></strong>
+\dontinclude TemplatedSample.cpp
+\skip #define
+\until Sample
+Here stands the name of the plugin class. This is mainly for your comfort,
+for you only have to type it once.
+
+\until #endif
+Nothing changed here.
+
+\until }
+\until }
+Now, the create function considers the template_type argument. Since template
+classes normally aren't compiled, this function forces the compiler to build
+the class as double, float and int type. Other types aren't supported.
+
+\until }
+Nothing changed here.
+
+If you are developing an own templated plugin, you can simply copy this
+code (<tt>TemplatedSample.cpp</tt>) and change the class name, the include
+directive and the <tt>$classname$_EXPORTS</tt> compiler directive.
+But beware: Always use the this-pointer or <tt>ParameteredObject::</tt> prefix
+(recommended) when calling a method of ParameteredObject and when using the
+templated ParameteredObject::_addParameter() method,
+don't specify the template argument in the function call.
+This won't compile using the GCC.
+*/

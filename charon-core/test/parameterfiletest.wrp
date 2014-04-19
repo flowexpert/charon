@@ -1,0 +1,24 @@
+# this is a test parameter file
+# to check ParameterFile class
+#
+param1		test # default: two tabs as separator
+param2  test2 # non-default white-space
+# empty line
+
+# empty parameter
+paramEmpty
+# multiline parameter/value pair
+param3     \
+value3
+# disabled multilinecomments \
+param4     10
+# mixed case parameter
+mixedCaseParam  5
+ # comment after whitespace
+param5 10.5;3.1;7 # parameter list
+# multiline param with comment
+param6 value1;\
+	value2;value3 # comment
+# duplicate parameter
+param7		val1
+param7		val2 # overwrites first occurrence
