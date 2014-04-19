@@ -1,0 +1,28 @@
+rd.type		filereader
+rd.filename		Penguin.pgm
+
+
+roi.type		roi
+roi.templatetype		int
+roi.xbegin		27
+roi.xend		46
+roi.yend		18
+
+blur.type		imageblur
+blur.strength		1.5
+blur.in		rd.out
+blur.roi		roi.out
+
+blur.editorinfo		266.296 -29.9297
+roi.editorinfo		60.2968 -73.064
+rd.editorinfo		53.5305 26.5902
+rd.out		blur.in
+roi.out		blur.roi
+blur.out		writer.in
+blur.templatetype		float
+rd.templatetype		float
+writer.type		filewriter
+writer.editorinfo		462.995 19.069
+writer.templatetype		float
+writer.in		blur.out
+writer.filename		testOutput.pgm

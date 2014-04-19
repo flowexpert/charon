@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FrameSelectWidget</class>
+ <widget class="QDockWidget" name="FrameSelectWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>224</width>
+    <height>201</height>
+   </rect>
+  </property>
+  <property name="features">
+   <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+  </property>
+  <property name="allowedAreas">
+   <set>Qt::RightDockWidgetArea|Qt::TopDockWidgetArea</set>
+  </property>
+  <property name="windowTitle">
+   <string>FrameSelect</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="3" column="0">
+     <widget class="QLabel" name="label2">
+      <property name="text">
+       <string>Dim 2 (Z)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QSlider" name="slider2">
+      <property name="tracking">
+       <bool>false</bool>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QSpinBox" name="spinBox2">
+      <property name="wrapping">
+       <bool>true</bool>
+      </property>
+      <property name="suffix">
+       <string> / ZZ</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label3">
+      <property name="text">
+       <string>Dim 3 (T)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QSlider" name="slider3">
+      <property name="tracking">
+       <bool>false</bool>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QSpinBox" name="spinBox3">
+      <property name="wrapping">
+       <bool>true</bool>
+      </property>
+      <property name="suffix">
+       <string> / TT</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label4">
+      <property name="text">
+       <string>Dim 4 (V)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QSlider" name="slider4">
+      <property name="tracking">
+       <bool>false</bool>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2">
+     <widget class="QSpinBox" name="spinBox4">
+      <property name="wrapping">
+       <bool>true</bool>
+      </property>
+      <property name="suffix">
+       <string> / VV</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="3">
+     <widget class="QCheckBox" name="checkCropV">
+      <property name="text">
+       <string>Crop last dimension (RGB/V) too</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="3">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Dim 1 and 2 (XY) stay untouched.&lt;br&gt;To swap dimensions, use the ChannelConverter.</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Indices</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>checkCropV</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label4</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>55</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>31</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkCropV</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>slider4</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>126</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkCropV</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinBox4</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>191</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider4</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox4</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox4</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider4</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>145</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider3</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox3</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox3</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider3</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>145</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>145</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>FrameSelectWidget</receiver>
+   <slot>setDim2(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>137</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>126</x>
+     <y>345</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider3</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>FrameSelectWidget</receiver>
+   <slot>setDim3(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>165</x>
+     <y>373</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider4</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>FrameSelectWidget</receiver>
+   <slot>setDim4(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>251</x>
+     <y>399</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkCropV</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>FrameSelectWidget</receiver>
+   <slot>setCropV(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>428</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>setCropV(bool)</slot>
+  <slot>setDim2(int)</slot>
+  <slot>setDim3(int)</slot>
+  <slot>setDim4(int)</slot>
+ </slots>
+</ui>

@@ -1,0 +1,28 @@
+/* Stylesheet for help page display */
+/* Author:  Jens-Malte Gottfried */
+/* Date:    24.11.2008 */
+h1 {
+    color:              blue;
+    font-family:        sans-serif;
+    font-style:         italic;
+    font-size:          xx-large;
+    font-weight:        bold;
+    font-variant:       small-caps;
+    text-align:         center;
+}
+
+h2 {
+    font-size:          x-large;
+    font-family:        sans-serif;
+    font-weight:        bold;
+    font-variant:       small-caps;
+    text-align:         left;
+}
+table{margin-left:30px;border-spacing:0}
+table.index{margin-left:auto;margin-right:auto}
+.parname{font-weight:bold}
+.baseclass{font-style:italic;color:#060;text-decoration:none}
+.ref{font-style:italic;color:#008;text-decoration:none}
+td.dtype{padding-right:15px}
+td.firstrow{border-top:1px solid #ccc}
+p{text-align:justify}

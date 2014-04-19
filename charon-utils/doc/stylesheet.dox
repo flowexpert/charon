@@ -1,0 +1,106 @@
+/**
+\page xml-doc XML Documentation Processing
+To be able to generate custom documentation like Tuchulcha-style
+module references, the xml output of doxygen can be used.
+This page describes how to generate this output and how to use
+the provided xml stylesheets to generate the module references.
+
+\section generation Generate the doxygen XML documentation
+XML Documentation generation has been included in the project
+CMake files. If Doxygen is found, running the make-target
+\c charon-utils_doc_xml will generate the xml documentation
+in the <code>{build dir}/doc/xml</code> directory.
+In general, if available, this target is called
+\c {projectName}_doc_xml, like e.g. \c charon_doc_xml
+in the charon flow estimation project.
+
+This documentation is not generated automatially from the
+\c doc target because it is only used for reference page
+generation and needs further processing to be really useful
+for the end-user.
+
+\section processing How to work with the XML files
+There are two possible options how to work with the xml files:
+Parse it with a helper tool to get information out of them
+or use some xsl stylesheets to set up html pages.
+
+\subsection charon-xml-helper XML helper
+The generated xml files may be read and parsed by the command
+line tool \c charon-xml-helper distributed with charon-utils.
+If Qt is found and enabled via CMake, this helper executable
+will be built in the \c bin directory of the build tree.
+
+This helper tool parses the xml files to detect which classes
+are derived from ParameteredObject.
+These classes are interpreted as possible module candidates.
+Addidionally it checks, which classes are grouped in the
+\ref charon-modules "charon-modules" group. Using the command line option
+\c --xcheck it prints differences between these sets of classes.
+
+An option summary and description how to call \c charon-xml-helper
+is printed, if called without arguments. See
+<a href="http://charon-suite.sourceforge.net/doc/man/man-charon-xml-helper.html">
+charon-xml-helper manpage</a> for detailed description of the
+command line options.
+
+\subsection xslt-sheets Formatting with XSLT
+XSLT stylesheets are formatting instructions for xml pages that may be used
+to generate e.g. html pages out of xml documents.
+Although modern web browsers are also capable of applying these stylesheets,
+the more flexible way is to use tools like \c xsltproc to perform
+the actual transformations and save the result to some html files.
+This way it is possible to tune parameters stored in the xls files.
+
+To generate an index page of all classes, use the command
+
+<code>
+xsltproc --stringparam basedir "{build dir}/doc/xml" \ \n
+    "{source dir}/doc/modIndex.xsl" "{build dir}/doc/xml/index.xml" > classIndex.html
+</code>
+
+\section stylesheets Available XSL stylesheets
+Here is a description of the available xsl stylesheets and their
+parameters.
+
+\subsection parseIndex parseIndex.xsl
+This script does not produce html output but can be used to extract all class
+and group ids as well as detect the charon-modules group (using kind="index").
+STL classes are ignored.
+\param kind Possible values: "class", "group", "index";
+	Select wich ids should be displayed.
+
+\subsection groupIndex groupIndex.xsl
+Generate index page of all classes in a group.
+\param basedir directory where to search for class xml files (usually \c doc/xml).
+	Has to be specified because paths in the xsl script are relative to the
+	xsl script location and not to the location of the xml data source file.
+\param stylesheet location of the css stylesheet file, defaults to "styles.css"
+\param index Possible values: 0,1
+	Generate general module index instad of group index.
+	Suppresses the group descriptions and replaces the title by "Module Index".
+
+\subsection groupList groupList.xsl
+Show modules collected by groups. Skips group \ref charon-modules "charon-modules".
+\param basedir directory where to search for class xml files (usually \c doc/xml).
+	Has to be specified because paths in the xsl script are relative to the
+	xsl script location and not to the location of the xml data source file.
+\param stylesheet location of the css stylesheet file, defaults to "styles.css"
+\param exclude addidional group to exclude
+
+\subsection modIndex modIndex.xsl
+Generate index page of all classes found in the index file.
+STL classes are ignored.
+\param basedir directory where to search for class xml files (usually \c doc/xml).
+	Has to be specified because paths in the xsl script are relative to the
+	xsl script location and not to the location of the xml data source file.
+\param stylesheet location of the css stylesheet file, defaults to "styles.css"
+
+\subsection modRef modRef.xsl
+Generate Module reference page with description of input/output slots and
+parameters. This pages look similar as the documentation shown in Tuchulcha.
+\param stylesheet location of the css stylesheet file, defaults to "styles.css"
+
+\subsection cssStylesheet styles.css
+CSS stylesheet file that may be used for formatting the appearance of the
+generated html pages.
+ */
