@@ -1,0 +1,134 @@
+interpolator.type		interpolatorlinear
+interpolator.out		warper.interpolator
+diff2.type		diff2d
+bm.type		brightnessmodels_constant
+bm.this		dataterm_hs.brightnessmodel
+mm.type		motionmodels_localconstant
+mm.this		dataterm_hs.motionmodel
+mm.dx		diff2.dx
+diff2.dx		mm.dx;dataterm_learned.ix
+mm.dy		diff2.dy
+diff2.dy		mm.dy;dataterm_learned.iy
+mm.dt		diff2.dt
+diff2.dt		mm.dt;dataterm_learned.it
+helper.type		iteratorhelper
+helper.in		relaxinghelper.sequence
+helper.self		iterator.helper
+helper.flow		spatialterm_hs.flowguess;warper.flowInput
+helper.sequence		warper.seqInput
+iterator.type		simpleiterator
+iterator.helper		helper.self
+iterator.flow		solver.out
+iterator.result		relaxator.flow
+iterator.maxruns		4
+analyzer.type		flowcomparator
+analyzer.groundtruth		flowcrop.out
+analyzer.result		relaxator.result
+analyzer.passthrough		
+solver.type		petscsolver
+solver.stencil		dataterm_hs.this;spatialterm_hs.this;dataterm_learned.this
+solver.out		iterator.flow
+solver.roi		solverroi.out
+seqcrop.type		crop
+seqcrop.in		seqreader.out
+seqcrop.out		relaxinghelper.in
+flowcrop.type		crop
+flowcrop.out		analyzer.groundtruth
+flowcrop.in		flowreader.out
+seqcrop.roi		roi.out
+flowcrop.roi		roi.out
+seqcrop.t		0
+seqcrop.v		0
+seqcrop.z		0
+flowcrop.z		0
+flowcrop.t		0
+flowcrop.v		0
+relaxator.type		relaxingiterator
+relaxator.flow		iterator.result
+relaxator.result		analyzer.result
+relaxinghelper.type		iteratorhelper
+relaxinghelper.in		seqcrop.out
+relaxinghelper.sequence		helper.in
+relaxator.helper		relaxinghelper.self
+relaxinghelper.self		relaxator.helper
+relaxator.initial		dataterm_hs.this
+dataterm_hs.type		gbcce
+dataterm_hs.brightnessmodel		bm.this
+dataterm_hs.motionmodel		mm.this
+dataterm_hs.this		solver.stencil;relaxator.initial
+spatialterm_hs.type		l2norm
+spatialterm_hs.this		solver.stencil
+spatialterm_hs.lambda		2000
+spatialterm_hs.unknowns		a1;a2
+relaxator.final		dataterm_learned.this
+iterator.accumulate		1
+diff2.dxx		
+diff2.dxy		
+diff2.dyy		
+phibc.type		mixtureofgaussians
+phibc.weights		0.763055;0.1797404;0.0787129;0.0784913
+phibc.sigmas		2;12;40;61
+helper.initflow		relaxinghelper.flow
+relaxinghelper.flow		helper.initFlow
+relaxator.maxruns		5
+solverroi.type		roi
+solverroi.templatetype		int
+solverroi.out		solver.roi
+solverroi.xend		60
+solverroi.yend		50
+relaxator.accumulate		0
+dataterm_learned.type		DataConstant
+dataterm_learned.this		solver.stencil;relaxator.final
+dataterm_learned.it		diff2.dt
+dataterm_learned.ix		diff2.dx
+dataterm_learned.iy		diff2.dy
+dataterm_learned.ixx		
+dataterm_learned.ixy		
+dataterm_learned.iyy		
+dataterm_learned.flowguess		helper.flow
+relaxinghelper.initflow		
+flowreader.type		filereader
+flowreader.out		flowcrop.in
+flowreader.filename		yosemiteFlow.cimg
+roi.type		roi
+roi.templatetype		int
+roi.out		seqcrop.roi;flowcrop.roi
+roi.xend		250
+roi.yend		130
+seqreader.type		filereader
+seqreader.out		seqcrop.in
+seqreader.filename		yosemiteNoClouds.cimg
+roi.xbegin		190
+roi.ybegin		80
+spatialterm_hs.flowguess		helper.flow
+dataterm_learned.lambda		3
+warper.type		warpsymmetric
+warper.seqinput		helper.sequence
+warper.flowinput		helper.flow
+warper.interpolator		interpolator.out
+dataterm_learned.psi		phibc.energy
+phibc.energy		dataterm_learned.psi
+diff2.img		warper.out
+warper.out		diff2.img;bm.image
+bm.image		warper.out
+helper.editorinfo		821.932 775.61
+phibc.editorinfo		1651.05 590.573
+interpolator.editorinfo		851.671 359.214
+solverroi.editorinfo		2508.51 166.583
+seqreader.editorinfo		178.225 647.522
+solver.editorinfo		2665.45 433.249
+roi.editorinfo		190.499 857.994
+flowreader.editorinfo		186.194 1013.54
+seqcrop.editorinfo		392.997 673.588
+warper.editorinfo		1161.74 319.969
+relaxinghelper.editorinfo		597.773 857.861
+dataterm_hs.editorinfo		2176.02 227.827
+bm.editorinfo		1826.19 184.415
+relaxator.editorinfo		3101.82 866.589
+diff2.editorinfo		1419.29 438.931
+dataterm_learned.editorinfo		2164.49 436.524
+iterator.editorinfo		2908.94 669.906
+flowcrop.editorinfo		415.006 1041.49
+spatialterm_hs.editorinfo		2170.94 652.943
+analyzer.editorinfo		3319 1067.06
+mm.editorinfo		1818.71 318.94

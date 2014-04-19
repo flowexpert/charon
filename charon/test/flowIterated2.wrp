@@ -1,0 +1,97 @@
+interpolator.type		interpolatorlinear
+interpolator.out		warper.interpolator
+diff2.type		diff2d
+bm.type		brightnessmodels_constant
+bm.this		dataterm.brightnessmodel
+mm.type		motionmodels_localconstant
+mm.this		dataterm.motionmodel
+mm.dx		diff2.dx
+diff2.dx		mm.dx
+mm.dy		diff2.dy
+diff2.dy		mm.dy
+mm.dt		diff2.dt
+diff2.dt		mm.dt
+helper.type		iteratorhelper
+helper.in		seqcrop.out
+helper.self		iterator.helper
+helper.flow		spatialterm.flowguess;warper.flowInput
+helper.sequence		warper.seqInput
+iterator.type		simpleiterator
+iterator.helper		helper.self
+iterator.flow		solver.out
+iterator.accumulate		1
+iterator.result		analyzer.result
+iterator.maxruns		10
+analyzer.type		flowcomparator
+analyzer.groundtruth		flowcrop.out
+analyzer.result		iterator.result
+analyzer.passthrough		
+dataterm.type		gbcce
+dataterm.brightnessmodel		bm.this
+dataterm.motionmodel		mm.this
+dataterm.this		solver.stencil
+spatialterm.type		l2norm
+spatialterm.this		solver.stencil
+spatialterm.lambda		800
+spatialterm.unknowns		a1;a2
+solver.type		petscsolver
+solver.stencil		dataterm.this;spatialterm.this
+solver.out		iterator.flow
+solver.roi		size.out
+seqreader.type		filereader
+seqcrop.type		crop
+seqcrop.in		seqreader.out
+seqreader.out		seqcrop.in
+seqcrop.out		helper.in
+flowcrop.type		crop
+flowcrop.out		analyzer.groundtruth
+flowreader.type		filereader
+flowcrop.in		flowreader.out
+flowreader.out		flowcrop.in
+seqreader.filename		yosemiteNoClouds.cimg
+flowreader.filename		yosemiteFlow.cimg
+roi.type		roi
+roi.templatetype		int
+seqcrop.roi		roi.out
+roi.out		seqcrop.roi;flowcrop.roi
+flowcrop.roi		roi.out
+roi.xbegin		190
+roi.ybegin		120
+roi.xend		222
+roi.yend		152
+seqcrop.t		0
+seqcrop.v		0
+seqcrop.z		0
+flowcrop.z		0
+flowcrop.t		0
+flowcrop.v		0
+spatialterm.flowguess		helper.flow
+warper.type		warpsymmetric
+warper.interpolator		interpolator.out
+diff2.img		warper.out
+warper.out		diff2.img;bm.image
+bm.image		warper.out
+warper.seqinput		helper.sequence
+warper.flowinput		helper.flow
+bm.editorinfo		1246.69 -226.961
+iterator.editorinfo		2330.68 181.468
+interpolator.editorinfo		576.369 -77.9813
+dataterm.editorinfo		1787.45 -67.1728
+helper.editorinfo		584.987 117.079
+flowreader.editorinfo		182.649 307.555
+seqcrop.editorinfo		401.317 71.6276
+diff2.editorinfo		1246.99 -59.1948
+seqreader.editorinfo		179.847 71.3858
+flowcrop.editorinfo		399.298 270.476
+warper.editorinfo		874.704 -3.89401
+roi.editorinfo		186.653 200.749
+solver.editorinfo		2133.04 22.7853
+analyzer.editorinfo		2539.23 291.064
+spatialterm.editorinfo		1801.71 126.347
+mm.editorinfo		1452.6 -37.0743
+size.type		roi
+size.templatetype		int
+size.out		solver.roi
+size.xend		32
+size.yend		32
+size.editorinfo		2006.11 181.567

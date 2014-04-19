@@ -1,0 +1,70 @@
+seqgen.type		sequencegenerator
+seqgen.sequence		helper.in
+interpolator.type		interpolatorlinear
+interpolator.out		warper.interpolator
+diff2.type		diff2d
+bm.type		brightnessmodels_constant
+bm.this		dataterm.brightnessmodel
+mm.type		motionmodels_localconstant
+mm.this		dataterm.motionmodel
+mm.dx		diff2.dx
+diff2.dx		mm.dx
+mm.dy		diff2.dy
+diff2.dy		mm.dy
+mm.dt		diff2.dt
+diff2.dt		mm.dt
+blubb.type		roi
+blubb.templatetype		int
+blubb.out		solver.roi
+blubb.xend		32
+blubb.yend		32
+seqgen.flow		analyzer.groundtruth
+seqgen.size		32;32;1;2
+helper.type		iteratorhelper
+helper.in		seqgen.sequence
+helper.self		iterator.helper
+helper.flow		spatialterm.flowguess;warper.flowInput
+helper.sequence		warper.seqInput
+iterator.type		simpleiterator
+iterator.helper		helper.self
+iterator.flow		solver.out
+iterator.accumulate		1
+iterator.result		analyzer.result
+iterator.maxruns		10
+analyzer.type		flowcomparator
+analyzer.groundtruth		seqgen.flow
+analyzer.result		iterator.result
+analyzer.passthrough		
+dataterm.type		gbcce
+dataterm.brightnessmodel		bm.this
+dataterm.motionmodel		mm.this
+dataterm.this		solver.stencil
+spatialterm.type		l2norm
+spatialterm.this		solver.stencil
+spatialterm.lambda		100
+spatialterm.unknowns		a1;a2
+solver.type		petscsolver
+solver.stencil		dataterm.this;spatialterm.this
+solver.out		iterator.flow
+solver.roi		blubb.out
+spatialterm.flowguess		helper.flow
+warper.type		warp
+warper.interpolator		interpolator.out
+warper.seqinput		helper.sequence
+warper.flowinput		helper.flow
+bm.image		warper.out
+warper.out		bm.image;diff2.img
+diff2.img		warper.out
+mm.editorinfo		1052.6 -225.417
+iterator.editorinfo		1805.73 77.9968
+interpolator.editorinfo		304.895 -240.587
+dataterm.editorinfo		1339.09 -272.148
+helper.editorinfo		316.257 -1.84699
+bm.editorinfo		831.297 -394.636
+diff2.editorinfo		847.059 -238.023
+warper.editorinfo		604.641 -305.428
+blubb.editorinfo		1375.9 76.602
+solver.editorinfo		1591.32 -107.011
+analyzer.editorinfo		2138.56 214.814
+seqgen.editorinfo		-29.0037 204.814
+spatialterm.editorinfo		1361.1 -72.6063

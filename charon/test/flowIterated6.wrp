@@ -1,0 +1,122 @@
+interpolator.type		interpolatorlinear
+interpolator.out		warper.interpolator
+diff2.type		diff2d
+bm.type		brightnessmodels_constant
+bm.this		dataterm.brightnessmodel
+mm.type		motionmodels_localconstant
+mm.this		dataterm.motionmodel
+mm.dx		diff2.dx
+diff2.dx		mm.dx
+mm.dy		diff2.dy
+diff2.dy		mm.dy
+mm.dt		diff2.dt
+diff2.dt		mm.dt
+helper.type		iteratorhelper
+helper.in		read.out
+helper.self		iterator.helper
+helper.flow		pyramid.flowin
+helper.sequence		pyramid.seqin
+iterator.type		simpleiterator
+iterator.helper		helper.self
+iterator.flow		iter2.result
+iterator.result		analyzer.result
+iterator.maxruns		5
+analyzer.type		flowcomparator
+analyzer.groundtruth		pyramidgt.flowOut
+analyzer.result		iterator.result
+analyzer.passthrough		
+dataterm.type		gbcce
+dataterm.brightnessmodel		bm.this
+dataterm.motionmodel		mm.this
+dataterm.this		solver.stencil
+spatialterm.type		l2norm
+spatialterm.this		solver.stencil
+spatialterm.lambda		800
+spatialterm.unknowns		a1;a2
+solver.type		petscsolver
+solver.stencil		dataterm.this;spatialterm.this
+solver.out		median.in
+solver.roi		pyramid.size
+spatialterm.flowguess		helper2.flow
+warper.type		warpsymmetric
+warper.interpolator		interpolator.out
+warper.seqinput		helper2.sequence
+warper.flowinput		helper2.flow
+bm.image		warper.out
+warper.out		bm.image;diff2.img
+diff2.img		warper.out
+read.type		filereader
+readgt.type		filereader
+read.out		helper.in;pyramidgt.seqIn
+readgt.out		pyramidgt.flowin
+read.filename		yosemiteNoClouds.cimg
+readgt.filename		yosemiteFlow.cimg
+pyramid.type		pyramidrescale
+pyramid.seqin		helper.sequence
+pyramid.seqout		helper2.in
+pyramid.flowout		iterator.flowinit;quiv2.flow;hsv2.flow;helper2.initflow
+pyramid.flowin		helper.flow
+pyramid.level		helper.count
+helper.count		pyramid.level;pyramidgt.level
+solver.entriesperrowhint		6
+pyramid.size		solver.roi
+pyramidgt.type		pyramidrescale
+pyramidgt.flowin		readgt.out
+pyramidgt.seqin		read.out
+pyramidgt.level		helper.count
+pyramidgt.flowout		analyzer.groundtruth
+iterator.flowinit		pyramid.flowOut
+tohsv.type		flow2hsv
+tohsv.flow		median.out
+quiv.type		flowquiver
+quiv.in		tohsv.out
+tohsv.out		quiv.in
+quiv.flow		median.out
+quiv2.type		flowquiver
+hsv2.type		flow2hsv
+quiv2.flow		pyramid.flowOut
+hsv2.flow		pyramid.flowOut
+quiv2.in		hsv2.out
+hsv2.out		quiv2.in
+iter2.type		simpleiterator
+helper2.type		iteratorhelper
+iter2.helper		helper2.self
+helper2.self		iter2.helper
+iter2.flow		median.out
+iter2.result		iterator.flow
+helper2.in		pyramid.seqOut
+helper2.initflow		pyramid.flowOut
+helper2.sequence		warper.seqInput
+helper2.flow		warper.flowinput;spatialterm.flowGuess
+iter2.maxruns		2
+pyramid.scalefactor		0.7
+pyramid.sigma		0.4
+pyramidgt.scalefactor		0.7
+pyramidgt.sigma		0.4
+median.type		medianfilter
+median.in		solver.out
+median.out		tohsv.flow;quiv.flow;iter2.flow
+median.windowradius		4
+iterator.accumulate		0
+readgt.editorinfo		295.947 923.876
+spatialterm.editorinfo		1997.37 351.447
+helper.editorinfo		485.945 651.082
+interpolator.editorinfo		991.546 67.4111
+solver.editorinfo		2312.28 412.264
+read.editorinfo		292.37 821.338
+iter2.editorinfo		2658.94 617.9
+dataterm.editorinfo		1989.12 141.25
+warper.editorinfo		1293.26 -17.2413
+median.editorinfo		2485.52 515.613
+helper2.editorinfo		996.678 179.982
+pyramidgt.editorinfo		829.984 863.959
+bm.editorinfo		1669.97 -34.8214
+diff2.editorinfo		1485 92.8039
+iterator.editorinfo		2852.55 767.197
+analyzer.editorinfo		3077.63 907.12
+mm.editorinfo		1678.73 114.688
+pyramid.editorinfo		735.143 570.624
+tohsv.editorinfo		2717.45 426.752
+quiv2.editorinfo		1278.69 501.593
+hsv2.editorinfo		1028.39 503.347
+quiv.editorinfo		2943.07 507.985

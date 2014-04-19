@@ -1,0 +1,24 @@
+iterator.type		relaxingiterator
+helper.type		iteratorhelper
+iterator.helper		helper.self
+helper.self		iterator.helper
+iterator.flow		helper.flow
+helper.flow		iterator.flow
+iterator.initial		stencil1.this
+iterator.final		stencil2.this
+stencil1.type		l2norm
+stencil1.this		iterator.initial
+stencil2.type		l2norm
+stencil2.this		iterator.final
+iterator.maxruns		3
+dummy.type		sequencegenerator
+helper.initflow		dummy.flow
+dummy.flow		helper.initFlow
+helper.in		dummy.sequence
+dummy.sequence		helper.in
+iterator.accumulate		0
+iterator.editorinfo		917.722 142.334
+helper.editorinfo		344.292 66.268
+dummy.editorinfo		68.0232 66.0184
+stencil2.editorinfo		628.469 382.977
+stencil1.editorinfo		628.448 241.528

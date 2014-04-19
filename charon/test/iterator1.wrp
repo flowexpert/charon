@@ -1,0 +1,15 @@
+seqgen.type		sequencegenerator
+seqgen.sequence		helper.in
+iterator.type		simpleiterator
+iterator.helper		helper.self
+iterator.flow		helper.flow
+iterator.maxruns		3
+iterator.epsilon		0
+iterator.accumulate		0
+helper.type		iteratorhelper
+helper.in		seqgen.sequence
+helper.self		iterator.helper
+helper.flow		iterator.flow
+iterator.editorinfo		624.988 299.072
+helper.editorinfo		346.88 223.291
+seqgen.editorinfo		37.8741 224.254

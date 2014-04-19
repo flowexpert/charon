@@ -1,0 +1,27 @@
+generator.type		samplegenerator
+sampler.type		mcmcsampler
+generator.sampler		sampler.out
+sampler.out		generator.sampler
+writer.type		filewriter
+writer.in		generator.out
+generator.out		writer.in
+size.type		roi
+size.templatetype		int
+generator.size		size.out
+size.out		generator.size
+gsm.type		mixtureofgaussians
+sampler.pdf		gsm.probability
+gsm.probability		sampler.pdf
+gsm.weights		0.25;0.75
+gsm.sigmas		1;10
+sampler.skip		100
+sampler.steps		10
+size.xend		300
+size.yend		300
+writer.filename		fit1.cimg
+sampler.sigma		1
+gsm.editorinfo		205.393 -244.896
+size.editorinfo		442.543 -139.308
+writer.editorinfo		817.99 -154.634
+sampler.editorinfo		434.446 -268.787
+generator.editorinfo		616.308 -205.175

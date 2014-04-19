@@ -1,0 +1,50 @@
+bm.type		brightnessmodels_constant
+mm.type		motionmodels_localconstant
+bcce.type		gbcce
+bcce.brightnessmodel		bm.this
+bm.this		bcce.brightnessmodel
+bcce.motionmodel		mm.this
+mm.this		bcce.motionmodel
+solver.type		petscsolver
+solver.stencil		bcce.this;l2norm.this
+bcce.this		solver.stencil
+roi.type		roi
+roi.templatetype		int
+solver.roi		roi.out
+roi.out		solver.roi
+writer.type		filewriter
+writer.in		solver.out
+solver.out		writer.in
+bm.image		sequence.sequence
+mm.dx		diff.dx
+mm.dy		diff.dy
+mm.dz		
+mm.dt		diff.dt
+sequence.type		sequencegenerator
+diff.type		diff2d
+diff.img		sequence.sequence
+sequence.sequence		diff.img;bm.image
+diff.dx		mm.dx
+diff.dy		mm.dy
+diff.dt		mm.dt
+writer.filename		flow1_HS_Sinus_calc.cimg
+origwriter.type		filewriter
+origwriter.in		sequence.flow
+sequence.flow		origwriter.in
+origwriter.filename		flow1_HS_Sinus.cimg
+roi.xend		20
+roi.yend		20
+l2norm.type		l2norm
+l2norm.this		solver.stencil
+l2norm.unknowns		a1;a2
+l2norm.lambda		50
+mm.editorinfo		842.171 -198.217
+bm.editorinfo		836.584 -335.613
+sequence.editorinfo		156.47 -269.144
+l2norm.editorinfo		1203.96 -409.192
+roi.editorinfo		1212.83 -62.2507
+origwriter.editorinfo		390.088 -187.207
+diff.editorinfo		588.367 -252.798
+bcce.editorinfo		1195.15 -256.761
+writer.editorinfo		1670.38 -88.6673
+solver.editorinfo		1445.82 -123.822

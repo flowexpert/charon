@@ -1,0 +1,40 @@
+// Charon Group Definitions
+
+/** \defgroup charon-modules Charon Modules
+	Collection of all module classes.
+ */
+
+/** \defgroup charon-flow Charon Flow Modules
+	Collection of all modules from the charon project.
+ */
+
+/** \defgroup charon-stencils Stencils
+	Collection of Stencil classes.
+ */
+
+/** \defgroup charon-stencil-helpers Stencil Helpers
+	Helper Modules for Stencils like Brightness or Motion Models.
+ */
+
+/** \defgroup charon-learning Learning Modules
+	Collection of modules for learning of flow statistics.
+	Used in the paper implementation of "Learning Optical Flow" by Sun et al.
+ */
+
+/** \defgroup charon-image-manipulators Image Manipulation
+	Image Manipulation Modules.
+ */
+
+/** \defgroup charon-flow-testing Flow Estimation Testing
+	Modules intendet to test the performance of optical flow estimation
+	algorithms. This includes generators of test sequences
+	and modules to compare the results with given ground truth.
+ */
+
+/** \defgroup charon-iterators Iteration Modules
+	Iteration and their helper modules.
+ */
+
+/** \defgroup charon-flow-solvers Flow Estimation Solvers
+	Solver Modules used for optical flow estimation.
+ */
