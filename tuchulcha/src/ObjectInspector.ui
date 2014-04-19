@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ObjectInspector</class>
+ <widget class="QWidget" name="ObjectInspector">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>870</width>
+    <height>446</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Frame</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_4">
+   <property name="margin">
+    <number>4</number>
+   </property>
+   <item>
+    <widget class="QTableView" name="view">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>5</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::AllEditTriggers</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="cornerButtonEnabled">
+      <bool>false</bool>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="tools" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QFrame" name="prefixFrame">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="margin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="prefixLabel">
+           <property name="text">
+            <string>Selected Node</string>
+           </property>
+           <property name="buddy">
+            <cstring>prefix</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFilterWidget" name="prefix"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolBox" name="toolBox">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>165</height>
+         </size>
+        </property>
+        <property name="tabSpacing">
+         <number>2</number>
+        </property>
+        <widget class="QWidget" name="pageTools">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>410</width>
+           <height>90</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>Tools</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QToolButton" name="setPriorityButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Change priority of selected parameters</string>
+            </property>
+            <property name="text">
+             <string>set
+priorities</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/prioritySignalLights.png</normaloff>:/icons/prioritySignalLights.png</iconset>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="resetParamButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>reset selected parameter(s) to their defaults
+This deletes the parameter(s) from the parameter file.</string>
+            </property>
+            <property name="text">
+             <string>reset
+parameter</string>
+            </property>
+            <property name="icon">
+             <iconset theme="document-revert" resource="../resources.qrc">
+              <normaloff>:/icons/revert.png</normaloff>:/icons/revert.png</iconset>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Deselect any currently selected node.&lt;br&gt;
+This causes all parameter from the workflow file
+to appear in the object inspector.&lt;br&gt;
+This might be useful e.g. in combination with a priority filter.</string>
+            </property>
+            <property name="text">
+             <string>deselect
+any node</string>
+            </property>
+            <property name="icon">
+             <iconset theme="edit-clear-list" resource="../resources.qrc">
+              <normaloff>:/icons/edit-clear-list.png</normaloff>:/icons/edit-clear-list.png</iconset>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="ActivateAllButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Activate all plugins starting with the selected one.
+If the selected plugin is already activated, this has no effect.
+If it was deactivated, the plugin itself and all connected
+plugins are activated (forward traversal).</string>
+            </property>
+            <property name="text">
+             <string>activate
+plugin tree</string>
+            </property>
+            <property name="icon">
+             <iconset theme="split" resource="../resources.qrc">
+              <normaloff>:/icons/split.png</normaloff>:/icons/split.png</iconset>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="pageFilter">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>410</width>
+           <height>90</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>Filter</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QLabel" name="priorityFilterLabel">
+            <property name="text">
+             <string>Priority</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="buddy">
+             <cstring>filterBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="PriorityBox" name="filterBox">
+            <property name="toolTip">
+             <string>Filter by priority</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="resetFilterButton">
+            <property name="toolTip">
+             <string>reset applied filters</string>
+            </property>
+            <property name="text">
+             <string>reset filters</string>
+            </property>
+            <property name="icon">
+             <iconset theme="edit-clear" resource="../resources.qrc">
+              <normaloff>:/icons/edit-clear-filter.png</normaloff>:/icons/edit-clear-filter.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="pageComment">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>410</width>
+           <height>195</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>Node-Comment</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QTextEdit" name="comment">
+            <property name="undoRedoEnabled">
+             <bool>false</bool>
+            </property>
+            <property name="acceptRichText">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="buttonGroupBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title">
+         <string>Editing</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <property name="margin">
+          <number>4</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QWidget" name="widget" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="margin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="addButton">
+              <property name="toolTip">
+               <string>Add new parameter</string>
+              </property>
+              <property name="text">
+               <string>&amp;Add</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="deleteButton">
+              <property name="toolTip">
+               <string>Delete selected parameter</string>
+              </property>
+              <property name="text">
+               <string>&amp;Delete</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="clearButton">
+              <property name="toolTip">
+               <string>Delete all parameters</string>
+              </property>
+              <property name="text">
+               <string>&amp;Clear</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="useMetadata">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>use metadata</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="onlyParams">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>show editable parameters only</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QFilterWidget</class>
+   <extends>QLineEdit</extends>
+   <header>QFilterWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PriorityBox</class>
+   <extends>QComboBox</extends>
+   <header>PriorityBox.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>view</tabstop>
+  <tabstop>prefix</tabstop>
+  <tabstop>addButton</tabstop>
+  <tabstop>deleteButton</tabstop>
+  <tabstop>clearButton</tabstop>
+  <tabstop>useMetadata</tabstop>
+  <tabstop>onlyParams</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>prefix</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>413</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>461</x>
+     <y>28</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>on_deleteButton_clicked()</slot>
+ </slots>
+</ui>

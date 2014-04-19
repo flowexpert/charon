@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PriorityDialog</class>
+ <widget class="QDialog" name="PriorityDialog">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>294</width>
+    <height>102</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Priority</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>4</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="description">
+     <property name="text">
+      <string>Select the priority to assign&lt;br&gt;to the selected parameters.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="PriorityBox" name="priorityBox"/>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PriorityBox</class>
+   <extends>QComboBox</extends>
+   <header>PriorityBox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>PriorityDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>258</x>
+     <y>67</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>PriorityDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>144</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>171</x>
+     <y>69</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

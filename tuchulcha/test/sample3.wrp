@@ -1,0 +1,25 @@
+
+rd.type		filereader
+rd.filename		infile.dat
+
+fs1.type		flowestimator
+
+fs2.type		flowestimator
+
+fw1.type		filewriter
+fw1.filename		file1.dat
+
+fw2.type		filewriter
+fw2.filename		file2.dat
+
+fw3.type		filewriter
+fw3.filename		file3.dat
+
+rd.data		fs1.data;fs2.data;fw3.data
+fs1.data		rd.data
+fs1.flow		fw1.data
+fs2.data		rd.data
+fs2.flow		fw2.data
+fw1.data		fs1.flow
+fw2.data		fs2.flow
+fw3.data		rd.data

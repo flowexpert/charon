@@ -1,0 +1,78 @@
+/** \mainpage Overview
+
+This project serves to provide an interface to edit workflow configuration
+files to be used within the charon-suite framework.
+With such files, it is possible to configure parameters of objects,
+algorithms or other data structures.
+It is designed to simplify the configuration of any kind of modular algorithms.
+Easy handling and prevention of errors which could occur
+on paremeter file creation by hand are the main goals.
+
+\image html screenshot.png "Tuchulcha screenshot"
+\image latex screenshot.png "Tuchulcha screenshot" width=0.95\textwidth
+
+\section features Main Features
+-   look and feel similar to other graphical IDEs (LabView, QT Designer, ...)
+-   a graphical flowchart, which is easier to understand than the plain
+    config file, gives an overview of the data interaction
+-   documentation on modules is presented on screen to help new users
+-   dock widgets can be rearranged or hidden to adapt to the user's needs
+-   mouse navigation or keyboard shortcuts for advanced users
+-   the user's attention is focussed on the objects and parameter configuration
+    and not on syntax details or searching the needed documentation
+-   multiple workflow files can be opened at the same time and be
+    compared this way
+-   flowchart images can be saved to jpeg/png or pdf files to be used e.g.
+    for presentations or documentation
+-   Object/class information (so called metadata) are stored in a separate file.
+    This way it's possible to configure visualizable processes in many different
+    projects/applications.
+-   this metadata is updated automatically by querying the present
+    charon-suite modules which are able to describe themselves
+-   system integration by using the icons from system theme
+    (oxygen icons as fallback)
+-   user interface translation (currently only german available)
+
+For a quickstart guide, refer to the \ref tuchulcha-usage.
+
+\section used Used software
+The whole project is written in C++ and designed to be platform independent.
+It uses only free (Open Source) software which is also avaiable for multiple
+platforms. The software has been tested on Linux (2.6)
+and Windows (XP, Server 2003, Vista, Server 2008, 7).
+The used libraries are avaiable for MAC OS too.
+
+This is a list of the used libraries and software:
+-   The <a href="http://cmake.org/">CMake</a> cross plattform build
+    system creates the project build files used by make/Eclipse/MSVC etc.
+    (Version >= 2.6.0)<br>
+    License: <a href="http://www.cmake.org/cmake/project/license.html">Berkely-style</a>
+-   the GUI is created using the
+    <a href="http://www.qtsoftware.com/products/appdev">QT library</a>
+    (Version >= 4.5.0)<br>
+    License: <a href="http://www.qtsoftware.com/products/licensing">LGPL</a>
+-   shipped icons are from the Oxygen icon set from the
+    <a href="http://websvn.kde.org/trunk/kdesupport/oxygen-icons/">
+    KDE Project</a><br>
+    License: <a href="http://websvn.kde.org/trunk/kdesupport/oxygen-icons/COPYING?view=markup">LGPL</a>
+-   documentation generated using <a href="http://www.doxygen.org">Doxygen</a> (Version >= 1.5.7)<br>
+    License: <a href="http://www.doxygen.org">GPL</a> (this does not affect the documentation output)
+
+\section license License
+Copyright (C) 2009-2013 Jens-Malte Gottfried
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the Free Software
+Foundation; either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see http://www.gnu.org/licenses/.
+
+\image html  lgplv3-147x51.png "LGPL logo"
+\image latex lgplv3-147x51.png "LGPL logo" width=4cm
+*/

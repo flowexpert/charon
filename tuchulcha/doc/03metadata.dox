@@ -1,0 +1,85 @@
+/**
+\page metadata Module Metadata
+The metadata are standard parameter files which can be opened by
+the class ParameterFile. You can edit these files via text editor or,
+more confortable with the object inspector \c paraminspektor(.exe) .
+
+\section meta_desc Object description
+If you want to use a class (node type) it in this project,
+you have to provide information about input/output slots and the configurable
+parameters. Multiple objects send their results to each other via these slots.
+Connected slots have to be of the same data type, so this type has also to
+be specified.
+
+\subsection meta_req_par Required parameters
+- \b inputs:
+    list of input slots
+- \b output:
+    list of output slots
+- \b parameters:
+    list of configurable parameters
+
+If an object has no inputs or outputs, set the corresponding parameter to
+an emtpy string.
+
+Each parameter given in one of the lists above, has to be of a certain type.
+So you have to set <tt>\<typename\>.\<parametername\>.type</tt> to this type.
+
+\subsection meta_opt_par Optional parameters
+After having specified the required parameters, you can add default values
+(to parameters listed in the \c parameters list) setting
+<tt>\<typename\>.\<parametername\></tt> to the desired default value.
+You can also add documentation by entering a docstring to
+<tt>\<typename\>.\<parametername\>.doc</tt> or by providing an URL to
+a text file containing the documentation (you can use html markup).
+URLs have to be given at the <tt>\<typename\>.\<parametername\>.docfile</tt>.
+The docfile URLs have to be given either as absolute paths or relative to the
+configuration directory (the class file is also located in the configuration
+directory). You can also provide both information (doc and docfile).
+The docfile property is (actually) only used for class documentation (not for
+parameters), there, the docstring is used as a brief summary at the top of the
+documentation page and the content of the docfile is pasted below.
+The docstrings for parameters are shown as tooltip in the object inspector
+and as a short description for each parameter in the class
+documentation (like in this doxygen documentation).
+
+Summary:
+- <tt>\<typename\>.\<parametername\></tt>: default value
+- <tt>\<typename\>.\<parametername\>.doc</tt>: docstring
+- <tt>\<typename\>.\<parametername\>.docfile</tt>: URL to doc file
+
+\subsection meta_example Example metadata file
+Here we describe a simple class that reads some image data from file.
+No input slot is needed, so <tt>filereader.inputs</tt> is set to an empty
+value. The data output is named \c data and given in the list
+<tt>filereader.outputs</tt>. The only configurable parameter is the filename
+to load from. The given default value, <tt>filereader.filename</tt>, docstrings
+and docfiles are optional.
+
+<table id="simple"  align="center">
+    <caption align="top">example class description</caption>
+    <tr><th>parameter</tr><th>value</th><th>remarks</th></tr>
+    <tr><td>filereader.inputs</td><td>&nbsp;</td><td>no inputs avaiable</td></tr>
+    <tr><td>filereader.outputs</td><td>data</td>
+        <td>one output slot named "data"</td></tr>
+    <tr><td>filereader.parameters</td><td>filename</td>
+        <td>one configurable parameter named "filename"</td></tr>
+    <tr><td>filereader.filename</td><td>sample.cimg</td>
+        <td>default value for "filename"</td></tr>
+    <tr><td>filereader.filename.type</td><td>filename</td>
+        <td>This type is actually only interpreted as a string</td></tr>
+    <tr><td>filereader.filename.doc</td><td>Name of the file to read from.</td>
+        <td>short docstring</td></tr>
+    <tr><td>filereader.data.type</td><td>image</td>
+        <td>slot data type (to check for matching slots)</td></tr>
+    <tr><td>filereader.data.doc</td><td>Data output.</td>
+        <td>short description of this output slot</td></tr>
+    <tr><td>filereader.doc</td><td>Reads data from file.</td>
+        <td>brief class desctiption</td></tr>
+    <tr><td>filereader.docfile</td><td>doc/classes/filereader.txt</td>
+        <td>URL to detailed documentation (relative to config dir)</td></tr>
+</table>
+
+A more complex example (which is used as default class configuration)
+can be found at \ref sampleclasses.wrp "sampleclasses.wrp".
+*/

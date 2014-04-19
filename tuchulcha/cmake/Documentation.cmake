@@ -1,0 +1,250 @@
+# Use information from FindDoxygen and set up documentation creation
+
+FIND_PACKAGE(Doxygen)
+SET_PACKAGE_PROPERTIES(Doxygen PROPERTIES TYPE RECOMMENDED URL www.doxygen.org
+	DESCRIPTION "tool for generating documentation from annotated C++ sources")
+SET_PACKAGE_PROPERTIES(Doxygen PROPERTIES PURPOSE
+	"- generate html and qhelp documentation")
+SET_PACKAGE_PROPERTIES(Doxygen PROPERTIES PURPOSE
+	"- generate pdf documentation and formulae using latex")
+
+IF (DOXYGEN_FOUND)
+	# Possibility to enable/disable documentation creation
+	OPTION(USE_LATEX "activate pdfdoc generation" ON)
+	OPTION(ENABLE_DOC_VERBOSE "Verbose documentation creation" ON)
+	SET(${PROJECT_NAME}_INSTALL_DOC doc/${PROJECT_NAME}
+		CACHE PATH "${PROJECT_NAME} documentation install prefix")
+	MARK_AS_ADVANCED(${PROJECT_NAME}_INSTALL_DOC ENABLE_DOC_VERBOSE)
+
+	IF(MSVC)
+		SET(DOXY_WARN_FORMAT    "$file($line) : $text")
+	ELSE(MSVC)
+		SET(DOXY_WARN_FORMAT    "$file:$line: $text")
+	ENDIF(MSVC)
+	SET(DOXY_OUTPUT_PATH        "${PROJECT_BINARY_DIR}/doc")
+	SET(DOXY_STRIP_INC_PATH     "${PROJECT_SOURCE_DIR}/src")
+	SET(DOXY_IMAGE_PATH         "${PROJECT_SOURCE_DIR}/doc/img")
+	SET(DOXY_EXAMPLE_PATH       "${PROJECT_SOURCE_DIR}/doc/example")
+	SET(DOXY_TEMPLATE           "${CMAKE_MODULE_PATH}/Doxyfile.in")
+	SET(DOXY_CONFIG             "${PROJECT_BINARY_DIR}/Doxyfile")
+	SET(DOXY_CONFIG_PDF         "${PROJECT_BINARY_DIR}/DoxyPdf")
+	SET(DOXY_CONFIG_QT          "${PROJECT_BINARY_DIR}/DoxyQHelp")
+	SET(DOXY_PROJECTNAME        "${PROJECT_NAME}")
+	SET(DOXY_PROJECT_BRIEF      "Graphical Workflow Configuration Editor")
+	SET(DOXY_PROJECT_LOGO       "${PROJECT_SOURCE_DIR}/icons/tc.png")
+	SET(DOXY_PROJECT_VERSION    "${${PROJECT_NAME}_VERSION}")
+	SET(DOXY_DOC_EXCLUDE        "designer")
+	SET(DOXY_DOC_RECURSIVE      NO)
+	SET(DOXY_HTML_STYLESHEET    "${PROJECT_SOURCE_DIR}/doc/customStyles.css")
+	SET(DOXY_LATEX_HEADER       "${PROJECT_SOURCE_DIR}/doc/DoxygenHeader.tex")
+	SET(DOXY_LATEX_BATCHMODE    YES)
+	SET(DOXY_COMPACT_LATEX      YES)
+	IF(ENABLE_DOC_VERBOSE)
+		SET(DOXY_QUIET          NO)
+	ELSE(ENABLE_DOC_VERBOSE)
+		SET(DOXY_QUIET          YES)
+	ENDIF(ENABLE_DOC_VERBOSE)
+	IF(NOT USE_LATEX)
+		SET(DOXY_SKIP_PDFDOC    YES)
+	ENDIF(NOT USE_LATEX)
+
+	# LaTeX needed to generate formula
+	FIND_PACKAGE(LATEX QUIET)
+
+	# graphviz needed to generate graphs
+	IF(DOXYGEN_DOT_EXECUTABLE)
+		SET(DOXY_DOT_ENABLE "YES")
+	ELSE(DOXYGEN_DOT_EXECUTABLE)
+		SET(DOXY_DOT_ENABLE "NO")
+	ENDIF(DOXYGEN_DOT_EXECUTABLE)
+
+	IF(NOT DOC_QUIET)
+		IF (NOT LATEX_COMPILER)
+			MESSAGE(STATUS "latex not found - disabling pdf output.")
+			MESSAGE(STATUS "You will probably get warnings generating formulae.")
+		ENDIF (NOT LATEX_COMPILER)
+
+		IF (NOT DOXYGEN_DOT_EXECUTABLE)
+			MESSAGE(STATUS "dot not found, graphs will not be generated")
+		ENDIF (NOT DOXYGEN_DOT_EXECUTABLE)
+	ENDIF(NOT DOC_QUIET)
+
+	# dummy target for documentation creation
+	IF(NOT TARGET doc)
+		ADD_CUSTOM_TARGET(doc)
+	ENDIF()
+
+	# for adding dependencies
+	FILE(GLOB DOX_FILES "${PROJECT_SOURCE_DIR}/doc/*.dox")
+
+	SET(DOXY_DOC_PATHS          "app src doc")
+	SET(DOXY_GENERATE_HTML      YES)
+	SET(DOXY_OUTPUT_HTML        html)
+	SET(DOXY_GENERATE_LATEX     NO )
+	SET(DOXY_GENERATE_QHELP     NO)
+	SET(DOXY_HTML_TREEVIEW      YES)
+	SET(DOXY_TAGFILE_INPUT      ${charon-core_TAG_IMPORT})
+	SET(DOXY_TAGFILE_OUTPUT     "${PROJECT_BINARY_DIR}/doc/${PROJECT_NAME}.tag")
+	CONFIGURE_FILE(${DOXY_TEMPLATE} ${DOXY_CONFIG}     @ONLY)
+	FILE(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/doc/html")
+
+	ADD_CUSTOM_TARGET(${PROJECT_NAME}_doc_html
+		COMMAND ${DOXYGEN_EXECUTABLE} ${DOXY_CONFIG}
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+		COMMENT "Generating ${PROJECT_NAME} html documentation"
+	)
+	ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_html)
+	SET_TARGET_PROPERTIES(${PROJECT_NAME}_doc_html PROPERTIES FOLDER "DocGen")
+
+	# install html documentation
+	INSTALL(
+		DIRECTORY       ${PROJECT_BINARY_DIR}/doc/html
+		DESTINATION     ${${PROJECT_NAME}_INSTALL_DOC}
+		OPTIONAL
+		COMPONENT       htmldoc
+	)
+
+	# install doxygen tagfile
+	INSTALL(
+		FILES           ${PROJECT_BINARY_DIR}/doc/${PROJECT_NAME}.tag
+		DESTINATION     ${${PROJECT_NAME}_INSTALL_DOC}
+		OPTIONAL
+		COMPONENT       htmldoc
+	)
+
+	IF(USE_ASSISTANT OR USE_HTMLHELP)
+		IF(NOT QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+			MESSAGE(SEND_ERROR "QtCollectionGenerator not found.")
+		ENDIF()
+		IF(USE_HTMLHELP)
+			FIND_PACKAGE(HTMLHelp QUIET)
+			IF(NOT HTML_HELP_COMPILER)
+				MESSAGE(SEND_ERROR "Htmlhelp not found. It is included in the Html Help Workshop at http://www.microsoft.com/en-us/download/details.aspx?id=21138")
+			ENDIF()
+		ENDIF(USE_HTMLHELP)
+		SET(DOXY_DOC_RECURSIVE      NO)
+		SET(DOXY_DOC_PATHS          doc)
+		SET(DOXY_GENERATE_HTML      YES)
+		SET(DOXY_HTML_TREEVIEW      NO)
+		SET(DOXY_OUTPUT_HTML        help)
+		SET(DOXY_GENERATE_LATEX     NO)
+		SET(DOXY_GENERATE_QHELP     YES)
+		SET(DOXY_QHP_SECT_ATTRS   "charon-suite ${PROJECT_NAME} ${${PROJECT_NAME}_VERSION}")
+		SET(DOXY_TAGFILE_INPUT)
+		SET(DOXY_TAGFILE_OUTPUT)
+		CONFIGURE_FILE(${DOXY_TEMPLATE} ${DOXY_CONFIG_QT} @ONLY)
+		FILE(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/doc/help")
+
+		ADD_CUSTOM_COMMAND(
+			OUTPUT  "${PROJECT_BINARY_DIR}/doc/help/index.qhp"
+			COMMAND ${DOXYGEN_EXECUTABLE} "${DOXY_CONFIG_QT}"
+			DEPENDS ${DOX_FILES}
+			WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+		)
+
+		CONFIGURE_FILE("${CMAKE_MODULE_PATH}/qhelp.qhcp.in"
+			"${PROJECT_BINARY_DIR}/doc/help/${PROJECT_NAME}.qhcp" @ONLY)
+
+		GET_TARGET_PROPERTY(TLOC tuchulcha LOCATION)
+		GET_FILENAME_COMPONENT(TLOC "${TLOC}" PATH)
+
+		ADD_CUSTOM_COMMAND(
+			OUTPUT  "${PROJECT_BINARY_DIR}/doc/help/${PROJECT_NAME}.qhc"
+			COMMAND ${QT_QCOLLECTIONGENERATOR_EXECUTABLE} "${PROJECT_NAME}.qhcp"
+			DEPENDS "${PROJECT_BINARY_DIR}/doc/help/index.qhp"
+			DEPENDS "${PROJECT_BINARY_DIR}/doc/help/${PROJECT_NAME}.qhcp"
+			WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
+		)
+
+		ADD_CUSTOM_TARGET(${PROJECT_NAME}_doc_help
+			DEPENDS "${PROJECT_BINARY_DIR}/doc/help/${PROJECT_NAME}.qhc"
+			COMMENT "Generating ${PROJECT_NAME} help documentation"
+		)
+		IF(NOT ${PROJECT_NAME}_QHC_DIR)
+			SET (${PROJECT_NAME}_QHC_DIR bin)
+		ENDIF()
+
+		IF(USE_ASSISTANT)
+			ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}_doc_help POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_NAME}.qch" "${TLOC}/${PROJECT_NAME}.qch"
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_NAME}.qhc" "${TLOC}/${PROJECT_NAME}.qhc"
+				WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
+			)
+			INSTALL(FILES
+					"${PROJECT_BINARY_DIR}/doc/help/${PROJECT_NAME}.qch"
+					"${PROJECT_BINARY_DIR}/doc/help/${PROJECT_NAME}.qhc"
+				DESTINATION     ${${PROJECT_NAME}_QHC_DIR}
+				OPTIONAL
+				COMPONENT       help
+			)
+		ENDIF()
+		IF(USE_HTMLHELP)
+			ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}_doc_help POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different "index.chm" "${TLOC}/${PROJECT_NAME}.chm"
+				WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
+			)
+			INSTALL(FILES
+					"${PROJECT_BINARY_DIR}/doc/help/index.chm"
+				DESTINATION     ${${PROJECT_NAME}_QHC_DIR}
+				RENAME          ${PROJECT_NAME}.chm
+				OPTIONAL
+				COMPONENT       help
+			)
+		ENDIF()
+
+
+		ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_help)
+		SET_TARGET_PROPERTIES(${PROJECT_NAME}_doc_help PROPERTIES FOLDER "DocGen")
+	ENDIF()
+
+	IF(PDFLATEX_COMPILER AND NOT DOXY_SKIP_PDFDOC)
+		SET(DOXY_DOC_RECURSIVE      NO)
+		SET(DOXY_DOC_PATHS          doc)
+		SET(DOXY_GENERATE_HTML      NO)
+		SET(DOXY_GENERATE_LATEX     YES)
+		SET(DOXY_GENERATE_QHELP     NO)
+		SET(DOXY_TAGFILE_INPUT)
+		SET(DOXY_TAGFILE_OUTPUT)
+		CONFIGURE_FILE(${DOXY_TEMPLATE} ${DOXY_CONFIG_PDF} @ONLY)
+		FILE(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/doc/latex")
+
+		ADD_CUSTOM_COMMAND(
+			OUTPUT  ${PROJECT_BINARY_DIR}/doc/latex/refman.tex
+			COMMAND ${DOXYGEN_EXECUTABLE} "${DOXY_CONFIG_PDF}"
+			COMMAND ${CMAKE_COMMAND} -E copy
+				"${PROJECT_SOURCE_DIR}/doc/doxygen.sty"
+				"${PROJECT_BINARY_DIR}/doc/latex/doxygen.sty"
+			DEPENDS ${DOX_FILES}
+			WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+		)
+
+		# pdf generation
+		ADD_CUSTOM_COMMAND(
+			OUTPUT  ${PROJECT_BINARY_DIR}/doc/latex/refman.pdf
+			DEPENDS ${PROJECT_BINARY_DIR}/doc/latex/refman.tex
+			COMMAND ${CMAKE_COMMAND} -E remove *.aux *.toc *.idx *.ind *.ilg *.log *.out
+			COMMAND ${PDFLATEX_COMPILER}  refman.tex
+			COMMAND ${MAKEINDEX_COMPILER} refman.idx
+			COMMAND ${PDFLATEX_COMPILER}  refman.tex
+			COMMAND ${PDFLATEX_COMPILER}  refman.tex
+			COMMAND ${PDFLATEX_COMPILER}  refman.tex
+			WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/doc/latex
+		)
+		ADD_CUSTOM_TARGET(${PROJECT_NAME}_doc_pdf
+			DEPENDS ${PROJECT_BINARY_DIR}/doc/latex/refman.pdf
+			COMMENT "Generating ${PROJECT_NAME} pdf manual"
+		)
+
+		ADD_DEPENDENCIES(doc ${PROJECT_NAME}_doc_pdf)
+		SET_TARGET_PROPERTIES(${PROJECT_NAME}_doc_pdf PROPERTIES FOLDER "DocGen")
+
+		# install pdf documentation
+		INSTALL(
+			FILES           ${PROJECT_BINARY_DIR}/doc/latex/refman.pdf
+			RENAME          ${PROJECT_NAME}-manual.pdf
+			DESTINATION     ${${PROJECT_NAME}_INSTALL_DOC}
+			OPTIONAL
+			COMPONENT       pdfdoc
+		)
+	ENDIF(PDFLATEX_COMPILER AND NOT DOXY_SKIP_PDFDOC)
+ENDIF (DOXYGEN_FOUND)

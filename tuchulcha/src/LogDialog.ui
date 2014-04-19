@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LogDialog</class>
+ <widget class="QDialog" name="LogDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>906</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Workflow Execution</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="lInfo">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Workflow execution results:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lProcName">
+       <property name="text">
+        <string>ProcName</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QCopyListView" name="logView">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>4</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ContiguousSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="infoDisplay">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="tabChangesFocus">
+      <bool>true</bool>
+     </property>
+     <property name="undoRedoEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="lineWrapMode">
+      <enum>QTextEdit::NoWrap</enum>
+     </property>
+     <property name="tabStopWidth">
+      <number>40</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="statusLayout"/>
+   </item>
+   <item>
+    <widget class="QToolBox" name="toolBox">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>145</height>
+      </size>
+     </property>
+     <widget class="QWidget" name="page">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>888</width>
+        <height>87</height>
+       </rect>
+      </property>
+      <attribute name="label">
+       <string>Tools</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="2" rowspan="2">
+        <widget class="QToolButton" name="bSearchDown">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Find
+Next</string>
+         </property>
+         <property name="icon">
+          <iconset theme="go-down" resource="../resources.qrc">
+           <normaloff>:/icons/go-down.png</normaloff>:/icons/go-down.png</iconset>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="lSearch">
+         <property name="text">
+          <string>Search in Log:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4" rowspan="2">
+        <widget class="QToolButton" name="bSaveLog">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Save
+Logfile</string>
+         </property>
+         <property name="icon">
+          <iconset theme="document-save" resource="../resources.qrc">
+           <normaloff>:/icons/document-save.png</normaloff>:/icons/document-save.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3" rowspan="2">
+        <widget class="QToolButton" name="bSearchUp">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Find
+Previous</string>
+         </property>
+         <property name="icon">
+          <iconset theme="go-up" resource="../resources.qrc">
+           <normaloff>:/icons/go-up.png</normaloff>:/icons/go-up.png</iconset>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QFilterWidget" name="eFilter">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>10</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="placeholderText">
+          <string>Search String (Wildcard expression)</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>373</width>
+        <height>73</height>
+       </rect>
+      </property>
+      <attribute name="label">
+       <string>Options</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="checkScroll">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>2</horstretch>
+           <verstretch>2</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>scroll down on new output</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="checkDD">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>2</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>lines with &quot;(DD)&quot; prefix</string>
+         </property>
+         <property name="whatsThis">
+          <string>lines with &quot;(DD)&quot; prefix</string>
+         </property>
+         <property name="text">
+          <string>show debug output</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="lBufSize">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>size of display buffer:</string>
+         </property>
+         <property name="buddy">
+          <cstring>sBufSize</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="sBufSize">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="specialValueText">
+          <string>unlimited</string>
+         </property>
+         <property name="suffix">
+          <string> lines</string>
+         </property>
+         <property name="maximum">
+          <number>100000</number>
+         </property>
+         <property name="singleStep">
+          <number>500</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QProgressBar" name="progressBar">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>20</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximum">
+        <number>0</number>
+       </property>
+       <property name="value">
+        <number>-1</number>
+       </property>
+       <property name="textVisible">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Close</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QCopyListView</class>
+   <extends>QListView</extends>
+   <header>QCopyListView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QFilterWidget</class>
+   <extends>QLineEdit</extends>
+   <header>QFilterWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>LogDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>889</x>
+     <y>689</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>LogDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>889</x>
+     <y>689</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

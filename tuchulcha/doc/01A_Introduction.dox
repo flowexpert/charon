@@ -1,0 +1,44 @@
+/** \page tuchulcha-usage Introduction
+\tableofcontents
+\section start Getting started
+To create a new (empty) file, select file->new or use the shortcut
+\c CTRL+N. \n
+To open an existing file, select file->open or use
+\c CTRL+O. \n
+
+\subsection editing Editing a Document
+If you have an open document, you can add new items by
+drag&drop (choose one from the selector widget and drag it onto
+the document) or by double-click on the item to add.
+You will be asked for a valid object name.
+Per default, an object name that does not conflict with any
+existing object will be proposed.
+In most situations, there is no need to change this name.
+
+If you click at an item in the selector widget,
+the corresponding class documentation will appear in the help browser.
+
+Connections between objects can also be established by
+drag&drop, simply drag the source slot onto the target slot.
+If an input slot is already connected, it will be disconnected
+before establishing the new connection.
+If an input slot may be connected to multiple targets,
+new connections will be added instead of replacing the existing one(s).
+
+To disconnect slots, use the disconnect button from the tool bar
+(disconnects all input and output slots of the selected module)
+or for more control, use the context menu which offers options
+to disconnect individual slots.
+
+Objects can be deleted pressing the \c DEL key and renamed
+using \c F2. In either case, a dialog will ask for your confirmation.
+These options are also available in the context menu.
+
+Object parameters can be changed using the objectInspector
+widget. Tooltips show a short documentation for each parameter.
+
+<h1>Further Information</h1>
+- \subpage widgets
+- \subpage tuchulcha-run
+- \subpage tuchulcha-options
+*/

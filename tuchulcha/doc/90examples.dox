@@ -1,0 +1,24 @@
+/** \example minimal.wrp
+    \image html minimal.png "minimal graph example visualization"
+    \image latex minimal.png "minimal graph example visualization" width=2.5cm
+ */
+
+/** \example connected.wrp
+    \image html connected.png "connected graph example visualization"
+    \image latex connected.png "connected graph example visualization" width=6cm
+ */
+
+/** \example multicon.wrp
+    \image html multicon.png "multiple connected graph example visualization"
+    \image latex multicon.png "multiple connected graph example visualization" width=7cm
+ */
+
+/** \example sampleclasses.wrp
+    This class description is used as default in ParamEdit.
+
+    The corresponding template instances (as shown in the selector widget)
+    look as follows:
+
+    \image html sampletemplates.png "template instances"
+    \image latex sampletemplates.png "template instances" width=8cm
+ */

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<QHelpCollectionProject version="1.0">
+	<assistant>
+		<title>@PROJECT_NAME@ help</title>
+		<title language="de">@PROJECT_NAME@ Hilfe</title>
+		<cacheDirectory>@PROJECT_NAME@/help</cacheDirectory>
+		<homePage>qthelp://org.doxygen.@PROJECT_NAME@/doc/index.html</homePage>
+		<startPage>qthelp://org.doxygen.@PROJECT_NAME@/doc/index.html</startPage>
+		<applicationIcon>@PROJECT_SOURCE_DIR@/icons/tc.png</applicationIcon>
+		<enableFilterFunctionality>false</enableFilterFunctionality>
+		<enableDocumentationManager>false</enableDocumentationManager>
+		<enableAddressBar>false</enableAddressBar>
+	</assistant>
+	<docFiles>
+		<generate>
+			<file>
+				<input>index.qhp</input>
+				<output>@PROJECT_NAME@.qch</output>
+			</file>
+		</generate>
+		<register>
+			<file>@PROJECT_NAME@.qch</file>
+		</register>
+	</docFiles>
+ </QHelpCollectionProject>

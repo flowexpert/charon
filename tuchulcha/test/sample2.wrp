@@ -1,0 +1,16 @@
+
+rd1.type		filereader
+rd1.filename		file1.dat
+
+fs.type		flowestimator
+
+fw1.type		filewriter
+fw1.filename		outfile1.dat
+
+fw2.type		filewriter
+fw2.filename		outfile2.dat
+rd1.data		fs.data
+fw1.data		fs.flow
+fw2.data		fs.flow
+fs.data		rd1.data
+fs.flow		fw1.data;fw2.data

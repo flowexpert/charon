@@ -1,0 +1,136 @@
+\documentclass[a4paper, 11pt, fleqn, pointlessnumbers]{scrartcl}
+
+\usepackage[utf8]{inputenc}   % zur richtigen Darstellung der Schriften
+\usepackage[T1]{fontenc}      % T1-Font auswählen
+\usepackage{moreverb}         % Quellcode einfügen
+\usepackage{ngerman}          % Trennungsregeln
+\usepackage{color}            % Hier kommt Farbe ins Spiel
+\usepackage[german]{varioref} % flexible Querverweise
+\usepackage{hyperref}         % Sprünge in der Datei
+
+% links formatieren
+\hypersetup{
+  colorlinks,                 % Links farbig statt mit Rahmen
+  linkcolor=black,            % z.B. im Inhaltsverzeichnis
+  urlcolor=darkblue           % Weblinks
+}
+
+% Arbeitszeitangaben
+\newcommand{\worktime}[1]{\hfill\textcolor{blue}{ca.~#1~h}}
+
+\begin{document}
+  \titlehead{
+    Universität Heidelberg \hfill SoSem 2008\\
+    Heidelberg Collaboratory for Image Processing (HCI)\\
+    Speyerer Straße 4\\
+    D-69115 Heidelberg
+  }
+  \subject{Projektpraktikum Informatik}
+  \title{Charon Konfigurationseditor}
+  \author{Jens-Malte Gottfried}
+  \date{14.08.2008}
+  \publishers{\vspace{1cm}Betreut durch Prof. Dr. B. Jähne}
+  \maketitle
+
+  \tableofcontents
+  \pagebreak
+
+  \section{Ziele}
+  In diesem Projekt soll eine GUI-Anwendung erstellt werden, mit der
+  man die umfangreichen Konfigurationsmöglichkeiten des Softwareprojektes
+  "`Charon"' übersichtlich erzeugen, darstellen und bearbeiten kann.
+  Hierbei ist Wert auf Plattformunabhängigkeit und Abstraktion zu legen,
+  damit die entstehende Anwendung ohne größere Modifikationen auch für
+  völlig andere Konfigurationsaufgaben verwendet werden kann. Ebenso soll
+  die Anwendung leicht erweiterbar sein, um sie bei zukünftiger
+  Weiterentwicklung des Charon Projektes anpassen zu können.
+
+  \section{Einführung}
+  Im Charon Projekt werden verschiedene Algorithmen, die u. A. zur
+  Flussanalyse digitaler Bildsequenzen dienen, implementiert. Um die dort
+  erstellten Anwendungen zu benutzen, müssen für die unterschiedlichen
+  Algorithmen jeweils Konfigurationsdateien angelegt werden, in denen die zu
+  verwendenden Parameter hinterlegt werden. Um z.B. eine Bildsequenz zu
+  verarbeiten, werden die entsprechenden Daten geladen, mit einem Algorithmus
+  bearbeitet, das Ergebnis an einen weiteren Algorithmus weitergegeben usw., bis
+  schließlich das gewünschte Ergebnis berechnet wird. In diesem Projekt
+  geht es nun darum, dieses Vorgehen zu visualisieren, d.h. den Datenfluss
+  darzustellen, sowie die möglichen Algorithmen, die man auf die Daten
+  anwenden kann, modular zusammenstellen zu können und die
+  resultierenden Konfigurationsdateien zu erzeugen. Dabei soll die Anwendung
+  sinnvolle Hinweise und Dokumentationen zu den einzelnen Algorithmen/
+  Modulen anzeigen, die bei der Konfigurationserstellung weiterhelfen.
+
+  \section{Programmbeschreibung}
+  In diesem Projekt soll eine C++-Anwendung unter Verwendung des
+  Qt-Framework der Firma Trolltech erstellt werden. Die Anwendung
+  besteht aus einer graphischen Benutzeroberfläche, in deren Zentrum
+  der zu konfigurierende Datenfluss ähnlich einem Datenflussdiagramm
+  dargestellt wird. Wählt man ein Objekt im Flussdiagramm (d.h. ein zu
+  konfigurierendes Modul im Datenfluss) aus, kann man dessen Eigenschaften in
+  einem Objektinspektor betrachten und verändern. Der Objektinspektor
+  speichert die Einstellungen in den dazugehörigen Konfigurationsdateien ab.
+  Beim Erstellen des Datenflussschemas sollen sinnvolle Vorschläge, welche
+  Module sich miteinander verknüpfen lassen, zur Verfügung stehen. Die nötigen
+  Informationen, welche Module es überhaupt gibt und wie sie miteinander
+  zusammenarbeiten können, werden in einer entsprechenden Datenbank zur
+  Verfügung gestellt. Für jedes Modul und die zugehörigen Parameter
+  sind Informationen zu hinterlegen, die bei der Konfiguration in einem
+  Hilfe-Fenster angezeigt werden, um Anwendern die Benutzung zu
+  erleichtern.
+
+  Die Verwendung des Qt-Framework wurde ausgewählt, damit die
+  Anwendung auf einer Vielzahl unterschiedlicher Plattformen lauffähig ist
+  (angestrebt sind Win(32), Unix, Mac).
+
+  Um die Software auf möglichst vielen Plattformen kompilieren zu können,
+  wird das Build-System "`CMake"' verwendet, welches build-Konfigurationen
+  für alle gängigen Entwicklungsumgebungen erzeugen kann. Hierzu gehören z.B.
+  Unix/MinGW Makefiles oder Microsoft Visual C++ Projekte.
+
+  Zur Dokumentation der Anwendung wird die Software "`Doxygen"' verwendet,
+  die ebenfalls auf vielen Plattformen verfügbar ist und die Informationen
+  aus speziellen Kommentaren innerhalb der Quelldateien generiert. Dies stellt
+  sicher, dass die Dokumentation schon während des Schreibens des
+  Programmcodes erstellt wird und nicht erst nachträglich hinzugefügt werden
+  muss, was oft dazu führt, dass Inkonsistenzen zwischen Code und
+  Dokumentation entstehen.
+
+  Alle erwähnten Tools und Bibliotheken stehen als OpenSource unter GPL oder
+  kompatiblen Lizenzen zur Verfügung, sodass keine Lizenzprobleme zu erwarten
+  sind. Die entstehende Anwendung soll nach Abschluss des Projektes ebenfalls
+  unter der GPL verfügbar gemacht werden, um die Weiterentwicklung zu ermöglichen.
+
+  \section{Zeitplanung und Milestones}
+  Die Anwendung besteht aus mehreren Modulen, die mehr oder weniger
+  unabhängig voneinander entwickelt werden können. Der geschätzte
+  Arbeitsaufwand ist rechts angegeben.
+  \begin{itemize}
+    \item Objektinspektor mit Anbindung an die Konfigurationsdateien
+      \worktime{20}
+    \item Datenflussdiagramm und -editor \worktime{20}\\
+      dazu benötigt:
+    \begin{itemize}
+      \item Modulauswahlfenster \worktime{20}
+      \item Visualisierung als Flussdiagramm \worktime{20}
+    \end{itemize}
+    \item Dokumentationsfenster (Anzeige der Hinweistexte) \worktime{20}
+  \end{itemize}
+
+  Zusätzlich zu den Programmkomponenten muss Folgendes erstellt werden:
+  \begin{itemize}
+    \item Datenbank der Informationen über die Datenflussstruktur
+      \worktime{20}
+    \item Dokumentationstexte zu den einzelnen Datenflussmodulen
+      \worktime{20}
+  \end{itemize}
+
+  Weiterhin ist eine umfangreiche Programmdokumentation erforderlich,
+  die die Weiterentwicklung und das Erweitern der Software ermöglicht und
+  vereinfacht. \worktime{20}
+
+  \vspace{5mm}
+  Da in den Vorlesungen zwar Programmierkenntnisse vermittelt wurden,
+  das umfangreiche Qt-Framework jedoch nicht behandelt wurde, gehört
+  die Einarbeitung in Qt ebenfalls zur Bearbeitung dieses Projektpraktikums.
+\end{document}

@@ -1,0 +1,6 @@
+fr.type		filereader
+fw1.type		filewriter
+fw2.type		filewriter
+fr.data		fw1.data;fw2.data
+fw1.data		fr.data
+fw2.data		fr.data

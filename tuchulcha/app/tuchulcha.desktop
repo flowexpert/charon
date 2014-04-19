@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Tuchulcha
+GenericName=Flowchart Configuration Editor
+Comment=Set up and modify charon workflow parameter files
+TryExec=tuchulcha
+Exec=tuchulcha %U
+StartupNotify=true
+Terminal=false
+Type=Application
+Icon=tuchulcha
+NoDisplay=false
+Categories=Qt;Education;Science;ImageProcessing;
+MimeType=text/plain;
